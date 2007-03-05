@@ -182,7 +182,7 @@ function nso_init() {
   if(autoAllow > 0) document.getElementById("sel-autoAllow").selectedIndex = autoAllow - 1; 
   nso_autoAllowChanged(cbx);
   
-  document.getElementById("policy-tree").view = policyModel;
+  // document.getElementById("policy-tree").view = policyModel;
 }
 
 function nso_urlListChanged() {

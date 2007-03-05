@@ -502,7 +502,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.6",
+  VERSION: "1.1.4.6.070304",
   
   get wrappedJSObject() {
     return this;
@@ -518,7 +518,7 @@ NoscriptService.prototype ={
     // dump(SERVICE_NAME+" notified of "+subject+","+topic+","+data); //DDEBUG
     
     if(subject instanceof Components.interfaces.nsIPrefBranchInternal) {
-      this.syncPrefs(subject,data);
+      this.syncPrefs(subject, data);
     } else {
       switch(topic) {
         case "xpcom-shutdown":
@@ -528,7 +528,11 @@ NoscriptService.prototype ={
           this.resetJSCaps();
           break;
         case "profile-after-change":
-          this.init();
+          try {
+            this.init();
+          } catch(e) {
+            dump("NS: init error -- " + e.message);
+          }
           break;
         case "em-action-requested":
           if( (subject instanceof Components.interfaces.nsIUpdateItem)
@@ -572,10 +576,15 @@ NoscriptService.prototype ={
         try {
           this.jsPolicySites.fromPref(this.policyPB);
         } catch(ex) {
+          /*
           this.policyPB.setCharPref("sites",
             this.getPref("default",
               "chrome: resource: about:neterror flashgot.net mail.google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com"
             ));
+          */
+          this.setJSEnabled(this.splitList(this.getPref("default",
+              "chrome: resource: about:neterror flashgot.net mail.google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com"
+              )), true, true);
         }
         break;
       case "temp":
@@ -626,7 +635,8 @@ NoscriptService.prototype ={
        
       case "nselForce":
       case "nselNever":
-        this.updateNselPerms(name);
+      // case "blockCssScanners":
+        this.updateCssPref(name);
         
       break;
       
@@ -653,25 +663,30 @@ NoscriptService.prototype ={
     }
   },
   
-  updateNselPerms: function(name) {
+  updateCssPref: function(name) {
     var sheet = 
     ({
       nselForce: "noscript.noscript-show, span.noscript-show { display: inline !important } span.noscript-show { padding: 0px; margin: 0px; border: none; background: inherit; color: inherit }",
-      nselNever: "noscript { display: none !important }"
+      nselNever: "noscript { display: none !important }",
+      blockCssScanners: "a:visited { background-image: none !important }"
     }[name]);
     if(!sheet) return;
 
     var value = this[name];
     this[name] = value = this.getPref(name, value);
+    this.updateStyleSheet(sheet, value);
+  },
+  
+  updateStyleSheet: function(sheet, enabled) {
     const sssClass = Components.classes["@mozilla.org/content/style-sheet-service;1"];
     if(!sssClass) return;
     
     const sss = sssClass.getService(Components.interfaces.nsIStyleSheetService);
     const uri = SiteUtils.ios.newURI("data:text/css," + sheet, null, null);
     if(sss.sheetRegistered(uri, sss.USER_SHEET)) {
-      if(!value) sss.unregisterSheet(uri, sss.USER_SHEET);
+      if(!enabled) sss.unregisterSheet(uri, sss.USER_SHEET);
     } else {
-      if(value) sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+      if(enabled) sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
     }
   },
  
@@ -719,26 +734,36 @@ NoscriptService.prototype ={
       "allowClipboard", "allowLocalLinks",
       "temp", "untrusted", // "permanent",
       "truncateTitle", "truncateTitleLen",
-      "nselNever", "nselForce",
+      "nselNever", "nselForce", "blockCssScanners",
       "autoAllow"
       ];
     for(var spcount = syncPrefNames.length; spcount-->0;) {
       this.syncPrefs(this.prefs, syncPrefNames[spcount]);
     }
     
-    this.syncPrefs(this.mozJSPref,"enabled");
-   
+    this.syncPrefs(this.mozJSPref, "enabled");
+    
+    this.setupJSCaps();
+    
     // init jsPolicySites from prefs
     this.syncPrefs(this.policyPB, "sites");
     this.eraseTemp();
+    this.sanitize2ndLevs();
     
-    
-    this.setupJSCaps();
     this.reloadWhereNeeded(); // init snapshot
    
     this.uninstallGuard.init();
-    
+ 
     return true;
+  }
+,  
+  sanitize2ndLevs: function() {
+    var rx = /(?:^| )([^ \.:]+\.\w+)(?= |$)(?!.*https:\/\/\1)/g
+    var doms = [];
+    for(var s = this.jsPolicySites.sitesString; m = rx.exec(s); s = s.substring(m.lastIndex - 1)) {
+      doms.push(m[1]);
+    }
+    if(doms.length) this.setJSEnabled(doms, true);
   }
 ,
   permanentSites: new PolicySites(),
@@ -861,6 +886,8 @@ NoscriptService.prototype ={
  flushCAPS: function(sitesString) {
    const ps = this.jsPolicySites;
    if(sitesString) ps.sitesString = sitesString;
+   
+   dump("Flushing " + ps.sitesString);
    ps.toPref(this.policyPB);
  }
 ,
@@ -930,7 +957,7 @@ NoscriptService.prototype ={
 ,
   SPECIAL_TLDS: {
     "ab": " ca ", 
-    "ac": " ac at be cn il in jp kr nz th uk za ", 
+    "ac": " ac at be cn id il in jp kr nz th uk za ", 
     "adm": " br ", 
     "adv": " br ",
     "agro": " pl ",
@@ -955,7 +982,7 @@ NoscriptService.prototype ={
     "cn": " com ",
     "cng": " br ",
     "cnt": " br ",
-    "co": " ac at il in jp kr nz th sy uk za ",
+    "co": " ac at id il in jp kr nz th sy uk za ",
     "com": " ar au br cn ec fr hk mm mx pl ro ru sg tr tw ua ",
     "cq": " cn ",
     "cri": " nz ",
@@ -977,7 +1004,7 @@ NoscriptService.prototype ={
     "gd": " cn ",
     "gen": " nz ",
     "gmina": " pl ",
-    "go": " jp kr th ",
+    "go": " id jp kr th ",
     "gob": " mx ",
     "gov": " ar br cn ec il in mm mx sg tr uk za ",
     "govt": " nz ",
@@ -1013,12 +1040,12 @@ NoscriptService.prototype ={
     "media": " pl ",
     "mi": " th ",
     "miasta": " pl ",
-    "mil": " br ec nz pl tr za ",
+    "mil": " br ec id nz pl tr za ",
     "mo": " cn ",
     "muni": " il ",
     "nb": " ca ",
     "ne": " jp kr ",
-    "net": " ar au br cn ec hk il in mm mx nz pl ru sg th tr tw ua uk za ",
+    "net": " ar au br cn ec hk id il in mm mx nz pl ru sg th tr tw ua uk za ",
     "nf": " ca ",
     "ngo": " za ",
     "nm": " cn kr ",
@@ -1030,7 +1057,7 @@ NoscriptService.prototype ={
     "nx": " cn ",
     "odo": " br ",
     "on": " ca ",
-    "or": " ac at jp kr th ",
+    "or": " ac at id jp kr th ",
     "org": " ar au br cn ec hk il in mm mx nz pl ro ru sg tr tw uk ua uk za ",
     "pc": " pl ",
     "pe": " ca ",
@@ -1050,6 +1077,7 @@ NoscriptService.prototype ={
     "res": " in ",
     "sa": " com ",
     "sc": " cn ",
+    "sch": " id ",
     "school": " nz za ",
     "se": " com net ",
     "sh": " cn ",
@@ -1074,7 +1102,7 @@ NoscriptService.prototype ={
     "us": " com ca ",
     "uy": " com ",
     "vet": " br ",
-    "web": " za ",
+    "web": " id za ",
     "www": " ro ",
     "xj": " cn ",
     "xz": " cn ",
@@ -1126,18 +1154,22 @@ NoscriptService.prototype ={
       } catch(ex) {
         prefString = POLICY_NAME;
       }
-  
-      if(prefString != originalPrefString) { 
-        this.caps.setCharPref("policynames", prefString);
-      }
       
       this.caps.setCharPref(POLICY_NAME + ".javascript.enabled", "allAccess");
+      if(prefString != originalPrefString) { 
+        this.caps.setCharPref("policynames", prefString);
+       
+      }
+      
+     
       
       if(!this._observingPolicies) {
         this.caps.addObserver("policynames", this, false);
         this._observingPolicies = true;
       }
-    } catch(ex) {}
+    } catch(ex) {
+      dump(ex.message);
+    }
     this._editingPolicies = false;
   },
   resetJSCaps: function() {
@@ -1597,7 +1629,7 @@ Module.unregisterSelf = function(compMgr, fileSpec, location) {
     ).unregisterFactoryLocation(SERVICE_CID, fileSpec);
   const catman = Components.classes['@mozilla.org/categorymanager;1'
       ].getService(Components.interfaces.nsICategoryManager);
-  for(var j=0, len=SERVICE_CATS.length; j<len; j++) {
+  for(var j = 0, len=SERVICE_CATS.length; j<len; j++) {
     catman.deleteCategoryEntry(SERVICE_CATS[j], SERVICE_CTRID, true);
   }
 }

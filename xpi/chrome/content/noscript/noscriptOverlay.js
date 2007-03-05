@@ -885,7 +885,9 @@ NoScriptOverlay.prototype = {
       el.parentNode.removeChild(el);
     }
     function change(id, attr, pref) {
-      document.getElementById(id).setAttribute(attr, pref);
+      try {
+        document.getElementById(id).setAttribute(attr, pref);
+      } catch(e) {}
     }
     var ids, i,callback, pref, attr = null;
     for(var k in keys) {

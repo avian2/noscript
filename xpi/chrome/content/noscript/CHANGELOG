@@ -1,5 +1,11 @@
 NoScript ChangeLog
 
+v 1.1.4.6.070304
+=====================================================================
++ Added many ".id" special TLDs (thanks FatMan)
+x Fixed localization-related bugs
+x Other minor bug fixes
+
 v 1.1.4.6.070302
 =====================================================================
 x Fixed a regression in the "Export" functionality
