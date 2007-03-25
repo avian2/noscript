@@ -1,5 +1,11 @@
 NoScript ChangeLog
 
+v 1.1.3.4
+=====================================================================
++ Flock support
++ Finnish (thanks to Mika Pirinen)
++ Norwegian bokmål (thanks to Håvard Mork)
+
 v 1.1.3.3
 =====================================================================
 + Placeholder icon can be hidden (NoScript Options|Advanced)

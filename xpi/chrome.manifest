@@ -10,6 +10,7 @@ style	chrome://global/content/customizeToolbar.xul	chrome://noscript/skin/browse
 locale	noscript	en-US	jar:chrome/noscript.jar!/content/noscript/en-US/
 locale	noscript	de-DE	jar:chrome/noscript.jar!/locale/de-DE/noscript/
 locale	noscript	fr-FR	jar:chrome/noscript.jar!/locale/fr-FR/noscript/
+locale	noscript	fi-FI	jar:chrome/noscript.jar!/locale/fi-FI/noscript/
 locale	noscript	it-IT	jar:chrome/noscript.jar!/locale/it-IT/noscript/
 locale	noscript	nl-NL	jar:chrome/noscript.jar!/locale/nl-NL/noscript/
 locale	noscript	pt-PT	jar:chrome/noscript.jar!/locale/pt-PT/noscript/
@@ -21,5 +22,6 @@ locale	noscript	cs-CZ	jar:chrome/noscript.jar!/locale/cs-CZ/noscript/
 locale	noscript	tr-TR	jar:chrome/noscript.jar!/locale/tr-TR/noscript/
 locale	noscript	ru-RU	jar:chrome/noscript.jar!/locale/ru-RU/noscript/
 locale	noscript	zh-CN	jar:chrome/noscript.jar!/locale/zh-CN/noscript/
+locale	noscript	nb-NO	jar:chrome/noscript.jar!/locale/nb-NO/noscript/
 locale	noscript	bg-BG	jar:chrome/noscript.jar!/locale/bg-BG/noscript/
 locale	noscript	es-ES	jar:chrome/noscript.jar!/locale/es-ES/noscript/

@@ -8,8 +8,8 @@
     <RDF:li resource="urn:mozilla:skin:classic/1.0"/>
   </RDF:Seq>
 
-  <!-- skin information -->
-  <RDF:Description about="urn:mozilla:skin:classic/1.0">
+   <!-- skin information -->
+  <RDF:Description about="urn:mozilla:skin:classic/1.0" chrome:name="classic/1.0">
     <chrome:packages>
       <RDF:Seq about="urn:mozilla:skin:classic/1.0:packages">
         <RDF:li resource="urn:mozilla:skin:classic/1.0:noscript"/>
@@ -17,7 +17,16 @@
     </chrome:packages>
   </RDF:Description>
   
-  
+   <!-- Seamonkey bug -->
+<!--
+   <RDF:Description about="urn:mozilla:skin:classic/1.0" >
+    <chrome:packages>
+      <RDF:Seq about="urn:mozilla:skin:classic/1.0:packages">
+        <RDF:li resource="urn:mozilla:skin:classic/1.0:noscript"/>
+      </RDF:Seq>
+    </chrome:packages>
+  </RDF:Description>
+-->
   
   <RDF:Seq about="urn:mozilla:stylesheets">
     <RDF:li resource="chrome://global/content/customizeToolbar.xul"/>

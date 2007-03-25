@@ -1,0 +1,46 @@
+<!ENTITY noscriptOptions "Asetukset...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript asetukset">
+<!ENTITY noscriptAbout "Tietoja NoScriptistä">
+<!ENTITY noscriptPermissionsText "Voit määrittää verkkosivut joiden sallitaan suorittaa JavaScriptejä. Kirjoita verkko-osoite tai verkkonimi (esim. &quot;http://www.site.com&quot; tai &quot;site.com&quot;) jonka haluat sallia ja paina salli.">
+<!ENTITY noscriptWebAddress "Verkkosivun osoite:">
+<!ENTITY noscriptAllow "Salli">
+<!ENTITY noscriptAllow.accesskey "S">
+<!ENTITY noscriptRemoveSelected "Poista valitut sivut">
+<!ENTITY noscriptGloballyEnabled "JavaScript kaikille sallittu (turvaton)">
+<!ENTITY noscriptAutoReload "Lataa sivu automaattisesti mikäli oikeudet muuttuvat">
+<!ENTITY noscriptGeneral "Yleistä">
+<!ENTITY noscriptAppearance "Ulkoasu">
+<!ENTITY noscriptShow "Näytetään">
+<!ENTITY noscriptCtxMenu "Lisää hiiren napin valikkoon">
+<!ENTITY noscriptStatusIcon "Tilapalkin kuvake">
+<!ENTITY noscriptFullAddr "Koko verkko-osoite (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Koko osoitenimi (www.noscript.net)">
+<!ENTITY noscriptBaseDom "2:n tason osoitenimi (noscript.net)">
+<!ENTITY noscriptTempCmd "Salli tilapäisesti [...]">
+<!ENTITY noscriptSound "Äänimerkki kun scripti estetään">
+<!ENTITY noscriptImport "Tuo">
+<!ENTITY noscriptImport.accesskey "T">
+<!ENTITY noscriptExport "Vie">
+<!ENTITY noscriptExport.accesskey "V">
+<!ENTITY noscriptNotify "Näytä viesti estetyistä scripteistä">
+<!ENTITY noscriptNotify.bottom "Sijoita viesti alas">
+<!ENTITY noscriptSound.choose "Valitse">
+<!ENTITY noscriptSound.choose.accesskey "v">
+<!ENTITY noscriptSound.play "Toista">
+<!ENTITY noscriptSound.play.accesskey "t">
+<!ENTITY noscriptSound.reset "Oletusarvot">
+<!ENTITY noscriptSound.reset.accesskey "O">
+<!ENTITY noscriptAdvanced "Lisäasetukset">
+<!ENTITY noscriptAdditionalPermissions "Lisäoikeudet luotetuille sivustoille">
+<!ENTITY noscriptAllowClipboard "Salli rich text kopiointi ja liittäminen ulkoiselta leikepöydältä">
+<!ENTITY noscriptAdditionalRestrictions "Lisäestot estetyille sivustoille">
+<!ENTITY noscriptForbidJava "Estä Java™">
+<!ENTITY noscriptForbidFlash "Estä Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Estä muut lisäkkeet">
+<!ENTITY noscriptReloadWarn "Nämä asetukset tulevat voimaan kun avaaat tai lataat sivun uudelleen">
+<!ENTITY noscriptConfirmUnblock "Kysy hyväksyntä ennen tilapäistä kohteen vapauttamista">
+<!ENTITY noscriptStatusLabel "Tilarivin huomautukset">
+<!ENTITY noscriptForbidBookmarklets "Estä kirjanmerkki lisäkkeet">
+<!ENTITY noscriptShowPlaceholder "Näytä sijoitettu kuvake">
+

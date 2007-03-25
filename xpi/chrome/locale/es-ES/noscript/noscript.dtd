@@ -39,4 +39,8 @@
 <!ENTITY noscriptForbidFlash "Bloquear Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Bloquear otros plugins">
 <!ENTITY noscriptReloadWarn "Estas opciones tendrán efecto en ventanas nuevas o tras recargar la página">
+<!ENTITY noscriptConfirmUnblock "Pedir confirmación antes de desbloquear temporalmente un objeto">
+<!ENTITY noscriptStatusLabel "Etiqueta en la barra de estado de Firefox">
 <!ENTITY noscriptForbidBookmarklets "Bloquear Bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Mostrar icono por tipo de objeto">
+

@@ -1,0 +1,46 @@
+<!ENTITY noscriptOptions "Innstillinger ...">
+<!ENTITY noscriptOptions.accesskey "I">
+<!ENTITY noscriptOptionsLong "NoScript-innstillinger">
+<!ENTITY noscriptAbout "Om NoScript">
+<!ENTITY noscriptPermissionsText "Du kan angi hvilke nettsted som har tillatelse til å bruke JavaScript. Skriv in adressen eller domenenavnet (f.eks. &quot;http://www.nettsted.com&quot; eller &quot;nettsted.com&quot;) av nettstedet du vil tillate, og trykk Tillat.">
+<!ENTITY noscriptWebAddress "Nettstedets adresse:">
+<!ENTITY noscriptAllow "Tillat">
+<!ENTITY noscriptAllow.accesskey "T">
+<!ENTITY noscriptRemoveSelected "Fjern valgte nettsted">
+<!ENTITY noscriptGloballyEnabled "Tillat JavaScript globalt (farlig)">
+<!ENTITY noscriptAutoReload "Automatisk last inn sider som blir berørt, når tillatelser endres">
+<!ENTITY noscriptGeneral "Generelt">
+<!ENTITY noscriptAppearance "Utseende">
+<!ENTITY noscriptShow "Vis ...">
+<!ENTITY noscriptCtxMenu "Kontekstmeny">
+<!ENTITY noscriptStatusIcon "Statuslinje-ikon">
+<!ENTITY noscriptFullAddr "Fullstendige adresser (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Fullstendige domener (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Andrenivås domener (noscript.net)">
+<!ENTITY noscriptTempCmd "Midlertidig tillat [...]">
+<!ENTITY noscriptSound "Lydsignal når skript blir blokkert">
+<!ENTITY noscriptImport "Importer">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Eksporter">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Vis melding når skript blokkeres">
+<!ENTITY noscriptNotify.bottom "Plasser meldinger på bunnen av nettleseren">
+<!ENTITY noscriptSound.choose "Velg">
+<!ENTITY noscriptSound.choose.accesskey "V">
+<!ENTITY noscriptSound.play "Spill av">
+<!ENTITY noscriptSound.play.accesskey "S">
+<!ENTITY noscriptSound.reset "Gjenopprett forvalg">
+<!ENTITY noscriptSound.reset.accesskey "G">
+<!ENTITY noscriptAdvanced "Avansert">
+<!ENTITY noscriptAdditionalPermissions "Flere tillatelsesinnstillinger for nettsted du stoler på">
+<!ENTITY noscriptAllowClipboard "Tillat kopering/innliming av tekst med tekststiler fra ekstern utklippstavle">
+<!ENTITY noscriptAdditionalRestrictions "Tilleggsbegrensinger for nettsider du ikke stoler på">
+<!ENTITY noscriptForbidJava "Forby Java™">
+<!ENTITY noscriptForbidFlash "Forby Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Forby andre programtillegg">
+<!ENTITY noscriptReloadWarn "Disse innstillingene vil tre i kraft for nye eller (manuelt) oppdaterte nettsider">
+<!ENTITY noscriptConfirmUnblock "Spør om bekreftelse før midlertidig oppheving av blokkering av et nettsted">
+<!ENTITY noscriptStatusLabel "Statuslinje-beskjed">
+<!ENTITY noscriptForbidBookmarklets "Forby bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Vis plassholder-ikon">
+

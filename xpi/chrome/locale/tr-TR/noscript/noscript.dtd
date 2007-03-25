@@ -1,45 +1,46 @@
-<!ENTITY noscriptOptions "Seçenekler...">
-<!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript Seçenekleri">
+<!ENTITY noscriptOptions "Tercihler">
+<!ENTITY noscriptOptions.accesskey "T"> 
+<!ENTITY noscriptOptionsLong "NoScript Tercihleri">
 <!ENTITY noscriptAbout "NoScript Hakkında">
-<!ENTITY noscriptPermissionsText "Hangi sitelerin JavaScript calıştırabileceğini belirtebilirsiniz.İzin vermek istediğiniz sitenin tam adresini yada alanadını yazın (ör. &quot;http://www.site.com&quot; yada &quot;site.com&quot;) sonra İzin ver'e tıklayın.">
-<!ENTITY noscriptWebAddress "Web sitenin adresi:">
+<!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript izni vereceğinizi kolayca tanımlayabilirsiniz. Lütfen adresi tam olarak girin ve 'İzin ver' düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
+<!ENTITY noscriptWebAddress "Site adresi:">
 <!ENTITY noscriptAllow "İzin ver">
-<!ENTITY noscriptAllow.accesskey "z">
-<!ENTITY noscriptRemoveSelected "Seçilen siteleri sil">
-<!ENTITY noscriptGloballyEnabled "JavaScriptlere daima izin ver (tehlikeli)">
-<!ENTITY noscriptAutoReload "İzin değiştirildiğinde siteyi yenile">
+<!ENTITY noscriptAllow.accesskey "E"> 
+<!ENTITY noscriptRemoveSelected "Seçili sayfaları kaldır">
+<!ENTITY noscriptGloballyEnabled "JavaScript'e genel olarak izin ver (tehlikeli)">
+<!ENTITY noscriptAutoReload "İzin hakları değişince sayfayı tekrar otomatikman yükle">
 <!ENTITY noscriptGeneral "Genel">
 <!ENTITY noscriptAppearance "Görünüm">
 <!ENTITY noscriptShow "Göster...">
-<!ENTITY noscriptCtxMenu "Bağlamsal menü">
-<!ENTITY noscriptStatusIcon "Durum çubuğu simgesi">
-<!ENTITY noscriptFullAddr "Tam Adresler (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Tam domainler (www.noscript.net)">
-<!ENTITY noscriptBaseDom "2. düzey alanlar (noscript.net)">
-<!ENTITY noscriptTempCmd "Geçici İzin [...]">
-<!ENTITY noscriptSound "Scriptler bloklandığında ses çal">
-<!ENTITY noscriptImport "Yükle">
-<!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Yedekle">
-<!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Bloklanan Scriptler hakkında mesaj göster">
-<!ENTITY noscriptNotify.bottom "Mesajı en alta yerleştir">
-<!ENTITY noscriptSound.choose "Seç">
-<!ENTITY noscriptSound.choose.accesskey "ç">
+<!ENTITY noscriptCtxMenu "İçerik menüsünde">
+<!ENTITY noscriptStatusIcon "Durum çubugunda ikon olarak">
+<!ENTITY noscriptFullAddr "Tam adres (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Bütün alan isimleri (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Alt alan isimleri (noscript.net)">
+<!ENTITY noscriptTempCmd "[...] geçici olarak izin ver">
+<!ENTITY noscriptSound "Betikler engellenince ses dosyası çal">
+<!ENTITY noscriptImport "İçe aktar">
+<!ENTITY noscriptImport.accesskey "K">
+<!ENTITY noscriptExport "Dışa aktar">
+<!ENTITY noscriptExport.accesskey "A">
+<!ENTITY noscriptNotify "Betik engellendiğinde uyarı olarak göster">
+<!ENTITY noscriptNotify.bottom "Uyarıları asağıdaki kenarda göster">
+<!ENTITY noscriptSound.choose "Seçin">
+<!ENTITY noscriptSound.choose.accesskey "S">
 <!ENTITY noscriptSound.play "Çal">
 <!ENTITY noscriptSound.play.accesskey "a">
-<!ENTITY noscriptSound.reset "Varsayılan ayarlar">
+<!ENTITY noscriptSound.reset "Varsayılanları yükle">
 <!ENTITY noscriptSound.reset.accesskey "R">
-<!ENTITY noscriptAdvanced "İleri Düzey">
-<!ENTITY noscriptAdditionalPermissions "Güvenilen siteler için ilave izinler">
-<!ENTITY noscriptAllowClipboard "Dış panodan zengin metin kopyalama ve yapıştırmaya izin ver">
-<!ENTITY noscriptAdditionalRestrictions "Güvenilmeyen siteler için İlave kısıtlamalar">
-<!ENTITY noscriptForbidJava "Java™yı engelle">
-<!ENTITY noscriptForbidFlash "Macromedia® Flash® ı engelle">
-<!ENTITY noscriptForbidPlugins "Diğer Eklentileri engelle">
-<!ENTITY noscriptReloadWarn "Bu ayarlar yeni sayfada yada (elle) yenilenen sayfada etkin hale gelir">
-<!ENTITY noscriptConfirmUnblock "Bir nesnenin engelini geçici olarak kaldırırken doğrulama için sor">
-<!ENTITY noscriptStatusLabel "Durum çubuğu etiketi">
-<!ENTITY noscriptForbidBookmarklets "Bookmarklet'leri Engelle">
+<!ENTITY noscriptAdvanced "Gelişmiş">
+<!ENTITY noscriptAdditionalPermissions "Güvenli sayfalar için ilave haklar">
+<!ENTITY noscriptAllowClipboard "Kopyala ve Yapıştır işlemine izin ver">
+<!ENTITY noscriptAdditionalRestrictions "Güvensiz sayfalar için ilave kısıtlamalar">
+<!ENTITY noscriptForbidJava "Java™ yasakla">
+<!ENTITY noscriptForbidFlash "Macromedia® Flash® yasakla">
+<!ENTITY noscriptForbidPlugins "Diğer eklentileri yasakla">
+<!ENTITY noscriptForbidBookmarklets "Yer imlerini yasakla">
+<!ENTITY noscriptReloadWarn "Bu ayarlar sadece yeni veya kendinizin yüklediği sayfalar için geçerlidir.">
+<!ENTITY noscriptConfirmUnblock "Bir nesneyi geçici olarak engellerken onay iste">
+<!ENTITY noscriptStatusLabel "Durum cubuğu etiketi">
+<!ENTITY noscriptShowPlaceholder "Yer tutucuları göster">
 
