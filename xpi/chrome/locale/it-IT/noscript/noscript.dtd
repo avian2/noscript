@@ -1,0 +1,9 @@
+<!ENTITY noscriptOptions "Opzioni">
+<!ENTITY noscriptOptionsLong "Opzioni NoScript">
+<!ENTITY noscriptAbout "Informazioni su NoScript">
+<!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l'esecuzione di JavaScript è consentita. Digitare l'indirizzo esatto e fare clic su Permetti">
+<!ENTITY noscriptWebAddress "Indirizzo del sito:">
+<!ENTITY noscriptAllow "Permetti">
+<!ENTITY noscriptRemoveSelected "Rimuovi i siti selezionati">
+<!ENTITY noscriptGloballyEnabled "JavaScript abilitato globalmente (pericoloso)">
+

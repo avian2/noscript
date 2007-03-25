@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+ <Description about="urn:mozilla:install-manifest">
+ 
+   <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
+   <em:name>NoScript</em:name>
+   <em:version>1.0</em:version>
+   <em:description>Extra protection for your Firefox: NoScript allows JavaScript execution only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive script blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
+   <em:creator>Giorgio Maone</em:creator>
+   
+   <em:contributor>Michela Venuto (inspiration)</em:contributor>
+  
+   <em:optionsURL>chrome://noscript/content/noscriptOptions.xul</em:optionsURL>
+   <em:homepageURL>http://www.noscript.net</em:homepageURL>
+   <em:updateURL>http://software.informaction.com/mozupd/?item_id=%ITEM_ID%&amp;item_version=%ITEM_VERSION%&amp;app_id=%APP_ID%&amp;app_version=%APP_VERSION%</em:updateURL>
+   <em:iconURL>chrome://noscript/skin/icon32.png</em:iconURL>
+   <em:aboutURL>chrome://noscript/content/about.xul</em:aboutURL>
+   <!-- Firefox -->
+   <em:targetApplication>
+     <Description>
+     <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+     <em:minVersion>0.7</em:minVersion>
+     <em:maxVersion>1.0+</em:maxVersion>
+     </Description>
+   </em:targetApplication>
+   
+   <!-- Mozilla -->
+   <em:targetApplication>
+      <Description>
+        <em:id>{86c18b42-e466-45a9-ae7a-9b95ba6f5640}</em:id>
+        <em:minVersion>1.7</em:minVersion>
+        <em:maxVersion>1.8</em:maxVersion>
+      </Description>
+   </em:targetApplication>
+   
+   <em:file>
+     <Description about="urn:mozilla:extension:file:noscript.jar">
+       <em:package>content/noscript/</em:package>  
+       <em:locale>content/noscript/en-US/</em:locale>
+       <em:locale>locale/it-IT/noscript/</em:locale>
+       <em:skin>skin/classic/noscript/</em:skin>
+     </Description>
+   </em:file>
+  
+ </Description>
+
+</RDF>

@@ -1,0 +1,9 @@
+<!ENTITY noscriptOptions "Options">
+<!ENTITY noscriptOptionsLong "NoScript Options">
+<!ENTITY noscriptAbout "About NoScript">
+<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute JavaScript. Type the exact address of the site you want to allow and then click Allow.">
+<!ENTITY noscriptWebAddress "Address of web site:">
+<!ENTITY noscriptAllow "Allow">
+<!ENTITY noscriptRemoveSelected "Remove Selected Sites">
+<!ENTITY noscriptGloballyEnabled "JavaScript Globally Allowed (dangerous)">
+
