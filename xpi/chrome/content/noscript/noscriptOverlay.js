@@ -3,6 +3,9 @@
 NoScript - a Firefox extension for whitelist driven safe JavaScript execution
 Copyright (C) 2004-2007 Giorgio Maone - g.maone@informaction.com
 
+Contributors: 
+  Higmmer
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -567,7 +570,7 @@ NoScriptOverlay.prototype = {
 ,
   get srcWindow() {
     //var w=document.commandDispatcher.focusedWindow;
-    return new XPCNativeWrapper(window._content, 'document','getSelection()');
+    return new XPCNativeWrapper(window._content, 'document','getSelection()', 'addEventListener()');
   }
 ,
   get srcDocument() {
@@ -756,6 +759,15 @@ NoScriptOverlay.prototype = {
               null, popup, pos, true,
               buttonAccesskey);
       }
+      //----- Added by Higmmer : Start ----->
+      // Fix: Missing freeing resources by NotificationBar may raise CPU usage rate after closing the page.
+      var wid = this.getNsNotification(box);
+      var bro = browser.selectedBrowser;
+      bro.addEventListener("beforeunload", function(e) {
+        noscriptOverlay.notificationHide(wid);
+        bro.removeEventListener("beforeunload", arguments.callee, true);
+      }, true);
+      //<----- Added by Higmmer : End -----
     }
     const delay = (this.ns.getPref("notify.hide") && this.ns.getPref("notify.hideDelay", 3)) || 0;
     if(delay) {
@@ -767,8 +779,8 @@ NoScriptOverlay.prototype = {
     return true;
   },
   
-  notificationHide: function() {
-    var widget = this.getNsNotification(this.getNotificationBox());
+  notificationHide: function(wid) { // Modified by Higmmer
+    var widget = wid ? wid : this.getNsNotification(this.getNotificationBox()); // Modified by Higmmer
      if(widget) {
        if(widget.close) widget.close();
        else widget.setAttribute("hidden", "true");
@@ -1057,6 +1069,7 @@ function _noScript_onloadInstall(ev) {
   const prevVer = ns.getPref("version", "");
   if(prevVer != ns.VERSION) {
     ns.setPref("version", ns.VERSION);
+    ns.sanitize2ndLevs();
     window.setTimeout(function() {
       const url = "http://noscript.net?ver=" + ns.VERSION + "&prev=" + prevVer;
       const browser = getBrowser();

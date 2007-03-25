@@ -502,7 +502,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.6.070304",
+  VERSION: "1.1.4.6.070305",
   
   get wrappedJSObject() {
     return this;
@@ -748,7 +748,7 @@ NoscriptService.prototype ={
     // init jsPolicySites from prefs
     this.syncPrefs(this.policyPB, "sites");
     this.eraseTemp();
-    this.sanitize2ndLevs();
+    // this.sanitize2ndLevs();
     
     this.reloadWhereNeeded(); // init snapshot
    
@@ -887,7 +887,7 @@ NoscriptService.prototype ={
    const ps = this.jsPolicySites;
    if(sitesString) ps.sitesString = sitesString;
    
-   dump("Flushing " + ps.sitesString);
+   // dump("Flushing " + ps.sitesString);
    ps.toPref(this.policyPB);
  }
 ,

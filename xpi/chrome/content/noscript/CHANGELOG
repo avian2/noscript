@@ -1,5 +1,14 @@
 NoScript ChangeLog
 
+v 1.1.4.6.070307
+=====================================================================
+x Further improvement in Higmmer patch
+
+v 1.1.4.6.070305
+=====================================================================
+x Fixed a resource deallocation issue (thanks Higmmer)
+x Fixed a potential slowdown on startup
+
 v 1.1.4.6.070304
 =====================================================================
 + Added many ".id" special TLDs (thanks FatMan)
