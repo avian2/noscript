@@ -1,5 +1,11 @@
 NoScript ChangeLog
 
+v 1.1.4.5.061206
+=====================================================================
++ Added org.in and co.sy to the "special" TLDs list
+x Fixed some bookmarklet quirks (not in trunk, though)
+x Fixed a bug in "uk.xyz" special TLDs management
+
 v 1.1.4.5.061030
 =====================================================================
 x Minefield fix: feedback during/after document loading (bug 335251)

@@ -416,16 +416,16 @@ NoScriptOverlay.prototype = {
             dp = domParts[dpLen-2];
             tlds = STLDS[dp];
             if(tlds) {
-              if(dp == "com" || tlds.indexOf(" " + domParts[dpLen - 1] + " ") > -1) {
-                if(dp != "uk" || 
-                  (lastPos = domain.lastIndexOf(".here.co.uk")) != 
-                      domain.length - 10) {
+              if(dp == "com" || (tlds.indexOf(" " + (dp = domParts[dpLen - 1]) + " ")) > -1) {
+                if(dp == "uk" && (pos = domain.lastIndexOf(".here.co.")) == domain.length - 11) {
+                  lastPos = pos;
+                } else {
                   lastPos = domain.lastIndexOf('.', lastPos - 1);
                 }
               }
             }
-            dp=domain;
-            for(pos=0; (pos = domain.indexOf('.',pos))>0; dp = domain.substring(++pos)) {
+            dp = domain;
+            for(pos=0; (pos = domain.indexOf('.', pos))>0; dp = domain.substring(++pos)) {
               if(pos==lastPos) {
                 if(menuSites.length>0 && !showBase) continue;
               } else {

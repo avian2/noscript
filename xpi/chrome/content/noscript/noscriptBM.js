@@ -43,7 +43,7 @@ function _noScript_handleBookmark(url, openCallback) {
           var snapshot = ns.jsPolicySites.sitesString;
           try {
             ns.setJSEnabled(site, true);
-            if(Components.utils) { // direct evaluation, after bug 351633 landing
+            if(Components.utils && typeof(/ /) == "object") { // direct evaluation, after bug 351633 landing
               var sandbox = Components.utils.Sandbox(browserWindow.content);
               sandbox.window = browserWindow.content;
               Components.utils.evalInSandbox(
