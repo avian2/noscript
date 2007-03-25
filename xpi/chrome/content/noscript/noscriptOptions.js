@@ -25,7 +25,8 @@ var g_jsglobal=null;
 var g_urlText=null;
 var g_addButton=null;
 var g_removeButton=null;
-var g_dom2=/^http[s]?:\/\/([\w\-]+(:?\.[\w]+$|$))/;
+var g_dom2=/^(?:http[s]?|file):\/\/([\w\-]+(:?\.[\w]+$|$))/; // 2nd level domain hack
+var g_policySites=null;
 
 function nso_init() {
   if(g_serv.uninstalling) { // this should never happen! 
@@ -37,7 +38,9 @@ function nso_init() {
   g_jsglobal=document.getElementById("jsglobal");
   g_addButton=document.getElementById("addButton");
   g_removeButton=document.getElementById("removeButton");
-  nso_populateUrlList(g_serv.sites);
+  
+  g_policySites=g_serv.jsPolicySites.clone();
+  nso_populateUrlList();
   g_jsglobal.setAttribute("checked",g_serv.jsEnabled);
  
   visitCheckboxes(
@@ -47,10 +50,12 @@ function nso_init() {
     }
   );
   
-  if(Components.interfaces.nsIPop3URL) { // SeaMonkey
+  /*
+  if(!Components.interfaces.nsIContentPolicy.TYPE_OBJECT) { // SeaMonkey
     document.getElementById("notifyOpts").setAttribute("collapsed","true");
     document.getElementById("contentOpts").setAttribute("collapsed","true");
   }
+  */
   
   document.getElementById("opt-showTemp").setAttribute("label",noscriptUtil.getString("allowTemp",["[...]"]));
   nso_setSample(g_serv.getPref("sound.block"));
@@ -72,19 +77,20 @@ function nso_urlListChanged() {
 function nso_urlChanged() {
   var url=g_urlText.value;
   if(url.match(/\s/)) url=g_urlText.value=url.replace(/\s/g,'');
-  var addEnabled=url.length>0 && (url=g_serv.getSite(url))!=null;
+  var addEnabled=url.length>0 && (url=g_serv.getSite(url));
   if(addEnabled) {
     var match=url.match(g_dom2);
     if(match) url=match[1];
-    url=g_serv.findShortestMatchingSite(url,nso_urlList2Arr());
-    if(!(addEnabled=url==null)) {
+    url=g_policySites.matches(url);
+    if( !(addEnabled = !url) ) {
       nso_ensureVisible(url);
     }
   }
   g_addButton.setAttribute("disabled",!addEnabled);
 }
 
-function nso_populateUrlList(sites) {
+function nso_populateUrlList() {
+  const sites=g_policySites.sitesList;
   for(var j=g_urlList.getRowCount(); j-->0; g_urlList.removeItemAt(j));
   var site,item;
   
@@ -107,19 +113,8 @@ function nso_populateUrlList(sites) {
       item.setAttribute("disabled","true");
     } 
     item.style.fontStyle=g_serv.isTemp(site)?"italic":"normal";
-    
   }
   nso_urlListChanged();
-}
-
-function nso_urlList2Arr(excludeTemp) {
-  const sites=[];
-  var s;
-  for(var j=g_urlList.getRowCount(); j-->0;) {
-    s=g_urlList.getItemAtIndex(j).getAttribute("value");
-    if(! (excludeTemp && g_serv.isTemp(s)) ) sites[j]=s;
-  }
-  return sites;
 }
 
 function nso_ensureVisible(site) {
@@ -132,11 +127,9 @@ function nso_ensureVisible(site) {
 }
 
 function nso_allow() {
-  var site=g_serv.getSite(g_urlText.value);
-  var sites=nso_urlList2Arr();
-  sites[sites.length]=site;
-  sites=g_serv.sortedSiteSet(sites);
-  nso_populateUrlList(sites);
+  const site=g_serv.getSite(g_urlText.value);
+  g_policySites.add(site);
+  nso_populateUrlList();
   nso_ensureVisible(site);
   g_addButton.setAttribute("disabled","true");
 }
@@ -145,9 +138,11 @@ function nso_allow() {
 
 function nso_remove() {
   const selectedItems=g_urlList.selectedItems;
+  var site;
   for(var j=selectedItems.length; j-->0;) {
-    if(!g_serv.isPermanent(selectedItems[j].getAttribute("value"))) {
+    if(!g_serv.isPermanent(site=selectedItems[j].getAttribute("value"))) {
       g_urlList.removeItemAt(g_urlList.getIndexOfItem(selectedItems[j]));
+      g_policySites.remove(site);
     }
   }
 }
@@ -166,10 +161,9 @@ function nso_save() {
     }
   );
   const serv=g_serv;
-  const sites=nso_urlList2Arr();
   const global=g_jsglobal.getAttribute("checked")=="true";
   serv.safeCapsOp(function() {
-    serv.setJSEnabled(sites,true,[]);
+    serv.setJSEnabled(g_policySites.sitesList,true,true);
     serv.jsEnabled=global;
   });
   
@@ -240,19 +234,14 @@ function nso_impexp(callback) {
 
 function nso_import(file) {
   if(typeof(file)=="undefined") return nso_impexp(nso_import);
-  nso_populateUrlList(
-    g_serv.sortedSiteSet(
-      g_serv.splitList(g_serv.readFile(file)).concat(nso_urlList2Arr())
-    )
-  );
+  g_policySites.sitesString += g_serv.readFile(file);
+  nso_populateUrlList();
   return null;
 }
 
 function nso_export(file) {
   if(typeof(file)=="undefined") return nso_impexp(nso_export);
-  g_serv.writeFile(file,
-    nso_urlList2Arr(true).join("\n")
-  );
+  g_serv.writeFile(file,g_policySites.sitesList.join("\n"));
   return null;
 }
 

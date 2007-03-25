@@ -106,7 +106,7 @@ UninstallGuard.prototype={
       }  
      } catch(ex) {
        this.log(ex);
-     } // quick and dirty work-around for Mozilla ;)
+     } // quick and dirty work-around for SeaMonkey ;)
      return false;
   }
 ,
@@ -117,12 +117,313 @@ UninstallGuard.prototype={
 
 
 
+
+
+
+
+
+
+
+
+
+const SiteUtils = new function() {
+  var _domainPattern = /^[\w\-\.]*\w$/;
+  
+  var _ios = null;
+  this.__defineGetter__("ios", function() {
+     return _ios?_ios
+      :_ios=Components.classes["@mozilla.org/network/io-service;1"
+        ].getService(Components.interfaces.nsIIOService);
+  });
+  
+  function sorter(a,b) {
+    if(a==b) return 0;
+    if(!a) return 1;
+    if(!b) return -1;
+    const dp=_domainPattern;
+    return dp.test(a)?
+      (dp.test(b)?(a<b?-1:1):-1)
+      :(dp.test(b)?1:a<b?-1:1);
+  }
+  
+  this.sort = function(ss) {
+    return ss.sort(sorter);
+  };
+
+  this.getSite = function(url) {
+    if(! (url && ( url=url.replace(/^\s+/,'').replace(/\s+$/,'') )) ) {
+      return "";
+    }
+    
+    if(url.indexOf(":")<0) return this.domainMatch(url);
+    
+    var scheme;
+    try {
+      scheme=this.ios.extractScheme(url);
+      if(scheme=="javascript" || scheme=="data" || scheme=="about") return "";
+      scheme+=":";
+      if(url==scheme) return url;
+    } catch(ex) {
+      return this.domainMatch(url);
+    }
+    try {
+      // let's unwrap JAR uris
+      var uri=this.ios.newURI(url,null,null);
+      if(uri instanceof Components.interfaces.nsIJARURI) {
+        uri=uri.JARFile;
+        return uri?this.getSite(uri.spec):scheme;
+      }
+      try  {
+        return scheme+"//"+uri.hostPort;
+      } catch(exNoHostPort) {
+        return scheme;
+      }
+    } catch(ex) {
+      return "";
+    }
+  };
+  
+  this.list2set = function(sl) {
+    // kill duplicates
+    var prevSite="";
+    var site;
+    for(var j=sl.length; j-->0;) {
+      site=sl[j];
+      if((!site) || site==prevSite) { 
+        sl.splice(j,1);
+      } else {
+        prevSite=site;
+      }
+    }
+    return sl;
+  };
+  
+  this.sortedSet = function(sl) {
+    return this.list2set(this.sort(sl));
+  }
+  
+  this.splitString = function(s) {
+    return s?/^[,\s]*$/.test(s)?[]:s.split(/\s*[,\s]\s*/):[];
+  };
+  
+  this.domainMatch = function(url) {
+     const m=url.match(_domainPattern);
+     return m?m[0].toLowerCase():"";
+  };
+  
+  this.sanitizeList = function(sl) {
+    for(var j=sl.length; j-->0; ) {
+      sl[j]=this.getSite(sl[j]);
+    }
+    return sl;
+  };
+  
+  this.sanitizeMap = function(sm) {
+    var site;
+    delete sm[""];
+    for(var url in sm) {
+      site=this.getSite(url);
+      if(site!=url) {
+        if(site) sm[site]=sm[url];
+        delete sm[url];
+      }
+    }
+    return sm;
+  };
+  
+  this.sanitizeString = function(s) {
+    // s=s.replace(/,/g,' ').replace(/\s{2,}/g,' ').replace(/(^\s+|\s+$)/g,'');
+    return this.set2string(this.string2set(s)); 
+  };
+  
+  this.string2set = function(s) {
+    return this.sortedSet(this.sanitizeList(this.splitString(s)));
+  };
+  
+  this.set2string = function(ss) {
+    return ss.join(" ");
+  };
+  
+  
+}
+
+
+
+
+function PolicySites(sitesString) {
+  if(sitesString) this.sitesString=sitesString;
+}
+PolicySites.prototype={
+  clone: function() {
+    return new PolicySites(this.sitesString);
+  }
+,
+  equals: function(other) {
+    return other && (this.sitesString==other.sitesString);
+  }
+,
+  _sitesString: "",
+  get sitesString() {
+    return this._sitesString;
+  },
+  set sitesString(s) {
+    s=SiteUtils.sanitizeString(s);
+    if(s!=this._sitesString) {
+      this._sitesString=s;
+      this._sitesMap=null;
+      this._sitesList=null;
+    }
+    return s;
+  }
+,
+  _sitesList: null,
+  get sitesList() {
+    return this._sitesList?this._sitesList:this._sitesList=SiteUtils.splitString(this.sitesString);
+  },
+  set sitesList(sl) {
+    this.sitesString=SiteUtils.set2string(SiteUtils.sortedSet(SiteUtils.sanitizeList(sl)));
+    return this.sitesList;
+  }
+,
+  _sitesMap: null,
+  get sitesMap() {
+    if(!this._sitesMap) {
+      const sm={};
+      const sl=SiteUtils.splitString(this.sitesString);
+      if(sl) {
+        for(var j=sl.length; j-->0;) {
+          sm[sl[j]]=true;
+        }
+      }
+      this._sitesMap=sm;
+    }
+    return this._sitesMap;
+  },
+  set sitesMap(sm) {
+    sm = sm?SiteUtils.sanitizeMap(sm):{};
+    var sl=[];
+    for(var s in sm) {
+      sl.push(s);
+    }
+    
+    this._sitesString=SiteUtils.set2string(SiteUtils.sort(sl));
+    this._sitesList=null;
+    return this._sitesMap=sm;
+  }
+,
+  // returns the shortest match for a site, or "" if no match is found
+  matches: function(site) {
+    if(!site) return "";
+    const sm=this.sitesMap;
+    var match;
+    var dots; // track "dots" for (temporary) fix to 2nd level domain policy lookup flaw 
+    var pos=site.indexOf(':')+1;
+    if(pos > 0 && (site[pos]=='/' || pos==site.length) ) {
+      if(sm[match=site.substring(0,pos)]) return match; // scheme match
+      if(site[++pos]!='/') return "";
+      match=site.substring(pos+1);
+      dots=0;
+    } else {
+      match=site;
+      dots=1;
+    }
+
+    var submatch;
+    for(pos=match.lastIndexOf('.'); pos>1; dots++) {
+      pos=match.lastIndexOf('.',pos-1);
+      if( (dots || pos>-1) && sm[submatch=match.substring(pos+1)]) {
+        return submatch; // domain/subdomain match
+      }
+    }
+    
+    if(sm[match]) return match; // host match
+    return sm[site]?site:""; // full match
+  }
+,
+  _remove: function(site, keepUp, keepDown) {
+    if(!site) return false;
+    
+    const sm=this.sitesMap;
+    var change=false;
+    var match;
+    
+    if(site[site.length-1]!=":") { // not a scheme only site
+      if(!keepUp) {
+        while( (match=this.matches(site)) && site!=match) { // remove ancestors
+          delete sm[match];
+          change = true;
+        }
+      }
+      if(!keepDown) {
+        for(match in sm) { // remove descendants
+          if( (site==this.matches(match)) && site!=match) {
+            delete sm[match];
+            change = true;
+          }
+        }
+      }
+    }
+    
+    if(site in sm) {
+      delete sm[site];
+      if(site.indexOf(".")==site.lastIndexOf(".")) {
+        //2nd level domain hack
+        delete sm["http://"+site];
+        delete sm["https://"+site];
+        delete sm["file://"+site];
+      }
+      change = true;
+    }
+    
+    return change;
+  },
+  remove: function(sites, keepUp, keepDown) {
+    return this._operate(this._remove, arguments);
+  },
+  _add: function(site) {
+    var change=false;
+    if(site.indexOf(":")<0 && site.indexOf(".")==site.lastIndexOf(".")) {
+     //2nd level domain hack
+      change = this._add("http://"+site) || change;
+      change = this._add("https://"+site) || change;
+      change = this._add("file://"+site) || change;
+    }
+    const sm=this.sitesMap;
+    return (site in sm?false:sm[site]=true) || change;
+  },
+  add: function(sites) {
+    return this._operate(this._add, arguments);
+  }, 
+  _operate: function(oper, args) {
+    var sites = args[0];
+    if(!sites) return false;
+    
+    var change;
+    if(typeof(sites)=="object" && sites.constructor == Array) {
+      for(var j=sites.length; j-->0; ) {
+        args[0]=sites[j];
+        if(oper.apply(this,args)) change=true;
+      }
+    } else {
+      change = oper.apply(this,args);
+    }
+    if(change) {
+      this.sitesMap = this._sitesMap;
+    }
+    return change;
+  }
+}
+
+
+
+
+
 function NoscriptService() {
   this.register();
 }
 
 NoscriptService.prototype={
-    get wrappedJSObject() {
+  get wrappedJSObject() {
     return this;
   }
 ,
@@ -184,24 +485,29 @@ NoscriptService.prototype={
   syncPrefs: function(branch, name) {
     switch(name) {
       case "sites":
-        this._sites=null; // invalidate sites list cache
-      break;
+        try {
+          this.jsPolicySites.sitesString=this.policyPB.getCharPref("sites");
+        } catch(ex) {
+          this.policyPB.setCharPref("sites",
+            this.getPref("default",
+              "chrome: resource: flashgot.net mail.google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com"
+            ));
+        }
+        break;
       case "permanent":
-        const permanentList=this.splitList(this.getPref("permanent",
-          "googlesyndication.com noscript.net maone.net informaction.com noscript.net"));
-        permanentList.concat(["chrome:","resource:"]);
-        this.permanentList=this.sortedSiteSet(permanentList);
+        this.permanentSites.sitesString=this.getPref("permanent",
+          "googlesyndication.com noscript.net maone.net informaction.com noscript.net"
+          ) + " chrome: resource:";
       break;
       case "temp":
-        const tempList=this.splitList(this.getPref("temp"),"");
-        tempList.push("jar:");
-        this.tempList=this.sortedSiteSet(tempList);
+        this.tempSites.sitesString=this.getPref("temp","") + " jar:";
+        // why jar:? see https://bugzilla.mozilla.org/show_bug.cgi?id=298823
         break;
       case "enabled":
         try {
           this.mozJSEnabled=this.mozJSPref.getBoolPref("enabled");
         } catch(ex) {
-          this.mozJSEnabled=true;
+          this.mozJSPref.setBoolPref("enabled",this.mozJSEnabled=true);
         }
       break;
       case "forbidJava":
@@ -209,8 +515,9 @@ NoscriptService.prototype={
       case "forbidPlugins":
       case "pluginPlaceholder":
         this[name]=this.getPref(name,this[name]);
-        this.forbidSomePlugins=this.forbidJava || this.forbidFlash || this.forbidPlugins;
-        this.forbidAllPlugins=this.forbidJava && this.forbidFlash && this.forbidPlugins;
+        this.forbidSomePlugins = this.forbidJava || this.forbidFlash || this.forbidPlugins;
+        this.forbidAllPlugins = this.forbidJava && this.forbidFlash && this.forbidPlugins;
+        this.initContentPolicy();
       break;
       case "allowClipboard":
         const cp=["cutcopy","paste"];
@@ -222,7 +529,9 @@ NoscriptService.prototype={
             if(cpEnabled) {
               this.caps.setCharPref(cpName,"allAccess");
             } else {
-              this.caps.clearUserPref(cpName);
+              if(this.caps.prefHasUserValue(cpName)) {
+                this.caps.clearUserPref(cpName);
+              }
             }
           } catch(ex) {
             dump(ex+"\n");
@@ -270,18 +579,16 @@ NoscriptService.prototype={
     }
     
     this.syncPrefs(this.mozJSPref,"enabled");
-    
-    const sites=this.sites=this.sites;
-    const mozJSEnabled=this.mozJSEnabled;
-    
-    this.setJSEnabled(this.tempList,false,sites); // remove temporary
-    this.setJSEnabled(this.permanentList,true,sites); // add permanent
-    
-    this.mozJSPref.setBoolPref("enabled",mozJSEnabled)
-    
+   
+    // init jsPolicySites from prefs
+    this.syncPrefs(this.policyPB,"sites");
+    this.jsPolicySites.remove(this.tempSites.sitesList, false, true); // remove temporary
+    this.setPref("temp",""); // flush temporary list
+    this.setJSEnabled(this.permanentSites.sitesList,true); // add permanent & save
+
     const POLICY_NAME=this.POLICY_NAME;
     var prefArray;
-    var prefString=null,originalPrefString=null;
+    var prefString="",originalPrefString="";
     try { 
       prefArray=this.splitList(prefString=originalPrefString=this.caps.getCharPref("policynames"));
       var pcount=prefArray.length;
@@ -291,7 +598,7 @@ NoscriptService.prototype={
         if(prefArray.length==0) {
           prefString=POLICY_NAME;
         } else {
-          prefArray[prefArray.length]=POLICY_NAME;
+          prefArray.push(POLICY_NAME);
           prefString=prefArray.join(' ');
         }
       }
@@ -310,33 +617,23 @@ NoscriptService.prototype={
     this.uninstallGuard.init();
   }
 ,
-  _indexOf: function(el,arr) {
-    for(var j=arr.length; j-->0;) {
-      if(arr[j]==el) break;
-    }
-    return j;
-  }
-,
+  permanentSites: new PolicySites(),
   isPermanent: function(s) {
     return s &&
       (s=="chrome:" || s=="resource:" 
-        || this._indexOf(s,this.permanentList)>-1);
+        || this.permanentSites.matches(s));
   }
 ,
-  tempList: [],
+  tempSites: new PolicySites(),
   isTemp: function(s) {
-    return s && this._indexOf(s,this.tempList)>-1;
+    return this.tempSites.matches(s);
   }
 ,
   setTemp: function(s,b) {
-    var tl=this.tempList;
-    if(b) {
-      tl.push(s);
-    } else {
-      for(var j; (j=this._indexOf(s,tl))>-1; tl.splice(j,1));
+    var change=b?this.tempSites.add(s):this.tempSites.remove(s, true);
+    if(change) {
+      this.setPref("temp",this.tempSites.sitesString);
     }
-    tl=this.sortedSiteSet(tl);
-    this.setPref("temp",tl.join(" "));
   }
 ,
   splitList: function(s) {
@@ -347,59 +644,7 @@ NoscriptService.prototype={
     return this.prefService.savePrefFile(null);
   }
 ,
-  get sitesString() {
-    try {
-      return this.policyPB.getCharPref("sites");
-    } catch(ex) {
-      return this.siteString=this.getPref("default",
-        "chrome: resource: noscript.net gmail.google.com googlesyndication.com informaction.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
-    }
-  }
-,
-  set sitesString(s) {
-    s=s.replace(/,/g,' ').replace(/\s{2,}/g,' ').replace(/(^\s+|\s+$)/g,'');
-    if(s!=this.siteString) {
-      this.policyPB.setCharPref("sites",s);
-      this._sites=null;
-    }
-    return s;
-  }
-,
-  _sites: null,
-  get sites() {
-    return this._sites?this._sites:this._sites=this.splitList(this.sitesString);
-  }
-,
-  set sites(ss) {
-    this.sitesString=(ss=this.sortedSiteSet(ss,true)).join(' ');
-    return ss;
-  }
-,
-  _domainPattern: /^[\w\-\.]*\w$/
-,
-  sortedSiteSet: function(ss,keepShortest) {
-    const ns=this;
-    ss.sort(function(a,b) {
-      if(a==b) return 0;
-      if(!a) return 1;
-      if(!b) return -1;
-      const dp=ns._domainPattern;
-      return dp.test(a)?
-        (dp.test(b)?(a<b?-1:1):-1)
-        :(dp.test(b)?1:a<b?-1:1);
-    });
-    // sanitize and kill duplicates
-    var prevSite=null;
-    for(var j=ss.length; j-->0;) {
-      var curSite=ss[j];
-      if((!curSite) || curSite.toLowerCase().replace(/\s/g,'')==prevSite) { 
-        ss.splice(j,1);
-      } else {
-        ss[j]=prevSite=curSite;
-      }
-    }
-    return ss;
-  }
+  sortedSiteSet: function(s) { return  SiteUtils.sortedSet(s); }
 ,
   get jsEnabled() {
     try {
@@ -418,106 +663,27 @@ NoscriptService.prototype={
     return enabled;
   }
 ,
-  _ios: null,
-  get ios() {
-     return this._ios?this._ios
-      :this._ios=Components.classes["@mozilla.org/network/io-service;1"
-        ].getService(Components.interfaces.nsIIOService);
-  }
-,
   getSite: function(url) {
-    if(!url) return null;
-    url=url.replace(/^\s+/,'').replace(/\s+$/,'');
-    if(!url) return null;
-    var scheme;
-    try {
-      scheme=this.ios.extractScheme(url);
-      if(scheme=="javascript" || scheme=="data" || scheme=="about") return null;
-      scheme+=":";
-      if(url==scheme) return url;
-    } catch(ex) {
-      var domainMatch=url.match(this._domainPattern);
-      return domainMatch?domainMatch[0].toLowerCase():null;
-    }
-    try {
-      // let's unwrap JAR uris
-      var uri=this.ios.newURI(url,null,null);
-      if(uri instanceof Components.interfaces.nsIJARURI) {
-        uri=uri.JARFile;
-        return uri?this.getSite(uri.spec):scheme;
-      }
-      try  {
-        return scheme+"//"+uri.hostPort;
-      } catch(exNoHostPort) {
-        return scheme;
-      }
-    } catch(ex) {
-      return null;
-    }
+    return SiteUtils.getSite(url);
   }
 ,
-  findMatchingSite: function(site,sites,visitor) {
-    if(!site) return null;
-    if(site.indexOf("chrome:/")==0) return "chrome:";
-    if(!sites) sites=this.sites;
-    const siteLen=site.length;
-    var current,currentLen,lenDiff,charBefore;
-    var matchFound;
-    var ret=null;
-    for(var j=sites.length; j-->0;) {
-      current=sites[j];
-      currentLen=current.length;
-      lenDiff=siteLen-currentLen;
-     
-      if(lenDiff>=0 
-        && (current==site 
-           // subdomain matching
-           || (lenDiff>0  
-               && ( (charBefore=site.charAt(lenDiff-1))=="."
-                    || (charBefore=="/" 
-                      && (matchFound || current.indexOf(".")!=current.lastIndexOf(".")) 
-                      // 2nd level domain policy lookup flaw 
-                      )
-                   )
-               && site.substring(lenDiff)==current
-               ) 
-           )
-      ) { 
-        if(visitor) {
-          matchFound=true;
-          if(ret=visitor.visit(current,sites,j)) {
-            return ret;
-          }
-        } else {
-          return current;
-        }
+  jsPolicySites: new PolicySites(),
+  isJSEnabled: function(site,ps) {
+    if(!ps) ps=this. jsPolicySites;
+    return !!ps.matches(site);
+  },
+  setJSEnabled: function(site,is,fromScratch) {
+    const ps=this.jsPolicySites;
+    if(fromScratch) ps.sitesString=this.permanentSites.sitesString;
+    var change = is ? ps.add(site) : ps.remove(site, false, true);
+    if(change) {
+      try {
+        change=ps.sitesString != this.policyPB.getCharPref("sites");
+      } catch(ex) {}
+      if(change) {
+        this.policyPB.setCharPref("sites",ps.sitesString);
       }
     }
-    return null;
-  }
-,
-  findShortestMatchingSite: function(site,sites) {
-    const shortestFinder={
-      shortest: null, shortestLen: site.length,
-      visit: function(current,sites,index) {
-        if(this.shortestLen>=current.length) {
-          this.shortestLen=current.length;
-          this.shortest=current;
-        }
-      }
-    };
-    return this.findMatchingSite(site,sites,shortestFinder) || shortestFinder.shortest;
-  }
-,
-  isJSEnabled: function(site,sites) {
-    return this.isInPolicy(site,sites);
-  }
-,
-  setJSEnabled: function(site,is,sites) {
-    if(!site) return false;
-    if(!sites) sites=this.sites;
-    this.putInPolicy(site,is,sites);
-    this.sites=sites;
     return is;
   }
 ,
@@ -525,39 +691,6 @@ NoscriptService.prototype={
     callback();
     this.savePrefs();
     this.reloadWhereNeeded();
-  }
-,
-  isInPolicy: function(site,sites) {
-    return this.findMatchingSite(site,sites,null)!=null; 
-  }
-,
-  putInPolicy: function(site,included,sites) {
-    if(typeof(site)=="object" && site.length) {
-      for(var j=site.length; j-->0; this.putInPolicy(site[j],included,sites));
-    } else if(site) {
-      site=site.toString(); // ensure we're working with the right type
-      
-      if(site.indexOf(":")<0 && site.indexOf(".")==site.lastIndexOf(".")) {
-       //2nd level domain hack
-        this.putInPolicy("http://"+site,included,sites);
-        this.putInPolicy("https://"+site,included,sites);
-      }
-      if(included==this.isInPolicy(site,sites)) { 
-        return included;
-      }
-      if(included) {
-        sites.push(site);
-      } else {
-        const siteKiller={
-          visit: function(current,ss,index) {
-            ss.splice(index,1);
-            return null;
-          }
-        };
-        this.findMatchingSite(site,sites,siteKiller);
-      }
-    }
-    return included;
   }
 ,
   getAllWindows: function() {
@@ -569,23 +702,22 @@ NoscriptService.prototype={
   _lastGlobal: false,
   reloadWhereNeeded: function(snapshot,lastGlobal) {
     if(!snapshot) snapshot=this._lastSnapshot;
-    const ss=this.sitesString;
-    this._lastSnapshot=ss;
+    const ps=this.jsPolicySites;
+    this._lastSnapshot=ps.clone();
     const global=this.jsEnabled;
     if(typeof(lastGlobal)=="undefined") {
       lastGlobal=this._lastGlobal;
+      this.initContentPolicy();
     }
     this._lastGlobal=global;
-    if( (global==lastGlobal && ss==snapshot) || !snapshot) return false;
+    if( (global==lastGlobal && ps.equals(snapshot)) || !snapshot) return false;
     
     if(!this.getPref("autoReload")) return false;
     
-    const prevSites=this.sortedSiteSet(this.splitList(snapshot));
-    const sites=this.sortedSiteSet(this.splitList(ss));
     const ww=this.getAllWindows();
     var ret=false;
-    var ov,gb,bb,b,j,doc,docSites;
-    var prevStatus,currStatus;
+    var ov, gb, bb, b, j, doc, docSites;
+    var prevStatus, currStatus;
     for(var w; ww.hasMoreElements();) {
       w=ww.getNext();
       ov=w.noscriptOverlay;
@@ -596,8 +728,8 @@ NoscriptService.prototype={
           if(doc) {
             docSites=ov.getSites(doc);
             for(j=docSites.length; j-- >0;) {
-              prevStatus=(lastGlobal || this.isInPolicy(docSites[j],sites));
-              currStatus=global || this.isInPolicy(docSites[j],prevSites);
+              prevStatus=lastGlobal || !!snapshot.matches(docSites[j]);
+              currStatus=global || !!ps.matches(docSites[j]);
               if(currStatus!=prevStatus) {
                 ret=true;
                 bb[b].reload();
@@ -612,158 +744,160 @@ NoscriptService.prototype={
   }
 ,
   SPECIAL_TLDS: {
-    ab:" ca ", 
-    ac:" ac at be cn il in jp kr nz th uk za ", 
-    adm:" br ", adv:" br ",
-    agro:" pl ",
-    ah:" cn ",
-    aid:" pl ",
-    alt:" za ",
-    am:" br ",
-    arq:" br ",
-    art:" br ",
-    arts:" ro ",
-    asn:" au au ",
-    asso:" fr mc ",
-    atm:" pl ",
-    auto:" pl ",
-    bbs:" tr ",
-    bc:" ca ",
-    bio:" br ",
-    biz:" pl ",
-    bj:" cn ",
-    br:" com ",
-    cn:" com ",
-    cng:" br ",
-    cnt:" br ",
-    co:" ac at il in jp kr nz th uk za ",
-    com:" au br cn ec fr hk mm mx pl ro ru sg tr tw ",
-    cq:" cn ",
-    cri:" nz ",
-    ecn:" br ",
-    edu:" au cn hk mm mx pl tr za ",
-    eng:" br ",
-    ernet:" in ",
-    esp:" br ",
-    etc:" br ",
-    eti:" br ",
-    eu:" com lv ",
-    fin:" ec ",
-    firm:" ro ",
-    fm:" br ",
-    fot:" br ",
-    fst:" br ",
-    g12:" br ",
-    gb:" com net ",
-    gd:" cn ",
-    gen:" nz ",
-    gmina:" pl ",
-    go:" jp kr th ",
-    gob:" mx ",
-    gov:" br cn ec il in mm mx sg tr za ",
-    govt:" nz ",
-    gs:" cn ",
-    gsm:" pl ",
-    gv:" ac at ",
-    gx:" cn ",
-    gz:" cn ",
-    hb:" cn ",
-    he:" cn ",
-    hi:" cn ",
-    hk:" cn ",
-    hl:" cn ",
-    hn:" cn ",
-    hu:" com ",
-    id:" au ",
-    ind:" br ",
-    inf:" br ",
-    info:" pl ro ",
-    iwi:" nz ",
-    jl:" cn ",
-    jor:" br ",
-    js:" cn ",
-    k12:" il tr ",
-    lel:" br ",
-    ln:" cn ",
-    ltd:" uk ",
-    mail:" pl ",
-    maori:" nz ",
-    mb:" ca ",
-    me:" uk ",
-    med:" br ec ",
-    media:" pl ",
-    mi:" th ",
-    miasta:" pl ",
-    mil:" br ec nz pl tr za ",
-    mo:" cn ",
-    muni:" il ",
-    nb:" ca ",
-    ne:" jp kr ",
-    net:" au br cn ec hk il in mm mx nz pl ru sg th tr tw za ",
-    nf:" ca ",
-    ngo:" za ",
-    nm:" cn kr ",
-    no:" com ",
-    nom:" br pl ro za ",
-    ns:" ca ",
-    nt:" ca ro ",
-    ntr:" br ",
-    nx:" cn ",
-    odo:" br ",
-    on:" ca ",
-    or:" ac at jp kr th ",
-    org:" au br cn ec hk il mm mx nz pl ro ru sg tr tw uk za ",
-    pc:" pl ",
-    pe:" ca ",
-    plc:" uk ",
-    ppg:" br ",
-    presse:" fr ",
-    priv:" pl ",
-    pro:" br ",
-    psc:" br ",
-    psi:" br ",
-    qc:" ca com ",
-    qh:" cn ",
-    re:" kr ",
-    realestate:" pl ",
-    rec:" br ro ",
-    rel:" pl ",
-    res:" in ",
-    sa:" com ",
-    sc:" cn ",
-    school:" nz za ",
-    se:" com net ",
-    sh:" cn ",
-    shop:" pl ",
-    sk:" ca ",
-    sklep:" pl ",
-    slg:" br ",
-    sn:" cn ",
-    sos:" pl ",
-    store:" ro ",
-    targi:" pl ",
-    tj:" cn ",
-    tm:" fr mc pl ro za ",
-    tmp:" br ",
-    tourism:" pl ",
-    travel:" pl ",
-    tur:" br ",
-    turystyka:" pl ",
-    tv:" br ",
-    tw:" cn ",
-    uk:" co com net ",
-    us:" com ",
-    uy:" com ",
-    vet:" br ",
-    web:" za ",
-    www:" ro ",
-    xj:" cn ",
-    xz:" cn ",
-    yk:" ca ",
-    yn:" cn ",
-    za:" com ",
-    zj:" cn ", 
-    zlg:" br "
+    "ab": " ca ", 
+    "ac": " ac at be cn il in jp kr nz th uk za ", 
+    "adm": " br ", 
+    "adv": " br ",
+    "agro": " pl ",
+    "ah": " cn ",
+    "aid": " pl ",
+    "alt": " za ",
+    "am": " br ",
+    "ar": " com ",
+    "arq": " br ",
+    "art": " br ",
+    "arts": " ro ",
+    "asn": " au au ",
+    "asso": " fr mc ",
+    "atm": " pl ",
+    "auto": " pl ",
+    "bbs": " tr ",
+    "bc": " ca ",
+    "bio": " br ",
+    "biz": " pl ",
+    "bj": " cn ",
+    "br": " com ",
+    "cn": " com ",
+    "cng": " br ",
+    "cnt": " br ",
+    "co": " ac at il in jp kr nz th uk za ",
+    "com": " au br cn ec fr hk mm mx pl ro ru sg tr tw ",
+    "cq": " cn ",
+    "cri": " nz ",
+    "ecn": " br ",
+    "edu": " au cn hk mm mx pl tr za ",
+    "eng": " br ",
+    "ernet": " in ",
+    "esp": " br ",
+    "etc": " br ",
+    "eti": " br ",
+    "eu": " com lv ",
+    "fin": " ec ",
+    "firm": " ro ",
+    "fm": " br ",
+    "fot": " br ",
+    "fst": " br ",
+    "g12": " br ",
+    "gb": " com net ",
+    "gd": " cn ",
+    "gen": " nz ",
+    "gmina": " pl ",
+    "go": " jp kr th ",
+    "gob": " mx ",
+    "gov": " br cn ec il in mm mx sg tr za ",
+    "govt": " nz ",
+    "gs": " cn ",
+    "gsm": " pl ",
+    "gv": " ac at ",
+    "gx": " cn ",
+    "gz": " cn ",
+    "hb": " cn ",
+    "he": " cn ",
+    "hi": " cn ",
+    "hk": " cn ",
+    "hl": " cn ",
+    "hn": " cn ",
+    "hu": " com ",
+    "id": " au ",
+    "ind": " br ",
+    "inf": " br ",
+    "info": " pl ro ",
+    "iwi": " nz ",
+    "jl": " cn ",
+    "jor": " br ",
+    "js": " cn ",
+    "k12": " il tr ",
+    "lel": " br ",
+    "ln": " cn ",
+    "ltd": " uk ",
+    "mail": " pl ",
+    "maori": " nz ",
+    "mb": " ca ",
+    "me": " uk ",
+    "med": " br ec ",
+    "media": " pl ",
+    "mi": " th ",
+    "miasta": " pl ",
+    "mil": " br ec nz pl tr za ",
+    "mo": " cn ",
+    "muni": " il ",
+    "nb": " ca ",
+    "ne": " jp kr ",
+    "net": " au br cn ec hk il in mm mx nz pl ru sg th tr tw za ",
+    "nf": " ca ",
+    "ngo": " za ",
+    "nm": " cn kr ",
+    "no": " com ",
+    "nom": " br pl ro za ",
+    "ns": " ca ",
+    "nt": " ca ro ",
+    "ntr": " br ",
+    "nx": " cn ",
+    "odo": " br ",
+    "on": " ca ",
+    "or": " ac at jp kr th ",
+    "org": " au br cn ec hk il mm mx nz pl ro ru sg tr tw uk za ",
+    "pc": " pl ",
+    "pe": " ca ",
+    "plc": " uk ",
+    "ppg": " br ",
+    "presse": " fr ",
+    "priv": " pl ",
+    "pro": " br ",
+    "psc": " br ",
+    "psi": " br ",
+    "qc": " ca com ",
+    "qh": " cn ",
+    "re": " kr ",
+    "realestate": " pl ",
+    "rec": " br ro ",
+    "rel": " pl ",
+    "res": " in ",
+    "sa": " com ",
+    "sc": " cn ",
+    "school": " nz za ",
+    "se": " com net ",
+    "sh": " cn ",
+    "shop": " pl ",
+    "sk": " ca ",
+    "sklep": " pl ",
+    "slg": " br ",
+    "sn": " cn ",
+    "sos": " pl ",
+    "store": " ro ",
+    "targi": " pl ",
+    "tj": " cn ",
+    "tm": " fr mc pl ro za ",
+    "tmp": " br ",
+    "tourism": " pl ",
+    "travel": " pl ",
+    "tur": " br ",
+    "turystyka": " pl ",
+    "tv": " br ",
+    "tw": " cn ",
+    "uk": " co com net ",
+    "us": " com ",
+    "uy": " com ",
+    "vet": " br ",
+    "web": " za ",
+    "www": " ro ",
+    "xj": " cn ",
+    "xz": " cn ",
+    "yk": " ca ",
+    "yn": " cn ",
+    "za": " com ",
+    "zj": " cn ", 
+    "zlg": " br "
   }
 ,
   cleanup: function() {
@@ -781,7 +915,7 @@ NoscriptService.prototype={
     } catch(ex) {}
     try {
       const POLICY_NAME=this.POLICY_NAME;
-      var prefArray=this.splitList(this.caps.getCharPref("policynames"));
+      var prefArray=SiteUtils.splitString(this.caps.getCharPref("policynames"));
       var pcount=prefArray.length;
       const prefArrayTarget=[];
       for(var pcount=prefArray.length; pcount-->0;) {
@@ -847,7 +981,7 @@ NoscriptService.prototype={
         sound.init();
       }
       try {
-        sound.play(this.ios.newURI(url,null,null));
+        sound.play(SiteUtils.ios.newURI(url,null,null));
       } catch(ex) {
         //dump(ex);
       }
@@ -891,6 +1025,13 @@ NoscriptService.prototype={
     xpcom_checkInterfaces(iid, iids, Components.results.NS_ERROR_NO_INTERFACE);
   }
 ,
+  _lookupMethod: null,
+  get lookupMethod() {
+    return this._lookupMethod?this._lookupMethod:(this._lookupMethod = 
+      (Components.utils && Components.utils.lookupMethod)
+        ?Components.utils.lookupMethod:Components.lookupMethod);
+  }
+,
   pluginPlaceholder: "chrome://noscript/skin/icon32.png",
   forbidSomePlugins: false,
   forbidAllPlugins: false,
@@ -902,6 +1043,15 @@ NoscriptService.prototype={
     const sc=this.pluginSitesCache;
     return uri?(uri in sc)?sc[uri]:sc[uri]={}:{};
   },
+  initContentPolicy: function() {
+    var delegate = this.forbidSomePlugins && !this._lastGlobal ? 
+        (Components.interfaces.nsIContentPolicy.TYPE_OBJECT 
+          ? this.mainContentPolicy 
+          : this.oldStyleContentPolicy)
+      : this.noopContentPolicy;
+    this.shouldLoad = delegate.shouldLoad;
+    this.shouldProcess = delegate.shouldProcess;
+  },
   // nsIContentPolicy interface
   // we use numeric constants for performance sake:
   // nsIContentPolicy.TYPE_SCRIPT = 2
@@ -910,11 +1060,14 @@ NoscriptService.prototype={
   // nsIContentPolicy.TYPE_SUBDOCUMENT = 7
   // nsIContentPolicy.REJECT_SERVER = -3
   // nsIContentPolicy.ACCEPT = 1
-  
-  shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
-    if(!this._lastGlobal) {
-      var forbid;
-      if(aContentType == 5 || ( forbid = (aContentType == 2) ) ) {
+  noopContentPolicy: {
+    shouldLoad: function() { return 1; },
+    shouldProcess: function() { return 1; }
+  },
+  mainContentPolicy: {
+    shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
+      var forbid, isJS, isFlash, isJava;
+      if(aContentType == 5 || ( forbid = isJS = (aContentType == 2) ) ) {
         var origin;
         if(!forbid) {
           // cache plugin sites as they (attempt to) load
@@ -938,33 +1091,29 @@ NoscriptService.prototype={
             }
           }
           
+          
           if(this.forbidSomePlugins) {
             var forbid=this.forbidAllPlugins;
             if((!forbid) && aMimeTypeGuess) {
-              const isFlash=aMimeTypeGuess=="application/x-shockwave-flash";
-              if(isFlash) {
-                forbid=this.forbidFlash;
-              } else {
-                const isJava=aMimeTypeGuess.indexOf("application/x-java-")==0;
-                if(isJava) {
-                  forbid=this.forbidJava;
-                } else {
-                  forbid=this.forbidPlugins;
-                }
-              }
+              forbid = 
+                (isFlash = aMimeTypeGuess == "application/x-shockwave-flash") && this.forbidFlash ||
+                (isJava = aMimeTypeGuess.indexOf("application/x-java-")==0) && this.forbidJava ||
+                this.forbidPlugins;
             }
           }
         }
+        
         if(forbid) {
           if(!origin) origin=this.getSite(aContentLocation.spec);
-          if(!this.isInPolicy(origin)) {
-            if(aContext) {
+          if(!this.isJSEnabled(origin)) {
+            if(aContext && ! isJS) {
               const lm=Components.lookupMethod;
               const ci=Components.interfaces;
               var setAttr,getAttr;
               if(aContext instanceof ci.nsIDOMHTMLAppletElement) {
                   (setAttr=lm(aContext,"setAttribute"))("code","java.applet.Applet");
               }
+              
               if(this.pluginPlaceholder) {
                 if(aContext instanceof Components.interfaces.nsIDOMNode) {
                   if(aContext instanceof(ci.nsIDOMHTMLEmbedElement)) {
@@ -989,19 +1138,47 @@ NoscriptService.prototype={
                 }
               }
             }
-            dump("NoScript blocked "+aContentLocation.spec+" which is a "+aMimeTypeGuess+" from "+origin);
+            
+            dump("NoScript blocked "+aContentLocation.spec+" which is a "+aMimeTypeGuess+" from "+origin+"\n");
             return -3;
           }
         }
       }
+    
+      return 1;
+    },
+    shouldProcess: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, aExtra) {
+      return this.shouldLoad(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, true);
     }
-    return 1;
-  }
-,
-  shouldProcess: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, aExtra) {
-    return this.shouldLoad(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, true);
+  },
+  oldStyleContentPolicy: {
+    shouldLoad: function(aContentType, aContentLocation, aCtx, aWin, aInternalCall) {
+      aContentType++;
+      var mimeType = "";
+      var origin = null;
+      if(aContentType == 5) {
+        var ext, pos;
+        if(aCtx && (aCtx instanceof Components.interfaces.nsIDOMHTMLAppletElement) || 
+            (ext = (ext = aContentLocation.path).substring(ext.lastIndexOf(
+              ".",(pos=ext.indexOf("?"))>0 ? pos : pos=ext.length)+1,pos).toLowerCase() ) == "jnlp" ) {
+          mimeType = "application/x-java-";
+        } else {
+          if(ext == "swf") mimeType = "application/x-shockwave-flash";
+        }
+        if(aCtx && aCtx.ownerDocument) {
+          origin = { spec: aCtx.ownerDocument.documentURI };
+        }
+      }
+      return this.mainContentPolicy
+                 .shouldLoad.call(this, aContentType, aContentLocation, origin, 
+                      aCtx || aWin, mimeType, aInternalCall) == 1;
+    },
+    shouldProcess: function(aContentType, aContentLocation, aCtx, aWin) {
+      return this.shouldLoad(aContentType, aContentLocation, aCtx, aWin, true);
+    }
   }
 };
+
 
 
 // XPCOM Scaffolding code
@@ -1030,7 +1207,7 @@ const SERVICE_CATS = ["app-startup","content-policy"];
 
 // Factory object
 const SERVICE_FACTORY = {
-  _instance: new SERVICE_CONSTRUCTOR(),
+  _instance: null,
   createInstance: function (outer, iid) {
     if (outer != null)
         throw Components.results.NS_ERROR_NO_AGGREGATION;

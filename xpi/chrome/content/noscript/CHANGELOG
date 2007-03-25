@@ -1,8 +1,14 @@
 NoScript ChangeLog
 
-TODO:
-Turn javascript: links into regular links where JS is disabled (zasxae)
-Black list
+v 1.1.2
+=====================================================================
++ Java/Flash/Plugins blocking works in Mozilla Suite / SeaMonkey too
++ Huge performance (up to 100x) improvements in policy matching
++ More consistent temporary sites handling (allowing a temporary
+  domain while subdomains are allowed, now forbids ancestors of that
+  domain but not its subdomains anymore on restart)
++ Added "ar.com" to the list of "special" TLDs
+x No more "phantom" http:// and https:// entries in whitelist
 
 v 1.1.1
 =====================================================================

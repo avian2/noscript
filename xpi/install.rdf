@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.1.1</em:version>
+   <em:version>1.1.2</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -25,7 +25,7 @@
      <Description>
      <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
      <em:minVersion>1.0</em:minVersion>
-     <em:maxVersion>1.0+</em:maxVersion>
+     <em:maxVersion>1.6</em:maxVersion>
      </Description>
    </em:targetApplication>
 
@@ -42,6 +42,7 @@
      <Description about="urn:mozilla:extension:file:noscript.jar">
        <em:package>content/noscript/</em:package>
        <em:locale>content/noscript/en-US/</em:locale>
+       <em:skin>skin/classic/noscript/</em:skin>
        <em:locale>locale/de-DE/noscript/</em:locale>
        <em:locale>locale/fr-FR/noscript/</em:locale>
        <em:locale>locale/it-IT/noscript/</em:locale>
@@ -49,7 +50,6 @@
        <em:locale>locale/pt-PT/noscript/</em:locale>
        <em:locale>locale/pt-BR/noscript/</em:locale>
        <em:locale>locale/es-ES/noscript/</em:locale>
-       <em:skin>skin/classic/noscript/</em:skin>
      </Description>
    </em:file>
 

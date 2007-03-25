@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.1.1";
+const APP_VERSION = "1.1.2";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
@@ -58,7 +58,7 @@ if(err == SUCCESS) {
   if(APP_XPCOM_SERVICE) {
     var componentsDir = getFolder("Components");
     addFile(APP_PACKAGE,APP_VERSION, APP_XPCOM_SERVICE, componentsDir, null, true);
-    addFile(APP_NAME, "components/.autoreg", getFolder("Program"), "");
+    // addFile(APP_NAME, "components/.autoreg", getFolder("Program"), "");
   }
   
   err = performInstall();

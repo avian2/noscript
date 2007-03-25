@@ -35,9 +35,9 @@ NoScriptOverlay.prototype={
   getSites: function(doc,sites,tagName) {
     try {
       if(doc || (doc=this.srcWindow.document)) {
-        const lm=Components.lookupMethod;
-        const getByTag=lm(doc,"getElementsByTagName");
         const ns=this.ns;
+        const lm=ns.lookupMethod;
+        const getByTag=lm(doc,"getElementsByTagName");
         if(!tagName) {
           const docURI=lm(doc,"documentURI")();
           var url=ns.getSite(docURI);
@@ -226,7 +226,7 @@ NoScriptOverlay.prototype={
     
     const sites=this.getSites();
     var site,enabled,lev;
-    const allowedSites=ns.sites;
+    var jsPSs=ns.jsPolicySites;
     var matchingSite;
     var menuSites,menuSite,scount;
     var domain,isIP,pos,lastPos,domParts,dpLen,dp,tlds;
@@ -250,8 +250,8 @@ NoScriptOverlay.prototype={
    
     for(j=sites.length; j-->0;) {
       site=sites[j];
-      matchingSite=ns.findShortestMatchingSite(site,allowedSites);
-      enabled=matchingSite!=null;
+      matchingSite=jsPSs.matches(site);
+      enabled=!!matchingSite;
       if(enabled) {
         if(domainDupChecker.check(matchingSite)) continue;
         menuSites=[matchingSite];
@@ -351,7 +351,7 @@ NoScriptOverlay.prototype={
   getBrowserDoc: function(browser) {
     if(browser && browser.contentWindow) {
       try {
-        return Components.lookupMethod(browser.contentWindow,'document')();
+        return this.ns.lookupMethod(browser.contentWindow,'document')();
       } catch(ex) {
       }
     } 
@@ -441,9 +441,12 @@ NoScriptOverlay.prototype={
     }
     
     const global=ns.jsEnabled;
+    const jsPSs=ns.jsPolicySites;
     var lev;
     const sites=this.getSites();
     var totalScripts=sites.scriptCount;
+    var totalPlugins=sites.pluginCount;
+    var totalAnnoyances=totalScripts+totalPlugins;
     var notificationNeeded;
     if(global) {
       lev="glb";
@@ -455,7 +458,7 @@ NoScriptOverlay.prototype={
       var url,site;
       while(s-->0) {
         url=sites[s];
-        site=ns.findShortestMatchingSite(url);
+        site=jsPSs.matches(url);
         if(site) {
           if(ns.isPermanent(site)) {
             total--;
@@ -465,13 +468,13 @@ NoScriptOverlay.prototype={
         } 
       }
       lev=(allowed==total && sites.length>0)?"yes":allowed==0?"no":"prt";
-      notificationNeeded=(lev!="yes" && totalScripts>0); 
+      notificationNeeded=(lev!="yes" && totalAnnoyances>0); 
     }
     const widget=document.getElementById("noscript-status");
     var message=this.getString("allowed."+lev)
-      +" [<script>: "+totalScripts+"] [J+F+P: "+sites.pluginCount+"]";
+      +" [<script>: "+totalScripts+"] [J+F+P: "+totalPlugins+"]";
    
-    var icon=this.getIcon(lev,!totalScripts);
+    var icon=this.getIcon(lev,!totalAnnoyances);
     widget.setAttribute("tooltiptext",message);
     widget.setAttribute("src",icon);
     
@@ -547,10 +550,10 @@ function _noscript_signatureGetter() { return _noscript_randomSignature; }
 const noscriptOverlay=new NoScriptOverlay();
 
 const noscriptOverlayPrefsObserver={
-  ns: noscriptOverlay.ns
-,
+  ns: noscriptOverlay.ns,
+  iids: [Components.interfaces.nsISupports, Components.interfaces.nsIObserver],
   QueryInterface: function(iid) {
-    return this.ns.queryInterfaceSupport(iid, [Components.interfaces.nsIObserver]);
+    return this.ns.queryInterfaceSupport(iid, this.iids);
   }
 ,
   observe: function(subject, topic, data) {
