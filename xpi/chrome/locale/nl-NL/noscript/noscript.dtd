@@ -2,16 +2,25 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript Opties">
 <!ENTITY noscriptAbout "Over NoScript">
-<!ENTITY noscriptPermissionsText "Je kunt aangeven welke internetadressen je toestemming geeft om JavaScript te gebruiken. Tik het adres of domein in (bijv. &quot;http://www.site.com&quot; of &quot;site.com&quot;) van de door jou toegestane site; klik daarna op Toestaan.">
+<!ENTITY noscriptPermissionsText "U kunt aangeven welke internetadressen u toestemming geeft om JavaScript te gebruiken. Typ het adres of domein in (bijv. &quot;http://www.site.com&quot; of &quot;site.com&quot;) van de door u toegestane site; klik daarna op Toestaan.">
 <!ENTITY noscriptWebAddress "Internetadres:">
 <!ENTITY noscriptAllow "Toestaan">
 <!ENTITY noscriptAllow.accesskey "T">
 <!ENTITY noscriptRemoveSelected "Geselecteerde sites verwijderen">
 <!ENTITY noscriptGloballyEnabled "JavaScript globaal toestaan (riskant)">
-<!ENTITY noscriptAutoReload "Huidige pagina automatisch herladen als de toestemming verandert">
+<!ENTITY noscriptAutoReload "Huidige pagina automatisch vernieuwen als de toestemming verandert">
 <!ENTITY noscriptGeneral "Algemeen">
-<!ENTITY noscriptAppearance "Presentatie">
+<!ENTITY noscriptAppearance "Uiterlijk">
 <!ENTITY noscriptShow "Tonen...">
 <!ENTITY noscriptCtxMenu "Contextmenu">
 <!ENTITY noscriptStatusIcon "Taakbalkpictogram">
+<!ENTITY noscriptFullAddr "Volledige adressen">
+<!ENTITY noscriptFullDom "Volledige domeinen">
+<!ENTITY noscriptBaseDom "Hoofd (2e niveau) domeinen">
+<!ENTITY noscriptSound "Geluidsondersteuning wanneer scripts worden geblokkeerd">
+<!ENTITY noscriptImport "Importeren">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exporteren">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Bericht over geblokkeerde scripts tonen">
 

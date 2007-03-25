@@ -40,9 +40,35 @@
   <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />
 </stringbundleset>
 
+<popupset id="mainPopupSet">
+  <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+    <menuseparator class="noscript-sep-insert" collapsed="true" />
+     <menuseparator class="noscript-sep-stop-global" />
+     <menuitem class="menuitem-iconic" />
+      <menuseparator />
+     <menuitem id="noscript-mi-opt-notify"
+      label="&noscriptNotify;"
+      oncommand="noscriptOverlay.toggleNotifyOpt(this)"
+      type="checkbox" autocheck="true"
+      />
+     <menuitem id="noscript-mi-opt-sound"
+      label="&noscriptSound;"
+      oncommand="noscriptOverlay.toggleMenuOpt(this)"
+      type="checkbox" autocheck="true"
+      />
+     <menuseparator />
+     <menuitem 
+      label="&noscriptOptions;"
+      accesskey="&noscriptOptions.accesskey;"
+      oncommand="noscriptOverlay.openOptionsDialog()"
+      tooltiptext="&noscriptOptionsLong;"
+      />
+   </popup>
+</popupset>
+    
 <popup id="contentAreaContextMenu">
   <menu id="noscript-context-menu" class="menu-iconic" label="NoScript" >
-    <menupopup onpopupshowing="noscriptOverlay.prepareMenu(this)">
+    <menupopup id="noscript-context-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
          <menuseparator class="noscript-sep-insert" collapsed="true" />
          <menuseparator class="noscript-sep-stop-global" />
          <menuitem class="menuitem-iconic" />

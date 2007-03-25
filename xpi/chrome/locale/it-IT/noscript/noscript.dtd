@@ -1,4 +1,5 @@
 <!ENTITY noscriptOptions "Opzioni">
+<!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opzioni NoScript">
 <!ENTITY noscriptAbout "Informazioni su NoScript">
 <!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l'esecuzione di JavaScript è consentita. Digitare l'indirizzo o il dominio (es. &quot;http://www.sito.com&quot; oppure &quot;sito.com&quot;)  e fare clic su Permetti.">
@@ -21,4 +22,5 @@
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Esporta">
 <!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Mostra messaggio sul blocco degli script">
 

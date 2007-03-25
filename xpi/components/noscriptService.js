@@ -102,6 +102,7 @@ NoscriptService.prototype={
   init: function() {
     if(this._inited) return;
     this._inited=true;
+    
     const prefserv=this.prefService=Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService)
     const PBI=Components.interfaces.nsIPrefBranchInternal;
     this.caps=prefserv.getBranch("capability.policy.").QueryInterface(PBI);
@@ -140,6 +141,8 @@ NoscriptService.prototype={
     const mozJSEnabled=this.mozJSEnabled;
     this.setJSEnabled(this.permanentList,true,sites);
     this.mozJSPref.setBoolPref("enabled",mozJSEnabled);
+    
+    this.reloadWhereNeeded(); // init snapshot
   }
 ,
   isPermanent: function(s) {
@@ -370,6 +373,210 @@ NoscriptService.prototype={
       }
     }
     return included;
+  }
+,
+  _lastSnapshot: null,
+  _lastGlobal: false,
+  reloadWhereNeeded: function(snapshot,lastGlobal) {
+    if(!snapshot) snapshot=this._lastSnapshot;
+    const ss=this.sitesString;
+    this._lastSnapshot=ss;
+    const global=this.jsEnabled;
+    if(typeof(lastGlobal)=="undefined") {
+      lastGlobal=this._lastGlobal;
+    }
+    this._lastGlobal=global;
+    if( (global==lastGlobal && ss==snapshot) || !snapshot) return false;
+    
+    if(!this.getPref("autoReload")) return false;
+    
+    const prevSites=this.sortedSiteSet(this.splitList(snapshot));
+    const sites=this.sortedSiteSet(this.splitList(ss));
+    const wm=Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(
+      Components.interfaces.nsIWindowMediator);
+    const ww=wm.getEnumerator(null);
+    var ret=false;
+    var ov,gb,bb,b,j,doc,docSites;
+    var prevStatus,currStatus;
+    for(var w; ww.hasMoreElements();) {
+      w=ww.getNext();
+      ov=w.noscriptOverlay;
+      gb=w.gBrowser;
+      if(ov && gb) {
+        bb=gb.browsers;
+        for(b=bb.length; b-->0;) {
+          doc=ov.getBrowserDoc(bb[b]);
+          if(doc) {
+            docSites=ov.getSites(doc);
+            for(j=docSites.length; j-- >0;) {
+              prevStatus=(lastGlobal || this.isInPolicy(docSites[j],sites));
+              currStatus=global || this.isInPolicy(docSites[j],prevSites);
+              if(currStatus!=prevStatus) {
+                ret=true;
+                bb[b].reload();
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+    return ret;
+  }
+,
+  SPECIAL_TLDS: {
+    ab:" ca ", 
+    ac:" ac at be cn il in jp kr nz th uk za ", 
+    adm:" br ", adv:" br ",
+    agro:" pl ",
+    ah:" cn ",
+    aid:" pl ",
+    alt:" za ",
+    am:" br ",
+    arq:" br ",
+    art:" br ",
+    arts:" ro ",
+    asn:" au au ",
+    asso:" fr mc ",
+    atm:" pl ",
+    auto:" pl ",
+    bbs:" tr ",
+    bc:" ca ",
+    bio:" br ",
+    biz:" pl ",
+    bj:" cn ",
+    br:" com ",
+    cn:" com ",
+    cng:" br ",
+    cnt:" br ",
+    co:" ac at il in jp kr nz th uk za ",
+    com:" au br cn ec fr hk mm mx pl ro ru sg tr tw ",
+    cq:" cn ",
+    cri:" nz ",
+    ecn:" br ",
+    edu:" au cn hk mm mx pl tr za ",
+    eng:" br ",
+    ernet:" in ",
+    esp:" br ",
+    etc:" br ",
+    eti:" br ",
+    eu:" com lv ",
+    fin:" ec ",
+    firm:" ro ",
+    fm:" br ",
+    fot:" br ",
+    fst:" br ",
+    g12:" br ",
+    gb:" com net ",
+    gd:" cn ",
+    gen:" nz ",
+    gmina:" pl ",
+    go:" jp kr th ",
+    gob:" mx ",
+    gov:" br cn ec il in mm mx sg tr za ",
+    govt:" nz ",
+    gs:" cn ",
+    gsm:" pl ",
+    gv:" ac at ",
+    gx:" cn ",
+    gz:" cn ",
+    hb:" cn ",
+    he:" cn ",
+    hi:" cn ",
+    hk:" cn ",
+    hl:" cn ",
+    hn:" cn ",
+    hu:" com ",
+    id:" au ",
+    ind:" br ",
+    inf:" br ",
+    info:" pl ro ",
+    iwi:" nz ",
+    jl:" cn ",
+    jor:" br ",
+    js:" cn ",
+    k12:" il tr ",
+    lel:" br ",
+    ln:" cn ",
+    ltd:" uk ",
+    mail:" pl ",
+    maori:" nz ",
+    mb:" ca ",
+    me:" uk ",
+    med:" br ec ",
+    media:" pl ",
+    mi:" th ",
+    miasta:" pl ",
+    mil:" br ec nz pl tr za ",
+    mo:" cn ",
+    muni:" il ",
+    nb:" ca ",
+    ne:" jp kr ",
+    net:" au br cn ec hk il in mm mx nz pl ru sg th tr tw za ",
+    nf:" ca ",
+    ngo:" za ",
+    nm:" cn kr ",
+    no:" com ",
+    nom:" br pl ro za ",
+    ns:" ca ",
+    nt:" ca ro ",
+    ntr:" br ",
+    nx:" cn ",
+    odo:" br ",
+    on:" ca ",
+    or:" ac at jp kr th ",
+    org:" au br cn ec hk il mm mx nz pl ro ru sg tr tw uk za ",
+    pc:" pl ",
+    pe:" ca ",
+    plc:" uk ",
+    ppg:" br ",
+    presse:" fr ",
+    priv:" pl ",
+    pro:" br ",
+    psc:" br ",
+    psi:" br ",
+    qc:" ca com ",
+    qh:" cn ",
+    re:" kr ",
+    realestate:" pl ",
+    rec:" br ro ",
+    rel:" pl ",
+    res:" in ",
+    sa:" com ",
+    sc:" cn ",
+    school:" nz za ",
+    se:" com net ",
+    sh:" cn ",
+    shop:" pl ",
+    sk:" ca ",
+    sklep:" pl ",
+    slg:" br ",
+    sn:" cn ",
+    sos:" pl ",
+    store:" ro ",
+    targi:" pl ",
+    tj:" cn ",
+    tm:" fr mc pl ro za ",
+    tmp:" br ",
+    tourism:" pl ",
+    travel:" pl ",
+    tur:" br ",
+    turystyka:" pl ",
+    tv:" br ",
+    tw:" cn ",
+    uk:" co com net ",
+    us:" com ",
+    uy:" com ",
+    vet:" br ",
+    web:" za ",
+    www:" ro ",
+    xj:" cn ",
+    xz:" cn ",
+    yk:" ca ",
+    yn:" cn ",
+    za:" com ",
+    zj:" cn ", 
+    zlg:" br "
   }
 ,
   willBeUninstalled: function() {

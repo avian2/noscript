@@ -98,6 +98,7 @@
     <separator class="groove"/>
     <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
     <checkbox id="opt-sound" label="&noscriptSound;" />
+    <checkbox id="opt-notify" label="&noscriptNotify;" />
   </vbox>
   </tabpanel>
   </tabpanels>

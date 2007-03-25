@@ -47,6 +47,9 @@ function nso_init() {
     }
   );
   
+  if(Components.interfaces.nsIChromeRegistrySea) { // SeaMonkey
+    document.getElementById("opt-notify").setAttribute("collapsed","true");
+  }
 }
 
 function nso_urlListChanged() {
@@ -144,25 +147,20 @@ function nso_remove() {
 function nso_save() {
   visitCheckboxes(
     function(prefName,inverse,checkbox) {
-      const checked=checkbox.getAttribute("checked")=="true";
-      g_ns.setPref(prefName,inverse?!checked:checked);
+      if(checkbox.getAttribute("collapsed")!="true") {
+        const checked=checkbox.getAttribute("checked")=="true";
+        const requestedVal=inverse?!checked:checked;
+        const prevVal=g_ns.getPref(prefName);
+        if(requestedVal!=prevVal) {
+          g_ns.setPref(prefName,requestedVal);
+        }
+      }
     }
   );
   
-  const sites=[];
-  const oldSS=g_ns.sitesString;
-  g_ns.setJSEnabled(nso_urlList2Arr(),true,sites);
-  const oldGlobal=g_ns.jsEnabled;
+  g_ns.setJSEnabled(nso_urlList2Arr(),true,[]);
   g_ns.jsEnabled=g_jsglobal.getAttribute("checked")=="true";
-  if(
-    (oldGlobal!=g_ns.jsEnabled || g_ns.sitesString!=oldSS) 
-    && g_ns.getPref("autoReload",true)) {
-    try {
-      window.opener.BrowserReload();
-    } catch(ex) {
-      // dump(ex);
-    }
-  }
+  g_ns.reloadWhereNeeded();
   g_ns.savePrefs();
 }
 

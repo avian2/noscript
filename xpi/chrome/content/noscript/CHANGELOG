@@ -3,6 +3,16 @@ NoScript ChangeLog
 TODO:
 Allow some URL only for current session life-span (many requests!!!)
 
+v 1.0.7
+=====================================================================
++ Notification message "popup blocker" style (Firefox only)
++ Autoreload synchronizes every view whose permissions have changed
++ Spanish translation (thanks to Alberto Martínez)
+x Improved subframes management in the contextual menu
+x Better UI support for "special" TLDS like co.uk, co.nz and others
+x Improved support for numeric addresses
+x Audio feedback with more discreet sound effect :-)
+
 v 1.0.6
 =====================================================================
 + Whitelist import/export (thanks hsmwrv for suggestion)

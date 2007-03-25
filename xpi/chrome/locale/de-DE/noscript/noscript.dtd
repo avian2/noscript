@@ -12,6 +12,14 @@
 <!ENTITY noscriptGeneral "Allgemein">
 <!ENTITY noscriptAppearance "Aussehen">
 <!ENTITY noscriptShow "Anzeigen...">
-<!ENTITY noscriptCtxMenu "Kontextmenü">
-<!ENTITY noscriptStatusIcon "Statusleiste Icon">
-
+<!ENTITY noscriptCtxMenu "Im Kontextmenü">
+<!ENTITY noscriptStatusIcon "Icon in der Statusleiste">
+<!ENTITY noscriptFullAddr "Ganze Adressen (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Ganze Domains (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Basis von Second Level Domains (noscript.net)">
+<!ENTITY noscriptSound "Ton ausgeben wenn Scripts geblockt wurden">
+<!ENTITY noscriptImport "Importieren">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exportieren">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Meldung anzeigen bei blockierten Scripts">

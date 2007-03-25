@@ -2,6 +2,7 @@ pref("noscript.autoReload",true);
 pref("noscript.ctxMenu",true);
 pref("noscript.statusIcon",true);
 pref("noscript.sound",true);
+pref("noscript.notify",true);
 pref("noscript.showAddress",false);
 pref("noscript.showDomain",false);
 pref("noscript.showBaseDomain",true);

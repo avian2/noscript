@@ -22,3 +22,4 @@
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exporter">
 <!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Afficher un message sur les scripts bloqués">
