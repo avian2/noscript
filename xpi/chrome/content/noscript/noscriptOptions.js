@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
-g_ns=new NoScript();
+g_ns=getNoscriptService();
 g_urlList=null;
 g_jsglobal=null;
 g_urlText=null;

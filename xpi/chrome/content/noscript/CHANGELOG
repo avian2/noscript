@@ -1,7 +1,18 @@
 NoScript ChangeLog
 
 TODO:
-Allow some URL only for current session life-span
+Allow some URL only for current session life-span (many requests!!!)
+Remove dummy space at the menu bottom (TheOneKEA)
+Whitelist import/export (hsmwrv)
+
+v 1.0.4
+=====================================================================
++ Automatically creates http:// and https:// prefixed URLs when a 2nd
+  level domain (xyz.com) is allowed, as a workaround for Firefox not 
+  matching URLs with a raw 2nd level domain if no protocol is listed
+  (thanks to Laura for report)
++ "Allowed" status feedback for chrome:// URLs (pacanukeha)
+x Core functionality refactored in a XPCOM service
 
 v 1.0.3
 =====================================================================

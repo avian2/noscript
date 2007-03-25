@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ***** END LICENSE BLOCK *****/
 
 function NoScriptOverlay() {
-  this.ns=new NoScript();
+  this.ns=getNoscriptService();
 }
 
 NoScriptOverlay.prototype={
@@ -51,7 +51,7 @@ NoScriptOverlay.prototype={
     try {
       if(doc || (doc=this.srcDocument)) {
         const ns=this.ns;
-        var url=ns.getSite(doc.URL);
+        var url=ns.getSite(doc.documentURI);
        
         if(sites) {
           sites[sites.length]=url;
@@ -64,12 +64,16 @@ NoScriptOverlay.prototype={
           var scripts=new XPCNativeWrapper(doc.getElementsByTagName("script"),"item()","length");
           var scount=scripts.length;
           sites.scriptCount+=scount;
-          var script;
+          var script,scriptSrc;
           while(scount-->0) {
-            script=new XPCNativeWrapper(scripts.item(scount),"src");
-            if(script.src) {
-              sites[sites.length]=ns.getSite(script.src);
+            script=scripts.item(scount);
+            if(script instanceof XULElement) {
+              scriptSrc=script.getAttribute("src");
+              if(!/^[\w\-]+:\/\//.test(scriptSrc)) continue;
+            } else {
+              scriptSrc=new XPCNativeWrapper(script,"src").src;
             }
+            sites[sites.length]=ns.getSite(scriptSrc);
           }
           
           this.getSites(doc, sites, 'frame');
@@ -226,7 +230,7 @@ NoScriptOverlay.prototype={
   }
 ,
   get srcDocument() {
-    return new XPCNativeWrapper(this.srcWindow.document, 'getElementsByTagName()','URL');
+    return new XPCNativeWrapper(this.srcWindow.document, 'getElementsByTagName()','documentURI');
   }
 ,
   menuAllow: function(enabled,menuItem) {
@@ -314,8 +318,7 @@ NoScriptOverlay.prototype={
           }
         } 
       }
-      //lev=allowed==0?"no":allowed==total?"yes":"prt";   
-      lev=(allowed==total && sites.length>0)?"yes":allowed==0?"no":"prt"; 
+      lev=(allowed==total && sites.length>0)?"yes":allowed==0?"no":"prt";
     }
     const widget=document.getElementById("noscript-status");
     widget.setAttribute("tooltiptext",

@@ -1,17 +1,17 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.0.3";
+const APP_VERSION = "1.0.4";
 
-const APP_PREFS_FILE=null; //"defaults/preferences/noscript.js";
-const APP_XPCOM_SERVICE=null; // "components/noscriptService.js";
+const APP_PREFS_FILE="defaults/preferences/noscript.js";
+const APP_XPCOM_SERVICE="components/noscriptService.js";
 const APP_JAR_FILE = "noscript.jar";
 const APP_CONTENT_FOLDER = "content/noscript/";
 const APP_LOCALES = [
   "de-DE","fr-FR","it-IT","en-US"
   ];
 
-const APP_SUCCESS_MESSAGE = APP_DISPLAY_NAME+" should now be available on the context menu when you restart Mozilla.";
+const APP_SUCCESS_MESSAGE = APP_DISPLAY_NAME+" should now be available when you restart Mozilla.";
 
 const INST_TO_PROFILE = "Do you wish to install "+APP_DISPLAY_NAME+" to your profile?\nThis will mean it does not need reinstalling when you update Mozilla.\n(Click Cancel if you want "+APP_DISPLAY_NAME+" installing to the Mozilla directory.)";
 
@@ -58,19 +58,20 @@ if(err == SUCCESS) {
   if(APP_XPCOM_SERVICE) {
     var componentsDir = getFolder("Components");
     addFile(APP_PACKAGE,APP_VERSION, APP_XPCOM_SERVICE, componentsDir, null, true);
+    addFile(APP_NAME, "components/.autoreg", getFolder("Program"), "");
   }
   
-	err = performInstall();
-	if(err == SUCCESS || err == 999) {
-		alert(APP_DISPLAY_NAME+" "+APP_VERSION+" has been succesfully installed.\n"+APP_SUCCESS_MESSAGE);
-	} else {
-		alert("Install failed!!! Error code:" + err);
-		cancelInstall(err);
-	}
+  err = performInstall();
+  if(err == SUCCESS || err == 999) {
+    alert(APP_DISPLAY_NAME+" "+APP_VERSION+" has been succesfully installed.\n"+APP_SUCCESS_MESSAGE);
+  } else {
+    alert("Install failed!!! Error code:" + err);
+    cancelInstall(err);
+  }
 } else {
-	alert("Failed to create " +APP_JAR_FILE +"\n"
-		+"You probably don't have appropriate permissions \n"
-		+"(write access to your profile or chrome directory). \n"
-		+"_____________________________\nError code:" + err);
-	cancelInstall(err);
+alert("Failed to create " +APP_JAR_FILE +"\n"
+  +"You probably don't have appropriate permissions \n"
+  +"(write access to your profile or chrome directory). \n"
+  +"_____________________________\nError code:" + err);
+cancelInstall(err);
 }
