@@ -1,0 +1,42 @@
+<!ENTITY noscriptOptions "Nastavení">
+<!ENTITY noscriptOptions.accesskey "N">
+<!ENTITY noscriptOptionsLong "Nastavení NoScript ">
+<!ENTITY noscriptAbout "O rozšíření NoScript">
+<!ENTITY noscriptPermissionsText "Můžete si zvolit, které webové stránky mají povoleno spouštět JavaScript. Zadejte adresu domény (např. &quot;http://www.site.com&quot; nebo &quot;site.com&quot;) na které se nachází stránka, pro kterou chcete JavaScript povolit a klepněte na Povolit.">
+<!ENTITY noscriptWebAddress "Adresa webové stránky:">
+<!ENTITY noscriptAllow "Povolit">
+<!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptRemoveSelected "Odstranit vybrané stránky">
+<!ENTITY noscriptGloballyEnabled "JavaScript celkově povolen (nebezpečné)">
+<!ENTITY noscriptAutoReload "Automaticky obnovit stránky při změně povolení">
+<!ENTITY noscriptGeneral "Obecné">
+<!ENTITY noscriptAppearance "Zobrazení">
+<!ENTITY noscriptShow "Zobrazit...">
+<!ENTITY noscriptCtxMenu "Místní nabídka ">
+<!ENTITY noscriptStatusIcon "Ikona ve stavovém řádku">
+<!ENTITY noscriptFullAddr "Celé adresy (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Celé domény (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Domény druhého řádu (noscript.net)">
+<!ENTITY noscriptTempCmd "Dočasně povolit [...]">
+<!ENTITY noscriptSound "Přehrát zvuk pokud jsou skripty zablokovány">
+<!ENTITY noscriptImport "Otevřít">
+<!ENTITY noscriptImport.accesskey "O">
+<!ENTITY noscriptExport "Uložit">
+<!ENTITY noscriptExport.accesskey "U">
+<!ENTITY noscriptNotify "Zobrazit zprávu o blokovaných skriptech">
+<!ENTITY noscriptNotify.bottom "Umístit zprávu do spodní části">
+<!ENTITY noscriptSound.choose "Zvolit">
+<!ENTITY noscriptSound.choose.accesskey "Z">
+<!ENTITY noscriptSound.play "Přehrát">
+<!ENTITY noscriptSound.play.accesskey "h">
+<!ENTITY noscriptSound.reset "Nastavit výchozí">
+<!ENTITY noscriptSound.reset.accesskey "v">
+<!ENTITY noscriptAdvanced "Pokročilé">
+<!ENTITY noscriptAdditionalPermissions "Dodatečná povolení pro důvěryhodné stránky">
+<!ENTITY noscriptAllowClipboard "Povolit kopírování a vkládání textu z vnější schránky">
+<!ENTITY noscriptAdditionalRestrictions "Dodatečná omezení pro nedůvěryhodné stránky">
+<!ENTITY noscriptForbidJava "Zakázat Javu(tm)">
+<!ENTITY noscriptForbidFlash "Zakázat Macromedia(r) Flash(r)">
+<!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">
+<!ENTITY noscriptReloadWarn "Tato nastavení budou aktivní na nově otevřených nebo (manuálně) obnovených stránkách">
+

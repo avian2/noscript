@@ -160,9 +160,10 @@ const SiteUtils = new function() {
     var scheme;
     try {
       scheme=this.ios.extractScheme(url);
-      if(scheme=="javascript" || scheme=="data" || scheme=="about") return "";
-      scheme+=":";
-      if(url==scheme) return url;
+      if(scheme == "javascript" || scheme == "data") return "";
+      if(scheme == "about") return url;
+      scheme += ":";
+      if(url == scheme) return url;
     } catch(ex) {
       return this.domainMatch(url);
     }
@@ -668,7 +669,7 @@ NoscriptService.prototype={
 ,
   jsPolicySites: new PolicySites(),
   isJSEnabled: function(site,ps) {
-    if(!ps) ps=this. jsPolicySites;
+    if(!ps) ps=this.jsPolicySites;
     return !!ps.matches(site);
   },
   setJSEnabled: function(site,is,fromScratch) {
@@ -700,11 +701,6 @@ NoscriptService.prototype={
     this.reloadWhereNeeded();
   }
 ,
-  getAllWindows: function() {
-     return Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(
-      Components.interfaces.nsIWindowMediator).getEnumerator(null);
-  }
-,
   _lastSnapshot: null,
   _lastGlobal: false,
   reloadWhereNeeded: function(snapshot,lastGlobal) {
@@ -714,17 +710,21 @@ NoscriptService.prototype={
     const global=this.jsEnabled;
     if(typeof(lastGlobal)=="undefined") {
       lastGlobal=this._lastGlobal;
-      this.initContentPolicy();
     }
     this._lastGlobal=global;
+    
+    this.initContentPolicy();
+    
     if( (global==lastGlobal && ps.equals(snapshot)) || !snapshot) return false;
     
     if(!this.getPref("autoReload")) return false;
     
-    const ww=this.getAllWindows();
     var ret=false;
     var ov, gb, bb, b, j, doc, docSites;
     var prevStatus, currStatus;
+    const ww = Components.classes['@mozilla.org/appshell/window-mediator;1']
+                         .getService(Components.interfaces.nsIWindowMediator)
+                         .getEnumerator("navigator:browser");
     for(var w; ww.hasMoreElements();) {
       w=ww.getNext();
       ov=w.noscriptOverlay;
@@ -1039,26 +1039,21 @@ NoscriptService.prototype={
     xpcom_checkInterfaces(iid, iids, Components.results.NS_ERROR_NO_INTERFACE);
   }
 ,
-  _lookupMethod: null,
-  get lookupMethod() {
-    return this._lookupMethod?this._lookupMethod:(this._lookupMethod = 
-      (Components.utils && Components.utils.lookupMethod)
-        ?Components.utils.lookupMethod:Components.lookupMethod);
-  }
+ lookupMethod: Components.utils?Components.utils.lookupMethod:Components.lookupMethod
 ,
   pluginPlaceholder: "chrome://noscript/skin/icon32.png",
+  pluginsExtrasMark: {},
+  getPluginExtras: function(obj) {
+    return (obj._noScriptExtras && obj._noScriptExtras.mark && 
+      this.pluginsExtrasMark == obj._noScriptExtras.mark) ? obj._noScriptExtras : null;
+  },
   forbidSomePlugins: false,
   forbidAllPlugins: false,
   forbidJava: false,
   forbidFlash: false,
-  forbidPlugins: false,
-  pluginSitesCache: {},
-  getPluginSites: function(uri) {
-    const sc=this.pluginSitesCache;
-    return uri?(uri in sc)?sc[uri]:sc[uri]={}:{};
-  },
+  forbidPlugins: false, 
   initContentPolicy: function() {
-    var delegate = this.forbidSomePlugins && !this._lastGlobal ? 
+    var delegate = (this.forbidSomePlugins && !this.getPref("global",false)) ? 
         (Components.interfaces.nsIContentPolicy.TYPE_OBJECT 
           ? this.mainContentPolicy 
           : this.oldStyleContentPolicy)
@@ -1081,32 +1076,17 @@ NoscriptService.prototype={
   mainContentPolicy: {
     shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
       var forbid, isJS, isFlash, isJava;
-      if(aContentType == 5 || ( forbid = isJS = (aContentType == 2) ) ) {
-        var origin;
+      if(aContentType == 5 || (forbid = isJS = (aContentType == 2))) {
+        const url = aContentLocation.spec;
+        const origin = this.getSite(url);
         if(!forbid) {
-          // cache plugin sites as they (attempt to) load
-          if(aRequestOrigin && !aInternalCall) {
-            const sites=this.getPluginSites(aRequestOrigin.spec);
-            const pluginURI=aContentLocation.spec;
-            origin=this.getSite(pluginURI);
-            if(origin) {
-              // we construct an hash for each origin, containing the real URLs 
-              // as properties and the total (unique) count for each plugin URL
-              var pe=sites[origin];
-              if(!pe) {
-                sites[origin]=pe={pluginCount: 1};
-                pe[pluginURI]=true;
-              } else {
-                if(!pe[pluginURI]) {
-                  pe[pluginURI]=true;
-                  pe.pluginCount++;
-                }
-              }
-            }
+          var forceAllow;
+          try {
+            forceAllow = this.pluginsCache.update(url, aMimeTypeGuess, origin, aRequestOrigin, aContext);
+          } catch(ex) {
+            dump("NoScriptService.pluginsCache.update():" + ex + "\n");
           }
-          
-          
-          if(this.forbidSomePlugins) {
+          if((!forceAllow) && this.forbidSomePlugins) {
             var forbid=this.forbidAllPlugins;
             if((!forbid) && aMimeTypeGuess) {
               forbid = 
@@ -1118,42 +1098,35 @@ NoscriptService.prototype={
         }
         
         if(forbid) {
-          if(!origin) origin=this.getSite(aContentLocation.spec);
-          if(!this.isJSEnabled(origin)) {
-            if(aContext && ! isJS) {
-              const lm=Components.lookupMethod;
-              const ci=Components.interfaces;
-              var setAttr,getAttr;
-              if(aContext instanceof ci.nsIDOMHTMLAppletElement) {
-                  (setAttr=lm(aContext,"setAttribute"))("code","java.applet.Applet");
-              }
-              
-              if(this.pluginPlaceholder) {
-                if(aContext instanceof Components.interfaces.nsIDOMNode) {
+          if(!(this.isJSEnabled(origin))) {
+            
+            if(aContext && (!isJS)) {
+              const ci = Components.interfaces;
+              if(aContext instanceof ci.nsIDOMNode) {
+                
+                const lm=this.lookupMethod;
+                
+                if(this.pluginPlaceholder) {
+                 
                   if(aContext instanceof(ci.nsIDOMHTMLEmbedElement)) {
-                    var parent=lm(aContext,"parentNode")();
+                    var parent = lm(aContext,"parentNode")();
                     if(parent instanceof ci.nsIDOMHTMLObjectElement) {
-                      aContext=parent;
-                      setAttr=null;
+                      aContext = parent;
                     }
                   }
-                  
-                  getAttr=lm(aContext,"getAttribute");
-                  if(!setAttr) setAttr=lm(aContext,"setAttribute");
-                  
-                  var clazz=getAttr("class");
-                  if((!clazz) || clazz.indexOf("-noscript-blocked")<0) {
-                    setAttr("class",clazz?clazz+" -noscript-blocked":"-noscript-blocked");
-                  
-                    var title=(aMimeTypeGuess?aMimeTypeGuess.replace("application/","")+"@":"@")+origin;
-                    var desc=getAttr("alt");
-                    setAttr("title",desc?title+" \""+desc+"\"":title);
+
+                  if(aMimeTypeGuess && !this.getPluginExtras(aContext)) {
+                    aContext._noScriptExtras = {
+                      mark: this.pluginsExtrasMark,
+                      url: url,
+                      mime: aMimeTypeGuess
+                    };
                   }
                 }
               }
             }
             
-            dump("NoScript blocked "+aContentLocation.spec+" which is a "+aMimeTypeGuess+" from "+origin+"\n");
+            dump("NoScript blocked " + url + " which is a " + aMimeTypeGuess + " from " + origin + "\n");
             return -3;
           }
         }
@@ -1189,6 +1162,86 @@ NoscriptService.prototype={
     },
     shouldProcess: function(aContentType, aContentLocation, aCtx, aWin) {
       return this.shouldLoad(aContentType, aContentLocation, aCtx, aWin, true);
+    }
+  },
+  pluginsCache: {
+    _lastBrowser: null,
+    findBrowser: function(chrome, win) {
+      var gb=chrome.getBrowser();
+      var browsers;
+      if(! (gb && (browsers = gb.browsers))) return null;
+      
+      var browser = gb.selectedBrowser;
+      if(browser.contentWindow == win) return browser;
+      
+      for(var j = browsers.length; j-- > 0;) {
+        browser = browsers[j];
+        if(browser.contentWindow == win) return browser;
+      }
+      
+      return null;
+    },
+    findBrowserForNode: function(ctx) {
+      if(!ctx) return null;
+      const ci = Components.interfaces;
+      const lm = this.lookupMethod;
+      if(!(ctx instanceof ci.nsIDOMWindow)) {
+        if(ctx instanceof ci.nsIDOMDocument) {
+          ctx = lm(ctx,"defaultView")();
+        } else if(ctx instanceof ci.nsIDOMNode) {
+          ctx = lm(lm(ctx,"ownerDocument")(),"defaultView")();
+        } else return; 
+      }
+      if(!ctx) return;
+      ctx = lm(ctx,"top")();
+      var browser = this._lastBrowser;
+      try {
+        if(browser.contentWindow != ctx) browser = null;
+      } catch(ex) {
+        browser = null;
+      }
+      if(!browser) {
+        this._lastBrowser = null;
+        const wm = Components.classes['@mozilla.org/appshell/window-mediator;1']
+                             .getService(Components.interfaces.nsIWindowMediator);
+        const chrome = wm.getMostRecentWindow("navigator:browser");
+        
+        if(! (browser = this.findBrowser(chrome, ctx))) {
+          const ww = wm.getEnumerator("navigator:browser");
+          for(var w; ww.hasMoreElements();) {
+            w=ww.getNext();
+            if(w != chrome && (browser = this.findBrowser(w, ctx))) {
+              break;
+            }
+          }
+        }
+        this._lastBrowser = browser;
+      }
+      return browser;
+    },
+    lookupMethod: Components.utils?Components.utils.lookupMethod:Components.lookupMethod,
+    update: function(url, mime, origin, docURI, ctx) { // returns forceAllow
+      var browser = this.findBrowserForNode(ctx);
+      if(browser) {
+        var cache = this.get(browser);
+        var uriCache = cache.uris;
+        var uriSpec = docURI.spec;
+        var origCache = uriCache[uriSpec] || (uriCache[uriSpec] = {});
+        origCache[origin] = true;
+        var forceMime = cache.forceAllow[url];
+        return forceMime && forceMime == mime;
+      }
+      return false;
+    },
+    purge: function(cache, uris) {
+      var uriCache = cache.uris;
+      for(u in uriCache) {
+        if(!uris[u]) delete uriCache[u];
+      }
+    },
+    get: function(browser) {
+      return browser.noScriptPluginsCache || 
+      (browser.noScriptPluginsCache = { uris: {}, forceAllow: {} });
     }
   }
 };

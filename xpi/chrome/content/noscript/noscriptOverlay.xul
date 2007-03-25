@@ -70,7 +70,36 @@
       />
    </popup>
 </popupset>
-    
+
+<toolbarpalette id="BrowserToolbarPalette">
+    <toolbarbutton id="noscript-tbb" 
+      tooltiptext="NoScript" 
+      buttonstyle="pictures"
+      image="chrome://noscript/skin/no16.png"
+      class="toolbar-1"
+      label="NoScript"
+      type="menu"
+   >
+   <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+         <menuseparator class="noscript-sep-insert" hidden="true" />
+         <menuseparator class="noscript-sep-stop-global" />
+         <menuitem class="menuitem-iconic" />
+         <menuseparator />
+         <menuitem id="noscript-options-tbb-menuitem"
+          label="&noscriptOptions;"
+          accesskey="&noscriptOptions.accesskey;"
+          oncommand="noscriptOverlay.openOptionsDialog()"
+          tooltiptext="&noscriptOptionsLong;"
+          />
+          <menuitem id="noscript-about-tbb-menuitem"
+            label="&noscriptAbout;"
+            tooltiptext="&noscriptAbout;"
+            oncommand="noscriptOverlay.openAboutDialog()"
+          />
+    </menupopup>
+   </toolbarbutton>
+</toolbarpalette>
+
 <popup id="contentAreaContextMenu">
   <menu id="noscript-context-menu" class="menu-iconic" label="NoScript" >
     <menupopup id="noscript-context-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
@@ -84,7 +113,7 @@
           oncommand="noscriptOverlay.openOptionsDialog()"
           tooltiptext="&noscriptOptionsLong;"
           />
-          <menuitem
+          <menuitem id="noscript-about-ctx-menuitem"
             label="&noscriptAbout;"
             tooltiptext="&noscriptAbout;"
             oncommand="noscriptOverlay.openAboutDialog()"

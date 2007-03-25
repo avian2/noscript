@@ -1,1 +1,9 @@
+/*
+#noscript-tbb {
+  list-style-image: url("chrome://noscript/skin/no24.png");
+}
 
+toolbar[iconsize="small"] #noscript-tbb {
+  list-style-image: url("chrome://noscript/skin/no16.png");
+}
+*/

@@ -1,0 +1,41 @@
+<!ENTITY noscriptOptions "Opcje">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "Opcje NoScript">
+<!ENTITY noscriptAbout "O NoScript...">
+<!ENTITY noscriptPermissionsText "Możesz podać które adresy stron www które mogą uruchamiać JavaScript. Wpisz adres lub domenę (np. &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) strony którą chcesz dodać i kliknij Dodaj.">
+<!ENTITY noscriptWebAddress "Adres strony:">
+<!ENTITY noscriptAllow "Dodaj">
+<!ENTITY noscriptAllow.accesskey "a">
+<!ENTITY noscriptRemoveSelected "Usuń wybrane pozycje">
+<!ENTITY noscriptGloballyEnabled "Pozwól na JavaScript globalnie (niebezpieczne)">
+<!ENTITY noscriptAutoReload "Automatycznie przeładuj stronę po zmianie uprawnień">
+<!ENTITY noscriptGeneral "Ogólne">
+<!ENTITY noscriptAppearance "Wygląd">
+<!ENTITY noscriptShow "Pokazuj...">
+<!ENTITY noscriptCtxMenu "Menu kontekstowe">
+<!ENTITY noscriptStatusIcon "Ikonka na pasku stanu">
+<!ENTITY noscriptFullAddr "Pełen adres (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Pełna domena (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Poddomena (noscript.net)">
+<!ENTITY noscriptTempCmd "Tymczasowo nie blokuj [...]">
+<!ENTITY noscriptSound "Odtwórz dźwięk gdy skrypty są blokowane">
+<!ENTITY noscriptImport "Importuj">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Eksportuj">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Wyświetl powiadomienie o blokowanych skryptach">
+<!ENTITY noscriptNotify.bottom "Umieść powiadomienie na dole">
+<!ENTITY noscriptSound.choose "Przeglądaj">
+<!ENTITY noscriptSound.choose.accesskey "P">
+<!ENTITY noscriptSound.play "Odtwórz">
+<!ENTITY noscriptSound.play.accesskey "O">
+<!ENTITY noscriptSound.reset "Domyślny">
+<!ENTITY noscriptSound.reset.accesskey "D">
+<!ENTITY noscriptAdvanced "Zaawansowane">
+<!ENTITY noscriptAdditionalPermissions "Dodatkowe uprawnienia dla zaufanych witryn">
+<!ENTITY noscriptAllowClipboard "Pozwalaj na kopiowanie/wklejanie ze schowka w formacie RTF">
+<!ENTITY noscriptAdditionalRestrictions "Dodatkowe restrykcje dla niepewnych witryn">
+<!ENTITY noscriptForbidJava "Blokuj Java™">
+<!ENTITY noscriptForbidFlash "Blokuj Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Blokuj inne wtyczki">
+<!ENTITY noscriptReloadWarn "Te opcje będą działały na nowych lub (ręcznie) przeładowanych stronach">

@@ -1,0 +1,41 @@
+<!ENTITY noscriptOptions "Opcions">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "Opcions de NoScript">
+<!ENTITY noscriptAbout "Quant a NoScript">
+<!ENTITY noscriptPermissionsText "Podeu especificar quins llocs web podran executar JavaScript. Escriviu l'adreça o el domini (p.ex. &quot;http://www.site.com&quot; o &quot;site.com&quot;) del lloc que voleu afegir i, després, feu clic a Permet.">
+<!ENTITY noscriptWebAddress "Adreça del lloc web:">
+<!ENTITY noscriptAllow "Permet">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptRemoveSelected "Suprimeix els llocs seleccionats">
+<!ENTITY noscriptGloballyEnabled "El JavaScript és permès globalment (perillós)">
+<!ENTITY noscriptAutoReload "Recarrega automàticament les pàgines afectades en canviar els permisssos">
+<!ENTITY noscriptGeneral "General">
+<!ENTITY noscriptAppearance "Aparença">
+<!ENTITY noscriptShow "Mostra">
+<!ENTITY noscriptCtxMenu "Menú contextual">
+<!ENTITY noscriptStatusIcon "Icona de la barra d'estat">
+<!ENTITY noscriptFullAddr "Adreces completes (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Dominis complets (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Dominis de segon nivell (noscript.net)">
+<!ENTITY noscriptTempCmd "Permet temporalment [...]">
+<!ENTITY noscriptSound "Reprodueix un so en blocar les seqüències">
+<!ENTITY noscriptImport "Importa">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exporta">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Mostra un missatge amb les seqüències blocades">
+<!ENTITY noscriptNotify.bottom "Col·loca el missatge a la part de baix">
+<!ENTITY noscriptSound.choose "Tria">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Reprodueix">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Reinicia allò predeterminat">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Avançades">
+<!ENTITY noscriptAdditionalPermissions "Permissos addicionals per a llocs de confiança">
+<!ENTITY noscriptAllowClipboard "Permet copiar i enganxar text enriquit des d'un porta-retalls extern">
+<!ENTITY noscriptAdditionalRestrictions "Restriccions addicionals per a llocs en què desconfieu">
+<!ENTITY noscriptForbidJava "Prohibeix el Javaâ¢">
+<!ENTITY noscriptForbidFlash "Prohibeix el MacromediaÂ® FlashÂ®">
+<!ENTITY noscriptForbidPlugins "Prohibeix d'altres connectors">
+<!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pàgines noves o recarregades (manualment)">

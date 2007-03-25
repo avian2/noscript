@@ -16,4 +16,5 @@ pref("noscript.forbidPlugins",false);
 pref("noscript.sound.block","chrome://noscript/skin/block.wav");
 pref("noscript.allowClipboard",false);
 pref("noscript.pluginPlaceholder","chrome://noscript/skin/icon32.png");
+pref("noscript.global",false);
 

@@ -7,7 +7,7 @@
 <!ENTITY noscriptAllow "Erlauben">
 <!ENTITY noscriptAllow.accesskey "E"> 
 <!ENTITY noscriptRemoveSelected "Markierte Seiten entfernen">
-<!ENTITY noscriptGloballyEnabled "JavaScript global erlauben (gefährlich)">
+<!ENTITY noscriptGloballyEnabled "JavaScript generell erlauben (gefährlich)">
 <!ENTITY noscriptAutoReload "Aktuelle Seite automatisch neu laden wenn die Berechtigungen ändern">
 <!ENTITY noscriptGeneral "Allgemein">
 <!ENTITY noscriptAppearance "Aussehen">
@@ -23,7 +23,7 @@
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exportieren">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Meldung anzeigen bei blockierten Scripts">
+<!ENTITY noscriptNotify "Meldung anzeigen wenn Scripts geblockt wurden">
 <!ENTITY noscriptNotify.bottom "Meldung am unteren Rand anzeigen">
 <!ENTITY noscriptSound.choose "Wählen">
 <!ENTITY noscriptSound.choose.accesskey "W">
@@ -39,3 +39,4 @@
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden bei neu (oder manuell) geladenen Seiten wirksam">
+

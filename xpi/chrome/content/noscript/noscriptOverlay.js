@@ -45,21 +45,26 @@ NoScriptOverlay.prototype={
             if(sites) {
               sites.push(url);
             } else {
-              sites=[url];
-              sites.scriptCount=0;
-              sites.pluginCount=0;
+              sites = [url];
+              sites.pluginsCache = ns.pluginsCache.get(getBrowser().selectedBrowser);
+              sites.scriptCount = 0;
+              sites.pluginCount = 0;
+              sites.docURIs = {};
+              sites.loading = this.isLoading();
             }
-            var pluginSites=ns.getPluginSites(docURI);
-            for(var pe in pluginSites) {
-              sites.push(pe);
-              sites.pluginCount+=pluginSites[pe].pluginCount;
+            sites.docURIs[docURI] = true;
+            var cache = sites.pluginsCache.uris[docURI];
+            if(cache) {
+              for(url in cache) {
+                sites[sites.length] = url;
+              }
             }
           }
           var scripts=new XPCNativeWrapper(getByTag("script"),"item()","length");
           var scount=scripts.length;
           if(scount) {
             sites.scriptCount+=scount;
-            var script,scriptSrc;
+            var script, scriptSrc;
             while(scount-->0) {
               script=scripts.item(scount);
               if(script instanceof XULElement) {
@@ -74,53 +79,89 @@ NoScriptOverlay.prototype={
               }
             }
           }
-          var pp=ns.pluginPlaceholder;
-          if(pp && ! (lm(doc,"getElementById")("_noscript_styled") || this.isLoading() ) ) {
-            const createElem=lm(doc,"createElement");
-            var style=createElem("style");
-            style.setAttribute("id","_noscript_styled");
-            style.setAttribute("type","text/css");
-            style.appendChild(lm(doc,"createTextNode")(
-              ".-noscript-blocked { border: 1px solid red !important; background: white url(\""
-              + pp + "\") no-repeat left top !important; opacity: 0.6 !important; }"
-            ));
-            try {
-              lm(getByTag("head")[0],"appendChild")(style);
-            } catch(ex) {}
-            const appletTags=["applet","object"];
-            var tcount=appletTags.length;
-            var applets,applet,clazz,div,innerDiv,style,cssCount,cssProp,cssDef;
-            var aWidth,aHeight;
-            while(tcount-->0) {
-              var applets=new XPCNativeWrapper(getByTag(appletTags[tcount]),"item()","length");
-              for(acount=applets.length; acount-- >0;) {
-                applet=applets.item(acount);
+          var pp = ns.pluginPlaceholder;
+          var replacePlugins = pp && 
+                   !(sites.loading || lm(doc,"getElementById")("_noscript_styled")) ;
+          
+          const appletTags=["embed", "applet", "object"];
+          var tcount=appletTags.length;
+          var applets, applet, div, innerDiv, appletParent;
+          var extras, title;
+          var style, cssLen, cssCount, cssProp, cssDef;
+          var aWidth,aHeight;
+          var createElem;
+          while(tcount-->0) {
+            var applets=new XPCNativeWrapper(getByTag(appletTags[tcount]),"item()","length");
+            for(acount=applets.length; acount-- >0;) {
+              applet = applets.item(acount);
+              if( (!tcount) && 
+                (lm(applet,"parentNode")() instanceof HTMLObjectElement)) {
+                continue; // skip "embed" if nested into "object"
+              }
+              
+              sites.pluginCount++;
+              
+              if(replacePlugins) {
+                if(!createElem) {
+                  createElem=lm(doc,"createElement");
+                  var style=createElem("style");
+                  style.setAttribute("id","_noscript_styled");
+                  style.setAttribute("type","text/css");
+                  style.appendChild(lm(doc,"createTextNode")(
+                    ".-noscript-blocked { -moz-outline-color: red !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; background: white url(\""
+                    + pp + "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important }"
+                  ));
+                  try {
+                    lm(getByTag("head")[0],"appendChild")(style);
+                  } catch(ex) {}
+                }
                 try {
-                  clazz=lm(applet,"getAttribute")("class");
-                  if(clazz && clazz.indexOf("-noscript-blocked")>-1) {
-                    innerDiv=createElem("div");
-                    div=createElem("div");
-                    div.setAttribute("title",lm(applet,"getAttribute")("title"));
-                    div.style.display="inline";
+                  if(extras = ns.getPluginExtras(applet)) {
+                   
+                    
+                    div = createElem("div");
+                    innerDiv = createElem("div");
+                    title = (extras.mime ? extras.mime.replace("application/","")+"@":"@") + url;
+                    extras.alt = lm(applet,"getAttribute")("alt");
+                    
+                    div.setAttribute("title", extras.alt ? title+" \"" + 
+                      extras.alt + "\"" : title);
+                    
+                    div.style.display = "inline";
+                    div.style.padding = div.style.margin = "0px";
+                     
                     style=lm(lm(doc,"defaultView")(),"getComputedStyle")(applet,"");
                     cssDef="";
-                    for(cssCount=style.length; cssCount-- >0;) {
+                    for(cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
                       cssProp=style.item(cssCount);
                       cssDef+=cssProp+": "+style.getPropertyValue(cssProp)+";";
                     }
                     innerDiv.setAttribute("style",cssDef);
-                    innerDiv.style.display="block";
-                    lm(applet,"setAttribute")("style","display: none !important");
-                    lm(lm(applet,"parentNode")(),"insertBefore")(div,applet);
+                    innerDiv.setAttribute("class", "-noscript-blocked");
+                    
+                    innerDiv.style.display = "block";
+                    
+                    div._noScriptRemovedObject = lm(applet, "cloneNode")(true);
+                    div._noScriptExtras = extras;
+                    
+                    while(lm(applet,"hasChildNodes")()) {
+                      lm(applet,"removeChild")(lm(applet,"firstChild")());
+                    }
+                    
+                    lm(lm(applet,"parentNode")(),"replaceChild")(div, applet);
                     div.appendChild(innerDiv);
-                    div.appendChild(applet);
+                    div.addEventListener("click", _noScript_onPluginClick, false);
                   }
-                } catch(appletEx) {}
+                } catch(appletEx) {
+                  dump("NoScript: "+appletEx+" processing plugin "+acount+"@"+url);
+                }
               }
             }
           }
+          
           sites=this.getSites(doc, sites, 'frame');
           sites=this.getSites(doc, sites, 'iframe');
+          if(!sites.loading) ns.pluginsCache.purge(sites.pluginsCache, sites.docURIs);
           return ns.sortedSiteSet(sites);
         } else {
           var frames=new XPCNativeWrapper(getByTag(tagName),"item()","length");
@@ -423,6 +464,14 @@ NoScriptOverlay.prototype={
         :null;
   }
 ,
+  _disablePopup: function(id) {
+    const popup=document.getElementById(id);
+    if(popup) {
+      popup.parentNode.setAttribute("onclick","noscriptOverlay.uninstallAlert()");
+      popup.parentNode.removeChild(popup);
+    }
+  }
+,
   _syncUINow: function() {
    
     const ns=this.ns;
@@ -432,12 +481,8 @@ NoScriptOverlay.prototype={
         ns.uninstallAlerted=true;
       }
       this._syncInfo.uninstallCheck=false;
-
-      const popup=document.getElementById("noscript-status-popup");
-      if(popup) {
-        popup.parentNode.setAttribute("onclick","noscriptOverlay.uninstallAlert()");
-        popup.parentNode.removeChild(popup);
-      }
+      this._disablePopup("noscript-status-popup");
+      this._disablePopup("noscript-tbb-popup");
     }
     
     const global=ns.jsEnabled;
@@ -470,14 +515,21 @@ NoScriptOverlay.prototype={
       lev=(allowed==total && sites.length>0)?"yes":allowed==0?"no":"prt";
       notificationNeeded=(lev!="yes" && totalAnnoyances>0); 
     }
-    const widget=document.getElementById("noscript-status");
+    
     var message=this.getString("allowed."+lev)
       +" [<script>: "+totalScripts+"] [J+F+P: "+totalPlugins+"]";
-   
     var icon=this.getIcon(lev,!totalAnnoyances);
-    widget.setAttribute("tooltiptext",message);
-    widget.setAttribute("src",icon);
     
+   var widget=document.getElementById("noscript-tbb");
+   if(widget) {
+     widget.setAttribute("tooltiptext",message);
+     widget.setAttribute("image",icon);  
+   }
+   
+   widget=document.getElementById("noscript-status");
+   widget.setAttribute("tooltiptext",message);
+   widget.setAttribute("src",icon);
+
     const mb=this.getMessageBox();
     const mbMine=this.isNsMB(mb);
     if(notificationNeeded) { // notifications
@@ -488,7 +540,7 @@ NoScriptOverlay.prototype={
           if(mbMine || hidden) {
             if(this.checkDocFlag(doc,"_noscript_message_shown")) {
               const browser=getBrowser();
-              var buttonLabel, buttonAccessKey;
+              var buttonLabel, buttonAccesskey;
               if(/\baButtonAccesskey\b/i.test(browser.showMessage.toSource())) {
                 const refWidget=document.getElementById("noscript-options-ctx-menuitem");
                 buttonLabel=refWidget.getAttribute("label");
@@ -504,6 +556,12 @@ NoScriptOverlay.prototype={
             } else if(mbMine && !hidden) {
               mb.text=message;
               mb.image=icon;
+            }
+            if(!mb._noScriptOneClickPatch) {
+              mb._noScriptOneClickPatch = true;
+              if(mb._buttonElement && mb._buttonElement.accessKey) { // Fx 1.5
+                // mb.addEventListener("click",_noScript_onMessageClick,false);
+              }
             }
           }
         } else if(mbMine && !hidden) {
@@ -571,8 +629,7 @@ const noscriptOverlayPrefsObserver={
        case "notify.bottom" : 
        var mb=noscriptOverlay.getMessageBox("top");
        if(mb) mb.hidden=true;
-       var mb=noscriptOverlay.getMessageBox("bottom");
-       if(mb) mb.hidden=true;
+       if(mb=noscriptOverlay.getMessageBox("bottom")) mb.hidden=true;
        break;
     }
   },
@@ -585,7 +642,40 @@ const noscriptOverlayPrefsObserver={
   }
 };
 
+function _noScript_onMessageClick(ev) {
+  if(noscriptOverlay.isNsMB(ev.target)) {
+    document.getElementById(ev.target.popup).showPopup(ev.target,-1,-1,"popup");
+  }
+}
 
+function _noScript_onPluginClick(ev) {
+  const div = ev.currentTarget;
+  const applet = div._noScriptRemovedObject;
+  if(applet) {
+    const ns = noscriptUtil.service;
+    const extras = ns.getPluginExtras(div);
+    const cache = ns.pluginsCache.get(ns.pluginsCache.findBrowserForNode(div));
+    if(! (extras && extras.url && extras.mime && cache) ) return;
+    
+    var url = extras.url;
+    var mime = extras.mime;
+    var description = url + "\n(" + mime + ")\n";
+    
+    if(ns.prompter.confirm(window, "NoScript", 
+       noscriptUtil.getString("allowTemp", [description]))
+    ) {
+      div._noScriptRemovedObject = null;
+      cache.forceAllow[url] = mime;
+      window.setTimeout(function() {
+        const lm = ns.lookupMethod;
+        while(lm(div,"hasChildNodes")()) {
+          lm(div,"removeChild")(lm(div,"firstChild")());
+        }
+        lm(lm(div,"parentNode")(),"replaceChild")(applet, div)
+      },0);
+    }
+  }
+}
 
 function _noScript_syncUI(ev) { 
   noscriptOverlay.syncUI(ev); 
@@ -594,8 +684,8 @@ function _noScript_prepareCtxMenu(ev) {
     noscriptOverlay.prepareContextMenu(ev);
 }
 function _noScript_onloadInstall(ev) {
-  document.getElementById("contentAreaContextMenu").addEventListener(
-    "popupshowing",_noScript_prepareCtxMenu,false);
+  document.getElementById("contentAreaContextMenu")
+          .addEventListener("popupshowing",_noScript_prepareCtxMenu,false);
 }
 
 const _noScript_syncEvents=["load","focus"];
@@ -613,9 +703,11 @@ function _noScript_install() {
 
 function _noScript_dispose(ev) {
   _noScript_syncEvents.visit(window.removeEventListener);
-  window.removeEventListener("load",_noScript_onloadInstall,false);
-  document.removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);
   noscriptOverlayPrefsObserver.remove();
+  window.removeEventListener("load",_noScript_onloadInstall,false);
+  document.getElementById("contentAreaContextMenu")
+          .removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);  
+  
 }
 
 _noScript_install();

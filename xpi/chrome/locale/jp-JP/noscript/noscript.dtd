@@ -1,0 +1,41 @@
+<!ENTITY noscriptOptions "オプション">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript オプション">
+<!ENTITY noscriptAbout "NoScriptについて">
+<!ENTITY noscriptPermissionsText "JavaScriptを許可するサイトを指定する事ができます。許可したいサイトのアドレスかドメインを入力して、ボタンを押してください。(例: &quot;http://www.site.com&quot; or &quot;site.com&quot;)">
+<!ENTITY noscriptWebAddress "ウェブサイトのアドレス:">
+<!ENTITY noscriptAllow "許可する">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptRemoveSelected "選択中のサイトを削除">
+<!ENTITY noscriptGloballyEnabled "すべてのサイトのJavaScriptを許可する (危険)">
+<!ENTITY noscriptAutoReload "許可を変更したとき自動的にページを再読込する">
+<!ENTITY noscriptGeneral "全般">
+<!ENTITY noscriptAppearance "インターフェース">
+<!ENTITY noscriptShow "外観...">
+<!ENTITY noscriptCtxMenu "コンテキストメニュー">
+<!ENTITY noscriptStatusIcon "ステータスバーアイコン">
+<!ENTITY noscriptFullAddr "フルアドレス (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "フルドメイン (www.noscript.net)">
+<!ENTITY noscriptBaseDom "2ndレベル ドメイン (noscript.net)">
+<!ENTITY noscriptTempCmd "一時的に許可する [...]">
+<!ENTITY noscriptSound "スクリプトをブロックしたときにサウンドで知らせる">
+<!ENTITY noscriptImport "インポート">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "エクスポート">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "スクリプトをブロックしたとき情報を表示する">
+<!ENTITY noscriptNotify.bottom "情報を下部に表示する">
+<!ENTITY noscriptSound.choose "選択">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "再生">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "設定をリセット">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "詳細設定">
+<!ENTITY noscriptAdditionalPermissions "信頼済みサイトへの許可の追加">
+<!ENTITY noscriptAllowClipboard "クリップボードからリッチテキストのコピーとペーストを可能にする">
+<!ENTITY noscriptAdditionalRestrictions "信頼されていないサイトへの制限の追加">
+<!ENTITY noscriptForbidJava "Java&#8482; の禁止">
+<!ENTITY noscriptForbidFlash "Macromedia&#174; Flash&#174; の禁止">
+<!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
+<!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページか(手動で)再読込されたページで有効になります">
