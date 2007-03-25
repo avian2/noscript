@@ -582,10 +582,9 @@ NoscriptService.prototype={
    
     // init jsPolicySites from prefs
     this.syncPrefs(this.policyPB,"sites");
-    this.jsPolicySites.remove(this.tempSites.sitesList, false, true); // remove temporary
-    this.setPref("temp",""); // flush temporary list
-    this.setJSEnabled(this.permanentSites.sitesList,true); // add permanent & save
-
+    this.eraseTemp();
+    
+    
     const POLICY_NAME=this.POLICY_NAME;
     var prefArray;
     var prefString="",originalPrefString="";
@@ -675,15 +674,23 @@ NoscriptService.prototype={
   setJSEnabled: function(site,is,fromScratch) {
     const ps=this.jsPolicySites;
     if(fromScratch) ps.sitesString=this.permanentSites.sitesString;
-    var change = is ? ps.add(site) : ps.remove(site, false, true);
-    if(change) {
-      try {
-        change=ps.sitesString != this.policyPB.getCharPref("sites");
-      } catch(ex) {}
-      if(change) {
-        this.policyPB.setCharPref("sites",ps.sitesString);
-      }
+    if(is) {
+      ps.add(site)
+    } else {
+      ps.remove(site, false, true);
     }
+    
+    var change;
+    try {
+      change = ps.sitesString != this.policyPB.getCharPref("sites");
+    } catch(ex) {
+      change = true;
+    }
+    
+    if(change) {
+      this.policyPB.setCharPref("sites",ps.sitesString);
+    }
+  
     return is;
   }
 ,
@@ -909,6 +916,12 @@ NoscriptService.prototype={
     return this.uninstalling;
   }
 ,
+  eraseTemp: function() {
+    this.jsPolicySites.remove(this.tempSites.sitesList, false, true); // remove temporary
+    this.setJSEnabled(this.permanentSites.sitesList,true); // add permanent & save
+    this.setPref("temp",""); // flush temporary list
+  }
+,
   resetJSCaps: function() {
     try {
       this.caps.clearUserPref("default.javascript.enabled");
@@ -929,6 +942,7 @@ NoscriptService.prototype={
           this.caps.clearUserPref("policynames");
         } catch(ex1) {}
       }
+      this.eraseTemp();
       this.savePrefs();
     } catch(ex) {
       // dump(ex);
