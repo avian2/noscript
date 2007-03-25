@@ -2,8 +2,17 @@ NoScript ChangeLog
 
 TODO:
 Allow some URL only for current session life-span (many requests!!!)
-Remove dummy space at the menu bottom (TheOneKEA)
 Whitelist import/export (hsmwrv)
+Work-around for XUL error messages
+
+v 1.0.5
+=====================================================================
++ "Appearance" option to hide/show popup menu and status bar icon; if
+  you decide to hide both, options are still reachable through the 
+  Extension Manager context menu (thanks Dick Minor for suggestion)
++ 2nd level domain trick don't clutters Options Dialog anymore
+  (http[s]:// auto-prefixed domains are hidden in whitelist)
+x Fixed menu layout (thanks to TheOneKEA for report)
 
 v 1.0.4
 =====================================================================

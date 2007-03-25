@@ -25,6 +25,7 @@ g_jsglobal=null;
 g_urlText=null;
 g_addButton=null;
 g_removeButton=null;
+g_dom2=/^http[s]?:\/\/([\w\-]+(:?\.[\w]+$|$))/;
 
 function nso_init() {
   if(g_ns.uninstalling) { // this should never happen! 
@@ -66,11 +67,11 @@ function nso_urlChanged() {
   if(url.match(/\s/)) url=g_urlText.value=url.replace(/\s/g,'');
   var addEnabled=url.length>0 && (url=g_ns.getSite(url))!=null;
   if(addEnabled) {
-    for(var j=g_urlList.getRowCount(); j-->0;) {
-      if(g_urlList.getItemAtIndex(j).getAttribute("value")==url) {
-        addEnabled=false;
-        break;
-      }
+    var match=url.match(g_dom2);
+    if(match) url=match[1];
+    url=g_ns.findShortestMatchingSite(url,nso_urlList2Arr());
+    if(!(addEnabled=url==null)) {
+      nso_ensureVisible(url);
     }
   }
   g_addButton.setAttribute("disabled",!addEnabled);
@@ -79,8 +80,21 @@ function nso_urlChanged() {
 function nso_populateUrlList(sites) {
   for(var j=g_urlList.getRowCount(); j-->0; g_urlList.removeItemAt(j));
   var site,item;
+  
+  var match,k;
   for(j=0, len=sites.length; j<len; j++) {
     site=sites[j];
+    // skip protocol+2ndlevel domain URLs
+    if(match=site.match(g_dom2)) {
+      item=match[1];
+      for(k=sites.length; k-->0;) {
+        if(sites[k]==item) {
+          item=null;
+          break;
+        }
+      }
+      if(!item) continue;
+    }
     item=g_urlList.appendItem(site,site);
     if(g_ns.isPermanent(site)) { 
       item.setAttribute("disabled","true");
@@ -97,6 +111,14 @@ function nso_urlList2Arr() {
   return sites;
 }
 
+function nso_ensureVisible(site) {
+  var item;
+  for(var j=g_urlList.getRowCount(); j-->0;) {
+    if((item=g_urlList.getItemAtIndex(j)).getAttribute("value")==site) {
+      g_urlList.ensureElementIsVisible(item);
+    }
+  }
+}
 
 function nso_allow() {
   var site=g_ns.getSite(g_urlText.value);
@@ -104,12 +126,7 @@ function nso_allow() {
   sites[sites.length]=site;
   sites=g_ns.sortedSiteSet(sites);
   nso_populateUrlList(sites);
-  var item;
-  for(var j=g_urlList.getRowCount(); j-->0;) {
-    if((item=g_urlList.getItemAtIndex(j)).getAttribute("value")==site) {
-      g_urlList.ensureElementIsVisible(item);
-    }
-  }
+  nso_ensureVisible(site);
   g_addButton.setAttribute("disabled","true");
 }
 
@@ -132,8 +149,9 @@ function nso_save() {
     }
   );
   
-  const sites=nso_urlList2Arr();
-
+  const sites=[];
+  g_ns.setJSEnabled(nso_urlList2Arr(),true,sites);
+  
   const oldSS=g_ns.sitesString;
   g_ns.sites=sites;
   const oldGlobal=g_ns.jsEnabled;

@@ -194,9 +194,10 @@ NoScriptOverlay.prototype={
           }
         }
       }
-      
-      node=document.createElement("menuseparator");
-      parent.insertBefore(node,stopSep);
+      if(stopSep.previousSibling.tagName!="menuseparator") {
+        node=document.createElement("menuseparator");
+        parent.insertBefore(node,stopSep);
+      }
       
       for(scount=menuSites.length; scount-->0;) {
         menuSite=menuSites[scount];
@@ -217,11 +218,12 @@ NoScriptOverlay.prototype={
       }
     }
     
-    if(insertSep==parent.firstChild) {
-      // kill exceeding top separator in contextual menu 
-      insertSep.nextSibling.setAttribute("collapsed","true");
+    
+    if(globalSep!=stopSep) { // status bar
+      insertSep.setAttribute("collapsed", insertSep.nextSibling.getAttribute("collapsed")?"true":"false");
+    } else { // context menu
+      globalSep.setAttribute("collapsed",stopSep==parent.firstChild.nextSibling); 
     }
-      
   }
 ,
   get srcWindow() {
@@ -350,6 +352,32 @@ NoScriptOverlay.prototype={
 
 noscriptOverlay=new NoScriptOverlay();
 
+noscriptOverlayPrefsObserver={
+  ns: noscriptOverlay.ns
+,
+  QueryInterface: function(iid) {
+    return this.ns.queryInterfaceSupport(iid, [Components.interfaces.nsIObserver]);
+  }
+,
+  observe: function(subject, topic, data) {
+    switch(data) {
+      case "statusIcon":
+        window.setTimeout(function() {
+          document.getElementById("noscript-status").setAttribute("collapsed",
+            !noscriptOverlay.ns.getPref("statusIcon"))
+        },0);
+       break;  
+    }
+  },
+  register: function() {
+    this.ns.prefs.addObserver("",this,false);
+    this.observe(null,null,"statusIcon");
+  },
+  remove: function() {
+    this.ns.prefs.removeObserver("",this);
+  }
+};
+
 _noScript_syncUI=function(ev) { 
   noscriptOverlay.syncUI(ev); 
 };
@@ -371,6 +399,7 @@ _noScript_install=function() {
   _noScript_syncEvents.visit(window.addEventListener);
   window.addEventListener("load",_noScript_onloadInstall,false);
   window.addEventListener("unload",_noScript_dispose,false);
+  noscriptOverlayPrefsObserver.register();
 };
 
 _noScript_dispose=function(ev) {
@@ -378,6 +407,7 @@ _noScript_dispose=function(ev) {
   _noScript_syncEvents.visit(window.removeEventListener);
   window.removeEventListener("load",_noScript_onloadInstall,false);
   document.removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);
+  noscriptOverlayPrefsObserver.remove();
 };
 
 _noScript_install();

@@ -38,6 +38,15 @@
   
   <script type="application/x-javascript" src="noscript.js" />
   <script type="application/x-javascript" src="noscriptOptions.js" />
+  
+  <tabbox >
+  <tabs>
+    <tab label="&noscriptGeneral;"/>
+    <tab label="&noscriptAppearance;"/>
+  </tabs>
+    <tabpanels>
+      <tabpanel>
+  
   <vbox>
   <hbox>
   <description style="width: 400px; white-space: normal" id="permissionsText">&noscriptPermissionsText;</description>
@@ -67,7 +76,18 @@
   </hbox>
   <separator class="thin"/>
   <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
-  <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
-  <checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
   </vbox>
+  </tabpanel>
+  <tabpanel>
+  <vbox>
+  <description>&noscriptShow;</description>
+   <separator class="thin"/>
+    <checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
+    <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
+    <separator class="groove"/>
+    <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
+  </vbox>
+  </tabpanel>
+  </tabpanels>
+  </tabbox>
 </dialog>

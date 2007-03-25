@@ -9,4 +9,9 @@
 <!ENTITY noscriptRemoveSelected "Remove Selected Sites">
 <!ENTITY noscriptGloballyEnabled "JavaScript Globally Allowed (dangerous)">
 <!ENTITY noscriptAutoReload "Automatically reload current page when permissions change">
-<!ENTITY noscriptCtxMenu  "Show contextual menu">
+<!ENTITY noscriptGeneral "General">
+<!ENTITY noscriptAppearance "Appearance">
+<!ENTITY noscriptShow "Show...">
+<!ENTITY noscriptCtxMenu "Contextual menu">
+<!ENTITY noscriptStatusIcon "Status bar icon">
+

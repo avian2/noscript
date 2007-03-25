@@ -9,5 +9,10 @@
 <!ENTITY noscriptRemoveSelected "Markierte Seiten entfernen">
 <!ENTITY noscriptGloballyEnabled "JavaScript global erlauben (gefährlich)">
 <!ENTITY noscriptAutoReload "Aktuelle Seite automatisch neu laden wenn die Berechtigungen ändern">
-<!ENTITY noscriptCtxMenu "Im Kontextmenü anzeigen">
+<!ENTITY noscriptGeneral "Allgemein">
+<!ENTITY noscriptAppearance "Aussehen">
+<!ENTITY noscriptShow "Anzeigen...">
+<!ENTITY noscriptCtxMenu "Kontextmenü">
+<!ENTITY noscriptStatusIcon "Statusleiste Icon">
+
 

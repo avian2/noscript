@@ -29,14 +29,14 @@ NoscriptService.prototype={
   }
 ,
   QueryInterface: function(iid) {
-     flashgot_checkInterfaces(iid,Components.results.NS_ERROR_NO_INTERFACE);
+     this.queryInterfaceSupport(iid,SERVICE_IIDS);
      return this;
   }
 ,
   // nsIObserver implementation 
   observe: function(subject, topic, data) {
-    if(subject==this.prefs) {
-      this.syncPrefs(data);
+    if(subject instanceof Components.interfaces.nsIPrefBranchInternal) {
+      this.syncPrefs(branch,data);
     } else {
       switch(topic) {
         case "xpcom-shutdown":
@@ -62,21 +62,33 @@ NoscriptService.prototype={
 ,
   unregister: function() {
     const osvr=Components.classes['@mozilla.org/observer-service;1'].getService(
-    Components.interfaces.nsIObserverService);
+      Components.interfaces.nsIObserverService);
     osvr.removeObserver(this,"profile-before-change");
     osvr.removeObserver(this,"xpcom-shutdown");
     osvr.removeObserver(this,"profile-after-change");
   }
 ,
-  syncPrefs: function(name) {}
+  syncPrefs: function(branch,name) {
+  }
 ,
-  _inited: false
+  _inited: false,
+  POLICY_NAME: "maonoscript",
+  prefService: null,
+  caps: null,
+  prefs: null,
+  //mozJSPref: null,
+  uninstalling: false
 ,
   init: function() {
     if(this._inited) return;
     this._inited=true;
-    this.DEFAULT_WHITELIST=this.getPref("default",
-      "noscript.net gmail.google.com googlesyndication.com informaction.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
+    const prefserv=this.prefService=Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService)
+    const PBI=Components.interfaces.nsIPrefBranchInternal;
+    this.caps=prefserv.getBranch("capability.policy.").QueryInterface(PBI);
+    this.prefs=prefserv.getBranch("noscript.").QueryInterface(PBI);
+    // this.mozJSPref=prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
+    // this.mozJSPref.addObserver("enabled",this,false);
+    
     this.permanentList=this.sortedSiteSet(this.splitList(this.getPref("permanent",
       "googlesyndication.com noscript.net maone.net informaction.com noscript.net")));
     const sites=this.sites=this.sites;
@@ -106,13 +118,7 @@ NoscriptService.prototype={
       this.caps.setCharPref(POLICY_NAME+".javascript.enabled","allAccess");
     }
     
-    var site;
-    for(var ps in this.permanentList) {
-      site=this.permanentList[ps];
-      if(!this.isJSEnabled(site,sites)) {
-        this.setJSEnabled(site,true);
-      }
-    }
+    this.setJSEnabled(this.permanentList,true,sites);
   }
 ,
   isPermanent: function(s) {
@@ -122,40 +128,25 @@ NoscriptService.prototype={
     for(var ps in pl) if(pl[ps]==s) return true;
   }
 ,
-  POLICY_NAME: "maonoscript",
-  _caps: null,
-  get caps() {
-    return this._caps?this._caps:this._caps=Components.classes["@mozilla.org/preferences-service;1"].getService(
-      Components.interfaces.nsIPrefService).getBranch("capability.policy.");
-  }
-, 
-  _prefs: null,
-  get prefs() {
-    return this._prefs?this._prefs:this._prefs=Components.classes["@mozilla.org/preferences-service;1"].getService(
-      Components.interfaces.nsIPrefService).getBranch("noscript.");
-  }
-,
-  uninstalling: false
-,
   splitList: function(s) {
-    return s.split(/\s*[, ]\s*/);
+    return /^[,\s]*$/.test(s)?[]:s.split(/\s*[, ]\s*/);
   }
 ,
   savePrefs: function() {
-    return Components.classes["@mozilla.org/preferences-service;1"].getService(
-        Components.interfaces.nsIPrefService).savePrefFile(null);
+    return this.prefService.savePrefFile(null);
   }
 ,
   get sitesString() {
     try {
       return this.caps.getCharPref(this.POLICY_NAME+".sites");
     } catch(ex) {
-      return this.siteString=this.DEFAULT_WHITELIST;
+      return this.siteString=this.getPref("default",
+        "noscript.net gmail.google.com googlesyndication.com informaction.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
     }
   }
 ,
   set sitesString(s) {
-    s=s.replace(/(^\s+|\s+$)/g,'');
+    s=s.replace(/,/g,' ').replace(/\s{2,}/g,' ').replace(/(^\s+|\s+$)/g,'');
     if(s!=this.siteString) {
       this.caps.setCharPref(this.POLICY_NAME+".sites",s);
     }
@@ -163,8 +154,7 @@ NoscriptService.prototype={
   }
 ,
   get sites() {
-    var sstr=this.sitesString;
-    return /^\s*$/.test(sstr)?[]:sstr.split(/\s+/);
+    return this.splitList(this.sitesString);
   }
 ,
   set sites(ss) {
@@ -290,34 +280,57 @@ NoscriptService.prototype={
   }
 ,
   isJSEnabled: function(site,sites) {
+    return this.isInPolicy(site,sites);
+  }
+,
+  setJSEnabled: function(site,is,sites) {
+    if(!site) return false;
+    if(!sites) sites=this.sites;
+    this.putInPolicy(site,is,sites);
+    this.sites=sites;
+    return is;
+  }
+,
+  isVolatile: function(site) {
+    return this.isInPolicy(site,this.volatileSites);  
+  }
+,
+  setVolatile: function(site,is) {
+    const sites=this.volatileSites;
+    this.putInPolicy(site,is,sites);
+    this.volatileSites=sites;
+    return is;
+  }
+,
+  isInPolicy: function(site,sites) {
     return this.findMatchingSite(site,sites,null)!=null; 
   }
 ,
-  setJSEnabled: function(site,enabled,sites) {
-    if(!site) return false;
-    if(!sites) sites=this.sites;
-    
-    if(site.indexOf("/")<0 && site.indexOf(".")==site.lastIndexOf(".")) {
-     //2nd level domain hack
-      this.setJSEnabled("http://"+site,enabled,sites);
-      this.setJSEnabled("https://"+site,enabled,sites);
-    }
-    if(enabled==this.isJSEnabled(site,sites)) { 
-      return enabled;
-    }
-    if(enabled) {
-      sites[sites.length]=site;
+  putInPolicy: function(site,included,sites) {
+    if(typeof(site)=="object" && site.length) {
+      for(var j=site.length; j-->0; this.putInPolicy(site[j],included,sites));
     } else {
-      const siteKiller={
-        visit: function(current,ss,index) {
-          ss.splice(index,1);
-          return null;
-        }
-      };
-      this.findMatchingSite(site,sites,siteKiller);
+      if(site.indexOf("/")<0 && site.indexOf(".")==site.lastIndexOf(".")) {
+       //2nd level domain hack
+        this.putInPolicy("http://"+site,included,sites);
+        this.putInPolicy("https://"+site,included,sites);
+      }
+      if(included==this.isInPolicy(site,sites)) { 
+        return included;
+      }
+      if(included) {
+        sites[sites.length]=site;
+      } else {
+        const siteKiller={
+          visit: function(current,ss,index) {
+            ss.splice(index,1);
+            return null;
+          }
+        };
+        this.findMatchingSite(site,sites,siteKiller);
+      }
     }
-    this.sites=sites;
-    return enabled;
+    return included;
   }
 ,
   willBeUninstalled: function() {
@@ -429,6 +442,10 @@ NoscriptService.prototype={
         throw new Error("Unsupported type "+typeof(value)+" for preference "+name);
     }
   }
+,
+  queryInterfaceSupport: function(iid,iids) { 
+    xpcom_checkInterface(iid, iids, Components.results.NS_ERROR_NO_INTERFACE);
+  }
 };
 
 
@@ -459,16 +476,16 @@ const SERVICE_FACTORY = {
     if (outer != null)
         throw Components.results.NS_ERROR_NO_AGGREGATION;
 
-    xpcom_checkInterfaces(iid,Components.results.NS_ERROR_INVALID_ARG);
+    xpcom_checkInterfaces(iid,SERVICE_IIDS,Components.results.NS_ERROR_INVALID_ARG);
     // kept this for flexibility sake, but we're really adopting an
     // early instantiation and late init singleton pattern
     return this._instance==null?this._instance=new SERVICE_CONSTRUCTOR():this._instance;
   }
 };
 
-function xpcom_checkInterfaces(iid,ex) {
-  for(var j=SERVICE_IIDS.length; j-- >0;) {
-    if(iid.equals(SERVICE_IIDS[j])) return true;
+function xpcom_checkInterfaces(iid,iids,ex) {
+  for(var j=iids.length; j-- >0;) {
+    if(iid.equals(iids[j])) return true;
   }
   throw ex;
 }

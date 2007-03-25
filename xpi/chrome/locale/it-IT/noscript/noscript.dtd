@@ -8,5 +8,9 @@
 <!ENTITY noscriptRemoveSelected "Rimuovi i siti selezionati">
 <!ENTITY noscriptGloballyEnabled "JavaScript abilitato globalmente (pericoloso)">
 <!ENTITY noscriptAutoReload "Aggiorna automaticamente la pagina quando i permessi cambiano">
-<!ENTITY noscriptCtxMenu "Mostra menù contestuale">
+<!ENTITY noscriptGeneral "Generale">
+<!ENTITY noscriptAppearance "Aspetto">
+<!ENTITY noscriptShow "Mostra...">
+<!ENTITY noscriptCtxMenu "Menu contestuale">
+<!ENTITY noscriptStatusIcon "Icona sulla barra di stato">
 

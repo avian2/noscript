@@ -27,6 +27,7 @@
 %noscriptFB;
 ]
 >
+<?xml-stylesheet href="chrome://noscript/skin/browser.css" type="text/css"?>
 
 <overlay id="noscriptOverlay" 
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -80,7 +81,7 @@
           />
          <menuseparator class="noscript-sep-global"/>
          <menuitem class="menuitem-iconic" />
-         <menuseparator class="noscript-sep-insert" collapsed="true" />
+         <menuseparator class="noscript-sep-insert"/>
          <menuseparator class="noscript-sep-stop" collapsed="true" />
     </menupopup>
 </statusbarpanel>
