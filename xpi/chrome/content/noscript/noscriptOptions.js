@@ -150,10 +150,8 @@ function nso_save() {
   );
   
   const sites=[];
-  g_ns.setJSEnabled(nso_urlList2Arr(),true,sites);
-  
   const oldSS=g_ns.sitesString;
-  g_ns.sites=sites;
+  g_ns.setJSEnabled(nso_urlList2Arr(),true,sites);
   const oldGlobal=g_ns.jsEnabled;
   g_ns.jsEnabled=g_jsglobal.getAttribute("checked")=="true";
   if(
@@ -168,6 +166,52 @@ function nso_save() {
   g_ns.savePrefs();
 }
 
+
+function nso_buttonToTitle(op) {
+  return 
+}
+
+function nso_impexp(callback) {
+  const op=callback.name.replace(/nso_/,'');
+  const title="NoScript - "+document.getElementById(op+"Button").getAttribute("label");
+  try {
+    const cc=Components.classes;
+    const ci=Components.interfaces;
+    const fp = cc["@mozilla.org/filepicker;1"].createInstance(ci.nsIFilePicker);
+    
+    fp.init(window,title, op=="import"?ci.nsIFilePicker.modeOpen:ci.nsIFilePicker.modeSave);
+    fp.appendFilters(ci.nsIFilePicker.filterText);
+    fp.appendFilters(ci.nsIFilePicker.filterAll);
+    fp.filterIndex=0;
+    fp.defaultExtension=".txt";
+    const ret=fp.show();
+    if (ret==ci.nsIFilePicker.returnOK || ret==ci.nsIFilePicker.returnReplace) {
+      callback(fp.file);
+    }
+    
+  } catch(ex) {
+    g_ns.prompter.alert(window,title,ex.message);
+  }
+}
+
+
+function nso_import(file) {
+  if(typeof(file)=="undefined") return nso_impexp(nso_import);
+  nso_populateUrlList(
+    g_ns.sortedSiteSet(
+      g_ns.splitList(g_ns.readFile(file)).concat(nso_urlList2Arr())
+    )
+  );  
+}
+
+function nso_export(file) {
+  if(typeof(file)=="undefined") return nso_impexp(nso_export);
+  g_ns.writeFile(file,
+    nso_urlList2Arr().join("\n")
+  );
+}
+
+
 function visitCheckboxes(callback) {
   const rxOpt=/^(inv|)opt-(.*)/;
   var j,checkbox,match;
@@ -179,4 +223,6 @@ function visitCheckboxes(callback) {
     }
   }
 }
+
+
 

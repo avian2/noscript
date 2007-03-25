@@ -1,0 +1,17 @@
+<!ENTITY noscriptOptions "Opties">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript Opties">
+<!ENTITY noscriptAbout "Over NoScript">
+<!ENTITY noscriptPermissionsText "Je kunt aangeven welke internetadressen je toestemming geeft om JavaScript te gebruiken. Tik het adres of domein in (bijv. &quot;http://www.site.com&quot; of &quot;site.com&quot;) van de door jou toegestane site; klik daarna op Toestaan.">
+<!ENTITY noscriptWebAddress "Internetadres:">
+<!ENTITY noscriptAllow "Toestaan">
+<!ENTITY noscriptAllow.accesskey "T">
+<!ENTITY noscriptRemoveSelected "Geselecteerde sites verwijderen">
+<!ENTITY noscriptGloballyEnabled "JavaScript globaal toestaan (riskant)">
+<!ENTITY noscriptAutoReload "Huidige pagina automatisch herladen als de toestemming verandert">
+<!ENTITY noscriptGeneral "Algemeen">
+<!ENTITY noscriptAppearance "Presentatie">
+<!ENTITY noscriptShow "Tonen...">
+<!ENTITY noscriptCtxMenu "Contextmenu">
+<!ENTITY noscriptStatusIcon "Taakbalkpictogram">
+

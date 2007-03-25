@@ -36,7 +36,7 @@ NoscriptService.prototype={
   // nsIObserver implementation 
   observe: function(subject, topic, data) {
     if(subject instanceof Components.interfaces.nsIPrefBranchInternal) {
-      this.syncPrefs(branch,data);
+      this.syncPrefs(subject,data);
     } else {
       switch(topic) {
         case "xpcom-shutdown":
@@ -66,9 +66,28 @@ NoscriptService.prototype={
     osvr.removeObserver(this,"profile-before-change");
     osvr.removeObserver(this,"xpcom-shutdown");
     osvr.removeObserver(this,"profile-after-change");
+    if(this.prefs) {
+      this.prefs.removeObserver("permanent",this);
+      this.mozJSPref.removeObserver("enabled",this,false);
+    }
   }
 ,
   syncPrefs: function(branch,name) {
+    switch(name) {
+      case "permanent":
+        const permanentList=this.splitList(this.getPref("permanent",
+          "googlesyndication.com noscript.net maone.net informaction.com noscript.net"));
+        permanentList[permanentList.length]="chrome:";
+        this.permanentList=this.sortedSiteSet(permanentList);
+      break;
+      case "enabled":
+        try {
+          this.mozJSEnabled=this.mozJSPref.getBoolPref("enabled");
+        } catch(ex) {
+          this.mozJSEnabled=true;
+        }
+      break;
+    }
   }
 ,
   _inited: false,
@@ -76,7 +95,8 @@ NoscriptService.prototype={
   prefService: null,
   caps: null,
   prefs: null,
-  //mozJSPref: null,
+  mozJSPref: null,
+  mozJSEnabled: true,
   uninstalling: false
 ,
   init: function() {
@@ -86,11 +106,11 @@ NoscriptService.prototype={
     const PBI=Components.interfaces.nsIPrefBranchInternal;
     this.caps=prefserv.getBranch("capability.policy.").QueryInterface(PBI);
     this.prefs=prefserv.getBranch("noscript.").QueryInterface(PBI);
-    // this.mozJSPref=prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
-    // this.mozJSPref.addObserver("enabled",this,false);
-    
-    this.permanentList=this.sortedSiteSet(this.splitList(this.getPref("permanent",
-      "googlesyndication.com noscript.net maone.net informaction.com noscript.net")));
+    this.prefs.addObserver("permanent",this,false);
+    this.mozJSPref=prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
+    this.mozJSPref.addObserver("enabled",this,false);
+    this.syncPrefs(this.prefs,"permanent");
+    this.syncPrefs(this.mozJSPref,"enabled");
     const sites=this.sites=this.sites;
     const POLICY_NAME=this.POLICY_NAME;
     var prefArray;
@@ -117,19 +137,20 @@ NoscriptService.prototype={
       this.caps.setCharPref("policynames",prefString);
       this.caps.setCharPref(POLICY_NAME+".javascript.enabled","allAccess");
     }
-    
+    const mozJSEnabled=this.mozJSEnabled;
     this.setJSEnabled(this.permanentList,true,sites);
+    this.mozJSPref.setBoolPref("enabled",mozJSEnabled);
   }
 ,
   isPermanent: function(s) {
     if(!s) return false;
-    if(s=="chrome://") return true; 
+    if(s=="chrome:") return true; 
     const pl=this.permanentList;
     for(var ps in pl) if(pl[ps]==s) return true;
   }
 ,
   splitList: function(s) {
-    return /^[,\s]*$/.test(s)?[]:s.split(/\s*[, ]\s*/);
+    return /^[,\s]*$/.test(s)?[]:s.split(/\s*[,\s]\s*/);
   }
 ,
   savePrefs: function() {
@@ -141,7 +162,7 @@ NoscriptService.prototype={
       return this.caps.getCharPref(this.POLICY_NAME+".sites");
     } catch(ex) {
       return this.siteString=this.getPref("default",
-        "noscript.net gmail.google.com googlesyndication.com informaction.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
+        "chrome: noscript.net gmail.google.com googlesyndication.com informaction.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
     }
   }
 ,
@@ -190,14 +211,15 @@ NoscriptService.prototype={
 ,
   get jsEnabled() {
     try {
-      return this.caps.getCharPref("default.javascript.enabled") != "noAccess";
+      return this.mozJSEnabled && this.caps.getCharPref("default.javascript.enabled") != "noAccess";
     } catch(ex) {
-      return this.uninstalling || (this.jsEnabled=false);
+      return this.uninstalling?this.mozJSEnabled:(this.jsEnabled=false);
     }
   }
 ,
   set jsEnabled(enabled) {
     this.caps.setCharPref("default.javascript.enabled",enabled?"allAccess":"noAccess");
+    if(enabled) this.mozJSPref.setBoolPref("enabled",true);
     return enabled;
   }
 ,
@@ -212,19 +234,30 @@ NoscriptService.prototype={
     if(!url) return null;
     url=url.replace(/^\s+/,'').replace(/\s+$/,'');
     if(!url) return null;
-    var protocol;
+    var scheme;
     try {
-      protocol=this.ios.extractScheme(url);
-      if(protocol=="javascript") return null;
-      protocol+="://";
+      scheme=this.ios.extractScheme(url);
+      if(scheme=="javascript" || scheme=="data" || scheme=="about") return null;
+      scheme+=":";
     } catch(ex) {
       var domainMatch=url.match(this._domainPattern);
       return domainMatch?domainMatch[0].toLowerCase():null;
     }
     try {
       const uri=this.ios.newURI(url,null,null);
-      const port=uri.port;
-      return port>0?protocol+uri.host+":"+port:protocol+uri.host;
+      var port;
+      try {
+        port=uri.port;
+      } catch(noportEx) { 
+        port=-1; 
+      }
+      var host;
+      try {
+        host="//"+uri.host;
+      } catch(nohostEx) {
+        host="";
+      }
+      return port>0?scheme+host+":"+port:scheme+host;
     } catch(ex) {
       return null;
     }
@@ -232,29 +265,33 @@ NoscriptService.prototype={
 ,
   findMatchingSite: function(site,sites,visitor) {
     if(!site) return null;
-    if(site.indexOf("chrome://")==0) return "chrome://";
+    if(site.indexOf("chrome:/")==0) return "chrome:";
     if(!sites) sites=this.sites;
     const siteLen=site.length;
     var current,currentLen,lenDiff,charBefore;
-    
+    var matchFound;
     var ret=null;
     for(var j=sites.length; j-->0;) {
       current=sites[j];
       currentLen=current.length;
       lenDiff=siteLen-currentLen;
      
-      if(lenDiff>=0 && (current==site ||
+      if(lenDiff>=0 
+        && (current==site 
            // subdomain matching
-          (lenDiff>0 && 
-            ( (charBefore=site.charAt(lenDiff-1))=="."
-               || (charBefore=="/" 
-                    && current.indexOf(".")!=current.lastIndexOf(".")) 
+           || (lenDiff>0  
+               && ( (charBefore=site.charAt(lenDiff-1))=="."
+                    || (charBefore=="/" 
+                      && (matchFound || current.indexOf(".")!=current.lastIndexOf(".")) 
                       // 2nd level domain policy lookup flaw 
-              ) 
-            && site.substring(lenDiff)==current
-          ) )
+                      )
+                   )
+               && site.substring(lenDiff)==current
+               ) 
+           )
       ) { 
         if(visitor) {
+          matchFound=true;
           if(ret=visitor.visit(current,sites,j)) {
             return ret;
           }
@@ -309,8 +346,10 @@ NoscriptService.prototype={
   putInPolicy: function(site,included,sites) {
     if(typeof(site)=="object" && site.length) {
       for(var j=site.length; j-->0; this.putInPolicy(site[j],included,sites));
-    } else {
-      if(site.indexOf("/")<0 && site.indexOf(".")==site.lastIndexOf(".")) {
+    } else if(site) {
+      site=new String(site);
+      
+      if(site.indexOf(":")<0 && site.indexOf(".")==site.lastIndexOf(".")) {
        //2nd level domain hack
         this.putInPolicy("http://"+site,included,sites);
         this.putInPolicy("https://"+site,included,sites);
@@ -441,6 +480,55 @@ NoscriptService.prototype={
       default:
         throw new Error("Unsupported type "+typeof(value)+" for preference "+name);
     }
+  }
+,
+  _sound: null,
+  playSound: function(url) {
+    if(this.getPref("sound",true)) {
+      var sound=this._sound;
+      if(sound==null) {
+        sound=Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound);
+        sound.init();
+      }
+      try {
+        sound.play(this.ios.newURI(url,null,null));
+      } catch(ex) {
+        dump(ex);
+      }
+    }
+  }
+,
+  readFile: function(file) {
+    const cc=Components.classes;
+    const ci=Components.interfaces;  
+    const is = cc["@mozilla.org/network/file-input-stream;1"].createInstance(
+          ci.nsIFileInputStream );
+    is.init(file ,0x01, 0400, null);
+    const sis = cc["@mozilla.org/scriptableinputstream;1"].createInstance(
+      ci.nsIScriptableInputStream );
+    sis.init(is);
+    const res=sis.read(sis.available());
+    is.close();
+    return res;
+  }
+,
+  writeFile: function(file, content) {
+    const cc=Components.classes;
+    const ci=Components.interfaces;
+    const unicodeConverter = cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(
+    ci.nsIScriptableUnicodeConverter);
+    unicodeConverter.charset = "UTF-8";
+    content=unicodeConverter.ConvertFromUnicode(content);
+    const os=cc["@mozilla.org/network/file-output-stream;1"].createInstance(
+      ci.nsIFileOutputStream);
+    os.init(file, 0x02 | 0x08 | 0x20,0664,0);
+    os.write(content,content.length);
+    os.close();
+  }
+,
+  get prompter() {
+    return Components.classes["@mozilla.org/embedcomp/prompt-service;1"
+          ].getService(Components.interfaces.nsIPromptService);
   }
 ,
   queryInterfaceSupport: function(iid,iids) { 

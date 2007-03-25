@@ -13,4 +13,12 @@
 <!ENTITY noscriptShow "Mostra...">
 <!ENTITY noscriptCtxMenu "Menu contestuale">
 <!ENTITY noscriptStatusIcon "Icona sulla barra di stato">
+<!ENTITY noscriptFullAddr "Indirizzi completi">
+<!ENTITY noscriptFullDom "Dominii completi">
+<!ENTITY noscriptBaseDom "Dominii base (di secondo livello)">
+<!ENTITY noscriptSound "Notifica audio per gli script bloccati">
+<!ENTITY noscriptImport "Importa">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Esporta">
+<!ENTITY noscriptExport.accesskey "E">
 

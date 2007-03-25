@@ -73,6 +73,11 @@
   <separator class="thin"/>
   <hbox>
     <button id="removeButton" disabled="true" label="&noscriptRemoveSelected;" oncommand="nso_remove()"/>
+    <spacer flex="1" />
+    <button id="importButton" label="&noscriptImport;" accesskey="&noscriptImport.accesskey;" 
+      oncommand="nso_import()"/>
+    <button id="exportButton" label="&noscriptExport;" accesskey="&noscriptExport.accesskey;" 
+       oncommand="nso_export()"/>
   </hbox>
   <separator class="thin"/>
   <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
@@ -82,10 +87,17 @@
   <vbox>
   <description>&noscriptShow;</description>
    <separator class="thin"/>
-    <checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
     <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
+    <checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
+    <separator class="thin"/>
+    <vbox style="margin-left: 23px">
+     <checkbox id="opt-showBaseDomain" label="&noscriptBaseDom;" />
+     <checkbox id="opt-showDomain" label="&noscriptFullDom;" />
+     <checkbox id="opt-showAddress" label="&noscriptFullAddr;" />
+    </vbox>
     <separator class="groove"/>
     <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
+    <checkbox id="opt-sound" label="&noscriptSound;" />
   </vbox>
   </tabpanel>
   </tabpanels>

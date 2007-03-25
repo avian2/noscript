@@ -101,8 +101,7 @@ NoScriptOverlay.prototype={
   }
 ,
   get prompter() {
-    return Components.classes["@mozilla.org/embedcomp/prompt-service;1"
-          ].getService(Components.interfaces.nsIPromptService);
+    return this.ns.prompter;
   }
 ,
   uninstallAlert: function() {
@@ -174,6 +173,10 @@ NoScriptOverlay.prototype={
       }
     };
     
+    const showAddress=ns.getPref("showAddress",false);
+    const showDomain=ns.getPref("showDomain",false);
+    const showBase=ns.getPref("showBaseDomain",true);
+    const showNothing=!(showAddress||showDomain||showBase);
     for(j=sites.length; j-->0;) {
      
       site=sites[j];
@@ -184,10 +187,16 @@ NoScriptOverlay.prototype={
         menuSites=[matchingSite];
       } else {
         domain=site.match(/.*:\/\/([\w\-\.]+)/);
-        menuSites=[site];
-        if(domain) {
+        menuSites=(showAddress || showNothing || !domain)?[site]:[];
+        if(domain && (showDomain || showBase)) {
           domain=domain[1];
           for(;(pos=domain.indexOf('.'))>0; domain=domain.substring(pos+1)) {
+            
+            if(pos==domain.lastIndexOf('.')) {
+              if(menuSites.length>0 && !showBase) continue;
+            } else {
+              if(!showDomain) continue;
+            }
             if(!domainDupChecker.check(domain)) {
               menuSites[menuSites.length]=domain;
             }
@@ -235,7 +244,7 @@ NoScriptOverlay.prototype={
     return new XPCNativeWrapper(this.srcWindow.document, 'getElementsByTagName()','documentURI');
   }
 ,
-  menuAllow: function(enabled,menuItem) {
+  menuAllow: function(enabled,menuItem) {             
     const ns=this.ns;
     var reload=ns.getPref("autoReload",true);
     if(menuItem) { // local 
@@ -282,6 +291,7 @@ NoScriptOverlay.prototype={
     }
   }
 ,
+  _lastSoundURI: null,
   _syncUINow: function() {
     // dump("syncUINow called\n");
     const ns=this.ns;
@@ -321,6 +331,11 @@ NoScriptOverlay.prototype={
         } 
       }
       lev=(allowed==total && sites.length>0)?"yes":allowed==0?"no":"prt";
+      if(lev!="yes" && sites.scriptCount>0
+        && !this.srcWindow.document._noscript_sound_played) {
+          this.srcWindow.document._noscript_sound_played=true;
+        ns.playSound("chrome://noscript/skin/block.wav");
+      }
     }
     const widget=document.getElementById("noscript-status");
     widget.setAttribute("tooltiptext",

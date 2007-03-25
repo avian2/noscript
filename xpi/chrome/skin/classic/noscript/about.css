@@ -71,7 +71,7 @@
   color: #444;
 } 
 
-#extensionCreatorLabel, #extensionContributors, #extensionSponsorLabel {
+#extensionCreator, #extensionContributors, #extensionSponsor {
   font-weight: bold;
 }
 

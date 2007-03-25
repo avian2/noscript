@@ -2,8 +2,18 @@ NoScript ChangeLog
 
 TODO:
 Allow some URL only for current session life-span (many requests!!!)
-Whitelist import/export (hsmwrv)
-Work-around for XUL error messages
+
+v 1.0.6
+=====================================================================
++ Whitelist import/export (thanks hsmwrv for suggestion)
++ Only 2nd level (base) domains shown by default in the "Allow" menu 
+  items (easier operation for non-geeks; geeks can still revert to
+  the old fine grained interface using the "Appearance" options)
++ Blocked scripts audio feedback (thanks to Markus for suggestion)
++ about:config/noscript.permanent can be changed live (no FF restart)
+x chrome content URL are properly whitelisted (XUL error pages OK)
+x Fixed empty permanent list problem (thanks to Patrick and Oremina 
+  for report)
 
 v 1.0.5
 =====================================================================

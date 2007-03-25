@@ -1,14 +1,24 @@
 <!ENTITY noscriptOptions "Options">
+<!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Options de NoScript">
 <!ENTITY noscriptAbout "À propos de NoScript">
 <!ENTITY noscriptPermissionsText "Il est possible de spécifier quels sites Web sont autorisés à exécuter des scripts Javascript. Saisissez l'adresse exacte du site que vous désirez autoriser puis cliquez sur Autoriser.">
 <!ENTITY noscriptWebAddress "Adresse du site Web :">
 <!ENTITY noscriptAllow "Autoriser">
+<!ENTITY noscriptAllow.accesskey "A">
 <!ENTITY noscriptRemoveSelected "Enlever les site sélectionné">
 <!ENTITY noscriptGloballyEnabled "Autoriser Javascript globalement (dangereux)">
 <!ENTITY noscriptAutoReload "Recharger la page automatiquement après avoir changé les permissions">
-<!ENTITY noscriptGeneral "General">
+<!ENTITY noscriptGeneral "Général">
 <!ENTITY noscriptAppearance "Apparence">
 <!ENTITY noscriptShow "Afficher...">
 <!ENTITY noscriptCtxMenu "Menu contextuel">
 <!ENTITY noscriptStatusIcon "Icône de barre d'état">
+<!ENTITY noscriptFullAddr "Adresses complètes (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Domaines complètes (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Domaines de second niveau (noscript.net)">
+<!ENTITY noscriptSound "Retour audio quand des scripts sont bloqués">
+<!ENTITY noscriptImport "Importer">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exporter">
+<!ENTITY noscriptExport.accesskey "E">
