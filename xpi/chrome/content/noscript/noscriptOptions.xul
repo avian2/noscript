@@ -92,8 +92,8 @@
   </tabpanel>
   <tabpanel>
   <vbox flex="1">
-  <hbox><description>&noscriptShow;</description></hbox>
-   <separator class="thin"/>
+  <label class="header">&noscriptShow;</label>
+
     <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
     <checkbox id="opt-statusLabel" label="&noscriptStatusLabel;" />
     <checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
@@ -104,8 +104,13 @@
      <checkbox id="opt-showAddress" label="&noscriptFullAddr;" />
      <checkbox id="opt-showTemp" label="&noscriptTempCmd;" />
     </vbox>
-    <separator class="groove"/>
-   
+    <separator class="thin"/>
+   <label class="header">&noscriptNotifications;</label>
+    <vbox id="notifyOpts">
+      <checkbox id="opt-notify" label="&noscriptNotify;" />
+      <checkbox id="opt-notify.bottom" label="&noscriptNotify.bottom;" style="margin-left: 24px" />
+      <checkbox id="opt-notify.hide" label="" style="margin-left: 24px" />
+    </vbox>
     <checkbox id="opt-sound" label="&noscriptSound;" />
     <vbox style="margin-left: 24px">
       <hbox>
@@ -121,11 +126,7 @@
           oncommand="nso_setSample(null)" />
       </hbox>
     </vbox>
-    <vbox id="notifyOpts">
-      <checkbox id="opt-notify" label="&noscriptNotify;" />
-      <checkbox id="opt-notify.bottom" label="&noscriptNotify.bottom;" style="margin-left: 24px" />
-      <checkbox id="opt-notify.hide" label="" style="margin-left: 24px" />
-    </vbox>
+   
   </vbox>
   </tabpanel>
   
@@ -139,27 +140,28 @@
       <checkbox id="mozopt-browser.send_pings" label="&noscriptAllowPing;" />
     </vbox>
    
-   
+    <separator class="thin"/>
     <vbox id="contentOpts" flex="1">
-     <separator class="groove"/>
+
+    
     <label class="header" value="&noscriptAdditionalRestrictions;" />
      <hbox><description style="width: 400px; white-space: normal">&noscriptReloadWarn;</description></hbox>
-    <vbox>
-      <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
-      <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
-      <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
-      <separator class="thin"/>
-      <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
-      <separator class="thin"/>
-      <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
-     
-      <separator class="thin"/>
-      <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+     <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
+     <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
+     <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+     <vbox style="margin-left: 24px">
+         <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
+         <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+     </vbox>
+      
       <separator class="thin"/>
       <checkbox id="opt-truncateTitle" label="&noscriptTruncateTitle;" />
       <checkbox id="opt-fixLinks" label="&noscriptFixLinks;" />
       <checkbox id="opt-noping" label="&noscriptForbidPing;" />
-    </vbox>
+      
+      <separator class="thin"/>
+      <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
+      
     </vbox>
    </vbox>
   </tabpanel>

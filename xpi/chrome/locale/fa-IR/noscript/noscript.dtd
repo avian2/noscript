@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks ".دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند">
 <!ENTITY noscriptAllowPing "&lt;a ping...&gt; اجازه دادن به">
 <!ENTITY noscriptForbidPing "&lt;a ping...&gt; ممنوع کردن">
+<!ENTITY noscriptWhitelist "لیست سفید">
+<!ENTITY noscriptPermissions "مجوزها">
+<!ENTITY noscriptRefresh "بارگذاری مجدد">
+<!ENTITY noscriptNotifications "هشدارها">
+<!ENTITY noscriptToolbarToggle ".کلیک چپ روی کلید نوار ابزار برنامه مجوز های سایت فعلی را باز می کند">
+<!ENTITY noscriptTrusted "مورد تایید">
+<!ENTITY noscriptUntrusted "مشکوک">
+<!ENTITY noscriptUnknown "ناشناس">
+<!ENTITY noscriptAdd "افزودن">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "بستن">
+<!ENTITY noscriptSiteManager "مدیر سایت">
+<!ENTITY noscriptSecurityManager "مدیر امنیت">
+<!ENTITY noscriptPolicies "راهنماها">
+<!ENTITY noscriptDefaultPolicies "راهنماهای پیشفرض">
+<!ENTITY noscriptSitePolicies "راهنمای مخصوص سایت">

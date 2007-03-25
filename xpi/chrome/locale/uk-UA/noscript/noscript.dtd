@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks "Дозволити сайти, відкриті через закладки">
 <!ENTITY noscriptAllowPing "Дозволити &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Заборонити &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Білий список">
+<!ENTITY noscriptPermissions "Дозволи">
+<!ENTITY noscriptRefresh "Оновлення">
+<!ENTITY noscriptNotifications "Сповіщення">
+<!ENTITY noscriptToolbarToggle "Клік лівою кнопкою миші по кнопці NoScript на панелі перемикає дозволи для поточного сайту верхнього рівня">
+<!ENTITY noscriptTrusted "Довірений">
+<!ENTITY noscriptUntrusted "Недовірений">
+<!ENTITY noscriptUnknown "Невідомий">
+<!ENTITY noscriptAdd "Додати">
+<!ENTITY noscriptAdd.accesskey "о">
+<!ENTITY noscriptClose "Закрити">
+<!ENTITY noscriptSiteManager "Менеджер Сайту">
+<!ENTITY noscriptSecurityManager "Менеджер Безпеки">
+<!ENTITY noscriptPolicies "Поліси безпеки">
+<!ENTITY noscriptDefaultPolicies "Поліс безпеки за умовчанням">
+<!ENTITY noscriptSitePolicies "Спеціальні поліси безпеки сайтів">

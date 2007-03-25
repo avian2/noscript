@@ -1,12 +1,12 @@
-<!ENTITY noscriptOptions "Postavke...">
+<!ENTITY noscriptOptions "Opcije...">
 <!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript postavke">
+<!ENTITY noscriptOptionsLong "NoScript Opcije">
 <!ENTITY noscriptAbout "O NoScript">
 <!ENTITY noscriptPermissionsText "Možete odrediti koje web stranice imaju dopuštenje za izvođenje skripti. Upišite adresu ili domenu (npr. &quot;http://www.stranica.hr&quot; ili &quot;stranica.hr&quot;) stranice kojoj želite dopustiti i kliknite na Dopusti.">
 <!ENTITY noscriptWebAddress "Adresa web stranice:">
 <!ENTITY noscriptAllow "Dopusti">
-<!ENTITY noscriptAllow.accesskey "A">
-<!ENTITY noscriptRemoveSelected "Ukloni označene site-ove">
+<!ENTITY noscriptAllow.accesskey "D">
+<!ENTITY noscriptRemoveSelected "Ukloni označene stranice">
 <!ENTITY noscriptGloballyEnabled "Skripte su općenito dopuštene (opasno)">
 <!ENTITY noscriptAutoReload "Automatski ponovno učitaj obuhvaćene stranice nakon promjene dopuštenja">
 <!ENTITY noscriptGeneral "Općenito">
@@ -20,32 +20,48 @@
 <!ENTITY noscriptTempCmd "Privremeno dopusti [...]">
 <!ENTITY noscriptSound "Zvučni signal kada su skripte blokirane">
 <!ENTITY noscriptImport "Uvezi">
-<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptImport.accesskey "U">
 <!ENTITY noscriptExport "Izvezi">
-<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptExport.accesskey "I">
 <!ENTITY noscriptNotify "Prikaži poruku o blokiranim skriptama">
 <!ENTITY noscriptNotify.bottom "Prikaži poruku pri dnu">
 <!ENTITY noscriptSound.choose "Izaberi">
-<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.choose.accesskey "z">
 <!ENTITY noscriptSound.play "Pusti">
-<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.play.accesskey "P">
 <!ENTITY noscriptSound.reset "Vrati zadano">
-<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptSound.reset.accesskey "r">
 <!ENTITY noscriptAdvanced "Napredno">
 <!ENTITY noscriptAdditionalPermissions "Dodatna dopuštenja za provjerene stranice">
 <!ENTITY noscriptAllowClipboard "Dopusti kopiranje i lijepljenje obogaćenog teksta iz vanjskog međuspremnika">
 <!ENTITY noscriptAdditionalRestrictions "Dodatna ograničenja za neprovjerene stranice">
 <!ENTITY noscriptForbidJava "Zabrani Java™">
 <!ENTITY noscriptForbidFlash "Zabrani Macromedia® Flash®">
-<!ENTITY noscriptForbidPlugins "Zabrani druge pluginove">
+<!ENTITY noscriptForbidPlugins "Zabrani druge dodatke">
 <!ENTITY noscriptReloadWarn "Ove postavke će imati učinka na novim ili (ručno) ponovno učitanim stranicama">
 <!ENTITY noscriptConfirmUnblock "Pitaj za potvrdu prije privremenog deblokiranja objekta">
 <!ENTITY noscriptStatusLabel "Naziv u statusnoj traci">
 <!ENTITY noscriptForbidBookmarklets "Zabrani bookmarklete">
 <!ENTITY noscriptShowPlaceholder "Prikaži ikonu za držanje položaja">
 <!ENTITY noscriptTruncateTitle "Odsijeci naslove dokumenta">
-<!ENTITY noscriptFixLinks "Pokušaj popraviti linkove JavaScript-a">
-<!ENTITY noscriptAllowBookmarks "Dopusti stranice koje su otvorene putem bookmarka">
-<!ENTITY noscriptAllowViaBookmarks "Dopusti stranice koje su otvorene putem bookmarka">
+<!ENTITY noscriptFixLinks "Pokušaj popraviti poveznice JavaScripta">
+<!ENTITY noscriptAllowBookmarks "Dopusti stranice koje su otvorene putem zabilješki">
+<!ENTITY noscriptAllowViaBookmarks "Dopusti stranice koje su otvorene putem zabilješki">
 <!ENTITY noscriptAllowPing "Dopusti &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Zabrani &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Popis dopuštenih">
+<!ENTITY noscriptPermissions "Dopuštenja">
+<!ENTITY noscriptRefresh "Osvježi">
+<!ENTITY noscriptNotifications "Obavijesti">
+<!ENTITY noscriptToolbarToggle "Lijevom klikom na NoScript gumb alatne trake mijenjate dopuštenja za trenutnu vršnu stranicu">
+<!ENTITY noscriptTrusted "Pouzdane">
+<!ENTITY noscriptUntrusted "Nepouzdane">
+<!ENTITY noscriptUnknown "Nepoznato">
+<!ENTITY noscriptAdd "Dodaj">
+<!ENTITY noscriptAdd.accesskey "D">
+<!ENTITY noscriptClose "Zatvori">
+<!ENTITY noscriptSiteManager "Upravitelj stranicom">
+<!ENTITY noscriptSecurityManager "Upravitelj sigurnosti">
+<!ENTITY noscriptPolicies "Police">
+<!ENTITY noscriptDefaultPolicies "Zadane police">
+<!ENTITY noscriptSitePolicies "Specifične police stranice">

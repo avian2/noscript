@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks "Aus Lesezeichen geöffnete Seiten erlauben">
 <!ENTITY noscriptAllowPing "Klick-Verfolgung über das PING-Attribut für Links erlauben">
 <!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">
+<!ENTITY noscriptWhitelist "Positivliste">
+<!ENTITY noscriptPermissions "Berechtigungen">
+<!ENTITY noscriptRefresh "Aktualisierung">
+<!ENTITY noscriptNotifications "Benachrichtigungen">
+<!ENTITY noscriptToolbarToggle "Berechtigungen für aktuelle Domain mit Links-Klick auf die Symbolleisten-Schaltfläche umschalten">
+<!ENTITY noscriptTrusted "Vertrauenswürdig">
+<!ENTITY noscriptUntrusted "Nicht vertrauenswürdig">
+<!ENTITY noscriptUnknown "Unbekannt">
+<!ENTITY noscriptAdd "Hinzufügen">
+<!ENTITY noscriptAdd.accesskey "H">
+<!ENTITY noscriptClose "Schließen">
+<!ENTITY noscriptSiteManager "Site-Manager">
+<!ENTITY noscriptSecurityManager "Sicherheits-Manager">
+<!ENTITY noscriptPolicies "Richtlinien">
+<!ENTITY noscriptDefaultPolicies "Standard-Richtlinien">
+<!ENTITY noscriptSitePolicies "Website-spezifische Richtlinien">

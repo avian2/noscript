@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks "Autoriser les sites ouverts par les marque-pages">
 <!ENTITY noscriptAllowPing "Autoriser &lt;a ping…&gt;">
 <!ENTITY noscriptForbidPing "Interdire &lt;a ping…&gt;">
+<!ENTITY noscriptWhitelist "Liste blanche">
+<!ENTITY noscriptPermissions "Permissions">
+<!ENTITY noscriptRefresh "Actualiser">
+<!ENTITY noscriptNotifications "Notifications">
+<!ENTITY noscriptToolbarToggle "Clic gauche sur le bouton de barre d&apos;outils NoScript inverse les permissions pour le site de premier niveau en cours">
+<!ENTITY noscriptTrusted "Fiable">
+<!ENTITY noscriptUntrusted "Non fiable">
+<!ENTITY noscriptUnknown "Inconnu">
+<!ENTITY noscriptAdd "Ajouter">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Fermer">
+<!ENTITY noscriptSiteManager "Gestionnaire de sites">
+<!ENTITY noscriptSecurityManager "Gestionnaire de sécurité">
+<!ENTITY noscriptPolicies "Politiques">
+<!ENTITY noscriptDefaultPolicies "Politiques par défaut">
+<!ENTITY noscriptSitePolicies "Politiques par site">

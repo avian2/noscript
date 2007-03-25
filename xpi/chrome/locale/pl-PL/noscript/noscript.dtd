@@ -1,6 +1,6 @@
 <!ENTITY noscriptOptions "Opcje">
 <!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript - Opcje">
+<!ENTITY noscriptOptionsLong "NoScript - opcje">
 <!ENTITY noscriptAbout "O NoScript">
 <!ENTITY noscriptPermissionsText "Tutaj możesz dodać witryny imternetowe, które będą mogły uruchamiać skrypty. Wpisz adres lub domenę witryny, którą chcesz dodać (np: &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) i naciśnij przycisk &quot;Dodaj&quot;.">
 <!ENTITY noscriptWebAddress "Adres witryny:">
@@ -19,9 +19,9 @@
 <!ENTITY noscriptBaseDom "Podstawa domeny  (np: noscript.net)">
 <!ENTITY noscriptTempCmd "Tymczasowo nie blokuj z  [...]">
 <!ENTITY noscriptSound "Odtwórz dźwięk, gdy skrypty są blokowane">
-<!ENTITY noscriptImport "Import">
+<!ENTITY noscriptImport "Importuj">
 <!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Eksport">
+<!ENTITY noscriptExport "Eksportuj">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Wyświetl powiadomienie o blokowanych skryptach">
 <!ENTITY noscriptNotify.bottom "Umieść powiadomienie na dole okna przeglądarki">
@@ -39,13 +39,29 @@
 <!ENTITY noscriptForbidFlash "Blokuj animacje Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Blokuj inne wtyczki">
 <!ENTITY noscriptReloadWarn "Uwaga! Opcje te będą działały po odświeżeniu stron oraz w nowo otwieranych stronach">
-<!ENTITY noscriptConfirmUnblock "Pytaj o potwierdzenie przed czasowym odblokowaniem objektu">
+<!ENTITY noscriptConfirmUnblock "Pytaj o potwierdzenie przed czasowym odblokowaniem obiektu">
 <!ENTITY noscriptStatusLabel "Informacje na pasku stanu">
 <!ENTITY noscriptForbidBookmarklets "Blokuj skryptozakładki">
-<!ENTITY noscriptShowPlaceholder "Pokaż zamienniki ikon">
+<!ENTITY noscriptShowPlaceholder "Wyświetl ikonę zamiennika">
 <!ENTITY noscriptTruncateTitle "Skracaj tytuły dokumentów">
-<!ENTITY noscriptFixLinks "Spróbuj naprawić odnośniki JavaScript">
-<!ENTITY noscriptAllowBookmarks "Pozwalaj wszystkim witrynom znajdującym się w zakładkach">
-<!ENTITY noscriptAllowViaBookmarks "Pozwalaj witrynom otwartym z zakładek">
-<!ENTITY noscriptAllowPing "Pozwalaj na &lt;a ping...&gt;">
+<!ENTITY noscriptFixLinks "Spróbuj przekształcić odnośniki JavaScript w normalne odnośniki">
+<!ENTITY noscriptAllowBookmarks "Pozwól na wykonywanie skryptów wszystkim witrynom znajdującym się w zakładkach">
+<!ENTITY noscriptAllowViaBookmarks "Pozwól na wykonywanie skryptów witrynom otwartym z zakładek">
+<!ENTITY noscriptAllowPing "Pozwól na &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Zabroń &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Zaufane witryny">
+<!ENTITY noscriptPermissions "Zezwolenia">
+<!ENTITY noscriptRefresh "Odświeżanie">
+<!ENTITY noscriptNotifications "Powiadomienia">
+<!ENTITY noscriptToolbarToggle "Naciśnięcie LPM na przycisk narzędziowy NoScript zmienia zezwolenia dla aktywnej witryny">
+<!ENTITY noscriptTrusted "Zaufana">
+<!ENTITY noscriptUntrusted "Niezaufana">
+<!ENTITY noscriptUnknown "Nieznany">
+<!ENTITY noscriptAdd "Dodaj">
+<!ENTITY noscriptAdd.accesskey "D">
+<!ENTITY noscriptClose "Zamknij">
+<!ENTITY noscriptSiteManager "Menedżer witryn">
+<!ENTITY noscriptSecurityManager "Menedżer bezpieczeństwa">
+<!ENTITY noscriptPolicies "Działania">
+<!ENTITY noscriptDefaultPolicies "Działania domyślne">
+<!ENTITY noscriptSitePolicies "Działania specyficzne dla danej witryny">

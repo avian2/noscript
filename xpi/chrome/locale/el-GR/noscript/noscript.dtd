@@ -12,7 +12,7 @@
 <!ENTITY noscriptGeneral "Γενικά">
 <!ENTITY noscriptAppearance "Εμφάνιση">
 <!ENTITY noscriptShow "Προβολή...">
-<!ENTITY noscriptCtxMenu "Μενού συνάφειας">
+<!ENTITY noscriptCtxMenu "Μενού περιεχομένου">
 <!ENTITY noscriptStatusIcon "Εικονίδιο γραμμής κατάστασης">
 <!ENTITY noscriptFullAddr "Πλήρεις διευθύνσεις (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Πλήρεις τομείς (www.noscript.net)">
@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
 <!ENTITY noscriptAllowPing "Να επιτρέπεται το &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Λίστα επιτρεπομένων">
+<!ENTITY noscriptPermissions "Αδειοδοτήσεις">
+<!ENTITY noscriptRefresh "Ανανέωση">
+<!ENTITY noscriptNotifications "Ειδοποιήσεις">
+<!ENTITY noscriptToolbarToggle "Με αριστερό κλικ στο εικονίδιο της εργαλειοθήκης του NoScript, γίνεται εναλλαγή δικαιωμάτων για τον τρέχοντα βασικό ιστότοπο">
+<!ENTITY noscriptTrusted "Έμπιστο">
+<!ENTITY noscriptUntrusted "Μη έμπιστο">
+<!ENTITY noscriptUnknown "Άγνωστο">
+<!ENTITY noscriptAdd "Προσθήκη">
+<!ENTITY noscriptAdd.accesskey "Π">
+<!ENTITY noscriptClose "Κλείσιμο">
+<!ENTITY noscriptSiteManager "Διαχειριστής ιστότοπων">
+<!ENTITY noscriptSecurityManager "Διαχειριστής ασφαλείας">
+<!ENTITY noscriptPolicies "Πολιτικές συμπεριφοράς">
+<!ENTITY noscriptDefaultPolicies "Αρχικές πολιτικές συμπεριφοράς">
+<!ENTITY noscriptSitePolicies "Πολιτικές συμπεριφοράς για συγκεκριμένους ιστότοπους">

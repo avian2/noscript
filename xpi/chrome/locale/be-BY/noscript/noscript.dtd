@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "а">
 <!ENTITY noscriptOptionsLong "Налады NoScript">
 <!ENTITY noscriptAbout "Аб пашырэнні">
-<!ENTITY noscriptPermissionsText "Вы можаце ўсталёўваць якім вэб-сайтам будзе дазволена выконваць код JavaScript. Увядзіце адрас або дамен (напрыклад &quot;http://www.site.com&quot; або &quot;site.com&quot;) сайта, якому вы жадаеце дазволіць выкананне JavaScript у тэкставым полі ніжэй, а затым націсніце &quot;Дазволіць&quot;.">
+<!ENTITY noscriptPermissionsText "Вы можаце ўсталёўваць якім вэб-сайтам будзе дазволена выконваць код JavaScript. Увядзіце адрас або дамен (напрыклад &quot;http://www.site.com&quot; або &quot;site.com&quot;) сайта якому вы жадаеце дазволіць выкананне JavaScript у тэкставым полі ніжэй, а затым націсніце &quot;Дазволіць&quot;.">
 <!ENTITY noscriptWebAddress "Адрас вэб-сайта:">
 <!ENTITY noscriptAllow "Дазволіць">
 <!ENTITY noscriptAllow.accesskey "е">
@@ -12,7 +12,7 @@
 <!ENTITY noscriptGeneral "Асноўныя">
 <!ENTITY noscriptAppearance "Знешні выгляд">
 <!ENTITY noscriptShow "Адлюстроўваць наступныя элементы NoScript...">
-<!ENTITY noscriptCtxMenu "Пункт у кантэкстным меню">
+<!ENTITY noscriptCtxMenu "Пункт у контексном меню">
 <!ENTITY noscriptStatusIcon "Значок у радку стану">
 <!ENTITY noscriptFullAddr "Поўныя адрасы (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Поўныя дамены (www.noscript.net)">
@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks "Дазваляць выкананне JavaScript усім вэб-сайтам з закладак">
 <!ENTITY noscriptAllowPing "Дазволіць вэб-сайту выкарыстаць параметр &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Забараніць вэб-сайту выкарыстаць параметр  &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Белы спіс">
+<!ENTITY noscriptPermissions "Дазволы">
+<!ENTITY noscriptRefresh "Абнавіць">
+<!ENTITY noscriptNotifications "Апавяшчэнні">
+<!ENTITY noscriptToolbarToggle "Па націску левай кнопкай мышы на значку NoScript перамыкаць дазволы для ўсяго сайта">
+<!ENTITY noscriptTrusted "Давераны">
+<!ENTITY noscriptUntrusted "Недоверенный">
+<!ENTITY noscriptUnknown "Невядомы">
+<!ENTITY noscriptAdd "Дадаць">
+<!ENTITY noscriptAdd.accesskey "аб">
+<!ENTITY noscriptClose "Зачыніць">
+<!ENTITY noscriptSiteManager "Мэнэджэр сайтаў">
+<!ENTITY noscriptSecurityManager "Кіраванне бяспекай">
+<!ENTITY noscriptPolicies "Палітыкі">
+<!ENTITY noscriptDefaultPolicies "Палітыкі па змаўчанні">
+<!ENTITY noscriptSitePolicies "Адмысловыя палітыкі для сайтаў">

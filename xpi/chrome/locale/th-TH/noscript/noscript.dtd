@@ -18,7 +18,7 @@
 <!ENTITY noscriptFullDom "โดเมนเต็ม (www.noscript.net)">
 <!ENTITY noscriptBaseDom "โดเมนบนฐานที่สอง (noscript.net)">
 <!ENTITY noscriptTempCmd "อนุญาตชั่วคราว [...]">
-<!ENTITY noscriptSound "ผลป้อนกลับเสียงเมื่อสคริปต์ถูกบล็อก">
+<!ENTITY noscriptSound "เสียงผลป้อนกลับเมื่อสคริปต์ถูกบล็อก">
 <!ENTITY noscriptImport "นำเข้า">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "ส่งออก">
@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks "อนุญาตไซต์ให้เปิดผ่านที่คั่นหน้า">
 <!ENTITY noscriptAllowPing "อนุญาต &lt;ปิง...&gt;">
 <!ENTITY noscriptForbidPing "ไม่อนุญาต &lt;ปิง...&gt;">
+<!ENTITY noscriptWhitelist "บัญชีขาว">
+<!ENTITY noscriptPermissions "การอนุญาต">
+<!ENTITY noscriptRefresh "เรียกหน้าใหม่">
+<!ENTITY noscriptNotifications "การเตือน">
+<!ENTITY noscriptToolbarToggle "คลิกซ้ายบนปุ่มแถมเครื่องมือ NoScript จะสลับการอนุญาตให้ไซต์ระดับสูงสุดปัจจุบัน">
+<!ENTITY noscriptTrusted "เชื่อถือได้">
+<!ENTITY noscriptUntrusted "เชื่อถือไม่ได้">
+<!ENTITY noscriptUnknown "ไม่ระบุ">
+<!ENTITY noscriptAdd "เพิ่ม">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "ปิด">
+<!ENTITY noscriptSiteManager "ตัวจัดการไซต์">
+<!ENTITY noscriptSecurityManager "ตัวจัดการด้านความปลอดภัย">
+<!ENTITY noscriptPolicies "กฎ">
+<!ENTITY noscriptDefaultPolicies "กฎเดิม">
+<!ENTITY noscriptSitePolicies "กฎไซต์ที่ปรากฏ">

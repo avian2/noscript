@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks "Povolit stránky otevřené ze záložek">
 <!ENTITY noscriptAllowPing "Povolit &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Zakázat &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Výjimky">
+<!ENTITY noscriptPermissions "Povolení">
+<!ENTITY noscriptRefresh "Obnovení">
+<!ENTITY noscriptNotifications "Oznámení">
+<!ENTITY noscriptToolbarToggle "Klepnutí levým tlačítkem myši na ikonku Noscriptu ve stavovém řádku přepíná povolení pro doménu nejvyšší úrovně aktuální stránky">
+<!ENTITY noscriptTrusted "Důvěryhodné">
+<!ENTITY noscriptUntrusted "Nedůvěryhodné">
+<!ENTITY noscriptUnknown "Neznámé">
+<!ENTITY noscriptAdd "Přidat">
+<!ENTITY noscriptAdd.accesskey "P">
+<!ENTITY noscriptClose "Zavřít">
+<!ENTITY noscriptSiteManager "Správce stránek">
+<!ENTITY noscriptSecurityManager "Správce zabezpečení">
+<!ENTITY noscriptPolicies "Politika">
+<!ENTITY noscriptDefaultPolicies "Výchozí politika">
+<!ENTITY noscriptSitePolicies "Politika pro specifické stránky">

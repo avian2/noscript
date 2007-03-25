@@ -1,5 +1,12 @@
 NoScript ChangeLog
 
+v 1.1.4.5
+=====================================================================
++ Some user interface tweakings in the Options UI
++ Several optimizations
+x Fixed XML issue
+x Fixed BFCache side-effects on certain pages
+x Fixed a timing bug in stand-alone plugin interception
 
 v 1.1.4.4
 =====================================================================

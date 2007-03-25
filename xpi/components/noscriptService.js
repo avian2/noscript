@@ -1236,7 +1236,7 @@ NoscriptService.prototype={
       
       if(forbid) {
         if(!(this.isJSEnabled(origin))) {
-          // from now on it should be safe reading "unsafe" properties on DOM nodes
+          
           if(aContext && (!isJS)) {
             const ci = Components.interfaces;
             if(aContext instanceof ci.nsIDOMNode) {
@@ -1263,8 +1263,7 @@ NoscriptService.prototype={
           return -3;
         }
       }
-  
-            
+
       return 1;
     },
     shouldProcess: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, aExtra) {

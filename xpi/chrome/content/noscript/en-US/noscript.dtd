@@ -50,6 +50,18 @@
 <!ENTITY noscriptAllowPing "Allow &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Forbid &lt;a ping...&gt;">
 <!ENTITY noscriptWhitelist "Whitelist">
+<!ENTITY noscriptPermissions "Permissions">
 <!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifyLabel "Notifications">
+<!ENTITY noscriptNotifications "Notifications">
 <!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
+<!ENTITY noscriptTrusted "Trusted">
+<!ENTITY noscriptUntrusted "Untrusted">
+<!ENTITY noscriptUnknown "Unknown">
+<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Close">
+<!ENTITY noscriptSiteManager "Site Manager">
+<!ENTITY noscriptSecurityManager "Security Manager">
+<!ENTITY noscriptPolicies "Policies">
+<!ENTITY noscriptDefaultPolicies "Default Policies">
+<!ENTITY noscriptSitePolicies "Site Specific Policies">

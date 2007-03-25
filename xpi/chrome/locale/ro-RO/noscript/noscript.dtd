@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks "Permite toate siteurile din Semne de Carte">
 <!ENTITY noscriptAllowPing "Permite tagul &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Blochează tagul &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Listă sigură">
+<!ENTITY noscriptPermissions "Permisiuni">
+<!ENTITY noscriptRefresh "Reîncărcare">
+<!ENTITY noscriptNotifications "Notificări">
+<!ENTITY noscriptToolbarToggle "Schimbă permisiunile pentru domeniul de nivel 2 cu un click pe butonul NoScript din bara de unelte">
+<!ENTITY noscriptTrusted "De încredere">
+<!ENTITY noscriptUntrusted "De neîncredere">
+<!ENTITY noscriptUnknown "Necunoscut">
+<!ENTITY noscriptAdd "Adaugă">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Închide">
+<!ENTITY noscriptSiteManager "Gestionar de Locaţii">
+<!ENTITY noscriptSecurityManager "Gestionar de Securitate">
+<!ENTITY noscriptPolicies "Reguli">
+<!ENTITY noscriptDefaultPolicies "Reguli implicite">
+<!ENTITY noscriptSitePolicies "Reguli dependente de locaţie">

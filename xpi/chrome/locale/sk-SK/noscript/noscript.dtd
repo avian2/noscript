@@ -1,14 +1,14 @@
 <!ENTITY noscriptOptions "Možnosti...">
 <!ENTITY noscriptOptions.accesskey "M">
-<!ENTITY noscriptOptionsLong "Možnosti NoScript">
+<!ENTITY noscriptOptionsLong "NoScript – Možnosti">
 <!ENTITY noscriptAbout "O rozšírení NoScript">
-<!ENTITY noscriptPermissionsText "Môžete určiť, ktoré webové stránky majú povolené spúšťať JavaScript. Zadajte adresu alebo doménu (napríklad &quot;http://www.site.com&quot; alebo &quot;site.com&quot;) stránky, ktorú chcete povoliť a potom kliknite na Povoliť.">
+<!ENTITY noscriptPermissionsText "Môžete určiť, ktoré webové stránky majú povolené spúšťať JavaScript. Zadajte adresu alebo doménu (napríklad &quot;http://www.site.com&quot; alebo &quot;site.com&quot;) stránky, ktorú chcete povoliť, a potom kliknite na tlačidlo Povoliť.">
 <!ENTITY noscriptWebAddress "Adresa webstránky:">
 <!ENTITY noscriptAllow "Povoliť">
 <!ENTITY noscriptAllow.accesskey "P">
 <!ENTITY noscriptRemoveSelected "Odstrániť vybrané stránky">
 <!ENTITY noscriptGloballyEnabled "Skripty všeobecne povolené (nebezpečné)">
-<!ENTITY noscriptAutoReload "Automaticky znovu načítať stránky, keď sa zmení oprávnenie">
+<!ENTITY noscriptAutoReload "Automaticky znovu načítať stránky, keď sa zmení povolenie">
 <!ENTITY noscriptGeneral "Všeobecné">
 <!ENTITY noscriptAppearance "Rozloženie">
 <!ENTITY noscriptShow "Zobraziť...">
@@ -24,7 +24,7 @@
 <!ENTITY noscriptExport "Exportovať">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Zobraziť oznámenie o blokovaných skriptoch">
-<!ENTITY noscriptNotify.bottom "Umiestniť oznámenie na spodok">
+<!ENTITY noscriptNotify.bottom "Umiestniť oznámenie naspodok">
 <!ENTITY noscriptSound.choose "Vybrať">
 <!ENTITY noscriptSound.choose.accesskey "V">
 <!ENTITY noscriptSound.play "Prehrať">
@@ -32,20 +32,36 @@
 <!ENTITY noscriptSound.reset "Obnoviť predvolené">
 <!ENTITY noscriptSound.reset.accesskey "r">
 <!ENTITY noscriptAdvanced "Rozšírené">
-<!ENTITY noscriptAdditionalPermissions "Ďalšie oprávnenia pre dôveryhodné stránky">
+<!ENTITY noscriptAdditionalPermissions "Ďalšie povolenia pre dôveryhodné stránky">
 <!ENTITY noscriptAllowClipboard "Povoliť kopírovanie a prilepenie textu z externej schránky">
 <!ENTITY noscriptAdditionalRestrictions "Ďalšie obmedzenia pre nepovolené stránky">
 <!ENTITY noscriptForbidJava "Zakázať Java™">
 <!ENTITY noscriptForbidFlash "Zakázať Macromedia® Flash®">
-<!ENTITY noscriptForbidPlugins "Zakázať ďalšie doplnky">
-<!ENTITY noscriptReloadWarn "Tieto voľby sa prejavia na nových (alebo na ručne znovu načítaných) stránkach">
+<!ENTITY noscriptForbidPlugins "Zakázať ostatné zásuvné moduly">
+<!ENTITY noscriptReloadWarn "Tieto možnosti sa prejavia na nových (alebo na ručne znovu načítaných) stránkach">
 <!ENTITY noscriptConfirmUnblock "Pred dočasným odblokovaním objektu sa opýtať na potvrdenie">
 <!ENTITY noscriptStatusLabel "Informácie v stavovom riadku">
 <!ENTITY noscriptForbidBookmarklets "Zakázať záložkové skripty">
 <!ENTITY noscriptShowPlaceholder "Zobraziť ikonu zástupcu">
 <!ENTITY noscriptTruncateTitle "Skrátiť titulky dokumentov">
-<!ENTITY noscriptFixLinks "Pokúsiť sa opraviť JavaScript odkaz">
+<!ENTITY noscriptFixLinks "Pokúsiť sa opraviť prepojenia JavaScriptu">
 <!ENTITY noscriptAllowBookmarks "Povoliť všetky stránky nájdené v Záložkách">
 <!ENTITY noscriptAllowViaBookmarks "Povoliť stránky otvorené zo Záložiek">
 <!ENTITY noscriptAllowPing "Povoliť &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Zakázať &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Zoznam povolených">
+<!ENTITY noscriptPermissions "Povolenia">
+<!ENTITY noscriptRefresh "Obnoviť">
+<!ENTITY noscriptNotifications "Oznámenia">
+<!ENTITY noscriptToolbarToggle "Kliknutím ľavým tlačidlom myši na tlačidlo NoScript na paneli s nástrojmi sa prepínajú povolenia pre aktuálnu doménu najvyššej úrovne">
+<!ENTITY noscriptTrusted "Dôveryhodné">
+<!ENTITY noscriptUntrusted "Nedôveryhodné">
+<!ENTITY noscriptUnknown "Neznáme">
+<!ENTITY noscriptAdd "Pridať">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Zavrieť">
+<!ENTITY noscriptSiteManager "Správca stránok">
+<!ENTITY noscriptSecurityManager "Správca zabezpečenia">
+<!ENTITY noscriptPolicies "Politiky">
+<!ENTITY noscriptDefaultPolicies "Predvolené politiky">
+<!ENTITY noscriptSitePolicies "Politiky konkrétnej stránky">

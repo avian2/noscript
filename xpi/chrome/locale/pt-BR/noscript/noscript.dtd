@@ -49,3 +49,19 @@
 <!ENTITY noscriptAllowViaBookmarks "Permitir sites abertos a partir dos favoritos">
 <!ENTITY noscriptAllowPing "Permitir &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Proibir &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Lista Branca">
+<!ENTITY noscriptPermissions "Permissões">
+<!ENTITY noscriptRefresh "Atualizar">
+<!ENTITY noscriptNotifications "Notificações">
+<!ENTITY noscriptToolbarToggle "Um clique esquerdo no botão do NoScript na barra de ferramentas altera as permissões para o site principal no momento">
+<!ENTITY noscriptTrusted "Confiável">
+<!ENTITY noscriptUntrusted "Não confiável">
+<!ENTITY noscriptUnknown "Desocnhecido">
+<!ENTITY noscriptAdd "Adicionar">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Fechar">
+<!ENTITY noscriptSiteManager "Gerenciador de Sites">
+<!ENTITY noscriptSecurityManager "Gerenciador de segurança">
+<!ENTITY noscriptPolicies "Políticas">
+<!ENTITY noscriptDefaultPolicies "Políticas Padrão">
+<!ENTITY noscriptSitePolicies "Políticas Específicas ao Site">
