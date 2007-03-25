@@ -504,10 +504,13 @@ NoscriptService.prototype={
             ));
         }
         break;
+      /*
       case "permanent":
-        this.permanentSites.sitesString=this.getPref("permanent",
+       
+        this.permanentSites.sitesString = this.getPref("permanent",
             "googlesyndication.com noscript.net maone.net informaction.com noscript.net"
           ) + " chrome: resource: about:neterror";
+      */
       break;
       case "temp":
         this.tempSites.sitesString=this.getPref("temp","") + " jar:";
@@ -595,9 +598,11 @@ NoscriptService.prototype={
     this.mozJSPref=prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
     this.mozJSPref.addObserver("enabled",this,false);
     
+    this.permanentSites.sitesString = "chrome: resource: about:neterror";
+    
     const syncPrefNames=[ "consoleDump",
       "pluginPlaceholder", "showPlaceholder", "allowClipboard", "forbidPlugins", 
-      "forbidJava", "forbidFlash", "temp", "permanent",
+      "forbidJava", "forbidFlash", "temp", // "permanent",
       "truncateTitle", "truncateTitleLen" ];
     for(var spcount=syncPrefNames.length; spcount-->0;) {
       this.syncPrefs(this.prefs,syncPrefNames[spcount]);
@@ -828,7 +833,7 @@ NoscriptService.prototype={
     "gmina": " pl ",
     "go": " jp kr th ",
     "gob": " mx ",
-    "gov": " ar br cn ec il in mm mx sg tr za ",
+    "gov": " ar br cn ec il in mm mx sg tr uk za ",
     "govt": " nz ",
     "gs": " cn ",
     "gsm": " pl ",
@@ -945,7 +950,7 @@ NoscriptService.prototype={
 ,
   eraseTemp: function() {
     this.jsPolicySites.remove(this.tempSites.sitesList, false, true); // remove temporary
-    this.setJSEnabled(this.permanentSites.sitesList,true); // add permanent & save
+    this.setJSEnabled(this.permanentSites.sitesList, true); // add permanent & save
     this.setPref("temp",""); // flush temporary list
   }
 ,

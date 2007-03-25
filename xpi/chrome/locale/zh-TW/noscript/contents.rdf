@@ -7,7 +7,7 @@
     <RDF:Description about="urn:mozilla:locale:zh-TW" chrome:name="zh-TW" >
         <chrome:packages>
             <RDF:Seq about="urn:mozilla:locale:zh-TW:packages">
-                <RDF:li resource="urn:mozilla:locale:zh-TW:noscript"/>
+               <RDF:li resource="urn:mozilla:locale:zh-TW:noscript"/>
             </RDF:Seq>
         </chrome:packages>
     </RDF:Description>

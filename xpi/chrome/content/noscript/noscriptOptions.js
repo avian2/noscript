@@ -43,10 +43,12 @@ function nso_init() {
   nso_populateUrlList();
   g_jsglobal.setAttribute("checked",g_serv.jsEnabled);
   
-  document.getElementById("mozopt-browser.send_pings")
-          .setAttribute("label", noscriptUtil.getString("allowLocal", ["<a ping...>"]));
-  document.getElementById("opt-noping")
-          .setAttribute("label", noscriptUtil.getString("forbidLocal", ["<a ping...>"]));
+  var pingCbx =  document.getElementById("mozopt-browser.send_pings");
+  if(pingCbx.getAttribute("label").indexOf("Allow ") == 0) { 
+    pingCbx.setAttribute("label", noscriptUtil.getString("allowLocal", ["<a ping...>"]));
+    document.getElementById("opt-noping")
+            .setAttribute("label", noscriptUtil.getString("forbidLocal", ["<a ping...>"]));
+  }
   
   visitCheckboxes(
     function(prefName, inverse, checkbox, mozilla) {

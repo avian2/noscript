@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Particularizare NoScript">
 <!ENTITY noscriptAbout "Despre NoScript">
-<!ENTITY noscriptPermissionsText "Puteţi să specificaţi paginile web care pot să execute scripturi. Scrieţi adresa (de exemplu &quot;http://www.site.com&quot;) sau domeniul (&quot;site.com&quot;) paginii, apoi apăsaţi pe butonul Permite.">
+<!ENTITY noscriptPermissionsText "Puteţi să specificaţi paginile web care pot să execute scripturi. Scrieţi adresa (de exemplu http://www.site.com) sau domeniul (site.com) paginii, apoi apăsaţi pe butonul Permite.">
 <!ENTITY noscriptWebAddress "Adresa paginii web:">
 <!ENTITY noscriptAllow "Permite">
 <!ENTITY noscriptAllow.accesskey "P">
@@ -30,7 +30,7 @@
 <!ENTITY noscriptSound.play "Redare">
 <!ENTITY noscriptSound.play.accesskey "R">
 <!ENTITY noscriptSound.reset "Resetează la original">
-<!ENTITY noscriptSound.reset.accesskey "E">
+<!ENTITY noscriptSound.reset.accesskey "o">
 <!ENTITY noscriptAdvanced "Avansat">
 <!ENTITY noscriptAdditionalPermissions "Permisiuni suplimentare pentru paginile de încredere">
 <!ENTITY noscriptAllowClipboard "Permite copiere text îmbogăţit din clipboard extern">
@@ -46,3 +46,5 @@
 <!ENTITY noscriptTruncateTitle "Limitează titlurile documentelor">
 <!ENTITY noscriptFixLinks "Încearcă să repari legăturile JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permite toate siteurile din Semne de Carte">
+<!ENTITY noscriptAllowPing "Permite tagul &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Blochează tagul &lt;a ping...&gt;">

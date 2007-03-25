@@ -13,3 +13,6 @@
                 <RDF:li resource="urn:mozilla:locale:pl-PL:noscript"/>
             </RDF:Seq>
         </chrome:packages>
+    </RDF:Description>
+</RDF:RDF>
+

@@ -46,3 +46,5 @@
 <!ENTITY noscriptTruncateTitle "Belge başlığını kes">
 <!ENTITY noscriptFixLinks "JavaScript bağlantılarını düzeltmeye çalış">
 <!ENTITY noscriptAllowBookmarks "Yer imlerimde kayıtlı sitelere izin ver">
+<!ENTITY noscriptAllowPing "İzin ver &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Yasakla &lt;a ping...&gt;">

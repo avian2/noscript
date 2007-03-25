@@ -1,5 +1,12 @@
 NoScript ChangeLog
 
+v 1.1.3.8
+=====================================================================
+x Another emergency release to fix Babelzilla bugs with Asian
+  languages (mass-reverting to 1.1.3.5 properties files to be sure).
+- Removed permanent whitelist (all the web sites can can 
+  be forbidden from the UI, no more about:config need)
+
 v 1.1.3.7
 =====================================================================
 x Fixed some localization bugs

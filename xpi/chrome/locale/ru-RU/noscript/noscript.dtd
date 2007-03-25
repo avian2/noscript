@@ -46,3 +46,5 @@
 <!ENTITY noscriptTruncateTitle "Отсекать заголовки документов">
 <!ENTITY noscriptFixLinks "Пробовать исправлять ссылки JavaScript">
 <!ENTITY noscriptAllowBookmarks "Разрешать всем сайтам найденным в закладках">
+<!ENTITY noscriptAllowPing "Разрешить &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Запретить &lt;a ping...&gt;">
