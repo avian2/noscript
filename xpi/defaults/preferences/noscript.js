@@ -23,6 +23,8 @@ pref("noscript.confirmUnblock", true);
 pref("noscript.statusLabel", false);
 pref("noscript.forbidBookmarklets", false);
 pref("noscript.notify.hideDelay", 5);
-pref("noscript.nodify.hide", false);
+pref("noscript.notify.hide", false);
+pref("noscript.truncateTitleLen", 255);
+pref("noscript.truncateTitle", true);
 
 

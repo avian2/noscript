@@ -551,6 +551,12 @@ NoscriptService.prototype={
           }
         }
       break;
+      case "truncateTitle" :
+        this.truncateTitle = this.getPref(name, true);
+      break;
+      case "truncateTitleLen" :
+       this.truncateTitleLen = this.getPref(name, 255);
+      break;  
     }
   }
 ,
@@ -588,7 +594,8 @@ NoscriptService.prototype={
     
     const syncPrefNames=[
       "pluginPlaceholder", "showPlaceholder", "allowClipboard", "forbidPlugins", 
-      "forbidJava", "forbidFlash", "temp","permanent"];
+      "forbidJava", "forbidFlash", "temp", "permanent",
+      "truncateTitle", "truncateTitleLen" ];
     for(var spcount=syncPrefNames.length; spcount-->0;) {
       this.syncPrefs(this.prefs,syncPrefNames[spcount]);
     }
@@ -795,11 +802,11 @@ NoscriptService.prototype={
     "cng": " br ",
     "cnt": " br ",
     "co": " ac at il in jp kr nz th uk za ",
-    "com": " au br cn ec fr hk mm mx pl ro ru sg tr tw ",
+    "com": " ar au br cn ec fr hk mm mx pl ro ru sg tr tw ",
     "cq": " cn ",
     "cri": " nz ",
     "ecn": " br ",
-    "edu": " au cn hk mm mx pl tr za ",
+    "edu": " ar au cn hk mm mx pl tr za ",
     "eng": " br ",
     "ernet": " in ",
     "esp": " br ",
@@ -818,7 +825,7 @@ NoscriptService.prototype={
     "gmina": " pl ",
     "go": " jp kr th ",
     "gob": " mx ",
-    "gov": " br cn ec il in mm mx sg tr za ",
+    "gov": " ar br cn ec il in mm mx sg tr za ",
     "govt": " nz ",
     "gs": " cn ",
     "gsm": " pl ",
@@ -857,7 +864,7 @@ NoscriptService.prototype={
     "muni": " il ",
     "nb": " ca ",
     "ne": " jp kr ",
-    "net": " au br cn ec hk il in mm mx nz pl ru sg th tr tw za ",
+    "net": " ar au br cn ec hk il in mm mx nz pl ru sg th tr tw za ",
     "nf": " ca ",
     "ngo": " za ",
     "nm": " cn kr ",
@@ -870,7 +877,7 @@ NoscriptService.prototype={
     "odo": " br ",
     "on": " ca ",
     "or": " ac at jp kr th ",
-    "org": " au br cn ec hk il mm mx nz pl ro ru sg tr tw uk za ",
+    "org": " ar au br cn ec hk il mm mx nz pl ro ru sg tr tw uk za ",
     "pc": " pl ",
     "pe": " ca ",
     "plc": " uk ",
@@ -910,7 +917,7 @@ NoscriptService.prototype={
     "tv": " br ",
     "tw": " cn ",
     "uk": " co com net ",
-    "us": " com ",
+    "us": " com ca ",
     "uy": " com ",
     "vet": " br ",
     "web": " za ",
@@ -1110,7 +1117,7 @@ NoscriptService.prototype={
               forbid = 
                 (isFlash = aMimeTypeGuess == "application/x-shockwave-flash") && this.forbidFlash ||
                 (isJava = aMimeTypeGuess.indexOf("application/x-java-")==0) && this.forbidJava ||
-                this.forbidPlugins;
+                (this.forbidPlugins && !(isJava || isFlash));
             }
           }
         }

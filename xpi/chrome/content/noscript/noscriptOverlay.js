@@ -37,6 +37,16 @@ NoScriptOverlay.prototype={
       if(doc || (doc=this.srcWindow.document)) {
         const ns=this.ns;
         const lm=ns.lookupMethod;
+        
+        if(ns.truncateTitle) {
+          try {
+            const titleAccessor = lm(doc, "title");
+            if(titleAccessor().length > ns.truncateTitleLen) {
+              titleAccessor(titleAccessor().substring(0, ns.truncateTitleLen));
+            }
+          } catch(ex) {}
+        }
+        
         const getByTag=lm(doc,"getElementsByTagName");
         if(!tagName) {
           const docURI=lm(doc,"documentURI")();
@@ -317,12 +327,16 @@ NoScriptOverlay.prototype={
             // Special TLD (co.uk, co.nz...) or normal domain
             dp=domParts[dpLen-2];
             if(tlds=STLDS[dp]) {
-              if(tlds.indexOf(" "+domParts[dpLen-1]+" ")>-1) {
-                lastPos=domain.lastIndexOf('.',lastPos-1);
+              if(dp == "com" || tlds.indexOf(" " + domParts[dpLen - 1] + " ")>-1) {
+                if(dp != "uk" || 
+                  (lastPos = domain.lastIndexOf(".here.co.uk")) != 
+                      domain.length - 10) {
+                  lastPos = domain.lastIndexOf('.', lastPos - 1);
+                }
               }
             }
             dp=domain;
-            for(pos=0; (pos=domain.indexOf('.',pos))>0; dp=domain.substring(++pos)) {
+            for(pos=0; (pos = domain.indexOf('.',pos))>0; dp = domain.substring(++pos)) {
               if(pos==lastPos) {
                 if(menuSites.length>0 && !showBase) continue;
               } else {
@@ -372,7 +386,7 @@ NoScriptOverlay.prototype={
     const doubleSep = stopSep.previousSibling.nodeName == "menuseparator";
     if(globalSep!=stopSep) { // status bar
       insertSep.setAttribute("hidden", insertSep.nextSibling.getAttribute("hidden")?"true":"false");
-      if(doubleSep) stopSep.parentNode.removeChild(stopSep.previousSibling); 
+      if(doubleSep) stopSep.previousSibling.setAttribute("hidden", "true");
     } else { // context menu
       stopSep.setAttribute("hidden",
         //stopSep==parent.firstChild.nextSibling ||
@@ -612,7 +626,7 @@ function _noscript_signatureGetter() { return _noscript_randomSignature; }
 
 const noscriptOverlay=new NoScriptOverlay();
 
-const noscriptOverlayPrefsObserver={
+const noscriptOverlayPrefsObserver = {
   ns: noscriptOverlay.ns,
   iids: [Components.interfaces.nsISupports, Components.interfaces.nsIObserver],
   QueryInterface: function(iid) {
@@ -635,12 +649,15 @@ const noscriptOverlayPrefsObserver={
        if(mb) mb.hidden=true;
        if(mb=noscriptOverlay.getMessageBox("bottom")) mb.hidden=true;
        break;
+      
     }
   },
   register: function() {
     this.ns.prefs.addObserver("",this,false);
-    this.observe(null,null,"statusIcon");
-    this.observe(null,null,"statusLabel");
+    const initPrefs = ["statusIcon", "statusLabel"];
+    for(var j = 0; j < initPrefs.length; j++) {
+      this.observe(null, null, initPrefs[j]);
+    }
   },
   remove: function() {
     this.ns.prefs.removeObserver("",this);

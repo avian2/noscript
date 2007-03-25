@@ -152,6 +152,8 @@
       <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
       <separator class="thin"/>
       <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+      <separator class="thin"/>
+      <checkbox id="opt-truncateTitle" label="&noscriptTruncateTitle;" />
     </vbox>
     </vbox>
    </vbox>

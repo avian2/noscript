@@ -1,5 +1,15 @@
 NoScript ChangeLog
 
+v 1.1.3.5
+=====================================================================
++ "Truncate title" option: enabled by default, even on whitelisted
+  sites, is a quick & dirty work around for Firefox DOS bug 319004
++ "com.xy" 2nd level domains are always considered special TLDs
++ Other special TLDs added
+x Fixed "Forbid other plugins" semantics: Java and Flash should
+  remain allowed unless their specific "Forbid" option is flagged.
+x Fixed portuguese locale bug
+
 v 1.1.3.4
 =====================================================================
 + Flock support

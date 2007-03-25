@@ -43,4 +43,5 @@
 <!ENTITY noscriptStatusLabel "Status bar label">
 <!ENTITY noscriptForbidBookmarklets "Forbid bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Show placeholder icon">
+<!ENTITY noscriptTruncateTitle "Truncate document titles">
 
