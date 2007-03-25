@@ -136,7 +136,7 @@ NoScriptOverlay.prototype = {
               
               if(replacePlugins) {
                 if(!createElem) {
-                  createElem = lm(document, "createElementNS");
+                  createElem = lm(doc, "createElementNS");
                   forcedCSS = "; -moz-outline-color: red !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; background: white url(\"" + pp +
                            "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important }";
                   try {

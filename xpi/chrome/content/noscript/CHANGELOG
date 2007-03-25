@@ -1,5 +1,11 @@
 NoScript ChangeLog
 
+v 1.1.4.5.061221
+=====================================================================
++ Minefield (3.0a2) support
++ Fixed plugin placeholder trunk issue (thanks timeless for report)
++ added *.ua "special" TLDs (thanks Devan Chetty)
+
 v 1.1.4.5.061206
 =====================================================================
 + Added org.in and co.sy to the "special" TLDs list
