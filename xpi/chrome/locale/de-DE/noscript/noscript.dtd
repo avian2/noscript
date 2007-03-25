@@ -17,9 +17,25 @@
 <!ENTITY noscriptFullAddr "Ganze Adressen (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Ganze Domains (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Basis von Second Level Domains (noscript.net)">
+<!ENTITY noscriptTempCmd "[...] temporär erlauben">
 <!ENTITY noscriptSound "Ton ausgeben wenn Scripts geblockt wurden">
 <!ENTITY noscriptImport "Importieren">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exportieren">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Meldung anzeigen bei blockierten Scripts">
+<!ENTITY noscriptNotify.bottom "Meldung am unteren Rand anzeigen">
+<!ENTITY noscriptSound.choose "Wählen">
+<!ENTITY noscriptSound.choose.accesskey "W">
+<!ENTITY noscriptSound.play "Abspielen">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Standard wiederherstellen">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Erweitert">
+<!ENTITY noscriptAdditionalPermissions "Zusätzliche Berechtigungen für vertrauenswürdige Seiten">
+<!ENTITY noscriptAllowClipboard "Copy and paste von formatiertem Text aus externer Zwischenablage erlauben">
+<!ENTITY noscriptAdditionalRestrictions "Zusätzliche Einschränkungen für nicht vertrauenswürdige Seiten">
+<!ENTITY noscriptForbidJava "Java™ verbieten">
+<!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
+<!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
+<!ENTITY noscriptReloadWarn "Diese Einstellungen werden bei neu (oder manuell) geladenen Seiten wirksam">

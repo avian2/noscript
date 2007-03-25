@@ -48,11 +48,12 @@
   <tabs>
     <tab label="&noscriptGeneral;"/>
     <tab label="&noscriptAppearance;"/>
+    <tab label="&noscriptAdvanced;"/>
   </tabs>
     <tabpanels>
       <tabpanel>
   
-  <vbox>
+  <vbox flex="1">
   <hbox>
   <description style="width: 400px; white-space: normal" id="permissionsText">&noscriptPermissionsText;</description>
   </hbox>
@@ -89,8 +90,8 @@
   </vbox>
   </tabpanel>
   <tabpanel>
-  <vbox>
-  <description>&noscriptShow;</description>
+  <vbox flex="1">
+  <hbox><description>&noscriptShow;</description></hbox>
    <separator class="thin"/>
     <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
     <checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
@@ -104,9 +105,50 @@
     <separator class="groove"/>
     <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
     <checkbox id="opt-sound" label="&noscriptSound;" />
-    <checkbox id="opt-notify" label="&noscriptNotify;" />
+    <vbox style="margin-left: 24px">
+      <hbox>
+        <textbox id="sampleURL" readonly="true" flex="1" />
+        <button id="sampleChooseButton" label="&noscriptSound.choose;" accesskey="&noscriptSound.choose.accesskey;" 
+          oncommand="nso_chooseSample()" />
+      </hbox>
+      <hbox align="right">
+        <spacer flex="1" />
+        <button label="&noscriptSound.play;" accesskey="&noscriptSound.play.accesskey;"
+          oncommand="nso_play()" />
+        <button label="&noscriptSound.reset;" accesskey="&noscriptSound.reset.accesskey;"
+          oncommand="nso_setSample(null)" />
+      </hbox>
+    </vbox>
+    <vbox id="notifyOpts">
+      <checkbox id="opt-notify" label="&noscriptNotify;" />
+      <checkbox id="opt-notify.bottom" label="&noscriptNotify.bottom;" style="margin-left: 24px" />
+    </vbox>
   </vbox>
   </tabpanel>
+  
+  
+  <tabpanel>
+    <vbox flex="1">
+    
+    <label class="header" value="&noscriptAdditionalPermissions;" />
+    <vbox>
+      <checkbox id="opt-allowClipboard" label="&noscriptAllowClipboard;" />
+    </vbox>
+   
+   
+    <vbox id="contentOpts" flex="1">
+     <separator class="groove"/>
+    <label class="header" value="&noscriptAdditionalRestrictions;" />
+     <hbox><description style="width: 400px; white-space: normal">&noscriptReloadWarn;</description></hbox>
+    <vbox>
+      <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
+      <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
+      <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+    </vbox>
+    </vbox>
+   </vbox>
+  </tabpanel>
+  
   </tabpanels>
   </tabbox>
 </dialog>

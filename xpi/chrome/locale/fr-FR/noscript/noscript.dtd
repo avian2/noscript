@@ -8,18 +8,34 @@
 <!ENTITY noscriptAllow.accesskey "A">
 <!ENTITY noscriptRemoveSelected "Enlever les site sélectionné">
 <!ENTITY noscriptGloballyEnabled "Autoriser Javascript globalement (dangereux)">
-<!ENTITY noscriptAutoReload "Recharger la page automatiquement après avoir changé les permissions">
+<!ENTITY noscriptAutoReload "Recharger les pages affectées automatiquement après avoir changé les permissions">
 <!ENTITY noscriptGeneral "Général">
 <!ENTITY noscriptAppearance "Apparence">
 <!ENTITY noscriptShow "Afficher...">
 <!ENTITY noscriptCtxMenu "Menu contextuel">
-<!ENTITY noscriptStatusIcon "Icône de barre d'état">
+<!ENTITY noscriptStatusIcon "Icône dans la barre d'état">
 <!ENTITY noscriptFullAddr "Adresses complètes (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Domaines complètes (www.noscript.net)">
+<!ENTITY noscriptFullDom "Domaines complets (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Domaines de second niveau (noscript.net)">
+<!ENTITY noscriptTempCmd "Autoriser temporairement [...]">
 <!ENTITY noscriptSound "Retour audio quand des scripts sont bloqués">
 <!ENTITY noscriptImport "Importer">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exporter">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Afficher un message sur les scripts bloqués">
+<!ENTITY noscriptNotify "Afficher un message à propos des scripts bloqués">
+<!ENTITY noscriptNotify.bottom "Placer le message en bas">
+<!ENTITY noscriptSound.choose "Choisir">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Jouer">
+<!ENTITY noscriptSound.play.accesskey "J">
+<!ENTITY noscriptSound.reset "Réinitialiser">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Avancé">
+<!ENTITY noscriptAdditionalPermissions "Permissions supplémentaires pour les sites de confiance">
+<!ENTITY noscriptAllowClipboard "Autoriser le copier/coller de texte riche du presse papier">
+<!ENTITY noscriptAdditionalRestrictions "Restrictions supplémentaires pour les sites à risque">
+<!ENTITY noscriptForbidJava "Interdire Java™">
+<!ENTITY noscriptForbidFlash "Interdire Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Interdire les autres plugins">
+<!ENTITY noscriptReloadWarn "Ces options prendront effet sur les pages rechargées (manuellement) et les nouvelles pages">

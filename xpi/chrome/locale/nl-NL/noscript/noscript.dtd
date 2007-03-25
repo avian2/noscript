@@ -14,13 +14,28 @@
 <!ENTITY noscriptShow "Tonen...">
 <!ENTITY noscriptCtxMenu "Contextmenu">
 <!ENTITY noscriptStatusIcon "Taakbalkpictogram">
-<!ENTITY noscriptFullAddr "Volledige adressen">
-<!ENTITY noscriptFullDom "Volledige domeinen">
-<!ENTITY noscriptBaseDom "Hoofd (2e niveau) domeinen">
+<!ENTITY noscriptFullAddr "Volledige adressen (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Volledige domeinen (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Hoofd (2e niveau) domeinen (noscript.net)">
+<!ENTITY noscriptTempCmd "Tijdelijk toestaan [...]">
 <!ENTITY noscriptSound "Geluidsondersteuning wanneer scripts worden geblokkeerd">
 <!ENTITY noscriptImport "Importeren">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exporteren">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Bericht over geblokkeerde scripts tonen">
-
+<!ENTITY noscriptNotify.bottom "Bericht onderin het scherm weergeven">
+<!ENTITY noscriptSound.choose "Kiezen">
+<!ENTITY noscriptSound.choose.accesskey "K">
+<!ENTITY noscriptSound.play "Afspelen">
+<!ENTITY noscriptSound.play.accesskey "A">
+<!ENTITY noscriptSound.reset "Standaard">
+<!ENTITY noscriptSound.reset.accesskey "S">
+<!ENTITY noscriptAdvanced "Geavanceerd">
+<!ENTITY noscriptAdditionalPermissions "Extra toestemming voor betrouwbare webpagina's">
+<!ENTITY noscriptAllowClipboard "Kopiëren en plakken van tekst met opmaakcodes vanaf een extern klembord toestaan">
+<!ENTITY noscriptAdditionalRestrictions "Extra beperkingen voor onbetrouwbare webpagina's">
+<!ENTITY noscriptForbidJava "Java™ verbieden">
+<!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieden">
+<!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
+<!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina's">

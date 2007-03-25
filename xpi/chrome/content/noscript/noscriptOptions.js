@@ -19,13 +19,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
-g_serv=noscriptUtil.service;
-g_urlList=null;
-g_jsglobal=null;
-g_urlText=null;
-g_addButton=null;
-g_removeButton=null;
-g_dom2=/^http[s]?:\/\/([\w\-]+(:?\.[\w]+$|$))/;
+const g_serv=noscriptUtil.service;
+var g_urlList=null;
+var g_jsglobal=null;
+var g_urlText=null;
+var g_addButton=null;
+var g_removeButton=null;
+var g_dom2=/^http[s]?:\/\/([\w\-]+(:?\.[\w]+$|$))/;
 
 function nso_init() {
   if(g_serv.uninstalling) { // this should never happen! 
@@ -47,12 +47,13 @@ function nso_init() {
     }
   );
   
-  if(Components.interfaces.nsIChromeRegistrySea) { // SeaMonkey
-    document.getElementById("opt-notify").setAttribute("collapsed","true");
+  if(Components.interfaces.nsIPop3URL) { // SeaMonkey
+    document.getElementById("notifyOpts").setAttribute("collapsed","true");
+    document.getElementById("contentOpts").setAttribute("collapsed","true");
   }
   
   document.getElementById("opt-showTemp").setAttribute("label",noscriptUtil.getString("allowTemp",["[...]"]));
-  
+  nso_setSample(g_serv.getPref("sound.block"));
 }
 
 function nso_urlListChanged() {
@@ -87,7 +88,7 @@ function nso_populateUrlList(sites) {
   for(var j=g_urlList.getRowCount(); j-->0; g_urlList.removeItemAt(j));
   var site,item;
   
-  var match,k;
+  var match,k,len;
   for(j=0, len=sites.length; j<len; j++) {
     site=sites[j];
     // skip protocol+2ndlevel domain URLs
@@ -171,6 +172,41 @@ function nso_save() {
     serv.setJSEnabled(sites,true,[]);
     serv.jsEnabled=global;
   });
+  
+  g_serv.setPref("sound.block",nso_getSample());
+}
+
+function nso_chooseSample() {
+   const title="NoScript - "+document.getElementById("sampleChooseButton").getAttribute("label");
+   try {
+    const cc=Components.classes;
+    const ci=Components.interfaces;
+    const fp = cc["@mozilla.org/filepicker;1"].createInstance(ci.nsIFilePicker);
+    
+    fp.init(window,title, ci.nsIFilePicker.modeOpen);
+    fp.appendFilter(noscriptUtil.getString("audio.samples"),"*.wav");
+    fp.filterIndex=0;
+    const ret=fp.show();
+    if (ret==ci.nsIFilePicker.returnOK || ret==ci.nsIFilePicker.returnReplace) {
+      nso_setSample(fp.fileURL.spec);
+      nso_play();
+    }
+  } catch(ex) {
+    g_serv.prompter.alert(window,title,ex.message);
+  }
+}
+
+function nso_setSample(url) {
+  if(!url) {
+    url="chrome://noscript/skin/block.wav";
+  }
+  document.getElementById("sampleURL").value=url;
+}
+function nso_getSample() {
+  return document.getElementById("sampleURL").value;
+}
+function nso_play() {
+  g_serv.playSound(nso_getSample(),true);
 }
 
 
@@ -208,7 +244,8 @@ function nso_import(file) {
     g_serv.sortedSiteSet(
       g_serv.splitList(g_serv.readFile(file)).concat(nso_urlList2Arr())
     )
-  );  
+  );
+  return null;
 }
 
 function nso_export(file) {
@@ -216,6 +253,7 @@ function nso_export(file) {
   g_serv.writeFile(file,
     nso_urlList2Arr(true).join("\n")
   );
+  return null;
 }
 
 

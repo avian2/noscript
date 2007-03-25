@@ -5,14 +5,15 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.0.9</em:version>
-   <em:description>Extra protection for your Firefox: NoScript allows JavaScript execution only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive script blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
+   <em:version>1.1.0</em:version>
+   <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
    <em:contributor>Alberto Martínez (Spanish translation)</em:contributor>
+   <em:contributor>Dario Ornelas (Portuguese translation)</em:contributor>
    <em:contributor>Liesbeth (Dutch translation)</em:contributor>
    <em:contributor>Michela Venuto (inspiration)</em:contributor>
-   <em:contributor>Thomas Weber (German translation)</em:contributor>
+   <em:contributor>Thomas Weber &amp; Volker Hable (German translation)</em:contributor>
    <em:contributor>Xavier Robin (French translation)</em:contributor>
 
    <em:optionsURL>chrome://noscript/content/noscriptOptions.xul</em:optionsURL>
@@ -45,6 +46,8 @@
        <em:locale>locale/fr-FR/noscript/</em:locale>
        <em:locale>locale/it-IT/noscript/</em:locale>
        <em:locale>locale/nl-NL/noscript/</em:locale>
+       <em:locale>locale/pt-PT/noscript/</em:locale>
+       <em:locale>locale/pt-BR/noscript/</em:locale>
        <em:locale>locale/es-ES/noscript/</em:locale>
        <em:skin>skin/classic/noscript/</em:skin>
      </Description>

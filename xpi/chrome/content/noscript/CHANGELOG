@@ -1,8 +1,26 @@
 NoScript ChangeLog
 
 TODO:
-Allow some URL only for current session life-span (many requests!!!)
 Turn javascript: links into regular links where JS is disabled (zasxae)
+Black list
+
+v 1.1.0
+=====================================================================
++ Customizable message position, top or bottom (new default) 
++ Customizable audio sample for feedback
++ (Firefox only) Advanced options to forbid Java™, Flash® and other 
+  plugins (Java™ forbidden by default, since many users don't
+  know the difference between Java and JavaScript)
++ Advanced options to allow rich-text clipboard on trusted sites
++ Portoguese translation (thanks to Dario Ornelas)
+x New (less ambiguous) "partially allowed" icon
+x Audio feedback off by default
+x Statusbar icon hidden status persists across sessions
+x Proper jar: scheme handling (will allow per-domain selection when
+  Firefox bug preventing it is patched -
+  see https://bugzilla.mozilla.org/show_bug.cgi?id=298823)
+x jar: scheme can be allowed only temporarily (see above)
+x No more browser activity stop after permission changes
 
 v 1.0.9
 =====================================================================

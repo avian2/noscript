@@ -175,28 +175,58 @@ NoscriptService.prototype={
     osvr.removeObserver(this,"profile-after-change");
     osvr.removeObserver(this,"em-action-requested",false);
     if(this.prefs) {
-      this.prefs.removeObserver("permanent",this);
+      this.prefs.removeObserver("",this);
       this.mozJSPref.removeObserver("enabled",this,false);
       this.uninstallGuard.dispose();
     }
   }
 ,
-  syncPrefs: function(branch,name) {
+  syncPrefs: function(branch, name) {
     switch(name) {
+      case "sites":
+        this._sites=null; // invalidate sites list cache
+      break;
       case "permanent":
         const permanentList=this.splitList(this.getPref("permanent",
           "googlesyndication.com noscript.net maone.net informaction.com noscript.net"));
-        permanentList[permanentList.length]="chrome:";
+        permanentList.concat(["chrome:","resource:"]);
         this.permanentList=this.sortedSiteSet(permanentList);
       break;
       case "temp":
-        this.tempList=this.splitList(this.getPref("temp"),"");
+        const tempList=this.splitList(this.getPref("temp"),"");
+        tempList.push("jar:");
+        this.tempList=this.sortedSiteSet(tempList);
         break;
       case "enabled":
         try {
           this.mozJSEnabled=this.mozJSPref.getBoolPref("enabled");
         } catch(ex) {
           this.mozJSEnabled=true;
+        }
+      break;
+      case "forbidJava":
+      case "forbidFlash":
+      case "forbidPlugins":
+      case "pluginPlaceholder":
+        this[name]=this.getPref(name,this[name]);
+        this.forbidSomePlugins=this.forbidJava || this.forbidFlash || this.forbidPlugins;
+        this.forbidAllPlugins=this.forbidJava && this.forbidFlash && this.forbidPlugins;
+      break;
+      case "allowClipboard":
+        const cp=["cutcopy","paste"];
+        const cpEnabled=this.getPref(name,false);
+        var cpName;
+        for(var cpJ=cp.length; cpJ-->0;) {
+          cpName=this.POLICY_NAME+".Clipboard."+cp[cpJ];
+          try {
+            if(cpEnabled) {
+              this.caps.setCharPref(cpName,"allAccess");
+            } else {
+              this.caps.clearUserPref(cpName);
+            }
+          } catch(ex) {
+            dump(ex+"\n");
+          }
         }
       break;
     }
@@ -226,13 +256,17 @@ NoscriptService.prototype={
     const prefserv=this.prefService=Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService)
     const PBI=Components.interfaces.nsIPrefBranchInternal;
     this.caps=prefserv.getBranch("capability.policy.").QueryInterface(PBI);
+    this.caps.addObserver("sites",this,false);
     this.prefs=prefserv.getBranch("noscript.").QueryInterface(PBI);
-    this.prefs.addObserver("permanent",this,false);
+    this.prefs.addObserver("",this,false);
     this.mozJSPref=prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
     this.mozJSPref.addObserver("enabled",this,false);
     
-    this.syncPrefs(this.prefs,"permanent");
-    this.syncPrefs(this.prefs,"temp");
+    const syncPrefNames=["pluginPlaceholder","allowClipboard","forbidPlugins","forbidJava","forbidFlash","temp","permanent"];
+    for(var spcount=syncPrefNames.length; spcount-->0;) {
+      this.syncPrefs(this.prefs,syncPrefNames[spcount]);
+    }
+    
     this.syncPrefs(this.mozJSPref,"enabled");
     
     const sites=this.sites=this.sites;
@@ -283,7 +317,7 @@ NoscriptService.prototype={
 ,
   isPermanent: function(s) {
     return s &&
-      (s=="chrome:" 
+      (s=="chrome:" || s=="resource:" 
         || this._indexOf(s,this.permanentList)>-1);
   }
 ,
@@ -316,7 +350,7 @@ NoscriptService.prototype={
       return this.caps.getCharPref(this.POLICY_NAME+".sites");
     } catch(ex) {
       return this.siteString=this.getPref("default",
-        "chrome: noscript.net gmail.google.com googlesyndication.com informaction.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
+        "chrome: resource: noscript.net gmail.google.com googlesyndication.com informaction.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
     }
   }
 ,
@@ -328,8 +362,9 @@ NoscriptService.prototype={
     return s;
   }
 ,
+  _sites: null,
   get sites() {
-    return this.splitList(this.sitesString);
+    return this._sites?this._sites:this._sites=this.splitList(this.sitesString);
   }
 ,
   set sites(ss) {
@@ -341,7 +376,7 @@ NoscriptService.prototype={
 ,
   sortedSiteSet: function(ss,keepShortest) {
     const ns=this;
-    ss=ss.sort(function(a,b) {
+    ss.sort(function(a,b) {
       if(a==b) return 0;
       if(!a) return 1;
       if(!b) return -1;
@@ -396,25 +431,23 @@ NoscriptService.prototype={
       scheme=this.ios.extractScheme(url);
       if(scheme=="javascript" || scheme=="data" || scheme=="about") return null;
       scheme+=":";
+      if(url==scheme) return url;
     } catch(ex) {
       var domainMatch=url.match(this._domainPattern);
       return domainMatch?domainMatch[0].toLowerCase():null;
     }
     try {
-      const uri=this.ios.newURI(url,null,null);
-      var port;
-      try {
-        port=uri.port;
-      } catch(noportEx) { 
-        port=-1; 
+      // let's unwrap JAR uris
+      var uri=this.ios.newURI(url,null,null);
+      if(uri instanceof Components.interfaces.nsIJARURI) {
+        uri=uri.JARFile;
+        return uri?this.getSite(uri.spec):scheme;
       }
-      var host;
-      try {
-        host="//"+uri.host;
-      } catch(nohostEx) {
-        host="";
+      try  {
+        return scheme+"//"+uri.hostPort;
+      } catch(exNoHostPort) {
+        return scheme;
       }
-      return port>0?scheme+host+":"+port:scheme+host;
     } catch(ex) {
       return null;
     }
@@ -485,28 +518,10 @@ NoscriptService.prototype={
     return is;
   }
 ,
-  delayExec: function(callback,delay) {
-     const timer=Components.classes["@mozilla.org/timer;1"].createInstance(
-        Components.interfaces.nsITimer);
-     timer.initWithCallback( { notify: callback }, 1, 0);
-  }
-,
-  _safeClosure: function() {
-    this.reloadWhereNeeded();
-    this.savePrefs();
-  }
-,
   safeCapsOp: function(callback) {
-    if(this.getPref("stop",true)) this.stopAll();
-    const serv=this;
-    this.delayExec(function() {
-     callback();
-     serv.delayExec(
-     function() {
-       serv.savePrefs();
-       serv.reloadWhereNeeded();
-     },1)
-    });
+    callback();
+    this.savePrefs();
+    this.reloadWhereNeeded();
   }
 ,
   isInPolicy: function(site,sites) {
@@ -517,7 +532,7 @@ NoscriptService.prototype={
     if(typeof(site)=="object" && site.length) {
       for(var j=site.length; j-->0; this.putInPolicy(site[j],included,sites));
     } else if(site) {
-      site=new String(site);
+      site=site.toString(); // ensure we're working with the right type
       
       if(site.indexOf(":")<0 && site.indexOf(".")==site.lastIndexOf(".")) {
        //2nd level domain hack
@@ -528,7 +543,7 @@ NoscriptService.prototype={
         return included;
       }
       if(included) {
-        sites[sites.length]=site;
+        sites.push(site);
       } else {
         const siteKiller={
           visit: function(current,ss,index) {
@@ -571,7 +586,7 @@ NoscriptService.prototype={
     for(var w; ww.hasMoreElements();) {
       w=ww.getNext();
       ov=w.noscriptOverlay;
-      gb=w.gBrowser;
+      gb=w.getBrowser?w.getBrowser():null;
       if(ov && gb && (bb=gb.browsers)) {
         for(b=bb.length; b-->0;) {
           doc=ov.getBrowserDoc(bb[b]);
@@ -591,26 +606,6 @@ NoscriptService.prototype={
       }
     }
     return ret;
-  }
-,
-  stopAll: function() {
-    const ww=this.getAllWindows();
-    var gb,bb,j,b;
-    for(var w; ww.hasMoreElements();) {
-      w=ww.getNext();
-      if( (gb=w.gBrowser) && (bb=gb.browsers) ) {
-         for(j=bb.length; j-->0;) {
-           b=bb[j];
-           dump("Stopping "+((b.currentURI)?b.currentURI.spec:"a browser")+" ...");
-           try {
-             b.stop();
-             dump("stopped\n");
-           } catch(ex) {
-             dump(ex);
-           }
-         }
-      }
-    }
   }
 ,
   SPECIAL_TLDS: {
@@ -841,8 +836,8 @@ NoscriptService.prototype={
   }
 ,
   _sound: null,
-  playSound: function(url) {
-    if(this.getPref("sound",true)) {
+  playSound: function(url,force) {
+    if(force || this.getPref("sound",true)) {
       var sound=this._sound;
       if(sound==null) {
         sound=Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound);
@@ -851,7 +846,7 @@ NoscriptService.prototype={
       try {
         sound.play(this.ios.newURI(url,null,null));
       } catch(ex) {
-        dump(ex);
+        //dump(ex);
       }
     }
   }
@@ -892,6 +887,117 @@ NoscriptService.prototype={
   queryInterfaceSupport: function(iid,iids) { 
     xpcom_checkInterfaces(iid, iids, Components.results.NS_ERROR_NO_INTERFACE);
   }
+,
+  pluginPlaceholder: "chrome://noscript/skin/icon32.png",
+  forbidSomePlugins: false,
+  forbidAllPlugins: false,
+  forbidJava: false,
+  forbidFlash: false,
+  forbidPlugins: false,
+  pluginSitesCache: {},
+  getPluginSites: function(uri) {
+    const sc=this.pluginSitesCache;
+    return uri?(uri in sc)?sc[uri]:sc[uri]={}:{};
+  },
+  // nsIContentPolicy interface
+  // we use numeric constants for performance sake:
+  // nsIContentPolicy.TYPE_SCRIPT = 2
+  // nsIContentPolicy.TYPE_OBJECT = 5
+  // nsIContentPolicy.TYPE_DOCUMENT = 6
+  // nsIContentPolicy.TYPE_SUBDOCUMENT = 7
+  // nsIContentPolicy.REJECT_SERVER = -3
+  // nsIContentPolicy.ACCEPT = 1
+  
+  shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
+    if(!this._lastGlobal) {
+      var forbid;
+      if(aContentType == 5 || ( forbid = (aContentType == 2) ) ) {
+        var origin;
+        if(!forbid) {
+          // cache plugin sites as they (attempt to) load
+          if(aRequestOrigin && !aInternalCall) {
+            const sites=this.getPluginSites(aRequestOrigin.spec);
+            const pluginURI=aContentLocation.spec;
+            origin=this.getSite(pluginURI);
+            if(origin) {
+              // we construct an hash for each origin, containing the real URLs 
+              // as properties and the total (unique) count for each plugin URL
+              var pe=sites[origin];
+              if(!pe) {
+                sites[origin]=pe={pluginCount: 1};
+                pe[pluginURI]=true;
+              } else {
+                if(!pe[pluginURI]) {
+                  pe[pluginURI]=true;
+                  pe.pluginCount++;
+                }
+              }
+            }
+          }
+          
+          if(this.forbidSomePlugins) {
+            var forbid=this.forbidAllPlugins;
+            if((!forbid) && aMimeTypeGuess) {
+              const isFlash=aMimeTypeGuess=="application/x-shockwave-flash";
+              if(isFlash) {
+                forbid=this.forbidFlash;
+              } else {
+                const isJava=aMimeTypeGuess.indexOf("application/x-java-")==0;
+                if(isJava) {
+                  forbid=this.forbidJava;
+                } else {
+                  forbid=this.forbidPlugins;
+                }
+              }
+            }
+          }
+        }
+        if(forbid) {
+          if(!origin) origin=this.getSite(aContentLocation.spec);
+          if(!this.isInPolicy(origin)) {
+            if(aContext) {
+              const lm=Components.lookupMethod;
+              const ci=Components.interfaces;
+              var setAttr,getAttr;
+              if(aContext instanceof ci.nsIDOMHTMLAppletElement) {
+                  (setAttr=lm(aContext,"setAttribute"))("code","java.applet.Applet");
+              }
+              if(this.pluginPlaceholder) {
+                if(aContext instanceof Components.interfaces.nsIDOMNode) {
+                  if(aContext instanceof(ci.nsIDOMHTMLEmbedElement)) {
+                    var parent=lm(aContext,"parentNode")();
+                    if(parent instanceof ci.nsIDOMHTMLObjectElement) {
+                      aContext=parent;
+                      setAttr=null;
+                    }
+                  }
+                  
+                  getAttr=lm(aContext,"getAttribute");
+                  if(!setAttr) setAttr=lm(aContext,"setAttribute");
+                  
+                  var clazz=getAttr("class");
+                  if((!clazz) || clazz.indexOf("-noscript-blocked")<0) {
+                    setAttr("class",clazz?clazz+" -noscript-blocked":"-noscript-blocked");
+                  
+                    var title=(aMimeTypeGuess?aMimeTypeGuess.replace("application/","")+"@":"@")+origin;
+                    var desc=getAttr("alt");
+                    setAttr("title",desc?title+" \""+desc+"\"":title);
+                  }
+                }
+              }
+            }
+            dump("NoScript blocked "+aContentLocation.spec+" which is a "+aMimeTypeGuess+" from "+origin);
+            return -3;
+          }
+        }
+      }
+    }
+    return 1;
+  }
+,
+  shouldProcess: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, aExtra) {
+    return this.shouldLoad(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, true);
+  }
 };
 
 
@@ -911,8 +1017,13 @@ const SERVICE_IIDS =
 [ 
 Components.interfaces.nsIObserver,
 Components.interfaces.nsISupports,
-Components.interfaces.nsISupportsWeakReference
+Components.interfaces.nsISupportsWeakReference,
+Components.interfaces.nsIContentPolicy
 ];
+
+// categories which this component is registered in
+const SERVICE_CATS = ["app-startup","content-policy"];
+
 
 // Factory object
 const SERVICE_FACTORY = {
@@ -951,21 +1062,24 @@ Module.registerSelf = function (compMgr, fileSpec, location, type) {
       fileSpec,
       location, 
       type);
-      
-    Components.classes['@mozilla.org/categorymanager;1'].getService(
-      Components.interfaces.nsICategoryManager
-     ).addCategoryEntry("app-startup",
-        SERVICE_NAME, "service," + SERVICE_CTRID, true, true, null);
-      
+    const catman = Components.classes['@mozilla.org/categorymanager;1'
+      ].getService(Components.interfaces.nsICategoryManager);
+    for(var j=0, len=SERVICE_CATS.length; j<len; j++) {
+      catman.addCategoryEntry(SERVICE_CATS[j],
+        //SERVICE_NAME, "service," + SERVICE_CTRID, 
+        SERVICE_CTRID, SERVICE_CTRID, true, true, null);
+    }
     this.firstTime=false;
   } 
 }
 Module.unregisterSelf = function(compMgr, fileSpec, location) {
   compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar
     ).unregisterFactoryLocation(SERVICE_CID, fileSpec);
-  Components.classes['@mozilla.org/categorymanager;1'].getService(
-      Components.interfaces.nsICategoryManager
-     ).deleteCategoryEntry("app-startup",SERVICE_NAME, true);
+  const catman = Components.classes['@mozilla.org/categorymanager;1'
+      ].getService(Components.interfaces.nsICategoryManager);
+  for(var j=0, len=SERVICE_CATS.length; j<len; j++) {
+    catman.deleteCategoryEntry(SERVICE_CATS[j], SERVICE_CTRID, true);
+  }
 }
 
 Module.getClassObject = function (compMgr, cid, iid) {

@@ -8,11 +8,11 @@
     </RDF:Seq>
 
     <RDF:Description about="urn:mozilla:package:noscript"
-            chrome:displayName="NoScript 1.0.9"
+            chrome:displayName="NoScript 1.1.0"
             chrome:author="Giorgio Maone (InformAction)"
             chrome:authorURL="http://www.informaction.com/mozilla/noscript"
             chrome:name="noscript"
-            chrome:description="Extra protection for your Firefox: NoScript allows JavaScript execution only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive script blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)"
+            chrome:description="Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)"
             chrome:extension="true">
     </RDF:Description>
 

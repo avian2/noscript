@@ -8,7 +8,7 @@
 <!ENTITY noscriptAllow.accesskey "A">
 <!ENTITY noscriptRemoveSelected "Remove Selected Sites">
 <!ENTITY noscriptGloballyEnabled "JavaScript Globally Allowed (dangerous)">
-<!ENTITY noscriptAutoReload "Automatically reload current page when permissions change">
+<!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
 <!ENTITY noscriptGeneral "General">
 <!ENTITY noscriptAppearance "Appearance">
 <!ENTITY noscriptShow "Show...">
@@ -24,4 +24,18 @@
 <!ENTITY noscriptExport "Export">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Show message about blocked scripts">
-
+<!ENTITY noscriptNotify.bottom "Place message at the bottom">
+<!ENTITY noscriptSound.choose "Choose">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Play">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Reset default">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Advanced">
+<!ENTITY noscriptAdditionalPermissions "Additional permissions for trusted sites">
+<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
+<!ENTITY noscriptAdditionalRestrictions "Additional restrictions for untrusted sites">
+<!ENTITY noscriptForbidJava "Forbid Java™">
+<!ENTITY noscriptForbidFlash "Forbid Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Forbid other plugins">
+<!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">

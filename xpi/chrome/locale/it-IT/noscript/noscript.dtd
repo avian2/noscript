@@ -23,4 +23,18 @@
 <!ENTITY noscriptExport "Esporta">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Mostra messaggio sul blocco degli script">
-
+<!ENTITY noscriptNotify.bottom "Posiziona il messaggio in basso">
+<!ENTITY noscriptSound.choose "Scegli">
+<!ENTITY noscriptSound.choose.accesskey "S">
+<!ENTITY noscriptSound.play "Suona">
+<!ENTITY noscriptSound.play.accesskey "u">
+<!ENTITY noscriptSound.reset "Ripristina predefinito">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Avanzate">
+<!ENTITY noscriptAdditionalPermissions "Permessi aggiuntivi per i siti fidati">
+<!ENTITY noscriptAllowClipboard "Permetti copia e incolla di testo formattato da altre applicazioni">
+<!ENTITY noscriptAdditionalRestrictions "Restrizioni aggiuntive per i siti non fidati">
+<!ENTITY noscriptForbidJava "Vieta Java™">
+<!ENTITY noscriptForbidFlash "Vieta Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Vieta altri plugin">
+<!ENTITY noscriptReloadWarn "Queste opzioni avranno effetto nelle nuove pagine e in quelle ricaricate (manualmente)">

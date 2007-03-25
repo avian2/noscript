@@ -2,11 +2,11 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Configuración de NoScript">
 <!ENTITY noscriptAbout "Acerca de NoScript">
-<!ENTITY noscriptPermissionsText "Aquí puedes especificar las páginas web a las que permites ejecutar código JavaScript. Escribe la dirección de la web que quieres incluir, y después haz clic en Permitir (ej. &quot;http://www.paginaweb.com&quot; o &quot;paginaweb.com&quot;) .">
+<!ENTITY noscriptPermissionsText "Aquí puedes especificar las páginas web a las que quieres permitir ejecutar código JavaScript. Escribe la dirección de la web que quieres incluir, y después haz clic en &quot;Permitir&quot; (ej. &quot;http://www.paginaweb.com&quot; o &quot;paginaweb.com&quot;).">
 <!ENTITY noscriptWebAddress "Dirección de la web:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">
-<!ENTITY noscriptRemoveSelected "Quitar webs seleccionadas">
+<!ENTITY noscriptRemoveSelected "Quitar web(s) seleccionada(s)">
 <!ENTITY noscriptGloballyEnabled "Permitir JavaScript Globalmente (peligroso)">
 <!ENTITY noscriptAutoReload "Recargar automáticamente la página al cambiarle los permisos">
 <!ENTITY noscriptGeneral "General">
@@ -17,10 +17,25 @@
 <!ENTITY noscriptFullAddr "Direcciones completas (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Dominios completos (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Dominios de segundo nivel (noscript.net)">
+<!ENTITY noscriptTempCmd "Permitir temporalmente [...]">
 <!ENTITY noscriptSound "Sonido de aviso al bloquear scripts">
 <!ENTITY noscriptImport "Importar">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exportar">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Mostrar alertas sobre scripts bloqueados">
-
+<!ENTITY noscriptNotify "Mostrar alertas de scripts bloqueados">
+<!ENTITY noscriptNotify.bottom "Mostrar alertas en la parte inferior">
+<!ENTITY noscriptSound.choose "Examinar">
+<!ENTITY noscriptSound.choose.accesskey "x">
+<!ENTITY noscriptSound.play "Play">
+<!ENTITY noscriptSound.play.accesskey "P">
+<!ENTITY noscriptSound.reset "Por defecto">
+<!ENTITY noscriptSound.reset.accesskey "d">
+<!ENTITY noscriptAdvanced "Avanzado">
+<!ENTITY noscriptAdditionalPermissions "Permisos adicionales para webs fiables">
+<!ENTITY noscriptAllowClipboard "Permitir copiar y pegar texto enriquecido desde otro programa">
+<!ENTITY noscriptAdditionalRestrictions "Restricciones adicionales para webs no fiables">
+<!ENTITY noscriptForbidJava "Bloquear Java™">
+<!ENTITY noscriptForbidFlash "Bloquear Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Bloquear otros plugins">
+<!ENTITY noscriptReloadWarn "Estas opciones tendrán efecto en ventanas nuevas o tras recargar la página">
