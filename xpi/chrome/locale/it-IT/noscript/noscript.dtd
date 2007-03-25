@@ -2,10 +2,16 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opzioni NoScript">
 <!ENTITY noscriptAbout "Informazioni su NoScript">
-<!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l'esecuzione degli script è consentita. Digitare l'indirizzo o il dominio (es. &quot;http://www.sito.com&quot; oppure &quot;sito.com&quot;)  e fare clic su Permetti.">
+<!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l&apos;esecuzione degli script è consentita. Digitare l&apos;indirizzo o il dominio (es. &quot;http://www.sito.com&quot; oppure &quot;sito.com&quot;)  e fare clic su Permetti.">
 <!ENTITY noscriptWebAddress "Indirizzo del sito:">
 <!ENTITY noscriptAllow "Permetti">
 <!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptForbid "Vieta">
+<!ENTITY noscriptForbid.accesskey "V">
+<!ENTITY noscriptTrust "Considera fidato">
+<!ENTITY noscriptTrust.accesskey "f">
+<!ENTITY noscriptUntrust "Considera non fidato">
+<!ENTITY noscriptUntrust.accesskey "n">
 <!ENTITY noscriptRemoveSelected "Rimuovi i siti selezionati">
 <!ENTITY noscriptGloballyEnabled "Esecuzione script abilitati globalmente (pericoloso)">
 <!ENTITY noscriptAutoReload "Aggiorna automaticamente la pagina quando i permessi cambiano">
@@ -17,7 +23,7 @@
 <!ENTITY noscriptFullAddr "Indirizzi completi">
 <!ENTITY noscriptFullDom "Dominii completi">
 <!ENTITY noscriptBaseDom "Dominii base (di secondo livello)">
-<!ENTITY noscriptTempCmd "Temporarily allow [...]">
+<!ENTITY noscriptTempCmd "Permetti temporaneamente [...]">
 <!ENTITY noscriptSound "Notifica audio per gli script bloccati">
 <!ENTITY noscriptImport "Importa">
 <!ENTITY noscriptImport.accesskey "I">
@@ -47,3 +53,26 @@
 <!ENTITY noscriptFixLinks "Tenta di correggere i link JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permetti tutti i siti presenti nei segnalibri">
 <!ENTITY noscriptAllowViaBookmarks "Permetti i siti aperti attraverso i segnalibri">
+<!ENTITY noscriptAllowPing "Permetti il ping dai collegamenti">
+<!ENTITY noscriptAllowLocalLinks "Permetti collegamenti locali">
+<!ENTITY noscriptForbidPing "Vieta il ping dai collegamenti">
+<!ENTITY noscriptWhitelist "Lista fidata">
+<!ENTITY noscriptPermissions "Permessi">
+<!ENTITY noscriptRefresh "Aggiorna">
+<!ENTITY noscriptNotifications "Notifiche">
+<!ENTITY noscriptToolbarToggle "Il click sinistro sul pulsante della barra inverte i permessi per il sito principale">
+<!ENTITY noscriptTrusted "Fidato">
+<!ENTITY noscriptUntrusted "Non fidato">
+<!ENTITY noscriptUnknown "Sconosciuto">
+<!ENTITY noscriptAdd "Aggiungi">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Chiudi">
+<!ENTITY noscriptSiteManager "Gestione Siti">
+<!ENTITY noscriptSecurityManager "Gestione Sicurezza">
+<!ENTITY noscriptPolicies "Politiche">
+<!ENTITY noscriptDefaultPolicies "Politiche predefinite">
+<!ENTITY noscriptSitePolicies "Politiche specifiche per i siti">
+<!ENTITY noscriptNselNever "Nascondi gli elementi &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Mostra l&apos;elemento &lt;noscript&gt; che segue un elemento &lt;script&gt; bloccato">
+<!ENTITY noscriptAutoAllowTopLevel "Permetti temporaneamente il sito principale in automatico">
+<!ENTITY noscriptDescription "Protezione aggiuntiva per Firefox: NoScript consente l&apos;esecuzione di JavaScript, di Java (e, opzionalmente, degli altri plugin) solo per domini fidati di tua scelta (es. la tua banca online). Questo blocco preventivo basato su whitelist impedisce lo sfruttamento di vulnerabiltà della sicurezza (sia note che  addirittura ancora sconosciute!) li esperti confermeranno: Firefox è davvero più sicuro con NoScript :-)">

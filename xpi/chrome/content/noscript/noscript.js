@@ -18,7 +18,7 @@ NoscriptUtil.prototype = {
     }
     if(s != null) {
       s.init();
-      s.unwrapEmbed = function(ctx) { // dirty hack...
+      s.nakeEmbed = function(ctx) {
         var lm = this.lookupMethod;
         var prev = lm(ctx, "previousSibling")();
         if(prev) return lm(prev, "nextSibling")();

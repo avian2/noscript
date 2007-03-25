@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Адреса web-сайту:">
 <!ENTITY noscriptAllow "Дозволити">
 <!ENTITY noscriptAllow.accesskey "о">
+<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "Видалити вибрані сайти">
 <!ENTITY noscriptGloballyEnabled "JavaScript повністю дозволений (небезпечно)">
 <!ENTITY noscriptAutoReload "Автоматично оновлювати сторінку після зміни для неї правил">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks "Дозволяти всім сайтам знайденим в закладках">
 <!ENTITY noscriptAllowViaBookmarks "Дозволити сайти, відкриті через закладки">
 <!ENTITY noscriptAllowPing "Дозволити &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Дозволити локальні посилання">
 <!ENTITY noscriptForbidPing "Заборонити &lt;a ping...&gt;">
 <!ENTITY noscriptWhitelist "Білий список">
 <!ENTITY noscriptPermissions "Дозволи">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Поліси безпеки">
 <!ENTITY noscriptDefaultPolicies "Поліс безпеки за умовчанням">
 <!ENTITY noscriptSitePolicies "Спеціальні поліси безпеки сайтів">
+<!ENTITY noscriptNselNever "Приховати &lt;noscript&gt; елементи">
+<!ENTITY noscriptNselForce "Показати &lt;noscript&gt; елементи при заблокованому &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">

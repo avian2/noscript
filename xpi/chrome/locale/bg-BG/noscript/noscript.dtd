@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Адрес на уеб-сайта:">
 <!ENTITY noscriptAllow "Разреши">
 <!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptForbid "Забрани">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Маркирай като Доверен">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Маркирай като Недоверен">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "Премахни избраните сайтове">
 <!ENTITY noscriptGloballyEnabled "Скриптовете са напълно разрешени (опасно)">
 <!ENTITY noscriptAutoReload "Автоматично презареждай сайтовете, когато разрешението бъде променено">
@@ -48,4 +54,25 @@
 <!ENTITY noscriptAllowBookmarks "Разреши всички сайтове в отметките">
 <!ENTITY noscriptAllowViaBookmarks "Разрешявай сайтове отваряни чрез отметките">
 <!ENTITY noscriptAllowPing "Разрешавай пинг...">
+<!ENTITY noscriptAllowLocalLinks "Allow local links">
 <!ENTITY noscriptForbidPing "Забравни пинг...">
+<!ENTITY noscriptWhitelist "Whitelist">
+<!ENTITY noscriptPermissions "Permissions">
+<!ENTITY noscriptRefresh "Refresh">
+<!ENTITY noscriptNotifications "Notifications">
+<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
+<!ENTITY noscriptTrusted "Trusted">
+<!ENTITY noscriptUntrusted "Untrusted">
+<!ENTITY noscriptUnknown "Unknwon">
+<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Close">
+<!ENTITY noscriptSiteManager "Site Manager">
+<!ENTITY noscriptSecurityManager "Security Manager">
+<!ENTITY noscriptPolicies "Policies">
+<!ENTITY noscriptDefaultPolicies "Default Policies">
+<!ENTITY noscriptSitePolicies "Site Specific Policies">
+<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
+<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Временно позволи използване на java от всички сайтове">
+<!ENTITY noscriptDescription "Допълнителна защита за вашият Firefox: NoScript позволява JavaScript, Java ( и други добавки ) само за избрани от вас сайтове ( като вашият личен сайт ). Превентира експлоатации от всякакъв вид ( познати и непознати! ) без следа от функционалност... Експертите ще се съгласят: Със NoScript вашият Firefox е в безопасност :-)">

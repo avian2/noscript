@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "آدرس وب سایت:">
 <!ENTITY noscriptAllow "اجازه دادن">
 <!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptForbid "ممنوع">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "علامت گدازی به عنوان تایید شده">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "علامت گدازی به عنوان مشکوک">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "پاک کردن سایت های انتخاب شده">
 <!ENTITY noscriptGloballyEnabled "(تمام اسکریپت ها مجوز دارند (خطرناک">
 <!ENTITY noscriptAutoReload "بارگذاری مجدد به صورت خودکار هنگام تغییر مجوزها">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks ".دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند">
 <!ENTITY noscriptAllowViaBookmarks ".دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند">
 <!ENTITY noscriptAllowPing "&lt;a ping...&gt; اجازه دادن به">
+<!ENTITY noscriptAllowLocalLinks "اجازه دادن به لینک های محلی">
 <!ENTITY noscriptForbidPing "&lt;a ping...&gt; ممنوع کردن">
 <!ENTITY noscriptWhitelist "لیست سفید">
 <!ENTITY noscriptPermissions "مجوزها">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "راهنماها">
 <!ENTITY noscriptDefaultPolicies "راهنماهای پیشفرض">
 <!ENTITY noscriptSitePolicies "راهنمای مخصوص سایت">
+<!ENTITY noscriptNselNever "&lt;noscript&gt; مخفی کردن عناصر">
+<!ENTITY noscriptNselForce "&lt;noscript&gt; نمایش عناصر">
+<!ENTITY noscriptAutoAllowTopLevel "اجازه دادن به سایت های رده بالا به صورت موقت و پیشفرض">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">

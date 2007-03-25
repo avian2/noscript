@@ -2,3 +2,16 @@
   cursor: pointer;
 }
 
+
+.noscript-cmd {
+  font-weight: normal;
+}
+
+.noscript-toplevel {
+  font-weight: bold;
+}
+.noscript-temp {
+  font-style: italic;
+  font-weight: normal;
+}
+

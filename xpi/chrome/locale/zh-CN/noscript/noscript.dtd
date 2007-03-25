@@ -3,9 +3,15 @@
 <!ENTITY noscriptOptionsLong "NoScript 选项">
 <!ENTITY noscriptAbout "关于 NoScript">
 <!ENTITY noscriptPermissionsText "您可以指定允许执行脚本的网站。请输入您想要允许的网站地址或域名(例如: &quot;http://www.site.com&quot;或者&quot;site.com&quot;)然后单击“允许”。">
-<!ENTITY noscriptWebAddress "网站地址: ">
+<!ENTITY noscriptWebAddress "网站地址:">
 <!ENTITY noscriptAllow "允许">
 <!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptForbid "禁止">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "标记为可信任">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "标记为不可信">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "删除选择的网站">
 <!ENTITY noscriptGloballyEnabled "全域允许脚本(危险)">
 <!ENTITY noscriptAutoReload "更改许可设置后自动重新载入相关页面">
@@ -46,3 +52,27 @@
 <!ENTITY noscriptTruncateTitle "截短文档标题">
 <!ENTITY noscriptFixLinks "尝试定位 JavaScript 链接">
 <!ENTITY noscriptAllowBookmarks "允许书签中的所有网站">
+<!ENTITY noscriptAllowViaBookmarks "允许通过书签打开站点">
+<!ENTITY noscriptAllowPing "允许&lt;ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "允许本地链接">
+<!ENTITY noscriptForbidPing "禁止&lt;ping...&gt;">
+<!ENTITY noscriptWhitelist "白名单">
+<!ENTITY noscriptPermissions "许可">
+<!ENTITY noscriptRefresh "刷新">
+<!ENTITY noscriptNotifications "通知">
+<!ENTITY noscriptToolbarToggle "左键点击 NoScript 工具栏按钮拴牢为当前顶层网站的许可">
+<!ENTITY noscriptTrusted "可信任">
+<!ENTITY noscriptUntrusted "不可信任">
+<!ENTITY noscriptUnknown "未知">
+<!ENTITY noscriptAdd "添加">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "关闭">
+<!ENTITY noscriptSiteManager "站点管理器">
+<!ENTITY noscriptSecurityManager "安全管理器">
+<!ENTITY noscriptPolicies "策略">
+<!ENTITY noscriptDefaultPolicies "默认策略">
+<!ENTITY noscriptSitePolicies "站点特殊策略">
+<!ENTITY noscriptNselNever "隐藏 &lt;noscript&gt; 元素">
+<!ENTITY noscriptNselForce "显示跟随被屏蔽的 &lt;script&gt; 的 &lt;noscript&gt; 元素">
+<!ENTITY noscriptAutoAllowTopLevel "默认临时允许顶层站点">
+<!ENTITY noscriptDescription "为您的 Firefox 提供额外保护: NoScript 只允许您所选择的信任域(例如您本国的银行网站)上的 JavaScript, Java (和其他插件)。该白名单基于抢先式过滤方法防止安全缺陷（已知，甚至是未知的！）被利用，并且不损失功能…… 专家们都同意：Firefox 加上 NoScript 真的是更加安全 :-)">

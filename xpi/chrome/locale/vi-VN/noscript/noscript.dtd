@@ -1,0 +1,78 @@
+<!ENTITY noscriptOptions "Tùy chọn">
+<!ENTITY noscriptOptions.accesskey "n">
+<!ENTITY noscriptOptionsLong "Tùy chọn cho NoScript">
+<!ENTITY noscriptAbout "Thông tin về NoScript">
+<!ENTITY noscriptPermissionsText "Bạn có thể chỉ định web sites nào được phép chạy scripts. Gõ địa chỉ hay tên miền (v.d, &quot;http://www.site.com&quot; hay &quot;site.com&quot;) của site mà bạn muốn cho phép, rồi nhấn Cho phép.">
+<!ENTITY noscriptWebAddress "Địa chỉ của web site:">
+<!ENTITY noscriptAllow "Cho phép">
+<!ENTITY noscriptAllow.accesskey "C">
+<!ENTITY noscriptForbid "Ngăn cấm">
+<!ENTITY noscriptForbid.accesskey "M">
+<!ENTITY noscriptTrust "Tin cậy">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Không tin cậy">
+<!ENTITY noscriptUntrust.accesskey "K">
+<!ENTITY noscriptRemoveSelected "Xóa Sites Đang Chọn">
+<!ENTITY noscriptGloballyEnabled "Scripts Đang Luôn Luôn Chạy (nguy hiểm)">
+<!ENTITY noscriptAutoReload "Tự động tải lại trang ảnh hưởng khi các phép được thay đổi">
+<!ENTITY noscriptGeneral "Tổng quát">
+<!ENTITY noscriptAppearance "Giao diện">
+<!ENTITY noscriptShow "Hiển thị...">
+<!ENTITY noscriptCtxMenu "Menu ngữ cảnh">
+<!ENTITY noscriptStatusIcon "Icon trong Thanh trạng thái">
+<!ENTITY noscriptFullAddr "Địa chỉ đầy đủ (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Tên miền đầy đủ (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Tên miền mức thứ nhì (noscript.net)">
+<!ENTITY noscriptTempCmd "Tạm thời cho phép [...]">
+<!ENTITY noscriptSound "Âm thanh cho biết khi scripts bị chặn/cấm">
+<!ENTITY noscriptImport "Nhập">
+<!ENTITY noscriptImport.accesskey "N">
+<!ENTITY noscriptExport "Xuất">
+<!ENTITY noscriptExport.accesskey "X">
+<!ENTITY noscriptNotify "Hiện thông tin về scripts bị chặn">
+<!ENTITY noscriptNotify.bottom "Đặt thông tin ở bên dưới">
+<!ENTITY noscriptSound.choose "Chọn">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Nghe">
+<!ENTITY noscriptSound.play.accesskey "e">
+<!ENTITY noscriptSound.reset "Hoàn mặc định">
+<!ENTITY noscriptSound.reset.accesskey "H">
+<!ENTITY noscriptAdvanced "Nâng cao">
+<!ENTITY noscriptAdditionalPermissions "Các phép bổ sung cho sites tin cậy">
+<!ENTITY noscriptAllowClipboard "Cho phép copy và dán rich text từ clipboard bên ngoài">
+<!ENTITY noscriptAdditionalRestrictions "Những hạn chế bổ sung cho sites không tin cậy">
+<!ENTITY noscriptForbidJava "Cấm Java™">
+<!ENTITY noscriptForbidFlash "Cấm Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Cấm các plugins khác">
+<!ENTITY noscriptReloadWarn "Những tùy chọn này sẽ có hiệu quả trong trang mới hay trang được tải lại">
+<!ENTITY noscriptConfirmUnblock "Hỏi xác nhận trước khi tạm thời không cấm một đối tượng">
+<!ENTITY noscriptStatusLabel "Nhãn hiệu cho thanh trạng thái">
+<!ENTITY noscriptForbidBookmarklets "Cấm bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Hiển thị icon giữ chỗ">
+<!ENTITY noscriptTruncateTitle "Cắt ngắn tựa đề của văn bản">
+<!ENTITY noscriptFixLinks "Cố gắng sửa kết nối JavaScript">
+<!ENTITY noscriptAllowBookmarks "Cho phép sites được mở qua Đánh dấu">
+<!ENTITY noscriptAllowViaBookmarks "Cho phép sites được mở qua Đánh dấu">
+<!ENTITY noscriptAllowPing "Cho phép &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Cho phép các liên kết nội tại">
+<!ENTITY noscriptForbidPing "Cấm &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Sổ trắng">
+<!ENTITY noscriptPermissions "Các phép">
+<!ENTITY noscriptRefresh "Tải lại">
+<!ENTITY noscriptNotifications "Khai báo">
+<!ENTITY noscriptToolbarToggle "Nhấn nút trái chuột vào nút NoScript trên thanh công cụ tắt/mở các phép cho site mức-cao-nhất hiện tại">
+<!ENTITY noscriptTrusted "Tin cậy">
+<!ENTITY noscriptUntrusted "Khôn tin cậy">
+<!ENTITY noscriptUnknown "Không biết">
+<!ENTITY noscriptAdd "Thêm">
+<!ENTITY noscriptAdd.accesskey "m">
+<!ENTITY noscriptClose "Đóng">
+<!ENTITY noscriptSiteManager "Quản lí Site">
+<!ENTITY noscriptSecurityManager "Quản lí Bảo mật">
+<!ENTITY noscriptPolicies "Luật">
+<!ENTITY noscriptDefaultPolicies "Luật Mặc định">
+<!ENTITY noscriptSitePolicies "Luật Cho Site Riêng Biệt">
+<!ENTITY noscriptNselNever "Giấu các phần tử &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Hiển thị phần tử &lt;noscript&gt; mà theo một phần tử &lt;script&gt; bị chặn">
+<!ENTITY noscriptAutoAllowTopLevel "Tạm thời cho phép sites mức thứ nhất theo mặc định">
+<!ENTITY noscriptDescription "Thêm phần bảo vệ cho Firefox của bạn: NoScript chỉ cho phép JavaScript, Java (và các plugins khác) được chạy trong những miền/trang web lựa chọn của bạn (v.d.: trang web ngân hàng của bạn).  Hướng đi dùng sổ trắng này ngăn chạn trước những khai thác lổ hỏng bảo mật (biết trước và ngay cả chưa biết trước) mà không mất đi tính năng...  Các chuyên gia sẽ đồng ý: Firefox thật sự an toàn hơn với NoScript :-)">

@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Endereço:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "Remover sites selecionados">
 <!ENTITY noscriptGloballyEnabled "JavaScript Globalmente Permitido (perigoso)">
 <!ENTITY noscriptAutoReload "Atualizar automaticamente a página atual quando as permissões são alteradas.">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks "Permitir todos os sites que se encontrem nos favoritos">
 <!ENTITY noscriptAllowViaBookmarks "Permitir sites abertos a partir dos favoritos">
 <!ENTITY noscriptAllowPing "Permitir &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Allow local links">
 <!ENTITY noscriptForbidPing "Proibir &lt;a ping...&gt;">
 <!ENTITY noscriptWhitelist "Lista Branca">
 <!ENTITY noscriptPermissions "Permissões">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Políticas">
 <!ENTITY noscriptDefaultPolicies "Políticas Padrão">
 <!ENTITY noscriptSitePolicies "Políticas Específicas ao Site">
+<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
+<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">

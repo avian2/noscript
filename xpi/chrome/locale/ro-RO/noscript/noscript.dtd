@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Adresa paginii web:">
 <!ENTITY noscriptAllow "Permite">
 <!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptForbid "Blockează">
+<!ENTITY noscriptForbid.accesskey "B">
+<!ENTITY noscriptTrust "Marchează ca fiind de încredere">
+<!ENTITY noscriptTrust.accesskey "c">
+<!ENTITY noscriptUntrust "Marchează ca fiind de neîncredere">
+<!ENTITY noscriptUntrust.accesskey "n">
 <!ENTITY noscriptRemoveSelected "Şterge din listă paginile selectate">
 <!ENTITY noscriptGloballyEnabled "JavaScript activat global (riscant)">
 <!ENTITY noscriptAutoReload "Reîncarcă automat paginile atunci când permisiunile se schimbă">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks "Permite toate siteurile din Semne de Carte">
 <!ENTITY noscriptAllowViaBookmarks "Permite toate siteurile din Semne de Carte">
 <!ENTITY noscriptAllowPing "Permite tagul &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Permite legături locale">
 <!ENTITY noscriptForbidPing "Blochează tagul &lt;a ping...&gt;">
 <!ENTITY noscriptWhitelist "Listă sigură">
 <!ENTITY noscriptPermissions "Permisiuni">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Reguli">
 <!ENTITY noscriptDefaultPolicies "Reguli implicite">
 <!ENTITY noscriptSitePolicies "Reguli dependente de locaţie">
+<!ENTITY noscriptNselNever "Ascunde elementele &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Arată elementele &lt;noscript&gt; care urmează unui script blocat">
+<!ENTITY noscriptAutoAllowTopLevel "Implicit, permite temporar domeniilor top-level">
+<!ENTITY noscriptDescription "Protecţie suplimentară pentru Firefox: JavaScript, Java şi alte pluginuri sunt permise numai paginilor de încredere, pentru a bloca preemptiv exploatarea vulnerabilităţilor (cunoscute sau necunoscute) care pot afecta securitatea sistemului.">

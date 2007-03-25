@@ -1,0 +1,78 @@
+<!ENTITY noscriptOptions "Opcións...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "Opcións de NoScript">
+<!ENTITY noscriptAbout "Acerca de NoScript">
+<!ENTITY noscriptPermissionsText "Podes especificar que páxinas web poden executar scripts. Teclea o enderezo ou o dominio (por exemplo &quot;http://www.paxina.com&quot; ou &quot;paxina.com&quot;) do sitio que queres autorizar e despois preme en &quot;Permitir&quot;.">
+<!ENTITY noscriptWebAddress "Enderezo web:">
+<!ENTITY noscriptAllow "Permitir">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptRemoveSelected "Borrar os ficheiros seleccionados">
+<!ENTITY noscriptGloballyEnabled "Scripts globalmente permitidos (perigoso)">
+<!ENTITY noscriptAutoReload "Recargar automaticamente as páxinas afectadas cando os permisos cambien">
+<!ENTITY noscriptGeneral "Xeral">
+<!ENTITY noscriptAppearance "Aspecto">
+<!ENTITY noscriptShow "Amosar...">
+<!ENTITY noscriptCtxMenu "Menú contextual">
+<!ENTITY noscriptStatusIcon "Icona da barra de estado">
+<!ENTITY noscriptFullAddr "Enderezos completos (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Dominios (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
+<!ENTITY noscriptTempCmd "Permitir temporalmente [...]">
+<!ENTITY noscriptSound "Audio feedback when scripts are blocked">
+<!ENTITY noscriptImport "Importar">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exportar">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Amosar mensaxes sobre os scripts bloqueados">
+<!ENTITY noscriptNotify.bottom "Colocar mensaxe ao final">
+<!ENTITY noscriptSound.choose "Escoller">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Reproducir">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Voltar ao valores iniciais">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Avanzado">
+<!ENTITY noscriptAdditionalPermissions "Permisos adicionais para sitios de confianza">
+<!ENTITY noscriptAllowClipboard "Permitir copiar e pegar texto desde un portapapeis externo">
+<!ENTITY noscriptAdditionalRestrictions "Restricións adicionais para sitio non de confianza">
+<!ENTITY noscriptForbidJava "Prohibir Java ®">
+<!ENTITY noscriptForbidFlash "Prohibir Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Prohibir outros plugins">
+<!ENTITY noscriptReloadWarn "Estas opcións terán efecto en páxinas novas ou (manualmente) recargadas">
+<!ENTITY noscriptConfirmUnblock "Pedir confirmación antes de desblocar temporalmente un obxecto">
+<!ENTITY noscriptStatusLabel "Etiqueta da barra de estado">
+<!ENTITY noscriptForbidBookmarklets "Prohibir bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Amosar icona">
+<!ENTITY noscriptTruncateTitle "Truncar títulos de documentos">
+<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptAllowBookmarks "Permitir enderezos abertos mediante bookmarks">
+<!ENTITY noscriptAllowViaBookmarks "Permitir enderezos abertos mediante bookmarks">
+<!ENTITY noscriptAllowPing "Permitir &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Permitir enderezos locais">
+<!ENTITY noscriptForbidPing "Prohibir &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Lista branca">
+<!ENTITY noscriptPermissions "Permisos">
+<!ENTITY noscriptRefresh "Refrescar">
+<!ENTITY noscriptNotifications "Notificacións">
+<!ENTITY noscriptToolbarToggle "Clic esquerdo no barra NoScript cambia permisos para a páxina actual">
+<!ENTITY noscriptTrusted "Fiábel">
+<!ENTITY noscriptUntrusted "Non fiábel">
+<!ENTITY noscriptUnknown "Descoñecido">
+<!ENTITY noscriptAdd "Engadir">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Pechar">
+<!ENTITY noscriptSiteManager "Xestor do sitio">
+<!ENTITY noscriptSecurityManager "Xestor de seguridade">
+<!ENTITY noscriptPolicies "Políticas">
+<!ENTITY noscriptDefaultPolicies "Políticas por defecto">
+<!ENTITY noscriptSitePolicies "Políticas específicas do sitio">
+<!ENTITY noscriptNselNever "Ocultar elementos &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Amosar o elemento &lt;noscript&gt; que siga a un &lt;script&gt; blocado">
+<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">

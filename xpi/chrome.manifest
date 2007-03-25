@@ -42,4 +42,7 @@ locale	noscript	el-GR	jar:chrome/noscript.jar!/locale/el-GR/noscript/
 locale	noscript	en-GB	jar:chrome/noscript.jar!/locale/en-GB/noscript/
 locale	noscript	hr-HR	jar:chrome/noscript.jar!/locale/hr-HR/noscript/
 locale	noscript	be-BY	jar:chrome/noscript.jar!/locale/be-BY/noscript/
+locale	noscript	vi-VN	jar:chrome/noscript.jar!/locale/vi-VN/noscript/
+locale	noscript	gl-ES	jar:chrome/noscript.jar!/locale/gl-ES/noscript/
+locale	noscript	km-KH	jar:chrome/noscript.jar!/locale/km-KH/noscript/
 locale	noscript	es-ES	jar:chrome/noscript.jar!/locale/es-ES/noscript/

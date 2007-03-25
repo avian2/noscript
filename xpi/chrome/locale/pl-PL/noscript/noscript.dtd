@@ -2,38 +2,44 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript - opcje">
 <!ENTITY noscriptAbout "O NoScript">
-<!ENTITY noscriptPermissionsText "Tutaj możesz dodać witryny imternetowe, które będą mogły uruchamiać skrypty. Wpisz adres lub domenę witryny, którą chcesz dodać (np: &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) i naciśnij przycisk &quot;Dodaj&quot;.">
+<!ENTITY noscriptPermissionsText "Tutaj można określić witryny internetowe, które będą mogły uruchamiać skrypty. Proszę wpisać adres lub domenę witryny (np: &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) i nacisnąć przycisk &quot;Pozwól&quot;.">
 <!ENTITY noscriptWebAddress "Adres witryny:">
-<!ENTITY noscriptAllow "Dodaj">
-<!ENTITY noscriptAllow.accesskey "D">
+<!ENTITY noscriptAllow "Pozwól">
+<!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptForbid "Zabroń">
+<!ENTITY noscriptForbid.accesskey "Z">
+<!ENTITY noscriptTrust "Oznacz jako zaufaną">
+<!ENTITY noscriptTrust.accesskey "U">
+<!ENTITY noscriptUntrust "Oznacz jako niezaufaną">
+<!ENTITY noscriptUntrust.accesskey "N">
 <!ENTITY noscriptRemoveSelected "Usuń wybrane witryny">
 <!ENTITY noscriptGloballyEnabled "Pozwól na wykonywanie skryptów JavaScript (niebezpieczne)">
 <!ENTITY noscriptAutoReload "Automatycznie odśwież stronę po zmianie uprawnień">
-<!ENTITY noscriptGeneral "    Ogólne    ">
-<!ENTITY noscriptAppearance "    Wygląd    ">
+<!ENTITY noscriptGeneral "Ogólne">
+<!ENTITY noscriptAppearance "Wygląd">
 <!ENTITY noscriptShow "Wyświetl:">
 <!ENTITY noscriptCtxMenu "Menu kontekstowe">
 <!ENTITY noscriptStatusIcon "Ikonę na pasku stanu">
-<!ENTITY noscriptFullAddr "Pełne adresy  (np: http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Pełne domeny  (np: www.noscript.net)">
-<!ENTITY noscriptBaseDom "Podstawa domeny  (np: noscript.net)">
+<!ENTITY noscriptFullAddr "Nie blokuj z  [...]  (pełny adres np. http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Nie blokuj z  [...]  (pełna domena np. www.noscript.net)">
+<!ENTITY noscriptBaseDom "Nie blokuj z  [...]  (podstawa domeny np. noscript.net)">
 <!ENTITY noscriptTempCmd "Tymczasowo nie blokuj z  [...]">
 <!ENTITY noscriptSound "Odtwórz dźwięk, gdy skrypty są blokowane">
-<!ENTITY noscriptImport "Importuj">
+<!ENTITY noscriptImport "Import">
 <!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Eksportuj">
+<!ENTITY noscriptExport "Eksport">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Wyświetl powiadomienie o blokowanych skryptach">
 <!ENTITY noscriptNotify.bottom "Umieść powiadomienie na dole okna przeglądarki">
-<!ENTITY noscriptSound.choose "Wybierz">
-<!ENTITY noscriptSound.choose.accesskey "W">
+<!ENTITY noscriptSound.choose "Przeglądaj">
+<!ENTITY noscriptSound.choose.accesskey "P">
 <!ENTITY noscriptSound.play "Odtwórz">
 <!ENTITY noscriptSound.play.accesskey "O">
 <!ENTITY noscriptSound.reset "Domyślny">
 <!ENTITY noscriptSound.reset.accesskey "D">
 <!ENTITY noscriptAdvanced "Zaawansowane">
 <!ENTITY noscriptAdditionalPermissions "Dodatkowe uprawnienia dla zaufanych witryn">
-<!ENTITY noscriptAllowClipboard "Pozwalaj na kopiowanie/wklejanie ze schowka w formacie RTF">
+<!ENTITY noscriptAllowClipboard "Pozwól na kopiowanie/wklejanie z zewnętrznego schowka w formacie RTF">
 <!ENTITY noscriptAdditionalRestrictions "Dodatkowe ograniczenia dla niezaufanych witryn">
 <!ENTITY noscriptForbidJava "Blokuj aplety Java™">
 <!ENTITY noscriptForbidFlash "Blokuj animacje Macromedia® Flash®">
@@ -44,19 +50,20 @@
 <!ENTITY noscriptForbidBookmarklets "Blokuj skryptozakładki">
 <!ENTITY noscriptShowPlaceholder "Wyświetl ikonę zamiennika">
 <!ENTITY noscriptTruncateTitle "Skracaj tytuły dokumentów">
-<!ENTITY noscriptFixLinks "Spróbuj przekształcić odnośniki JavaScript w normalne odnośniki">
-<!ENTITY noscriptAllowBookmarks "Pozwól na wykonywanie skryptów wszystkim witrynom znajdującym się w zakładkach">
-<!ENTITY noscriptAllowViaBookmarks "Pozwól na wykonywanie skryptów witrynom otwartym z zakładek">
-<!ENTITY noscriptAllowPing "Pozwól na &lt;a ping...&gt;">
-<!ENTITY noscriptForbidPing "Zabroń &lt;a ping...&gt;">
+<!ENTITY noscriptFixLinks "Próbuj przekształcić odnośniki JavaScript w normalne odnośniki">
+<!ENTITY noscriptAllowBookmarks "Pozwól na wykonywanie skryptów witrynom otwieranym z folderu &quot;Zakładki&quot;">
+<!ENTITY noscriptAllowViaBookmarks "Pozwól na wykonywanie skryptów witrynom otwieranym z folderu &quot;Zakładki&quot;">
+<!ENTITY noscriptAllowPing "Pozwól na &lt;ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Pozwól na wykonywanie skryptów lokalnym odnośnikom">
+<!ENTITY noscriptForbidPing "Zabroń &lt;ping...&gt;">
 <!ENTITY noscriptWhitelist "Zaufane witryny">
 <!ENTITY noscriptPermissions "Zezwolenia">
 <!ENTITY noscriptRefresh "Odświeżanie">
 <!ENTITY noscriptNotifications "Powiadomienia">
-<!ENTITY noscriptToolbarToggle "Naciśnięcie LPM na przycisk narzędziowy NoScript zmienia zezwolenia dla aktywnej witryny">
-<!ENTITY noscriptTrusted "Zaufana">
-<!ENTITY noscriptUntrusted "Niezaufana">
-<!ENTITY noscriptUnknown "Nieznany">
+<!ENTITY noscriptToolbarToggle "Naciśnięcie LPM na przycisk &quot;NoScript&quot; zmienia zezwolenia dla aktywnej witryny">
+<!ENTITY noscriptTrusted "Zaufane">
+<!ENTITY noscriptUntrusted "Niezaufane">
+<!ENTITY noscriptUnknown "Nieznana">
 <!ENTITY noscriptAdd "Dodaj">
 <!ENTITY noscriptAdd.accesskey "D">
 <!ENTITY noscriptClose "Zamknij">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Działania">
 <!ENTITY noscriptDefaultPolicies "Działania domyślne">
 <!ENTITY noscriptSitePolicies "Działania specyficzne dla danej witryny">
+<!ENTITY noscriptNselNever "Nie wyświetlaj składników pobieranych z elementu HTML &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Wyświetl składniki pobierane z blokowanych witryn przez element &lt;noscript&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Domyślne, czasowo dozwolone witryny">
+<!ENTITY noscriptDescription "Dodatkowe zabezpieczenie Firefoksa. NoScript pozwala na wykonywanie kodów JavaScript, Java i innych wtyczek tylko wybranym przez użytkownika zaufanym domenom np. strony bankowe. Lista zaufanych domen pozwala zabezpieczyć się przed znanymi i nieznanymi witrynami próbującymi przechwycić dane o użytkowniku. Eksperci potwierdzają, że Firefox z zainstalowanym NoScript jest bezpieczniejszy.">

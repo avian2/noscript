@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Dirección de la página web:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptForbid "Prohibir">
+<!ENTITY noscriptForbid.accesskey "r">
+<!ENTITY noscriptTrust "Marcar como fiable">
+<!ENTITY noscriptTrust.accesskey "f">
+<!ENTITY noscriptUntrust "Marcar como no fiable">
+<!ENTITY noscriptUntrust.accesskey "n">
 <!ENTITY noscriptRemoveSelected "Eliminar sitio(s) web seleccionado(s)">
 <!ENTITY noscriptGloballyEnabled "Permitir JavaScript globalmente (peligroso)">
 <!ENTITY noscriptAutoReload "Recargar página automáticamente tras cambiar permisos">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks "Permitir todos los sitios de marcadores">
 <!ENTITY noscriptAllowViaBookmarks "Permitir sitios abiertos desde marcadores">
 <!ENTITY noscriptAllowPing "Permitir ping">
+<!ENTITY noscriptAllowLocalLinks "Permitir enlaces locales">
 <!ENTITY noscriptForbidPing "Bloquear ping">
 <!ENTITY noscriptWhitelist "Lista blanca">
 <!ENTITY noscriptPermissions "Permisos">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Normas a aplicar">
 <!ENTITY noscriptDefaultPolicies "Normas predeterminadas">
 <!ENTITY noscriptSitePolicies "Normas específicas por sitio">
+<!ENTITY noscriptNselNever "Ocultar los elementos &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Mostrar el elemento &lt;noscript&gt; que sigue a un &lt;script&gt; bloqueado">
+<!ENTITY noscriptAutoAllowTopLevel "Permitir por defecto de forma temporal los dominios de máximo nivel">
+<!ENTITY noscriptDescription "Protección extra para su Firefox: NoScript sólo permite JavaScript, Java y otros plugins en los sitios web de confianza que Ud. elija (como la web de su banco). Este planteamiento preventivo basado en una lista blanca evita que se puedan explotar vulnerabilidades (conocidas o incluso desconocidas) sin pérdida de funcionalidad... Los expertos lo confirmarán: Firefox es realmente más seguro con NoScript :-)">

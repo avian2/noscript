@@ -6,13 +6,19 @@
 <!ENTITY noscriptWebAddress "Адрес веб-сайта:">
 <!ENTITY noscriptAllow "Разрешить">
 <!ENTITY noscriptAllow.accesskey "е">
+<!ENTITY noscriptForbid "Запретить">
+<!ENTITY noscriptForbid.accesskey "ь">
+<!ENTITY noscriptTrust "Отметить доверенным">
+<!ENTITY noscriptTrust.accesskey "о">
+<!ENTITY noscriptUntrust "Отметить недоверенным">
+<!ENTITY noscriptUntrust.accesskey "в">
 <!ENTITY noscriptRemoveSelected "Удалить выбранные сайты">
 <!ENTITY noscriptGloballyEnabled "Полностью разрешать выполнение JavaScript на страницах (опасно)">
 <!ENTITY noscriptAutoReload "Автоматически обновлять страницу после изменения для неё правил">
 <!ENTITY noscriptGeneral "Основные">
 <!ENTITY noscriptAppearance "Внешний вид">
 <!ENTITY noscriptShow "Отображать следующие элементы NoScript...">
-<!ENTITY noscriptCtxMenu "Пункт в контексном меню">
+<!ENTITY noscriptCtxMenu "Пункт в контекстном меню">
 <!ENTITY noscriptStatusIcon "Значок в строке состояния">
 <!ENTITY noscriptFullAddr "Полные адреса (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Полные домены (www.noscript.net)">
@@ -34,7 +40,7 @@
 <!ENTITY noscriptAdvanced "Дополнительно">
 <!ENTITY noscriptAdditionalPermissions "Дополнительные возможности для доверяемых сайтов">
 <!ENTITY noscriptAllowClipboard "Расширенное копирование/вставка из внешнего буфера обмена">
-<!ENTITY noscriptAdditionalRestrictions "Дополнительные ограничения для ненадежных сайтов">
+<!ENTITY noscriptAdditionalRestrictions "Дополнительные ограничения для ненадёжных сайтов">
 <!ENTITY noscriptForbidJava "Запретить отображение элементов Java™">
 <!ENTITY noscriptForbidFlash "Запретить отображение элементов Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Запретить отображение элементов других плагинов">
@@ -48,12 +54,13 @@
 <!ENTITY noscriptAllowBookmarks "Разрешать выполнение JavaScript всем веб-сайтам из закладок">
 <!ENTITY noscriptAllowViaBookmarks "Разрешать выполнение JavaScript всем веб-сайтам из закладок">
 <!ENTITY noscriptAllowPing "Разрешить веб-сайту использовать параметр &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Разрешить локальные ссылки">
 <!ENTITY noscriptForbidPing "Запретить веб-сайту использовать параметр  &lt;a ping...&gt;">
 <!ENTITY noscriptWhitelist "Белый список">
 <!ENTITY noscriptPermissions "Разрешения">
 <!ENTITY noscriptRefresh "Обновить">
 <!ENTITY noscriptNotifications "Уведомления">
-<!ENTITY noscriptToolbarToggle "По нажатию левой кнопкой мыши на значке NoScript переключать разрешения для всего сайта">
+<!ENTITY noscriptToolbarToggle "Нажатием на значке NoScript переключать разрешения для всего сайта">
 <!ENTITY noscriptTrusted "Доверенный">
 <!ENTITY noscriptUntrusted "Недоверенный">
 <!ENTITY noscriptUnknown "Неизвестный">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Политики">
 <!ENTITY noscriptDefaultPolicies "Политики по умолчанию">
 <!ENTITY noscriptSitePolicies "Специальные политики для сайтов">
+<!ENTITY noscriptNselNever "Скрывать элементы &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Показывать элемент &lt;noscript&gt; который блокирует &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Временно разрешать базовым доменам 2-го уровня по умолчанию">
+<!ENTITY noscriptDescription "Экстра защита для Firefox: NoScript позволяет разрешать исполнение JavaScript, Java (и других плагинов) только доменам, которым доверяете (например, ваш веб-сайт). Белый список, основанный на принципе упреждающего блокирования, позволяет предотвратить использование уязвимостей (известных и ещё неизвестных!) без потери функциональности... Эксперты соглашаются: Firefox действительно безопаснее с NoScript :-)">

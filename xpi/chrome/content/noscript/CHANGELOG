@@ -1,10 +1,50 @@
 NoScript ChangeLog
 
+v 1.1.4.6
+=====================================================================
+x Stable "blacklist" release
++ Vietnamese (thanks tonynguyen)
++ Galician (thanks roebek)
+
+v 1.1.4.5.070222
+=====================================================================
+x Fixed a "Mark as untrusted" menu item bug
+
+v 1.1.4.5.070210
+=====================================================================
+x Fixed a bug affecting some locales on Mozilla/SeaMonkey/Fx 1.0
+
+v 1.1.4.5.070207
+=====================================================================
+x "Forbid" doesn't mark the site as untrusted by default anymore (old
+  behaviour can be restored via "noscript.forbidImpliesUntrust" pref)
+
+v 1.1.4.5.070127
+=====================================================================
++ Experimental blacklist ("Mark as untrusted" + "Untrusted|Allow")
++ Global shortcut toggling top level status: "CTRL + SHIFT + \"
++ Global shortcut to NoScript menu: "CTRL + SHIFT + X"
++ Extra control on NOSCRIPT elements rendering
++ "Allow Globally" menu item is optional now (shown by default)
++ "Link Local Files" optional permission for trusted sites
++ "noscript.excaps" hidden pref for CAPS conflicts resolution (e.g.
+  with Google Toolbar and other Google extensions)
++ "Temporarily allow top-level sites by default" new preference 
+  (not advised and disabled by default)
++ Menu items referring to current location are hilighted in bold
++ New preference in Options|General controls toolbar button reaction
+  to left click (default none, optional toggles top level status)
++ net.uk, com.uk and org.uk pseudo TLDs
+
+v 1.1.4.5.061231
+=====================================================================
+x Fixed "cancel with non-failure status code" assertion
+
 v 1.1.4.5.061221
 =====================================================================
 + Minefield (3.0a2) support
 + Fixed plugin placeholder trunk issue (thanks timeless for report)
-+ added *.ua "special" TLDs (thanks Devan Chetty)
++ *.ua "special" TLDs (thanks Devan Chetty)
 
 v 1.1.4.5.061206
 =====================================================================

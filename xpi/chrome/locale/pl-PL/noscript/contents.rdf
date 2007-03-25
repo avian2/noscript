@@ -5,9 +5,6 @@
         <RDF:li resource="urn:mozilla:locale:pl-PL"/>
     </RDF:Seq>
     <RDF:Description about="urn:mozilla:locale:pl-PL"
-		     chrome:displayName="Polski(PL)"                      
-                     chrome:author="leszek(teo)Życzkowski"
-                     chrome:name="pl-PL">                     
         <chrome:packages>
             <RDF:Seq about="urn:mozilla:locale:pl-PL:packages">
                 <RDF:li resource="urn:mozilla:locale:pl-PL:noscript"/>
@@ -15,4 +12,4 @@
         </chrome:packages>
     </RDF:Description>
 </RDF:RDF>
-
+        </chrome:packages>

@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Διεύθυνση ιστότοπου">
 <!ENTITY noscriptAllow "Να επιτρέπεται">
 <!ENTITY noscriptAllow.accesskey "Ν">
+<!ENTITY noscriptForbid "Απαγόρευση">
+<!ENTITY noscriptForbid.accesskey "Α">
+<!ENTITY noscriptTrust "Σημείωση ως έμπιστο">
+<!ENTITY noscriptTrust.accesskey "ε">
+<!ENTITY noscriptUntrust "Σημείωση ως μη έμπιστο">
+<!ENTITY noscriptUntrust.accesskey "μ">
 <!ENTITY noscriptRemoveSelected "Αφαίρεση επιλεγμένων ιστότοπων">
 <!ENTITY noscriptGloballyEnabled "Σενάρια εντολών που επιτρέπονται γενικά (μη ασφαλές)">
 <!ENTITY noscriptAutoReload "Αυτόματη ανανέωση των σελίδων που επηρεάζονται από την αλλαγή δικαιωμάτων">
@@ -22,11 +28,11 @@
 <!ENTITY noscriptImport "Εισαγωγή">
 <!ENTITY noscriptImport.accesskey "Ε">
 <!ENTITY noscriptExport "Εξαγωγή">
-<!ENTITY noscriptExport.accesskey "Ξ">
+<!ENTITY noscriptExport.accesskey "ξ">
 <!ENTITY noscriptNotify "Προβολή μηνύματος για μπλοκαρισμένα σενάρια εντολών">
 <!ENTITY noscriptNotify.bottom "Τοποθέτηση μηνύματος στο κάτω μέρος">
 <!ENTITY noscriptSound.choose "Επιλογή">
-<!ENTITY noscriptSound.choose.accesskey "Π">
+<!ENTITY noscriptSound.choose.accesskey "π">
 <!ENTITY noscriptSound.play "Αναπαραγωγή">
 <!ENTITY noscriptSound.play.accesskey "α">
 <!ENTITY noscriptSound.reset "Επαναφορά αρχικού">
@@ -48,12 +54,13 @@
 <!ENTITY noscriptAllowBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
 <!ENTITY noscriptAllowViaBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
 <!ENTITY noscriptAllowPing "Να επιτρέπεται το &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Να επιτρέπονται τοπικοί δεσμοί">
 <!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;a ping...&gt;">
 <!ENTITY noscriptWhitelist "Λίστα επιτρεπομένων">
 <!ENTITY noscriptPermissions "Αδειοδοτήσεις">
 <!ENTITY noscriptRefresh "Ανανέωση">
 <!ENTITY noscriptNotifications "Ειδοποιήσεις">
-<!ENTITY noscriptToolbarToggle "Με αριστερό κλικ στο εικονίδιο της εργαλειοθήκης του NoScript, γίνεται εναλλαγή δικαιωμάτων για τον τρέχοντα βασικό ιστότοπο">
+<!ENTITY noscriptToolbarToggle "Εναλλαγή δικαιωμάτων για τον τρέχοντα βασικό ιστότοπο με αριστερό κλικ στο εικονίδιο NoScript της εργαλειοθήκης">
 <!ENTITY noscriptTrusted "Έμπιστο">
 <!ENTITY noscriptUntrusted "Μη έμπιστο">
 <!ENTITY noscriptUnknown "Άγνωστο">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Πολιτικές συμπεριφοράς">
 <!ENTITY noscriptDefaultPolicies "Αρχικές πολιτικές συμπεριφοράς">
 <!ENTITY noscriptSitePolicies "Πολιτικές συμπεριφοράς για συγκεκριμένους ιστότοπους">
+<!ENTITY noscriptNselNever "Απόκρυψη στοιχείων &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Προβολή του στοιχείου &lt;noscript&gt; που ακολουθεί μπλοκαρισμένα σενάρια εντολών">
+<!ENTITY noscriptAutoAllowTopLevel "Να επιτρέπεται προσωρινά για τον βασικό ιστότοπο (ως αρχική ρύθμιση)">
+<!ENTITY noscriptDescription "Πρόσθετη προστασία για τον Firefox. Οι ειδικοί συμφωνούν: το NoScript δίνει μεγαλύτερη ασφάλεια στον Firefox. :-)">

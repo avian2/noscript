@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Adresse du site Web :">
 <!ENTITY noscriptAllow "Autoriser">
 <!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptForbid "Interdire">
+<!ENTITY noscriptForbid.accesskey "I">
+<!ENTITY noscriptTrust "Faire confiance">
+<!ENTITY noscriptTrust.accesskey "C">
+<!ENTITY noscriptUntrust "Ne pas faire confiance">
+<!ENTITY noscriptUntrust.accesskey "P">
 <!ENTITY noscriptRemoveSelected "Enlever les sites sélectionnés">
 <!ENTITY noscriptGloballyEnabled "Autoriser les scripts globalement (dangereux)">
 <!ENTITY noscriptAutoReload "Recharger les pages affectées automatiquement après avoir changé les permissions">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks "Autoriser tous les sites trouvés dans les marque-pages">
 <!ENTITY noscriptAllowViaBookmarks "Autoriser les sites ouverts par les marque-pages">
 <!ENTITY noscriptAllowPing "Autoriser &lt;a ping…&gt;">
+<!ENTITY noscriptAllowLocalLinks "Autoriser les liens locaux">
 <!ENTITY noscriptForbidPing "Interdire &lt;a ping…&gt;">
 <!ENTITY noscriptWhitelist "Liste blanche">
 <!ENTITY noscriptPermissions "Permissions">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Politiques">
 <!ENTITY noscriptDefaultPolicies "Politiques par défaut">
 <!ENTITY noscriptSitePolicies "Politiques par site">
+<!ENTITY noscriptNselNever "Cacher les éléments &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Afficher l&apos;élément &lt;noscript&gt; qui suit un &lt;script&gt; bloqué">
+<!ENTITY noscriptAutoAllowTopLevel "Autoriser temporairement les sites de premier niveau par défaut">
+<!ENTITY noscriptDescription "Protection supplémentaire pour votre Firefox : NoScript ne permet l&apos;exécution de scripts JavaScript que sur les domaines de confiance de votre choix (p.ex. le site de votre banque). Ce système de blocage préventif de scripts basé sur une liste blanche empêche l&apos;exploitation de failles de sécurité (connues et même inconnues) sans perte de fonctionnalités… Les experts en conviendront : Firefox est réellement plus sûr avec NoScript :-)">

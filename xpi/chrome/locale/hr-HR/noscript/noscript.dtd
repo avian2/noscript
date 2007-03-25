@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Adresa web stranice:">
 <!ENTITY noscriptAllow "Dopusti">
 <!ENTITY noscriptAllow.accesskey "D">
+<!ENTITY noscriptForbid "Zabrani">
+<!ENTITY noscriptForbid.accesskey "b">
+<!ENTITY noscriptTrust "Označi kao provjereno">
+<!ENTITY noscriptTrust.accesskey "v">
+<!ENTITY noscriptUntrust "Označi kao neprovjereno">
+<!ENTITY noscriptUntrust.accesskey "e">
 <!ENTITY noscriptRemoveSelected "Ukloni označene stranice">
 <!ENTITY noscriptGloballyEnabled "Skripte su općenito dopuštene (opasno)">
 <!ENTITY noscriptAutoReload "Automatski ponovno učitaj obuhvaćene stranice nakon promjene dopuštenja">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks "Dopusti stranice koje su otvorene putem zabilješki">
 <!ENTITY noscriptAllowViaBookmarks "Dopusti stranice koje su otvorene putem zabilješki">
 <!ENTITY noscriptAllowPing "Dopusti &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Dopusti lokalne poveznice">
 <!ENTITY noscriptForbidPing "Zabrani &lt;a ping...&gt;">
 <!ENTITY noscriptWhitelist "Popis dopuštenih">
 <!ENTITY noscriptPermissions "Dopuštenja">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Police">
 <!ENTITY noscriptDefaultPolicies "Zadane police">
 <!ENTITY noscriptSitePolicies "Specifične police stranice">
+<!ENTITY noscriptNselNever "Sakrij &lt;noscript&gt; elemente">
+<!ENTITY noscriptNselForce "Prikaži &lt;noscript&gt; elemente koji slijede blokirane &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Privremeno kao zadano dopusti vršne stranice">
+<!ENTITY noscriptDescription "Dodatna zaštita za Vaš Firefox: NoScript dopušta JavaScript, Java (i druge dodatke) samo za provjerene domene Vašeg izbora (npr. Vaša stranica Intenet bankarstva) . Ovaj pristup preventivnog blokiranja zasnovan na popisu dopuštenih spriječava iskorištavanje sigurnosnih slabosti (znanih i neznanih) bez ikakvog gubitka funkcionalnosti... Stručnjaci će se složiti: Firefox je zbilja sigurniji s NoScript :-)">

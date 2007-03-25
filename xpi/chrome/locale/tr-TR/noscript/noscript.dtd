@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Site adresi:">
 <!ENTITY noscriptAllow "İzin ver">
 <!ENTITY noscriptAllow.accesskey "E">
+<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "Seçili sayfaları kaldır">
 <!ENTITY noscriptGloballyEnabled "JavaScript&apos;e genel olarak izin ver (tehlikeli)">
 <!ENTITY noscriptAutoReload "İzin hakları değişince sayfayı tekrar otomatikman yükle">
@@ -48,4 +54,25 @@
 <!ENTITY noscriptAllowBookmarks "Yer imlerimde kayıtlı sitelere izin ver">
 <!ENTITY noscriptAllowViaBookmarks "Yer imlerinden açılan sitelere izin ver">
 <!ENTITY noscriptAllowPing "İzin ver &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Yerel bağlantılara izin ver">
 <!ENTITY noscriptForbidPing "Yasakla &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Güvenilir listesi">
+<!ENTITY noscriptPermissions "Erişimler">
+<!ENTITY noscriptRefresh "Tazele">
+<!ENTITY noscriptNotifications "Uyarılma">
+<!ENTITY noscriptToolbarToggle "Araç çubuğundaki NoScript düğmesine sol tıklayarak sitenin erişim haklarını değiştirebilirsiniz.">
+<!ENTITY noscriptTrusted "Güvenli">
+<!ENTITY noscriptUntrusted "Güvensiz">
+<!ENTITY noscriptUnknown "Bilinmiyor">
+<!ENTITY noscriptAdd "Ekle">
+<!ENTITY noscriptAdd.accesskey "E">
+<!ENTITY noscriptClose "Kapat">
+<!ENTITY noscriptSiteManager "Site yöneticisi">
+<!ENTITY noscriptSecurityManager "Güvenlik yöneticisi">
+<!ENTITY noscriptPolicies "Kurallar">
+<!ENTITY noscriptDefaultPolicies "Varsayılan kurallar">
+<!ENTITY noscriptSitePolicies "Siteye özel kurallar">
+<!ENTITY noscriptNselNever "&lt;noscript&gt; öğelerini sakla">
+<!ENTITY noscriptNselForce "&lt;script&gt;&apos;den sonra oluşan &lt;noscript&gt; öğelerini göster">
+<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">

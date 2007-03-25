@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Adresse der Website:">
 <!ENTITY noscriptAllow "Erlauben">
 <!ENTITY noscriptAllow.accesskey "E">
+<!ENTITY noscriptForbid "Verbieten">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Als vertrauenswürdig einstufen">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Als nicht vertrauenswürdig einstufen">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "Ausgewählte Websites entfernen">
 <!ENTITY noscriptGloballyEnabled "Skripte allgemein erlauben (nicht empfohlen)">
 <!ENTITY noscriptAutoReload "Betroffene Seiten beim Ändern der Berechtigungen automatisch neu laden">
@@ -19,9 +25,9 @@
 <!ENTITY noscriptBaseDom "Second-Level-Domains (noscript.net)">
 <!ENTITY noscriptTempCmd "[...] temporär erlauben">
 <!ENTITY noscriptSound "Klang ausgeben, wenn Skripte blockiert werden">
-<!ENTITY noscriptImport "Importieren">
+<!ENTITY noscriptImport "Importieren...">
 <!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Exportieren">
+<!ENTITY noscriptExport "Exportieren...">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Informationsleiste anzeigen, wenn Skripte blockiert werden">
 <!ENTITY noscriptNotify.bottom "Am unteren Rand anzeigen">
@@ -38,7 +44,7 @@
 <!ENTITY noscriptForbidJava "Java™ verbieten">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
-<!ENTITY noscriptReloadWarn "Diese Einstellungen werden  erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
+<!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
 <!ENTITY noscriptConfirmUnblock "Bestätigungsmeldung anzeigen, bevor ein Objekt temporär erlaubt wird">
 <!ENTITY noscriptStatusLabel "Informationstext in der Statusleiste">
 <!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieten">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks "Alle Websites aus den Lesezeichen erlauben">
 <!ENTITY noscriptAllowViaBookmarks "Aus Lesezeichen geöffnete Seiten erlauben">
 <!ENTITY noscriptAllowPing "Klick-Verfolgung über das PING-Attribut für Links erlauben">
+<!ENTITY noscriptAllowLocalLinks "Lokale Links erlauben">
 <!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">
 <!ENTITY noscriptWhitelist "Positivliste">
 <!ENTITY noscriptPermissions "Berechtigungen">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Richtlinien">
 <!ENTITY noscriptDefaultPolicies "Standard-Richtlinien">
 <!ENTITY noscriptSitePolicies "Website-spezifische Richtlinien">
+<!ENTITY noscriptNselNever "&lt;noscript&gt;-Elemente ausblenden">
+<!ENTITY noscriptNselForce "&lt;noscript&gt;-Element, das einem blockierten &lt;script&gt; folgt, anzeigen">
+<!ENTITY noscriptAutoAllowTopLevel "Top-Level-Sites standardmäßig temporär erlauben">
+<!ENTITY noscriptDescription "Zusätzlicher Schutz für Ihren Browser: NoScript erlaubt das Ausführen von JavaScript, Java (und anderen Plugins) nur bei vertrauenswürdigen Domains Ihrer Wahl (z.B. Ihrer Homebanking-Website). Der auf einer Positivliste basierende präventive Ansatz zum Blockieren von Skripten verhindert das Ausnutzen von (bekannten und unbekannten!) Sicherheitslücken ohne Verlust an Funktionalität.">

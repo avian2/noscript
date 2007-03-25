@@ -2,58 +2,65 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript Opties">
 <!ENTITY noscriptAbout "Over NoScript">
-<!ENTITY noscriptPermissionsText "U kunt aangeven welke internetadressen u toestemming geeft om JavaScript te gebruiken. Type het adres of domein in (bijv. &quot;http://www.site.com&quot; of &quot;site.com&quot;) van de door u toegestane site; klik daarna op Toestaan.">
-<!ENTITY noscriptWebAddress "Internetadres:">
+<!ENTITY noscriptPermissionsText "U kunt aangeven welke webadressen u toestemming geeft om JavaScript te gebruiken. Type het adres of domein in (bijv. &quot;http://www.site.com&quot; of &quot;site.com&quot;) van de door u toegestane site; klik daarna op Toestaan.">
+<!ENTITY noscriptWebAddress "Webadres:">
 <!ENTITY noscriptAllow "Toestaan">
 <!ENTITY noscriptAllow.accesskey "T">
+<!ENTITY noscriptForbid "Verbieden">
+<!ENTITY noscriptForbid.accesskey "V">
+<!ENTITY noscriptTrust "Als betrouwbaar markeren">
+<!ENTITY noscriptTrust.accesskey "b">
+<!ENTITY noscriptUntrust "Als onbetrouwbaar markeren">
+<!ENTITY noscriptUntrust.accesskey "o">
 <!ENTITY noscriptRemoveSelected "Geselecteerde sites verwijderen">
 <!ENTITY noscriptGloballyEnabled "JavaScript algemeen toestaan (riskant)">
 <!ENTITY noscriptAutoReload "Huidige pagina automatisch vernieuwen als de toestemming verandert">
 <!ENTITY noscriptGeneral "Algemeen">
 <!ENTITY noscriptAppearance "Uiterlijk">
-<!ENTITY noscriptShow "Weergeven...">
+<!ENTITY noscriptShow "Weergeven">
 <!ENTITY noscriptCtxMenu "Contextmenu">
 <!ENTITY noscriptStatusIcon "Statusbalk pictogram">
 <!ENTITY noscriptFullAddr "Volledige adressen (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Volledige domeinen (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Hoofd (2e niveau) domeinen (noscript.net)">
-<!ENTITY noscriptTempCmd "Tijdelijk toestaan [...]">
+<!ENTITY noscriptTempCmd "[...] tijdelijk toestaan">
 <!ENTITY noscriptSound "Geluid afspelen wanneer scripts worden geblokkeerd">
 <!ENTITY noscriptImport "Importeren">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exporteren">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Bericht over geblokkeerde scripts tonen">
+<!ENTITY noscriptNotify "Bericht over geblokkeerde scripts weergeven">
 <!ENTITY noscriptNotify.bottom "Bericht onderin het scherm weergeven">
-<!ENTITY noscriptSound.choose "Kiezen">
-<!ENTITY noscriptSound.choose.accesskey "K">
+<!ENTITY noscriptSound.choose "Selecteren">
+<!ENTITY noscriptSound.choose.accesskey "S">
 <!ENTITY noscriptSound.play "Afspelen">
 <!ENTITY noscriptSound.play.accesskey "A">
 <!ENTITY noscriptSound.reset "Standaard">
-<!ENTITY noscriptSound.reset.accesskey "S">
+<!ENTITY noscriptSound.reset.accesskey "d">
 <!ENTITY noscriptAdvanced "Geavanceerd">
-<!ENTITY noscriptAdditionalPermissions "Extra toestemming voor betrouwbare webpagina&apos;s">
+<!ENTITY noscriptAdditionalPermissions "Aanvullende toestemming voor betrouwbare webpagina&apos;s">
 <!ENTITY noscriptAllowClipboard "Kopiëren en plakken van tekst met opmaakcodes vanaf een extern klembord toestaan">
-<!ENTITY noscriptAdditionalRestrictions "Extra beperkingen voor onbetrouwbare webpagina&apos;s">
+<!ENTITY noscriptAdditionalRestrictions "Aanvullende beperking voor onbetrouwbare webpagina&apos;s">
 <!ENTITY noscriptForbidJava "Java™ verbieden">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieden">
 <!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
 <!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina&apos;s">
-<!ENTITY noscriptConfirmUnblock "Om een bevestiging vragen voordat blokkering van een object tijdelijk wordt opgeheven">
+<!ENTITY noscriptConfirmUnblock "Om een bevestiging vragen voordat een blokkering van een object tijdelijk wordt opgeheven">
 <!ENTITY noscriptStatusLabel "Statusbalk label">
 <!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieden">
 <!ENTITY noscriptShowPlaceholder "Vervangend pictogram weergeven">
 <!ENTITY noscriptTruncateTitle "Documenttitels inkorten">
 <!ENTITY noscriptFixLinks "JavaScript koppelingen proberen te herstellen">
-<!ENTITY noscriptAllowBookmarks "Alle via een bladwijzer geopende sites toestaan">
-<!ENTITY noscriptAllowViaBookmarks "Alle via een bladwijzer geopende sites toestaan">
+<!ENTITY noscriptAllowBookmarks "Via een bladwijzer geopende sites toestaan">
+<!ENTITY noscriptAllowViaBookmarks "Via een bladwijzer geopende sites toestaan">
 <!ENTITY noscriptAllowPing "&lt;a ping...&gt; toestaan">
+<!ENTITY noscriptAllowLocalLinks "Locale koppelingen toestaan">
 <!ENTITY noscriptForbidPing "&lt;a ping...&gt; verbieden">
 <!ENTITY noscriptWhitelist "Toestemmingenlijst">
 <!ENTITY noscriptPermissions "Toestemmingen">
 <!ENTITY noscriptRefresh "Vernieuwen">
 <!ENTITY noscriptNotifications "Waarschuwingen">
-<!ENTITY noscriptToolbarToggle "Links klikken op NoScript werkbalkknop schakelt toestemmingen voor huidig top-level site om">
+<!ENTITY noscriptToolbarToggle "Links klikken op NoScript werkbalkknop schakelt toestemmingen voor huidige top-level site in/uit">
 <!ENTITY noscriptTrusted "Betrouwbaar">
 <!ENTITY noscriptUntrusted "Onbetrouwbaar">
 <!ENTITY noscriptUnknown "Onbekend">
@@ -61,7 +68,11 @@
 <!ENTITY noscriptAdd.accesskey "T">
 <!ENTITY noscriptClose "Sluiten">
 <!ENTITY noscriptSiteManager "Site beheerder">
-<!ENTITY noscriptSecurityManager "Beveiliging beheerder">
+<!ENTITY noscriptSecurityManager "Beveiligingsbeheerder">
 <!ENTITY noscriptPolicies "Beleid">
 <!ENTITY noscriptDefaultPolicies "Standaard beleid">
 <!ENTITY noscriptSitePolicies "Site specifiek beleid">
+<!ENTITY noscriptNselNever "&lt;noscript&gt; elementen verbergen">
+<!ENTITY noscriptNselForce "Het &lt;noscript&gt; element dat na een geblokkeerd &lt;script&gt; volgt weergeven">
+<!ENTITY noscriptAutoAllowTopLevel "Standaard top-level sites tijdelijk toestaan">
+<!ENTITY noscriptDescription "Extra bescherming voor Firefox: NoScript staat JavaScript, Java (en andere plugins) alleen toe voor zelf gekozen betrouwbare domeinen (bijv. de internetbankieren website). Deze op toestemmingslijsten gebaseerde blokkering vooraf voorkomt exploitatie van beveiligings kwetsbaarheden (bekende en zelfs onbekende!) zonder verlies aan functionaliteit... Experts zullen bevestigen: Firefox is werkelijk veiliger met NoScript :-)">

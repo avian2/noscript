@@ -1,7 +1,7 @@
 /***** BEGIN LICENSE BLOCK *****
 
 NoScript - a Firefox extension for whitelist driven safe JavaScript execution
-Copyright (C) 2004-2005 Giorgio Maone - g.maone@informaction.com
+Copyright (C) 2004-2007 Giorgio Maone - g.maone@informaction.com
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,13 +29,15 @@ NoScriptOverlay.prototype = {
     return noscriptUtil.getString(key, parms);
   }
 ,
-  toggleCurrentPage: function() {
+  toggleCurrentPage: function(force) {
     const ns = this.ns;
+    if(!(force || ns.getPref("toolbarToggle", false))) return;
+    
     const url = ns.getSite(ns.lookupMethod(this.srcWindow.document, "documentURI")());
     this.safeAllow(url, !ns.isJSEnabled(url));
   },
   
-  isLoading : function() {   
+  isLoading: function() {   
     return getBrowser().selectedBrowser.webProgress.isLoadingDocument;
   },
   
@@ -44,7 +46,7 @@ NoScriptOverlay.prototype = {
   },
 
  
-  getSites: function(doc,sites,tagName) {
+  getSites: function(doc, sites, tagName) {
     try {
       if(doc || (doc = this.srcWindow.document)) {
         const ns = this.ns;
@@ -59,7 +61,7 @@ NoScriptOverlay.prototype = {
           } catch(ex) {}
         }
         const htmlNS = "http://www.w3.org/1999/xhtml";
-        const getByTag = lm(doc,"getElementsByTagName");
+        const getByTag = lm(doc, "getElementsByTagName");
         if(!tagName) {
           const docURI = lm(doc,"documentURI")();
           var url = ns.getSite(docURI);
@@ -73,6 +75,7 @@ NoScriptOverlay.prototype = {
               sites.pluginCount = 0;
               sites.docURIs = {};
               sites.loading = this.isLoading();
+              sites.topURL = url;
             }
             sites.docURIs[docURI] = true;
             var cache = sites.pluginsCache.uris[docURI];
@@ -81,23 +84,33 @@ NoScriptOverlay.prototype = {
                 sites[sites.length] = pluginURI;
               }
             }
+            const domain = lm(doc, "domain")();
+            if(domain && ns.getDomain(url) != domain) sites[sites.length] = domain;
           }
+          
           var scripts = new XPCNativeWrapper(getByTag("script"), "item()" , "length");
           var scount = scripts.length;
+          
           if(scount) {
             sites.scriptCount += scount;
             var script, scriptSrc;
-            while(scount-->0) {
-              script=scripts.item(scount);
-              if(script instanceof XULElement) {
-                scriptSrc=script.getAttribute("src");
-                if(!/^[\w\-]+:\/\//.test(scriptSrc)) continue;
+            var nselForce = ns.nselForce && !sites.loading && ns.isJSEnabled(url);
+            var isHTMLScript;
+            while(scount-- > 0) {
+              script = scripts.item(scount);
+              var isHTMLScript = script instanceof HTMLElement;
+              if(isHTMLScript) {
+                scriptSrc = lm(script, "src")();
               } else {
-                scriptSrc=lm(script,"src")();
+                scriptSrc = script.getAttribute("src");
+                if(!/^[\w\-]+:\/\//.test(scriptSrc)) continue;
               }
-              scriptSrc=ns.getSite(scriptSrc);
+              scriptSrc = ns.getSite(scriptSrc);
               if(scriptSrc) {
                 sites.push(scriptSrc);
+                if(nselForce && isHTMLScript && !ns.isJSEnabled(scriptSrc)) {
+                  this.showNextNsel(script);
+                }
               }
             }
           }
@@ -143,7 +156,7 @@ NoScriptOverlay.prototype = {
                     if(lm(lm(lm(doc, "documentElement")(), "firstChild")(), "firstChild")() == applet &&
                        lm(applet, "nextSibling")() == null) { // raw plugin content ?
                       var contentType = lm(doc, "contentType")();
-                      if(contentType.substring(0, 5) != "text/" && !/\bxml\b/.test(contentType)) { // force "extras" creation
+                      if(contentType.substring(0, 5) != "text/") {
                         ns.shouldLoad(5, { spec: docURI }, { spec: docURI }, applet, contentType, true);
                       }
                     }
@@ -174,7 +187,7 @@ NoScriptOverlay.prototype = {
                     innerDiv.style.display = "block";
                     
                     div._noScriptRemovedObject = lm(applet, "cloneNode")(true);
-                    ns.setPluginExtras(div, extras);
+                   
                     
                     while(lm(applet,"hasChildNodes")()) {
                       lm(applet,"removeChild")(lm(applet,"firstChild")());
@@ -182,6 +195,7 @@ NoScriptOverlay.prototype = {
                     
                     lm(lm(applet,"parentNode")(),"replaceChild")(div, applet);
                     div.appendChild(innerDiv);
+                    ns.setPluginExtras(div, extras);
                     div.onclick = _noScript_onPluginClick;
                   }
                 } catch(appletEx) {
@@ -212,11 +226,28 @@ NoScriptOverlay.prototype = {
       // dump(ex);
     }
     if(!sites) {
-      sites=[];
-      sites.scriptCount=0;
-      sites.pluginCount=0;
+      sites = [];
+      sites.scriptCount = 0;
+      sites.pluginCount = 0;
     }
     return sites;
+  },
+  
+  showNextNsel: function(script, doc) {
+    const lm = this.ns.lookupMethod;
+    for (var node = script; (node = lm(node, "nextSibling")());) {
+      if(node instanceof HTMLElement) {
+        if(new String(lm(node, "tagName")()).toUpperCase() != "NOSCRIPT") return;
+        if(lm(node, "getAttribute")("class") == "noscript-show") return;
+        lm(node, "setAttribute")("class", "noscript-show");
+        var child = lm(node, "firstChild")();
+        if(lm(child, "nodeType")() != 3) return;
+        var el = lm(lm(node, "ownerDocument")(), "createElement")("span");
+        el.className = "noscript-show";
+        el.innerHTML = lm(child, "nodeValue")();
+        lm(node, "replaceChild")(el, child);
+      }
+    }
   },
   
   fixLink: function(ev) {
@@ -291,20 +322,20 @@ NoScriptOverlay.prototype = {
   uninstallAlert: function() {
     this.prompter.alert(window,this.getString("uninstall.alert.title"),
           this.getString("uninstall.alert.text",
-            [this.getString("allowed."+(this.ns.jsEnabled?"glb":"no") ) ]
+            [this.getString("allowed." + (this.ns.jsEnabled ? "glb" : "no")) ]
             ));
   }
 ,
   prepareContextMenu: function(ev) {
     var menu = document.getElementById("noscript-context-menu");
-    if(this.ns.uninstalling || !this.ns.getPref("ctxMenu",true)) {
+    if(this.ns.uninstalling || !this.ns.getPref("ctxMenu", true)) {
       menu.setAttribute("hidden",true);
       return;
     }
     menu.removeAttribute("hidden");
-    const status=document.getElementById("noscript-statusIcon");
+    const status = document.getElementById("noscript-statusIcon");
     menu.setAttribute("image",status.getAttribute("src"));
-    menu.setAttribute("tooltiptext",status.getAttribute("tooltiptext"));
+    menu.setAttribute("tooltiptext", status.getAttribute("tooltiptext"));
   }
 ,
   toggleMenuOpt: function(node) {
@@ -318,9 +349,10 @@ NoScriptOverlay.prototype = {
 ,
   prepareMenu: function(popup) {
     const ns=this.ns;
-    var j,k,node;
     
-    var opts=popup.getElementsByAttribute("type","checkbox");
+    var j, k, node;
+    
+    var opts=popup.getElementsByAttribute("type", "checkbox");
     for(j=opts.length; j-->0;) {
       node=opts[j];
       if((k = node.id.lastIndexOf("-opt-"))>-1) {
@@ -331,157 +363,206 @@ NoScriptOverlay.prototype = {
     var miNotify=document.getElementById('noscript-mi-notify');
     if(miNotify) miNotify.setAttribute("checked",ns.getPref("notify")); 
     
-    const global=ns.jsEnabled;
+    const global = ns.jsEnabled;
     
-    var separators=popup.getElementsByTagName("menuseparator");
-    var insertSep,stopSep,globalSep;
-    const sepNames=['insert','stop','global'];
+    var allSeps = popup.getElementsByTagName("menuseparator");
+   
+    var seps = { insert: null, stop: null, global: null };
     var sepName;
-    for(j=separators.length; j-- >0;) {
-      sepName=(node=separators[j]).className;
-      for(k in sepNames) {
-        if(sepName.indexOf("-"+sepNames[k])>-1) {
-          eval(sepNames[k]+"Sep=node");
+    for(j = allSeps.length; j-- >0;) {
+      sepName = (node = allSeps[j]).className;
+      node.hidden = false;
+      for(k in seps) {
+        if(sepName.indexOf("-" + k) > -1) {
+          seps[k] = node;
         }
       }
     }
     
-    delete separators;
-    const miGlobal = globalSep.nextSibling;
-    miGlobal.setAttribute("label",this.getString((global?"forbid":"allow")+"Global"));
-    miGlobal.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!global)+")");
-    miGlobal.setAttribute("tooltiptext",document.getElementById("noscript-statusIcon").getAttribute("tooltiptext"));
-    miGlobal.setAttribute("image",this.getIcon(global?"no":"glb"));
+    delete allSeps;
 
+    const miGlobal = seps.global.nextSibling;
     
-    node=insertSep.nextSibling;
-    const parent=node.parentNode;
-    var remNode;
-    while(node && (node!=stopSep)) {
-       remNode=node;
-       node=node.nextSibling;
-       parent.removeChild(remNode);
+    if(global || ns.getPref("showGlobal")) {
+      miGlobal.style.display = "";
+      seps.global.style.display = "";
+      miGlobal.setAttribute("label",this.getString((global ? "forbid" : "allow") + "Global"));
+      miGlobal.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!global)+")");
+      miGlobal.setAttribute("tooltiptext", document.getElementById("noscript-statusIcon").getAttribute("tooltiptext"));
+      miGlobal.setAttribute("image", this.getIcon(global ? "no" : "glb"));
+    } else {
+      miGlobal.style.display = "none";
+      seps.global.style.display = "none";
     }
     
-    const sites=this.getSites();
-    var site,enabled,lev;
+    node = seps.insert.nextSibling;
+    
+    const mainMenu = node.parentNode;
+    const untrustedMenu = mainMenu.getElementsByTagName("menupopup")[0];
+    
+    var parent;
+    var remNode;
+    while(node && (node != seps.stop)) {
+       remNode = node;
+       node = node.nextSibling;
+       mainMenu.removeChild(remNode);
+    }
+    if(untrustedMenu) {
+      while(untrustedMenu.firstChild) {
+        untrustedMenu.removeChild(untrustedMenu.firstChild);
+      }
+      untrustedMenu.appendCmd = untrustedMenu.appendChild;
+      untrustedMenu.parentNode.setAttribute("image", this.getIcon("no", true));
+    }
+    mainMenu.appendCmd = function(n) { this.insertBefore(n, seps.stop); };
+
+    const sites = this.getSites();
+    var site, enabled, isTop, lev;
     var jsPSs=ns.jsPolicySites;
     var matchingSite;
-    var menuSites,menuSite,scount;
-    var domain, isIP, pos, lastPos, domParts, dpLen, dp, tlds;
-    const STLDS=ns.SPECIAL_TLDS;
-    var domainDupChecker={
+    var menuSites, menuSite, scount;
+    var domain, pos, lastPos, dp;
+    var untrusted;
+    var cssClass;
+    
+    
+    var domainDupChecker = {
       prev: "",
       check: function(d) {
-         d=" "+d+" ";
-         if(this.prev.indexOf(d)>-1) return true;
-         this.prev+=d;
+         d = " "+d+" ";
+         if(this.prev.indexOf(d) > -1) return true;
+         this.prev += d;
          return false;
       }
     };
     
-    const showAddress=ns.getPref("showAddress",false);
-    const showDomain=ns.getPref("showDomain",false);
-    const showBase=ns.getPref("showBaseDomain",true);
-    const showNothing=!(showAddress||showDomain||showBase);
+    const showAddress = ns.getPref("showAddress", false);
+    const showDomain = ns.getPref("showDomain", false);
+    const showBase = ns.getPref("showBaseDomain", true);
+    const showUntrusted = ns.getPref("showUntrusted", true);
+    const showDistrust = ns.getPref("showDistrust", true);
+    const showNothing = !(showAddress || showDomain || showBase || showUntrust);
     
-    const showTemp=ns.getPref("showTemp");
+    const showTemp = ns.getPref("showTemp");
    
-    for(j=sites.length; j-->0;) {
-      site=sites[j];
-      matchingSite=jsPSs.matches(site);
-      enabled=!!matchingSite;
+    for(j = sites.length; j-->0;) {
+      site = sites[j];
+      matchingSite = jsPSs.matches(site);
+      enabled = !!matchingSite;
+      isTop = site == sites.topURL;
+      
       if(enabled) {
         if(domainDupChecker.check(matchingSite)) continue;
-        menuSites=[matchingSite];
+        menuSites = [matchingSite];
       } else {
-        domain=site.match(/.*?:\/\/([^\?\/\\#]+)/); // double check - changed for Unicode compatibility
-        if(domain) {
-          domain=domain[1];
-          if(domain.indexOf(":")>-1) {
-            domain=null; // addresses with a specific port can't be enabled by domain
-          }
-        }
-        menuSites=(showAddress || showNothing || !domain)?[site]:[];
+        domain = ns.getDomain(site);
+        menuSites = (showAddress || showNothing || !domain) ? [site] : [];
         if(domain && (showDomain || showBase)) {
-          isIP=/^[\d\.]+$/.test(domain);
-          if(isIP || (lastPos = domain.lastIndexOf('.')) < 0
-            || (dpLen = (domParts = domain.split('.')).length) < 3) {
+
+          if(!(lastPos = ns.getTLDPos(domain))) {
             // IP or TLD or 2nd level domain
             if(!domainDupChecker.check(domain)) {
               menuSites[menuSites.length] = domain;
             }
           } else {
-            // Special TLD (co.uk, co.nz...) or normal domain
-            dp = domParts[dpLen-2];
-            tlds = STLDS[dp];
-            if(tlds) {
-              if(dp == "com" || (tlds.indexOf(" " + (dp = domParts[dpLen - 1]) + " ")) > -1) {
-                if(dp == "uk" && (pos = domain.lastIndexOf(".here.co.")) == domain.length - 11) {
-                  lastPos = pos;
-                } else {
-                  lastPos = domain.lastIndexOf('.', lastPos - 1);
-                }
-              }
-            }
             dp = domain;
-            for(pos=0; (pos = domain.indexOf('.', pos))>0; dp = domain.substring(++pos)) {
-              if(pos==lastPos) {
-                if(menuSites.length>0 && !showBase) continue;
+            for(pos = 0; (pos = domain.indexOf('.', pos)) > 0; dp = domain.substring(++pos)) {
+              if(pos == lastPos) {
+                if(menuSites.length > 0 && !showBase) continue;
               } else {
                 if(!showDomain) continue;
               }
               if(!domainDupChecker.check(dp)) {
-                menuSites[menuSites.length]=dp;
-                if(pos==lastPos) break;
+                menuSites[menuSites.length] = dp;
+                if(pos == lastPos) break;
               }
             }
           }
         }
       }
-      if(stopSep.previousSibling.nodeName!="menuseparator") {
-        node=document.createElement("menuseparator");
-        parent.insertBefore(node,stopSep);
+      
+      if(seps.stop.previousSibling.nodeName != "menuseparator") {
+        mainMenu.appendCmd(document.createElement("menuseparator"));
       }
       
+ 
+      
       for(scount = menuSites.length; scount-- > 0;) {
-        menuSite=menuSites[scount];
-        node=document.createElement("menuitem");
-        node.setAttribute("label",this.getString((enabled?"forbidLocal":"allowLocal"),[menuSite]));
-        node.setAttribute("statustext",menuSite);
-        node.setAttribute("oncommand","noscriptOverlay.menuAllow(" + (!enabled) + ",this)");
+        menuSite = menuSites[scount];
+        
+        untrusted = (!enabled) && ns.isUntrusted(menuSite);
+        parent = (untrusted && showUntrusted) ? untrustedMenu : mainMenu;
+        if(!parent) continue;
+        
+        node = document.createElement("menuitem");
+        cssClass = isTop ? "noscript-toplevel noscript-cmd" : "noscript-cmd";
+        node.setAttribute("label", this.getString((enabled ? "forbidLocal" : "allowLocal"), [menuSite]));
+        node.setAttribute("statustext", menuSite);
+        node.setAttribute("oncommand", "noscriptOverlay.menuAllow(" + (!enabled) + ",this)");
         node.setAttribute("tooltiptext",
-          this.getString("allowed."+(enabled?"yes":"no")));
+          this.getString("allowed." + (enabled ? "yes" : "no")));
         if(enabled && ns.isPermanent(menuSite)) {
-          node.setAttribute("class","");
-          node.setAttribute("disabled","true");
-          node.style.fontStyle="normal";
+          node.setAttribute("disabled", "true");
         } else {
-          node.setAttribute("class","menuitem-iconic");
-          node.setAttribute("image",this.getIcon(enabled?"no":"yes"));
-          node.style.fontStyle=(enabled && ns.isTemp(menuSite))?"italic":"normal";
+          cssClass += " menuitem-iconic";
+          node.setAttribute("image", this.getIcon(enabled ? "no" : "yes"));
+          if(enabled && ns.isTemp(menuSite)) cssClass += " noscript-temp";
         }
-        parent.insertBefore(node,stopSep);
-        if(showTemp && !enabled) {
-          node=node.cloneNode(true);
-          node.setAttribute("label",this.getString("allowTemp",[menuSite]));
-          node.setAttribute("oncommand","noscriptOverlay.menuAllow(true,this,true)");
-          node.style.fontStyle="italic";
-          parent.insertBefore(node,stopSep);
+        node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
+        
+        parent.appendCmd(node);
+        
+        if(!enabled) {
+          if(showTemp) {
+            node = node.cloneNode(true);
+            node.setAttribute("label", this.getString("allowTemp", [menuSite]));
+            node.setAttribute("oncommand", "noscriptOverlay.menuAllow(true,this,true)");
+            node.setAttribute("class", cssClass + " noscript-temp noscript-allow");
+            parent.appendCmd(node);
+          }
+          if(((showUntrusted && untrustedMenu) || showDistrust) && !untrusted) {
+            node = node.cloneNode(true);
+            node.setAttribute("label", this.getString("distrust", [menuSite]));
+            node.setAttribute("image", this.getIcon("no", true));
+            node.setAttribute("class", cssClass + " noscript-distrust");
+            node.setAttribute("oncommand", "noscriptOverlay.menuAllow(false, this, false)");
+            (showUntrusted ? untrustedMenu : mainMenu).appendCmd(node);
+          }
+        }
+      }
+      if(untrustedMenu && untrustedMenu.firstChild) {
+        untrustedMenu.appendCmd(document.createElement("menuseparator"));
+      }
+    }
+    this.normalizeMenu(untrustedMenu);
+    this.normalizeMenu(mainMenu);
+  },
+  
+  normalizeMenu: function(menu) {
+    if(!menu) return;
+    var prev = null;
+    var wasSep = false;
+    var isSep, haveMenu = false;
+    for(var i = menu.firstChild; i; i = i.nextSibling) {
+      if(!i.hidden) {
+        isSep = i.nodeName == "menuseparator";
+        if(isSep && (wasSep || !prev)) {
+          i.hidden = true;
+        } else {
+          prev = i;
+          wasSep = isSep;
+          haveMenu = haveMenu || !isSep;
         }
       }
     }
     
-    const doubleSep = stopSep.previousSibling.nodeName == "menuseparator";
-    if(globalSep!=stopSep) { // status bar
-      insertSep.setAttribute("hidden", insertSep.nextSibling.getAttribute("hidden")?"true":"false");
-      if(doubleSep) stopSep.previousSibling.setAttribute("hidden", "true");
-    } else { // context menu
-      stopSep.setAttribute("hidden",
-        //stopSep==parent.firstChild.nextSibling ||
-        doubleSep
-        ); 
+    if(prev && wasSep) {
+      prev.hidden = true;
+      prev = null;
     }
+    
+    menu.parentNode.hidden = !haveMenu;
+    
   }
 ,
   get srcWindow() {
@@ -505,8 +586,11 @@ NoScriptOverlay.prototype = {
 ,
   menuAllow: function(enabled, menuItem, temp) {
     if(menuItem) { // local 
-      const site=menuItem.getAttribute("statustext");
+      const site = menuItem.getAttribute("statustext");
       if(!site) return;
+      if(menuItem.getAttribute("class").indexOf("-distrust") > -1) {
+        this.ns.setUntrusted(site, true);
+      }
     } else { // global
       if(enabled) {
         enabled=this.prompter.confirm(window,this.getString("global.warning.title"),
@@ -516,13 +600,13 @@ NoScriptOverlay.prototype = {
     this.safeAllow(site, enabled, temp);
   }
 ,
-  safeAllow: function(site,enabled,temp) {
+  safeAllow: function(site, enabled, temp) {
     const overlay = this;
     const ns = this.ns;
     ns.safeCapsOp(function() {
       if(site) {
-        ns.setJSEnabled(site, enabled);
         ns.setTemp(site, enabled && temp);
+        ns.setJSEnabled(site, enabled);
       } else {
         ns.jsEnabled = enabled;
       }
@@ -533,7 +617,7 @@ NoScriptOverlay.prototype = {
   _iconURL: null,
   getIcon: function(lev,inactive) {
     if(!this._iconURL) this._iconURL=document.getElementById("noscript-statusIcon").src;
-    return this._iconURL.replace(/[^\/]*(yes|no|glb|prt)(\d+\.)/,(inactive?"inactive-":"")+lev+"$2");
+    return this._iconURL.replace(/[^\/]*(yes|no|glb|prt)(\d+\.)/,(inactive ? "inactive-" : "") + lev + "$2");
   }
 ,
   _syncInfo: { enqueued: false, uninstallCheck: false }
@@ -555,6 +639,11 @@ NoScriptOverlay.prototype = {
         nso._syncInfo.enqueued = false; 
        }, 400, this);
     }
+  },
+  
+  showUI: function() {
+    this.ns.setPref("statusIcon", true);
+    document.getElementById("noscript-status-popup").showPopup();
   }
 ,
   get notificationPos() {
@@ -711,39 +800,41 @@ NoScriptOverlay.prototype = {
    
     const ns = this.ns;
     
-    const global=ns.jsEnabled;
-    const jsPSs=ns.jsPolicySites;
+    const global = ns.jsEnabled;
+    const jsPSs = ns.jsPolicySites;
+    const untrustedSites = ns.untrustedSites;
     var lev;
     const sites = this.getSites();
     var totalScripts = sites.scriptCount;
     var totalPlugins = sites.pluginCount;
     var totalAnnoyances = totalScripts + totalPlugins;
-    var notificationNeeded;
+    var notificationNeeded = false;
     if(global) {
       lev = "glb";
-      notificationNeeded = false;
     } else {
-      var allowed=0;
-      var s=sites.length;
-      var total=s;
+      var allowed = 0;
+      var s = sites.length;
+      var total = s;
       var url, site;
-      while(s-->0) {
-        url=sites[s];
-        site=jsPSs.matches(url);
+      while(s-- > 0) {
+        url = sites[s];
+        site = jsPSs.matches(url);
         if(site) {
           if(ns.isPermanent(site)) {
             total--;
           } else {
             allowed++;
           }
-        } 
+        } else {
+          notificationNeeded = notificationNeeded || !untrustedSites.matches(url);
+        }
       }
-      lev=(allowed==total && sites.length>0)?"yes":allowed==0?"no":"prt";
-      notificationNeeded=(lev!="yes" && totalAnnoyances>0); 
+      lev = (allowed == total && sites.length > 0) ? "yes" : allowed == 0 ? "no" : "prt";
+      notificationNeeded = notificationNeeded && totalAnnoyances > 0; 
     }
     
-    var message=this.getString("allowed."+lev)
-      +" [<script>: "+totalScripts+"] [J+F+P: "+totalPlugins+"]";
+    var message=this.getString("allowed." + lev)
+      +" [<script>: " + totalScripts + "] [J+F+P: " + totalPlugins + "]";
     var icon = this.getIcon(lev, !totalAnnoyances);
     
    var widget=document.getElementById("noscript-tbb");
@@ -752,7 +843,7 @@ NoScriptOverlay.prototype = {
      widget.setAttribute("image", icon);  
    }
    
-   widget=document.getElementById("noscript-statusIcon");
+   widget = document.getElementById("noscript-statusIcon");
    widget.setAttribute("tooltiptext",message);
    widget.setAttribute("src", icon);
 
@@ -800,13 +891,13 @@ const noscriptOverlayPrefsObserver = {
 ,
   observe: function(subject, topic, data) {
     switch(data) {
-      case "statusIcon": case "statusLabel":  
+      case "statusIcon": case "statusLabel":
       window.setTimeout(function() {
-          var widget=document.getElementById("noscript-"+data);
+          var widget=document.getElementById("noscript-" + data);
           if(widget) {
             widget.setAttribute("hidden", !noscriptOverlay.ns.getPref(data))
           }
-        },0);
+        }, 0);
        break;
        case "notify":
        case "notify.bottom" : 
@@ -891,15 +982,24 @@ const _noScript_WebProgressListener = {
      }
      try {
        if(aRequest && (aRequest instanceof Components.interfaces.nsIChannel) && aRequest.isPending()) {
-        var contentType = aRequest.contentType;
-      
-          if(contentType.substring(0, 5) != "text/" && 
-              noscriptOverlay.ns.shouldLoad(5, aRequest.URI, aRequest.URI, aWebProgress.DOMWindow, contentType, true) == -3) {
-            aRequest.cancel( 0 /* 0x804b0002 == NS_BINDING_ABORTED */); 
+          const ns = noscriptOverlay.ns;
+          if(ns.shouldLoad(7, aRequest.URI, aRequest.URI, aWebProgress.DOMWindow, aRequest.contentType, true) != 1) {
+            aRequest.cancel(0x804b0002);
+          } else {
+            if(ns.autoAllow > 0 && !ns.jsEnabled) {
+              var site = ns.getSite(aRequest.URI.spec);
+              var domain;
+              if(ns.autoAllow > 1 && (domain = ns.getDomain(site))) {
+                site = ns.autoAllow > 2 ? ns.get2ndLevel(domain) : domain;
+              }
+              if(!(ns.isJSEnabled(site) || ns.isUntrusted(site))) {
+                ns.setTemp(site, true);
+                ns.setJSEnabled(site, true);
+              }
+            }
           }
-       } else {
-         _noScript_syncUI(null);
        }
+       _noScript_syncUI(null);
      } catch(e) {}
    },
    onStatusChange: function() {}, 
@@ -923,6 +1023,7 @@ function _noScript_onloadInstall(ev) {
     l.onLocationChange = _noScript_WebProgressListener.onLocationChange;
     return l;
   };
+  
 }
 
 

@@ -1,48 +1,78 @@
-<!ENTITY noscriptOptions "Inställningar...">
+<!ENTITY noscriptOptions "Alternativ...">
 <!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript-inställningar">
-<!ENTITY noscriptAbout "Om NoSCript">
-<!ENTITY noscriptPermissionsText "Du kan bestämma vilka webplatser som ska tillåtas att använda skript. Skriv adressen eller domänen (ex. &quot;http://www.sajt.se&quot; eller &quot;sajt.se&quot;) till den webplats du vill tillåta och klicka på &quot;Tillåt&quot;.">
-<!ENTITY noscriptWebAddress "Adress till webplats:">
+<!ENTITY noscriptOptionsLong "NoScript-alternativ">
+<!ENTITY noscriptAbout "Om NoScript">
+<!ENTITY noscriptPermissionsText "Det är möjligt att specificera vilka webbplatser som tillåts använda skript. Skriv webbadressen eller domänen (ex. &quot;http://www.webbplats.se&quot; eller &quot;webbplats.se&quot;) för den webbplats där skript ska tillåtas. Klicka sedan på &quot;Tillåt&quot;.">
+<!ENTITY noscriptWebAddress "Webbplatsadress:">
 <!ENTITY noscriptAllow "Tillåt">
-<!ENTITY noscriptAllow.accesskey "T">
-<!ENTITY noscriptRemoveSelected "Ta bort markerad webplats">
-<!ENTITY noscriptGloballyEnabled "Skript är tillåtet på alla webplatser (Farligt)">
-<!ENTITY noscriptAutoReload "Ladda om berörda websidor när tillåtelse förändras">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptRemoveSelected "Ta bort markerade webbplatser">
+<!ENTITY noscriptGloballyEnabled "Skript är tillåtna globalt (farligt)">
+<!ENTITY noscriptAutoReload "Uppdatera berörda webbsidor när skripttillstånd ändras">
 <!ENTITY noscriptGeneral "Allmänt">
 <!ENTITY noscriptAppearance "Utseende">
 <!ENTITY noscriptShow "Visa...">
 <!ENTITY noscriptCtxMenu "Snabbmeny">
 <!ENTITY noscriptStatusIcon "Statusfältsikon">
-<!ENTITY noscriptFullAddr "Fullständiga adresser (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Fullständiga domänadresser (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Andra nivåns domänadresser (noscript.net)">
+<!ENTITY noscriptFullAddr "Hela adresser (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Hela domäner (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Andranivå-domäner (noscript.net)">
 <!ENTITY noscriptTempCmd "Tillåt tillfälligt [...]">
-<!ENTITY noscriptSound "Ljudsignal när skript blockeras">
+<!ENTITY noscriptSound "Spela upp ljud när skript blockeras">
 <!ENTITY noscriptImport "Importera">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exportera">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Visa meddelande om blockerade skript">
-<!ENTITY noscriptNotify.bottom "Visa meddelande längst ner i fönstret">
+<!ENTITY noscriptNotify.bottom "Placera meddelande längst ned">
 <!ENTITY noscriptSound.choose "Välj">
-<!ENTITY noscriptSound.choose.accesskey "V">
+<!ENTITY noscriptSound.choose.accesskey "C">
 <!ENTITY noscriptSound.play "Spela">
-<!ENTITY noscriptSound.play.accesskey "S">
-<!ENTITY noscriptSound.reset "Återställ inställningar till standardinställningar">
-<!ENTITY noscriptSound.reset.accesskey "Å">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Återställ standard">
+<!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "Avancerat">
-<!ENTITY noscriptAdditionalPermissions "Ytterligare tillstånd för betrodda webplatser">
-<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
-<!ENTITY noscriptAdditionalRestrictions "Ytterligare förbud för ej betrodda webplatser">
+<!ENTITY noscriptAdditionalPermissions "Ytterligare tillstånd för betrodda webbplatser">
+<!ENTITY noscriptAllowClipboard "Tillåt klipp ut och kopiera från externt urklipp">
+<!ENTITY noscriptAdditionalRestrictions "Ytterliga restriktioner för ej betrodda webbplatser">
 <!ENTITY noscriptForbidJava "Förbjud Java™">
 <!ENTITY noscriptForbidFlash "Förbjud Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Förbjud andra insticksmoduler">
-<!ENTITY noscriptReloadWarn "Dessa inställningar kommer att gälla för nya eller (manuellt) uppdaterade sidor.">
-<!ENTITY noscriptConfirmUnblock "Be om bekräftelse innan ett objekt tillfälligt ej blockeras">
-<!ENTITY noscriptStatusLabel "Statusfältets etikett">
-<!ENTITY noscriptForbidBookmarklets "Förbjud bokmärken">
-<!ENTITY noscriptShowPlaceholder "Visa &quot;PlaceHolder&quot;-ikon">
+<!ENTITY noscriptReloadWarn "Dessa alternativ kommer att börja gälla för nya eller (manuellt) uppdaterade webbsidor">
+<!ENTITY noscriptConfirmUnblock "Fråga efter bekräftelse innan temporär avblockering av ett objekt sker">
+<!ENTITY noscriptStatusLabel "Statusfältsetikett">
+<!ENTITY noscriptForbidBookmarklets "Förbjud bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Visa placeholderikon">
 <!ENTITY noscriptTruncateTitle "Korta av dokumenttitlar">
-<!ENTITY noscriptFixLinks "Försök laga JavaScript-länkar">
-<!ENTITY noscriptAllowBookmarks "Tillåt alla webplatser under bokmärken">
+<!ENTITY noscriptFixLinks "Försök laga JavaSkript-länkar">
+<!ENTITY noscriptAllowBookmarks "Tillåt webbplatser som öppnas från bokmärken">
+<!ENTITY noscriptAllowViaBookmarks "Tillåt webbplatser som öppnas från bokmärken">
+<!ENTITY noscriptAllowPing "Tillåt &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Allow local links">
+<!ENTITY noscriptForbidPing "Förbjud &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Whitelist">
+<!ENTITY noscriptPermissions "Permissions">
+<!ENTITY noscriptRefresh "Refresh">
+<!ENTITY noscriptNotifications "Notifications">
+<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
+<!ENTITY noscriptTrusted "Trusted">
+<!ENTITY noscriptUntrusted "Untrusted">
+<!ENTITY noscriptUnknown "Unknwon">
+<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Close">
+<!ENTITY noscriptSiteManager "Site Manager">
+<!ENTITY noscriptSecurityManager "Security Manager">
+<!ENTITY noscriptPolicies "Policies">
+<!ENTITY noscriptDefaultPolicies "Default Policies">
+<!ENTITY noscriptSitePolicies "Site Specific Policies">
+<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
+<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">

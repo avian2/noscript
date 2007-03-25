@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Adresa webové stránky:">
 <!ENTITY noscriptAllow "Povolit">
 <!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptForbid "Zakázat">
+<!ENTITY noscriptForbid.accesskey "Z">
+<!ENTITY noscriptTrust "Označit jako důvěryhodný">
+<!ENTITY noscriptTrust.accesskey "d">
+<!ENTITY noscriptUntrust "Označit jako nedůvěryhodný">
+<!ENTITY noscriptUntrust.accesskey "n">
 <!ENTITY noscriptRemoveSelected "Odstranit vybrané stránky">
 <!ENTITY noscriptGloballyEnabled "JavaScript celkově povolit (nebezpečné)">
 <!ENTITY noscriptAutoReload "Automaticky obnovit stránky při změně povolení">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks "Povolit stránky otevřené ze záložek">
 <!ENTITY noscriptAllowViaBookmarks "Povolit stránky otevřené ze záložek">
 <!ENTITY noscriptAllowPing "Povolit &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Povolit místní odkazy">
 <!ENTITY noscriptForbidPing "Zakázat &lt;a ping...&gt;">
 <!ENTITY noscriptWhitelist "Výjimky">
 <!ENTITY noscriptPermissions "Povolení">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "Politika">
 <!ENTITY noscriptDefaultPolicies "Výchozí politika">
 <!ENTITY noscriptSitePolicies "Politika pro specifické stránky">
+<!ENTITY noscriptNselNever "Zakázat prvky &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Zobrazit prvek &lt;noscript&gt; následující po zablokovaném prvku &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Dočasně povolit stránky domény nejvyšší úrovně">
+<!ENTITY noscriptDescription "Mimořádná ochrana pro váš Firefox: NoScript povoluje JavaScript, Javu (a další zásuvné moduly) pouze pro důvěryhodné servery dle vašeho výběru (např. vaše stránka pro home-banking). Tento seznam důvěryhodných serverů založený na preventivním blokování přístupu předchází zneužití bezpečnostních děr (známých a dokonce i neznámých!) bez jakékoli ztráty na funkčnosti... Odborníci budou souhlasit: Firefox je skutečně bezpečnější s rozšířením NoScript :-)">

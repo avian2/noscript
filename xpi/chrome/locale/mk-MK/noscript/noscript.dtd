@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "Адреса на дозволената веб страна">
 <!ENTITY noscriptAllow "Дозволи">
 <!ENTITY noscriptAllow.accesskey "Д">
+<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "Отстрани ги избраните страници од листата на дозволени">
 <!ENTITY noscriptGloballyEnabled "Општо овозможени скрипти (можност за опасност)">
 <!ENTITY noscriptAutoReload "Автоматско превчитување на страните при промена на дозволата">
@@ -48,4 +54,25 @@
 <!ENTITY noscriptAllowBookmarks "Дозволи ги скриптите за сите страни од обележувачите">
 <!ENTITY noscriptAllowViaBookmarks "Дозволи ги скриптите за сите страни отворени преку обележувачите">
 <!ENTITY noscriptAllowPing "Овозможи следење на вашите кликови преку атрибутот „ping“ (&lt;a ping=...&gt;)">
+<!ENTITY noscriptAllowLocalLinks "Allow local links">
 <!ENTITY noscriptForbidPing "Оневозможи следење на вашите кликови преку атрибутот „ping“ (&lt;a ping=...&gt;)">
+<!ENTITY noscriptWhitelist "Whitelist">
+<!ENTITY noscriptPermissions "Permissions">
+<!ENTITY noscriptRefresh "Refresh">
+<!ENTITY noscriptNotifications "Notifications">
+<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
+<!ENTITY noscriptTrusted "Trusted">
+<!ENTITY noscriptUntrusted "Untrusted">
+<!ENTITY noscriptUnknown "Unknwon">
+<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Close">
+<!ENTITY noscriptSiteManager "Site Manager">
+<!ENTITY noscriptSecurityManager "Security Manager">
+<!ENTITY noscriptPolicies "Policies">
+<!ENTITY noscriptDefaultPolicies "Default Policies">
+<!ENTITY noscriptSitePolicies "Site Specific Policies">
+<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
+<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">

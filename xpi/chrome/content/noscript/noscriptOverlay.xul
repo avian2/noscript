@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- ***** BEGIN LICENSE BLOCK *****
     NoScript - a Firefox extension for whitelist driven safe JavaScript execution
-    Copyright (C) 2004-2005 Giorgio Maone - g.maone@informaction.com
+    Copyright (C) 2004-2007 Giorgio Maone - g.maone@informaction.com
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,6 +36,10 @@
 <script type="application/x-javascript" src="noscriptOverlay.js"/>
 <script type="application/x-javascript" src="noscriptBM.js"/>
 
+<keyset id="mainKeyset">
+    <key id="noscript-toggle-key" keycode="VK_BACK_SLASH" modifiers="accel,shift" oncommand="noscriptOverlay.toggleCurrentPage(true)" />
+    <key id="noscript-ui-key" key="x" modifiers="accel,shift" oncommand="noscriptOverlay.showUI()" />
+</keyset>
 <stringbundleset id="stringbundleset">
   <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />
   <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />
@@ -44,9 +48,15 @@
 <popupset id="mainPopupSet">
   <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
     <menuseparator class="noscript-sep-insert" hidden="true" />
-     <menuseparator class="noscript-sep-stop-global" />
+    
+    <menuseparator class="noscript-sep-stop-untrusted"/>
+         <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
+            <menupopup />
+         </menu>
+         
+     <menuseparator class="noscript-sep-global" />
      <menuitem class="menuitem-iconic" />
-      <menuseparator />
+     <menuseparator />
      <menuitem id="noscript-mi-opt-notify"
       label="&noscriptNotify;"
       oncommand="noscriptOverlay.toggleMenuOpt(this)"
@@ -85,7 +95,13 @@
    >
    <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
          <menuseparator class="noscript-sep-insert" hidden="true" />
-         <menuseparator class="noscript-sep-stop-global" />
+         
+         <menuseparator class="noscript-sep-stop-untrusted"/>
+         <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
+            <menupopup />
+         </menu>
+         
+         <menuseparator class="noscript-sep-global" />
          <menuitem class="menuitem-iconic" />
          <menuseparator />
          <menuitem id="noscript-options-tbb-menuitem"
@@ -107,7 +123,11 @@
   <menu id="noscript-context-menu" class="menu-iconic" label="NoScript" >
     <menupopup id="noscript-context-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
          <menuseparator class="noscript-sep-insert" hidden="true" />
-         <menuseparator class="noscript-sep-stop-global" />
+         <menuseparator class="noscript-sep-stop-untrusted"/>
+         <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
+            <menupopup />
+         </menu>
+         <menuseparator class="noscript-sep-global" />
          <menuitem class="menuitem-iconic" />
          <menuseparator />
          <menuitem id="noscript-options-ctx-menuitem"
@@ -142,8 +162,14 @@
         oncommand="noscriptUtil.openOptionsDialog()"
         tooltiptext="&noscriptOptionsLong;"
         />
+        
        <menuseparator class="noscript-sep-global"/>
        <menuitem class="menuitem-iconic" />
+       
+       <menuseparator class="noscript-sep-untrusted"/>
+       <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
+          <menupopup />
+       </menu>
        <menuseparator class="noscript-sep-insert"/>
        <menuseparator class="noscript-sep-stop" hidden="true" />
     </menupopup>
@@ -165,6 +191,12 @@
       />
      <menuseparator class="noscript-sep-global"/>
      <menuitem class="menuitem-iconic" />
+     
+     <menuseparator class="noscript-sep-untrusted"/>
+     <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
+        <menupopup />
+     </menu>
+     
      <menuseparator class="noscript-sep-insert"/>
      <menuseparator class="noscript-sep-stop" hidden="true" />
   </popup>

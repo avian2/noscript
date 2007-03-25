@@ -2,10 +2,16 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcions de NoScript">
 <!ENTITY noscriptAbout "Quant a NoScript">
-<!ENTITY noscriptPermissionsText "Podeu especificar quins llocs web poden executar seqüències. El tipus d'adreça o el domini (p.ex. &quot;http://www.site.com&quot; o &quot;site.com&quot;) del lloc al qual voleu donar permissos i feu clic a Permet.">
+<!ENTITY noscriptPermissionsText "Podeu especificar quins llocs web poden executar seqüències. El tipus d&apos;adreça o el domini (p.ex. &quot;http://www.site.com&quot; o &quot;site.com&quot;) del lloc al qual voleu donar permissos i feu clic a Permet.">
 <!ENTITY noscriptWebAddress "Adreça del lloc web:">
 <!ENTITY noscriptAllow "Permet">
 <!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "Suprimeix els llocs seleccionats">
 <!ENTITY noscriptGloballyEnabled "El JavaScript és permès globalment (perillós)">
 <!ENTITY noscriptAutoReload "Recarrega automàticament les pàgines afectades en canviar els permisssos">
@@ -13,7 +19,7 @@
 <!ENTITY noscriptAppearance "Aparença">
 <!ENTITY noscriptShow "Mostra">
 <!ENTITY noscriptCtxMenu "Menú contextual">
-<!ENTITY noscriptStatusIcon "Icona de la barra d'estat">
+<!ENTITY noscriptStatusIcon "Icona de la barra d&apos;estat">
 <!ENTITY noscriptFullAddr "Adreces completes (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Dominis complets (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Dominis de segon nivell (noscript.net)">
@@ -33,16 +39,40 @@
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "Avançades">
 <!ENTITY noscriptAdditionalPermissions "Permissos addicionals per a llocs de confiança">
-<!ENTITY noscriptAllowClipboard "Permet copiar i enganxar text enriquit des d'un porta-retalls extern">
+<!ENTITY noscriptAllowClipboard "Permet copiar i enganxar text enriquit des d&apos;un porta-retalls extern">
 <!ENTITY noscriptAdditionalRestrictions "Restriccions addicionals per a llocs en què desconfieu">
 <!ENTITY noscriptForbidJava "Prohibeix el Java™">
 <!ENTITY noscriptForbidFlash "Prohibeix el Macromedia® Flash®">
-<!ENTITY noscriptForbidPlugins "Prohibeix d'altres connectors">
+<!ENTITY noscriptForbidPlugins "Prohibeix d&apos;altres connectors">
 <!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pàgines noves o recarregades (manualment)">
-<!ENTITY noscriptConfirmUnblock "Demana confirmació abans de desblocar un objecte temporalment">
-<!ENTITY noscriptStatusLabel "Etiqueta de la barra d'estat">
-<!ENTITY noscriptForbidBookmarklets "Prohibeix les Adreces d'interès">
+<!ENTITY noscriptConfirmUnblock "Demana confirmaci� abans de desblocar un objecte temporalment">
+<!ENTITY noscriptStatusLabel "Etiqueta de la barra d&apos;estat">
+<!ENTITY noscriptForbidBookmarklets "Prohibeix les Adreces d&apos;inter�s">
 <!ENTITY noscriptShowPlaceholder "Mostra-ne les icones">
 <!ENTITY noscriptTruncateTitle "Talla els títols dels documents">
 <!ENTITY noscriptFixLinks "Intenta arreglar els enllaços en JavaScript">
-<!ENTITY noscriptAllowBookmarks "Permet tots els llocs que trobes a les adreces d'interès">
+<!ENTITY noscriptAllowBookmarks "Permet tots els llocs que trobes a les adreces d&apos;interès">
+<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
+<!ENTITY noscriptAllowPing "Allow &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Allow local links">
+<!ENTITY noscriptForbidPing "Forbid &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Llista blanca">
+<!ENTITY noscriptPermissions "Permissos">
+<!ENTITY noscriptRefresh "Actualitza">
+<!ENTITY noscriptNotifications "Notificacions">
+<!ENTITY noscriptToolbarToggle "El botó esquerre en la barra de tasques de NoScript alterna els permissos per als llocs de nivell alt">
+<!ENTITY noscriptTrusted "De confiança">
+<!ENTITY noscriptUntrusted "Sense confiança">
+<!ENTITY noscriptUnknown "Desconegut">
+<!ENTITY noscriptAdd "Afegeix">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Tanca">
+<!ENTITY noscriptSiteManager "Gestor de llocs">
+<!ENTITY noscriptSecurityManager "Gestor de seguretat">
+<!ENTITY noscriptPolicies "Política">
+<!ENTITY noscriptDefaultPolicies "Actuació per defecte">
+<!ENTITY noscriptSitePolicies "Actuació per a un lloc específic">
+<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
+<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">

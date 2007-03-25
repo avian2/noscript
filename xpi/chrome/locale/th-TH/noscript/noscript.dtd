@@ -6,6 +6,12 @@
 <!ENTITY noscriptWebAddress "ที่อยู่เว็บไซต์:">
 <!ENTITY noscriptAllow "อนุญาต">
 <!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptForbid "ห้าม">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "ทำเครื่องหมายเชื่อถือได้">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "ทำเครื่องหมายเชื่อถือไม่ได้">
+<!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "ลบไซต์ที่เลือก">
 <!ENTITY noscriptGloballyEnabled "อนุญาตสคริปต์ทั่วไป (อันตราย)">
 <!ENTITY noscriptAutoReload "เรียกใหม่หน้าที่ส่งผลอัตโนมัติเมื่อเปลี่ยนการอนุญาต">
@@ -48,6 +54,7 @@
 <!ENTITY noscriptAllowBookmarks "อนุญาตไซต์ให้เปิดผ่านที่คั่นหน้า">
 <!ENTITY noscriptAllowViaBookmarks "อนุญาตไซต์ให้เปิดผ่านที่คั่นหน้า">
 <!ENTITY noscriptAllowPing "อนุญาต &lt;ปิง...&gt;">
+<!ENTITY noscriptAllowLocalLinks "อนุญาตลิงก์ภายใน">
 <!ENTITY noscriptForbidPing "ไม่อนุญาต &lt;ปิง...&gt;">
 <!ENTITY noscriptWhitelist "บัญชีขาว">
 <!ENTITY noscriptPermissions "การอนุญาต">
@@ -65,3 +72,7 @@
 <!ENTITY noscriptPolicies "กฎ">
 <!ENTITY noscriptDefaultPolicies "กฎเดิม">
 <!ENTITY noscriptSitePolicies "กฎไซต์ที่ปรากฏ">
+<!ENTITY noscriptNselNever "ซ่อนส่วนประกอบ &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "แสดงส่วนประกอบ &lt;noscript&gt; ที่ตาม &lt;script&gt; ที่บล็อก">
+<!ENTITY noscriptAutoAllowTopLevel "อนุญาตไซต์ระดับสูงสุดโดยชั่วคราวด้วยค่าเริ่มต้น">
+<!ENTITY noscriptDescription "การป้องกันพิเศษสำหรับไฟร์ฟอกซ์ของคุณ: NoScript อนุญาตจาวาสคริปต์ จาวา(และตัวเสริมอื่นๆ)เฉพาะสำหรับโดเมนที่เชื่อถือได้ของตัวเลือกของคุณ(เช่นเว็บไซต์โฮมว่างของคุณ) บัญชีขาวนี้มีพื้นฐานอยู่บนการบล็อกพรี-เอมป์ทีฟคล้ายการป้องกันการหาประโยชน์อย่างไม่ถูกต้องของความอ่อนแอของความปลอดภัย(รู้แล้วและแม้แต่ไม่รู้!)ด้วยการใช้ให้เป็นประโยชน์อย่างไม่ผิดพลาด...ผู้เชี่ยวชาญจะยอมรับ: ไฟร์ฟอกซ์ปลอดภัยกว่าอย่างแท้จริงด้วย NoScript:-)">
