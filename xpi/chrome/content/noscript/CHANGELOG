@@ -1,5 +1,9 @@
 NoScript ChangeLog
 
+v 1.1.3.7
+=====================================================================
+x Fixed some localization bugs
+
 v 1.1.3.6
 =====================================================================
 + "Fix JavaScript links" option: enabled by default, attempts to

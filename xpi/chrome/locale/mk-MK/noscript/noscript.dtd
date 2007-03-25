@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcii na NoScript">
 <!ENTITY noscriptAbout "Za NoScript">
-<!ENTITY noscriptPermissionsText "Mozete da gi specificirate koi stranici sakate da bidat izvrsuvani od Java Script.Napisete ja adresata na domenot (pr."http://www.site.com" ili "site.com")sto sakate da bide dozvolena i kliknete Dozvoli">
+<!ENTITY noscriptPermissionsText "Mozete da gi specificirate koi stranici sakate da bidat izvrsuvani od Java Script.Napisete ja adresata na domenot (pr.&quot;http://www.site.com&quot; ili &quot;site.com&quot;)sto sakate da bide dozvolena i kliknete Dozvoli">
 <!ENTITY noscriptWebAddress "Adresa na veb stranicata">
 <!ENTITY noscriptAllow "Dozvoli">
 <!ENTITY noscriptAllow.accesskey "A">

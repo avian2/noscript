@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "I">
 <!ENTITY noscriptOptionsLong "NoScript indstillinger">
 <!ENTITY noscriptAbout "Om NoScript">
-<!ENTITY noscriptPermissionsText "Du kan angive hvilke hjemmesider der har tilladelse til at køre JavaScript. Indtast adressen eller domænet (f.eks. "http://www.site.com" eller "site.com") på siden du vil give tilladelse, og klik da på Tillad.">
+<!ENTITY noscriptPermissionsText "Du kan angive hvilke hjemmesider der har tilladelse til at køre JavaScript. Indtast adressen eller domænet (f.eks. &quot;http://www.site.com&quot; eller &quot;site.co&quot;) på siden du vil give tilladelse, og klik da på Tillad.">
 <!ENTITY noscriptWebAddress "Adressen til hjemmesiden:">
 <!ENTITY noscriptAllow "Tillad">
 <!ENTITY noscriptAllow.accesskey "T">

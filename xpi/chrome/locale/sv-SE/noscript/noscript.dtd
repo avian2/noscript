@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript-inställningar">
 <!ENTITY noscriptAbout "Om NoSCript">
-<!ENTITY noscriptPermissionsText "Du kan bestämma vilka webplatser som ska tillåtas att använda skript. Skriv adressen eller domänen (ex. "http://www.sajt.se" eller "sajt.se") till den webplats du vill tillåta och klicka på "Tillåt".">
+<!ENTITY noscriptPermissionsText "Du kan bestämma vilka webplatser som ska tillåtas att använda skript. Skriv adressen eller domänen (ex. &quot;http://www.sajt.se&quot; eller &quot;sajt.se&quot;) till den webplats du vill tillåta och klicka på &quot;Tillåt&quot;.">
 <!ENTITY noscriptWebAddress "Adress till webplats:">
 <!ENTITY noscriptAllow "Tillåt">
 <!ENTITY noscriptAllow.accesskey "T">
@@ -42,7 +42,7 @@
 <!ENTITY noscriptConfirmUnblock "Be om bekräftelse innan ett objekt tillfälligt ej blockeras">
 <!ENTITY noscriptStatusLabel "Statusfältets etikett">
 <!ENTITY noscriptForbidBookmarklets "Förbjud bokmärken">
-<!ENTITY noscriptShowPlaceholder "Visa "PlaceHolder"-ikon">
+<!ENTITY noscriptShowPlaceholder "Visa &quot;PlaceHolder&quot;-ikon">
 <!ENTITY noscriptTruncateTitle "Korta av dokumenttitlar">
 <!ENTITY noscriptFixLinks "Försök laga JavaScript-länkar">
 <!ENTITY noscriptAllowBookmarks "Tillåt alla webplatser under bokmärken">

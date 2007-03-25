@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "а">
 <!ENTITY noscriptOptionsLong "Настройки NoScript">
 <!ENTITY noscriptAbout "О расширении">
-<!ENTITY noscriptPermissionsText "Вы можете установить каким web-сайтам разрешено выполнять JavaScript. Введите адрес или домен (напр. "http://www.site.com" или "site.com") сайта которому вы желаете разрешить исполнять JavaScript и затем нажмите Разрешить.">
+<!ENTITY noscriptPermissionsText "Вы можете установить каким web-сайтам разрешено выполнять JavaScript. Введите адрес или домен (напр. &quot;http://www.site.com&quot; или &quot;site.com&quot;) сайта которому вы желаете разрешить исполнять JavaScript и затем нажмите Разрешить.">
 <!ENTITY noscriptWebAddress "Адрес web-сайта:">
 <!ENTITY noscriptAllow "Разрешить">
 <!ENTITY noscriptAllow.accesskey "е">
