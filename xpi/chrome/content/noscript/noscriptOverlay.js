@@ -85,7 +85,7 @@ NoScriptOverlay.prototype={
           
           const appletTags=["embed", "applet", "object"];
           var tcount=appletTags.length;
-          var applets, applet, div, innerDiv, appletParent;
+          var acount, applets, applet, div, innerDiv, appletParent;
           var extras, title;
           var style, cssLen, cssCount, cssProp, cssDef;
           var aWidth,aHeight;
@@ -204,7 +204,7 @@ NoScriptOverlay.prototype={
       return;
     }
     menu.removeAttribute("hidden");
-    const status=document.getElementById("noscript-status");
+    const status=document.getElementById("noscript-statusIcon");
     menu.setAttribute("image",status.getAttribute("src"));
     menu.setAttribute("tooltiptext",status.getAttribute("tooltiptext"));
   }
@@ -252,7 +252,7 @@ NoScriptOverlay.prototype={
     const miGlobal=globalSep.nextSibling;
     miGlobal.setAttribute("label",this.getString((global?"forbid":"allow")+"Global"));
     miGlobal.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!global)+")");
-    miGlobal.setAttribute("tooltiptext",document.getElementById("noscript-status").getAttribute("tooltiptext"));
+    miGlobal.setAttribute("tooltiptext",document.getElementById("noscript-statusIcon").getAttribute("tooltiptext"));
     miGlobal.setAttribute("image",this.getIcon(global?"no":"glb"));
 
     
@@ -297,7 +297,7 @@ NoScriptOverlay.prototype={
         if(domainDupChecker.check(matchingSite)) continue;
         menuSites=[matchingSite];
       } else {
-        domain=site.match(/.*?:\/\/([\w\-\.:]+)/);
+        domain=site.match(/.*?:\/\/([^\?\/\\#]+)/); // double check - changed for Unicode compatibility
         if(domain) {
           domain=domain[1];
           if(domain.indexOf(":")>-1) {
@@ -428,7 +428,7 @@ NoScriptOverlay.prototype={
 ,
   _iconURL: null,
   getIcon: function(lev,inactive) {
-    if(!this._iconURL) this._iconURL=document.getElementById("noscript-status").src;
+    if(!this._iconURL) this._iconURL=document.getElementById("noscript-statusIcon").src;
     return this._iconURL.replace(/[^\/]*(yes|no|glb|prt)(\d+\.)/,(inactive?"inactive-":"")+lev+"$2");
   }
 ,
@@ -523,16 +523,19 @@ NoScriptOverlay.prototype={
    var widget=document.getElementById("noscript-tbb");
    if(widget) {
      widget.setAttribute("tooltiptext",message);
-     widget.setAttribute("image",icon);  
+     widget.setAttribute("image", icon);  
    }
    
-   widget=document.getElementById("noscript-status");
+   widget=document.getElementById("noscript-statusIcon");
    widget.setAttribute("tooltiptext",message);
-   widget.setAttribute("src",icon);
+   widget.setAttribute("src", icon);
 
+   
+   
     const mb=this.getMessageBox();
     const mbMine=this.isNsMB(mb);
     if(notificationNeeded) { // notifications
+
       const doc=this.srcWindow.document;
       if(mb) {
         var hidden=mb.hidden;
@@ -575,7 +578,12 @@ NoScriptOverlay.prototype={
       if(mbMine && !mb.hidden) {
         mb.hidden=true;
       }
+      message = "";
     }
+    
+    widget=document.getElementById("noscript-statusLabelValue");
+    widget.setAttribute("value", message ? message.replace(/JavaScript/g,"JS") : "");
+    widget.parentNode.style.display = message ? "block" : "none";
   }
 ,
   checkDocFlag: function(doc,flag) {
@@ -586,19 +594,6 @@ NoScriptOverlay.prototype={
 ,
   isNsMB: function(mb) {
     return mb && mb.popup=="noscript-notify-popup";
-  }
-,
-  chromeBase: "chrome://noscript/content/",
-  chromeName: "noscript"
-,
-  openOptionsDialog: function() {
-    window.openDialog(this.chromeBase+this.chromeName+"Options.xul",this.chromeName+"Options",
-      "chrome,dialog,centerscreen,alwaysRaised");
-  }
-,
-  openAboutDialog: function() {
-    window.openDialog(this.chromeBase+"about.xul",this.chromeName+"About",
-      "chrome,dialog,centerscreen");
   }
 }
 
@@ -616,12 +611,11 @@ const noscriptOverlayPrefsObserver={
 ,
   observe: function(subject, topic, data) {
     switch(data) {
-      case "statusIcon":
-        window.setTimeout(function() {
-          var widget=document.getElementById("noscript-status");
+      case "statusIcon": case "statusLabel":  
+      window.setTimeout(function() {
+          var widget=document.getElementById("noscript-"+data);
           if(widget) {
-            widget.setAttribute("hidden",
-            !noscriptOverlay.ns.getPref("statusIcon"))
+            widget.setAttribute("hidden", !noscriptOverlay.ns.getPref(data))
           }
         },0);
        break;
@@ -636,6 +630,7 @@ const noscriptOverlayPrefsObserver={
   register: function() {
     this.ns.prefs.addObserver("",this,false);
     this.observe(null,null,"statusIcon");
+    this.observe(null,null,"statusLabel");
   },
   remove: function() {
     this.ns.prefs.removeObserver("",this);
@@ -644,7 +639,8 @@ const noscriptOverlayPrefsObserver={
 
 function _noScript_onMessageClick(ev) {
   if(noscriptOverlay.isNsMB(ev.target)) {
-    document.getElementById(ev.target.popup).showPopup(ev.target,-1,-1,"popup");
+    document.getElementById(ev.target.popup)
+            .showPopup(ev.target, -1, -1, "popup");
   }
 }
 
@@ -660,10 +656,13 @@ function _noScript_onPluginClick(ev) {
     var url = extras.url;
     var mime = extras.mime;
     var description = url + "\n(" + mime + ")\n";
-    
-    if(ns.prompter.confirm(window, "NoScript", 
-       noscriptUtil.getString("allowTemp", [description]))
+    var alwaysAsk = { value: ns.getPref("confirmUnblock", true) };
+    if((!alwaysAsk.value) || 
+        ns.prompter.confirmCheck(window, "NoScript", 
+       noscriptUtil.getString("allowTemp", [description]),
+       noscriptUtil.getString("alwaysAsk"), alwaysAsk)
     ) {
+      ns.setPref("confirmUnblock", alwaysAsk.value);
       div._noScriptRemovedObject = null;
       cache.forceAllow[url] = mime;
       window.setTimeout(function() {
@@ -684,6 +683,10 @@ function _noScript_prepareCtxMenu(ev) {
     noscriptOverlay.prepareContextMenu(ev);
 }
 function _noScript_onloadInstall(ev) {
+  if(!Components.interfaces.nsIContentPolicy.TYPE_OBJECT) {
+    // Mozilla: remove status-label context menu
+    document.getElementById("noscript-statusLabel").removeAttribute("context");
+  }
   document.getElementById("contentAreaContextMenu")
           .addEventListener("popupshowing",_noScript_prepareCtxMenu,false);
 }

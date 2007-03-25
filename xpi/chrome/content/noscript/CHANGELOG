@@ -1,5 +1,13 @@
 NoScript ChangeLog
 
+v 1.1.3.1
+=====================================================================
++ Option to skip confirmation when temporarily unblocking objects
++ Optional status bar label (with Firefox-only context menu)
++ Support for Unicode domains
+x Work-around for Firefox bug #307678 (dialogs freeze)
+x Handle about:neterror and about: (help) "always allowed" exception 
+
 v 1.1.3
 =====================================================================
 + Toolbar button

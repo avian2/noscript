@@ -46,13 +46,13 @@ NoscriptUtil.prototype={
     return s?s:this._stringFrom(this.stringsFB,key,parms);
   }
 ,
-  openOptionsDialog: function(full) {
-    window.openDialog(this.chromeBase+this.chromeName+"Options.xul",this.chromeName+"Options",
+  openOptionsDialog: function() {
+    window.open(this.chromeBase+this.chromeName+"Options.xul",this.chromeName+"Options",
           "chrome,dialog,centerscreen,alwaysRaised");  
   }
 ,
   openAboutDialog: function() {
-    window.openDialog(this.chromeBase+"about.xul",this.chromeName+"About",
+    window.open(this.chromeBase+"about.xul",this.chromeName+"About",
       "chrome,dialog,centerscreen");
   }
 };

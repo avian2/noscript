@@ -94,6 +94,7 @@
   <hbox><description>&noscriptShow;</description></hbox>
    <separator class="thin"/>
     <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
+    <checkbox id="opt-statusLabel" label="&noscriptStatusLabel;" />
     <checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
     <separator class="thin"/>
     <vbox style="margin-left: 23px">
@@ -144,6 +145,8 @@
       <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
       <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
       <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+      <separator class="thin"/>
+      <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
     </vbox>
     </vbox>
    </vbox>

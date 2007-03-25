@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Opzioni">
+<!ENTITY noscriptOptions "Opzioni...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opzioni NoScript">
 <!ENTITY noscriptAbout "Informazioni su NoScript">
@@ -38,3 +38,6 @@
 <!ENTITY noscriptForbidFlash "Vieta Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Vieta altri plugin">
 <!ENTITY noscriptReloadWarn "Queste opzioni avranno effetto nelle nuove pagine e in quelle ricaricate (manualmente)">
+<!ENTITY noscriptConfirmUnblock "Chiedi conferma prima di sbloccare temporaneamente un oggetto">
+<!ENTITY noscriptConfirm "Sei sicuro?">
+<!ENTITY noscriptStatusLabel "Etichetta sulla barra di stato">

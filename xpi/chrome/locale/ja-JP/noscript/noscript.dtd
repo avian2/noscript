@@ -39,3 +39,5 @@
 <!ENTITY noscriptForbidFlash "Macromedia&#174; Flash&#174; の禁止">
 <!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
 <!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページか(手動で)再読込されたページで有効になります">
+<!ENTITY noscriptConfirmUnblock "一時的に許可する前に確認する">
+<!ENTITY noscriptStatusLabel "ステータスバーラベル">

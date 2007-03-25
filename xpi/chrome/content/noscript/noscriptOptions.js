@@ -25,7 +25,7 @@ var g_jsglobal=null;
 var g_urlText=null;
 var g_addButton=null;
 var g_removeButton=null;
-var g_dom2=/^(?:http[s]?|file):\/\/([\w\-]+(:?\.[\w]+$|$))/; // 2nd level domain hack
+var g_dom2=/^(?:http[s]?|file):\/\/([^\.\?\/#,;:\\\@]+(:?\.[^\.\?\/#,;:\\\@]+$|$))/; // 2nd level domain hack
 var g_policySites=null;
 
 function nso_init() {
@@ -49,14 +49,7 @@ function nso_init() {
       checkbox.setAttribute("checked",inverse?!val:val);
     }
   );
-  
-  /*
-  if(!Components.interfaces.nsIContentPolicy.TYPE_OBJECT) { // SeaMonkey
-    document.getElementById("notifyOpts").setAttribute("collapsed","true");
-    document.getElementById("contentOpts").setAttribute("collapsed","true");
-  }
-  */
-  
+
   document.getElementById("opt-showTemp").setAttribute("label",noscriptUtil.getString("allowTemp",["[...]"]));
   nso_setSample(g_serv.getPref("sound.block"));
 }
@@ -77,7 +70,7 @@ function nso_urlListChanged() {
 function nso_urlChanged() {
   var url=g_urlText.value;
   if(url.match(/\s/)) url=g_urlText.value=url.replace(/\s/g,'');
-  var addEnabled=url.length>0 && (url=g_serv.getSite(url));
+  var addEnabled=url.length>0 && (url=g_serv.getSite(url)) ;
   if(addEnabled) {
     var match=url.match(g_dom2);
     if(match) url=match[1];

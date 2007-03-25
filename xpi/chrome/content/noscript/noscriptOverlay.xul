@@ -65,10 +65,11 @@
      <menuitem 
       label="&noscriptOptions;"
       accesskey="&noscriptOptions.accesskey;"
-      oncommand="noscriptOverlay.openOptionsDialog()"
+      oncommand="noscriptUtil.openOptionsDialog()"
       tooltiptext="&noscriptOptionsLong;"
       />
    </popup>
+
 </popupset>
 
 <toolbarpalette id="BrowserToolbarPalette">
@@ -88,13 +89,13 @@
          <menuitem id="noscript-options-tbb-menuitem"
           label="&noscriptOptions;"
           accesskey="&noscriptOptions.accesskey;"
-          oncommand="noscriptOverlay.openOptionsDialog()"
+          oncommand="noscriptUtil.openOptionsDialog()"
           tooltiptext="&noscriptOptionsLong;"
           />
           <menuitem id="noscript-about-tbb-menuitem"
             label="&noscriptAbout;"
             tooltiptext="&noscriptAbout;"
-            oncommand="noscriptOverlay.openAboutDialog()"
+            oncommand="noscriptUtil.openAboutDialog()"
           />
     </menupopup>
    </toolbarbutton>
@@ -110,41 +111,69 @@
          <menuitem id="noscript-options-ctx-menuitem"
           label="&noscriptOptions;"
           accesskey="&noscriptOptions.accesskey;"
-          oncommand="noscriptOverlay.openOptionsDialog()"
+          oncommand="noscriptUtil.openOptionsDialog()"
           tooltiptext="&noscriptOptionsLong;"
           />
           <menuitem id="noscript-about-ctx-menuitem"
             label="&noscriptAbout;"
             tooltiptext="&noscriptAbout;"
-            oncommand="noscriptOverlay.openAboutDialog()"
+            oncommand="noscriptUtil.openAboutDialog()"
           />
     </menupopup>
   </menu>
 </popup>
 
 <statusbar id="status-bar">
-  <statusbarpanel id="noscript-status" insertbefore="statusbar-updates" 
+  <statusbarpanel id="noscript-statusIcon" insertbefore="statusbar-updates"
     src="chrome://noscript/skin/no16.png" class="statusbarpanel-menu-iconic"
     hidden="false" persist="hidden"
     >
     <menupopup id="noscript-status-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
-         <menuitem
-            label="&noscriptAbout;"
-            tooltiptext="&noscriptAbout;"
-            oncommand="noscriptOverlay.openAboutDialog()"
-          /> 
-        <menuitem 
-          label="&noscriptOptions;"
-          accesskey="&noscriptOptions.accesskey;"
-          oncommand="noscriptOverlay.openOptionsDialog()"
-          tooltiptext="&noscriptOptionsLong;"
-          />
-         <menuseparator class="noscript-sep-global"/>
-         <menuitem class="menuitem-iconic" />
-         <menuseparator class="noscript-sep-insert"/>
-         <menuseparator class="noscript-sep-stop" hidden="true" />
+       <menuitem
+          label="&noscriptAbout;"
+          tooltiptext="&noscriptAbout;"
+          oncommand="noscriptUtil.openAboutDialog()"
+        /> 
+      <menuitem 
+        label="&noscriptOptions;"
+        accesskey="&noscriptOptions.accesskey;"
+        oncommand="noscriptUtil.openOptionsDialog()"
+        tooltiptext="&noscriptOptionsLong;"
+        />
+       <menuseparator class="noscript-sep-global"/>
+       <menuitem class="menuitem-iconic" />
+       <menuseparator class="noscript-sep-insert"/>
+       <menuseparator class="noscript-sep-stop" hidden="true" />
     </menupopup>
-</statusbarpanel>
+  </statusbarpanel>
+  <statusbarpanel id="noscript-statusLabel" insertbefore="statusbar-updates"
+    context="_child" class="statusbar-display"
+    hidden="false" persist="hidden"
+    >
+    <menupopup id="noscript-statusLabel-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+     <menuitem
+        label="&noscriptAbout;"
+        tooltiptext="&noscriptAbout;"
+        oncommand="noscriptUtil.openAboutDialog()"
+      /> 
+    <menuitem 
+      label="&noscriptOptions;"
+      accesskey="&noscriptOptions.accesskey;"
+      oncommand="noscriptUtil.openOptionsDialog()"
+      tooltiptext="&noscriptOptionsLong;"
+      />
+     <menuseparator class="noscript-sep-global"/>
+     <menuitem class="menuitem-iconic" />
+     <menuseparator class="noscript-sep-insert"/>
+     <menuseparator class="noscript-sep-stop" hidden="true" />
+  </menupopup>
+    
+    
+   <label id="noscript-statusLabelValue" />
+       
+   
+ </statusbarpanel>
+   
    
 </statusbar>
 

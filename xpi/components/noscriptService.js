@@ -115,19 +115,8 @@ UninstallGuard.prototype={
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
 const SiteUtils = new function() {
-  var _domainPattern = /^[\w\-\.]*\w$/;
+  var _domainPattern = /^[^\?\/#,;:\\\@]+$/; // double check: changed for Unicode compliance: it was /^[\w\-\.]*\w$/
   
   var _ios = null;
   this.__defineGetter__("ios", function() {
@@ -161,7 +150,9 @@ const SiteUtils = new function() {
     try {
       scheme=this.ios.extractScheme(url);
       if(scheme == "javascript" || scheme == "data") return "";
-      if(scheme == "about") return url;
+      if(scheme == "about") {
+        return /about:neterror(\?|$)/.test(url) ? "about:neterror" : url;
+      }
       scheme += ":";
       if(url == scheme) return url;
     } catch(ex) {
@@ -245,7 +236,6 @@ const SiteUtils = new function() {
     return ss.join(" ");
   };
   
-  
 }
 
 
@@ -312,6 +302,25 @@ PolicySites.prototype={
     return this._sitesMap=sm;
   }
 ,
+ fromPref: function(pref) {
+   this.sitesString = pref.getCharPref("sites")
+       .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
+ }
+,
+ toPref: function(pref) {
+   var change;
+   var s = this.sitesString.replace(/[^\u0000-\u007f]+/g,function($0) { return unescape(encodeURIComponent($0)) });
+   try {
+      change = s != pref.getCharPref("sites");
+    } catch(ex) {
+      change = true;
+    }
+    
+    if(change) {
+      pref.setCharPref("sites", s);
+    }
+ }
+,
   // returns the shortest match for a site, or "" if no match is found
   matches: function(site) {
     if(!site) return "";
@@ -321,7 +330,7 @@ PolicySites.prototype={
     var pos=site.indexOf(':')+1;
     if(pos > 0 && (site[pos]=='/' || pos==site.length) ) {
       if(sm[match=site.substring(0,pos)]) return match; // scheme match
-      if(site[++pos]!='/') return "";
+      if(site[++pos]!='/') return site == "about:" ? "about:" : "";
       match=site.substring(pos+1);
       dots=0;
     } else {
@@ -350,7 +359,7 @@ PolicySites.prototype={
     
     if(site[site.length-1]!=":") { // not a scheme only site
       if(!keepUp) {
-        while( (match=this.matches(site)) && site!=match) { // remove ancestors
+        while((match=this.matches(site)) && site!=match) { // remove ancestors
           delete sm[match];
           change = true;
         }
@@ -487,18 +496,18 @@ NoscriptService.prototype={
     switch(name) {
       case "sites":
         try {
-          this.jsPolicySites.sitesString=this.policyPB.getCharPref("sites");
+          this.jsPolicySites.fromPref(this.policyPB);
         } catch(ex) {
           this.policyPB.setCharPref("sites",
             this.getPref("default",
-              "chrome: resource: flashgot.net mail.google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com"
+              "chrome: resource: about:neterror flashgot.net mail.google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com"
             ));
         }
         break;
       case "permanent":
         this.permanentSites.sitesString=this.getPref("permanent",
-          "googlesyndication.com noscript.net maone.net informaction.com noscript.net"
-          ) + " chrome: resource:";
+            "googlesyndication.com noscript.net maone.net informaction.com noscript.net"
+          ) + " chrome: resource: about:neterror";
       break;
       case "temp":
         this.tempSites.sitesString=this.getPref("temp","") + " jar:";
@@ -620,7 +629,7 @@ NoscriptService.prototype={
   permanentSites: new PolicySites(),
   isPermanent: function(s) {
     return s &&
-      (s=="chrome:" || s=="resource:" 
+      (s == "chrome:" || s == "resource:" || s =="about:" || s == "about:neterror"
         || this.permanentSites.matches(s));
   }
 ,
@@ -668,9 +677,9 @@ NoscriptService.prototype={
   }
 ,
   jsPolicySites: new PolicySites(),
-  isJSEnabled: function(site,ps) {
+  isJSEnabled: function(site, ps) {
     if(!ps) ps=this.jsPolicySites;
-    return !!ps.matches(site);
+    return (!!ps.matches(site));
   },
   setJSEnabled: function(site,is,fromScratch) {
     const ps=this.jsPolicySites;
@@ -681,24 +690,23 @@ NoscriptService.prototype={
       ps.remove(site, false, true);
     }
     
-    var change;
-    try {
-      change = ps.sitesString != this.policyPB.getCharPref("sites");
-    } catch(ex) {
-      change = true;
-    }
-    
-    if(change) {
-      this.policyPB.setCharPref("sites",ps.sitesString);
-    }
-  
+    ps.toPref(this.policyPB);
     return is;
+  }
+,
+  delayExec: function(callback,delay) {
+     const timer=Components.classes["@mozilla.org/timer;1"].createInstance(
+        Components.interfaces.nsITimer);
+     timer.initWithCallback( { notify: callback }, 1, 0);
   }
 ,
   safeCapsOp: function(callback) {
     callback();
-    this.savePrefs();
-    this.reloadWhereNeeded();
+    const serv=this;
+    this.delayExec(function() {
+      serv.savePrefs();
+      serv.reloadWhereNeeded();
+     },1);
   }
 ,
   _lastSnapshot: null,

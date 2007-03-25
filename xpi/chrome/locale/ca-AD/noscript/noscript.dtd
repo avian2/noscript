@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Opcions">
+<!ENTITY noscriptOptions "Opcions...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcions de NoScript">
 <!ENTITY noscriptAbout "Quant a NoScript">
@@ -24,7 +24,7 @@
 <!ENTITY noscriptExport "Exporta">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Mostra un missatge amb les seqüències blocades">
-<!ENTITY noscriptNotify.bottom "Col·loca el missatge a la part de baix">
+<!ENTITY noscriptNotify.bottom "Colloca el missatge a la part de baix">
 <!ENTITY noscriptSound.choose "Tria">
 <!ENTITY noscriptSound.choose.accesskey "C">
 <!ENTITY noscriptSound.play "Reprodueix">
