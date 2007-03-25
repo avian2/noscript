@@ -39,25 +39,42 @@
   <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />
 </stringbundleset>
 
+<popup id="contentAreaContextMenu">
+  <menu id="noscript-context-menu" class="menu-iconic" label="NoScript" >
+    <menupopup onpopupshowing="noscriptOverlay.prepareMenu(this)">
+         <menuitem class="menuitem-iconic" />
+         <menuseparator />
+         <menuitem 
+          label="&noscriptOptions;"
+          oncommand="noscriptOverlay.openOptionsDialog()"
+          tooltiptext="&noscriptOptionsLong;"
+          />
+          <menuitem
+          label="&noscriptAbout;"
+          tooltiptext="&noscriptAbout;"
+          oncommand="noscriptOverlay.openAboutDialog()"
+          />
+    </menupopup>
+  </menu>
+</popup>
+
 <statusbar id="status-bar">
   <statusbarpanel id="noscript-status" insertbefore="statusbar-updates" 
     src="chrome://noscript/skin/no16.png" class="statusbarpanel-menu-iconic"
     collapsed="false" 
     >
-    <menupopup id="noscript-status-popup" onpopupshowing="noscriptOverlay.prepareMenu(event)">
-         <menuitem id="noscript-sm-allow-global" class="menuitem-iconic" />
-          
-         <menuseparator id="noscript-sm-sep"  />
-         <menuitem id="noscript-sm-options" 
+    <menupopup id="noscript-status-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+         <menuitem class="menuitem-iconic" />
+         <menuseparator />
+         <menuitem 
           label="&noscriptOptions;"
           oncommand="noscriptOverlay.openOptionsDialog()"
           tooltiptext="&noscriptOptionsLong;"
           />
-          <menuitem id="noscript-sm-about" 
+          <menuitem
           label="&noscriptAbout;"
           tooltiptext="&noscriptAbout;"
           oncommand="noscriptOverlay.openAboutDialog()"
-          
           />
     </menupopup>
 </statusbarpanel>

@@ -1,5 +1,15 @@
 NoScript ChangeLog
 
+v 1.0.1
+=====================================================================
++ Contextual menu for easy operation in statusbar-less windows
++ Current page is automatically reloaded when permissions are changed
++ Support for implicit subdomain inclusion (e.g. if you add 
+  mozilla.org, you allow www.mozilla.org, addons.mozilla.org etc.)
++ German translation (thanks to my friend Thomas Weber)
+x Fixed localization issue
+x Work around for Firefox occasional crashes
+
 v 1.0.0
 =====================================================================
 First public release

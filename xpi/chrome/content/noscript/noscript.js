@@ -23,32 +23,45 @@ function NoScript() {
   if(this.cleanupIfUninstalling()) {
     return;
   }
+  this.sites=this.sites; // inits mandatory sites line - hopefully prevents a reported segfault
   const POLICY_NAME=this.POLICY_NAME;
   var prefArray;
-  var prefString=null;
-  try {
-    prefArray=this.splitList(this.prefs.getCharPref("policynames"));
+  var prefString=null,originalPrefString=null;
+  try { 
+    prefArray=this.splitList(prefString=originalPrefString=this.caps.getCharPref("policynames"));
     var pcount=prefArray.length;
-    while(pcount-->0 && prefArray[pcount]!=POLICY_NAME);
+    var pn;
+    while(pcount-->0 && (pn=prefArray[pcount])!=POLICY_NAME);
     if(pcount==-1) {
-      prefArray[prefArray.length]=POLICY_NAME;
-      prefString=prefArray.join(",");
+      if(prefArray.length==0) {
+        prefString=POLICY_NAME;
+      } else {
+        prefArray[prefArray.length]=POLICY_NAME;
+        prefString=prefArray.join(' ');
+      }
     }
+    prefString=prefString.replace(/,/g,' ').replace(/\s+/g,' ').replace(/^\s+/,'').replace(/\s+$/,'');
   } catch(ex) {
     prefString=POLICY_NAME;
   }
-  if(prefString) {
-    this.prefs.setCharPref("policynames",prefString);
-    this.prefs.setCharPref(POLICY_NAME+".javascript.enabled","allAccess");
+  if(prefString && (prefString!=originalPrefString)) { 
+    this.caps.setCharPref("policynames",prefString);
+    this.caps.setCharPref(POLICY_NAME+".javascript.enabled","allAccess");
   }
-  this.sitesString;
 }
 
 NoScript.prototype={
   POLICY_NAME: "maonoscript",
-  get prefs() {
-    return Components.classes["@mozilla.org/preferences-service;1"].getService(
+  _caps: null,
+  get caps() {
+    return this._caps?this._caps:this._caps=Components.classes["@mozilla.org/preferences-service;1"].getService(
       Components.interfaces.nsIPrefService).getBranch("capability.policy.");
+  }
+, 
+  _prefs: null,
+  get prefs() {
+    return this._prefs?this._prefs:this._prefs=Components.classes["@mozilla.org/preferences-service;1"].getService(
+      Components.interfaces.nsIPrefService).getBranch("noscript.");
   }
 ,
   uninstalling: false
@@ -57,17 +70,25 @@ NoScript.prototype={
     return s.split(/\s*[, ]\s*/);
   }
 ,
+  savePrefs: function() {
+    return Components.classes["@mozilla.org/preferences-service;1"].getService(
+        Components.interfaces.nsIPrefService).savePrefFile(null);
+  }
+,
   get sitesString() {
     try {
-      return this.prefs.getCharPref(this.POLICY_NAME+".sites");
+      return this.caps.getCharPref(this.POLICY_NAME+".sites");
     } catch(ex) {
-      return "http://www.informaction.com http://www.maone.net http://www.noscript.net http://www.flashgot.net https://addons.mozilla.org";
+      return this.siteString="flashgot.net informaction.com maone.net mozilla.org noscript.net";
     }
   }
 ,
   set sitesString(s) {
     s=s.replace(/(^\s+|\s+$)/g,'');
-    this.prefs.setCharPref(this.POLICY_NAME+".sites",s);
+    if(s!=this.siteString) {
+      this.caps.setCharPref(this.POLICY_NAME+".sites",'');
+      this.caps.setCharPref(this.POLICY_NAME+".sites",s);
+    }
     return s;
   }
 ,
@@ -81,8 +102,19 @@ NoScript.prototype={
     return ss;
   }
 ,
-  sortedSiteSet: function(ss) {
-    ss=ss.sort();
+  _domainPattern: /^[\w\-\.]*\w$/
+,
+  sortedSiteSet: function(ss,keepShortest) {
+    const ns=this;
+    ss=ss.sort(function(a,b) {
+      if(a==b) return 0;
+      if(!a) return 1;
+      if(!b) return -1;
+      const dp=ns._domainPattern;
+      return dp.test(a)?
+        (dp.test(b)?(a<b?-1:1):-1)
+        :(dp.test(b)?1:a<b?-1:1);
+    });
     // sanitize and kill duplicates
     var prevSite=null;
     for(var j=ss.length; j-->0;) {
@@ -98,14 +130,14 @@ NoScript.prototype={
 ,
   get jsEnabled() {
     try {
-      return this.prefs.getCharPref("default.javascript.enabled") != "noAccess";
+      return this.caps.getCharPref("default.javascript.enabled") != "noAccess";
     } catch(ex) {
       return this.uninstalling || (this.jsEnabled=false);
     }
   }
 ,
   set jsEnabled(enabled) {
-    this.prefs.setCharPref("default.javascript.enabled",enabled?"allAccess":"noAccess");
+    this.caps.setCharPref("default.javascript.enabled",enabled?"allAccess":"noAccess");
     return enabled;
   }
 ,
@@ -118,11 +150,16 @@ NoScript.prototype={
 ,
   getSite: function(url) {
     if(url==null) return null;
+    url=url.replace(/^\s+/,'').replace(/\s+$/,'');
+    if(!url) return null;
     var protocol;
     try {
-      protocol=this.ios.extractScheme(url)+"://";
+      protocol=this.ios.extractScheme(url);
+      if(protocol=="chrome" || protocol=="javascript") return null;
+      protocol+="://";
     } catch(ex) {
-      url=(protocol="http://")+url;
+      var domainMatch=url.match(this._domainPattern);
+      return domainMatch?domainMatch[0].toLowerCase():null;
     }
     try {
       return protocol+this.ios.newURI(url,null,null).host;
@@ -131,26 +168,67 @@ NoScript.prototype={
     }
   }
 ,
-  isJSEnabled: function(site) {
-    if(!site) return false;
-    var sites=this.sitesString;
-    if(!(sites && sites.length)) return false;
-    var pos=sites.indexOf(site);
-    return (pos==0 || pos>0 && sites.charAt(pos-1)==' ');
+  findMatchingSite: function(site,sites,visitor) {
+    if(!site) return null;
+    if(!sites) sites=this.sites;
+    
+    var siteLen=site.length;
+    var current,currentLen;
+    var ret=null;
+    for(var j=sites.length; j-->0;) {
+      current=sites[j];
+      currentLen=current.length;
+      if( siteLen>=currentLen && ( current==site
+         || (siteLen!=currentLen 
+            && site.substring(siteLen-currentLen)==current) 
+      ) ) { 
+        if(visitor) {
+          if(ret=visitor.visit(current,sites,j)) {
+            return ret;
+          }
+        } else {
+          return current;
+        }
+      }
+    }
+    return null;
+  }
+,
+  findShortestMatchingSite: function(site,sites) {
+    const shortestFinder={
+      shortest: null, shortestLen: site.length,
+      visit: function(current,sites,index) {
+        if(this.shortestLen>=current.length) {
+          this.shortestLen=current.length;
+          this.shortest=current;
+        }
+      }
+    };
+    this.findMatchingSite(site,sites,shortestFinder);
+    return shortestFinder.shortest;
+  }
+,
+  isJSEnabled: function(site,sites) {
+    return this.findMatchingSite(site,sites,null)!=null; 
   }
 ,
   setJSEnabled: function(site,enabled) {
     if(!site) return false;
-    var sites=this.sitesString.split(/\s+/);
-    var scount=sites.length;
-    while(scount-->0) {
-      if(sites[scount]==site) {
-        if(enabled) return true;
-        sites.splice(scount,1);
-        break;
-      }
+    const sites=this.sites;
+    if(enabled==this.isJSEnabled(site,sites)) { 
+      return enabled;
     }
-    if(scount==-1) sites[sites.length]=site;
+    if(enabled) {
+      sites[sites.length]=site;
+    } else {
+      const siteKiller={
+        visit: function(current,sites,index) {
+          sites.splice(index,1);
+          return null;
+        }
+      };
+      this.findMatchingSite(site,sites,siteKiller);
+    }
     this.sites=sites;
     return enabled;
   }
@@ -202,23 +280,62 @@ NoScript.prototype={
 ,
   cleanup: function() {
     try {
-      this.prefs.clearUserPref("default.javascript.enabled");
+      this.caps.clearUserPref("default.javascript.enabled");
     } catch(ex) {
       dump(ex);
     }
     try {
       const POLICY_NAME=this.POLICY_NAME;
-      var prefArray=this.splitList(this.prefs.getCharPref("policynames"));
+      var prefArray=this.splitList(this.caps.getCharPref("policynames"));
       var pcount=prefArray.length;
       prefArrayTarget=[];
       for(var pcount=prefArray.length; pcount-->0;) {
         if(prefArray[pcount]!=POLICY_NAME) prefArrayTarget[prefArrayTarget.length]=prefArray[pcount];
       }
-      this.prefs.setCharPref("policynames",prefArrayTarget.join(","));
-      return Components.classes["@mozilla.org/preferences-service;1"].getService(
-        Components.interfaces.nsIPrefService).savePrefFile(null);
+      var prefString=prefArrayTarget.join(" ").replace(/\s+/g,' ').replace(/^\s+/,'').replace(/\s+$/,'');
+      if(prefString) {
+        this.caps.setCharPref("policynames",prefString);
+      } else {
+        try {
+          this.caps.clearUserPref("default.javascript.enabled");
+        } catch(ex1) {}
+      }
+      this.savePrefs();
     } catch(ex) {
       dump(ex);
+    }
+  }
+,
+  getPref: function(name,def) {
+    const IPC=Components.interfaces.nsIPrefBranch;
+    const prefs=this.prefs;
+    try {
+      switch(prefs.getPrefType(name)) {
+        case IPC.PREF_STRING:
+          return prefs.getCharPref(name);
+        case IPC.PREF_INT:
+          return prefs.getIntPref(name);
+        case IPC.PREF_BOOL:
+          return prefs.getBoolPref(name);
+      }
+    } catch(e) {}
+    return def;
+  }
+,
+  setPref: function(name,value) {
+    const prefs=this.prefs;
+    switch(typeof(value)) {
+      case "string":
+          prefs.setCharPref(name,value);
+          break;
+      case "boolean":
+        prefs.setBoolPref(name,value);
+        break;
+      case "number":
+        prefs.setIntPref(name,value);
+        break;
+      default:
+        throw new Error("Unsupported type "+typeof(value)+" for preference "+name);
     }
   }
 }

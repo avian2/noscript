@@ -40,7 +40,7 @@
   <script type="application/x-javascript" src="noscriptOptions.js" />
   <vbox>
   <hbox>
-  <description style="width: 300px; white-space: normal" id="permissionsText">&noscriptPermissionsText;</description>
+  <description style="width: 400px; white-space: normal" id="permissionsText">&noscriptPermissionsText;</description>
   </hbox>
   <separator class="thin"/>
   <label value="&noscriptWebAddress;"/>
@@ -54,7 +54,7 @@
   <listbox id="urlList" seltype="multiple" 
     onselect="nso_urlListChanged()" 
     flex="1"
-    rows="10"
+    rows="8"
   >
   <listitem id="fake_url_item" label=" " />
   </listbox>
@@ -64,5 +64,7 @@
   </hbox>
   <separator class="thin"/>
   <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
+  <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
+  <checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
   </vbox>
 </dialog>

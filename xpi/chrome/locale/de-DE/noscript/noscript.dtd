@@ -1,0 +1,11 @@
+<!ENTITY noscriptOptions "Optionen">
+<!ENTITY noscriptOptionsLong "NoScript Optionen">
+<!ENTITY noscriptAbout "Über NoScript">
+<!ENTITY noscriptPermissionsText "Sie können bestimmen welche Webseiten JavaScript ausführen dürfen. Geben sie die exakte Adresse der Seite ein und klicken Sie auf 'Erlauben'.">
+<!ENTITY noscriptWebAddress "Adresse der Webseite:">
+<!ENTITY noscriptAllow "Erlauben">
+<!ENTITY noscriptRemoveSelected "Markierte Seiten entfernen">
+<!ENTITY noscriptGloballyEnabled "JavaScript global erlauben (gefährlich)">
+<!ENTITY noscriptAutoReload "Aktuelle Seite automatisch neu laden wenn die Berechtigungen ändern">
+<!ENTITY noscriptCtxMenu "Zeigen Sie Kontextmenü">
+

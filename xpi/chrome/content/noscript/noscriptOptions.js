@@ -25,6 +25,7 @@ g_jsglobal=null;
 g_urlText=null;
 g_addButton=null;
 g_removeButton=null;
+
 function nso_init() {
   if(g_ns.uninstalling) { // this should never happen! 
     window.close();
@@ -41,6 +42,14 @@ function nso_init() {
     g_urlList.appendItem(sites[j],sites[j]);
   }
   g_jsglobal.setAttribute("checked",g_ns.jsEnabled);
+ 
+  visitCheckboxes(
+    function(prefName,inverse,checkbox) {
+      var val=g_ns.getPref(prefName);
+      checkbox.setAttribute("checked",inverse?!val:val);
+    }
+  );
+  
   nso_urlListChanged();
 }
 
@@ -77,11 +86,45 @@ function nso_remove() {
 }
 
 function nso_save() {
-  g_ns.jsEnabled=g_jsglobal.getAttribute("checked")=="true";
+  visitCheckboxes(
+    function(prefName,inverse,checkbox) {
+      g_ns.setPref(prefName,inverse?!checkbox.checked:checkbox.checked);
+    }
+  );
+  
+  
+  
+  
   const sites=[];
   for(var j=g_urlList.getRowCount(); j-->0;) {
     sites[sites.length]=g_urlList.getItemAtIndex(j).value;
   }
+
+  const oldSS=g_ns.sitesString;
   g_ns.sites=sites;
+  const oldGlobal=g_ns.jsEnabled;
+  g_ns.jsEnabled=g_jsglobal.getAttribute("checked")=="true";
+  if(
+    (oldGlobal!=g_ns.jsEnabled || g_ns.sitesString!=oldSS) 
+    && g_ns.getPref("autoReload",true)) {
+    try {
+      window.opener.BrowserReload();
+    } catch(ex) {
+      dump(ex);
+    }
+  }
+  
+}
+
+function visitCheckboxes(callback) {
+  const rxOpt=/^(inv|)opt-(.*)/;
+  var j,checkbox,match;
+  const opts=document.getElementsByTagName("checkbox");
+  for(j=opts.length; j-->0;) {
+    checkbox=opts[j];
+    if(match=checkbox.id.match(rxOpt)) {
+      callback(match[2],match[1]=="inv",checkbox);
+    }
+  }
 }
 

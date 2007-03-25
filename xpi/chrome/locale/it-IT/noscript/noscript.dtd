@@ -1,9 +1,11 @@
 <!ENTITY noscriptOptions "Opzioni">
 <!ENTITY noscriptOptionsLong "Opzioni NoScript">
 <!ENTITY noscriptAbout "Informazioni su NoScript">
-<!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l'esecuzione di JavaScript è consentita. Digitare l'indirizzo esatto e fare clic su Permetti">
+<!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l'esecuzione di JavaScript è consentita. Digitare l'indirizzo o il dominio (es. &quot;http://www.sito.com&quot; oppure &quot;sito.com&quot;)  e fare clic su Permetti.">
 <!ENTITY noscriptWebAddress "Indirizzo del sito:">
 <!ENTITY noscriptAllow "Permetti">
 <!ENTITY noscriptRemoveSelected "Rimuovi i siti selezionati">
 <!ENTITY noscriptGloballyEnabled "JavaScript abilitato globalmente (pericoloso)">
+<!ENTITY noscriptAutoReload "Aggiorna automaticamente la pagina quando i permessi cambiano">
+<!ENTITY noscriptCtxMenu "Mostra menù contestuale">
 

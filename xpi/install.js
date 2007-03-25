@@ -1,14 +1,14 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.0";
+const APP_VERSION = "1.0.1";
 
 const APP_PREFS_FILE=null; //"defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE=null; // "components/noscriptService.js";
 const APP_JAR_FILE = "noscript.jar";
 const APP_CONTENT_FOLDER = "content/noscript/";
 const APP_LOCALES = [
-  "it-IT","en-US"
+  "de-DE","it-IT","en-US"
   ];
 
 const APP_SUCCESS_MESSAGE = APP_DISPLAY_NAME+" should now be available on the context menu when you restart Mozilla.";
