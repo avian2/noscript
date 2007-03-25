@@ -62,7 +62,7 @@ function nso_init() {
   document.getElementById("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp",["[...]"]));
   
   document.getElementById("opt-notify.hide").setAttribute("label",
-           noscriptUtil.getString("notifyHide",[g_serv.getPref("notify.hideDelay",3)]));
+           noscriptUtil.getString("notifyHide", [g_serv.getPref("notify.hideDelay",3)]));
    
   nso_setSample(g_serv.getPref("sound.block"));
   
@@ -257,7 +257,7 @@ function nso_impexp(callback) {
 
 function nso_import(file) {
   if(typeof(file)=="undefined") return nso_impexp(nso_import);
-  g_policySites.sitesString += g_serv.readFile(file);
+  g_policySites.sitesString += "\n" + g_serv.readFile(file);
   nso_populateUrlList();
   return null;
 }

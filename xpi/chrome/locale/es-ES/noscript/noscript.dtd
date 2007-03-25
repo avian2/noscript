@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Configuración de NoScript">
 <!ENTITY noscriptAbout "Acerca de NoScript">
-<!ENTITY noscriptPermissionsText "Aquí puede especificar las páginas web a las que quieres permitir ejecutar código JavaScript. Escriba la dirección de la web que quiera incluir, y después haga clic en 'Permitir' (ej. 'http://www.paginaweb.com' o 'paginaweb.com').">
+<!ENTITY noscriptPermissionsText "Aquí puede especificar las páginas web a las que quieres permitir ejecutar código JavaScript. Escriba la dirección de la web que quiera incluir, y después haga clic en &apos;Permitir&apos; (ej. &apos;http://www.paginaweb.com&apos; o &apos;paginaweb.com&apos;).">
 <!ENTITY noscriptWebAddress "Dirección de la web:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">

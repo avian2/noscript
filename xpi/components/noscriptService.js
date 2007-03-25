@@ -115,6 +115,72 @@ UninstallGuard.prototype={
   }
 };
 
+function Strings(chromeName) {
+  this.chromeName = chromeName;
+}
+
+Strings.wrap = function(s, length, sep) {
+    if(!sep) sep = ' ';
+    
+    function wrapPara(p) {
+    if(!length) length = 80;
+    if(p.length <= length) return p;
+    chunks = [];
+    var pos;
+    while(p.length > length) {
+      pos = p.lastIndexOf(sep, length);
+      if(pos < 0) pos = p.indexOf(sep, length);
+      if(pos < 0) break;
+      chunks.push(p.substring(0, pos));
+      p = p.substring(pos + 1);
+    }
+
+    if(chunks.length) {
+      res  = chunks.join("\n");
+      if(p.length) res += "\n" + p;
+      return res;
+    } else return p;
+  }
+  if(typeof(s) != "string") s = s.toString();
+  var paras = s.split(/\n/);
+  
+  for(var j = 0; j < paras.length; j++) paras[j] = wrapPara(paras[j]);
+  return paras.join("\n");
+}
+
+Strings.prototype = {
+  bundles: {},
+  getBundle: function(path) {
+    if(path in this.bundles) return this.bundles[path];
+    try {
+      return this.bundles[path] = 
+        Components.classes["@mozilla.org/intl/stringbundle;1"]
+                  .getService(Components.interfaces.nsIStringBundleService)
+                  .createBundle("chrome://" + this.chromeName +  "/" + path +
+                                "/" + this.chromeName + ".properties");
+    } catch(ex) {
+      return this.bundles[path] = null;
+    }
+  },
+  
+ 
+  _stringFrom: function(bundle, name, parms) {
+    try {
+      return parms ? bundle.formatStringFromName(name, parms, parms.length) : bundle.GetStringFromName(name);
+    } catch(ex) {
+      return null;
+    }
+  }
+,
+  getString: function(name, parms) {
+    var s=this._stringFrom(this.getBundle("locale"), name, parms);
+    return s || this._stringFrom(this.getBundle("content/en-US"), name, parms) || name;
+  }
+  
+}
+
+const noscriptStrings = new Strings("noscript");
+
 const SiteUtils = new function() {
   var _domainPattern = /^[^\?\/#,;:\\\@]+$/; // double check: changed for Unicode compliance: it was /^[\w\-\.]*\w$/
   
@@ -129,7 +195,7 @@ const SiteUtils = new function() {
     if(a==b) return 0;
     if(!a) return 1;
     if(!b) return -1;
-    const dp=_domainPattern;
+    const dp = _domainPattern;
     return dp.test(a)?
       (dp.test(b)?(a<b?-1:1):-1)
       :(dp.test(b)?1:a<b?-1:1);
@@ -214,9 +280,9 @@ const SiteUtils = new function() {
     var site;
     delete sm[""];
     for(var url in sm) {
-      site=this.getSite(url);
-      if(site!=url) {
-        if(site) sm[site]=sm[url];
+      site = this.getSite(url);
+      if(site != url) {
+        if(site) sm[site] = sm[url];
         delete sm[url];
       }
     }
@@ -328,14 +394,14 @@ PolicySites.prototype={
     var match;
     var dots; // track "dots" for (temporary) fix to 2nd level domain policy lookup flaw 
     var pos=site.indexOf(':')+1;
-    if(pos > 0 && (site[pos]=='/' || pos==site.length) ) {
-      if(sm[match=site.substring(0,pos)]) return match; // scheme match
-      if(site[++pos]!='/') return site == "about:" ? "about:" : "";
-      match=site.substring(pos+1);
-      dots=0;
+    if(pos > 0 && (pos == site.length || site[pos]=='/')) {
+      if(sm[match = site.substring(0,pos)]) return match; // scheme match
+      if(site[++pos] != '/') return site == "about:" ? "about:" : "";
+      match = site.substring(pos+1);
+      dots = 0;
     } else {
-      match=site;
-      dots=1;
+      match = site;
+      dots = 1;
     }
 
     var submatch;
@@ -562,8 +628,10 @@ NoscriptService.prototype={
        this.truncateTitleLen = this.getPref(name, 255);
       break;  
     }
-  }
-,
+  },
+  
+  getString: function(name, parms) { return noscriptStrings.getString(name, parms); },
+  
   uninstallGuard: new UninstallGuard("NoScript"),
   _uninstalling: false,
   get uninstalling() {
@@ -684,7 +752,7 @@ NoscriptService.prototype={
   }
 ,
   set jsEnabled(enabled) {
-    this.caps.setCharPref("default.javascript.enabled",enabled?"allAccess":"noAccess");
+    this.caps.setCharPref("default.javascript.enabled", enabled ? "allAccess" : "noAccess");
     this.setPref("global",enabled);
     if(enabled) {
       this.mozJSPref.setBoolPref("enabled",true);
@@ -735,7 +803,7 @@ NoscriptService.prototype={
 ,
   _lastSnapshot: null,
   _lastGlobal: false,
-  reloadWhereNeeded: function(snapshot,lastGlobal) {
+  reloadWhereNeeded: function(snapshot, lastGlobal) {
     if(!snapshot) snapshot=this._lastSnapshot;
     const ps=this.jsPolicySites;
     this._lastSnapshot=ps.clone();
@@ -1065,6 +1133,17 @@ NoscriptService.prototype={
   get prompter() {
     return Components.classes["@mozilla.org/embedcomp/prompt-service;1"
           ].getService(Components.interfaces.nsIPromptService);
+  },
+  get lastWindow() {
+    return Components.classes['@mozilla.org/appshell/window-mediator;1']
+      .getService(Components.interfaces.nsIWindowMediator)
+      .getMostRecentWindow("navigator:browser");
+  },
+  getAllowObjectMessage: function(url, mime) {
+    if(url.length > 100) {
+      url = url.substring(0, 50) + "..." + url.substring(url.length - 50);
+    }
+    return this.getString("allowTemp", [url + "\n(" + mime + ")\n"]);
   }
 ,
   queryInterfaceSupport: function(iid,iids) { 
@@ -1111,64 +1190,78 @@ NoscriptService.prototype={
   },
   mainContentPolicy: {
     shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
-      var forbid, isJS, isFlash, isJava;
-      if(aContentType == 5 || (forbid = isJS = (aContentType == 2))) {
-        const url = aContentLocation.spec;
-        const origin = this.getSite(url);
-        if(!forbid) {
-          var forceAllow;
-          try {
-            forceAllow = this.pluginsCache.update(url, aMimeTypeGuess, origin, aRequestOrigin, aContext);
-          } catch(ex) {
-            dump("NoScriptService.pluginsCache.update():" + ex + "\n");
-          }
-          if((!forceAllow) && this.forbidSomePlugins) {
-            var forbid=this.forbidAllPlugins;
-            if((!forbid) && aMimeTypeGuess) {
-              forbid = 
-                (isFlash = aMimeTypeGuess == "application/x-shockwave-flash") && this.forbidFlash ||
-                (isJava = aMimeTypeGuess.indexOf("application/x-java-")==0) && this.forbidJava ||
-                (this.forbidPlugins && !(isJava || isFlash));
-            }
-          }
-        }
-        
-        if(forbid) {
-          if(!(this.isJSEnabled(origin))) {
-            
-            if(aContext && (!isJS)) {
-              const ci = Components.interfaces;
-              if(aContext instanceof ci.nsIDOMNode) {
-                
-                const lm=this.lookupMethod;
-                
-                if(this.pluginPlaceholder) {
-                 
-                  if(aContext instanceof(ci.nsIDOMHTMLEmbedElement)) {
-                    var parent = lm(aContext,"parentNode")();
-                    if(parent instanceof ci.nsIDOMHTMLObjectElement) {
-                      aContext = parent;
-                    }
-                  }
+       /*dump("[noscript cp]: type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
+        ", origin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + aContext + ", mime: " + aMimeTypeGuess + ", " + aInternalCall
+          + "\n");
+      */
+      var forbid, isJS, isFlash, isJava, mustAsk;
+      
+      switch(aContentType) {
+        case 2:
+          forbid = isJS = true;
+          break;
+        case 5:
+          break;
+        default:
+          return 1;
+      }
 
-                  if(aMimeTypeGuess && !this.getPluginExtras(aContext)) {
-                    aContext._noScriptExtras = {
-                      mark: this.pluginsExtrasMark,
-                      url: url,
-                      mime: aMimeTypeGuess
-                    };
-                  }
-                }
-              }
-            }
-            
-            if(this.consoleDump) 
-              dump("NoScript blocked " + url + " which is a " + aMimeTypeGuess + " from " + origin + "\n");
-            return -3;
+      const url = aContentLocation.spec;
+      
+      const origin = this.getSite(url);
+      if(!forbid) {
+        var forceAllow;
+        try {
+          forceAllow = this.pluginsCache.update(url, aMimeTypeGuess, origin, aRequestOrigin, aContext);
+        } catch(ex) {
+          dump("NoScriptService.pluginsCache.update():" + ex + "\n");
+        }
+        if((!forceAllow) && this.forbidSomePlugins) {
+          var forbid = this.forbidAllPlugins;
+          if((!forbid) && aMimeTypeGuess) {
+            forbid = 
+              (isFlash = aMimeTypeGuess == "application/x-shockwave-flash") && this.forbidFlash ||
+              (isJava = aMimeTypeGuess.indexOf("application/x-java-")==0) && this.forbidJava ||
+              (this.forbidPlugins && !(isJava || isFlash));
           }
         }
       }
-    
+      
+      if(forbid) {
+        if(!(this.isJSEnabled(origin))) {
+          if(aContext && (!isJS)) {
+            const ci = Components.interfaces;
+            if(aContext instanceof ci.nsIDOMNode) {
+              
+              const lm=this.lookupMethod;
+              
+              if(this.pluginPlaceholder) {
+               
+                if(aContext instanceof(ci.nsIDOMHTMLEmbedElement)) {
+                  var parent = lm(aContext,"parentNode")();
+                  if(parent instanceof ci.nsIDOMHTMLObjectElement) {
+                    aContext = parent;
+                  }
+                }
+
+                if(aMimeTypeGuess && !this.getPluginExtras(aContext)) {
+                  aContext._noScriptExtras = {
+                    mark: this.pluginsExtrasMark,
+                    url: url,
+                    mime: aMimeTypeGuess
+                  };
+                }
+              }
+            }
+          }
+          
+          if(this.consoleDump) 
+            dump("NoScript blocked " + url + " which is a " + aMimeTypeGuess + " from " + origin + "\n");
+          return -3;
+        }
+      }
+  
+            
       return 1;
     },
     shouldProcess: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, aExtra) {

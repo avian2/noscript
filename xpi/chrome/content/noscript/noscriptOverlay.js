@@ -107,7 +107,7 @@ NoScriptOverlay.prototype={
           var aWidth,aHeight;
           var createElem;
           while(tcount-->0) {
-            var applets=new XPCNativeWrapper(getByTag(appletTags[tcount]),"item()","length");
+            var applets = new XPCNativeWrapper(getByTag(appletTags[tcount]),"item()","length");
             for(acount=applets.length; acount-- >0;) {
               applet = applets.item(acount);
               if( (!tcount) && 
@@ -128,7 +128,22 @@ NoScriptOverlay.prototype={
                     + pp + "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important }"
                   ));
                   try {
-                    lm(getByTag("head")[0],"appendChild")(style);
+                    var head = getByTag("head")[0];
+                    if(!head) { // probably a plugin document
+                      if(applets.length == 1) {
+                        var contentType = lm(doc, "contentType")();
+                        if(contentType.substring(0, 5) != "text/" && contentType.indexOf("/xml") < 0) {
+                          ns.shouldLoad(5, { spec: docURI }, { spec: docURI }, applet, contentType, true);
+                        }
+                      }
+                      head = createElem("head");
+                      var rootElement = lm(doc, "documentElement")();
+                      lm(rootElement, "insertBefore")(head, lm(rootElement, "firstChild")());
+                    }
+                    lm(head,"appendChild")(style);
+                  } catch(ex) {}
+                  try {
+                    lm(getByTag("body")[0],"appendChild")(style);
                   } catch(ex) {}
                 }
                 try {
@@ -257,7 +272,8 @@ NoScriptOverlay.prototype={
     var match = js.match(/['"]([\/\w-\?\.#%=&:@]+)/);
     return match && match[1];
   },
-  removeFixLinker: function(ev) {
+  removeLinkFixer: function(ev) {
+    if(!ev.target) return; 
     ev.target.removeEventListener("click", noscriptOverlay.fixLink, true);
     ev.target.removeEventListener("unload", noscriptOverlay.removeLinkFixer, false);
   }
@@ -535,15 +551,134 @@ NoScriptOverlay.prototype={
     }
   }
 ,
-  get messageBoxPos() {
-    return this.ns.getPref("notify.bottom",false) ? "bottom" : "top";
+  get notificationPos() {
+    return this.ns.getPref("notify.bottom", false) ? "bottom" : "top";
   }
-,
-  getMessageBox: function(pos) {
+, 
+  getNotificationBox: function(pos) {
     var b = getBrowser();
-    return b.getMessageForBrowser?
-        b.getMessageForBrowser(b.selectedBrowser, pos ? pos : this.messageBoxPos)
-        :null;
+    if(!pos) pos = this.notificationPos;
+    if(b.getMessageForBrowser) return b.getMessageForBrowser(b.selectedBrowser, pos); // Fx <= 1.5 
+    if(!b.getNotificationBox) return null; // SeaMonkey
+
+    nb = b.getNotificationBox(null);
+    b = null;
+    
+    if(pos == "bottom") {
+      if(!nb._bottomStack) {
+        var stacks =  nb.getElementsByTagName("stack");
+        var stack = null;
+        for(var j = stacks.length; j-- > 0;) {
+          if(stacks[j].getAttribute("class") ==  "noscript-bottom-notify") {
+            stack = stacks[j];
+            break;
+          }
+        }
+        if(!stack) {
+         stack = nb.ownerDocument.createElement("stack");
+         stack.setAttribute("class", "noscript-bottom-notify");
+         nb.appendChild(stack);
+        }
+        nb._bottomStack = stack;
+        nb._dom_removeChild = nb.removeChild;
+        nb.removeChild = function(n) {
+          return (n.parentNode == this) ? this._dom_removeChild(n) : n.parentNode.removeChild(n); 
+        }
+        nb._dom_insertBefore = nb.insertBefore;
+        nb.insertBefore = function(n, ref) {
+          if(n.localName == "notification" && n.getAttribute("value") == "noscript"
+            && noscriptOverlay.notificationPos == "bottom") {
+            while(this._bottomStack.firstChild) this._bottomStack.removeChild(this._bottomStack.firstChild);
+            this._bottomStack.appendChild(n);
+            var hbox = n.ownerDocument.getAnonymousElementByAttribute(n, "class", "notification-inner outset");
+            if(hbox) {
+              var style = hbox.ownerDocument.defaultView.getComputedStyle(hbox, null);
+              var borderProps = ['color', 'style', 'width'];
+              var cssProp, jsProp, tmpVal;
+              for(var p = borderProps.length; p-- > 0;) {
+                cssProp = borderProps[p];
+                jsProp = cssProp[0].toUpperCase() + cssProp.substring(1);
+                tmpVal = style.getPropertyValue("border-bottom-" + cssProp);
+                hbox.style["borderBottom" + jsProp] = style.getPropertyValue("border-top-" + cssProp);
+                hbox.style["borderTop" + jsProp] = tmpVal;
+              }
+            }
+            return n;
+          }
+          return this._dom_insertBefore(n, ref);
+        }
+      }
+    }
+   
+    return nb;
+  },
+  getNsNotification: function(widget) {
+    if(widget == null) return null;
+    if(widget.localName == "notificationbox") return widget.getNotificationWithValue("noscript");
+    return this.isNsNotification(widget) && widget || null;
+  },
+  isNsNotification: function(widget) {
+    return widget && widget.getAttribute("value") == "noscript" || widget.popup == "noscript-notify-popup";
+  },
+  
+  notificationShow: function(label, icon, canAppend) {
+     var box = this.getNotificationBox();
+     if(box == null) return false;
+     var pos = this.notificationPos;
+     var widget = this.getNsNotification(box);
+     if(widget) {
+       if(widget.localName == "notification") {
+         widget.label = label;
+         widget.icon = icon;
+         return;
+       } else {
+         widget.text = label;
+         widget.image = icon;
+         widget.removeAttribute("hidden");
+       }
+     
+     } else {
+       
+       if(!canAppend) return false;
+       
+       const browser = getBrowser();
+       
+       var buttonLabel, buttonAccesskey;
+       if(browser.getNotificationBox || /\baButtonAccesskey\b/i.test(browser.showMessage.toSource())) {
+          const refWidget = document.getElementById("noscript-options-ctx-menuitem");
+          buttonLabel = refWidget.getAttribute("label");
+          buttonAccesskey = refWidget.getAttribute("accesskey");
+        } else { // Fx < 1.5
+          buttonLabel = "";
+          buttonAccesskey = "";
+       }
+       const popup = "noscript-notify-popup";
+       if(box.appendNotification) { // >= Fx 2.0
+         box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_HIGH,
+          [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]); 
+       } else if(browser.showMessage) { // Fx <= 1.5.x
+         browser.showMessage(browser.selectedBrowser, icon, label, 
+                buttonLabel, null,
+                null, popup, pos, true,
+                buttonAccesskey);
+       }
+     }
+     const delay = (this.ns.getPref("notify.hide") && this.ns.getPref("notify.hideDelay", 3)) || 0;
+     if(delay) {
+       window.clearTimeout(this.notifyHideTimeout);
+       this.notifyHideTimeout = window.setTimeout(
+         function() { noscriptOverlay.notificationHide(); },
+         1000 * delay);
+     }
+     return true;
+  },
+  
+  notificationHide: function() {
+    var widget = this.getNsNotification(this.getNotificationBox());
+     if(widget) {
+       if(widget.close) widget.close();
+       else widget.setAttribute("hidden", "true");
+     }
   }
 ,
   _disablePopup: function(id) {
@@ -600,7 +735,7 @@ NoScriptOverlay.prototype={
     
     var message=this.getString("allowed."+lev)
       +" [<script>: "+totalScripts+"] [J+F+P: "+totalPlugins+"]";
-    var icon=this.getIcon(lev,!totalAnnoyances);
+    var icon = this.getIcon(lev, !totalAnnoyances);
     
    var widget=document.getElementById("noscript-tbb");
    if(widget) {
@@ -614,59 +749,18 @@ NoScriptOverlay.prototype={
 
    
    
-    const mb=this.getMessageBox();
-    const mbMine=this.isNsMB(mb);
-    if(notificationNeeded) { // notifications
-
-      const doc=this.srcWindow.document;
-      if(mb) {
-        var hidden=mb.hidden;
-        if(ns.getPref("notify",false)) { 
-          if(mbMine || hidden) {
-            if(this.checkDocFlag(doc, "_noscript_message_shown")) {
-              const browser = getBrowser();
-              var buttonLabel, buttonAccesskey;
-              if(/\baButtonAccesskey\b/i.test(browser.showMessage.toSource())) {
-                const refWidget=document.getElementById("noscript-options-ctx-menuitem");
-                buttonLabel=refWidget.getAttribute("label");
-                buttonAccesskey=refWidget.getAttribute("accesskey");
-              } else {
-                buttonLabel="";
-                buttonAccesskey="";
-              }
-              browser.showMessage(browser.selectedBrowser, icon, message, 
-                buttonLabel, null,
-                null, "noscript-notify-popup",this.messageBoxPos,true,
-                buttonAccesskey);
-              const delay = (ns.getPref("notify.hide") && ns.getPref("notify.hideDelay", 3)) || 0;
-              if(delay) {
-                window.clearTimeout(this.notifyHideTimeout);
-                this.notifyHideTimeout = window.setTimeout(
-                  function() { if(noscriptOverlay.isNsMB(mb)) mb.hidden = true },
-                  1000*delay);
-              }
-            } else if(mbMine && !hidden) {
-              mb.text=message;
-              mb.image=icon;
-            }
-            if(!mb._noScriptOneClickPatch) {
-              mb._noScriptOneClickPatch = true;
-              if(mb._buttonElement && mb._buttonElement.accessKey) { // Fx 1.5
-                // mb.addEventListener("click",_noScript_onMessageClick,false);
-              }
-            }
-          }
-        } else if(mbMine && !hidden) {
-          mb.hidden=true; 
-        }
+   if(notificationNeeded) { // notifications
+      const doc = this.srcWindow.document;
+      if(ns.getPref("notify", false)) { 
+        this.notificationShow(message, icon, this.checkDocFlag(doc, "_noscript_message_shown"));
+      } else {
+        this.notificationHide(); 
       }
       if(this.checkDocFlag(doc, "_noscript_sound_played")) {
         ns.playSound(ns.getPref("sound.block"));
       }
     } else {
-      if(mbMine && !mb.hidden) {
-        mb.hidden=true;
-      }
+      this.notificationHide();
       message = "";
     }
     
@@ -677,15 +771,12 @@ NoScriptOverlay.prototype={
 ,
   notifyHideTimeout: 0
 ,
-  checkDocFlag: function(doc,flag) {
-    if(flag in doc && doc[flag]==_noscript_randomSignature) return false;
+  checkDocFlag: function(doc, flag) {
+    if(flag in doc && doc[flag] == _noscript_randomSignature) return false;
     doc.__defineGetter__(flag, _noscript_signatureGetter);
     return true;
   }
-,
-  isNsMB: function(mb) {
-    return mb && mb.popup=="noscript-notify-popup";
-  }
+
 }
 
 const _noscript_randomSignature=Math.floor(100000000*Math.random());
@@ -712,10 +803,7 @@ const noscriptOverlayPrefsObserver = {
        break;
        case "notify":
        case "notify.bottom" : 
-       var mb=noscriptOverlay.getMessageBox("top");
-       if(mb) mb.hidden=true;
-       mb = noscriptOverlay.getMessageBox("bottom");
-       if(mb) mb.hidden=true;
+         noscriptOverlay.notificationHide();
        break;
       
     }
@@ -732,12 +820,6 @@ const noscriptOverlayPrefsObserver = {
   }
 };
 
-function _noScript_onMessageClick(ev) {
-  if(noscriptOverlay.isNsMB(ev.target)) {
-    document.getElementById(ev.target.popup)
-            .showPopup(ev.target, -1, -1, "popup");
-  }
-}
 
 function _noScript_onPluginClick(ev) {
   const div = ev.currentTarget;
@@ -750,22 +832,27 @@ function _noScript_onPluginClick(ev) {
     const ns = noscriptUtil.service;
     const extras = ns.getPluginExtras(div);
     const cache = ns.pluginsCache.get(ns.pluginsCache.findBrowserForNode(div));
-    if(! (extras && extras.url && extras.mime && cache) ) return;
+    if(!(extras && extras.url && extras.mime && cache) ) return;
     
     var url = extras.url;
     var mime = extras.mime;
-    var description = url + "\n(" + mime + ")\n";
+
     var alwaysAsk = { value: ns.getPref("confirmUnblock", true) };
     if((!alwaysAsk.value) || 
-        ns.prompter.confirmCheck(window, "NoScript", 
-       noscriptUtil.getString("allowTemp", [description]),
-       noscriptUtil.getString("alwaysAsk"), alwaysAsk)
+        ns.prompter.confirmCheck(window, "NoScript",
+          ns.getAllowObjectMessage(url, mime),
+          noscriptUtil.getString("alwaysAsk"), alwaysAsk)
     ) {
       ns.setPref("confirmUnblock", alwaysAsk.value);
-      div._noScriptRemovedObject = null;
       cache.forceAllow[url] = mime;
-      window.setTimeout(function() {
-        const lm = ns.lookupMethod;
+      const lm = ns.lookupMethod;
+      var doc = lm(div, "ownerDocument")();
+      if(mime == (doc, "contentType")()) { // stand-alone plugin
+        lm(lm(doc, "location")(), "reload")();
+        return;
+      }
+      div._noScriptRemovedObject = null;
+      window.setTimeout(function() { 
         while(lm(div,"hasChildNodes")()) {
           lm(div,"removeChild")(lm(div,"firstChild")());
         }

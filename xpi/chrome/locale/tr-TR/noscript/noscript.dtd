@@ -2,12 +2,12 @@
 <!ENTITY noscriptOptions.accesskey "T">
 <!ENTITY noscriptOptionsLong "NoScript Tercihleri">
 <!ENTITY noscriptAbout "NoScript Hakkında">
-<!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript izni vereceğinizi kolayca tanımlayabilirsiniz. Lütfen adresi tam olarak girin ve 'İzin ver' düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
+<!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript izni vereceğinizi kolayca tanımlayabilirsiniz. Lütfen adresi tam olarak girin ve &apos;İzin ver&apos; düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
 <!ENTITY noscriptWebAddress "Site adresi:">
 <!ENTITY noscriptAllow "İzin ver">
 <!ENTITY noscriptAllow.accesskey "E">
 <!ENTITY noscriptRemoveSelected "Seçili sayfaları kaldır">
-<!ENTITY noscriptGloballyEnabled "JavaScript'e genel olarak izin ver (tehlikeli)">
+<!ENTITY noscriptGloballyEnabled "JavaScript&apos;e genel olarak izin ver (tehlikeli)">
 <!ENTITY noscriptAutoReload "İzin hakları değişince sayfayı tekrar otomatikman yükle">
 <!ENTITY noscriptGeneral "Genel">
 <!ENTITY noscriptAppearance "Görünüm">

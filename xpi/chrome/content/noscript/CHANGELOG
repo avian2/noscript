@@ -1,5 +1,11 @@
 NoScript ChangeLog
 
+v 1.1.4.2
+=====================================================================
++ Notifications Firefox 2+ compatible
+x Fixed whitelist import bug (phantom resource:xyz entry)
+x Fixed "removeLinkFixer" warning (thanks to Pablo)
+
 v 1.1.4.1
 =====================================================================
 + Left clicking on NoScript toolbar button toggles permissions for 

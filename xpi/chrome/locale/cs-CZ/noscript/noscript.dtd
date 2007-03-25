@@ -7,7 +7,7 @@
 <!ENTITY noscriptAllow "Povolit">
 <!ENTITY noscriptAllow.accesskey "P">
 <!ENTITY noscriptRemoveSelected "Odstranit vybrané stránky">
-<!ENTITY noscriptGloballyEnabled "JavaScript celkově povolen (nebezpečné)">
+<!ENTITY noscriptGloballyEnabled "JavaScript celkově povolit (nebezpečné)">
 <!ENTITY noscriptAutoReload "Automaticky obnovit stránky při změně povolení">
 <!ENTITY noscriptGeneral "Obecné">
 <!ENTITY noscriptAppearance "Zobrazení">

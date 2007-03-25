@@ -20,38 +20,17 @@ NoscriptUtil.prototype={
     return this._service=s;
   }
 ,
-  _strings: null,
-  get strings() {
-    return this._strings?this._strings
-      :this._strings=document.getElementById(this.chromeName+"-strings");  
-  }
-,
-  _stringsFB: null,
-  get stringsFB() {
-    return this._stringsFB?this._stringsFB
-      :this._stringsFB=document.getElementById(this.chromeName+"-stringsFB");  
-  }
-,
-  _stringFrom: function(bundle,key,parms) {
-    try {
-      return parms?bundle.getFormattedString(key,parms):bundle.getString(key);
-    } catch(ex) {
-      return null;
-    }
-  }
-,
-  getString: function(key,parms) {
-    var s=this._stringFrom(this.strings,key,parms);
-    return s?s:this._stringFrom(this.stringsFB,key,parms);
+  getString: function(key, parms) {
+    return this._service.getString(key, parms);
   }
 ,
   openOptionsDialog: function() {
-    window.open(this.chromeBase+this.chromeName+"Options.xul",this.chromeName+"Options",
+    window.open(this.chromeBase + this.chromeName + "Options.xul", this.chromeName + "Options",
           "chrome,dialog,centerscreen,alwaysRaised");  
   }
 ,
   openAboutDialog: function() {
-    window.open(this.chromeBase+"about.xul",this.chromeName+"About",
+    window.open(this.chromeBase + "about.xul", this.chromeName + "About",
       "chrome,dialog,centerscreen");
   }
 };

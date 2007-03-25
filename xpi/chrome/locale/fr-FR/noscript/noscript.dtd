@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Options de NoScript">
 <!ENTITY noscriptAbout "À propos de NoScript">
-<!ENTITY noscriptPermissionsText "Il est possible de spécifier quels sites Web sont autorisés à exécuter des scripts. Saisissez l'adresse exacte du site que vous désirez autoriser puis cliquez sur Autoriser.">
+<!ENTITY noscriptPermissionsText "Il est possible de spécifier quels sites Web sont autorisés à exécuter des scripts. Saisissez l&apos;adresse exacte du site que vous désirez autoriser puis cliquez sur Autoriser.">
 <!ENTITY noscriptWebAddress "Adresse du site Web :">
 <!ENTITY noscriptAllow "Autoriser">
 <!ENTITY noscriptAllow.accesskey "A">
@@ -13,7 +13,7 @@
 <!ENTITY noscriptAppearance "Apparence">
 <!ENTITY noscriptShow "Afficher...">
 <!ENTITY noscriptCtxMenu "Menu contextuel">
-<!ENTITY noscriptStatusIcon "Icône dans la barre d'état">
+<!ENTITY noscriptStatusIcon "Icône dans la barre d&apos;état">
 <!ENTITY noscriptFullAddr "Adresses complètes (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Domaines complets (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Domaines de second niveau (noscript.net)">
@@ -40,9 +40,9 @@
 <!ENTITY noscriptForbidPlugins "Interdire les autres plugins">
 <!ENTITY noscriptReloadWarn "Ces options prendront effet sur les pages rechargées (manuellement) et les nouvelles pages">
 <!ENTITY noscriptConfirmUnblock "Demander confirmation avant de débloquer temporairement un objet">
-<!ENTITY noscriptStatusLabel "Étiquette dans la barre d'état">
+<!ENTITY noscriptStatusLabel "Étiquette dans la barre d&apos;état">
 <!ENTITY noscriptForbidBookmarklets "Interdire les bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Afficher l'emplacement fictif de l'objet bloqué">
+<!ENTITY noscriptShowPlaceholder "Afficher l&apos;emplacement fictif de l&apos;objet bloqué">
 <!ENTITY noscriptTruncateTitle "Tronquer le titre des documents">
 <!ENTITY noscriptFixLinks "Essayer de réparer les liens javascript">
 <!ENTITY noscriptAllowBookmarks "Autoriser tous les sites trouvés dans les marque-pages">
