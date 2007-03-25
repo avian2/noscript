@@ -43,7 +43,14 @@ function _noScript_handleBookmark(url, openCallback) {
           var snapshot = ns.jsPolicySites.sitesString;
           try {
             ns.setJSEnabled(site, true);
-            openCallback(url);
+            if(Components.utils) { // direct evaluation, after bug 351633 landing
+              var sandbox = Components.utils.Sandbox(browserWindow.content);
+              sandbox.window = browserWindow.content;
+              Components.utils.evalInSandbox(
+                "with(window) { " + decodeURIComponent(url.replace(/^javascript:/i, "")) + " }", sandbox);
+            } else {
+              openCallback(url);
+            }
             return true;
           } finally {
             ns.flushCAPS(snapshot);

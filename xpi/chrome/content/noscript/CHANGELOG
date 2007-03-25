@@ -1,5 +1,15 @@
 NoScript ChangeLog
 
+v 1.1.4.5.061030
+=====================================================================
+x Minefield fix: feedback during/after document loading (bug 335251)
+x Minefield fix: bookmarklet on the fly enablement (bug 351633)
+
+v 1.1.4.5.061021
+=====================================================================
+x Fixed title changes lost on some pages
+x Restored Flock compatibility
+
 v 1.1.4.5
 =====================================================================
 + Some user interface tweakings in the Options UI

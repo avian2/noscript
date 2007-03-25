@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.1.4.5";
+const APP_VERSION = "1.1.4.5.061030";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
@@ -29,7 +29,7 @@ function myPerformInstall(secondTry) {
   
   if(!secondTry) {  
     // profile installs only work since 2003-03-06
-    instToProfile = (buildID>2003030600 && confirm(INST_TO_PROFILE));
+    instToProfile = (buildID > 2003030600 && confirm(INST_TO_PROFILE));
   }
   
   var chromef = instToProfile ? getFolder("Profile", "chrome") : getFolder("chrome");

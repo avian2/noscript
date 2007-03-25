@@ -209,7 +209,7 @@ function nso_chooseSample() {
       nso_play();
     }
   } catch(ex) {
-    g_serv.prompter.alert(window,title,ex.message);
+    noscriptUtil.prompter.alert(window,title,ex.message);
   }
 }
 
@@ -250,7 +250,7 @@ function nso_impexp(callback) {
     }
     
   } catch(ex) {
-    g_serv.prompter.alert(window,title,ex.message);
+    noscriptUtil.prompter.alert(window,title,ex.message);
   }
 }
 

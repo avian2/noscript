@@ -655,8 +655,8 @@ NoscriptService.prototype={
   mozJSEnabled: true
 ,
   init: function() {
-    if(this._inited) return;
-    this._inited=true;
+    if(this._inited) return false;
+    this._inited = true;
     
     const prefserv=this.prefService=Components.classes["@mozilla.org/preferences-service;1"]
       .getService(Components.interfaces.nsIPrefService).QueryInterface(Components.interfaces.nsIPrefBranch);
@@ -716,6 +716,8 @@ NoscriptService.prototype={
     this.reloadWhereNeeded(); // init snapshot
    
     this.uninstallGuard.init();
+    
+    return true;
   }
 ,
   permanentSites: new PolicySites(),
@@ -1134,15 +1136,13 @@ NoscriptService.prototype={
     os.close();
   }
 ,
-  get prompter() {
-    return Components.classes["@mozilla.org/embedcomp/prompt-service;1"
-          ].getService(Components.interfaces.nsIPromptService);
-  },
+  
   get lastWindow() {
     return Components.classes['@mozilla.org/appshell/window-mediator;1']
       .getService(Components.interfaces.nsIWindowMediator)
       .getMostRecentWindow("navigator:browser");
   },
+
   getAllowObjectMessage: function(url, mime) {
     if(url.length > 100) {
       url = url.substring(0, 50) + "..." + url.substring(url.length - 50);

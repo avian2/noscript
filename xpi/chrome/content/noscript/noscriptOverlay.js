@@ -285,7 +285,7 @@ NoScriptOverlay.prototype = {
   },
   
   get prompter() {
-    return this.ns.prompter;
+    return noscriptUtil.prompter;
   }
 ,
   uninstallAlert: function() {
@@ -540,7 +540,7 @@ NoScriptOverlay.prototype = {
 ,
   syncUI: function(ev) {
     if(ev && ev.eventPhase == ev.AT_TARGET 
-        && ev.target == document && ev.type=="focus") {
+        && ev.target == document && ev.type== "focus") {
       this._syncInfo.uninstallCheck = true;
     }
      
@@ -846,7 +846,7 @@ function _noScript_onPluginClick(ev) {
 
     var alwaysAsk = { value: ns.getPref("confirmUnblock", true) };
     if((!alwaysAsk.value) || 
-        ns.prompter.confirmCheck(window, "NoScript",
+        noscriptUtil.prompter.confirmCheck(window, "NoScript",
           ns.getAllowObjectMessage(url, mime),
           noscriptUtil.getString("alwaysAsk"), alwaysAsk)
     ) {
@@ -889,18 +889,18 @@ const _noScript_WebProgressListener = {
          this.originalOnLocationChange(aWebProgress, aRequest, aLocation);
        } catch(e) {}
      }
-     
-     if(aRequest && (aRequest instanceof Components.interfaces.nsIChannel) && aRequest.isPending()) {
+     try {
+       if(aRequest && (aRequest instanceof Components.interfaces.nsIChannel) && aRequest.isPending()) {
         var contentType = aRequest.contentType;
-        try {
+      
           if(contentType.substring(0, 5) != "text/" && 
               noscriptOverlay.ns.shouldLoad(5, aRequest.URI, aRequest.URI, aWebProgress.DOMWindow, contentType, true) == -3) {
             aRequest.cancel( 0 /* 0x804b0002 == NS_BINDING_ABORTED */); 
           }
-        } catch(e) {}
-     } else {
-       _noScript_syncUI(null);
-     }
+       } else {
+         _noScript_syncUI(null);
+       }
+     } catch(e) {}
    },
    onStatusChange: function() {}, 
    onStateChange: function() {}, 
@@ -913,6 +913,7 @@ function _noScript_onloadInstall(ev) {
   document.getElementById("contentAreaContextMenu")
           .addEventListener("popupshowing", _noScript_prepareCtxMenu, false);
   var b = getBrowser();
+  b.addEventListener("load", _noScript_syncUI, true);
   b.addEventListener("click", noscriptOverlay.fixLink, true);
   b.addProgressListener(_noScript_WebProgressListener);
   noscriptOverlay.originalTabProgressListener = b.mTabProgressListener;
@@ -928,7 +929,6 @@ function _noScript_onloadInstall(ev) {
 function _noScript_install() {
  
   window.addEventListener("load", _noScript_onloadInstall, false);
-  window.addEventListener("load", _noScript_syncUI, true);
   window.addEventListener("focus", _noScript_uninstallCheck, false);
    
   window.addEventListener("unload", _noScript_dispose,false);
@@ -940,15 +940,15 @@ function _noScript_dispose(ev) {
   if(b) {
     b.removeEventListener("click", noscriptOverlay.fixLink, true);
     b.removeProgressListener(_noScript_WebProgressListener);
+    b.removeEventListener("load", _noScript_syncUI, true);
   }
   
   noscriptOverlayPrefsObserver.remove();
   
-  window.removedEventListener("focus", _noScript_uninstallCheck, false);
-  window.removeEventListener("load", _noScript_syncUI, true);
+  window.removeEventListener("focus", _noScript_uninstallCheck, false);
   window.removeEventListener("load", _noScript_onloadInstall, false);
   document.getElementById("contentAreaContextMenu")
-          .removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);
+          .removeEventListener("popupshowing", _noScript_prepareCtxMenu,false);
 }
 
 _noScript_install();
