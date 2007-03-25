@@ -6,7 +6,7 @@
 <!ENTITY noscriptWebAddress "Adresse du site Web :">
 <!ENTITY noscriptAllow "Autoriser">
 <!ENTITY noscriptAllow.accesskey "A">
-<!ENTITY noscriptRemoveSelected "Enlever les site sélectionné">
+<!ENTITY noscriptRemoveSelected "Enlever les sites sélectionnés">
 <!ENTITY noscriptGloballyEnabled "Autoriser Javascript globalement (dangereux)">
 <!ENTITY noscriptAutoReload "Recharger les pages affectées automatiquement après avoir changé les permissions">
 <!ENTITY noscriptGeneral "Général">
@@ -39,4 +39,7 @@
 <!ENTITY noscriptForbidFlash "Interdire Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Interdire les autres plugins">
 <!ENTITY noscriptReloadWarn "Ces options prendront effet sur les pages rechargées (manuellement) et les nouvelles pages">
-<!ENTITY noscriptForbidBookmarklets "Interdire Bookmarklets">
+<!ENTITY noscriptConfirmUnblock "Demander confirmation avant de débloquer temporairement un objet">
+<!ENTITY noscriptStatusLabel "Étiquette dans la barre d'état">
+<!ENTITY noscriptForbidBookmarklets "Interdire les bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Afficher l'emplacement fictif de l'objet bloqué">

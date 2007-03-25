@@ -1,8 +1,8 @@
-<!ENTITY noscriptOptions "オプション">
+<!ENTITY noscriptOptions "オプション...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript オプション">
 <!ENTITY noscriptAbout "NoScriptについて">
-<!ENTITY noscriptPermissionsText "JavaScriptを許可するサイトを指定する事ができます。許可したいサイトのアドレスかドメインを入力して、ボタンを押してください。(例: &quot;http://www.site.com&quot; or &quot;site.com&quot;)">
+<!ENTITY noscriptPermissionsText "JavaScriptを許可するサイトを指定する事ができます。許可したいサイトのアドレスかドメインを入力して、ボタンを押してください。(例: &quot;http://www.site.com&quot; または &quot;site.com&quot;)">
 <!ENTITY noscriptWebAddress "ウェブサイトのアドレス:">
 <!ENTITY noscriptAllow "許可する">
 <!ENTITY noscriptAllow.accesskey "A">
@@ -39,6 +39,7 @@
 <!ENTITY noscriptForbidFlash "Macromedia&#174; Flash&#174; の禁止">
 <!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
 <!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページか(手動で)再読込されたページで有効になります">
-<!ENTITY noscriptConfirmUnblock "一時的に許可する前に確認する">
+<!ENTITY noscriptConfirmUnblock "オブジェクトを一時的に許可する前に確認する">
 <!ENTITY noscriptStatusLabel "ステータスバーラベル">
-<!ENTITY noscriptForbidBookmarklets "Bookmarklets の禁止">
+<!ENTITY noscriptForbidBookmarklets "ブックマークレットの禁止">
+<!ENTITY noscriptShowPlaceholder "プレースホルダーとアイコンを表示する">

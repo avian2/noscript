@@ -39,4 +39,7 @@
 <!ENTITY noscriptForbidFlash "Prohibeix el MacromediaÂ® FlashÂ®">
 <!ENTITY noscriptForbidPlugins "Prohibeix d'altres connectors">
 <!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pÃ gines noves o recarregades (manualment)">
-<!ENTITY noscriptForbidBookmarklets "Prohibeix Bookmarklets">
+<!ENTITY noscriptConfirmUnblock "Demana confirmació abans de desblocar un objecte temporalment">
+<!ENTITY noscriptStatusLabel "Etiqueta de la barra d'estat">
+<!ENTITY noscriptForbidBookmarklets "Prohibeix les Adreces d'interés">
+<!ENTITY noscriptShowPlaceholder "Mostra-ne les icones">

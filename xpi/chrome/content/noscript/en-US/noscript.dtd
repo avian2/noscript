@@ -41,5 +41,6 @@
 <!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
 <!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">
 <!ENTITY noscriptStatusLabel "Status bar label">
-<!ENTITY noscriptForbidBookmarklets "Forbid Bookmarklets">
+<!ENTITY noscriptForbidBookmarklets "Forbid bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
 

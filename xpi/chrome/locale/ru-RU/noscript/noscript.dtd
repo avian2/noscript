@@ -1,0 +1,46 @@
+<!ENTITY noscriptOptions "Настройки...">
+<!ENTITY noscriptOptions.accesskey "а">
+<!ENTITY noscriptOptionsLong "Настройки NoScript">
+<!ENTITY noscriptAbout "О расширении">
+<!ENTITY noscriptPermissionsText "Вы можете установить каким web-сайтам разрешено выполнять JavaScript. Введите адрес или домен (напр. &quot;http://www.site.com&quot; или &quot;site.com&quot;) сайта которому вы желаете разрешить исполнять JavaScript и затем нажмите Разрешить.">
+<!ENTITY noscriptWebAddress "Адрес web-сайта:">
+<!ENTITY noscriptAllow "Разрешить">
+<!ENTITY noscriptAllow.accesskey "е">
+<!ENTITY noscriptRemoveSelected "Удалить выбранные сайты">
+<!ENTITY noscriptGloballyEnabled "JavaScript полностью разрешен (опасно)">
+<!ENTITY noscriptAutoReload "Автоматически обновлять страницу после изменения для нее правил">
+<!ENTITY noscriptGeneral "Основные">
+<!ENTITY noscriptAppearance "Внешний вид">
+<!ENTITY noscriptShow "Показывать...">
+<!ENTITY noscriptCtxMenu "Контексное меню">
+<!ENTITY noscriptStatusIcon "Иконку в строке статуса">
+<!ENTITY noscriptFullAddr "Полные адреса (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Полные домены (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Базовые домены 2-го уровня (noscript.net)">
+<!ENTITY noscriptTempCmd "Временно разрешить [...]">
+<!ENTITY noscriptSound "Проиграть аудио-файл если заблокирован скрипт">
+<!ENTITY noscriptImport "Импорт">
+<!ENTITY noscriptImport.accesskey "м">
+<!ENTITY noscriptExport "Экспорт">
+<!ENTITY noscriptExport.accesskey "к">
+<!ENTITY noscriptNotify "Показывать сообщения о заблокированных скриптах">
+<!ENTITY noscriptNotify.bottom "Расположить сообщения снизу">
+<!ENTITY noscriptSound.choose "Выбрать">
+<!ENTITY noscriptSound.choose.accesskey "ы">
+<!ENTITY noscriptSound.play "Тест">
+<!ENTITY noscriptSound.play.accesskey "с">
+<!ENTITY noscriptSound.reset "Сбросить">
+<!ENTITY noscriptSound.reset.accesskey "б">
+<!ENTITY noscriptAdvanced "Дополнительно">
+<!ENTITY noscriptAdditionalPermissions "Дополнительные права для доверенных сайтов">
+<!ENTITY noscriptAllowClipboard "Разрешить расширенное копирование/вставку из внешнего буфера обмена">
+<!ENTITY noscriptAdditionalRestrictions "Дополнительные ограничения для ненадежных сайтов">
+<!ENTITY noscriptForbidJava "Запретить Java™">
+<!ENTITY noscriptForbidFlash "Запретить Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Запретить другие плагины">
+<!ENTITY noscriptReloadWarn "Настройки вступят в силу на новой странице или после обновления (вручную)">
+<!ENTITY noscriptConfirmUnblock "Спрашивать подтверждение перед временной разблокировкой объекта">
+<!ENTITY noscriptStatusLabel "Сообщение в строке статуса">
+<!ENTITY noscriptForbidBookmarklets "Запретить Bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Показать расположение иконки">
+

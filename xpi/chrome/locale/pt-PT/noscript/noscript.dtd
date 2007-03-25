@@ -39,4 +39,7 @@
 <!ENTITY noscriptForbidFlash "Proibir Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Proibir outros plugins">
 <!ENTITY noscriptReloadWarn "Estas opções teram efeito em páginas novas ou (manualmente) actualizadas.">
+<!ENTITY noscriptConfirmUnblock "Pedir confirmação antes de desbloquear temporariamente um objecto
+<!ENTITY noscriptStatusLabel "Informações na barra de estado">">
 <!ENTITY noscriptForbidBookmarklets "Proibir bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Mostrar ícone de substituição">

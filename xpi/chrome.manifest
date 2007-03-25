@@ -18,4 +18,8 @@ locale	noscript	ca-AD	jar:chrome/noscript.jar!/locale/ca-AD/noscript/
 locale	noscript	ja-JP	jar:chrome/noscript.jar!/locale/ja-JP/noscript/
 locale	noscript	pl-PL	jar:chrome/noscript.jar!/locale/pl-PL/noscript/
 locale	noscript	cs-CZ	jar:chrome/noscript.jar!/locale/cs-CZ/noscript/
+locale	noscript	tr-TR	jar:chrome/noscript.jar!/locale/tr-TR/noscript/
+locale	noscript	ru-RU	jar:chrome/noscript.jar!/locale/ru-RU/noscript/
+locale	noscript	zh-CN	jar:chrome/noscript.jar!/locale/zh-CN/noscript/
+locale	noscript	bg-BG	jar:chrome/noscript.jar!/locale/bg-BG/noscript/
 locale	noscript	es-ES	jar:chrome/noscript.jar!/locale/es-ES/noscript/

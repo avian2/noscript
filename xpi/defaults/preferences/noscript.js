@@ -9,15 +9,19 @@ pref("noscript.showDomain",false);
 pref("noscript.showTemp",true);
 pref("noscript.showBaseDomain",true);
 pref("noscript.permanent","chrome: resource: about:neterror googlesyndication.com informaction.com flashgot.net maone.net noscript.net");
-pref("noscript.default","chrome: resource: about:neterror flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
+pref("noscript.default","chrome: resource: about:neterror about:config about:plugins about:credits flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
 pref("noscript.forbidJava",true);
 pref("noscript.forbidFlash",false);
 pref("noscript.forbidPlugins",false);
 pref("noscript.sound.block","chrome://noscript/skin/block.wav");
 pref("noscript.allowClipboard",false);
 pref("noscript.pluginPlaceholder","chrome://noscript/skin/icon32.png");
+pref("noscript.showPlaceholder",true);
 pref("noscript.global",false);
 pref("noscript.confirmUnblock", true);
 pref("noscript.statusLabel", false);
 pref("noscript.forbidBookmarklets", false);
+pref("noscript.notify.hideDelay", 5);
+pref("noscript.nodify.hide", false);
+
 

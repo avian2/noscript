@@ -1,0 +1,45 @@
+<!ENTITY noscriptOptions "Seçenekler...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript Seçenekleri">
+<!ENTITY noscriptAbout "NoScript Hakkında">
+<!ENTITY noscriptPermissionsText "Hangi sitelerin JavaScript calıştırabileceğini belirtebilirsiniz.İzin vermek istediğiniz sitenin tam adresini yada alanadını yazın (ör. &quot;http://www.site.com&quot; yada &quot;site.com&quot;) sonra İzin ver'e tıklayın.">
+<!ENTITY noscriptWebAddress "Web sitenin adresi:">
+<!ENTITY noscriptAllow "İzin ver">
+<!ENTITY noscriptAllow.accesskey "z">
+<!ENTITY noscriptRemoveSelected "Seçilen siteleri sil">
+<!ENTITY noscriptGloballyEnabled "JavaScriptlere daima izin ver (tehlikeli)">
+<!ENTITY noscriptAutoReload "İzin değiştirildiğinde siteyi yenile">
+<!ENTITY noscriptGeneral "Genel">
+<!ENTITY noscriptAppearance "Görünüm">
+<!ENTITY noscriptShow "Göster...">
+<!ENTITY noscriptCtxMenu "Bağlamsal menü">
+<!ENTITY noscriptStatusIcon "Durum çubuğu simgesi">
+<!ENTITY noscriptFullAddr "Tam Adresler (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Tam domainler (www.noscript.net)">
+<!ENTITY noscriptBaseDom "2. düzey alanlar (noscript.net)">
+<!ENTITY noscriptTempCmd "Geçici İzin [...]">
+<!ENTITY noscriptSound "Scriptler bloklandığında ses çal">
+<!ENTITY noscriptImport "Yükle">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Yedekle">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Bloklanan Scriptler hakkında mesaj göster">
+<!ENTITY noscriptNotify.bottom "Mesajı en alta yerleştir">
+<!ENTITY noscriptSound.choose "Seç">
+<!ENTITY noscriptSound.choose.accesskey "ç">
+<!ENTITY noscriptSound.play "Çal">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Varsayılan ayarlar">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "İleri Düzey">
+<!ENTITY noscriptAdditionalPermissions "Güvenilen siteler için ilave izinler">
+<!ENTITY noscriptAllowClipboard "Dış panodan zengin metin kopyalama ve yapıştırmaya izin ver">
+<!ENTITY noscriptAdditionalRestrictions "Güvenilmeyen siteler için İlave kısıtlamalar">
+<!ENTITY noscriptForbidJava "Java™yı engelle">
+<!ENTITY noscriptForbidFlash "Macromedia® Flash® ı engelle">
+<!ENTITY noscriptForbidPlugins "Diğer Eklentileri engelle">
+<!ENTITY noscriptReloadWarn "Bu ayarlar yeni sayfada yada (elle) yenilenen sayfada etkin hale gelir">
+<!ENTITY noscriptConfirmUnblock "Bir nesnenin engelini geçici olarak kaldırırken doğrulama için sor">
+<!ENTITY noscriptStatusLabel "Durum çubuğu etiketi">
+<!ENTITY noscriptForbidBookmarklets "Bookmarklet'leri Engelle">
+

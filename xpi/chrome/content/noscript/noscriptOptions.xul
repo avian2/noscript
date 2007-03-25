@@ -123,6 +123,7 @@
     <vbox id="notifyOpts">
       <checkbox id="opt-notify" label="&noscriptNotify;" />
       <checkbox id="opt-notify.bottom" label="&noscriptNotify.bottom;" style="margin-left: 24px" />
+      <checkbox id="opt-notify.hide" label="" style="margin-left: 24px" />
     </vbox>
   </vbox>
   </tabpanel>
@@ -145,6 +146,9 @@
       <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
       <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
       <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+      <separator class="thin"/>
+      <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
+      <separator class="thin"/>
       <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
       <separator class="thin"/>
       <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />

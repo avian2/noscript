@@ -79,7 +79,7 @@ NoScriptOverlay.prototype={
               }
             }
           }
-          var pp = ns.pluginPlaceholder;
+          var pp = ns.showPlaceholder && ns.pluginPlaceholder;
           var replacePlugins = pp && 
                    !(sites.loading || lm(doc,"getElementById")("_noscript_styled")) ;
           
@@ -336,7 +336,7 @@ NoScriptOverlay.prototype={
           }
         }
       }
-      if(stopSep.previousSibling.tagName!="menuseparator") {
+      if(stopSep.previousSibling.nodeName!="menuseparator") {
         node=document.createElement("menuseparator");
         parent.insertBefore(node,stopSep);
       }
@@ -369,13 +369,14 @@ NoScriptOverlay.prototype={
       }
     }
     
-    
+    const doubleSep = stopSep.previousSibling.nodeName == "menuseparator";
     if(globalSep!=stopSep) { // status bar
       insertSep.setAttribute("hidden", insertSep.nextSibling.getAttribute("hidden")?"true":"false");
+      if(doubleSep) stopSep.parentNode.removeChild(stopSep.previousSibling); 
     } else { // context menu
       stopSep.setAttribute("hidden",
         //stopSep==parent.firstChild.nextSibling ||
-        stopSep.previousSibling.nodeName=="menuseparator"
+        doubleSep
         ); 
     }
   }
@@ -556,6 +557,13 @@ NoScriptOverlay.prototype={
                 buttonLabel, null,
                 null, "noscript-notify-popup",this.messageBoxPos,true,
                 buttonAccesskey);
+              const delay = (ns.getPref("notify.hide") && ns.getPref("notify.delayHide",3)) || 0;
+              if(delay) {
+                window.clearTimeout(this.notifyHideTimeout);
+                this.notifyHideTimeout = window.setTimeout(
+                  function() { if(noscriptOverlay.isNsMB(mb)) mb.hidden = true },
+                  1000*delay);
+              }
             } else if(mbMine && !hidden) {
               mb.text=message;
               mb.image=icon;
@@ -585,6 +593,8 @@ NoScriptOverlay.prototype={
     widget.setAttribute("value", message ? message.replace(/JavaScript/g,"JS") : "");
     widget.parentNode.style.display = message ? "block" : "none";
   }
+,
+  notifyHideTimeout: 0
 ,
   checkDocFlag: function(doc,flag) {
     if(flag in doc && doc[flag]==_noscript_randomSignature) return false;

@@ -1,0 +1,46 @@
+<!ENTITY noscriptOptions "Опций...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript Опций">
+<!ENTITY noscriptAbout "За NoScript">
+<!ENTITY noscriptPermissionsText "Можеш да укажеш в кои уеб-сайтове е позволен JavaScript.Напиши адреса или домейна (напр. &quot;http://www.site.com&quot; or &quot;site.com&quot;) на сайта,който искаш да разрешиш и натисни Разреши.">
+<!ENTITY noscriptWebAddress "Адрес на уеб-сайта:">
+<!ENTITY noscriptAllow "Разреши">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptRemoveSelected "Премахни избраните сайтове">
+<!ENTITY noscriptGloballyEnabled "JavaScript напълно разрешен (опасно)">
+<!ENTITY noscriptAutoReload "Автоматично презареждай сайтовете,когато разрешението бъде променено">
+<!ENTITY noscriptGeneral "Общи">
+<!ENTITY noscriptAppearance "Изглед">
+<!ENTITY noscriptShow "Покажи...">
+<!ENTITY noscriptCtxMenu "Контекстно меню">
+<!ENTITY noscriptStatusIcon "Икона в статус лентата">
+<!ENTITY noscriptFullAddr "Пълен адрес (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Пълен домейн (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Втори домейн (noscript.net)">
+<!ENTITY noscriptTempCmd "Разреши временно [...]">
+<!ENTITY noscriptSound "Звуково известие при блокиране на скрипт">
+<!ENTITY noscriptImport "Импортирай">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Експортирай">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Показвай съобщение за блокираните скриптове">
+<!ENTITY noscriptNotify.bottom "Постави съобщението в дъното на екрана">
+<!ENTITY noscriptSound.choose "Choose">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Прослушай">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "възстанови настройките по подразбиране">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Детайли">
+<!ENTITY noscriptAdditionalPermissions "Допълнително разрешение за доверените сайтове">
+<!ENTITY noscriptAllowClipboard "Позволявай текстово копиране и поставяне от клипборда">
+<!ENTITY noscriptAdditionalRestrictions "Допълнителна забрана за недоверени сайтове">
+<!ENTITY noscriptForbidJava "Забрани Java™">
+<!ENTITY noscriptForbidFlash "Забрани Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Забрани други плугини">
+<!ENTITY noscriptReloadWarn "Тези опций ще имат ефект на нови или (ръчно) презаредени сайтове">
+<!ENTITY noscriptConfirmUnblock "Искай разрешение преди временно да позволиш обект">
+<!ENTITY noscriptStatusLabel "Обозначение в статус лентата">
+<!ENTITY noscriptForbidBookmarklets "Забрани bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Покажи иконата">
+

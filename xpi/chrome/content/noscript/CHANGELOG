@@ -1,5 +1,18 @@
 NoScript ChangeLog
 
+v 1.1.3.3
+=====================================================================
++ Placeholder icon can be hidden (NoScript Options|Advanced)
++ Message bar notifications can be set to go away automatically after 
+  5 seconds
++ Bulgarian (thanks to Georgi Marchev)
++ Simplified Chinese (thanks to George C. Tsoi)
++ Russian (thanks to Alexander Sokolov)
++ Turkish (thanks to Engin Yazılan)
+x Best effort XPCOM auto registration on Mozilla Suite installation
+x Minor menu formatting glitches removed
+x Some about:xxx URLs added to the default whitelist
+
 v 1.1.3.2
 =====================================================================
 + Bookmarklet support. It allows JS on current page just for the

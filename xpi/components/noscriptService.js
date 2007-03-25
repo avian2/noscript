@@ -523,11 +523,14 @@ NoscriptService.prototype={
       case "forbidJava":
       case "forbidFlash":
       case "forbidPlugins":
-      case "pluginPlaceholder":
         this[name]=this.getPref(name,this[name]);
         this.forbidSomePlugins = this.forbidJava || this.forbidFlash || this.forbidPlugins;
         this.forbidAllPlugins = this.forbidJava && this.forbidFlash && this.forbidPlugins;
         this.initContentPolicy();
+      break;
+      case "pluginPlaceholder":
+      case "showPlaceholder":
+        this[name]=this.getPref(name,this[name]);
       break;
       case "allowClipboard":
         const cp=["cutcopy","paste"];
@@ -583,7 +586,9 @@ NoscriptService.prototype={
     this.mozJSPref=prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
     this.mozJSPref.addObserver("enabled",this,false);
     
-    const syncPrefNames=["pluginPlaceholder","allowClipboard","forbidPlugins","forbidJava","forbidFlash","temp","permanent"];
+    const syncPrefNames=[
+      "pluginPlaceholder", "showPlaceholder", "allowClipboard", "forbidPlugins", 
+      "forbidJava", "forbidFlash", "temp","permanent"];
     for(var spcount=syncPrefNames.length; spcount-->0;) {
       this.syncPrefs(this.prefs,syncPrefNames[spcount]);
     }
@@ -1054,6 +1059,7 @@ NoscriptService.prototype={
  lookupMethod: Components.utils?Components.utils.lookupMethod:Components.lookupMethod
 ,
   pluginPlaceholder: "chrome://noscript/skin/icon32.png",
+  showPlaceHolder: true,
   pluginsExtrasMark: {},
   getPluginExtras: function(obj) {
     return (obj._noScriptExtras && obj._noScriptExtras.mark && 

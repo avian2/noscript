@@ -51,6 +51,10 @@ function nso_init() {
   );
 
   document.getElementById("opt-showTemp").setAttribute("label",noscriptUtil.getString("allowTemp",["[...]"]));
+  
+  document.getElementById("opt-notify.hide").setAttribute("label",
+           noscriptUtil.getString("notifyHide",[g_serv.getPref("notify.hideDelay",3)]));
+   
   nso_setSample(g_serv.getPref("sound.block"));
 }
 

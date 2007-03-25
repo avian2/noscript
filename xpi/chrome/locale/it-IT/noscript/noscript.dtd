@@ -42,3 +42,4 @@
 <!ENTITY noscriptConfirm "Sei sicuro?">
 <!ENTITY noscriptStatusLabel "Etichetta sulla barra di stato">
 <!ENTITY noscriptForbidBookmarklets "Vieta i bookmarklet">
+<!ENTITY noscriptShowPlaceholder "Mostra icona sostitutiva">

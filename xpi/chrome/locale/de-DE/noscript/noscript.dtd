@@ -13,7 +13,7 @@
 <!ENTITY noscriptAppearance "Aussehen">
 <!ENTITY noscriptShow "Anzeigen...">
 <!ENTITY noscriptCtxMenu "Im Kontextmenü">
-<!ENTITY noscriptStatusIcon "Icon in der Statusleiste">
+<!ENTITY noscriptStatusIcon "Icon in der Statusleiste anzeigen">
 <!ENTITY noscriptFullAddr "Ganze Adressen (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Ganze Domains (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Basis von Second Level Domains (noscript.net)">
@@ -39,5 +39,8 @@
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden bei neu (oder manuell) geladenen Seiten wirksam">
+<!ENTITY noscriptConfirmUnblock "Bestätigung anfordern, bevor ein Objekt temporär erlaubt wird">
+<!ENTITY noscriptStatusLabel "Info in der Statusleiste anzeigen">
 <!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieten">
+<!ENTITY noscriptShowPlaceholder "Platzhalter anzeigen">
 

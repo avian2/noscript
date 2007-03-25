@@ -1,14 +1,15 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.1.3.2";
+const APP_VERSION = "1.1.3.3";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
 const APP_JAR_FILE = "noscript.jar";
 const APP_CONTENT_FOLDER = "content/noscript/";
 const APP_LOCALES = [
-  "es-ES","cs-CZ","pl-PL","ja-JP","ca-AD","pt-PT", "pt-BR", "de-DE","fr-FR","it-IT","nl-NL","en-US"
+  "es-ES","cs-CZ","pl-PL","ja-JP","ca-AD","pt-PT","pt-BR","de-DE",
+  "fr-FR","it-IT","nl-NL","tr-TR","zh-CN","ru-RU","bg-BG","en-US"
   ];
 
 const APP_SUCCESS_MESSAGE = APP_DISPLAY_NAME+" should now be available when you restart Mozilla.";
@@ -41,9 +42,9 @@ if(APP_PREFS_FILE && (err == SUCCESS) ) {
 }
 
 if(err == SUCCESS) {
-	var jar = getFolder(chromef, APP_JAR_FILE);
-	const chromeFlag=instToProfile?PROFILE_CHROME:DELAYED_CHROME;
- 
+  var jar = getFolder(chromef, APP_JAR_FILE);
+  const chromeFlag=instToProfile?PROFILE_CHROME:DELAYED_CHROME;
+
   registerChrome(CONTENT | chromeFlag, jar, APP_CONTENT_FOLDER);
   var localesCount=APP_LOCALES.length;
   if(localesCount>0) {
@@ -58,7 +59,7 @@ if(err == SUCCESS) {
   if(APP_XPCOM_SERVICE) {
     var componentsDir = getFolder("Components");
     addFile(APP_PACKAGE,APP_VERSION, APP_XPCOM_SERVICE, componentsDir, null, true);
-    // addFile(APP_NAME, "components/.autoreg", getFolder("Program"), "");
+    addFile(APP_NAME, "components/.autoreg", getFolder("Program"), "");
   }
   
   err = performInstall();
@@ -69,9 +70,9 @@ if(err == SUCCESS) {
     cancelInstall(err);
   }
 } else {
-alert("Failed to create " +APP_JAR_FILE +"\n"
-  +"You probably don't have appropriate permissions \n"
-  +"(write access to your profile or chrome directory). \n"
-  +"_____________________________\nError code:" + err);
-cancelInstall(err);
+  alert("Failed to create " +APP_JAR_FILE +"\n"
+    +"You probably don't have appropriate permissions \n"
+    +"(write access to your profile or chrome directory). \n"
+    +"_____________________________\nError code:" + err);
+  cancelInstall(err);
 }
