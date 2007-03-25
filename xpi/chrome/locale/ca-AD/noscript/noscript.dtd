@@ -24,7 +24,7 @@
 <!ENTITY noscriptExport "Exporta">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Mostra un missatge amb les seqüències blocades">
-<!ENTITY noscriptNotify.bottom "Colloca el missatge a la part de baix">
+<!ENTITY noscriptNotify.bottom "Col loca el missatge a la part de baix">
 <!ENTITY noscriptSound.choose "Tria">
 <!ENTITY noscriptSound.choose.accesskey "C">
 <!ENTITY noscriptSound.play "Reprodueix">
@@ -35,7 +35,8 @@
 <!ENTITY noscriptAdditionalPermissions "Permissos addicionals per a llocs de confiança">
 <!ENTITY noscriptAllowClipboard "Permet copiar i enganxar text enriquit des d'un porta-retalls extern">
 <!ENTITY noscriptAdditionalRestrictions "Restriccions addicionals per a llocs en què desconfieu">
-<!ENTITY noscriptForbidJava "Prohibeix el Javaâ¢">
-<!ENTITY noscriptForbidFlash "Prohibeix el MacromediaÂ® FlashÂ®">
+<!ENTITY noscriptForbidJava "Prohibeix el Java™">
+<!ENTITY noscriptForbidFlash "Prohibeix el Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Prohibeix d'altres connectors">
 <!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pàgines noves o recarregades (manualment)">
+<!ENTITY noscriptForbidBookmarklets "Prohibeix Bookmarklets">

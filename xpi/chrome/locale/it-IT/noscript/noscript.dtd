@@ -41,3 +41,4 @@
 <!ENTITY noscriptConfirmUnblock "Chiedi conferma prima di sbloccare temporaneamente un oggetto">
 <!ENTITY noscriptConfirm "Sei sicuro?">
 <!ENTITY noscriptStatusLabel "Etichetta sulla barra di stato">
+<!ENTITY noscriptForbidBookmarklets "Vieta i bookmarklet">

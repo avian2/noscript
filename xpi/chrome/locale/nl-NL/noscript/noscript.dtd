@@ -39,3 +39,4 @@
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieden">
 <!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
 <!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina's">
+<!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieden">

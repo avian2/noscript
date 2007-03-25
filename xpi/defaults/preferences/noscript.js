@@ -18,5 +18,6 @@ pref("noscript.allowClipboard",false);
 pref("noscript.pluginPlaceholder","chrome://noscript/skin/icon32.png");
 pref("noscript.global",false);
 pref("noscript.confirmUnblock", true);
-pref("noscript.statusLabel", true);
+pref("noscript.statusLabel", false);
+pref("noscript.forbidBookmarklets", false);
 

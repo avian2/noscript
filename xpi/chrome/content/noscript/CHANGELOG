@@ -1,5 +1,13 @@
 NoScript ChangeLog
 
+v 1.1.3.2
+=====================================================================
++ Bookmarklet support. It allows JS on current page just for the
+  bookmarklet execution lifespan. If you don't want or don't need it,
+  turn on "NoScript Options|Advanced|Forbid Bookmarklets"
+x Fixed right-click status label crash affecting pre-1.8 browser.Now
+  status label context menu works on Mozilla and Firefox 1.0.x too.
+
 v 1.1.3.1
 =====================================================================
 + Option to skip confirmation when temporarily unblocking objects

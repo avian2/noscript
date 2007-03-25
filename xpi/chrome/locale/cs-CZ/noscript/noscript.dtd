@@ -39,4 +39,4 @@
 <!ENTITY noscriptForbidFlash "Zakázat Macromedia(r) Flash(r)">
 <!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">
 <!ENTITY noscriptReloadWarn "Tato nastavení budou aktivní na nově otevřených nebo (manuálně) obnovených stránkách">
-
+<!ENTITY noscriptForbidBookmarklets "Zakázat Bookmarklets">

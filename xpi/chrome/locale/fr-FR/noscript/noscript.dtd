@@ -39,3 +39,4 @@
 <!ENTITY noscriptForbidFlash "Interdire Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Interdire les autres plugins">
 <!ENTITY noscriptReloadWarn "Ces options prendront effet sur les pages rechargées (manuellement) et les nouvelles pages">
+<!ENTITY noscriptForbidBookmarklets "Interdire Bookmarklets">

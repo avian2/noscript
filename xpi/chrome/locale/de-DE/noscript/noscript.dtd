@@ -39,4 +39,5 @@
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden bei neu (oder manuell) geladenen Seiten wirksam">
+<!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieten">
 

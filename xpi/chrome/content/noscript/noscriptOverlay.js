@@ -682,13 +682,46 @@ function _noScript_syncUI(ev) {
 function _noScript_prepareCtxMenu(ev) {
     noscriptOverlay.prepareContextMenu(ev);
 }
-function _noScript_onloadInstall(ev) {
-  if(!Components.interfaces.nsIContentPolicy.TYPE_OBJECT) {
-    // Mozilla: remove status-label context menu
-    document.getElementById("noscript-statusLabel").removeAttribute("context");
+
+function _noScript_openOneBookmark(aURI, aTargetBrowser, aDS) {
+  const ns = noscriptUtil.service;
+  var snapshot = "";
+  if(aTargetBrowser == "current" && !(ns.getPref("forbidBookmarklets", false)  || ns.jsEnabled)) {
+    var ncNS = typeof(gNC_NS) == "undefined" ? ( typeof(NC_NS) == "undefined" ?
+      "http://home.netscape.com/NC-rdf#" : NC_NS ) : gNC_NS;
+    var url = BookmarksUtils.getProperty(aURI, ncNS+"URL", aDS);
+    if(!url) return;
+    var caughtEx = null;
+    try {
+      if(url.toLowerCase().indexOf("javascript:") == 0) {
+        var browser = getBrowser().selectedBrowser;
+        var site = ns.getSite(noscriptOverlay.srcDocument.documentURI);
+        if(browser && !ns.isJSEnabled(site)) {
+          snapshot = ns.jsPolicySites.sitesString;
+          try {
+            ns.setJSEnabled(site, true);
+            browser.loadURI(url);
+          } catch(ex) {
+            caughtEx = ex;
+          }
+          ns.flushCAPS(snapshot);
+          if(caughtEx) throw caughtEx;
+          return;
+        }
+      }
+    } catch(silentEx) {
+      dump(silentEx);
+    }
   }
+  this._noScript_openOneBookmark_originalMethod(aURI, aTargetBrowser, aDS);
+}
+
+
+function _noScript_onloadInstall(ev) {
   document.getElementById("contentAreaContextMenu")
           .addEventListener("popupshowing",_noScript_prepareCtxMenu,false);
+  BookmarksCommand._noScript_openOneBookmark_originalMethod = BookmarksCommand.openOneBookmark;
+  BookmarksCommand.openOneBookmark = _noScript_openOneBookmark;
 }
 
 const _noScript_syncEvents=["load","focus"];

@@ -148,7 +148,7 @@ const SiteUtils = new function() {
     
     var scheme;
     try {
-      scheme=this.ios.extractScheme(url);
+      scheme = this.ios.extractScheme(url).toLowerCase();
       if(scheme == "javascript" || scheme == "data") return "";
       if(scheme == "about") {
         return /about:neterror(\?|$)/.test(url) ? "about:neterror" : url;
@@ -677,9 +677,8 @@ NoscriptService.prototype={
   }
 ,
   jsPolicySites: new PolicySites(),
-  isJSEnabled: function(site, ps) {
-    if(!ps) ps=this.jsPolicySites;
-    return (!!ps.matches(site));
+  isJSEnabled: function(site) {
+    return (!!this.jsPolicySites.matches(site));
   },
   setJSEnabled: function(site,is,fromScratch) {
     const ps=this.jsPolicySites;
@@ -689,10 +688,15 @@ NoscriptService.prototype={
     } else {
       ps.remove(site, false, true);
     }
-    
-    ps.toPref(this.policyPB);
+    this.flushCAPS();
     return is;
   }
+,
+ flushCAPS: function(sitesString) {
+   const ps = this.jsPolicySites;
+   if(sitesString) ps.sitesString = sitesString;
+   ps.toPref(this.policyPB);
+ }
 ,
   delayExec: function(callback,delay) {
      const timer=Components.classes["@mozilla.org/timer;1"].createInstance(

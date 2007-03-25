@@ -145,6 +145,7 @@
       <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
       <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
       <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+      <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
       <separator class="thin"/>
       <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
     </vbox>

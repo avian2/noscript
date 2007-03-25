@@ -41,3 +41,4 @@
 <!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページか(手動で)再読込されたページで有効になります">
 <!ENTITY noscriptConfirmUnblock "一時的に許可する前に確認する">
 <!ENTITY noscriptStatusLabel "ステータスバーラベル">
+<!ENTITY noscriptForbidBookmarklets "Bookmarklets の禁止">

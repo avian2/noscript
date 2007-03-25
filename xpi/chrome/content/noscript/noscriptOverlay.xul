@@ -147,15 +147,14 @@
     </menupopup>
   </statusbarpanel>
   <statusbarpanel id="noscript-statusLabel" insertbefore="statusbar-updates"
-    context="_child" class="statusbar-display"
-    hidden="false" persist="hidden"
+    hidden="true" persist="hidden"
     >
-    <menupopup id="noscript-statusLabel-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+    <popup id="noscript-statusLabel-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
      <menuitem
         label="&noscriptAbout;"
         tooltiptext="&noscriptAbout;"
         oncommand="noscriptUtil.openAboutDialog()"
-      /> 
+      />
     <menuitem 
       label="&noscriptOptions;"
       accesskey="&noscriptOptions.accesskey;"
@@ -166,11 +165,11 @@
      <menuitem class="menuitem-iconic" />
      <menuseparator class="noscript-sep-insert"/>
      <menuseparator class="noscript-sep-stop" hidden="true" />
-  </menupopup>
+  </popup>
     
-    
-   <label id="noscript-statusLabelValue" />
-       
+   <vbox flex="1" align="center" pack="center"  context="noscript-statusLabel-popup" >  
+    <label id="noscript-statusLabelValue"/>
+   </vbox>   
    
  </statusbarpanel>
    
