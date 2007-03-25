@@ -46,3 +46,6 @@
 <!ENTITY noscriptTruncateTitle "Tronquer le titre des documents">
 <!ENTITY noscriptFixLinks "Essayer de réparer les liens javascript">
 <!ENTITY noscriptAllowBookmarks "Autoriser tous les sites trouvés dans les marque-pages">
+<!ENTITY noscriptAllowViaBookmarks "Autoriser les sites ouverts par les marque-pages">
+<!ENTITY noscriptAllowPing "Autoriser &lt;a ping…&gt;">
+<!ENTITY noscriptForbidPing "Interdire &lt;a ping…&gt;">

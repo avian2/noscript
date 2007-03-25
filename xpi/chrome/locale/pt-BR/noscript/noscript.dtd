@@ -1,24 +1,24 @@
 <!ENTITY noscriptOptions "Opções">
 <!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "Opções NoScript">
-<!ENTITY noscriptAbout "Sobre NoScript">
+<!ENTITY noscriptOptionsLong "Opções do NoScript">
+<!ENTITY noscriptAbout "Sobre o NoScript">
 <!ENTITY noscriptPermissionsText "Pode especificar os sites que podem executar JavaScript.Escreva o endereço ou o domínio (ex e.g. &quot;http://www.site.com&quot; ou &quot;site.com&quot;) do site que deseja perimtir e depois pressione Permitir.">
 <!ENTITY noscriptWebAddress "Endereço:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">
 <!ENTITY noscriptRemoveSelected "Remover sites selecionados">
 <!ENTITY noscriptGloballyEnabled "JavaScript Globalmente Permitido (perigoso)">
-<!ENTITY noscriptAutoReload "Actualizar automaticamente a página actual quando as permissões são alteradas.">
+<!ENTITY noscriptAutoReload "Atualizar automaticamente a página atual quando as permissões são alteradas.">
 <!ENTITY noscriptGeneral "Geral">
 <!ENTITY noscriptAppearance "Aparência">
 <!ENTITY noscriptShow "Mostrar...">
 <!ENTITY noscriptCtxMenu "Menu Contextual">
-<!ENTITY noscriptStatusIcon "Icone da Barra de Estado">
+<!ENTITY noscriptStatusIcon "Ícone da Barra de Status">
 <!ENTITY noscriptFullAddr "Endereço completo (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Domínios completos (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Base domínios do 2º nível (noscript.net)">
 <!ENTITY noscriptTempCmd "Permitir temporariamente [...]">
-<!ENTITY noscriptSound "Alerta áudio quando os scripts são bloqueados">
+<!ENTITY noscriptSound "Alerta de áudio quando os scripts são bloqueados">
 <!ENTITY noscriptImport "Importar">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exportar">
@@ -38,11 +38,14 @@
 <!ENTITY noscriptForbidJava "Proibir Java™">
 <!ENTITY noscriptForbidFlash "Proibir Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Proibir outros plugins">
-<!ENTITY noscriptReloadWarn "Estas opções teram efeito em páginas novas ou (manualmente) actualizadas.">
+<!ENTITY noscriptReloadWarn "Estas opções teram efeito em páginas novas ou (manualmente) atualizadas.">
 <!ENTITY noscriptConfirmUnblock "Pedir confirmação antes de desbloquear temporariamente um objecto">
-<!ENTITY noscriptStatusLabel "Informações na barra de estado">
+<!ENTITY noscriptStatusLabel "Informações na barra de status">
 <!ENTITY noscriptForbidBookmarklets "Proibir bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Mostrar ícone de substituição">
 <!ENTITY noscriptTruncateTitle "Quebrar títulos dos documentos">
 <!ENTITY noscriptFixLinks "Tentar corrigir links JavaScript">
-<!ENTITY noscriptAllowBookmarks "Permitir todos os sites que se encontrem nos Marcadores">
+<!ENTITY noscriptAllowBookmarks "Permitir todos os sites que se encontrem nos favoritos">
+<!ENTITY noscriptAllowViaBookmarks "Permitir sites abertos a partir dos favoritos">
+<!ENTITY noscriptAllowPing "Permitir &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Proibir &lt;a ping...&gt;">

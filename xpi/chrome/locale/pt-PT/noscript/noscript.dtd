@@ -46,3 +46,6 @@
 <!ENTITY noscriptTruncateTitle "Quebrar títulos dos documentos">
 <!ENTITY noscriptFixLinks "Tentar corrigir links JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permitir todos os sites que se encontrem nos Marcadores">
+<!ENTITY noscriptAllowViaBookmarks "Permitir sites abertos a partir dos favoritos">
+<!ENTITY noscriptAllowPing "Permitir &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Proibir &lt;a ping...&gt;">

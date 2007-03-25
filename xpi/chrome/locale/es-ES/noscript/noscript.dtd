@@ -2,12 +2,12 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Configuración de NoScript">
 <!ENTITY noscriptAbout "Acerca de NoScript">
-<!ENTITY noscriptPermissionsText "Aquí puedes especificar las páginas web a las que quieres permitir ejecutar código JavaScript. Escribe la dirección de la web que quieres incluir, y después haz clic en 'Permitir' (ej. 'http://www.paginaweb.com' o 'paginaweb.com').">
+<!ENTITY noscriptPermissionsText "Aquí puede especificar las páginas web a las que quieres permitir ejecutar código JavaScript. Escriba la dirección de la web que quiera incluir, y después haga clic en 'Permitir' (ej. 'http://www.paginaweb.com' o 'paginaweb.com').">
 <!ENTITY noscriptWebAddress "Dirección de la web:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">
 <!ENTITY noscriptRemoveSelected "Eliminar web(s) seleccionada(s)">
-<!ENTITY noscriptGloballyEnabled "Permitir JavaScript Globalmente (peligroso)">
+<!ENTITY noscriptGloballyEnabled "Permitir JavaScript globalmente (peligroso)">
 <!ENTITY noscriptAutoReload "Recargar página automáticamente tras cambiar permisos">
 <!ENTITY noscriptGeneral "General">
 <!ENTITY noscriptAppearance "Apariencia">
@@ -45,4 +45,7 @@
 <!ENTITY noscriptShowPlaceholder "Mostrar indicador de objeto bloqueado (placeholder)">
 <!ENTITY noscriptTruncateTitle "Truncar títulos de documentos">
 <!ENTITY noscriptFixLinks "Intentar corregir enlaces JavaScript">
-<!ENTITY noscriptAllowBookmarks "Permitir todas las web presentes en Marcadores">
+<!ENTITY noscriptAllowBookmarks "Permitir todas las web de marcadores">
+<!ENTITY noscriptAllowViaBookmarks "Permitir web abiertas desde marcadores">
+<!ENTITY noscriptAllowPing "Permitir ping">
+<!ENTITY noscriptForbidPing "Bloquear ping">

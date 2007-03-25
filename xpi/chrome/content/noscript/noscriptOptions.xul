@@ -59,15 +59,12 @@
   </hbox>
   <separator class="thin"/>
   <label value="&noscriptWebAddress;"/>
-  <hbox align="start">
-    <textbox id="urlText" flex="1" oninput="nso_urlChanged()"/>
-  </hbox>
-  <hbox pack="end">
+  <hbox>
+    <textbox id="urlText" flex="1" oninput="nso_urlChanged()"/> 
     <button disabled="true" id="addButton" label="&noscriptAllow;" 
       accesskey="&noscriptAllow.accesskey;" 
       oncommand="nso_allow()"/>
   </hbox>
-  <separator class="thin"/>
   <listbox id="urlList" seltype="multiple" 
     onselect="nso_urlListChanged()"
     onkeyup="if(event.keyCode==event.DOM_VK_DELETE) nso_remove();"
@@ -87,6 +84,10 @@
   </hbox>
   <separator class="thin"/>
   <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
+  <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
+  <label id="lbl-allowBookmarks" hidden="true" collapsed="true" value="&noscriptAllowBookmarks;" />
+  <separator class="thin"/>
+   <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
   </vbox>
   </tabpanel>
   <tabpanel>
@@ -104,7 +105,7 @@
      <checkbox id="opt-showTemp" label="&noscriptTempCmd;" />
     </vbox>
     <separator class="groove"/>
-    <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
+   
     <checkbox id="opt-sound" label="&noscriptSound;" />
     <vbox style="margin-left: 24px">
       <hbox>
@@ -151,6 +152,7 @@
       <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
       <separator class="thin"/>
       <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
+     
       <separator class="thin"/>
       <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
       <separator class="thin"/>

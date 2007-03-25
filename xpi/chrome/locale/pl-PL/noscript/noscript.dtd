@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript - Opcje">
 <!ENTITY noscriptAbout "O NoScript">
-<!ENTITY noscriptPermissionsText "Tutaj możesz dodać witryny imternetowe, które będą mogły uruchamiać skrypty JavaScript. Wpisz adres lub domenę witryny, którą chcesz dodać (np: &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) i naciśnij przycisk &quot;Dodaj&quot;.">
+<!ENTITY noscriptPermissionsText "Tutaj możesz dodać witryny imternetowe, które będą mogły uruchamiać skrypty. Wpisz adres lub domenę witryny, którą chcesz dodać (np: &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) i naciśnij przycisk &quot;Dodaj&quot;.">
 <!ENTITY noscriptWebAddress "Adres witryny:">
 <!ENTITY noscriptAllow "Dodaj">
 <!ENTITY noscriptAllow.accesskey "D">
@@ -14,8 +14,8 @@
 <!ENTITY noscriptShow "Wyświetl:">
 <!ENTITY noscriptCtxMenu "Menu kontekstowe">
 <!ENTITY noscriptStatusIcon "Ikonę na pasku stanu">
-<!ENTITY noscriptFullAddr "Pełny adres  (np: http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Pełna domena  (np: www.noscript.net)">
+<!ENTITY noscriptFullAddr "Pełne adresy  (np: http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Pełne domeny  (np: www.noscript.net)">
 <!ENTITY noscriptBaseDom "Podstawa domeny  (np: noscript.net)">
 <!ENTITY noscriptTempCmd "Tymczasowo nie blokuj z  [...]">
 <!ENTITY noscriptSound "Odtwórz dźwięk, gdy skrypty są blokowane">
@@ -44,7 +44,8 @@
 <!ENTITY noscriptForbidBookmarklets "Blokuj skryptozakładki">
 <!ENTITY noscriptShowPlaceholder "Pokaż zamienniki ikon">
 <!ENTITY noscriptTruncateTitle "Skracaj tytuły dokumentów">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptFixLinks "Spróbuj naprawić odnośniki JavaScript">
 <!ENTITY noscriptAllowBookmarks "Pozwalaj wszystkim witrynom znajdującym się w zakładkach">
+<!ENTITY noscriptAllowViaBookmarks "Pozwalaj witrynom otwartym z zakładek">
 <!ENTITY noscriptAllowPing "Pozwalaj na &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Zabroń &lt;a ping...&gt;">

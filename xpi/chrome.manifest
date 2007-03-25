@@ -2,6 +2,10 @@ overlay	chrome://navigator/content/navigatorOverlay.xul	chrome://noscript/conten
 overlay	chrome://browser/content/browser.xul	chrome://noscript/content/noscriptOverlay.xul
 overlay	chrome://browser/content/pref/pref-features.xul	chrome://noscript/content/prefContent.xul
 
+overlay chrome://browser/content/bookmarks/bookmarksManager.xul chrome://noscript/content/noscriptBMOverlay.xul
+overlay chrome://browser/content/bookmarks/bookmarksPanel.xul chrome://noscript/content/noscriptBMOverlay.xul
+overlay chrome://browser/content/places/places.xul chrome://noscript/content/noscriptBMOverlay.xul
+
 content	noscript	jar:chrome/noscript.jar!/content/noscript/ xpcnativewrappers=no
 
 skin	noscript	classic/1.0	jar:chrome/noscript.jar!/skin/classic/noscript/
@@ -28,4 +32,7 @@ locale	noscript	bg-BG	jar:chrome/noscript.jar!/locale/bg-BG/noscript/
 locale	noscript	ro-RO	jar:chrome/noscript.jar!/locale/ro-RO/noscript/
 locale	noscript	sk-SK	jar:chrome/noscript.jar!/locale/sk-SK/noscript/
 locale	noscript	hu-HU	jar:chrome/noscript.jar!/locale/hu-HU/noscript/
+locale	noscript	mk-MK	jar:chrome/noscript.jar!/locale/mk-MK/noscript/
+locale	noscript	da-DK	jar:chrome/noscript.jar!/locale/da-DK/noscript/
+locale	noscript	sv-SE	jar:chrome/noscript.jar!/locale/sv-SE/noscript/
 locale	noscript	es-ES	jar:chrome/noscript.jar!/locale/es-ES/noscript/

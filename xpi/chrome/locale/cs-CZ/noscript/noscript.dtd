@@ -45,4 +45,7 @@
 <!ENTITY noscriptShowPlaceholder "Zobrazovat zástupnou ikonu">
 <!ENTITY noscriptTruncateTitle "Zkrátit titulek stránky">
 <!ENTITY noscriptFixLinks "Pokusit se opravit odkazy tvořené JavaScriptem">
-<!ENTITY noscriptAllowBookmarks "Povolit všechny stránky v záložkách">
+<!ENTITY noscriptAllowBookmarks "Povolit stránky otevřené ze záložek">
+<!ENTITY noscriptAllowViaBookmarks "Povolit stránky otevřené ze záložek">
+<!ENTITY noscriptAllowPing "Povolit &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Zakázat &lt;a ping...&gt;">

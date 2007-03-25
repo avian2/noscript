@@ -46,3 +46,6 @@
 <!ENTITY noscriptTruncateTitle "Skrátiť titulky dokumentov">
 <!ENTITY noscriptFixLinks "Pokúsiť sa opraviť JavaScript odkaz">
 <!ENTITY noscriptAllowBookmarks "Povoliť všetky stránky nájdené v Záložkách">
+<!ENTITY noscriptAllowViaBookmarks "Povoliť stránky otvorené zo Záložiek">
+<!ENTITY noscriptAllowPing "Povoliť &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Zakázať &lt;a ping...&gt;">

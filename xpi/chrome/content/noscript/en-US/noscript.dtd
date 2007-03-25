@@ -45,6 +45,10 @@
 <!ENTITY noscriptShowPlaceholder "Show placeholder icon">
 <!ENTITY noscriptTruncateTitle "Truncate document titles">
 <!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
-<!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">
+<!ENTITY noscriptAllowBookmarks "Allow sites opened through bookmarks">
+<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
 <!ENTITY noscriptAllowPing "Allow &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Forbid &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Whitelist">
+<!ENTITY noscriptRefresh "Refresh">
+<!ENTITY noscriptNotifyLabel "Notifications">

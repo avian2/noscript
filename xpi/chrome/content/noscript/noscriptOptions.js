@@ -53,7 +53,7 @@ function nso_init() {
   visitCheckboxes(
     function(prefName, inverse, checkbox, mozilla) {
       try {
-        val = mozilla ? g_serv.prefService.getBoolPref(prefName) : g_serv.getPref(prefName);
+        var val = mozilla ? g_serv.prefService.getBoolPref(prefName) : g_serv.getPref(prefName);
         checkbox.setAttribute("checked",inverse ? !val: val);
       } catch(ex) {}
     }
@@ -65,6 +65,15 @@ function nso_init() {
            noscriptUtil.getString("notifyHide",[g_serv.getPref("notify.hideDelay",3)]));
    
   nso_setSample(g_serv.getPref("sound.block"));
+  
+  // internationalization hack for "Allow bookmarks" vs "Allow via bookmarks" afterthought :(
+  const optBookmarks = document.getElementById("opt-allowBookmarks");
+  const lbl1 = optBookmarks.getAttribute("label");
+  var lbl2;
+  if(/^Allow sites/.test(lbl1) && 
+    !/^Allow sites/.test(lbl2 = document.getElementById("lbl-allowBookmarks").getAttribute("value"))) {
+    optBookmarks.setAttribute("label", lbl2);
+  }
 }
 
 function nso_urlListChanged() {
@@ -158,15 +167,17 @@ function nso_save() {
     function(prefName, inverse, checkbox, mozilla) {
       if(checkbox.getAttribute("collapsed")!="true") {
         const checked=checkbox.getAttribute("checked")=="true";
-        const requestedVal=inverse? !checked : checked;
+        const requestedVal = inverse ? !checked : checked;
         
         if(mozilla) {
-          g_serv.prefService.setBoolPref(prefName, requestedVal);
+          try {
+            g_serv.prefService.setBoolPref(prefName, requestedVal);
+          } catch(ex) {}
           return;
         }
         
-        const prevVal=g_serv.getPref(prefName);
-        if(requestedVal!=prevVal) {
+        const prevVal = g_serv.getPref(prefName);
+        if(requestedVal != prevVal) {
           g_serv.setPref(prefName, requestedVal);
         }
       }

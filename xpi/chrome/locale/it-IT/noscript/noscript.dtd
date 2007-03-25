@@ -46,3 +46,4 @@
 <!ENTITY noscriptTruncateTitle "Tronca i titoli dei documenti">
 <!ENTITY noscriptFixLinks "Tenta di correggere i link JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permetti tutti i siti presenti nei segnalibri">
+<!ENTITY noscriptAllowViaBookmarks "Permetti i siti aperti attraverso i segnalibri">

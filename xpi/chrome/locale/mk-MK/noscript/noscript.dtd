@@ -33,7 +33,7 @@
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "Napredno">
 <!ENTITY noscriptAdditionalPermissions "Dodatni odobruvanja za provereni stranici">
-<!ENTITY noscriptAllowClipboard "Dozvoli tekst koj prepoznava kurziv(italic), zadebeleni bukvi (bold)kopiraj i prekopiraj od nadvoresno mesto koe ti sluzi za prenesuvanje na tekst ili slika (clipboard)">
+<!ENTITY noscriptAllowClipboard "Dozvoli tekst koj prepoznava kurziv, zadebeleni bukvi kopiraj i prekopiraj od nadvoresno mesto koe ti sluzi za prenesuvanje na tekst ili slika">
 <!ENTITY noscriptAdditionalRestrictions "Dodatni zabrani za neprovereni stranici">
 <!ENTITY noscriptForbidJava "Zabrani Java™">
 <!ENTITY noscriptForbidFlash "Zabrani Macromedia® Flash®">

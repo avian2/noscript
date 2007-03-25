@@ -46,3 +46,6 @@
 <!ENTITY noscriptTruncateTitle "Überlangen &quot;document.title&quot; kürzen (siehe Bug 319004)">
 <!ENTITY noscriptFixLinks "Versuchen, JavaScript-Links in normale Links umzuwandeln">
 <!ENTITY noscriptAllowBookmarks "Alle Websites aus den Lesezeichen erlauben">
+<!ENTITY noscriptAllowViaBookmarks "Aus Lesezeichen geöffnete Seiten erlauben">
+<!ENTITY noscriptAllowPing "Klick-Verfolgung über das PING-Attribut für Links erlauben">
+<!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">

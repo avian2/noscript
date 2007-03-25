@@ -46,5 +46,6 @@
 <!ENTITY noscriptTruncateTitle "Limitează titlurile documentelor">
 <!ENTITY noscriptFixLinks "Încearcă să repari legăturile JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permite toate siteurile din Semne de Carte">
+<!ENTITY noscriptAllowViaBookmarks "Permite toate siteurile din Semne de Carte">
 <!ENTITY noscriptAllowPing "Permite tagul &lt;a ping...&gt;">
 <!ENTITY noscriptForbidPing "Blochează tagul &lt;a ping...&gt;">

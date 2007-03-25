@@ -1086,6 +1086,8 @@ NoscriptService.prototype={
   forbidJava: false,
   forbidFlash: false,
   forbidPlugins: false, 
+  shouldLoad: function() { return 1; },
+  shouldProcess: function() { return 1; },
   initContentPolicy: function() {
     var delegate = (this.forbidSomePlugins && !this.getPref("global",false)) ? 
         (Components.interfaces.nsIContentPolicy.TYPE_OBJECT 

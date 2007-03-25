@@ -34,7 +34,7 @@ NoScriptOverlay.prototype={
 ,
   getSites: function(doc,sites,tagName) {
     try {
-      if(doc || (doc=this.srcWindow.document)) {
+      if(doc || (doc = this.srcWindow.document)) {
         const ns=this.ns;
         const lm=ns.lookupMethod;
         
@@ -126,9 +126,8 @@ NoScriptOverlay.prototype={
                   } catch(ex) {}
                 }
                 try {
-                  if(extras = ns.getPluginExtras(applet)) {
-                   
-                    
+                  extras = ns.getPluginExtras(applet);
+                  if(extras) {
                     div = createElem("div");
                     innerDiv = createElem("div");
                     title = (extras.mime ? extras.mime.replace("application/","")+"@":"@") + url;
@@ -225,24 +224,26 @@ NoScriptOverlay.prototype={
       }
     }
     
-    var jsURL;
-    if(href) {
-      jsURL = href.toLowerCase().indexOf("javascript:") == 0;
-      if(!(jsURL || href.indexOf("#") == 0)) return;
-    } else {
-      jsURL = false;
-    }
-    
-    var onclick = getAttr("onclick");
-    var fixedHref = fixedHref = (onclick && noscriptOverlay.extractLink(onclick)) || 
-                     (jsURL && noscriptOverlay.extractLink(href)) || "";
-    
-    if(fixedHref) {
-      setAttr("href", fixedHref);
-      var title = getAttr("title");
-      setAttr("title", title ? "[js] " + title : 
-        (onclick || "") + " " + href
-        );
+    if(ns.getPref("fixLinks", true)) {
+      var jsURL;
+      if(href) {
+        jsURL = href.toLowerCase().indexOf("javascript:") == 0;
+        if(!(jsURL || href.indexOf("#") == 0)) return;
+      } else {
+        jsURL = false;
+      }
+      
+      var onclick = getAttr("onclick");
+      var fixedHref = fixedHref = (onclick && noscriptOverlay.extractLink(onclick)) || 
+                       (jsURL && noscriptOverlay.extractLink(href)) || "";
+      
+      if(fixedHref) {
+        setAttr("href", fixedHref);
+        var title = getAttr("title");
+        setAttr("title", title ? "[js] " + title : 
+          (onclick || "") + " " + href
+          );
+      }
     }
   },
   
@@ -290,7 +291,7 @@ NoScriptOverlay.prototype={
     var opts=popup.getElementsByAttribute("type","checkbox");
     for(j=opts.length; j-->0;) {
       node=opts[j];
-      if((k=node.id.lastIndexOf("-opt-"))>-1) {
+      if((k = node.id.lastIndexOf("-opt-"))>-1) {
         node.setAttribute("checked",ns.getPref(node.id.substring(5+k)));
       }
     }
@@ -335,7 +336,7 @@ NoScriptOverlay.prototype={
     var jsPSs=ns.jsPolicySites;
     var matchingSite;
     var menuSites,menuSite,scount;
-    var domain,isIP,pos,lastPos,domParts,dpLen,dp,tlds;
+    var domain, isIP, pos, lastPos, domParts, dpLen, dp, tlds;
     const STLDS=ns.SPECIAL_TLDS;
     var domainDupChecker={
       prev: "",
@@ -372,17 +373,18 @@ NoScriptOverlay.prototype={
         menuSites=(showAddress || showNothing || !domain)?[site]:[];
         if(domain && (showDomain || showBase)) {
           isIP=/^[\d\.]+$/.test(domain);
-          if(isIP || (lastPos=domain.lastIndexOf('.'))<0
-            || (dpLen=(domParts=domain.split('.')).length)<3) {
+          if(isIP || (lastPos = domain.lastIndexOf('.')) < 0
+            || (dpLen = (domParts = domain.split('.')).length) < 3) {
             // IP or TLD or 2nd level domain
             if(!domainDupChecker.check(domain)) {
-              menuSites[menuSites.length]=domain;
+              menuSites[menuSites.length] = domain;
             }
           } else {
             // Special TLD (co.uk, co.nz...) or normal domain
-            dp=domParts[dpLen-2];
-            if(tlds=STLDS[dp]) {
-              if(dp == "com" || tlds.indexOf(" " + domParts[dpLen - 1] + " ")>-1) {
+            dp = domParts[dpLen-2];
+            tlds = STLDS[dp];
+            if(tlds) {
+              if(dp == "com" || tlds.indexOf(" " + domParts[dpLen - 1] + " ") > -1) {
                 if(dp != "uk" || 
                   (lastPos = domain.lastIndexOf(".here.co.uk")) != 
                       domain.length - 10) {
@@ -524,7 +526,7 @@ NoScriptOverlay.prototype={
   }
 ,
   get messageBoxPos() {
-    return this.ns.getPref("notify.bottom",false)?"bottom":"top";
+    return this.ns.getPref("notify.bottom",false) ? "bottom" : "top";
   }
 ,
   getMessageBox: function(pos) {
@@ -626,7 +628,7 @@ NoScriptOverlay.prototype={
                 buttonLabel, null,
                 null, "noscript-notify-popup",this.messageBoxPos,true,
                 buttonAccesskey);
-              const delay = (ns.getPref("notify.hide") && ns.getPref("notify.delayHide",3)) || 0;
+              const delay = (ns.getPref("notify.hide") && ns.getPref("notify.hideDelay", 3)) || 0;
               if(delay) {
                 window.clearTimeout(this.notifyHideTimeout);
                 this.notifyHideTimeout = window.setTimeout(
@@ -702,7 +704,8 @@ const noscriptOverlayPrefsObserver = {
        case "notify.bottom" : 
        var mb=noscriptOverlay.getMessageBox("top");
        if(mb) mb.hidden=true;
-       if(mb=noscriptOverlay.getMessageBox("bottom")) mb.hidden=true;
+       mb = noscriptOverlay.getMessageBox("bottom");
+       if(mb) mb.hidden=true;
        break;
       
     }
@@ -765,48 +768,14 @@ function _noScript_prepareCtxMenu(ev) {
     noscriptOverlay.prepareContextMenu(ev);
 }
 
-function _noScript_openOneBookmark(aURI, aTargetBrowser, aDS) {
-  const ns = noscriptUtil.service;
-  var snapshot = "";
-  if(aTargetBrowser == "current" && !(ns.getPref("forbidBookmarklets", false)  || ns.jsEnabled)) {
-    var ncNS = typeof(gNC_NS) == "undefined" ? ( typeof(NC_NS) == "undefined" ?
-      "http://home.netscape.com/NC-rdf#" : NC_NS ) : gNC_NS;
-    var url = BookmarksUtils.getProperty(aURI, ncNS+"URL", aDS);
-    if(!url) return;
-    var caughtEx = null;
-    try {
-      if(url.toLowerCase().indexOf("javascript:") == 0) {
-        var browser = getBrowser().selectedBrowser;
-        var site = ns.getSite(noscriptOverlay.srcDocument.documentURI);
-        if(browser && !ns.isJSEnabled(site)) {
-          snapshot = ns.jsPolicySites.sitesString;
-          try {
-            ns.setJSEnabled(site, true);
-            browser.loadURI(url);
-          } catch(ex) {
-            caughtEx = ex;
-          }
-          ns.flushCAPS(snapshot);
-          if(caughtEx) throw caughtEx;
-          return;
-        }
-      }
-    } catch(silentEx) {
-      dump(silentEx);
-    }
-  }
-  this._noScript_openOneBookmark_originalMethod(aURI, aTargetBrowser, aDS);
-}
 
 
 function _noScript_onloadInstall(ev) {
   document.getElementById("contentAreaContextMenu")
           .addEventListener("popupshowing",_noScript_prepareCtxMenu,false);
-  BookmarksCommand._noScript_openOneBookmark_originalMethod = BookmarksCommand.openOneBookmark;
-  BookmarksCommand.openOneBookmark = _noScript_openOneBookmark;
 }
 
-const _noScript_syncEvents=["load","focus"];
+const _noScript_syncEvents=["load", "focus"];
 _noScript_syncEvents.visit=function(callback) {
   for(var e=0,len=this.length; e<len; e++) {
     callback.call(window,this[e],_noScript_syncUI,true);

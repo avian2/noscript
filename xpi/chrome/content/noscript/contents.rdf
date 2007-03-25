@@ -8,7 +8,7 @@
     </RDF:Seq>
 
     <RDF:Description about="urn:mozilla:package:noscript"
-            chrome:displayName="NoScript 1.1.3.9"
+            chrome:displayName="NoScript 1.1.4"
             chrome:author="Giorgio Maone (InformAction)"
             chrome:authorURL="http://www.informaction.com/mozilla/noscript"
             chrome:name="noscript"
@@ -19,18 +19,40 @@
   <RDF:Seq about="urn:mozilla:overlays">
     <RDF:li resource="chrome://navigator/content/navigatorOverlay.xul"/>
     <RDF:li resource="chrome://browser/content/browser.xul"/>
+    <RDF:li resource="chrome://browser/content/bookmarks/bookmarksManager.xul" />
+    <RDF:li resource="chrome://browser/content/bookmarks/bookmarksPanel.xul" />
+    <RDF:li resource="chrome://communicator/content/bookmarks/bookmarksManager.xul" />
+    <RDF:li resource="chrome://communicator/content/bookmarks/bm-panel.xul" />
     <!-- <RDF:li resource="chrome://browser/content/preferences/content.xul"/> --> <!-- FF 1.1 -->
     <RDF:li resource="chrome://browser/content/pref/pref-features.xul"/> <!-- FF 1.0 -->
-  </RDF:Seq>
+  
+    </RDF:Seq>
   
   <RDF:Seq about="chrome://browser/content/browser.xul">
     <RDF:li>chrome://noscript/content/noscriptOverlay.xul</RDF:li>
   </RDF:Seq>
+   
+  <RDF:Seq about="chrome://browser/content/bookmarks/bookmarksManager.xul">
+      <RDF:li>chrome://noscript/content/noscriptBMOverlay.xul</RDF:li>
+   </RDF:Seq>
+   <RDF:Seq about="chrome://browser/content/bookmarks/bookmarksPanel.xul">
+      <RDF:li>chrome://noscript/content/noscriptBMOverlay.xul</RDF:li>
+   </RDF:Seq>
+   
+   <RDF:Seq about="chrome://communicator/content/bookmarks/bookmarksManager.xul">
+      <RDF:li>chrome://noscript/content/noscriptBMOverlay.xul</RDF:li>
+   </RDF:Seq>
+   <RDF:Seq about="chrome://communicator/content/bookmarks/bm-panel.xul">
+      <RDF:li>chrome://noscript/content/noscriptBMOverlay.xul</RDF:li>
+   </RDF:Seq>
+   
+   
   <!--
   <RDF:Seq about="chrome://browser/content/preferences/content.xul">
     <RDF:li>chrome://noscript/content/prefContent.xul</RDF:li>
   </RDF:Seq>
   -->
+  
   <RDF:Seq about="chrome://browser/content/pref/pref-features.xul">
     <RDF:li>chrome://noscript/content/prefContent.xul</RDF:li>
   </RDF:Seq>
@@ -39,4 +61,6 @@
     <RDF:li>chrome://noscript/content/noscriptOverlay.xul</RDF:li>
   </RDF:Seq>
 	
+  
+  
 </RDF:RDF>

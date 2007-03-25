@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay>
+
+<overlay id="noscriptBMOverlay" 
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="noscript.js" />
+  <script type="application/x-javascript" src="noscriptBM.js"/>
+</overlay>

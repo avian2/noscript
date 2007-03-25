@@ -1,5 +1,17 @@
 NoScript ChangeLog
 
+v 1.1.4
+=====================================================================
++ "Allow sites opened through bookmarks" option
++ Notification delay in seconds can be changed through the
+  "noscript.notify.hideDelay" about:config preference
+x Removed bogus JS messages on SeaMonkey startup
+x Fixed bookmarklet support to work with the new "Places" code,
+  the bookmark sidebar and the bookmark manager
+x Added mozilla.com to the default whitelist
+x Always honour "Attempt to fix JavaScript links" option (links
+  were processed anyway if "Forbid <a...ping>" was enabled)
+
 v 1.1.3.9
 =====================================================================
 x Fixed temporary memory leak when loading pages containing plugins
