@@ -1,0 +1,48 @@
+<!ENTITY noscriptOptions "Opţiuni...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "Particularizare NoScript">
+<!ENTITY noscriptAbout "Despre NoScript">
+<!ENTITY noscriptPermissionsText "Puteţi să specificaţi paginile web care pot să execute scripturi. Scrieţi adresa (de exemplu &quot;http://www.site.com&quot;) sau domeniul (&quot;site.com&quot;) paginii, apoi apăsaţi pe butonul Permite.">
+<!ENTITY noscriptWebAddress "Adresa paginii web:">
+<!ENTITY noscriptAllow "Permite">
+<!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptRemoveSelected "Şterge din listă paginile selectate">
+<!ENTITY noscriptGloballyEnabled "JavaScript activat global (riscant)">
+<!ENTITY noscriptAutoReload "Reîncarcă automat paginile atunci când permisiunile se schimbă">
+<!ENTITY noscriptGeneral "General">
+<!ENTITY noscriptAppearance "Vizualizare">
+<!ENTITY noscriptShow "Arată...">
+<!ENTITY noscriptCtxMenu "Meniu contextual">
+<!ENTITY noscriptStatusIcon "Pictogramă pe bara de stare">
+<!ENTITY noscriptFullAddr "Adrese complete (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Nume domeniu complete (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Nume domeniu de nivel 2 (noscript.net)">
+<!ENTITY noscriptTempCmd "Permite temporar [...]">
+<!ENTITY noscriptSound "Atenţionează sonor când scripturile sunt blocate">
+<!ENTITY noscriptImport "Import">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Export">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Afişează un mesaj când scripturile sunt blocate">
+<!ENTITY noscriptNotify.bottom "Poziţionează mesajul în partea de jos a ferestrei">
+<!ENTITY noscriptSound.choose "Alege...">
+<!ENTITY noscriptSound.choose.accesskey "A">
+<!ENTITY noscriptSound.play "Redare">
+<!ENTITY noscriptSound.play.accesskey "R">
+<!ENTITY noscriptSound.reset "Resetează la original">
+<!ENTITY noscriptSound.reset.accesskey "E">
+<!ENTITY noscriptAdvanced "Avansat">
+<!ENTITY noscriptAdditionalPermissions "Permisiuni suplimentare pentru paginile de încredere">
+<!ENTITY noscriptAllowClipboard "Permite copiere text îmbogăţit din clipboard extern">
+<!ENTITY noscriptAdditionalRestrictions "Restricţii suplimentare pentru paginile nesigure">
+<!ENTITY noscriptForbidJava "Blochează Java™">
+<!ENTITY noscriptForbidFlash "Blochează Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Blochează alte pluginuri">
+<!ENTITY noscriptReloadWarn "Aceste opţiuni vor avea efect în paginile nou deschise sau reîncărcate (manual).">
+<!ENTITY noscriptConfirmUnblock "Cere confirmare înainte de a debloca un obiect">
+<!ENTITY noscriptStatusLabel "Etichetă pe bara de stare">
+<!ENTITY noscriptForbidBookmarklets "Blochează bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Arată pictograma (placeholder)">
+<!ENTITY noscriptTruncateTitle "Limitează titlurile documentelor">
+<!ENTITY noscriptFixLinks "Încearcă să repari legăturile JavaScript">
+<!ENTITY noscriptAllowBookmarks "Permite toate siteurile din Semne de Carte">

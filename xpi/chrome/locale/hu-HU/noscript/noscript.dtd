@@ -1,0 +1,48 @@
+<!ENTITY noscriptOptions "Beállítások...">
+<!ENTITY noscriptOptions.accesskey "B">
+<!ENTITY noscriptOptionsLong "A NoScript beállításai">
+<!ENTITY noscriptAbout "A NoScript névjegye">
+<!ENTITY noscriptPermissionsText "Megadhatja, hogy mely webhelyek számára engedélyezi a parancsfájlok futtatását. Írja be az engedélyezni kívánt webhely címét vagy tartománynevét (pl. &quot;http://www.webhely.hu&quot; vagy &quot;webhely.hu&quot;), majd kattintson az Engedélyezés gombra.">
+<!ENTITY noscriptWebAddress "A webhely címe:">
+<!ENTITY noscriptAllow "Engedélyezés">
+<!ENTITY noscriptAllow.accesskey "E">
+<!ENTITY noscriptRemoveSelected "A kiválasztott helyek eltávolítása">
+<!ENTITY noscriptGloballyEnabled "A parancsfájlok általános futtatása engedélyezett (veszélyes)">
+<!ENTITY noscriptAutoReload "Az érintett oldalak automatikus újratöltése az engedélyek megváltoztatásakor">
+<!ENTITY noscriptGeneral "Általános">
+<!ENTITY noscriptAppearance "Megjelenés">
+<!ENTITY noscriptShow "Megjelenítés...">
+<!ENTITY noscriptCtxMenu "Helyi menü">
+<!ENTITY noscriptStatusIcon "Ikon az állapotsoron">
+<!ENTITY noscriptFullAddr "Teljes címek (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Teljes tartományok (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Alap 2. szintű tartományok (noscript.net)">
+<!ENTITY noscriptTempCmd "Ideiglenes engedélyezés [...]">
+<!ENTITY noscriptSound "Hangjelzés a parancsfájlok blokkolásakor">
+<!ENTITY noscriptImport "Importálás">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exportálás">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Üzenet megjelenítése a blokkolt parancsfájlokról">
+<!ENTITY noscriptNotify.bottom "Az üzenet alulra helyezése">
+<!ENTITY noscriptSound.choose "Választás">
+<!ENTITY noscriptSound.choose.accesskey "V">
+<!ENTITY noscriptSound.play "Lejátszás">
+<!ENTITY noscriptSound.play.accesskey "e">
+<!ENTITY noscriptSound.reset "Alaphelyzet">
+<!ENTITY noscriptSound.reset.accesskey "A">
+<!ENTITY noscriptAdvanced "Speciális">
+<!ENTITY noscriptAdditionalPermissions "A megbízható helyek további engedélyei">
+<!ENTITY noscriptAllowClipboard "A rich text másolás és a külső vágólapról történő beillesztés engedélyezése">
+<!ENTITY noscriptAdditionalRestrictions "A megbízhatatlan helyek további korlátozásai">
+<!ENTITY noscriptForbidJava "A Java™ tiltása">
+<!ENTITY noscriptForbidFlash "A Macromedia® Flash® tiltása">
+<!ENTITY noscriptForbidPlugins "Egyéb beépülő modulok tiltása">
+<!ENTITY noscriptReloadWarn "Ezek a beállítások új vagy (kézzel) újratöltött oldalaknál lépnek érvénybe">
+<!ENTITY noscriptConfirmUnblock "Megerősítés kérése egy objektum ideiglenes feloldása előtt">
+<!ENTITY noscriptStatusLabel "Az állapotsor címkéje">
+<!ENTITY noscriptForbidBookmarklets "A bookmarkletek letiltása">
+<!ENTITY noscriptShowPlaceholder "A helyőrző ikon megjelenítése">
+<!ENTITY noscriptTruncateTitle "A dokumentumok címeinek lerövidítése">
+<!ENTITY noscriptFixLinks "Kísérlet a JavaScript hivatkozások javítására">
+<!ENTITY noscriptAllowBookmarks "A könyvjelzőkben található összes webhely engedélyezése">

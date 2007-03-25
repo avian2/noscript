@@ -2,12 +2,12 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Options de NoScript">
 <!ENTITY noscriptAbout "À propos de NoScript">
-<!ENTITY noscriptPermissionsText "Il est possible de spécifier quels sites Web sont autorisés à exécuter des scripts Javascript. Saisissez l'adresse exacte du site que vous désirez autoriser puis cliquez sur Autoriser.">
+<!ENTITY noscriptPermissionsText "Il est possible de spécifier quels sites Web sont autorisés à exécuter des scripts. Saisissez l'adresse exacte du site que vous désirez autoriser puis cliquez sur Autoriser.">
 <!ENTITY noscriptWebAddress "Adresse du site Web :">
 <!ENTITY noscriptAllow "Autoriser">
 <!ENTITY noscriptAllow.accesskey "A">
 <!ENTITY noscriptRemoveSelected "Enlever les sites sélectionnés">
-<!ENTITY noscriptGloballyEnabled "Autoriser Javascript globalement (dangereux)">
+<!ENTITY noscriptGloballyEnabled "Autoriser les scripts globalement (dangereux)">
 <!ENTITY noscriptAutoReload "Recharger les pages affectées automatiquement après avoir changé les permissions">
 <!ENTITY noscriptGeneral "Général">
 <!ENTITY noscriptAppearance "Apparence">
@@ -33,7 +33,7 @@
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "Avancé">
 <!ENTITY noscriptAdditionalPermissions "Permissions supplémentaires pour les sites de confiance">
-<!ENTITY noscriptAllowClipboard "Autoriser le copier/coller de texte riche du presse papier">
+<!ENTITY noscriptAllowClipboard "Autoriser le copier/coller de texte riche du presse-papier">
 <!ENTITY noscriptAdditionalRestrictions "Restrictions supplémentaires pour les sites à risque">
 <!ENTITY noscriptForbidJava "Interdire Java™">
 <!ENTITY noscriptForbidFlash "Interdire Macromedia® Flash®">
@@ -43,3 +43,6 @@
 <!ENTITY noscriptStatusLabel "Étiquette dans la barre d'état">
 <!ENTITY noscriptForbidBookmarklets "Interdire les bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Afficher l'emplacement fictif de l'objet bloqué">
+<!ENTITY noscriptTruncateTitle "Tronquer le titre des documents">
+<!ENTITY noscriptFixLinks "Essayer de réparer les liens javascript">
+<!ENTITY noscriptAllowBookmarks "Autoriser tous les sites trouvés dans les marque-pages">

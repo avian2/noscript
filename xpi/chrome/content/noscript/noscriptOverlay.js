@@ -168,6 +168,12 @@ NoScriptOverlay.prototype={
               }
             }
           }
+          if((!doc._noscript_patch) && 
+              (ns.getPref("fixLinks", true) || ns.getPref("noping", true))
+              && !ns.isJSEnabled(ns.getSite(url))) {
+            doc._noscript_patch = true;
+            doc.addEventListener("click", this.fixLink, true);
+          }
           
           sites=this.getSites(doc, sites, 'frame');
           sites=this.getSites(doc, sites, 'iframe');
@@ -194,6 +200,55 @@ NoScriptOverlay.prototype={
       sites.pluginCount=0;
     }
     return sites;
+  },
+  
+  fixLink: function(ev) {
+    const ns = noscriptOverlay.ns;
+    const lm = ns.lookupMethod;
+    
+    var a = ev.target;
+    
+    while(!(a instanceof HTMLAnchorElement || a instanceof HTMLMapElement)) {
+      if(!(a = a.parentNode)) return;
+    }
+    
+    const getAttr = lm(a, "getAttribute");
+    const setAttr = lm(a, "setAttribute");
+    
+    const href = getAttr("href");
+    
+    if(ns.getPref("noping", true)) {
+      var ping = getAttr("ping");
+      if(ping) {
+        lm(a, "removeAttribute")("ping");
+        setAttr("noping", ping);
+      }
+    }
+    
+    var jsURL;
+    if(href) {
+      jsURL = href.toLowerCase().indexOf("javascript:") == 0;
+      if(!(jsURL || href.indexOf("#") == 0)) return;
+    } else {
+      jsURL = false;
+    }
+    
+    var onclick = getAttr("onclick");
+    var fixedHref = fixedHref = (onclick && noscriptOverlay.extractLink(onclick)) || 
+                     (jsURL && noscriptOverlay.extractLink(href)) || "";
+    
+    if(fixedHref) {
+      setAttr("href", fixedHref);
+      var title = getAttr("title");
+      setAttr("title", title ? "[js] " + title : 
+        (onclick || "") + " " + href
+        );
+    }
+  },
+  
+  extractLink: function(js) {
+    var match = js.match(/['"]([\/\w-\?\.#%=&:@]+)/);
+    return match && match[1];
   }
 ,
   get prompter() {
@@ -259,7 +314,7 @@ NoScriptOverlay.prototype={
     }
     
     delete separators;
-    const miGlobal=globalSep.nextSibling;
+    const miGlobal = globalSep.nextSibling;
     miGlobal.setAttribute("label",this.getString((global?"forbid":"allow")+"Global"));
     miGlobal.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!global)+")");
     miGlobal.setAttribute("tooltiptext",document.getElementById("noscript-statusIcon").getAttribute("tooltiptext"));
@@ -759,8 +814,8 @@ _noScript_syncEvents.visit=function(callback) {
 }
 function _noScript_install() {
   _noScript_syncEvents.visit(window.addEventListener);
-  window.addEventListener("load",_noScript_onloadInstall,false);
-  window.addEventListener("unload",_noScript_dispose,false);
+  window.addEventListener("load", _noScript_onloadInstall,false);
+  window.addEventListener("unload", _noScript_dispose,false);
   noscriptOverlayPrefsObserver.register();
 }
 

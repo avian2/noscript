@@ -43,3 +43,6 @@
 <!ENTITY noscriptStatusLabel "Informações na barra de estado">
 <!ENTITY noscriptForbidBookmarklets "Proibir bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Mostrar ícone de substituição">
+<!ENTITY noscriptTruncateTitle "Quebrar títulos dos documentos">
+<!ENTITY noscriptFixLinks "Tentar corrigir links JavaScript">
+<!ENTITY noscriptAllowBookmarks "Permitir todos os sites que se encontrem nos Marcadores">

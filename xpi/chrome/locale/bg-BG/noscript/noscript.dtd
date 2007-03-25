@@ -43,4 +43,6 @@
 <!ENTITY noscriptStatusLabel "Обозначение в статус лентата">
 <!ENTITY noscriptForbidBookmarklets "Забрани bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Покажи иконата">
-
+<!ENTITY noscriptTruncateTitle "Truncate document titles">
+<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">

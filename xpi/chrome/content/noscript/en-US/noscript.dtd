@@ -2,12 +2,12 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript Options">
 <!ENTITY noscriptAbout "About NoScript">
-<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute JavaScript. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
+<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
 <!ENTITY noscriptWebAddress "Address of web site:">
 <!ENTITY noscriptAllow "Allow">
 <!ENTITY noscriptAllow.accesskey "A">
 <!ENTITY noscriptRemoveSelected "Remove Selected Sites">
-<!ENTITY noscriptGloballyEnabled "JavaScript Globally Allowed (dangerous)">
+<!ENTITY noscriptGloballyEnabled "Scripts Globally Allowed (dangerous)">
 <!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
 <!ENTITY noscriptGeneral "General">
 <!ENTITY noscriptAppearance "Appearance">
@@ -44,4 +44,7 @@
 <!ENTITY noscriptForbidBookmarklets "Forbid bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Show placeholder icon">
 <!ENTITY noscriptTruncateTitle "Truncate document titles">
-
+<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">
+<!ENTITY noscriptAllowPing "Allow &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Forbid &lt;a ping...&gt;">

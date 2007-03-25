@@ -42,15 +42,22 @@ function nso_init() {
   g_policySites=g_serv.jsPolicySites.clone();
   nso_populateUrlList();
   g_jsglobal.setAttribute("checked",g_serv.jsEnabled);
- 
+  
+  document.getElementById("mozopt-browser.send_pings")
+          .setAttribute("label", noscriptUtil.getString("allowLocal", ["<a ping...>"]));
+  document.getElementById("opt-noping")
+          .setAttribute("label", noscriptUtil.getString("forbidLocal", ["<a ping...>"]));
+  
   visitCheckboxes(
-    function(prefName,inverse,checkbox) {
-      var val=g_serv.getPref(prefName);
-      checkbox.setAttribute("checked",inverse?!val:val);
+    function(prefName, inverse, checkbox, mozilla) {
+      try {
+        val = mozilla ? g_serv.prefService.getBoolPref(prefName) : g_serv.getPref(prefName);
+        checkbox.setAttribute("checked",inverse ? !val: val);
+      } catch(ex) {}
     }
   );
 
-  document.getElementById("opt-showTemp").setAttribute("label",noscriptUtil.getString("allowTemp",["[...]"]));
+  document.getElementById("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp",["[...]"]));
   
   document.getElementById("opt-notify.hide").setAttribute("label",
            noscriptUtil.getString("notifyHide",[g_serv.getPref("notify.hideDelay",3)]));
@@ -146,13 +153,19 @@ function nso_remove() {
 
 function nso_save() {
   visitCheckboxes(
-    function(prefName,inverse,checkbox) {
+    function(prefName, inverse, checkbox, mozilla) {
       if(checkbox.getAttribute("collapsed")!="true") {
         const checked=checkbox.getAttribute("checked")=="true";
-        const requestedVal=inverse?!checked:checked;
+        const requestedVal=inverse? !checked : checked;
+        
+        if(mozilla) {
+          g_serv.prefService.setBoolPref(prefName, requestedVal);
+          return;
+        }
+        
         const prevVal=g_serv.getPref(prefName);
         if(requestedVal!=prevVal) {
-          g_serv.setPref(prefName,requestedVal);
+          g_serv.setPref(prefName, requestedVal);
         }
       }
     }
@@ -244,13 +257,13 @@ function nso_export(file) {
 
 
 function visitCheckboxes(callback) {
-  const rxOpt=/^(inv|)opt-(.*)/;
+  const rxOpt=/^(inv|moz|)opt-(.*)/;
   var j,checkbox,match;
   const opts=document.getElementsByTagName("checkbox");
   for(j=opts.length; j-->0;) {
     checkbox=opts[j];
     if(match=checkbox.id.match(rxOpt)) {
-      callback(match[2],match[1]=="inv",checkbox);
+      callback(match[2],match[1]=="inv",checkbox,match[1]=="moz");
     }
   }
 }

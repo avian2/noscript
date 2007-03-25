@@ -1,0 +1,46 @@
+<!ENTITY noscriptOptions "Indstillinger...">
+<!ENTITY noscriptOptions.accesskey "I">
+<!ENTITY noscriptOptionsLong "NoScript indstillinger">
+<!ENTITY noscriptAbout "Om NoScript">
+<!ENTITY noscriptPermissionsText "Du kan angive hvilke hjemmesider der har tilladelse til at køre JavaScript. Indtast adressen eller domænet (f.eks. "http://www.site.com" eller "site.com") på siden du vil give tilladelse, og klik da på Tillad.">
+<!ENTITY noscriptWebAddress "Adressen til hjemmesiden:">
+<!ENTITY noscriptAllow "Tillad">
+<!ENTITY noscriptAllow.accesskey "T">
+<!ENTITY noscriptRemoveSelected "Fjern valgte sider.">
+<!ENTITY noscriptGloballyEnabled "JavaScript er tilladt globalt (farligt)">
+<!ENTITY noscriptAutoReload "Genindlæs automatisk de berørte sider når tilladelserne ændrer sig">
+<!ENTITY noscriptGeneral "Generelt">
+<!ENTITY noscriptAppearance "Udseende">
+<!ENTITY noscriptShow "Vis...">
+<!ENTITY noscriptCtxMenu "Genvejs menu">
+<!ENTITY noscriptStatusIcon "Status bar ikon">
+<!ENTITY noscriptFullAddr "Fulde adresser (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Fulde domæner (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Base 2. niveau domæner (noscript.net)">
+<!ENTITY noscriptTempCmd "Tillad midlertidigt [...]">
+<!ENTITY noscriptSound "Afspil lyd når scripts bliver blokeret">
+<!ENTITY noscriptImport "Importer">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Eksporter">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Vis besked om blokerede scripts">
+<!ENTITY noscriptNotify.bottom "Placer beskeden i bunden">
+<!ENTITY noscriptSound.choose "Vælg">
+<!ENTITY noscriptSound.choose.accesskey "V">
+<!ENTITY noscriptSound.play "Afspil">
+<!ENTITY noscriptSound.play.accesskey "A">
+<!ENTITY noscriptSound.reset "Nulstil">
+<!ENTITY noscriptSound.reset.accesskey "N">
+<!ENTITY noscriptAdvanced "Avanceret">
+<!ENTITY noscriptAdditionalPermissions "Yderligere tilladelser til sider du har tillid til">
+<!ENTITY noscriptAllowClipboard "Tillad kopiering og indsættelse af Rig Tekst fra ekstern udklipsholder">
+<!ENTITY noscriptAdditionalRestrictions "Yderligere restriktioner til sider du ikke har tillid til">
+<!ENTITY noscriptForbidJava "Forbyd Java™">
+<!ENTITY noscriptForbidFlash "Forbyd Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Forbyd andre plugins">
+<!ENTITY noscriptReloadWarn "Disse indstillinger vil virke på nye eller (manuelt) genindlæste sider">
+<!ENTITY noscriptConfirmUnblock "Spørg efter bekræftelse inden midlertidig ublokering af et objekt">
+<!ENTITY noscriptStatusLabel "Status bar tekst">
+<!ENTITY noscriptForbidBookmarklets "Forbyd bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Vis pladsholder ikon">
+<!ENTITY noscriptTruncateTitle "Forkort dokument titler">

@@ -2,13 +2,13 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Configuración de NoScript">
 <!ENTITY noscriptAbout "Acerca de NoScript">
-<!ENTITY noscriptPermissionsText "Aquí puedes especificar las páginas web a las que quieres permitir ejecutar código JavaScript. Escribe la dirección de la web que quieres incluir, y después haz clic en &quot;Permitir&quot; (ej. &quot;http://www.paginaweb.com&quot; o &quot;paginaweb.com&quot;).">
+<!ENTITY noscriptPermissionsText "Aquí puedes especificar las páginas web a las que quieres permitir ejecutar código JavaScript. Escribe la dirección de la web que quieres incluir, y después haz clic en 'Permitir' (ej. 'http://www.paginaweb.com' o 'paginaweb.com').">
 <!ENTITY noscriptWebAddress "Dirección de la web:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">
-<!ENTITY noscriptRemoveSelected "Quitar web(s) seleccionada(s)">
+<!ENTITY noscriptRemoveSelected "Eliminar web(s) seleccionada(s)">
 <!ENTITY noscriptGloballyEnabled "Permitir JavaScript Globalmente (peligroso)">
-<!ENTITY noscriptAutoReload "Recargar automáticamente la página al cambiarle los permisos">
+<!ENTITY noscriptAutoReload "Recargar página automáticamente tras cambiar permisos">
 <!ENTITY noscriptGeneral "General">
 <!ENTITY noscriptAppearance "Apariencia">
 <!ENTITY noscriptShow "Mostrar...">
@@ -18,7 +18,7 @@
 <!ENTITY noscriptFullDom "Dominios completos (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Dominios de segundo nivel (noscript.net)">
 <!ENTITY noscriptTempCmd "Permitir temporalmente [...]">
-<!ENTITY noscriptSound "Sonido de aviso al bloquear scripts">
+<!ENTITY noscriptSound "Aviso acústico al bloquear scripts">
 <!ENTITY noscriptImport "Importar">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exportar">
@@ -40,7 +40,9 @@
 <!ENTITY noscriptForbidPlugins "Bloquear otros plugins">
 <!ENTITY noscriptReloadWarn "Estas opciones tendrán efecto en ventanas nuevas o tras recargar la página">
 <!ENTITY noscriptConfirmUnblock "Pedir confirmación antes de desbloquear temporalmente un objeto">
-<!ENTITY noscriptStatusLabel "Etiqueta en la barra de estado de Firefox">
+<!ENTITY noscriptStatusLabel "Etiqueta en la barra de estado">
 <!ENTITY noscriptForbidBookmarklets "Bloquear Bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Mostrar icono por tipo de objeto">
-
+<!ENTITY noscriptShowPlaceholder "Mostrar indicador de objeto bloqueado (placeholder)">
+<!ENTITY noscriptTruncateTitle "Truncar títulos de documentos">
+<!ENTITY noscriptFixLinks "Intentar corregir enlaces JavaScript">
+<!ENTITY noscriptAllowBookmarks "Permitir todas las web presentes en Marcadores">

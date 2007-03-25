@@ -1,0 +1,46 @@
+<!ENTITY noscriptOptions "Opcii">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "Opcii na NoScript">
+<!ENTITY noscriptAbout "Za NoScript">
+<!ENTITY noscriptPermissionsText "Mozete da gi specificirate koi stranici sakate da bidat izvrsuvani od Java Script.Napisete ja adresata na domenot (pr."http://www.site.com" ili "site.com")sto sakate da bide dozvolena i kliknete Dozvoli">
+<!ENTITY noscriptWebAddress "Adresa na veb stranicata">
+<!ENTITY noscriptAllow "Dozvoli">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptRemoveSelected "Trgni gi Selektiranite Stranici">
+<!ENTITY noscriptGloballyEnabled "Globalno Dozvolen Java Script (opasno)">
+<!ENTITY noscriptAutoReload "Avtomatsko povtorno lodiranje na somnitelnite stranici koga odobruvanjata se menuvaat">
+<!ENTITY noscriptGeneral "Opsto">
+<!ENTITY noscriptAppearance "Izgled">
+<!ENTITY noscriptShow "Pokazete...">
+<!ENTITY noscriptCtxMenu "Kontekstualno meni">
+<!ENTITY noscriptStatusIcon "Ikona na statusnata linija">
+<!ENTITY noscriptFullAddr "Kompletni(polni) adresi (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Kompletni(polni) domeni(http://www.noscript.net)">
+<!ENTITY noscriptBaseDom "Vtor stepen na domenot (noscript.net)">
+<!ENTITY noscriptTempCmd "Privremeno dozvoli (...)">
+<!ENTITY noscriptSound "Audio povratna vrska koga skriptovite se blokirani">
+<!ENTITY noscriptImport "Vnesuvanje">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Iznesuvanje">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Pokazi poraka za blokirani skriptovi">
+<!ENTITY noscriptNotify.bottom "Smesti ja porakata na dnoto">
+<!ENTITY noscriptSound.choose "Odberi">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Pusti">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Vrati go na difolt">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Napredno">
+<!ENTITY noscriptAdditionalPermissions "Dodatni odobruvanja za provereni stranici">
+<!ENTITY noscriptAllowClipboard "Dozvoli tekst koj prepoznava kurziv(italic), zadebeleni bukvi (bold)kopiraj i prekopiraj od nadvoresno mesto koe ti sluzi za prenesuvanje na tekst ili slika (clipboard)">
+<!ENTITY noscriptAdditionalRestrictions "Dodatni zabrani za neprovereni stranici">
+<!ENTITY noscriptForbidJava "Zabrani Java™">
+<!ENTITY noscriptForbidFlash "Zabrani Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Zabrani dodatni moduli (plugins)">
+<!ENTITY noscriptReloadWarn "Ovie opcii ce se aktiviraat na novo ili (racno) povtorno lodiranje na stranicite">
+<!ENTITY noscriptConfirmUnblock "Prasaj za odobruvanje pred privremeno odblokiranje na objektot">
+<!ENTITY noscriptStatusLabel "Etiketata naStatusna linija">
+<!ENTITY noscriptForbidBookmarklets "Zabrani zacuvuvanje na linkot">
+<!ENTITY noscriptShowPlaceholder "Pokazi ja ikonata na plejsholderot">
+<!ENTITY noscriptTruncateTitle "Skrati gi naslovite na dokumentite">

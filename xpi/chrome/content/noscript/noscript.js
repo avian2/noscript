@@ -9,8 +9,7 @@ NoscriptUtil.prototype={
     var s=null;
     for(var attempt=1; attempt<=2;attempt++) {
       try {
-       s=Components.classes["@maone.net/noscript-service;1"
-          ].getService(Components.interfaces.nsISupports).wrappedJSObject;
+       s = Components.classes["@maone.net/noscript-service;1"].getService().wrappedJSObject;
        break;
       } catch(ex) {
         dump(ex.message);

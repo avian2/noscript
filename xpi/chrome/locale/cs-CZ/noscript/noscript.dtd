@@ -1,8 +1,8 @@
 <!ENTITY noscriptOptions "Nastavení...">
 <!ENTITY noscriptOptions.accesskey "N">
-<!ENTITY noscriptOptionsLong "Nastavení NoScript ">
+<!ENTITY noscriptOptionsLong "Nastavení NoScript">
 <!ENTITY noscriptAbout "O rozšíření NoScript">
-<!ENTITY noscriptPermissionsText "Můžete si zvolit, které webové stránky mají povoleno spouštět JavaScript. Zadejte adresu domény (např. &quot;http://www.site.com&quot; nebo &quot;site.com&quot;) na které se nachází stránka, pro kterou chcete JavaScript povolit a klepněte na Povolit.">
+<!ENTITY noscriptPermissionsText "Můžete si zvolit, které webové stránky mají povoleno spouštět skripty. Zadejte adresu (např. http://www.site.com nebo site.com) na které se nachází stránka, pro kterou chcete skripty povolit a klepněte na Povolit.">
 <!ENTITY noscriptWebAddress "Adresa webové stránky:">
 <!ENTITY noscriptAllow "Povolit">
 <!ENTITY noscriptAllow.accesskey "P">
@@ -12,10 +12,10 @@
 <!ENTITY noscriptGeneral "Obecné">
 <!ENTITY noscriptAppearance "Zobrazení">
 <!ENTITY noscriptShow "Zobrazit...">
-<!ENTITY noscriptCtxMenu "Místní nabídka ">
+<!ENTITY noscriptCtxMenu "Místní nabídka">
 <!ENTITY noscriptStatusIcon "Ikona ve stavovém řádku">
-<!ENTITY noscriptFullAddr "Celé adresy (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Celé domény (www.noscript.net)">
+<!ENTITY noscriptFullAddr "Úplné adresy (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Úplné domény (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Domény druhého řádu (noscript.net)">
 <!ENTITY noscriptTempCmd "Dočasně povolit [...]">
 <!ENTITY noscriptSound "Přehrát zvuk pokud jsou skripty zablokovány">
@@ -23,7 +23,7 @@
 <!ENTITY noscriptImport.accesskey "O">
 <!ENTITY noscriptExport "Uložit">
 <!ENTITY noscriptExport.accesskey "U">
-<!ENTITY noscriptNotify "Zobrazit zprávu o blokovaných skriptech">
+<!ENTITY noscriptNotify "Zobrazovat zprávu o blokovaných skriptech">
 <!ENTITY noscriptNotify.bottom "Umístit zprávu do spodní části">
 <!ENTITY noscriptSound.choose "Zvolit">
 <!ENTITY noscriptSound.choose.accesskey "Z">
@@ -40,5 +40,9 @@
 <!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">
 <!ENTITY noscriptReloadWarn "Tato nastavení budou aktivní na nově otevřených nebo (manuálně) obnovených stránkách">
 <!ENTITY noscriptConfirmUnblock "Požadovat potvrzení při dočasném povolení objektu">
-<!ENTITY noscriptStatusLabel "Zobrazit popisek ve stavovém řádku">
+<!ENTITY noscriptStatusLabel "Zobrazovat popisek ve stavovém řádku">
 <!ENTITY noscriptForbidBookmarklets "Zakázat bookmarklety">
+<!ENTITY noscriptShowPlaceholder "Zobrazovat zástupnou ikonu">
+<!ENTITY noscriptTruncateTitle "Zkrátit titulek stránky">
+<!ENTITY noscriptFixLinks "Pokusit se opravit odkazy tvořené JavaScriptem">
+<!ENTITY noscriptAllowBookmarks "Povolit všechny stránky v záložkách">

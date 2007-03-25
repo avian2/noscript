@@ -13,21 +13,3 @@
     </RDF:Seq>
 
 
-
-    <RDF:Description about="urn:mozilla:locale:ru-RU"
-      chrome:name="ru-RU" >
-
-        <chrome:packages>
-
-            <RDF:Seq about="urn:mozilla:locale:ru-RU:packages">
-
-                <RDF:li resource="urn:mozilla:locale:ru-RU:noscript"/>
-
-            </RDF:Seq>
-
-        </chrome:packages>
-
-    </RDF:Description>
-
-</RDF:RDF>
-

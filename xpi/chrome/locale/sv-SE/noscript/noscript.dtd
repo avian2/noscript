@@ -1,0 +1,48 @@
+<!ENTITY noscriptOptions "Inställningar...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript-inställningar">
+<!ENTITY noscriptAbout "Om NoSCript">
+<!ENTITY noscriptPermissionsText "Du kan bestämma vilka webplatser som ska tillåtas att använda skript. Skriv adressen eller domänen (ex. "http://www.sajt.se" eller "sajt.se") till den webplats du vill tillåta och klicka på "Tillåt".">
+<!ENTITY noscriptWebAddress "Adress till webplats:">
+<!ENTITY noscriptAllow "Tillåt">
+<!ENTITY noscriptAllow.accesskey "T">
+<!ENTITY noscriptRemoveSelected "Ta bort markerad webplats">
+<!ENTITY noscriptGloballyEnabled "Skript är tillåtet på alla webplatser (Farligt)">
+<!ENTITY noscriptAutoReload "Ladda om berörda websidor när tillåtelse förändras">
+<!ENTITY noscriptGeneral "Allmänt">
+<!ENTITY noscriptAppearance "Utseende">
+<!ENTITY noscriptShow "Visa...">
+<!ENTITY noscriptCtxMenu "Snabbmeny">
+<!ENTITY noscriptStatusIcon "Statusfältsikon">
+<!ENTITY noscriptFullAddr "Fullständiga adresser (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Fullständiga domänadresser (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Andra nivåns domänadresser (noscript.net)">
+<!ENTITY noscriptTempCmd "Tillåt tillfälligt [...]">
+<!ENTITY noscriptSound "Ljudsignal när skript blockeras">
+<!ENTITY noscriptImport "Importera">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exportera">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Visa meddelande om blockerade skript">
+<!ENTITY noscriptNotify.bottom "Visa meddelande längst ner i fönstret">
+<!ENTITY noscriptSound.choose "Välj">
+<!ENTITY noscriptSound.choose.accesskey "V">
+<!ENTITY noscriptSound.play "Spela">
+<!ENTITY noscriptSound.play.accesskey "S">
+<!ENTITY noscriptSound.reset "Återställ inställningar till standardinställningar">
+<!ENTITY noscriptSound.reset.accesskey "Å">
+<!ENTITY noscriptAdvanced "Avancerat">
+<!ENTITY noscriptAdditionalPermissions "Ytterligare tillstånd för betrodda webplatser">
+<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
+<!ENTITY noscriptAdditionalRestrictions "Ytterligare förbud för ej betrodda webplatser">
+<!ENTITY noscriptForbidJava "Förbjud Java™">
+<!ENTITY noscriptForbidFlash "Förbjud Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Förbjud andra insticksmoduler">
+<!ENTITY noscriptReloadWarn "Dessa inställningar kommer att gälla för nya eller (manuellt) uppdaterade sidor.">
+<!ENTITY noscriptConfirmUnblock "Be om bekräftelse innan ett objekt tillfälligt ej blockeras">
+<!ENTITY noscriptStatusLabel "Statusfältets etikett">
+<!ENTITY noscriptForbidBookmarklets "Förbjud bokmärken">
+<!ENTITY noscriptShowPlaceholder "Visa "PlaceHolder"-ikon">
+<!ENTITY noscriptTruncateTitle "Korta av dokumenttitlar">
+<!ENTITY noscriptFixLinks "Försök laga JavaScript-länkar">
+<!ENTITY noscriptAllowBookmarks "Tillåt alla webplatser under bokmärken">

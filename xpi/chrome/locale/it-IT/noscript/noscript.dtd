@@ -2,12 +2,12 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opzioni NoScript">
 <!ENTITY noscriptAbout "Informazioni su NoScript">
-<!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l'esecuzione di JavaScript è consentita. Digitare l'indirizzo o il dominio (es. &quot;http://www.sito.com&quot; oppure &quot;sito.com&quot;)  e fare clic su Permetti.">
+<!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l'esecuzione degli script è consentita. Digitare l'indirizzo o il dominio (es. &quot;http://www.sito.com&quot; oppure &quot;sito.com&quot;)  e fare clic su Permetti.">
 <!ENTITY noscriptWebAddress "Indirizzo del sito:">
 <!ENTITY noscriptAllow "Permetti">
 <!ENTITY noscriptAllow.accesskey "P">
 <!ENTITY noscriptRemoveSelected "Rimuovi i siti selezionati">
-<!ENTITY noscriptGloballyEnabled "JavaScript abilitato globalmente (pericoloso)">
+<!ENTITY noscriptGloballyEnabled "Esecuzione script abilitati globalmente (pericoloso)">
 <!ENTITY noscriptAutoReload "Aggiorna automaticamente la pagina quando i permessi cambiano">
 <!ENTITY noscriptGeneral "Generale">
 <!ENTITY noscriptAppearance "Aspetto">
@@ -17,6 +17,7 @@
 <!ENTITY noscriptFullAddr "Indirizzi completi">
 <!ENTITY noscriptFullDom "Dominii completi">
 <!ENTITY noscriptBaseDom "Dominii base (di secondo livello)">
+<!ENTITY noscriptTempCmd "Temporarily allow [...]">
 <!ENTITY noscriptSound "Notifica audio per gli script bloccati">
 <!ENTITY noscriptImport "Importa">
 <!ENTITY noscriptImport.accesskey "I">
@@ -39,7 +40,9 @@
 <!ENTITY noscriptForbidPlugins "Vieta altri plugin">
 <!ENTITY noscriptReloadWarn "Queste opzioni avranno effetto nelle nuove pagine e in quelle ricaricate (manualmente)">
 <!ENTITY noscriptConfirmUnblock "Chiedi conferma prima di sbloccare temporaneamente un oggetto">
-<!ENTITY noscriptConfirm "Sei sicuro?">
 <!ENTITY noscriptStatusLabel "Etichetta sulla barra di stato">
 <!ENTITY noscriptForbidBookmarklets "Vieta i bookmarklet">
 <!ENTITY noscriptShowPlaceholder "Mostra icona sostitutiva">
+<!ENTITY noscriptTruncateTitle "Tronca i titoli dei documenti">
+<!ENTITY noscriptFixLinks "Tenta di correggere i link JavaScript">
+<!ENTITY noscriptAllowBookmarks "Permetti tutti i siti presenti nei segnalibri">

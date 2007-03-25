@@ -2,12 +2,12 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 选项">
 <!ENTITY noscriptAbout "关于 NoScript">
-<!ENTITY noscriptPermissionsText "您可以指定允许执行 JavaScript 的网站。请输入您想要允许的网站地址或域名 (例如: &quot;http://www.site.com&quot;或者&quot;site.com&quot;) 然后单击“允许”。">
+<!ENTITY noscriptPermissionsText "您可以指定允许执行脚本的网站。请输入您想要允许的网站地址或域名(例如: &quot;http://www.site.com&quot;或者&quot;site.com&quot;)然后单击“允许”。">
 <!ENTITY noscriptWebAddress "网站地址: ">
 <!ENTITY noscriptAllow "允许">
 <!ENTITY noscriptAllow.accesskey "A">
 <!ENTITY noscriptRemoveSelected "删除选择的网站">
-<!ENTITY noscriptGloballyEnabled "全域允许 JavaScript (危险)">
+<!ENTITY noscriptGloballyEnabled "全域允许脚本(危险)">
 <!ENTITY noscriptAutoReload "更改许可设置后自动重新载入相关页面">
 <!ENTITY noscriptGeneral "常规">
 <!ENTITY noscriptAppearance "外观">
@@ -18,13 +18,13 @@
 <!ENTITY noscriptFullDom "子域名 (www.noscript.net)">
 <!ENTITY noscriptBaseDom "泛域名 (noscript.net)">
 <!ENTITY noscriptTempCmd "暂时允许 [...]">
-<!ENTITY noscriptSound "当脚本被阻止时提示声音">
+<!ENTITY noscriptSound "脚本被阻止时提示声音">
 <!ENTITY noscriptImport "导入">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "导出">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "显示被阻止脚本的信息">
-<!ENTITY noscriptNotify.bottom "在底部显示信息">
+<!ENTITY noscriptNotify.bottom "在浏览器底部显示信息">
 <!ENTITY noscriptSound.choose "选择">
 <!ENTITY noscriptSound.choose.accesskey "C">
 <!ENTITY noscriptSound.play "播放">
@@ -38,9 +38,11 @@
 <!ENTITY noscriptForbidJava "禁止 Java™">
 <!ENTITY noscriptForbidFlash "禁止 Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "禁止 其他插件">
-<!ENTITY noscriptReloadWarn "下面这些选项将在新页面中或 (手动) 重新载入后生效。">
+<!ENTITY noscriptReloadWarn "下面这些选项将在新页面中或(手动)重新载入后生效。">
 <!ENTITY noscriptConfirmUnblock "需要确认后再允许某些临时项目">
 <!ENTITY noscriptStatusLabel "状态栏标签">
 <!ENTITY noscriptForbidBookmarklets "禁止 Bookmarklet">
 <!ENTITY noscriptShowPlaceholder "显示 图像占位符">
-
+<!ENTITY noscriptTruncateTitle "截短文档标题">
+<!ENTITY noscriptFixLinks "尝试定位 JavaScript 链接">
+<!ENTITY noscriptAllowBookmarks "允许书签中的所有网站">

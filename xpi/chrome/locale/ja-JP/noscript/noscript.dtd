@@ -8,7 +8,7 @@
 <!ENTITY noscriptAllow.accesskey "A">
 <!ENTITY noscriptRemoveSelected "選択中のサイトを削除">
 <!ENTITY noscriptGloballyEnabled "すべてのサイトのJavaScriptを許可する (危険)">
-<!ENTITY noscriptAutoReload "許可を変更したとき自動的にページを再読込する">
+<!ENTITY noscriptAutoReload "許可設定を変更したときにページを自動的に再読込する">
 <!ENTITY noscriptGeneral "全般">
 <!ENTITY noscriptAppearance "インターフェース">
 <!ENTITY noscriptShow "外観...">
@@ -16,14 +16,14 @@
 <!ENTITY noscriptStatusIcon "ステータスバーアイコン">
 <!ENTITY noscriptFullAddr "フルアドレス (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "フルドメイン (www.noscript.net)">
-<!ENTITY noscriptBaseDom "2ndレベル ドメイン (noscript.net)">
+<!ENTITY noscriptBaseDom "セカンドレベル ドメイン (noscript.net)">
 <!ENTITY noscriptTempCmd "一時的に許可する [...]">
-<!ENTITY noscriptSound "スクリプトをブロックしたときにサウンドで知らせる">
+<!ENTITY noscriptSound "スクリプトをブロックしたときにサウンドで通知する">
 <!ENTITY noscriptImport "インポート">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "エクスポート">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "スクリプトをブロックしたとき情報を表示する">
+<!ENTITY noscriptNotify "スクリプトをブロックしたときに情報を表示する">
 <!ENTITY noscriptNotify.bottom "情報を下部に表示する">
 <!ENTITY noscriptSound.choose "選択">
 <!ENTITY noscriptSound.choose.accesskey "C">
@@ -38,8 +38,11 @@
 <!ENTITY noscriptForbidJava "Java&#8482; の禁止">
 <!ENTITY noscriptForbidFlash "Macromedia&#174; Flash&#174; の禁止">
 <!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
-<!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページか(手動で)再読込されたページで有効になります">
+<!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページ、または再読込したページで有効になります">
 <!ENTITY noscriptConfirmUnblock "オブジェクトを一時的に許可する前に確認する">
 <!ENTITY noscriptStatusLabel "ステータスバーラベル">
 <!ENTITY noscriptForbidBookmarklets "ブックマークレットの禁止">
 <!ENTITY noscriptShowPlaceholder "プレースホルダーとアイコンを表示する">
+<!ENTITY noscriptTruncateTitle "ページタイトルを切り詰める">
+<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">

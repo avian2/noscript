@@ -530,6 +530,7 @@ NoscriptService.prototype={
       break;
       case "pluginPlaceholder":
       case "showPlaceholder":
+      case "consoleDump":
         this[name]=this.getPref(name,this[name]);
       break;
       case "allowClipboard":
@@ -582,7 +583,9 @@ NoscriptService.prototype={
     if(this._inited) return;
     this._inited=true;
     
-    const prefserv=this.prefService=Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService)
+    const prefserv=this.prefService=Components.classes["@mozilla.org/preferences-service;1"]
+      .getService(Components.interfaces.nsIPrefService).QueryInterface(Components.interfaces.nsIPrefBranch);
+    
     const PBI=Components.interfaces.nsIPrefBranchInternal;
     this.caps=prefserv.getBranch("capability.policy.").QueryInterface(PBI);
     this.policyPB=prefserv.getBranch("capability.policy."+this.POLICY_NAME+".").QueryInterface(PBI);
@@ -592,7 +595,7 @@ NoscriptService.prototype={
     this.mozJSPref=prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
     this.mozJSPref.addObserver("enabled",this,false);
     
-    const syncPrefNames=[
+    const syncPrefNames=[ "consoleDump",
       "pluginPlaceholder", "showPlaceholder", "allowClipboard", "forbidPlugins", 
       "forbidJava", "forbidFlash", "temp", "permanent",
       "truncateTitle", "truncateTitleLen" ];
@@ -1072,6 +1075,7 @@ NoscriptService.prototype={
     return (obj._noScriptExtras && obj._noScriptExtras.mark && 
       this.pluginsExtrasMark == obj._noScriptExtras.mark) ? obj._noScriptExtras : null;
   },
+  consoleDump: false,
   forbidSomePlugins: false,
   forbidAllPlugins: false,
   forbidJava: false,
@@ -1151,7 +1155,8 @@ NoscriptService.prototype={
               }
             }
             
-            dump("NoScript blocked " + url + " which is a " + aMimeTypeGuess + " from " + origin + "\n");
+            if(this.consoleDump) 
+              dump("NoScript blocked " + url + " which is a " + aMimeTypeGuess + " from " + origin + "\n");
             return -3;
           }
         }

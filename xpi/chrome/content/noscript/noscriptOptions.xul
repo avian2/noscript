@@ -135,6 +135,7 @@
     <label class="header" value="&noscriptAdditionalPermissions;" />
     <vbox>
       <checkbox id="opt-allowClipboard" label="&noscriptAllowClipboard;" />
+      <checkbox id="mozopt-browser.send_pings" label="&noscriptAllowPing;" />
     </vbox>
    
    
@@ -154,6 +155,8 @@
       <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
       <separator class="thin"/>
       <checkbox id="opt-truncateTitle" label="&noscriptTruncateTitle;" />
+      <checkbox id="opt-fixLinks" label="&noscriptFixLinks;" />
+      <checkbox id="opt-noping" label="&noscriptForbidPing;" />
     </vbox>
     </vbox>
    </vbox>

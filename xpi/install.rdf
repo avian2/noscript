@@ -5,26 +5,30 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.1.3.5</em:version>
+   <em:version>1.1.3.6</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
-   <em:contributor>Alberto Martínez (Spanish translation)</em:contributor>
+   <em:contributor>Alberto Martínez &amp; Urko (Spanish translation)</em:contributor>
    <em:contributor>Alexander Sokolov (Russian translation)</em:contributor>
+   <em:contributor>Batuhan Çetin(Turkish translation)</em:contributor>
    <em:contributor>Beerboy (Japanese translation)</em:contributor>
+   <em:contributor>Chiou Po-Jung (Chinese Traditional translation)</em:contributor>
    <em:contributor>Dario Ornelas (Portuguese translation)</em:contributor>
-   <em:contributor>Engin Yazılan (Trurkish translation)</em:contributor>
-    <em:contributor>Erkan Kaplan (Trurkish translation)</em:contributor>
+   <em:contributor>Engin Yazılan, Erkan Kaplan &amp; Fathi  (Turkish translation)</em:contributor>
    <em:contributor>George C. Tsoi (Simplified Chinese)</em:contributor>
    <em:contributor>Georgi Marchev (Bulgarian translation)</em:contributor>
    <em:contributor>Håvard Mork (Norwegian bokmål translation)</em:contributor>
    <em:contributor>Joan-Josep Bargues (Catalan translation)</em:contributor>
    <em:contributor>Liesbeth (Dutch translation)</em:contributor>
-   <em:contributor>Lukasz Biegaj (Polish translation)</em:contributor>
+   <em:contributor>LocaLiceR (Hungarian translation)</em:contributor>
+   <em:contributor>Lukasz Biegaj &amp; Teo (Polish translation)</em:contributor>
    <em:contributor>Michela Venuto (inspiration)</em:contributor>
    <em:contributor>Mika Pirinen (Finnish translation)</em:contributor>
    <em:contributor>Petr Jirsa (Czech translation)</em:contributor>
+   <em:contributor>Slovak Soft (Slovak translation)</em:contributor>
    <em:contributor>Thomas Weber &amp; Volker Hable (German translation)</em:contributor>
+   <em:contributor>Ultravioletu (Romanian translation)</em:contributor>
    <em:contributor>Xavier Robin (French translation)</em:contributor>
  
    <em:optionsURL>chrome://noscript/content/noscriptOptions.xul</em:optionsURL>
@@ -49,14 +53,14 @@
       </Description>
    </em:targetApplication>
 
-    <!-- Flock --><!--
+    <!-- Flock -->
    <em:targetApplication>
       <Description>
         <em:id>{a463f10c-3994-11da-9945-000d60ca027b}</em:id>
         <em:minVersion>1.0+</em:minVersion>
         <em:maxVersion>1.0+</em:maxVersion>
       </Description>
-   </em:targetApplication>-->
+   </em:targetApplication>
    
    <em:file>
      <Description about="urn:mozilla:extension:file:noscript.jar">
@@ -79,6 +83,9 @@
        <em:locale>locale/bg-BG/noscript/</em:locale>
        <em:locale>locale/nb-NO/noscript/</em:locale>
        <em:locale>locale/ru-RU/noscript/</em:locale>
+       <em:locale>locale/sk-SK/noscript/</em:locale>
+       <em:locale>locale/ro-RO/noscript/</em:locale>
+       <em:locale>locale/hu-HU/noscript/</em:locale>
        <em:locale>locale/es-ES/noscript/</em:locale>
      </Description>
    </em:file>

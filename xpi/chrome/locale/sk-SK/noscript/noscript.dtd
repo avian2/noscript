@@ -1,0 +1,48 @@
+<!ENTITY noscriptOptions "Možnosti...">
+<!ENTITY noscriptOptions.accesskey "M">
+<!ENTITY noscriptOptionsLong "Možnosti NoScript">
+<!ENTITY noscriptAbout "O rozšírení NoScript">
+<!ENTITY noscriptPermissionsText "Môžete určiť, ktoré webové stránky majú povolené spúšťať JavaScript. Zadajte adresu alebo doménu (napríklad &quot;http://www.site.com&quot; alebo &quot;site.com&quot;) stránky, ktorú chcete povoliť a potom kliknite na Povoliť.">
+<!ENTITY noscriptWebAddress "Adresa webstránky:">
+<!ENTITY noscriptAllow "Povoliť">
+<!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptRemoveSelected "Odstrániť vybrané stránky">
+<!ENTITY noscriptGloballyEnabled "Skripty všeobecne povolené (nebezpečné)">
+<!ENTITY noscriptAutoReload "Automaticky znovu načítať stránky, keď sa zmení oprávnenie">
+<!ENTITY noscriptGeneral "Všeobecné">
+<!ENTITY noscriptAppearance "Rozloženie">
+<!ENTITY noscriptShow "Zobraziť...">
+<!ENTITY noscriptCtxMenu "Kontextová ponuka">
+<!ENTITY noscriptStatusIcon "Ikona v stavovom riadku">
+<!ENTITY noscriptFullAddr "Celé adresy (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Celé domény (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Základňa pre subdomény (noscript.net)">
+<!ENTITY noscriptTempCmd "Dočasne povoliť [...]">
+<!ENTITY noscriptSound "Zvukový signál pri zablokovaní skriptov">
+<!ENTITY noscriptImport "Importovať">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exportovať">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Zobraziť oznámenie o blokovaných skriptoch">
+<!ENTITY noscriptNotify.bottom "Umiestniť oznámenie na spodok">
+<!ENTITY noscriptSound.choose "Vybrať">
+<!ENTITY noscriptSound.choose.accesskey "V">
+<!ENTITY noscriptSound.play "Prehrať">
+<!ENTITY noscriptSound.play.accesskey "h">
+<!ENTITY noscriptSound.reset "Obnoviť predvolené">
+<!ENTITY noscriptSound.reset.accesskey "r">
+<!ENTITY noscriptAdvanced "Rozšírené">
+<!ENTITY noscriptAdditionalPermissions "Ďalšie oprávnenia pre dôveryhodné stránky">
+<!ENTITY noscriptAllowClipboard "Povoliť kopírovanie a prilepenie textu z externej schránky">
+<!ENTITY noscriptAdditionalRestrictions "Ďalšie obmedzenia pre nepovolené stránky">
+<!ENTITY noscriptForbidJava "Zakázať Java™">
+<!ENTITY noscriptForbidFlash "Zakázať Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Zakázať ďalšie doplnky">
+<!ENTITY noscriptReloadWarn "Tieto voľby sa prejavia na nových (alebo na ručne znovu načítaných) stránkach">
+<!ENTITY noscriptConfirmUnblock "Pred dočasným odblokovaním objektu sa opýtať na potvrdenie">
+<!ENTITY noscriptStatusLabel "Informácie v stavovom riadku">
+<!ENTITY noscriptForbidBookmarklets "Zakázať záložkové skripty">
+<!ENTITY noscriptShowPlaceholder "Zobraziť ikonu zástupcu">
+<!ENTITY noscriptTruncateTitle "Skrátiť titulky dokumentov">
+<!ENTITY noscriptFixLinks "Pokúsiť sa opraviť JavaScript odkaz">
+<!ENTITY noscriptAllowBookmarks "Povoliť všetky stránky nájdené v Záložkách">

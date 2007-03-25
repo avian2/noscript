@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcions de NoScript">
 <!ENTITY noscriptAbout "Quant a NoScript">
-<!ENTITY noscriptPermissionsText "Podeu especificar quins llocs web podran executar JavaScript. Escriviu l'adreça o el domini (p.ex. &quot;http://www.site.com&quot; o &quot;site.com&quot;) del lloc que voleu afegir i, després, feu clic a Permet.">
+<!ENTITY noscriptPermissionsText "Podeu especificar quins llocs web poden executar seqüències. El tipus d'adreça o el domini (p.ex. "http://www.site.com" o "site.com") del lloc al qual voleu donar permissos i feu clic a Permet.">
 <!ENTITY noscriptWebAddress "Adreça del lloc web:">
 <!ENTITY noscriptAllow "Permet">
 <!ENTITY noscriptAllow.accesskey "A">
@@ -39,7 +39,10 @@
 <!ENTITY noscriptForbidFlash "Prohibeix el Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Prohibeix d'altres connectors">
 <!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pàgines noves o recarregades (manualment)">
-<!ENTITY noscriptConfirmUnblock "Demana confirmaci� abans de desblocar un objecte temporalment">
+<!ENTITY noscriptConfirmUnblock "Demana confirmaci� abans de desblocar un objecte temporalment">
 <!ENTITY noscriptStatusLabel "Etiqueta de la barra d'estat">
-<!ENTITY noscriptForbidBookmarklets "Prohibeix les Adreces d'inter�s">
+<!ENTITY noscriptForbidBookmarklets "Prohibeix les Adreces d'inter�s">
 <!ENTITY noscriptShowPlaceholder "Mostra-ne les icones">
+<!ENTITY noscriptTruncateTitle "Talla els títols dels documents">
+<!ENTITY noscriptFixLinks "Intenta arreglar els enllaços en JavaScript">
+<!ENTITY noscriptAllowBookmarks "Permet tots els llocs que trobes a les adreces d'interès">

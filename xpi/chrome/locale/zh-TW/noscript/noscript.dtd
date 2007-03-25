@@ -1,0 +1,46 @@
+<!ENTITY noscriptOptions "選項...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript 選項">
+<!ENTITY noscriptAbout "關於 NoScript">
+<!ENTITY noscriptPermissionsText "您可以指定允許執行 JavaScript 的網站。輸入您欲允許的網址或網域（例如 "http://www.site.com" 或 "site.com"），然後點允許.">
+<!ENTITY noscriptWebAddress "網址：">
+<!ENTITY noscriptAllow "允許">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptRemoveSelected "移除選取的網站">
+<!ENTITY noscriptGloballyEnabled "全面允許 JavaScript（危險)">
+<!ENTITY noscriptAutoReload "更改許可設定後自動重讀相關的頁面.">
+<!ENTITY noscriptGeneral "一般">
+<!ENTITY noscriptAppearance "外觀">
+<!ENTITY noscriptShow "顯示...">
+<!ENTITY noscriptCtxMenu "右鍵選單">
+<!ENTITY noscriptStatusIcon "狀態列圖示">
+<!ENTITY noscriptFullAddr "完整的網址（http://www.noscript.net）">
+<!ENTITY noscriptFullDom "完整的網域（www.noscript.net）">
+<!ENTITY noscriptBaseDom "第二層網域（noscript.net）">
+<!ENTITY noscriptTempCmd "暫時允許 [...]">
+<!ENTITY noscriptSound "有 Script 被阻擋時播放音效">
+<!ENTITY noscriptImport "匯入">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "匯出">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "顯示阻擋 Script 的訊息">
+<!ENTITY noscriptNotify.bottom "將訊息放在底部">
+<!ENTITY noscriptSound.choose "選擇">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "播放">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "恢復預設">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "進階">
+<!ENTITY noscriptAdditionalPermissions "對於信任網站的額外許可">
+<!ENTITY noscriptAllowClipboard "允許從外部剪貼簿複製與貼上Rich Format Text">
+<!ENTITY noscriptAdditionalRestrictions "對不信任網站的額外限制">
+<!ENTITY noscriptForbidJava "禁止 Java™">
+<!ENTITY noscriptForbidFlash "禁止 Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "禁止其他外掛">
+<!ENTITY noscriptReloadWarn "這些選項會套用在新的或（手動）重讀的頁面">
+<!ENTITY noscriptConfirmUnblock "暫時取消阻擋物件需要確認">
+<!ENTITY noscriptStatusLabel "狀態列標籤">
+<!ENTITY noscriptForbidBookmarklets "禁止 Bookmarklets">
+<!ENTITY noscriptShowPlaceholder "顯示圖片預留位置">
+<!ENTITY noscriptTruncateTitle "Truncate document titles">

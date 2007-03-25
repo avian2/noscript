@@ -1,32 +1,32 @@
-<!ENTITY noscriptOptions "Opcje...">
+<!ENTITY noscriptOptions "Opcje">
 <!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "Opcje NoScript">
-<!ENTITY noscriptAbout "O NoScript...">
-<!ENTITY noscriptPermissionsText "Możesz podać które adresy stron www które mogą uruchamiać JavaScript. Wpisz adres lub domenę (np. &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) strony którą chcesz dodać i kliknij Dodaj.">
-<!ENTITY noscriptWebAddress "Adres strony:">
+<!ENTITY noscriptOptionsLong "NoScript - Opcje">
+<!ENTITY noscriptAbout "O NoScript">
+<!ENTITY noscriptPermissionsText "Tutaj możesz dodać witryny imternetowe, które będą mogły uruchamiać skrypty JavaScript. Wpisz adres lub domenę witryny, którą chcesz dodać (np: &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) i naciśnij przycisk &quot;Dodaj&quot;.">
+<!ENTITY noscriptWebAddress "Adres witryny:">
 <!ENTITY noscriptAllow "Dodaj">
-<!ENTITY noscriptAllow.accesskey "a">
-<!ENTITY noscriptRemoveSelected "Usuń wybrane pozycje">
-<!ENTITY noscriptGloballyEnabled "Pozwól na JavaScript globalnie (niebezpieczne)">
-<!ENTITY noscriptAutoReload "Automatycznie przeładuj stronę po zmianie uprawnień">
-<!ENTITY noscriptGeneral "Ogólne">
-<!ENTITY noscriptAppearance "Wygląd">
-<!ENTITY noscriptShow "Pokazuj...">
+<!ENTITY noscriptAllow.accesskey "D">
+<!ENTITY noscriptRemoveSelected "Usuń wybrane witryny">
+<!ENTITY noscriptGloballyEnabled "Pozwól na wykonywanie skryptów JavaScript (niebezpieczne)">
+<!ENTITY noscriptAutoReload "Automatycznie odśwież stronę po zmianie uprawnień">
+<!ENTITY noscriptGeneral "    Ogólne    ">
+<!ENTITY noscriptAppearance "    Wygląd    ">
+<!ENTITY noscriptShow "Wyświetl:">
 <!ENTITY noscriptCtxMenu "Menu kontekstowe">
-<!ENTITY noscriptStatusIcon "Ikonka na pasku stanu">
-<!ENTITY noscriptFullAddr "Pełen adres (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Pełna domena (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Poddomena (noscript.net)">
-<!ENTITY noscriptTempCmd "Tymczasowo nie blokuj [...]">
-<!ENTITY noscriptSound "Odtwórz dźwięk gdy skrypty są blokowane">
-<!ENTITY noscriptImport "Importuj">
+<!ENTITY noscriptStatusIcon "Ikonę na pasku stanu">
+<!ENTITY noscriptFullAddr "Pełny adres  (np: http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Pełna domena  (np: www.noscript.net)">
+<!ENTITY noscriptBaseDom "Podstawa domeny  (np: noscript.net)">
+<!ENTITY noscriptTempCmd "Tymczasowo nie blokuj z  [...]">
+<!ENTITY noscriptSound "Odtwórz dźwięk, gdy skrypty są blokowane">
+<!ENTITY noscriptImport "Import">
 <!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Eksportuj">
+<!ENTITY noscriptExport "Eksport">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Wyświetl powiadomienie o blokowanych skryptach">
-<!ENTITY noscriptNotify.bottom "Umieść powiadomienie na dole">
-<!ENTITY noscriptSound.choose "Przeglądaj">
-<!ENTITY noscriptSound.choose.accesskey "P">
+<!ENTITY noscriptNotify.bottom "Umieść powiadomienie na dole okna przeglądarki">
+<!ENTITY noscriptSound.choose "Wybierz">
+<!ENTITY noscriptSound.choose.accesskey "W">
 <!ENTITY noscriptSound.play "Odtwórz">
 <!ENTITY noscriptSound.play.accesskey "O">
 <!ENTITY noscriptSound.reset "Domyślny">
@@ -34,9 +34,15 @@
 <!ENTITY noscriptAdvanced "Zaawansowane">
 <!ENTITY noscriptAdditionalPermissions "Dodatkowe uprawnienia dla zaufanych witryn">
 <!ENTITY noscriptAllowClipboard "Pozwalaj na kopiowanie/wklejanie ze schowka w formacie RTF">
-<!ENTITY noscriptAdditionalRestrictions "Dodatkowe restrykcje dla niepewnych witryn">
-<!ENTITY noscriptForbidJava "Blokuj Java™">
-<!ENTITY noscriptForbidFlash "Blokuj Macromedia® Flash®">
+<!ENTITY noscriptAdditionalRestrictions "Dodatkowe ograniczenia dla niezaufanych witryn">
+<!ENTITY noscriptForbidJava "Blokuj aplety Java™">
+<!ENTITY noscriptForbidFlash "Blokuj animacje Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Blokuj inne wtyczki">
-<!ENTITY noscriptReloadWarn "Te opcje będą działały na nowych lub (ręcznie) przeładowanych stronach">
-<!ENTITY noscriptForbidBookmarklets "Blokuj bookmarklets">
+<!ENTITY noscriptReloadWarn "Uwaga! Opcje te będą działały po odświeżeniu stron oraz w nowo otwieranych stronach">
+<!ENTITY noscriptConfirmUnblock "Pytaj o potwierdzenie przed czasowym odblokowaniem objektu">
+<!ENTITY noscriptStatusLabel "Informacje na pasku stanu">
+<!ENTITY noscriptForbidBookmarklets "Blokuj skryptozakładki">
+<!ENTITY noscriptShowPlaceholder "Pokaż zamienniki ikon">
+<!ENTITY noscriptTruncateTitle "Skracaj tytuły dokumentów">
+<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptAllowBookmarks "Pozwalaj wszystkim witrynom znajdującym się w zakładkach">

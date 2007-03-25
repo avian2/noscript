@@ -26,5 +26,7 @@ pref("noscript.notify.hideDelay", 5);
 pref("noscript.notify.hide", false);
 pref("noscript.truncateTitleLen", 255);
 pref("noscript.truncateTitle", true);
-
+pref("noscript.fixLinks", true);
+pref("noscript.noping", true);
+pref("noscript.consoleDump", false);
 

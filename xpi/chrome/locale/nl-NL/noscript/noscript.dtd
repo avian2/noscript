@@ -39,4 +39,10 @@
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieden">
 <!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
 <!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina's">
+<!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">
+<!ENTITY noscriptStatusLabel "Status bar label">
 <!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieden">
+<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
+<!ENTITY noscriptTruncateTitle "Truncate document titles">
+<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">

@@ -1,46 +1,48 @@
-<!ENTITY noscriptOptions "Optionen...">
-<!ENTITY noscriptOptions.accesskey "O"> 
-<!ENTITY noscriptOptionsLong "NoScript Optionen">
-<!ENTITY noscriptAbout "Über NoScript">
-<!ENTITY noscriptPermissionsText "Sie können bestimmen welche Webseiten JavaScript ausführen dürfen. Geben sie die exakte Adresse der Seite ein und klicken Sie auf 'Erlauben'.">
-<!ENTITY noscriptWebAddress "Adresse der Webseite:">
+<!ENTITY noscriptOptions "Einstellungen...">
+<!ENTITY noscriptOptions.accesskey "E">
+<!ENTITY noscriptOptionsLong "NoScript - Einstellungen">
+<!ENTITY noscriptAbout "Über NoScript...">
+<!ENTITY noscriptPermissionsText "Sie können festlegen, welchen Websites Sie das Ausführen von Skripten erlauben möchten. Geben Sie bitte die exakte Adresse oder die Domain der Website ein (z.B. &quot;http://www.site.com&quot; oder &quot;site.com&quot;), für die Sie dies zulassen möchten, und klicken Sie dann auf &quot;Erlauben&quot;.">
+<!ENTITY noscriptWebAddress "Adresse der Website:">
 <!ENTITY noscriptAllow "Erlauben">
-<!ENTITY noscriptAllow.accesskey "E"> 
-<!ENTITY noscriptRemoveSelected "Markierte Seiten entfernen">
-<!ENTITY noscriptGloballyEnabled "JavaScript generell erlauben (gefährlich)">
-<!ENTITY noscriptAutoReload "Aktuelle Seite automatisch neu laden wenn die Berechtigungen ändern">
+<!ENTITY noscriptAllow.accesskey "E">
+<!ENTITY noscriptRemoveSelected "Ausgewählte Websites entfernen">
+<!ENTITY noscriptGloballyEnabled "Skripte allgemein erlauben (nicht empfohlen)">
+<!ENTITY noscriptAutoReload "Betroffene Seiten beim Ändern der Berechtigungen automatisch neu laden">
 <!ENTITY noscriptGeneral "Allgemein">
 <!ENTITY noscriptAppearance "Aussehen">
-<!ENTITY noscriptShow "Anzeigen...">
-<!ENTITY noscriptCtxMenu "Im Kontextmenü">
-<!ENTITY noscriptStatusIcon "Icon in der Statusleiste anzeigen">
-<!ENTITY noscriptFullAddr "Ganze Adressen (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Ganze Domains (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Basis von Second Level Domains (noscript.net)">
+<!ENTITY noscriptShow "Anzeigen:">
+<!ENTITY noscriptCtxMenu "Eintrag im Kontextmenü">
+<!ENTITY noscriptStatusIcon "Symbol in der Statusleiste">
+<!ENTITY noscriptFullAddr "Vollständige Adressen (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Vollständige Domains (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Second-Level-Domains (noscript.net)">
 <!ENTITY noscriptTempCmd "[...] temporär erlauben">
-<!ENTITY noscriptSound "Ton ausgeben wenn Scripts geblockt wurden">
+<!ENTITY noscriptSound "Klang ausgeben, wenn Skripte blockiert werden">
 <!ENTITY noscriptImport "Importieren">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exportieren">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Meldung anzeigen wenn Scripts geblockt wurden">
-<!ENTITY noscriptNotify.bottom "Meldung am unteren Rand anzeigen">
-<!ENTITY noscriptSound.choose "Wählen">
-<!ENTITY noscriptSound.choose.accesskey "W">
+<!ENTITY noscriptNotify "Informationsleiste anzeigen, wenn Skripte blockiert werden">
+<!ENTITY noscriptNotify.bottom "Am unteren Rand anzeigen">
+<!ENTITY noscriptSound.choose "Durchsuchen...">
+<!ENTITY noscriptSound.choose.accesskey "D">
 <!ENTITY noscriptSound.play "Abspielen">
-<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.play.accesskey "A">
 <!ENTITY noscriptSound.reset "Standard wiederherstellen">
-<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptSound.reset.accesskey "S">
 <!ENTITY noscriptAdvanced "Erweitert">
-<!ENTITY noscriptAdditionalPermissions "Zusätzliche Berechtigungen für vertrauenswürdige Seiten">
-<!ENTITY noscriptAllowClipboard "Copy and paste von formatiertem Text aus externer Zwischenablage erlauben">
-<!ENTITY noscriptAdditionalRestrictions "Zusätzliche Einschränkungen für nicht vertrauenswürdige Seiten">
+<!ENTITY noscriptAdditionalPermissions "Zusätzliche Berechtigungen für vertrauenswürdige Websites">
+<!ENTITY noscriptAllowClipboard "Einfügen von formatiertem Text (z.B. HTML) aus der Zwischenablage erlauben">
+<!ENTITY noscriptAdditionalRestrictions "Zusätzliche Einschränkungen für nicht vertrauenswürdige Websites">
 <!ENTITY noscriptForbidJava "Java™ verbieten">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
-<!ENTITY noscriptReloadWarn "Diese Einstellungen werden bei neu (oder manuell) geladenen Seiten wirksam">
-<!ENTITY noscriptConfirmUnblock "Bestätigung anfordern, bevor ein Objekt temporär erlaubt wird">
-<!ENTITY noscriptStatusLabel "Info in der Statusleiste anzeigen">
+<!ENTITY noscriptReloadWarn "Diese Einstellungen werden  erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
+<!ENTITY noscriptConfirmUnblock "Bestätigungsmeldung anzeigen, bevor ein Objekt temporär erlaubt wird">
+<!ENTITY noscriptStatusLabel "Informationstext in der Statusleiste">
 <!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieten">
-<!ENTITY noscriptShowPlaceholder "Platzhalter anzeigen">
-
+<!ENTITY noscriptShowPlaceholder "Platzhaltersymbol anzeigen">
+<!ENTITY noscriptTruncateTitle "Überlangen &quot;document.title&quot; kürzen (siehe Bug 319004)">
+<!ENTITY noscriptFixLinks "Versuchen, JavaScript-Links in normale Links umzuwandeln">
+<!ENTITY noscriptAllowBookmarks "Alle Websites aus den Lesezeichen erlauben">
