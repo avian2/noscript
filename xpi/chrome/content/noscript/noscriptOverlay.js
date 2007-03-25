@@ -170,7 +170,7 @@ NoScriptOverlay.prototype={
           }
           if((!doc._noscript_patch) && 
               (ns.getPref("fixLinks", true) || ns.getPref("noping", true))
-              && !ns.isJSEnabled(ns.getSite(url))) {
+              && !(ns.jsEnabled || ns.isJSEnabled(ns.getSite(url))) ) {
             doc._noscript_patch = true;
             doc.addEventListener("click", this.fixLink, true);
           }
@@ -611,7 +611,7 @@ NoScriptOverlay.prototype={
         var hidden=mb.hidden;
         if(ns.getPref("notify",false)) { 
           if(mbMine || hidden) {
-            if(this.checkDocFlag(doc,"_noscript_message_shown")) {
+            if(this.checkDocFlag(doc, "_noscript_message_shown")) {
               const browser=getBrowser();
               var buttonLabel, buttonAccesskey;
               if(/\baButtonAccesskey\b/i.test(browser.showMessage.toSource())) {
@@ -648,7 +648,7 @@ NoScriptOverlay.prototype={
           mb.hidden=true; 
         }
       }
-      if(this.checkDocFlag(doc,"_noscript_sound_played")) {
+      if(this.checkDocFlag(doc, "_noscript_sound_played")) {
         ns.playSound(ns.getPref("sound.block"));
       }
     } else {
@@ -667,7 +667,7 @@ NoScriptOverlay.prototype={
 ,
   checkDocFlag: function(doc,flag) {
     if(flag in doc && doc[flag]==_noscript_randomSignature) return false;
-    doc.__defineGetter__(flag,_noscript_signatureGetter);
+    doc.__defineGetter__(flag, _noscript_signatureGetter);
     return true;
   }
 ,
@@ -822,7 +822,7 @@ function _noScript_install() {
 function _noScript_dispose(ev) {
   _noScript_syncEvents.visit(window.removeEventListener);
   noscriptOverlayPrefsObserver.remove();
-  window.removeEventListener("load",_noScript_onloadInstall,false);
+  window.removeEventListener("load", _noScript_onloadInstall, false);
   document.getElementById("contentAreaContextMenu")
           .removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);  
   

@@ -46,3 +46,5 @@
 <!ENTITY noscriptTruncateTitle "Skracaj tytuły dokumentów">
 <!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
 <!ENTITY noscriptAllowBookmarks "Pozwalaj wszystkim witrynom znajdującym się w zakładkach">
+<!ENTITY noscriptAllowPing "Pozwalaj na &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Zabroń &lt;a ping...&gt;">

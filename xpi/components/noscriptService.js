@@ -1200,7 +1200,7 @@ NoscriptService.prototype={
     }
   },
   pluginsCache: {
-    _lastBrowser: null,
+    
     findBrowser: function(chrome, win) {
       var gb=chrome.getBrowser();
       var browsers;
@@ -1229,29 +1229,21 @@ NoscriptService.prototype={
       }
       if(!ctx) return;
       ctx = lm(ctx,"top")();
-      var browser = this._lastBrowser;
-      try {
-        if(browser.contentWindow != ctx) browser = null;
-      } catch(ex) {
-        browser = null;
-      }
-      if(!browser) {
-        this._lastBrowser = null;
-        const wm = Components.classes['@mozilla.org/appshell/window-mediator;1']
-                             .getService(Components.interfaces.nsIWindowMediator);
-        const chrome = wm.getMostRecentWindow("navigator:browser");
-        
-        if(! (browser = this.findBrowser(chrome, ctx))) {
-          const ww = wm.getEnumerator("navigator:browser");
-          for(var w; ww.hasMoreElements();) {
-            w=ww.getNext();
-            if(w != chrome && (browser = this.findBrowser(w, ctx))) {
-              break;
-            }
+      
+      const wm = Components.classes['@mozilla.org/appshell/window-mediator;1']
+                           .getService(Components.interfaces.nsIWindowMediator);
+      const chrome = wm.getMostRecentWindow("navigator:browser");
+      
+      if(! (browser = this.findBrowser(chrome, ctx))) {
+        const ww = wm.getEnumerator("navigator:browser");
+        for(var w; ww.hasMoreElements();) {
+          w=ww.getNext();
+          if(w != chrome && (browser = this.findBrowser(w, ctx))) {
+            break;
           }
         }
-        this._lastBrowser = browser;
       }
+      
       return browser;
     },
     lookupMethod: Components.utils?Components.utils.lookupMethod:Components.lookupMethod,
