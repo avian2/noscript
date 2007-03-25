@@ -25,9 +25,15 @@ function NoScriptOverlay() {
 
 NoScriptOverlay.prototype={
   getString: function(key,parms) {
-    return noscriptUtil.getString(key,parms);
+    return noscriptUtil.getString(key, parms);
   }
 ,
+  toggleCurrentPage: function() {
+    const ns = this.ns;
+    const url = ns.getSite(ns.lookupMethod(this.srcWindow.document, "documentURI")());
+    this.safeAllow(url, !ns.isJSEnabled(url));
+  },
+  
   isLoading : function() {   
     return getBrowser().selectedBrowser.webProgress.isLoadingDocument;
   }
@@ -35,8 +41,8 @@ NoScriptOverlay.prototype={
   getSites: function(doc,sites,tagName) {
     try {
       if(doc || (doc = this.srcWindow.document)) {
-        const ns=this.ns;
-        const lm=ns.lookupMethod;
+        const ns = this.ns;
+        const lm = ns.lookupMethod;
         
         if(ns.truncateTitle) {
           try {
@@ -49,8 +55,8 @@ NoScriptOverlay.prototype={
         
         const getByTag=lm(doc,"getElementsByTagName");
         if(!tagName) {
-          const docURI=lm(doc,"documentURI")();
-          var url=ns.getSite(docURI);
+          const docURI = lm(doc,"documentURI")();
+          var url = ns.getSite(docURI);
           if(url) {
             if(sites) {
               sites.push(url);
@@ -159,7 +165,7 @@ NoScriptOverlay.prototype={
                     
                     lm(lm(applet,"parentNode")(),"replaceChild")(div, applet);
                     div.appendChild(innerDiv);
-                    div.addEventListener("click", _noScript_onPluginClick, false);
+                    div.onclick = _noScript_onPluginClick;
                   }
                 } catch(appletEx) {
                   dump("NoScript: "+appletEx+" processing plugin "+acount+"@"+url);
@@ -167,11 +173,12 @@ NoScriptOverlay.prototype={
               }
             }
           }
-          if((!doc._noscript_patch) && 
+          if((!doc._noscript_fixLink) && 
               (ns.getPref("fixLinks", true) || ns.getPref("noping", true))
               && !(ns.jsEnabled || ns.isJSEnabled(ns.getSite(url))) ) {
-            doc._noscript_patch = true;
-            doc.addEventListener("click", this.fixLink, true);
+            doc._noscript_fixLink = true;
+            doc.defaultView.addEventListener("click", this.fixLink, true);
+            doc.defaultView.addEventListener("unload", this.removeLinkFixer, false);
           }
           
           sites=this.getSites(doc, sites, 'frame');
@@ -228,7 +235,7 @@ NoScriptOverlay.prototype={
       var jsURL;
       if(href) {
         jsURL = href.toLowerCase().indexOf("javascript:") == 0;
-        if(!(jsURL || href.indexOf("#") == 0)) return;
+        if(!(jsURL || href == "#")) return;
       } else {
         jsURL = false;
       }
@@ -246,10 +253,13 @@ NoScriptOverlay.prototype={
       }
     }
   },
-  
   extractLink: function(js) {
     var match = js.match(/['"]([\/\w-\?\.#%=&:@]+)/);
     return match && match[1];
+  },
+  removeFixLinker: function(ev) {
+    ev.target.removeEventListener("click", noscriptOverlay.fixLink, true);
+    ev.target.removeEventListener("unload", noscriptOverlay.removeLinkFixer, false);
   }
 ,
   get prompter() {
@@ -412,12 +422,12 @@ NoScriptOverlay.prototype={
         parent.insertBefore(node,stopSep);
       }
       
-      for(scount=menuSites.length; scount-->0;) {
+      for(scount = menuSites.length; scount-- > 0;) {
         menuSite=menuSites[scount];
         node=document.createElement("menuitem");
         node.setAttribute("label",this.getString((enabled?"forbidLocal":"allowLocal"),[menuSite]));
         node.setAttribute("statustext",menuSite);
-        node.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!enabled)+",this)");
+        node.setAttribute("oncommand","noscriptOverlay.menuAllow(" + (!enabled) + ",this)");
         node.setAttribute("tooltiptext",
           this.getString("allowed."+(enabled?"yes":"no")));
         if(enabled && ns.isPermanent(menuSite)) {
@@ -471,7 +481,7 @@ NoScriptOverlay.prototype={
     return null;
   }
 ,
-  menuAllow: function(enabled,menuItem,temp) {
+  menuAllow: function(enabled, menuItem, temp) {
     if(menuItem) { // local 
       const site=menuItem.getAttribute("statustext");
       if(!site) return;
@@ -481,18 +491,18 @@ NoScriptOverlay.prototype={
           this.getString("global.warning.text"));
       }
     }
-    this.safeAllow(site,enabled,temp);
+    this.safeAllow(site, enabled, temp);
   }
 ,
   safeAllow: function(site,enabled,temp) {
-    const overlay=this;
-    const ns=this.ns;
+    const overlay = this;
+    const ns = this.ns;
     ns.safeCapsOp(function() {
       if(site) {
-        ns.setJSEnabled(site,enabled);
+        ns.setJSEnabled(site, enabled);
         ns.setTemp(site, enabled && temp);
       } else {
-        ns.jsEnabled=enabled;
+        ns.jsEnabled = enabled;
       }
       overlay.syncUI();
     });
@@ -530,9 +540,9 @@ NoScriptOverlay.prototype={
   }
 ,
   getMessageBox: function(pos) {
-    var b=getBrowser();
+    var b = getBrowser();
     return b.getMessageForBrowser?
-        b.getMessageForBrowser(b.selectedBrowser,pos?pos:this.messageBoxPos)
+        b.getMessageForBrowser(b.selectedBrowser, pos ? pos : this.messageBoxPos)
         :null;
   }
 ,
@@ -614,7 +624,7 @@ NoScriptOverlay.prototype={
         if(ns.getPref("notify",false)) { 
           if(mbMine || hidden) {
             if(this.checkDocFlag(doc, "_noscript_message_shown")) {
-              const browser=getBrowser();
+              const browser = getBrowser();
               var buttonLabel, buttonAccesskey;
               if(/\baButtonAccesskey\b/i.test(browser.showMessage.toSource())) {
                 const refWidget=document.getElementById("noscript-options-ctx-menuitem");
@@ -733,6 +743,10 @@ function _noScript_onPluginClick(ev) {
   const div = ev.currentTarget;
   const applet = div._noScriptRemovedObject;
   if(applet) {
+    if(ev.shiftKey) {
+      div.style.display = "none";
+      return;
+    }
     const ns = noscriptUtil.service;
     const extras = ns.getPluginExtras(div);
     const cache = ns.pluginsCache.get(ns.pluginsCache.findBrowserForNode(div));
@@ -761,6 +775,8 @@ function _noScript_onPluginClick(ev) {
   }
 }
 
+
+
 function _noScript_syncUI(ev) { 
   noscriptOverlay.syncUI(ev); 
 }
@@ -772,7 +788,7 @@ function _noScript_prepareCtxMenu(ev) {
 
 function _noScript_onloadInstall(ev) {
   document.getElementById("contentAreaContextMenu")
-          .addEventListener("popupshowing",_noScript_prepareCtxMenu,false);
+          .addEventListener("popupshowing", _noScript_prepareCtxMenu, false);
 }
 
 const _noScript_syncEvents=["load", "focus"];
@@ -793,8 +809,7 @@ function _noScript_dispose(ev) {
   noscriptOverlayPrefsObserver.remove();
   window.removeEventListener("load", _noScript_onloadInstall, false);
   document.getElementById("contentAreaContextMenu")
-          .removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);  
-  
+          .removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);
 }
 
 _noScript_install();

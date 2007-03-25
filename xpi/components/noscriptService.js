@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ***** END LICENSE BLOCK *****/
 
 function UninstallGuard(name) {
-  this.name=name;
+  this.name = name;
 }
 
 UninstallGuard.prototype={
@@ -700,7 +700,7 @@ NoscriptService.prototype={
   isJSEnabled: function(site) {
     return (!!this.jsPolicySites.matches(site));
   },
-  setJSEnabled: function(site,is,fromScratch) {
+  setJSEnabled: function(site, is, fromScratch) {
     const ps=this.jsPolicySites;
     if(fromScratch) ps.sitesString=this.permanentSites.sitesString;
     if(is) {

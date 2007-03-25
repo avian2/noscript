@@ -10,7 +10,7 @@ pref("noscript.showDomain",false);
 pref("noscript.showTemp",true);
 pref("noscript.showBaseDomain",true);
 pref("noscript.permanent","");
-pref("noscript.default","chrome: resource: about:blank about:neterror about:config about:plugins about:credits flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.com mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
+pref("noscript.default","chrome: resource: about:blank about:neterror about:config about:plugins about:credits flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.com mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
 pref("noscript.forbidJava",true);
 pref("noscript.forbidFlash",false);
 pref("noscript.forbidPlugins",false);

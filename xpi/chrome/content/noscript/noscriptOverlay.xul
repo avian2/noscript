@@ -80,7 +80,8 @@
       image="chrome://noscript/skin/no16.png"
       class="toolbar-1"
       label="NoScript"
-      type="menu"
+      type="menu-button"
+      oncommand="if(event.target == this) noscriptOverlay.toggleCurrentPage()"
    >
    <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
          <menuseparator class="noscript-sep-insert" hidden="true" />

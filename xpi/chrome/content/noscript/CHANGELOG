@@ -1,5 +1,15 @@
 NoScript ChangeLog
 
+v 1.1.4.1
+=====================================================================
++ Left clicking on NoScript toolbar button toggles permissions for 
+  current top-level site
++ Shift+Click on a Java/Flash/Object placeholder temporarily hides it
++ "Attempt to fix JavaScript links" now skips "real" hash URLs
++ Added live.com to the default whitelist (for MS webmails)
+x Removed a leak caused by "Attempt to fix JavaScript links" option
+x Fixed Macedonian translation
+
 v 1.1.4
 =====================================================================
 + "Allow sites opened through bookmarks" option
