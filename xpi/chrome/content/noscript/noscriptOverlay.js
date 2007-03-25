@@ -50,17 +50,35 @@ NoScriptOverlay.prototype={
   getSites: function(doc,sites,tagName) {
     try {
       if(doc || (doc=this.srcDocument)) {
-        var url=this.ns.getSite(doc.URL);
+        const ns=this.ns;
+        var url=ns.getSite(doc.URL);
+       
         if(sites) {
           sites[sites.length]=url;
         } else {
           sites=[url];
+          sites.scriptCount=0;
         }
+        
         if(!tagName) {
+          var scripts=new XPCNativeWrapper(doc.getElementsByTagName("script"),"item()","length");
+          var scount=scripts.length;
+          sites.scriptCount+=scount;
+          var script;
+          while(scount-->0) {
+            script=new XPCNativeWrapper(scripts.item(scount),"src");
+            if(script.src) {
+              sites[sites.length]=ns.getSite(script.src);
+            }
+          }
+          
           this.getSites(doc, sites, 'frame');
           this.getSites(doc, sites, 'iframe');
+          return ns.sortedSiteSet(sites);
+
         } else {
-          var frames=doc.getElementsByTagName(tagName);
+          
+          var frames=new XPCNativeWrapper(doc.getElementsByTagName(tagName),"item()","length");
           var frame;
           for(var j=frames.length; j-->0;) {
             try {
@@ -71,11 +89,11 @@ NoScriptOverlay.prototype={
           }
         }
       }
-      return this.ns.sortedSiteSet(sites);
+     
     } catch(ex) {
-      dump(ex);
+      // dump(ex);
     }
-    return sites?sites:[];
+    return sites?sites:{ length: 0, scriptCount: 0 };
   }
 ,
   get prompter() {
@@ -140,7 +158,7 @@ NoScriptOverlay.prototype={
     var site,enabled,lev;
     const allowedSites=ns.sites;
     var matchingSite;
-    var menuSites,scount;
+    var menuSites,menuSite,scount;
     var domain,pos;
     var domainDupChecker={
       prev: "",
@@ -177,13 +195,20 @@ NoScriptOverlay.prototype={
       parent.insertBefore(node,stopSep);
       
       for(scount=menuSites.length; scount-->0;) {
+        menuSite=menuSites[scount];
         node=document.createElement("menuitem");
-        node.setAttribute("label",this.getString((enabled?"forbidLocal":"allowLocal"),[menuSites[scount]]));
-        node.setAttribute("statustext",menuSites[scount]);
+        node.setAttribute("label",this.getString((enabled?"forbidLocal":"allowLocal"),[menuSite]));
+        node.setAttribute("statustext",menuSite);
         node.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!enabled)+",this)");
-        node.setAttribute("class","menuitem-iconic");
-        node.setAttribute("tooltiptext",this.getString("allowed."+(enabled?"yes":"no")));
-        node.setAttribute("image",this.getIcon(enabled?"no":"yes"));
+        node.setAttribute("tooltiptext",
+          this.getString("allowed."+(enabled?"yes":"no")));
+        if(enabled && ns.isPermanent(menuSite)) {
+          node.setAttribute("class","");
+          node.setAttribute("disabled","true");
+        } else {
+          node.setAttribute("class","menuitem-iconic");
+          node.setAttribute("image",this.getIcon(enabled?"no":"yes"));
+        }
         parent.insertBefore(node,stopSep);
       }
     }
@@ -220,26 +245,47 @@ NoScriptOverlay.prototype={
       }
       ns.jsEnabled=enabled;
     }
+    ns.savePrefs();
     if(reload) BrowserReload();
     this.syncUI();
   }
 ,
   _iconURL: null,
-  getIcon: function(lev) {
+  getIcon: function(lev,inactive) {
     if(!this._iconURL) this._iconURL=document.getElementById("noscript-status").src;
-    return this._iconURL.replace(/\b(yes|no|glb)(\d+\.)/,lev+"$2")
+    return this._iconURL.replace(/[^\/]*(yes|no|glb|prt)(\d+\.)/,(inactive?"inactive-":"")+lev+"$2");
   }
 ,
+  _syncInfo: { enqueued: false, uninstallCheck: false }
+,
   syncUI: function(ev) {
-    const ns=this.ns;
-    
-    if(ev && ev.eventPhase==Event.AT_TARGET && ev.type=="focus") {
-      if((!this.ns.uninstalling) && this.cleanup()) {
-        window.setTimeout(function() { noscriptOverlay.uninstallAlert(); },10);
-      }
+    if(ev && ev.eventPhase==ev.AT_TARGET && ev.target==document && ev.type=="focus") {
+      this._syncInfo.uninstallCheck=true;
     }
     
-    if(this.ns.uninstalling) {
+    if(!this._syncInfo.enqueued) {
+      this._syncInfo.enqueued=true;
+      window.setTimeout(function(nso) { 
+        try {
+          nso._syncUINow();
+        } catch(ex) {
+          // dump(ex);
+        }
+        nso._syncInfo.enqueued=false; 
+       }, 400, this);
+    }
+  }
+,
+  _syncUINow: function() {
+    // dump("syncUINow called\n");
+    const ns=this.ns;
+    
+    if((!this.cleanupDone) && this._syncInfo.uninstallCheck && this.cleanup()) {
+      window.setTimeout(function() { noscriptOverlay.uninstallAlert(); }, 10);
+    }
+    this._syncInfo.uninstallCheck=false;
+    
+    if(ns.uninstalling) {
       const popup=document.getElementById("noscript-status-popup");
       if(popup) {
         popup.parentNode.setAttribute("onclick","noscriptOverlay.uninstallAlert()");
@@ -249,17 +295,32 @@ NoScriptOverlay.prototype={
     
     const global=ns.jsEnabled;
     var lev;
+    const sites=this.getSites();
+
     if(global) {
       lev="glb";
     } else {
-      const sites=this.getSites();
+      var allowed=0;
       var scount=sites.length;
-      while(scount-->0 && !ns.isJSEnabled(sites[scount]));
-      lev=scount>-1?"yes":"no";
+      var total=scount;
+      var site;
+      while(scount-->0) {
+        site=ns.findShortestMatchingSite(sites[scount]);
+        if(site) { 
+          if(ns.isPermanent(site)) {
+            total--;
+          } else {
+            allowed++;
+          }
+        } 
+      }
+      //lev=allowed==0?"no":allowed==total?"yes":"prt";   
+      lev=(allowed==total && sites.length>0)?"yes":allowed==0?"no":"prt"; 
     }
     const widget=document.getElementById("noscript-status");
-    widget.setAttribute("tooltiptext",this.getString("allowed."+lev));
-    widget.setAttribute("src",this.getIcon(lev));
+    widget.setAttribute("tooltiptext",
+      this.getString("allowed."+lev)+" ("+sites.scriptCount+")");
+    widget.setAttribute("src",this.getIcon(lev,!sites.scriptCount));
   }
 ,
   chromeBase: "chrome://noscript/content/",
@@ -275,9 +336,13 @@ NoScriptOverlay.prototype={
       "chrome,dialog,centerscreen");
   }
 ,
+  cleanupDone: false
+,
   cleanup: function() {
-    return this.ns.cleanupIfUninstalling();
+    // dump("Cleanup check called\n");
+    return this.cleanupDone=this.ns.cleanupIfUninstalling();
   }
+  
 }
 
 noscriptOverlay=new NoScriptOverlay();
@@ -285,13 +350,32 @@ noscriptOverlay=new NoScriptOverlay();
 _noScript_syncUI=function(ev) { 
   noscriptOverlay.syncUI(ev); 
 };
-window.addEventListener("load",function() {
-  document.getElementById("contentAreaContextMenu").addEventListener("popupshowing",function(ev) {
+_noScript_prepareCtxMenu=function(ev) {
     noscriptOverlay.prepareContextMenu(ev);
-  },false);
-},false);
-window.addEventListener("load",_noScript_syncUI,true);
-window.addEventListener("focus",_noScript_syncUI,true);
-window.addEventListener("command",_noScript_syncUI,true);
-window.addEventListener("click",_noScript_syncUI,true);
-window.addEventListener("unload",function() { noscriptOverlay.cleanup(); },false);
+};
+_noScript_onloadInstall=function(ev) {
+  document.getElementById("contentAreaContextMenu").addEventListener(
+    "popupshowing",_noScript_prepareCtxMenu,false);
+};
+
+_noScript_syncEvents=["load","focus"];
+_noScript_syncEvents.visit=function(callback) {
+  for(var e=0,len=this.length; e<len; e++) {
+    callback.call(window,this[e],_noScript_syncUI,true);
+  }
+}
+_noScript_install=function() {
+  _noScript_syncEvents.visit(window.addEventListener);
+  window.addEventListener("load",_noScript_onloadInstall,false);
+  window.addEventListener("unload",_noScript_dispose,false);
+};
+
+_noScript_dispose=function(ev) {
+  noscriptOverlay.cleanup();
+  _noScript_syncEvents.visit(window.removeEventListener);
+  window.removeEventListener("load",_noScript_onloadInstall,false);
+  document.removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);
+};
+
+_noScript_install();
+

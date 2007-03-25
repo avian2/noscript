@@ -36,11 +36,7 @@ function nso_init() {
   g_jsglobal=document.getElementById("jsglobal");
   g_addButton=document.getElementById("addButton");
   g_removeButton=document.getElementById("removeButton");
-  g_urlList.removeItemAt(0);
-  const sites=g_ns.sites;
-  for(var j=0, len=sites.length; j<len; j++) {
-    g_urlList.appendItem(sites[j],sites[j]);
-  }
+  nso_populateUrlList(g_ns.sites);
   g_jsglobal.setAttribute("checked",g_ns.jsEnabled);
  
   visitCheckboxes(
@@ -50,11 +46,19 @@ function nso_init() {
     }
   );
   
-  nso_urlListChanged();
 }
 
 function nso_urlListChanged() {
-  g_removeButton.setAttribute("disabled",g_urlList.selectedCount==0);
+  const selectedItems=g_urlList.selectedItems;
+  var removeDisabled=true;
+  for(var j=selectedItems.length; j-->0;) {
+    if(selectedItems[j].getAttribute("disabled")!="true") {
+      removeDisabled=false;
+      break;
+    }
+  } 
+  g_removeButton.setAttribute("disabled", removeDisabled);
+  nso_urlChanged();
 }
 
 function nso_urlChanged() {
@@ -63,7 +67,7 @@ function nso_urlChanged() {
   var addEnabled=url.length>0 && (url=g_ns.getSite(url))!=null;
   if(addEnabled) {
     for(var j=g_urlList.getRowCount(); j-->0;) {
-      if(g_urlList.getItemAtIndex(j).value==url) {
+      if(g_urlList.getItemAtIndex(j).getAttribute("value")==url) {
         addEnabled=false;
         break;
       }
@@ -72,30 +76,63 @@ function nso_urlChanged() {
   g_addButton.setAttribute("disabled",!addEnabled);
 }
 
-function nso_allow() {
-  var site=g_ns.getSite(g_urlText.value);
-  g_urlList.appendItem(site,site);
+function nso_populateUrlList(sites) {
+  for(var j=g_urlList.getRowCount(); j-->0; g_urlList.removeItemAt(j));
+  var site,item;
+  for(j=0, len=sites.length; j<len; j++) {
+    site=sites[j];
+    item=g_urlList.appendItem(site,site);
+    if(g_ns.isPermanent(site)) { 
+      item.setAttribute("disabled","true");
+    }
+  }
   nso_urlListChanged();
 }
+
+function nso_urlList2Arr() {
+  const sites=[];
+  for(var j=g_urlList.getRowCount(); j-->0;) {
+    sites[sites.length]=g_urlList.getItemAtIndex(j).getAttribute("value");
+  }
+  return sites;
+}
+
+
+function nso_allow() {
+  var site=g_ns.getSite(g_urlText.value);
+  var sites=nso_urlList2Arr();
+  sites[sites.length]=site;
+  sites=g_ns.sortedSiteSet(sites);
+  nso_populateUrlList(sites);
+  var item;
+  for(var j=g_urlList.getRowCount(); j-->0;) {
+    if((item=g_urlList.getItemAtIndex(j)).getAttribute("value")==site) {
+      g_urlList.ensureElementIsVisible(item);
+    }
+  }
+  g_addButton.setAttribute("disabled","true");
+}
+
+
 
 function nso_remove() {
   const selectedItems=g_urlList.selectedItems;
   for(var j=selectedItems.length; j-->0;) {
-    g_urlList.removeItemAt(g_urlList.getIndexOfItem(selectedItems[j]));
+    if(!g_ns.isPermanent(selectedItems[j].getAttribute("value"))) {
+      g_urlList.removeItemAt(g_urlList.getIndexOfItem(selectedItems[j]));
+    }
   }
 }
 
 function nso_save() {
   visitCheckboxes(
     function(prefName,inverse,checkbox) {
-      g_ns.setPref(prefName,inverse?!checkbox.checked:checkbox.checked);
+      const checked=checkbox.getAttribute("checked")=="true";
+      g_ns.setPref(prefName,inverse?!checked:checked);
     }
   );
   
-  const sites=[];
-  for(var j=g_urlList.getRowCount(); j-->0;) {
-    sites[sites.length]=g_urlList.getItemAtIndex(j).value;
-  }
+  const sites=nso_urlList2Arr();
 
   const oldSS=g_ns.sitesString;
   g_ns.sites=sites;
@@ -107,10 +144,10 @@ function nso_save() {
     try {
       window.opener.BrowserReload();
     } catch(ex) {
-      dump(ex);
+      // dump(ex);
     }
   }
-  
+  g_ns.savePrefs();
 }
 
 function visitCheckboxes(callback) {

@@ -7,4 +7,4 @@
 <!ENTITY noscriptRemoveSelected "Enlever les site sélectionné">
 <!ENTITY noscriptGloballyEnabled "Autoriser Javascript globalement (dangereux)">
 <!ENTITY noscriptAutoReload "Recharger la page automatiquement après avoir changé les permissions">
-<!ENTITY noscriptCtxMenu  "Afficher dans le menu contextuel">
+<!ENTITY noscriptCtxMenu "Afficher dans le menu contextuel">

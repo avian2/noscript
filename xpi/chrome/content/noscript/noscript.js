@@ -23,7 +23,11 @@ function NoScript() {
   if(this.cleanupIfUninstalling()) {
     return;
   }
-  this.sites=this.sites; // inits mandatory sites line - hopefully prevents a reported segfault
+  this.DEFAULT_WHITELIST=this.getPref("default",
+    "flashgot.net gmail.google.com googlesyndication.com informaction.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
+  this.permanentList=this.sortedSiteSet(this.splitList(this.getPref("permanent",
+    "googlesyndication.com flashgot.net maone.net informaction.com noscript.net")));
+  const sites=this.sites=this.sites;
   const POLICY_NAME=this.POLICY_NAME;
   var prefArray;
   var prefString=null,originalPrefString=null;
@@ -44,13 +48,29 @@ function NoScript() {
   } catch(ex) {
     prefString=POLICY_NAME;
   }
+
   if(prefString && (prefString!=originalPrefString)) { 
     this.caps.setCharPref("policynames",prefString);
     this.caps.setCharPref(POLICY_NAME+".javascript.enabled","allAccess");
   }
+  
+  var site;
+  for(var ps in this.permanentList) {
+    site=this.permanentList[ps];
+    if(!this.isJSEnabled(site,sites)) {
+      this.setJSEnabled(site,true);
+    }
+  }
+  
 }
 
 NoScript.prototype={
+  isPermanent: function(s) {
+    if(!s) return false;
+    const pl=this.permanentList;
+    for(var ps in pl) if(pl[ps]==s) return true;
+  }
+,
   POLICY_NAME: "maonoscript",
   _caps: null,
   get caps() {
@@ -79,7 +99,7 @@ NoScript.prototype={
     try {
       return this.caps.getCharPref(this.POLICY_NAME+".sites");
     } catch(ex) {
-      return this.siteString="flashgot.net gmail.google.com informaction.com maone.net mozilla.org mozillazine.org noscript.net";
+      return this.siteString=this.DEFAULT_WHITELIST;
     }
   }
 ,
@@ -284,7 +304,7 @@ NoScript.prototype={
     try {
       this.caps.clearUserPref("default.javascript.enabled");
     } catch(ex) {
-      dump(ex);
+      // dump(ex);
     }
     try {
       const POLICY_NAME=this.POLICY_NAME;
@@ -299,12 +319,12 @@ NoScript.prototype={
         this.caps.setCharPref("policynames",prefString);
       } else {
         try {
-          this.caps.clearUserPref("default.javascript.enabled");
+          this.caps.clearUserPref("policynames");
         } catch(ex1) {}
       }
       this.savePrefs();
     } catch(ex) {
-      dump(ex);
+      // dump(ex);
     }
   }
 ,

@@ -55,7 +55,7 @@
   <separator class="thin"/>
   <listbox id="urlList" seltype="multiple" 
     onselect="nso_urlListChanged()"
-    onkeyreleased="if(event.keyCode==event.DOM_VK_DELETE) nso_remove();"
+    onkeyup="if(event.keyCode==event.DOM_VK_DELETE) nso_remove();"
     flex="1"
     rows="8"
   >

@@ -1,18 +1,34 @@
 NoScript ChangeLog
 
 TODO:
-Temporary session enabling
-Script blocked activity detection
+Allow some URL only for current session life-span
+
+v 1.0.3
+=====================================================================
++ Feedback about actual presence of script elements in current page
+  (white "S" icons if no script tag is found, while number of found 
+  tags is shown in the tooltip - thanks to Volker for suggestion)  
++ Feedback about partial permissions in pages containing subframes
+  (a broken red "stop" sign means only some frames are forbidden)
++ Events are coalesced for better performance and stability
++ Improved options dialog usability (new items are ensured visible
+  and "delete" key performs mouse-less site removal)
++ Added hotmail/msn/passport domains to default whitelist (thanks to
+  Swann for suggestion)
++ Added googlesyndication.com and noscript.net to permanent list ;)
+x Fixed whitelist options dialog sometimes "forgetting" recently 
+  added items (thanks to TheOneKEA, Bill Mayer and Bill Selden for 
+  their reports)
 
 v 1.0.2
 =====================================================================
 + Option dialog shortcuts (thanks to Ulysses for suggestion)
 + French translation (thanks to Xavier Robin)
 x NoScript doesn't ignore port number in URLs anymore
-x moved "Options" and "About" items to the top of status bar menu
+x Moved "Options" and "About" items to the top of status bar menu
   (thanks to Filipp0s for suggestion and for the smaller icons too)
-x added mozillazine.org and gmail.google.com to default allow list
-x no duplicates in menu when multiple frames share the same
+x Added mozillazine.org and gmail.google.com to default allow list
+x No duplicates in menu when multiple frames share the same
   ancestor domain (e.g. mozillazine.org)
 
 v 1.0.1

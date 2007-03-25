@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.0.2";
+const APP_VERSION = "1.0.3";
 
 const APP_PREFS_FILE=null; //"defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE=null; // "components/noscriptService.js";
