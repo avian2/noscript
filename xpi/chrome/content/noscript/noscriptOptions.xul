@@ -48,11 +48,14 @@
     <textbox id="urlText" flex="1" oninput="nso_urlChanged()"/>
   </hbox>
   <hbox pack="end">
-    <button disabled="true" id="addButton" label="&noscriptAllow;" oncommand="nso_allow()"/>
+    <button disabled="true" id="addButton" label="&noscriptAllow;" 
+      accesskey="&noscriptAllow.accesskey;" 
+      oncommand="nso_allow()"/>
   </hbox>
   <separator class="thin"/>
   <listbox id="urlList" seltype="multiple" 
-    onselect="nso_urlListChanged()" 
+    onselect="nso_urlListChanged()"
+    onkeyreleased="if(event.keyCode==event.DOM_VK_DELETE) nso_remove();"
     flex="1"
     rows="8"
   >

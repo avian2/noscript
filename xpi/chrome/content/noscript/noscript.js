@@ -79,7 +79,7 @@ NoScript.prototype={
     try {
       return this.caps.getCharPref(this.POLICY_NAME+".sites");
     } catch(ex) {
-      return this.siteString="flashgot.net informaction.com maone.net mozilla.org noscript.net";
+      return this.siteString="flashgot.net gmail.google.com informaction.com maone.net mozilla.org mozillazine.org noscript.net";
     }
   }
 ,
@@ -98,7 +98,7 @@ NoScript.prototype={
   }
 ,
   set sites(ss) {
-    this.sitesString=(ss=this.sortedSiteSet(ss)).join(' ');
+    this.sitesString=(ss=this.sortedSiteSet(ss,true)).join(' ');
     return ss;
   }
 ,
@@ -162,7 +162,9 @@ NoScript.prototype={
       return domainMatch?domainMatch[0].toLowerCase():null;
     }
     try {
-      return protocol+this.ios.newURI(url,null,null).host;
+      const uri=this.ios.newURI(url,null,null);
+      const port=uri.port;
+      return port>0?protocol+uri.host+":"+port:protocol+uri.host;
     } catch(ex) {
       return null;
     }

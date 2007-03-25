@@ -92,9 +92,6 @@ function nso_save() {
     }
   );
   
-  
-  
-  
   const sites=[];
   for(var j=g_urlList.getRowCount(); j-->0;) {
     sites[sites.length]=g_urlList.getItemAtIndex(j).value;

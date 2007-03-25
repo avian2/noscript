@@ -42,17 +42,20 @@
 <popup id="contentAreaContextMenu">
   <menu id="noscript-context-menu" class="menu-iconic" label="NoScript" >
     <menupopup onpopupshowing="noscriptOverlay.prepareMenu(this)">
+         <menuseparator class="noscript-sep-insert" collapsed="true" />
+         <menuseparator class="noscript-sep-stop-global" />
          <menuitem class="menuitem-iconic" />
          <menuseparator />
          <menuitem 
           label="&noscriptOptions;"
+          accesskey="&noscriptOptions.accesskey;"
           oncommand="noscriptOverlay.openOptionsDialog()"
           tooltiptext="&noscriptOptionsLong;"
           />
           <menuitem
-          label="&noscriptAbout;"
-          tooltiptext="&noscriptAbout;"
-          oncommand="noscriptOverlay.openAboutDialog()"
+            label="&noscriptAbout;"
+            tooltiptext="&noscriptAbout;"
+            oncommand="noscriptOverlay.openAboutDialog()"
           />
     </menupopup>
   </menu>
@@ -64,18 +67,21 @@
     collapsed="false" 
     >
     <menupopup id="noscript-status-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
-         <menuitem class="menuitem-iconic" />
-         <menuseparator />
-         <menuitem 
+         <menuitem
+            label="&noscriptAbout;"
+            tooltiptext="&noscriptAbout;"
+            oncommand="noscriptOverlay.openAboutDialog()"
+          /> 
+        <menuitem 
           label="&noscriptOptions;"
+          accesskey="&noscriptOptions.accesskey;"
           oncommand="noscriptOverlay.openOptionsDialog()"
           tooltiptext="&noscriptOptionsLong;"
           />
-          <menuitem
-          label="&noscriptAbout;"
-          tooltiptext="&noscriptAbout;"
-          oncommand="noscriptOverlay.openAboutDialog()"
-          />
+         <menuseparator class="noscript-sep-global"/>
+         <menuitem class="menuitem-iconic" />
+         <menuseparator class="noscript-sep-insert" collapsed="true" />
+         <menuseparator class="noscript-sep-stop" collapsed="true" />
     </menupopup>
 </statusbarpanel>
    

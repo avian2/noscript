@@ -1,5 +1,20 @@
 NoScript ChangeLog
 
+TODO:
+Temporary session enabling
+Script blocked activity detection
+
+v 1.0.2
+=====================================================================
++ Option dialog shortcuts (thanks to Ulysses for suggestion)
++ French translation (thanks to Xavier Robin)
+x NoScript doesn't ignore port number in URLs anymore
+x moved "Options" and "About" items to the top of status bar menu
+  (thanks to Filipp0s for suggestion and for the smaller icons too)
+x added mozillazine.org and gmail.google.com to default allow list
+x no duplicates in menu when multiple frames share the same
+  ancestor domain (e.g. mozillazine.org)
+
 v 1.0.1
 =====================================================================
 + Contextual menu for easy operation in statusbar-less windows

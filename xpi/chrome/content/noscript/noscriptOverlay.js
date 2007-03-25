@@ -103,21 +103,34 @@ NoScriptOverlay.prototype={
   }
 ,
   prepareMenu: function(popup) {
-    
     const ns=this.ns;
-    const miGlobal=popup.firstChild;
     const global=ns.jsEnabled;
+    var j,k,node;
+    var separators=popup.getElementsByTagName("menuseparator");
+    var insertSep,stopSep,globalSep;
+    const sepNames=['insert','stop','global'];
+    var sepName;
+    for(j=separators.length; j-- >0;) {
+      sepName=(node=separators[j]).className;
+      for(k in sepNames) {
+        if(sepName.indexOf("-"+sepNames[k])>-1) {
+          eval(sepNames[k]+"Sep=node");
+        }
+      }
+    }
+    
+    delete separators;
+    const miGlobal=globalSep.nextSibling;
     miGlobal.setAttribute("label",this.getString((global?"forbid":"allow")+"Global"));
     miGlobal.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!global)+")");
     miGlobal.setAttribute("tooltiptext",document.getElementById("noscript-status").getAttribute("tooltiptext"));
     miGlobal.setAttribute("image",this.getIcon(global?"no":"glb"));
-    var separators=popup.getElementsByTagName("menuseparator");
-    const sep=separators[separators.length-1];
-    delete separators;
-    const parent=miGlobal.parentNode;
-    var node=miGlobal.nextSibling;
+
+    
+    node=insertSep.nextSibling;
+    const parent=node.parentNode;
     var remNode;
-    while(node && (node!=sep)) {
+    while(node && (node!=stopSep)) {
        remNode=node;
        node=node.nextSibling;
        parent.removeChild(remNode);
@@ -129,13 +142,23 @@ NoScriptOverlay.prototype={
     var matchingSite;
     var menuSites,scount;
     var domain,pos;
-    for(var j=sites.length; j-->0;) {
-      node=document.createElement("menuseparator");
-      parent.insertBefore(node,sep);
+    var domainDupChecker={
+      prev: "",
+      check: function(d) {
+         d=" "+d+" ";
+         if(this.prev.indexOf(d)>-1) return true;
+         this.prev+=d;
+         return false;
+      }
+    };
+    
+    for(j=sites.length; j-->0;) {
+     
       site=sites[j];
       matchingSite=ns.findShortestMatchingSite(site,allowedSites);
       enabled=matchingSite!=null;
       if(enabled) {
+        if(domainDupChecker.check(matchingSite)) continue;
         menuSites=[matchingSite];
       } else {
         domain=site.match(/.*:\/\/([\w\-\.]+)/);
@@ -143,10 +166,16 @@ NoScriptOverlay.prototype={
         if(domain) {
           domain=domain[1];
           for(;(pos=domain.indexOf('.'))>0; domain=domain.substring(pos+1)) {
-            menuSites[menuSites.length]=domain;
+            if(!domainDupChecker.check(domain)) {
+              menuSites[menuSites.length]=domain;
+            }
           }
         }
       }
+      
+      node=document.createElement("menuseparator");
+      parent.insertBefore(node,stopSep);
+      
       for(scount=menuSites.length; scount-->0;) {
         node=document.createElement("menuitem");
         node.setAttribute("label",this.getString((enabled?"forbidLocal":"allowLocal"),[menuSites[scount]]));
@@ -155,9 +184,15 @@ NoScriptOverlay.prototype={
         node.setAttribute("class","menuitem-iconic");
         node.setAttribute("tooltiptext",this.getString("allowed."+(enabled?"yes":"no")));
         node.setAttribute("image",this.getIcon(enabled?"no":"yes"));
-        parent.insertBefore(node,sep);
+        parent.insertBefore(node,stopSep);
       }
     }
+    
+    if(insertSep==parent.firstChild) {
+      // kill exceeding top separator in contextual menu 
+      insertSep.nextSibling.setAttribute("collapsed","true");
+    }
+      
   }
 ,
   get srcWindow() {
@@ -171,6 +206,7 @@ NoScriptOverlay.prototype={
 ,
   menuAllow: function(enabled,menuItem) {
     const ns=this.ns;
+    var reload=ns.getPref("autoReload",true);
     if(menuItem) { // local 
       const site=menuItem.getAttribute("statustext");
       if(site) {
@@ -180,10 +216,11 @@ NoScriptOverlay.prototype={
       if(enabled) {
         enabled=this.prompter.confirm(window,this.getString("global.warning.title"),
           this.getString("global.warning.text"));
+        reload=enabled;
       }
       ns.jsEnabled=enabled;
     }
-    if(ns.getPref("autoReload",true)) BrowserReload();
+    if(reload) BrowserReload();
     this.syncUI();
   }
 ,
