@@ -40,5 +40,5 @@ pref("noscript.nselNever", false);
 pref("noscript.autoAllow", 0);
 pref("noscript.toolbarToggle", false);
 pref("noscript.forbidImpliesUntrust", false);
-
-
+pref("noscript.keys.toggle", "VK_BACK_SLASH");
+pref("noscript.keys.ui", "x");

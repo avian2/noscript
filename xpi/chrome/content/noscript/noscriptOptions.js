@@ -360,9 +360,11 @@ function nso_import(file) {
 
 function nso_export(file) {
   if(typeof(file)=="undefined") return nso_impexp(nso_export);
-  g_serv.writeFile(file, g_trustedSites.sitesList.join("\n"));
-  g_serv.writeFile(file, "\n[UNTRUSTED]\n");
-  g_serv.writeFile(file, g_untrustedSites.sitesList.join("\n"));
+  g_serv.writeFile(file, 
+    g_trustedSites.sitesList.join("\n") + 
+    "\n[UNTRUSTED]\n" +
+    g_untrustedSites.sitesList.join("\n")
+  );
   return null;
 }
 

@@ -875,6 +875,31 @@ NoScriptOverlay.prototype = {
     if(flag in doc && doc[flag] == _noScript_flag) return false;
     doc[flag] = _noScript_flag;
     return true;
+  },
+  
+  setupKeys: function() {
+    const ns = this.ns;
+    const keys = { 'ui': 'x', 'toggle': 'VK_BACK_SLASH' };
+    function remove(id) {
+      var el = document.getElementById(id);
+      el.parentNode.removeChild(el);
+    }
+    function change(id, attr, pref) {
+      document.getElementById(id).setAttribute(attr, pref);
+    }
+    var ids, i,callback, pref, attr = null;
+    for(var k in keys) {
+      pref = ns.getPref("noscript.keys." + k, keys[k]);
+      ids = ["noscript-" + k + "-key", "noscript-zm-" + k + "-key"];
+      if(pref) {
+        attr = pref.length > 0 ? "keycode" : "key";
+        callback = change;
+      } else {
+        callback = remove;
+        attr = null;
+      }
+      for(i = ids.length; i-- > 0;) callback(ids[i], pref, attr);
+    }
   }
 }
 
@@ -903,18 +928,21 @@ const noscriptOverlayPrefsObserver = {
        case "notify.bottom" : 
          noscriptOverlay.notificationHide();
        break;
-      
+       case "noscript.keys.ui":
+       case "noscript.keys.toggle":
+         noscriptOverlay.setupKeys();
+       break;
     }
   },
   register: function() {
     this.ns.prefs.addObserver("",this,false);
-    const initPrefs = ["statusIcon", "statusLabel"];
+    const initPrefs = ["statusIcon", "statusLabel", "noscript.keys.ui", "noscript.keys.toggle"];
     for(var j = 0; j < initPrefs.length; j++) {
       this.observe(null, null, initPrefs[j]);
     }
   },
   remove: function() {
-    this.ns.prefs.removeObserver("",this);
+    this.ns.prefs.removeObserver("", this);
   }
 };
 
@@ -1023,8 +1051,18 @@ function _noScript_onloadInstall(ev) {
     l.onLocationChange = _noScript_WebProgressListener.onLocationChange;
     return l;
   };
-  
+  const ns = noscriptOverlay.ns;
+  const prevVer = ns.getPref("version", "");
+  if(prevVer != ns.VERSION) {
+    ns.setPref("version", ns.VERSION);
+    window.setTimeout(function() {
+      const url = "http://noscript.net?ver=" + ns.VERSION + "&prev=" + prevVer;
+      const browser = getBrowser();
+      browser.selectedTab = browser.addTab(url, null);
+    }, 100);
+  }
 }
+
 
 
 function _noScript_install() {

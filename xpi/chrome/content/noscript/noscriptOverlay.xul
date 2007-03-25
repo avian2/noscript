@@ -40,6 +40,11 @@
     <key id="noscript-toggle-key" keycode="VK_BACK_SLASH" modifiers="accel,shift" oncommand="noscriptOverlay.toggleCurrentPage(true)" />
     <key id="noscript-ui-key" key="x" modifiers="accel,shift" oncommand="noscriptOverlay.showUI()" />
 </keyset>
+<keyset id="navKeys">
+    <key id="noscript-zm-toggle-key" keycode="VK_BACK_SLASH" modifiers="accel,shift" oncommand="noscriptOverlay.toggleCurrentPage(true)" />
+    <key id="noscript-zm-ui-key" key="x" modifiers="accel,shift" oncommand="noscriptOverlay.showUI()" />
+</keyset>
+  
 <stringbundleset id="stringbundleset">
   <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />
   <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />

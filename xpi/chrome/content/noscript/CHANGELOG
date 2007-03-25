@@ -1,5 +1,13 @@
 NoScript ChangeLog
 
+v 1.1.4.6.070302
+=====================================================================
+x Fixed a regression in the "Export" functionality
+x Added a couple of about:config options (noscript.keys.*) to disable 
+  keyboard shortcuts: just blank their values. Notice: changing the
+  option value to a different key is possible, but it  doesn't 
+  actually work (yet?)
+
 v 1.1.4.6
 =====================================================================
 x Stable "blacklist" release
