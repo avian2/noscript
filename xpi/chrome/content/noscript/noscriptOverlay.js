@@ -20,31 +20,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ***** END LICENSE BLOCK *****/
 
 function NoScriptOverlay() {
-  this.ns=getNoscriptService();
+  this.ns=noscriptUtil.service;
 }
 
 NoScriptOverlay.prototype={
-  _strings: null,
-  get strings() {
-    return this._strings?this._strings:this._strings=document.getElementById("noscript-strings");  
-  }
-,
-  _stringsFB: null,
-  get stringsFB() {
-    return this._stringsFB?this._stringsFB:this._stringsFB=document.getElementById("noscript-stringsFB");  
-  }
-,
-  _stringFrom: function(bundle,key,parms) {
-    try {
-      return parms?bundle.getFormattedString(key,parms):bundle.getString(key);
-    } catch(ex) {
-      return null;
-    }
-  }
-,
   getString: function(key,parms) {
-    var s=this._stringFrom(this.strings,key,parms);
-    return s?s:this._stringFrom(this.stringsFB,key,parms);
+    return noscriptUtil.getString(key,parms);
   }
 ,
   getSites: function(doc,sites,tagName) {
@@ -207,6 +188,9 @@ NoScriptOverlay.prototype={
     const showDomain=ns.getPref("showDomain",false);
     const showBase=ns.getPref("showBaseDomain",true);
     const showNothing=!(showAddress||showDomain||showBase);
+    
+    const showTemp=ns.getPref("showTemp");
+   
     for(j=sites.length; j-->0;) {
       site=sites[j];
       matchingSite=ns.findShortestMatchingSite(site,allowedSites);
@@ -270,11 +254,20 @@ NoScriptOverlay.prototype={
         if(enabled && ns.isPermanent(menuSite)) {
           node.setAttribute("class","");
           node.setAttribute("disabled","true");
+          node.style.fontStyle="normal";
         } else {
           node.setAttribute("class","menuitem-iconic");
           node.setAttribute("image",this.getIcon(enabled?"no":"yes"));
+          node.style.fontStyle=(enabled && ns.isTemp(menuSite))?"italic":"normal";
         }
         parent.insertBefore(node,stopSep);
+        if(showTemp && !enabled) {
+          node=node.cloneNode(true);
+          node.setAttribute("label",this.getString("allowTemp",[menuSite]));
+          node.setAttribute("oncommand","noscriptOverlay.menuAllow(true,this,true)");
+          node.style.fontStyle="italic";
+          parent.insertBefore(node,stopSep);
+        }
       }
     }
     
@@ -307,23 +300,31 @@ NoScriptOverlay.prototype={
     return null;
   }
 ,
-  menuAllow: function(enabled,menuItem) {
-    const ns=this.ns;
+  menuAllow: function(enabled,menuItem,temp) {
     if(menuItem) { // local 
       const site=menuItem.getAttribute("statustext");
-      if(site) {
-        ns.setJSEnabled(site,enabled);
-      }
+      if(!site) return;
     } else { // global
       if(enabled) {
         enabled=this.prompter.confirm(window,this.getString("global.warning.title"),
           this.getString("global.warning.text"));
       }
-      ns.jsEnabled=enabled;
     }
-    ns.savePrefs();
-    ns.reloadWhereNeeded();
-    this.syncUI();
+    this.safeAllow(site,enabled,temp);
+  }
+,
+  safeAllow: function(site,enabled,temp) {
+    const overlay=this;
+    const ns=this.ns;
+    ns.safeCapsOp(function() {
+      if(site) {
+        ns.setJSEnabled(site,enabled);
+        ns.setTemp(site, enabled && temp);
+      } else {
+        ns.jsEnabled=enabled;
+      }
+      overlay.syncUI();
+    });
   }
 ,
   _iconURL: null,
@@ -359,15 +360,15 @@ NoScriptOverlay.prototype={
   }
 ,
   _syncUINow: function() {
-    // dump("syncUINow called\n");
+   
     const ns=this.ns;
-    
-    if((!this.cleanupDone) && this._syncInfo.uninstallCheck && this.cleanup()) {
-      window.setTimeout(function() { noscriptOverlay.uninstallAlert(); }, 10);
-    }
-    this._syncInfo.uninstallCheck=false;
-    
     if(ns.uninstalling) {
+      if(this._syncInfo.uninstallCheck && !ns.uninstallAlerted) {
+        window.setTimeout(function() { noscriptOverlay.uninstallAlert(); }, 10);
+        ns.uninstallAlerted=true;
+      }
+      this._syncInfo.uninstallCheck=false;
+
       const popup=document.getElementById("noscript-status-popup");
       if(popup) {
         popup.parentNode.setAttribute("onclick","noscriptOverlay.uninstallAlert()");
@@ -440,7 +441,7 @@ NoScriptOverlay.prototype={
 ,
   checkDocFlag: function(doc,flag) {
     if(flag in doc && doc[flag]==_noscript_randomSignature) return false;
-    doc[flag] getter=_noscript_signatureGetter;
+    doc.__defineGetter__(flag,_noscript_signatureGetter);
     return true;
   }
 ,
@@ -460,14 +461,6 @@ NoScriptOverlay.prototype={
     window.openDialog(this.chromeBase+"about.xul",this.chromeName+"About",
       "chrome,dialog,centerscreen");
   }
-,
-  cleanupDone: false
-,
-  cleanup: function() {
-    // dump("Cleanup check called\n");
-    return this.cleanupDone=this.ns.cleanupIfUninstalling();
-  }
-  
 }
 
 _noscript_randomSignature=Math.floor(100000000*Math.random());
@@ -506,32 +499,31 @@ noscriptOverlayPrefsObserver={
 
 
 
-_noScript_syncUI=function(ev) { 
+var _noScript_syncUI=function(ev) { 
   noscriptOverlay.syncUI(ev); 
 };
-_noScript_prepareCtxMenu=function(ev) {
+var _noScript_prepareCtxMenu=function(ev) {
     noscriptOverlay.prepareContextMenu(ev);
 };
-_noScript_onloadInstall=function(ev) {
+var _noScript_onloadInstall=function(ev) {
   document.getElementById("contentAreaContextMenu").addEventListener(
     "popupshowing",_noScript_prepareCtxMenu,false);
 };
 
-_noScript_syncEvents=["load","focus"];
+var _noScript_syncEvents=["load","focus"];
 _noScript_syncEvents.visit=function(callback) {
   for(var e=0,len=this.length; e<len; e++) {
     callback.call(window,this[e],_noScript_syncUI,true);
   }
 }
-_noScript_install=function() {
+var _noScript_install=function() {
   _noScript_syncEvents.visit(window.addEventListener);
   window.addEventListener("load",_noScript_onloadInstall,false);
   window.addEventListener("unload",_noScript_dispose,false);
   noscriptOverlayPrefsObserver.register();
 };
 
-_noScript_dispose=function(ev) {
-  noscriptOverlay.cleanup();
+var _noScript_dispose=function(ev) {
   _noScript_syncEvents.visit(window.removeEventListener);
   window.removeEventListener("load",_noScript_onloadInstall,false);
   document.removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);

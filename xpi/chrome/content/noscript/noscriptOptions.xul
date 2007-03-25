@@ -36,6 +36,11 @@
   persist="screenX screenY"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />
+    <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />
+  </stringbundleset>
+  
   <script type="application/x-javascript" src="noscript.js" />
   <script type="application/x-javascript" src="noscriptOptions.js" />
   
@@ -94,6 +99,7 @@
      <checkbox id="opt-showBaseDomain" label="&noscriptBaseDom;" />
      <checkbox id="opt-showDomain" label="&noscriptFullDom;" />
      <checkbox id="opt-showAddress" label="&noscriptFullAddr;" />
+     <checkbox id="opt-showTemp" label="&noscriptTempCmd;" />
     </vbox>
     <separator class="groove"/>
     <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />

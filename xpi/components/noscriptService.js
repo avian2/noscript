@@ -19,6 +19,104 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
+function UninstallGuard(name) {
+  this.name=name;
+}
+
+UninstallGuard.prototype={
+  uninstalling: false,
+  disabled: false,
+  get ds() {
+    return Components.classes["@mozilla.org/extensions/manager;1"
+        ].getService(Components.interfaces.nsIExtensionManager
+      ).datasource;
+  }
+,
+  get rdfService() {
+    return Components.classes["@mozilla.org/rdf/rdf-service;1"].getService(Components.interfaces.nsIRDFService);
+  }
+,
+  onAssert: function(ds,source,prop,target) {
+    this.check(ds,source);
+  },
+  onBeginUpdateBatch: function(ds) {},
+  onChange: function(ds,source,prop,oldTarget,newTarget) {
+    this.check(ds,source);
+  },
+  onEndUpdateBatch: function(ds) {
+    this.checkAll(ds);
+  },
+  onMove: function(ds,oldSource,newSource,prop,target) {
+    this.check(ds,newSource);
+  },
+  onUnassert: function(ds,source,prop,target) {
+    this.check(ds,source);
+  }
+,
+  init: function() {
+    try {
+      this.ds.AddObserver(this);
+    } catch(ex) {
+      this.log(ex);
+    } 
+  }
+,
+  dispose: function() {
+    try {
+      this.ds.RemoveObserver(this);
+    } catch(ex) {
+      this.log(ex);
+    } 
+  }
+,
+  checkAll: function(ds) {
+    const container = Components.classes["@mozilla.org/rdf/container;1"]
+               .getService(Components.interfaces.nsIRDFContainer);
+    var root = this.rdfService.GetResource("urn:mozilla:extension:root");
+    container.Init(ds,root);
+    
+     var found = false;
+     var elements = container.GetElements();
+     for(var found=false; elements.hasMoreElements() && !found; ) {
+        found=this.check(elements.getNext().QueryInterface(Components.interfaces.nsIRDFResource));
+     }
+  }
+,
+  check: function(extensionDS,element) {
+    try { 
+      const RDFService = this.rdfService;
+      var target;
+      if((target=extensionDS.GetTarget(element,  
+        RDFService.GetResource("http://www.mozilla.org/2004/em-rdf#name") ,true))
+        && target.QueryInterface(Components.interfaces.nsIRDFLiteral).Value==this.name
+        ) {
+        this.uninstalling = (
+          (target = extensionDS.GetTarget(element, 
+            RDFService.GetResource("http://www.mozilla.org/2004/em-rdf#toBeUninstalled"),true)
+            ) !=null 
+            && target.QueryInterface(Components.interfaces.nsIRDFLiteral).Value == "true"
+           );
+        this.disabled = (
+          (target = extensionDS.GetTarget(element, 
+            RDFService.GetResource("http://www.mozilla.org/2004/em-rdf#toBeDisabled"),true)
+            ) !=null
+            && target.QueryInterface(Components.interfaces.nsIRDFLiteral).Value == "true"
+          );
+        return true;
+      }  
+     } catch(ex) {
+       this.log(ex);
+     } // quick and dirty work-around for Mozilla ;)
+     return false;
+  }
+,
+  log: function(msg) {
+    dump("UninstallGuard: "+msg+"\n");
+  }
+};
+
+
+
 function NoscriptService() {
   this.register();
 }
@@ -35,6 +133,8 @@ NoscriptService.prototype={
 ,
   // nsIObserver implementation 
   observe: function(subject, topic, data) {
+    // dump(SERVICE_NAME+" notified of "+subject+","+topic+","+data); //DDEBUG
+    
     if(subject instanceof Components.interfaces.nsIPrefBranchInternal) {
       this.syncPrefs(subject,data);
     } else {
@@ -43,11 +143,17 @@ NoscriptService.prototype={
           this.unregister();
           break;
         case "profile-before-change": 
-          this.cleanup();
+          this.resetJSCaps();
           break;
         case "profile-after-change":
           this.init();
           break;
+        case "em-action-requested":
+          if( (subject instanceof Components.interfaces.nsIUpdateItem)
+              && subject.id==EXTENSION_ID ) {
+              this.uninstallGuard.uninstalling=data=="item-uninstalled";
+              this.uninstallGuard.disabled=data=="item-disabled"
+          }
       }
     }
   }
@@ -58,6 +164,7 @@ NoscriptService.prototype={
     osvr.addObserver(this,"profile-before-change",false);
     osvr.addObserver(this,"xpcom-shutdown",false);
     osvr.addObserver(this,"profile-after-change",false);
+    osvr.addObserver(this,"em-action-requested",false);
   }
 ,
   unregister: function() {
@@ -66,9 +173,11 @@ NoscriptService.prototype={
     osvr.removeObserver(this,"profile-before-change");
     osvr.removeObserver(this,"xpcom-shutdown");
     osvr.removeObserver(this,"profile-after-change");
+    osvr.removeObserver(this,"em-action-requested",false);
     if(this.prefs) {
       this.prefs.removeObserver("permanent",this);
       this.mozJSPref.removeObserver("enabled",this,false);
+      this.uninstallGuard.dispose();
     }
   }
 ,
@@ -80,6 +189,9 @@ NoscriptService.prototype={
         permanentList[permanentList.length]="chrome:";
         this.permanentList=this.sortedSiteSet(permanentList);
       break;
+      case "temp":
+        this.tempList=this.splitList(this.getPref("temp"),"");
+        break;
       case "enabled":
         try {
           this.mozJSEnabled=this.mozJSPref.getBoolPref("enabled");
@@ -90,14 +202,22 @@ NoscriptService.prototype={
     }
   }
 ,
+  uninstallGuard: new UninstallGuard("NoScript"),
+  _uninstalling: false,
+  get uninstalling() {
+    if(this._uninstalling) return this._uninstalling;
+    const ug=this.uninstallGuard;
+    return (this._uninstalling=(ug.uninstalling || ug.disabled))?
+      this.cleanupIfUninstalling():false;
+  }
+,
   _inited: false,
   POLICY_NAME: "maonoscript",
   prefService: null,
   caps: null,
   prefs: null,
   mozJSPref: null,
-  mozJSEnabled: true,
-  uninstalling: false
+  mozJSEnabled: true
 ,
   init: function() {
     if(this._inited) return;
@@ -110,9 +230,19 @@ NoscriptService.prototype={
     this.prefs.addObserver("permanent",this,false);
     this.mozJSPref=prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
     this.mozJSPref.addObserver("enabled",this,false);
+    
     this.syncPrefs(this.prefs,"permanent");
+    this.syncPrefs(this.prefs,"temp");
     this.syncPrefs(this.mozJSPref,"enabled");
+    
     const sites=this.sites=this.sites;
+    const mozJSEnabled=this.mozJSEnabled;
+    
+    this.setJSEnabled(this.tempList,false,sites); // remove temporary
+    this.setJSEnabled(this.permanentList,true,sites); // add permanent
+    
+    this.mozJSPref.setBoolPref("enabled",mozJSEnabled)
+    
     const POLICY_NAME=this.POLICY_NAME;
     var prefArray;
     var prefString=null,originalPrefString=null;
@@ -138,22 +268,43 @@ NoscriptService.prototype={
       this.caps.setCharPref("policynames",prefString);
       this.caps.setCharPref(POLICY_NAME+".javascript.enabled","allAccess");
     }
-    const mozJSEnabled=this.mozJSEnabled;
-    this.setJSEnabled(this.permanentList,true,sites);
-    this.mozJSPref.setBoolPref("enabled",mozJSEnabled);
     
     this.reloadWhereNeeded(); // init snapshot
+   
+    this.uninstallGuard.init();
+  }
+,
+  _indexOf: function(el,arr) {
+    for(var j=arr.length; j-->0;) {
+      if(arr[j]==el) break;
+    }
+    return j;
   }
 ,
   isPermanent: function(s) {
-    if(!s) return false;
-    if(s=="chrome:") return true; 
-    const pl=this.permanentList;
-    for(var ps in pl) if(pl[ps]==s) return true;
+    return s &&
+      (s=="chrome:" 
+        || this._indexOf(s,this.permanentList)>-1);
+  }
+,
+  tempList: [],
+  isTemp: function(s) {
+    return s && this._indexOf(s,this.tempList)>-1;
+  }
+,
+  setTemp: function(s,b) {
+    var tl=this.tempList;
+    if(b) {
+      tl.push(s);
+    } else {
+      for(var j; (j=this._indexOf(s,tl))>-1; tl.splice(j,1));
+    }
+    tl=this.sortedSiteSet(tl);
+    this.setPref("temp",tl.join(" "));
   }
 ,
   splitList: function(s) {
-    return /^[,\s]*$/.test(s)?[]:s.split(/\s*[,\s]\s*/);
+    return s?/^[,\s]*$/.test(s)?[]:s.split(/\s*[,\s]\s*/):[];
   }
 ,
   savePrefs: function() {
@@ -172,7 +323,6 @@ NoscriptService.prototype={
   set sitesString(s) {
     s=s.replace(/,/g,' ').replace(/\s{2,}/g,' ').replace(/(^\s+|\s+$)/g,'');
     if(s!=this.siteString) {
-      if(this.getPref("stop",true)) this.stopAll();
       this.caps.setCharPref(this.POLICY_NAME+".sites",s);
     }
     return s;
@@ -217,13 +367,16 @@ NoscriptService.prototype={
     try {
       return this.mozJSEnabled && this.caps.getCharPref("default.javascript.enabled") != "noAccess";
     } catch(ex) {
-      return this.uninstalling?this.mozJSEnabled:(this.jsEnabled=false);
+      return this.uninstalling?this.mozJSEnabled:(this.jsEnabled=this.getPref("global",false));
     }
   }
 ,
   set jsEnabled(enabled) {
     this.caps.setCharPref("default.javascript.enabled",enabled?"allAccess":"noAccess");
-    if(enabled) this.mozJSPref.setBoolPref("enabled",true);
+    this.setPref("global",enabled);
+    if(enabled) {
+      this.mozJSPref.setBoolPref("enabled",true);
+    }
     return enabled;
   }
 ,
@@ -332,15 +485,28 @@ NoscriptService.prototype={
     return is;
   }
 ,
-  isVolatile: function(site) {
-    return this.isInPolicy(site,this.volatileSites);  
+  delayExec: function(callback,delay) {
+     const timer=Components.classes["@mozilla.org/timer;1"].createInstance(
+        Components.interfaces.nsITimer);
+     timer.initWithCallback( { notify: callback }, 1, 0);
   }
 ,
-  setVolatile: function(site,is) {
-    const sites=this.volatileSites;
-    this.putInPolicy(site,is,sites);
-    this.volatileSites=sites;
-    return is;
+  _safeClosure: function() {
+    this.reloadWhereNeeded();
+    this.savePrefs();
+  }
+,
+  safeCapsOp: function(callback) {
+    if(this.getPref("stop",true)) this.stopAll();
+    const serv=this;
+    this.delayExec(function() {
+     callback();
+     serv.delayExec(
+     function() {
+       serv.savePrefs();
+       serv.reloadWhereNeeded();
+     },1)
+    });
   }
 ,
   isInPolicy: function(site,sites) {
@@ -406,8 +572,7 @@ NoscriptService.prototype={
       w=ww.getNext();
       ov=w.noscriptOverlay;
       gb=w.gBrowser;
-      if(ov && gb) {
-        bb=gb.browsers;
+      if(ov && gb && (bb=gb.browsers)) {
         for(b=bb.length; b-->0;) {
           doc=ov.getBrowserDoc(bb[b]);
           if(doc) {
@@ -430,13 +595,19 @@ NoscriptService.prototype={
 ,
   stopAll: function() {
     const ww=this.getAllWindows();
-    var gb;
+    var gb,bb,j,b;
     for(var w; ww.hasMoreElements();) {
       w=ww.getNext();
-      if(gb=w.gBrowser) {
-         bb=gb.browsers;
-         for(b=bb.length; b-->0;) {
-           bb[b].stop(bb[b].STOP_ALL);
+      if( (gb=w.gBrowser) && (bb=gb.browsers) ) {
+         for(j=bb.length; j-->0;) {
+           b=bb[j];
+           dump("Stopping "+((b.currentURI)?b.currentURI.spec:"a browser")+" ...");
+           try {
+             b.stop();
+             dump("stopped\n");
+           } catch(ex) {
+             dump(ex);
+           }
          }
       }
     }
@@ -597,66 +768,24 @@ NoscriptService.prototype={
     zlg:" br "
   }
 ,
-  willBeUninstalled: function() {
-   if(this.uninstalling) return true;
-   try {
-     const RDFService = Components.classes["@mozilla.org/rdf/rdf-service;1"]
-               .getService(Components.interfaces.nsIRDFService);
-     const container = Components.classes["@mozilla.org/rdf/container;1"]
-               .getService(Components.interfaces.nsIRDFContainer);
-     const extensionDS= Components.classes["@mozilla.org/extensions/manager;1"]
-          .getService(Components.interfaces.nsIExtensionManager).datasource;
-     var root = RDFService.GetResource("urn:mozilla:extension:root");
-     const nameArc = RDFService.GetResource("http://www.mozilla.org/2004/em-rdf#name");
-     const toBeUninstalledArc = RDFService.GetResource("http://www.mozilla.org/2004/em-rdf#toBeUninstalled");
-     const toBeDisabledArc=RDFService.GetResource("http://www.mozilla.org/2004/em-rdf#toBeDisabled");
-     container.Init(extensionDS,root);
-    
-     var found = false;
-     var elements = container.GetElements();
-     var element,name,target;
-     while (elements.hasMoreElements()) {
-      element = elements.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-     
-  
-      if((target=extensionDS.GetTarget(element, nameArc ,true)) && 
-          target.QueryInterface(Components.interfaces.nsIRDFLiteral).Value=="NoScript"
-        && 
-        (
-          (target = extensionDS.GetTarget(element, toBeUninstalledArc,true))
-           && target.QueryInterface(Components.interfaces.nsIRDFLiteral).Value == "true"
-          ||
-          (target = extensionDS.GetTarget(element, toBeDisabledArc,true))
-          && target.QueryInterface(Components.interfaces.nsIRDFLiteral).Value == "true"
-        )  
-      ) {
-         return this.uninstalling=true;     
-        }         
-     }
-   } catch(ex) {} // quick and dirty work-around for Mozilla ;)
-   return this.uninstalling=false;
-  }
-,
   cleanup: function() {
     this.cleanupIfUninstalling();
   }
 ,
   cleanupIfUninstalling: function() {
-    if(this.willBeUninstalled()) this.uninstallJob();
+    if(this.uninstalling) this.uninstallJob();
     return this.uninstalling;
   }
 ,
-  uninstallJob: function() {
+  resetJSCaps: function() {
     try {
       this.caps.clearUserPref("default.javascript.enabled");
-    } catch(ex) {
-      // dump(ex);
-    }
+    } catch(ex) {}
     try {
       const POLICY_NAME=this.POLICY_NAME;
       var prefArray=this.splitList(this.caps.getCharPref("policynames"));
       var pcount=prefArray.length;
-      prefArrayTarget=[];
+      const prefArrayTarget=[];
       for(var pcount=prefArray.length; pcount-->0;) {
         if(prefArray[pcount]!=POLICY_NAME) prefArrayTarget[prefArrayTarget.length]=prefArray[pcount];
       }
@@ -672,6 +801,10 @@ NoscriptService.prototype={
     } catch(ex) {
       // dump(ex);
     }
+  }
+,
+  uninstallJob: function() {
+    this.resetJSCaps();
   }
 ,
   getPref: function(name,def) {
@@ -757,7 +890,7 @@ NoscriptService.prototype={
   }
 ,
   queryInterfaceSupport: function(iid,iids) { 
-    xpcom_checkInterface(iid, iids, Components.results.NS_ERROR_NO_INTERFACE);
+    xpcom_checkInterfaces(iid, iids, Components.results.NS_ERROR_NO_INTERFACE);
   }
 };
 
@@ -765,21 +898,20 @@ NoscriptService.prototype={
 // XPCOM Scaffolding code
 
 // component defined in this file
-
+const EXTENSION_ID="{73a6fe31-595d-460b-a920-fcc0f8843232}";
 const SERVICE_NAME="NoScript Service";
-const SERVICE_CID =
-    Components.ID("{31aec909-8e86-4397-9380-63a59e0c5ff5}");
-const SERVICE_CTRID =
-    "@maone.net/noscript-service;1";
-    
+const SERVICE_ID="{31aec909-8e86-4397-9380-63a59e0c5ff5}";
+const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_CONSTRUCTOR=NoscriptService;
+
+const SERVICE_CID = Components.ID(SERVICE_ID);
 
 // interfaces implemented by this component
 const SERVICE_IIDS = 
 [ 
 Components.interfaces.nsIObserver,
 Components.interfaces.nsISupports,
-Components.interfaces.nsISupportsWeakReference,
+Components.interfaces.nsISupportsWeakReference
 ];
 
 // Factory object
@@ -855,4 +987,5 @@ Module.canUnload = function(compMgr) {
 function NSGetModule(compMgr, fileSpec) {
   return Module;
 }
+
 

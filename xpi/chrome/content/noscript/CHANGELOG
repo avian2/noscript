@@ -2,7 +2,17 @@ NoScript ChangeLog
 
 TODO:
 Allow some URL only for current session life-span (many requests!!!)
-Turn javscript: links into regular links where JS is disabled (zasxae)
+Turn javascript: links into regular links where JS is disabled (zasxae)
+
+v 1.0.9
+=====================================================================
++ Temporarily allow URLs (for current session only): temporary items
+  are shown in italics font
++ Clean uninstall in Deer Park
++ Added jar: to the default white-list, to allow about:plugin
+  and other "special" URLs to work out-of-the-box
+x Better work-arounds for Firefox synchronization bugs
+x Fixed conflict when a "View Source" window was open
 
 v 1.0.8
 =====================================================================
