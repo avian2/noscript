@@ -847,7 +847,7 @@ function _noScript_onPluginClick(ev) {
       cache.forceAllow[url] = mime;
       const lm = ns.lookupMethod;
       var doc = lm(div, "ownerDocument")();
-      if(mime == (doc, "contentType")()) { // stand-alone plugin
+      if(mime == lm(doc, "contentType")()) { // stand-alone plugin
         lm(lm(doc, "location")(), "reload")();
         return;
       }
@@ -876,6 +876,20 @@ function _noScript_prepareCtxMenu(ev) {
 function _noScript_onloadInstall(ev) {
   document.getElementById("contentAreaContextMenu")
           .addEventListener("popupshowing", _noScript_prepareCtxMenu, false);
+  
+  if(typeof(nsBrowserStatusHandler) == "function" && nsBrowserStatusHandler.prototype &&  !nsBrowserStatusHandler.prototype._noScript_onLocationChange) {
+    // wonderful hack for stand-alone plugins
+    nsBrowserStatusHandler.prototype._noScript_onLocationChange = nsBrowserStatusHandler.prototype.onLocationChange;
+    nsBrowserStatusHandler.prototype.onLocationChange = function(aWebProgress, aRequest, aLocation) { 
+      try {
+        if(aRequest && aRequest.QueryInterface(Components.interfaces.nsIChannel).contentType.substring(0, 12) == "application/" 
+            && noscriptOverlay.ns.shouldLoad(5, aRequest.URI, aRequest.URI, aWebProgress.DOMWindow, aRequest.contentType, true) == -3) { 
+            aRequest.cancel(0); 
+        }
+      } catch(e) {} 
+      this._noScript_onLocationChange(aWebProgress, aRequest, aLocation); 
+    };
+  }
 }
 
 const _noScript_syncEvents=["load", "focus"];

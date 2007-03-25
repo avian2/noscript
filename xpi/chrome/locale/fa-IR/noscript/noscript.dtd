@@ -1,0 +1,51 @@
+<!ENTITY noscriptOptions "...تنظیمات">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript تنظیمات">
+<!ENTITY noscriptAbout "NoScript درباره">
+<!ENTITY noscriptPermissionsText ".شما می توانید سایت هایی را که اجازه اجرای اسکریپت دارند را مشخص کنید (&quot;http://www.site.com&quot; یا &quot;site.com&quot; آدرس سایت یا نام دامنه را وارد کنید(به عنوان مثال">
+<!ENTITY noscriptWebAddress "آدرس وب سایت:">
+<!ENTITY noscriptAllow "اجازه دادن">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptRemoveSelected "پاک کردن سایت های انتخاب شده">
+<!ENTITY noscriptGloballyEnabled "(تمام اسکریپت ها مجوز دارند (خطرناک">
+<!ENTITY noscriptAutoReload "بارگذاری مجدد به صورت خودکار هنگام تغییر مجوزها">
+<!ENTITY noscriptGeneral "عمومی">
+<!ENTITY noscriptAppearance "تنظیمات ظاهری">
+<!ENTITY noscriptShow "...نمایش">
+<!ENTITY noscriptCtxMenu "نمایش در منوی کلیک راست">
+<!ENTITY noscriptStatusIcon "آیکون برنامه در نوار وضعیت">
+<!ENTITY noscriptFullAddr "(http://www.noscript.net) آدرس کامل">
+<!ENTITY noscriptFullDom "(http://www.noscript.net) نام کامل دامنه">
+<!ENTITY noscriptBaseDom "(noscript.net) سطح دوم نام دامنه ها">
+<!ENTITY noscriptTempCmd "[...] دادن مجوز موقت به">
+<!ENTITY noscriptSound "پخش موزیک هنگام ممنوع شدن اسکریپت ها">
+<!ENTITY noscriptImport "ایمپورت">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "اکسپورت">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "نمایش پیام هنگام متوقف شدن اسکریپت ها">
+<!ENTITY noscriptNotify.bottom "نمایش پیام در پایین صفحه">
+<!ENTITY noscriptSound.choose "انتخاب">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "پخش">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "بازگردانی تنظیمات اولیه">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "پیشرفته">
+<!ENTITY noscriptAdditionalPermissions "مجوزهای اضافی برای سایت های مورد اطمینان">
+<!ENTITY noscriptAllowClipboard "دادن مجوز برای کپی کردن و چسباندن متن سطح بالا">
+<!ENTITY noscriptAdditionalRestrictions "محدودیت بیشتر برای سایت های غیر مطمئن">
+<!ENTITY noscriptForbidJava "Java ممنوع کردن">
+<!ENTITY noscriptForbidFlash "Macromedia Flash ممنوع کردن">
+<!ENTITY noscriptForbidPlugins "ممنوع کردن سایر پلاگین ها">
+<!ENTITY noscriptReloadWarn ".این تنظیمات روی پنجره های جدید اعمال خواهند شد">
+<!ENTITY noscriptConfirmUnblock "پرسیدن سوال قبل مجوز دادن به اسکریپت های یک سایت">
+<!ENTITY noscriptStatusLabel "برچسب نوار وضعیت">
+<!ENTITY noscriptForbidBookmarklets ".ممنوع کردن سایت هایی که از نشانه گذاری ها باز می شوند">
+<!ENTITY noscriptShowPlaceholder "نمایش آیکون">
+<!ENTITY noscriptTruncateTitle "کوتاه کردن عنوان پرونده">
+<!ENTITY noscriptFixLinks "اجازه دادن به لینک های جاوا اسکریپت">
+<!ENTITY noscriptAllowBookmarks ".دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند">
+<!ENTITY noscriptAllowViaBookmarks ".دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند">
+<!ENTITY noscriptAllowPing "&lt;a ping...&gt; اجازه دادن به">
+<!ENTITY noscriptForbidPing "&lt;a ping...&gt; ممنوع کردن">

@@ -1,0 +1,51 @@
+<!ENTITY noscriptOptions "Επιλογές">
+<!ENTITY noscriptOptions.accesskey "Ε">
+<!ENTITY noscriptOptionsLong "Επιλογές NoScript">
+<!ENTITY noscriptAbout "Περί NoScript">
+<!ENTITY noscriptPermissionsText "Μπορείτε να καθορίσετε για ποιους ιστότοπους θα επιτρέπεται η εκτέλεση σεναρίων εντολών. Πληκτρολογήστε τη διεύθυνση τομέα (πχ. &quot;http://www.site.com&quot; or &quot;site.com&quot;) του ιστότοπου που θέλετε και μετά κάντε κλικ στο «Να επιτρέπεται»">
+<!ENTITY noscriptWebAddress "Διεύθυνση ιστότοπου">
+<!ENTITY noscriptAllow "Να επιτρέπεται">
+<!ENTITY noscriptAllow.accesskey "Ν">
+<!ENTITY noscriptRemoveSelected "Αφαίρεση επιλεγμένων ιστότοπων">
+<!ENTITY noscriptGloballyEnabled "Σενάρια εντολών που επιτρέπονται γενικά (μη ασφαλές)">
+<!ENTITY noscriptAutoReload "Αυτόματη ανανέωση των σελίδων που επηρεάζονται από την αλλαγή δικαιωμάτων">
+<!ENTITY noscriptGeneral "Γενικά">
+<!ENTITY noscriptAppearance "Εμφάνιση">
+<!ENTITY noscriptShow "Προβολή...">
+<!ENTITY noscriptCtxMenu "Μενού συνάφειας">
+<!ENTITY noscriptStatusIcon "Εικονίδιο γραμμής κατάστασης">
+<!ENTITY noscriptFullAddr "Πλήρεις διευθύνσεις (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Πλήρεις τομείς (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Δευτερεύοντες βασικοί τομείς (noscript.net)">
+<!ENTITY noscriptTempCmd "Να επιτρέπονται προσωρινά [...]">
+<!ENTITY noscriptSound "Ηχητική σήμανση όταν μπλοκάρονται σενάρια εντολών">
+<!ENTITY noscriptImport "Εισαγωγή">
+<!ENTITY noscriptImport.accesskey "Ε">
+<!ENTITY noscriptExport "Εξαγωγή">
+<!ENTITY noscriptExport.accesskey "Ξ">
+<!ENTITY noscriptNotify "Προβολή μηνύματος για μπλοκαρισμένα σενάρια εντολών">
+<!ENTITY noscriptNotify.bottom "Τοποθέτηση μηνύματος στο κάτω μέρος">
+<!ENTITY noscriptSound.choose "Επιλογή">
+<!ENTITY noscriptSound.choose.accesskey "Π">
+<!ENTITY noscriptSound.play "Αναπαραγωγή">
+<!ENTITY noscriptSound.play.accesskey "α">
+<!ENTITY noscriptSound.reset "Επαναφορά αρχικού">
+<!ENTITY noscriptSound.reset.accesskey "ρ">
+<!ENTITY noscriptAdvanced "Για προχωρημένους">
+<!ENTITY noscriptAdditionalPermissions "Πρόσθετες εξουσιοδοτήσεις για έμπιστους ιστότοπους">
+<!ENTITY noscriptAllowClipboard "Να επιτρέπεται αντιγραφή και επικόλληση από το πρόχειρο (εξωτερικής εφαρμογής)">
+<!ENTITY noscriptAdditionalRestrictions "Πρόσθετοι περιορισμοί για μη έμπιστους ιστότοπους">
+<!ENTITY noscriptForbidJava "Απαγόρευση εκτέλεσης Java™">
+<!ENTITY noscriptForbidFlash "Απαγόρευση εκτέλεσης Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Απαγόρευση εκτέλεσης άλλων πρόσθετων λειτουργιών">
+<!ENTITY noscriptReloadWarn "Αυτές οι επιλογές θα εφαρμοστούν σε σελίδες που θα ανανεώσετε μόνοι σας ή θα φορτώσετε από &apos;δω και πέρα">
+<!ENTITY noscriptConfirmUnblock "Να γίνεται ερώτηση πριν επιτραπεί προσωρινά ένα αντικείμενο">
+<!ENTITY noscriptStatusLabel "Ετικέτα γραμμής κατάστασης">
+<!ENTITY noscriptForbidBookmarklets "Απαγόρευση εκτέλεσης bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Προβολή εικονιδίου γεμίσματος">
+<!ENTITY noscriptTruncateTitle "Σύντμηση τίτλων εγγράφων">
+<!ENTITY noscriptFixLinks "Να γίνεται προσπάθεια διόρθωσης δεσμών JavaScript">
+<!ENTITY noscriptAllowBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
+<!ENTITY noscriptAllowViaBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
+<!ENTITY noscriptAllowPing "Να επιτρέπεται το &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;a ping...&gt;">

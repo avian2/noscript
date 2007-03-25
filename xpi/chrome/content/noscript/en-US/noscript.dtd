@@ -52,3 +52,4 @@
 <!ENTITY noscriptWhitelist "Whitelist">
 <!ENTITY noscriptRefresh "Refresh">
 <!ENTITY noscriptNotifyLabel "Notifications">
+<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">

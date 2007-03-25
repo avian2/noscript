@@ -1,0 +1,51 @@
+<!ENTITY noscriptOptions "Налаштування...">
+<!ENTITY noscriptOptions.accesskey "ш">
+<!ENTITY noscriptOptionsLong "Налаштування NoScript">
+<!ENTITY noscriptAbout "Про розширення">
+<!ENTITY noscriptPermissionsText "Ви можете встановити яким web-сайтам дозволено виконувати JavaScript. Введіть адресу або домен (напр. &quot;http://www.site.com&quot; або &quot;site.com&quot;) сайту якому ви бажаєте дозволити виконувати JavaScript і потім натисніть Дозволити.">
+<!ENTITY noscriptWebAddress "Адреса web-сайту:">
+<!ENTITY noscriptAllow "Дозволити">
+<!ENTITY noscriptAllow.accesskey "о">
+<!ENTITY noscriptRemoveSelected "Видалити вибрані сайти">
+<!ENTITY noscriptGloballyEnabled "JavaScript повністю дозволений (небезпечно)">
+<!ENTITY noscriptAutoReload "Автоматично оновлювати сторінку після зміни для неї правил">
+<!ENTITY noscriptGeneral "Основні">
+<!ENTITY noscriptAppearance "Зовнішній вигляд">
+<!ENTITY noscriptShow "Показувати...">
+<!ENTITY noscriptCtxMenu "Контексне меню">
+<!ENTITY noscriptStatusIcon "Ікону в рядку статусу">
+<!ENTITY noscriptFullAddr "Повні адреси (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Повні домени (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Базові домени 2-го рівня (noscript.net)">
+<!ENTITY noscriptTempCmd "Тимчасово дозволити [...]">
+<!ENTITY noscriptSound "Програти аудіо-файл якщо заблокований скрипт">
+<!ENTITY noscriptImport "Імпорт">
+<!ENTITY noscriptImport.accesskey "м">
+<!ENTITY noscriptExport "Експорт">
+<!ENTITY noscriptExport.accesskey "к">
+<!ENTITY noscriptNotify "Показувати повідомлення про заблоковані скрипти">
+<!ENTITY noscriptNotify.bottom "Розташувати повідомлення знизу">
+<!ENTITY noscriptSound.choose "Вибрати">
+<!ENTITY noscriptSound.choose.accesskey "б">
+<!ENTITY noscriptSound.play "Тест">
+<!ENTITY noscriptSound.play.accesskey "с">
+<!ENTITY noscriptSound.reset "Скинути">
+<!ENTITY noscriptSound.reset.accesskey "н">
+<!ENTITY noscriptAdvanced "Додатково">
+<!ENTITY noscriptAdditionalPermissions "Додаткові права для довірених сайтів">
+<!ENTITY noscriptAllowClipboard "Вирішити розширене копіювання/вставку із зовнішнього буфера обміну">
+<!ENTITY noscriptAdditionalRestrictions "Додаткові обмеження для ненадійних сайтів">
+<!ENTITY noscriptForbidJava "Заборонити Java™">
+<!ENTITY noscriptForbidFlash "Заборонити Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Заборонити інші плагини">
+<!ENTITY noscriptReloadWarn "Налаштування вступлять у силу на новій сторінці або після оновлення (вручну)">
+<!ENTITY noscriptConfirmUnblock "Питати підтвердження перед тимчасовим розблокуванням об&apos;єкту">
+<!ENTITY noscriptStatusLabel "Повідомлення в рядку статусу">
+<!ENTITY noscriptForbidBookmarklets "Заборонити Bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Показати розташування іконки">
+<!ENTITY noscriptTruncateTitle "Відсікати заголовки документів">
+<!ENTITY noscriptFixLinks "Пробувати виправляти посилання JavaScript">
+<!ENTITY noscriptAllowBookmarks "Дозволяти всім сайтам знайденим в закладках">
+<!ENTITY noscriptAllowViaBookmarks "Дозволити сайти, відкриті через закладки">
+<!ENTITY noscriptAllowPing "Дозволити &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Заборонити &lt;a ping...&gt;">

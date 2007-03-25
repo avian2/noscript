@@ -1,0 +1,51 @@
+<!ENTITY noscriptOptions "Options...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript Options">
+<!ENTITY noscriptAbout "About NoScript">
+<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
+<!ENTITY noscriptWebAddress "Address of web site:">
+<!ENTITY noscriptAllow "Allow">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptRemoveSelected "Remove Selected Sites">
+<!ENTITY noscriptGloballyEnabled "Scripts Globally Allowed (dangerous)">
+<!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
+<!ENTITY noscriptGeneral "General">
+<!ENTITY noscriptAppearance "Appearance">
+<!ENTITY noscriptShow "Show...">
+<!ENTITY noscriptCtxMenu "Contextual menu">
+<!ENTITY noscriptStatusIcon "Status bar icon">
+<!ENTITY noscriptFullAddr "Full Addresses (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Full Domains (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
+<!ENTITY noscriptTempCmd "Temporarily allow [...]">
+<!ENTITY noscriptSound "Audio feedback when scripts are blocked">
+<!ENTITY noscriptImport "Import">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Export">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Show message about blocked scripts">
+<!ENTITY noscriptNotify.bottom "Place message at the bottom">
+<!ENTITY noscriptSound.choose "Choose">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Play">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Reset default">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Advanced">
+<!ENTITY noscriptAdditionalPermissions "Additional permissions for trusted sites">
+<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
+<!ENTITY noscriptAdditionalRestrictions "Additional restrictions for untrusted sites">
+<!ENTITY noscriptForbidJava "Forbid Java™">
+<!ENTITY noscriptForbidFlash "Forbid Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Forbid other plugins">
+<!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
+<!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">
+<!ENTITY noscriptStatusLabel "Status bar label">
+<!ENTITY noscriptForbidBookmarklets "Forbid bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
+<!ENTITY noscriptTruncateTitle "Truncate document titles">
+<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptAllowBookmarks "Allow sites opened through bookmarks">
+<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
+<!ENTITY noscriptAllowPing "Allow &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Forbid &lt;a ping...&gt;">

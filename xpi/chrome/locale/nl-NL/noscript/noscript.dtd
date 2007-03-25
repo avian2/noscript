@@ -13,7 +13,7 @@
 <!ENTITY noscriptAppearance "Uiterlijk">
 <!ENTITY noscriptShow "Tonen...">
 <!ENTITY noscriptCtxMenu "Contextmenu">
-<!ENTITY noscriptStatusIcon "Taakbalkpictogram">
+<!ENTITY noscriptStatusIcon "Statusbalk pictogram">
 <!ENTITY noscriptFullAddr "Volledige adressen (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Volledige domeinen (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Hoofd (2e niveau) domeinen (noscript.net)">
@@ -32,17 +32,20 @@
 <!ENTITY noscriptSound.reset "Standaard">
 <!ENTITY noscriptSound.reset.accesskey "S">
 <!ENTITY noscriptAdvanced "Geavanceerd">
-<!ENTITY noscriptAdditionalPermissions "Extra toestemming voor betrouwbare webpagina's">
+<!ENTITY noscriptAdditionalPermissions "Extra toestemming voor betrouwbare webpagina&apos;s">
 <!ENTITY noscriptAllowClipboard "Kopiëren en plakken van tekst met opmaakcodes vanaf een extern klembord toestaan">
-<!ENTITY noscriptAdditionalRestrictions "Extra beperkingen voor onbetrouwbare webpagina's">
+<!ENTITY noscriptAdditionalRestrictions "Extra beperkingen voor onbetrouwbare webpagina&apos;s">
 <!ENTITY noscriptForbidJava "Java™ verbieden">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieden">
 <!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
-<!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina's">
-<!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">
-<!ENTITY noscriptStatusLabel "Status bar label">
+<!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina&apos;s">
+<!ENTITY noscriptConfirmUnblock "Om een bevestiging vragen voordat blokkering van een object tijdelijk wordt opgeheven">
+<!ENTITY noscriptStatusLabel "Statusbalk label">
 <!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieden">
-<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
-<!ENTITY noscriptTruncateTitle "Truncate document titles">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
-<!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">
+<!ENTITY noscriptShowPlaceholder "Vervangend pictogram weergeven">
+<!ENTITY noscriptTruncateTitle "Documenttitels inkorten">
+<!ENTITY noscriptFixLinks "JavaScript koppelingen proberen te herstellen">
+<!ENTITY noscriptAllowBookmarks "Alle via een bladwijzer geopende sites toestaan">
+<!ENTITY noscriptAllowViaBookmarks "Alle via een bladwijzer geopende sites toestaan">
+<!ENTITY noscriptAllowPing "&lt;a ping...&gt; toestaan">
+<!ENTITY noscriptForbidPing "&lt;a ping...&gt; verbieden">

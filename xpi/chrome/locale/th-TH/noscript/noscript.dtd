@@ -1,0 +1,51 @@
+<!ENTITY noscriptOptions "ตัวเลือก...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "ตัวเลือก NoScript">
+<!ENTITY noscriptAbout "เกี่ยวกับ NoScript">
+<!ENTITY noscriptPermissionsText "คุณสามารถกำหนดเว็บไซต์ที่จะอนุญาตดำเนินการสคริปต์ พิมพ์ที่อยู่หรือโดเมน (เช่น &quot;http://www.site.com&quot; หรือ &quot;site.com&quot;) ของไซต์ที่คุณต้องการอนุญาตและคลิกอนุญาต">
+<!ENTITY noscriptWebAddress "ที่อยู่เว็บไซต์:">
+<!ENTITY noscriptAllow "อนุญาต">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptRemoveSelected "ลบไซต์ที่เลือก">
+<!ENTITY noscriptGloballyEnabled "อนุญาตสคริปต์ทั่วไป (อันตราย)">
+<!ENTITY noscriptAutoReload "เรียกใหม่หน้าที่ส่งผลอัตโนมัติเมื่อเปลี่ยนการอนุญาต">
+<!ENTITY noscriptGeneral "ทั่วไป">
+<!ENTITY noscriptAppearance "การปรากฏ">
+<!ENTITY noscriptShow "แสดง...">
+<!ENTITY noscriptCtxMenu "เมนูบริบท">
+<!ENTITY noscriptStatusIcon "แสดงสัญรูปแถบสถานะ">
+<!ENTITY noscriptFullAddr "ที่อยู่เต็ม (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "โดเมนเต็ม (www.noscript.net)">
+<!ENTITY noscriptBaseDom "โดเมนบนฐานที่สอง (noscript.net)">
+<!ENTITY noscriptTempCmd "อนุญาตชั่วคราว [...]">
+<!ENTITY noscriptSound "ผลป้อนกลับเสียงเมื่อสคริปต์ถูกบล็อก">
+<!ENTITY noscriptImport "นำเข้า">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "ส่งออก">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "แสดงข้อความเกี่ยวกับสคริปต์ที่บล็อก">
+<!ENTITY noscriptNotify.bottom "วางข้อความที่ล่างสุด">
+<!ENTITY noscriptSound.choose "เลือก">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "เล่น">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "กลับไปยังค่าเริ่มต้น">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "ขั้นสูง">
+<!ENTITY noscriptAdditionalPermissions "การอนุญาตที่เพิ่มขึ้นสำหรับไซต์ที่เขื่อถือ">
+<!ENTITY noscriptAllowClipboard "อนุญาตให้ริชเท็กซ์คัดลอกและวางจากคลิปบอร์ดภายนอก">
+<!ENTITY noscriptAdditionalRestrictions "การควบคุมที่เพิ่มขึ้นสำหรับไซต์ที่ไม่เชื่อถือ">
+<!ENTITY noscriptForbidJava "ไม่อนุญาตจาวาâ™">
+<!ENTITY noscriptForbidFlash "ไม่อนุญาต Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "ไม่อนุญาตตัวเสริมอื่น">
+<!ENTITY noscriptReloadWarn "ตัวเลือกเหล่านี้จะส่งผลกระทบในหน้าใหม่หรือหน้าที่เรียกใหม่ (ด้วยตัวเอง)">
+<!ENTITY noscriptConfirmUnblock "ถามเรื่องการยืนยันก่อนถอนการบล็อกวัตถุชั่วคราว">
+<!ENTITY noscriptStatusLabel "ป้ายแถบสถานะ">
+<!ENTITY noscriptForbidBookmarklets "ไม่อนุญาต bookmarklet">
+<!ENTITY noscriptShowPlaceholder "แสดงสัญรูปตัวยึดตำแหน่ง">
+<!ENTITY noscriptTruncateTitle "ตัดปลายหัวเรื่องเอกสาร">
+<!ENTITY noscriptFixLinks "พยายามซ่อมแซมลิงก์ JavaScript">
+<!ENTITY noscriptAllowBookmarks "อนุญาตไซต์ให้เปิดผ่านที่คั่นหน้า">
+<!ENTITY noscriptAllowViaBookmarks "อนุญาตไซต์ให้เปิดผ่านที่คั่นหน้า">
+<!ENTITY noscriptAllowPing "อนุญาต &lt;ปิง...&gt;">
+<!ENTITY noscriptForbidPing "ไม่อนุญาต &lt;ปิง...&gt;">

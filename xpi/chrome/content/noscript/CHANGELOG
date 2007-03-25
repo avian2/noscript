@@ -1,5 +1,18 @@
 NoScript ChangeLog
 
+
+v 1.1.4.3
+=====================================================================
++ Emulated Firefox 1.0.x top-level plugin content blocking behaviour
++ uk-UA (Ukrainian) thanks to MozUA
++ th-TH (Thai) thanks to Qen
++ fa-IR (Persian) thanks to Persavosh
++ el-GR (Greek) thanks to Sonickydon
++ en-GB (English GB) thanks to Ian Moody
++ hr-HR (Croatian) thanks to Krcko
+x Other updated translations
+x Fixed plugin content reloading bug
+
 v 1.1.4.2
 =====================================================================
 + Notifications Firefox 2+ compatible

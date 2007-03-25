@@ -1,14 +1,14 @@
 <!ENTITY noscriptOptions "Опций...">
 <!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript Опций">
-<!ENTITY noscriptAbout "За NoScript">
-<!ENTITY noscriptPermissionsText "Можеш да укажеш в кои уеб-сайтове е позволен JavaScript.Напиши адреса или домейна (напр. &quot;http://www.site.com&quot; or &quot;site.com&quot;) на сайта,който искаш да разрешиш и натисни Разреши.">
+<!ENTITY noscriptOptionsLong "БезСкрипт Опций">
+<!ENTITY noscriptAbout "За БезСкрипт">
+<!ENTITY noscriptPermissionsText "Можеш да укажеш в кои уеб-сайтове е позволено да се използват скриптовете. Напиши адреса или домейна (например &quot;http://www.site.com&quot; или &quot;site.com&quot;) на сайта, който искаш да разрешиш и натисни Разреши.">
 <!ENTITY noscriptWebAddress "Адрес на уеб-сайта:">
 <!ENTITY noscriptAllow "Разреши">
 <!ENTITY noscriptAllow.accesskey "A">
 <!ENTITY noscriptRemoveSelected "Премахни избраните сайтове">
-<!ENTITY noscriptGloballyEnabled "JavaScript напълно разрешен (опасно)">
-<!ENTITY noscriptAutoReload "Автоматично презареждай сайтовете,когато разрешението бъде променено">
+<!ENTITY noscriptGloballyEnabled "Скриптовете са напълно разрешени (опасно)">
+<!ENTITY noscriptAutoReload "Автоматично презареждай сайтовете, когато разрешението бъде променено">
 <!ENTITY noscriptGeneral "Общи">
 <!ENTITY noscriptAppearance "Изглед">
 <!ENTITY noscriptShow "Покажи...">
@@ -25,24 +25,27 @@
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Показвай съобщение за блокираните скриптове">
 <!ENTITY noscriptNotify.bottom "Постави съобщението в дъното на екрана">
-<!ENTITY noscriptSound.choose "Choose">
+<!ENTITY noscriptSound.choose "Избери">
 <!ENTITY noscriptSound.choose.accesskey "C">
 <!ENTITY noscriptSound.play "Прослушай">
 <!ENTITY noscriptSound.play.accesskey "a">
-<!ENTITY noscriptSound.reset "възстанови настройките по подразбиране">
+<!ENTITY noscriptSound.reset "Възстанови обичайните настройки">
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "Детайли">
-<!ENTITY noscriptAdditionalPermissions "Допълнително разрешение за доверените сайтове">
+<!ENTITY noscriptAdditionalPermissions "Допълнителни разрешения за доверените сайтове">
 <!ENTITY noscriptAllowClipboard "Позволявай текстово копиране и поставяне от клипборда">
-<!ENTITY noscriptAdditionalRestrictions "Допълнителна забрана за недоверени сайтове">
+<!ENTITY noscriptAdditionalRestrictions "Допълнителни забрани за недоверени сайтове">
 <!ENTITY noscriptForbidJava "Забрани Java™">
 <!ENTITY noscriptForbidFlash "Забрани Macromedia® Flash®">
-<!ENTITY noscriptForbidPlugins "Забрани други плугини">
-<!ENTITY noscriptReloadWarn "Тези опций ще имат ефект на нови или (ръчно) презаредени сайтове">
+<!ENTITY noscriptForbidPlugins "Забрани други плъгини">
+<!ENTITY noscriptReloadWarn "Тези опций ще имат ефект на нови или (ръчно) презаредени страници">
 <!ENTITY noscriptConfirmUnblock "Искай разрешение преди временно да позволиш обект">
 <!ENTITY noscriptStatusLabel "Обозначение в статус лентата">
-<!ENTITY noscriptForbidBookmarklets "Забрани bookmarklets">
+<!ENTITY noscriptForbidBookmarklets "Забрани отметки">
 <!ENTITY noscriptShowPlaceholder "Покажи иконата">
-<!ENTITY noscriptTruncateTitle "Truncate document titles">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
-<!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">
+<!ENTITY noscriptTruncateTitle "Отрежи имената на документите">
+<!ENTITY noscriptFixLinks "Направи опит да поправиш JavaScript линковете">
+<!ENTITY noscriptAllowBookmarks "Разреши всички сайтове в отметките">
+<!ENTITY noscriptAllowViaBookmarks "Разрешявай сайтове отваряни чрез отметките">
+<!ENTITY noscriptAllowPing "Разрешавай пинг...">
+<!ENTITY noscriptForbidPing "Забравни пинг...">

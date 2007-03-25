@@ -1,0 +1,51 @@
+<!ENTITY noscriptOptions "Postavke...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript postavke">
+<!ENTITY noscriptAbout "O NoScript">
+<!ENTITY noscriptPermissionsText "Možete odrediti koje web stranice imaju dopuštenje za izvođenje skripti. Upišite adresu ili domenu (npr. &quot;http://www.stranica.hr&quot; ili &quot;stranica.hr&quot;) stranice kojoj želite dopustiti i kliknite na Dopusti.">
+<!ENTITY noscriptWebAddress "Adresa web stranice:">
+<!ENTITY noscriptAllow "Dopusti">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptRemoveSelected "Ukloni označene site-ove">
+<!ENTITY noscriptGloballyEnabled "Skripte su općenito dopuštene (opasno)">
+<!ENTITY noscriptAutoReload "Automatski ponovno učitaj obuhvaćene stranice nakon promjene dopuštenja">
+<!ENTITY noscriptGeneral "Općenito">
+<!ENTITY noscriptAppearance "Izgled">
+<!ENTITY noscriptShow "Prikaži...">
+<!ENTITY noscriptCtxMenu "Kontekstni izbornik">
+<!ENTITY noscriptStatusIcon "Ikonu u statusnoj traci">
+<!ENTITY noscriptFullAddr "Puna adresa (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Puna domena (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Osnovne domene drugog nivoa (noscript.net)">
+<!ENTITY noscriptTempCmd "Privremeno dopusti [...]">
+<!ENTITY noscriptSound "Zvučni signal kada su skripte blokirane">
+<!ENTITY noscriptImport "Uvezi">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Izvezi">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Prikaži poruku o blokiranim skriptama">
+<!ENTITY noscriptNotify.bottom "Prikaži poruku pri dnu">
+<!ENTITY noscriptSound.choose "Izaberi">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Pusti">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Vrati zadano">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Napredno">
+<!ENTITY noscriptAdditionalPermissions "Dodatna dopuštenja za provjerene stranice">
+<!ENTITY noscriptAllowClipboard "Dopusti kopiranje i lijepljenje obogaćenog teksta iz vanjskog međuspremnika">
+<!ENTITY noscriptAdditionalRestrictions "Dodatna ograničenja za neprovjerene stranice">
+<!ENTITY noscriptForbidJava "Zabrani Java™">
+<!ENTITY noscriptForbidFlash "Zabrani Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Zabrani druge pluginove">
+<!ENTITY noscriptReloadWarn "Ove postavke će imati učinka na novim ili (ručno) ponovno učitanim stranicama">
+<!ENTITY noscriptConfirmUnblock "Pitaj za potvrdu prije privremenog deblokiranja objekta">
+<!ENTITY noscriptStatusLabel "Naziv u statusnoj traci">
+<!ENTITY noscriptForbidBookmarklets "Zabrani bookmarklete">
+<!ENTITY noscriptShowPlaceholder "Prikaži ikonu za držanje položaja">
+<!ENTITY noscriptTruncateTitle "Odsijeci naslove dokumenta">
+<!ENTITY noscriptFixLinks "Pokušaj popraviti linkove JavaScript-a">
+<!ENTITY noscriptAllowBookmarks "Dopusti stranice koje su otvorene putem bookmarka">
+<!ENTITY noscriptAllowViaBookmarks "Dopusti stranice koje su otvorene putem bookmarka">
+<!ENTITY noscriptAllowPing "Dopusti &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Zabrani &lt;a ping...&gt;">

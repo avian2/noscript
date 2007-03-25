@@ -41,7 +41,7 @@
 <!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pàgines noves o recarregades (manualment)">
 <!ENTITY noscriptConfirmUnblock "Demana confirmació abans de desblocar un objecte temporalment">
 <!ENTITY noscriptStatusLabel "Etiqueta de la barra d'estat">
-<!ENTITY noscriptForbidBookmarklets "Prohibeix les Adreces d'inter�s">
+<!ENTITY noscriptForbidBookmarklets "Prohibeix les Adreces d'interès">
 <!ENTITY noscriptShowPlaceholder "Mostra-ne les icones">
 <!ENTITY noscriptTruncateTitle "Talla els títols dels documents">
 <!ENTITY noscriptFixLinks "Intenta arreglar els enllaços en JavaScript">
