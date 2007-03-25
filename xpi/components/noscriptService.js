@@ -245,6 +245,7 @@ NoscriptService.prototype={
   POLICY_NAME: "maonoscript",
   prefService: null,
   caps: null,
+  policyPB: null,
   prefs: null,
   mozJSPref: null,
   mozJSEnabled: true
@@ -256,7 +257,8 @@ NoscriptService.prototype={
     const prefserv=this.prefService=Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService)
     const PBI=Components.interfaces.nsIPrefBranchInternal;
     this.caps=prefserv.getBranch("capability.policy.").QueryInterface(PBI);
-    this.caps.addObserver("sites",this,false);
+    this.policyPB=prefserv.getBranch("capability.policy."+this.POLICY_NAME+".").QueryInterface(PBI);
+    this.policyPB.addObserver("sites",this,false);
     this.prefs=prefserv.getBranch("noscript.").QueryInterface(PBI);
     this.prefs.addObserver("",this,false);
     this.mozJSPref=prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
@@ -347,7 +349,7 @@ NoscriptService.prototype={
 ,
   get sitesString() {
     try {
-      return this.caps.getCharPref(this.POLICY_NAME+".sites");
+      return this.policyPB.getCharPref("sites");
     } catch(ex) {
       return this.siteString=this.getPref("default",
         "chrome: resource: noscript.net gmail.google.com googlesyndication.com informaction.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com");
@@ -357,7 +359,8 @@ NoscriptService.prototype={
   set sitesString(s) {
     s=s.replace(/,/g,' ').replace(/\s{2,}/g,' ').replace(/(^\s+|\s+$)/g,'');
     if(s!=this.siteString) {
-      this.caps.setCharPref(this.POLICY_NAME+".sites",s);
+      this.policyPB.setCharPref("sites",s);
+      this._sites=null;
     }
     return s;
   }

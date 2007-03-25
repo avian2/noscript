@@ -4,6 +4,12 @@ TODO:
 Turn javascript: links into regular links where JS is disabled (zasxae)
 Black list
 
+v 1.1.1
+=====================================================================
+x Fixed sites list update synchronization bug
+x Fixed Spanish locale bug
+
+
 v 1.1.0
 =====================================================================
 + Customizable message position, top or bottom (new default) 
