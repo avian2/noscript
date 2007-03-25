@@ -215,10 +215,15 @@ NoScriptOverlay.prototype={
         if(domainDupChecker.check(matchingSite)) continue;
         menuSites=[matchingSite];
       } else {
-        domain=site.match(/.*:\/\/([\w\-\.]+)/);
+        domain=site.match(/.*?:\/\/([\w\-\.:]+)/);
+        if(domain) {
+          domain=domain[1];
+          if(domain.indexOf(":")>-1) {
+            domain=null; // addresses with a specific port can't be enabled by domain
+          }
+        }
         menuSites=(showAddress || showNothing || !domain)?[site]:[];
         if(domain && (showDomain || showBase)) {
-          domain=domain[1];
           isIP=/^[\d\.]+$/.test(domain);
           if(isIP || (lastPos=domain.lastIndexOf('.'))<0
             || (dpLen=(domParts=domain.split('.')).length)<3) {
@@ -404,27 +409,32 @@ NoScriptOverlay.prototype={
     widget.setAttribute("src",icon);
     
     const mb=this.getMessageBox();
+    const mbMine=this.isNsMB(mb);
     if(notificationNeeded) { // notifications
-      doc=this.srcWindow.document;
-      if(mb && ns.getPref("notify",false)) {
-        var mine=this.isNsMB(mb);
+      const doc=this.srcWindow.document;
+      if(mb) {
         var hidden=mb.hidden;
-        if(mine || hidden) {
-          if(this.checkDocFlag(doc,"_noscript_message_shown")) {
-            gBrowser.showMessage(gBrowser.selectedBrowser, icon, message, 
-              "", null, null, "noscript-notify-popup","top",true);
-          } else if(mine && !hidden) {
-            mb.text=message;
-            mb.image=icon;
+        if(ns.getPref("notify",false)) { 
+          if(mbMine || hidden) {
+            if(this.checkDocFlag(doc,"_noscript_message_shown")) {
+              gBrowser.showMessage(gBrowser.selectedBrowser, icon, message, 
+                "", null, null, "noscript-notify-popup","top",true);
+            } else if(mbMine && !hidden) {
+              mb.text=message;
+              mb.image=icon;
+            }
           }
+        } else if(mbMine && !hidden) {
+          mb.hidden=true; 
         }
       }
-      
       if(this.checkDocFlag(doc,"_noscript_sound_played")) {
         ns.playSound("chrome://noscript/skin/block.wav");
       }
     } else {
-      if(this.isNsMB(mb)) mb.hidden=true;
+      if(mbMine && !mb.hidden) {
+        mb.hidden=true;
+      }
     }
   }
 ,

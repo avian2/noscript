@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.0.7</em:version>
+   <em:version>1.0.8</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript execution only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive script blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -17,7 +17,6 @@
 
    <em:optionsURL>chrome://noscript/content/noscriptOptions.xul</em:optionsURL>
    <em:homepageURL>http://www.noscript.net</em:homepageURL>
-   <em:updateURL>http://software.informaction.com/mozupd/?item_id=%ITEM_ID%&amp;item_version=%ITEM_VERSION%&amp;app_id=%APP_ID%&amp;app_version=%APP_VERSION%</em:updateURL>
    <em:iconURL>chrome://noscript/skin/icon32.png</em:iconURL>
    <em:aboutURL>chrome://noscript/content/about.xul</em:aboutURL>
    <!-- Firefox -->

@@ -2,6 +2,16 @@ NoScript ChangeLog
 
 TODO:
 Allow some URL only for current session life-span (many requests!!!)
+Turn javscript: links into regular links where JS is disabled (zasxae)
+
+v 1.0.8
+=====================================================================
++ Whole addresses are shown when a port number is specified, no
+  matter which the Appearance options are, since enabling a domain
+  doesn't enable it for non-standard ports (thanks to jayvdb for
+  suggestion)
++ Stop every browser activity before changing policies (this should
+  be a workaround for most crashes dued to Firefox CAPS bugs)
 
 v 1.0.7
 =====================================================================

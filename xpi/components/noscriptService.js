@@ -172,6 +172,7 @@ NoscriptService.prototype={
   set sitesString(s) {
     s=s.replace(/,/g,' ').replace(/\s{2,}/g,' ').replace(/(^\s+|\s+$)/g,'');
     if(s!=this.siteString) {
+      if(this.getPref("stop",true)) this.stopAll();
       this.caps.setCharPref(this.POLICY_NAME+".sites",s);
     }
     return s;
@@ -375,6 +376,11 @@ NoscriptService.prototype={
     return included;
   }
 ,
+  getAllWindows: function() {
+     return Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(
+      Components.interfaces.nsIWindowMediator).getEnumerator(null);
+  }
+,
   _lastSnapshot: null,
   _lastGlobal: false,
   reloadWhereNeeded: function(snapshot,lastGlobal) {
@@ -392,9 +398,7 @@ NoscriptService.prototype={
     
     const prevSites=this.sortedSiteSet(this.splitList(snapshot));
     const sites=this.sortedSiteSet(this.splitList(ss));
-    const wm=Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(
-      Components.interfaces.nsIWindowMediator);
-    const ww=wm.getEnumerator(null);
+    const ww=this.getAllWindows();
     var ret=false;
     var ov,gb,bb,b,j,doc,docSites;
     var prevStatus,currStatus;
@@ -422,6 +426,20 @@ NoscriptService.prototype={
       }
     }
     return ret;
+  }
+,
+  stopAll: function() {
+    const ww=this.getAllWindows();
+    var gb;
+    for(var w; ww.hasMoreElements();) {
+      w=ww.getNext();
+      if(gb=w.gBrowser) {
+         bb=gb.browsers;
+         for(b=bb.length; b-->0;) {
+           bb[b].stop(bb[b].STOP_ALL);
+         }
+      }
+    }
   }
 ,
   SPECIAL_TLDS: {
@@ -794,25 +812,28 @@ Module.registerSelf = function (compMgr, fileSpec, location, type) {
    
     debug("*** Registering "+SERVICE_CTRID+".\n");
     
-    compMgr =
-        compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-  
-    compMgr.registerFactoryLocation(SERVICE_CID,
-      "NoScript Service",
+    compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar
+      ).registerFactoryLocation(SERVICE_CID,
+      SERVICE_NAME,
       SERVICE_CTRID, 
       fileSpec,
       location, 
       type);
-   
-   Components.classes[SERVICE_CTRID].getService(
-      Components.interfaces.nsISupports);
-    // Early instantiation, CHECK ME
+      
+    Components.classes['@mozilla.org/categorymanager;1'].getService(
+      Components.interfaces.nsICategoryManager
+     ).addCategoryEntry("app-startup",
+        SERVICE_NAME, "service," + SERVICE_CTRID, true, true, null);
+      
     this.firstTime=false;
   } 
 }
 Module.unregisterSelf = function(compMgr, fileSpec, location) {
-  compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-  compMgr.unregisterFactoryLocation(SERVICE_CID, fileSpec);
+  compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar
+    ).unregisterFactoryLocation(SERVICE_CID, fileSpec);
+  Components.classes['@mozilla.org/categorymanager;1'].getService(
+      Components.interfaces.nsICategoryManager
+     ).deleteCategoryEntry("app-startup",SERVICE_NAME, true);
 }
 
 Module.getClassObject = function (compMgr, cid, iid) {

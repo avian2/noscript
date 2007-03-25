@@ -2,8 +2,8 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Configuración de NoScript">
 <!ENTITY noscriptAbout "Acerca de NoScript">
-<!ENTITY noscriptPermissionsText "Puedes especificar a qué páginas web les permites ejecutar código JavaScript. Escribe la dirección del dominio (ej. &quot;http://www.paginaweb.com&quot; or &quot;paginaweb.com&quot;) de la web a la que quieres incluir, y después haz clic en Permitir.">
-<!ENTITY noscriptWebAddress "Dirección del sitio web:">
+<!ENTITY noscriptPermissionsText "Aquí puedes especificar las páginas web a las que permites ejecutar código JavaScript. Escribe la dirección de la web que quieres incluir, y después haz clic en Permitir (ej. &quot;http://www.paginaweb.com&quot; o &quot;paginaweb.com&quot;) .">
+<!ENTITY noscriptWebAddress "Dirección de la web:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">
 <!ENTITY noscriptRemoveSelected "Quitar webs seleccionadas">
@@ -13,7 +13,7 @@
 <!ENTITY noscriptAppearance "Apariencia">
 <!ENTITY noscriptShow "Mostrar...">
 <!ENTITY noscriptCtxMenu "Menú contextual">
-<!ENTITY noscriptStatusIcon "Icono de la barra de estado">
+<!ENTITY noscriptStatusIcon "Icono en la barra de estado de Firefox">
 <!ENTITY noscriptFullAddr "Direcciones completas (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Dominios completos (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Dominios de segundo nivel (noscript.net)">

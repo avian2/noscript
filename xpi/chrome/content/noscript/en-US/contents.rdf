@@ -14,7 +14,8 @@
 
 
 
-    <RDF:Description about="urn:mozilla:locale:en-US">
+    <RDF:Description about="urn:mozilla:locale:en-US"
+      chrome:name="en-US" >
 
         <chrome:packages>
 
