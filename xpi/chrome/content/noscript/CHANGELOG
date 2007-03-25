@@ -1,12 +1,20 @@
 NoScript ChangeLog
 
 
+v 1.1.4.4
+=====================================================================
++ be-BY (Belarusian) thanks to DRKA 
++ JavaScript links fixing made compatible with AllPeers
++ Better interception of plugin content
+x Fixed interception of xml and xhtml content
+x Fixed some strict warnings (thanks to timeless)
+
 v 1.1.4.3
 =====================================================================
 + Emulated Firefox 1.0.x top-level plugin content blocking behaviour
 + uk-UA (Ukrainian) thanks to MozUA
 + th-TH (Thai) thanks to Qen
-+ fa-IR (Persian) thanks to Persavosh
++ fa-IR (Persian) thanks to Pedram Veisi
 + el-GR (Greek) thanks to Sonickydon
 + en-GB (English GB) thanks to Ian Moody
 + hr-HR (Croatian) thanks to Krcko

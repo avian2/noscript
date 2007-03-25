@@ -20,10 +20,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ***** END LICENSE BLOCK *****/
 
 function NoScriptOverlay() {
-  this.ns=noscriptUtil.service;
+  this.ns = noscriptUtil.service;
 }
 
-NoScriptOverlay.prototype={
+NoScriptOverlay.prototype = {
+  
   getString: function(key,parms) {
     return noscriptUtil.getString(key, parms);
   }
@@ -36,8 +37,13 @@ NoScriptOverlay.prototype={
   
   isLoading : function() {   
     return getBrowser().selectedBrowser.webProgress.isLoadingDocument;
-  }
-,
+  },
+  
+  get currentPluginsCache() {
+    return this.ns.pluginsCache.get(getBrowser().selectedBrowser);
+  },
+
+ 
   getSites: function(doc,sites,tagName) {
     try {
       if(doc || (doc = this.srcWindow.document)) {
@@ -53,7 +59,7 @@ NoScriptOverlay.prototype={
           } catch(ex) {}
         }
         
-        const getByTag=lm(doc,"getElementsByTagName");
+        const getByTag = lm(doc,"getElementsByTagName");
         if(!tagName) {
           const docURI = lm(doc,"documentURI")();
           var url = ns.getSite(docURI);
@@ -62,7 +68,7 @@ NoScriptOverlay.prototype={
               sites.push(url);
             } else {
               sites = [url];
-              sites.pluginsCache = ns.pluginsCache.get(getBrowser().selectedBrowser);
+              sites.pluginsCache = this.currentPluginsCache;
               sites.scriptCount = 0;
               sites.pluginCount = 0;
               sites.docURIs = {};
@@ -71,15 +77,15 @@ NoScriptOverlay.prototype={
             sites.docURIs[docURI] = true;
             var cache = sites.pluginsCache.uris[docURI];
             if(cache) {
-              for(url in cache) {
-                sites[sites.length] = url;
+              for(var pluginURI in cache) {
+                sites[sites.length] = pluginURI;
               }
             }
           }
-          var scripts=new XPCNativeWrapper(getByTag("script"),"item()","length");
-          var scount=scripts.length;
+          var scripts = new XPCNativeWrapper(getByTag("script"), "item()" , "length");
+          var scount = scripts.length;
           if(scount) {
-            sites.scriptCount+=scount;
+            sites.scriptCount += scount;
             var script, scriptSrc;
             while(scount-->0) {
               script=scripts.item(scount);
@@ -119,11 +125,11 @@ NoScriptOverlay.prototype={
               
               if(replacePlugins) {
                 if(!createElem) {
-                  createElem=lm(doc,"createElement");
+                  createElem = lm(doc, "createElement");
                   var style=createElem("style");
-                  style.setAttribute("id","_noscript_styled");
-                  style.setAttribute("type","text/css");
-                  style.appendChild(lm(doc,"createTextNode")(
+                  style.setAttribute("id", "_noscript_styled");
+                  style.setAttribute("type", "text/css");
+                  style.appendChild(lm(doc, "createTextNode")(
                     ".-noscript-blocked { -moz-outline-color: red !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; background: white url(\""
                     + pp + "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important }"
                   ));
@@ -132,7 +138,7 @@ NoScriptOverlay.prototype={
                     if(!head) { // probably a plugin document
                       if(applets.length == 1) {
                         var contentType = lm(doc, "contentType")();
-                        if(contentType.substring(0, 5) != "text/" && contentType.indexOf("/xml") < 0) {
+                        if(contentType.substring(0, 5) != "text/" && !/\bxml\b/.test(contentType)) {
                           ns.shouldLoad(5, { spec: docURI }, { spec: docURI }, applet, contentType, true);
                         }
                       }
@@ -141,10 +147,11 @@ NoScriptOverlay.prototype={
                       lm(rootElement, "insertBefore")(head, lm(rootElement, "firstChild")());
                     }
                     lm(head,"appendChild")(style);
-                  } catch(ex) {}
-                  try {
-                    lm(getByTag("body")[0],"appendChild")(style);
-                  } catch(ex) {}
+                  } catch(ex) {
+                    try {
+                       lm(getByTag("body")[0],"appendChild")(style);
+                    } catch(ex) {}
+                  }
                 }
                 try {
                   extras = ns.getPluginExtras(applet);
@@ -161,18 +168,18 @@ NoScriptOverlay.prototype={
                     div.style.padding = div.style.margin = "0px";
                      
                     style=lm(lm(doc,"defaultView")(),"getComputedStyle")(applet,"");
-                    cssDef="";
+                    cssDef = "";
                     for(cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
                       cssProp=style.item(cssCount);
-                      cssDef+=cssProp+": "+style.getPropertyValue(cssProp)+";";
+                      cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
                     }
-                    innerDiv.setAttribute("style",cssDef);
+                    innerDiv.setAttribute("style", cssDef);
                     innerDiv.setAttribute("class", "-noscript-blocked");
                     
                     innerDiv.style.display = "block";
                     
                     div._noScriptRemovedObject = lm(applet, "cloneNode")(true);
-                    div._noScriptExtras = extras;
+                    ns.setPluginExtras(div, extras);
                     
                     while(lm(applet,"hasChildNodes")()) {
                       lm(applet,"removeChild")(lm(applet,"firstChild")());
@@ -188,9 +195,9 @@ NoScriptOverlay.prototype={
               }
             }
           }
-          if((!doc._noscript_fixLink) && 
-              (ns.getPref("fixLinks", true) || ns.getPref("noping", true))
-              && !(ns.jsEnabled || ns.isJSEnabled(ns.getSite(url))) ) {
+          if((ns.getPref("fixLinks", true) || ns.getPref("noping", true))
+              && !(ns.jsEnabled || ns.isJSEnabled(url))
+              && !doc._noscript_fixLink) {
             doc._noscript_fixLink = true;
             doc.defaultView.addEventListener("click", this.fixLink, true);
             doc.defaultView.addEventListener("unload", this.removeLinkFixer, false);
@@ -290,7 +297,7 @@ NoScriptOverlay.prototype={
   }
 ,
   prepareContextMenu: function(ev) {
-    menu=document.getElementById("noscript-context-menu");
+    var menu = document.getElementById("noscript-context-menu");
     if(this.ns.uninstalling || !this.ns.getPref("ctxMenu",true)) {
       menu.setAttribute("hidden",true);
       return;
@@ -533,9 +540,9 @@ NoScriptOverlay.prototype={
   _syncInfo: { enqueued: false, uninstallCheck: false }
 ,
   syncUI: function(ev) {
-    if(ev && ev.eventPhase==ev.AT_TARGET 
-        && ev.target==document && ev.type=="focus") {
-      this._syncInfo.uninstallCheck=true;
+    if(ev && ev.eventPhase == ev.AT_TARGET 
+        && ev.target == document && ev.type=="focus") {
+      this._syncInfo.uninstallCheck = true;
     }
      
     if(!this._syncInfo.enqueued) {
@@ -561,7 +568,7 @@ NoScriptOverlay.prototype={
     if(b.getMessageForBrowser) return b.getMessageForBrowser(b.selectedBrowser, pos); // Fx <= 1.5 
     if(!b.getNotificationBox) return null; // SeaMonkey
 
-    nb = b.getNotificationBox(null);
+    var nb = b.getNotificationBox(null);
     b = null;
     
     if(pos == "bottom") {
@@ -622,55 +629,54 @@ NoScriptOverlay.prototype={
   },
   
   notificationShow: function(label, icon, canAppend) {
-     var box = this.getNotificationBox();
-     if(box == null) return false;
-     var pos = this.notificationPos;
-     var widget = this.getNsNotification(box);
-     if(widget) {
-       if(widget.localName == "notification") {
-         widget.label = label;
-         widget.icon = icon;
-         return;
-       } else {
-         widget.text = label;
-         widget.image = icon;
-         widget.removeAttribute("hidden");
-       }
-     
+    var box = this.getNotificationBox();
+    if(box == null) return false;
+    var pos = this.notificationPos;
+    var widget = this.getNsNotification(box);
+    if(widget) {
+     if(widget.localName == "notification") {
+       widget.label = label;
+       widget.icon = icon;
      } else {
-       
-       if(!canAppend) return false;
-       
-       const browser = getBrowser();
-       
-       var buttonLabel, buttonAccesskey;
-       if(browser.getNotificationBox || /\baButtonAccesskey\b/i.test(browser.showMessage.toSource())) {
-          const refWidget = document.getElementById("noscript-options-ctx-menuitem");
-          buttonLabel = refWidget.getAttribute("label");
-          buttonAccesskey = refWidget.getAttribute("accesskey");
-        } else { // Fx < 1.5
-          buttonLabel = "";
-          buttonAccesskey = "";
-       }
-       const popup = "noscript-notify-popup";
-       if(box.appendNotification) { // >= Fx 2.0
-         box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_HIGH,
-          [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]); 
-       } else if(browser.showMessage) { // Fx <= 1.5.x
-         browser.showMessage(browser.selectedBrowser, icon, label, 
-                buttonLabel, null,
-                null, popup, pos, true,
-                buttonAccesskey);
-       }
+       widget.text = label;
+       widget.image = icon;
+       widget.removeAttribute("hidden");
      }
-     const delay = (this.ns.getPref("notify.hide") && this.ns.getPref("notify.hideDelay", 3)) || 0;
-     if(delay) {
-       window.clearTimeout(this.notifyHideTimeout);
-       this.notifyHideTimeout = window.setTimeout(
-         function() { noscriptOverlay.notificationHide(); },
-         1000 * delay);
-     }
-     return true;
+    
+    } else {
+     
+      if(!canAppend) return false;
+       
+      const browser = getBrowser();
+     
+      var buttonLabel, buttonAccesskey;
+      if(browser.getNotificationBox || /\baButtonAccesskey\b/i.test(browser.showMessage.toSource())) {
+        const refWidget = document.getElementById("noscript-options-ctx-menuitem");
+        buttonLabel = refWidget.getAttribute("label");
+        buttonAccesskey = refWidget.getAttribute("accesskey");
+      } else { // Fx < 1.5
+        buttonLabel = "";
+        buttonAccesskey = "";
+      }
+      const popup = "noscript-notify-popup";
+      if(box.appendNotification) { // >= Fx 2.0
+       box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_HIGH,
+        [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]); 
+      } else if(browser.showMessage) { // Fx <= 1.5.x
+        browser.showMessage(browser.selectedBrowser, icon, label, 
+              buttonLabel, null,
+              null, popup, pos, true,
+              buttonAccesskey);
+      }
+    }
+    const delay = (this.ns.getPref("notify.hide") && this.ns.getPref("notify.hideDelay", 3)) || 0;
+    if(delay) {
+     window.clearTimeout(this.notifyHideTimeout);
+     this.notifyHideTimeout = window.setTimeout(
+       function() { noscriptOverlay.notificationHide(); },
+       1000 * delay);
+    }
+    return true;
   },
   
   notificationHide: function() {
@@ -706,18 +712,18 @@ NoScriptOverlay.prototype={
     const jsPSs=ns.jsPolicySites;
     var lev;
     const sites=this.getSites();
-    var totalScripts=sites.scriptCount;
-    var totalPlugins=sites.pluginCount;
-    var totalAnnoyances=totalScripts+totalPlugins;
+    var totalScripts = sites.scriptCount;
+    var totalPlugins = sites.pluginCount;
+    var totalAnnoyances = totalScripts + totalPlugins;
     var notificationNeeded;
     if(global) {
-      lev="glb";
-      notificationNeeded=false;
+      lev = "glb";
+      notificationNeeded = false;
     } else {
       var allowed=0;
       var s=sites.length;
       var total=s;
-      var url,site;
+      var url, site;
       while(s-->0) {
         url=sites[s];
         site=jsPSs.matches(url);
@@ -772,15 +778,13 @@ NoScriptOverlay.prototype={
   notifyHideTimeout: 0
 ,
   checkDocFlag: function(doc, flag) {
-    if(flag in doc && doc[flag] == _noscript_randomSignature) return false;
-    doc.__defineGetter__(flag, _noscript_signatureGetter);
+    if(flag in doc && doc[flag] == _noScript_flag) return false;
+    doc[flag] = _noScript_flag;
     return true;
   }
-
 }
 
-const _noscript_randomSignature=Math.floor(100000000*Math.random());
-function _noscript_signatureGetter() { return _noscript_randomSignature; }
+const _noScript_flag = {};
 
 const noscriptOverlay=new NoScriptOverlay();
 
@@ -857,7 +861,7 @@ function _noScript_onPluginClick(ev) {
           lm(div,"removeChild")(lm(div,"firstChild")());
         }
         lm(lm(div,"parentNode")(),"replaceChild")(applet, div)
-      },0);
+      }, 0);
     }
   }
 }
@@ -872,30 +876,48 @@ function _noScript_prepareCtxMenu(ev) {
 }
 
 
+const _noScript_WebProgressListener = {
+   onLocationChange: function(aWebProgress, aRequest, aLocation) { 
+     if(this.originalOnLocationChange) {
+       this.originalOnLocationChange(aWebProgress, aRequest, aLocation);
+     }
+     
+     if(aRequest && (aRequest instanceof Components.interfaces.nsIChannel) && aRequest.isPending()) {
+          var contentType = aRequest.contentType;
+          try {
+            if(contentType.substring(0, 5) != "text/" && 
+                noscriptOverlay.ns.shouldLoad(5, aRequest.URI, aRequest.URI, aWebProgress.DOMWindow, contentType, true) == -3) {
+                  window.setTimeout(function() { aRequest.cancel( 0 /* 0x804b0002 == NS_BINDING_ABORTED */); }, 0);
+            }
+          } catch(e) {}
+     }
+     
+   },
+   onStatusChange: function() {}, 
+   onStateChange: function() {}, 
+   onSecurityChange: function() {}, 
+   onProgressChange: function() {}
+};
+
 
 function _noScript_onloadInstall(ev) {
   document.getElementById("contentAreaContextMenu")
           .addEventListener("popupshowing", _noScript_prepareCtxMenu, false);
-  
-  if(typeof(nsBrowserStatusHandler) == "function" && nsBrowserStatusHandler.prototype &&  !nsBrowserStatusHandler.prototype._noScript_onLocationChange) {
-    // wonderful hack for stand-alone plugins
-    nsBrowserStatusHandler.prototype._noScript_onLocationChange = nsBrowserStatusHandler.prototype.onLocationChange;
-    nsBrowserStatusHandler.prototype.onLocationChange = function(aWebProgress, aRequest, aLocation) { 
-      try {
-        if(aRequest && aRequest.QueryInterface(Components.interfaces.nsIChannel).contentType.substring(0, 12) == "application/" 
-            && noscriptOverlay.ns.shouldLoad(5, aRequest.URI, aRequest.URI, aWebProgress.DOMWindow, aRequest.contentType, true) == -3) { 
-            aRequest.cancel(0); 
-        }
-      } catch(e) {} 
-      this._noScript_onLocationChange(aWebProgress, aRequest, aLocation); 
-    };
-  }
+  var b = getBrowser();
+  b.addProgressListener(_noScript_WebProgressListener);
+  noscriptOverlay.originalTabProgressListener = b.mTabProgressListener;
+  b.mTabProgressListener = function() {
+    var l = noscriptOverlay.originalTabProgressListener.apply(this, arguments);
+    l.originalOnLocationChange = l.onLocationChange;
+    l.onLocationChange = _noScript_WebProgressListener.onLocationChange;
+    return l;
+  };
 }
 
 const _noScript_syncEvents=["load", "focus"];
 _noScript_syncEvents.visit=function(callback) {
   for(var e=0,len=this.length; e<len; e++) {
-    callback.call(window,this[e],_noScript_syncUI,true);
+    callback.call(window, this[e], _noScript_syncUI, true);
   }
 }
 function _noScript_install() {
@@ -911,6 +933,7 @@ function _noScript_dispose(ev) {
   window.removeEventListener("load", _noScript_onloadInstall, false);
   document.getElementById("contentAreaContextMenu")
           .removeEventListener("popupshowing",_noScript_prepareCtxMenu,false);
+  getBrowser().removeProgressListener(_noScript_WebProgressListener);
 }
 
 _noScript_install();

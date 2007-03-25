@@ -62,7 +62,7 @@ function nso_init() {
   document.getElementById("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp",["[...]"]));
   
   document.getElementById("opt-notify.hide").setAttribute("label",
-           noscriptUtil.getString("notifyHide", [g_serv.getPref("notify.hideDelay",3)]));
+           noscriptUtil.getString("notifyHide", [g_serv.getPref("notify.hideDelay", 3)]));
    
   nso_setSample(g_serv.getPref("sound.block"));
   
@@ -113,7 +113,7 @@ function nso_populateUrlList() {
   for(j=0, len=sites.length; j<len; j++) {
     site=sites[j];
     // skip protocol+2ndlevel domain URLs
-    if(match=site.match(g_dom2)) {
+    if((match=site.match(g_dom2))) {
       item=match[1];
       for(k=sites.length; k-->0;) {
         if(sites[k]==item) {
@@ -186,8 +186,8 @@ function nso_save() {
   const serv=g_serv;
   const global=g_jsglobal.getAttribute("checked")=="true";
   serv.safeCapsOp(function() {
-    serv.setJSEnabled(g_policySites.sitesList,true,true);
-    serv.jsEnabled=global;
+    serv.setJSEnabled(g_policySites.sitesList, true, true);
+    serv.jsEnabled = global;
   });
   
   g_serv.setPref("sound.block",nso_getSample());
@@ -275,7 +275,7 @@ function visitCheckboxes(callback) {
   const opts=document.getElementsByTagName("checkbox");
   for(j=opts.length; j-->0;) {
     checkbox=opts[j];
-    if(match=checkbox.id.match(rxOpt)) {
+    if((match=checkbox.id.match(rxOpt))) {
       callback(match[2],match[1]=="inv",checkbox,match[1]=="moz");
     }
   }

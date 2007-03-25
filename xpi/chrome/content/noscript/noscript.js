@@ -1,6 +1,6 @@
 function NoscriptUtil() {}
 
-NoscriptUtil.prototype={
+NoscriptUtil.prototype = {
   chromeBase: "chrome://noscript/content/",
   chromeName: "noscript",
   _service: null, 
@@ -16,8 +16,11 @@ NoscriptUtil.prototype={
         window.navigator.plugins.refresh();
       }
     }
-    if(s!=null) s.init();
-    return this._service=s;
+    if(s != null) s.init();
+    s.unwrapEmbed = function(ctx) { // dirty hack...
+      return ctx.previousSibling ? ctx.previousSibling.nextSibling : ctx.parentNode.firstChild;
+    };
+    return this._service = s;
   }
 ,
   getString: function(key, parms) {
@@ -35,4 +38,4 @@ NoscriptUtil.prototype={
   }
 };
 
-var noscriptUtil=new NoscriptUtil();
+var noscriptUtil = new NoscriptUtil();

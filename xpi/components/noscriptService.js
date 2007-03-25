@@ -186,8 +186,8 @@ const SiteUtils = new function() {
   
   var _ios = null;
   this.__defineGetter__("ios", function() {
-     return _ios?_ios
-      :_ios=Components.classes["@mozilla.org/network/io-service;1"
+     return _ios ? _ios
+      : _ios = Components.classes["@mozilla.org/network/io-service;1"
         ].getService(Components.interfaces.nsIIOService);
   });
   
@@ -206,18 +206,22 @@ const SiteUtils = new function() {
   };
 
   this.getSite = function(url) {
-    if(! (url && ( url=url.replace(/^\s+/,'').replace(/\s+$/,'') )) ) {
+    if(! (url && (url = url.replace(/^\s+/, '').replace(/\s+$/, '') ))) {
       return "";
     }
     
-    if(url.indexOf(":")<0) return this.domainMatch(url);
+    if(url.indexOf(":") < 0) return this.domainMatch(url);
     
     var scheme;
     try {
       scheme = this.ios.extractScheme(url).toLowerCase();
-      if(scheme == "javascript" || scheme == "data") return "";
-      if(scheme == "about") {
-        return /about:neterror(\?|$)/.test(url) ? "about:neterror" : url;
+      switch(scheme) {
+        case "javascript": case "data": 
+          return "";
+        case "about":
+          return /about:neterror(\?|$)/.test(url) ? "about:neterror" : url;
+        case "chrome":
+          return "chrome:";
       }
       scheme += ":";
       if(url == scheme) return url;
@@ -226,13 +230,13 @@ const SiteUtils = new function() {
     }
     try {
       // let's unwrap JAR uris
-      var uri=this.ios.newURI(url,null,null);
+      var uri=this.ios.newURI(url, null, null);
       if(uri instanceof Components.interfaces.nsIJARURI) {
         uri=uri.JARFile;
         return uri?this.getSite(uri.spec):scheme;
       }
       try  {
-        return scheme+"//"+uri.hostPort;
+        return scheme + "//" + uri.hostPort;
       } catch(exNoHostPort) {
         return scheme;
       }
@@ -324,7 +328,7 @@ PolicySites.prototype={
     return this._sitesString;
   },
   set sitesString(s) {
-    s=SiteUtils.sanitizeString(s);
+    s = SiteUtils.sanitizeString(s);
     if(s!=this._sitesString) {
       this._sitesString=s;
       this._sitesMap=null;
@@ -338,7 +342,7 @@ PolicySites.prototype={
     return this._sitesList?this._sitesList:this._sitesList=SiteUtils.splitString(this.sitesString);
   },
   set sitesList(sl) {
-    this.sitesString=SiteUtils.set2string(SiteUtils.sortedSet(SiteUtils.sanitizeList(sl)));
+    this.sitesString = SiteUtils.set2string(SiteUtils.sortedSet(SiteUtils.sanitizeList(sl)));
     return this.sitesList;
   }
 ,
@@ -357,7 +361,7 @@ PolicySites.prototype={
     return this._sitesMap;
   },
   set sitesMap(sm) {
-    sm = sm?SiteUtils.sanitizeMap(sm):{};
+    sm = sm ? SiteUtils.sanitizeMap(sm):{};
     var sl=[];
     for(var s in sm) {
       sl.push(s);
@@ -390,14 +394,14 @@ PolicySites.prototype={
   // returns the shortest match for a site, or "" if no match is found
   matches: function(site) {
     if(!site) return "";
-    const sm=this.sitesMap;
+    const sm = this.sitesMap;
     var match;
     var dots; // track "dots" for (temporary) fix to 2nd level domain policy lookup flaw 
-    var pos=site.indexOf(':')+1;
-    if(pos > 0 && (pos == site.length || site[pos]=='/')) {
-      if(sm[match = site.substring(0,pos)]) return match; // scheme match
-      if(site[++pos] != '/') return site == "about:" ? "about:" : "";
-      match = site.substring(pos+1);
+    var pos = site.indexOf(':') + 1;
+    if(pos > 0 && (pos == site.length || site[pos] == '/')) {
+      if(sm[match = site.substring(0, pos)]) return match; // scheme match
+      if(++pos >= site.length || site[pos] != '/') return site == "about:" ? "about:" : "";
+      match = site.substring(pos + 1);
       dots = 0;
     } else {
       match = site;
@@ -405,15 +409,15 @@ PolicySites.prototype={
     }
 
     var submatch;
-    for(pos=match.lastIndexOf('.'); pos>1; dots++) {
-      pos=match.lastIndexOf('.',pos-1);
-      if( (dots || pos>-1) && sm[submatch=match.substring(pos+1)]) {
+    for(pos = match.lastIndexOf('.'); pos > 1; dots++) {
+      pos = match.lastIndexOf('.', pos - 1);
+      if( (dots || pos > -1) && sm[submatch=match.substring(pos + 1)]) {
         return submatch; // domain/subdomain match
       }
     }
     
     if(sm[match]) return match; // host match
-    return sm[site]?site:""; // full match
+    return sm[site] ? site : ""; // full match
   }
 ,
   _remove: function(site, keepUp, keepDown) {
@@ -1152,13 +1156,9 @@ NoscriptService.prototype={
 ,
  lookupMethod: Components.utils?Components.utils.lookupMethod:Components.lookupMethod
 ,
+  unwrapEmbed: function(e) { return e; }, // real implementation will be set by our chrome helper noscript.js
   pluginPlaceholder: "chrome://noscript/skin/icon32.png",
   showPlaceHolder: true,
-  pluginsExtrasMark: {},
-  getPluginExtras: function(obj) {
-    return (obj._noScriptExtras && obj._noScriptExtras.mark && 
-      this.pluginsExtrasMark == obj._noScriptExtras.mark) ? obj._noScriptExtras : null;
-  },
   consoleDump: false,
   forbidSomePlugins: false,
   forbidAllPlugins: false,
@@ -1201,6 +1201,12 @@ NoscriptService.prototype={
           forbid = isJS = true;
           break;
         case 5:
+          if(( (!this.forbidSomePlugins)
+              || aMimeTypeGuess == "application/xml" 
+              || aMimeTypeGuess == "application/xhtml+xml"
+              || aMimeTypeGuess.substring(0, 6) == "image/")
+              )
+            return 1;
           break;
         default:
           return 1;
@@ -1210,13 +1216,14 @@ NoscriptService.prototype={
       
       const origin = this.getSite(url);
       if(!forbid) {
-        var forceAllow;
+        
         try {
-          forceAllow = this.pluginsCache.update(url, aMimeTypeGuess, origin, aRequestOrigin, aContext);
+          if(this.pluginsCache.update(url, aMimeTypeGuess, origin, aRequestOrigin, aContext)) 
+            return 1; // forceAllow
         } catch(ex) {
           dump("NoScriptService.pluginsCache.update():" + ex + "\n");
         }
-        if((!forceAllow) && this.forbidSomePlugins) {
+        if(this.forbidSomePlugins) {
           var forbid = this.forbidAllPlugins;
           if((!forbid) && aMimeTypeGuess) {
             forbid = 
@@ -1229,27 +1236,23 @@ NoscriptService.prototype={
       
       if(forbid) {
         if(!(this.isJSEnabled(origin))) {
+          // from now on it should be safe reading "unsafe" properties on DOM nodes
           if(aContext && (!isJS)) {
             const ci = Components.interfaces;
             if(aContext instanceof ci.nsIDOMNode) {
               
-              const lm=this.lookupMethod;
-              
-              if(this.pluginPlaceholder) {
+             if(this.pluginPlaceholder) {
                
-                if(aContext instanceof(ci.nsIDOMHTMLEmbedElement)) {
-                  var parent = lm(aContext,"parentNode")();
-                  if(parent instanceof ci.nsIDOMHTMLObjectElement) {
-                    aContext = parent;
-                  }
+                if(aContext instanceof ci.nsIDOMHTMLEmbedElement
+                    && aContext.parentNode instanceof ci.nsIDOMHTMLObjectElement) {
+                  aContext = aContext.parentNode;
                 }
-
-                if(aMimeTypeGuess && !this.getPluginExtras(aContext)) {
-                  aContext._noScriptExtras = {
-                    mark: this.pluginsExtrasMark,
+                if(aMimeTypeGuess) {
+                  this.setPluginExtras(this.unwrapEmbed(aContext), 
+                  {
                     url: url,
                     mime: aMimeTypeGuess
-                  };
+                  });
                 }
               }
             }
@@ -1266,6 +1269,9 @@ NoscriptService.prototype={
     },
     shouldProcess: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, aExtra) {
       return this.shouldLoad(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, true);
+    },
+    check: function() {
+      return false;
     }
   },
   oldStyleContentPolicy: {
@@ -1297,7 +1303,7 @@ NoscriptService.prototype={
   pluginsCache: {
     
     findBrowser: function(chrome, win) {
-      var gb=chrome.getBrowser();
+      var gb = chrome.getBrowser();
       var browsers;
       if(! (gb && (browsers = gb.browsers))) return null;
       
@@ -1323,7 +1329,7 @@ NoscriptService.prototype={
         } else return; 
       }
       if(!ctx) return;
-      ctx = lm(ctx,"top")();
+      ctx = lm(ctx, "top")();
       
       const wm = Components.classes['@mozilla.org/appshell/window-mediator;1']
                            .getService(Components.interfaces.nsIWindowMediator);
@@ -1332,7 +1338,7 @@ NoscriptService.prototype={
       if(! (browser = this.findBrowser(chrome, ctx))) {
         const ww = wm.getEnumerator("navigator:browser");
         for(var w; ww.hasMoreElements();) {
-          w=ww.getNext();
+          w = ww.getNext();
           if(w != chrome && (browser = this.findBrowser(w, ctx))) {
             break;
           }
@@ -1341,8 +1347,9 @@ NoscriptService.prototype={
       
       return browser;
     },
-    lookupMethod: Components.utils?Components.utils.lookupMethod:Components.lookupMethod,
-    update: function(url, mime, origin, docURI, ctx) { // returns forceAllow
+    lookupMethod: Components.utils ? Components.utils.lookupMethod : Components.lookupMethod,
+    
+    update: function(url, mime, origin, docURI, ctx) { // returns forceAllow for this url and mime
       var browser = this.findBrowserForNode(ctx);
       if(browser) {
         var cache = this.get(browser);
@@ -1365,6 +1372,17 @@ NoscriptService.prototype={
       return browser.noScriptPluginsCache || 
       (browser.noScriptPluginsCache = { uris: {}, forceAllow: {} });
     }
+  },
+  
+  pluginExtrasMark: {},
+  getPluginExtras: function(obj) {
+    return (obj._noScriptExtras && obj._noScriptExtras.mark && 
+      this.pluginExtrasMark == obj._noScriptExtras.mark) ? obj._noScriptExtras : null;
+  },
+  setPluginExtras: function(obj, extras) {
+    extras.mark = this.pluginExtrasMark;
+    obj._noScriptExtras = extras;
+    return extras;
   }
 };
 

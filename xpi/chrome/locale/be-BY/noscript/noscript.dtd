@@ -1,0 +1,51 @@
+<!ENTITY noscriptOptions "Налады...">
+<!ENTITY noscriptOptions.accesskey "а">
+<!ENTITY noscriptOptionsLong "Налады NoScript">
+<!ENTITY noscriptAbout "Аб пашырэнні">
+<!ENTITY noscriptPermissionsText "Вы можаце ўсталёўваць якім вэб-сайтам будзе дазволена выконваць код JavaScript. Увядзіце адрас або дамен (напрыклад &quot;http://www.site.com&quot; або &quot;site.com&quot;) сайта, якому вы жадаеце дазволіць выкананне JavaScript у тэкставым полі ніжэй, а затым націсніце &quot;Дазволіць&quot;.">
+<!ENTITY noscriptWebAddress "Адрас вэб-сайта:">
+<!ENTITY noscriptAllow "Дазволіць">
+<!ENTITY noscriptAllow.accesskey "е">
+<!ENTITY noscriptRemoveSelected "Выдаліць вылучаныя сайты">
+<!ENTITY noscriptGloballyEnabled "Цалкам дазваляць выкананне JavaScript на старонках (небяспечна)">
+<!ENTITY noscriptAutoReload "Аўтаматычна абнаўляць старонку пасля змены для яе правіл">
+<!ENTITY noscriptGeneral "Асноўныя">
+<!ENTITY noscriptAppearance "Знешні выгляд">
+<!ENTITY noscriptShow "Адлюстроўваць наступныя элементы NoScript...">
+<!ENTITY noscriptCtxMenu "Пункт у кантэкстным меню">
+<!ENTITY noscriptStatusIcon "Значок у радку стану">
+<!ENTITY noscriptFullAddr "Поўныя адрасы (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Поўныя дамены (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Базавыя дамены 2-го ўзроўня (noscript.net)">
+<!ENTITY noscriptTempCmd "Часова дазволіць [...]">
+<!ENTITY noscriptSound "Прайграваць аўдыёфайл пры блакаванні скрыптоў">
+<!ENTITY noscriptImport "Імпарт">
+<!ENTITY noscriptImport.accesskey "м">
+<!ENTITY noscriptExport "Экспарт">
+<!ENTITY noscriptExport.accesskey "да">
+<!ENTITY noscriptNotify "Адлюстроўваць паведамленні аб заблакаваных скрыптах">
+<!ENTITY noscriptNotify.bottom "Размяшчаць паведамленні знізу экрана">
+<!ENTITY noscriptSound.choose "Агляд">
+<!ENTITY noscriptSound.choose.accesskey "аб">
+<!ENTITY noscriptSound.play "Праслухаць">
+<!ENTITY noscriptSound.play.accesskey "а">
+<!ENTITY noscriptSound.reset "Скід">
+<!ENTITY noscriptSound.reset.accesskey "бы">
+<!ENTITY noscriptAdvanced "Дадаткова">
+<!ENTITY noscriptAdditionalPermissions "Дадатковыя магчымасці для доверяемых сайтаў">
+<!ENTITY noscriptAllowClipboard "Пашыранае капіяванне/устаўка з знешняга буфера абмену">
+<!ENTITY noscriptAdditionalRestrictions "Дадатковыя абмежаванні для ненадзейных сайтаў">
+<!ENTITY noscriptForbidJava "Забараніць адлюстраванне элементаў Java™">
+<!ENTITY noscriptForbidFlash "Забараніць адлюстраванне элементаў Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Забараніць адлюстраванне элементаў іншых убудоў">
+<!ENTITY noscriptReloadWarn "Нататка: Усталяваныя налады ўступаюць у сілу альбо на новай старонцы, альбо пасля ручнога абнаўлення бягучай старонкі">
+<!ENTITY noscriptConfirmUnblock "Пацвярджаць часовую разблакоўку аб&apos;екта на старонцы">
+<!ENTITY noscriptStatusLabel "Паведамленні ў радку стану">
+<!ENTITY noscriptForbidBookmarklets "Забараніць выкарыстанне Bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Вылучаць размяшчэнне заблакаваных элементаў значком з рамкай">
+<!ENTITY noscriptTruncateTitle "Адсякаць занадта доўгія загалоўкі вэб-сайтаў">
+<!ENTITY noscriptFixLinks "Ужываць алгарытм выпраўлення JavaScript-спасылак">
+<!ENTITY noscriptAllowBookmarks "Дазваляць выкананне JavaScript усім вэб-сайтам з закладак">
+<!ENTITY noscriptAllowViaBookmarks "Дазваляць выкананне JavaScript усім вэб-сайтам з закладак">
+<!ENTITY noscriptAllowPing "Дазволіць вэб-сайту выкарыстаць параметр &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Забараніць вэб-сайту выкарыстаць параметр  &lt;a ping...&gt;">
