@@ -35,6 +35,7 @@ locale	noscript	hu-HU	jar:chrome/noscript.jar!/locale/hu-HU/noscript/
 locale	noscript	mk-MK	jar:chrome/noscript.jar!/locale/mk-MK/noscript/
 locale	noscript	da-DK	jar:chrome/noscript.jar!/locale/da-DK/noscript/
 locale	noscript	sv-SE	jar:chrome/noscript.jar!/locale/sv-SE/noscript/
+locale	noscript	he-IL	jar:chrome/noscript.jar!/locale/he-IL/noscript/
 locale	noscript	uk-UA	jar:chrome/noscript.jar!/locale/uk-UA/noscript/
 locale	noscript	th-TH	jar:chrome/noscript.jar!/locale/th-TH/noscript/
 locale	noscript	fa-IR	jar:chrome/noscript.jar!/locale/fa-IR/noscript/

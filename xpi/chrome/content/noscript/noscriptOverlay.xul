@@ -36,14 +36,6 @@
 <script type="application/x-javascript" src="noscriptOverlay.js"/>
 <script type="application/x-javascript" src="noscriptBM.js"/>
 
-<keyset id="mainKeyset">
-    <key id="noscript-toggle-key" keycode="VK_BACK_SLASH" modifiers="accel,shift" oncommand="noscriptOverlay.toggleCurrentPage(true)" />
-    <key id="noscript-ui-key" key="x" modifiers="accel,shift" oncommand="noscriptOverlay.showUI()" />
-</keyset>
-<keyset id="navKeys">
-    <key id="noscript-zm-toggle-key" keycode="VK_BACK_SLASH" modifiers="accel,shift" oncommand="noscriptOverlay.toggleCurrentPage(true)" />
-    <key id="noscript-zm-ui-key" key="x" modifiers="accel,shift" oncommand="noscriptOverlay.showUI()" />
-</keyset>
   
 <stringbundleset id="stringbundleset">
   <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />

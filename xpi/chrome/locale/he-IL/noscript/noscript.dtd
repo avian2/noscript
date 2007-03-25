@@ -1,0 +1,78 @@
+<!ENTITY noscriptOptions "הגדרות...">
+<!ENTITY noscriptOptions.accesskey "ג">
+<!ENTITY noscriptOptionsLong "הגדרות נוסקריפט">
+<!ENTITY noscriptAbout "על אודות נוסקריפט">
+<!ENTITY noscriptPermissionsText "באפשרותך להגדיר לאילו אתרים יותר להפעיל סקריפטים.  יש להזין את כתובת האתר או המתחם (דומיין), למשל http://www.site.com או site.com, של האתר שברצונך לאשר, וללחוץ על התר.">
+<!ENTITY noscriptWebAddress "כתובת אתר:">
+<!ENTITY noscriptAllow "התר">
+<!ENTITY noscriptAllow.accesskey "ה">
+<!ENTITY noscriptForbid "אסור">
+<!ENTITY noscriptForbid.accesskey "א">
+<!ENTITY noscriptTrust "סמוך על אתר זה">
+<!ENTITY noscriptTrust.accesskey "ס">
+<!ENTITY noscriptUntrust "אל תסמוך על אתר זה">
+<!ENTITY noscriptUntrust.accesskey "ת">
+<!ENTITY noscriptRemoveSelected "הסר אתרים נבחרים">
+<!ENTITY noscriptGloballyEnabled "סקריפטים מותרים בכל אתר (מסוכן)">
+<!ENTITY noscriptAutoReload "טען מחדש דפים שמושפעים משינוי הרשאות באופן אוטומטי">
+<!ENTITY noscriptGeneral "כללי">
+<!ENTITY noscriptAppearance "תצוגה">
+<!ENTITY noscriptShow "הצג...">
+<!ENTITY noscriptCtxMenu "תפריט הקשר">
+<!ENTITY noscriptStatusIcon "צלמית שורת מצב">
+<!ENTITY noscriptFullAddr "כתובות מלאות (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "מתחמים מלאים (www.noscript.net)">
+<!ENTITY noscriptBaseDom "מתחמי בסיס ברמה שנייה (noscript.net)">
+<!ENTITY noscriptTempCmd "זמנית התר [...]">
+<!ENTITY noscriptSound "תן משוב צלילי כשסקריפטים נחסמים">
+<!ENTITY noscriptImport "יבא">
+<!ENTITY noscriptImport.accesskey "י">
+<!ENTITY noscriptExport "יצא">
+<!ENTITY noscriptExport.accesskey "צ">
+<!ENTITY noscriptNotify "הצג הודעה בדבר סקריפטים נחסמים">
+<!ENTITY noscriptNotify.bottom "מקם הודעות בתחתית">
+<!ENTITY noscriptSound.choose "נא לבחור">
+<!ENTITY noscriptSound.choose.accesskey "ב">
+<!ENTITY noscriptSound.play "השמע">
+<!ENTITY noscriptSound.play.accesskey "ש">
+<!ENTITY noscriptSound.reset "חזור לברירת מחדל">
+<!ENTITY noscriptSound.reset.accesskey "ח">
+<!ENTITY noscriptAdvanced "אפשרויות מתקדמות">
+<!ENTITY noscriptAdditionalPermissions "הרשאות נוספות לאתרים מורשים">
+<!ENTITY noscriptAllowClipboard "התר העתקה והדבקה של טקסט עשיר (rich text) מהלוח החיצוני">
+<!ENTITY noscriptAdditionalRestrictions "הגבלות נוספות על אתרים בלתי-מורשים">
+<!ENTITY noscriptForbidJava "אסור על ג&apos;אוה">
+<!ENTITY noscriptForbidFlash "אסור על פלאש">
+<!ENTITY noscriptForbidPlugins "אסור על תוספים אחרים">
+<!ENTITY noscriptReloadWarn "אפשרויות אלו ייכנסו לתוקף בדפים חדשים או דפים שנטענו מחדש ידנית">
+<!ENTITY noscriptConfirmUnblock "בקש אישור לפני התרה זמנית של פריט">
+<!ENTITY noscriptStatusLabel "כותרת שורת מצב">
+<!ENTITY noscriptForbidBookmarklets "אסור על יישומי-סימניה (bookmarklets)">
+<!ENTITY noscriptShowPlaceholder "הצג צלמית כתחליף">
+<!ENTITY noscriptTruncateTitle "קצר כותרות דפים">
+<!ENTITY noscriptFixLinks "נסה לתקן קישוריות ג&apos;אוהסקריפט">
+<!ENTITY noscriptAllowBookmarks "סמוך על אתרים שנפתחו דרך סימניות">
+<!ENTITY noscriptAllowViaBookmarks "סמוך על אתרים שנפתחו דרך סימניות">
+<!ENTITY noscriptAllowPing "התר &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "התר קישוריות מקומיות">
+<!ENTITY noscriptForbidPing "אסור &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "רשימת מותרים">
+<!ENTITY noscriptPermissions "הרשאות">
+<!ENTITY noscriptRefresh "טען מחדש">
+<!ENTITY noscriptNotifications "הודעות">
+<!ENTITY noscriptToolbarToggle "הקלקה על סרגל הכלים של נוסקריפט מדליקה/מכבה הרשאות לאתר הראשי הנוכחי">
+<!ENTITY noscriptTrusted "אתר אמין">
+<!ENTITY noscriptUntrusted "אתר לא אמין">
+<!ENTITY noscriptUnknown "לא ידוע">
+<!ENTITY noscriptAdd "הוסף">
+<!ENTITY noscriptAdd.accesskey "ה">
+<!ENTITY noscriptClose "סגור">
+<!ENTITY noscriptSiteManager "מנהל אתר">
+<!ENTITY noscriptSecurityManager "מנהל אבטחה">
+<!ENTITY noscriptPolicies "הגדרות">
+<!ENTITY noscriptDefaultPolicies "הגדרות ברירת מחדל">
+<!ENTITY noscriptSitePolicies "הגדרות ספציפיות לאתר">
+<!ENTITY noscriptNselNever "הסתר תגיות &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "הצג את תגית ה-&lt;noscript&gt; שבאה אחרי &lt;script&gt; חסום.">
+<!ENTITY noscriptAutoAllowTopLevel "כברירת מחדל, התר אתרים ראשיים באופן זמני">
+<!ENTITY noscriptDescription "הגנה מורחבת לפיירפוקס: נוסקריפט מאפשר ג&apos;אוהסקריפט, ג&apos;אוה (ותוספים אחרים) רק לאתרים מורשים לבחירתך (למשל, אתר הבנק).  גישה זו, של חסימה מראש על בסיס רשימת-מותרים, מונעת ניצול של פרצות אבטחה (מוכרות ואף בלתי-מוכרות!) בלי לאבד פונקציונליות... מומחים מסכימים: פיירפוקס בטוח יותר עם נוסקריפט. :-)">

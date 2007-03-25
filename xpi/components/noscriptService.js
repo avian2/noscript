@@ -371,12 +371,13 @@ PolicySites.prototype = {
     return this._sitesMap=sm;
   }
 ,
- fromPref: function(pref) {
+  fromPref: function(pref) {
    this.sitesString = pref.getCharPref("sites")
        .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
- }
+  }
 ,
- toPref: function(pref) {
+  settingPref: false,
+  toPref: function(pref) {
    var change;
    var s = this.sitesString.replace(/[^\u0000-\u007f]+/g,function($0) { return unescape(encodeURIComponent($0)) });
    try {
@@ -386,7 +387,9 @@ PolicySites.prototype = {
     }
     
     if(change) {
+      this.settingPref = true;
       pref.setCharPref("sites", s);
+      this.settingPref = false;
     }
  }
 ,
@@ -502,7 +505,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.6.070305",
+  VERSION: "1.1.4.6.070317",
   
   get wrappedJSObject() {
     return this;
@@ -573,17 +576,12 @@ NoscriptService.prototype ={
     
     switch(name) {
       case "sites":
+        if(this.jsPolicySites.settingPref) return;
         try {
           this.jsPolicySites.fromPref(this.policyPB);
         } catch(ex) {
-          /*
-          this.policyPB.setCharPref("sites",
-            this.getPref("default",
-              "chrome: resource: about:neterror flashgot.net mail.google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com"
-            ));
-          */
           this.setJSEnabled(this.splitList(this.getPref("default",
-              "chrome: resource: about:neterror flashgot.net mail.google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net mozilla.org mozillazine.org noscript.net hotmail.com msn.com passport.com passport.net passportimages.com"
+              "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com"
               )), true, true);
         }
         break;
@@ -612,6 +610,8 @@ NoscriptService.prototype ={
       case "pluginPlaceholder":
       case "showPlaceholder":
       case "consoleDump":
+      case "blockCssScanners":
+      case "blockCrossIntranet":
         this[name]=this.getPref(name, this[name]);
       break;
       
@@ -728,13 +728,14 @@ NoscriptService.prototype ={
     
     this.permanentSites.sitesString = "chrome: resource: about:neterror";
     
-    const syncPrefNames=[ "consoleDump",
+    const syncPrefNames=["consoleDump",
       "pluginPlaceholder", "showPlaceholder", "forbidPlugins", 
       "forbidJava", "forbidFlash", 
       "allowClipboard", "allowLocalLinks",
       "temp", "untrusted", // "permanent",
       "truncateTitle", "truncateTitleLen",
-      "nselNever", "nselForce", "blockCssScanners",
+      "nselNever", "nselForce", 
+      "blockCssScanners", "blockCrossIntranet",
       "autoAllow"
       ];
     for(var spcount = syncPrefNames.length; spcount-->0;) {
@@ -930,6 +931,7 @@ NoscriptService.prototype ={
     const ww = Components.classes['@mozilla.org/appshell/window-mediator;1']
                          .getService(Components.interfaces.nsIWindowMediator)
                          .getEnumerator("navigator:browser");
+    const FROM_CACHE = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE;
     for(var w; ww.hasMoreElements();) {
       w = ww.getNext();
       ov = w.noscriptOverlay;
@@ -944,7 +946,7 @@ NoscriptService.prototype ={
               currStatus = global || !!ps.matches(docSites[j]);
               if(currStatus != prevStatus) {
                 ret=true;
-                bb[b].reload();
+                bb[b].reloadWithFlags(FROM_CACHE);
                 break;
               }
             }
@@ -1308,6 +1310,8 @@ NoscriptService.prototype ={
   pluginPlaceholder: "chrome://noscript/skin/icon32.png",
   showPlaceHolder: true,
   consoleDump: false,
+  blockCssScanning: true,
+  blockCrossIntranet: true,
   pluginForMime: function(mimeType) {
     if(!mimeType) return null;
     var w = this.lastWindow;
@@ -1550,6 +1554,15 @@ NoscriptService.prototype ={
     return extras;
   }
 };
+
+function RequestObserver(ns) {
+  this.ns = ns;
+}
+RequestObserver.protoype = {
+  observe: function(subject, topic, data) {
+    
+  }
+}
 
 
 

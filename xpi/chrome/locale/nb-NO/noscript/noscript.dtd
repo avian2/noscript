@@ -1,28 +1,28 @@
-<!ENTITY noscriptOptions "Innstillinger ...">
+<!ENTITY noscriptOptions "Innstillinger...">
 <!ENTITY noscriptOptions.accesskey "I">
 <!ENTITY noscriptOptionsLong "NoScript-innstillinger">
 <!ENTITY noscriptAbout "Om NoScript">
-<!ENTITY noscriptPermissionsText "Du kan angi hvilke nettsted som har tillatelse til å bruke JavaScript. Skriv in adressen eller domenenavnet (f.eks. &quot;http://www.nettsted.com&quot; eller &quot;nettsted.com&quot;) av nettstedet du vil tillate, og trykk Tillat.">
+<!ENTITY noscriptPermissionsText "Du kan angi hvilke nettsted som har tillatelse til å bruke JavaScript. Skriv inn adressen eller domenenavnet (f.eks. &quot;http://www.nettsted.com&quot; eller &quot;nettsted.com&quot;) av nettstedet du vil tillate, og trykk Tillat.">
 <!ENTITY noscriptWebAddress "Nettstedets adresse:">
 <!ENTITY noscriptAllow "Tillat">
 <!ENTITY noscriptAllow.accesskey "T">
-<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid "Forby">
 <!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
-<!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptTrust "Merk som pålitelig">
+<!ENTITY noscriptTrust.accesskey "M">
+<!ENTITY noscriptUntrust "Merk som upålitelig">
 <!ENTITY noscriptUntrust.accesskey "U">
-<!ENTITY noscriptRemoveSelected "Fjern valgte nettsted">
+<!ENTITY noscriptRemoveSelected "Fjern valgt(e) side(r)">
 <!ENTITY noscriptGloballyEnabled "Tillat JavaScript globalt (farlig)">
 <!ENTITY noscriptAutoReload "Automatisk last inn sider som blir berørt, når tillatelser endres">
 <!ENTITY noscriptGeneral "Generelt">
 <!ENTITY noscriptAppearance "Utseende">
-<!ENTITY noscriptShow "Vis ...">
+<!ENTITY noscriptShow "Vis...">
 <!ENTITY noscriptCtxMenu "Kontekstmeny">
 <!ENTITY noscriptStatusIcon "Statuslinje-ikon">
-<!ENTITY noscriptFullAddr "Fullstendige adresser (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Fullstendige domener (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Andrenivås domener (noscript.net)">
+<!ENTITY noscriptFullAddr "Fullstendige Adresser (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Fullstendige Domener (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Andrenivås Domener (noscript.net)">
 <!ENTITY noscriptTempCmd "Midlertidig tillat [...]">
 <!ENTITY noscriptSound "Lydsignal når skript blir blokkert">
 <!ENTITY noscriptImport "Importer">
@@ -30,7 +30,7 @@
 <!ENTITY noscriptExport "Eksporter">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Vis melding når skript blokkeres">
-<!ENTITY noscriptNotify.bottom "Plasser meldinger på bunnen av nettleseren">
+<!ENTITY noscriptNotify.bottom "Plasser meldinger på bunnen av Firefox">
 <!ENTITY noscriptSound.choose "Velg">
 <!ENTITY noscriptSound.choose.accesskey "V">
 <!ENTITY noscriptSound.play "Spill av">
@@ -38,41 +38,41 @@
 <!ENTITY noscriptSound.reset "Gjenopprett forvalg">
 <!ENTITY noscriptSound.reset.accesskey "G">
 <!ENTITY noscriptAdvanced "Avansert">
-<!ENTITY noscriptAdditionalPermissions "Flere tillatelsesinnstillinger for nettsted du stoler på">
-<!ENTITY noscriptAllowClipboard "Tillat kopering/innliming av tekst med tekststiler fra ekstern utklippstavle">
-<!ENTITY noscriptAdditionalRestrictions "Tilleggsbegrensinger for nettsider du ikke stoler på">
+<!ENTITY noscriptAdditionalPermissions "Flere tillatelsesinnstillinger for pålitelige sider">
+<!ENTITY noscriptAllowClipboard "Tillat kopiering/innliming av tekst med tekststiler fra ekstern utklippstavle">
+<!ENTITY noscriptAdditionalRestrictions "Tilleggsbegrensinger for upålitelige sider">
 <!ENTITY noscriptForbidJava "Forby Java™">
 <!ENTITY noscriptForbidFlash "Forby Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Forby andre programtillegg">
 <!ENTITY noscriptReloadWarn "Disse innstillingene vil tre i kraft for nye eller (manuelt) oppdaterte nettsider">
 <!ENTITY noscriptConfirmUnblock "Spør om bekreftelse før midlertidig oppheving av blokkering av et nettsted">
 <!ENTITY noscriptStatusLabel "Statuslinje-beskjed">
-<!ENTITY noscriptForbidBookmarklets "Forby bookmarklets">
+<!ENTITY noscriptForbidBookmarklets "Forby bokmerkelets">
 <!ENTITY noscriptShowPlaceholder "Vis plassholder-ikon">
-<!ENTITY noscriptTruncateTitle "Truncate document titles">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
-<!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">
-<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;a ping...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;a ping...&gt;">
-<!ENTITY noscriptWhitelist "Whitelist">
-<!ENTITY noscriptPermissions "Permissions">
-<!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifications "Notifications">
-<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
-<!ENTITY noscriptTrusted "Trusted">
-<!ENTITY noscriptUntrusted "Untrusted">
-<!ENTITY noscriptUnknown "Unknwon">
-<!ENTITY noscriptAdd "Add">
-<!ENTITY noscriptAdd.accesskey "A">
-<!ENTITY noscriptClose "Close">
-<!ENTITY noscriptSiteManager "Site Manager">
-<!ENTITY noscriptSecurityManager "Security Manager">
-<!ENTITY noscriptPolicies "Policies">
-<!ENTITY noscriptDefaultPolicies "Default Policies">
-<!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
+<!ENTITY noscriptTruncateTitle "Truncate dokumenttittler">
+<!ENTITY noscriptFixLinks "Prøv å fikse JavaScript-lenker">
+<!ENTITY noscriptAllowBookmarks "Tillat sider gjennom bokmerker">
+<!ENTITY noscriptAllowViaBookmarks "Tillat sider gjennom bokmerker">
+<!ENTITY noscriptAllowPing "Tillat &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Tillat lokale lenker">
+<!ENTITY noscriptForbidPing "Forby &lt;a ping...&gt;">
+<!ENTITY noscriptWhitelist "Hvitelist">
+<!ENTITY noscriptPermissions "Tillatelser">
+<!ENTITY noscriptRefresh "Oppdater">
+<!ENTITY noscriptNotifications "Notifikasjoner">
+<!ENTITY noscriptToolbarToggle "Venstreklikk på NoScript-knappen slår tillatelsen for nåværende toppside av/på">
+<!ENTITY noscriptTrusted "Pålitelig">
+<!ENTITY noscriptUntrusted "Upålitelig">
+<!ENTITY noscriptUnknown "Ukjent">
+<!ENTITY noscriptAdd "Legg til">
+<!ENTITY noscriptAdd.accesskey "E">
+<!ENTITY noscriptClose "Lukk">
+<!ENTITY noscriptSiteManager "Sidemanager">
+<!ENTITY noscriptSecurityManager "Sikkerhetsmanager">
+<!ENTITY noscriptPolicies "Polisie">
+<!ENTITY noscriptDefaultPolicies "Standard Polisier">
+<!ENTITY noscriptSitePolicies "Sidespesifike Polisier">
+<!ENTITY noscriptNselNever "Skjul &lt;noscript&gt;-elementer">
+<!ENTITY noscriptNselForce "Vis &lt;noscript&gt;-element som følger et låst &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillat top-level nettsteder som standard">
+<!ENTITY noscriptDescription "Ekstra beskyttelse for din Firefox">

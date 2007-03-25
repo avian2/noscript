@@ -37,7 +37,7 @@ NoScriptOverlay.prototype = {
     if(!(force || ns.getPref("toolbarToggle", false))) return;
     
     const url = ns.getSite(ns.lookupMethod(this.srcWindow.document, "documentURI")());
-    this.safeAllow(url, !ns.isJSEnabled(url));
+    this.safeAllow(url, !ns.isJSEnabled(url), ns.getPref("toggle.temp"));
   },
   
   isLoading: function() {   
@@ -889,31 +889,85 @@ NoScriptOverlay.prototype = {
     return true;
   },
   
-  setupKeys: function() {
-    const ns = this.ns;
-    const keys = { 'ui': 'x', 'toggle': 'VK_BACK_SLASH' };
-    function remove(id) {
-      var el = document.getElementById(id);
-      el.parentNode.removeChild(el);
+  
+  keyCommand: function(cmd) {
+    switch(cmd) {
+      case 'toggle':
+        this.toggleCurrentPage(true);
+        break;
+      case 'ui':
+         this.showUI();
+         break;
     }
-    function change(id, attr, pref) {
-      try {
-        document.getElementById(id).setAttribute(attr, pref);
-      } catch(e) {}
-    }
-    var ids, i,callback, pref, attr = null;
-    for(var k in keys) {
-      pref = ns.getPref("noscript.keys." + k, keys[k]);
-      ids = ["noscript-" + k + "-key", "noscript-zm-" + k + "-key"];
-      if(pref) {
-        attr = pref.length > 0 ? "keycode" : "key";
-        callback = change;
-      } else {
-        callback = remove;
-        attr = null;
+  },
+  
+  shortcutKeys: {},
+  setupShortcutKey: function(name, values) { 
+    values = values.toLowerCase().replace(/^\s*(.*?)\s*$/g, "$1").split(/\s+/);
+    var vpos = values.length;
+    if(vpos) {
+      
+      var mods = { shiftKey: false, altKey: false, metaKey: false, ctrlKey: false };
+      
+      var keyVal = values[--vpos];
+      for(var value; vpos-- > 0;) {
+        value = values[vpos] + "Key";
+        if(value in mods) {
+          mods[value] = true;
+        }
       }
-      for(i = ids.length; i-- > 0;) callback(ids[i], pref, attr);
+      
+      var key = { modifiers: mods, charCode: 0, keyCode: 0 };
+      
+      if(keyVal.length > 3) {
+        var pos = keyVal.indexOf('.');
+        if(pos > 3) {
+          key.charCode = keyVal.charCodeAt(pos + 1) || 0;
+          keyVal = keyVal.substring(0, pos);
+        }
+        key.keyCode = KeyEvent["DOM_" + keyVal.toUpperCase()] || 0;
+      } else {
+        key.charCode = (key.modifiers.shiftKey ? keyVal.toUpperCase() : keyVal).charCodeAt(0) || 0;
+      }
+      
+      this.shortcutKeys[name] = key;
+    } else {
+      delete(this.shortcutKeys[name]);
     }
+  },
+  keyListener: function(ev) {
+    const binding = arguments.callee.binding;
+    const skk = binding.shortcutKeys;
+    var cmd, k, p, sk, mods;
+    for(k in skk) {
+      cmd = k;
+      sk = skk[k];
+      
+       
+      if(ev.charCode && ev.charCode == sk.charCode || ev.keyCode && ev.keyCode == sk.keyCode) {
+        mods = sk.modifiers;
+        for(p in mods) {
+          if(ev[p] != mods[p]) {
+            cmd = null;
+            break;
+          }
+        }
+        
+        
+        if(cmd) {
+          ev.preventDefault();
+          binding.keyCommand(cmd);
+          return;
+        }
+      }
+    }
+  },
+  registerShortcutKeys: function() {
+    this.keyListener.binding = this;
+    window.addEventListener("keypress", this.keyListener, true);
+  },
+  removeShortcutKeys: function() {
+    window.removeEventListener("keypress", this.keyListener, true);
   }
 }
 
@@ -942,15 +996,15 @@ const noscriptOverlayPrefsObserver = {
        case "notify.bottom" : 
          noscriptOverlay.notificationHide();
        break;
-       case "noscript.keys.ui":
-       case "noscript.keys.toggle":
-         noscriptOverlay.setupKeys();
+       case "keys.ui":
+       case "keys.toggle":
+         noscriptOverlay.setupShortcutKey(data.replace(/^keys\./, ""), this.ns.getPref(data, ""));
        break;
     }
   },
   register: function() {
     this.ns.prefs.addObserver("",this,false);
-    const initPrefs = ["statusIcon", "statusLabel", "noscript.keys.ui", "noscript.keys.toggle"];
+    const initPrefs = ["statusIcon", "statusLabel", "keys.ui", "keys.toggle"];
     for(var j = 0; j < initPrefs.length; j++) {
       this.observe(null, null, initPrefs[j]);
     }
@@ -1065,17 +1119,20 @@ function _noScript_onloadInstall(ev) {
     l.onLocationChange = _noScript_WebProgressListener.onLocationChange;
     return l;
   };
-  const ns = noscriptOverlay.ns;
-  const prevVer = ns.getPref("version", "");
-  if(prevVer != ns.VERSION) {
-    ns.setPref("version", ns.VERSION);
-    ns.sanitize2ndLevs();
-    window.setTimeout(function() {
-      const url = "http://noscript.net?ver=" + ns.VERSION + "&prev=" + prevVer;
-      const browser = getBrowser();
-      browser.selectedTab = browser.addTab(url, null);
-    }, 100);
-  }
+  noscriptOverlay.registerShortcutKeys();
+  window.setTimeout(function() {  
+     const ns = noscriptOverlay.ns;
+     const prevVer = ns.getPref("version", "");
+      if(prevVer != ns.VERSION) {
+        ns.setPref("version", ns.VERSION);
+        if(prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
+        window.setTimeout(function() {
+          const url = "http://noscript.net?ver=" + ns.VERSION + "&prev=" + prevVer;
+          const browser = getBrowser();
+          browser.selectedTab = browser.addTab(url, null);
+        }, 100);
+      }
+    }, 10);
 }
 
 
@@ -1084,7 +1141,6 @@ function _noScript_install() {
  
   window.addEventListener("load", _noScript_onloadInstall, false);
   window.addEventListener("focus", _noScript_uninstallCheck, false);
-   
   window.addEventListener("unload", _noScript_dispose,false);
   noscriptOverlayPrefsObserver.register();
 }
@@ -1098,6 +1154,8 @@ function _noScript_dispose(ev) {
   }
   
   noscriptOverlayPrefsObserver.remove();
+  
+  noscriptOverlay.removeShortcutKeys();
   
   window.removeEventListener("focus", _noScript_uninstallCheck, false);
   window.removeEventListener("load", _noScript_onloadInstall, false);

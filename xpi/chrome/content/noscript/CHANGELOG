@@ -1,5 +1,19 @@
 NoScript ChangeLog
 
+v 1.1.4.6.070317
+=====================================================================
+x Customizable keyboard shortcuts (about:config - noscript.keys.*) 
+x Quick toggle (by shortcut or toolbar) behaviour changed to 
+  *Temporarily* Allow / Forbid (old behaviour can be restored by
+  setting the about:config noscript.toggle.temp pref to false) 
+
+v 1.1.4.6.070316
+=====================================================================
++ Super fast reloading after toggling permissions
++ Hebrew (thanks to Asaf Bartov)
+x removed mozillazine.org and mozilla.org from the default list 
+  (thanks Wladimir Palant)
+
 v 1.1.4.6.070307
 =====================================================================
 x Further improvement in Higmmer patch
