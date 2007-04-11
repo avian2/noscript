@@ -76,3 +76,6 @@
 <!ENTITY noscriptNselForce "Zobraziť prvok &lt;noscript&gt;, ktorý nasleduje za blokovaným &lt;script&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Dočasne povoliť stránky najvyššej úrovne">
 <!ENTITY noscriptDescription "Extra ochrana pre Firefox: NoScript povolí JavaScript, Javu (a ďalšie doplnky) len pre dôveryhodné domény podľa vášho výberu (napríklad webovú stránku bankingu). Tento zoznam dôveryhodných serverov založený na preventívnom blokovaní chráni pred zneužitím bezpečnostných dier (známych aj neznámych!) bez straty funkčnosti... Experti budú súhlasiť: Firefox s rozšírením NoScript je naozaj bezpečnejší :-)">
+<!ENTITY noscriptOptBlockCssScanners "Blokovať skenery CSS">
+<!ENTITY noscriptOptFilterXGet "Ošetriť podozrivé požiadavky cross-site">
+<!ENTITY noscriptOptFilterXPost "Prepnúť požiadavky POST cross-site na údajovo bezstratové požiadavky GET">

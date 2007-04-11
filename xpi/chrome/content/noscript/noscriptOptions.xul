@@ -73,7 +73,7 @@
   
   <vbox flex="1">
   <hbox>
-  <description style="width: 400px; white-space: normal" id="permissionsText">&noscriptPermissionsText;</description>
+  <description style="width: 500px; white-space: normal" id="permissionsText">&noscriptPermissionsText;</description>
   </hbox>
   <separator class="thin"/>
   <label value="&noscriptWebAddress;"/>
@@ -203,6 +203,9 @@
           <checkbox id="opt-nselNever" label="&noscriptNselNever;" />
           <separator class="thin"/>
           <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
+          <separator class="thin"/>
+          <checkbox id="opt-filterXGet" label="&noscriptOptFilterXGet;" />
+          <checkbox id="opt-filterXPost" label="&noscriptOptFilterXPost;" />
        </groupbox>
    </vbox>
   </tabpanel>

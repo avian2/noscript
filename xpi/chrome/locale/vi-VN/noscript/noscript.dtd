@@ -62,7 +62,7 @@
 <!ENTITY noscriptNotifications "Khai báo">
 <!ENTITY noscriptToolbarToggle "Nhấn nút trái chuột vào nút NoScript trên thanh công cụ tắt/mở các phép cho site mức-cao-nhất hiện tại">
 <!ENTITY noscriptTrusted "Tin cậy">
-<!ENTITY noscriptUntrusted "Khôn tin cậy">
+<!ENTITY noscriptUntrusted "Không tin cậy">
 <!ENTITY noscriptUnknown "Không biết">
 <!ENTITY noscriptAdd "Thêm">
 <!ENTITY noscriptAdd.accesskey "m">
@@ -76,3 +76,6 @@
 <!ENTITY noscriptNselForce "Hiển thị phần tử &lt;noscript&gt; mà theo một phần tử &lt;script&gt; bị chặn">
 <!ENTITY noscriptAutoAllowTopLevel "Tạm thời cho phép sites mức thứ nhất theo mặc định">
 <!ENTITY noscriptDescription "Thêm phần bảo vệ cho Firefox của bạn: NoScript chỉ cho phép JavaScript, Java (và các plugins khác) được chạy trong những miền/trang web lựa chọn của bạn (v.d.: trang web ngân hàng của bạn).  Hướng đi dùng sổ trắng này ngăn chạn trước những khai thác lổ hỏng bảo mật (biết trước và ngay cả chưa biết trước) mà không mất đi tính năng...  Các chuyên gia sẽ đồng ý: Firefox thật sự an toàn hơn với NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Chặn các trình quét CSS">
+<!ENTITY noscriptOptFilterXGet "Làm sạch các yêu cầu cross-site đáng ngờ">
+<!ENTITY noscriptOptFilterXPost "Đổi các yêu cầu dạng POST cross-site sang yêu cầu dạng GET">

@@ -76,3 +76,6 @@
 <!ENTITY noscriptNselForce "Afficher l&apos;élément &lt;noscript&gt; qui suit un &lt;script&gt; bloqué">
 <!ENTITY noscriptAutoAllowTopLevel "Autoriser temporairement les sites de premier niveau par défaut">
 <!ENTITY noscriptDescription "Protection supplémentaire pour votre Firefox : NoScript ne permet l&apos;exécution de scripts JavaScript que sur les domaines de confiance de votre choix (p.ex. le site de votre banque). Ce système de blocage préventif de scripts basé sur une liste blanche empêche l&apos;exploitation de failles de sécurité (connues et même inconnues) sans perte de fonctionnalités… Les experts en conviendront : Firefox est réellement plus sûr avec NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Bloquer les scanners basés sur des CSS">
+<!ENTITY noscriptOptFilterXGet "Nettoyer les requêtes suspicieuses entre sites">
+<!ENTITY noscriptOptFilterXPost "Transformer les requêtes POST entre sites en requêtes GET sans données">

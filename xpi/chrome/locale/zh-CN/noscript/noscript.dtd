@@ -48,7 +48,7 @@
 <!ENTITY noscriptConfirmUnblock "需要确认后再允许某些临时项目">
 <!ENTITY noscriptStatusLabel "状态栏标签">
 <!ENTITY noscriptForbidBookmarklets "禁止 Bookmarklet">
-<!ENTITY noscriptShowPlaceholder "显示 图像占位符">
+<!ENTITY noscriptShowPlaceholder "显示图像占位符">
 <!ENTITY noscriptTruncateTitle "截短文档标题">
 <!ENTITY noscriptFixLinks "尝试定位 JavaScript 链接">
 <!ENTITY noscriptAllowBookmarks "允许书签中的所有网站">
@@ -76,3 +76,6 @@
 <!ENTITY noscriptNselForce "显示跟随被屏蔽的 &lt;script&gt; 的 &lt;noscript&gt; 元素">
 <!ENTITY noscriptAutoAllowTopLevel "默认临时允许顶层站点">
 <!ENTITY noscriptDescription "为您的 Firefox 提供额外保护: NoScript 只允许您所选择的信任域(例如您本国的银行网站)上的 JavaScript, Java (和其他插件)。该白名单基于抢先式过滤方法防止安全缺陷（已知，甚至是未知的！）被利用，并且不损失功能…… 专家们都同意：Firefox 加上 NoScript 真的是更加安全 :-)">
+<!ENTITY noscriptOptBlockCssScanners "过滤基于 CSS 的扫描器">
+<!ENTITY noscriptOptFilterXGet "净化跨站点的可疑请求">
+<!ENTITY noscriptOptFilterXPost "把跨站点 POST 请求转换成缺少数据的 GET 请求">

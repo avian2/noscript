@@ -22,12 +22,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
-function NoScriptOverlay() {
-  this.ns = noscriptUtil.service;
-}
+const noscriptOverlay = {
+  ns: noscriptUtil.service,
 
-NoScriptOverlay.prototype = {
-  
   getString: function(key,parms) {
     return noscriptUtil.getString(key, parms);
   }
@@ -91,135 +88,148 @@ NoScriptOverlay.prototype = {
             if(domain && ns.getDomain(url) != domain) sites[sites.length] = domain;
           }
           
-          var scripts = new XPCNativeWrapper(getByTag("script"), "item()" , "length");
-          var scount = scripts.length;
           
-          if(scount) {
-            sites.scriptCount += scount;
-            var script, scriptSrc;
-            var nselForce = ns.nselForce && !sites.loading && ns.isJSEnabled(url);
-            var isHTMLScript;
-            while(scount-- > 0) {
-              script = scripts.item(scount);
-              var isHTMLScript = script instanceof HTMLElement;
-              if(isHTMLScript) {
-                scriptSrc = lm(script, "src")();
-              } else {
-                scriptSrc = script.getAttribute("src");
-                if(!/^[\w\-]+:\/\//.test(scriptSrc)) continue;
-              }
-              scriptSrc = ns.getSite(scriptSrc);
-              if(scriptSrc) {
-                sites.push(scriptSrc);
-                if(nselForce && isHTMLScript && !ns.isJSEnabled(scriptSrc)) {
-                  this.showNextNsel(script);
-                }
-              }
-            }
-          }
-          var pp = ns.showPlaceholder && ns.pluginPlaceholder;
+          if(!sites.loading) { // deep DOM manipulations only when loading is complete
           
-          var replacePlugins = pp && ns.forbidSomePlugins && !sites.loading;
-          
-          const appletTypes = {
-              "embed": HTMLEmbedElement, 
-              "applet": HTMLAppletElement, 
-              "object": HTMLObjectElement
-          };
-          var appletType;
-          var acount, applets, applet, div, innerDiv, appletParent;
-          var extras, title;
-          var style, cssLen, cssCount, cssProp, cssDef;
-          var aWidth,aHeight;
-          var createElem;
-          var forcedCSS, style;
-          
-          for(appletTag in appletTypes) {
+            var scripts = new XPCNativeWrapper(getByTag("script"), "item()" , "length");
+            var scount = scripts.length;
             
-            applets = new XPCNativeWrapper(getByTag(appletTag), "item()", "length");
-            appletType = appletTypes[appletTag];
-            
-            for(acount = applets.length; acount-- > 0;) {
-              applet = applets.item(acount);
-              if(!(applet instanceof appletType)) continue;
-              
-              if(appletType == HTMLEmbedElement && 
-                (lm(applet,"parentNode")() instanceof HTMLObjectElement)) {
-                continue; // skip "embed" if nested into "object"
-              }
-              
-              sites.pluginCount++;
-              
-              if(replacePlugins) {
-                if(!createElem) {
-                  createElem = lm(doc, "createElementNS");
-                  forcedCSS = "; -moz-outline-color: red !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; background: white url(\"" + pp +
-                           "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important }";
-                  try {
-                    if(lm(lm(lm(doc, "documentElement")(), "firstChild")(), "firstChild")() == applet &&
-                       lm(applet, "nextSibling")() == null) { // raw plugin content ?
-                      var contentType = lm(doc, "contentType")();
-                      if(contentType.substring(0, 5) != "text/") {
-                        ns.shouldLoad(5, { spec: docURI }, { spec: docURI }, applet, contentType, true);
-                      }
-                    }
-                  } catch(e) {}
+            if(scount) {
+              sites.scriptCount += scount;
+              var script, scriptSrc;
+              var nselForce = ns.nselForce && ns.isJSEnabled(url);
+              var isHTMLScript;
+              while(scount-- > 0) {
+                script = scripts.item(scount);
+                var isHTMLScript = script instanceof HTMLElement;
+                if(isHTMLScript) {
+                  scriptSrc = lm(script, "src")();
+                } else {
+                  scriptSrc = script.getAttribute("src");
+                  if(!/^[\w\-]+:\/\//.test(scriptSrc)) continue;
                 }
-                try {
-                  extras = ns.getPluginExtras(applet);
-                  if(extras) {
-                    div = createElem(htmlNS, "div");
-                    innerDiv = createElem(htmlNS, "div");
-                    title = (extras.mime ? extras.mime.replace("application/","")+"@":"@") + url;
-                    extras.alt = lm(applet,"getAttribute")("alt");
-                    
-                    div.setAttribute("title", extras.alt ? title+" \"" + 
-                      extras.alt + "\"" : title);
-                    
-                    div.style.display = "inline";
-                    div.style.padding = div.style.margin = "0px";
-                     
-                    style = lm(lm(doc,"defaultView")(),"getComputedStyle")(applet,"");
-                    cssDef = "";
-                    for(cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
-                      cssProp=style.item(cssCount);
-                      cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
-                    }
-                    innerDiv.setAttribute("style", cssDef + forcedCSS);
-                    
-                    innerDiv.style.display = "block";
-                    
-                    div._noScriptRemovedObject = lm(applet, "cloneNode")(true);
-                   
-                    
-                    while(lm(applet,"hasChildNodes")()) {
-                      lm(applet,"removeChild")(lm(applet,"firstChild")());
-                    }
-                    
-                    lm(lm(applet,"parentNode")(),"replaceChild")(div, applet);
-                    div.appendChild(innerDiv);
-                    ns.setPluginExtras(div, extras);
-                    div.onclick = _noScript_onPluginClick;
+                scriptSrc = ns.getSite(scriptSrc);
+                if(scriptSrc) {
+                  sites.push(scriptSrc);
+                  if(nselForce && isHTMLScript && !ns.isJSEnabled(scriptSrc)) {
+                    this.showNextNsel(script);
                   }
-                } catch(appletEx) {
-                  dump("NoScript: "+appletEx+" processing plugin "+acount+"@"+url);
+                }
+              }
+            }
+            var pp = ns.showPlaceholder && ns.pluginPlaceholder;
+            
+            var replacePlugins = pp && ns.forbidSomePlugins && !sites.loading;
+            
+            const appletTypes = {
+                "embed": HTMLEmbedElement, 
+                "applet": HTMLAppletElement,
+                "iframe": HTMLIFrameElement,
+                "object": HTMLObjectElement
+            };
+            var appletType;
+            var acount, applets, applet, div, innerDiv, appletParent;
+            var extras, title;
+            var style, cssLen, cssCount, cssProp, cssDef;
+            var aWidth,aHeight;
+            var createElem;
+            var forcedCSS, style;
+            
+            for(appletTag in appletTypes) {
+              
+              applets = new XPCNativeWrapper(getByTag(appletTag), "item()", "length");
+              appletType = appletTypes[appletTag];
+              
+              for(acount = applets.length; acount-- > 0;) {
+                applet = applets.item(acount);
+                if(!(applet instanceof appletType)) continue;
+                
+                if(appletType == HTMLEmbedElement && 
+                  (lm(applet,"parentNode")() instanceof HTMLObjectElement)) {
+                  continue; // skip "embed" if nested into "object"
+                }
+                
+                sites.pluginCount++;
+                
+                if(replacePlugins) {
+                  if(!createElem) {
+                    createElem = lm(doc, "createElementNS");
+                    forcedCSS = "; -moz-outline-color: red !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; background: white url(\"" + pp +
+                             "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important }";
+                    try {
+                      if(lm(lm(lm(doc, "documentElement")(), "firstChild")(), "firstChild")() == applet &&
+                         lm(applet, "nextSibling")() == null) { // raw plugin content ?
+                        var contentType = lm(doc, "contentType")();
+                        if(contentType.substring(0, 5) != "text/") {
+                          ns.shouldLoad(5, ns.siteUtils.ios.newURI(docURI, null, null), null, applet, contentType, true);
+                        }
+                      }
+                    } catch(e) {}
+                  }
+                  try {
+                    extras = ns.getPluginExtras(applet);
+                    if(extras) {
+                      div = createElem(htmlNS, "div");
+                      innerDiv = createElem(htmlNS, "div");
+                      title = (extras.mime ? extras.mime.replace("application/","")+"@":"@") + url;
+                      extras.alt = lm(applet,"getAttribute")("alt");
+                      
+                      div.setAttribute("title", extras.alt ? title+" \"" + 
+                        extras.alt + "\"" : title);
+                      
+                      div.style.display = "inline";
+                      div.style.padding = div.style.margin = "0px";
+                       
+                      style = lm(lm(doc,"defaultView")(),"getComputedStyle")(applet,"");
+                      cssDef = "";
+                      for(cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
+                        cssProp=style.item(cssCount);
+                        cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
+                      }
+                      innerDiv.setAttribute("style", cssDef + forcedCSS);
+                      
+                      innerDiv.style.display = "block";
+                      
+                      div._noScriptRemovedObject = lm(applet, "cloneNode")(true);
+                     
+                      
+                      while(lm(applet,"hasChildNodes")()) {
+                        lm(applet,"removeChild")(lm(applet,"firstChild")());
+                      }
+                      
+                      lm(lm(applet,"parentNode")(),"replaceChild")(div, applet);
+                      div.appendChild(innerDiv);
+                      ns.setPluginExtras(div, extras);
+                      div.onclick = this.listeners.onAppletClick;
+                    }
+                  } catch(appletEx) {
+                    dump("NoScript: "+appletEx+" processing plugin "+acount+"@"+url);
+                  }
                 }
               }
             }
           }
-
           
-          sites=this.getSites(doc, sites, 'frame');
-          sites=this.getSites(doc, sites, 'iframe');
+          sites = this.getSites(doc, sites, 'frame');
+          sites = this.getSites(doc, sites, 'iframe');
+          sites = this.getSites(doc, sites, 'object');
+          
           if(!sites.loading) ns.pluginsCache.purge(sites.pluginsCache, sites.docURIs);
+          
+          for(scount = sites.length; scount-- > 0;) {
+            if(!/^[a-z]+:\/*[^\/\s]+/.test(sites[scount]) && site != "file:///") {
+              sites.splice(scount, 1); // reject scheme-only URLs
+            }
+          }
+          
           return ns.sortedSiteSet(sites);
         } else {
-          var frames=new XPCNativeWrapper(getByTag(tagName),"item()","length");
+          var frames = new XPCNativeWrapper(getByTag(tagName), "item()", "length");
           var contentDocument;
-          for(var j=frames.length; j-->0;) {
+          for(var j = frames.length; j-->0;) {
             try {
-              contentDocument=lm(frames.item(j),"contentDocument")();
-              if(contentDocument) this.getSites(contentDocument,sites);
+              contentDocument = lm(frames.item(j),"contentDocument")();
+              if(contentDocument) this.getSites(contentDocument, sites);
             } catch(ex2) {
             }
           }
@@ -450,6 +460,7 @@ NoScriptOverlay.prototype = {
    
     for(j = sites.length; j-->0;) {
       site = sites[j];
+      
       matchingSite = jsPSs.matches(site);
       enabled = !!matchingSite;
       isTop = site == sites.topURL;
@@ -618,7 +629,7 @@ NoScriptOverlay.prototype = {
   }
 ,
   _iconURL: null,
-  getIcon: function(lev,inactive) {
+  getIcon: function(lev, inactive) {
     if(!this._iconURL) this._iconURL=document.getElementById("noscript-statusIcon").src;
     return this._iconURL.replace(/[^\/]*(yes|no|glb|prt)(\d+\.)/,(inactive ? "inactive-" : "") + lev + "$2");
   }
@@ -751,23 +762,16 @@ NoScriptOverlay.prototype = {
       }
       const popup = "noscript-notify-popup";
       if(box.appendNotification) { // >= Fx 2.0
-       box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_HIGH,
-        [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]); 
+       box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_MEDIUM,
+        [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]);
+       
       } else if(browser.showMessage) { // Fx <= 1.5.x
         browser.showMessage(browser.selectedBrowser, icon, label, 
               buttonLabel, null,
               null, popup, pos, true,
               buttonAccesskey);
       }
-      //----- Added by Higmmer : Start ----->
-      // Fix: Missing freeing resources by NotificationBar may raise CPU usage rate after closing the page.
-      var wid = this.getNsNotification(box);
-      var bro = browser.selectedBrowser;
-      bro.addEventListener("beforeunload", function(e) {
-        noscriptOverlay.notificationHide(wid);
-        bro.removeEventListener("beforeunload", arguments.callee, true);
-      }, true);
-      //<----- Added by Higmmer : End -----
+      
     }
     const delay = (this.ns.getPref("notify.hide") && this.ns.getPref("notify.hideDelay", 3)) || 0;
     if(delay) {
@@ -777,6 +781,36 @@ NoScriptOverlay.prototype = {
        1000 * delay);
     }
     return true;
+  },
+  
+  notifyXSSOnLoad: function(requestInfo) {
+    if(!getBrowser().getNotificationBox) return;
+    requestInfo.browser.addEventListener("load", function(ev) {
+      requestInfo.browser.removeEventListener("load", arguments.callee, true);
+      noscriptOverlay.notifyXSS(requestInfo);
+    }, true);
+  },
+  
+  notifyXSS: function(requestInfo) {
+    const notificationValue = "noscript-xss-notification"; 
+    const box = getBrowser().getNotificationBox(requestInfo.browser);
+    if(box.getNotificationWithValue(notificationValue)) return;
+    
+    var origin = this.ns.getSite(requestInfo.origin);
+    origin = (origin && "[" + origin + "]") || this.getString("untrustedOrigin");
+    var label = this.getString("xss.notify.generic", [origin]);
+    var icon = this.getIcon("no", true); // block/inactive
+    
+    box.appendNotification(
+      label, 
+      notificationValue, 
+      icon, 
+      box.PRIORITY_WARNING_HIGH,
+      [ {
+        label:  this.getString("xss.notify.showConsole"), 
+        accessKey:  this.getString("xss.notify.showConsole.accessKey"),  
+        callback: toJavaScriptConsole 
+      } ]); 
   },
   
   notificationHide: function(wid) { // Modified by Higmmer
@@ -838,15 +872,15 @@ NoScriptOverlay.prototype = {
             allowed++;
           }
         } else {
-          notificationNeeded = notificationNeeded || !untrustedSites.matches(url);
+          notificationNeeded = notificationNeeded || url != "about:blank" && !untrustedSites.matches(url);
         }
       }
       lev = (allowed == total && sites.length > 0) ? "yes" : allowed == 0 ? "no" : "prt";
-      notificationNeeded = notificationNeeded && totalAnnoyances > 0; 
+      notificationNeeded = notificationNeeded && totalAnnoyances > 0;
     }
     
     var message=this.getString("allowed." + lev)
-      +" [<script>: " + totalScripts + "] [J+F+P: " + totalPlugins + "]";
+      +" [<script>: " + totalScripts + "] [Java + Flash + Plugin: " + totalPlugins + "]";
     var icon = this.getIcon(lev, !totalAnnoyances);
     
    var widget=document.getElementById("noscript-tbb");
@@ -883,285 +917,333 @@ NoScriptOverlay.prototype = {
 ,
   notifyHideTimeout: 0
 ,
+  docFlag: {},
   checkDocFlag: function(doc, flag) {
-    if(flag in doc && doc[flag] == _noScript_flag) return false;
-    doc[flag] = _noScript_flag;
+    if(flag in doc && doc[flag] == noscriptOverlay.docFlag) return false;
+    doc[flag] = noscriptOverlay.docFlag;
     return true;
   },
   
   
-  keyCommand: function(cmd) {
-    switch(cmd) {
-      case 'toggle':
-        this.toggleCurrentPage(true);
-        break;
-      case 'ui':
-         this.showUI();
+  
+  
+  
+  prefsObserver: {
+    ns: noscriptUtil.service,
+    iids: [Components.interfaces.nsISupports, Components.interfaces.nsIObserver],
+    QueryInterface: function(iid) {
+      return this.ns.queryInterfaceSupport(iid, this.iids);
+    }
+  ,
+    observe: function(subject, topic, data) {
+      switch(data) {
+        case "statusIcon": case "statusLabel":
+        window.setTimeout(function() {
+            var widget=document.getElementById("noscript-" + data);
+            if(widget) {
+              widget.setAttribute("hidden", !noscriptOverlay.ns.getPref(data))
+            }
+          }, 0);
          break;
+         case "notify":
+         case "notify.bottom" : 
+           noscriptOverlay.notificationHide();
+         break;
+         case "keys.ui":
+         case "keys.toggle":
+           noscriptOverlay.shortcutKeys.setup(data.replace(/^keys\./, ""), this.ns.getPref(data, ""));
+         break;
+      }
+    },
+    register: function() {
+      this.ns.prefs.addObserver("", this, false);
+      const initPrefs = ["statusIcon", "statusLabel", "keys.ui", "keys.toggle"];
+      for(var j = 0; j < initPrefs.length; j++) {
+        this.observe(null, null, initPrefs[j]);
+      }
+    },
+    remove: function() {
+      this.ns.prefs.removeObserver("", this);
     }
   },
   
-  shortcutKeys: {},
-  setupShortcutKey: function(name, values) { 
-    values = values.toLowerCase().replace(/^\s*(.*?)\s*$/g, "$1").split(/\s+/);
-    var vpos = values.length;
-    if(vpos) {
-      
-      var mods = { shiftKey: false, altKey: false, metaKey: false, ctrlKey: false };
-      
-      var keyVal = values[--vpos];
-      for(var value; vpos-- > 0;) {
-        value = values[vpos] + "Key";
-        if(value in mods) {
-          mods[value] = true;
-        }
-      }
-      
-      var key = { modifiers: mods, charCode: 0, keyCode: 0 };
-      
-      if(keyVal.length > 3) {
-        var pos = keyVal.indexOf('.');
-        if(pos > 3) {
-          key.charCode = keyVal.charCodeAt(pos + 1) || 0;
-          keyVal = keyVal.substring(0, pos);
-        }
-        key.keyCode = KeyEvent["DOM_" + keyVal.toUpperCase()] || 0;
-      } else {
-        key.charCode = (key.modifiers.shiftKey ? keyVal.toUpperCase() : keyVal).charCodeAt(0) || 0;
-      }
-      
-      this.shortcutKeys[name] = key;
-    } else {
-      delete(this.shortcutKeys[name]);
-    }
-  },
-  keyListener: function(ev) {
-    const binding = arguments.callee.binding;
-    const skk = binding.shortcutKeys;
-    var cmd, k, p, sk, mods;
-    for(k in skk) {
-      cmd = k;
-      sk = skk[k];
-      
-       
-      if(ev.charCode && ev.charCode == sk.charCode || ev.keyCode && ev.keyCode == sk.keyCode) {
-        mods = sk.modifiers;
-        for(p in mods) {
-          if(ev[p] != mods[p]) {
-            cmd = null;
-            break;
-          }
-        }
-        
-        
-        if(cmd) {
-          ev.preventDefault();
-          binding.keyCommand(cmd);
-          return;
-        }
-      }
-    }
-  },
-  registerShortcutKeys: function() {
-    this.keyListener.binding = this;
-    window.addEventListener("keypress", this.keyListener, true);
-  },
-  removeShortcutKeys: function() {
-    window.removeEventListener("keypress", this.keyListener, true);
-  }
-}
-
-const _noScript_flag = {};
-
-const noscriptOverlay=new NoScriptOverlay();
-
-const noscriptOverlayPrefsObserver = {
-  ns: noscriptOverlay.ns,
-  iids: [Components.interfaces.nsISupports, Components.interfaces.nsIObserver],
-  QueryInterface: function(iid) {
-    return this.ns.queryInterfaceSupport(iid, this.iids);
-  }
-,
-  observe: function(subject, topic, data) {
-    switch(data) {
-      case "statusIcon": case "statusLabel":
-      window.setTimeout(function() {
-          var widget=document.getElementById("noscript-" + data);
-          if(widget) {
-            widget.setAttribute("hidden", !noscriptOverlay.ns.getPref(data))
-          }
-        }, 0);
-       break;
-       case "notify":
-       case "notify.bottom" : 
-         noscriptOverlay.notificationHide();
-       break;
-       case "keys.ui":
-       case "keys.toggle":
-         noscriptOverlay.setupShortcutKey(data.replace(/^keys\./, ""), this.ns.getPref(data, ""));
-       break;
-    }
-  },
-  register: function() {
-    this.ns.prefs.addObserver("",this,false);
-    const initPrefs = ["statusIcon", "statusLabel", "keys.ui", "keys.toggle"];
-    for(var j = 0; j < initPrefs.length; j++) {
-      this.observe(null, null, initPrefs[j]);
-    }
-  },
-  remove: function() {
-    this.ns.prefs.removeObserver("", this);
-  }
-};
-
-
-function _noScript_onPluginClick(ev) {
-  const div = ev.currentTarget;
-  const applet = div._noScriptRemovedObject;
-  if(applet) {
-    if(ev.shiftKey) {
-      div.style.display = "none";
-      return;
-    }
-    const ns = noscriptUtil.service;
-    const extras = ns.getPluginExtras(div);
-    const cache = ns.pluginsCache.get(ns.pluginsCache.findBrowserForNode(div));
-    if(!(extras && extras.url && extras.mime && cache) ) return;
+  
+  
+  
+  
+  shortcutKeys: {
     
-    var url = extras.url;
-    var mime = extras.mime;
-
-    var alwaysAsk = { value: ns.getPref("confirmUnblock", true) };
-    if((!alwaysAsk.value) || 
-        noscriptUtil.prompter.confirmCheck(window, "NoScript",
-          ns.getAllowObjectMessage(url, mime),
-          noscriptUtil.getString("alwaysAsk"), alwaysAsk)
-    ) {
-      ns.setPref("confirmUnblock", alwaysAsk.value);
-      cache.forceAllow[url] = mime;
-      const lm = ns.lookupMethod;
-      var doc = lm(div, "ownerDocument")();
-      if(mime == lm(doc, "contentType")()) { // stand-alone plugin
-        lm(lm(doc, "location")(), "reload")();
-        return;
+    execute: function(cmd) {
+      switch(cmd) {
+        case 'toggle':
+          noscriptOverlay.toggleCurrentPage(true);
+          break;
+        case 'ui':
+           noscriptOverlay.showUI();
+           break;
       }
-      div._noScriptRemovedObject = null;
-      window.setTimeout(function() { 
-        while(lm(div,"hasChildNodes")()) {
-          lm(div,"removeChild")(lm(div,"firstChild")());
+    },
+    
+    keys: {},
+    setup: function(name, values) { 
+      values = values.toLowerCase().replace(/^\s*(.*?)\s*$/g, "$1").split(/\s+/);
+      var vpos = values.length;
+      if(vpos) {
+        
+        var mods = { shiftKey: false, altKey: false, metaKey: false, ctrlKey: false };
+        
+        var keyVal = values[--vpos];
+        for(var value; vpos-- > 0;) {
+          value = values[vpos] + "Key";
+          if(value in mods) {
+            mods[value] = true;
+          }
         }
-        lm(lm(div,"parentNode")(),"replaceChild")(applet, div)
-      }, 0);
-    }
-  }
-}
-
-
-
-function _noScript_syncUI(ev) { 
-  noscriptOverlay.syncUI(ev); 
-}
-function _noScript_uninstallCheck(ev) { 
-  noscriptOverlay.uninstallCheck(ev); 
-}
-function _noScript_prepareCtxMenu(ev) {
-  noscriptOverlay.prepareContextMenu(ev);
-}
-
-
-const _noScript_WebProgressListener = {
-   onLocationChange: function(aWebProgress, aRequest, aLocation) { 
-     if(this.originalOnLocationChange) {
-       try {
-         this.originalOnLocationChange(aWebProgress, aRequest, aLocation);
-       } catch(e) {}
-     }
-     try {
-       if(aRequest && (aRequest instanceof Components.interfaces.nsIChannel) && aRequest.isPending()) {
-          const ns = noscriptOverlay.ns;
-          if(ns.shouldLoad(7, aRequest.URI, aRequest.URI, aWebProgress.DOMWindow, aRequest.contentType, true) != 1) {
-            aRequest.cancel(0x804b0002);
-          } else {
-            if(ns.autoAllow > 0 && !ns.jsEnabled) {
-              var site = ns.getSite(aRequest.URI.spec);
-              var domain;
-              if(ns.autoAllow > 1 && (domain = ns.getDomain(site))) {
-                site = ns.autoAllow > 2 ? ns.get2ndLevel(domain) : domain;
-              }
-              if(!(ns.isJSEnabled(site) || ns.isUntrusted(site))) {
-                ns.setTemp(site, true);
-                ns.setJSEnabled(site, true);
-              }
+        
+        var key = { modifiers: mods, charCode: 0, keyCode: 0 };
+        
+        if(keyVal.length > 3) {
+          var pos = keyVal.indexOf('.');
+          if(pos > 3) {
+            key.charCode = keyVal.charCodeAt(pos + 1) || 0;
+            keyVal = keyVal.substring(0, pos);
+          }
+          key.keyCode = KeyEvent["DOM_" + keyVal.toUpperCase()] || 0;
+        } else {
+          key.charCode = (key.modifiers.shiftKey ? keyVal.toUpperCase() : keyVal).charCodeAt(0) || 0;
+        }
+        
+        this.keys[name] = key;
+      } else {
+        delete(this.keys[name]);
+      }
+    },
+    listener: function(ev) {
+      const binding = arguments.callee.binding;
+      const skk = binding.keys;
+      var cmd, k, p, sk, mods;
+      for(k in skk) {
+        cmd = k;
+        sk = skk[k];
+        
+         
+        if(ev.charCode && ev.charCode == sk.charCode || ev.keyCode && ev.keyCode == sk.keyCode) {
+          mods = sk.modifiers;
+          for(p in mods) {
+            if(ev[p] != mods[p]) {
+              cmd = null;
+              break;
             }
           }
-       }
-       _noScript_syncUI(null);
-     } catch(e) {}
-   },
-   onStatusChange: function() {}, 
-   onStateChange: function() {}, 
-   onSecurityChange: function() {}, 
-   onProgressChange: function() {}
-};
-
-
-function _noScript_onloadInstall(ev) {
-  document.getElementById("contentAreaContextMenu")
-          .addEventListener("popupshowing", _noScript_prepareCtxMenu, false);
-  var b = getBrowser();
-  b.addEventListener("load", _noScript_syncUI, true);
-  b.addEventListener("click", noscriptOverlay.fixLink, true);
-  b.addProgressListener(_noScript_WebProgressListener);
-  noscriptOverlay.originalTabProgressListener = b.mTabProgressListener;
-  b.mTabProgressListener = function() {
-    var l = noscriptOverlay.originalTabProgressListener.apply(this, arguments);
-    l.originalOnLocationChange = l.onLocationChange;
-    l.onLocationChange = _noScript_WebProgressListener.onLocationChange;
-    return l;
-  };
-  noscriptOverlay.registerShortcutKeys();
-  window.setTimeout(function() {  
-     const ns = noscriptOverlay.ns;
-     const prevVer = ns.getPref("version", "");
-      if(prevVer != ns.VERSION) {
-        ns.setPref("version", ns.VERSION);
-        if(prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
-        window.setTimeout(function() {
-          const url = "http://noscript.net?ver=" + ns.VERSION + "&prev=" + prevVer;
-          const browser = getBrowser();
-          browser.selectedTab = browser.addTab(url, null);
-        }, 100);
+          
+          
+          if(cmd) {
+            ev.preventDefault();
+            binding.execute(cmd);
+            return;
+          }
+        }
       }
-    }, 10);
-}
-
-
-
-function _noScript_install() {
+    },
+    
+    register: function() {
+      this.listener.binding = this;
+      window.addEventListener("keypress", this.listener, true);
+    },
+    remove: function() {
+      window.removeEventListener("keypress", this.listener, true);
+    }
+  },
+  
+  
+  
+  
+  
+  
+  listeners: {
+    
+    onAppletClick: function(ev) {
+      const div = ev.currentTarget;
+      const applet = div._noScriptRemovedObject;
+      if(applet) {
+        if(ev.shiftKey) {
+          div.style.display = "none";
+          return;
+        }
+        const ns = noscriptUtil.service;
+        const extras = ns.getPluginExtras(div);
+        const cache = ns.pluginsCache.get(ns.domUtils.findBrowserForNode(div));
+        if(!(extras && extras.url && extras.mime && cache) ) return;
+        
+        var url = extras.url;
+        var mime = extras.mime;
+    
+        var alwaysAsk = { value: ns.getPref("confirmUnblock", true) };
+        if((!alwaysAsk.value) || 
+            noscriptUtil.prompter.confirmCheck(window, "NoScript",
+              ns.getAllowObjectMessage(url, mime),
+              noscriptUtil.getString("alwaysAsk"), alwaysAsk)
+        ) {
+          ns.setPref("confirmUnblock", alwaysAsk.value);
+          cache.forceAllow[url] = mime;
+          const lm = ns.lookupMethod;
  
-  window.addEventListener("load", _noScript_onloadInstall, false);
-  window.addEventListener("focus", _noScript_uninstallCheck, false);
-  window.addEventListener("unload", _noScript_dispose,false);
-  noscriptOverlayPrefsObserver.register();
-}
+          var doc = lm(div, "ownerDocument")();
+          if(mime == lm(doc, "contentType")()) { // stand-alone plugin
+            lm(lm(doc, "location")(), "reload")();
+            return;
+          }
+          
+          div._noScriptRemovedObject = null;
+          window.setTimeout(function() { 
+            while(lm(div,"hasChildNodes")()) {
+              lm(div,"removeChild")(lm(div,"firstChild")());
+            }
+            lm(lm(div,"parentNode")(),"replaceChild")(applet, div)
+          }, 0);
+        }
+      }
+    },
+    
+    onTabClose: function(ev) {
+      try {
+        getBrowser().getNotificationBox(ev.target.linkedBrowser).removeAllNotifications(true);
+      } catch(e) {}
+    },
+    
+   webProgressListener: {
+     STATE_STOP: Components.interfaces.nsIWebProgressListener.STATE_STOP,
+     onLocationChange: function(aWebProgress, aRequest, aLocation) { 
+       if(this.originalOnLocationChange) {
+         try {
+           this.originalOnLocationChange(aWebProgress, aRequest, aLocation);
+         } catch(e) {}
+       }
+       try {
+         if(aRequest && (aRequest instanceof Components.interfaces.nsIChannel) && aRequest.isPending()) {
+            const ns = noscriptOverlay.ns;
+            if(ns.shouldLoad(7, aRequest.URI, aRequest.URI, aWebProgress.DOMWindow, aRequest.contentType, true) != 1) {
+              aRequest.cancel(0x804b0002);
+            } else {
+              if(ns.autoAllow > 0 && !ns.jsEnabled) {
+                var site = ns.getSite(aRequest.URI.spec);
+                var domain;
+                if(ns.autoAllow > 1 && (domain = ns.getDomain(site))) {
+                  site = ns.autoAllow > 2 ? ns.get2ndLevel(domain) : domain;
+                }
+                if(!(ns.isJSEnabled(site) || ns.isUntrusted(site))) {
+                  ns.setTemp(site, true);
+                  ns.setJSEnabled(site, true);
+                }
+              }
+            }
+         }
+         noscriptOverlay.syncUI(null);
+       } catch(e) {}
+     },
+     onStatusChange: function() {}, 
+     onStateChange: function(aWebProgress, aRequest, stateFlags, status) {
+        if(stateFlags & this.STATE_STOP) {
+          try {
+            noscriptOverlay.syncUI(null);
+          } catch(e) {}
+        }
+      }, 
+      onSecurityChange: function() {}, 
+      onProgressChange: function() {}
+    },
+    
+    onUISync: function(ev) { noscriptOverlay.syncUI(); },
+    onUninstallMaybe: function(ev) { noscriptOverlay.uninstallCheck(ev) }, 
+    onContextMenu:  function(ev) { noscriptOverlay.prepareContextMenu(ev) },
+    
+    
+    onLoad: function(ev) {
+      noscriptOverlay.listeners.setup();
+    },
+    onUnload: function(ev) {
+      noscriptOverlay.listeners.teardown();
+    },
+    
+    setup: function() {
+      document.getElementById("contentAreaContextMenu")
+          .addEventListener("popupshowing", this.onContextMenu, false);
+      
+          
+          var b = getBrowser();
+      b.addEventListener("load", this.onUISync, true);
+      b.addEventListener("click", noscriptOverlay.fixLink, true);
 
-function _noScript_dispose(ev) {
-  var b = getBrowser();
-  if(b) {
-    b.removeEventListener("click", noscriptOverlay.fixLink, true);
-    b.removeProgressListener(_noScript_WebProgressListener);
-    b.removeEventListener("load", _noScript_syncUI, true);
+      b.addProgressListener(this.webProgressListener);
+      this.originalTabProgressListener = b.mTabProgressListener;
+      b.mTabProgressListener = function() {
+        var l = noscriptOverlay.listeners.originalTabProgressListener.apply(this, arguments);
+        l.originalOnLocationChange = l.onLocationChange;
+        l.onLocationChange = noscriptOverlay.listeners.webProgressListener.onLocationChange;
+        return l;
+      };
+      
+      if(b.tabContainer) {
+        b.tabContainer.addEventListener("TabClose", this.onTabClose, false);
+      }
+      
+      noscriptOverlay.shortcutKeys.register();
+      noscriptOverlay.prefsObserver.register();
+      
+      window.setTimeout(function() {  
+        const ns = noscriptUtil.service;
+        const prevVer = ns.getPref("version", "");
+        if(prevVer != ns.VERSION) {
+          ns.setPref("version", ns.VERSION);
+          if(prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
+          if(ns.getPref("firstRunRedirection", true)) {
+              window.setTimeout(function() {
+                const url = "http://noscript.net?ver=" + ns.VERSION + "&prev=" + prevVer;
+                const browser = getBrowser();
+                browser.selectedTab = browser.addTab(url, null);
+              }, 100);
+           }
+        }
+      }, 10);
+    },
+    
+   
+    teardown: function() {
+      var b = getBrowser();
+      if(b) {
+        const ll = this.listeners;
+        b.removeEventListener("click", noscriptOverlay.fixLink, true);
+        b.removeEventListener("load", this.onUISync, true);
+        if(b.tabContainer) {
+          b.tabContainer.removeEventListener("TabClose", this.onTabClose, false);
+        }
+        
+        b.removeProgressListener(this.webProgressListener);
+      }
+
+      noscriptOverlay.prefsObserver.remove();
+      noscriptOverlay.shortcutKeys.remove();
+      
+      document.getElementById("contentAreaContextMenu")
+              .removeEventListener("popupshowing", this.onContextMenu,false);
+    }
+  }, // END listeners
+  
+  install: function() {
+    const ll = this.listeners;
+    window.addEventListener("load", ll.onLoad, false);
+    window.addEventListener("focus", ll.onUninstallMaybe, false);
+    window.addEventListener("unload", ll.onUnload, false);
+  },
+
+  dispose: function() {
+    const ll = this.listeners;
+    window.removeEventListener("unload", ll.onUnload, false);
+    window.removeEventListener("focus", ll.onUninstallMaybe, false);
+    window.removeEventListener("load", ll.onLoad, false);
   }
-  
-  noscriptOverlayPrefsObserver.remove();
-  
-  noscriptOverlay.removeShortcutKeys();
-  
-  window.removeEventListener("focus", _noScript_uninstallCheck, false);
-  window.removeEventListener("load", _noScript_onloadInstall, false);
-  document.getElementById("contentAreaContextMenu")
-          .removeEventListener("popupshowing", _noScript_prepareCtxMenu,false);
 }
+  
 
-_noScript_install();
 
+noscriptOverlay.install();

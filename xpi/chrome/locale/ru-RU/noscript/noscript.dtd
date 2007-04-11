@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "а">
 <!ENTITY noscriptOptionsLong "Настройки NoScript">
 <!ENTITY noscriptAbout "О расширении">
-<!ENTITY noscriptPermissionsText "Вы можете устанавливать каким веб-сайтам будет разрешено выполнять код JavaScript. Введите адрес или домен (например &quot;http://www.site.com&quot; или &quot;site.com&quot;) сайта которому вы желаете разрешить исполнение JavaScript в текстовом поле ниже, а затем нажмите &quot;Разрешить&quot;.">
+<!ENTITY noscriptPermissionsText "Вы можете устанавливать каким веб-сайтам будет разрешено выполнять код JavaScript. Введите адрес или домен (например «http://www.site.com» или «site.com») сайта которому вы желаете разрешить исполнение JavaScript в текстовом поле ниже, а затем нажмите «Разрешить».">
 <!ENTITY noscriptWebAddress "Адрес веб-сайта:">
 <!ENTITY noscriptAllow "Разрешить">
 <!ENTITY noscriptAllow.accesskey "е">
@@ -48,7 +48,7 @@
 <!ENTITY noscriptConfirmUnblock "Подтверждать временную разблокировку объекта на странице">
 <!ENTITY noscriptStatusLabel "Сообщения в строке состояния">
 <!ENTITY noscriptForbidBookmarklets "Запретить использование Bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Выделять расположение заблокированных элементов значком с рамкой">
+<!ENTITY noscriptShowPlaceholder "Выделять заблокированные элементы значком с рамкой">
 <!ENTITY noscriptTruncateTitle "Отсекать слишком длинные заголовки веб-сайтов">
 <!ENTITY noscriptFixLinks "Применять алгоритм исправления JavaScript-ссылок">
 <!ENTITY noscriptAllowBookmarks "Разрешать выполнение JavaScript всем веб-сайтам из закладок">
@@ -61,8 +61,8 @@
 <!ENTITY noscriptRefresh "Обновить">
 <!ENTITY noscriptNotifications "Уведомления">
 <!ENTITY noscriptToolbarToggle "Нажатием на значке NoScript переключать разрешения для всего сайта">
-<!ENTITY noscriptTrusted "Доверенный">
-<!ENTITY noscriptUntrusted "Недоверенный">
+<!ENTITY noscriptTrusted "Доверенные">
+<!ENTITY noscriptUntrusted "Недоверенные">
 <!ENTITY noscriptUnknown "Неизвестный">
 <!ENTITY noscriptAdd "Добавить">
 <!ENTITY noscriptAdd.accesskey "о">
@@ -76,3 +76,6 @@
 <!ENTITY noscriptNselForce "Показывать элемент &lt;noscript&gt; который блокирует &lt;script&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Временно разрешать базовым доменам 2-го уровня по умолчанию">
 <!ENTITY noscriptDescription "Экстра защита для Firefox: NoScript позволяет разрешать исполнение JavaScript, Java (и других плагинов) только доменам, которым доверяете (например, ваш веб-сайт). Белый список, основанный на принципе упреждающего блокирования, позволяет предотвратить использование уязвимостей (известных и ещё неизвестных!) без потери функциональности... Эксперты соглашаются: Firefox действительно безопаснее с NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Блокировать CSS-сканеры">
+<!ENTITY noscriptOptFilterXGet "Фильтровать запросы, подозреваемые на XSS">
+<!ENTITY noscriptOptFilterXPost "Заменять XSS POST-запросы на GET-запросы без данных">

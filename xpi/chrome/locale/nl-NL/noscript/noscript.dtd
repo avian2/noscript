@@ -76,3 +76,6 @@
 <!ENTITY noscriptNselForce "Het &lt;noscript&gt; element dat na een geblokkeerd &lt;script&gt; volgt weergeven">
 <!ENTITY noscriptAutoAllowTopLevel "Standaard top-level sites tijdelijk toestaan">
 <!ENTITY noscriptDescription "Extra bescherming voor Firefox: NoScript staat JavaScript, Java (en andere plugins) alleen toe voor zelf gekozen betrouwbare domeinen (bijv. de internetbankieren website). Deze op toestemmingslijsten gebaseerde blokkering vooraf voorkomt exploitatie van beveiligings kwetsbaarheden (bekende en zelfs onbekende!) zonder verlies aan functionaliteit... Experts zullen bevestigen: Firefox is werkelijk veiliger met NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Op cross-site scripting (CSS) gebaseerde scanners blokkeren">
+<!ENTITY noscriptOptFilterXGet "Verdachte cross-site verzoeken zuiveren">
+<!ENTITY noscriptOptFilterXPost "Cross-site POST verzoeken omzetten in data-vrije GET verzoeken">

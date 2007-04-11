@@ -13,7 +13,7 @@ pref("noscript.showUntrusted", true);
 pref("noscript.showBaseDomain", true);
 pref("noscript.showGlobal", true);
 pref("noscript.permanent", "");
-pref("noscript.default", "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
+pref("noscript.default", "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net gmail.com google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", false);
 pref("noscript.forbidPlugins", false);
@@ -33,7 +33,7 @@ pref("noscript.truncateTitleLen", 255);
 pref("noscript.truncateTitle", true);
 pref("noscript.fixLinks", true);
 pref("noscript.noping", true);
-pref("noscript.consoleDump", false);
+pref("noscript.consoleDump", 0);
 pref("noscript.excaps", true);
 pref("noscript.nselForce", true);
 pref("noscript.nselNever", false);
@@ -42,10 +42,18 @@ pref("noscript.toolbarToggle", false);
 pref("noscript.forbidImpliesUntrust", false);
 pref("noscript.keys.toggle", "ctrl shift VK_BACK_SLASH.|");
 pref("noscript.keys.ui", "ctrl shift X");
-pref("noscript.blockCssScanners", true);
-pref("noscript.blockIntranetCrossing", true);
-pref("noscript.zapXPost", true);
-pref("noscript.filterXQuery", true);
+
 pref("noscript.forbidMetaRefresh", false);
 pref("noscript.toggle.temp", true);
+pref("noscript.firstRunRedirection", true);
 
+pref("noscript.xss.notify", true);
+pref("noscript.filterXPost", true);
+pref("noscript.filterXGet", true);
+pref("noscript.filterXGetRx", "[^\\w:\\/\\.\\-\\+\\[\\]\\{\\}~,@]");
+pref("noscript.filterXExceptions", "^http://(?:www\\.google\\.com/(?:search|custom)|search\\.yahoo\\.com/search)\\?"); 
+
+pref("noscript.blockXIntranet", true);
+pref("noscript.intranetMaskRx", "^(127\\.[\\d.]+)");
+
+pref("noscript.blockCssScanners", true);

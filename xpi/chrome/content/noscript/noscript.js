@@ -1,6 +1,4 @@
-function NoscriptUtil() {}
-
-NoscriptUtil.prototype = {
+const noscriptUtil = {
   chromeBase: "chrome://noscript/content/",
   chromeName: "noscript",
   _service: null, 
@@ -18,16 +16,18 @@ NoscriptUtil.prototype = {
     }
     if(s != null) {
       s.init();
-      s.nakeEmbed = function(ctx) {
-        var lm = this.lookupMethod;
-        var prev = lm(ctx, "previousSibling")();
-        if(prev) return lm(prev, "nextSibling")();
-        return lm(lm(ctx, "parentNode")(), "firstChild")();
-      };
+      s.nakeEmbed = this._nakeEmbed;
     } else {
       s = { uninstalling: true };
     }
     return this._service = s;
+  },
+  
+  _nakeEmbed: function(ctx) {
+    const lm = this.lookupMethod;
+    var prev = lm(ctx, "previousSibling")();
+    if(prev) return lm(prev, "nextSibling")();
+    return lm(lm(ctx, "parentNode")(), "firstChild")();
   },
   
   get prompter() {
@@ -51,5 +51,3 @@ NoscriptUtil.prototype = {
   
   
 };
-
-var noscriptUtil = new NoscriptUtil();

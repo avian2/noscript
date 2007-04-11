@@ -60,7 +60,7 @@
 <!ENTITY noscriptPermissions "Αδειοδοτήσεις">
 <!ENTITY noscriptRefresh "Ανανέωση">
 <!ENTITY noscriptNotifications "Ειδοποιήσεις">
-<!ENTITY noscriptToolbarToggle "Εναλλαγή δικαιωμάτων για τον τρέχοντα βασικό ιστότοπο με αριστερό κλικ στο εικονίδιο NoScript της εργαλειοθήκης">
+<!ENTITY noscriptToolbarToggle "Εναλλαγή δικαιωμάτων για τον βασικό ιστότοπο με αριστερό κλικ στο εικονίδιο της εργαλειοθήκης">
 <!ENTITY noscriptTrusted "Έμπιστο">
 <!ENTITY noscriptUntrusted "Μη έμπιστο">
 <!ENTITY noscriptUnknown "Άγνωστο">
@@ -76,3 +76,6 @@
 <!ENTITY noscriptNselForce "Προβολή του στοιχείου &lt;noscript&gt; που ακολουθεί μπλοκαρισμένα σενάρια εντολών">
 <!ENTITY noscriptAutoAllowTopLevel "Να επιτρέπεται προσωρινά για τον βασικό ιστότοπο (ως αρχική ρύθμιση)">
 <!ENTITY noscriptDescription "Πρόσθετη προστασία για τον Firefox. Οι ειδικοί συμφωνούν: το NoScript δίνει μεγαλύτερη ασφάλεια στον Firefox. :-)">
+<!ENTITY noscriptOptBlockCssScanners "Μπλοκάρισμα ανιχνεύσεων CSS">
+<!ENTITY noscriptOptFilterXGet "Εκκαθάριση αιτημάτων ύποπτων ως cross-site scripting">
+<!ENTITY noscriptOptFilterXPost "Μετατροπή αιτημάτων cross-site POST σε κενά περιεχομένου αιτήματα GET">

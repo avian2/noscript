@@ -76,3 +76,6 @@
 <!ENTITY noscriptNselForce "Arată elementele &lt;noscript&gt; care urmează unui script blocat">
 <!ENTITY noscriptAutoAllowTopLevel "Implicit, permite temporar domeniilor top-level">
 <!ENTITY noscriptDescription "Protecţie suplimentară pentru Firefox: JavaScript, Java şi alte pluginuri sunt permise numai paginilor de încredere, pentru a bloca preemptiv exploatarea vulnerabilităţilor (cunoscute sau necunoscute) care pot afecta securitatea sistemului.">
+<!ENTITY noscriptOptBlockCssScanners "Blochează scanerele bazate pe CSS">
+<!ENTITY noscriptOptFilterXGet "Curăţă solicitările suspecte de exploatare de tipul Cross-Site Scripting">
+<!ENTITY noscriptOptFilterXPost "Transformă solicitările POST către pagini diferite în solicitări GET">

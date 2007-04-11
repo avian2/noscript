@@ -1,5 +1,58 @@
 NoScript ChangeLog
 
+v 1.1.4.7
+=====================================================================
++ First "official" anti-XSS release
++ New plugin content detection algorithm defeats latest aggressive 
+  Flash cloaking strategies (e.g. http://www.hardocp.com/ )
++ Improved subframe detection, includes object elements (e.g.
+  http://www.operamini.com/demo/ )
++ Improved fast reload, preserving form input data.
++ Minefield full compatibility
+
+v 1.1.4.6.070409
+=====================================================================
+x Fixed weird intermittent interference with dynamic JavaScript 
+  inclusion via document.write() used by some JavaScript libraries 
+  (e.g. Prototype, Dojo or Tiny-MCE)
+
+v 1.1.4.6.070404
+=====================================================================
+x Drastic reduction of XSS redirection-related false positives
+
+v 1.1.4.6.070325
+=====================================================================
+x Fixed regression, leak happening on window closure (10x pirlouy)
+x Fixed regression, file:// entries missing from menus (10x therube)
+
+v 1.1.4.6.070322
+=====================================================================
++ Safer behaviour on reloading/whitelisting a XSSed page
+
+v 1.1.4.6.070321
+=====================================================================
++ XSS sanitization of the whole request URL
++ XSS sanitization of the referrer URL
++ XSS filters exceptions for some "trusted" addresses requiring 
+  cross-site complex query strings (controlled by a regexp in the
+  noscript.filterXExceptions hidden preference, defaults to Google 
+  search and Yahoo search)
++ Better general search engine compatibility with anti-XSS filters
+x Several performance optimizations
+
+v 1.1.4.6.070318
+=====================================================================
++ First anti-XSS countermeasures round: "default deny" sanitization
+  is applied to every request coming from an unknown (restricted) 
+  site and landing on a trusted (scripting allowed) site:
+  1. GET requests with a query string get all the matches for the
+     noscript.filterXGetRx regular expression replaced with space
+  2. POST requests are turned into no-data GET
+  3. Every request filtering action is logged to the Console, while a
+     short notification is issued through the info-bar* (if enabled)
+     *Info-bar notifications require Fx 2.0 or above
+  Behaviours 1 and 2 can be controlled from NoScript Options|Advanced
+
 v 1.1.4.6.070317
 =====================================================================
 x Customizable keyboard shortcuts (about:config - noscript.keys.*) 
