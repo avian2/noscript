@@ -20,6 +20,297 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ***** END LICENSE BLOCK *****/
 
 
+
+var nsopt = {
+  
+  serv: noscriptUtil.service,
+  dom2: /^(?:http[s]?|file):\/\/([^\.\?\/#,;:\\\@]+(:?\.[^\.\?\/#,;:\\\@]+$|$))/,
+  utils: null,
+  init: function() {
+    const ns = this.serv; 
+    if(ns.uninstalling) { // this should never happen! 
+      window.close();
+      return;
+    }
+    
+    this.utils = new UIUtils(this.serv);
+    this.utils.resumeTabSelections();
+    
+    const widgets = ["urlText", "urlText","urlList","jsglobal","addButton","removeButton"];
+    for(var j = widgets.length; j-- > 0;) 
+      this[widgets[j]] = document.getElementById(widgets[j]); 
+    
+    this.trustedSites = ns.jsPolicySites.clone();
+    this.untrustedSites = ns.untrustedSites.clone();
+    this.populateUrlList();
+    
+    this.jsglobal.checked = ns.jsEnabled;
+    
+    // forbid <a ping>
+    var pingCbx = document.getElementById("mozopt-browser.send_pings");
+    if(pingCbx.getAttribute("label").indexOf("Allow ") == 0) { 
+      pingCbx.setAttribute("label", noscriptUtil.getString("allowLocal", ["<a ping...>"]));
+      document.getElementById("opt-noping")
+              .setAttribute("label", noscriptUtil.getString("forbidLocal", ["<a ping...>"]));
+    }
+    
+    this.utils.visitCheckboxes(function(prefName, inverse, checkbox, mozilla) {
+        try {
+          var val = mozilla ? ns.prefService.getBoolPref(prefName) : ns.getPref(prefName);
+          checkbox.setAttribute("checked",inverse ? !val : val);
+        } catch(ex) {}
+      }
+    );
+    
+    document.getElementById("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp", ["[...]"]));
+    document.getElementById("opt-showDistrust").setAttribute("label", noscriptUtil.getString("distrust", ["[...]"]));
+    document.getElementById("opt-showGlobal").setAttribute("label", noscriptUtil.getString("allowGlobal"));
+  
+    document.getElementById("opt-notify.hide").setAttribute("label",
+           noscriptUtil.getString("notifyHide", [ns.getPref("notify.hideDelay", 3)]));
+       
+    this.soundChooser.setSample(ns.getPref("sound.block"));
+    
+    this.autoAllowGroup = new ConditionalGroup(ns, "autoAllow", 0);
+    this.toggleGroup = new ConditionalGroup(ns, "toolbarToggle", 3);
+    
+    var shortcut = ns.getPref("keys.toggle");
+    if(shortcut) {
+      shortcut = shortcut.replace(/VK_([^\.]*).*/g, "$1").replace(/\s+/g, '+').replace(/_/g, ' ');
+      var shortcutLabel = document.getElementById("toolbarToggle-shortcut");
+      shortcutLabel.value = "(" + shortcut + ")";
+      shortcutLabel.removeAttribute("hidden");
+    }
+    
+    this.xssEx = new RegExpController(
+        "xssEx", 
+        ns.rxParsers.multi,
+        ns.getPref("filterXExceptions"));
+
+    // document.getElementById("policy-tree").view = policyModel;
+    window.sizeToContent();
+      
+  },
+  
+
+  save: function() {
+    const ns = this.serv;
+    
+    this.utils.visitCheckboxes(
+      function(prefName, inverse, checkbox, mozilla) {
+        if(checkbox.getAttribute("collapsed")!="true") {
+          const checked = checkbox.getAttribute("checked") == "true";
+          const requestedVal = inverse ? !checked : checked;
+          
+          if(mozilla) {
+            try {
+              ns.prefService.setBoolPref(prefName, requestedVal);
+            } catch(ex) {}
+            return;
+          }
+          
+          const prevVal = ns.getPref(prefName);
+          if(requestedVal != prevVal) {
+            ns.setPref(prefName, requestedVal);
+          }
+        }
+      }
+    );
+    
+    ns.setPref("sound.block", this.soundChooser.getSample());
+    
+    this.autoAllowGroup.persist();
+    this.toggleGroup.persist();
+    
+    var xssEx = this.xssEx.getValue(true);
+    if(xssEx) ns.setPref("filterXExceptions", xssEx);
+    
+    
+    var global = this.jsglobal.getAttribute("checked") == "true";
+    var untrustedSites = this.untrustedSites;
+    var trustedSites = this.trustedSites;
+    ns.safeCapsOp(function() {
+      ns.untrustedSites.sitesString = untrustedSites.sitesString;
+      ns.setJSEnabled(trustedSites.sitesList, true, true);
+      ns.jsEnabled = global;
+    });
+    
+    
+  },
+
+  urlListChanged: function() {
+    const selectedItems = this.urlList.selectedItems;
+    var removeDisabled = true;
+    for(var j = selectedItems.length; j-- > 0;) {
+      if(selectedItems[j].getAttribute("disabled") != "true") {
+        removeDisabled = false;
+        break;
+      }
+    }  
+    this.removeButton.setAttribute("disabled", removeDisabled);
+    this.urlChanged();
+  },
+  
+  urlChanged: function() {
+    var url = this.urlText.value;
+    if(url.match(/\s/)) url = this.urlText.value = url.replace(/\s/g,'');
+    var addEnabled = url.length > 0 && (url=this.serv.getSite(url)) ;
+    if(addEnabled) {
+      var match = url.match(this.dom2);
+      if(match) url = match[1];
+      url = this.trustedSites.matches(url);
+      if(!(addEnabled = !url)) {
+        this.ensureVisible(url);
+      }
+    }
+    this.addButton.setAttribute("disabled", !addEnabled);
+  },
+  
+  ensureVisible: function(site) {
+    var item;
+    const ul = this.urlList;
+    for(var j = ul.getRowCount(); j-- > 0;) {
+      if((item = ul.getItemAtIndex(j)).getAttribute("value") == site) {
+        ul.ensureElementIsVisible(item);
+      }
+    }
+  },
+  
+  populateUrlList: function() {
+    const policy = this.trustedSites;
+    const sites = this.trustedSites.sitesList;
+    const ul = this.urlList;
+    const ns = this.serv;
+    for(var j = ul.getRowCount(); j-- > 0; ul.removeItemAt(j));
+    const dom2 = this.dom2;
+    var site, item;
+    var match, k, len;
+    for(j = 0, len = sites.length; j < len; j++) {
+      site = sites[j];
+      // skip protocol + 2nd level domain URLs
+      if((match = site.match(dom2)) && policy.matches(item = match[1])) 
+        continue;
+      
+      item = ul.appendItem(site, site);
+      if(ns.isPermanent(site)) { 
+        item.setAttribute("disabled", "true");
+      }
+      item.style.fontStyle = ns.isTemp(site) ? "italic" : "normal";
+    }
+    this.urlListChanged();
+  },
+  
+  allow: function() {
+    const site = this.serv.getSite(this.urlText.value);
+    this.trustedSites.add(site);
+    this.untrustedSites.remove(site);
+    this.populateUrlList();
+    this.ensureVisible(site);
+    this.addButton.setAttribute("disabled", "true");
+  },
+  
+  remove: function() {
+    const ns = this.serv;
+    const ul = this.urlList;
+    var visIdx = ul.getIndexOfFirstVisibleRow();
+    var lastIdx = visIdx + ul.getNumberOfVisibleRows();
+    const selectedItems = ul.selectedItems;
+    
+    if(selectedItems.length == 1) {
+      if(!ns.isPermanent(site = selectedItems[0].value)) {
+        ul.removeItemAt(ul.getIndexOfItem(selectedItems[0]));
+      }
+      return;
+    }
+    
+    var removed = [];
+    for(var j = selectedItems.length; j-- > 0;) {
+      if(!ns.isPermanent(site = selectedItems[j].value)) {
+        removed.push(site);
+      }
+    }
+    this.trustedSites.remove(removed, true); // keepUp
+    // TODO: hide flickering
+    this.populateUrlList();
+    try {
+      var rowCount = ul.getRowCount();
+      if(rowCount > lastIdx) {
+        ul.scrollToIndex(visIdx);
+      } else {
+        ul.ensureIndexIsVisible(rowCount - 1);
+      } 
+    } catch(e) {}
+  },
+  
+  _soundChooser: null,
+  get soundChooser() {
+    return this._soundChooser || 
+      (this._soundChooser = 
+        new SoundChooser(
+        "sampleURL", 
+        this.buttonToTitle("sampleChooseButton"),
+        noscriptUtil.service,
+        "chrome://noscript/skin/block.wav"
+      ));
+  },
+  
+  
+  importExport: function(op) {
+    const title = this.buttonToTitle(op + "Button");
+    try {
+      const cc=Components.classes;
+      const ci=Components.interfaces;
+      const fp = cc["@mozilla.org/filepicker;1"].createInstance(ci.nsIFilePicker);
+      
+      fp.init(window,title, op == "import"?ci.nsIFilePicker.modeOpen:ci.nsIFilePicker.modeSave);
+      fp.appendFilters(ci.nsIFilePicker.filterText);
+      fp.appendFilters(ci.nsIFilePicker.filterAll);
+      fp.filterIndex = 0;
+      fp.defaultExtension = ".txt";
+      const ret=fp.show();
+      if(ret == ci.nsIFilePicker.returnOK || 
+          ret == ci.nsIFilePicker.returnReplace) {
+        this[op](fp.file);
+      }
+    } catch(ex) {
+      noscriptUtil.prompter.alert(window, title, ex.toString());
+    }
+  },
+  
+  import: function(file) {
+    if(typeof(file)=="undefined") return this.importExport("import");
+    var all = this.serv.readFile(file);
+    var untrustedPos = all.indexOf("\n[UNTRUSTED]\n");
+    if(untrustedPos < 0) {
+      this.trustedSites.sitesString += "\n" + all;
+      this.untrustedSites.remove(this.trustedSites.sitesList);
+    } else {
+      this.trustedSites.sitesString += "\n" + all.substring(0, untrustedPos);
+      this.untrustedSites.siteString += all.substring(all.indexOf("\n", untrustedPos + 2));
+    }
+    this.untrustedSites.remove(this.trustedSites.sitesList);
+    this.populateUrlList();
+    return null;
+  },
+  
+  export: function(file) {
+    if(typeof(file)=="undefined") return this.importExport("export");
+    this.serv.writeFile(file, 
+      this.trustedSites.sitesList.join("\n") + 
+      "\n[UNTRUSTED]\n" +
+      this.untrustedSites.sitesList.join("\n")
+    );
+    return null;
+  },
+  
+  
+  
+  buttonToTitle: function(btid) {
+    return "NoScript - " + document.getElementById(btid).getAttribute("label");
+  }
+}
+
+/*
 function Site(url, perm, temp, disabled) {
   this.url = url;
   this.perm = perm;
@@ -52,16 +343,6 @@ Site.sort = function(array, field, descending) {
 }
 
 Site.currentSorting = { field: 'url', descending: false };
-
-const g_serv = noscriptUtil.service;
-var g_urlList = null;
-var g_jsglobal = null;
-var g_urlText = null;
-var g_addButton = null;
-var g_removeButton = null;
-var g_dom2 = /^(?:http[s]?|file):\/\/([^\.\?\/#,;:\\\@]+(:?\.[^\.\?\/#,;:\\\@]+$|$))/; // 2nd level domain hack
-var g_trustedSites = null;
-var g_untrustedSites = null;
 
 var policyModel = {
   data: [],
@@ -122,301 +403,6 @@ var policyModel = {
   performActionOnRow: function(action, row) { },
   performActionOnCell: function(action, row, column) { }
 };
-
-
-function nso_init() {
-  if(g_serv.uninstalling) { // this should never happen! 
-    window.close();
-    return;
-  }
-  g_urlText = document.getElementById("urlText");
-  g_urlList = document.getElementById("urlList");
-  g_jsglobal = document.getElementById("jsglobal");
-  g_addButton = document.getElementById("addButton");
-  g_removeButton = document.getElementById("removeButton");
-  
-  g_trustedSites = g_serv.jsPolicySites.clone();
-  g_untrustedSites = g_serv.untrustedSites.clone();
-  
-  nso_populateUrlList();
-  
-  g_jsglobal.setAttribute("checked", g_serv.jsEnabled);
-  
-  var pingCbx =  document.getElementById("mozopt-browser.send_pings");
-  if(pingCbx.getAttribute("label").indexOf("Allow ") == 0) { 
-    pingCbx.setAttribute("label", noscriptUtil.getString("allowLocal", ["<a ping...>"]));
-    document.getElementById("opt-noping")
-            .setAttribute("label", noscriptUtil.getString("forbidLocal", ["<a ping...>"]));
-  }
-  
-  visitCheckboxes(
-    function(prefName, inverse, checkbox, mozilla) {
-      try {
-        var val = mozilla ? g_serv.prefService.getBoolPref(prefName) : g_serv.getPref(prefName);
-        checkbox.setAttribute("checked",inverse ? !val: val);
-      } catch(ex) {}
-    }
-  );
-
-  document.getElementById("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp", ["[...]"]));
-  document.getElementById("opt-showDistrust").setAttribute("label", noscriptUtil.getString("distrust", ["[...]"]));
-  document.getElementById("opt-showGlobal").setAttribute("label", noscriptUtil.getString("allowGlobal"));
-  
-  document.getElementById("opt-notify.hide").setAttribute("label",
-           noscriptUtil.getString("notifyHide", [g_serv.getPref("notify.hideDelay", 3)]));
-   
-  nso_setSample(g_serv.getPref("sound.block"));
-  
-  // internationalization hack for "Allow bookmarks" vs "Allow via bookmarks" afterthought :(
-  const optBookmarks = document.getElementById("opt-allowBookmarks");
-  const lbl1 = optBookmarks.getAttribute("label");
-  var lbl2;
-  if(/^Allow sites/.test(lbl1) && 
-    !/^Allow sites/.test(lbl2 = document.getElementById("lbl-allowBookmarks").getAttribute("value"))) {
-    optBookmarks.setAttribute("label", lbl2);
-  }
-  
-  var cbx = document.getElementById("cbx-autoAllow");
-  var autoAllow = g_serv.getPref("autoAllow", 0);
-  cbx.checked =  !!autoAllow;
-  if(autoAllow > 0) document.getElementById("sel-autoAllow").selectedIndex = autoAllow - 1; 
-  nso_autoAllowChanged(cbx);
-  
-  // document.getElementById("policy-tree").view = policyModel;
-}
-
-function nso_urlListChanged() {
-  const selectedItems = g_urlList.selectedItems;
-  var removeDisabled = true;
-  for(var j=selectedItems.length; j-->0;) {
-    if(selectedItems[j].getAttribute("disabled") != "true") {
-      removeDisabled = false;
-      break;
-    }
-  } 
-  g_removeButton.setAttribute("disabled", removeDisabled);
-  nso_urlChanged();
-}
-
-function nso_urlChanged() {
-  var url=g_urlText.value;
-  if(url.match(/\s/)) url=g_urlText.value=url.replace(/\s/g,'');
-  var addEnabled=url.length>0 && (url=g_serv.getSite(url)) ;
-  if(addEnabled) {
-    var match=url.match(g_dom2);
-    if(match) url=match[1];
-    url = g_trustedSites.matches(url);
-    if(!(addEnabled = !url)) {
-      nso_ensureVisible(url);
-    }
-  }
-  g_addButton.setAttribute("disabled",!addEnabled);
-}
-
-function nso_populateUrlList() {
-  
-  const sites = g_trustedSites.sitesList;
-  for(var j= g_urlList.getRowCount(); j-- > 0; g_urlList.removeItemAt(j));
-  var site,item;
-  
-  var match,k,len;
-  for(j=0, len=sites.length; j<len; j++) {
-    site=sites[j];
-    // skip protocol + 2nd level domain URLs
-    if((match=site.match(g_dom2))) {
-      item=match[1];
-      for(k=sites.length; k-->0;) {
-        if(sites[k]==item) {
-          item=null;
-          break;
-        }
-      }
-      if(!item) continue;
-    }
-    item=g_urlList.appendItem(site,site);
-    if(g_serv.isPermanent(site)) { 
-      item.setAttribute("disabled", "true");
-    } 
-    item.style.fontStyle = g_serv.isTemp(site) ? "italic" : "normal";
-    
-  }
-  nso_urlListChanged();
-}
-
-function nso_ensureVisible(site) {
-  var item;
-  for(var j=g_urlList.getRowCount(); j-- > 0;) {
-    if((item=g_urlList.getItemAtIndex(j)).getAttribute("value")==site) {
-      g_urlList.ensureElementIsVisible(item);
-    }
-  }
-}
-
-function nso_allow() {
-  const site=g_serv.getSite(g_urlText.value);
-  g_trustedSites.add(site);
-  g_untrustedSites.remove(site);
-  nso_populateUrlList();
-  nso_ensureVisible(site);
-  g_addButton.setAttribute("disabled", "true");
-}
-
-
-
-function nso_remove() {
-  const selectedItems = g_urlList.selectedItems;
-  var site;
-  for(var j=selectedItems.length; j-->0;) {
-    if(!g_serv.isPermanent(site = selectedItems[j].getAttribute("value"))) {
-      g_urlList.removeItemAt(g_urlList.getIndexOfItem(selectedItems[j]));
-      g_trustedSites.remove(site);
-    }
-  }
-}
-
-
-function nso_chooseSample() {
-   const title="NoScript - "+document.getElementById("sampleChooseButton").getAttribute("label");
-   try {
-    const cc=Components.classes;
-    const ci=Components.interfaces;
-    const fp = cc["@mozilla.org/filepicker;1"].createInstance(ci.nsIFilePicker);
-    
-    fp.init(window,title, ci.nsIFilePicker.modeOpen);
-    fp.appendFilter(noscriptUtil.getString("audio.samples"),"*.wav");
-    fp.filterIndex=0;
-    const ret=fp.show();
-    if (ret==ci.nsIFilePicker.returnOK || ret==ci.nsIFilePicker.returnReplace) {
-      nso_setSample(fp.fileURL.spec);
-      nso_play();
-    }
-  } catch(ex) {
-    noscriptUtil.prompter.alert(window, title, ex.toString());
-  }
-}
-
-function nso_setSample(url) {
-  if(!url) {
-    url="chrome://noscript/skin/block.wav";
-  }
-  document.getElementById("sampleURL").value=url;
-}
-function nso_getSample() {
-  return document.getElementById("sampleURL").value;
-}
-function nso_play() {
-  g_serv.playSound(nso_getSample(),true);
-}
-
-
-function nso_autoAllowChanged(cbx) {
-  document.getElementById("sel-autoAllow").disabled = !cbx.checked;
-}
-
-
-function nso_buttonToTitle(op) {
-  return 
-}
-
-function nso_impexp(callback) {
-  const op = callback.name.replace(/nso_/,'');
-  const title = "NoScript - "+document.getElementById(op + "Button").getAttribute("label");
-  try {
-    const cc=Components.classes;
-    const ci=Components.interfaces;
-    const fp = cc["@mozilla.org/filepicker;1"].createInstance(ci.nsIFilePicker);
-    
-    fp.init(window,title, op=="import"?ci.nsIFilePicker.modeOpen:ci.nsIFilePicker.modeSave);
-    fp.appendFilters(ci.nsIFilePicker.filterText);
-    fp.appendFilters(ci.nsIFilePicker.filterAll);
-    fp.filterIndex=0;
-    fp.defaultExtension=".txt";
-    const ret=fp.show();
-    if (ret==ci.nsIFilePicker.returnOK || ret==ci.nsIFilePicker.returnReplace) {
-      callback(fp.file);
-    }
-    
-  } catch(ex) {
-    noscriptUtil.prompter.alert(window, title, ex.toString());
-  }
-}
-
-
-function nso_import(file) {
-  if(typeof(file)=="undefined") return nso_impexp(nso_import);
-  var all = g_serv.readFile(file);
-  var untrustedPos = all.indexOf("\n[UNTRUSTED]\n");
-  if( untrustedPos < 0) {
-    g_trustedSites.sitesString += "\n" + all;
-    g_untrustedSites.remove(g_trustedSites.sitesList);
-  } else {
-    g_trustedSites.sitesString += "\n" + all.substring(0, untrustedPos);
-    g_untrustedSites.siteString += all.substring(all.indexOf("\n", untrustedPos + 2));
-  }
-  g_untrustedSites.remove(g_trustedSites.sitesList);
-  nso_populateUrlList();
-  return null;
-}
-
-function nso_export(file) {
-  if(typeof(file)=="undefined") return nso_impexp(nso_export);
-  g_serv.writeFile(file, 
-    g_trustedSites.sitesList.join("\n") + 
-    "\n[UNTRUSTED]\n" +
-    g_untrustedSites.sitesList.join("\n")
-  );
-  return null;
-}
-
-
-function visitCheckboxes(callback) {
-  const rxOpt=/^(inv|moz|)opt-(.*)/;
-  var j,checkbox,match;
-  const opts=document.getElementsByTagName("checkbox");
-  for(j=opts.length; j-->0;) {
-    checkbox=opts[j];
-    if((match=checkbox.id.match(rxOpt))) {
-      callback(match[2],match[1]=="inv",checkbox,match[1]=="moz");
-    }
-  }
-}
-
-function nso_save() {
-  visitCheckboxes(
-    function(prefName, inverse, checkbox, mozilla) {
-      if(checkbox.getAttribute("collapsed")!="true") {
-        const checked=checkbox.getAttribute("checked")=="true";
-        const requestedVal = inverse ? !checked : checked;
-        
-        if(mozilla) {
-          try {
-            g_serv.prefService.setBoolPref(prefName, requestedVal);
-          } catch(ex) {}
-          return;
-        }
-        
-        const prevVal = g_serv.getPref(prefName);
-        if(requestedVal != prevVal) {
-          g_serv.setPref(prefName, requestedVal);
-        }
-      }
-    }
-  );
-  
-  g_serv.setPref("autoAllow", 
-      document.getElementById("cbx-autoAllow").checked ? 
-      (document.getElementById("sel-autoAllow").selectedIndex + 1) : 0
-  );
-  
-  const serv = g_serv;
-  const global = g_jsglobal.getAttribute("checked") == "true";
-  serv.safeCapsOp(function() {
-    serv.untrustedSites.sitesString = g_untrustedSites.sitesString;
-    serv.setJSEnabled(g_trustedSites.sitesList, true, true);
-    serv.jsEnabled = global;
-  });
-  
-  g_serv.setPref("sound.block",nso_getSample());
-}
+*/
 
 

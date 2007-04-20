@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Tillat &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Tillat lokale lenker">
 <!ENTITY noscriptForbidPing "Forby &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
 <!ENTITY noscriptWhitelist "Hvitelist">
 <!ENTITY noscriptPermissions "Tillatelser">
 <!ENTITY noscriptRefresh "Oppdater">
@@ -76,3 +77,16 @@
 <!ENTITY noscriptNselForce "Vis &lt;noscript&gt;-element som følger et låst &lt;script&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillat top-level nettsteder som standard">
 <!ENTITY noscriptDescription "Ekstra beskyttelse for din Firefox">
+<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
+<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
+<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
+<!ENTITY noscriptShowConsole "Show Console...">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptMatchSample "Pattern matching sample:">

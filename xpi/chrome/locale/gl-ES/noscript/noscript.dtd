@@ -6,11 +6,11 @@
 <!ENTITY noscriptWebAddress "Enderezo web:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "A">
-<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid "Non permitir">
 <!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust "Marcar como sitio fiábel">
 <!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust "Marcar como sitio non fiábel">
 <!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "Borrar os ficheiros seleccionados">
 <!ENTITY noscriptGloballyEnabled "Scripts globalmente permitidos (perigoso)">
@@ -22,7 +22,7 @@
 <!ENTITY noscriptStatusIcon "Icona da barra de estado">
 <!ENTITY noscriptFullAddr "Enderezos completos (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Dominios (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
+<!ENTITY noscriptBaseDom "Dominios base de segundo nivel (noscript.net)">
 <!ENTITY noscriptTempCmd "Permitir temporalmente [...]">
 <!ENTITY noscriptSound "Audio feedback when scripts are blocked">
 <!ENTITY noscriptImport "Importar">
@@ -41,21 +41,22 @@
 <!ENTITY noscriptAdditionalPermissions "Permisos adicionais para sitios de confianza">
 <!ENTITY noscriptAllowClipboard "Permitir copiar e pegar texto desde un portapapeis externo">
 <!ENTITY noscriptAdditionalRestrictions "Restricións adicionais para sitio non de confianza">
-<!ENTITY noscriptForbidJava "Prohibir Java ®">
-<!ENTITY noscriptForbidFlash "Prohibir Macromedia® Flash®">
-<!ENTITY noscriptForbidPlugins "Prohibir outros plugins">
+<!ENTITY noscriptForbidJava "Non permitir Java ®">
+<!ENTITY noscriptForbidFlash "Non permitir Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Non permitir outros plugins">
 <!ENTITY noscriptReloadWarn "Estas opcións terán efecto en páxinas novas ou (manualmente) recargadas">
 <!ENTITY noscriptConfirmUnblock "Pedir confirmación antes de desblocar temporalmente un obxecto">
 <!ENTITY noscriptStatusLabel "Etiqueta da barra de estado">
-<!ENTITY noscriptForbidBookmarklets "Prohibir bookmarklets">
+<!ENTITY noscriptForbidBookmarklets "Non permitir bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Amosar icona">
 <!ENTITY noscriptTruncateTitle "Truncar títulos de documentos">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptFixLinks "Tentar fixar ligazóns Javascript">
 <!ENTITY noscriptAllowBookmarks "Permitir enderezos abertos mediante bookmarks">
 <!ENTITY noscriptAllowViaBookmarks "Permitir enderezos abertos mediante bookmarks">
 <!ENTITY noscriptAllowPing "Permitir &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Permitir enderezos locais">
-<!ENTITY noscriptForbidPing "Prohibir &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Non permitir &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Non permitir redireccións META dentro de elementos &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "Lista branca">
 <!ENTITY noscriptPermissions "Permisos">
 <!ENTITY noscriptRefresh "Refrescar">
@@ -76,3 +77,16 @@
 <!ENTITY noscriptNselForce "Amosar o elemento &lt;noscript&gt; que siga a un &lt;script&gt; blocado">
 <!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
 <!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Bloquear escáners baseados en CSS">
+<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
+<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
+<!ENTITY noscriptShowConsole "Amosar consola">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "FAQ XSS">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Excepcións ña protección anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Os destinos que coincidan con estas expresións regulares NON serán protexidos contra XSS">
+<!ENTITY noscriptMatchSample "Mostra de coincidencia de patróns:">

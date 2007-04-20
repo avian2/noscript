@@ -1,0 +1,11 @@
+.ia-indent {
+  padding-left: 24px;
+}
+
+.text-link {
+  text-decoration: none;
+}
+.text-link:hover {
+  text-decoration: underline;
+}
+

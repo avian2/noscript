@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Povoliť &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Povoliť lokálne prepojenia">
 <!ENTITY noscriptForbidPing "Zakázať &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Zakázať presmerovanie META v rámci prvkov &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "Zoznam povolených">
 <!ENTITY noscriptPermissions "Povolenia">
 <!ENTITY noscriptRefresh "Obnoviť">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "Blokovať skenery CSS">
 <!ENTITY noscriptOptFilterXGet "Ošetriť podozrivé požiadavky cross-site">
 <!ENTITY noscriptOptFilterXPost "Prepnúť požiadavky POST cross-site na údajovo bezstratové požiadavky GET">
+<!ENTITY noscriptShowConsole "Zobraziť konzolu...">
+<!ENTITY noscriptShowConsole.accesskey "k">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Nebezpečné znovunačítanie">
+<!ENTITY noscriptUnsafeReload.accesskey "N">
+<!ENTITY noscriptXssExceptions "Výnimky ochrany Anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Adresy zodpovedajúce týmto regulárnym výrazom NEBUDÚ chránené proti XSS">
+<!ENTITY noscriptMatchSample "Vzor šablóny:">

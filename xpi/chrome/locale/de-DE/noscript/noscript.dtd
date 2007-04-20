@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Klick-Verfolgung über das PING-Attribut für Links erlauben">
 <!ENTITY noscriptAllowLocalLinks "Lokale Links erlauben">
 <!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
 <!ENTITY noscriptWhitelist "Positivliste">
 <!ENTITY noscriptPermissions "Berechtigungen">
 <!ENTITY noscriptRefresh "Aktualisierung">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "Auf Cross-Site Scripting basierende Scanner blockieren">
 <!ENTITY noscriptOptFilterXGet "Anfragen bei Verdacht auf Cross-Site Scripting bereinigen">
 <!ENTITY noscriptOptFilterXPost "Cross-Site-POST-Anfragen in datenlose GET-Anfragen umwandeln">
+<!ENTITY noscriptShowConsole "Konsole anzeigen...">
+<!ENTITY noscriptShowConsole.accesskey "z">
+<!ENTITY noscriptXss "Cross-Site Scripting (XSS)">
+<!ENTITY noscriptXssFaq "Cross-Site Scripting FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsicheres Neu-Laden der Seite">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Ausnahmen vom XSS-Schutz">
+<!ENTITY noscriptXssExceptions.description "Ziele, die mit diesen regulären Ausdrücken übereinstimmen, sind vom XSS-Schutz ausgeschlossen">
+<!ENTITY noscriptMatchSample "Beispiel zur Übereinstimmung von Ausdrücken:">

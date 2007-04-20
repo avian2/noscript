@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Povolit &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Povolit místní odkazy">
 <!ENTITY noscriptForbidPing "Zakázat &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
 <!ENTITY noscriptWhitelist "Výjimky">
 <!ENTITY noscriptPermissions "Povolení">
 <!ENTITY noscriptRefresh "Obnovení">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "Blokovat skenery založené na CSS">
 <!ENTITY noscriptOptFilterXGet "Zajistit podezřelé původce požadavku">
 <!ENTITY noscriptOptFilterXPost "Převést požadavky POST napříč stránkou na požadavky GET neobsahující data.">
+<!ENTITY noscriptShowConsole "Zobrazit konzolu...">
+<!ENTITY noscriptShowConsole.accesskey "k">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptMatchSample "Pattern matching sample:">

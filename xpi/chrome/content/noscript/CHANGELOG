@@ -1,5 +1,54 @@
 NoScript ChangeLog
 
+v 1.1.4.8
+=====================================================================
+x Minor improvements in XSS exceptions regular expression parsing
+x Fixed last-minute Seamonkey breakage (many thanks therube!!!)
+
+v 1.1.4.8RC3 (1.1.4.7.070420.1)
+=====================================================================
+x Further refinement in XSS filters (thanks niko322)
+
+v 1.1.4.8RC2 (1.1.4.7.070420)
+=====================================================================
+x Fixed 2nd level domain toggle option (thanks therube)
+x Fixed multi-window feedback synchronization (thanks lakrids)
+
+v 1.1.4.8RC1 (1.1.4.7.070419)
+=====================================================================
++ Option to block META refresh inside NOSCRIPT elements: a prompt
+  will be shown asking if you want to follow the redirect, and
+  choice will be remebered across the current session
+  (noscript.forbidMetaRefresh.remember preference, dismissing the 
+  notification with its close button means "keep blocked")
+  thanks rsnake and Alan Baxter for suggestion
++ "XSS-Unsafe Reload" menu item in the XSS notification bar popup
++ "XSS FAQ" menu item in the XSS notification bar popup
++ noscript.xss.notify.subframes about:config preference to control 
+  notification for XSS in subframes (default false, suppressed)
++ Option to toggle sites by (2nd level) domain, rather than full URL
+x Default "Show NoScript menu" shortcut changed to Ctrl+Shift+S
+  (Ctrl+Shift+X conflicting with "change direction" Firefox command)
+x moved "Show Console" from XSS notify button to an "Options" popup
+x Options Dialog reorganization
+x Right click on toolbar button and status bar elements opens menu
+x Mass-removal speedup of in Options Dialog|Whitelist
+
+v 1.1.4.7.070414
+=====================================================================
++ Finer grained treatment for data: and javascript: urls in frames,
+  whose domain is considered the one of the nearest window ancestor
+  having a meaningful web address (thanks to Vectorspace for his
+  suggestion)
+
+v 1.1.4.7.070413
+=====================================================================
++ "noscript.globalwarning" about:config hidden preference controls
+  wether a warning prompt should be issued or not whenever user
+  switches on scripts globally (true by default)
+x Improved Anti-XSS Protection compatibility with some message boards
+  (special thanks to Aerik and Olaf Schweppe)
+
 v 1.1.4.7
 =====================================================================
 + First "official" anti-XSS release

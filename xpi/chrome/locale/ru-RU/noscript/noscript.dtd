@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Разрешить веб-сайту использовать параметр &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Разрешить локальные ссылки">
 <!ENTITY noscriptForbidPing "Запретить веб-сайту использовать параметр  &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Запретить META перенаправления внутри элементов &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "Белый список">
 <!ENTITY noscriptPermissions "Разрешения">
 <!ENTITY noscriptRefresh "Обновить">
@@ -77,5 +78,15 @@
 <!ENTITY noscriptAutoAllowTopLevel "Временно разрешать базовым доменам 2-го уровня по умолчанию">
 <!ENTITY noscriptDescription "Экстра защита для Firefox: NoScript позволяет разрешать исполнение JavaScript, Java (и других плагинов) только доменам, которым доверяете (например, ваш веб-сайт). Белый список, основанный на принципе упреждающего блокирования, позволяет предотвратить использование уязвимостей (известных и ещё неизвестных!) без потери функциональности... Эксперты соглашаются: Firefox действительно безопаснее с NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Блокировать CSS-сканеры">
-<!ENTITY noscriptOptFilterXGet "Фильтровать запросы, подозреваемые на XSS">
+<!ENTITY noscriptOptFilterXGet "Фильтровать запросы, подозреваемые в XSS">
 <!ENTITY noscriptOptFilterXPost "Заменять XSS POST-запросы на GET-запросы без данных">
+<!ENTITY noscriptShowConsole "Открыть консоль...">
+<!ENTITY noscriptShowConsole.accesskey "о">
+<!ENTITY noscriptXss "XSS (межсайтовый скриптинг)">
+<!ENTITY noscriptXssFaq "Справка по XSS (межсайтовый скриптинг)">
+<!ENTITY noscriptXssFaq.accesskey "а">
+<!ENTITY noscriptUnsafeReload "Небезопасное обновление">
+<!ENTITY noscriptUnsafeReload.accesskey "е">
+<!ENTITY noscriptXssExceptions "Исключения анти-XSS защиты">
+<!ENTITY noscriptXssExceptions.description "Путь, попадающий под одно из регулярных выражений НЕ будет защищаться против XSS.">
+<!ENTITY noscriptMatchSample "Пример шаблона:">

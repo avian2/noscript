@@ -48,13 +48,14 @@
   
 }
 
-.link {
-  color: #0000FF;
+.text-link {
+  color: #00f;
   text-decoration: none;
   cursor: pointer;
   
 }
-.link:hover {
+.text-link:hover {
+  color: #00f;
   text-decoration: underline ;
 }
 
@@ -73,5 +74,9 @@
 
 #extensionCreator, #extensionContributors, #extensionSponsor {
   font-weight: bold;
+}
+
+text-link {
+  text-decoration: none;
 }
 

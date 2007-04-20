@@ -44,7 +44,9 @@ UninstallGuard.prototype = {
     this.check(ds,source);
   },
   onEndUpdateBatch: function(ds) {
-    this.checkAll(ds);
+    try {
+      this.checkAll(ds);
+    } catch(ex) {}
   },
   onMove: function(ds,oldSource,newSource,prop,target) {
     this.check(ds,newSource);
@@ -73,7 +75,7 @@ UninstallGuard.prototype = {
     const container = Components.classes["@mozilla.org/rdf/container;1"]
                .getService(Components.interfaces.nsIRDFContainer);
     var root = this.rdfService.GetResource("urn:mozilla:extension:root");
-    container.Init(ds,root);
+    container.Init(ds, root);
 
      var elements = container.GetElements();
      for(var found = false; elements.hasMoreElements() && !found; ) {
@@ -186,6 +188,8 @@ const SiteUtils = new function() {
   this.ios = Components.classes["@mozilla.org/network/io-service;1"
         ].getService(Components.interfaces.nsIIOService);
   
+  this.uriFixup = Components.classes["@mozilla.org/docshell/urifixup;1"].getService(Components.interfaces.nsIURIFixup);
+  
   function sorter(a,b) {
     if(a==b) return 0;
     if(!a) return 1;
@@ -199,16 +203,19 @@ const SiteUtils = new function() {
   this.sort = function(ss) {
     return ss.sort(sorter);
   };
-
+  
   this.getSite = function(url) {
-    if(! (url && (url = url.replace(/^\s+/, '').replace(/\s+$/, '') ))) {
-      return "";
+    if((!url) || 
+        (/\s/.test(url.charAt(0) + url.charAt(url.length - 1) && // needs trimming
+        !(url = url.replace(/^\s*(.*?)\s*$/, '$1'))))) {
+      return '';
     }
     
     if(url.indexOf(":") < 0) return this.domainMatch(url);
     
     var scheme;
     try {
+      
       scheme = this.ios.extractScheme(url).toLowerCase();
       switch(scheme) {
         case "javascript": case "data": 
@@ -225,10 +232,10 @@ const SiteUtils = new function() {
     }
     try {
       // let's unwrap JAR uris
-      var uri=this.ios.newURI(url, null, null);
+      var uri = this.uriFixup.createExposableURI(this.ios.newURI(url, null, null));
       if(uri instanceof Components.interfaces.nsIJARURI) {
-        uri=uri.JARFile;
-        return uri?this.getSite(uri.spec):scheme;
+        uri = uri.JARFile;
+        return uri ? this.getSite(uri.spec) : scheme;
       }
       try  {
         return scheme + "//" + uri.hostPort;
@@ -301,7 +308,27 @@ const SiteUtils = new function() {
     return ss.join(" ");
   };
   
+  this.crop = function(url, width, max) {
+    width = width || 100;
+    if(url.length < width) return url;
+    
+    max = max || 2000;
+    if(max > width && url.length > max) {
+        return this.crop(url.substring(0, max / 2)) + "\n[...]\n" + 
+          this.crop(url.substring(url.length - max / 2));
+    }
+    
+    var parts = [];
+   
+    while(url.length > width) {
+      parts.push(url.substring(0, width));
+      url = url.substring(width);
+    }
+    parts.push(url);
+    return parts.join("\n");
+  };
 }
+
 
 const DOMUtils = {
   lookupMethod: Components.utils ? Components.utils.lookupMethod : Components.lookupMethod,
@@ -344,6 +371,17 @@ const DOMUtils = {
     return null;
   },
   
+  getDocShellFromWindow: function(window) {
+    const ci = Components.interfaces;
+    try {
+      return window.QueryInterface(ci.nsIInterfaceRequestor)
+                   .getInterface(ci.nsIWebNavigation)
+                   .QueryInterface(ci.nsIDocShell);
+    } catch(e) {
+      return null;
+    }
+  },
+  
   BrowserIterator: function() {
      const wm = Components.classes['@mozilla.org/appshell/window-mediator;1']
                           .getService(Components.interfaces.nsIWindowMediator);
@@ -353,6 +391,7 @@ const DOMUtils = {
     var winEnum = null;
     var currentTB, currentTab;
     var curTabIdx;
+    var browsers;
     
     function initPerWin() {
       currentTB = currentWin && currentWin.getBrowser();
@@ -508,7 +547,7 @@ PolicySites.prototype = {
   _remove: function(site, keepUp, keepDown) {
     if(!site) return false;
     
-    const sm=this.sitesMap;
+    const sm = this.sitesMap;
     var change=false;
     var match;
     
@@ -521,7 +560,7 @@ PolicySites.prototype = {
       }
       if(!keepDown) {
         for(match in sm) { // remove descendants
-          if( (site == this.matches(match)) && site!=match) {
+          if((site == this.matches(match)) && site != match) {
             delete sm[match];
             change = true;
           }
@@ -531,11 +570,11 @@ PolicySites.prototype = {
     
     if(site in sm) {
       delete sm[site];
-      if(site.indexOf(".")==site.lastIndexOf(".")) {
+      if(site.indexOf(".") == site.lastIndexOf(".")) {
         //2nd level domain hack
-        delete sm["http://"+site];
-        delete sm["https://"+site];
-        delete sm["file://"+site];
+        delete sm["http://" + site];
+        delete sm["https://" + site];
+        delete sm["file://" + site];
       }
       change = true;
     }
@@ -553,8 +592,8 @@ PolicySites.prototype = {
       change = this._add("https://" + site) || change;
       change = this._add("file://" + site) || change;
     }
-    const sm=this.sitesMap;
-    return (site in sm?false:sm[site]=true) || change;
+    const sm = this.sitesMap;
+    return (site in sm ? false : sm[site] = true ) || change;
   },
   add: function(sites) {
     return this._operate(this._add, arguments);
@@ -564,10 +603,10 @@ PolicySites.prototype = {
     if(!sites) return false;
     
     var change;
-    if(typeof(sites)=="object" && sites.constructor == Array) {
-      for(var j=sites.length; j-->0; ) {
+    if(typeof(sites)=="object" && "push" in sites) {
+      for(var j = sites.length; j-->0; ) {
         args[0]=sites[j];
-        if(oper.apply(this,args)) change=true;
+        if(oper.apply(this, args)) change = true;
       }
     } else {
       change = oper.apply(this,args);
@@ -588,7 +627,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.7",
+  VERSION: "1.1.4.8",
   
   get wrappedJSObject() {
     return this;
@@ -602,7 +641,7 @@ NoscriptService.prototype ={
   // nsIObserver implementation 
   observe: function(subject, topic, data) {
     // dump(SERVICE_NAME+" notified of "+subject+","+topic+","+data); //DDEBUG
-    if(subject instanceof Components.interfaces.nsIPrefBranchInternal) {
+    if(subject instanceof Components.interfaces.nsIPrefBranch2) {
       this.syncPrefs(subject, data);
     } else {
       switch(topic) {
@@ -661,6 +700,33 @@ NoscriptService.prototype ={
     this.uninstallGuard.dispose();
   }
 ,
+  
+  // Preference driven properties
+  autoAllow: false,
+  
+  blockCssScanning: true,
+  blockCrossIntranet: true,
+  
+  consoleDump: 0,
+  truncateTitle: true,
+  truncateTitleLen: 255,
+  pluginPlaceholder: "chrome://noscript/skin/icon32.png",
+  showPlaceHolder: true,
+
+  forbidSomeContent: false,
+  forbidAllContent: false,
+  
+  forbidJava: false,
+  forbidFlash: false,
+  forbidPlugins: false,
+  forbidData: true,
+  
+  nselNever: false,
+  nselForce: true,
+  
+  filterXGetRx: "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;]",
+  filterXGetRx2Black: "[\(\)\=;]",
+  
   syncPrefs: function(branch, name) {
     switch(name) {
       case "sites":
@@ -690,11 +756,12 @@ NoscriptService.prototype ={
       case "forbidJava":
       case "forbidFlash":
       case "forbidPlugins":
-        this[name]=this.getPref(name,this[name]);
-        var fsp = this.forbidSomePlugins;
-        this.forbidSomePlugins = this.forbidJava || this.forbidFlash || this.forbidPlugins;
-        this.forbidAllPlugins = this.forbidJava && this.forbidFlash && this.forbidPlugins;
-        if(fsp != this.forbidSomePlugins) this.initContentPolicy();
+      case "forbidData":
+        this[name]=this.getPref(name, this[name]);
+        var fsp = this.forbidSomeContent;
+        this.forbidSomeContent = this.forbidJava || this.forbidFlash || this.forbidPlugins || this.forbidData;
+        this.forbidAllContent = this.forbidJava && this.forbidFlash && this.forbidPlugins;
+        if(fsp != this.forbidSomeContent) this.initContentPolicy();
       break;
       
       case "filterXPost":
@@ -702,20 +769,25 @@ NoscriptService.prototype ={
       case "blockCssScanners":
       case "blockXIntranet":
         this.initContentPolicy();
-    
+        
+      case "autoAllow":
+      case "consoleDump":
       case "pluginPlaceholder":
       case "showPlaceholder":
-      case "consoleDump":
-      
+      case "truncateTitle":
+      case "truncateTitleLen":
       case "forbidMetaRefresh":
         this[name] = this.getPref(name, this[name]);
       break;
-      
-      case "filterXGetRx":
-        this.updateRxPref(name, "[^\\w:\\/\\.\\-\\+\\[\\]\\{\\}~,@]", "g");
+      case "forbidMetaRefresh.remember":
+        if(!this.getPref(name)) this.metaRefreshWhitelist = {};
       break;
-       case "filterXExceptions":
-        this.updateRxPref(name, "", "");
+      case "filterXGetRx":
+      case "filterXGetRx2Black":
+        this.updateRxPref(name, this[name], "g");
+      break;
+      case "filterXExceptions":
+        this.updateRxPref(name, "", "", this.rxParsers.multi);
       break;
       
       case "allowClipboard":
@@ -723,17 +795,6 @@ NoscriptService.prototype ={
       break;
       case "allowLocalLinks":
         this.updateExtraPerm(name, "checkloaduri", ["enabled"]);
-      break;
-      
-      case "truncateTitle":
-        this.truncateTitle = this.getPref(name, true);
-      break;
-      case "truncateTitleLen":
-       this.truncateTitleLen = this.getPref(name, 255);
-      break;
-      
-      case "autoAllow":
-       this[name] = this.getPref(name, 0);
       break;
        
       case "nselForce":
@@ -749,19 +810,47 @@ NoscriptService.prototype ={
     }
   },
   
-  updateRxPref: function(name, def, flags) {
+  rxParsers: {
+    simple: function(s, flags) {
+      return new RegExp(s, flags);
+    },
+    multi: function(s, flags) {
+      var lines = s.split(/[\n\r]+/);
+      var rxx = [];
+      for(var j = lines.length; j-- > 0;) {
+        if(/\S/.test(lines[j])) { 
+          rxx.push(new RegExp(lines[j], flags));
+        } else {
+          lines.splice(j, 1);
+        }
+      }
+      if(!rxx.length) return null;
+      
+      rxx.test = function(s) {
+        for(var j = this.length; j-- > 0;) {
+          if(this[j].test(s)) return true;
+        }
+        return false;
+      }
+      rxx.toString = function() { return lines.join("\n"); }
+      return rxx;
+    }
+  },
+  updateRxPref: function(name, def, flags, parseRx) {
+    parseRx = parseRx || this.rxParsers.simple;
     var s = this.getPref(name, def);
     if(!s) {
       this[name] = null;
     } else
     {
       try {
-        this[name] = new RegExp(this.getPref(name, def), flags);
+        this[name] = parseRx(this.getPref(name, def), flags);
       } catch(e) {
-        this[name] = new RegExp(def, flags);
+        this[name] = parseRx(def, flags);
       }
     }
   },
+  
   
   updateExtraPerm: function(prefName, baseName, names) {
     var cpName;
@@ -831,32 +920,35 @@ NoscriptService.prototype ={
     if(this._inited) return false;
     this._inited = true;
     
+    
     const prefserv=this.prefService=Components.classes["@mozilla.org/preferences-service;1"]
       .getService(Components.interfaces.nsIPrefService).QueryInterface(Components.interfaces.nsIPrefBranch);
     
-    const PBI=Components.interfaces.nsIPrefBranchInternal;
+    const PBI=Components.interfaces.nsIPrefBranch2;
     this.caps = prefserv.getBranch("capability.policy.").QueryInterface(PBI);
     this.policyPB = prefserv.getBranch("capability.policy." + this.POLICY_NAME + ".").QueryInterface(PBI);
     this.policyPB.addObserver("sites", this, false);
     this.prefs = prefserv.getBranch("noscript.").QueryInterface(PBI);
     this.prefs.addObserver("", this, false);
-    this.mozJSPref = prefserv.getBranch("javascript.").QueryInterface(Components.interfaces.nsIPrefBranchInternal);
+    this.mozJSPref = prefserv.getBranch("javascript.").QueryInterface(PBI);
     this.mozJSPref.addObserver("enabled", this, false);
     
     this.permanentSites.sitesString = "chrome: resource: about:neterror";
     
     const syncPrefNames = [
-      "consoleDump",
-      "pluginPlaceholder", "showPlaceholder", "forbidPlugins", 
-      "forbidJava", "forbidFlash", 
+      "autoAllow",
       "allowClipboard", "allowLocalLinks",
-      "temp", "untrusted",
-      "truncateTitle", "truncateTitleLen",
-      "nselNever", "nselForce", 
       "blockCssScanners", "blockCrossIntranet",
-      "filterXPost", "filterXGet", "filterXGetRx", "filterXExceptions",
+      "consoleDump",
+      "filterXPost", "filterXGet", 
+      "filterXGetRx", "filterXGetRx2Black", 
+      "filterXExceptions",
+      "forbidFlash", "forbidJava", "forbidPlugins", "forbidData",
       "forbidMetaRefresh",
-      "autoAllow"
+      "nselNever", "nselForce",
+      "pluginPlaceholder", "showPlaceholder",
+      "temp", "untrusted",
+      "truncateTitle", "truncateTitleLen"
     ];
     for(var spcount = syncPrefNames.length; spcount-->0;) {
       this.syncPrefs(this.prefs, syncPrefNames[spcount]);
@@ -948,6 +1040,18 @@ NoscriptService.prototype ={
     return SiteUtils.getSite(url);
   },
   
+  getQuickSite: function(url, level) {
+    var site = null;
+    if(level > 0 && !this.jsEnabled) {
+      site = this.getSite(url);
+      var domain;
+      if(level > 1 && (domain = this.getDomain(site))) {
+        site = level > 2 ? this.get2ndLevel(domain) : domain;
+      }
+    }
+    return site;
+  },
+  
   getDomain: function(site) {
     var domain = site.match(/.*?:\/\/([^\?\/\\#]+)/); // double check - changed for Unicode compatibility
     if(domain) {
@@ -1019,9 +1123,9 @@ NoscriptService.prototype ={
   }
 ,
   safeCapsOp: function(callback) {
-    callback();
     const serv = this;
     this.delayExec(function() {
+      callback();
       serv.savePrefs();
       serv.reloadWhereNeeded();
      },1);
@@ -1031,54 +1135,51 @@ NoscriptService.prototype ={
   _lastGlobal: false,
   reloadWhereNeeded: function(snapshot, lastGlobal) {
     if(!snapshot) snapshot = this._lastSnapshot;
-    const ps=this.jsPolicySites;
+    const ps = this.jsPolicySites;
     this._lastSnapshot = ps.clone();
     const global = this.jsEnabled;
     if(typeof(lastGlobal) == "undefined") {
-      lastGlobal=this._lastGlobal;
+      lastGlobal = this._lastGlobal;
     }
     this._lastGlobal = global;
     
     this.initContentPolicy();
     
-    if( (global==lastGlobal && ps.equals(snapshot)) || !snapshot) return false;
+    if((global == lastGlobal && ps.equals(snapshot)) || !snapshot) return false;
     
     if(!this.getPref("autoReload")) return false;
     
-    var ret=false;
-    var ov, gb, bb, b, j, doc, docSites;
+    var ret = false;
+    var docSites, site;
     var prevStatus, currStatus;
-    const ww = Components.classes['@mozilla.org/appshell/window-mediator;1']
-                         .getService(Components.interfaces.nsIWindowMediator)
-                         .getEnumerator("navigator:browser");
+    
     var webNav;
     const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
     const LOAD_FLAGS = nsIWebNavigation.LOAD_FLAGS_NORMAL; // nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE;
-    for(var w; ww.hasMoreElements();) {
-      w = ww.getNext();
-      ov = w.noscriptOverlay;
-      gb = w.getBrowser ? w.getBrowser() : null;
-      if(ov && gb && (bb=gb.browsers)) {
-        for(b = bb.length; b-- > 0;) {
-          doc = ov.getBrowserDoc(bb[b]);
-          if(doc) {
-            docSites = ov.getSites(doc);
-            for(j = docSites.length; j-- >0;) {
-              prevStatus = lastGlobal || !!snapshot.matches(docSites[j]);
-              currStatus = global || !!ps.matches(docSites[j]);
-              if(currStatus != prevStatus) {
-                ret = true;
-                webNav = bb[b].webNavigation;
-                try {
-                  webNav = webNav.sessionHistory.QueryInterface(nsIWebNavigation);
-                  webNav.gotoIndex(webNav.index);
-                } catch(e) {
-                  webNav.reload(LOAD_FLAGS);
-                }
-                break;
-              }
+    const trustReloads = this.getPref("xss.trustReloads", true);
+    
+    for(var browser, bi = new this.domUtils.BrowserIterator(), j; browser = bi.next();) {
+      docSites = this.getSites(browser, true);
+      for(j = docSites.length; j-- > 0;) {
+        prevStatus = lastGlobal || !!snapshot.matches(docSites[j]);
+        currStatus = global || !!ps.matches(docSites[j]);
+        if(currStatus != prevStatus) {
+          ret = true;
+          if(currStatus) this.requestWatchdog.setUntrustedReloadInfo(browser, true);
+          webNav = browser.webNavigation;
+          try {
+            webNav = webNav.sessionHistory.QueryInterface(nsIWebNavigation);
+            if(currStatus && trustReloads && webNav.index) {
+              try {
+                site = this.getSite(webNav.getEntryAtIndex(webNav.index - 1, false).URI.spec);
+                this.requestWatchdog.setUntrustedReloadInfo(browser, site != docSites[j] || !ps.matches(site));
+              } catch(e) {}
             }
+            webNav.gotoIndex(webNav.index);
+          } catch(e) {
+            browser.webNavigation.reload(LOAD_FLAGS);
           }
+          break;
         }
       }
     }
@@ -1086,6 +1187,7 @@ NoscriptService.prototype ={
   }
 ,
   SPECIAL_TLDS: {
+
     "ab": " ca ", 
     "ac": " ac at be cn id il in jp kr nz th uk za ", 
     "adm": " br ", 
@@ -1117,7 +1219,7 @@ NoscriptService.prototype ={
     "cq": " cn ",
     "cri": " nz ",
     "ecn": " br ",
-    "edu": " ar au cn hk mm mx pl tr za ",
+    "edu": " ar au co cn hk mm mx pl tr za ",
     "eng": " br ",
     "ernet": " in ",
     "esp": " br ",
@@ -1188,7 +1290,7 @@ NoscriptService.prototype ={
     "odo": " br ",
     "on": " ca ",
     "or": " ac at id jp kr th ",
-    "org": " ar au br cn ec hk il in mm mx nz pl ro ru sg tr tw uk ua uk za ",
+    "org": " ar au br cn ec hk il in mm mx nz pe pl ro ru sg tr tw uk ua uk za ",
     "pc": " pl ",
     "pe": " ca ",
     "plc": " uk ",
@@ -1420,11 +1522,10 @@ NoscriptService.prototype ={
       .getService(Components.interfaces.nsIWindowMediator)
       .getMostRecentWindow("navigator:browser");
   },
-
+  
+  
   getAllowObjectMessage: function(url, mime) {
-    if(url.length > 100) {
-      url = url.substring(0, 50) + "..." + url.substring(url.length - 50);
-    }
+    url = this.siteUtils.crop(url);
     return this.getString("allowTemp", [url + "\n(" + mime + ")\n"]);
   }
 ,
@@ -1436,34 +1537,16 @@ NoscriptService.prototype ={
   domUtils: DOMUtils,
   siteUtils: SiteUtils
 ,
-  nakeEmbed: function(ctx) { return ctx },
-  pluginPlaceholder: "chrome://noscript/skin/icon32.png",
-  showPlaceHolder: true,
-  consoleDump: 0,
-  blockCssScanning: true,
-  blockCrossIntranet: true,
-  pluginForMime: function(mimeType) {
-    if(!mimeType) return null;
-    var w = this.lastWindow;
-    if(!(w && w.navigator)) return null;
-    var mime = w.navigator.mimeTypes.namedItem(mimeType);
-    return mime && mime.enabledPlugin || null;
-  },
-  forbidSomePlugins: false,
-  forbidAllPlugins: false,
-  forbidJava: false,
-  forbidFlash: false,
-  forbidPlugins: false,
-  nselNever: false,
-  nselForce: true,
+
   
   mimeService: null,
   xcache: null,
+ 
   shouldLoad: function() { return 1; },
   shouldProcess: function() { return 1; },
   initContentPolicy: function() {
     var delegate = (
-        (this.forbidSomePlugins || this.filterXPost || this.filterXGet) 
+        (this.forbidSomeContent || this.filterXPost || this.filterXGet) 
           && !this.getPref("global", false)
         ) 
         ? (Components.interfaces.nsIContentPolicy.TYPE_OBJECT 
@@ -1488,12 +1571,20 @@ NoscriptService.prototype ={
       return "";
     }
   },
+  pluginForMime: function(mimeType) {
+    if(!mimeType) return null;
+    var w = this.lastWindow;
+    if(!(w && w.navigator)) return null;
+    var mime = w.navigator.mimeTypes.namedItem(mimeType);
+    return mime && mime.enabledPlugin || null;
+  },
   // nsIContentPolicy interface
   // we use numeric constants for performance sake:
   // nsIContentPolicy.TYPE_SCRIPT = 2
   // nsIContentPolicy.TYPE_OBJECT = 5
   // nsIContentPolicy.TYPE_DOCUMENT = 6
   // nsIContentPolicy.TYPE_SUBDOCUMENT = 7
+  // nsIContentPolicy.TYPE_REFRESH = 8
   // nsIContentPolicy.REJECT_SERVER = -3
   // nsIContentPolicy.ACCEPT = 1
   
@@ -1525,14 +1616,21 @@ NoscriptService.prototype ={
           if(!aMimeTypeGuess) aMimeTypeGuess = this.guessMime(aContentLocation);
         case 6:
           
-          if(aRequestOrigin && 
-              (aRequestOrigin != aContentLocation) && 
-              (aContentLocation.schemeIs("http") || aContentLocation.schemeIs("https")) &&
-              aRequestOrigin.prePath != aContentLocation.prePath
-             ) {
-            this.xcache.storeOrigin(aRequestOrigin, aContentLocation);
+          if(aRequestOrigin && aRequestOrigin != aContentLocation) {
+            if(aContentLocation.schemeIs("http") || aContentLocation.schemeIs("https")) {
+              if(aRequestOrigin.prePath != aContentLocation.prePath) {
+               this.xcache.storeOrigin(aRequestOrigin, aContentLocation);
+              }
+            } else if(this.forbidData && // block data: and javascript: URLs
+                      (aContentLocation.schemeIs("data:") || aContentLocation.schemeIs("javascript")) &&
+                      !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
+               if(this.consoleDump & 1) 
+                 dump("NoScript blocked " + aContentLocation.spec + " from " + aRequestOrigin.spec + "\n");
+              return this.rejectCode;
+            }
           }
-          if(((!this.forbidSomePlugins)
+          
+          if(((!this.forbidSomeContent)
               || (!aMimeTypeGuess)
               || aMimeTypeGuess.substring(0, 5) == "text/"
               || aMimeTypeGuess == "application/xml" 
@@ -1542,6 +1640,7 @@ NoscriptService.prototype ={
             return 1;
           }
           break;
+          
         default:
           return 1;
       }
@@ -1550,15 +1649,15 @@ NoscriptService.prototype ={
       const origin = this.getSite(url);
       
       if(!forbid) {
-        
         try {
           if(this.pluginsCache.update(url, aMimeTypeGuess, origin, aRequestOrigin || aContentLocation, aContext)) 
             return 1; // forceAllow
         } catch(ex) {
           dump("NoScriptService.pluginsCache.update():" + ex + "\n");
         }
-        if(this.forbidSomePlugins) {
-          var forbid = this.forbidAllPlugins;
+        
+        if(this.forbidSomeContent) {
+          var forbid = this.forbidAllContent;
           if((!forbid) && aMimeTypeGuess) {
             forbid = 
               (isFlash = (aMimeTypeGuess == "application/x-shockwave-flash" || aMimeTypeGuess == "application/futuresplash") && this.forbidFlash ||
@@ -1620,7 +1719,7 @@ NoscriptService.prototype ={
       //
       // so...
       
-      aContentType++;
+      aContentType = [1, 2, 3, 4, 5, 7, 8, 8, 6][aContentType];
 
       var mimeType = "";
       var origin = null;
@@ -1636,8 +1735,6 @@ NoscriptService.prototype ={
         if(aCtx && aCtx.ownerDocument) {
           origin = { spec: aCtx.ownerDocument.documentURI };
         }
-      } else if(aContentType == 8) {
-        aContentType = 7;
       }
       return this.mainContentPolicy
                  .shouldLoad.call(this, aContentType, aContentLocation, origin, 
@@ -1669,8 +1766,8 @@ NoscriptService.prototype ={
       }
     },
     get: function(browser) {
-      return browser.noScriptPluginsCache || 
-      (browser.noScriptPluginsCache = { uris: {}, forceAllow: {} });
+      return browser.__noscriptPluginsCache || 
+      (browser.__noscriptPluginsCache = { uris: {}, forceAllow: {} });
     },
     
     isForcedSomewhere: function(uri, mime) {
@@ -1687,24 +1784,368 @@ NoscriptService.prototype ={
   
   pluginExtrasMark: {},
   getPluginExtras: function(obj) {
-    obj = this.nakeEmbed(obj);
-    if(this.consoleDump & 8) dump("Reading extras for " + obj);
-    return (obj._noScriptExtras && obj._noScriptExtras.mark && 
-      this.pluginExtrasMark == obj._noScriptExtras.mark) ? obj._noScriptExtras : null;
+    return this.getExpando(obj, "pluginExtras");
   },
   setPluginExtras: function(obj, extras) {
-    obj = this.nakeEmbed(obj);
-    if(this.consoleDump & 8) dump("Setting extras for " + obj);
-    extras.mark = this.pluginExtrasMark;
-    obj._noScriptExtras = extras;
+    this.setExpando(obj, "pluginExtras", extras);
+    if(this.consoleDump) dump("Setting plugin extras on " + obj + " -> " + (this.getPluginExtras(obj) == extras)
+      + ", " + (extras && extras.toSource())  );
     return extras;
   },
   
+  expandoMarker: {},
+  getExpando: function(domObject, key) {
+    return domObject && domObject.__noscriptStorage && 
+           domObject.__noscriptStorage.__marker == this.expandoMarker && 
+           domObject.__noscriptStorage[key] || null;
+  },
+  setExpando: function(domObject, key, value) {
+    if(!domObject) return null;
+    if(!domObject.__noscriptStorage) domObject.__noscriptStorage = { __marker: this.expandoMarker };
+    domObject.__noscriptStorage[key] = value;
+    return value;
+  },
+  
+  
+  processScriptElements: function(document, sites) {
+    var scripts = document.getElementsByTagName("script");
+    var scount = scripts.length;
+    if(scount) {
+      const HTMLElement = Components.interfaces.nsIDOMHTMLElement;
+      sites.scriptCount += scount;
+      var script, scriptSrc;
+      var nselForce = this.nselForce && this.isJSEnabled(sites[sites.length - 1]);
+      var isHTMLScript;
+      while(scount-- > 0) {
+        script = scripts.item(scount);
+        isHTMLScript = script instanceof HTMLElement;
+        if(isHTMLScript) {
+          scriptSrc = script.src;
+        } else {
+          scriptSrc = script.getAttribute("src");
+          if(!/^[a-z]+:\/\//i.test(scriptSrc)) continue;
+        }
+        scriptSrc = this.getSite(scriptSrc);
+        if(scriptSrc) {
+          sites.push(scriptSrc);
+          if(nselForce && isHTMLScript && !this.isJSEnabled(scriptSrc)) {
+            this.showNextNoscriptElement(script);
+          }
+        }
+      }
+    }
+  },
+  
+  showNextNoscriptElement: function(script, doc) { // TODO: dexpcomize!!!
+    const lm = this.lookupMethod;
+    const HTMLElement = Components.interfaces.nsIDOMHTMLElement;
+    for (var node = script; (node = lm(node, "nextSibling")());) {
+      if(node instanceof HTMLElement) {
+        if(new String(lm(node, "tagName")()).toUpperCase() != "NOSCRIPT") return;
+        if(lm(node, "getAttribute")("class") == "noscript-show") return;
+        lm(node, "setAttribute")("class", "noscript-show");
+        var child = lm(node, "firstChild")();
+        if(lm(child, "nodeType")() != 3) return;
+        var el = lm(lm(node, "ownerDocument")(), "createElement")("span");
+        el.className = "noscript-show";
+        el.innerHTML = lm(child, "nodeValue")();
+        lm(node, "replaceChild")(el, child);
+      }
+    }
+  },
+  
+  metaRefreshWhitelist: {},
+  metaRefreshesXPath: "/html/head/meta[translate(self::node()/attribute::http-equiv,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'refresh']",
+  processMetaRefresh: function(document) {
+    var docShell = this.domUtils.getDocShellFromWindow(document.defaultView);
+    if(!this.forbidMetaRefresh ||    
+       this.metaRefreshWhitelist[document.documentURI] ||
+       this.isJSEnabled(this.getSite(document.documentURI)) ||
+       !document.getElementsByTagName("noscript").length
+       ) {
+      this.enableMetaRefresh(docShell);
+      return;
+    }
+    try {
+      /*
+       "//noscript//meta" SHOULD be the right XPATH, if only Gecko didn't mess 
+       both with <NOSCRIPT> tags inside <HEAD>, relocating them inside <BODY>, 
+       and with <META> tags relocatibg them inside <HEAD> :P
+       So we need to fallback to a fuzzier euristhic...
+       We'll just require that both a <NOSCRIPT> element and a <META> refresh
+       live in the same document
+      */
+      // const xpath = "//noscript//meta[translate(self::node()/attribute::http-equiv,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'refresh']";
+      const xpath = this.metaRefreshesXPath;
+      var rr = document.evaluate(xpath, document, null, 
+           Components.interfaces.nsIDOMXPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+      if(!rr.snapshotLength) return;
+
+      var refresh, content, timeout, uri;
+      for(var j = 0; j < rr.snapshotLength; j++) {
+        refresh = rr.snapshotItem(j);
+        content = refresh.getAttribute ("content").split(/[,;]/, 2);
+        uri = content[1];
+        if(uri) {
+          if(!(document.documentURI in this.metaRefreshWhitelist) && this.getPref("forbidMetaRefresh.notify", true)) {
+            timeout = content[0];
+            uri = uri.replace (/^\s*/, "").replace (/^URL/i, "URL").split("URL=", 2)[1];
+            try {
+              this.domUtils.findBrowserForNode(document).ownerDocument.defaultView
+                  .noscriptOverlay.notifyMetaRefresh({ 
+                docShell: docShell,
+                document: document,
+                baseURI: docShell.currentURI,
+                uri: uri, 
+                timeout: timeout
+              });
+            } catch(e) {
+              dump("[NoScript]: " + e + " notifying meta refresh at " + document.documentURI + "\n");
+            }
+          }
+          this.disableMetaRefresh(docShell);
+          return;
+        }
+      }
+    } catch(e) {
+      dump("[NoScript]: " + e + " processing meta refresh at " + document.documentURI + "\n");
+      debugger;
+    }
+    this.enableMetaRefresh(docShell);
+  },
+  doFollowMetaRefresh: function(metaRefreshInfo) {
+    if(this.getPref("forbidMetaRefresh.remember", true)) {
+      var document = metaRefreshInfo.document;
+      this.metaRefreshWhitelist[document.documentURI] = metaRefreshInfo.uri;
+    }
+    var docShell = metaRefreshInfo.docShell;
+    this.enableMetaRefresh(metaRefreshInfo.docShell);
+    if(docShell instanceof Components.interfaces.nsIRefreshURI) {
+      docShell.setupRefreshURIFromHeader(metaRefreshInfo.baseURI, "0;" + metaRefreshInfo.uri);
+    }
+  },
+  doBlockMetaRefresh: function(metaRefreshInfo) {
+    if(this.getPref("forbidMetaRefresh.remember", true)) {
+      var document = metaRefreshInfo.document;
+      this.metaRefreshWhitelist[document.documentURI] = null;
+    }
+  },
+  
+  enableMetaRefresh: function(docShell) {
+    if(docShell) {
+      docShell.allowMetaRedirects = true;
+      docShell.resumeRefreshURIs();
+      // if(this.consoleDump) dump("Enabled META refresh on " + (docShell.currentURI && docShell.currentURI.spec) + "\n");
+    }
+  },
+  disableMetaRefresh: function(docShell) {
+    if(docShell) {
+      docShell.suspendRefreshURIs();
+      docShell.allowMetaRedirects = false;
+      if(docShell instanceof Components.interfaces.nsIRefreshURI) {
+        docShell.cancelRefreshURITimers();
+      }
+      // if(this.consoleDump) dump("Disabled META refresh on " + (docShell.currentURI && docShell.currentURI.spec) + "\n");
+    }
+  },
+  
+  
+  _objectTypes: null,
+  processObjectElements: function(document, sites) {
+    const ci = Components.interfaces;
+    var pp = this.showPlaceholder && this.pluginPlaceholder;
+    var replacePlugins = pp && this.forbidSomeContent;
+      
+    const types = this._objectTypes || 
+          (this._objectTypes = {
+            embed:  ci.nsIDOMHTMLEmbedElement, 
+            applet: ci.nsIDOMHTMLAppletElement,
+            iframe: ci.nsIDOMHTMLIFrameElement,
+            object: ci.nsIDOMHTMLObjectElement
+          });
+
+    const htmlNS = "http://www.w3.org/1999/xhtml";
+    
+    var objectType;
+    var count, objects, object, div, innerDiv, objectParent;
+    var extras, title;
+    var style, cssLen, cssCount, cssProp, cssDef;
+    var aWidth,aHeight;
+    var forcedCSS, style;
+    
+    for(objectTag in types) {
+      objects = document.getElementsByTagName(objectTag);
+      objectType = types[objectTag];
+      for(count = objects.length; count-- > 0;) {
+        object = objects.item(count);
+        if(!(object instanceof objectType) || // wrong type instantiated for this tag?!
+            objectType == types.embed &&
+            object.parentNode instanceof types.object // skip "embed" if nested into "object"
+         ) continue;
+         
+        sites.pluginCount++;
+        
+        if(replacePlugins) {
+          if(!forcedCSS) {
+            forcedCSS = "; -moz-outline-color: red !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; background: white url(\"" + pp +
+                     "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important }";
+            try {
+              if(document.documentElement.firstChild.firstChild == object && 
+                  !object.nextSibling) { // raw plugin content ?
+                var contentType = document.contentType;
+                if(contentType.substring(0, 5) != "text/") {
+                  this.shouldLoad(5, 
+                      this.siteUtils.ios.newURI(document.documentURI, null, null), 
+                      null, object, contentType, true);
+                }
+              }
+            } catch(e) {}
+          }
+          try {
+            extras = this.getPluginExtras(object);
+            if(extras) {
+              div = document.createElementNS(htmlNS, "div");
+              innerDiv = document.createElementNS(htmlNS, "div");
+              title = (extras.mime ? extras.mime.replace("application/", "") + "@" : "@") + extras.url;
+              extras.alt = object.getAttribute("alt");
+              
+              div.setAttribute("title", extras.alt ? title+" \"" + 
+                               extras.alt + "\"" : title);
+              
+              div.style.display = "inline";
+              div.style.padding = div.style.margin = "0px";
+               
+              style = document.defaultView.getComputedStyle(object, null);
+               
+              cssDef = "";
+              for(cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
+                cssProp=style.item(cssCount);
+                cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
+              }
+              innerDiv.setAttribute("style", cssDef + forcedCSS);
+              
+              innerDiv.style.display = "block";
+              
+              this.setExpando(div, "removedPlugin", object.cloneNode(true));
+             
+              
+              while(object.firstChild) {
+                object.removeChild(object.firstChild);
+              }
+              object.parentNode.replaceChild(div, object);
+              div.appendChild(innerDiv);
+              if(innerDiv.parentNode.parentNode == document.body &&
+                style.width == "100%" && style.height == "100%") {
+                innerDiv.style.border = "none";
+              }
+              this.setPluginExtras(div, extras);
+              div.addEventListener("click", sites.browser.ownerDocument.defaultView.noscriptOverlay.listeners.onAppletClick, false);
+            }
+          } catch(objectEx) {
+            dump("NoScript: " + objectEx + " processing plugin " + count + "@" + document.documentURI + "\n");
+          }
+        }
+      }
+    }
+  
+  },
+  
+  getSites: function(browser) {
+    var sites = [];
+    sites.browser = browser;
+    sites.scriptCount = 0;
+    sites.pluginCount = 0;
+    
+    try {
+      return this._enumerateSites(browser, sites);
+    } catch(ex) {
+      if(this.consoleDump) {
+        dump("[NOSCRIPT ERROR!!!] Enumerating sites: " + ex.message + "\n");
+        debugger;
+      }
+    }
+    return sites;
+  },
+  
+  _enumerateSites: function(browser, sites) {
+    const ci = Components.interfaces;
+    const nsIWebNavigation = ci.nsIWebNavigation;
+    const nsIDocShell = ci.nsIDocShell;
+    
+    const docShells = browser.docShell.getDocShellEnumerator (
+        ci.nsIDocShellTreeItem.typeContent,
+        browser.docShell.ENUMERATE_FORWARDS
+    );
+    
+    var docShell, doc, docURI, url;
+    
+    const pluginsCache = this.pluginsCache.get(browser);
+    const docURIs = {};
+    var cache;
+    
+    var document;
+    while(docShells.hasMoreElements()) {
+       
+       docShell = docShells.getNext();
+       document = (docShell instanceof nsIDocShell) &&
+                  docShell.contentViewer && docShell.contentViewer.DOMDocument;
+       if(!document) continue;
+       
+       // Truncate title as needed
+       if(this.truncateTitle && document.title.length > this.truncateTitleLen) {
+         document.title = document.title.substring(0, this.truncateTitleLen);
+       }
+       
+       // Collect document / cached plugin URLs
+       url = this.getSite(docURI = document.documentURI);
+       if(url) {
+         sites.push(url);
+         docURIs[docURI] = true;
+         cache = pluginsCache.uris[docURI];
+         if(cache) {
+           for(var pluginURI in cache) {
+              sites.push(pluginURI);
+            }
+          }
+          try {
+            const domain = document.domain;
+            if(domain && this.getDomain(url) != domain) sites.push(domain);
+          } catch(e) {}
+       }
+
+       if(!(docShell instanceof nsIWebNavigation) || docShell.isLoadingDocument)
+         continue;
+       
+       // scripts
+       this.processScriptElements(document, sites);
+       
+       // plugins
+       this.processObjectElements(document, sites);
+
+    }
+    if(browser.docShell instanceof nsIWebNavigation && !browser.docShell.isLoadingDocument) {
+      this.pluginsCache.purge(pluginsCache, docURIs);
+    }
+    
+    for(var j = sites.length; j-- > 0;) {
+      if(!/^[a-z]+:\/*[^\/\s]+/.test(sites[j]) && sites[j] != "file:///") {
+        sites.splice(j, 1); // reject scheme-only URLs
+      }
+    }
+    
+    sites.topURL = sites[0] || '';
+    return this.sortedSiteSet(sites);
+  },
+  
+
   log: function(msg) {
     var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
                                  .getService(Components.interfaces.nsIConsoleService);
     consoleService.logStringMessage(msg);
-  }
+  },
+  
+ 
+  
 };
 
 
@@ -1753,7 +2194,118 @@ RequestWatchdog.prototype = {
   ns: null,
   callback: null,
   
-  observe: function(channel, topic, data) {
+  getUnsafeRequest: function(browser) {
+    return this.ns.getExpando(browser, "unsafeRequest");
+  },
+  setUnsafeRequest: function(browser, request) {
+    return this.ns.setExpando(browser, "unsafeRequest", request);
+  },
+  
+  unsafeReload: function(browser, start) {
+    this.ns.setExpando(browser, "unsafeReload", start);
+    if(start) {
+      const unsafeRequest = this.getUnsafeRequest(browser);
+      if(unsafeRequest) {
+        browser.webNavigation.loadURI(unsafeRequest.URI.spec, unsafeRequest.loadFlags, 
+              unsafeRequest.referrer, unsafeRequest.postData, null);
+        this.setUnsafeRequest(browser, null);
+      } else {
+        browser.reload();
+      }
+    }
+    return start;
+  },
+  
+  isUnsafeReload: function(browser) {
+    return this.ns.getExpando(browser, "unsafeReload");
+  },
+  
+  resetUntrustedReloadInfo: function(browser, channel) {
+    if(!browser) return;
+    var window = this.findWindow(channel);
+    if(browser.contentWindow == window) {
+      if(this.ns.consoleDump) this.dump(channel, "Top level document, resetting former untrusted browser info");
+      this.setUntrustedReloadInfo(browser, false);
+    }
+  },
+  setUntrustedReloadInfo: function(browser, status) {
+    return this.ns.setExpando(browser, "untrustedReload", status);
+  },
+  getUntrustedReloadInfo: function(browser) {
+    return this.ns.getExpando(browser, "untrustedReload");
+  },
+  
+  detectBackFrame: function(prev, next, ds) {
+    if(prev.ID != next.ID) return prev.URI.spec;
+    const ci = Components.interfaces;
+    if((prev instanceof ci.nsISHContainer) &&
+       (next instanceof ci.nsISHContainer) &&
+       (ds instanceof ci.nsIDocShellTreeNode)
+      ) {
+      var uri;
+      for(var j = Math.min(prev.childCount, next.childCount, ds.childCount); j-- > 0;) {
+        uri = this.detectBackFrame(prev.GetChildAt(j),
+                                   next.GetChildAt(j),
+                                   ds.GetChildAt(j));
+        if(uri) return uri.spec;
+      }
+    }
+    return null;
+  },
+  
+  traceBackHistory: function(sh, window, breadCrumbs) {
+    var wantsBreadCrumbs = !breadCrumbs;
+    breadCrumbs = breadCrumbs || [];
+    
+    var he;
+    var uri = null;
+    var site = '';
+    for(var j = sh.index; j-- > 0;) {
+       he = sh.getEntryAtIndex(j, false);
+       if(he.isSubFrame) {
+         uri = this.detectBackFrame(he, sh.getEntryAtIndex(j + 1),
+           this.ns.getDocShellFromWindow(window)
+         );  
+       } else {
+        // not a subframe navigation 
+        if(window == window.top) {
+          uri = he.URI.spec; // top frame, return previous history entry
+        } else {
+          window = window.parent;
+          uri = window.document.documentURI;
+        }
+      }
+      if(!uri) break;
+      breadCrumbs.push(uri);
+      var site = this.ns.getSite(uri);
+      if(site) break;
+    }
+    return wantsBreadCrumbs ? breadCrumbs : site;
+  },
+  
+  traceBack: function(channel, breadCrumbs) {
+    
+    const ci = Components.interfaces;
+    try {
+      var window = this.findWindow(channel);
+      var webNav = window.top.QueryInterface(ci.nsIInterfaceRequestor).getInterface(ci.nsIWebNavigation);
+      const sh = webNav.sessionHistory;
+      if(!sh) return '';
+      
+    } catch(e) {
+      if(this.ns.consoleDump) this.dump(channel, "Error tracing back origin: " + e.message);
+    }
+    return '';
+  },
+  
+  observe: function(subject, topic, data) {
+    try {
+      this.filterXSS(subject);
+    } catch(e) {
+      this.abort({ channel: subject, reason: e.message, silent: true });
+    }
+  },
+  filterXSS: function(channel) {
     const ci = Components.interfaces;
     const ns = this.ns;
     
@@ -1768,21 +2320,32 @@ RequestWatchdog.prototype = {
     
     // fast return if nothing to do here
     if(!(ns.filterXPost || ns.filterXGet)) return; 
-
+    
+    var browser = null;
+    
     var origin = xorigin && xorigin.spec || channel.originalURI.spec != url.spec && channel.originalURI.spec || null;
     
     
     var untrustedReload = false;
-    var browser = null;
-
+   
+    var originSite = null;
+    
     if(!origin) {
       if((channel instanceof ci.nsIHttpChannelInternal) && channel.documentURI) {
-        if(channel.URI == channel.documentURI) {
-           browser = this.findBrowser(channel);
-           if(!(browser && browser.__noscript_untrusted__)) return;
-           origin = "";
-           untrustedReload = true;
-           if(ns.consoleDump) this.dump(channel, "Untrusted reload");
+        if(channel.URI.spec == channel.documentURI.spec) {
+           var breadCrumbs = [];
+           originSite = this.traceBack(channel, breadCrumbs);
+           if(originSite) {
+             origin = [channel.URI.spec].concat(breadCrumbs).join("@@@");
+             if(ns.consoleDump) this.dump(channel, "TRACEBACK ORIGIN: " + originSite + " FROM " + origin);
+           } else {
+             // check untrusted reload
+             browser = this.findBrowser(channel);
+             if(!this.getUntrustedReloadInfo(browser)) return;
+             origin = "";
+             untrustedReload = true;
+             if(ns.consoleDump) this.dump(channel, "Untrusted reload");
+           }
         } else {
           origin = channel.documentURI.spec;
           if(ns.consoleDump) this.dump(channel, "ORIGIN (from channel.documentURI): " + origin);
@@ -1795,76 +2358,97 @@ RequestWatchdog.prototype = {
       if(ns.consoleDump) this.dump("ORIGIN is about:blank, SKIP");
       return;
     } else {
+      if(channel.loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI && channel.originalURI.spec == channel.URI.spec) {
+        // clean up after user action
+        browser = browser || this.findBrowser(channel);
+        this.resetUntrustedReloadInfo(browser, channel);
+        var unsafeRequest = this.getUnsafeRequest(browser);
+        if(unsafeRequest && unsafeRequest.URI.spec != channel.originalURI.spec) {
+          this.setUnsafeRequest(browser, null);
+        }
+      }
       if(ns.consoleDump) this.dump(channel, "ORIGIN: " + origin + ", xorigin: " + (xorigin && xorigin.spec) + ", originalURI: " + channel.originalURI.spec);
     }
     
     const su = this.siteUtils;
-    const originSite = su.getSite(origin);
-    const targetSite = su.getSite(url.spec);
-
+    originSite = originSite || su.getSite(origin);
+    var targetSite = su.getSite(url.spec);
+   
+    
     if(originSite == targetSite) return; // same origin, fast return
     
     if(this.callback && this.callback(channel, origin)) return;
-
-    if(ns.isJSEnabled(originSite)) {
-      if(originSite.substring(0, 7) == "chrome:"   // browser initiated navigation
-         // && !(channel.loadGroup.loadFlags & channel.LOAD_REPLACE) // not a reload, cleanup state
-          ) { 
-        browser = browser || this.findBrowser(channel); 
-        if(browser) { 
-          browser.__noscript_untrusted__ = false;
-          if(ns.consoleDump) this.dump(channel, "Origin " + origin + " is chrome, resetting untrusted browser info");
-        } else {
-          if(ns.consoleDump) this.dump(channel, "Origin " + origin + " is chrome, but cannot find browser");
-        }
-      } else if(ns.consoleDump) this.dump(channel, "Origin " + origin + " is trusted, SKIP");
-      return;
-    }
     
     if(!ns.isJSEnabled(targetSite)) {
-       browser = browser || this.findBrowser(channel);
-       if(browser) browser.__noscript_untrusted__ = true;
        if(ns.consoleDump) this.dump(channel, "Destination " + url.spec + " is noscripted, SKIP");
        return;
     }
     
+    if(!originSite) { // maybe data or javascript URL?
+      if(/^(?:javascript|data):/i.test(origin) && ns.getPref("xss.trustData", true)) {
+        var breadCrumbs = [];
+        originSite = this.traceBack(channel, breadCrumbs);
+        if(originSite) { 
+          origin = [origin].concat(breadCrumbs).join("@@@");
+        }
+        delete breadCrumbs;
+      }
+    }
+    
+    if(ns.isJSEnabled(originSite)) {
+      this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel), channel);
+      if(ns.consoleDump) this.dump(channel, "Origin " + origin + " is trusted, SKIP");
+      return;
+    }
     
     if(untrustedReload && browser) {
-      var window = this.findWindow(channel);
-      if(browser.contentWindow == window) {
-        if(ns.consoleDump) this.dump(channel, "Top level document, resetting untrusted browser info");
-        browser.__noscript_untrusted__ = false;
-      }
+      this.resetUntrustedReloadInfo(browser, channel);
+    }
+    
+    if(this.isUnsafeReload(browser = browser || this.findBrowser(channel))) {
+       if(ns.consoleDump) this.dump(channel, "UNSAFE RELOAD of [" + url.spec +"] from [" + origin + "], SKIP");
+       return;
+    }
+    
+    if(ns.filterXExceptions && ns.filterXExceptions.test(url.spec)) { 
+      // "safe" xss target exception
+      if(ns.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
+      return;
     }
     
     // -- DANGER ZONE --
     
-    var originalAttempt = url.spec;
-    var xssMaybe = false;
+    var requestInfo = {
+      xssMaybe: false,
+      channel: channel,
+      unsafeRequest: {
+        URI: url.clone(),
+        postData: null,
+        referrer: channel.referrer && channel.referrer.clone(),
+        origin: origin,
+        loadFlags: channel.loadFlags
+      }
+    };
+    
+    var originalAttempt;
     
     // transform upload requests into no-data GETs
     if(ns.filterXPost && (channel instanceof ci.nsIUploadChannel) && channel.uploadStream) {
       channel.requestMethod = "GET";
-      try {
-        channel.uploadStream.close();
-      } catch(e) {}
+ 
+      requestInfo.unsafeRequest.postData = channel.uploadStream;
       channel.uploadStream = null;
-      xssMaybe = true;
-      this.notify({
+      this.notify(this.addXssInfo(requestInfo, {
         reason: "filterXPost",
-        channel: channel,
         origin: origin,
-        originalAttempt: originalAttempt
-      });
+        originalAttempt: url.spec,
+        silent: untrustedReload
+      }));
     }
     
     if(ns.filterXGet && ns.filterXGetRx) {
     
-      if(ns.filterXExceptions && ns.filterXExceptions.test(originalAttempt)) { 
-        // "safe" xss target exception
-        if(this.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
-        return; 
-      }
+      
       // sanitize referer
       if(channel.referrer && channel.referrer.spec) {
         originalAttempt = channel.referrer.spec;
@@ -1884,14 +2468,12 @@ RequestWatchdog.prototype = {
           channel.referrer.spec = "";
         }
         if((!channel.referrer) || originalAttempt != channel.referrer.spec) {
-          xssMaybe = true;
-          this.notify({
+          this.notify(this.addXssInfo(requestInfo, {
             reason: "filterXGetRef",
-            channel: channel,
             origin: origin,
             originalAttempt: originalAttempt,
             silent: true
-          });
+          }));
         }
       }
       
@@ -1904,7 +2486,7 @@ RequestWatchdog.prototype = {
       var qsChanged = { value: false };
       if(url instanceof ci.nsIURL) {
         // sanitize path
-        if(url.filePath) url.filePath = this.sanitizeURI(url.filePath);
+        if(url.filePath) url.filePath = this.sanitizeURI(url.filePath, true); // true == lenient == allow ()=
         // sanitize query
         if(url.query) url.query = this.sanitizeXQuery(url.query, qsChanged);
         // sanitize fragment
@@ -1915,31 +2497,33 @@ RequestWatchdog.prototype = {
       }
       
       if(url.spec != originalAttempt) {
-        xssMaybe = true;
-        this.notify({
+        this.notify(this.addXssInfo(requestInfo, {
           reason: "filterXGet",
-          channel: channel,
           origin: origin,
           originalAttempt: originalAttempt,
-          silent: !(qsChanged.value || originalAttempt.replace(/\?.*/g, "") != url.prePath + url.filePath) 
-        });
+          silent: !(qsChanged.value || decodeURIComponent(originalAttempt.replace(/\?.*/g, "")) != decodeURIComponent(url.prePath + url.filePath)) 
+        }));
       }
     }
    
-    if(untrustedReload) { 
-      browser.__noscript_untrusted__ = false;
-    }
-    // avoid surprises from history & cache
-    if(xssMaybe && channel instanceof Components.interfaces.nsICachingChannel) {
-      const CACHE_FLAGS = channel.LOAD_FROM_CACHE | 
-                          channel.VALIDATE_NEVER | 
-                          channel.LOAD_ONLY_FROM_CACHE;
-      if(channel.loadFlags & CACHE_FLAGS) {
-        channel.loadFlags = channel.loadFlags & ~CACHE_FLAGS | channel.LOAD_BYPASS_CACHE;
-        if(this.consoleDump) this.dump(channel, "SKIPPING CACHE");
+    
+
+    if(requestInfo.xssMaybe) {
+      // avoid surprises from history & cache
+      if(channel instanceof Components.interfaces.nsICachingChannel) {
+        const CACHE_FLAGS = channel.LOAD_FROM_CACHE | 
+                            channel.VALIDATE_NEVER | 
+                            channel.LOAD_ONLY_FROM_CACHE;
+        if(channel.loadFlags & CACHE_FLAGS) {
+          channel.loadFlags = channel.loadFlags & ~CACHE_FLAGS | channel.LOAD_BYPASS_CACHE;
+          if(this.consoleDump) this.dump(channel, "SKIPPING CACHE");
+        }
+      }
+      
+      if(requestInfo.window == requestInfo.window.top) {
+        this.setUnsafeRequest(requestInfo.browser, requestInfo.unsafeRequest);
       }
     }
-
   },
   
   sanitizeXQuery: function(query, changed) {
@@ -1986,9 +2570,9 @@ RequestWatchdog.prototype = {
     } 
     return parms.join("&");
   },
-  sanitizeURI: function(s) {
+  sanitizeURI: function(s, lenient) {
     try {
-      return encodeURI(this.sanitize(decodeURI(s)));
+      return encodeURI(this.sanitize(decodeURIComponent(s), lenient));
     } catch(e) {
       return "";
     }
@@ -2000,7 +2584,7 @@ RequestWatchdog.prototype = {
       return "";
     }
   },
-  sanitize: function(s) {
+  sanitize: function(s, lenient) {
     
     if(s.indexOf('"') > -1) {
       // try to play nice on search engine queries with grouped quoted elements
@@ -2021,13 +2605,34 @@ RequestWatchdog.prototype = {
       return s;
     }
     // regular duty
-    return s.replace(this.ns.filterXGetRx, " ");
+    s = s.replace(this.ns.filterXGetRx, " ");
+    if(!lenient) s = s.replace(this.ns.filterXGetRx2Black, " "); // lenient on path only to allow some wikipedianisms
+    return s;
   },
   
   abort: function(requestInfo) {
-    requestInfo.channel.cancel(0x804b0002 /* NS_BINDING_ABORTED */);
+    if(requestInfo.channel instanceof Components.interfaces.nsIRequest) {
+      requestInfo.channel.cancel(0x804b0002 /* NS_BINDING_ABORTED */);
+    }
     this.dump(requestInfo.channel, "Aborted - " + requestInfo.reason);
     this.notify(requestInfo);
+  },
+  
+  mergeObjects: function(o1, o2) {
+    for(p in o2) {
+      o1[p] = o2[p];
+    }
+    return o1;
+  },
+  
+  addXssInfo: function(requestInfo, xssInfo) {
+    try {
+      requestInfo.window = requestInfo.window || this.findWindow(requestInfo.channel);
+      requestInfo.browser = requestInfo.browser || (requestInfo.window && 
+                            this.ns.domUtils.findBrowserForNode(requestInfo.window));
+    } catch(e) {}
+    requestInfo.xssMaybe = true;
+    return this.mergeObjects(xssInfo, requestInfo);
   },
   
   notify: function(requestInfo) {
@@ -2038,19 +2643,28 @@ RequestWatchdog.prototype = {
       ]);
     this.dump(requestInfo.channel, "Notifying " + msg + "\n\n\n");
     this.ns.log(msg);
+   
     
-    if(requestInfo.silent || !this.ns.getPref("xss.notify", true)) 
-      return;
+    if(requestInfo.silent || !requestInfo.browser || !requestInfo.window ||
+      !this.ns.getPref("xss.notify", true) ||
+      (requestInfo.window != requestInfo.window.top && 
+          !this.ns.getPref("xss.notify.subframes", false)
+      )
+    ) return;
     
-    if((requestInfo.browser = this.findBrowser(requestInfo.channel))) {
+    try {
       requestInfo.browser.ownerDocument.defaultView.noscriptOverlay.notifyXSSOnLoad(requestInfo);
-    }
+    } catch(e) {}
   },
   
   findWindow: function(channel) {
-    return channel.notificationCallbacks.QueryInterface(
-      Components.interfaces.nsIInterfaceRequestor).getInterface(
-      Components.interfaces.nsIDOMWindow);
+    try {
+      return channel.notificationCallbacks.QueryInterface(
+        Components.interfaces.nsIInterfaceRequestor).getInterface(
+        Components.interfaces.nsIDOMWindow);
+    } catch(e) {
+      return null;
+    }
   },
   findBrowser: function(channel) {
     var w = this.findWindow(channel);

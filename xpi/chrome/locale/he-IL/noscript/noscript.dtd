@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "התר &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "התר קישוריות מקומיות">
 <!ENTITY noscriptForbidPing "אסור &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "אסור על הפניות META בתוך תגיות &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "רשימת מותרים">
 <!ENTITY noscriptPermissions "הרשאות">
 <!ENTITY noscriptRefresh "טען מחדש">
@@ -76,3 +77,16 @@
 <!ENTITY noscriptNselForce "הצג את תגית ה-&lt;noscript&gt; שבאה אחרי &lt;script&gt; חסום.">
 <!ENTITY noscriptAutoAllowTopLevel "כברירת מחדל, התר אתרים ראשיים באופן זמני">
 <!ENTITY noscriptDescription "הגנה מורחבת לפיירפוקס: נוסקריפט מאפשר ג&apos;אוהסקריפט, ג&apos;אוה (ותוספים אחרים) רק לאתרים מורשים לבחירתך (למשל, אתר הבנק).  גישה זו, של חסימה מראש על בסיס רשימת-מותרים, מונעת ניצול של פרצות אבטחה (מוכרות ואף בלתי-מוכרות!) בלי לאבד פונקציונליות... מומחים מסכימים: פיירפוקס בטוח יותר עם נוסקריפט. :-)">
+<!ENTITY noscriptOptBlockCssScanners "חסום סורקים מבוססי-CSS">
+<!ENTITY noscriptOptFilterXGet "בטל בקשות חשודות לאתרים מצד שלישי">
+<!ENTITY noscriptOptFilterXPost "הפוך בקשות POST מאתרים מצד שלישי לבקשות GET ללא נתונים נלווים">
+<!ENTITY noscriptShowConsole "הצג מסוף...">
+<!ENTITY noscriptShowConsole.accesskey "מ">
+<!ENTITY noscriptXss "XSS (סקריפטים מאתרים מצד שלישי)">
+<!ENTITY noscriptXssFaq "שאלות ותשובות על XSS">
+<!ENTITY noscriptXssFaq.accesskey "ש">
+<!ENTITY noscriptUnsafeReload "טעינה מחדש בשיטה בלתי בטוחה">
+<!ENTITY noscriptUnsafeReload.accesskey "ב">
+<!ENTITY noscriptXssExceptions "יוצאים מכלל ההגנה נגד XSS">
+<!ENTITY noscriptXssExceptions.description "ביעדים שמתאימים לביטויים הרגולריים האלה *לא* תיחסם אפשרות XSS">
+<!ENTITY noscriptMatchSample "דוגמה לביטוי רגולרי">

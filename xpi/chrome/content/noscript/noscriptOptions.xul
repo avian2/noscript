@@ -20,6 +20,7 @@
 ***** END LICENSE BLOCK ***** -->
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://noscript/skin/browser.css" type="text/css"?>
+<?xml-stylesheet href="chrome://noscript/skin/options.css" type="text/css"?>
 
 <!DOCTYPE dialog [
 <!ENTITY % noscript SYSTEM "chrome://noscript/locale/noscript.dtd" >
@@ -29,11 +30,10 @@
 ]
 >
 <dialog id="noscriptOptions" 
-  onload="nso_init()"
-  ondialogaccept="nso_save()"
+  onload="nsopt.init()"
+  ondialogaccept="nsopt.save()"
   title="&noscriptOptionsLong;"
 	buttons="accept,cancel"
-  flex="1"
   persist="screenX screenY"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
@@ -43,14 +43,18 @@
   </stringbundleset>
   
   <script type="application/x-javascript" src="noscript.js" />
+  <script type="application/x-javascript" src="iaUI.js" />
   <script type="application/x-javascript" src="noscriptOptions.js" />
   
-  <tabbox >
+  <vbox style="width: 40em">
+  <tabbox id="nsopt-tabsMain">
   <tabs>
     <!-- <tab label="&noscriptSiteManager;"/> -->
-    <tab label="&noscriptGeneral;"/>
-    <tab label="&noscriptAppearance;"/>
-    <tab label="&noscriptAdvanced;"/>
+    <tab label="&noscriptGeneral;" id="nsopt-tabGeneral"/>
+    <tab label="&noscriptWhitelist;" id="nsopt-tabWhitelist"/>
+    <tab label="&noscriptAppearance;" id="nsopt-tabAppearance"/>
+    <tab label="&noscriptNotifications;" id="nsopt-tabNotifications"/>
+    <tab label="&noscriptAdvanced;" id="nsopt-tabAdvanced"/>
   </tabs>
     <tabpanels>
    <!-- 
@@ -69,23 +73,55 @@
     
     </tabpanel>
   -->  
-      <tabpanel>
+  <tabpanel><!-- General -->
   
   <vbox flex="1">
-  <hbox>
-  <description style="width: 500px; white-space: normal" id="permissionsText">&noscriptPermissionsText;</description>
-  </hbox>
+
+    <groupbox class="ia-indent">
+      <caption><checkbox id="cbx-autoAllow" label="&noscriptAutoAllowTopLevel;" oncommand="ConditionalGroup.changed(this)" /></caption>
+      <radiogroup id="sel-autoAllow">  
+         <radio label="&noscriptFullAddr;" value="1" selected="true" />
+         <radio label="&noscriptFullDom;" value="2"/>
+         <radio label="&noscriptBaseDom;" value="3"/>
+      </radiogroup>
+    </groupbox>
+    
+    <groupbox class="ia-indent">
+      <caption orient="vertical">
+      <checkbox id="cbx-toolbarToggle" label="&noscriptToolbarToggle;" oncommand="ConditionalGroup.changed(this)" />
+      <label id="toolbarToggle-shortcut" class="ia-indent" hidden="true"/>
+      </caption>
+      
+      <radiogroup id="sel-toolbarToggle">  
+         <radio label="&noscriptFullAddr;" value="1" />
+         <radio label="&noscriptFullDom;" value="2" />
+         <radio label="&noscriptBaseDom;" value="3" selected="true" />
+      </radiogroup>
+    </groupbox>
+    
+    <groupbox>
+     <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
+     <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
+     <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
+    </groupbox>
+  
+  </vbox>
+  </tabpanel><!-- END General -->
+  
+  <tabpanel><!-- Whitelist -->
+  <vbox flex="1">
+  <description style="white-space: normal; width: 33em" id="permissionsText">&noscriptPermissionsText;</description>
   <separator class="thin"/>
   <label value="&noscriptWebAddress;"/>
-  <hbox>
-    <textbox id="urlText" flex="1" oninput="nso_urlChanged()"/> 
+  <hbox align="center">
+    <textbox id="urlText" flex="1" oninput="nsopt.urlChanged()"/> 
     <button disabled="true" id="addButton" label="&noscriptAllow;" 
       accesskey="&noscriptAllow.accesskey;" 
-      oncommand="nso_allow()"/>
+      oncommand="nsopt.allow()"/>
   </hbox>
   <listbox id="urlList" seltype="multiple" 
-    onselect="nso_urlListChanged()"
-    onkeyup="if(event.keyCode==event.DOM_VK_DELETE) nso_remove();"
+    onselect="nsopt.urlListChanged()"
+    onkeyup="if(event.keyCode==event.DOM_VK_DELETE) nsopt.remove();"
     flex="1"
     rows="8"
   >
@@ -93,47 +129,30 @@
   </listbox>
   <separator class="thin"/>
   <hbox>
-    <button id="removeButton" disabled="true" label="&noscriptRemoveSelected;" oncommand="nso_remove()"/>
+    <button id="removeButton" disabled="true" label="&noscriptRemoveSelected;" oncommand="nsopt.remove()"/>
     <spacer flex="1" />
     <button id="importButton" label="&noscriptImport;" accesskey="&noscriptImport.accesskey;" 
-      oncommand="nso_import()"/>
+      oncommand="nsopt.import()"/>
     <button id="exportButton" label="&noscriptExport;" accesskey="&noscriptExport.accesskey;" 
-       oncommand="nso_export()"/>
+       oncommand="nsopt.export()"/>
   </hbox>
- 
-  
-  <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
-  <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
-  <label id="lbl-allowBookmarks" hidden="true" collapsed="true" value="&noscriptAllowBookmarks;" />
-
-   <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
-   <checkbox id="opt-toolbarToggle" label="&noscriptToolbarToggle;" />
-   
-    <separator class="thin"/>
-    
-  <groupbox>
-    <caption><checkbox id="cbx-autoAllow" label="&noscriptAutoAllowTopLevel;" oncommand="nso_autoAllowChanged(this)" /></caption>
-    <menulist id="sel-autoAllow">  
-      <menupopup>
-        <menuitem label="&noscriptFullAddr;" value="1" selected="true" />
-        <menuitem label="&noscriptFullDom;" value="2"/>
-        <menuitem label="&noscriptBaseDom;" value="3"/>
-      </menupopup>
-    </menulist>
-  </groupbox>
-  
   </vbox>
-  </tabpanel>
-  <tabpanel>
-  <vbox flex="1">
-    <groupbox> 
-      <caption label="&noscriptShow;" />
+  </tabpanel><!-- END Whitelist -->
   
+  
+  <tabpanel><!-- Appearance -->
+  <vbox flex="1">
+ 
+      <label class="header" value="&noscriptShow;"/>
+     <groupbox>
       <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
       <checkbox id="opt-statusLabel" label="&noscriptStatusLabel;" />
-      <checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
-      <separator class="thin"/>
-      <vbox style="margin-left: 23px">
+    </groupbox>
+    
+    <groupbox class="ia-indent">
+      <caption><checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" /></caption>
+  
+     
        <checkbox id="opt-showBaseDomain" label="&noscriptBaseDom;" />
        <checkbox id="opt-showDomain" label="&noscriptFullDom;" />
        <checkbox id="opt-showAddress" label="&noscriptFullAddr;" />
@@ -143,73 +162,123 @@
          <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
        <separator class="thin" />
        <checkbox id="opt-showGlobal" label="Allow Globally" />
-      </vbox>
      </groupbox>
-     <groupbox> 
-        <caption label="&noscriptNotifications;" />
-        <vbox id="notifyOpts">
-          <checkbox id="opt-notify" label="&noscriptNotify;" />
-          <checkbox id="opt-notify.bottom" label="&noscriptNotify.bottom;" style="margin-left: 24px" />
-          <checkbox id="opt-notify.hide" label="" style="margin-left: 24px" />
-        </vbox>
-        <checkbox id="opt-sound" label="&noscriptSound;" />
-        <vbox style="margin-left: 24px">
-          <hbox>
-            <textbox id="sampleURL" readonly="true" flex="1" />
-            <button id="sampleChooseButton" label="&noscriptSound.choose;" accesskey="&noscriptSound.choose.accesskey;" 
-              oncommand="nso_chooseSample()" />
-          </hbox>
-          <hbox align="right">
-            <spacer flex="1" />
-            <button label="&noscriptSound.play;" accesskey="&noscriptSound.play.accesskey;"
-              oncommand="nso_play()" />
-            <button label="&noscriptSound.reset;" accesskey="&noscriptSound.reset.accesskey;"
-              oncommand="nso_setSample(null)" />
-          </hbox>
-        </vbox>
-     </groupbox>
+    
   </vbox>
-  </tabpanel>
+  </tabpanel><!-- END Appearance -->
   
-  
-  <tabpanel>
+  <tabpanel><!-- Notifications -->
     <vbox flex="1">
-      <hbox><description style="width: 400px; white-space: normal">&noscriptReloadWarn;</description></hbox>
-      <groupbox> 
-        <caption label="&noscriptAdditionalPermissions;" />
-        <vbox>
-          <checkbox id="opt-nselForce" label="&noscriptNselForce;" />
-          <checkbox id="mozopt-browser.send_pings" label="&noscriptAllowPing;" />
-          <separator class="thin"/>
-          <checkbox id="opt-allowClipboard" label="&noscriptAllowClipboard;" />
-          <checkbox id="opt-allowLocalLinks" label="&noscriptAllowLocalLinks;" />
-        </vbox>
-       
-      </groupbox>
-      <groupbox> 
-         <caption label="&noscriptAdditionalRestrictions;" />
-         <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
-         <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
-         <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
-         <vbox style="margin-left: 24px">
-             <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
-             <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+    <groupbox>
+      <vbox id="notifyOpts">
+        <checkbox id="opt-notify" label="&noscriptNotify;" />
+        <vbox class="ia-indent">
+          <checkbox id="opt-notify.bottom" label="&noscriptNotify.bottom;"  />
+          <checkbox id="opt-notify.hide" label="" />
          </vbox>
-          
-          <separator class="thin"/>
-          <checkbox id="opt-truncateTitle" label="&noscriptTruncateTitle;" />
-          <checkbox id="opt-fixLinks" label="&noscriptFixLinks;" />
-          <checkbox id="opt-noping" label="&noscriptForbidPing;" />
-          <checkbox id="opt-nselNever" label="&noscriptNselNever;" />
-          <separator class="thin"/>
-          <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
-          <separator class="thin"/>
-          <checkbox id="opt-filterXGet" label="&noscriptOptFilterXGet;" />
-          <checkbox id="opt-filterXPost" label="&noscriptOptFilterXPost;" />
-       </groupbox>
-   </vbox>
-  </tabpanel>
+      </vbox>
+      <separator class="thin" />
+      <hbox align="center">
+        <checkbox id="opt-xss.notify" label="&noscriptXss;" /><!-- TODO: accesskey -->
+        <label class="text-link" style="font-weight: bold" value="?" onclick="noscriptUtil.openXssFaq()" tooltiptext="&noscriptXssFaq;" />
+      </hbox>
+      
+      <separator class="thin" />
+      <checkbox id="opt-forbidMetaRefresh.notify" label="&noscriptForbidMetaRefresh;"/><!-- TODO: accesskey -->
+      
+      </groupbox>
+      <groupbox class="ia-indent">
+        <caption><checkbox id="opt-sound" label="&noscriptSound;" /></caption>
+       
+        <hbox>
+          <textbox id="sampleURL" readonly="true" flex="1" />
+          <button id="sampleChooseButton" label="&noscriptSound.choose;" 
+            accesskey="&noscriptSound.choose.accesskey;" 
+            oncommand="nsopt.soundChooser.choose()" />
+        </hbox>
+        <hbox align="right">
+          <spacer flex="1" />
+          <button label="&noscriptSound.play;" accesskey="&noscriptSound.play.accesskey;"
+            oncommand="nsopt.soundChooser.play()" />
+          <button label="&noscriptSound.reset;" accesskey="&noscriptSound.reset.accesskey;"
+            oncommand="nsopt.soundChooser.setSample(null)" />
+        </hbox>        
+      </groupbox>
+    </vbox>
+  </tabpanel><!-- END Notifications -->
   
+  <tabpanel><!-- Advanced -->
+    <vbox flex="1">
+    <hbox><description style="white-space: normal">&noscriptReloadWarn;</description></hbox>
+  <tabbox id="nsopt-tabsAdvanced">
+      <tabs>
+        <tab class="noscript-no" label=" &noscriptUntrusted; " id="nsopt-tabUntrusted" tooltiptext="&noscriptAdditionalRestrictions;"/>
+        <tab class="noscript-yes" label=" &noscriptTrusted; " id="nsopt-tabTrusted" tooltiptext="&noscriptAdditionalPermissions;"/>
+        <tab class="noscript-xss" label=" &noscriptXss; " id="nsopt-tabXss"/>
+      </tabs>
+      <tabpanels>
+          <tabpanel>
+          <vbox flex="1">
+            <label class="header" value="&noscriptAdditionalRestrictions;" />
+            <groupbox>
+              <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
+               <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
+               <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+               <separator class="thin" />
+               <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
+               <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+               
+             </groupbox>
+             <groupbox>
+                <!-- <checkbox id="opt-truncateTitle" label="&noscriptTruncateTitle;" /> -->
+                <checkbox id="opt-fixLinks" label="&noscriptFixLinks;" />
+                <checkbox id="opt-nselNever" label="&noscriptNselNever;" />
+                <checkbox id="opt-forbidMetaRefresh" label="&noscriptForbidMetaRefresh;" />
+                <separator class="thin"/>
+                <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
+                <checkbox id="opt-noping" label="&noscriptForbidPing;" />
+             </groupbox>
+          </vbox>
+         </tabpanel><!-- END additional restrictions -->
+         
+         <tabpanel><!-- Additional Permissions -->
+            <vbox flex="1">
+              <label class="header" value="&noscriptAdditionalPermissions;" />
+              <groupbox>
+              <checkbox id="opt-nselForce" label="&noscriptNselForce;" />
+              <checkbox id="mozopt-browser.send_pings" label="&noscriptAllowPing;" />
+              </groupbox>
+              <groupbox>
+              <checkbox id="opt-allowClipboard" label="&noscriptAllowClipboard;" />
+              <checkbox id="opt-allowLocalLinks" label="&noscriptAllowLocalLinks;" />
+              </groupbox>
+            </vbox>
+          </tabpanel><!-- END Additional Permissions -->
+        
+
+         <tabpanel><!-- XSS -->
+         <vbox flex="1">
+            <label class="text-link header" 
+              onclick="noscriptUtil.openXssFaq()" value="&noscriptXssFaq;"/>
+            <checkbox id="opt-filterXGet" label="&noscriptOptFilterXGet;" />
+            <checkbox id="opt-filterXPost" label="&noscriptOptFilterXPost;" />
+            <separator class="thin" />
+            <label class="header" value="&noscriptXssExceptions;" />
+            <description style="white-space: normal">&noscriptXssExceptions.description;</description>
+            <textbox id="xssEx-regexp" multiline="true" flex="1" /> 
+            <hbox align="center">
+              <label for="xssEx-sample" value="&noscriptMatchSample;" />
+              <textbox id="xssEx-sample" flex="1" value="http://www.google.com/search?q=test" />
+            </hbox>
+          </vbox>
+        </tabpanel>
+      </tabpanels>
+      
+      
+     </tabbox>
+     </vbox>
+     </tabpanel>
   </tabpanels>
   </tabbox>
+  </vbox>
 </dialog>

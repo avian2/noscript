@@ -16,38 +16,72 @@ const noscriptUtil = {
     }
     if(s != null) {
       s.init();
-      s.nakeEmbed = this._nakeEmbed;
     } else {
       s = { uninstalling: true };
     }
     return this._service = s;
-  },
-  
-  _nakeEmbed: function(ctx) {
-    const lm = this.lookupMethod;
-    var prev = lm(ctx, "previousSibling")();
-    if(prev) return lm(prev, "nextSibling")();
-    return lm(lm(ctx, "parentNode")(), "firstChild")();
-  },
-  
+  }, 
   get prompter() {
     return Components.classes["@mozilla.org/embedcomp/prompt-service;1"
           ].getService(Components.interfaces.nsIPromptService);
   }
 ,
+  confirm: function(msg, pesistPref, title) {
+    const ns = this.service; 
+    var alwaysAsk = { value: ns.getPref(pesistPref, true) };
+     if((!alwaysAsk.value) || 
+        noscriptUtil.prompter.confirmCheck(window, title || "NoScript",
+          msg,
+          noscriptUtil.getString("alwaysAsk"), alwaysAsk)
+     ) {
+      ns.setPref(pesistPref, alwaysAsk.value);
+      return true;
+    }
+    return false;
+  },
+
   getString: function(key, parms) {
     return this._service.getString(key, parms);
   }
 ,
-  openOptionsDialog: function() {
-    window.open(this.chromeBase + this.chromeName + "Options.xul", this.chromeName + "Options",
-          "chrome, dialog, centerscreen,alwaysRaised");  
+  openOptionsDialog: function(params) {
+    window.openDialog(
+        this.chromeBase + this.chromeName + "Options.xul", 
+        this.chromeName + "Options",
+        "chrome, dialog, centerscreen, alwaysRaised",
+        params);  
+  },
+  
+  
+  openXssOptions: function() {
+    this.openOptionsDialog({tabselIndexes: [4, 2]});
   }
 ,
-  openAboutDialog: function() {
-    window.open(this.chromeBase + "about.xul", this.chromeName + "About",
+  openAboutDialog: function(params) {
+    window.open(
+      this.chromeBase + "about.xul", 
+      this.chromeName + "About",
       "chrome,dialog,centerscreen");
   }
+,
+  openConsole: function() {
+    toJavaScriptConsole();
+  },
   
+  openXssFaq: function() {
+    this.browse("http://noscript.net/faq#xss");
+  },
+  
+  browse: function(url) {
+    var w = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                 .getService(Components.interfaces.nsIWindowMediator
+                 ).getMostRecentWindow("navigator:browser");
+    if(w && !w.closed) {
+      var browser = w.getBrowser();
+      browser.selectedTab = browser.addTab(url, null);
+    } else {
+      window.open(url, "_blank")
+    }
+  }
   
 };

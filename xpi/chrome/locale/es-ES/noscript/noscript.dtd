@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Permitir ping">
 <!ENTITY noscriptAllowLocalLinks "Permitir enlaces locales">
 <!ENTITY noscriptForbidPing "Bloquear ping">
+<!ENTITY noscriptForbidMetaRefresh "Prohibir META redireccionamientos dentro de elementos &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "Lista blanca">
 <!ENTITY noscriptPermissions "Permisos">
 <!ENTITY noscriptRefresh "Recargar">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "Bloquear scanners basados en CSS">
 <!ENTITY noscriptOptFilterXGet "Depurar peticiones cross-site sospechosas">
 <!ENTITY noscriptOptFilterXPost "Convertir peticiones POST cross-site en peticiones GET sin datos">
+<!ENTITY noscriptShowConsole "Mostrar Consola de error...">
+<!ENTITY noscriptShowConsole.accesskey "C">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "FAQ sobre XSS...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Recarga en modo seguro">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Excepciones a la protección anti XSS">
+<!ENTITY noscriptXssExceptions.description "Los destinos que coincidan con estas expresiones regulares NO estarán protegidos frente a XSS">
+<!ENTITY noscriptMatchSample "Muestra de patrón de coincidencia:">

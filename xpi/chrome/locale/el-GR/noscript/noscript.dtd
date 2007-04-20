@@ -13,7 +13,7 @@
 <!ENTITY noscriptUntrust "Σημείωση ως μη έμπιστο">
 <!ENTITY noscriptUntrust.accesskey "μ">
 <!ENTITY noscriptRemoveSelected "Αφαίρεση επιλεγμένων ιστότοπων">
-<!ENTITY noscriptGloballyEnabled "Σενάρια εντολών που επιτρέπονται γενικά (μη ασφαλές)">
+<!ENTITY noscriptGloballyEnabled "Να επιτρέπονται τα σενάρια εντολών γενικά (μη ασφαλές)">
 <!ENTITY noscriptAutoReload "Αυτόματη ανανέωση των σελίδων που επηρεάζονται από την αλλαγή δικαιωμάτων">
 <!ENTITY noscriptGeneral "Γενικά">
 <!ENTITY noscriptAppearance "Εμφάνιση">
@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Να επιτρέπεται το &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Να επιτρέπονται τοπικοί δεσμοί">
 <!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Να απαγορεύονται οι ανακατευθύνσεις META σε στοιχεία &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "Λίστα επιτρεπομένων">
 <!ENTITY noscriptPermissions "Αδειοδοτήσεις">
 <!ENTITY noscriptRefresh "Ανανέωση">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "Μπλοκάρισμα ανιχνεύσεων CSS">
 <!ENTITY noscriptOptFilterXGet "Εκκαθάριση αιτημάτων ύποπτων ως cross-site scripting">
 <!ENTITY noscriptOptFilterXPost "Μετατροπή αιτημάτων cross-site POST σε κενά περιεχομένου αιτήματα GET">
+<!ENTITY noscriptShowConsole "Προβολή κονσόλας...">
+<!ENTITY noscriptShowConsole.accesskey "κ">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "Συχνές ερωτήσεις XSS...">
+<!ENTITY noscriptXssFaq.accesskey "χ">
+<!ENTITY noscriptUnsafeReload "Μη ασφαλής ανανέωση">
+<!ENTITY noscriptUnsafeReload.accesskey "Μ">
+<!ENTITY noscriptXssExceptions "Εξαιρέσεις από προστασία αντί-XSS">
+<!ENTITY noscriptXssExceptions.description "Δεν θα παρέχεται προστασία αντί-XSS για προορισμούς που ταιριάζουν με τις κανονικές εκφράσεις:">
+<!ENTITY noscriptMatchSample "Παράδειγμα ταιριάσματος μοτίβου:">

@@ -25,9 +25,9 @@
 <!ENTITY noscriptBaseDom "Nie blokuj z  [...]  (podstawa domeny np. noscript.net)">
 <!ENTITY noscriptTempCmd "Tymczasowo nie blokuj z  [...]">
 <!ENTITY noscriptSound "Odtwórz dźwięk, gdy skrypty są blokowane">
-<!ENTITY noscriptImport "Import">
+<!ENTITY noscriptImport "Importuj">
 <!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Eksport">
+<!ENTITY noscriptExport "Eksportuj">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Wyświetl powiadomienie o blokowanych skryptach">
 <!ENTITY noscriptNotify.bottom "Umieść powiadomienie na dole okna przeglądarki">
@@ -44,7 +44,7 @@
 <!ENTITY noscriptForbidJava "Blokuj aplety Java™">
 <!ENTITY noscriptForbidFlash "Blokuj animacje Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Blokuj inne wtyczki">
-<!ENTITY noscriptReloadWarn "Uwaga! Opcje te będą działały po odświeżeniu stron oraz w nowo otwieranych stronach">
+<!ENTITY noscriptReloadWarn "Uwaga! Opcje te będą działały po odświeżeniu stron oraz w nowo otwieranych stronach.">
 <!ENTITY noscriptConfirmUnblock "Pytaj o potwierdzenie przed czasowym odblokowaniem obiektu">
 <!ENTITY noscriptStatusLabel "Informacje na pasku stanu">
 <!ENTITY noscriptForbidBookmarklets "Blokuj skryptozakładki">
@@ -56,11 +56,12 @@
 <!ENTITY noscriptAllowPing "Pozwól na &lt;ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Pozwól na wykonywanie skryptów lokalnym odnośnikom">
 <!ENTITY noscriptForbidPing "Zabroń &lt;ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Nie pozwalaj na przekierowania META znajdujące się wewnątrz elementu HTML &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "Zaufane witryny">
 <!ENTITY noscriptPermissions "Zezwolenia">
 <!ENTITY noscriptRefresh "Odświeżanie">
 <!ENTITY noscriptNotifications "Powiadomienia">
-<!ENTITY noscriptToolbarToggle "Naciśnięcie LPM na przycisk &quot;NoScript&quot; zmienia zezwolenia dla aktywnej witryny">
+<!ENTITY noscriptToolbarToggle "Naciśnięcie lpm na przycisk &quot;NoScript&quot; zmienia zezwolenia dla aktywnej witryny">
 <!ENTITY noscriptTrusted "Zaufane">
 <!ENTITY noscriptUntrusted "Niezaufane">
 <!ENTITY noscriptUnknown "Nieznana">
@@ -76,3 +77,16 @@
 <!ENTITY noscriptNselForce "Wyświetl składniki pobierane z blokowanych witryn przez element &lt;noscript&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Domyślne, czasowo dozwolone witryny">
 <!ENTITY noscriptDescription "Dodatkowe zabezpieczenie Firefoksa. NoScript pozwala na wykonywanie kodów JavaScript, Java i innych wtyczek tylko wybranym przez użytkownika zaufanym domenom np. strony bankowe. Lista zaufanych domen pozwala zabezpieczyć się przed znanymi i nieznanymi witrynami próbującymi przechwycić dane o użytkowniku. Eksperci potwierdzają, że Firefox z zainstalowanym NoScript jest bezpieczniejszy.">
+<!ENTITY noscriptOptBlockCssScanners "Blokuj skanery oparte na cross-site scripting (XSS)">
+<!ENTITY noscriptOptFilterXGet "Usuń podejrzane żądania">
+<!ENTITY noscriptOptFilterXPost "Zamień żądania cross-site POST na data-less GET">
+<!ENTITY noscriptShowConsole "Wyświetl konsolę">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "Pytania i odpowiedzi o XSS">
+<!ENTITY noscriptXssFaq.accesskey "X">
+<!ENTITY noscriptUnsafeReload "Odśwież bez zabezpieczeń">
+<!ENTITY noscriptUnsafeReload.accesskey "W">
+<!ENTITY noscriptXssExceptions "Wyjątki zabezpieczeń Anty-XSS">
+<!ENTITY noscriptXssExceptions.description "Obiekty odpowiadające tym wyrażeniom regularnym nie będą zabezpieczane przed XSS">
+<!ENTITY noscriptMatchSample "Przykłady wzorców:">

@@ -1,24 +1,24 @@
-<!ENTITY noscriptOptions "Налады...">
+﻿<!ENTITY noscriptOptions "Налады...">
 <!ENTITY noscriptOptions.accesskey "а">
 <!ENTITY noscriptOptionsLong "Налады NoScript">
 <!ENTITY noscriptAbout "Аб пашырэнні">
-<!ENTITY noscriptPermissionsText "Вы можаце ўсталёўваць якім вэб-сайтам будзе дазволена выконваць код JavaScript. Увядзіце адрас або дамен (напрыклад &quot;http://www.site.com&quot; або &quot;site.com&quot;) сайта якому вы жадаеце дазволіць выкананне JavaScript у тэкставым полі ніжэй, а затым націсніце &quot;Дазволіць&quot;.">
+<!ENTITY noscriptPermissionsText "Вы можаце ўсталёўваць якім вэб-сайтам будзе дазволена выконваць код JavaScript. Увядзіце адрас або дамен (напрыклад «http://www.site.com» або «site.com») сайта якому вы жадаеце дазволіць выкананне JavaScript у тэкставым полі ніжэй, а затым націсніце «Дазволіць».">
 <!ENTITY noscriptWebAddress "Адрас вэб-сайта:">
 <!ENTITY noscriptAllow "Дазволіць">
 <!ENTITY noscriptAllow.accesskey "е">
-<!ENTITY noscriptForbid "Forbid">
-<!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
-<!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
-<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptForbid "Забараніць">
+<!ENTITY noscriptForbid.accesskey "ь">
+<!ENTITY noscriptTrust "Адзначыць давераным">
+<!ENTITY noscriptTrust.accesskey "аб">
+<!ENTITY noscriptUntrust "Адзначыць недоверенным">
+<!ENTITY noscriptUntrust.accesskey "у">
 <!ENTITY noscriptRemoveSelected "Выдаліць вылучаныя сайты">
 <!ENTITY noscriptGloballyEnabled "Цалкам дазваляць выкананне JavaScript на старонках (небяспечна)">
-<!ENTITY noscriptAutoReload "Аўтаматычна абнаўляць старонку пасля змены для яе правіл">
+<!ENTITY noscriptAutoReload "Аўтаматычна абнаўляць старонку пасля змены для яе правілаў">
 <!ENTITY noscriptGeneral "Асноўныя">
 <!ENTITY noscriptAppearance "Знешні выгляд">
 <!ENTITY noscriptShow "Адлюстроўваць наступныя элементы NoScript...">
-<!ENTITY noscriptCtxMenu "Пункт у контексном меню">
+<!ENTITY noscriptCtxMenu "Пункт у кантэкстным меню">
 <!ENTITY noscriptStatusIcon "Значок у радку стану">
 <!ENTITY noscriptFullAddr "Поўныя адрасы (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Поўныя дамены (www.noscript.net)">
@@ -43,36 +43,39 @@
 <!ENTITY noscriptAdditionalRestrictions "Дадатковыя абмежаванні для ненадзейных сайтаў">
 <!ENTITY noscriptForbidJava "Забараніць адлюстраванне элементаў Java™">
 <!ENTITY noscriptForbidFlash "Забараніць адлюстраванне элементаў Macromedia® Flash®">
-<!ENTITY noscriptForbidPlugins "Забараніць адлюстраванне элементаў іншых убудоў">
-<!ENTITY noscriptReloadWarn "Нататка: Усталяваныя налады ўступаюць у сілу альбо на новай старонцы, альбо пасля ручнога абнаўлення бягучай старонкі">
-<!ENTITY noscriptConfirmUnblock "Пацвярджаць часовую разблакоўку аб&apos;екта на старонцы">
+<!ENTITY noscriptForbidPlugins "Забараніць адлюстраванне элементаў іншых убудоваў">
+<!ENTITY noscriptReloadWarn "Нататка: Усталяваныя налады ўступаюць у сілу альбо на новай старонцы, альбо пасля ручнога абнаўлення бягучае старонкі">
+<!ENTITY noscriptConfirmUnblock "Пацвярджаць часовую разблакоўку аб'екта на старонцы">
 <!ENTITY noscriptStatusLabel "Паведамленні ў радку стану">
 <!ENTITY noscriptForbidBookmarklets "Забараніць выкарыстанне Bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Вылучаць размяшчэнне заблакаваных элементаў значком з рамкай">
+<!ENTITY noscriptShowPlaceholder "Вылучаць заблакаваныя элементы значком з рамкаю">
 <!ENTITY noscriptTruncateTitle "Адсякаць занадта доўгія загалоўкі вэб-сайтаў">
-<!ENTITY noscriptFixLinks "Ужываць алгарытм выпраўлення JavaScript-спасылак">
-<!ENTITY noscriptAllowBookmarks "Дазваляць выкананне JavaScript усім вэб-сайтам з закладак">
-<!ENTITY noscriptAllowViaBookmarks "Дазваляць выкананне JavaScript усім вэб-сайтам з закладак">
+<!ENTITY noscriptFixLinks "Ужываць алгарытм выпраўлення JavaScript-спасылкаў">
+<!ENTITY noscriptAllowBookmarks "Дазваляць выкананне JavaScript усім вэб-сайтам з закладкаў">
+<!ENTITY noscriptAllowViaBookmarks "Дазваляць выкананне JavaScript усім вэб-сайтам з закладкаў">
 <!ENTITY noscriptAllowPing "Дазволіць вэб-сайту выкарыстаць параметр &lt;a ping...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
+<!ENTITY noscriptAllowLocalLinks "Дазволіць лакальныя спасылкі">
 <!ENTITY noscriptForbidPing "Забараніць вэб-сайту выкарыстаць параметр  &lt;a ping...&gt;">
 <!ENTITY noscriptWhitelist "Белы спіс">
 <!ENTITY noscriptPermissions "Дазволы">
 <!ENTITY noscriptRefresh "Абнавіць">
 <!ENTITY noscriptNotifications "Апавяшчэнні">
-<!ENTITY noscriptToolbarToggle "Па націску левай кнопкай мышы на значку NoScript перамыкаць дазволы для ўсяго сайта">
-<!ENTITY noscriptTrusted "Давераны">
-<!ENTITY noscriptUntrusted "Недоверенный">
+<!ENTITY noscriptToolbarToggle "Націскам на значку NoScript перамыкаць дазволы для ўсяго сайта">
+<!ENTITY noscriptTrusted "Давераныя">
+<!ENTITY noscriptUntrusted "Недоверенные">
 <!ENTITY noscriptUnknown "Невядомы">
 <!ENTITY noscriptAdd "Дадаць">
 <!ENTITY noscriptAdd.accesskey "аб">
 <!ENTITY noscriptClose "Зачыніць">
 <!ENTITY noscriptSiteManager "Мэнэджэр сайтаў">
-<!ENTITY noscriptSecurityManager "Кіраванне бяспекай">
+<!ENTITY noscriptSecurityManager "Кіраванне бяспекаю">
 <!ENTITY noscriptPolicies "Палітыкі">
 <!ENTITY noscriptDefaultPolicies "Палітыкі па змаўчанні">
 <!ENTITY noscriptSitePolicies "Адмысловыя палітыкі для сайтаў">
-<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
+<!ENTITY noscriptNselNever "Хаваць элементы &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Паказваць элемент &lt;noscript&gt; які блакуе &lt;script&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Часова дазваляць базавым даменам 2-го ўзроўня па змаўчанні">
+<!ENTITY noscriptDescription "Экстра абарона для Firefox: NoScript дазваляе дазваляць выкананне JavaScript, Java (і іншых убудоваў) толькі даменам, якім давяраеце (напрыклад, ваш вэб-сайт). Белы спіс, заснаваны на прынцыпе папераджальнага блакавання, дазваляе прадухіліць выкарыстанне ўразлівасцяў (вядомых і яшчэ невядомых!) без страты функцыянальнасці... Эксперты згаджаюцца: Firefox сапраўды бяспечней з NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Блакаваць CSS-сканары">
+<!ENTITY noscriptOptFilterXGet "Фільтраваць запыты, падазраваныя на XSS">
+<!ENTITY noscriptOptFilterXPost "Замяняць XSS POST-запыты на GET-запыты без дадзеных">

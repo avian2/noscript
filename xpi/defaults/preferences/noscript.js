@@ -17,6 +17,7 @@ pref("noscript.default", "chrome: resource: about:blank about:neterror about:con
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", false);
 pref("noscript.forbidPlugins", false);
+pref("noscript.forbidData", true);
 pref("noscript.sound.block", "chrome://noscript/skin/block.wav");
 pref("noscript.allowClipboard", false);
 pref("noscript.allowLocalLinks", false);
@@ -24,6 +25,7 @@ pref("noscript.pluginPlaceholder", "chrome://noscript/skin/icon32.png");
 pref("noscript.showPlaceholder", true);
 pref("noscript.global", false);
 pref("noscript.confirmUnblock", true);
+pref("noscript.confirmUnsafeReload", true);
 pref("noscript.statusLabel", false);
 pref("noscript.forbidBookmarklets", false);
 pref("noscript.allowBookmarks", false);
@@ -37,23 +39,36 @@ pref("noscript.consoleDump", 0);
 pref("noscript.excaps", true);
 pref("noscript.nselForce", true);
 pref("noscript.nselNever", false);
+pref("noscript.nselNoMeta", true);
 pref("noscript.autoAllow", 0);
-pref("noscript.toolbarToggle", false);
+pref("noscript.toolbarToggle", 3);
 pref("noscript.forbidImpliesUntrust", false);
 pref("noscript.keys.toggle", "ctrl shift VK_BACK_SLASH.|");
-pref("noscript.keys.ui", "ctrl shift X");
+pref("noscript.keys.ui", "ctrl shift S");
 
 pref("noscript.forbidMetaRefresh", false);
+pref("noscript.forbidMetaRefresh.remember", true);
+pref("noscript.forbidMetaRefresh.notify", true);
+
 pref("noscript.toggle.temp", true);
 pref("noscript.firstRunRedirection", true);
 
 pref("noscript.xss.notify", true);
+pref("noscript.xss.notify.subframes", false);
+
+pref("noscript.xss.trustReloads", true);
+pref("noscript.xss.trustData", true);
+
 pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
-pref("noscript.filterXGetRx", "[^\\w:\\/\\.\\-\\+\\[\\]\\{\\}~,@]");
-pref("noscript.filterXExceptions", "^http://(?:www\\.google\\.com/(?:search|custom)|search\\.yahoo\\.com/search)\\?"); 
+pref("noscript.filterXGetRx", "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;]");
+pref("noscript.filterXGetRx2Black", "[\(\)\=;]");
+pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.[a-z\\.]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/[^\"'<>\?%]+$"); 
 
 pref("noscript.blockXIntranet", true);
 pref("noscript.intranetMaskRx", "^(127\\.[\\d.]+)");
 
 pref("noscript.blockCssScanners", true);
+
+pref("noscript.globalwarning", true);
+

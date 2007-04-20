@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Dopusti &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Dopusti lokalne poveznice">
 <!ENTITY noscriptForbidPing "Zabrani &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
 <!ENTITY noscriptWhitelist "Popis dopuštenih">
 <!ENTITY noscriptPermissions "Dopuštenja">
 <!ENTITY noscriptRefresh "Osvježi">
@@ -76,3 +77,16 @@
 <!ENTITY noscriptNselForce "Prikaži &lt;noscript&gt; elemente koji slijede blokirane &lt;script&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Privremeno kao zadano dopusti vršne stranice">
 <!ENTITY noscriptDescription "Dodatna zaštita za Vaš Firefox: NoScript dopušta JavaScript, Java (i druge dodatke) samo za provjerene domene Vašeg izbora (npr. Vaša stranica Intenet bankarstva) . Ovaj pristup preventivnog blokiranja zasnovan na popisu dopuštenih spriječava iskorištavanje sigurnosnih slabosti (znanih i neznanih) bez ikakvog gubitka funkcionalnosti... Stručnjaci će se složiti: Firefox je zbilja sigurniji s NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
+<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
+<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
+<!ENTITY noscriptShowConsole "Show Console...">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptMatchSample "Pattern matching sample:">

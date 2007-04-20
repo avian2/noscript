@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "允许&lt;ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "允许本地链接">
 <!ENTITY noscriptForbidPing "禁止&lt;ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
 <!ENTITY noscriptWhitelist "白名单">
 <!ENTITY noscriptPermissions "许可">
 <!ENTITY noscriptRefresh "刷新">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "过滤基于 CSS 的扫描器">
 <!ENTITY noscriptOptFilterXGet "净化跨站点的可疑请求">
 <!ENTITY noscriptOptFilterXPost "把跨站点 POST 请求转换成缺少数据的 GET 请求">
+<!ENTITY noscriptShowConsole "显示控制台...">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptMatchSample "Pattern matching sample:">

@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "อนุญาต &lt;ปิง...&gt;">
 <!ENTITY noscriptAllowLocalLinks "อนุญาตลิงก์ภายใน">
 <!ENTITY noscriptForbidPing "ไม่อนุญาต &lt;ปิง...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "ห้าม META เปลี่ยนทางภายในส่วนประกอบ &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "บัญชีขาว">
 <!ENTITY noscriptPermissions "การอนุญาต">
 <!ENTITY noscriptRefresh "เรียกหน้าใหม่">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "บล็อกเครื่องกราดตรวจที่มีซีเอสเอสเป็นรากฐาน">
 <!ENTITY noscriptOptFilterXGet "ไซต์ผสมปราศจากเชื้อโรคมีความต้องการน่าสงสัย">
 <!ENTITY noscriptOptFilterXPost "เปลี่ยนความต้องการไซต์ผสม POST ไปยังความต้องการไม่มีข้อมูล GET">
+<!ENTITY noscriptShowConsole "แสดงส่วนเฝ้าคุม...">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "เอกซ์เอสเอส">
+<!ENTITY noscriptXssFaq "คำถามพบบ่อยเอกซ์เอสเอส...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "โหลดใหม่ไม่ปลอดภัย">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "ข้อยกเว้นการปกป้องแอนทิ-เอกซ์เอสเอส">
+<!ENTITY noscriptXssExceptions.description "เป้าหมายการจับคู่การแสดงออกทั่วไปเหล่านี้จะไม่ถูกปกป้องกับเอกซ์เอสเอส">
+<!ENTITY noscriptMatchSample "ตัวอย่างการจับคู่พื้นผิว:">

@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Cho phép &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Cho phép các liên kết nội tại">
 <!ENTITY noscriptForbidPing "Cấm &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
 <!ENTITY noscriptWhitelist "Sổ trắng">
 <!ENTITY noscriptPermissions "Các phép">
 <!ENTITY noscriptRefresh "Tải lại">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "Chặn các trình quét CSS">
 <!ENTITY noscriptOptFilterXGet "Làm sạch các yêu cầu cross-site đáng ngờ">
 <!ENTITY noscriptOptFilterXPost "Đổi các yêu cầu dạng POST cross-site sang yêu cầu dạng GET">
+<!ENTITY noscriptShowConsole "Hiển thị Console...">
+<!ENTITY noscriptShowConsole.accesskey "s">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptMatchSample "Pattern matching sample:">

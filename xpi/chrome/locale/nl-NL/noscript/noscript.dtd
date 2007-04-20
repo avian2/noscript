@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "&lt;a ping...&gt; toestaan">
 <!ENTITY noscriptAllowLocalLinks "Locale koppelingen toestaan">
 <!ENTITY noscriptForbidPing "&lt;a ping...&gt; verbieden">
+<!ENTITY noscriptForbidMetaRefresh "META doorverwijzingen in &lt;noscript&gt; elementen verbieden">
 <!ENTITY noscriptWhitelist "Toestemmingenlijst">
 <!ENTITY noscriptPermissions "Toestemmingen">
 <!ENTITY noscriptRefresh "Vernieuwen">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "Op cross-site scripting (CSS) gebaseerde scanners blokkeren">
 <!ENTITY noscriptOptFilterXGet "Verdachte cross-site verzoeken zuiveren">
 <!ENTITY noscriptOptFilterXPost "Cross-site POST verzoeken omzetten in data-vrije GET verzoeken">
+<!ENTITY noscriptShowConsole "Console weergeven...">
+<!ENTITY noscriptShowConsole.accesskey "w">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Onveilig herladen">
+<!ENTITY noscriptUnsafeReload.accesskey "H">
+<!ENTITY noscriptXssExceptions "Uitzonderingen Anti-XSS bescherming">
+<!ENTITY noscriptXssExceptions.description "Bestemmingen die voldoen aan deze regulaire expressies zullen NIET beschermd worden tegen XSS">
+<!ENTITY noscriptMatchSample "Patroon overeenkomst voorbeeld:">

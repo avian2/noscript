@@ -56,6 +56,7 @@
 <!ENTITY noscriptAllowPing "Permite tagul &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Permite legături locale">
 <!ENTITY noscriptForbidPing "Blochează tagul &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
 <!ENTITY noscriptWhitelist "Listă sigură">
 <!ENTITY noscriptPermissions "Permisiuni">
 <!ENTITY noscriptRefresh "Reîncărcare">
@@ -79,3 +80,13 @@
 <!ENTITY noscriptOptBlockCssScanners "Blochează scanerele bazate pe CSS">
 <!ENTITY noscriptOptFilterXGet "Curăţă solicitările suspecte de exploatare de tipul Cross-Site Scripting">
 <!ENTITY noscriptOptFilterXPost "Transformă solicitările POST către pagini diferite în solicitări GET">
+<!ENTITY noscriptShowConsole "Arată Consola JavaScript....">
+<!ENTITY noscriptShowConsole.accesskey "a">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptMatchSample "Pattern matching sample:">

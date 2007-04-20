@@ -1,8 +1,15 @@
+#noscript-tbb {
+  list-style-image: url("icon24.png");
+}
+
+/*  remove first selector when we've got both 24 and 16 full icon sets */
+toolbar #noscript-tbb, toolbar[iconsize="small"] #noscript-tbb {
+  list-style-image: url("no16.png");
+}
+
 #noscript-statusIcon {
   cursor: pointer;
 }
-
-
 .noscript-cmd {
   font-weight: normal;
 }
@@ -15,3 +22,44 @@
   font-weight: normal;
 }
 
+.noscript-unsafe-reload {
+  list-style-image: url(unsafe-reload16.png);
+}
+.noscript-console {
+   list-style-image: url(console16.png);
+}
+.noscript-faq {
+   list-style-image: url(faq16.png);
+}
+.noscript-xss {
+   list-style-image: url(xss16.png);
+}
+
+.noscript-yes {
+  list-style-image: url(yes16.png);
+}
+.noscript-no {
+  list-style-image: url(no16.png);
+}
+.noscript-prt {
+  list-style-image: url(no16.png);
+}
+
+.noscript-inactive-yes {
+  list-style-image: url(inactive-yes16.png);
+}
+.noscript-inactive-no {
+  list-style-image: url(inactive-no16.png);
+}
+.noscript-inactive-prt {
+  list-style-image: url(inactive-no16.png);
+}
+
+tab.noscript-xss, tab.noscript-yes, tab.noscript-no {
+  marker-offset: 24px;
+}
+
+.noscript-error {
+  color: red !important;
+  background: #ffa !important;
+}

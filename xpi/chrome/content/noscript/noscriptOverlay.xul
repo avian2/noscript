@@ -42,14 +42,79 @@
   <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />
 </stringbundleset>
 
-<popupset id="mainPopupSet">
+
+
+<toolbarpalette id="BrowserToolbarPalette">
+    <toolbarbutton id="noscript-tbb" 
+      tooltiptext="NoScript" 
+      buttonstyle="pictures"
+      
+      class="toolbarbutton-1"
+      label="NoScript"
+      type="menu-button"
+      oncommand="if(event.target == this) if(!noscriptOverlay.toggleCurrentPage()) this.open = true"
+      onclick="if(event.button == 2) { event.preventDefault(); this.open = true; }"
+   >
+   <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+         <menuseparator class="noscript-sep-insert" hidden="true" />
+         
+         <menuseparator class="noscript-sep-stop-untrusted"/>
+         <!-- dynamically inserted #noscript-menu-untrusted -->
+         
+         <menuseparator class="noscript-sep-global" />
+         <menuitem class="menuitem-iconic" />
+         <menuseparator />
+         <menuitem id="noscript-options-tbb-menuitem"
+          label="&noscriptOptions;"
+          accesskey="&noscriptOptions.accesskey;"
+          oncommand="noscriptUtil.openOptionsDialog()"
+          tooltiptext="&noscriptOptionsLong;"
+          class="menuitem-iconic noscript-options"
+          />
+          <menuitem id="noscript-about-tbb-menuitem"
+            label="&noscriptAbout;"
+            tooltiptext="&noscriptAbout;"
+            oncommand="noscriptUtil.openAboutDialog()"
+          />
+    </menupopup>
+   </toolbarbutton>
+</toolbarpalette>
+
+<popup id="contentAreaContextMenu">
+  <menu id="noscript-context-menu" class="menu-iconic" label="NoScript" >
+    <menupopup id="noscript-context-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+         <menuseparator class="noscript-sep-insert" hidden="true" />
+         <menuseparator class="noscript-sep-stop-untrusted"/>
+         <!-- dynamically inserted #noscript-menu-untrusted -->
+         
+         <menuseparator class="noscript-sep-global" />
+         <menuitem class="menuitem-iconic" />
+         
+         <menuseparator />
+         <menuitem id="noscript-options-ctx-menuitem"
+          label="&noscriptOptions;"
+          accesskey="&noscriptOptions.accesskey;"
+          oncommand="noscriptUtil.openOptionsDialog()"
+          tooltiptext="&noscriptOptionsLong;"
+          class="menuitem-iconic noscript-options"
+          />
+          <menuitem id="noscript-about-ctx-menuitem"
+            label="&noscriptAbout;"
+            tooltiptext="&noscriptAbout;"
+            oncommand="noscriptUtil.openAboutDialog()"
+          />
+    </menupopup>
+  </menu>
+</popup>
+
+<statusbar id="status-bar">
+
+<popupset id="noscriptPopupSet">
   <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
     <menuseparator class="noscript-sep-insert" hidden="true" />
     
     <menuseparator class="noscript-sep-stop-untrusted"/>
-         <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
-            <menupopup />
-         </menu>
+     <!-- dynamically inserted #noscript-menu-untrusted -->
          
      <menuseparator class="noscript-sep-global" />
      <menuitem class="menuitem-iconic" />
@@ -77,75 +142,53 @@
       tooltiptext="&noscriptOptionsLong;"
       />
    </popup>
-
+   <popup id="noscript-xss-popup" onpopupshowing="noscriptOverlay.prepareXSSMenu(this)">
+      <menuitem id="noscript-mi-xss-console" 
+        label="&noscriptShowConsole;"
+        class="menuitem-iconic noscript-console"
+        accesskey="&noscriptShowConsole.accesskey;"
+        oncommand="noscriptUtil.openConsole()"
+       />
+       
+       <menuitem id="noscript-mi-xss-unsafe-reload"
+        class="menuitem-iconic noscript-unsafe-reload"
+        label="&noscriptUnsafeReload;"
+        accesskey="&noscriptUnsafeReload.accesskey;"
+        oncommand="noscriptOverlay.unsafeReload()"
+       />
+    
+       <menuseparator />
+       <menuitem id="noscript-mi-xss-opt-xss.notify"
+        label="&noscriptNotifications;"
+        type="checkbox" autocheck="true"
+        oncommand="noscriptOverlay.toggleMenuOpt(this)"
+       />
+      
+       <menuitem id="noscript-mi-xss-options" 
+        label="&noscriptOptions;"
+        class="menuitem-iconic noscript-options"
+        accesskey="&noscriptOptions.accesskey;"
+        oncommand="noscriptUtil.openXssOptions()"
+      />
+      
+      <menuseparator />
+      <menuitem id="noscript-mi-xss-faq" 
+        label="&noscriptXssFaq;"
+        class="menuitem-iconic noscript-faq"
+        accesskey="&noscriptXssFaq.accesskey;"
+        oncommand="noscriptUtil.openXssFaq()"
+      />
+              
+   </popup>
 </popupset>
 
-<toolbarpalette id="BrowserToolbarPalette">
-    <toolbarbutton id="noscript-tbb" 
-      tooltiptext="NoScript" 
-      buttonstyle="pictures"
-      image="chrome://noscript/skin/no16.png"
-      class="toolbar-1"
-      label="NoScript"
-      type="menu-button"
-      oncommand="if(event.target == this) noscriptOverlay.toggleCurrentPage()"
-   >
-   <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
-         <menuseparator class="noscript-sep-insert" hidden="true" />
-         
-         <menuseparator class="noscript-sep-stop-untrusted"/>
-         <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
-            <menupopup />
-         </menu>
-         
-         <menuseparator class="noscript-sep-global" />
-         <menuitem class="menuitem-iconic" />
-         <menuseparator />
-         <menuitem id="noscript-options-tbb-menuitem"
-          label="&noscriptOptions;"
-          accesskey="&noscriptOptions.accesskey;"
-          oncommand="noscriptUtil.openOptionsDialog()"
-          tooltiptext="&noscriptOptionsLong;"
-          />
-          <menuitem id="noscript-about-tbb-menuitem"
-            label="&noscriptAbout;"
-            tooltiptext="&noscriptAbout;"
-            oncommand="noscriptUtil.openAboutDialog()"
-          />
-    </menupopup>
-   </toolbarbutton>
-</toolbarpalette>
 
-<popup id="contentAreaContextMenu">
-  <menu id="noscript-context-menu" class="menu-iconic" label="NoScript" >
-    <menupopup id="noscript-context-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
-         <menuseparator class="noscript-sep-insert" hidden="true" />
-         <menuseparator class="noscript-sep-stop-untrusted"/>
-         <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
-            <menupopup />
-         </menu>
-         <menuseparator class="noscript-sep-global" />
-         <menuitem class="menuitem-iconic" />
-         <menuseparator />
-         <menuitem id="noscript-options-ctx-menuitem"
-          label="&noscriptOptions;"
-          accesskey="&noscriptOptions.accesskey;"
-          oncommand="noscriptUtil.openOptionsDialog()"
-          tooltiptext="&noscriptOptionsLong;"
-          />
-          <menuitem id="noscript-about-ctx-menuitem"
-            label="&noscriptAbout;"
-            tooltiptext="&noscriptAbout;"
-            oncommand="noscriptUtil.openAboutDialog()"
-          />
-    </menupopup>
-  </menu>
-</popup>
 
-<statusbar id="status-bar">
+
   <statusbarpanel id="noscript-statusIcon" insertbefore="statusbar-updates"
     src="chrome://noscript/skin/no16.png" class="statusbarpanel-menu-iconic"
     hidden="false" persist="hidden"
+    onclick="if(event.button == 2) { event.preventDefault(); noscriptOverlay.showUI() }"
     >
     <menupopup id="noscript-status-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
        <menuitem
@@ -159,14 +202,20 @@
         oncommand="noscriptUtil.openOptionsDialog()"
         tooltiptext="&noscriptOptionsLong;"
         />
+        <menuseparator class="noscript-sep-global"/>
+        <menuitem class="menuitem-iconic" />
+        <menu id="noscript-xss-menu" class="menu-iconic noscript-xss" 
+          onpopupshowing="event.stopPropagation()" label="&noscriptXss;">
+         <menupopup id="noscript-xss-menupopup">
+         </menupopup>
+       </menu>
         
-       <menuseparator class="noscript-sep-global"/>
-       <menuitem class="menuitem-iconic" />
-       
        <menuseparator class="noscript-sep-untrusted"/>
-       <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
+       <menu id="noscript-menu-untrusted" class="menu-iconic noscript-untrusted" 
+            onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
           <menupopup />
        </menu>
+       
        <menuseparator class="noscript-sep-insert"/>
        <menuseparator class="noscript-sep-stop" hidden="true" />
     </menupopup>
@@ -190,9 +239,7 @@
      <menuitem class="menuitem-iconic" />
      
      <menuseparator class="noscript-sep-untrusted"/>
-     <menu class="menu-iconic noscript-untrusted" onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
-        <menupopup />
-     </menu>
+     <!-- dynamically inserted #noscript-menu-untrusted -->
      
      <menuseparator class="noscript-sep-insert"/>
      <menuseparator class="noscript-sep-stop" hidden="true" />
