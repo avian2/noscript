@@ -17,8 +17,8 @@
 <!ENTITY noscriptAutoReload "Betroffene Seiten beim Ändern der Berechtigungen automatisch neu laden">
 <!ENTITY noscriptGeneral "Allgemein">
 <!ENTITY noscriptAppearance "Aussehen">
-<!ENTITY noscriptShow "Anzeigen:">
-<!ENTITY noscriptCtxMenu "Eintrag im Kontextmenü">
+<!ENTITY noscriptShow "Folgende Elemente anzeigen:">
+<!ENTITY noscriptCtxMenu "Kontextmenüeinträge:">
 <!ENTITY noscriptStatusIcon "Symbol in der Statusleiste">
 <!ENTITY noscriptFullAddr "Vollständige Adressen (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Vollständige Domains (www.noscript.net)">
@@ -39,7 +39,7 @@
 <!ENTITY noscriptSound.reset.accesskey "S">
 <!ENTITY noscriptAdvanced "Erweitert">
 <!ENTITY noscriptAdditionalPermissions "Zusätzliche Berechtigungen für vertrauenswürdige Websites">
-<!ENTITY noscriptAllowClipboard "Einfügen von formatiertem Text (z.B. HTML) aus der Zwischenablage erlauben">
+<!ENTITY noscriptAllowClipboard "Einfügen von formatiertem Text (z.B. RTF) aus der Zwischenablage erlauben">
 <!ENTITY noscriptAdditionalRestrictions "Zusätzliche Einschränkungen für nicht vertrauenswürdige Websites">
 <!ENTITY noscriptForbidJava "Java™ verbieten">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
@@ -51,17 +51,17 @@
 <!ENTITY noscriptShowPlaceholder "Platzhaltersymbol anzeigen">
 <!ENTITY noscriptTruncateTitle "Überlangen &quot;document.title&quot; kürzen (siehe Bug 319004)">
 <!ENTITY noscriptFixLinks "Versuchen, JavaScript-Links in normale Links umzuwandeln">
-<!ENTITY noscriptAllowBookmarks "Alle Websites aus den Lesezeichen erlauben">
-<!ENTITY noscriptAllowViaBookmarks "Aus Lesezeichen geöffnete Seiten erlauben">
+<!ENTITY noscriptAllowBookmarks "Aus Lesezeichen geöffnete Websites erlauben">
+<!ENTITY noscriptAllowViaBookmarks "Aus Lesezeichen geöffnete Websites erlauben">
 <!ENTITY noscriptAllowPing "Klick-Verfolgung über das PING-Attribut für Links erlauben">
-<!ENTITY noscriptAllowLocalLinks "Lokale Links erlauben">
+<!ENTITY noscriptAllowLocalLinks "Links auf lokale Dateien erlauben">
 <!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "META-Weiterleitungen innerhalb von &lt;noscript&gt;-Elementen verbieten">
 <!ENTITY noscriptWhitelist "Positivliste">
 <!ENTITY noscriptPermissions "Berechtigungen">
 <!ENTITY noscriptRefresh "Aktualisierung">
 <!ENTITY noscriptNotifications "Benachrichtigungen">
-<!ENTITY noscriptToolbarToggle "Berechtigungen für aktuelle Domain mit Links-Klick auf die Symbolleisten-Schaltfläche umschalten">
+<!ENTITY noscriptToolbarToggle "Berechtigungen für aktuelle Top-Level-Site mit Links-Klick auf die Symbolleisten-Schaltfläche umschalten">
 <!ENTITY noscriptTrusted "Vertrauenswürdig">
 <!ENTITY noscriptUntrusted "Nicht vertrauenswürdig">
 <!ENTITY noscriptUnknown "Unbekannt">
@@ -83,10 +83,10 @@
 <!ENTITY noscriptShowConsole "Konsole anzeigen...">
 <!ENTITY noscriptShowConsole.accesskey "z">
 <!ENTITY noscriptXss "Cross-Site Scripting (XSS)">
-<!ENTITY noscriptXssFaq "Cross-Site Scripting FAQ...">
+<!ENTITY noscriptXssFaq "FAQ zu Cross-Site Scripting (engl.)...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsicheres Neu-Laden der Seite">
+<!ENTITY noscriptUnsafeReload "Unsicheres Nachladen">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Ausnahmen vom XSS-Schutz">
-<!ENTITY noscriptXssExceptions.description "Ziele, die mit diesen regulären Ausdrücken übereinstimmen, sind vom XSS-Schutz ausgeschlossen">
-<!ENTITY noscriptMatchSample "Beispiel zur Übereinstimmung von Ausdrücken:">
+<!ENTITY noscriptXssExceptions.description "Zieladressen, die mit diesen regulären Ausdrücken übereinstimmen, werden vom XSS-Schutz ausgenommen">
+<!ENTITY noscriptMatchSample "Beispieladresse für Übereinstimmung:">

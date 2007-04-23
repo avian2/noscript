@@ -89,4 +89,4 @@
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Excepciones a la protección anti XSS">
 <!ENTITY noscriptXssExceptions.description "Los destinos que coincidan con estas expresiones regulares NO estarán protegidos frente a XSS">
-<!ENTITY noscriptMatchSample "Muestra de patrón de coincidencia:">
+<!ENTITY noscriptMatchSample "Ejemplo de coincidencia con las expresiones:">

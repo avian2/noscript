@@ -47,7 +47,7 @@ pref("noscript.keys.toggle", "ctrl shift VK_BACK_SLASH.|");
 pref("noscript.keys.ui", "ctrl shift S");
 
 pref("noscript.forbidMetaRefresh", false);
-pref("noscript.forbidMetaRefresh.remember", true);
+pref("noscript.forbidMetaRefresh.remember", false);
 pref("noscript.forbidMetaRefresh.notify", true);
 
 pref("noscript.toggle.temp", true);

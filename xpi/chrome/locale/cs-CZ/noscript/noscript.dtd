@@ -14,7 +14,7 @@
 <!ENTITY noscriptUntrust.accesskey "n">
 <!ENTITY noscriptRemoveSelected "Odstranit vybrané stránky">
 <!ENTITY noscriptGloballyEnabled "JavaScript celkově povolit (nebezpečné)">
-<!ENTITY noscriptAutoReload "Automaticky obnovit stránky při změně povolení">
+<!ENTITY noscriptAutoReload "Automaticky aktualizovat stránky při změně povolení">
 <!ENTITY noscriptGeneral "Obecné">
 <!ENTITY noscriptAppearance "Zobrazení">
 <!ENTITY noscriptShow "Zobrazit...">
@@ -44,7 +44,7 @@
 <!ENTITY noscriptForbidJava "Zakázat Javu(tm)">
 <!ENTITY noscriptForbidFlash "Zakázat Macromedia(r) Flash(r)">
 <!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">
-<!ENTITY noscriptReloadWarn "Tato nastavení budou aktivní na nově otevřených nebo (manuálně) obnovených stránkách">
+<!ENTITY noscriptReloadWarn "Tato nastavení se projeví u nově otevřených nebo (manuálně) aktualizovaných stránkách">
 <!ENTITY noscriptConfirmUnblock "Požadovat potvrzení při dočasném povolení objektu">
 <!ENTITY noscriptStatusLabel "Zobrazovat popisek ve stavovém řádku">
 <!ENTITY noscriptForbidBookmarklets "Zakázat bookmarklety">
@@ -56,7 +56,7 @@
 <!ENTITY noscriptAllowPing "Povolit &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Povolit místní odkazy">
 <!ENTITY noscriptForbidPing "Zakázat &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "Zakázat META přesměrování uvnitř elementů &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "Výjimky">
 <!ENTITY noscriptPermissions "Povolení">
 <!ENTITY noscriptRefresh "Obnovení">
@@ -83,10 +83,10 @@
 <!ENTITY noscriptShowConsole "Zobrazit konzolu...">
 <!ENTITY noscriptShowConsole.accesskey "k">
 <!ENTITY noscriptXss "XSS">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
-<!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
-<!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptXssFaq "XSS - často kladené otázky">
+<!ENTITY noscriptXssFaq.accesskey "o">
+<!ENTITY noscriptUnsafeReload "Riskantní aktualizace">
+<!ENTITY noscriptUnsafeReload.accesskey "a">
+<!ENTITY noscriptXssExceptions "Ochrana proti XSS - výjimky">
+<!ENTITY noscriptXssExceptions.description "Cíle vyhovující těmto regulárním výrazům NEBUDOU CHRÁNĚNY proti XSS">
+<!ENTITY noscriptMatchSample "Ukázka vyhovující vzoru:">

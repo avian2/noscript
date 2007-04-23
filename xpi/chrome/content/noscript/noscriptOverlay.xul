@@ -111,14 +111,13 @@
 
 <popupset id="noscriptPopupSet">
   <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
-    <menuseparator class="noscript-sep-insert" hidden="true" />
-    
-    <menuseparator class="noscript-sep-stop-untrusted"/>
-     <!-- dynamically inserted #noscript-menu-untrusted -->
-         
-     <menuseparator class="noscript-sep-global" />
-     <menuitem class="menuitem-iconic" />
-     <menuseparator />
+    <menuseparator />
+     <menuitem 
+      label="&noscriptOptions;"
+      accesskey="&noscriptOptions.accesskey;"
+      oncommand="noscriptUtil.openOptionsDialog()"
+      tooltiptext="&noscriptOptionsLong;"
+      />
      <menuitem id="noscript-mi-opt-notify"
       label="&noscriptNotify;"
       oncommand="noscriptOverlay.toggleMenuOpt(this)"
@@ -134,15 +133,20 @@
       oncommand="noscriptOverlay.toggleMenuOpt(this)"
       type="checkbox" autocheck="true"
       />
+   
+     <menuseparator class="noscript-sep-global" />
+     <menuitem class="menuitem-iconic" />
      <menuseparator />
-     <menuitem 
-      label="&noscriptOptions;"
-      accesskey="&noscriptOptions.accesskey;"
-      oncommand="noscriptUtil.openOptionsDialog()"
-      tooltiptext="&noscriptOptionsLong;"
-      />
+     <menuseparator class="noscript-sep-untrusted"/>
+     <!-- dynamically inserted #noscript-menu-untrusted -->
+      
+      <menuseparator class="noscript-sep-insert"/>
+       <menuseparator class="noscript-sep-stop" hidden="true" />
    </popup>
-   <popup id="noscript-xss-popup" onpopupshowing="noscriptOverlay.prepareXSSMenu(this)">
+   
+   
+   
+   <popup id="noscript-xss-popup" onpopupshowing="noscriptOverlay.prepareXssMenu(this)">
       <menuitem id="noscript-mi-xss-console" 
         label="&noscriptShowConsole;"
         class="menuitem-iconic noscript-console"
@@ -181,13 +185,13 @@
               
    </popup>
 </popupset>
-
+  
 
 
 
   <statusbarpanel id="noscript-statusIcon" insertbefore="statusbar-updates"
     src="chrome://noscript/skin/no16.png" class="statusbarpanel-menu-iconic"
-    hidden="false" persist="hidden"
+    hidden="false"
     onclick="if(event.button == 2) { event.preventDefault(); noscriptOverlay.showUI() }"
     >
     <menupopup id="noscript-status-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
@@ -210,7 +214,7 @@
          </menupopup>
        </menu>
         
-       <menuseparator class="noscript-sep-untrusted"/>
+       <menuseparator id="noscript-sep-untrusted-status" class="noscript-sep-untrusted"/>
        <menu id="noscript-menu-untrusted" class="menu-iconic noscript-untrusted" 
             onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
           <menupopup />
@@ -221,7 +225,7 @@
     </menupopup>
   </statusbarpanel>
   <statusbarpanel id="noscript-statusLabel" insertbefore="statusbar-updates"
-    hidden="true" persist="hidden"
+    hidden="true"
     >
     <popup id="noscript-statusLabel-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
      <menuitem
@@ -251,7 +255,21 @@
    
  </statusbarpanel>
    
-   
+  <statusbarpanel id="noscript-statusXss" insertbefore="statusbar-updates"
+    src="chrome://noscript/skin/xss16.png" class="statusbarpanel-menu-iconic"
+    hidden="true"
+    onclick="switch(event.button) { case 1: this.hidden = true; break; case 2: event.preventDefault(); this.firstChild.showPopup(); }"
+    >
+    <menupopup id="noscript-status-xss-popup" onpopupshowing="noscriptOverlay.prepareXssMenu(this, true)" />
+  </statusbarpanel>
+  
+  <statusbarpanel id="noscript-statusRedirect" insertbefore="statusbar-updates"
+    src="chrome://noscript/skin/redirect16.png" class="statusbarpanel-iconic"
+    hidden="true" 
+    onclick="if(event.button == 1) this.hidden = true"
+    oncommand="noscriptOverlay.followMetaRefresh(event)"
+    />
+  
 </statusbar>
 
 </overlay>

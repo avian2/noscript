@@ -56,7 +56,7 @@
 <!ENTITY noscriptAllowPing "允许&lt;ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "允许本地链接">
 <!ENTITY noscriptForbidPing "禁止&lt;ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "禁止 &lt;noscript&gt; 元素中的 META 重定向">
 <!ENTITY noscriptWhitelist "白名单">
 <!ENTITY noscriptPermissions "许可">
 <!ENTITY noscriptRefresh "刷新">
@@ -83,10 +83,10 @@
 <!ENTITY noscriptShowConsole "显示控制台...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS 问答...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload "非安全的重新载入">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptXssExceptions "反 XSS 保护例外">
+<!ENTITY noscriptXssExceptions.description "匹配这些正则表达式的目标将不会被保护不受XSS(跨站脚本攻击)">
+<!ENTITY noscriptMatchSample "模式匹配样例:">

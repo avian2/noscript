@@ -7,7 +7,7 @@ toolbar #noscript-tbb, toolbar[iconsize="small"] #noscript-tbb {
   list-style-image: url("no16.png");
 }
 
-#noscript-statusIcon {
+#noscript-statusIcon, #noscript-statusLabel, #noscript-statusRedirect, #noscript-statusXss {
   cursor: pointer;
 }
 .noscript-cmd {
@@ -24,6 +24,9 @@ toolbar #noscript-tbb, toolbar[iconsize="small"] #noscript-tbb {
 
 .noscript-unsafe-reload {
   list-style-image: url(unsafe-reload16.png);
+}
+.noscript-redirect {
+  list-style-image: url(redirect16.png);
 }
 .noscript-console {
    list-style-image: url(console16.png);

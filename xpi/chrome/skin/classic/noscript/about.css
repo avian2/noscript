@@ -48,7 +48,7 @@
   
 }
 
-.text-link {
+.text-link, .text-link:focus  {
   color: #00f;
   text-decoration: none;
   cursor: pointer;

@@ -211,13 +211,12 @@ const SiteUtils = new function() {
       return '';
     }
     
-    if(url.indexOf(":") < 0) return this.domainMatch(url);
-    
     var scheme;
     try {
-      
       scheme = this.ios.extractScheme(url).toLowerCase();
       switch(scheme) {
+        case "http": case "https": // commonest case first
+          break;
         case "javascript": case "data": 
           return "";
         case "about":
@@ -627,7 +626,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.8",
+  VERSION: "1.1.4.8.070423",
   
   get wrappedJSObject() {
     return this;
@@ -1660,9 +1659,9 @@ NoscriptService.prototype ={
           var forbid = this.forbidAllContent;
           if((!forbid) && aMimeTypeGuess) {
             forbid = 
-              (isFlash = (aMimeTypeGuess == "application/x-shockwave-flash" || aMimeTypeGuess == "application/futuresplash") && this.forbidFlash ||
+              (isFlash = (aMimeTypeGuess == "application/x-shockwave-flash" || aMimeTypeGuess == "application/futuresplash")) && this.forbidFlash ||
               (isJava = aMimeTypeGuess.indexOf("application/x-java-") == 0) && this.forbidJava ||
-              (this.forbidPlugins && !(isJava || isFlash)));
+              (this.forbidPlugins && !(isJava || isFlash));
           }
         }
       }
@@ -1781,8 +1780,7 @@ NoscriptService.prototype ={
     }
     
   },
-  
-  pluginExtrasMark: {},
+
   getPluginExtras: function(obj) {
     return this.getExpando(obj, "pluginExtras");
   },
@@ -1887,7 +1885,7 @@ NoscriptService.prototype ={
         content = refresh.getAttribute ("content").split(/[,;]/, 2);
         uri = content[1];
         if(uri) {
-          if(!(document.documentURI in this.metaRefreshWhitelist) && this.getPref("forbidMetaRefresh.notify", true)) {
+          if(!(document.documentURI in this.metaRefreshWhitelist)) {
             timeout = content[0];
             uri = uri.replace (/^\s*/, "").replace (/^URL/i, "URL").split("URL=", 2)[1];
             try {
@@ -1913,8 +1911,8 @@ NoscriptService.prototype ={
     }
     this.enableMetaRefresh(docShell);
   },
-  doFollowMetaRefresh: function(metaRefreshInfo) {
-    if(this.getPref("forbidMetaRefresh.remember", true)) {
+  doFollowMetaRefresh: function(metaRefreshInfo, forceRemember) {
+    if(forceRemember || this.getPref("forbidMetaRefresh.remember", false)) {
       var document = metaRefreshInfo.document;
       this.metaRefreshWhitelist[document.documentURI] = metaRefreshInfo.uri;
     }
@@ -2128,7 +2126,7 @@ NoscriptService.prototype ={
     }
     
     for(var j = sites.length; j-- > 0;) {
-      if(!/^[a-z]+:\/*[^\/\s]+/.test(sites[j]) && sites[j] != "file:///") {
+      if(!/^[a-z]+:\/*[^\/\s]+/.test(sites[j]) && sites[j] != "file://") {
         sites.splice(j, 1); // reject scheme-only URLs
       }
     }

@@ -1,0 +1,92 @@
+<!ENTITY noscriptOptions "Nuostatos...">
+<!ENTITY noscriptOptions.accesskey "N">
+<!ENTITY noscriptOptionsLong "NoScript nuostatos">
+<!ENTITY noscriptAbout "Apie NoScript">
+<!ENTITY noscriptPermissionsText "Jūs galite nurodyti, kurioms interneto svetainėms suteikiamas leidimas leisti programinius kodus. Įveskite adresą arba domeną (pvz., &quot;http://www.svetaine.lt&quot; arba &quot;svetaine.lt&quot;) svetainės, kuriai norite suteikti leidimą ir spauskite Leisti.">
+<!ENTITY noscriptWebAddress "Interneto svetainės adresas:">
+<!ENTITY noscriptAllow "Leisti">
+<!ENTITY noscriptAllow.accesskey "L">
+<!ENTITY noscriptForbid "Drausti">
+<!ENTITY noscriptForbid.accesskey "D">
+<!ENTITY noscriptTrust "Pažymėti patikimu">
+<!ENTITY noscriptTrust.accesskey "P">
+<!ENTITY noscriptUntrust "Pažymėti nepatikimu">
+<!ENTITY noscriptUntrust.accesskey "N">
+<!ENTITY noscriptRemoveSelected "Pašalinti pažymėtas svetaines">
+<!ENTITY noscriptGloballyEnabled "Programiniai kodai leidžiami visuotinai (pavojinga)">
+<!ENTITY noscriptAutoReload "Automatiškai įkelti iš naujo puslapius, kai jų leidimai pasikeičia">
+<!ENTITY noscriptGeneral "Bendrosios">
+<!ENTITY noscriptAppearance "Išvaizda">
+<!ENTITY noscriptShow "Rodyti...">
+<!ENTITY noscriptCtxMenu "Kontekstinį meniu">
+<!ENTITY noscriptStatusIcon "Būsenos juostos ikoną">
+<!ENTITY noscriptFullAddr "Pilniems adresams (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Pilniems domenams (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Antrojo lygio domenams (noscript.net)">
+<!ENTITY noscriptTempCmd "Laikinai leisti [...]">
+<!ENTITY noscriptSound "Groti garsinį pranešimą, kai programiniai kodai blokuojami">
+<!ENTITY noscriptImport "Importuoti">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Eksportuoti">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Rodyti pranešimą apie blokuotus programinius kodus">
+<!ENTITY noscriptNotify.bottom "Patalpinti pranešimą apačioje">
+<!ENTITY noscriptSound.choose "Pasirinkti">
+<!ENTITY noscriptSound.choose.accesskey "P">
+<!ENTITY noscriptSound.play "Groti">
+<!ENTITY noscriptSound.play.accesskey "G">
+<!ENTITY noscriptSound.reset "Atstatyti">
+<!ENTITY noscriptSound.reset.accesskey "A">
+<!ENTITY noscriptAdvanced "Kitkas">
+<!ENTITY noscriptAdditionalPermissions "Papildomi leidimai patikimoms svetainėms">
+<!ENTITY noscriptAllowClipboard "Leisti formatuoto teksto kopijavimą ir įterpimą iš atmintinės">
+<!ENTITY noscriptAdditionalRestrictions "Papildomi draudimai nepatikimoms svetainėms">
+<!ENTITY noscriptForbidJava "Uždrausti Java™">
+<!ENTITY noscriptForbidFlash "Uždrausti Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Uždrausti kitus įskiepius">
+<!ENTITY noscriptReloadWarn "Šios nuostatos įsigalios naujoms arba (rankiniu būdu) įkrautoms iš naujo svetainėms">
+<!ENTITY noscriptConfirmUnblock "Prašyti patvirtinimo prieš laikiną objekto atblokavimą">
+<!ENTITY noscriptStatusLabel "Būsenos juostos žymą">
+<!ENTITY noscriptForbidBookmarklets "Uždrausti JavaScript kuriamus adresyno įrašus">
+<!ENTITY noscriptShowPlaceholder "Rodyti puslapio talpintojo ikoną">
+<!ENTITY noscriptTruncateTitle "Nerodyti dokumentų pavadinimų">
+<!ENTITY noscriptFixLinks "Bandyti sutaisyti JavaScript saitus">
+<!ENTITY noscriptAllowBookmarks "Suteikti leidimą svetainėms, atidarytoms iš adresyno">
+<!ENTITY noscriptAllowViaBookmarks "Suteikti leidimą svetainėms, atidarytoms iš adresyno">
+<!ENTITY noscriptAllowPing "Leisti &lt;a ping...&gt; elementus">
+<!ENTITY noscriptAllowLocalLinks "Leisti saitus į vietines bylas">
+<!ENTITY noscriptForbidPing "Uždrausti &lt;a ping...&gt; elementus">
+<!ENTITY noscriptForbidMetaRefresh "Uždrausti &lt;META&gt; peradresavimus &lt;noscript&gt; elementuose">
+<!ENTITY noscriptWhitelist "Baltasis sąrašas">
+<!ENTITY noscriptPermissions "Leidimai">
+<!ENTITY noscriptRefresh "Atnaujinti">
+<!ENTITY noscriptNotifications "Pranešimai">
+<!ENTITY noscriptToolbarToggle "Kairysis paspaudimas ant NoScript įrankių juostos mygtuko keičia atidarytos svetainės leidimus">
+<!ENTITY noscriptTrusted "Patikimi">
+<!ENTITY noscriptUntrusted "Nepatikimi">
+<!ENTITY noscriptUnknown "Nežinomi">
+<!ENTITY noscriptAdd "Pridėti">
+<!ENTITY noscriptAdd.accesskey "P">
+<!ENTITY noscriptClose "Uždaryti">
+<!ENTITY noscriptSiteManager "Svetainių vadovas">
+<!ENTITY noscriptSecurityManager "Saugumo vadovas">
+<!ENTITY noscriptPolicies "Nuostatos">
+<!ENTITY noscriptDefaultPolicies "Numatytos nuostatos">
+<!ENTITY noscriptSitePolicies "Specifinės svetainių nuostatos">
+<!ENTITY noscriptNselNever "Paslėpti &lt;noscript&gt; elementus">
+<!ENTITY noscriptNselForce "Rodyti &lt;noscript&gt; elementus, kurie eina po blokinio &lt;script&gt; elemento">
+<!ENTITY noscriptAutoAllowTopLevel "Laikinai suteikti leidimą aukščiausiojo lygio svetainių adresams pagal nutylėjimą">
+<!ENTITY noscriptDescription "Papildoma apsauga jūsų Firefox naršyklei: NoScript leidžia JavaScript, Java (ir kitus įskiepius) tik jūsų pasirinktiems patikimiems domenams (pvz., jūsų banko interneto svetainei). Ši baltuoju sąrašu pagrįsta išankstinio blokavimo taktika neleidžia panaudoti saugumo skylių (žinomų ir net nežinomų!) neprarandant funkcionalumo... Ekspertai pritaria: Firefox tikrai saugesnis su NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Blokuoti ieškiklius, pagrįstus CSS">
+<!ENTITY noscriptOptFilterXGet "Nukenksminti įtartinas tarp-svetainines užklausas">
+<!ENTITY noscriptOptFilterXPost "Paversti tarp-svetainines POST užklausas į tuščias GET užklausas">
+<!ENTITY noscriptShowConsole "Rodyti konsolę">
+<!ENTITY noscriptShowConsole.accesskey "K">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXssFaq "XSS DPK...">
+<!ENTITY noscriptXssFaq.accesskey "D">
+<!ENTITY noscriptUnsafeReload "Nesaugus perkrovimas">
+<!ENTITY noscriptUnsafeReload.accesskey "P">
+<!ENTITY noscriptXssExceptions "Anti-XSS apsaugos išimtys">
+<!ENTITY noscriptXssExceptions.description "Adresai, atitinkantys šias reguliarias išraiškas, NEBUS apsaugoti nuo XSS">
+<!ENTITY noscriptMatchSample "Išraiškos pavyzdys:">

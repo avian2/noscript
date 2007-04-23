@@ -86,7 +86,13 @@ var nsopt = {
         "xssEx", 
         ns.rxParsers.multi,
         ns.getPref("filterXExceptions"));
-
+    
+    // hide incompatible options
+    if(top.opener && top.opener.noscriptOverlay && !top.opener.noscriptOverlay.getNotificationBox()) {
+      // Moz/SeaMonkey, no notifications
+      document.getElementById("fx-notifications").setAttribute("hidden", "true");
+    }
+    
     // document.getElementById("policy-tree").view = policyModel;
     window.sizeToContent();
       
@@ -219,6 +225,7 @@ var nsopt = {
     if(selectedItems.length == 1) {
       if(!ns.isPermanent(site = selectedItems[0].value)) {
         ul.removeItemAt(ul.getIndexOfItem(selectedItems[0]));
+        this.trustedSites.remove(site, true)
       }
       return;
     }
@@ -258,27 +265,27 @@ var nsopt = {
   importExport: function(op) {
     const title = this.buttonToTitle(op + "Button");
     try {
-      const cc=Components.classes;
-      const ci=Components.interfaces;
-      const fp = cc["@mozilla.org/filepicker;1"].createInstance(ci.nsIFilePicker);
+      const cc = Components.classes;
+      const ci = Components.interfaces;
+      const IFP = ci.nsIFilePicker;
+      const fp = cc["@mozilla.org/filepicker;1"].createInstance(IFP);
       
-      fp.init(window,title, op == "import"?ci.nsIFilePicker.modeOpen:ci.nsIFilePicker.modeSave);
-      fp.appendFilters(ci.nsIFilePicker.filterText);
-      fp.appendFilters(ci.nsIFilePicker.filterAll);
+      fp.init(window,title, op == "import" ? IFP.modeOpen : IFP.modeSave);
+      fp.appendFilters(IFP.filterText);
+      fp.appendFilters(IFP.filterAll);
       fp.filterIndex = 0;
       fp.defaultExtension = ".txt";
-      const ret=fp.show();
-      if(ret == ci.nsIFilePicker.returnOK || 
-          ret == ci.nsIFilePicker.returnReplace) {
-        this[op](fp.file);
+      const ret = fp.show();
+      if(ret == IFP.returnOK || 
+          ret == IFP.returnReplace) {
+        this[op + "List"](fp.file);
       }
     } catch(ex) {
       noscriptUtil.prompter.alert(window, title, ex.toString());
     }
   },
   
-  import: function(file) {
-    if(typeof(file)=="undefined") return this.importExport("import");
+  importList: function(file) {
     var all = this.serv.readFile(file);
     var untrustedPos = all.indexOf("\n[UNTRUSTED]\n");
     if(untrustedPos < 0) {
@@ -293,8 +300,7 @@ var nsopt = {
     return null;
   },
   
-  export: function(file) {
-    if(typeof(file)=="undefined") return this.importExport("export");
+  exportList: function(file) {
     this.serv.writeFile(file, 
       this.trustedSites.sitesList.join("\n") + 
       "\n[UNTRUSTED]\n" +

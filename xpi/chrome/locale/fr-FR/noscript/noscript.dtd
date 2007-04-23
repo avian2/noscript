@@ -56,7 +56,7 @@
 <!ENTITY noscriptAllowPing "Autoriser &lt;a ping…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Autoriser les liens locaux">
 <!ENTITY noscriptForbidPing "Interdire &lt;a ping…&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "Interdire les redirections META dans des éléments &lt;noscript&gt;">
 <!ENTITY noscriptWhitelist "Liste blanche">
 <!ENTITY noscriptPermissions "Permissions">
 <!ENTITY noscriptRefresh "Actualiser">
@@ -83,10 +83,10 @@
 <!ENTITY noscriptShowConsole "Afficher la console...">
 <!ENTITY noscriptShowConsole.accesskey "A">
 <!ENTITY noscriptXss "XSS">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "FAQ XSS">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload "Rechargement non sécurisé">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptXssExceptions "Exceptions de protection anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Les destinations correspondantes aux expressions régulières suivantes ne seront pas protégées contre les scripts entre sites XSS">
+<!ENTITY noscriptMatchSample "Example de motif :">

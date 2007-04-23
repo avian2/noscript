@@ -132,9 +132,9 @@
     <button id="removeButton" disabled="true" label="&noscriptRemoveSelected;" oncommand="nsopt.remove()"/>
     <spacer flex="1" />
     <button id="importButton" label="&noscriptImport;" accesskey="&noscriptImport.accesskey;" 
-      oncommand="nsopt.import()"/>
+      oncommand="nsopt.importExport('import')"/>
     <button id="exportButton" label="&noscriptExport;" accesskey="&noscriptExport.accesskey;" 
-       oncommand="nsopt.export()"/>
+       oncommand="nsopt.importExport('export')"/>
   </hbox>
   </vbox>
   </tabpanel><!-- END Whitelist -->
@@ -169,23 +169,22 @@
   
   <tabpanel><!-- Notifications -->
     <vbox flex="1">
-    <groupbox>
-      <vbox id="notifyOpts">
-        <checkbox id="opt-notify" label="&noscriptNotify;" />
-        <vbox class="ia-indent">
-          <checkbox id="opt-notify.bottom" label="&noscriptNotify.bottom;"  />
-          <checkbox id="opt-notify.hide" label="" />
-         </vbox>
-      </vbox>
-      <separator class="thin" />
-      <hbox align="center">
-        <checkbox id="opt-xss.notify" label="&noscriptXss;" /><!-- TODO: accesskey -->
-        <label class="text-link" style="font-weight: bold" value="?" onclick="noscriptUtil.openXssFaq()" tooltiptext="&noscriptXssFaq;" />
-      </hbox>
-      
-      <separator class="thin" />
-      <checkbox id="opt-forbidMetaRefresh.notify" label="&noscriptForbidMetaRefresh;"/><!-- TODO: accesskey -->
-      
+      <groupbox id="fx-notifications">
+        <vbox id="notifyOpts">
+          <checkbox id="opt-notify" label="&noscriptNotify;" />
+          <vbox class="ia-indent">
+            <checkbox id="opt-notify.bottom" label="&noscriptNotify.bottom;"  />
+            <checkbox id="opt-notify.hide" label="" />
+           </vbox>
+        </vbox>
+        <separator class="thin" />
+        <hbox align="center">
+          <checkbox id="opt-xss.notify" label="&noscriptXss;" /><!-- TODO: accesskey -->
+          <label class="text-link" style="font-weight: bold" value="?" onclick="noscriptUtil.openXssFaq()" tooltiptext="&noscriptXssFaq;" />
+        </hbox>
+        
+        <separator class="thin" />
+        <checkbox id="opt-forbidMetaRefresh.notify" label="&noscriptForbidMetaRefresh;"/><!-- TODO: accesskey -->
       </groupbox>
       <groupbox class="ia-indent">
         <caption><checkbox id="opt-sound" label="&noscriptSound;" /></caption>

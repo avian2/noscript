@@ -83,7 +83,7 @@
 <!ENTITY noscriptShowConsole "Открыть консоль...">
 <!ENTITY noscriptShowConsole.accesskey "о">
 <!ENTITY noscriptXss "XSS (межсайтовый скриптинг)">
-<!ENTITY noscriptXssFaq "Справка по XSS (межсайтовый скриптинг)">
+<!ENTITY noscriptXssFaq "Справка по XSS (межсайтовому скриптингу)">
 <!ENTITY noscriptXssFaq.accesskey "а">
 <!ENTITY noscriptUnsafeReload "Небезопасное обновление">
 <!ENTITY noscriptUnsafeReload.accesskey "е">

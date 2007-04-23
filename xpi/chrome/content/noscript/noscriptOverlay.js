@@ -156,28 +156,42 @@ const noscriptOverlay = {
 ,
 
   prepareOptItems: function(popup) {
+    const notifications = this.getNotificationBox();
     const opts = popup.getElementsByAttribute("type", "checkbox");
-    var k, j, node;
+    var k, j, node, id;
     for(j = opts.length; j-- > 0;) {
       node = opts[j];
-      if((k = node.id.lastIndexOf("-opt-")) > -1) {
-        node.setAttribute("checked", this.ns.getPref(node.id.substring(5 + k)));
+      var id = node.id;
+      if((k = id.lastIndexOf("-opt-")) > -1) {
+        if((!notifications) && id.indexOf("notification") - 1) {
+          node.setAttribute("hidden", "true");
+        } else {
+          node.setAttribute("checked", this.ns.getPref(node.id.substring(5 + k)));
+        }
       }
     }
   },
   
   
-  prepareXSSMenu: function(popup) {
-    this.prepareOptItems(this.populateXSSMenu(popup));
+  prepareXssMenu: function(popup, invert) {
+    this.prepareOptItems(this.populateXssMenu(popup, invert));
   },
-  populateXSSMenu: function(popup) {
+  populateXssMenu: function(popup, invert) {
     var ref = document.getElementById("noscript-mi-xss-unsafe-reload");
     var parent = ref.parentNode;
+    inverse = parent.lastChild.id != "noscript-mi-xss-faq";
+    invert = inverse && !invert;
     if(parent != popup) {
       while(parent.firstChild) {
-        popup.appendChild(parent.firstChild);
+        popup.appendChild(invert ? parent.lastChild : parent.firstChild);
+      }
+    } else if(invert) {
+      for(var p, n = parent.lastChild; n; n = p) {
+        p = n.previousSibling;
+        parent.appendChild(n);
       }
     }
+    
     return popup;
   },
   
@@ -224,20 +238,13 @@ const noscriptOverlay = {
     const mainMenu = node.parentNode;
      
     var xssMenu = document.getElementById("noscript-xss-menu");
+    
     if(xssMenu && node != xssMenu) {
       mainMenu.insertBefore(xssMenu, node);
     }
-    this.populateXSSMenu(xssMenu.firstChild);
-    var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(gBrowser.selectedBrowser);
-    if(unsafeRequest) {
-      xssMenu.style.display = "";
-      xssMenu.setAttribute("tooltiptext", "XSS [" +
-                  ns.getSite(unsafeRequest.origin) + "]->[" + 
-                  ns.getSite(unsafeRequest.URI.spec) + "]");
-    } else {
-      xssMenu.style.display = "none";
-    }
-
+    this.populateXssMenu(xssMenu.firstChild);
+    this.syncXssWidget(xssMenu);
+    
 
     this.prepareOptItems(popup);
       
@@ -390,6 +397,16 @@ const noscriptOverlay = {
     }
     this.normalizeMenu(untrustedMenu);
     this.normalizeMenu(mainMenu);
+    
+    if(mainMenu.parentNode.id == "noscript-tbb") { 
+      // this one can go away, better take our stuff back when done
+      mainMenu.addEventListener("popuphidden", function(ev) {
+        ev.stopPropagation();
+        popup.removeEventListener(ev.name, arguments.callee, false);
+        noscriptOverlay.prepareMenu(document.getElementById("noscript-status-popup"));
+      }, false);
+    }
+    
   },
   
   normalizeMenu: function(menu) {
@@ -482,7 +499,7 @@ const noscriptOverlay = {
         && ev.target == document && ev.type== "focus") {
       this._syncInfo.uninstallCheck = true;
     }
-     
+    
     if(!this._syncInfo.enqueued) {
       this._syncInfo.enqueued = true;
       window.setTimeout(function(nso) { 
@@ -496,6 +513,32 @@ const noscriptOverlay = {
     }
   },
   
+  syncXssWidget: function(widget) {
+    if(!widget) widget = document.getElementById("noscript-statusXss");
+    const ns = this.ns;
+    var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(gBrowser.selectedBrowser);
+    if(unsafeRequest) {
+      widget.removeAttribute("hidden");
+      widget.setAttribute("tooltiptext", "XSS [" +
+                  ns.getSite(unsafeRequest.origin) + "]->[" + 
+                  ns.getSite(unsafeRequest.URI.spec) + "]");
+    } else {
+      widget.setAttribute("hidden", "true");
+    }
+  },
+  
+  syncRedirectWidget: function() {
+    var widget = document.getElementById("noscript-statusRedirect");
+    var info = this.getMetaRefreshInfo();
+    if(!info) {
+      widget.setAttribute("hidden", true);
+      return;
+    }
+    widget.removeAttribute("hidden");
+    widget.setAttribute("tooltiptext",
+        this.getString("metaRefresh.notify.follow") + " [" + info.uri + "]"); 
+  },
+  
   showUI: function() {
     this.ns.setPref("statusIcon", true);
     document.getElementById("noscript-status-popup").showPopup();
@@ -503,16 +546,21 @@ const noscriptOverlay = {
 ,
   get notificationPos() {
     return this.ns.getPref("notify.bottom", false) ? "bottom" : "top";
+  },
+  get altNotificationPos() {
+    return this.notificationPos == "top" ? "bottom" : "top";
   }
 , 
-  getNotificationBox: function(pos) {
-    var b = getBrowser();
-    if(!pos) pos = this.notificationPos;
-    if(b.getMessageForBrowser) return b.getMessageForBrowser(b.selectedBrowser, pos); // Fx <= 1.5 
-    if(!b.getNotificationBox) return null; // SeaMonkey
+  getNotificationBox: function(pos, browser) {
+    var gb = getBrowser();
+    browser = browser || gb.selectedBrowser;
+    if(!pos) pos = this.notificationPos
+    
+    if(gb.getMessageForBrowser) return gb.getMessageForBrowser(browser, pos); // Fx <= 1.5 
+    if(!gb.getNotificationBox) return null; // SeaMonkey
 
-    var nb = b.getNotificationBox(null);
-    b = null;
+    var nb = gb.getNotificationBox(browser);
+    gb = browser = null;
     
     if(pos == "bottom") {
       if(!nb._bottomStack) {
@@ -625,8 +673,15 @@ const noscriptOverlay = {
     return true;
   },
   
+  getAltNotificationBox: function(browser, value, canAppend) {
+    const box = this.getNotificationBox(this.altNotificationPos, browser);
+    if(canAppend || (box && 
+        box.getNotificationWithValue &&
+        box.getNotificationWithValue(value))) return null;
+    return box;
+  },
+  
   notifyXSSOnLoad: function(requestInfo) {
-    if(!getBrowser().getNotificationBox) return;
     requestInfo.browser.addEventListener("load", function(ev) {
       requestInfo.browser.removeEventListener("load", arguments.callee, true);
       noscriptOverlay.notifyXSS(requestInfo);
@@ -635,9 +690,9 @@ const noscriptOverlay = {
   
   notifyXSS: function(requestInfo) {
     const notificationValue = "noscript-xss-notification"; 
-    const box = getBrowser().getNotificationBox(requestInfo.browser);
-    if(box.getNotificationWithValue(notificationValue)) return;
-    
+    const box = this.getAltNotificationBox(requestInfo.browser, notificationValue);
+    if(!box) return;
+
     var origin = this.ns.getSite(requestInfo.origin);
     origin = (origin && "[" + origin + "]") || this.getString("untrustedOrigin");
     var label = this.getString("xss.notify.generic", [origin]);
@@ -646,54 +701,82 @@ const noscriptOverlay = {
     const refWidget = document.getElementById("noscript-options-ctx-menuitem");
     var buttonLabel = refWidget.getAttribute("label");
     var buttonAccesskey = refWidget.getAttribute("accesskey");
+    var popup = "noscript-xss-popup";
     
-    box.appendNotification(
-      label, 
-      notificationValue, 
-      icon, 
-      box.PRIORITY_WARNING_HIGH,
-      [{
-        label: buttonLabel,
-        accessKey: buttonAccesskey,
-        popup: "noscript-xss-popup"
-       }]
-      ); 
+    const tabBrowser = getBrowser();
+    if(tabBrowser.showMessage) { // Fx 1.5
+      tabBrowser.showMessage(
+          requestInfo.browser, 
+          icon, label, 
+          buttonLabel, null,
+          null, popup, this.altNotificationPos, true,
+          buttonAccesskey);
+    } else { // Fx >= 2.0
+      box.appendNotification(
+        label, 
+        notificationValue, 
+        icon, 
+        box.PRIORITY_WARNING_HIGH,
+        [{
+          label: buttonLabel,
+          accessKey: buttonAccesskey,
+          popup: popup
+         }]
+        );
+    }
   },
   
   notifyMetaRefresh: function(info) {
-    const notificationValue = "noscript-metaRefresh-notification";
-    var browser = gBrowser.getBrowserForDocument(info.document);
+    var browser = this.ns.domUtils.findBrowser(window, info.document.defaultView);
     if(!browser) return;
-    var box = gBrowser.getNotificationBox(browser);
-    if(box.getNotificationWithValue(notificationValue)) return;
     
-    var label = this.getString("metaRefresh.notify", [info.uri, info.timeout])
-    var icon = this.getIcon("redirect");
-
-    var notification = box.appendNotification(
-      label, 
-      notificationValue, 
-      icon, 
-      box.PRIORITY_INFO_HIGH,
-      [{
-          label: this.getString("metaRefresh.notify.follow"),
-          accessKey: this.getString("metaRefresh.notify.follow.accessKey"),
-          callback: function(notification, buttonInfo) {
-            noscriptOverlay.ns.doFollowMetaRefresh(info);
-          }
-       }]
-      );
-
-    browser.addEventListener("beforeunload", function(ev) {
-      if(ev.originalTarget == info.document || ev.originalTarget == browser) {
-        browser.removeEventListener("beforeunload", arguments.callee, false);
-        if(notification == box.currentNotification) {
-          box.removeCurrentNotification();
-        } else {
-          noscriptOverlay.ns.doBlockMetaRefresh(info);
-        } 
+    const notificationValue = "noscript-metaRefresh-notification";
+    const box = this.getAltNotificationBox(browser, notificationValue);
+    var notification = null;
+    
+    if(box && this.ns.getPref("forbidMetaRefresh.notify", true)) {
+      var label = this.getString("metaRefresh.notify", [info.uri, info.timeout])
+      var icon = this.getIcon("redirect");
+        
+      if(box.appendNotification) { // Fx 2
+      
+        notification = box.appendNotification(
+          label, 
+          notificationValue, 
+          icon, 
+          box.PRIORITY_INFO_HIGH,
+          [{
+              label: this.getString("metaRefresh.notify.follow"),
+              accessKey: this.getString("metaRefresh.notify.follow.accessKey"),
+              callback: function(notification, buttonInfo) {
+                noscriptOverlay.ns.doFollowMetaRefresh(info);
+              }
+           }]
+          );
       }
-    }, false);
+      browser.addEventListener("beforeunload", function(ev) {
+        if(ev.originalTarget == info.document || ev.originalTarget == browser) {
+          browser.removeEventListener("beforeunload", arguments.callee, false);
+          if(notification && notification == box.currentNotification) {
+            box.removeCurrentNotification();
+          } else {
+            noscriptOverlay.ns.doBlockMetaRefresh(info);
+          }
+        }
+      }, false);
+    }
+    
+    this.setMetaRefreshInfo(info, browser);
+  },
+  
+  setMetaRefreshInfo: function(value, browser) {
+    return this.ns.setExpando(browser || gBrowser.selectedBrowser, "metaRefreshInfo", value);
+  },
+  getMetaRefreshInfo: function(browser) {
+    return this.ns.getExpando(browser || gBrowser.selectedBrowser, "metaRefreshInfo");
+  },
+  followMetaRefresh: function(event) {
+    this.ns.doFollowMetaRefresh(this.getMetaRefreshInfo(), event.shiftKey);
   },
   
   unsafeReload: function() {
@@ -718,7 +801,12 @@ const noscriptOverlay = {
       ]);
     msg += noscriptUtil.getString("confirm");
     if(noscriptUtil.confirm(msg, "confirmUnsafeReload")) {
-      getBrowser().getNotificationBox(browser).removeAllNotifications(true);
+      try {
+        getBrowser().getNotificationBox(browser).removeAllNotifications(true);
+      } catch(e) {}
+      try {
+        this.notificationHide(this.getAltNotificationBo(browser));
+      } catch(e) {}
       rw.unsafeReload(browser, true);
     }
   },
@@ -760,13 +848,16 @@ const noscriptOverlay = {
   },
   
   _syncUINow: function() {
-   
-    const ns = this.ns;
     
+    const ns = this.ns;
     const global = ns.jsEnabled;
     const jsPSs = ns.jsPolicySites;
     const untrustedSites = ns.untrustedSites;
     var lev;
+    
+    this.syncXssWidget();
+    this.syncRedirectWidget();
+    
     const sites = this.getSites();
     var totalScripts = sites.scriptCount;
     var totalPlugins = sites.pluginCount;
@@ -1042,11 +1133,14 @@ const noscriptOverlay = {
             const ns = noscriptOverlay.ns;
             const domWindow = aWebProgress.DOMWindow;
             const uri = aRequest.URI;
-            
+            const topWin = domWindow && domWindow == domWindow.top
+            if(topWin) {
+              noscriptOverlay.setMetaRefreshInfo(null, ns.domUtils.findBrowser(window, domWindow));
+            }
             if(ns.shouldLoad(7, uri, uri, domWindow, aRequest.contentType, true) != 1) {
               aRequest.cancel(0x804b0002);
             } else {
-              if(domWindow && domWindow == domWindow.top) {
+              if(topWin) {
                 if(ns.autoAllow) {
                   var site = ns.getQuickSite(uri.spec, ns.autoAllow);
                   if(site && (!(ns.isJSEnabled(site) || ns.isUntrusted(site)))) {
@@ -1083,9 +1177,9 @@ const noscriptOverlay = {
     onContentLoad: function(ev) {
       var doc = ev.originalTarget;
       if(doc instanceof HTMLDocument) {
-        if(doc.defaultView == doc.defaultView.top) 
+        if(doc.defaultView == doc.defaultView.top) {
           noscriptOverlay.ns.processMetaRefresh(doc);
-        
+        }
         noscriptOverlay.syncUI(); 
       }
     },

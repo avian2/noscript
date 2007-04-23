@@ -56,7 +56,7 @@
 <!ENTITY noscriptAllowPing "&lt;a ping...&gt; اجازه دادن به">
 <!ENTITY noscriptAllowLocalLinks "اجازه دادن به لینک های محلی">
 <!ENTITY noscriptForbidPing "&lt;a ping...&gt; ممنوع کردن">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "&lt;noscript&gt; در عناصر META ممنوع کردن تفییر مسیرهای">
 <!ENTITY noscriptWhitelist "لیست سفید">
 <!ENTITY noscriptPermissions "مجوزها">
 <!ENTITY noscriptRefresh "بارگذاری مجدد">
@@ -83,10 +83,10 @@
 <!ENTITY noscriptShowConsole "نمایش کنسول...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS سوالات">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload "بارگذاری مجدد ناامن">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
 <!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptMatchSample "مثال تطابق الگو :">

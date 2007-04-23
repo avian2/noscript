@@ -1,5 +1,33 @@
 NoScript ChangeLog
 
+v 1.1.4.8.070423
+=====================================================================
++ Lituanian (thanks to Mindaugas Jakutis)
+x Additional localization updates and minor fixes
+
+v 1.1.4.8.070422
+=====================================================================
++ Forbid META redirection inside NOSCRIPT element in Seamonkey too
++ XSS notifications for Fx 1.5 too
++ XSS status bar icon appears when XSS activity is detected:
+  left/right click opens XSS menu, middle click hides icon
++ META redirection bar icon appears when needed: 
+  click follows redirection once, shift+click remembers for session, 
+  middle click hides icon
+x Fixed a regression (070420 only) with Import/Export buttons broken
+x Fixed toolbar button removal messing with other NoScript menus
+  (thanks niko322 for report)
+x Fixed file:// URL item not showing anymore regression
+  (thanks Shingoshi for report)
+x Fixed regression in Option Dialog: removing from whitelist didn't 
+  work if you applied to just one site (multiple batch did work) -
+  thanks Alan Baxter for report
+
+v 1.1.4.8.070420
+=====================================================================
+x Fixed "Forbid other plugins implies Forbid Flash" - thanks Dwedit
+x Fixed Options dialog issues with Fx 1.5
+
 v 1.1.4.8
 =====================================================================
 x Minor improvements in XSS exceptions regular expression parsing
@@ -21,7 +49,7 @@ v 1.1.4.8RC1 (1.1.4.7.070419)
   choice will be remebered across the current session
   (noscript.forbidMetaRefresh.remember preference, dismissing the 
   notification with its close button means "keep blocked")
-  thanks rsnake and Alan Baxter for suggestion
+  thanks rsnake and Alan Baxter for suggestion (Firefox 2 only)
 + "XSS-Unsafe Reload" menu item in the XSS notification bar popup
 + "XSS FAQ" menu item in the XSS notification bar popup
 + noscript.xss.notify.subframes about:config preference to control 
