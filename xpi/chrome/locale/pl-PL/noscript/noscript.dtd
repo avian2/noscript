@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "Pozwól na wykonywanie skryptów lokalnym odnośnikom">
 <!ENTITY noscriptForbidPing "Zabroń &lt;ping...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Nie pozwalaj na przekierowania META znajdujące się wewnątrz elementu HTML &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Zaufane witryny">
 <!ENTITY noscriptPermissions "Zezwolenia">
 <!ENTITY noscriptRefresh "Odświeżanie">
@@ -83,10 +84,15 @@
 <!ENTITY noscriptShowConsole "Wyświetl konsolę">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "Pytania i odpowiedzi o XSS">
-<!ENTITY noscriptXssFaq.accesskey "X">
+<!ENTITY noscriptXssFaq.accesskey "S">
 <!ENTITY noscriptUnsafeReload "Odśwież bez zabezpieczeń">
 <!ENTITY noscriptUnsafeReload.accesskey "W">
 <!ENTITY noscriptXssExceptions "Wyjątki zabezpieczeń Anty-XSS">
 <!ENTITY noscriptXssExceptions.description "Obiekty odpowiadające tym wyrażeniom regularnym nie będą zabezpieczane przed XSS">
 <!ENTITY noscriptMatchSample "Przykłady wzorców:">
+<!ENTITY noscriptReset "Resetuj">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "Przywróć domyślne">
+<!ENTITY noscriptResetDef.accesskey "d">

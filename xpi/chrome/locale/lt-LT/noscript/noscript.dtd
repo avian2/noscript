@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "Leisti saitus į vietines bylas">
 <!ENTITY noscriptForbidPing "Uždrausti &lt;a ping...&gt; elementus">
 <!ENTITY noscriptForbidMetaRefresh "Uždrausti &lt;META&gt; peradresavimus &lt;noscript&gt; elementuose">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "Ž">
 <!ENTITY noscriptWhitelist "Baltasis sąrašas">
 <!ENTITY noscriptPermissions "Leidimai">
 <!ENTITY noscriptRefresh "Atnaujinti">
@@ -83,10 +84,15 @@
 <!ENTITY noscriptShowConsole "Rodyti konsolę">
 <!ENTITY noscriptShowConsole.accesskey "K">
 <!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS DPK...">
 <!ENTITY noscriptXssFaq.accesskey "D">
 <!ENTITY noscriptUnsafeReload "Nesaugus perkrovimas">
 <!ENTITY noscriptUnsafeReload.accesskey "P">
 <!ENTITY noscriptXssExceptions "Anti-XSS apsaugos išimtys">
 <!ENTITY noscriptXssExceptions.description "Adresai, atitinkantys šias reguliarias išraiškas, NEBUS apsaugoti nuo XSS">
-<!ENTITY noscriptMatchSample "Išraiškos pavyzdys:">
+<!ENTITY noscriptMatchSample "Adreso pavyzdys:">
+<!ENTITY noscriptReset "Atstatyti">
+<!ENTITY noscriptReset.accesskey "A">
+<!ENTITY noscriptResetDef "Atstatyti į pradines reikšmes">
+<!ENTITY noscriptResetDef.accesskey "Į">

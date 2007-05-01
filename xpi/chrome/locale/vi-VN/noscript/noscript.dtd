@@ -56,7 +56,8 @@
 <!ENTITY noscriptAllowPing "Cho phép &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Cho phép các liên kết nội tại">
 <!ENTITY noscriptForbidPing "Cấm &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "Cấm đổi hướng bằng META trong các phần tử &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Sổ trắng">
 <!ENTITY noscriptPermissions "Các phép">
 <!ENTITY noscriptRefresh "Tải lại">
@@ -68,8 +69,8 @@
 <!ENTITY noscriptAdd "Thêm">
 <!ENTITY noscriptAdd.accesskey "m">
 <!ENTITY noscriptClose "Đóng">
-<!ENTITY noscriptSiteManager "Quản lí Site">
-<!ENTITY noscriptSecurityManager "Quản lí Bảo mật">
+<!ENTITY noscriptSiteManager "Quản lý Site">
+<!ENTITY noscriptSecurityManager "Quản lý Bảo mật">
 <!ENTITY noscriptPolicies "Luật">
 <!ENTITY noscriptDefaultPolicies "Luật Mặc định">
 <!ENTITY noscriptSitePolicies "Luật Cho Site Riêng Biệt">
@@ -83,10 +84,16 @@
 <!ENTITY noscriptShowConsole "Hiển thị Console...">
 <!ENTITY noscriptShowConsole.accesskey "s">
 <!ENTITY noscriptXss "XSS">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
-<!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
-<!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS Câu Hỏi Thường Gặp...">
+<!ENTITY noscriptXssFaq.accesskey "G">
+<!ENTITY noscriptUnsafeReload "Tải Lại Không An Toàn">
+<!ENTITY noscriptUnsafeReload.accesskey "L">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions
+Luật Ngoại Trừ Cho Bảo Vệ Anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Địa điểm đối chiếu với các regular expressions này sẽ KHÔNG được bảo vệ từ XSS">
+<!ENTITY noscriptMatchSample "Mẫu đối chiếu:">
+<!ENTITY noscriptReset "Hoàn Lại">
+<!ENTITY noscriptReset.accesskey "H">
+<!ENTITY noscriptResetDef "Hoàn lại giá trị mặc định">
+<!ENTITY noscriptResetDef.accesskey "c">

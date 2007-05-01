@@ -50,20 +50,22 @@ pref("noscript.forbidMetaRefresh", false);
 pref("noscript.forbidMetaRefresh.remember", false);
 pref("noscript.forbidMetaRefresh.notify", true);
 
+pref("noscript.contentBlocker", false);
+
 pref("noscript.toggle.temp", true);
 pref("noscript.firstRunRedirection", true);
 
 pref("noscript.xss.notify", true);
 pref("noscript.xss.notify.subframes", false);
 
-pref("noscript.xss.trustReloads", true);
+pref("noscript.xss.trustReloads", false);
 pref("noscript.xss.trustData", true);
 
 pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
 pref("noscript.filterXGetRx", "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;]");
 pref("noscript.filterXGetRx2Black", "[\(\)\=;]");
-pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.[a-z\\.]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/[^\"'<>\?%]+$"); 
+pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.[a-z\\.]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"'<>\?%]+$"); 
 
 pref("noscript.blockXIntranet", true);
 pref("noscript.intranetMaskRx", "^(127\\.[\\d.]+)");

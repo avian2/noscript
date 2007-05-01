@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "อนุญาตลิงก์ภายใน">
 <!ENTITY noscriptForbidPing "ไม่อนุญาต &lt;ปิง...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "ห้าม META เปลี่ยนทางภายในส่วนประกอบ &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "บัญชีขาว">
 <!ENTITY noscriptPermissions "การอนุญาต">
 <!ENTITY noscriptRefresh "เรียกหน้าใหม่">
@@ -83,6 +84,7 @@
 <!ENTITY noscriptShowConsole "แสดงส่วนเฝ้าคุม...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "เอกซ์เอสเอส">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "คำถามพบบ่อยเอกซ์เอสเอส...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "โหลดใหม่ไม่ปลอดภัย">
@@ -90,3 +92,7 @@
 <!ENTITY noscriptXssExceptions "ข้อยกเว้นการปกป้องแอนทิ-เอกซ์เอสเอส">
 <!ENTITY noscriptXssExceptions.description "เป้าหมายการจับคู่การแสดงออกทั่วไปเหล่านี้จะไม่ถูกปกป้องกับเอกซ์เอสเอส">
 <!ENTITY noscriptMatchSample "ตัวอย่างการจับคู่พื้นผิว:">
+<!ENTITY noscriptReset "รีเซ็ต">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "คืนค่าเป็นค่าดั้งเดิม">
+<!ENTITY noscriptResetDef.accesskey "d">

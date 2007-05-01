@@ -107,9 +107,8 @@
   </menu>
 </popup>
 
-<statusbar id="status-bar">
-
-<popupset id="noscriptPopupSet">
+<window id="main-window">
+<popupset><!-- we use a private anonymous (no id) popup set for SeaMonkey compatibility -->
   <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
     <menuseparator />
      <menuitem 
@@ -185,9 +184,10 @@
               
    </popup>
 </popupset>
-  
+</window>
 
 
+<statusbar id="status-bar">
 
   <statusbarpanel id="noscript-statusIcon" insertbefore="statusbar-updates"
     src="chrome://noscript/skin/no16.png" class="statusbarpanel-menu-iconic"

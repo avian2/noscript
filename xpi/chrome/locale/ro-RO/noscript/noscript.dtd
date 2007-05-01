@@ -56,7 +56,8 @@
 <!ENTITY noscriptAllowPing "Permite tagul &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Permite legături locale">
 <!ENTITY noscriptForbidPing "Blochează tagul &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "Blocheazp redirectările META din elementele &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "r">
 <!ENTITY noscriptWhitelist "Listă sigură">
 <!ENTITY noscriptPermissions "Permisiuni">
 <!ENTITY noscriptRefresh "Reîncărcare">
@@ -83,10 +84,15 @@
 <!ENTITY noscriptShowConsole "Arată Consola JavaScript....">
 <!ENTITY noscriptShowConsole.accesskey "a">
 <!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload "Reîncărcare nesigură">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptXssExceptions "Excepţii la protecţia Anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Adresele care corespunde filtrelor din listă nu vor fi protejate împotriva atacurilor XSS.">
+<!ENTITY noscriptMatchSample "Mostră filtru:">
+<!ENTITY noscriptReset "Iniţializare">
+<!ENTITY noscriptReset.accesskey "r">
+<!ENTITY noscriptResetDef "Iniţializare (valori implicite)">
+<!ENTITY noscriptResetDef.accesskey "v">

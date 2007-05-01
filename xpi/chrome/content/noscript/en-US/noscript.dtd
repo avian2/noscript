@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Options...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript Options">
-<!ENTITY noscriptAbout "About NoScript">
+<!ENTITY noscriptAbout "About NoScript...">
 <!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
 <!ENTITY noscriptWebAddress "Address of web site:">
 <!ENTITY noscriptAllow "Allow">
@@ -96,5 +96,3 @@
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Reset to defaults">
 <!ENTITY noscriptResetDef.accesskey "d">
-
-

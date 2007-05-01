@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "允许本地链接">
 <!ENTITY noscriptForbidPing "禁止&lt;ping...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "禁止 &lt;noscript&gt; 元素中的 META 重定向">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "白名单">
 <!ENTITY noscriptPermissions "许可">
 <!ENTITY noscriptRefresh "刷新">
@@ -83,6 +84,7 @@
 <!ENTITY noscriptShowConsole "显示控制台...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS 问答...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "非安全的重新载入">
@@ -90,3 +92,7 @@
 <!ENTITY noscriptXssExceptions "反 XSS 保护例外">
 <!ENTITY noscriptXssExceptions.description "匹配这些正则表达式的目标将不会被保护不受XSS(跨站脚本攻击)">
 <!ENTITY noscriptMatchSample "模式匹配样例:">
+<!ENTITY noscriptReset "重置">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "重置为默认值">
+<!ENTITY noscriptResetDef.accesskey "d">

@@ -136,7 +136,7 @@ const noscriptOverlay = {
   prepareContextMenu: function(ev) {
     var menu = document.getElementById("noscript-context-menu");
     if(this.ns.uninstalling || !this.ns.getPref("ctxMenu", true)) {
-      menu.setAttribute("hidden",true);
+      menu.setAttribute("hidden", true);
       return;
     }
     menu.removeAttribute("hidden");
@@ -179,7 +179,7 @@ const noscriptOverlay = {
   populateXssMenu: function(popup, invert) {
     var ref = document.getElementById("noscript-mi-xss-unsafe-reload");
     var parent = ref.parentNode;
-    inverse = parent.lastChild.id != "noscript-mi-xss-faq";
+    var inverse = parent.lastChild.id != "noscript-mi-xss-faq";
     invert = inverse && !invert;
     if(parent != popup) {
       while(parent.firstChild) {
@@ -395,21 +395,21 @@ const noscriptOverlay = {
         untrustedMenu.appendCmd(document.createElement("menuseparator"));
       }
     }
-    this.normalizeMenu(untrustedMenu);
-    this.normalizeMenu(mainMenu);
+    this.normalizeMenu(untrustedMenu, true);
+    this.normalizeMenu(mainMenu, false);
     
-    if(mainMenu.parentNode.id == "noscript-tbb") { 
+    if(mainMenu.id == "noscript-tbb-popup") { 
       // this one can go away, better take our stuff back when done
       mainMenu.addEventListener("popuphidden", function(ev) {
-        ev.stopPropagation();
-        popup.removeEventListener(ev.name, arguments.callee, false);
+        if(ev.target != ev.currentTarget) return;
+        ev.currentTarget.removeEventListener(ev.name, arguments.callee, false);
         noscriptOverlay.prepareMenu(document.getElementById("noscript-status-popup"));
       }, false);
     }
     
   },
   
-  normalizeMenu: function(menu) {
+  normalizeMenu: function(menu, hideParentIfEmpty) {
     if(!menu) return;
     var prev = null;
     var wasSep = false;
@@ -429,16 +429,15 @@ const noscriptOverlay = {
     
     if(prev && wasSep) {
       prev.hidden = true;
-      prev = null;
     }
-    
-    menu.parentNode.hidden = !haveMenu;
-    
+    if(hideParentIfEmpty && menu.parentNode) {
+      menu.parentNode.hidden = !haveMenu;
+    }
   }
 ,
   get srcWindow() {
     //var w=document.commandDispatcher.focusedWindow;
-    return new XPCNativeWrapper(window._content, 'document','getSelection()', 'addEventListener()');
+    return new XPCNativeWrapper(window.content, 'document','getSelection()', 'addEventListener()');
   }
 ,
   get srcDocument() {
@@ -448,7 +447,7 @@ const noscriptOverlay = {
   getBrowserDoc: function(browser) {
     if(browser && browser.contentWindow) {
       try {
-        return this.ns.lookupMethod(browser.contentWindow,'document')();
+        return this.ns.lookupMethod(browser.contentWindow, 'document')();
       } catch(ex) {
       }
     } 
@@ -465,7 +464,7 @@ const noscriptOverlay = {
     } else { // global
       if(enabled) {
         enabled = (!this.ns.getPref("globalwarning")) ||
-          this.prompter.confirm(window,this.getString("global.warning.title"),
+          this.prompter.confirm(window, this.getString("global.warning.title"),
                                 this.getString("global.warning.text"));
       }
     }
@@ -540,8 +539,26 @@ const noscriptOverlay = {
   },
   
   showUI: function() {
-    this.ns.setPref("statusIcon", true);
-    document.getElementById("noscript-status-popup").showPopup();
+    var statusIcon = document.getElementById("noscript-statusIcon");
+    var popup = document.getElementById("noscript-status-popup");
+    if(statusIcon.hidden || statusIcon.parentNode.hidden) {
+      var tbb = document.getElementById("noscript-tbb");
+      if(tbb) {
+        tbb.open = true;
+        return;
+      }
+      if(statusIcon.parentNode.hidden) {
+        popup = document.getElementById("noscript-notify-popup");
+      } else {
+        popup.addEventListener("popuphidden", function(ev) {
+            if(ev.currentTarget != ev.target) return;
+            ev.target.removeEventListener("popuphidden", arguments.callee, false);
+            ev.target.parentNode.hidden = !noscriptOverlay.ns.getPref("statusIcon", true);
+        }, false);
+        statusIcon.hidden = false;
+      }
+    }
+    popup.showPopup();
   }
 ,
   get notificationPos() {
@@ -919,7 +936,7 @@ const noscriptOverlay = {
       message = shortMessage = "";
     }
     
-    widget=document.getElementById("noscript-statusLabelValue");
+    widget = document.getElementById("noscript-statusLabelValue");
     widget.setAttribute("value", shortMessage);
     widget.parentNode.style.display = message ? "block" : "none";
   }
@@ -1072,47 +1089,6 @@ const noscriptOverlay = {
   },
   
   listeners: {
-    
-    onAppletClick: function(ev) {
-      const div = ev.currentTarget;
-      const ns = noscriptUtil.service;
-      const applet = ns.getExpando(div, "removedPlugin");
-      
-      if(applet) {
-        if(ev.shiftKey) {
-          div.style.display = "none";
-          return;
-        }
-        
-        const extras = ns.getPluginExtras(div);
-        const cache = ns.pluginsCache.get(ns.domUtils.findBrowserForNode(div));
-        if(!(extras && extras.url && extras.mime && cache) ) return;
-        
-        var url = extras.url;
-        var mime = extras.mime;
-        
-        
-        if(noscriptUtil.confirm(ns.getAllowObjectMessage(url, mime), "confirmUnblock")) { 
-          cache.forceAllow[url] = mime;
-          const lm = ns.lookupMethod;
- 
-          var doc = lm(div, "ownerDocument")();
-          if(mime == lm(doc, "contentType")()) { // stand-alone plugin
-            lm(lm(doc, "location")(), "reload")();
-            return;
-          }
-          
-          ns.setExpando(div, "removedPlugin", null);
-          
-          window.setTimeout(function() { 
-            while(lm(div,"hasChildNodes")()) {
-              lm(div,"removeChild")(lm(div,"firstChild")());
-            }
-            lm(lm(div,"parentNode")(),"replaceChild")(applet, div)
-          }, 0);
-        }
-      }
-    },
     
     onTabClose: function(ev) {
       try {

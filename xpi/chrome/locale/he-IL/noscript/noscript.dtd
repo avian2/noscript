@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "התר קישוריות מקומיות">
 <!ENTITY noscriptForbidPing "אסור &lt;a ping...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "אסור על הפניות META בתוך תגיות &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "רשימת מותרים">
 <!ENTITY noscriptPermissions "הרשאות">
 <!ENTITY noscriptRefresh "טען מחדש">
@@ -83,6 +84,7 @@
 <!ENTITY noscriptShowConsole "הצג מסוף...">
 <!ENTITY noscriptShowConsole.accesskey "מ">
 <!ENTITY noscriptXss "XSS (סקריפטים מאתרים מצד שלישי)">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "שאלות ותשובות על XSS">
 <!ENTITY noscriptXssFaq.accesskey "ש">
 <!ENTITY noscriptUnsafeReload "טעינה מחדש בשיטה בלתי בטוחה">
@@ -90,3 +92,7 @@
 <!ENTITY noscriptXssExceptions "יוצאים מכלל ההגנה נגד XSS">
 <!ENTITY noscriptXssExceptions.description "ביעדים שמתאימים לביטויים הרגולריים האלה *לא* תיחסם אפשרות XSS">
 <!ENTITY noscriptMatchSample "דוגמה לביטוי רגולרי">
+<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "Reset to defaults">
+<!ENTITY noscriptResetDef.accesskey "d">

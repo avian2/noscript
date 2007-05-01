@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "اجازه دادن به لینک های محلی">
 <!ENTITY noscriptForbidPing "&lt;a ping...&gt; ممنوع کردن">
 <!ENTITY noscriptForbidMetaRefresh "&lt;noscript&gt; در عناصر META ممنوع کردن تفییر مسیرهای">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "لیست سفید">
 <!ENTITY noscriptPermissions "مجوزها">
 <!ENTITY noscriptRefresh "بارگذاری مجدد">
@@ -83,6 +84,7 @@
 <!ENTITY noscriptShowConsole "نمایش کنسول...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS سوالات">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "بارگذاری مجدد ناامن">
@@ -90,3 +92,7 @@
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
 <!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "مثال تطابق الگو :">
+<!ENTITY noscriptReset "ریست">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "بازگردانی به تنظیمات اولیه">
+<!ENTITY noscriptResetDef.accesskey "d">

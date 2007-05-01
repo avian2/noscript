@@ -1,8 +1,56 @@
 NoScript ChangeLog
 
+v 1.1.4.8.070430
+=====================================================================
+x Localization updates and release QA
+
+v 1.1.4.8.070429
+=====================================================================
++ Shortcut to show NoScript menu works even if status bar icon and
+  toolbar button are both hidden
+x Fixed "Options..." button not working if status bar hidden (thanks
+  napiertt and joymus)
+x Fixed regression in XSS notifications due to 070427 fix (some XSS
+  suspicious requests were silently cancelled, rather than sanitized
+  and notified)
+x Fixed "empty Untrusted menu" (thanks niko322)
+
+v 1.1.4.8.070428
+=====================================================================
+x Fixed using keyboard shortcut always shows status icon
+x Fixed closing toolbar button menu always shows status icon 
+
+v 1.1.4.8.070427
+=====================================================================
+x Fixed referrer sanitization glitch (thanks Alan Baxter)
+
+v 1.1.4.8.070426
+=====================================================================
+x Fixed Refresh Blocker and Tab Mix plus redirection permissions 
+  incompatibility (thanks tabasco.kfarmer and Mc)
+x Fixed SeaMonkey "removed content" placeholder (thanks therube)
+x Fixed Seamonkey "Reset" button placement (thanks Phil Chee)
+
+v 1.1.4.8.070425
+=====================================================================
++ Experimental "noscript.contentBlocker" about:config preference
+  to block Java, Flash and other plugins in whitelisted sites as well
+x Fixed bug in toolbar button Untrusted submenu (thanks Steve1000)
+x Better XSS management on whitelisting automatic reloads (XSS checks 
+  for whitelisting reloads can be disabled by toggling off the 
+  "noscript.xss.trustReloads" preference in about:config)
+
+v 1.1.4.8.070424
+=====================================================================
++ "Reset" command in Options Dialog resets options to their default
+  values (thanks Frank Myers)
++ Always bypass cache on XSS Unsafe Reload (thanks Jussi Lahtinen)
++ Serbian translation (thanks Ivan Pesic)
+x Improved Wikipedia XSS exception
+
 v 1.1.4.8.070423
 =====================================================================
-+ Lituanian (thanks to Mindaugas Jakutis)
++ Lithuanian (thanks Mindaugas Jakutis)
 x Additional localization updates and minor fixes
 
 v 1.1.4.8.070422

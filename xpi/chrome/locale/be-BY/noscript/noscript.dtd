@@ -1,4 +1,4 @@
-﻿<!ENTITY noscriptOptions "Налады...">
+<!ENTITY noscriptOptions "Налады...">
 <!ENTITY noscriptOptions.accesskey "а">
 <!ENTITY noscriptOptionsLong "Налады NoScript">
 <!ENTITY noscriptAbout "Аб пашырэнні">
@@ -45,7 +45,7 @@
 <!ENTITY noscriptForbidFlash "Забараніць адлюстраванне элементаў Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Забараніць адлюстраванне элементаў іншых убудоваў">
 <!ENTITY noscriptReloadWarn "Нататка: Усталяваныя налады ўступаюць у сілу альбо на новай старонцы, альбо пасля ручнога абнаўлення бягучае старонкі">
-<!ENTITY noscriptConfirmUnblock "Пацвярджаць часовую разблакоўку аб'екта на старонцы">
+<!ENTITY noscriptConfirmUnblock "Пацвярджаць часовую разблакоўку аб&apos;екта на старонцы">
 <!ENTITY noscriptStatusLabel "Паведамленні ў радку стану">
 <!ENTITY noscriptForbidBookmarklets "Забараніць выкарыстанне Bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Вылучаць заблакаваныя элементы значком з рамкаю">
@@ -56,6 +56,8 @@
 <!ENTITY noscriptAllowPing "Дазволіць вэб-сайту выкарыстаць параметр &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Дазволіць лакальныя спасылкі">
 <!ENTITY noscriptForbidPing "Забараніць вэб-сайту выкарыстаць параметр  &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Белы спіс">
 <!ENTITY noscriptPermissions "Дазволы">
 <!ENTITY noscriptRefresh "Абнавіць">
@@ -79,3 +81,18 @@
 <!ENTITY noscriptOptBlockCssScanners "Блакаваць CSS-сканары">
 <!ENTITY noscriptOptFilterXGet "Фільтраваць запыты, падазраваныя на XSS">
 <!ENTITY noscriptOptFilterXPost "Замяняць XSS POST-запыты на GET-запыты без дадзеных">
+<!ENTITY noscriptShowConsole "Show Console...">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
+<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "Reset to defaults">
+<!ENTITY noscriptResetDef.accesskey "d">

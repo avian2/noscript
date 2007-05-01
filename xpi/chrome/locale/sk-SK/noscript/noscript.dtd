@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "Povoliť lokálne prepojenia">
 <!ENTITY noscriptForbidPing "Zakázať &lt;a ping...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Zakázať presmerovanie META v rámci prvkov &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Zoznam povolených">
 <!ENTITY noscriptPermissions "Povolenia">
 <!ENTITY noscriptRefresh "Obnoviť">
@@ -83,6 +84,7 @@
 <!ENTITY noscriptShowConsole "Zobraziť konzolu...">
 <!ENTITY noscriptShowConsole.accesskey "k">
 <!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Nebezpečné znovunačítanie">
@@ -90,3 +92,7 @@
 <!ENTITY noscriptXssExceptions "Výnimky ochrany Anti-XSS">
 <!ENTITY noscriptXssExceptions.description "Adresy zodpovedajúce týmto regulárnym výrazom NEBUDÚ chránené proti XSS">
 <!ENTITY noscriptMatchSample "Vzor šablóny:">
+<!ENTITY noscriptReset "Vynulovať">
+<!ENTITY noscriptReset.accesskey "V">
+<!ENTITY noscriptResetDef "Vynulovať na predvolené">
+<!ENTITY noscriptResetDef.accesskey "d">

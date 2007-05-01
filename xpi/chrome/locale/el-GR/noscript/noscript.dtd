@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "Να επιτρέπονται τοπικοί δεσμοί">
 <!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;a ping...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Να απαγορεύονται οι ανακατευθύνσεις META σε στοιχεία &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "θ">
 <!ENTITY noscriptWhitelist "Λίστα επιτρεπομένων">
 <!ENTITY noscriptPermissions "Αδειοδοτήσεις">
 <!ENTITY noscriptRefresh "Ανανέωση">
@@ -83,6 +84,7 @@
 <!ENTITY noscriptShowConsole "Προβολή κονσόλας...">
 <!ENTITY noscriptShowConsole.accesskey "κ">
 <!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "Συχνές ερωτήσεις XSS...">
 <!ENTITY noscriptXssFaq.accesskey "χ">
 <!ENTITY noscriptUnsafeReload "Μη ασφαλής ανανέωση">
@@ -90,3 +92,7 @@
 <!ENTITY noscriptXssExceptions "Εξαιρέσεις από προστασία αντί-XSS">
 <!ENTITY noscriptXssExceptions.description "Δεν θα παρέχεται προστασία αντί-XSS για προορισμούς που ταιριάζουν με τις κανονικές εκφράσεις:">
 <!ENTITY noscriptMatchSample "Παράδειγμα ταιριάσματος μοτίβου:">
+<!ENTITY noscriptReset "Επαναφορά αρχικών ρυθμίσεων">
+<!ENTITY noscriptReset.accesskey "Ε">
+<!ENTITY noscriptResetDef "Επαναφορά αρχικών ρυθμίσεων">
+<!ENTITY noscriptResetDef.accesskey "σ">

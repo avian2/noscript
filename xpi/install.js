@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.1.4.8.070423";
+const APP_VERSION = "1.1.4.8.070430";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
@@ -11,7 +11,8 @@ const APP_LOCALES = [
   "es-ES","cs-CZ","pl-PL","ja-JP","ca-AD","pt-PT","pt-BR","de-DE","nb-NO",
   "fi-FI","fr-FR","it-IT","nl-NL","tr-TR","zh-CN","ru-RU","bg-BG","ro-RO",
   "uk-UA", "th-TH", "fa-IR", "el-GR", "hr-HR", "he-IL", "be-BY", "vi-VN",
-  "sk-SK", "hu-HU", "mk-MK", "da-DK", "sv-SE", "zh-TW", "en-US"
+  "sk-SK", "hu-HU", "mk-MK", "da-DK", "sv-SE", "lt-LT", "zh-TW", // "sr-YU",
+  "en-US"
   ];
 
 const APP_SUCCESS_MESSAGE = APP_DISPLAY_NAME+" should now be available when you restart the browser.";

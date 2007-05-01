@@ -5,14 +5,14 @@
 <!ENTITY noscriptPermissionsText "Megadhatja, hogy mely webhelyek számára engedélyezi a parancsfájlok futtatását. Írja be az engedélyezni kívánt webhely címét vagy tartománynevét (pl. &quot;http://www.webhely.hu&quot; vagy &quot;webhely.hu&quot;), majd kattintson az Engedélyezés gombra.">
 <!ENTITY noscriptWebAddress "A webhely címe:">
 <!ENTITY noscriptAllow "Engedélyezés">
-<!ENTITY noscriptAllow.accesskey "E">
-<!ENTITY noscriptForbid "Forbid">
-<!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
-<!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
-<!ENTITY noscriptUntrust.accesskey "U">
-<!ENTITY noscriptRemoveSelected "A kiválasztott helyek eltávolítása">
+<!ENTITY noscriptAllow.accesskey "N">
+<!ENTITY noscriptForbid "Letiltás">
+<!ENTITY noscriptForbid.accesskey "L">
+<!ENTITY noscriptTrust "Megjelölés megbízhatóként">
+<!ENTITY noscriptTrust.accesskey "b">
+<!ENTITY noscriptUntrust "Megjelölés megbízhatatlanként">
+<!ENTITY noscriptUntrust.accesskey "n">
+<!ENTITY noscriptRemoveSelected "A kiválasztott webhelyek eltávolítása">
 <!ENTITY noscriptGloballyEnabled "A parancsfájlok általános futtatása engedélyezett (veszélyes)">
 <!ENTITY noscriptAutoReload "Az érintett oldalak automatikus újratöltése az engedélyek megváltoztatásakor">
 <!ENTITY noscriptGeneral "Általános">
@@ -34,59 +34,65 @@
 <!ENTITY noscriptSound.choose "Választás">
 <!ENTITY noscriptSound.choose.accesskey "V">
 <!ENTITY noscriptSound.play "Lejátszás">
-<!ENTITY noscriptSound.play.accesskey "e">
+<!ENTITY noscriptSound.play.accesskey "L">
 <!ENTITY noscriptSound.reset "Alaphelyzet">
-<!ENTITY noscriptSound.reset.accesskey "A">
+<!ENTITY noscriptSound.reset.accesskey "H">
 <!ENTITY noscriptAdvanced "Speciális">
-<!ENTITY noscriptAdditionalPermissions "A megbízható helyek további engedélyei">
+<!ENTITY noscriptAdditionalPermissions "A megbízható webhelyek további engedélyei">
 <!ENTITY noscriptAllowClipboard "A rich text másolás és a külső vágólapról történő beillesztés engedélyezése">
-<!ENTITY noscriptAdditionalRestrictions "A megbízhatatlan helyek további korlátozásai">
+<!ENTITY noscriptAdditionalRestrictions "A megbízhatatlan webhelyek további korlátozásai">
 <!ENTITY noscriptForbidJava "A Java™ tiltása">
 <!ENTITY noscriptForbidFlash "A Macromedia® Flash® tiltása">
 <!ENTITY noscriptForbidPlugins "Egyéb beépülő modulok tiltása">
 <!ENTITY noscriptReloadWarn "Ezek a beállítások új vagy (kézzel) újratöltött oldalaknál lépnek érvénybe">
 <!ENTITY noscriptConfirmUnblock "Megerősítés kérése egy objektum ideiglenes feloldása előtt">
 <!ENTITY noscriptStatusLabel "Az állapotsor címkéje">
-<!ENTITY noscriptForbidBookmarklets "A bookmarkletek letiltása">
+<!ENTITY noscriptForbidBookmarklets "A bookmarkletek (könyvjelzők) letiltása">
 <!ENTITY noscriptShowPlaceholder "A helyőrző ikon megjelenítése">
 <!ENTITY noscriptTruncateTitle "A dokumentumok címeinek lerövidítése">
 <!ENTITY noscriptFixLinks "Kísérlet a JavaScript hivatkozások javítására">
 <!ENTITY noscriptAllowBookmarks "A könyvjelzőkben található összes webhely engedélyezése">
-<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;a ping...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
-<!ENTITY noscriptWhitelist "Whitelist">
-<!ENTITY noscriptPermissions "Permissions">
-<!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifications "Notifications">
-<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
-<!ENTITY noscriptTrusted "Trusted">
-<!ENTITY noscriptUntrusted "Untrusted">
-<!ENTITY noscriptUnknown "Unknwon">
-<!ENTITY noscriptAdd "Add">
-<!ENTITY noscriptAdd.accesskey "A">
-<!ENTITY noscriptClose "Close">
-<!ENTITY noscriptSiteManager "Site Manager">
-<!ENTITY noscriptSecurityManager "Security Manager">
-<!ENTITY noscriptPolicies "Policies">
-<!ENTITY noscriptDefaultPolicies "Default Policies">
-<!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console...">
-<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptAllowViaBookmarks "A könyvjelzőből megnyitott webhelyek engedélyezése">
+<!ENTITY noscriptAllowPing "Engedélyezés: &lt;ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Helyi linkek engedélyezése">
+<!ENTITY noscriptForbidPing "Letiltás: &lt;ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "META átirányítások letiltása a &lt;noscript&gt; elemekben">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "l">
+<!ENTITY noscriptWhitelist "Fehérlista">
+<!ENTITY noscriptPermissions "Engedélyek">
+<!ENTITY noscriptRefresh "Újratöltés">
+<!ENTITY noscriptNotifications "Jelentések">
+<!ENTITY noscriptToolbarToggle "Az eszköztár ikonjának helyi menüje megváltoztathatja a jelenlegi webhely (legmagasabb szint) engedélyeit">
+<!ENTITY noscriptTrusted "Megbízható">
+<!ENTITY noscriptUntrusted "Megbízhatatlan">
+<!ENTITY noscriptUnknown "Ismeretlen">
+<!ENTITY noscriptAdd "Hozzáad">
+<!ENTITY noscriptAdd.accesskey "H">
+<!ENTITY noscriptClose "Bezár">
+<!ENTITY noscriptSiteManager "Webhely-kezelő">
+<!ENTITY noscriptSecurityManager "Megbízhatóság-kezelő">
+<!ENTITY noscriptPolicies "Kezelés">
+<!ENTITY noscriptDefaultPolicies "Alapértelmezett kezelés">
+<!ENTITY noscriptSitePolicies "Webhelyspecifikus kezelés">
+<!ENTITY noscriptNselNever "&lt;noscript&gt; elemek elrejtése">
+<!ENTITY noscriptNselForce "&lt;noscript&gt; elem megjelenítése, amely a blokkolt &lt;script&gt; után következik">
+<!ENTITY noscriptAutoAllowTopLevel "Legmagasabb szintű webhelyek ideiglenes engedélyezése">
+<!ENTITY noscriptDescription "Firefox extra védelme: NoScript engedélyezheti a JavaScript, Java (és más beépülőket) az Ön által megadott webhelyekre (pl. átutalások interneten keresztül). Ez a megbízható szervereket tartalmazó lista megelőző blokkoláson alapszik, így óv a támadásoktól a biztonsági réseken keresztül (ismert és ismeretlen!), mindezt működés közben... Az expertek egyetértenek: A Firefox a NoScript kiterjesztéssel valóban biztonságosabb :-)">
+<!ENTITY noscriptOptBlockCssScanners "CSS-alapú szkennerek blokkolása">
+<!ENTITY noscriptOptFilterXGet "Gyanús XSS hozzáférések kezelése">
+<!ENTITY noscriptOptFilterXPost "POST hozzáférés átváltása GET hozzáférésre">
+<!ENTITY noscriptShowConsole "Konzol megjelenítése...">
+<!ENTITY noscriptShowConsole.accesskey "K">
 <!ENTITY noscriptXss "XSS">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
-<!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
-<!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS GYIK...">
+<!ENTITY noscriptXssFaq.accesskey "G">
+<!ENTITY noscriptUnsafeReload "Megbízhatatlan újratöltése">
+<!ENTITY noscriptUnsafeReload.accesskey "N">
+<!ENTITY noscriptXssExceptions "Anti-XSS védelem kivételek">
+<!ENTITY noscriptXssExceptions.description "A következő reguláris kifejezéseknek megfelelő webhelyek NEM LESZNEK az XSS ellen védve">
+<!ENTITY noscriptMatchSample "Sablon példa:">
+<!ENTITY noscriptReset "Alaphelyzet">
+<!ENTITY noscriptReset.accesskey "A">
+<!ENTITY noscriptResetDef "Alaphelyzetbe állít">
+<!ENTITY noscriptResetDef.accesskey "h">

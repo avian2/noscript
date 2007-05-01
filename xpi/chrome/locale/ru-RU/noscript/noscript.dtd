@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "Разрешить локальные ссылки">
 <!ENTITY noscriptForbidPing "Запретить веб-сайту использовать параметр  &lt;a ping...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Запретить META перенаправления внутри элементов &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "а">
 <!ENTITY noscriptWhitelist "Белый список">
 <!ENTITY noscriptPermissions "Разрешения">
 <!ENTITY noscriptRefresh "Обновить">
@@ -83,6 +84,7 @@
 <!ENTITY noscriptShowConsole "Открыть консоль...">
 <!ENTITY noscriptShowConsole.accesskey "о">
 <!ENTITY noscriptXss "XSS (межсайтовый скриптинг)">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "Справка по XSS (межсайтовому скриптингу)">
 <!ENTITY noscriptXssFaq.accesskey "а">
 <!ENTITY noscriptUnsafeReload "Небезопасное обновление">
@@ -90,3 +92,7 @@
 <!ENTITY noscriptXssExceptions "Исключения анти-XSS защиты">
 <!ENTITY noscriptXssExceptions.description "Путь, попадающий под одно из регулярных выражений НЕ будет защищаться против XSS.">
 <!ENTITY noscriptMatchSample "Пример шаблона:">
+<!ENTITY noscriptReset "Сброс">
+<!ENTITY noscriptReset.accesskey "о">
+<!ENTITY noscriptResetDef "Сбросить настройки">
+<!ENTITY noscriptResetDef.accesskey "и">

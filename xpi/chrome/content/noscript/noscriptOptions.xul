@@ -33,7 +33,11 @@
   onload="nsopt.init()"
   ondialogaccept="nsopt.save()"
   title="&noscriptOptionsLong;"
-	buttons="accept,cancel"
+	buttons="accept,extra2,cancel"
+  buttonlabelextra2="&noscriptReset;"
+  buttonaccesskeyextra2="&noscriptReset.accesskey;" 
+  ondialogextra2="nsopt.reset()"
+  spacerflex="1"
   persist="screenX screenY"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   

@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "Tillat lokale lenker">
 <!ENTITY noscriptForbidPing "Forby &lt;a ping...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Hvitelist">
 <!ENTITY noscriptPermissions "Tillatelser">
 <!ENTITY noscriptRefresh "Oppdater">
@@ -83,6 +84,7 @@
 <!ENTITY noscriptShowConsole "Show Console...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
@@ -90,3 +92,7 @@
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
 <!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "Reset to defaults">
+<!ENTITY noscriptResetDef.accesskey "d">

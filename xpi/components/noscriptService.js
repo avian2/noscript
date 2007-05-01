@@ -626,7 +626,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.8.070423",
+  VERSION: "1.1.4.8.070430",
   
   get wrappedJSObject() {
     return this;
@@ -714,6 +714,7 @@ NoscriptService.prototype ={
 
   forbidSomeContent: false,
   forbidAllContent: false,
+  contentBlocker: false,
   
   forbidJava: false,
   forbidFlash: false,
@@ -726,6 +727,36 @@ NoscriptService.prototype ={
   filterXGetRx: "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;]",
   filterXGetRx2Black: "[\(\)\=;]",
   
+  resetDefaultPrefs: function(prefs, exclude) {
+    exclude = exclude || [];
+    var children = prefs.getChildList("", {});
+    for(var j = children.length; j-- > 0;) {
+      if(exclude.indexOf(children[j]) < 0) {
+        if(prefs.prefHasUserValue( children[j])) {
+          dump("Resetting noscript." + children[j] + "\n");
+          try {
+            prefs.clearUserPref(children[j]);
+          } catch(e) { dump(e + "\n") }
+        }
+      }
+    }
+    this.savePrefs();
+  },
+  
+  resetDefaultGeneralPrefs: function() {
+    this.resetDefaultPrefs(this.prefs, ['version']);
+  },
+  
+  resetDefaultSitePrefs: function() {
+    this.setJSEnabled(this.splitList(this.getPref("default",
+              "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net gmail.com google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com"
+              )), true, true);
+  },
+  
+  resetDefaults: function() {
+    this.resetDefaultGeneralPrefs();
+    this.resetDefaultSitePrefs();
+  },
   syncPrefs: function(branch, name) {
     switch(name) {
       case "sites":
@@ -733,9 +764,7 @@ NoscriptService.prototype ={
         try {
           this.jsPolicySites.fromPref(this.policyPB);
         } catch(ex) {
-          this.setJSEnabled(this.splitList(this.getPref("default",
-              "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net gmail.com google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com"
-              )), true, true);
+          this.resetDefaultSitePrefs();
         }
         break;
       case "temp":
@@ -771,6 +800,7 @@ NoscriptService.prototype ={
         
       case "autoAllow":
       case "consoleDump":
+      case "contentBlocker":
       case "pluginPlaceholder":
       case "showPlaceholder":
       case "truncateTitle":
@@ -938,7 +968,7 @@ NoscriptService.prototype ={
       "autoAllow",
       "allowClipboard", "allowLocalLinks",
       "blockCssScanners", "blockCrossIntranet",
-      "consoleDump",
+      "consoleDump", "contentBlocker",
       "filterXPost", "filterXGet", 
       "filterXGetRx", "filterXGetRx2Black", 
       "filterXExceptions",
@@ -1155,7 +1185,7 @@ NoscriptService.prototype ={
     var webNav;
     const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
     const LOAD_FLAGS = nsIWebNavigation.LOAD_FLAGS_NORMAL; // nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE;
-    const trustReloads = this.getPref("xss.trustReloads", true);
+    const untrustedReload = !this.getPref("xss.trustReloads", false);
     
     for(var browser, bi = new this.domUtils.BrowserIterator(), j; browser = bi.next();) {
       docSites = this.getSites(browser, true);
@@ -1168,10 +1198,10 @@ NoscriptService.prototype ={
           webNav = browser.webNavigation;
           try {
             webNav = webNav.sessionHistory.QueryInterface(nsIWebNavigation);
-            if(currStatus && trustReloads && webNav.index) {
+            if(currStatus && webNav.index && untrustedReload) {
               try {
                 site = this.getSite(webNav.getEntryAtIndex(webNav.index - 1, false).URI.spec);
-                this.requestWatchdog.setUntrustedReloadInfo(browser, site != docSites[j] || !ps.matches(site));
+                this.requestWatchdog.setUntrustedReloadInfo(browser, site != docSites[j] && !ps.matches(site));
               } catch(e) {}
             }
             webNav.gotoIndex(webNav.index);
@@ -1455,7 +1485,7 @@ NoscriptService.prototype ={
   }
 ,
   setPref: function(name,value) {
-    const prefs=this.prefs;
+    const prefs = this.prefs;
     switch(typeof(value)) {
       case "string":
           prefs.setCharPref(name,value);
@@ -1667,7 +1697,8 @@ NoscriptService.prototype ={
       }
       
       if(forbid) {
-        if(!(this.isJSEnabled(origin))) {
+        if((this.contentBlocker && !isJS) || 
+            !(this.isJSEnabled(origin))) {
            
           if(aContext && (aContentType == 5 || aContentType ==7)) {
             const ci = Components.interfaces;
@@ -1861,7 +1892,7 @@ NoscriptService.prototype ={
        this.isJSEnabled(this.getSite(document.documentURI)) ||
        !document.getElementsByTagName("noscript").length
        ) {
-      this.enableMetaRefresh(docShell);
+      if(!docShell.allowMetaRedirects) this.disableMetaRefresh(docShell); // refresh blocker courtesy
       return;
     }
     try {
@@ -1901,6 +1932,10 @@ NoscriptService.prototype ={
               dump("[NoScript]: " + e + " notifying meta refresh at " + document.documentURI + "\n");
             }
           }
+          document.defaultView.addEventListener("pagehide", function(ev) {
+              ev.currentTarget.removeEventListener("pagehide", arguments.callee, false);
+              docShell.allowMetaRedirects = true;
+          }, false);
           this.disableMetaRefresh(docShell);
           return;
         }
@@ -1909,7 +1944,7 @@ NoscriptService.prototype ={
       dump("[NoScript]: " + e + " processing meta refresh at " + document.documentURI + "\n");
       debugger;
     }
-    this.enableMetaRefresh(docShell);
+    // this.enableMetaRefresh(docShell);
   },
   doFollowMetaRefresh: function(metaRefreshInfo, forceRemember) {
     if(forceRemember || this.getPref("forbidMetaRefresh.remember", false)) {
@@ -1988,7 +2023,7 @@ NoscriptService.prototype ={
             forcedCSS = "; -moz-outline-color: red !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; background: white url(\"" + pp +
                      "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important }";
             try {
-              if(document.documentElement.firstChild.firstChild == object && 
+              if(object.parentNode == document.body && 
                   !object.nextSibling) { // raw plugin content ?
                 var contentType = document.contentType;
                 if(contentType.substring(0, 5) != "text/") {
@@ -2024,20 +2059,18 @@ NoscriptService.prototype ={
               
               innerDiv.style.display = "block";
               
-              this.setExpando(div, "removedPlugin", object.cloneNode(true));
-             
               
-              while(object.firstChild) {
-                object.removeChild(object.firstChild);
-              }
+             
               object.parentNode.replaceChild(div, object);
               div.appendChild(innerDiv);
-              if(innerDiv.parentNode.parentNode == document.body &&
+              if(div.parentNode == document.body &&
                 style.width == "100%" && style.height == "100%") {
                 innerDiv.style.border = "none";
               }
+              
+              div.addEventListener("click", this.objectClickListener.bind(this), false);
               this.setPluginExtras(div, extras);
-              div.addEventListener("click", sites.browser.ownerDocument.defaultView.noscriptOverlay.listeners.onAppletClick, false);
+              this.setExpando(div, "removedPlugin", object.cloneNode(true));
             }
           } catch(objectEx) {
             dump("NoScript: " + objectEx + " processing plugin " + count + "@" + document.documentURI + "\n");
@@ -2045,7 +2078,49 @@ NoscriptService.prototype ={
         }
       }
     }
+  },
   
+  objectClickListener: {
+    bind: function(ns) {
+      this._clickListener.ns = ns;
+      return this._clickListener;
+    },
+    _clickListener: function(ev) {
+      const div = ev.currentTarget;
+      const ns = arguments.callee.ns;
+      const object = ns.getExpando(div, "removedPlugin");
+      
+      if(object) {
+        if(ev.shiftKey) {
+          div.style.display = "none";
+          return;
+        }
+        
+        const extras = ns.getPluginExtras(div);
+        const browser = ns.domUtils.findBrowserForNode(div);
+        const cache = ns.pluginsCache.get(browser);
+        if(!(extras && extras.url && extras.mime && cache) ) return;
+        
+        var url = extras.url;
+        var mime = extras.mime;
+        
+        const window = browser.ownerDocument.defaultView;
+        if(window.noscriptUtil.confirm(ns.getAllowObjectMessage(url, mime), "confirmUnblock")) { 
+          cache.forceAllow[url] = mime;
+          var doc = div.ownerDocument;
+          if(mime == doc.contentType) { // stand-alone plugin
+            doc.location.reload();
+            return;
+          }
+          
+          ns.setExpando(div, "removedPlugin", null);
+          
+          window.setTimeout(function() { 
+            div.parentNode.replaceChild(object.cloneNode(true), div);
+          }, 0);
+        }
+      }
+    }
   },
   
   getSites: function(browser) {
@@ -2204,7 +2279,8 @@ RequestWatchdog.prototype = {
     if(start) {
       const unsafeRequest = this.getUnsafeRequest(browser);
       if(unsafeRequest) {
-        browser.webNavigation.loadURI(unsafeRequest.URI.spec, unsafeRequest.loadFlags, 
+        browser.webNavigation.loadURI(unsafeRequest.URI.spec, 
+              unsafeRequest.loadFlags | browser.webNavigation.LOAD_FLAGS_BYPASS_CACHE, 
               unsafeRequest.referrer, unsafeRequest.postData, null);
         this.setUnsafeRequest(browser, null);
       } else {
@@ -2408,10 +2484,14 @@ RequestWatchdog.prototype = {
        return;
     }
     
-    if(ns.filterXExceptions && ns.filterXExceptions.test(url.spec)) { 
-      // "safe" xss target exception
-      if(ns.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
-      return;
+    if(ns.filterXExceptions) {
+      try {
+        if(ns.filterXExceptions.test(decodeURI(url.spec))) { 
+          // "safe" xss target exception
+          if(ns.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
+          return;
+        }
+      } catch(e) {}
     }
     
     // -- DANGER ZONE --
@@ -2424,8 +2504,9 @@ RequestWatchdog.prototype = {
         postData: null,
         referrer: channel.referrer && channel.referrer.clone(),
         origin: origin,
-        loadFlags: channel.loadFlags
-      }
+        loadFlags: channel.loadFlags,
+      },
+      sanitizedURI: url
     };
     
     var originalAttempt;
@@ -2445,32 +2526,26 @@ RequestWatchdog.prototype = {
     }
     
     if(ns.filterXGet && ns.filterXGetRx) {
-    
-      
-      // sanitize referer
+
+      // sanitize referrer
       if(channel.referrer && channel.referrer.spec) {
         originalAttempt = channel.referrer.spec;
         try {
-          if(channel.referrer instanceof Components.interfaces.nsIURL) {
-            channel.referrer = SiteUtils.ios.newURI(
-              this.sanitizeURI(channel.referrer.prePath + channel.referrer.filePath) +
-              (channel.query ? ("?" + this.sanitizeXQuery(channel.query)) : ""),
-              null, null);
-          } else {
-            channel.referrer = SiteUtils.ios.newURI(
-                this.sanitizeURI(originalAttempt), 
-                null, null);
-          }
+          channel.referrer.spec = (channel.referrer instanceof Components.interfaces.nsIURL) ?
+            (this.sanitizeURI(channel.referrer.prePath + channel.referrer.filePath) +
+              (channel.referrer.query ? ("?" + this.sanitizeXQuery(channel.referrer.query)) : "")
+            ) : this.sanitizeURI(originalAttempt);
         } catch(e) {
           this.dump("Failed sanitizing referrer " + channel.referrer.spec + ", " + e);
           channel.referrer.spec = "";
         }
-        if((!channel.referrer) || originalAttempt != channel.referrer.spec) {
+        if((!channel.referrer.spec) || originalAttempt != channel.referrer.spec) {
           this.notify(this.addXssInfo(requestInfo, {
             reason: "filterXGetRef",
             origin: origin,
-            originalAttempt: originalAttempt,
-            silent: true
+            originalAttempt: url.spec + " (REF: " + originalAttempt + ")",
+            silent: true,
+            sanitizedURI: channel.referrer
           }));
         }
       }
@@ -2509,13 +2584,14 @@ RequestWatchdog.prototype = {
     if(requestInfo.xssMaybe) {
       // avoid surprises from history & cache
       if(channel instanceof Components.interfaces.nsICachingChannel) {
+        
         const CACHE_FLAGS = channel.LOAD_FROM_CACHE | 
                             channel.VALIDATE_NEVER | 
                             channel.LOAD_ONLY_FROM_CACHE;
-        if(channel.loadFlags & CACHE_FLAGS) {
+        // if(channel.loadFlags & CACHE_FLAGS) {
           channel.loadFlags = channel.loadFlags & ~CACHE_FLAGS | channel.LOAD_BYPASS_CACHE;
           if(this.consoleDump) this.dump(channel, "SKIPPING CACHE");
-        }
+        // }
       }
       
       if(requestInfo.window == requestInfo.window.top) {
@@ -2547,7 +2623,7 @@ RequestWatchdog.prototype = {
             } else {
               // split, sanitize and rejoin
               pz = [ this.sanitize(pz.substring(0, qpos)), 
-                     this.sanitizeXQuery(pz.substring(qpos + 1), changed.value)
+                     this.sanitizeXQuery(pz.substring(qpos + 1), changed)
                    ].join("?")
             }
           } else {
@@ -2604,6 +2680,14 @@ RequestWatchdog.prototype = {
     }
     // regular duty
     s = s.replace(this.ns.filterXGetRx, " ");
+    /*
+    if(s.indexOf("+") > -1) { 
+      // Anti UTF-7, effective but likely too much drastic.
+      // Investigate on-the-fly charset detection for future versions,
+      // as this kind of attack is *very* unlikely to work in default Firefox setup
+      s.replace(/\+\w+/g, function(m) { return m.replace(/A/g, "a"); });
+    }
+    */
     if(!lenient) s = s.replace(this.ns.filterXGetRx2Black, " "); // lenient on path only to allow some wikipedianisms
     return s;
   },
@@ -2637,7 +2721,7 @@ RequestWatchdog.prototype = {
     var msg = "[NoScript XSS] " + this.ns.getString("xss.reason." + requestInfo.reason, [ 
         requestInfo.originalAttempt || "N/A",
         requestInfo.origin,
-        requestInfo.channel.URI.spec
+        requestInfo.sanitizedURI.spec
       ]);
     this.dump(requestInfo.channel, "Notifying " + msg + "\n\n\n");
     this.ns.log(msg);

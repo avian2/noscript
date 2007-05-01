@@ -57,6 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "Links auf lokale Dateien erlauben">
 <!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">
 <!ENTITY noscriptForbidMetaRefresh "META-Weiterleitungen innerhalb von &lt;noscript&gt;-Elementen verbieten">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "W">
 <!ENTITY noscriptWhitelist "Positivliste">
 <!ENTITY noscriptPermissions "Berechtigungen">
 <!ENTITY noscriptRefresh "Aktualisierung">
@@ -83,6 +84,7 @@
 <!ENTITY noscriptShowConsole "Konsole anzeigen...">
 <!ENTITY noscriptShowConsole.accesskey "z">
 <!ENTITY noscriptXss "Cross-Site Scripting (XSS)">
+<!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "FAQ zu Cross-Site Scripting (engl.)...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Unsicheres Nachladen">
@@ -90,3 +92,7 @@
 <!ENTITY noscriptXssExceptions "Ausnahmen vom XSS-Schutz">
 <!ENTITY noscriptXssExceptions.description "Zieladressen, die mit diesen regulären Ausdrücken übereinstimmen, werden vom XSS-Schutz ausgenommen">
 <!ENTITY noscriptMatchSample "Beispieladresse für Übereinstimmung:">
+<!ENTITY noscriptReset "Zurücksetzen">
+<!ENTITY noscriptReset.accesskey "Z">
+<!ENTITY noscriptResetDef "Auf Standardwerte zurücksetzen">
+<!ENTITY noscriptResetDef.accesskey "d">

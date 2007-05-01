@@ -33,20 +33,14 @@ var nsopt = {
       return;
     }
     
-    this.utils = new UIUtils(this.serv);
+    this.utils = new UIUtils(ns);
     this.utils.resumeTabSelections();
     
     const widgets = ["urlText", "urlText","urlList","jsglobal","addButton","removeButton"];
     for(var j = widgets.length; j-- > 0;) 
       this[widgets[j]] = document.getElementById(widgets[j]); 
     
-    this.trustedSites = ns.jsPolicySites.clone();
-    this.untrustedSites = ns.untrustedSites.clone();
-    this.populateUrlList();
-    
-    this.jsglobal.checked = ns.jsEnabled;
-    
-    // forbid <a ping>
+     // forbid <a ping>
     var pingCbx = document.getElementById("mozopt-browser.send_pings");
     if(pingCbx.getAttribute("label").indexOf("Allow ") == 0) { 
       pingCbx.setAttribute("label", noscriptUtil.getString("allowLocal", ["<a ping...>"]));
@@ -54,6 +48,12 @@ var nsopt = {
               .setAttribute("label", noscriptUtil.getString("forbidLocal", ["<a ping...>"]));
     }
     
+    this.trustedSites = ns.jsPolicySites.clone();
+    this.untrustedSites = ns.untrustedSites.clone();
+    this.populateUrlList();
+    
+    this.jsglobal.checked = ns.jsEnabled;
+ 
     this.utils.visitCheckboxes(function(prefName, inverse, checkbox, mozilla) {
         try {
           var val = mozilla ? ns.prefService.getBoolPref(prefName) : ns.getPref(prefName);
@@ -98,7 +98,24 @@ var nsopt = {
       
   },
   
-
+  reset: function() {
+    
+    if(!noscriptUtil.prompter.confirm(window, 
+          noscriptUtil.getString("reset.title"),
+          noscriptUtil.getString("reset.warning"))
+      ) return;
+    
+    this.serv.resetDefaults();
+    this.utils.persistTabSelections();
+    var op = top.opener;
+    if(op && op.noscriptUtil) {
+      op.setTimeout(function() {
+          op.noscriptUtil.openOptionsDialog();
+      }, 10);
+    }
+    window.close();
+  },
+  
   save: function() {
     const ns = this.serv;
     
