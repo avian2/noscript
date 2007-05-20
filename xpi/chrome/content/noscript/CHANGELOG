@@ -1,5 +1,57 @@
 NoScript ChangeLog
 
+v 1.1.4.8.070514
+=====================================================================
+x Sanitized URI randomization (thanks kuza55 for inspiration)
+x *Fast* reload also with fragment URI (thanks Martin Focke)
+
+v 1.1.4.8.070513
+=====================================================================
+x Fixed last minute regression slipped in Anti-XSS GET filter (some 
+  suspicious query strings entirely removed, rather than sanitized) 
+
+v 1.1.4.8.070512
+=====================================================================
++ Appearence Option to show/hide "Allow" menu items(thanks mamas6667)
+x Updated locales (cs-CZ, en-GB, pl-PL)
+
+v 1.1.4.8.070511
+=====================================================================
+x Fixed "black boxes" glitch on page unload (thanks jdopple)
+x Fixed XSS exceptions must allow blank value (thanks Martin Focke)
+x Fixed reloading URLs with hash(thanks Martin Focke)
+x Work-around for Minefield bug displaying wrong labels on cloned 
+  menu items (thanks Itsnow)
+x Fixed regression, menu popup not shown by keyboard shortcut when 
+  both toolbar button and status bar element are hidden (thanks
+  niko322)
+
+v 1.1.4.8.070509
+=====================================================================
++ noscript.xss.trustExternal about:config preference controls if  
+  anti-XSS filters should be bypassed for URLs opened from external
+  applications like email clients (default false)
++ noscript.xss.trustTemp about:config preference controls if anti-XSS
+  should be bypassed if URLs are opened from "temporary allow"ed 
+  sites (default true, thanks Salim for suggestion)
+x Wikipedia default XSS exception tweaked to include apostrophes in
+  titles (thanks Alan Baxter for report)
+
+v 1.1.4.8.070505
+=====================================================================
+x Better compatibility with Google Toolbar's translation service
+
+v 1.1.4.8.070502
+=====================================================================
+x Fixed Linux Flash blocking crash when placeholders are active
+  (thanks mastro for report)
+x (Hopefully) Last  bug fix in referrer XSS sanitization (thanks
+  Alan Baxter)
+
+v 1.1.4.8.070501
+=====================================================================
+x Further bug fix in referrer XSS notification template
+
 v 1.1.4.8.070430
 =====================================================================
 x Localization updates and release QA

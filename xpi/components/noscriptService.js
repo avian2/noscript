@@ -626,7 +626,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.8.070430",
+  VERSION: "1.1.4.8.070514",
   
   get wrappedJSObject() {
     return this;
@@ -1182,9 +1182,11 @@ NoscriptService.prototype ={
     var docSites, site;
     var prevStatus, currStatus;
     
-    var webNav;
+    var webNav, url;
+    
     const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
-    const LOAD_FLAGS = nsIWebNavigation.LOAD_FLAGS_NORMAL; // nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE;
+    const nsIURL = Components.interfaces.nsIURL;
+    const LOAD_FLAGS = nsIWebNavigation.LOAD_FLAGS_NONE;
     const untrustedReload = !this.getPref("xss.trustReloads", false);
     
     for(var browser, bi = new this.domUtils.BrowserIterator(), j; browser = bi.next();) {
@@ -1196,6 +1198,10 @@ NoscriptService.prototype ={
           ret = true;
           if(currStatus) this.requestWatchdog.setUntrustedReloadInfo(browser, true);
           webNav = browser.webNavigation;
+          url = webNav.currentURI;
+          if(url.schemeIs("http") || url.schemeIs("https")) {
+            this.requestWatchdog.noscriptReload = url;
+          }
           try {
             webNav = webNav.sessionHistory.QueryInterface(nsIWebNavigation);
             if(currStatus && webNav.index && untrustedReload) {
@@ -1204,10 +1210,12 @@ NoscriptService.prototype ={
                 this.requestWatchdog.setUntrustedReloadInfo(browser, site != docSites[j] && !ps.matches(site));
               } catch(e) {}
             }
-            webNav.gotoIndex(webNav.index);
-          } catch(e) {
-            browser.webNavigation.reload(LOAD_FLAGS);
-          }
+            if(!(url instanceof nsIURL && url.ref)) {
+              webNav.gotoIndex(webNav.index);
+              break;
+            }
+          } catch(e) {}
+          browser.webNavigation.reload(LOAD_FLAGS);
           break;
         }
       }
@@ -1648,7 +1656,7 @@ NoscriptService.prototype ={
           if(aRequestOrigin && aRequestOrigin != aContentLocation) {
             if(aContentLocation.schemeIs("http") || aContentLocation.schemeIs("https")) {
               if(aRequestOrigin.prePath != aContentLocation.prePath) {
-               this.xcache.storeOrigin(aRequestOrigin, aContentLocation);
+                this.xcache.storeOrigin(aRequestOrigin, aContentLocation);
               }
             } else if(this.forbidData && // block data: and javascript: URLs
                       (aContentLocation.schemeIs("data:") || aContentLocation.schemeIs("javascript")) &&
@@ -2006,6 +2014,8 @@ NoscriptService.prototype ={
     var aWidth,aHeight;
     var forcedCSS, style;
     
+    var replacements = null;
+    
     for(objectTag in types) {
       objects = document.getElementsByTagName(objectTag);
       objectType = types[objectTag];
@@ -2021,7 +2031,7 @@ NoscriptService.prototype ={
         if(replacePlugins) {
           if(!forcedCSS) {
             forcedCSS = "; -moz-outline-color: red !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; background: white url(\"" + pp +
-                     "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important }";
+                     "\") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important; }";
             try {
               if(object.parentNode == document.body && 
                   !object.nextSibling) { // raw plugin content ?
@@ -2058,19 +2068,19 @@ NoscriptService.prototype ={
               innerDiv.setAttribute("style", cssDef + forcedCSS);
               
               innerDiv.style.display = "block";
-              
-              
-             
-              object.parentNode.replaceChild(div, object);
+
               div.appendChild(innerDiv);
-              if(div.parentNode == document.body &&
+              if(object.parentNode == document.body &&
                 style.width == "100%" && style.height == "100%") {
                 innerDiv.style.border = "none";
               }
               
               div.addEventListener("click", this.objectClickListener.bind(this), false);
               this.setPluginExtras(div, extras);
-              this.setExpando(div, "removedPlugin", object.cloneNode(true));
+              this.setExpando(div, "removedPlugin", object);
+              
+              (replacements = replacements || []).push({object: object, placeHolder: div});
+              
             }
           } catch(objectEx) {
             dump("NoScript: " + objectEx + " processing plugin " + count + "@" + document.documentURI + "\n");
@@ -2078,6 +2088,18 @@ NoscriptService.prototype ={
         }
       }
     }
+    
+    if(replacements) {
+      this.createDeferredPlaceHolders(document.defaultView, replacements);
+    }
+  },
+  
+  createDeferredPlaceHolders: function(window, replacements) {
+    window.setTimeout(function() {
+        replacements.forEach(function(r) {
+          r.object.parentNode.replaceChild(r.placeHolder, r.object);  
+        });
+    }, 0);
   },
   
   objectClickListener: {
@@ -2267,6 +2289,9 @@ RequestWatchdog.prototype = {
   ns: null,
   callback: null,
   
+  externalLoad: null,
+  noscriptReload: null,
+  
   getUnsafeRequest: function(browser) {
     return this.ns.getExpando(browser, "unsafeRequest");
   },
@@ -2279,8 +2304,9 @@ RequestWatchdog.prototype = {
     if(start) {
       const unsafeRequest = this.getUnsafeRequest(browser);
       if(unsafeRequest) {
+        // should we figure out what to do with unsafeRequest.loadFlags?
         browser.webNavigation.loadURI(unsafeRequest.URI.spec, 
-              unsafeRequest.loadFlags | browser.webNavigation.LOAD_FLAGS_BYPASS_CACHE, 
+              browser.webNavigation.LOAD_FLAGS_BYPASS_CACHE, 
               unsafeRequest.referrer, unsafeRequest.postData, null);
         this.setUnsafeRequest(browser, null);
       } else {
@@ -2392,6 +2418,12 @@ RequestWatchdog.prototype = {
     
     const xorigin = ns.xcache.pickOrigin(url, true); // picks and remove cached entry
     
+    if(this.noscriptReload && this.noscriptReload == url) {
+      // fast cache route for NoScript-triggered reloads
+      this.noscriptReload = null;
+      channel.loadFlags |= channel.LOAD_FROM_CACHE | channel.VALIDATE_NEVER;
+    }
+    
     // fast return if nothing to do here
     if(!(ns.filterXPost || ns.filterXGet)) return; 
     
@@ -2447,11 +2479,16 @@ RequestWatchdog.prototype = {
     const su = this.siteUtils;
     originSite = originSite || su.getSite(origin);
     var targetSite = su.getSite(url.spec);
-   
-    
+
     if(originSite == targetSite) return; // same origin, fast return
     
     if(this.callback && this.callback(channel, origin)) return;
+    
+    
+    var externalLoad = this.externalLoad && this.externalLoad == url.spec;
+    if(externalLoad) {
+      this.externalLoad = null;
+    }
     
     if(!ns.isJSEnabled(targetSite)) {
        if(ns.consoleDump) this.dump(channel, "Destination " + url.spec + " is noscripted, SKIP");
@@ -2471,8 +2508,22 @@ RequestWatchdog.prototype = {
     
     if(ns.isJSEnabled(originSite)) {
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel), channel);
-      if(ns.consoleDump) this.dump(channel, "Origin " + origin + " is trusted, SKIP");
-      return;
+      if(externalLoad) { // external origin ?
+        if(ns.consoleDump) this.dump(channel, "External load");
+        if(ns.getPref("xss.trustExternal", false)) {
+          if(ns.consoleDump) this.dump(channel, "noscript.xss.trustExternal is TRUE, SKIP");
+          return;
+        }
+        origin = "///EXTERNAL///";
+        originSite = "";
+      } else if(ns.getPref("xss.trustTemp", true) || !ns.isTemp(originSite)) { // temporary allowed origin?
+        if(ns.consoleDump) this.dump(channel, "Origin " + origin + " is trusted, SKIP");
+        return;
+      }
+      
+      if(ns.consoleDump) 
+        this.dump(channel, (externalLoad ? "External origin" : "Origin " + origin + " is TEMPORARILY allowed") + 
+          ", we don't really trust it");
     }
     
     if(untrustedReload && browser) {
@@ -2526,55 +2577,47 @@ RequestWatchdog.prototype = {
     }
     
     if(ns.filterXGet && ns.filterXGetRx) {
-
+      var changes;
+      
       // sanitize referrer
       if(channel.referrer && channel.referrer.spec) {
         originalAttempt = channel.referrer.spec;
         try {
-          channel.referrer.spec = (channel.referrer instanceof Components.interfaces.nsIURL) ?
-            (this.sanitizeURI(channel.referrer.prePath + channel.referrer.filePath) +
-              (channel.referrer.query ? ("?" + this.sanitizeXQuery(channel.referrer.query)) : "")
-            ) : this.sanitizeURI(originalAttempt);
+          if(channel.referrer instanceof Components.interfaces.nsIURL) {
+            changes = this.sanitizeURL(channel.referrer);
+          } else {
+            channel.referrer.spec =  this.sanitizeURIString(originalAttempt);
+          }
         } catch(e) {
           this.dump("Failed sanitizing referrer " + channel.referrer.spec + ", " + e);
           channel.referrer.spec = "";
         }
-        if((!channel.referrer.spec) || originalAttempt != channel.referrer.spec) {
-          this.notify(this.addXssInfo(requestInfo, {
-            reason: "filterXGetRef",
-            origin: origin,
-            originalAttempt: url.spec + " (REF: " + originalAttempt + ")",
-            silent: true,
-            sanitizedURI: channel.referrer
-          }));
+        try {
+          if((!channel.referrer.spec) || decodeURI(originalAttempt) != decodeURI(channel.referrer.spec)) {
+            channel.referrer = channel.referrer.clone();
+            this.notify(this.addXssInfo(requestInfo, {
+              reason: "filterXGetRef",
+              origin: origin,
+              originalAttempt: url.spec + " (REF: " + originalAttempt + ")",
+              silent: true,
+              sanitizedURI: channel.referrer
+            }));
+          }
+        } catch(e) {
+          this.dump("Failed notifying referrer sanitization: " + channel.referrer.spec + ", " + e);
+          channel.referrer.spec = "";
+          channel.referrer = channel.referrer.clone();
         }
       }
       
       originalAttempt = url.spec;
-      
-      // sanitize credentials
-      if(url.username) url.username = this.sanitizeEnc(url.user);
-      if(url.password) url.password = this.sanitizeEnc(url.password);
-      url.host = this.sanitizeEnc(url.host);
-      var qsChanged = { value: false };
-      if(url instanceof ci.nsIURL) {
-        // sanitize path
-        if(url.filePath) url.filePath = this.sanitizeURI(url.filePath, true); // true == lenient == allow ()=
-        // sanitize query
-        if(url.query) url.query = this.sanitizeXQuery(url.query, qsChanged);
-        // sanitize fragment
-        if(url.ref) url.ref = this.sanitizeEnc(url.ref);
-      } else {
-        // fallback for non-URL URIs, we should never get here anyway
-        if(url.path) url.path = this.sanitizeURI(url.Path);
-      }
-      
-      if(url.spec != originalAttempt) {
+      changes = this.sanitizeURL(url);
+      if(changes.minor) {
         this.notify(this.addXssInfo(requestInfo, {
           reason: "filterXGet",
           origin: origin,
           originalAttempt: originalAttempt,
-          silent: !(qsChanged.value || decodeURIComponent(originalAttempt.replace(/\?.*/g, "")) != decodeURIComponent(url.prePath + url.filePath)) 
+          silent: !changes.major 
         }));
       }
     }
@@ -2600,11 +2643,39 @@ RequestWatchdog.prototype = {
     }
   },
   
-  sanitizeXQuery: function(query, changed) {
+  sanitizeURL: function(url) {
+    var original = url.clone();
+    changes = { minor: false, major: false, qs: false };
+    // sanitize credentials
+    if(url.username) url.username = this.sanitizeEnc(url.user);
+    if(url.password) url.password = this.sanitizeEnc(url.password);
+    url.host = this.sanitizeEnc(url.host);
+    var qsChanged = { value: false };
+    if(url instanceof Components.interfaces.nsIURL) {
+      // sanitize path
+      if(url.filePath) url.filePath = this.sanitizeURIString(url.filePath, true); // true == lenient == allow ()=
+      // sanitize query
+      if(url.query) url.query = this.sanitizeXQuery(url.query, changes);
+      // sanitize fragment
+      if(url.ref) url.ref = this.sanitizeEnc(url.ref);
+    } else {
+      // fallback for non-URL URIs, we should never get here anyway
+      if(url.path) url.path = this.sanitizeURIString(url.Path);
+    }
+    
+    if(url.getRelativeSpec(original)) {
+      changes.minor = true;
+      changes.major = changes.qs || decodeURIComponent(original.spec.replace(/\?.*/g, "")) != decodeURIComponent(url.prePath + url.filePath);
+      url.ref = encodeURIComponent(Math.random()); // randomize URI
+    }
+    return changes;
+  },
+  
+  sanitizeXQuery: function(query, changes) {
     // replace every character matching noscript.filterXGetRx with a single ASCII space (0x20)
-    changed = changed || {};
+    changes = changes || {};
     const parms = query.split(/[&;]/);
-    var j, pieces, k, pz, origPz, qpos, apos;
+    var j, pieces, k, pz, origPz, nestedURI, qpos, apos;
     
     for(j = parms.length; j-- > 0;) {
       pieces = parms[j].split(/=/, 2);
@@ -2612,25 +2683,39 @@ RequestWatchdog.prototype = {
         for(k = pieces.length; k-- > 0;) {
          
           origPz = pz = decodeURIComponent(pieces[k].replace(/\+/g, " "));
-          
-          qpos = pz.indexOf("?");
-          spos = pz.search(/[&;]/);
-          if(qpos > -1 || spos > -1) { 
-            // recursive query string?
-            if(spos > -1 && qpos > spos) {
-              // recursively sanitize it as a whole qs
-              pz = this.sanitizeXQuery(pz, changed);
-            } else {
-              // split, sanitize and rejoin
-              pz = [ this.sanitize(pz.substring(0, qpos)), 
-                     this.sanitizeXQuery(pz.substring(qpos + 1), changed)
-                   ].join("?")
+          nestedURI = null;
+          if(/^https?:\/\//i.test(pz)) {
+            // try to sanitize as a nested URL
+            try {
+              nestedURI = this.ns.siteUtils.ios.newURI(pz, null, null).QueryInterface(Components.interfaces.nsIURL);
+              changes = this.mergeDefaults(this.sanitizeURL(nestedURI), changes);
+              pz = nestedURI.spec;
+            } catch(e) {
+              nestedURI = null;
             }
-          } else {
-            pz = this.sanitize(pz);
           }
+          
+          if(!nestedURI) {
+            qpos = pz.indexOf("?");
+            spos = pz.search(/[&;]/);
+            if(qpos > -1 || spos > -1) { 
+              // recursive query string?
+              if(spos > -1 && qpos > spos) {
+                // recursively sanitize it as a whole qs
+                pz = this.sanitizeXQuery(pz, changes);
+              } else {
+                // split, sanitize and rejoin
+                pz = [ this.sanitize(pz.substring(0, qpos)), 
+                       this.sanitizeXQuery(pz.substring(qpos + 1), changes)
+                     ].join("?")
+              }
+            } else {
+              pz = this.sanitize(pz);
+            }
+            if(origPz != pz) changes.qs = true;
+          }
+          
           pieces[k] = encodeURIComponent(pz);
-          if(origPz != pz) changed.value = true;
         }
         if(j > 0 && pieces.length == 1 && j == parms.length - 1) {
           // avoid "&" separator to be used as an entity escape if site rewrites this URL 
@@ -2644,7 +2729,8 @@ RequestWatchdog.prototype = {
     } 
     return parms.join("&");
   },
-  sanitizeURI: function(s, lenient) {
+  
+  sanitizeURIString: function(s, lenient) {
     try {
       return encodeURI(this.sanitize(decodeURIComponent(s), lenient));
     } catch(e) {
@@ -2700,9 +2786,9 @@ RequestWatchdog.prototype = {
     this.notify(requestInfo);
   },
   
-  mergeObjects: function(o1, o2) {
+  mergeDefaults: function(o1, o2) {
     for(p in o2) {
-      o1[p] = o2[p];
+      o1[p] = o1[p] || o2[p];
     }
     return o1;
   },
@@ -2714,14 +2800,14 @@ RequestWatchdog.prototype = {
                             this.ns.domUtils.findBrowserForNode(requestInfo.window));
     } catch(e) {}
     requestInfo.xssMaybe = true;
-    return this.mergeObjects(xssInfo, requestInfo);
+    return this.mergeDefaults(xssInfo, requestInfo);
   },
   
   notify: function(requestInfo) {
     var msg = "[NoScript XSS] " + this.ns.getString("xss.reason." + requestInfo.reason, [ 
         requestInfo.originalAttempt || "N/A",
         requestInfo.origin,
-        requestInfo.sanitizedURI.spec
+        requestInfo.sanitizedURI && requestInfo.sanitizedURI.spec || ""
       ]);
     this.dump(requestInfo.channel, "Notifying " + msg + "\n\n\n");
     this.ns.log(msg);

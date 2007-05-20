@@ -8,6 +8,7 @@ pref("noscript.notify.bottom", true);
 pref("noscript.showAddress", false);
 pref("noscript.showDomain", false);
 pref("noscript.showTemp", true);
+pref("noscript.showPermanent", true);
 pref("noscript.showDistrust", true);
 pref("noscript.showUntrusted", true);
 pref("noscript.showBaseDomain", true);
@@ -17,7 +18,7 @@ pref("noscript.default", "chrome: resource: about:blank about:neterror about:con
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", false);
 pref("noscript.forbidPlugins", false);
-pref("noscript.forbidData", true);
+pref("noscript.forbidData", false);
 pref("noscript.sound.block", "chrome://noscript/skin/block.wav");
 pref("noscript.allowClipboard", false);
 pref("noscript.allowLocalLinks", false);
@@ -60,12 +61,14 @@ pref("noscript.xss.notify.subframes", false);
 
 pref("noscript.xss.trustReloads", false);
 pref("noscript.xss.trustData", true);
+pref("noscript.xss.trustExternal", false);
+pref("noscript.xss.trustTemp", true);
 
 pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
-pref("noscript.filterXGetRx", "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;]");
+pref("noscript.filterXGetRx", "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;\\|#]");
 pref("noscript.filterXGetRx2Black", "[\(\)\=;]");
-pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.[a-z\\.]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"'<>\?%]+$"); 
+pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.[a-z\\.]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
 
 pref("noscript.blockXIntranet", true);
 pref("noscript.intranetMaskRx", "^(127\\.[\\d.]+)");

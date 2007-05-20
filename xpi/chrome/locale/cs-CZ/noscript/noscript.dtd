@@ -57,7 +57,7 @@
 <!ENTITY noscriptAllowLocalLinks "Povolit místní odkazy">
 <!ENTITY noscriptForbidPing "Zakázat &lt;a ping...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Zakázat META přesměrování uvnitř elementů &lt;noscript&gt;">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "M">
 <!ENTITY noscriptWhitelist "Výjimky">
 <!ENTITY noscriptPermissions "Povolení">
 <!ENTITY noscriptRefresh "Obnovení">
@@ -92,7 +92,7 @@
 <!ENTITY noscriptXssExceptions "Ochrana proti XSS - výjimky">
 <!ENTITY noscriptXssExceptions.description "Cíle vyhovující těmto regulárním výrazům NEBUDOU CHRÁNĚNY proti XSS">
 <!ENTITY noscriptMatchSample "Ukázka vyhovující vzoru:">
-<!ENTITY noscriptReset "Reset">
-<!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptReset "Vynulovat">
+<!ENTITY noscriptReset.accesskey "V">
+<!ENTITY noscriptResetDef "Výchozí nastavení">
+<!ENTITY noscriptResetDef.accesskey "z">

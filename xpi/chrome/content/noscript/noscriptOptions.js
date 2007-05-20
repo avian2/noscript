@@ -62,6 +62,7 @@ var nsopt = {
       }
     );
     
+    document.getElementById("opt-showPermanent").setAttribute("label", noscriptUtil.getString("allowLocal", ["[...]"]));
     document.getElementById("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp", ["[...]"]));
     document.getElementById("opt-showDistrust").setAttribute("label", noscriptUtil.getString("distrust", ["[...]"]));
     document.getElementById("opt-showGlobal").setAttribute("label", noscriptUtil.getString("allowGlobal"));
@@ -145,8 +146,9 @@ var nsopt = {
     this.autoAllowGroup.persist();
     this.toggleGroup.persist();
     
-    var xssEx = this.xssEx.getValue(true);
-    if(xssEx) ns.setPref("filterXExceptions", xssEx);
+    var xssEx = this.xssEx.getValue();
+    if(this.xssEx.validate() || !/\S/.test(xssEx)) 
+      ns.setPref("filterXExceptions", xssEx);
     
     
     var global = this.jsglobal.getAttribute("checked") == "true";

@@ -302,9 +302,10 @@ const noscriptOverlay = {
     const showDistrust = ns.getPref("showDistrust", true);
     const showNothing = !(showAddress || showDomain || showBase || showUntrust);
     
-    const showTemp = ns.getPref("showTemp");
+    const showPermanent = ns.getPref("showPermanent", true);
+    const showTemp = ns.getPref("showTemp", true);
     
-    var parent;
+    var parent, extraNode;
     for(j = sites.length; j-->0;) {
       site = sites[j];
       
@@ -371,23 +372,28 @@ const noscriptOverlay = {
         }
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
         
-        parent.appendCmd(node);
+        if(showPermanent || enabled) 
+          parent.appendCmd(node);
         
         if(!enabled) {
           if(showTemp) {
-            node = node.cloneNode(true);
-            node.setAttribute("label", this.getString("allowTemp", [menuSite]));
-            node.setAttribute("oncommand", "noscriptOverlay.menuAllow(true,this,true)");
-            node.setAttribute("class", cssClass + " noscript-temp noscript-allow");
-            parent.appendCmd(node);
+            extraNode = document.createElement("menuitem");
+            extraNode.setAttribute("label", this.getString("allowTemp", [menuSite]));
+            extraNode.setAttribute("image", node.getAttribute("image"));
+            extraNode.setAttribute("statustext", menuSite);
+            extraNode.setAttribute("oncommand", "noscriptOverlay.menuAllow(true,this,true)");
+            extraNode.setAttribute("class", cssClass + " noscript-temp noscript-allow");
+            extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
+            parent.appendCmd(extraNode);
           }
           if(((showUntrusted && untrustedMenu) || showDistrust) && !untrusted) {
-            node = node.cloneNode(true);
-            node.setAttribute("label", this.getString("distrust", [menuSite]));
-            node.setAttribute("image", this.getIcon("no", true));
-            node.setAttribute("class", cssClass + " noscript-distrust");
-            node.setAttribute("oncommand", "noscriptOverlay.menuAllow(false, this, false)");
-            (showUntrusted ? untrustedMenu : mainMenu).appendCmd(node);
+            extraNode = document.createElement("menuitem");
+            extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
+            extraNode.setAttribute("image", this.getIcon("no", true));
+            extraNode.setAttribute("class", cssClass + " noscript-distrust");
+            extraNode.setAttribute("oncommand", "noscriptOverlay.menuAllow(false, this, false)");
+            extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
+            (showUntrusted ? untrustedMenu : mainMenu).appendCmd(extraNode);
           }
         }
       }
@@ -548,7 +554,12 @@ const noscriptOverlay = {
         return;
       }
       if(statusIcon.parentNode.hidden) {
-        popup = document.getElementById("noscript-notify-popup");
+        window.setTimeout(function() {
+          var popup = document.getElementById("noscript-notify-popup");
+          var ref = document.getElementById("appcontent");
+          popup.showPopup(ref, ref.boxObject.screenX, ref.boxObject.screenY);
+        }, 0);
+        return;
       } else {
         popup.addEventListener("popuphidden", function(ev) {
             if(ev.currentTarget != ev.target) return;
@@ -669,24 +680,36 @@ const noscriptOverlay = {
       }
       const popup = "noscript-notify-popup";
       if(box.appendNotification) { // >= Fx 2.0
-       box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_MEDIUM,
-        [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]);
+        widget =  box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_MEDIUM,
+                  [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]);
+        browser.addEventListener("beforeunload", function(ev) {
+          if(ev.originalTarget == browser || ev.originalTarget == browser.contentWindow.document) {
+            browser.removeEventListener("beforeunload", arguments.callee, false);
+            noscriptOverlay.notificationHide(widget, true);
+          }
+        }, false);
        
       } else if(browser.showMessage) { // Fx <= 1.5.x
         browser.showMessage(browser.selectedBrowser, icon, label, 
               buttonLabel, null,
               null, popup, pos, true,
               buttonAccesskey);
+        widget = this.getNsNotification(box);
       }
-      
+     
     }
+    if(!widget) return;
+    
     const delay = (this.ns.getPref("notify.hide") && this.ns.getPref("notify.hideDelay", 3)) || 0;
     if(delay) {
      window.clearTimeout(this.notifyHideTimeout);
      this.notifyHideTimeout = window.setTimeout(
-       function() { noscriptOverlay.notificationHide(); },
+       function() {
+          noscriptOverlay.notificationHide(widget); 
+       },
        1000 * delay);
     }
+    
     return true;
   },
   
@@ -821,19 +844,20 @@ const noscriptOverlay = {
       try {
         getBrowser().getNotificationBox(browser).removeAllNotifications(true);
       } catch(e) {}
-      try {
-        this.notificationHide(this.getAltNotificationBo(browser));
-      } catch(e) {}
       rw.unsafeReload(browser, true);
     }
   },
   
-  notificationHide: function(wid) { // Modified by Higmmer
+  notificationHide: function(wid, immediate) { // Modified by Higmmer
     var box = this.getNotificationBox();
     var widget = wid ? wid : this.getNsNotification(box); // Modified by Higmmer
      if(widget) {
        if(widget.parentNode) {
+         box = widget.parentNode.parentNode;
          if(box && box.removeNotification) {
+           if(immediate && box.currentNotification == widget) {
+             box.currentNotification = null;
+           }
            box.removeNotification(widget);
          } else if(widget.close) {
            widget.close();
@@ -1153,7 +1177,7 @@ const noscriptOverlay = {
     onContentLoad: function(ev) {
       var doc = ev.originalTarget;
       if(doc instanceof HTMLDocument) {
-        if(doc.defaultView == doc.defaultView.top) {
+        if(doc.defaultView && doc.defaultView == doc.defaultView.top) {
           noscriptOverlay.ns.processMetaRefresh(doc);
         }
         noscriptOverlay.syncUI(); 
@@ -1165,6 +1189,7 @@ const noscriptOverlay = {
     
     onLoad: function(ev) {
       noscriptOverlay.listeners.setup();
+      noscriptOverlay.patchBrowserAccess();
     },
     onUnload: function(ev) {
       noscriptOverlay.listeners.teardown();
@@ -1236,6 +1261,21 @@ const noscriptOverlay = {
               .removeEventListener("popupshowing", this.onContextMenu,false);
     }
   }, // END listeners
+  
+  patchBrowserAccess: function() { // called onload
+    if(!nsBrowserAccess) return;
+    const OPEN_EXTERNAL = Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL;
+    const openURI = nsBrowserAccess.prototype.openURI;
+    
+    nsBrowserAccess.prototype.openURI = function(aURI, aOpener, aWhere, aContext) {
+      var external = (aContext == OPEN_EXTERNAL && 
+        (aURI.schemeIs("http") || aURI.schemeIs("https"))) && 
+        (noscriptOverlay.ns.requestWatchdog.externalLoad = aURI.spec);
+      var w = openURI(aURI, aOpener, aWhere, aContext);
+      if(external && !w) noscriptOverlay.ns.requestWatchdog.externalLoad = null;
+      return w;
+    }
+  },
   
   install: function() {
     const ll = this.listeners;

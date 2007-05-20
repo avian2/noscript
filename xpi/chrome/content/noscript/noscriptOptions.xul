@@ -155,15 +155,20 @@
     
     <groupbox class="ia-indent">
       <caption><checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" /></caption>
-  
-     
+       
+       <checkbox id="opt-showPermanent" label="Allow [...]" />
+       <checkbox id="opt-showTemp" label="&noscriptTempCmd;" />
+       <checkbox id="opt-showDistrust" label="Mark [...] as untrusted" />
+       <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
+       
+       <separator class="thin" />
+       
        <checkbox id="opt-showBaseDomain" label="&noscriptBaseDom;" />
        <checkbox id="opt-showDomain" label="&noscriptFullDom;" />
        <checkbox id="opt-showAddress" label="&noscriptFullAddr;" />
-       <checkbox id="opt-showTemp" label="&noscriptTempCmd;" />
-       <separator class="thin" />
-         <checkbox id="opt-showDistrust" label="Mark as untrusted" />
-         <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
+       
+       
+         
        <separator class="thin" />
        <checkbox id="opt-showGlobal" label="Allow Globally" />
      </groupbox>
