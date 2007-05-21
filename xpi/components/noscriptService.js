@@ -183,12 +183,13 @@ Strings.prototype = {
 const noscriptStrings = new Strings("noscript");
 
 const SiteUtils = new function() {
-  var _domainPattern = /^[^\?\/#,;:\\\@]+$/; // double check: changed for Unicode compliance: it was /^[\w\-\.]*\w$/
+  const _domainPattern = /^[^\?\/#,;:\\\@]+$/;
   
-  this.ios = Components.classes["@mozilla.org/network/io-service;1"
-        ].getService(Components.interfaces.nsIIOService);
+  const _ios = this.ios = Components.classes["@mozilla.org/network/io-service;1"]
+    .getService(Components.interfaces.nsIIOService);
   
-  this.uriFixup = Components.classes["@mozilla.org/docshell/urifixup;1"].getService(Components.interfaces.nsIURIFixup);
+  const _uriFixup = this.uriFixup = Components.classes["@mozilla.org/docshell/urifixup;1"]
+    .getService(Components.interfaces.nsIURIFixup);
   
   function sorter(a,b) {
     if(a==b) return 0;
@@ -205,10 +206,14 @@ const SiteUtils = new function() {
   };
   
   this.getSite = function(url) {
-    if((!url) || 
-        (/\s/.test(url.charAt(0) + url.charAt(url.length - 1) && // needs trimming
-        !(url = url.replace(/^\s*(.*?)\s*$/, '$1'))))) {
-      return '';
+    if(!url || 
+        url.charCodeAt(0) < 33  && // needs trimming
+        !(url = url.replace(/^\s*(.*?)\s*$/, '$1'))) {
+      return "";
+    }
+    
+    if(url.indexOf(":") == -1) {
+      return this.domainMatch(url);
     }
     
     var scheme;
@@ -231,7 +236,7 @@ const SiteUtils = new function() {
     }
     try {
       // let's unwrap JAR uris
-      var uri = this.uriFixup.createExposableURI(this.ios.newURI(url, null, null));
+      var uri = _uriFixup.createExposableURI(_ios.newURI(url, null, null));
       if(uri instanceof Components.interfaces.nsIJARURI) {
         uri = uri.JARFile;
         return uri ? this.getSite(uri.spec) : scheme;
@@ -266,17 +271,17 @@ const SiteUtils = new function() {
   }
   
   this.splitString = function(s) {
-    return s?/^[,\s]*$/.test(s)?[]:s.split(/\s*[,\s]\s*/):[];
+    return s && /[^\s,]/.test(s) && s.split(/\s*[,\s]\s*/) || [];
   };
   
   this.domainMatch = function(url) {
-     const m=url.match(_domainPattern);
-     return m?m[0].toLowerCase():"";
+     const m = url.match(_domainPattern);
+     return m ? m[0].toLowerCase() : "";
   };
   
   this.sanitizeList = function(sl) {
-    for(var j=sl.length; j-->0; ) {
-      sl[j]=this.getSite(sl[j]);
+    for(var j=sl.length; j-- > 0; ) {
+      sl[j] = this.getSite(sl[j]);
     }
     return sl;
   };
@@ -295,7 +300,7 @@ const SiteUtils = new function() {
   };
   
   this.sanitizeString = function(s) {
-    // s=s.replace(/,/g,' ').replace(/\s{2,}/g,' ').replace(/(^\s+|\s+$)/g,'');
+    // s = s.replace(/,/g,' ').replace(/\s{2,}/g,' ').replace(/(^\s+|\s+$)/g,'');
     return this.set2string(this.string2set(s)); 
   };
   
@@ -626,7 +631,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.8.070514",
+  VERSION: "1.1.4.8.070521",
   
   get wrappedJSObject() {
     return this;

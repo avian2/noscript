@@ -390,6 +390,7 @@ const noscriptOverlay = {
             extraNode = document.createElement("menuitem");
             extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
             extraNode.setAttribute("image", this.getIcon("no", true));
+            extraNode.setAttribute("statustext", menuSite);
             extraNode.setAttribute("class", cssClass + " noscript-distrust");
             extraNode.setAttribute("oncommand", "noscriptOverlay.menuAllow(false, this, false)");
             extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
@@ -1233,6 +1234,7 @@ const noscriptOverlay = {
                 const url = "http://noscript.net?ver=" + ns.VERSION + "&prev=" + prevVer;
                 const browser = getBrowser();
                 browser.selectedTab = browser.addTab(url, null);
+                ns.savePrefs();
               }, 100);
            }
         }
@@ -1264,20 +1266,41 @@ const noscriptOverlay = {
   
   patchBrowserAccess: function() { // called onload
     if(!nsBrowserAccess) return;
-    const OPEN_EXTERNAL = Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL;
-    const openURI = nsBrowserAccess.prototype.openURI;
+    if(!nsBrowserAccess.prototype.wrappedJSObject) {
+      nsBrowserAccess.prototype.__defineGetter__("wrappedJSObject", function() { return this; });
+    }
+    if(!window.browserDOMWindow.wrappedJSObject) {
+      arguments.callee.retryCount = arguments.callee.retryCount || 10;
+      if(arguments.callee.retryCount) return; 
+      dump("browserDOMWindow not found or not set up, retrying " + arguments.callee.retryCount + " times");
+      arguments.callee.retryCount--;
+      window.setTimeout(arguments.callee, 0);
+      return;
+    }
     
-    nsBrowserAccess.prototype.openURI = function(aURI, aOpener, aWhere, aContext) {
-      var external = (aContext == OPEN_EXTERNAL && 
+    const OPEN_EXTERNAL = Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL;   
+    
+    window.browserDOMWindow.wrappedJSObject.openURI = function(aURI, aOpener, aWhere, aContext) {
+      var external = (aContext == OPEN_EXTERNAL && aURI &&
         (aURI.schemeIs("http") || aURI.schemeIs("https"))) && 
         (noscriptOverlay.ns.requestWatchdog.externalLoad = aURI.spec);
-      var w = openURI(aURI, aOpener, aWhere, aContext);
-      if(external && !w) noscriptOverlay.ns.requestWatchdog.externalLoad = null;
+      var w = null;
+      try {
+        w = nsBrowserAccess.prototype.openURI.apply(this, [aURI, aOpener, aWhere, aContext]);
+      } finally {
+        if(external && !w) noscriptOverlay.ns.requestWatchdog.externalLoad = null;
+      }
       return w;
     }
   },
   
   install: function() {
+    if(!this.ns) {
+      // TODO - fail in a nicer way
+      alert("NoScript is not properly installed and cannot operate correctly.\n" + 
+            "Please install it again and check the Install FAQ section on http://noscript.net/faq if this problem persists.");
+      return;
+    }
     const ll = this.listeners;
     window.addEventListener("load", ll.onLoad, false);
     window.addEventListener("focus", ll.onUninstallMaybe, false);

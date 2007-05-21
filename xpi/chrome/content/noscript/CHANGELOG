@@ -1,5 +1,16 @@
 NoScript ChangeLog
 
+v 1.1.4.8.070521
+=====================================================================
+x Fixed regression from bug 53901 work-around, "Mark as untrusted
+  menu" not working anymore (thanks Ricky Ridgdill)
+
+v 1.1.4.8.070520
+=====================================================================
+x Resolved 070509 conflict with IETab + Tab Mix Plus causing some 
+  tab-diverted links to open in new windows (thanks to Nuttysman, 
+  niko322, Alan Baxter)
+
 v 1.1.4.8.070514
 =====================================================================
 x Sanitized URI randomization (thanks kuza55 for inspiration)
