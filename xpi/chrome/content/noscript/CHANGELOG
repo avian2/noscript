@@ -1,5 +1,19 @@
 NoScript ChangeLog
 
+v 1.1.4.8.070523
+=====================================================================
+x Improved notification consistency with back-forward navigation
+x Better compatibility with Google Desktop Search and Paypal email
+  notifications
+
+v 1.1.4.8.070522
+=====================================================================
++ "org.uy", "net.uy" and "edu.uy" special TLDs (thanks Mauricio)
+x Nicer url randomization
+x Improved notification on nested URL XSS sanitization
+x Fixed external load request detection failing "randomly" in some 
+  setups (regression from the IETab incompatibility work-around) 
+
 v 1.1.4.8.070521
 =====================================================================
 x Fixed regression from bug 53901 work-around, "Mark as untrusted

@@ -631,7 +631,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.8.070521",
+  VERSION: "1.1.4.8.070523",
   
   get wrappedJSObject() {
     return this;
@@ -1261,7 +1261,7 @@ NoscriptService.prototype ={
     "cq": " cn ",
     "cri": " nz ",
     "ecn": " br ",
-    "edu": " ar au co cn hk mm mx pl tr za ",
+    "edu": " ar au co cn hk mm mx pl tr uy za ",
     "eng": " br ",
     "ernet": " in ",
     "esp": " br ",
@@ -1319,7 +1319,7 @@ NoscriptService.prototype ={
     "muni": " il ",
     "nb": " ca ",
     "ne": " jp kr ",
-    "net": " ar au br cn ec hk id il in mm mx nz pl ru sg th tr tw ua uk za ",
+    "net": " ar au br cn ec hk id il in mm mx nz pl ru sg th tr tw ua uk uy za ",
     "nf": " ca ",
     "ngo": " za ",
     "nm": " cn kr ",
@@ -1332,7 +1332,7 @@ NoscriptService.prototype ={
     "odo": " br ",
     "on": " ca ",
     "or": " ac at id jp kr th ",
-    "org": " ar au br cn ec hk il in mm mx nz pe pl ro ru sg tr tw uk ua uk za ",
+    "org": " ar au br cn ec hk il in mm mx nz pe pl ro ru sg tr tw uk ua uk uy za ",
     "pc": " pl ",
     "pe": " ca ",
     "plc": " uk ",
@@ -1374,7 +1374,6 @@ NoscriptService.prototype ={
     "tw": " cn ",
     "uk": " co com net ",
     "us": " com ca ",
-    "uy": " com ",
     "vet": " br ",
     "web": " id za ",
     "www": " ro ",
@@ -2514,13 +2513,18 @@ RequestWatchdog.prototype = {
     if(ns.isJSEnabled(originSite)) {
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel), channel);
       if(externalLoad) { // external origin ?
-        if(ns.consoleDump) this.dump(channel, "External load");
-        if(ns.getPref("xss.trustExternal", false)) {
-          if(ns.consoleDump) this.dump(channel, "noscript.xss.trustExternal is TRUE, SKIP");
+        if(ns.consoleDump) this.dump(channel, "External load from " + origin);
+        if(originSite == "chrome:") {
+          if(ns.getPref("xss.trustExternal", false)) {
+            if(ns.consoleDump) this.dump(channel, "noscript.xss.trustExternal is TRUE, SKIP");
+            return;
+          }
+          origin = "///EXTERNAL///";
+          originSite = "";
+        } else {
+          if(ns.consoleDump) this.dump(channel, "Not coming from an external application, SKIP");
           return;
         }
-        origin = "///EXTERNAL///";
-        originSite = "";
       } else if(ns.getPref("xss.trustTemp", true) || !ns.isTemp(originSite)) { // temporary allowed origin?
         if(ns.consoleDump) this.dump(channel, "Origin " + origin + " is trusted, SKIP");
         return;
@@ -2642,7 +2646,7 @@ RequestWatchdog.prototype = {
         // }
       }
       
-      if(requestInfo.window == requestInfo.window.top) {
+      if(requestInfo.window && requestInfo.window == requestInfo.window.top) {
         this.setUnsafeRequest(requestInfo.browser, requestInfo.unsafeRequest);
       }
     }
@@ -2658,7 +2662,12 @@ RequestWatchdog.prototype = {
     var qsChanged = { value: false };
     if(url instanceof Components.interfaces.nsIURL) {
       // sanitize path
-      if(url.filePath) url.filePath = this.sanitizeURIString(url.filePath, true); // true == lenient == allow ()=
+     
+      if(url.param) {
+        url.path = this.sanitizeURIString(url.path, true); // param is the URL part after filePath and a semicolon ?!
+      } else if(url.filePath) { 
+        url.filePath = this.sanitizeURIString(url.filePath, true); // true == lenient == allow ()=
+      }
       // sanitize query
       if(url.query) url.query = this.sanitizeXQuery(url.query, changes);
       // sanitize fragment
@@ -2670,8 +2679,10 @@ RequestWatchdog.prototype = {
     
     if(url.getRelativeSpec(original)) {
       changes.minor = true;
-      changes.major = changes.qs || decodeURIComponent(original.spec.replace(/\?.*/g, "")) != decodeURIComponent(url.prePath + url.filePath);
-      url.ref = encodeURIComponent(Math.random()); // randomize URI
+      changes.major = changes.major || changes.qs || 
+                      decodeURIComponent(original.spec.replace(/\?.*/g, "")) 
+                        != decodeURIComponent(url.spec.replace(/\?.*/g, ""));
+      url.ref = Math.random().toString().concat(Math.round(Math.random() * 999 + 1)).replace(/0./, '') // randomize URI
     }
     return changes;
   },
@@ -2693,7 +2704,7 @@ RequestWatchdog.prototype = {
             // try to sanitize as a nested URL
             try {
               nestedURI = this.ns.siteUtils.ios.newURI(pz, null, null).QueryInterface(Components.interfaces.nsIURL);
-              changes = this.mergeDefaults(this.sanitizeURL(nestedURI), changes);
+              changes = this.mergeDefaults(changes, this.sanitizeURL(nestedURI));
               pz = nestedURI.spec;
             } catch(e) {
               nestedURI = null;
@@ -2779,7 +2790,12 @@ RequestWatchdog.prototype = {
       s.replace(/\+\w+/g, function(m) { return m.replace(/A/g, "a"); });
     }
     */
-    if(!lenient) s = s.replace(this.ns.filterXGetRx2Black, " "); // lenient on path only to allow some wikipedianisms
+    if(lenient) {
+      // if lenient, we let ampersand and semicolon pass. Now we ensure that no entity passes, though
+      s = s.replace(/&(?:[^\/=]+;|[^\/=]*$)/g, "");
+    } else {
+      s = s.replace(this.ns.filterXGetRx2Black, " "); // lenient on path only to allow some wikipedianisms
+    }
     return s;
   },
   
@@ -2820,7 +2836,7 @@ RequestWatchdog.prototype = {
     
     if(requestInfo.silent || !requestInfo.browser || !requestInfo.window ||
       !this.ns.getPref("xss.notify", true) ||
-      (requestInfo.window != requestInfo.window.top && 
+      (requestInfo.window && requestInfo.window != requestInfo.window.top && 
           !this.ns.getPref("xss.notify.subframes", false)
       )
     ) return;

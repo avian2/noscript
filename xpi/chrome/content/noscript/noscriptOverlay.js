@@ -683,13 +683,7 @@ const noscriptOverlay = {
       if(box.appendNotification) { // >= Fx 2.0
         widget =  box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_MEDIUM,
                   [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]);
-        browser.addEventListener("beforeunload", function(ev) {
-          if(ev.originalTarget == browser || ev.originalTarget == browser.contentWindow.document) {
-            browser.removeEventListener("beforeunload", arguments.callee, false);
-            noscriptOverlay.notificationHide(widget, true);
-          }
-        }, false);
-       
+        
       } else if(browser.showMessage) { // Fx <= 1.5.x
         browser.showMessage(browser.selectedBrowser, icon, label, 
               buttonLabel, null,
@@ -706,7 +700,7 @@ const noscriptOverlay = {
      window.clearTimeout(this.notifyHideTimeout);
      this.notifyHideTimeout = window.setTimeout(
        function() {
-          noscriptOverlay.notificationHide(widget); 
+          noscriptOverlay.notificationHide(browser); 
        },
        1000 * delay);
     }
@@ -849,23 +843,25 @@ const noscriptOverlay = {
     }
   },
   
-  notificationHide: function(wid, immediate) { // Modified by Higmmer
-    var box = this.getNotificationBox();
-    var widget = wid ? wid : this.getNsNotification(box); // Modified by Higmmer
-     if(widget) {
-       if(widget.parentNode) {
-         box = widget.parentNode.parentNode;
-         if(box && box.removeNotification) {
-           if(immediate && box.currentNotification == widget) {
-             box.currentNotification = null;
-           }
-           box.removeNotification(widget);
-         } else if(widget.close) {
-           widget.close();
-         }
-       }
-       widget.setAttribute("hidden", "true");
-     }
+  notificationHide: function(browser, immediate) { // Modified by Higmmer
+    var box = this.getNotificationBox(null, browser);
+    var widget = this.getNsNotification(box); // Modified by Higmmer
+    if(widget) {
+      if(widget.parentNode) {
+        box = widget.parentNode.parentNode;
+        if(box && box.removeNotification) {
+          if(immediate && box.currentNotification == widget) {
+            box.currentNotification = null;
+          }
+          box.removeNotification(widget);
+        } else if(widget.close) {
+          widget.close();
+        }
+      }
+      widget.setAttribute("hidden", "true");
+      return true;
+    }
+    return false;
   }
 ,
   _disablePopup: function(id) {
@@ -974,7 +970,9 @@ const noscriptOverlay = {
     doc[flag] = noscriptOverlay.docFlag;
     return true;
   },
-  
+  clearDocFlag: function(doc, flag) {
+    doc[flag] = null;
+  },
   
   
   
@@ -1121,6 +1119,17 @@ const noscriptOverlay = {
       } catch(e) {}
     },
     
+    onDocumentClose: function(ev) {
+      const doc = ev.originalTarget;
+      const browser = getBrowser().getBrowserForDocument(doc);
+      if(browser) {
+        if(noscriptOverlay.notificationHide(browser, true)) {
+           noscriptOverlay.clearDocFlag(doc, "_noscript_message_shown");
+        }
+      }
+     
+    },
+    
     webProgressListener: {
       STATE_STOP: Components.interfaces.nsIWebProgressListener.STATE_STOP,
       onLocationChange: function(aWebProgress, aRequest, aLocation) { 
@@ -1218,7 +1227,10 @@ const noscriptOverlay = {
         b.tabContainer.addEventListener("TabClose", this.onTabClose, false);
       }
       
+      window.addEventListener("pageshow", this.onContentLoad, false);
       window.addEventListener("DOMContentLoaded", this.onContentLoad, false);
+      window.addEventListener("beforeunload", this.onDocumentClose, false);
+      window.addEventListener("pagehide", this.onDocumentClose, false);
       
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
@@ -1254,8 +1266,11 @@ const noscriptOverlay = {
         b.removeProgressListener(this.webProgressListener);
       }
       
+      window.removeEventListener("beforeunload", this.onDocumentClose, false);
+      window.removeEventListener("pagehide", this.onDocumentClose, false);
+      window.removeEventListener("pageshow", this.onContentLoad, false);
       window.removeEventListener("DOMContentLoaded", this.onContentLoad, false);
-      
+
       noscriptOverlay.prefsObserver.remove();
       noscriptOverlay.shortcutKeys.remove();
       
@@ -1269,10 +1284,10 @@ const noscriptOverlay = {
     if(!nsBrowserAccess.prototype.wrappedJSObject) {
       nsBrowserAccess.prototype.__defineGetter__("wrappedJSObject", function() { return this; });
     }
-    if(!window.browserDOMWindow.wrappedJSObject) {
+    if(!(window.browserDOMWindow && window.browserDOMWindow.wrappedJSObject)) {
       arguments.callee.retryCount = arguments.callee.retryCount || 10;
-      if(arguments.callee.retryCount) return; 
-      dump("browserDOMWindow not found or not set up, retrying " + arguments.callee.retryCount + " times");
+      if(!arguments.callee.retryCount) return; 
+      noscriptOverlay.ns.log("[NoScript] browserDOMWindow not found or not set up, retrying " + arguments.callee.retryCount + " times");
       arguments.callee.retryCount--;
       window.setTimeout(arguments.callee, 0);
       return;
@@ -1287,11 +1302,13 @@ const noscriptOverlay = {
       var w = null;
       try {
         w = nsBrowserAccess.prototype.openURI.apply(this, [aURI, aOpener, aWhere, aContext]);
+        if(external) noscriptOverlay.ns.log("[NoScript] external load intercepted");
       } finally {
         if(external && !w) noscriptOverlay.ns.requestWatchdog.externalLoad = null;
       }
       return w;
     }
+    noscriptOverlay.ns.log("[NoScript] browserDOMWindow patched for external load interception");
   },
   
   install: function() {
