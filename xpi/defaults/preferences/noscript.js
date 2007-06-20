@@ -1,5 +1,7 @@
 pref("extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description", "chrome://noscript/locale/about.properties");
 pref("noscript.autoReload", true);
+pref("noscript.autoReload.global", true);
+pref("noscript.autoReload.allTabs", true);
 pref("noscript.ctxMenu", true);
 pref("noscript.statusIcon", true);
 pref("noscript.sound", false);
@@ -69,11 +71,14 @@ pref("noscript.filterXGet", true);
 pref("noscript.filterXGetRx", "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;\\|#&]");
 pref("noscript.filterXGetRx2Black", "[\(\)\=;&]");
 pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.[a-z\\.]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
-
+pref("noscript.injectionCheck", 2);
 pref("noscript.blockXIntranet", true);
 pref("noscript.intranetMaskRx", "^(127\\.[\\d.]+)");
 
 pref("noscript.blockCssScanners", true);
 
 pref("noscript.globalwarning", true);
+
+pref("noscript.jsredirectIgnore", false);
+pref("noscript.jsredirectFollow", true);
 

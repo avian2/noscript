@@ -1,5 +1,63 @@
 NoScript ChangeLog
 
+v 1.1.4.9
+=====================================================================
++ noscript.injectionCheck about:config option adds first-line 
+  detection for XSS injections in GET requests originated by 
+  whitelisted sites and landing on top level windows. Value can be:
+    0 - never check
+    1 - check cross-site requests from temporary allowed sites
+    2 - check every cross-site request (default)
+    3 - check every request
++ noscript.jsredirectIgnore about:config option enables/disables
+  the new "Detect and show JavaScript redirections" feature
++ noscript.jsredirectFollow about:config option enables/disables
+  auto-following if a single redirect is detected on a textless page
+x "Allow top level sites by default" won't affect sites that have 
+  been manually forbidden during the current session (to make
+  this exception permanent, mark the site as untrusted)
+
+v 1.1.4.8.070618
+=====================================================================
++ New placeholders for plugin content can be right clicked as any 
+  "regular" link, e.g. to "Save Link As..." or "Copy Link Location"
++ Placeholders for plugin content are rendered real-time during load
++ Experimental detection of JavaScript redirections (thanks timeless)
+x Fixed glitch in plugin replacement with JS enabled (thanks lulu135)
+
+v 1.1.4.8.070617
+=====================================================================
+x Fixed untrusted blacklist import bug (thanks MZFuser)
+
+v 1.1.4.8.070606
+=====================================================================
++ edu.tw special TLD (thanks twocs)
++ New noscript.autoReload.global about:config preference controls if 
+  automatic reload affects global allow / forbid (thanks lulu135)
++ New noscript.autoReload.allTabs about:config preference controls if
+  automatic reload affacts all or just current tab (thanks lulu135)
+
+v 1.1.4.8.070602
+=====================================================================
+x Removed console error message on document unload in SeaMonkey
+
+v 1.1.4.8.070530
+=====================================================================
+x Fixed toggle shortcut regression (thanks therube)
+
+v 1.1.4.8.070529
+=====================================================================
+x Automatic fixup of trailing dot domains, replacing them on the
+  fly with their canonical name (thanks fartron and timeless)
++ "in.th" special TLD (thanks Kridsada)
+x Fixed minor notification glitches in Fx 1.5 (thanks arete7)
+
+v 1.1.4.8.070528
+=====================================================================
+x Performance optimization of options dialog closure for long 
+  whitelists used in conjunction with long blackists (thanks arete7)
+x Automatic notification hiding for background tabs (thanks arete7)
+
 v 1.1.4.8.070523
 =====================================================================
 x Improved notification consistency with back-forward navigation

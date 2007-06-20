@@ -154,13 +154,16 @@ var nsopt = {
     var global = this.jsglobal.getAttribute("checked") == "true";
     var untrustedSites = this.untrustedSites;
     var trustedSites = this.trustedSites;
+    
     ns.safeCapsOp(function() {
-      ns.untrustedSites.sitesString = untrustedSites.sitesString;
-      ns.setJSEnabled(trustedSites.sitesList, true, true);
+      if(ns.untrustedSites.sitesString != untrustedSites.sitesString
+          || ns.jsPolicySites.sitesString != trustedSites.sitesString) {
+        ns.untrustedSites.sitesString = untrustedSites.sitesString;
+        ns.persistUntrusted();
+        ns.setJSEnabled(trustedSites.sitesList, true, true);
+      }
       ns.jsEnabled = global;
     });
-    
-    
   },
 
   urlListChanged: function() {
@@ -309,10 +312,9 @@ var nsopt = {
     var untrustedPos = all.indexOf("\n[UNTRUSTED]\n");
     if(untrustedPos < 0) {
       this.trustedSites.sitesString += "\n" + all;
-      this.untrustedSites.remove(this.trustedSites.sitesList);
     } else {
       this.trustedSites.sitesString += "\n" + all.substring(0, untrustedPos);
-      this.untrustedSites.siteString += all.substring(all.indexOf("\n", untrustedPos + 2));
+      this.untrustedSites.sitesString += all.substring(all.indexOf("\n", untrustedPos + 2));
     }
     this.untrustedSites.remove(this.trustedSites.sitesList);
     this.populateUrlList();

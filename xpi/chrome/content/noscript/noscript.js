@@ -26,15 +26,15 @@ const noscriptUtil = {
           ].getService(Components.interfaces.nsIPromptService);
   }
 ,
-  confirm: function(msg, pesistPref, title) {
+  confirm: function(msg, persistPref, title) {
     const ns = this.service; 
-    var alwaysAsk = { value: ns.getPref(pesistPref, true) };
+    var alwaysAsk = { value: ns.getPref(persistPref, true) };
      if((!alwaysAsk.value) || 
         noscriptUtil.prompter.confirmCheck(window, title || "NoScript",
           msg,
           noscriptUtil.getString("alwaysAsk"), alwaysAsk)
      ) {
-      ns.setPref(pesistPref, alwaysAsk.value);
+      ns.setPref(persistPref, alwaysAsk.value);
       return true;
     }
     return false;
