@@ -356,16 +356,16 @@ const DOMUtils = {
   findBrowserForNode: function(ctx) {
     if(!ctx) return null;
     const ci = Components.interfaces;
-    const lm = this.lookupMethod;
+    
     if(!(ctx instanceof ci.nsIDOMWindow)) {
       if(ctx instanceof ci.nsIDOMDocument) {
-        ctx = lm(ctx, "defaultView")();
+        ctx = ctx.defaultView;
       } else if(ctx instanceof ci.nsIDOMNode) {
-        ctx = lm(lm(ctx, "ownerDocument")(), "defaultView")();
+        ctx = ctx.ownerDocument.defaultView;
       } else return null; 
     }
     if(!ctx) return null;
-    ctx = lm(ctx, "top")();
+    ctx = ctx.top;
     
     var bi = new this.BrowserIterator();
     for(var b; b = bi.next();) {
@@ -631,7 +631,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.8.070619",
+  VERSION: "1.1.4.9.070622",
   
   get wrappedJSObject() {
     return this;
@@ -668,7 +668,36 @@ NoscriptService.prototype ={
               this.uninstallGuard.uninstalling = data=="item-uninstalled";
               this.uninstallGuard.disabled = data=="item-disabled"
           }
+        break;
+        case "toplevel-window-ready":
+          subject.isNewToplevel = true; // see shouldLoad and safeToplevel
+        break;
+        case "domwindowopened":
+          this.onDOMWindowLoad(subject);
+        break;
       }
+    }
+  },
+  
+  onDOMWindowLoad: function(window) {
+    this.deferAboutBlank(window);
+    this.wrapBrowserDOMWindow(window);
+  },
+  deferAboutBlank: function(window) {
+    if(this.isJSEnabled("about:blank")) {
+      this.setJSEnabled("about:blank", false);
+      var ns = this;
+      window.addEventListener("load", function(ev) {
+          window.removeEventListener("load", arguments.callee, false);
+          ns.setJSEnabled("about:blank", true);
+          ns = window = null;
+      }, false);
+    }
+  },
+  wrapBrowserDOMWindow: function(window) {
+    if(window instanceof Components.interfaces.nsIDOMChromeWindow) {
+      window.browserDOMWindow = new BrowserDOMWindow(window.browserDOMWindow, this);
+      if(this.consoleDump) dump("[NoScript] browserDOMWindow wrapped\n");
     }
   }
 ,  
@@ -679,18 +708,22 @@ NoscriptService.prototype ={
     osvr.addObserver(this, "xpcom-shutdown", false);
     osvr.addObserver(this, "profile-after-change", false);
     osvr.addObserver(this, "em-action-requested", false);
+    osvr.addObserver(this, "toplevel-window-ready", false);
+    osvr.addObserver(this, "domwindowopened", false);
     if(!this.requestWatchdog) {
       osvr.addObserver(this.requestWatchdog = new RequestWatchdog(this), "http-on-modify-request", false);
     }
   }
 ,
   unregister: function() {
-    const osvr=Components.classes['@mozilla.org/observer-service;1'].getService(
+    const osvr = Components.classes['@mozilla.org/observer-service;1'].getService(
       Components.interfaces.nsIObserverService);
     osvr.removeObserver(this, "profile-before-change");
     osvr.removeObserver(this, "xpcom-shutdown");
     osvr.removeObserver(this, "profile-after-change");
     osvr.removeObserver(this, "em-action-requested", false);
+    osvr.removeObserver(this, "toplevel-window-ready", false);
+    osvr.removeObserver(this, "domwindowopened", false);
     if(this.requestWatchdog) {
       osvr.removeObserver(this.requestWatchdog, "http-on-modify-request", false);
       this.requestWatchdog = null;
@@ -1010,10 +1043,9 @@ NoscriptService.prototype ={
     this.reloadWhereNeeded(); // init snapshot
    
     this.uninstallGuard.init();
- 
     return true;
-  }
-,  
+  },
+ 
   sanitize2ndLevs: function() {
     const rx = /(?:^| )([^ \.:]+\.\w+)(?= |$)(?!.*https:\/\/\1)/g
     const doms = [];
@@ -1629,7 +1661,7 @@ NoscriptService.prototype ={
     this.shouldLoad = delegate.shouldLoad;
     this.shouldProcess = delegate.shouldProcess;
     this.rejectCode = typeof(/ /) == "object" ? -4 : -3;
-    
+    this.safeToplevel = this.getPref("safeToplevel", true);
     if(!this.xcache) {
       this.xcache = new XCache();
       this.mimeService = Components.classes['@mozilla.org/uriloader/external-helper-app-service;1']
@@ -1690,13 +1722,22 @@ NoscriptService.prototype ={
         case 6:
           
           if(aRequestOrigin && aRequestOrigin != aContentLocation) {
+            
+            if(this.safeToplevel && aContext.isNewToplevel && !aContext.opener &&
+                !(aContentLocation.schemeIs("chrome") ||
+                  aContentLocation.schemeIs("resource") ||
+                  aContentLocation.schemeIs("file"))) {
+               if(this.consoleDump) dump("NoScript blocked " + aContentLocation.spec + ": can't open in a toplevel window\n");
+               aContext.isNewToplevel = false;
+               return this.rejectCode;
+            }
             if(aContentLocation.schemeIs("http") || aContentLocation.schemeIs("https")) {
               if(aRequestOrigin.prePath != aContentLocation.prePath) {
                 this.xcache.storeOrigin(aRequestOrigin, aContentLocation);
               }
             } else if(this.forbidData && // block data: and javascript: URLs
                       (aContentLocation.schemeIs("data:") || aContentLocation.schemeIs("javascript")) &&
-                      !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
+                      (aContext.safeToplevel || !this.isJSEnabled(this.getSite(aRequestOrigin.spec)))) {
                if(this.consoleDump & 1) 
                  dump("NoScript blocked " + aContentLocation.spec + " from " + aRequestOrigin.spec + "\n");
               return this.rejectCode;
@@ -2173,7 +2214,7 @@ NoscriptService.prototype ={
   createDeferredPlaceHolders: function(window, replacements) {
     window.setTimeout(function() {
         replacements.forEach(function(r) {
-          r.object.parentNode.replaceChild(r.placeHolder, r.object);  
+          if(r.object.parentNode) r.object.parentNode.replaceChild(r.placeHolder, r.object);  
         });
     }, 0);
   },
@@ -2517,6 +2558,20 @@ RequestWatchdog.prototype = {
     }
   },
   
+  isHome: function(url) {
+    return this.getHomes().indexOf(url) > -1
+  },
+  getHomes: function(pref) {
+    var homes;
+    try {
+      homes = this.ns.prefService.getComplexValue(pref || "browser.startup.homepage",
+                         Components.interfaces.nsIPrefLocalizedString).data;
+    } catch (e) {
+      return pref ? [] : this.getHomes("browser.startup.homepage.override");
+    }
+    return homes ? homes.split("|") : [];
+  }
+  ,
   filterXSS: function(channel) {
     const ci = Components.interfaces;
     const ns = this.ns;
@@ -2651,19 +2706,26 @@ RequestWatchdog.prototype = {
       if(injectionAttempt) {
         if(ns.consoleDump) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
       } else {
+        if(ns.consoleDump) this.dump(channel, "externalLoad flag is " + externalLoad);
+        externalLoad = (originSite == "chrome:") && (externalLoad ||
+          (window = window || this.findWindow(channel)) && window == window.top &&
+          (browser || (browser = this.findBrowser(channel, window))) 
+                   && browser.ownerDocument.defaultView.isNewToplevel
+                   && !browser.ownerDocument.defaultView.opener
+           );
+
         if(externalLoad) { // external origin ?
           if(ns.consoleDump) this.dump(channel, "External load from " + origin);
-          if(originSite == "chrome:") {
-            if(ns.getPref("xss.trustExternal", false)) {
-              if(ns.consoleDump) this.dump(channel, "noscript.xss.trustExternal is TRUE, SKIP");
-              return;
-            }
-            origin = "///EXTERNAL///";
-            originSite = "";
-          } else {
-            if(ns.consoleDump) this.dump(channel, "Not coming from an external application, SKIP");
+          if(this.isHome(url.spec)) {
+            if(ns.consoleDump) this.dump(channel, "Browser home page, SKIP");
             return;
           }
+          if(ns.getPref("xss.trustExternal", false)) {
+            if(ns.consoleDump) this.dump(channel, "noscript.xss.trustExternal is TRUE, SKIP");
+            return;
+          }
+          origin = "///EXTERNAL///";
+          originSite = "";
         } else if(ns.getPref("xss.trustTemp", true) || !ns.isTemp(originSite)) { // temporary allowed origin?
           if(ns.consoleDump) this.dump(channel, "Origin " + origin + " is trusted, SKIP");
           return;
@@ -2817,7 +2879,7 @@ RequestWatchdog.prototype = {
       if(url.path) url.path = this.sanitizeURIString(url.Path);
     }
     
-    if(url.getRelativeSpec(original)) {
+    if(url.getRelativeSpec(original) && url.spec != original) {
       changes.minor = true;
       changes.major = changes.major || changes.qs || 
                       decodeURIComponent(original.spec.replace(/\?.*/g, "")) 
@@ -2995,8 +3057,8 @@ RequestWatchdog.prototype = {
       return null;
     }
   },
-  findBrowser: function(channel) {
-    var w = this.findWindow(channel);
+  findBrowser: function(channel, window) {
+    var w = window || this.findWindow(channel);
     return w && this.ns.domUtils.findBrowserForNode(w);
   },
   
@@ -3014,6 +3076,36 @@ RequestWatchdog.prototype = {
   
   
 }
+
+function BrowserDOMWindow(delegate, ns) {
+  const OPEN_EXTERNAL = Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL;
+  this.openURI = function(aURI, aOpener, aWhere, aContext) {
+    var external = aContext == OPEN_EXTERNAL && aURI;
+    if(external) {
+      if(aURI.schemeIs("http") || aURI.schemeIs("https")) {
+         // remember for filter processing
+         ns.requestWatchdog.externalLoad = aURI.spec;
+      } else {
+         // don't let the external protocol open dangerous URIs
+         if(aURI.schemeIs("javascript") || aURI.schemeIs("data")) {
+           var err = "[NoScript] external non-http load blocked: " + aURI.spec;
+           ns.log(err);
+           throw err;
+         }
+      }
+    }
+    var w = null;
+    try {
+      w = delegate.openURI(aURI, aOpener, aWhere, aContext);
+      if(external) ns.log("[NoScript] external load intercepted");
+    } finally {
+      if(external && !w) ns.requestWatchdog.externalLoad = null;
+    }
+    return w;
+  } 
+}
+
+
 
 
 

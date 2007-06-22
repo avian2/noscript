@@ -82,3 +82,5 @@ pref("noscript.globalwarning", true);
 pref("noscript.jsredirectIgnore", false);
 pref("noscript.jsredirectFollow", true);
 
+pref("noscript.safeToplevel", true);
+

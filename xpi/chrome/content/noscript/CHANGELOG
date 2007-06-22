@@ -1,5 +1,24 @@
 NoScript ChangeLog
 
+v 1.1.4.9.070622
+=====================================================================
++ Full Anti-XSS protection for every trusted URL opened from external
+  applications
++ Protection against all the currently known cross-browser exploits
+  targeting Firefox
+
+v 1.1.4.9.070621
+=====================================================================
++ Additional checks for toplevel windows (thanks dveditz)
+x Work-around for interference of some tab-related extension with
+  external URL interception
+
+v 1.1.4.9.070620
+=====================================================================
++ Protection against so called "Universal XSS" through JS URLs opened
+  by external applications, as explained in 
+  http://www.xs-sniper.com/sniperscope/IE-Pwns-Firefox.html 
+
 v 1.1.4.9
 =====================================================================
 + noscript.injectionCheck about:config option adds first-line 

@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
+window.isNewToplevel = true;
+
 const noscriptOverlay = {
   ns: noscriptUtil.service,
 
@@ -1122,8 +1124,10 @@ const noscriptOverlay = {
     },
     
     webProgressListener: {
+      STATE_START: Components.interfaces.nsIWebProgressListener.STATE_START,
       STATE_STOP: Components.interfaces.nsIWebProgressListener.STATE_STOP,
-      onLocationChange: function(aWebProgress, aRequest, aLocation) { 
+      onLocationChange: function(aWebProgress, aRequest, aLocation) {
+        window.isNewToplevel = false;
         if(this.originalOnLocationChange) {
           try {
             this.originalOnLocationChange(aWebProgress, aRequest, aLocation);
@@ -1160,8 +1164,10 @@ const noscriptOverlay = {
       },
       onStatusChange: function() {}, 
       onStateChange: function(aWebProgress, aRequest, stateFlags, status) {
+
         if(stateFlags & this.STATE_STOP) {
-          const ns = noscriptOverlay.ns;
+          
+          var ns = noscriptOverlay.ns;
           const domWindow = aWebProgress.DOMWindow;
           const browser = ns.domUtils.findBrowserForNode(domWindow);
           if(browser) {
@@ -1177,6 +1183,7 @@ const noscriptOverlay = {
     },
     
     onContentLoad: function(ev) {
+      window.isNewToplevel = false;
       var doc = ev.originalTarget;
       if(doc instanceof HTMLDocument) {
         var w = doc.defaultView;
@@ -1198,8 +1205,14 @@ const noscriptOverlay = {
     
     
     onLoad: function(ev) {
-      noscriptOverlay.listeners.setup();
-      noscriptOverlay.patchBrowserAccess();
+      try {
+        noscriptOverlay.listeners.setup();
+        noscriptOverlay.wrapBrowserAccess();
+      } catch(e) {
+        var msg = "[NoScript] Error initializing new window " + e + "\n"; 
+        noscriptOverlay.ns.log(msg);
+        dump(msg);
+      }
     },
     onUnload: function(ev) {
       noscriptOverlay.listeners.teardown();
@@ -1279,38 +1292,27 @@ const noscriptOverlay = {
     }
   }, // END listeners
   
-  patchBrowserAccess: function() { // called onload
-    if(!nsBrowserAccess) return;
+  wrapBrowserAccess: function() { // called onload
+    if(!window.nsBrowserAccess) {
+      noscriptOverlay.ns.log("[NoScript] nsBrowserAccess not found?!");
+    }
+  
     if(!nsBrowserAccess.prototype.wrappedJSObject) {
       nsBrowserAccess.prototype.__defineGetter__("wrappedJSObject", function() { return this; });
     }
-    if(!(window.browserDOMWindow && window.browserDOMWindow.wrappedJSObject)) {
+    if(!(window.browserDOMWindow && window.browserDOMWindow.wrappedJSObject && (window.browserDOMWindow.wrappedJSObject instanceof nsBrowserAccess))) {
       if(!'retryCount' in arguments.callee) {
         arguments.callee.retryCount = 10;
       } else if(arguments.callee.retryCount) {
         noscriptOverlay.ns.log("[NoScript] browserDOMWindow not found or not set up, retrying " + arguments.callee.retryCount + " times");
         arguments.callee.retryCount--;
-        window.setTimeout(arguments.callee, 0);
       }
+      window.setTimeout(arguments.callee, 0);
       return;
     }
     
-    const OPEN_EXTERNAL = Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL;   
-    
-    window.browserDOMWindow.wrappedJSObject.openURI = function(aURI, aOpener, aWhere, aContext) {
-      var external = (aContext == OPEN_EXTERNAL && aURI &&
-        (aURI.schemeIs("http") || aURI.schemeIs("https"))) && 
-        (noscriptOverlay.ns.requestWatchdog.externalLoad = aURI.spec);
-      var w = null;
-      try {
-        w = nsBrowserAccess.prototype.openURI.apply(this, [aURI, aOpener, aWhere, aContext]);
-        if(external) noscriptOverlay.ns.log("[NoScript] external load intercepted");
-      } finally {
-        if(external && !w) noscriptOverlay.ns.requestWatchdog.externalLoad = null;
-      }
-      return w;
-    }
-    noscriptOverlay.ns.log("[NoScript] browserDOMWindow patched for external load interception");
+    noscriptOverlay.ns.wrapBrowserDOMWindow(window);
+    noscriptOverlay.ns.log("[NoScript] browserDOMWindow wrapped for external load interception");
   },
   
   install: function() {
