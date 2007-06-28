@@ -367,7 +367,7 @@ const DOMUtils = {
     if(!ctx) return null;
     ctx = ctx.top;
     
-    var bi = new this.BrowserIterator();
+    var bi = new this.BrowserIterator(this.getChromeWindow(ctx));
     for(var b; b = bi.next();) {
       if(b.contentWindow == ctx) return b;
     }
@@ -385,13 +385,32 @@ const DOMUtils = {
       return null;
     }
   },
-  
-  BrowserIterator: function() {
-     const wm = Components.classes['@mozilla.org/appshell/window-mediator;1']
-                          .getService(Components.interfaces.nsIWindowMediator);
     
-    var mostRecentWin, mostRecentTab;
-    var currentWin = mostRecentWin = wm.getMostRecentWindow("navigator:browser");
+  getChromeWindow: function(window) {
+    try {
+      const ci = Components.interfaces;
+      return this.getDocShellFromWindow(window)
+        .QueryInterface(ci.nsIDocShellTreeItem).rootTreeItem
+        .QueryInterface(ci.nsIInterfaceRequestor)
+        .getInterface(ci.nsIDOMWindow);
+    } catch(e) {
+      return null;
+    }
+  },
+  
+  _wm: null,
+  get windowMediator() {
+    return this._wm || (this._wm = 
+        Components.classes['@mozilla.org/appshell/window-mediator;1']
+                  .getService(Components.interfaces.nsIWindowMediator));
+  },
+  BrowserIterator: function(initialWin) {
+    const wm = DOMUtils.windowMediator;
+    if(!(initialWin && initialWin.getBrowser)) {
+       initialWin = wm.getMostRecentWindow("navigator:browser");
+    }
+    var mostRecentTab;
+    var currentWin = initialWin;
     var winEnum = null;
     var currentTB, currentTab;
     var curTabIdx;
@@ -416,11 +435,11 @@ const DOMUtils = {
       if(curTabIdx >= browsers.length) {
         
         if(!winEnum) {
-          winEnum = wm.getEnumerator("navigator:browser");
+          winEnum = wm.getZOrderDOMWindowEnumerator("navigator:browser", true);
         }
         if(winEnum.hasMoreElements()) {
           currentWin = winEnum.getNext();
-          if(currentWin == mostRecentWin) return this.next();
+          if(currentWin == initialWin) return this.next();
           initPerWin();
         } else {
           currentTab = null;
@@ -631,7 +650,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.4.9.070622",
+  VERSION: "1.1.5",
   
   get wrappedJSObject() {
     return this;
@@ -659,7 +678,7 @@ NoscriptService.prototype ={
           try {
             this.init();
           } catch(e) {
-            dump("NS: init error -- " + e.message);
+            dump("[Noscript] Init error -- " + e.message);
           }
           break;
         case "em-action-requested":
@@ -670,37 +689,34 @@ NoscriptService.prototype ={
           }
         break;
         case "toplevel-window-ready":
-          subject.isNewToplevel = true; // see shouldLoad and safeToplevel
-        break;
-        case "domwindowopened":
-          this.onDOMWindowLoad(subject);
+          this.registerToplevel(subject);
         break;
       }
     }
   },
   
-  onDOMWindowLoad: function(window) {
-    this.deferAboutBlank(window);
-    this.wrapBrowserDOMWindow(window);
-  },
-  deferAboutBlank: function(window) {
-    if(this.isJSEnabled("about:blank")) {
-      this.setJSEnabled("about:blank", false);
+  nsIDOMChromeWindow: Components.interfaces.nsIDOMChromeWindow,
+  registerToplevel: function(window) {
+    var list = this._toplevel;
+    if((window instanceof this.nsIDOMChromeWindow) && !window.opener) {
+      window.isNewToplevel = true;
       var ns = this;
       window.addEventListener("load", function(ev) {
-          window.removeEventListener("load", arguments.callee, false);
-          ns.setJSEnabled("about:blank", true);
-          ns = window = null;
+        var w = ev.currentTarget;
+        w.removeEventListener("load", arguments.callee, false);
+        w.setTimeout(ns.forgetToplevel, 100, w);
       }, false);
     }
   },
-  wrapBrowserDOMWindow: function(window) {
-    if(window instanceof Components.interfaces.nsIDOMChromeWindow) {
-      window.browserDOMWindow = new BrowserDOMWindow(window.browserDOMWindow, this);
-      if(this.consoleDump) dump("[NoScript] browserDOMWindow wrapped\n");
-    }
-  }
-,  
+  
+  forgetToplevel: function(window) {
+    window.isNewToplevel = false;
+  },
+  
+  isNewBrowserWindow: function(window) {
+    return window.isNewToplevel && !window.opener;
+  },
+  
   register: function() {
     const osvr = Components.classes['@mozilla.org/observer-service;1'].getService(
       Components.interfaces.nsIObserverService);
@@ -709,7 +725,6 @@ NoscriptService.prototype ={
     osvr.addObserver(this, "profile-after-change", false);
     osvr.addObserver(this, "em-action-requested", false);
     osvr.addObserver(this, "toplevel-window-ready", false);
-    osvr.addObserver(this, "domwindowopened", false);
     if(!this.requestWatchdog) {
       osvr.addObserver(this.requestWatchdog = new RequestWatchdog(this), "http-on-modify-request", false);
     }
@@ -723,7 +738,6 @@ NoscriptService.prototype ={
     osvr.removeObserver(this, "profile-after-change");
     osvr.removeObserver(this, "em-action-requested", false);
     osvr.removeObserver(this, "toplevel-window-ready", false);
-    osvr.removeObserver(this, "domwindowopened", false);
     if(this.requestWatchdog) {
       osvr.removeObserver(this.requestWatchdog, "http-on-modify-request", false);
       this.requestWatchdog = null;
@@ -767,8 +781,8 @@ NoscriptService.prototype ={
   nselNever: false,
   nselForce: true,
   
-  filterXGetRx: "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;]",
-  filterXGetRx2Black: "[\(\)\=;]",
+  filterXGetRx: "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;\\|#&`\\^\\$!\\s]",
+  filterXGetRx2Black: "",
   
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
@@ -967,7 +981,11 @@ NoscriptService.prototype ={
     if(sss.sheetRegistered(uri, sss.USER_SHEET)) {
       if(!enabled) sss.unregisterSheet(uri, sss.USER_SHEET);
     } else {
-      if(enabled) sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+      try {
+        if(enabled) sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+      } catch(e) {
+        this.log("[NoScript CSS] Can't register " + uri + ", " + e); 
+      }
     }
   },
  
@@ -1008,7 +1026,7 @@ NoscriptService.prototype ={
     this.mozJSPref = prefserv.getBranch("javascript.").QueryInterface(PBI);
     this.mozJSPref.addObserver("enabled", this, false);
     
-    this.permanentSites.sitesString = "chrome: resource: about:neterror";
+    this.permanentSites.sitesString = this.getPref("mandatory", "chrome: about: resource:");
     
     const syncPrefNames = [
       "autoAllow",
@@ -1057,9 +1075,7 @@ NoscriptService.prototype ={
 ,
   permanentSites: new PolicySites(),
   isPermanent: function(s) {
-    return s &&
-      (s == "chrome:" || s == "resource:" || s == "about:" || s == "about:neterror"
-        || this.permanentSites.matches(s));
+    return s && this.permanentSites.matches(s);
   }
 ,
   tempSites: new PolicySites(),
@@ -1097,6 +1113,15 @@ NoscriptService.prototype ={
     if(b) this.untrustedSites.add(s);
     else this.untrustedSites.remove(s, true);
     return b;
+  },
+  
+  autoTemp: function(site) {
+    if(!(this.isUntrusted(site) || this.isManual(site))) {
+      this.setTemp(site, true);
+      this.setJSEnabled(site, true);
+      return true;
+    }
+    return false;
   }
 ,
   jsPolicySites: new PolicySites(),
@@ -1122,6 +1147,16 @@ NoscriptService.prototype ={
     }
     this.flushCAPS();
     return is;
+  }
+,
+  checkShorthands: function(site, map) {
+    map = map || this.jsPolicySites.sitesMap;
+    // port matching, with "0" as wildcard port
+    if(/:\d+$/.test(site) && map[site.replace(/\d+$/, "0")]) return true;
+    
+    // check IP leftmost portion up to 2nd byte (e.g. 192.168 or 10.0.0)
+    var m = site.match(/^(https?:\/\/((\d+\.\d+)\.\d+))\.\d+(?:\d|$)/);
+    return m && (map[m[1]] || map[m[2]] || map[m[3]]);
   }
 ,
   flushCAPS: function(sitesString) {
@@ -1250,6 +1285,8 @@ NoscriptService.prototype ={
     if(!this.getPref("autoReload", true)) return false;
     if(global != lastGlobal && !this.getPref("autoReload.global", true)) return false; 
     const currentTabOnly = !this.getPref("autoReload.allTabs", true);
+    var useHistory = this.getPref("xss.reload.useHistory", false);
+    var useHistoryExceptCurrent = this.getPref("xss.reload.useHistory.exceptCurrent", true);
     
     var ret = false;
     var docSites, site;
@@ -1262,11 +1299,12 @@ NoscriptService.prototype ={
     const LOAD_FLAGS = nsIWebNavigation.LOAD_FLAGS_NONE;
     const untrustedReload = !this.getPref("xss.trustReloads", false);
     
+    
     for(var browser, bi = new this.domUtils.BrowserIterator(), j; browser = bi.next();) {
       docSites = this.getSites(browser, true);
       for(j = docSites.length; j-- > 0;) {
         prevStatus = lastGlobal || !!snapshot.matches(docSites[j]);
-        currStatus = global || !!ps.matches(docSites[j]);
+        currStatus = global || !!(ps.matches(docSites[j]) || this.checkShorthands(docSites[j]));
         if(currStatus != prevStatus) {
           ret = true;
           if(currStatus) this.requestWatchdog.setUntrustedReloadInfo(browser, true);
@@ -1283,9 +1321,15 @@ NoscriptService.prototype ={
                 this.requestWatchdog.setUntrustedReloadInfo(browser, site != docSites[j] && !ps.matches(site));
               } catch(e) {}
             }
-            if(!(url instanceof nsIURL && url.ref)) {
-              webNav.gotoIndex(webNav.index);
-              break;
+            
+            if(useHistory) {
+              if(useHistoryExceptCurrent) {
+                useHistoryExceptCurrent = false;
+              } else if(!(url instanceof nsIURL && url.ref || url.spec.substring(url.spec.length - 1) == "#")) {
+                if(useHistoryCurrentOnly) useHistory = false;
+                webNav.gotoIndex(webNav.index);
+                break;
+              }
             }
           } catch(e) {}
           browser.webNavigation.reload(LOAD_FLAGS);
@@ -1629,9 +1673,7 @@ NoscriptService.prototype ={
 ,
   
   get lastWindow() {
-    return Components.classes['@mozilla.org/appshell/window-mediator;1']
-      .getService(Components.interfaces.nsIWindowMediator)
-      .getMostRecentWindow("navigator:browser");
+    return DOMUtils.windowMediator.getMostRecentWindow("navigator:browser");
   },
   
   
@@ -1697,9 +1739,10 @@ NoscriptService.prototype ={
     shouldLoad: function() { return 1; },
     shouldProcess: function() { return 1; }
   },
+  cpConsoleFilter: [2, 5, 6, 7],
   mainContentPolicy: {
     shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
-      if(this.consoleDump && (this.consoleDump & 4)) {
+      if(this.consoleDump && (this.consoleDump & 4) && this.cpConsoleFilter.indexOf(aContentType) > -1) {
         dump("[noscript cp]: type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
         ", origin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + aContext + ", mime: " + aMimeTypeGuess + ", " + aInternalCall
           + "\n");
@@ -1723,21 +1766,32 @@ NoscriptService.prototype ={
           
           if(aRequestOrigin && aRequestOrigin != aContentLocation) {
             
-            if(this.safeToplevel && aContext.isNewToplevel && !aContext.opener &&
-                !(aContentLocation.schemeIs("chrome") ||
+            if(this.safeToplevel && (aContext instanceof Components.interfaces.nsIDOMChromeWindow) &&
+                !(aContext.opener ||
+                  aContentLocation.schemeIs("chrome") ||
                   aContentLocation.schemeIs("resource") ||
                   aContentLocation.schemeIs("file"))) {
                if(this.consoleDump) dump("NoScript blocked " + aContentLocation.spec + ": can't open in a toplevel window\n");
-               aContext.isNewToplevel = false;
                return this.rejectCode;
             }
             if(aContentLocation.schemeIs("http") || aContentLocation.schemeIs("https")) {
               if(aRequestOrigin.prePath != aContentLocation.prePath) {
+                if(aRequestOrigin.schemeIs("chrome") && aContext.ownerDocument &&
+                  this.isNewBrowserWindow(aContext.ownerDocument.defaultView)){
+                  this.requestWatchdog.externalLoad = aContentLocation.spec;
+                }
                 this.xcache.storeOrigin(aRequestOrigin, aContentLocation);
               }
-            } else if(this.forbidData && // block data: and javascript: URLs
-                      (aContentLocation.schemeIs("data:") || aContentLocation.schemeIs("javascript")) &&
-                      (aContext.safeToplevel || !this.isJSEnabled(this.getSite(aRequestOrigin.spec)))) {
+            } else if( //data: and javascript: URLs 
+                  (aContentLocation.schemeIs("data:") || aContentLocation.schemeIs("javascript")) &&
+                  (this.forbidData && !this.isJSEnabled(this.getSite(aRequestOrigin.spec)) ||
+                      aContext && this.isNewBrowserWindow(
+                        (aContext instanceof Components.interfaces.nsIDOMWindow) 
+                          ? aContext
+                          : aContext.ownerDocument.defaultView
+                       )
+                   )
+                 ) {
                if(this.consoleDump & 1) 
                  dump("NoScript blocked " + aContentLocation.spec + " from " + aRequestOrigin.spec + "\n");
               return this.rejectCode;
@@ -1957,7 +2011,7 @@ NoscriptService.prototype ={
       const HTMLElement = Components.interfaces.nsIDOMHTMLElement;
       sites.scriptCount += scount;
       var script, scriptSrc;
-      var nselForce = this.nselForce && this.isJSEnabled(sites[sites.length - 1]);
+      var nselForce = this.nselForce && sites.length && this.isJSEnabled(sites[sites.length - 1]);
       var isHTMLScript;
       while(scount-- > 0) {
         script = scripts.item(scount);
@@ -2034,8 +2088,7 @@ NoscriptService.prototype ={
             timeout = content[0];
             uri = uri.replace (/^\s*/, "").replace (/^URL/i, "URL").split("URL=", 2)[1];
             try {
-              this.domUtils.findBrowserForNode(document).ownerDocument.defaultView
-                  .noscriptOverlay.notifyMetaRefresh({ 
+              this.domUtils.getChromeWindow(document.defaultView).noscriptOverlay.notifyMetaRefresh({ 
                 docShell: docShell,
                 document: document,
                 baseURI: docShell.currentURI,
@@ -2304,7 +2357,7 @@ NoscriptService.prototype ={
     const docURIs = {};
     var cache;
     
-    var document;
+    var document, domain;
     while(docShells.hasMoreElements()) {
        
        docShell = docShells.getNext();
@@ -2329,7 +2382,7 @@ NoscriptService.prototype ={
             }
           }
           try {
-            const domain = document.domain;
+            domain = document.domain;
             if(domain && this.getDomain(url) != domain) sites.push(domain);
           } catch(e) {}
        }
@@ -2346,7 +2399,7 @@ NoscriptService.prototype ={
     }
     
     for(var j = sites.length; j-- > 0;) {
-      if(!/^[a-z]+:\/*[^\/\s]+/.test(sites[j]) && sites[j] != "file://") {
+      if(!(/^[a-z]+:\/*[^\/\s]+/.test(sites[j]) || /^(?:file|resource|chrome):/.test(sites[j]))) {
         sites.splice(j, 1); // reject scheme-only URLs
       }
     }
@@ -2407,8 +2460,10 @@ XCache.prototype = {
 function RequestWatchdog(ns) {
   this.ns = ns;
   this.siteUtils = ns.siteUtils;
+  const ci = Components.interfaces;
   this.dns = Components.classes["@mozilla.org/network/dns-service;1"]
-                  .getService(Components.interfaces.nsIDNSService);
+                  .getService(ci.nsIDNSService);
+  this.LOAD_DOCUMENT_URI = ci.nsIChannel.LOAD_DOCUMENT_URI;
 }
 
 RequestWatchdog.prototype = {
@@ -2417,7 +2472,7 @@ RequestWatchdog.prototype = {
   callback: null,
   externalLoad: null,
   noscriptReload: null,
-
+  LOAD_DOCUMENT_URI: Components.interfaces.nsIChannel.LOAD_DOCUMENT_URI,
   getUnsafeRequest: function(browser) {
     return this.ns.getExpando(browser, "unsafeRequest");
   },
@@ -2533,33 +2588,15 @@ RequestWatchdog.prototype = {
     }
   },
   
-  checkInjections: function(url) {
-    try {
-      // Direct script injection breaking a JS string
-      var unescapedURL = decodeURIComponent(url);
-      var sandbox = null;
-      const syntaxCheck = "new Function(script)";
-      const findInjection = /(['"])(?=([\s\S]*[=\(][\s\S]*?)(\1|\/\/))/g;
-      findInjection.lastIndex = 0;
-      for(var m; m = findInjection.exec(unescapedURL);) {
-        if(!sandbox) sandbox = new Components.utils.Sandbox("about:neterror");
-        sandbox.script = m[1] + m[1] + m[2] + m[3] + m[1];
-        try {
-          Components.utils.evalInSandbox(syntaxCheck, sandbox);
-          return true;
-        } catch(e) {}
-      }
-      // basic HTML injections
-      return /<\/?script|<form|<style|<link|<object|<applet|<iframe|<base|<frameset|<body|<meta|[^\w](?:javascript|data):|[\/'"`\s](?:FSCommand|on[a-z]{3,}\s*=)|-moz-binding.*:.*url|\.\s*fromCharCode\s*\(|\beval\s*\(/i
-        .test(unescapedURL);
-    } catch(ex) {
-      this.ns.log("[NoScript XSS] Error while checking " + url + " for basic injections, " + ex.message);
-      return true;
-    }
-  },
-  
+
   isHome: function(url) {
-    return this.getHomes().indexOf(url) > -1
+    return url instanceof Components.interfaces.nsIURL &&
+      this.getHomes().some(function(urlSpec) {
+        try {
+          return !url.getRelativeSpec(SiteUtils.ios.newURI(urlSpec, null, null));
+        } catch(e) {}
+        return false;
+      });
   },
   getHomes: function(pref) {
     var homes;
@@ -2576,8 +2613,7 @@ RequestWatchdog.prototype = {
     const ci = Components.interfaces;
     const ns = this.ns;
     
-    if(!((channel instanceof ci.nsIHttpChannel) && (channel.loadFlags & channel.LOAD_DOCUMENT_URI))) { 
-      if(ns.consoleDump) this.dump(channel, "not a document load, SKIP");
+    if(!((channel instanceof ci.nsIHttpChannel) && (channel.loadFlags & this.LOAD_DOCUMENT_URI))) { 
       return;
     }
     
@@ -2585,10 +2621,11 @@ RequestWatchdog.prototype = {
     
     const xorigin = ns.xcache.pickOrigin(url, true); // picks and remove cached entry
     
-    if(this.noscriptReload && this.noscriptReload == url) {
+    if(this.noscriptReload == url) {
       // fast cache route for NoScript-triggered reloads
       this.noscriptReload = null;
       channel.loadFlags |= channel.LOAD_FROM_CACHE | channel.VALIDATE_NEVER;
+      channel.loadGroup.loadFlags |= channel.LOAD_FROM_CACHE | channel.VALIDATE_NEVER;
     }
     
     // fast return if nothing to do here
@@ -2626,10 +2663,6 @@ RequestWatchdog.prototype = {
       } else {
         if(ns.consoleDump) this.dump("***** NO ORIGIN CAN BE INFERRED!!! *****");
       }
-    } else if(origin == "about:blank") {
-      //let's pass it on, it may be an user-initated refresh or an external navigation
-      if(ns.consoleDump) this.dump("ORIGIN is about:blank, SKIP");
-      return;
     } else {
       if(channel.loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI && channel.originalURI.spec == channel.URI.spec) {
         // clean up after user action
@@ -2676,8 +2709,14 @@ RequestWatchdog.prototype = {
     }
     
     if(!ns.isJSEnabled(targetSite)) {
-       if(ns.consoleDump) this.dump(channel, "Destination " + url.spec + " is noscripted, SKIP");
-       return;
+      // check wildcards
+      // http://url:0 matches all port except defaults
+      if(ns.checkShorthands(targetSite)) {
+          ns.autoTemp(targetSite);
+      } else {
+        if(ns.consoleDump) this.dump(channel, "Destination " + url.spec + " is noscripted, SKIP");
+          return;
+      }
     }
     
     if(!originSite) { // maybe data or javascript URL?
@@ -2697,8 +2736,8 @@ RequestWatchdog.prototype = {
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel), channel);
       
       if(injectionAttempt = injectionCheck && (injectionCheck > 1 || ns.isTemp(originSite)) &&
-        channel.requestMethod == "GET" &&
-        this.checkInjections(url.spec)) {
+          channel.requestMethod == "GET" &&
+          InjectionChecker.checkURL(url.spec)) {
         window = this.findWindow(channel);
         injectionAttempt = window == window.top; 
       }
@@ -2707,16 +2746,10 @@ RequestWatchdog.prototype = {
         if(ns.consoleDump) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
       } else {
         if(ns.consoleDump) this.dump(channel, "externalLoad flag is " + externalLoad);
-        externalLoad = (originSite == "chrome:") && (externalLoad ||
-          (window = window || this.findWindow(channel)) && window == window.top &&
-          (browser || (browser = this.findBrowser(channel, window))) 
-                   && browser.ownerDocument.defaultView.isNewToplevel
-                   && !browser.ownerDocument.defaultView.opener
-           );
 
         if(externalLoad) { // external origin ?
           if(ns.consoleDump) this.dump(channel, "External load from " + origin);
-          if(this.isHome(url.spec)) {
+          if(this.isHome(url)) {
             if(ns.consoleDump) this.dump(channel, "Browser home page, SKIP");
             return;
           }
@@ -2727,7 +2760,9 @@ RequestWatchdog.prototype = {
           origin = "///EXTERNAL///";
           originSite = "";
         } else if(ns.getPref("xss.trustTemp", true) || !ns.isTemp(originSite)) { // temporary allowed origin?
-          if(ns.consoleDump) this.dump(channel, "Origin " + origin + " is trusted, SKIP");
+          if(ns.consoleDump) {
+            this.dump(channel, "Origin " + origin + " is trusted, SKIP");
+          }
           return;
         }
         if(ns.consoleDump) 
@@ -2773,6 +2808,8 @@ RequestWatchdog.prototype = {
     
     var originalAttempt;
     
+    
+
     // transform upload requests into no-data GETs
     if(ns.filterXPost && (channel instanceof ci.nsIUploadChannel) && channel.uploadStream) {
       channel.requestMethod = "GET";
@@ -2788,23 +2825,30 @@ RequestWatchdog.prototype = {
     }
     
     if(ns.filterXGet && ns.filterXGetRx) {
-      var changes;
-      
+      var changes = null;
+      var xsan = new XSanitizer(ns.filterXGetRx, ns.filterXGetRx2Black);
       // sanitize referrer
       if(channel.referrer && channel.referrer.spec) {
         originalAttempt = channel.referrer.spec;
+        xsan.brutal = true;
         try {
           if(channel.referrer instanceof Components.interfaces.nsIURL) {
-            changes = this.sanitizeURL(channel.referrer);
+            changes = xsan.sanitizeURL(channel.referrer);
           } else {
-            channel.referrer.spec =  this.sanitizeURIString(originalAttempt);
+            channel.referrer.spec =  xsan.sanitizeURIComponent(originalAttempt);
           }
         } catch(e) {
           this.dump("Failed sanitizing referrer " + channel.referrer.spec + ", " + e);
           channel.referrer.spec = "";
         }
         try {
-          if((!channel.referrer.spec) || decodeURI(originalAttempt) != decodeURI(channel.referrer.spec)) {
+          if(!changes) {
+            changes = { 
+              minor: !channel.referrer.spec || 
+                     decodeURI(originalAttempt) != decodeURI(channel.referrer.spec) 
+            };
+          }
+          if(changes.minor) {
             channel.referrer = channel.referrer.clone();
             this.notify(this.addXssInfo(requestInfo, {
               reason: "filterXGetRef",
@@ -2822,7 +2866,8 @@ RequestWatchdog.prototype = {
       }
       
       originalAttempt = url.spec;
-      changes = this.sanitizeURL(url);
+      xsan.brutal = xsan.injectionAttempt;
+      changes = xsan.sanitizeURL(url);
       if(changes.minor) {
         this.notify(this.addXssInfo(requestInfo, {
           reason: "filterXGet",
@@ -2854,153 +2899,6 @@ RequestWatchdog.prototype = {
     }
   },
   
-  sanitizeURL: function(url) {
-    var original = url.clone();
-    changes = { minor: false, major: false, qs: false };
-    // sanitize credentials
-    if(url.username) url.username = this.sanitizeEnc(url.user);
-    if(url.password) url.password = this.sanitizeEnc(url.password);
-    url.host = this.sanitizeEnc(url.host);
-    var qsChanged = { value: false };
-    if(url instanceof Components.interfaces.nsIURL) {
-      // sanitize path
-     
-      if(url.param) {
-        url.path = this.sanitizeURIString(url.path, true); // param is the URL part after filePath and a semicolon ?!
-      } else if(url.filePath) { 
-        url.filePath = this.sanitizeURIString(url.filePath, true); // true == lenient == allow ()=
-      }
-      // sanitize query
-      if(url.query) url.query = this.sanitizeXQuery(url.query, changes);
-      // sanitize fragment
-      if(url.ref) url.ref = this.sanitizeEnc(url.ref);
-    } else {
-      // fallback for non-URL URIs, we should never get here anyway
-      if(url.path) url.path = this.sanitizeURIString(url.Path);
-    }
-    
-    if(url.getRelativeSpec(original) && url.spec != original) {
-      changes.minor = true;
-      changes.major = changes.major || changes.qs || 
-                      decodeURIComponent(original.spec.replace(/\?.*/g, "")) 
-                        != decodeURIComponent(url.spec.replace(/\?.*/g, ""));
-      url.ref = Math.random().toString().concat(Math.round(Math.random() * 999 + 1)).replace(/0./, '') // randomize URI
-    }
-    return changes;
-  },
-  
-  sanitizeXQuery: function(query, changes) {
-    // replace every character matching noscript.filterXGetRx with a single ASCII space (0x20)
-    changes = changes || {};
-    const parms = query.split(/[&;]/);
-    var j, pieces, k, pz, origPz, nestedURI, qpos, apos;
-    
-    for(j = parms.length; j-- > 0;) {
-      pieces = parms[j].split(/=/, 2);
-      try {
-        for(k = pieces.length; k-- > 0;) {
-         
-          origPz = pz = decodeURIComponent(pieces[k].replace(/\+/g, " "));
-          nestedURI = null;
-          if(/^https?:\/\//i.test(pz)) {
-            // try to sanitize as a nested URL
-            try {
-              nestedURI = this.ns.siteUtils.ios.newURI(pz, null, null).QueryInterface(Components.interfaces.nsIURL);
-              changes = this.mergeDefaults(changes, this.sanitizeURL(nestedURI));
-              pz = nestedURI.spec;
-            } catch(e) {
-              nestedURI = null;
-            }
-          }
-          
-          if(!nestedURI) {
-            qpos = pz.indexOf("?");
-            spos = pz.search(/[&;]/);
-            if(qpos > -1 || spos > -1) { 
-              // recursive query string?
-              if(spos > -1 && qpos > spos) {
-                // recursively sanitize it as a whole qs
-                pz = this.sanitizeXQuery(pz, changes);
-              } else {
-                // split, sanitize and rejoin
-                pz = [ this.sanitize(pz.substring(0, qpos)), 
-                       this.sanitizeXQuery(pz.substring(qpos + 1), changes)
-                     ].join("?")
-              }
-            } else {
-              pz = this.sanitize(pz);
-            }
-            if(origPz != pz) changes.qs = true;
-          }
-          
-          pieces[k] = encodeURIComponent(pz);
-        }
-        if(j > 0 && pieces.length == 1 && j == parms.length - 1) {
-          // avoid "&" separator to be used as an entity escape if site rewrites this URL 
-          pieces.push("");
-        }
-        parms[j] = pieces.join("=");
-      } catch(e) { 
-        // decoding exception, skip this param
-        parms.splice(j, 1);
-      }
-    } 
-    return parms.join("&");
-  },
-  
-  sanitizeURIString: function(s, lenient) {
-    try {
-      return encodeURI(this.sanitize(decodeURIComponent(s), lenient));
-    } catch(e) {
-      return "";
-    }
-  },
-  sanitizeEnc: function(s) {
-    try {
-      return encodeURIComponent(this.sanitize(decodeURIComponent(s)));
-    } catch(e) {
-      return "";
-    }
-  },
-  sanitize: function(s, lenient) {
-    
-    if(s.indexOf('"') > -1) {
-      // try to play nice on search engine queries with grouped quoted elements
-      // by allowing double quotes but stripping even more aggressively other chars
-      
-      // Google preserves "$" and recognizes ~, + and ".." as operators
-      // All the other non alphanumeric chars (aside double quotes) are ignored.
-      // We will preserve the site: modifier as well
-      // Ref.: http://www.google.com/help/refinesearch.html
-      s = s.replace(/[^\w\$\+\.\~" :]/g, 
-          " " // strip everything but alphnum and operators
-          ).replace(":", 
-          function(k, pos, s) { // strip colons as well, unless it's the site: operator
-            return (s.substring(0, pos) == "site" || s.substring(pos - 5) == " site") ? ":" : " " 
-          }
-        );
-      if(s.replace(/[^"]/g, "").length % 2) s += '"'; // close unpaired quotes
-      return s;
-    }
-    // regular duty
-    s = s.replace(this.ns.filterXGetRx, " ");
-    /*
-    if(s.indexOf("+") > -1) { 
-      // Anti UTF-7, effective but likely too much drastic.
-      // Investigate on-the-fly charset detection for future versions,
-      // as this kind of attack is *very* unlikely to work in default Firefox setup
-      s.replace(/\+\w+/g, function(m) { return m.replace(/A/g, "a"); });
-    }
-    */
-    if(lenient) {
-      // if lenient, we let ampersand and semicolon pass. Now we ensure that no entity passes, though
-      s = s.replace(/&(?:[^\/=]+;|[^\/=]*$)/g, "");
-    } else {
-      s = s.replace(this.ns.filterXGetRx2Black, " "); // lenient on path only to allow some wikipedianisms
-    }
-    return s;
-  },
-  
   abort: function(requestInfo) {
     if(requestInfo.channel instanceof Components.interfaces.nsIRequest) {
       requestInfo.channel.cancel(0x804b0002 /* NS_BINDING_ABORTED */);
@@ -3011,7 +2909,7 @@ RequestWatchdog.prototype = {
   
   mergeDefaults: function(o1, o2) {
     for(p in o2) {
-      o1[p] = o1[p] || o2[p];
+      if(!(p in o1)) o1[p] = o2[p];
     }
     return o1;
   },
@@ -3035,19 +2933,32 @@ RequestWatchdog.prototype = {
     this.dump(requestInfo.channel, "Notifying " + msg + "\n\n\n");
     this.ns.log(msg);
    
-    
-    if(requestInfo.silent || !requestInfo.browser || !requestInfo.window ||
-      !this.ns.getPref("xss.notify", true) ||
-      (requestInfo.window && requestInfo.window != requestInfo.window.top && 
-          !this.ns.getPref("xss.notify.subframes", false)
-      )
-    ) return;
-    
     try {
-      requestInfo.browser.ownerDocument.defaultView.noscriptOverlay.notifyXSSOnLoad(requestInfo);
-    } catch(e) {}
+      if(requestInfo.silent || !requestInfo.window ||
+        !this.ns.getPref("xss.notify", true) ||
+        (requestInfo.window && requestInfo.window != requestInfo.window.top && 
+            !this.ns.getPref("xss.notify.subframes", false)
+        )
+      ) return;
+    
+      if(requestInfo.browser) {
+        var chrome = requestInfo.browser.ownerDocument.defaultView;
+        chrome.noscriptOverlay.notifyXSSOnLoad(requestInfo)
+      } else {
+         this.deferNotify(requestInfo);
+      }
+    } catch(e) {
+      dump(e + "\n");
+    }
   },
-  
+  deferNotify: function(requestInfo) {
+    requestInfo.QueryInterface = function(iid) {
+      xpcom_checkInterfaces(iid, [Components.interfaces.nsISupports], Components.results.NS_ERROR_NO_INTERFACE);
+    };
+    requestInfo.wrappedJSObject = requestInfo;
+    requestInfo.channel.QueryInterface(Components.interfaces.nsIWritablePropertyBag2)
+      .setPropertyAsInterface("noscriptXSS", requestInfo);
+  },
   findWindow: function(channel) {
     try {
       return channel.notificationCallbacks.QueryInterface(
@@ -3077,36 +2988,269 @@ RequestWatchdog.prototype = {
   
 }
 
-function BrowserDOMWindow(delegate, ns) {
-  const OPEN_EXTERNAL = Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL;
-  this.openURI = function(aURI, aOpener, aWhere, aContext) {
-    var external = aContext == OPEN_EXTERNAL && aURI;
-    if(external) {
-      if(aURI.schemeIs("http") || aURI.schemeIs("https")) {
-         // remember for filter processing
-         ns.requestWatchdog.externalLoad = aURI.spec;
-      } else {
-         // don't let the external protocol open dangerous URIs
-         if(aURI.schemeIs("javascript") || aURI.schemeIs("data")) {
-           var err = "[NoScript] external non-http load blocked: " + aURI.spec;
-           ns.log(err);
-           throw err;
-         }
+function SyntaxChecker() {
+  this.sandbox = new Components.utils.Sandbox("about:");
+}
+
+SyntaxChecker.prototype = {
+  check: function(script) {
+    this.sandbox.script = script;
+     try {
+       Components.utils.evalInSandbox("new Function(script)", this.sandbox);
+       return true;
+     } catch(e) {}
+     return false;
+  }
+};
+var Entities = {
+  _htmlNode: null,
+  get htmlNode() {
+    return this._htmlNode || (this._htmlNode = 
+      Components.classes["@mozilla.org/xul/xul-document;1"]
+        .createInstance(Components.interfaces.nsIDOMDocument)
+        .createElementNS("http://www.w3.org/1999/xhtml", "div")
+      );
+  },
+  convert: function(e) {
+    try {
+      this.htmlNode.innerHTML = e;
+      return this.htmlNode.firstChild.nodeValue;
+    } catch(ex) {
+      return e;
+    }
+  },
+  convertAll: function(s) {
+    return s.replace(/&[\w#-]*?;/g, function(e) { return Entities.convert(e) });
+  },
+  convertDeep: function(s) {
+    for(var prev = null; (s = this.convertAll(s)) != prev; prev = s);
+    return s;
+  },
+  neutralize: function(e) {
+    var c = this.convert(e);
+    return (c == e) ? c : e.replace(";", ",");
+  },
+  neutralizeAll: function(s) {
+    return s.replace(/&[\w#-]*?;/g, function(e) { return Entities.neutralize(e); });
+  }
+}
+
+var InjectionChecker = {
+  
+  checkJavaScriptBrokenString: function(s, ignoreEntities) {
+    // Direct script injection breaking a JS string literals
+    const findInjection = /(['"])(?=([\s\S]*[=\(][\s\S]*?)(\1|\/\/))/g;
+    findInjection.lastIndex = 0;
+    var syntax = null;
+
+    for(var m; m = findInjection.exec(s);) {
+      if((syntax || (syntax = new SyntaxChecker())).check(m[1] + m[1] + m[2] + m[3] + m[1])) {
+        return true;
       }
     }
-    var w = null;
-    try {
-      w = delegate.openURI(aURI, aOpener, aWhere, aContext);
-      if(external) ns.log("[NoScript] external load intercepted");
-    } finally {
-      if(external && !w) ns.requestWatchdog.externalLoad = null;
+    if(ignoreEntities) return false;
+    var converted = Entities.convertAll(s);
+    return (converted != s) && arguments.callee.apply(this, [converted, true]);
+  },
+  
+  checkHTML: function(s) {
+    // TODO: deobfuscate...
+    return /<\W*\/?(?:\W*s\W*c\W*r\W*i\W*p\W*t|\W*f\W*o\W*r\W*m|\W*s\W*t\W*y\W*l\W*e|\W*l\W*i\W*n\W*k|\W*o\W*b\W*j\W*e\W*c\W*t|\W*a\W*p\W*p\W*l\W*e\W*t|\W*i\W*f\W*r\W*a\W*m\W*e|\W*b\W*a\W*s\W*e|\W*f\W*r\W*a\W*m\W*e\W*s\W*e\W*t|\W*b\W*o\W*d\W*y|\W*m\W*e\W*t\W*a)|[^\w](?:javascript|data):|[\/'"\s]\W*(?:FSCommand|on[a-z]{3,}\s*=)|-moz-binding.*:.*url|\b(?:fromCharCode|eval|with)\s*(?:\(|\/\*)/i
+      .test(s);
+  },
+  
+  checkURL: function(url) {
+    // iterate escaping until there's no more to escape
+    var currentURL = url, prevURL = null;
+    while(currentURL != prevURL) {
+      try {
+        if(this.checkHTML(currentURL) || this.checkJavaScriptBrokenString(currentURL)) return true;
+        prevURL = currentURL;
+        try {
+          currentURL = decodeURIComponent(currentURL);
+        } catch(warn) {
+          dump("[NoScript XSS] Problem decoding " + currentURL + " (" + url + ") for injections checks " + warn.message + "\n");
+          currentURL = unescape(currentURL);
+        }
+      } catch(ex) {
+        dump("[NoScript XSS] Error checking " + currentURL + " (" + url + ") for basic injections, " + ex.message + "\n");
+        return true;
+      }
     }
-    return w;
-  } 
+    return false;
+  }
 }
 
 
+function XSanitizer(negatedWhitelist, blacklist) {
+  this.negatedWhitelist = negatedWhitelist;
+  this.blacklist = blacklist;
+}
 
+XSanitizer.prototype = {
+  brutal: false,
+  sanitizeURL: function(url) {
+    var original = url.clone();
+    this.brutal = this.brutal || InjectionChecker.checkURL(url.spec);
+    const changes = { minor: false, major: false, qs: false };
+    // sanitize credentials
+    if(url.username) url.username = this.sanitizeEnc(url.username);
+    if(url.password) url.password = this.sanitizeEnc(url.password);
+    url.host = this.sanitizeEnc(url.host);
+    
+    if(url instanceof Components.interfaces.nsIURL) {
+      // sanitize path
+     
+      if(url.param) {
+        url.path = this.sanitizeURIComponent(url.path); // param is the URL part after filePath and a semicolon ?!
+      } else if(url.filePath) { 
+        url.filePath = this.sanitizeURIComponent(url.filePath); // true == lenient == allow ()=
+      }
+      // sanitize query
+      if(url.query) url.query = this.sanitizeXQuery(url.query, changes);
+      // sanitize fragment
+      if(url.ref) url.ref = this.sanitizeEnc(url.ref);
+    } else {
+      // fallback for non-URL URIs, we should never get here anyway
+      if(url.path) url.path = this.sanitizeURIComponent(url.Path);
+    }
+    
+    var urlSpec = url.spec;
+    var neutralized = Entities.neutralizeAll(urlSpec);
+    if(urlSpec != neutralized) url.spec = neutralized;
+    
+    if(url.getRelativeSpec(original) && unescape(url.spec) != unescape(original.spec)) { // ok, this seems overkill but take my word, the double check is needed
+      changes.minor = true;
+      changes.major = changes.major || changes.qs || 
+                      unescape(original.spec.replace(/\?.*/g, "")) 
+                        != unescape(url.spec.replace(/\?.*/g, ""));
+      if(changes.major) {
+        url.ref = Math.random().toString().concat(Math.round(Math.random() * 999 + 1)).replace(/0./, '') // randomize URI
+      }
+    } else changes.minor = false;
+    return changes;
+  },
+  
+  
+  sanitizeXQuery: function(query, changes) {
+    // replace every character matching noscript.filterXGetRx with a single ASCII space (0x20)
+    changes = changes || {};
+    const parms = query.split(/[&;]/);
+    var j, pieces, k, pz, origPz, encodedPz, nestedURI, qpos, apos;
+    
+    for(j = parms.length; j-- > 0;) {
+      pieces = parms[j].split(/=/, 2);
+      try {
+        for(k = pieces.length; k-- > 0;) {
+          origPz = pz = decodeURIComponent(encodedPz = pieces[k]);
+          nestedURI = null;
+          if(/^https?:\/\//i.test(pz)) {
+            // try to sanitize as a nested URL
+            try {
+              nestedURI = SiteUtils.ios.newURI(pz, null, null).QueryInterface(Components.interfaces.nsIURL);
+              changes.qs = changes.qs || this.sanitizeURL(nestedURI).major;
+              pz = nestedURI.spec;
+            } catch(e) {
+              nestedURI = null;
+            }
+          }
+          
+          if(!nestedURI) {
+            qpos = pz.indexOf("?");
+            spos = pz.search(/[&;]/);
+            if(qpos > -1 && spos > qpos) { 
+              // recursive query string?
+              if(qpos > -1 && spos > qpos) {
+                // recursively sanitize it as a whole qs
+                pz = this.sanitizeXQuery(pz, changes);
+              } else {
+                // split, sanitize and rejoin
+                pz = [ this.sanitize(pz.substring(0, qpos)), 
+                       this.sanitizeXQuery(pz.substring(qpos + 1), changes)
+                     ].join("?")
+              }
+            } else {
+              pz = this.sanitize(pz);
+            }
+            if(origPz != pz) changes.qs = true;
+          }
+          
+          pieces[k] = encodedPz.indexOf("+") > - 1 ? escape(pz) : encodeURIComponent(pz);
+        }
+        if(j > 0 && pieces.length == 1 && j == parms.length - 1) {
+          // avoid "&" separator to be used as an entity escape if site rewrites this URL 
+          pieces.push("");
+        }
+        parms[j] = pieces.join("=");
+      } catch(e) { 
+        // decoding exception, skip this param
+        parms.splice(j, 1);
+      }
+    }
+    return parms.join("&");
+  },
+  
+  sanitizeURIComponent: function(s) {
+    try {
+      return encodeURI(this.sanitize(decodeURIComponent(s)));
+    } catch(e) {
+      return "";
+    }
+  },
+  sanitizeEnc: function(s) {
+    try {
+      return encodeURIComponent(this.sanitize(decodeURIComponent(s)));
+    } catch(e) {
+      return "";
+    }
+  },
+  sanitize: function(s) {
+    // deeply convert entities
+    s = Entities.convertDeep(s);
+    
+    if(s.indexOf('"') > -1) {
+      // try to play nice on search engine queries with grouped quoted elements
+      // by allowing double quotes but stripping even more aggressively other chars
+      
+      // Google preserves "$" and recognizes ~, + and ".." as operators
+      // All the other non alphanumeric chars (aside double quotes) are ignored.
+      // We will preserve the site: modifier as well
+      // Ref.: http://www.google.com/help/refinesearch.html
+      s = s.replace(/[^\w\$\+\.\~" :]/g, 
+          " " // strip everything but alphnum and operators
+          ).replace(":", 
+          function(k, pos, s) { // strip colons as well, unless it's the site: operator
+            return (s.substring(0, pos) == "site" || s.substring(pos - 5) == " site") ? ":" : " " 
+          }
+        );
+      if(s.replace(/[^"]/g, "").length % 2) s += '"'; // close unpaired quotes
+      return s;
+    }
+    // regular duty
+    s = s.replace(this.negatedWhitelist, " ");
+    
+    /*
+    if(s.indexOf("+") > -1) { 
+      // Anti UTF-7, effective but likely too much drastic.
+      // Investigate on-the-fly charset detection for future versions,
+      // as this kind of attack is *very* unlikely to work in default Firefox setup
+      s.replace(/\+\w+/g, function(m) { return m.replace(/A/g, "a"); });
+    }
+    */
+    
+    s = s.replace(/-moz-binding/g, " moz binding");
+    
+    if(this.blacklist) { // additional user-defined blacklist for emergencies
+      s = s.replace(this.blacklist, " "); 
+    }
+    
+    if(this.brutal) { // injection checks were positive
+      s = s.replace(/\(\)\=/g, " ");
+    }
+    
+    return s;
+  }
+};
 
 
 // XPCOM Scaffolding code

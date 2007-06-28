@@ -1,5 +1,47 @@
 NoScript ChangeLog
 
+v 1.1.5
+=====================================================================
+x Removed about:neterror from the permanent non-deletable whitelist
+  (for the super-paranoids, thanks Aerik)
+x Minor bug fix, anti-XSS notification bar skipped when an URL nested
+  in a query string gets sanitized
+x Extra QA for public release
+
+v 1.1.4.9.070627
+=====================================================================
++ Added "0" shorthand to match all *explicit* IP ports on the same 
+  protocol/host, e.g. http://acme.com:0 matches http://acme.com:8080
+  and http://acme.com:9999, but neither https://acme.com:8080 nor
+  http://acme.com
++ Partial numeric IPv4 are matched up to the 2nd leftmost byte, e.g.
+  "192.168" matches 192.168.0.22 and "10.0.0" matches 10.0.0.33
+x Minor cosmetic tweaks to XSS notifications threshold
+x Improved reload on permissions change
+
+v 1.1.4.9.070624
+=====================================================================
++ Optimization of active counter-measures
+x Additional QA for public bug fixing automatic update
+
+v 1.1.4.9.070623
+=====================================================================
++ More lenient yet the safest XSS filters
+x Fixed a leak happening when a secondary browser window is closed
+
+v 1.1.4.9.070622r3
+=====================================================================
+x Fixed some popup not closing issue (thanks Angelo Dicerni)
+
+v 1.1.4.9.070622r2
+=====================================================================
+x Fixed issue with usernames embedded in home page (thanks england)
+
+v 1.1.4.9.070622r1
+=====================================================================
+x Fixed incompatibility with certain malformed Ebay search URIs
+  (thanks to Marc Van Buggenhout for reporting)
+  
 v 1.1.4.9.070622
 =====================================================================
 + Full Anti-XSS protection for every trusted URL opened from external

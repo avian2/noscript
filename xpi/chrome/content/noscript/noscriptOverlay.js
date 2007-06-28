@@ -22,11 +22,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
-window.isNewToplevel = true;
 
 const noscriptOverlay = {
   ns: noscriptUtil.service,
-
+  
   getString: function(key,parms) {
     return noscriptUtil.getString(key, parms);
   }
@@ -469,7 +468,6 @@ const noscriptOverlay = {
   }
 ,
   safeAllow: function(site, enabled, temp) {
-    const overlay = this;
     const ns = this.ns;
     ns.safeCapsOp(function() {
       if(site) {
@@ -478,7 +476,7 @@ const noscriptOverlay = {
       } else {
         ns.jsEnabled = enabled;
       }
-      overlay.syncUI();
+      noscriptOverlay.syncUI();
     });
   }
 ,
@@ -1110,7 +1108,7 @@ const noscriptOverlay = {
     
     onDocumentClose: function(ev) {
       const doc = ev.originalTarget;
-      if(!(doc.defaultView && doc.defaultView == doc.defaultView.top)) return;
+      if(!(doc && doc.defaultView && doc.defaultView == doc.defaultView.top)) return;
       
       const ns = noscriptOverlay.ns;
       const browser = ns.domUtils.findBrowserForNode(doc);
@@ -1127,7 +1125,6 @@ const noscriptOverlay = {
       STATE_START: Components.interfaces.nsIWebProgressListener.STATE_START,
       STATE_STOP: Components.interfaces.nsIWebProgressListener.STATE_STOP,
       onLocationChange: function(aWebProgress, aRequest, aLocation) {
-        window.isNewToplevel = false;
         if(this.originalOnLocationChange) {
           try {
             this.originalOnLocationChange(aWebProgress, aRequest, aLocation);
@@ -1140,7 +1137,20 @@ const noscriptOverlay = {
             const uri = aRequest.URI;
             const topWin = domWindow && domWindow == domWindow.top
             if(topWin) {
+              try {
+                var requestInfo = aRequest.QueryInterface(Components.interfaces.nsIPropertyBag2)
+                  .getPropertyAsInterface("noscriptXSS", Components.interfaces.nsISupports)
+                  .wrappedJSObject;
+              
+                if(requestInfo) {
+                  requestInfo.browser = ns.domUtils.findBrowserForNode(domWindow);
+                  noscriptOverlay.notifyXSS(requestInfo);
+                }
+              } catch(e) {
+                // dump(e + "\n");
+              }
               noscriptOverlay.setMetaRefreshInfo(null, ns.domUtils.findBrowser(window, domWindow));
+              
             }
             if(ns.shouldLoad(7, uri, uri, domWindow, aRequest.contentType, true) != 1) {
               aRequest.cancel(0x804b0002);
@@ -1148,9 +1158,8 @@ const noscriptOverlay = {
               if(topWin) {
                 if(ns.autoAllow) {
                   var site = ns.getQuickSite(uri.spec, ns.autoAllow);
-                  if(site && (!(ns.isJSEnabled(site) || ns.isUntrusted(site) || ns.isManual(site)))) {
-                    ns.setTemp(site, true);
-                    ns.setJSEnabled(site, true);
+                  if(site && !ns.isJSEnabled(site)) {
+                    ns.autoTemp(site);
                   }
                 }
               }
@@ -1176,14 +1185,14 @@ const noscriptOverlay = {
           try {
             noscriptOverlay.syncUI(domWindow);
           } catch(e) {}
-        }
+        } 
       }, 
       onSecurityChange: function() {}, 
       onProgressChange: function() {}
     },
     
+
     onContentLoad: function(ev) {
-      window.isNewToplevel = false;
       var doc = ev.originalTarget;
       if(doc instanceof HTMLDocument) {
         var w = doc.defaultView;
@@ -1192,7 +1201,9 @@ const noscriptOverlay = {
           doc._NoScript_contentLoaded = true;
           if(w == w.top) {
             ns.processMetaRefresh(doc);
-            if(w == window.content) noscriptOverlay._syncUINow();
+            if(w == window.content) {
+              noscriptOverlay._syncUINow();
+            }
           } else {
             noscriptOverlay.syncUI(w.top);
           }
@@ -1311,7 +1322,35 @@ const noscriptOverlay = {
       return;
     }
     
-    noscriptOverlay.ns.wrapBrowserDOMWindow(window);
+    const OPEN_EXTERNAL = Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL;
+    const originalOpenURI = window.nsBrowserAccess.prototype.openURI;
+    const ns = noscriptOverlay.ns;
+    
+    window.browserDOMWindow.wrappedJSObject.openURI = function(aURI, aOpener, aWhere, aContext) {
+      var external = aContext == OPEN_EXTERNAL && aURI;
+      if(external) {
+        if(aURI.schemeIs("http") || aURI.schemeIs("https")) {
+           // remember for filter processing
+           ns.requestWatchdog.externalLoad = aURI.spec;
+        } else {
+           // don't let the external protocol open dangerous URIs
+           if(aURI.schemeIs("javascript") || aURI.schemeIs("data")) {
+             var err = "[NoScript] external non-http load blocked: " + aURI.spec;
+             ns.log(err);
+             throw err;
+           }
+        }
+      }
+      var w = null;
+      try {
+        w = originalOpenURI.apply(this, arguments);
+        if(external) ns.log("[NoScript] external load intercepted");
+      } finally {
+        if(external && !w) ns.requestWatchdog.externalLoad = null;
+      }
+      return w;
+    };
+    
     noscriptOverlay.ns.log("[NoScript] browserDOMWindow wrapped for external load interception");
   },
   
@@ -1333,9 +1372,8 @@ const noscriptOverlay = {
     window.removeEventListener("unload", ll.onUnload, false);
     window.removeEventListener("focus", ll.onUninstallMaybe, false);
     window.removeEventListener("load", ll.onLoad, false);
+    window.browserDOMWindow = null;
   }
 }
-  
-
 
 noscriptOverlay.install();

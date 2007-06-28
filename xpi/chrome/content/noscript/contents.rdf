@@ -8,7 +8,7 @@
     </RDF:Seq>
 
     <RDF:Description about="urn:mozilla:package:noscript"
-            chrome:displayName="NoScript 1.1.4.9.070622"
+            chrome:displayName="NoScript 1.1.5"
             chrome:author="Giorgio Maone (InformAction)"
             chrome:authorURL="http://www.informaction.com/mozilla/noscript"
             chrome:name="noscript"

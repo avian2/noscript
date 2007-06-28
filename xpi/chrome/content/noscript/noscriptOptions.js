@@ -245,7 +245,8 @@ var nsopt = {
     const selectedItems = ul.selectedItems;
     
     if(selectedItems.length == 1) {
-      if(!ns.isPermanent(site = selectedItems[0].value)) {
+      var site = selectedItems[0].value;
+      if(!ns.isPermanent(site)) {
         ul.removeItemAt(ul.getIndexOfItem(selectedItems[0]));
         this.trustedSites.remove(site, true)
       }
