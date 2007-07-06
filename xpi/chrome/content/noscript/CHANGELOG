@@ -1,5 +1,48 @@
 NoScript ChangeLog
 
+v 1.1.6
+=====================================================================
++ "Light" injection checks are enabled also with "Scripts Globally
+  allowed" (notice that allowing scripts globally is still a very bad 
+  idea, since POST injections and other XSS attacks launched using 
+  JavaScript, Java or Flash are virtually undetectable)
+x Depth limit to URL decoding
+x Extra QA for public release
+x Work-around for JS Development Environment scoped evaluation being
+  blocked by noscript.safeToplevel feature
+
+v 1.1.5.07
+=====================================================================
+x Extra QA and optimization for very complex URLs
+
+v 1.1.5.06
+=====================================================================
+x Huge performance and accuracy enhancement in injection detector
+x Bookmarklet bypass for Minefield Places (thanks Hwasung Kim)
+
+v 1.1.5.05
+=====================================================================
++ Smarter injection detector for trusted to trusted requests
+x Fixed "this.docShell has no properties" issue (many thanks therube)
+x Fixed external URLs not opening in IETab (thanks chili1)
+
+v 1.1.5.04
+=====================================================================
+x Fixed traceback regression skipping checks on permissions change 
+
+v 1.1.5.03
+=====================================================================
+x Fixed XSS notification message bar not showing sometimes
+
+v 1.1.5.02
+=====================================================================
+x More accurate origin detection on META refresh
+
+v 1.1.5.01
+=====================================================================
++ XSS character-level filter enhancements
++ Notifications for Flash-based XSS too 
+
 v 1.1.5
 =====================================================================
 x Removed about:neterror from the permanent non-deletable whitelist

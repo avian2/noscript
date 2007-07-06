@@ -40,14 +40,6 @@ const noscriptOverlay = {
     this.safeAllow(url, !ns.isJSEnabled(url), ns.getPref("toggle.temp"));
     return true;
   },
-  
-  isLoading: function() {   
-    return getBrowser().selectedBrowser.webProgress.isLoadingDocument;
-  },
-  
-  get currentPluginsCache() {
-    return this.ns.pluginsCache.get(getBrowser().selectedBrowser);
-  },
 
   
   getSites: function() {
@@ -507,7 +499,7 @@ const noscriptOverlay = {
     if(!widget) widget = document.getElementById("noscript-statusXss");
     const ns = this.ns;
     var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(gBrowser.selectedBrowser);
-    if(unsafeRequest) {
+    if(unsafeRequest && !unsafeRequest.issued) {
       widget.removeAttribute("hidden");
       widget.setAttribute("tooltiptext", "XSS [" +
                   ns.getSite(unsafeRequest.origin) + "]->[" + 
@@ -567,7 +559,7 @@ const noscriptOverlay = {
   getNotificationBox: function(pos, browser) {
     var gb = getBrowser();
     browser = browser || gb.selectedBrowser;
-    if(!pos) pos = this.notificationPos
+    if(!pos) pos = this.notificationPos;
     
     if(gb.getMessageForBrowser) return gb.getMessageForBrowser(browser, pos); // Fx <= 1.5 
     if(!gb.getNotificationBox) return null; // SeaMonkey
@@ -704,10 +696,11 @@ const noscriptOverlay = {
   },
   
   notifyXSSOnLoad: function(requestInfo) {
-    requestInfo.browser.addEventListener("load", function(ev) {
-      requestInfo.browser.removeEventListener("load", arguments.callee, true);
+    requestInfo.browser.addEventListener("DOMContentLoaded", function(ev) {
+      requestInfo.browser.removeEventListener("DOMContentLoaded", arguments.callee, false);
+      if(requestInfo.unsafeRequest && requestInfo.unsafeRequest.issued) return;
       noscriptOverlay.notifyXSS(requestInfo);
-    }, true);
+    }, false);
   },
   
   notifyXSS: function(requestInfo) {
@@ -805,21 +798,21 @@ const noscriptOverlay = {
     const browser = gBrowser.selectedBrowser;
     const ns = this.ns;
     const rw = ns.requestWatchdog;
-    var req = rw.getUnsafeRequest(browser);
+    var unsafeRequest = rw.getUnsafeRequest(browser);
     var method;
-    if(!req) {
-      req = {
+    if(!unsafeRequest) {
+      unsafeRequest = {
         URI: browser.webNavigation.currentURI,
-        origin: rw.traceBackHistory(browser.webNavigation.sessionHistory, browser.contentWindow).join("@@@"),
+        origin: rw.traceBackHistory(browser.webNavigation.sessionHistory, browser.contentWindow).join(">>>"),
       };
       method = "URL";
     } else {
-      method = (req.postData ? "POST" : "GET");
+      method = (unsafeRequest.postData ? "POST" : "GET");
     }
     var msg = noscriptUtil.getString("unsafeReload.warning",
       [ method, 
-        ns.siteUtils.crop(req.URI.spec), 
-        ns.siteUtils.crop(req.origin || req.referrer && req.referrer.spec || '?')
+        ns.siteUtils.crop(unsafeRequest.URI.spec), 
+        ns.siteUtils.crop(unsafeRequest.origin || unsafeRequest.referrer && unsafeRequest.referrer.spec || '?')
       ]);
     msg += noscriptUtil.getString("confirm");
     if(noscriptUtil.confirm(msg, "confirmUnsafeReload")) {
@@ -1102,7 +1095,13 @@ const noscriptOverlay = {
     
     onTabClose: function(ev) {
       try {
-        getBrowser().getNotificationBox(ev.target.linkedBrowser).removeAllNotifications(true);
+        var browser = ev.target.linkedBrowser;
+        noscriptOverlay.ns.cleanupBrowser(browser);
+        var tabbrowser = getBrowser();
+        if(tabbrowser._browsers) tabbrowser._browsers = null;
+        if(tabbrowser.getNotificationBox) {
+          tabbrowser.getNotificationBox(browser).removeAllNotifications(true);
+        }
       } catch(e) {}
     },
     
@@ -1136,26 +1135,21 @@ const noscriptOverlay = {
             const ns = noscriptOverlay.ns;
             const uri = aRequest.URI;
             const topWin = domWindow && domWindow == domWindow.top
+            var browser = null;
+            var xssInfo = null;
             if(topWin) {
-              try {
-                var requestInfo = aRequest.QueryInterface(Components.interfaces.nsIPropertyBag2)
-                  .getPropertyAsInterface("noscriptXSS", Components.interfaces.nsISupports)
-                  .wrappedJSObject;
-              
-                if(requestInfo) {
-                  requestInfo.browser = ns.domUtils.findBrowserForNode(domWindow);
-                  noscriptOverlay.notifyXSS(requestInfo);
-                }
-              } catch(e) {
-                // dump(e + "\n");
-              }
-              noscriptOverlay.setMetaRefreshInfo(null, ns.domUtils.findBrowser(window, domWindow));
-              
+              browser = ns.domUtils.findBrowser(window, domWindow);
+              noscriptOverlay.setMetaRefreshInfo(null, browser);
+              xssInfo = ns.requestWatchdog.extractFromChannel(aRequest);
+              if(xssInfo) xssInfo.browser = browser;
+              ns.requestWatchdog.unsafeReload(browser, false);
             }
             if(ns.shouldLoad(7, uri, uri, domWindow, aRequest.contentType, true) != 1) {
               aRequest.cancel(0x804b0002);
+              if(xssInfo) noscriptOverlay.notifyXSS(xssInfo);
             } else {
               if(topWin) {
+                if(xssInfo) noscriptOverlay.notifyXSSOnLoad(xssInfo);
                 if(ns.autoAllow) {
                   var site = ns.getQuickSite(uri.spec, ns.autoAllow);
                   if(site && !ns.isJSEnabled(site)) {
@@ -1178,17 +1172,16 @@ const noscriptOverlay = {
           
           var ns = noscriptOverlay.ns;
           const domWindow = aWebProgress.DOMWindow;
-          const browser = ns.domUtils.findBrowserForNode(domWindow);
-          if(browser) {
-            ns.requestWatchdog.unsafeReload(browser, false);
+          if(domWindow == domWindow.top) {
+            
+            try {
+              noscriptOverlay.syncUI(domWindow);
+            } catch(e) {}
           }
-          try {
-            noscriptOverlay.syncUI(domWindow);
-          } catch(e) {}
         } 
       }, 
       onSecurityChange: function() {}, 
-      onProgressChange: function() {}
+      onProgressChange: function() {},
     },
     
 
@@ -1230,10 +1223,10 @@ const noscriptOverlay = {
     },
     
     setup: function() {
-      document.getElementById("contentAreaContextMenu")
-          .addEventListener("popupshowing", this.onContextMenu, false);
+      var context = document.getElementById("contentAreaContextMenu");
+      if(!context) return; // not a browser window?
       
-          
+      context.addEventListener("popupshowing", this.onContextMenu, false);
       var b = getBrowser();
       
       b.addEventListener("click", noscriptOverlay.fixLink, true);
@@ -1254,7 +1247,7 @@ const noscriptOverlay = {
       window.addEventListener("pageshow", this.onContentLoad, false);
       window.addEventListener("DOMContentLoaded", this.onContentLoad, false);
       window.addEventListener("beforeunload", this.onDocumentClose, false);
-      window.addEventListener("pagehide", this.onDocumentClose, false);
+      //window.addEventListener("pagehide", this.onDocumentClose, false);
       
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
@@ -1291,7 +1284,7 @@ const noscriptOverlay = {
       }
       
       window.removeEventListener("beforeunload", this.onDocumentClose, false);
-      window.removeEventListener("pagehide", this.onDocumentClose, false);
+      // window.removeEventListener("pagehide", this.onDocumentClose, false);
       window.removeEventListener("pageshow", this.onContentLoad, false);
       window.removeEventListener("DOMContentLoaded", this.onContentLoad, false);
 
@@ -1323,9 +1316,8 @@ const noscriptOverlay = {
     }
     
     const OPEN_EXTERNAL = Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL;
-    const originalOpenURI = window.nsBrowserAccess.prototype.openURI;
     const ns = noscriptOverlay.ns;
-    
+    const browserAccess = window.nsBrowserAccess.prototype; 
     window.browserDOMWindow.wrappedJSObject.openURI = function(aURI, aOpener, aWhere, aContext) {
       var external = aContext == OPEN_EXTERNAL && aURI;
       if(external) {
@@ -1343,7 +1335,7 @@ const noscriptOverlay = {
       }
       var w = null;
       try {
-        w = originalOpenURI.apply(this, arguments);
+        w = browserAccess.openURI.apply(this, arguments);
         if(external) ns.log("[NoScript] external load intercepted");
       } finally {
         if(external && !w) ns.requestWatchdog.externalLoad = null;

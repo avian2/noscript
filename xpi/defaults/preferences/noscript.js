@@ -74,6 +74,9 @@ pref("noscript.filterXGetRx", "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;\\|
 pref("noscript.filterXGetRx2Black", "");
 pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.[a-z\\.]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
 pref("noscript.injectionCheck", 2);
+pref("noscript.injectionCheck.timeout", 800);
+pref("noscript.injectionCheck.loops", 20);
+
 pref("noscript.blockXIntranet", true);
 pref("noscript.intranetMaskRx", "^(127\\.[\\d.]+)");
 
@@ -85,4 +88,6 @@ pref("noscript.jsredirectIgnore", false);
 pref("noscript.jsredirectFollow", true);
 
 pref("noscript.safeToplevel", true);
+
+
 

@@ -1,3 +1,27 @@
+/***** BEGIN LICENSE BLOCK *****
+
+NoScript - a Firefox extension for whitelist driven safe JavaScript execution
+Copyright (C) 2004-2007 Giorgio Maone - g.maone@informaction.com
+
+Contributors: 
+  Hwasung Kim
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+***** END LICENSE BLOCK *****/
+
 function _noScript_BM_openOneBookmark(aURI, aTargetBrowser, aDS) {
   var ncNS = typeof(gNC_NS) == "undefined" ? ( typeof(NC_NS) == "undefined" ?
       "http://home.netscape.com/NC-rdf#" : NC_NS ) : gNC_NS;
@@ -13,12 +37,13 @@ function _noScript_BM_openOneBookmark(aURI, aTargetBrowser, aDS) {
 }
 
 function _noScript_PC_genericPatch(oldMethod, args) {
-  var node = this._activeView.selectedURINode;
+  var node = this._view.selectedURINode;
   if (!node) return;
   const url = node.uri;
   node = null;
+  var self = this;
   var openCallback = function(url) { 
-    oldMethod.apply(PlacesController, args); 
+    oldMethod.apply(self, args); 
   }
   if(!_noScript_handleBookmark(url, openCallback)) {
     openCallback(url);
@@ -46,6 +71,7 @@ function _noScript_handleBookmark(url, openCallback) {
             if(Components.utils && typeof(/ /) == "object") { // direct evaluation, after bug 351633 landing
               var sandbox = Components.utils.Sandbox(browserWindow.content);
               sandbox.window = browserWindow.content;
+              sandbox.document = sandbox.window.document;
               Components.utils.evalInSandbox(
                 "with(window) { " + decodeURIComponent(url.replace(/^javascript:/i, "")) + " }", sandbox);
             } else {
@@ -67,27 +93,23 @@ function _noScript_handleBookmark(url, openCallback) {
 }
 
 function _noScript_patchPCMethod(m) {
-  if(m in PlacesController) {
-    var oldMethod = PlacesController[m];
-    PlacesController[m] = function() { _noScript_PC_genericPatch.call(this, oldMethod, arguments); };
+  if(m in PlacesController.prototype) {
+    var oldMethod = PlacesController.prototype[m];
+    PlacesController.prototype[m] = function() { _noScript_PC_genericPatch.call(this, oldMethod, arguments); };
   }
 }
 
-function _noScript_BM_install() {
+function _noScript_BM_install(ev) {
+  ev.currentTarget.removeEventListener("load", arguments.callee, false);
   if(window.BookmarksCommand) {
     BookmarksCommand._noScript_BM_openOneBookmark_original = BookmarksCommand.openOneBookmark;
     BookmarksCommand.openOneBookmark = _noScript_BM_openOneBookmark;
   }
-  if(window.PlacesController) {
-    var methods = ["mouseLoadURI", "openLinkInNewWindow", "openLinkInNewTab", "openLinkInCurrentWindow"];
-    var m;
-    for(var j = methods.length; j-- > 0;) {
+  if(typeof window.PlacesController == "function") {
+     var methods = ["openSelectedNodeIn"];
+    for(var j = methods.length; j-- > 0;)
       _noScript_patchPCMethod(methods[j]);
-    }
   }
-  window.setTimeout(function() { window.removeEventListener("load", _noScript_BM_install, false); }, 0);
 }
-
 window.addEventListener("load", _noScript_BM_install, false);
-
 
