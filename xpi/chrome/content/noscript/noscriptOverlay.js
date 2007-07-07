@@ -1169,11 +1169,8 @@ const noscriptOverlay = {
       onStateChange: function(aWebProgress, aRequest, stateFlags, status) {
 
         if(stateFlags & this.STATE_STOP) {
-          
-          var ns = noscriptOverlay.ns;
           const domWindow = aWebProgress.DOMWindow;
           if(domWindow == domWindow.top) {
-            
             try {
               noscriptOverlay.syncUI(domWindow);
             } catch(e) {}

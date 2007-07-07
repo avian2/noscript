@@ -650,7 +650,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype ={
-  VERSION: "1.1.6",
+  VERSION: "1.1.6.02",
   
   get wrappedJSObject() {
     return this;
@@ -711,7 +711,8 @@ NoscriptService.prototype ={
   
   forgetToplevel: function(window) {
     window.isNewToplevel = false;
-    if(!window.opener) window.opener = window; // work-around for JavaScript Development Environment context
+    if(window.noscriptOverlay && !window.opener) 
+      window.opener = window; // work-around for JavaScript Development Environment context
   },
   
   isNewBrowserWindow: function(window) {
@@ -3122,7 +3123,7 @@ var InjectionChecker = {
    maybeJS: function(expr, THRESHOLD) {
      score = 0;
     // single function call with arguments, it would be enough -- eval(name) -- but we catch those shorties in checkJSStunts()
-    if(/[\w$\]][\s\S]*\([^\)]*[^\)\s]+[^\)]*\)/.test(expr)) {
+    if(/[\w$\]][\s\S]*\(\s*[^\)\(\s][\S\s]*\)/.test(expr)) {
       score += 2;
       // multiple function calls or assignments or dot notation, danger! (a=eval,b=unescape,c=location;a(b(c)))
       if(/\([^\(\s]*\(|=|\./.test(expr)) score += 2;

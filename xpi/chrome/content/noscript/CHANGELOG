@@ -1,4 +1,13 @@
 NoScript ChangeLog
+v 1.1.6.02
+=====================================================================
+x Fixed "Unresponsive Script" on specific complex URL patterns
+  (many thanks to Sue Petersen)
+
+v 1.1.6.01
+=====================================================================
+x Fixed "Clear private data" window not closing if you hit "OK" on
+  browser exit with Firefox < 3.0 (thanks VT first report)
 
 v 1.1.6
 =====================================================================
@@ -6,6 +15,7 @@ v 1.1.6
   allowed" (notice that allowing scripts globally is still a very bad 
   idea, since POST injections and other XSS attacks launched using 
   JavaScript, Java or Flash are virtually undetectable)
+x Better XSS notification/UI feedback on partial loads
 x Depth limit to URL decoding
 x Extra QA for public release
 x Work-around for JS Development Environment scoped evaluation being
