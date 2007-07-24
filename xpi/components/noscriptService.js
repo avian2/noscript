@@ -19,102 +19,118 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
-function UninstallGuard(name) {
-  this.name = name;
-}
+// XPCOM Scaffolding
 
-UninstallGuard.prototype = {
-  uninstalling: false,
-  disabled: false,
-  get ds() {
-    return Components.classes["@mozilla.org/extensions/manager;1"
-        ].getService(Components.interfaces.nsIExtensionManager
-      ).datasource;
-  }
-,
-  get rdfService() {
-    return Components.classes["@mozilla.org/rdf/rdf-service;1"].getService(Components.interfaces.nsIRDFService);
-  }
-,
-  onAssert: function(ds,source,prop,target) {
-    this.check(ds,source);
-  },
-  onBeginUpdateBatch: function(ds) {},
-  onChange: function(ds,source,prop,oldTarget,newTarget) {
-    this.check(ds,source);
-  },
-  onEndUpdateBatch: function(ds) {
-    try {
-      this.checkAll(ds);
-    } catch(ex) {}
-  },
-  onMove: function(ds,oldSource,newSource,prop,target) {
-    this.check(ds,newSource);
-  },
-  onUnassert: function(ds,source,prop,target) {
-    this.check(ds,source);
-  }
-,
-  init: function() {
-    try {
-      this.ds.AddObserver(this);
-    } catch(ex) {
-      this.log(ex);
-    } 
-  }
-,
-  dispose: function() {
-    try {
-      this.ds.RemoveObserver(this);
-    } catch(ex) {
-      this.log(ex);
-    } 
-  }
-,
-  checkAll: function(ds) {
-    const container = Components.classes["@mozilla.org/rdf/container;1"]
-               .getService(Components.interfaces.nsIRDFContainer);
-    var root = this.rdfService.GetResource("urn:mozilla:extension:root");
-    container.Init(ds, root);
+const CI = Components.interfaces;
+const CC = Components.classes;
 
-     var elements = container.GetElements();
-     for(var found = false; elements.hasMoreElements() && !found; ) {
-        found = this.check(elements.getNext().QueryInterface(Components.interfaces.nsIRDFResource));
-     }
-  }
-,
-  check: function(extensionDS,element) {
-    try { 
-      const RDFService = this.rdfService;
-      var target;
-      if((target=extensionDS.GetTarget(element,  
-        RDFService.GetResource("http://www.mozilla.org/2004/em-rdf#name") ,true))
-        && target.QueryInterface(Components.interfaces.nsIRDFLiteral).Value==this.name
-        ) {
-        this.uninstalling = (
-          (target = extensionDS.GetTarget(element, 
-            RDFService.GetResource("http://www.mozilla.org/2004/em-rdf#toBeUninstalled"),true)
-            ) != null 
-            && target.QueryInterface(Components.interfaces.nsIRDFLiteral).Value == "true"
-           );
-        this.disabled = (
-          (target = extensionDS.GetTarget(element, 
-            RDFService.GetResource("http://www.mozilla.org/2004/em-rdf#toBeDisabled"),true)
-            ) != null
-            && target.QueryInterface(Components.interfaces.nsIRDFLiteral).Value == "true"
-          );
-        return true;
-      }  
-     } catch(ex) {
-       this.log(ex);
-     } // quick and dirty work-around for SeaMonkey ;)
-     return false;
-  }
-,
-  log: function(msg) {
-    dump("UninstallGuard: "+msg+"\n");
+// component defined in this file
+const EXTENSION_ID="{73a6fe31-595d-460b-a920-fcc0f8843232}";
+const SERVICE_NAME="NoScript Service";
+const SERVICE_ID="{31aec909-8e86-4397-9380-63a59e0c5ff5}";
+const SERVICE_CTRID = "@maone.net/noscript-service;1";
+const SERVICE_CONSTRUCTOR=NoscriptService;
+
+const SERVICE_CID = Components.ID(SERVICE_ID);
+
+// interfaces implemented by this component
+const SERVICE_IIDS = 
+[ 
+CI.nsIObserver,
+CI.nsISupports,
+CI.nsISupportsWeakReference,
+CI.nsIContentPolicy,
+CI.nsIWebProgressListener
+];
+
+// categories which this component is registered in
+const SERVICE_CATS = ["app-startup", "content-policy"];
+
+
+// Factory object
+const SERVICE_FACTORY = {
+  _instance: null,
+  createInstance: function (outer, iid) {
+    if (outer != null)
+        throw Components.results.NS_ERROR_NO_AGGREGATION;
+
+    xpcom_checkInterfaces(iid, SERVICE_IIDS, Components.results.NS_ERROR_INVALID_ARG);
+    // kept this for flexibility sake, but we're really adopting an
+    // early instantiation and late init singleton pattern
+    return this._instance==null ? this._instance=new SERVICE_CONSTRUCTOR() : this._instance;
   }
 };
+
+function xpcom_generateQI(iids) {
+  var lines = [];
+  for(var j = iids.length; j-- > 0;) {
+    lines.push("if(CI." + iids[j].name + ".equals(iid)) return this;");
+  }
+  lines.push("throw Components.results.NS_ERROR_NO_INTERFACE;");
+  return new Function("iid", lines.join("\n"));
+}
+
+
+function xpcom_checkInterfaces(iid,iids,ex) {
+  for(var j = iids.length; j-- >0;) {
+    if(iid.equals(iids[j])) return true;
+  }
+  throw ex;
+}
+
+var Module = {
+  firstTime: true,
+  registerSelf: function (compMgr, fileSpec, location, type) {
+    if(this.firstTime) {
+      compMgr.QueryInterface(CI.nsIComponentRegistrar
+        ).registerFactoryLocation(SERVICE_CID,
+        SERVICE_NAME,
+        SERVICE_CTRID, 
+        fileSpec,
+        location, 
+        type);
+      const catman = CC['@mozilla.org/categorymanager;1'
+        ].getService(CI.nsICategoryManager);
+      for(var j=0, len=SERVICE_CATS.length; j<len; j++) {
+        catman.addCategoryEntry(SERVICE_CATS[j],
+          //SERVICE_NAME, "service," + SERVICE_CTRID, 
+          SERVICE_CTRID, SERVICE_CTRID, true, true);
+      }
+      this.firstTime=false;
+    }
+  },
+  
+  unregisterSelf: function(compMgr, fileSpec, location) {
+    compMgr.QueryInterface(CI.nsIComponentRegistrar
+      ).unregisterFactoryLocation(SERVICE_CID, fileSpec);
+    const catman = CC['@mozilla.org/categorymanager;1'
+        ].getService(CI.nsICategoryManager);
+    for(var j = 0, len=SERVICE_CATS.length; j<len; j++) {
+      catman.deleteCategoryEntry(SERVICE_CATS[j], SERVICE_CTRID, true);
+    }
+  },
+
+  getClassObject: function (compMgr, cid, iid) {
+    if(cid.equals(SERVICE_CID))
+      return SERVICE_FACTORY;
+  
+    if (!iid.equals(CI.nsIFactory))
+      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
+    
+    throw Components.results.NS_ERROR_NO_INTERFACE;
+  },
+
+  canUnload: function(compMgr) {
+    return true;
+  }
+}
+function NSGetModule(compMgr, fileSpec) {
+  return Module;
+}
+
+// END XPCOM Scaffolding
+
+
 
 function Strings(chromeName) {
   this.chromeName = chromeName;
@@ -155,8 +171,8 @@ Strings.prototype = {
     if(path in this.bundles) return this.bundles[path];
     try {
       return this.bundles[path] = 
-        Components.classes["@mozilla.org/intl/stringbundle;1"]
-                  .getService(Components.interfaces.nsIStringBundleService)
+        CC["@mozilla.org/intl/stringbundle;1"]
+                  .getService(CI.nsIStringBundleService)
                   .createBundle("chrome://" + this.chromeName +  "/" + path +
                                 "/" + this.chromeName + ".properties");
     } catch(ex) {
@@ -185,11 +201,11 @@ const noscriptStrings = new Strings("noscript");
 const SiteUtils = new function() {
   const _domainPattern = /^[^\?\/#,;:\\\@]+$/;
   
-  const _ios = this.ios = Components.classes["@mozilla.org/network/io-service;1"]
-    .getService(Components.interfaces.nsIIOService);
+  const _ios = this.ios = CC["@mozilla.org/network/io-service;1"]
+    .getService(CI.nsIIOService);
   
-  const _uriFixup = this.uriFixup = Components.classes["@mozilla.org/docshell/urifixup;1"]
-    .getService(Components.interfaces.nsIURIFixup);
+  const _uriFixup = this.uriFixup = CC["@mozilla.org/docshell/urifixup;1"]
+    .getService(CI.nsIURIFixup);
   
   function sorter(a,b) {
     if(a==b) return 0;
@@ -237,7 +253,7 @@ const SiteUtils = new function() {
     try {
       // let's unwrap JAR uris
       var uri = _uriFixup.createExposableURI(_ios.newURI(url, null, null));
-      if(uri instanceof Components.interfaces.nsIJARURI) {
+      if(uri instanceof CI.nsIJARURI) {
         uri = uri.JARFile;
         return uri ? this.getSite(uri.spec) : scheme;
       }
@@ -355,32 +371,37 @@ const DOMUtils = {
   
   findBrowserForNode: function(ctx) {
     if(!ctx) return null;
-    const ci = Components.interfaces;
+    var bi = null;
     try {
-      if(!(ctx instanceof ci.nsIDOMWindow)) {
-        if(ctx instanceof ci.nsIDOMDocument) {
+      if(!(ctx instanceof CI.nsIDOMWindow)) {
+        if(ctx instanceof CI.nsIDOMDocument) {
           ctx = ctx.defaultView;
-        } else if(ctx instanceof ci.nsIDOMNode) {
+        } else if(ctx instanceof CI.nsIDOMNode) {
           ctx = ctx.ownerDocument.defaultView;
         } else return null; 
       }
       if(!ctx) return null;
       ctx = ctx.top;
       
-      var bi = new this.BrowserIterator(this.getChromeWindow(ctx));
+      var bi = new this.createBrowserIterator(this.getChromeWindow(ctx));
       for(var b; b = bi.next();) {
         if(b.contentWindow == ctx) return b;
       }
-    } catch(e) {}
+    } catch(e) {
+    } finally {
+      if(bi) bi.dispose();
+      ctx = null;
+    }
     return null;
   },
   
+  
+  
   getDocShellFromWindow: function(window) {
-    const ci = Components.interfaces;
     try {
-      return window.QueryInterface(ci.nsIInterfaceRequestor)
-                   .getInterface(ci.nsIWebNavigation)
-                   .QueryInterface(ci.nsIDocShell);
+      return window.QueryInterface(CI.nsIInterfaceRequestor)
+                   .getInterface(CI.nsIWebNavigation)
+                   .QueryInterface(CI.nsIDocShell);
     } catch(e) {
       return null;
     }
@@ -388,11 +409,10 @@ const DOMUtils = {
     
   getChromeWindow: function(window) {
     try {
-      const ci = Components.interfaces;
       return this.getDocShellFromWindow(window)
-        .QueryInterface(ci.nsIDocShellTreeItem).rootTreeItem
-        .QueryInterface(ci.nsIInterfaceRequestor)
-        .getInterface(ci.nsIDOMWindow);
+        .QueryInterface(CI.nsIDocShellTreeItem).rootTreeItem
+        .QueryInterface(CI.nsIInterfaceRequestor)
+        .getInterface(CI.nsIDOMWindow);
     } catch(e) {
       return null;
     }
@@ -401,59 +421,84 @@ const DOMUtils = {
   _wm: null,
   get windowMediator() {
     return this._wm || (this._wm = 
-        Components.classes['@mozilla.org/appshell/window-mediator;1']
-                  .getService(Components.interfaces.nsIWindowMediator));
+        CC['@mozilla.org/appshell/window-mediator;1']
+                  .getService(CI.nsIWindowMediator));
   },
-  BrowserIterator: function(initialWin) {
-    const wm = DOMUtils.windowMediator;
-    if(!(initialWin && initialWin.getBrowser)) {
-       initialWin = wm.getMostRecentWindow("navigator:browser");
-    }
-    var mostRecentTab;
-    var currentWin = initialWin;
-    var winEnum = null;
-    var currentTB, currentTab;
-    var curTabIdx;
-    var browsers;
-    
-    function initPerWin() {
-      currentTB = currentWin && currentWin.getBrowser();
-      if(currentTB) {
-        browsers = currentTB.browsers;
-        currentTab = mostRecentTab = currentTB && currentTB.selectedBrowser;
-      } else {
-        currentTab = null;
-      }
-      curTabIdx = 0;
-    }
-    
-    initPerWin();
-   
-    this.next = function() {
-      var ret = currentTab;
-      if(!ret) return null;
-      if(curTabIdx >= browsers.length) {
-        
-        if(!winEnum) {
-          winEnum = wm.getZOrderDOMWindowEnumerator("navigator:browser", true);
-        }
-        if(winEnum.hasMoreElements()) {
-          currentWin = winEnum.getNext();
-          if(currentWin == initialWin) return this.next();
-          initPerWin();
-        } else {
-          currentTab = null;
-          return ret;
-        }
-      }
-      currentTab = browsers[curTabIdx++];
-      
-      if(currentTab == mostRecentTab) this.next();
-      return ret;
-    }
+  
+  createBrowserIterator: function(initialWin) {
+    return new BrowserIterator(initialWin);
   }
 };
 
+function BrowserIterator(initialWin) {
+  this.wm = DOMUtils.windowMediator;
+  if(!(initialWin && initialWin.getBrowser)) {
+     initialWin = this.wm.getMostRecentWindow("navigator:browser");
+  }
+  this.currentWin = this.initialWin = initialWin;
+  this.initPerWin();
+}
+BrowserIterator.prototype = {
+  initPerWin: function() {
+    var currentTB = this.currentWin && this.currentWin.getBrowser();
+    if(currentTB) {
+      this.browsers = currentTB.browsers;
+      this.currentTab = this.mostRecentTab = currentTB && currentTB.selectedBrowser;
+    } else {
+      this.currentTab = null;
+    }
+    this.curTabIdx = 0;
+  },
+  next: function() {
+    var ret = this.currentTab;
+    if(!ret) {
+      this.dispose();
+      return null;
+    }
+    if(this.curTabIdx >= this.browsers.length) {
+      if(!this.winEnum) {
+        this.winEnum = this.wm.getZOrderDOMWindowEnumerator("navigator:browser", true);
+      }
+      if(this.winEnum.hasMoreElements()) {
+        this.currentWin = this.winEnum.getNext();
+        if(this.currentWin == this.initialWin) return this.next();
+        this.initPerWin();
+      } else {
+        this.currentTab = null;
+        return ret;
+      }
+    }
+    this.currentTab = this.browsers[this.curTabIdx++];
+    
+    if(this.currentTab == this.mostRecentTab) this.next();
+    return ret;
+  },
+  dispose: function() {
+    if(!this.wm) return; // already disposed;
+    this.initialWin = 
+      this.currentWin = 
+      this.browsers = 
+      this.currentTab = 
+      this.mostRecentTab = 
+      this.winEnum = 
+      this.wm = 
+      null;
+  },
+  
+  find: function(filter) {
+    try {
+      for(var b; b = this.next();) {
+        if(filter(b)) {
+          return b;
+        }
+      }
+    } finally {
+      this.dispose();
+      filter = null;
+    }
+    return null;
+  }
+};
 
 function PolicySites(sitesString) {
   if(sitesString) this.sitesString = sitesString;
@@ -649,22 +694,20 @@ function NoscriptService() {
   this.register();
 }
 
-NoscriptService.prototype ={
-  VERSION: "1.1.6.02",
+NoscriptService.prototype = {
+  VERSION: "1.1.6.06",
   
   get wrappedJSObject() {
     return this;
   }
 ,
-  QueryInterface: function(iid) {
-     this.queryInterfaceSupport(iid, SERVICE_IIDS);
-     return this;
-  }
+  QueryInterface: xpcom_generateQI(SERVICE_IIDS),
+  generateQI: xpcom_generateQI
 ,
   // nsIObserver implementation 
   observe: function(subject, topic, data) {
     // dump(SERVICE_NAME+" notified of "+subject+","+topic+","+data); //DDEBUG
-    if(subject instanceof Components.interfaces.nsIPrefBranch2) {
+    if(subject instanceof CI.nsIPrefBranch2) {
       this.syncPrefs(subject, data);
     } else {
       switch(topic) {
@@ -682,10 +725,14 @@ NoscriptService.prototype ={
           }
           break;
         case "em-action-requested":
-          if( (subject instanceof Components.interfaces.nsIUpdateItem)
+          if( (subject instanceof CI.nsIUpdateItem)
               && subject.id==EXTENSION_ID ) {
-              this.uninstallGuard.uninstalling = data=="item-uninstalled";
-              this.uninstallGuard.disabled = data=="item-disabled"
+            if(data == "item-uninstalled" || data == "item-disabled") {
+              this.uninstalling = true;
+            } else if(data == "item-enabled") {
+              this.uninstalling = false;
+            }
+            dump("[NoScript] " + data + "\n");
           }
         break;
         case "toplevel-window-ready":
@@ -695,24 +742,32 @@ NoscriptService.prototype ={
     }
   },
   
-  nsIDOMChromeWindow: Components.interfaces.nsIDOMChromeWindow,
+  nsIDOMChromeWindow: CI.nsIDOMChromeWindow,
   registerToplevel: function(window) {
-    var list = this._toplevel;
+    
     if((window instanceof this.nsIDOMChromeWindow) && !window.opener) {
       window.isNewToplevel = true;
-      var ns = this;
-      window.addEventListener("load", function(ev) {
-        var w = ev.currentTarget;
-        w.removeEventListener("load", arguments.callee, false);
-        w.setTimeout(ns.forgetToplevel, 100, w);
-      }, false);
+      this.toplevelLoaded.forget = this.forgetToplevel;
+      window.addEventListener("load", this.toplevelLoaded, false);
     }
   },
-  
-  forgetToplevel: function(window) {
-    window.isNewToplevel = false;
+  toplevelLoaded: function(ev) {
+    var window = ev.currentTarget;
+    
+    var callee = arguments.callee;
+    window.removeEventListener("load", callee, false);
+    const timer = CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer);
+      timer.initWithCallback({ notify: callee.forget, window: window }, 100, 0);
+  },
+  forgetToplevel: function() {
+    var window = this.window; // from our nsITimerCallback "closure"
+    this.window = null;
+    
+    window.QueryInterface(CI.nsIDOMChromeWindow).isNewToplevel = false;
+
     if(window.noscriptOverlay && !window.opener) 
       window.opener = window; // work-around for JavaScript Development Environment context
+
   },
   
   isNewBrowserWindow: function(window) {
@@ -720,37 +775,41 @@ NoscriptService.prototype ={
   },
   
   register: function() {
-    const osvr = Components.classes['@mozilla.org/observer-service;1'].getService(
-      Components.interfaces.nsIObserverService);
-    osvr.addObserver(this, "profile-before-change", false);
-    osvr.addObserver(this, "xpcom-shutdown", false);
-    osvr.addObserver(this, "profile-after-change", false);
-    osvr.addObserver(this, "em-action-requested", false);
-    osvr.addObserver(this, "toplevel-window-ready", false);
+    const osvr = CC['@mozilla.org/observer-service;1'].getService(CI.nsIObserverService);
+    osvr.addObserver(this, "profile-before-change", true);
+    osvr.addObserver(this, "xpcom-shutdown", true);
+    osvr.addObserver(this, "profile-after-change", true);
+    osvr.addObserver(this, "em-action-requested", true);
+    osvr.addObserver(this, "toplevel-window-ready", true);
     if(!this.requestWatchdog) {
-      osvr.addObserver(this.requestWatchdog = new RequestWatchdog(this), "http-on-modify-request", false);
+      osvr.addObserver(this.requestWatchdog = new RequestWatchdog(this), "http-on-modify-request", true);
     }
+    
+    const dls = CC['@mozilla.org/docloaderservice;1'].getService(CI.nsIWebProgress);
+    dls.addProgressListener(this, CI.nsIWebProgress.NOTIFY_LOCATION);
   }
 ,
   unregister: function() {
-    const osvr = Components.classes['@mozilla.org/observer-service;1'].getService(
-      Components.interfaces.nsIObserverService);
+    const osvr = CC['@mozilla.org/observer-service;1'].getService(CI.nsIObserverService);
+    
+    if(this.requestWatchdog) {
+      osvr.removeObserver(this.requestWatchdog, "http-on-modify-request");
+      this.requestWatchdog = null;
+    }
+    const dls = CC['@mozilla.org/docloaderservice;1'].getService(CI.nsIWebProgress);
+    dls.removeProgressListener(this);
+    
     osvr.removeObserver(this, "profile-before-change");
     osvr.removeObserver(this, "xpcom-shutdown");
     osvr.removeObserver(this, "profile-after-change");
-    osvr.removeObserver(this, "em-action-requested", false);
-    osvr.removeObserver(this, "toplevel-window-ready", false);
-    if(this.requestWatchdog) {
-      osvr.removeObserver(this.requestWatchdog, "http-on-modify-request", false);
-      this.requestWatchdog = null;
-    }
+    osvr.removeObserver(this, "em-action-requested");
+    osvr.removeObserver(this, "toplevel-window-ready");
   },
   
   dispose: function() {
     this.prefs.removeObserver("", this);
-    this.mozJSPref.removeObserver("enabled", this, false);
+    this.mozJSPref.removeObserver("enabled", this);
     this.resetJSCaps();
-    this.uninstallGuard.dispose();
   }
 ,
   
@@ -782,9 +841,9 @@ NoscriptService.prototype ={
   
   nselNever: false,
   nselForce: true,
-  
-  filterXGetRx: "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;\\|#&`\\^\\$!\\s]",
-  filterXGetRx2Black: "",
+
+  filterXGetRx: "(?:<+(?=[^<>=\\d\\. ])|[\\\\'\"\\x00-\\x07\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F])",
+  filterXGetUserRx: "",
   
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
@@ -884,7 +943,7 @@ NoscriptService.prototype ={
         if(!this.getPref(name)) this.metaRefreshWhitelist = {};
       break;
       case "filterXGetRx":
-      case "filterXGetRx2Black":
+      case "filterXGetUserRx":
         this.updateRxPref(name, this[name], "g");
       break;
       case "filterXExceptions":
@@ -985,10 +1044,10 @@ NoscriptService.prototype ={
   },
   
   updateStyleSheet: function(sheet, enabled) {
-    const sssClass = Components.classes["@mozilla.org/content/style-sheet-service;1"];
+    const sssClass = CC["@mozilla.org/content/style-sheet-service;1"];
     if(!sssClass) return;
     
-    const sss = sssClass.getService(Components.interfaces.nsIStyleSheetService);
+    const sss = sssClass.getService(CI.nsIStyleSheetService);
     const uri = SiteUtils.ios.newURI("data:text/css," + sheet, null, null);
     if(sss.sheetRegistered(uri, sss.USER_SHEET)) {
       if(!enabled) sss.unregisterSheet(uri, sss.USER_SHEET);
@@ -1003,19 +1062,24 @@ NoscriptService.prototype ={
  
   getString: function(name, parms) { return noscriptStrings.getString(name, parms); },
   
-  uninstallGuard: new UninstallGuard("NoScript"),
   _uninstalling: false,
   get uninstalling() {
-    if(this._uninstalling) return this._uninstalling;
-    const ug=this.uninstallGuard;
-    return (this._uninstalling=(ug.uninstalling || ug.disabled))?
-      this.cleanupIfUninstalling():false;
+    return this._uninstalling;
+  },
+  set uninstalling(b) {
+    if(!this._uninstalling) {
+      if(b) this.uninstallJob();
+    } else {
+      if(!b) this.undoUninstallJob();
+    }
+    return this._uninstalling = b;
   }
 ,
   _inited: false,
   POLICY_NAME: "maonoscript",
   prefService: null,
   caps: null,
+  defaultCaps: null,
   policyPB: null,
   prefs: null,
   mozJSPref: null,
@@ -1026,27 +1090,28 @@ NoscriptService.prototype ={
     this._inited = true;
     
     
-    const prefserv=this.prefService=Components.classes["@mozilla.org/preferences-service;1"]
-      .getService(Components.interfaces.nsIPrefService).QueryInterface(Components.interfaces.nsIPrefBranch);
+    const prefserv = this.prefService = CC["@mozilla.org/preferences-service;1"]
+      .getService(CI.nsIPrefService).QueryInterface(CI.nsIPrefBranch);
     
-    const PBI=Components.interfaces.nsIPrefBranch2;
+    const PBI=CI.nsIPrefBranch2;
     this.caps = prefserv.getBranch("capability.policy.").QueryInterface(PBI);
+    this.defaultCaps = prefserv.getDefaultBranch(this.caps.root);
     this.policyPB = prefserv.getBranch("capability.policy." + this.POLICY_NAME + ".").QueryInterface(PBI);
-    this.policyPB.addObserver("sites", this, false);
+    this.policyPB.addObserver("sites", this, true);
     this.prefs = prefserv.getBranch("noscript.").QueryInterface(PBI);
-    this.prefs.addObserver("", this, false);
+    this.prefs.addObserver("", this, true);
     this.mozJSPref = prefserv.getBranch("javascript.").QueryInterface(PBI);
-    this.mozJSPref.addObserver("enabled", this, false);
+    this.mozJSPref.addObserver("enabled", this, true);
     
     this.permanentSites.sitesString = this.getPref("mandatory", "chrome: about: resource:");
     
-    const syncPrefNames = [
+    for each(var p in [
       "autoAllow",
       "allowClipboard", "allowLocalLinks",
       "blockCssScanners", "blockCrossIntranet",
       "consoleDump", "contentBlocker",
       "filterXPost", "filterXGet", 
-      "filterXGetRx", "filterXGetRx2Black", 
+      "filterXGetRx", "filterXGetUserRx", 
       "filterXExceptions",
       "forbidFlash", "forbidJava", "forbidPlugins", "forbidData",
       "forbidMetaRefresh",
@@ -1057,9 +1122,12 @@ NoscriptService.prototype ={
       "pluginPlaceholder", "showPlaceholder",
       "temp", "untrusted",
       "truncateTitle", "truncateTitleLen"
-    ];
-    for(var spcount = syncPrefNames.length; spcount-->0;) {
-      this.syncPrefs(this.prefs, syncPrefNames[spcount]);
+      ]) {
+      try {
+        this.syncPrefs(this.prefs, p);
+      } catch(e) {
+        dump("[NoScript init error] " + e + " setting " + p + "\n");
+      }
     }
     
     this.syncPrefs(this.mozJSPref, "enabled");
@@ -1072,8 +1140,7 @@ NoscriptService.prototype ={
     // this.sanitize2ndLevs();
     
     this.reloadWhereNeeded(); // init snapshot
-   
-    this.uninstallGuard.init();
+
     return true;
   },
  
@@ -1204,7 +1271,11 @@ NoscriptService.prototype ={
   }
 ,
   set jsEnabled(enabled) {
-    this.caps.setCharPref("default.javascript.enabled", enabled ? "allAccess" : "noAccess");
+    const prefName = "default.javascript.enabled";
+    try {
+      this.caps.clearUserPref("default.javascript.enabled");
+    } catch(e) {}
+    this.defaultCaps.setCharPref(prefName, enabled ? "allAccess" : "noAccess");
     this.setPref("global", enabled);
     if(enabled) {
       this.mozJSPref.setBoolPref("enabled", true);
@@ -1230,7 +1301,7 @@ NoscriptService.prototype ={
   
   getDomain: function(site) {
     try {
-      const url = (site instanceof Components.interfaces.nsIURL) ? site : SiteUtils.ios.newURI(site, null, null);
+      const url = (site instanceof CI.nsIURL) ? site : SiteUtils.ios.newURI(site, null, null);
       const host = url.host;
       return url.port == -1 && host[host.length - 1] != "." && 
             (host.lastIndexOf(".") > 0 || host == "localhost") ? host : null;
@@ -1268,8 +1339,8 @@ NoscriptService.prototype ={
 ,
 
   delayExec: function(callback, delay) {
-     const timer=Components.classes["@mozilla.org/timer;1"].createInstance(
-        Components.interfaces.nsITimer);
+     const timer = CC["@mozilla.org/timer;1"].createInstance(
+        CI.nsITimer);
      timer.initWithCallback( { notify: callback, context: this },  delay || 1, 0);
   }
 ,
@@ -1310,13 +1381,13 @@ NoscriptService.prototype ={
     
     var webNav, url;
     
-    const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
-    const nsIURL = Components.interfaces.nsIURL;
+    const nsIWebNavigation = CI.nsIWebNavigation;
+    const nsIURL = CI.nsIURL;
     const LOAD_FLAGS = nsIWebNavigation.LOAD_FLAGS_NONE;
     const untrustedReload = !this.getPref("xss.trustReloads", false);
     
-    
-    for(var browser, bi = new this.domUtils.BrowserIterator(), j; browser = bi.next();) {
+    var bi = new this.domUtils.createBrowserIterator();
+    for(var browser, j; browser = bi.next();) {
       docSites = this.getSites(browser, true);
       for(j = docSites.length; j-- > 0;) {
         prevStatus = lastGlobal || !!snapshot.matches(docSites[j]);
@@ -1354,6 +1425,8 @@ NoscriptService.prototype ={
       }
       if(currentTabOnly) break;
     }
+    bi.dispose();
+    bi = null;
     return ret;
   }
 ,
@@ -1516,15 +1589,6 @@ NoscriptService.prototype ={
     "zlg": " br "
   }
 ,
-  cleanup: function() {
-    this.cleanupIfUninstalling();
-  }
-,
-  cleanupIfUninstalling: function() {
-    if(this.uninstalling) this.uninstallJob();
-    return this.uninstalling;
-  }
-,
   eraseTemp: function() {
     this.jsPolicySites.remove(this.tempSites.sitesList, false, true); // remove temporary
     this.setJSEnabled(this.permanentSites.sitesList, true); // add permanent & save
@@ -1540,13 +1604,20 @@ NoscriptService.prototype ={
       const POLICY_NAME = this.POLICY_NAME;
       var prefArray;
       var prefString = "", originalPrefString = "";
+      var exclusive = this.getPref("excaps", true);
       try {
-        prefArray = this.splitList(prefString = originalPrefString = this.caps.getCharPref("policynames"));
+        
+        prefArray = this.splitList(prefString = originalPrefString = 
+          (this.caps.prefHasUserValue("policynames") 
+            ? this.caps.getCharPref("policynames")
+            : this.getPref("policynames") // saved value from dirty exit
+          )
+        );
         var pcount = prefArray.length;
         while(pcount-- > 0 && prefArray[pcount] != POLICY_NAME);
         if(pcount == -1) { // our policy is not installed, should always be so unless dirty exit
           this.setPref("policynames", originalPrefString);
-          if(prefArray.length == 0 || this.getPref("excaps", true)) {
+          if(exclusive || prefArray.length == 0) {
             prefString = POLICY_NAME;
           } else {
             prefArray.push(POLICY_NAME);
@@ -1559,15 +1630,15 @@ NoscriptService.prototype ={
       }
       
       this.caps.setCharPref(POLICY_NAME + ".javascript.enabled", "allAccess");
-      if(prefString != originalPrefString) { 
-        this.caps.setCharPref("policynames", prefString);
-       
-      }
       
-     
+      try {
+        this.caps.clearUserPref("policynames");
+      } catch(e) {}
+      this.defaultCaps.setCharPref("policynames", prefString);
+
       
       if(!this._observingPolicies) {
-        this.caps.addObserver("policynames", this, false);
+        this.caps.addObserver("policynames", this, true);
         this._observingPolicies = true;
       }
     } catch(ex) {
@@ -1601,17 +1672,23 @@ NoscriptService.prototype ={
           this.caps.clearUserPref("policynames");
         } catch(ex1) {}
       }
+      try {
+        this.clearUserPref("policynames");
+      } catch(ex1) {}
       this.eraseTemp();
       this.savePrefs();
     } catch(ex) {}
   }
 ,
   uninstallJob: function() {
-    this.resetJSCaps();
+    // this.resetJSCaps();
+  },
+  undoUninstallJob: function() {
+    // this.setupJSCaps();
   }
 ,
   getPref: function(name,def) {
-    const IPC = Components.interfaces.nsIPrefBranch;
+    const IPC = CI.nsIPrefBranch;
     const prefs = this.prefs;
     try {
       switch(prefs.getPrefType(name)) {
@@ -1648,7 +1725,7 @@ NoscriptService.prototype ={
     if(force || this.getPref("sound",true)) {
       var sound=this._sound;
       if(sound==null) {
-        sound=Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound);
+        sound=CC["@mozilla.org/sound;1"].createInstance(CI.nsISound);
         sound.init();
       }
       try {
@@ -1662,11 +1739,11 @@ NoscriptService.prototype ={
   readFile: function(file) {
     const cc=Components.classes;
     const ci=Components.interfaces;  
-    const is = cc["@mozilla.org/network/file-input-stream;1"].createInstance(
-          ci.nsIFileInputStream );
+    const is = CC["@mozilla.org/network/file-input-stream;1"].createInstance(
+          CI.nsIFileInputStream );
     is.init(file ,0x01, 0400, null);
-    const sis = cc["@mozilla.org/scriptableinputstream;1"].createInstance(
-      ci.nsIScriptableInputStream );
+    const sis = CC["@mozilla.org/scriptableinputstream;1"].createInstance(
+      CI.nsIScriptableInputStream );
     sis.init(is);
     const res=sis.read(sis.available());
     is.close();
@@ -1676,12 +1753,12 @@ NoscriptService.prototype ={
   writeFile: function(file, content) {
     const cc=Components.classes;
     const ci=Components.interfaces;
-    const unicodeConverter = cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(
-    ci.nsIScriptableUnicodeConverter);
+    const unicodeConverter = CC["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(
+    CI.nsIScriptableUnicodeConverter);
     unicodeConverter.charset = "UTF-8";
     content=unicodeConverter.ConvertFromUnicode(content);
-    const os=cc["@mozilla.org/network/file-output-stream;1"].createInstance(
-      ci.nsIFileOutputStream);
+    const os=CC["@mozilla.org/network/file-output-stream;1"].createInstance(
+      CI.nsIFileOutputStream);
     os.init(file, 0x02 | 0x08 | 0x20,0664,0);
     os.write(content,content.length);
     os.close();
@@ -1696,10 +1773,6 @@ NoscriptService.prototype ={
   getAllowObjectMessage: function(url, mime) {
     url = this.siteUtils.crop(url);
     return this.getString("allowTemp", [url + "\n(" + mime + ")\n"]);
-  }
-,
-  queryInterfaceSupport: function(iid,iids) { 
-    xpcom_checkInterfaces(iid, iids, Components.results.NS_ERROR_NO_INTERFACE);
   }
 ,
   lookupMethod: DOMUtils.lookupMethod,
@@ -1722,13 +1795,13 @@ NoscriptService.prototype ={
     this.safeToplevel = this.getPref("safeToplevel", true);
     if(!this.xcache) {
       this.xcache = new XCache();
-      this.mimeService = Components.classes['@mozilla.org/uriloader/external-helper-app-service;1']
-                                   .getService(Components.interfaces.nsIMIMEService);
+      this.mimeService = CC['@mozilla.org/uriloader/external-helper-app-service;1']
+                                   .getService(CI.nsIMIMEService);
     }
   },
   guessMime: function(uri) {
     try {
-      return (uri instanceof Components.interfaces.nsIURL) && uri.fileExtension && 
+      return (uri instanceof CI.nsIURL) && uri.fileExtension && 
         this.mimeService.getTypeFromExtension(uri.fileExtension) || ""; 
     } catch(e) {
       return "";
@@ -1772,7 +1845,7 @@ NoscriptService.prototype ={
           break;
         case 5:
           if(aContentLocation && aRequestOrigin && aContentLocation.spec == aRequestOrigin.spec && 
-              (aContext instanceof Components.interfaces.nsIDOMHTMLEmbedElement) &&
+              (aContext instanceof CI.nsIDOMHTMLEmbedElement) &&
               aMimeTypeGuess && this.pluginsCache.isForcedSomewhere(aContentLocation.spec, aMimeTypeGuess)) {
             return 1; // plugin document, we'll handle it in our webprogress listener
           }
@@ -1782,7 +1855,7 @@ NoscriptService.prototype ={
           
           if(aRequestOrigin && aRequestOrigin != aContentLocation) {
             
-            if(this.safeToplevel && (aContext instanceof Components.interfaces.nsIDOMChromeWindow) &&
+            if(this.safeToplevel && (aContext instanceof this.nsIDOMChromeWindow) &&
                 !(aContext.opener ||
                   aContentLocation.schemeIs("chrome") ||
                   aContentLocation.schemeIs("resource") ||
@@ -1790,6 +1863,7 @@ NoscriptService.prototype ={
                if(this.consoleDump) dump("NoScript blocked " + aContentLocation.spec + ": can't open in a toplevel window\n");
                return this.rejectCode;
             }
+            
             if(aContentLocation.schemeIs("http") || aContentLocation.schemeIs("https")) {
               if(aRequestOrigin.prePath != aContentLocation.prePath) {
                 if(aRequestOrigin.schemeIs("chrome") && aContext.ownerDocument &&
@@ -1802,7 +1876,7 @@ NoscriptService.prototype ={
                   (aContentLocation.schemeIs("data") || aContentLocation.schemeIs("javascript")) &&
                   (this.forbidData && !this.isJSEnabled(this.getSite(aRequestOrigin.spec)) ||
                       aContext && this.isNewBrowserWindow(
-                        (aContext instanceof Components.interfaces.nsIDOMWindow) 
+                        (aContext instanceof CI.nsIDOMWindow) 
                           ? aContext
                           : aContext.ownerDocument.defaultView
                        )
@@ -1811,7 +1885,13 @@ NoscriptService.prototype ={
                if(this.consoleDump & 1) 
                  dump("NoScript blocked " + aContentLocation.spec + " from " + aRequestOrigin.spec + "\n");
               return this.rejectCode;
-            }
+            } else { // work-around for bug 389106
+              var uriSpec = aContentLocation.spec.replace(/[ "]/g, encodeURIComponent);
+              if(uriSpec != aContentLocation.spec && this.getPref("fixURI", true)) { 
+                aContentLocation.spec = uriSpec;
+                if(this.consoleDump) this.dump("Fixed uri: " + aContentLocation.spec);
+              }
+            } 
           }
           
           if(((!this.forbidSomeContent)
@@ -1857,10 +1937,10 @@ NoscriptService.prototype ={
           try {
             if(aContext && (aContentType == 5 || aContentType ==7)) {
               const ci = Components.interfaces;
-              if(aContext instanceof ci.nsIDOMNode
+              if(aContext instanceof CI.nsIDOMNode
                  && this.pluginPlaceholder) {  
-                if(aContext instanceof ci.nsIDOMHTMLEmbedElement
-                    && aContext.parentNode instanceof ci.nsIDOMHTMLObjectElement) {
+                if(aContext instanceof CI.nsIDOMHTMLEmbedElement
+                    && aContext.parentNode instanceof CI.nsIDOMHTMLObjectElement) {
                   aContext = aContext.parentNode;
                 }
                 if(aMimeTypeGuess) {
@@ -1870,7 +1950,7 @@ NoscriptService.prototype ={
                     mime: aMimeTypeGuess
                   });
                   const browser = this.domUtils.findBrowserForNode(aContext);
-                  if(browser && (browser.docShell instanceof ci.nsIWebNavigation) && !browser.docShell.isLoadingDocument) {
+                  if(browser && (browser.docShell instanceof CI.nsIWebNavigation) && !browser.docShell.isLoadingDocument) {
                     browser.ownerDocument.defaultView.noscriptOverlay.syncUI(aContext.ownerDocument.defaultView);
                   }
                 }
@@ -1925,13 +2005,10 @@ NoscriptService.prototype ={
     },
     
     isForcedSomewhere: function(uri, mime) {
-      if(uri) {
-        var bi = new DOMUtils.BrowserIterator();
-        for(var b; b = bi.next();) {
-          if(this.get(b).forceAllow[uri] == mime) return true;
-        }
-      }
-      return false;
+      return uri && new DOMUtils.createBrowserIterator().find(this.forcedFilter);
+    },
+    forcedFilter: function(b) {
+      return b.__noscriptPluginsCache && b.__noscriptPluginsCache.forceAllow[uri] == mime;
     },
     
     dispose: function(browser) {
@@ -1968,7 +2045,7 @@ NoscriptService.prototype ={
   },
   
   detectJSRedirects: function(document) {
-        if(this.jsredirectIgnore) return 0;
+    if(this.jsredirectIgnore) return 0;
     try {
       if(document.links[0] || this.isJSEnabled(this.getSite(document.documentURI))) return 0;
       const scripts = document.getElementsByTagName("script");
@@ -1996,7 +2073,7 @@ NoscriptService.prototype ={
              window = document.defaultView;
              follow = window == window.top &&  this.jsredirectFollow &&
                !window.frames[0] &&
-               !document.evaluate( "//body//text()", document, null,  Components.interfaces.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+               !document.evaluate( "//body//text()", document, null,  CI.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
              document.body.appendChild(container);
           }
           url = m[1];
@@ -2032,7 +2109,7 @@ NoscriptService.prototype ={
     var scripts = document.getElementsByTagName("script");
     var scount = scripts.length;
     if(scount) {
-      const HTMLElement = Components.interfaces.nsIDOMHTMLElement;
+      const HTMLElement = CI.nsIDOMHTMLElement;
       sites.scriptCount += scount;
       var script, scriptSrc;
       var nselForce = this.nselForce && sites.length && this.isJSEnabled(sites[sites.length - 1]);
@@ -2059,7 +2136,7 @@ NoscriptService.prototype ={
   
   showNextNoscriptElement: function(script, doc) { // TODO: dexpcomize!!!
     const lm = this.lookupMethod;
-    const HTMLElement = Components.interfaces.nsIDOMHTMLElement;
+    const HTMLElement = CI.nsIDOMHTMLElement;
     for (var node = script; (node = lm(node, "nextSibling")());) {
       if(node instanceof HTMLElement) {
         if(new String(lm(node, "tagName")()).toUpperCase() != "NOSCRIPT") return;
@@ -2099,7 +2176,7 @@ NoscriptService.prototype ={
       // const xpath = "//noscript//meta[translate(self::node()/attribute::http-equiv,'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'refresh']";
       const xpath = this.metaRefreshesXPath;
       var rr = document.evaluate(xpath, document, null, 
-           Components.interfaces.nsIDOMXPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+           CI.nsIDOMXPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
       if(!rr.snapshotLength) return;
 
       var refresh, content, timeout, uri;
@@ -2126,6 +2203,7 @@ NoscriptService.prototype ={
           document.defaultView.addEventListener("pagehide", function(ev) {
               ev.currentTarget.removeEventListener("pagehide", arguments.callee, false);
               docShell.allowMetaRedirects = true;
+              document = docShell = null;
           }, false);
           this.disableMetaRefresh(docShell);
           return;
@@ -2133,7 +2211,6 @@ NoscriptService.prototype ={
       }
     } catch(e) {
       dump("[NoScript]: " + e + " processing meta refresh at " + document.documentURI + "\n");
-      debugger;
     }
     // this.enableMetaRefresh(docShell);
   },
@@ -2144,7 +2221,7 @@ NoscriptService.prototype ={
     }
     var docShell = metaRefreshInfo.docShell;
     this.enableMetaRefresh(metaRefreshInfo.docShell);
-    if(docShell instanceof Components.interfaces.nsIRefreshURI) {
+    if(docShell instanceof CI.nsIRefreshURI) {
       docShell.setupRefreshURIFromHeader(metaRefreshInfo.baseURI, "0;" + metaRefreshInfo.uri);
     }
   },
@@ -2166,7 +2243,7 @@ NoscriptService.prototype ={
     if(docShell) {
       docShell.suspendRefreshURIs();
       docShell.allowMetaRedirects = false;
-      if(docShell instanceof Components.interfaces.nsIRefreshURI) {
+      if(docShell instanceof CI.nsIRefreshURI) {
         docShell.cancelRefreshURITimers();
       }
       // if(this.consoleDump) dump("Disabled META refresh on " + (docShell.currentURI && docShell.currentURI.spec) + "\n");
@@ -2182,10 +2259,10 @@ NoscriptService.prototype ={
       
     const types = this._objectTypes || 
           (this._objectTypes = {
-            embed:  ci.nsIDOMHTMLEmbedElement, 
-            applet: ci.nsIDOMHTMLAppletElement,
-            iframe: ci.nsIDOMHTMLIFrameElement,
-            object: ci.nsIDOMHTMLObjectElement
+            embed:  CI.nsIDOMHTMLEmbedElement, 
+            applet: CI.nsIDOMHTMLAppletElement,
+            iframe: CI.nsIDOMHTMLIFrameElement,
+            object: CI.nsIDOMHTMLObjectElement
           });
 
     const htmlNS = "http://www.w3.org/1999/xhtml";
@@ -2290,10 +2367,12 @@ NoscriptService.prototype ={
   
   createDeferredPlaceHolders: function(window, replacements) {
     window.setTimeout(function() {
-        replacements.forEach(function(r) {
+        for each(r in replacements) {
           if(r.object.parentNode) r.object.parentNode.replaceChild(r.placeHolder, r.object);  
-        });
+        }
+        replacements = null;
     }, 0);
+    window = null;
   },
   
   objectClickListener: {
@@ -2321,36 +2400,49 @@ NoscriptService.prototype ={
         const browser = ns.domUtils.findBrowserForNode(anchor);
         const cache = ns.pluginsCache.get(browser);
         if(!(extras && extras.url && extras.mime && cache) ) return;
-        
-        var url = extras.url;
-        var mime = extras.mime;
-        
-        const window = browser.ownerDocument.defaultView;
-        window.setTimeout(function() {
-          if(window.noscriptUtil.confirm(ns.getAllowObjectMessage(url, mime), "confirmUnblock")) { 
-            cache.forceAllow[url] = mime;
-            var doc = anchor.ownerDocument;
-            if(mime == doc.contentType) { // stand-alone plugin
-              doc.location.reload();
-              return;
-            }
-            
-            ns.setExpando(anchor, "removedPlugin", null);
-            
-            window.setTimeout(function() { 
-              anchor.parentNode.replaceChild(object.cloneNode(true), anchor);
-            }, 0);
-          }
-        }, 0);
+       
+        var window = browser.ownerDocument.defaultView;
+        window.setTimeout(ns.objectClickListener.checkAndEnable, 0,
+          {
+            window: window,
+            url: extras.url,
+            mime: extras.mime,
+            cache: cache,
+            anchor: anchor,
+            object: object,
+            ns: ns
+          });
       } finally {
         ev.preventDefault();
       }
-    }
+    },
+    
+    checkAndEnable: function(ctx) {
+      var mime = ctx.mime;
+      var url = ctx.url;
+      if(ctx.window.noscriptUtil.confirm(
+          ctx.ns.getAllowObjectMessage(url, mime), 
+          "confirmUnblock")) { 
+        ctx.cache.forceAllow[url] = mime;
+        var doc = ctx.anchor.ownerDocument;
+        if(mime == doc.contentType) { // stand-alone plugin
+          doc.location.reload();
+        } else {
+          ctx.ns.setExpando(ctx.anchor, "removedPlugin", null);
+          ctx.window.setTimeout(function() { 
+            ctx.anchor.parentNode.replaceChild(ctx.object.cloneNode(true), ctx.anchor);
+            ctx = null;
+          }, 0);
+          return;
+        }
+      }
+      ctx = null;
+    },
+    
   },
   
   getSites: function(browser) {
     var sites = [];
-    sites.browser = browser;
     sites.scriptCount = 0;
     sites.pluginCount = 0;
     
@@ -2359,7 +2451,6 @@ NoscriptService.prototype ={
     } catch(ex) {
       if(this.consoleDump) {
         dump("[NOSCRIPT ERROR!!!] Enumerating sites: " + ex.message + "\n");
-        debugger;
       }
     }
     return sites;
@@ -2367,11 +2458,11 @@ NoscriptService.prototype ={
   
   _enumerateSites: function(browser, sites) {
     const ci = Components.interfaces;
-    const nsIWebNavigation = ci.nsIWebNavigation;
-    const nsIDocShell = ci.nsIDocShell;
+    const nsIWebNavigation = CI.nsIWebNavigation;
+    const nsIDocShell = CI.nsIDocShell;
     
     const docShells = browser.docShell.getDocShellEnumerator (
-        ci.nsIDocShellTreeItem.typeContent,
+        CI.nsIDocShellTreeItem.typeContent,
         browser.docShell.ENUMERATE_FORWARDS
     );
     
@@ -2432,15 +2523,100 @@ NoscriptService.prototype ={
     return this.sortedSiteSet(sites);
   },
   
+  
+  // nsIWebProgressListener implementation
+  onLocationChange: function(wp, aRequest, aLocation) {
+    try {
+      if(aRequest && (aRequest instanceof CI.nsIChannel) && aRequest.isPending()) {
+        
+        const ns = this;
+        const rwd = ns.requestWatchdog;
+        
+        const domWindow = rwd.findWindow(aRequest);
+        
+        if(!domWindow) return;
+        
+        const uri = aRequest.URI;
+        
+        if(domWindow && domWindow.document && domWindow.document.characterSet == "UTF-7") {
+          if((uri.schemeIs("http") || uri.schemeIs("https")) &&
+              this.getPref("utf7filter", true)) {
+            if(this.neutralizeUTF7(domWindow)) {
+              aRequest.cancel(0x804b0002);
+              return;
+            }
+          }
+        }
+
+        const topWin = domWindow == domWindow.top;
+          
+        var browser = null;
+        var overlay = null;
+        var xssInfo = null;
+        
+
+        if(topWin) {
+          
+          if(domWindow instanceof ns.nsIDOMChromeWindow) return;
+          
+          browser = ns.domUtils.findBrowserForNode(domWindow);
+          overlay = browser && browser.ownerDocument.defaultView.noscriptOverlay;
+          if(browser && overlay) {
+            overlay.initContentWindow(domWindow);
+            overlay.setMetaRefreshInfo(null, browser);
+            xssInfo = rwd.extractFromChannel(aRequest);
+            if(xssInfo) xssInfo.browser = browser;
+            rwd.unsafeReload(browser, false);
+          }
+        }
+        
+       
+        if(ns.shouldLoad(7, uri, uri, domWindow, aRequest.contentType, true) != 1) {
+          aRequest.cancel(0x804b0002);
+          if(xssInfo) overlay.notifyXSS(xssInfo);
+        } else {
+          if(topWin) {
+            if(xssInfo) overlay.notifyXSSOnLoad(xssInfo);
+            if(ns.autoAllow) {
+              var site = ns.getQuickSite(uri.spec, ns.autoAllow);
+              if(site && !ns.isJSEnabled(site)) {
+                ns.autoTemp(site);
+              }
+            }
+          }
+        }
+      }
+    } catch(e) {
+      ns.consoleDump && dump("[NoScript] " + e + "\n");
+    }
+  },
+  onStatusChange: function() {}, 
+  onStateChange: function() {}, 
+  onSecurityChange: function() {}, 
+  onProgressChange: function() {}
+  ,
+  // end nsIWebProgressListener
+  
+  neutralizeUTF7: function(window, altCharset) {
+    var ds = this.domUtils.getDocShellFromWindow(window);
+    var as = Components.classes["@mozilla.org/atom-service;1"].
+            getService(Components.interfaces.nsIAtomService);
+    ds.documentCharsetInfo.forcedCharset = as.getAtom(altCharset || "UTF-8");
+    ds.reload(ds.LOAD_FLAGS_CHARSET_CHANGE);
+    return true;
+  },
+  
 
   log: function(msg) {
-    var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-                                 .getService(Components.interfaces.nsIConsoleService);
+    var consoleService = CC["@mozilla.org/consoleservice;1"]
+                                 .getService(CI.nsIConsoleService);
     consoleService.logStringMessage(msg);
   },
   
  
-  
+  dump: function(msg) {
+    dump("[NoScript] " + msg + "\n");
+  }
 };
 
 
@@ -2484,10 +2660,9 @@ XCache.prototype = {
 function RequestWatchdog(ns) {
   this.ns = ns;
   this.siteUtils = ns.siteUtils;
-  const ci = Components.interfaces;
-  this.dns = Components.classes["@mozilla.org/network/dns-service;1"]
-                  .getService(ci.nsIDNSService);
-  this.LOAD_DOCUMENT_URI = ci.nsIChannel.LOAD_DOCUMENT_URI;
+  this.dns = CC["@mozilla.org/network/dns-service;1"]
+                  .getService(CI.nsIDNSService);
+  this.LOAD_DOCUMENT_URI = CI.nsIChannel.LOAD_DOCUMENT_URI;
 }
 
 RequestWatchdog.prototype = {
@@ -2496,7 +2671,10 @@ RequestWatchdog.prototype = {
   callback: null,
   externalLoad: null,
   noscriptReload: null,
-  LOAD_DOCUMENT_URI: Components.interfaces.nsIChannel.LOAD_DOCUMENT_URI,
+  LOAD_DOCUMENT_URI: CI.nsIChannel.LOAD_DOCUMENT_URI,
+  
+  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
+  
   getUnsafeRequest: function(browser) {
     return this.ns.getExpando(browser, "unsafeRequest");
   },
@@ -2542,10 +2720,10 @@ RequestWatchdog.prototype = {
   },
   
   extractInternalReferrer: function(channel) {
-    const ci = Components.interfaces;
+    
     try {
-      return channel.QueryInterface(ci.nsIPropertyBag2)
-        .getPropertyAsInterface("docshell.internalReferrer", ci.nsIURL);
+      return channel.QueryInterface(CI.nsIPropertyBag2)
+        .getPropertyAsInterface("docshell.internalReferrer", CI.nsIURL);
     } catch(e) {}
     return null;
   },
@@ -2556,10 +2734,9 @@ RequestWatchdog.prototype = {
   
   detectBackFrame: function(prev, next, ds) {
     if(prev.ID != next.ID) return prev.URI.spec;
-    const ci = Components.interfaces;
-    if((prev instanceof ci.nsISHContainer) &&
-       (next instanceof ci.nsISHContainer) &&
-       (ds instanceof ci.nsIDocShellTreeNode)
+    if((prev instanceof CI.nsISHContainer) &&
+       (next instanceof CI.nsISHContainer) &&
+       (ds instanceof CI.nsIDocShellTreeNode)
       ) {
       var uri;
       for(var j = Math.min(prev.childCount, next.childCount, ds.childCount); j-- > 0;) {
@@ -2604,11 +2781,9 @@ RequestWatchdog.prototype = {
   },
   
   traceBack: function(channel, breadCrumbs) {
-    
-    const ci = Components.interfaces;
     try {
       var window = this.findWindow(channel);
-      var webNav = window.top.QueryInterface(ci.nsIInterfaceRequestor).getInterface(ci.nsIWebNavigation);
+      var webNav = window.top.QueryInterface(CI.nsIInterfaceRequestor).getInterface(CI.nsIWebNavigation);
       const sh = webNav.sessionHistory;
       return sh ? this.traceBackHistory(sh, window, breadCrumbs || null) 
                 : webNav.currentURI && !webNav.currentURI.equals(channel.URI) 
@@ -2630,7 +2805,7 @@ RequestWatchdog.prototype = {
   
 
   isHome: function(url) {
-    return url instanceof Components.interfaces.nsIURL &&
+    return url instanceof CI.nsIURL &&
       this.getHomes().some(function(urlSpec) {
         try {
           return !url.getRelativeSpec(SiteUtils.ios.newURI(urlSpec, null, null));
@@ -2642,7 +2817,7 @@ RequestWatchdog.prototype = {
     var homes;
     try {
       homes = this.ns.prefService.getComplexValue(pref || "browser.startup.homepage",
-                         Components.interfaces.nsIPrefLocalizedString).data;
+                         CI.nsIPrefLocalizedString).data;
     } catch (e) {
       return pref ? [] : this.getHomes("browser.startup.homepage.override");
     }
@@ -2650,10 +2825,9 @@ RequestWatchdog.prototype = {
   }
   ,
   filterXSS: function(channel) {
-    const ci = Components.interfaces;
     const ns = this.ns;
     
-    if(!((channel instanceof ci.nsIHttpChannel) && (channel.loadFlags & this.LOAD_DOCUMENT_URI))) { 
+    if(!((channel instanceof CI.nsIHttpChannel) && (channel.loadFlags & this.LOAD_DOCUMENT_URI))) { 
       return;
     }
     
@@ -2682,7 +2856,7 @@ RequestWatchdog.prototype = {
     var originSite = null;
     
     if(!origin) {
-      if((channel instanceof ci.nsIHttpChannelInternal) && channel.documentURI) {
+      if((channel instanceof CI.nsIHttpChannelInternal) && channel.documentURI) {
         if(url.spec == channel.documentURI.spec) {
            var breadCrumbs = [url.spec];
            originSite = this.traceBack(channel, breadCrumbs);
@@ -2757,7 +2931,6 @@ RequestWatchdog.prototype = {
       return;
     }
     
-    
     if(!(globalJS || ns.isJSEnabled(targetSite))) {
       // check wildcards
       // http://url:0 matches all port except defaults
@@ -2769,6 +2942,17 @@ RequestWatchdog.prototype = {
       }
     }
     
+    if(ns.filterXExceptions) {
+      try {
+        if(ns.filterXExceptions.test(decodeURI(url.spec))) { 
+          // "safe" xss target exception
+          if(ns.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
+          return;
+        }
+      } catch(e) {}
+    }
+    
+    
     if(!originSite) { // maybe data or javascript URL?
       if(/^(?:javascript|data):/i.test(origin) && ns.getPref("xss.trustData", true)) {
         var breadCrumbs = [origin];
@@ -2779,16 +2963,24 @@ RequestWatchdog.prototype = {
         delete breadCrumbs;
       }
     }
-
+    
+    var originalAttempt;
     var injectionAttempt = false;
-    var window = null;
+    var window = this.findWindow(channel);
+    
+    // neutralize window.name-based attack
+    if(window.name && /[^\w\-\s]/.test(window.name)) {
+      originalAttempt = window.name;
+      window.name = window.name.replace(/[^\w\-\s]/g, " ");
+      ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');
+    }
+   
     if(globalJS || ns.isJSEnabled(originSite)) {
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel), channel);
       
       if(injectionAttempt = injectionCheck && (injectionCheck > 1 || ns.isTemp(originSite)) &&
           channel.requestMethod == "GET" &&
           InjectionChecker.checkURL(url.spec)) {
-        window = this.findWindow(channel);
         injectionAttempt = window == window.top; 
       }
       
@@ -2827,15 +3019,7 @@ RequestWatchdog.prototype = {
     
     
     
-    if(ns.filterXExceptions) {
-      try {
-        if(ns.filterXExceptions.test(decodeURI(url.spec))) { 
-          // "safe" xss target exception
-          if(ns.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
-          return;
-        }
-      } catch(e) {}
-    }
+    
     
     // -- DANGER ZONE --
     
@@ -2854,12 +3038,12 @@ RequestWatchdog.prototype = {
       window: window
     };
     
-    var originalAttempt;
+
     
     
 
     // transform upload requests into no-data GETs
-    if(ns.filterXPost && (channel instanceof ci.nsIUploadChannel) && channel.uploadStream) {
+    if(ns.filterXPost && (channel instanceof CI.nsIUploadChannel) && channel.uploadStream) {
       channel.requestMethod = "GET";
  
       requestInfo.unsafeRequest.postData = channel.uploadStream;
@@ -2874,13 +3058,13 @@ RequestWatchdog.prototype = {
     
     if(ns.filterXGet && ns.filterXGetRx) {
       var changes = null;
-      var xsan = new XSanitizer(ns.filterXGetRx, ns.filterXGetRx2Black);
+      var xsan = new XSanitizer(ns.filterXGetRx, ns.filterXGetUserRx);
       // sanitize referrer
       if(channel.referrer && channel.referrer.spec) {
         originalAttempt = channel.referrer.spec;
         xsan.brutal = true;
         try {
-          if(channel.referrer instanceof Components.interfaces.nsIURL) {
+          if(channel.referrer instanceof CI.nsIURL) {
             changes = xsan.sanitizeURL(channel.referrer);
           } else {
             channel.referrer.spec =  xsan.sanitizeURIComponent(originalAttempt);
@@ -2930,7 +3114,7 @@ RequestWatchdog.prototype = {
 
     if(requestInfo.xssMaybe) {
       // avoid surprises from history & cache
-      if(channel instanceof Components.interfaces.nsICachingChannel) {
+      if(channel instanceof CI.nsICachingChannel) {
         
         const CACHE_FLAGS = channel.LOAD_FROM_CACHE | 
                             channel.VALIDATE_NEVER | 
@@ -2948,7 +3132,7 @@ RequestWatchdog.prototype = {
   },
   
   abort: function(requestInfo) {
-    if(requestInfo.channel instanceof Components.interfaces.nsIRequest) {
+    if(requestInfo.channel instanceof CI.nsIRequest) {
       requestInfo.channel.cancel(0x804b0002 /* NS_BINDING_ABORTED */);
     }
     this.dump(requestInfo.channel, "Aborted - " + requestInfo.reason);
@@ -2995,17 +3179,15 @@ RequestWatchdog.prototype = {
   },
   
   attachToChannel: function(requestInfo) {
-    requestInfo.QueryInterface = function(iid) {
-      xpcom_checkInterfaces(iid, [Components.interfaces.nsISupports], Components.results.NS_ERROR_NO_INTERFACE);
-    };
+    requestInfo.QueryInterface = xpcom_generateQI([CI.nsISupports]);
     requestInfo.wrappedJSObject = requestInfo;
-    requestInfo.channel.QueryInterface(Components.interfaces.nsIWritablePropertyBag2)
+    requestInfo.channel.QueryInterface(CI.nsIWritablePropertyBag2)
       .setPropertyAsInterface("noscript.XSS", requestInfo);
   },
   extractFromChannel: function(channel) {
     try {
-      return channel.QueryInterface(Components.interfaces.nsIPropertyBag2)
-        .getPropertyAsInterface("noscript.XSS", Components.interfaces.nsISupports).wrappedJSObject;
+      return channel.QueryInterface(CI.nsIPropertyBag2)
+        .getPropertyAsInterface("noscript.XSS", CI.nsISupports).wrappedJSObject;
     } catch(e) {}
     return null;
   },
@@ -3013,8 +3195,8 @@ RequestWatchdog.prototype = {
   findWindow: function(channel) {
     try {
       return channel.notificationCallbacks.QueryInterface(
-        Components.interfaces.nsIInterfaceRequestor).getInterface(
-        Components.interfaces.nsIDOMWindow);
+        CI.nsIInterfaceRequestor).getInterface(
+        CI.nsIDOMWindow);
     } catch(e) {
       return null;
     }
@@ -3044,8 +3226,8 @@ var Entities = {
   _htmlNode: null,
   get htmlNode() {
     return this._htmlNode || (this._htmlNode = 
-      Components.classes["@mozilla.org/xul/xul-document;1"]
-        .createInstance(Components.interfaces.nsIDOMDocument)
+      CC["@mozilla.org/xul/xul-document;1"]
+        .createInstance(CI.nsIDOMDocument)
         .createElementNS("http://www.w3.org/1999/xhtml", "div")
       );
   },
@@ -3064,12 +3246,12 @@ var Entities = {
     for(var prev = null; (s = this.convertAll(s)) != prev; prev = s);
     return s;
   },
-  neutralize: function(e) {
+  neutralize: function(e, whitelist) {
     var c = this.convert(e);
-    return (c == e) ? c : e.replace(";", ",");
+    return (c == e) ? c : (whitelist && whitelist.test(c) ? e : e.replace(";", ","));
   },
-  neutralizeAll: function(s) {
-    return s.replace(/&[\w#-]*?;/g, function(e) { return Entities.neutralize(e); });
+  neutralizeAll: function(s, whitelist) {
+    return s.replace(/&[\w#-]*?;/g, function(e) { return Entities.neutralize(e, whitelist || null); });
   }
 };
 
@@ -3221,7 +3403,7 @@ var InjectionChecker = {
           this.log(iterations + ": " + errmsg + "\n" + expr + "\n---------------");
           if(errmsg.indexOf("left-hand") > 0) {
             break; // unrepairable syntax error (wrong assignment to a left-hand expression), move left cursor forward 
-          } else if((m = errmsg.match(/\bmissing (.) /))) {
+          } else if((m = errmsg.match(/\bmissing ([:\]\)]) /))) {
             len = subj.indexOf(m[1], len);
             if(len > -1) {
                expr = subj.substring(0, ++len);
@@ -3234,7 +3416,7 @@ var InjectionChecker = {
     this.log(s, t);
     return false;
   },
-
+    
   checkJSStunt: function(s) {
     // check noisy comments first
     if(/\/\*[\s\S]*\*\//.test(s)) { 
@@ -3271,11 +3453,13 @@ var InjectionChecker = {
     return (converted != s) && arguments.callee.apply(this, [converted, true]);
   },
   
-  
+  HTMLChecker: (function() {
+      const tags = "script|form|style|link|object|embed|applet|iframe|frame|base|body|meta".replace(/[a-z]/g, "\\W*$&");
+      return new RegExp("<\\W*/?(?:" + tags + 
+              ")|\\W(?:javascript|data):|[/'\"\\s\\x08]\\W*(?:FSCommand|on[a-z]{3,}[\\s\\x08]*=)|@import|-moz-binding[\\s\\S]*:[\\s\\S]*url", "gi");
+  })(),
   checkHTML: function(s) {
-    // TODO: deobfuscate...
-    return /<\W*\/?(?:\W*s\W*c\W*r\W*i\W*p\W*t|\W*f\W*o\W*r\W*m|\W*s\W*t\W*y\W*l\W*e|\W*l\W*i\W*n\W*k|\W*o\W*b\W*j\W*e\W*c\W*t|\W*a\W*p\W*p\W*l\W*e\W*t|\W*i\W*f\W*r\W*a\W*m\W*e|\W*b\W*a\W*s\W*e|\W*f\W*r\W*a\W*m\W*e\W*s\W*e\W*t|\W*b\W*o\W*d\W*y|\W*m\W*e\W*t\W*a)|\W(?:\javascript|data):|[\/'"\s\x08]\W*(?:FSCommand|on[a-z]{3,}[\s\x08]*=)|@import|-moz-binding[\s\S]*:[\s\S]*url/i
-      .test(s);
+    return this.HTMLChecker.test(s);
   },
   
   checkURL: function(url, depth) {
@@ -3325,9 +3509,9 @@ var InjectionChecker = {
 
 
 
-function XSanitizer(negatedWhitelist, blacklist) {
-  this.negatedWhitelist = negatedWhitelist;
-  this.blacklist = blacklist;
+function XSanitizer(primaryBlacklist, extraBlacklist) {
+  this.primaryBlacklist = primaryBlacklist;
+  this. extraBlacklist = extraBlacklist;
 }
 
 XSanitizer.prototype = {
@@ -3341,7 +3525,7 @@ XSanitizer.prototype = {
     if(url.password) url.password = this.sanitizeEnc(url.password);
     url.host = this.sanitizeEnc(url.host);
     
-    if(url instanceof Components.interfaces.nsIURL) {
+    if(url instanceof CI.nsIURL) {
       // sanitize path
      
       if(url.param) {
@@ -3350,7 +3534,7 @@ XSanitizer.prototype = {
         url.filePath = this.sanitizeURIComponent(url.filePath); // true == lenient == allow ()=
       }
       // sanitize query
-      if(url.query) url.query = this.sanitizeXQuery(url.query, changes);
+      if(url.query) url.query = this.sanitizeQuery(url.query, changes);
       // sanitize fragment
       var fragPos = url.path.indexOf("#");
       if(url.ref || fragPos > -1) {
@@ -3366,7 +3550,7 @@ XSanitizer.prototype = {
     }
     
     var urlSpec = url.spec;
-    var neutralized = Entities.neutralizeAll(urlSpec);
+    var neutralized = Entities.neutralizeAll(urlSpec, /[^\\'"\x00-\x07\x09\x0B\x0C\x0E-\x1F\x7F<>]/);
     if(urlSpec != neutralized) url.spec = neutralized;
     
     if(url.getRelativeSpec(original) && unescape(url.spec) != unescape(original.spec)) { // ok, this seems overkill but take my word, the double check is needed
@@ -3382,10 +3566,13 @@ XSanitizer.prototype = {
   },
   
   
-  sanitizeXQuery: function(query, changes) {
+  sanitizeQuery: function(query, changes, sep) {
     // replace every character matching noscript.filterXGetRx with a single ASCII space (0x20)
     changes = changes || {};
-    const parms = query.split(/[&;]/);
+    if(!sep) {
+      sep = query.indexOf("&") > -1 ? "&" : ";" 
+    }
+    const parms = query.split(sep);
     var j, pieces, k, pz, origPz, encodedPz, nestedURI, qpos, apos;
     
     for(j = parms.length; j-- > 0;) {
@@ -3397,7 +3584,7 @@ XSanitizer.prototype = {
           if(/^https?:\/\//i.test(pz)) {
             // try to sanitize as a nested URL
             try {
-              nestedURI = SiteUtils.ios.newURI(pz, null, null).QueryInterface(Components.interfaces.nsIURL);
+              nestedURI = SiteUtils.ios.newURI(pz, null, null).QueryInterface(CI.nsIURL);
               changes.qs = changes.qs || this.sanitizeURL(nestedURI).major;
               pz = nestedURI.spec;
             } catch(e) {
@@ -3412,11 +3599,11 @@ XSanitizer.prototype = {
               // recursive query string?
               if(qpos > -1 && spos > qpos) {
                 // recursively sanitize it as a whole qs
-                pz = this.sanitizeXQuery(pz, changes);
+                pz = this.sanitizeQuery(pz, changes);
               } else {
                 // split, sanitize and rejoin
                 pz = [ this.sanitize(pz.substring(0, qpos)), 
-                       this.sanitizeXQuery(pz.substring(qpos + 1), changes)
+                       this.sanitizeQuery(pz.substring(qpos + 1), changes)
                      ].join("?")
               }
             } else {
@@ -3427,17 +3614,13 @@ XSanitizer.prototype = {
           
           pieces[k] = encodedPz.indexOf("+") > - 1 ? escape(pz) : encodeURIComponent(pz);
         }
-        if(j > 0 && pieces.length == 1 && j == parms.length - 1) {
-          // avoid "&" separator to be used as an entity escape if site rewrites this URL 
-          pieces.push("");
-        }
         parms[j] = pieces.join("=");
       } catch(e) { 
         // decoding exception, skip this param
         parms.splice(j, 1);
       }
     }
-    return parms.join("&");
+    return parms.join(sep);
   },
   
   sanitizeURIComponent: function(s) {
@@ -3466,7 +3649,7 @@ XSanitizer.prototype = {
       // All the other non alphanumeric chars (aside double quotes) are ignored.
       // We will preserve the site: modifier as well
       // Ref.: http://www.google.com/help/refinesearch.html
-      s = s.replace(/[^\w\$\+\.\~" :]/g, 
+      s = s.replace(/[^\w\$\+\.\~"&;\- :\u0080-\uffff]/g, 
           " " // strip everything but alphnum and operators
           ).replace(":", 
           function(k, pos, s) { // strip colons as well, unless it's the site: operator
@@ -3477,21 +3660,12 @@ XSanitizer.prototype = {
       return s;
     }
     // regular duty
-    s = s.replace(this.negatedWhitelist, " ");
-    
-    /*
-    if(s.indexOf("+") > -1) { 
-      // Anti UTF-7, effective but likely too much drastic.
-      // Investigate on-the-fly charset detection for future versions,
-      // as this kind of attack is *very* unlikely to work in default Firefox setup
-      s.replace(/\+\w+/g, function(m) { return m.replace(/A/g, "a"); });
-    }
-    */
+    s = s.replace(this.primaryBlacklist, " ");
     
     s = s.replace(/javascript\s*:+|data\s*:+|-moz-binding|@import/ig, function(m) { return m.replace(/\W/g, " "); });
     
-    if(this.blacklist) { // additional user-defined blacklist for emergencies
-      s = s.replace(this.blacklist, " "); 
+    if(this.extraBlacklist) { // additional user-defined blacklist for emergencies
+      s = s.replace(this.extraBlacklist, " "); 
     }
     
     if(this.brutal) { // injection checks were positive
@@ -3501,107 +3675,4 @@ XSanitizer.prototype = {
     return s;
   }
 };
-
-
-// XPCOM Scaffolding code
-
-// component defined in this file
-const EXTENSION_ID="{73a6fe31-595d-460b-a920-fcc0f8843232}";
-const SERVICE_NAME="NoScript Service";
-const SERVICE_ID="{31aec909-8e86-4397-9380-63a59e0c5ff5}";
-const SERVICE_CTRID = "@maone.net/noscript-service;1";
-const SERVICE_CONSTRUCTOR=NoscriptService;
-
-const SERVICE_CID = Components.ID(SERVICE_ID);
-
-// interfaces implemented by this component
-const SERVICE_IIDS = 
-[ 
-Components.interfaces.nsIObserver,
-Components.interfaces.nsISupports,
-Components.interfaces.nsISupportsWeakReference,
-Components.interfaces.nsIContentPolicy
-];
-
-// categories which this component is registered in
-const SERVICE_CATS = ["app-startup","content-policy"];
-
-
-// Factory object
-const SERVICE_FACTORY = {
-  _instance: null,
-  createInstance: function (outer, iid) {
-    if (outer != null)
-        throw Components.results.NS_ERROR_NO_AGGREGATION;
-
-    xpcom_checkInterfaces(iid,SERVICE_IIDS,Components.results.NS_ERROR_INVALID_ARG);
-    // kept this for flexibility sake, but we're really adopting an
-    // early instantiation and late init singleton pattern
-    return this._instance==null?this._instance=new SERVICE_CONSTRUCTOR():this._instance;
-  }
-};
-
-function xpcom_checkInterfaces(iid,iids,ex) {
-  for(var j=iids.length; j-- >0;) {
-    if(iid.equals(iids[j])) return true;
-  }
-  throw ex;
-}
-
-// Module
-
-var Module = new Object();
-Module.firstTime=true;
-Module.registerSelf = function (compMgr, fileSpec, location, type) {
-  if(this.firstTime) {
-   
-    debug("*** Registering "+SERVICE_CTRID+".\n");
-    
-    compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar
-      ).registerFactoryLocation(SERVICE_CID,
-      SERVICE_NAME,
-      SERVICE_CTRID, 
-      fileSpec,
-      location, 
-      type);
-    const catman = Components.classes['@mozilla.org/categorymanager;1'
-      ].getService(Components.interfaces.nsICategoryManager);
-    for(var j=0, len=SERVICE_CATS.length; j<len; j++) {
-      catman.addCategoryEntry(SERVICE_CATS[j],
-        //SERVICE_NAME, "service," + SERVICE_CTRID, 
-        SERVICE_CTRID, SERVICE_CTRID, true, true, null);
-    }
-    this.firstTime=false;
-  } 
-}
-Module.unregisterSelf = function(compMgr, fileSpec, location) {
-  compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar
-    ).unregisterFactoryLocation(SERVICE_CID, fileSpec);
-  const catman = Components.classes['@mozilla.org/categorymanager;1'
-      ].getService(Components.interfaces.nsICategoryManager);
-  for(var j = 0, len=SERVICE_CATS.length; j<len; j++) {
-    catman.deleteCategoryEntry(SERVICE_CATS[j], SERVICE_CTRID, true);
-  }
-}
-
-Module.getClassObject = function (compMgr, cid, iid) {
-  if(cid.equals(SERVICE_CID))
-    return SERVICE_FACTORY;
-
-  if (!iid.equals(Components.interfaces.nsIFactory))
-    throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-  
-  throw Components.results.NS_ERROR_NO_INTERFACE;
-    
-}
-
-Module.canUnload = function(compMgr) {
-  return true;
-}
-
-// entrypoint
-function NSGetModule(compMgr, fileSpec) {
-  return Module;
-}
-
 

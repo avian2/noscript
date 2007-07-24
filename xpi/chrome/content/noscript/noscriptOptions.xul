@@ -119,7 +119,7 @@
   <label value="&noscriptWebAddress;"/>
   <hbox align="center">
     <textbox id="urlText" flex="1" oninput="nsopt.urlChanged()"/> 
-    <button disabled="true" id="addButton" label="&noscriptAllow;" 
+    <button disabled="false" id="addButton" label="&noscriptAllow;" 
       accesskey="&noscriptAllow.accesskey;" 
       oncommand="nsopt.allow()"/>
   </hbox>
@@ -133,7 +133,7 @@
   </listbox>
   <separator class="thin"/>
   <hbox>
-    <button id="removeButton" disabled="true" label="&noscriptRemoveSelected;" oncommand="nsopt.remove()"/>
+    <button id="removeButton" disabled="false" label="&noscriptRemoveSelected;" oncommand="nsopt.remove()"/>
     <spacer flex="1" />
     <button id="importButton" label="&noscriptImport;" accesskey="&noscriptImport.accesskey;" 
       oncommand="nsopt.importExport('import')"/>

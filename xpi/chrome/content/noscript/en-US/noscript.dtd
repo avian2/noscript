@@ -5,7 +5,7 @@
 <!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
 <!ENTITY noscriptWebAddress "Address of web site:">
 <!ENTITY noscriptAllow "Allow">
-<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptAllow.accesskey "l">
 <!ENTITY noscriptForbid "Forbid">
 <!ENTITY noscriptForbid.accesskey "F">
 <!ENTITY noscriptTrust "Mark as Trusted">

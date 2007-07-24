@@ -101,6 +101,8 @@ function _noScript_patchPCMethod(m) {
 
 function _noScript_BM_install(ev) {
   ev.currentTarget.removeEventListener("load", arguments.callee, false);
+  if(!noscriptUtil.service) return;
+  
   if(window.BookmarksCommand) {
     BookmarksCommand._noScript_BM_openOneBookmark_original = BookmarksCommand.openOneBookmark;
     BookmarksCommand.openOneBookmark = _noScript_BM_openOneBookmark;

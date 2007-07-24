@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.1.6.02";
+const APP_VERSION = "1.1.6.06";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
@@ -65,11 +65,11 @@ function myPerformInstall(secondTry) {
     }
     registerChrome(SKIN | chromeFlag, jar, "skin/classic/noscript/");
     
-    
+    var xpcomError = SUCCESS;
     if(APP_XPCOM_SERVICE) {
       var componentsDir = getFolder("Components");
-      addFile(APP_PACKAGE,APP_VERSION, APP_XPCOM_SERVICE, componentsDir, null, true);
-      addFile(APP_NAME, ".autoreg", getFolder("Program"), "");
+      err = addFile(APP_NAME, ".autoreg", getFolder("Program"), "");
+      xpcomError = addFile(APP_PACKAGE,APP_VERSION, APP_XPCOM_SERVICE, componentsDir, null, true);
     }
     
     err = performInstall();
@@ -80,7 +80,14 @@ function myPerformInstall(secondTry) {
       return;
     }
     if(err == SUCCESS || err == 999) {
-      alert(APP_DISPLAY_NAME+" "+APP_VERSION+" has been succesfully installed.\n"+APP_SUCCESS_MESSAGE);
+      if(xpcomError != SUCCESS) {
+        alert("*** WARNING: PARTIAL INSTALLATION ***\n" +
+              "A component requiring permissions to write in the SeaMonkey program directory couldn't be installed.\n"+
+              "You will need either to reinstall " + APP_DISPLAY_NAME + " once as Administrator / root or install SeaMonkey in an user-writable location.");
+        err = xpcomError;
+      } else {
+        alert(APP_DISPLAY_NAME+" "+APP_VERSION+" has been succesfully installed.\n"+APP_SUCCESS_MESSAGE);
+      }
     } else {
       var msg = "Install failed!!! Error code:" + err;
 

@@ -1,4 +1,4 @@
-const noscriptUtil = {
+var noscriptUtil = {
   chromeBase: "chrome://noscript/content/",
   chromeName: "noscript",
   _service: null, 
@@ -16,8 +16,6 @@ const noscriptUtil = {
     }
     if(s != null) {
       s.init();
-    } else {
-      s = { uninstalling: true };
     }
     return this._service = s;
   }, 

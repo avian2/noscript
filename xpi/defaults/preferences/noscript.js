@@ -70,8 +70,8 @@ pref("noscript.xss.trustTemp", true);
 
 pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
-pref("noscript.filterXGetRx", "[^\\w:\\/\\.\\-\\+\\*\\=\\(\\)\\[\\]\\{\\}~,@;\\|#&`\\^\\$!\\s]");
-pref("noscript.filterXGetRx2Black", "");
+pref("noscript.filterXGetRx", "(?:<+(?=[^<>=\\d\\. ])|[\\\\'\"\\x00-\\x07\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F])");
+pref("noscript.filterXGetUserRx", "");
 pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.[a-z\\.]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
 pref("noscript.injectionCheck", 2);
 pref("noscript.injectionCheck.timeout", 800);
@@ -88,6 +88,11 @@ pref("noscript.jsredirectIgnore", false);
 pref("noscript.jsredirectFollow", true);
 
 pref("noscript.safeToplevel", true);
+pref("noscript.utf7filter", true);
+
+pref("noscript.badInstall", false);
+
+pref("noscript.fixURI", true);
 
 
 

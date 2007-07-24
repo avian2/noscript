@@ -36,7 +36,7 @@ var nsopt = {
     this.utils = new UIUtils(ns);
     this.utils.resumeTabSelections();
     
-    const widgets = ["urlText", "urlText","urlList","jsglobal","addButton","removeButton"];
+    const widgets = ["urlText", "urlText","urlList", "jsglobal", "addButton", "removeButton"];
     for(var j = widgets.length; j-- > 0;) 
       this[widgets[j]] = document.getElementById(widgets[j]); 
     
@@ -96,7 +96,9 @@ var nsopt = {
     
     // document.getElementById("policy-tree").view = policyModel;
     window.sizeToContent();
-      
+    
+    this.addButton.setAttribute("enabled", "false");
+    this.removeButton.setAttribute("enabled", "false");
   },
   
   reset: function() {

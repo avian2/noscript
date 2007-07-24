@@ -1,4 +1,33 @@
 NoScript ChangeLog
+
+v 1.1.6.06
+=====================================================================
+x Early protection against URL protocol handling exploitation (see
+  http://tinyurl.com/37o23j and Mozilla bug 389106)
+x Fix to ampersand being sometimes escaped by anti-XSS filters
+
+v 1.1.6.05
+=====================================================================
++ Protection against UTF-7 encoded XSS attacks
+x Improved plugin content blocking in background tabs
+x Better XSS query string processing preserves "exotic" patterns
+
+v 1.1.6.04
+=====================================================================
++ Smarter Anti-XSS filters allowing non-latin characters
+x Kill duplicates in "Partially allowed" statistics
+x Switched to getDefaultBranch() for volatile CAPS preferences in
+  order to grant a clean "Safe Mode" even after Firefox crashes 
+  (thanks Benjamin Smedberg for suggestion)
+
+v 1.1.6.03
+=====================================================================
++ Allowed sites and partial counts in the infobar when scripts are
+  "Partially allowed" (timeless suggestion)
++ Window.name payload attacks neutralization
+x Fixed over-optimization of JS detection relying on syntax errors
+x Fixed "Allow" button shortcut not working in NoScript Options
+
 v 1.1.6.02
 =====================================================================
 x Fixed "Unresponsive Script" on specific complex URL patterns
@@ -7,7 +36,7 @@ x Fixed "Unresponsive Script" on specific complex URL patterns
 v 1.1.6.01
 =====================================================================
 x Fixed "Clear private data" window not closing if you hit "OK" on
-  browser exit with Firefox < 3.0 (thanks VT first report)
+  browser exit with Firefox < 3.0 (thanks VT for first report)
 
 v 1.1.6
 =====================================================================
