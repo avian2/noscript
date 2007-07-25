@@ -695,7 +695,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.1.6.06",
+  VERSION: "1.1.6.07",
   
   get wrappedJSObject() {
     return this;
@@ -1093,6 +1093,7 @@ NoscriptService.prototype = {
     const prefserv = this.prefService = CC["@mozilla.org/preferences-service;1"]
       .getService(CI.nsIPrefService).QueryInterface(CI.nsIPrefBranch);
     
+      
     const PBI=CI.nsIPrefBranch2;
     this.caps = prefserv.getBranch("capability.policy.").QueryInterface(PBI);
     this.defaultCaps = prefserv.getDefaultBranch(this.caps.root);
@@ -1104,6 +1105,8 @@ NoscriptService.prototype = {
     this.mozJSPref.addObserver("enabled", this, true);
     
     this.permanentSites.sitesString = this.getPref("mandatory", "chrome: about: resource:");
+    
+    this.captureExternalProtocols();
     
     for each(var p in [
       "autoAllow",
@@ -1132,6 +1135,7 @@ NoscriptService.prototype = {
     
     this.syncPrefs(this.mozJSPref, "enabled");
     
+
     this.setupJSCaps();
     
     // init jsPolicySites from prefs
@@ -1143,7 +1147,29 @@ NoscriptService.prototype = {
 
     return true;
   },
- 
+  
+  captureExternalProtocols: function() {
+    try {
+      const ph = this.prefService.getDefaultBranch("network.protocol-handler.");
+      if(this.getPref("fixURI", true)) {
+        try {
+          ph.setBoolPref("expose-all", true);
+        } catch(e1) {}
+        var prots = [];
+        for each(var key in ph.getChildList("expose.", {})) {
+          try {
+            ph.setBoolPref(key, true);
+            prots.push(key.replace("expose.", ""));
+            if(ph.hasUserPref(key)) ph.clearUserPref(key);
+          } catch(e1) {}
+        }
+        if(prots.length) this.extraCapturedProtocols = prots;
+      }
+    } catch(e) {}
+  },
+  
+  extraCapturedProtocols: null,
+  
   sanitize2ndLevs: function() {
     const rx = /(?:^| )([^ \.:]+\.\w+)(?= |$)(?!.*https:\/\/\1)/g
     const doms = [];
@@ -2969,7 +2995,7 @@ RequestWatchdog.prototype = {
     var window = this.findWindow(channel);
     
     // neutralize window.name-based attack
-    if(window.name && /[^\w\-\s]/.test(window.name)) {
+    if(window && window.name && /[^\w\-\s]/.test(window.name)) {
       originalAttempt = window.name;
       window.name = window.name.replace(/[^\w\-\s]/g, " ");
       ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');

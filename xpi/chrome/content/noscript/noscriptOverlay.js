@@ -1255,6 +1255,9 @@ var noscriptOverlay = noscriptUtil.service ?
     self: function() { return this; },
     openURI: function(aURI, aOpener, aWhere, aContext) {
       const ns = noscriptUtil.service;
+
+      if(!aURI && ns.extraCapturedProtocols) return aOpener || window.content;
+
       var external = aContext == Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL && aURI;
       if(external) {
         if(aURI.schemeIs("http") || aURI.schemeIs("https")) {
@@ -1267,6 +1270,10 @@ var noscriptOverlay = noscriptUtil.service ?
              ns.log(err);
              throw err;
            }
+        }
+      } else {
+        if(ns.extraCapturedProtocols && ns.extraCapturedProtocols.indexOf(aURI.scheme) > -1) {
+          return aOpener || window.content;
         }
       }
       var w = null;

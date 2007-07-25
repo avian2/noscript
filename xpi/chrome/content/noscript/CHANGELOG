@@ -1,5 +1,12 @@
 NoScript ChangeLog
 
+v 1.1.6.07
+=====================================================================
+x Further refinement of URL protocol handler protection to cope with
+  special configuration-depending cases with mail/news protocols 
+  (not affecting SeaMonkey) - thanks Rios and McFeters for generic
+  PoC, thanks Darkdata for specific test case
+
 v 1.1.6.06
 =====================================================================
 x Early protection against URL protocol handling exploitation (see
