@@ -1,4 +1,8 @@
 NoScript ChangeLog
+v 1.1.6.08
+=====================================================================
+x Fix for popup content loaded in the opener window regression (from
+  mail/news exploitation protection)
 
 v 1.1.6.07
 =====================================================================

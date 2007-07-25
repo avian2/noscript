@@ -695,7 +695,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.1.6.07",
+  VERSION: "1.1.6.08",
   
   get wrappedJSObject() {
     return this;
