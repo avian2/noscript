@@ -1,4 +1,27 @@
 NoScript ChangeLog
+
+v 1.1.6.12
+=====================================================================
++ URI Validator facility for on-demand protection against URI-based
+  exploits. You can add your uri-validator anchored regular
+  expressions as an about:config preference named like
+  "noscript.urivalid.protocolname" to validate the URI substring
+  immediately following scheme + colon (see the noscript.urivalid.aim 
+  pre-configured example entry)
+x Minor change in query string parser, it doesn't drop "=" splitted
+  chunks exceeding the first two anymore
+
+v 1.1.6.11
+=====================================================================
++ Optional blocking of tracking images (also known as "Web Bugs")
+  embedded inside NOSCRIPT tags: it can be enable through the
+  noscript.blockNSWB about:config property (thanks lakrids/Arimfe)
+
+v 1.1.6.10
+=====================================================================
+x Fixed extension conflict leading to javascript: links not opening 
+  under some circumstances (thanks england and haklin)
+
 v 1.1.6.08
 =====================================================================
 x Fix for popup content loaded in the opener window regression (from

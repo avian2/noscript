@@ -94,6 +94,10 @@ pref("noscript.badInstall", false);
 
 pref("noscript.fixURI", true);
 
+pref("noscript.blockNSWB", false);
 
+pref("noscript.urivalid.aim", "\\w[^\\\\\?&\\x00-\\x1f#]*(?:\\?[^\\\\\\x00-\\x1f#]*(?:#[\\w\\-\\.\\+@]{2,32})?)?");
+
+pref("noscript.forbidExtProtSubdocs", true);
 
 
