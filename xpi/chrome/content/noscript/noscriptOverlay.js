@@ -916,7 +916,7 @@ var noscriptOverlay = noscriptUtil.service ?
         this.notificationHide(); 
       }
       if(!doc._NoScript_soundPlayed) {
-        ns.playSound(ns.getPref("sound.block"));
+        ns.soundNotify(window.content.location.href);
         doc._NoScript_soundPlayed = true;
       }
     } else {
@@ -1224,6 +1224,8 @@ var noscriptOverlay = noscriptUtil.service ?
        }
     }
   },
+  
+ 
   
   wrapBrowserAccess: function() { // called onload
     if(!window.nsBrowserAccess) {

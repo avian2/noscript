@@ -7,6 +7,7 @@ pref("noscript.autoReload.useHistory.exceptCurrent", true);
 pref("noscript.ctxMenu", true);
 pref("noscript.statusIcon", true);
 pref("noscript.sound", false);
+pref("noscript.sound.oncePerSite", true);
 pref("noscript.notify", true);
 pref("noscript.notify.bottom", true);
 pref("noscript.showAddress", false);
@@ -72,7 +73,7 @@ pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
 pref("noscript.filterXGetRx", "(?:<+(?=[^<>=\\d\\. ])|[\\\\'\"\\x00-\\x07\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F])");
 pref("noscript.filterXGetUserRx", "");
-pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.[a-z\\.]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
+pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
 pref("noscript.injectionCheck", 2);
 pref("noscript.injectionCheck.timeout", 800);
 pref("noscript.injectionCheck.loops", 20);
@@ -93,6 +94,7 @@ pref("noscript.utf7filter", true);
 pref("noscript.badInstall", false);
 
 pref("noscript.fixURI", true);
+pref("noscript.fixURI.exclude", "");
 
 pref("noscript.blockNSWB", false);
 
@@ -100,4 +102,5 @@ pref("noscript.urivalid.aim", "\\w[^\\\\\?&\\x00-\\x1f#]*(?:\\?[^\\\\\\x00-\\x1f
 
 pref("noscript.forbidExtProtSubdocs", true);
 
+pref("noscript.forbidChromeScripts", true);
 

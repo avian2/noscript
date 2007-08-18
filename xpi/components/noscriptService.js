@@ -577,10 +577,10 @@ PolicySites.prototype = {
   _sitesMap: null,
   get sitesMap() {
     if(!this._sitesMap) {
-      const sm={};
+      const sm = {};
       const sl = SiteUtils.splitString(this.sitesString);
       if(sl) {
-        for(var j = sl.length; j-->0;) {
+        for(var j = sl.length; j-- > 0;) {
           sm[sl[j]] = true;
         }
       }
@@ -596,8 +596,8 @@ PolicySites.prototype = {
     }
     
     this._sitesString = SiteUtils.set2string(SiteUtils.sort(sl));
-    this._sitesList=null;
-    return this._sitesMap=sm;
+    this._sitesList = null;
+    return this._sitesMap = sm;
   }
 ,
   fromPref: function(pref) {
@@ -734,7 +734,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.1.6.12",
+  VERSION: "1.1.6.15",
   
   get wrappedJSObject() {
     return this;
@@ -878,6 +878,8 @@ NoscriptService.prototype = {
   forbidPlugins: false,
   forbidData: true,
   
+  forbidChromeScripts: true,
+  
   injectionCheck: 2,
   
   jsredirectIgnore: false,
@@ -947,11 +949,11 @@ NoscriptService.prototype = {
       case "forbidFlash":
       case "forbidPlugins":
       case "forbidData":
+      case "forbidChromeScripts":
         this[name]=this.getPref(name, this[name]);
-        var fsp = this.forbidSomeContent;
-        this.forbidSomeContent = this.forbidJava || this.forbidFlash || this.forbidPlugins || this.forbidData;
+        this.forbidSomeContent = this.forbidJava || this.forbidFlash || this.forbidPlugins;
         this.forbidAllContent = this.forbidJava && this.forbidFlash && this.forbidPlugins;
-        if(fsp != this.forbidSomeContent) this.initContentPolicy();
+
       break;
       
       case "filterXPost":
@@ -959,8 +961,6 @@ NoscriptService.prototype = {
       case "blockCssScanners":
       case "blockXIntranet":
       case "safeToplevel":
-        this.initContentPolicy();
-        
       case "autoAllow":
       case "consoleDump":
       case "contentBlocker":
@@ -975,7 +975,7 @@ NoscriptService.prototype = {
         this[name] = this.getPref(name, this[name]);
         switch(name) {
           case "consoleDump":
-            InjectionChecker.logEnabled = !!this.consoleDump;
+            this.injectionChecker.logEnabled = !!this.consoleDump;
           break;
         }
       break;
@@ -1308,9 +1308,19 @@ NoscriptService.prototype = {
 ,
   checkShorthands: function(site, map) {
     map = map || this.jsPolicySites.sitesMap;
-    // port matching, with "0" as wildcard port
-    if(/:\d+$/.test(site) && map[site.replace(/\d+$/, "0")]) return true;
-    
+    // port matching, with "0" as port wildcard  and * as nth level host wildcard
+    if(/:\d+$/.test(site)) {
+      var key = site.replace(/\d+$/, "0");
+      if(map[key]) return true;
+      var keys = key.split(".");
+      if(keys.length > 1) {
+        var prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
+        while(keys.length > 2) {
+          keys.shift();
+          if(map[prefix + keys.join(".")]) return true;
+        }
+      }
+    }
     // check IP leftmost portion up to 2nd byte (e.g. 192.168 or 10.0.0)
     var m = site.match(/^(https?:\/\/((\d+\.\d+)\.\d+))\.\d+(?:\d|$)/);
     return m && (map[m[1]] || map[m[2]] || map[m[3]]);
@@ -1475,7 +1485,7 @@ NoscriptService.prototype = {
           webNav = browser.webNavigation;
           url = webNav.currentURI;
           if(url.schemeIs("http") || url.schemeIs("https")) {
-            this.requestWatchdog.noscriptReload = url;
+            this.requestWatchdog.noscriptReload = url.spec;
           }
           try {
             webNav = webNav.sessionHistory.QueryInterface(nsIWebNavigation);
@@ -1798,10 +1808,10 @@ NoscriptService.prototype = {
   }
 ,
   _sound: null,
-  playSound: function(url,force) {
+  playSound: function(url, force) {
     if(force || this.getPref("sound",true)) {
-      var sound=this._sound;
-      if(sound==null) {
+      var sound = this._sound;
+      if(sound == null) {
         sound=CC["@mozilla.org/sound;1"].createInstance(CI.nsISound);
         sound.init();
       }
@@ -1811,6 +1821,15 @@ NoscriptService.prototype = {
         //dump(ex);
       }
     }
+  },
+  _soundNotified: {},
+  soundNotify: function(url) {
+    if(this.getPref("sound.oncePerSite")) {
+      const site = this.getSite(url);
+      if(this._soundNotified[site]) return;
+      this._soundNotified[site] = true;
+    }
+    this.playSound(this.getPref("sound.block"));
   }
 ,
   readFile: function(file) {
@@ -1867,7 +1886,7 @@ NoscriptService.prototype = {
     this.shouldProcess = delegate.shouldProcess;
     this.rejectCode = typeof(/ /) == "object" ? -4 : -3;
     this.safeToplevel = this.getPref("safeToplevel", true);
-    if(!this.xcache) {
+    if(!this.mimeService) {
       this.xcache = new XCache();
       this.mimeService = CC['@mozilla.org/uriloader/external-helper-app-service;1']
                                    .getService(CI.nsIMIMEService);
@@ -1889,13 +1908,18 @@ NoscriptService.prototype = {
     return mime && mime.enabledPlugin || null;
   },
   // nsIContentPolicy interface
-  // we use numeric constants for performance sake:
+  // we use numeric constants for performance sake: 
+  // nsIContentPolicy.TYPE_OTHER = 1
   // nsIContentPolicy.TYPE_SCRIPT = 2
   // nsIContentPolicy.TYPE_IMAGE = 3
   // nsIContentPolicy.TYPE_OBJECT = 5
   // nsIContentPolicy.TYPE_DOCUMENT = 6
   // nsIContentPolicy.TYPE_SUBDOCUMENT = 7
   // nsIContentPolicy.TYPE_REFRESH = 8
+  // nsIContentPolicy.TYPE_XBL = 9
+  // nsIContentPolicy.TYPE_PING = 10
+  // nsIContentPolicy.TYPE_XMLHTTPREQUEST = 11
+  // nsIContentPolicy.TYPE_OBJECT_SUBREQUEST = 12
   // nsIContentPolicy.REJECT_SERVER = -3
   // nsIContentPolicy.ACCEPT = 1
   
@@ -1912,10 +1936,15 @@ NoscriptService.prototype = {
           + "\n");
       }
       
-      var url, forbid, isJS, isFlash, isJava, mustAsk;
+      var url, forbid, isJS, isFlash, isJava, mustAsk, scheme;
 
       switch(aContentType) {
         case 2:
+          scheme = aContentLocation.scheme;
+          if(this.forbidChromeScripts && scheme == "chrome" && 
+            aRequestOrigin && !/^(?:chrome|resource|file)$/.test(aRequestOrigin.scheme)) {
+            return this.rejectCode;
+          }
           forbid = isJS = true;
           break;
         case 3:
@@ -1943,9 +1972,10 @@ NoscriptService.prototype = {
           if(!aMimeTypeGuess) aMimeTypeGuess = this.guessMime(aContentLocation);
           
         case 6:
+          scheme = aContentLocation.scheme;
           
           if(aRequestOrigin && aRequestOrigin != aContentLocation) {
-            var scheme = aContentLocation.scheme;
+            
             if(this.safeToplevel && (aContext instanceof CI.nsIDOMChromeWindow) &&
                 this.isNewBrowserWindow(aContext) &&
                 !/^(?:chrome|resource|file)$/.test(scheme)) {
@@ -2081,7 +2111,9 @@ NoscriptService.prototype = {
   normalizeExternalURI: function(uri) {
     var uriSpec = uri.spec;
     var uriValid = this.uriValidator.validate(uriSpec);
-    var fixURI = this.getPref("fixURI", true);
+    var fixURI = this.getPref("fixURI", true) && 
+      this.getPref("fixURI.exclude", "").split(/[^\w-]+/)
+          .indexOf(uri.scheme) < 0;
     var msg;
     if(!uriValid) {
       if(fixURI) {
@@ -2103,17 +2135,19 @@ NoscriptService.prototype = {
       }
     }
     // encode all you can (i.e. don't touch valid encoded and delims)
-    try {
-      uriSpec = uriSpec.replace(/[^%]|%(?![\da-f]{2})/gi, encodeURI); 
-      if(fixURI && uriSpec != uri.spec) {
-        if(this.consoleDump) this.dump("Encoded URI: " + uri.spec + " to " + uriSpec);
-        uri.spec = uriSpec;
+    if(fixURI) {
+      try {
+        uriSpec = uriSpec.replace(/[^%]|%(?![\da-f]{2})/gi, encodeURI); 
+        if(uriSpec != uri.spec) {
+          if(this.consoleDump) this.dump("Encoded URI: " + uri.spec + " to " + uriSpec);
+          uri.spec = uriSpec;
+        }
+      } catch(ex) {
+        msg = "Error assigning encoded URI: " + uriSpec + ", " + ex;
+        if(this.consoleDump) this.dump(msg);
+        this.log("[NoScript URI Validator] " + msg);
+        return false;
       }
-    } catch(ex) {
-      msg = "Error assigning encoded URI: " + uriSpec + ", " + ex;
-      if(this.consoleDump) this.dump(msg);
-      this.log("[NoScript URI Validator] " + msg);
-      return false;
     }
     return true;
   },
@@ -2392,6 +2426,47 @@ NoscriptService.prototype = {
       }
       // if(this.consoleDump) dump("Disabled META refresh on " + (docShell.currentURI && docShell.currentURI.spec) + "\n");
     }
+  },
+  
+  handleBookmark: function(url, openCallback) {
+    if(!url) return true;
+    const allowBookmarklets = !this.getPref("forbidBookmarklets", false);
+    const allowBookmarks = this.getPref("allowBookmarks", false);
+    if((!this.jsEnabled) && 
+      (allowBookmarks || allowBookmarklets)) {
+      try {
+        if(allowBookmarklets && url.toLowerCase().indexOf("javascript:") == 0) {
+          var browserWindow =  Components.classes["@mozilla.org/appshell/window-mediator;1"]
+              .getService(Components.interfaces.nsIWindowMediator)
+              .getMostRecentWindow("navigator:browser");
+          var browser = browserWindow.getBrowser().selectedBrowser;
+          var site = this.getSite(browserWindow.noscriptOverlay.srcDocument.documentURI);
+          if(browser && !this.isJSEnabled(site)) {
+            var snapshot = this.jsPolicySites.sitesString;
+            try {
+              this.setJSEnabled(site, true);
+              if(Components.utils && typeof(/ /) == "object") { // direct evaluation, after bug 351633 landing
+                var sandbox = Components.utils.Sandbox(browserWindow.content);
+                sandbox.window = browserWindow.content;
+                sandbox.document = sandbox.window.document;
+                Components.utils.evalInSandbox(
+                  "with(window) { " + decodeURIComponent(url.replace(/^javascript:/i, "")) + " }", sandbox);
+              } else {
+                openCallback(url);
+              }
+              return true;
+            } finally {
+              this.flushCAPS(snapshot);
+            }
+          }
+        } else if(allowBookmarks) {
+          this.setJSEnabled(this.getSite(url), true);
+        }
+      } catch(silentEx) {
+        dump(silentEx);
+      }
+    }
+    return false;
   },
   
   
@@ -2976,14 +3051,32 @@ RequestWatchdog.prototype = {
     }
     
     const url = channel.URI;
+    const originalSpec = url.spec;
     
     const xorigin = ns.xcache.pickOrigin(url, true); // picks and remove cached entry
     
-    if(this.noscriptReload == url) {
+    if(this.noscriptReload == originalSpec) {
       // fast cache route for NoScript-triggered reloads
       this.noscriptReload = null;
-      channel.loadFlags |= channel.LOAD_FROM_CACHE | channel.VALIDATE_NEVER;
-      channel.loadGroup.loadFlags |= channel.LOAD_FROM_CACHE | channel.VALIDATE_NEVER;
+      try {
+        if(ns.consoleDump) {
+          ns.dump("Fast reload, original flags: " + 
+            channel.loadFlags + ", " + (channel.loadGroup && channel.loadGroup.loadFlags));
+        }
+        channel.loadFlags = (channel.loadFlags & ~CI.nsIChannel.VALIDATE_ALWAYS) | 
+                    CI.nsIChannel.LOAD_FROM_CACHE | CI.nsIChannel.VALIDATE_NEVER;
+        if(channel.loadGroup) {
+          channel.loadGroup.loadFlags = (channel.loadGroup.loadFlags & ~CI.nsIChannel.VALIDATE_ALWAYS) | 
+                  CI.nsIChannel.LOAD_FROM_CACHE | CI.nsIChannel.VALIDATE_NEVER;
+        }
+        if(ns.consoleDump) {
+          ns.dump("Fast reload, new flags: " + 
+            channel.loadFlags + ", " + (channel.loadGroup && channel.loadGroup.loadFlags));
+        }
+      } catch(e) {
+        // we may have a problem here due to something Firekeeper 0.2.11 started doing..
+        ns.dump(e);
+      }
     }
     
     // fast return if nothing to do here
@@ -2992,7 +3085,7 @@ RequestWatchdog.prototype = {
     var browser = null;
     
     var origin = xorigin && xorigin.spec || 
-        channel.originalURI.spec != url.spec && channel.originalURI.spec 
+        channel.originalURI.spec != originalSpec && channel.originalURI.spec 
         || this.extractInternalReferrerSpec(channel) || null;
 
     var untrustedReload = false;
@@ -3001,8 +3094,8 @@ RequestWatchdog.prototype = {
     
     if(!origin) {
       if((channel instanceof CI.nsIHttpChannelInternal) && channel.documentURI) {
-        if(url.spec == channel.documentURI.spec) {
-           var breadCrumbs = [url.spec];
+        if(originalSpec == channel.documentURI.spec) {
+           var breadCrumbs = [originalSpec];
            originSite = this.traceBack(channel, breadCrumbs);
            if(originSite) {
              origin = breadCrumbs.join(">>>");
@@ -3046,7 +3139,7 @@ RequestWatchdog.prototype = {
       channel.URI.host = this.dns.resolve(host, 2).canonicalName;
     }
     
-    var targetSite = su.getSite(url.spec);
+    var targetSite = su.getSite(originalSpec);
     
     const globalJS = ns.globalJS;
     
@@ -3067,11 +3160,11 @@ RequestWatchdog.prototype = {
     if(this.callback && this.callback(channel, origin)) return;
     
     
-    var externalLoad = this.externalLoad && this.externalLoad == url.spec;
+    var externalLoad = this.externalLoad && this.externalLoad == originalSpec;
     if(externalLoad) {
       this.externalLoad = null;
     } else if(this.isUnsafeReload(browser = browser || this.findBrowser(channel))) {
-      if(ns.consoleDump) this.dump(channel, "UNSAFE RELOAD of [" + url.spec +"] from [" + origin + "], SKIP");
+      if(ns.consoleDump) this.dump(channel, "UNSAFE RELOAD of [" + originalSpec +"] from [" + origin + "], SKIP");
       return;
     }
     
@@ -3081,14 +3174,14 @@ RequestWatchdog.prototype = {
       if(ns.checkShorthands(targetSite)) {
           ns.autoTemp(targetSite);
       } else {
-        if(ns.consoleDump) this.dump(channel, "Destination " + url.spec + " is noscripted, SKIP");
+        if(ns.consoleDump) this.dump(channel, "Destination " + originalSpec + " is noscripted, SKIP");
           return;
       }
     }
     
     if(ns.filterXExceptions) {
       try {
-        if(ns.filterXExceptions.test(decodeURI(url.spec))) { 
+        if(ns.filterXExceptions.test(decodeURI(originalSpec))) { 
           // "safe" xss target exception
           if(ns.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
           return;
@@ -3124,7 +3217,7 @@ RequestWatchdog.prototype = {
       
       if(injectionAttempt = injectionCheck && (injectionCheck > 1 || ns.isTemp(originSite)) &&
           channel.requestMethod == "GET" &&
-          InjectionChecker.checkURL(url.spec)) {
+          ns.injectionChecker.checkURL(originalSpec)) {
         injectionAttempt = window == window.top; 
       }
       
@@ -3195,7 +3288,7 @@ RequestWatchdog.prototype = {
       this.notify(this.addXssInfo(requestInfo, {
         reason: "filterXPost",
         origin: origin,
-        originalAttempt: url.spec,
+        originalAttempt: originalSpec,
         silent: untrustedReload
       }));
     }
@@ -3655,14 +3748,15 @@ var InjectionChecker = {
 
 function XSanitizer(primaryBlacklist, extraBlacklist) {
   this.primaryBlacklist = primaryBlacklist;
-  this. extraBlacklist = extraBlacklist;
+  this.extraBlacklist = extraBlacklist;
+  this.injectionChecker = InjectionChecker;
 }
 
 XSanitizer.prototype = {
   brutal: false,
   sanitizeURL: function(url) {
     var original = url.clone();
-    this.brutal = this.brutal || InjectionChecker.checkURL(url.spec);
+    this.brutal = this.brutal || this.injectionChecker.checkURL(url.spec);
     const changes = { minor: false, major: false, qs: false };
     // sanitize credentials
     if(url.username) url.username = this.sanitizeEnc(url.username);

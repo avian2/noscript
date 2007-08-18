@@ -1,5 +1,29 @@
 NoScript ChangeLog
 
+v 1.1.6.15
+=====================================================================
++ Support for keyword-driven bookmarklets on untrusted pages (thanks
+  Mike Rocker and therube for report/request)
++ noscript.forbidChromeScripts preference (true by default), prevents 
+  script tags in content (non chrome:/resource:/file:) documents from
+  referencing chrome: scripts, see
+  https://bugzilla.mozilla.org/show_bug.cgi?id=292789
+x Fix for fast reload not working on Minefield
+
+v 1.1.6.14
+=====================================================================
+x Work-around for a reload problem caused by Firekeeper 0.2.11
+x Version bump for Minefield
+
+v 1.1.6.13
+=====================================================================
++ Enhanced the "multi-port shorthand" feature to accept "*" wildcard
+  for subdomains, e.g. "http://*.google.com:0" matches every http 
+  google subdomain with any port number (thanks Dave Faraldo for RFE)
++ Added a "noscript.fixURI.exclude" about:config preference where
+  protocols which should not be escaped by NoScript can be specified
+  as a space-separated list (thanks therube for inspiration)
+
 v 1.1.6.12
 =====================================================================
 + URI Validator facility for on-demand protection against URI-based

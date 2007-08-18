@@ -22,96 +22,83 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
-function _noScript_BM_openOneBookmark(aURI, aTargetBrowser, aDS) {
-  var ncNS = typeof(gNC_NS) == "undefined" ? ( typeof(NC_NS) == "undefined" ?
+var noscriptBM = {
+  openOneBookmarkOriginal: null,
+  openOneBookmark: function (aURI, aTargetBrowser, aDS) {
+    var ncNS = typeof(gNC_NS) == "undefined" ? ( typeof(NC_NS) == "undefined" ?
       "http://home.netscape.com/NC-rdf#" : NC_NS ) : gNC_NS;
-  const url = BookmarksUtils.getProperty(aURI, ncNS+"URL", aDS);
+    const url = BookmarksUtils.getProperty(aURI, ncNS+"URL", aDS);
+    
+    var openCallback = function(url) {
+      noscriptBM.openOneBookmarkOriginal.apply(BookmarksCommand, [aURI, aTargetBrowser, aDS]);
+    };
   
-  var openCallback = function(url) {
-    BookmarksCommand._noScript_BM_openOneBookmark_original(aURI, aTargetBrowser, aDS);
-  };
+    if(!noscriptBM.handleBookmark(url, openCallback)) {
+      openCallback();
+    }
+  },
   
-  if(!_noScript_handleBookmark(url, openCallback)) {
-    openCallback();
-  }
-}
+  handleURLBarCommandOriginal: null,
+  handleURLBarCommand: function(aTriggeringEvent) {
+    if(!(window.gURLBar && gURLBar.value))
+      return;
+    var shortcut = gURLBar.value;
+    var jsrx = /\s*javascript:/i;
+    callback = function() { noscriptBM.handleURLBarCommandOriginal(aTriggeringEvent); };
+    if(window.getShortcutOrURI && (shortcut.indexOf(" ") > 0  && !jsrx.test(shortcut) || shortcut.indexOf(":") < 0)) {
+      var url = getShortcutOrURI(shortcut, {});
+      if(jsrx.test(url) && noscriptBM.handleBookmark(url, callback))
+        return;
+    }
+    callback();
+  },
+  
+  genericPatch: function(oldMethod, args) {
+    var node = this._view.selectedURINode;
+    if (!node) return;
+    const url = node.uri;
+    node = null;
+    var self = this;
+    var openCallback = function(url) { 
+      oldMethod.apply(self, args); 
+    }
+    if(!noscriptBM.handleBookmark(url, openCallback)) {
+      openCallback(url);
+    }
+  },
 
-function _noScript_PC_genericPatch(oldMethod, args) {
-  var node = this._view.selectedURINode;
-  if (!node) return;
-  const url = node.uri;
-  node = null;
-  var self = this;
-  var openCallback = function(url) { 
-    oldMethod.apply(self, args); 
-  }
-  if(!_noScript_handleBookmark(url, openCallback)) {
-    openCallback(url);
-  }
-}
+  handleBookmark: function(url, openCallback) {
+    return noscriptUtil.service.handleBookmark(url, openCallback);
+  },
 
-function _noScript_handleBookmark(url, openCallback) {
-  if(!url) return true;
-  const ns = noscriptUtil.service;
-  const allowBookmarklets = !ns.getPref("forbidBookmarklets", false);
-  const allowBookmarks = ns.getPref("allowBookmarks", false);
-  if((!ns.jsEnabled) && 
-    (allowBookmarks || allowBookmarklets)) {
-    try {
-      if(allowBookmarklets && url.toLowerCase().indexOf("javascript:") == 0) {
-        var browserWindow =  Components.classes["@mozilla.org/appshell/window-mediator;1"]
-            .getService(Components.interfaces.nsIWindowMediator)
-            .getMostRecentWindow("navigator:browser");
-        var browser = browserWindow.getBrowser().selectedBrowser;
-        var site = ns.getSite(browserWindow.noscriptOverlay.srcDocument.documentURI);
-        if(browser && !ns.isJSEnabled(site)) {
-          var snapshot = ns.jsPolicySites.sitesString;
-          try {
-            ns.setJSEnabled(site, true);
-            if(Components.utils && typeof(/ /) == "object") { // direct evaluation, after bug 351633 landing
-              var sandbox = Components.utils.Sandbox(browserWindow.content);
-              sandbox.window = browserWindow.content;
-              sandbox.document = sandbox.window.document;
-              Components.utils.evalInSandbox(
-                "with(window) { " + decodeURIComponent(url.replace(/^javascript:/i, "")) + " }", sandbox);
-            } else {
-              openCallback(url);
-            }
-            return true;
-          } finally {
-            ns.flushCAPS(snapshot);
-          }
-        }
-      } else if(allowBookmarks) {
-        ns.setJSEnabled(ns.getSite(url), true);
-      }
-    } catch(silentEx) {
-      dump(silentEx);
+  patchPCMethod: function(m) {
+    if(m in PlacesController.prototype) {
+      var oldMethod = PlacesController.prototype[m];
+      PlacesController.prototype[m] = function() { noscriptBM.genericPatch.call(this, oldMethod, arguments); };
+    }
+  },
+  
+  onLoad: function(ev) {
+    ev.currentTarget.removeEventListener("load", arguments.callee, false);
+    if(!noscriptUtil.service) return;
+    
+    if(window.BookmarksCommand) { // patch bookmark clicks
+      noscriptBM.openOneBookmarkOriginal = BookmarksCommand.openOneBookmark;
+      BookmarksCommand.openOneBookmark = noscriptBM.openOneBookmark;
+    }
+    
+    if(window.handleURLBarCommand) { // patch URLBar for keyword-triggered bookmarklets
+      noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
+      window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
+    }
+    
+    if(typeof window.PlacesController == "function") {
+       var methods = ["openSelectedNodeIn"];
+      for(var j = methods.length; j-- > 0;)
+        noscriptBM.patchPCMethod(methods[j]);
     }
   }
-  return false;
-}
+};
 
-function _noScript_patchPCMethod(m) {
-  if(m in PlacesController.prototype) {
-    var oldMethod = PlacesController.prototype[m];
-    PlacesController.prototype[m] = function() { _noScript_PC_genericPatch.call(this, oldMethod, arguments); };
-  }
-}
-
-function _noScript_BM_install(ev) {
-  ev.currentTarget.removeEventListener("load", arguments.callee, false);
-  if(!noscriptUtil.service) return;
-  
-  if(window.BookmarksCommand) {
-    BookmarksCommand._noScript_BM_openOneBookmark_original = BookmarksCommand.openOneBookmark;
-    BookmarksCommand.openOneBookmark = _noScript_BM_openOneBookmark;
-  }
-  if(typeof window.PlacesController == "function") {
-     var methods = ["openSelectedNodeIn"];
-    for(var j = methods.length; j-- > 0;)
-      _noScript_patchPCMethod(methods[j]);
-  }
-}
-window.addEventListener("load", _noScript_BM_install, false);
+window.addEventListener("load", noscriptBM.onLoad, false);
 
