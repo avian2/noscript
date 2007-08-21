@@ -102,5 +102,4 @@ pref("noscript.urivalid.aim", "\\w[^\\\\\?&\\x00-\\x1f#]*(?:\\?[^\\\\\\x00-\\x1f
 
 pref("noscript.forbidExtProtSubdocs", true);
 
-pref("noscript.forbidChromeScripts", true);
-
+pref("noscript.forbidChromeScripts", false);

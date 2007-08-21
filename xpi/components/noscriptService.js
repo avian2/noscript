@@ -734,7 +734,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.1.6.15",
+  VERSION: "1.1.6.16",
   
   get wrappedJSObject() {
     return this;
@@ -1907,6 +1907,26 @@ NoscriptService.prototype = {
     var mime = w.navigator.mimeTypes.namedItem(mimeType);
     return mime && mime.enabledPlugin || null;
   },
+  
+  browserChromeDir: CC["@mozilla.org/file/directory_service;1"].getService(CI.nsIProperties)
+                       .get("AChrom", CI.nsIFile),
+  chromeRegistry: CC["@mozilla.org/chrome/chrome-registry;1"].getService(CI.nsIChromeRegistry),
+  checkForbiddenChrome: function(url, origin) {
+    if(url.scheme == "chrome" && origin && !/^(?:chrome|resource|file|about)$/.test(origin.scheme)) {
+      var packageName = url.host;
+      if(packageName == "browser") return false; // fast path for commonest case
+      exception = this.getPref("forbidChromeExceptions." + packageName, false);
+      if(exception) return false;
+      var chromeURL = this.chromeRegistry.convertChromeURL(url);
+      if(chromeURL instanceof CI.nsIJARURI) 
+        chromeURL = chromeURL.JARFile;
+            
+      if(chromeURL instanceof CI.nsIFileURL && !this.browserChromeDir.contains(chromeURL.file, true)) {
+        return true;
+      }
+    }
+    return false;
+  },
   // nsIContentPolicy interface
   // we use numeric constants for performance sake: 
   // nsIContentPolicy.TYPE_OTHER = 1
@@ -1940,9 +1960,7 @@ NoscriptService.prototype = {
 
       switch(aContentType) {
         case 2:
-          scheme = aContentLocation.scheme;
-          if(this.forbidChromeScripts && scheme == "chrome" && 
-            aRequestOrigin && !/^(?:chrome|resource|file)$/.test(aRequestOrigin.scheme)) {
+          if(this.forbidChromeScripts && this.checkForbiddenChrome(aContentLocation, aRequestOrigin)) {
             return this.rejectCode;
           }
           forbid = isJS = true;
@@ -3422,10 +3440,12 @@ RequestWatchdog.prototype = {
       .setPropertyAsInterface("noscript.XSS", requestInfo);
   },
   extractFromChannel: function(channel) {
-    try {
-      return channel.QueryInterface(CI.nsIPropertyBag2)
-        .getPropertyAsInterface("noscript.XSS", CI.nsISupports).wrappedJSObject;
-    } catch(e) {}
+    if(channel instanceof CI.nsIPropertyBag2) {
+      try {
+        var requestInfo = channel.getPropertyAsInterface("noscript.XSS", CI.nsISupports);
+        if(requestInfo) return requestInfo.wrappedJSObject;
+      } catch(e) {}
+    }
     return null;
   },
   

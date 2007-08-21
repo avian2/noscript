@@ -1,5 +1,16 @@
 NoScript ChangeLog
 
+v 1.1.6.16
+=====================================================================
+x Fixed noscript.forbidChromeScripts preventing RSS subscribe UI from
+  working: browser packages are whitelisted by default, extensions
+  and other chrome packages can be optionally whitelisted adding a 
+  noscript.forbidChromeExceptions.packageName preference set to true,
+  and the noscript.forbidChromeScripts preference defaults to false
+  now, since Bug 292789 couldn't do any harm unless some extension 
+  does very stupid things.
+x Fixed incompatibility with the BookmarksHome extension
+
 v 1.1.6.15
 =====================================================================
 + Support for keyword-driven bookmarklets on untrusted pages (thanks
