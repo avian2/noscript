@@ -49,7 +49,7 @@
       tooltiptext="NoScript" 
       buttonstyle="pictures"
       
-      class="toolbarbutton-1"
+      class="toolbarbutton-1 noscript-no"
       label="NoScript"
       type="menu-button"
       oncommand="if(event.target == this) if(!noscriptOverlay.toggleCurrentPage()) this.open = true"
@@ -190,7 +190,7 @@
 <statusbar id="status-bar">
 
   <statusbarpanel id="noscript-statusIcon" insertbefore="statusbar-updates"
-    src="chrome://noscript/skin/no16.png" class="statusbarpanel-menu-iconic"
+    class="statusbarpanel-menu-iconic noscript-no"
     hidden="false"
     onclick="if(event.button == 2) { event.preventDefault(); noscriptOverlay.showUI() }"
     >
@@ -256,7 +256,7 @@
  </statusbarpanel>
    
   <statusbarpanel id="noscript-statusXss" insertbefore="statusbar-updates"
-    src="chrome://noscript/skin/xss16.png" class="statusbarpanel-menu-iconic"
+    class="statusbarpanel-menu-iconic noscript-xss"
     hidden="true"
     onclick="switch(event.button) { case 1: this.hidden = true; break; case 2: event.preventDefault(); this.firstChild.showPopup(); }"
     >
@@ -264,7 +264,7 @@
   </statusbarpanel>
   
   <statusbarpanel id="noscript-statusRedirect" insertbefore="statusbar-updates"
-    src="chrome://noscript/skin/redirect16.png" class="statusbarpanel-iconic"
+    class="statusbarpanel-iconic noscript-redirect"
     hidden="true" 
     onclick="if(event.button == 1) this.hidden = true"
     oncommand="noscriptOverlay.followMetaRefresh(event)"

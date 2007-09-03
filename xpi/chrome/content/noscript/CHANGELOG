@@ -1,5 +1,30 @@
 NoScript ChangeLog
 
+v 1.1.6.20
+=====================================================================
+x Fixed inconsistent status icon feedback (thanks Alan Baxter)
+
+v 1.1.6.19
+=====================================================================
+x Fix for the massive breakage on Mozilla trunk caused by landing of 
+  the patch for https://bugzilla.mozilla.org/show_bug.cgi?id=377696
+  (thanks Quarantine and Peter(6) for reporting)
+
+v 1.1.6.18
+=====================================================================
++ noscript.safeJSRx preference allows to specify a regular expression 
+  matching statements allowed in a top-level javascript: URL. Default 
+  value allows sessionstore prompt javascript:window.close() trick
+  (http://forums.mozillazine.org/viewtopic.php?p=3033780#3033780)
+
+v 1.1.6.17
+=====================================================================
++ Smarter JS link fixing on untrusted sites (thanks timeless)
++ Smarter allowable sites detection/reporting if domain tricks are
+  being used.
+x Fixed CTRL+Enter address bar SeaMonkey feature (thanks blindtrust)
+x Fixed conflict with SiteAdvisor tooltips
+
 v 1.1.6.16
 =====================================================================
 x Fixed noscript.forbidChromeScripts preventing RSS subscribe UI from

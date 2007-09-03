@@ -39,12 +39,13 @@ var noscriptBM = {
   },
   
   handleURLBarCommandOriginal: null,
-  handleURLBarCommand: function(aTriggeringEvent) {
+  handleURLBarCommand: function() {
     if(!(window.gURLBar && gURLBar.value))
       return;
     var shortcut = gURLBar.value;
     var jsrx = /\s*javascript:/i;
-    callback = function() { noscriptBM.handleURLBarCommandOriginal(aTriggeringEvent); };
+    var originalArguments = arguments;
+    callback = function() { noscriptBM.handleURLBarCommandOriginal.apply(window, originalArguments); };
     if(window.getShortcutOrURI && (shortcut.indexOf(" ") > 0  && !jsrx.test(shortcut) || shortcut.indexOf(":") < 0)) {
       var url = getShortcutOrURI(shortcut, {});
       if(jsrx.test(url) && noscriptBM.handleBookmark(url, callback))

@@ -47,74 +47,6 @@ var noscriptOverlay = noscriptUtil.service ?
     return this.ns.getSites(gBrowser.selectedBrowser);
   },
   
-  
-  
-  fixLink: function(ev) { // TODO: cleanup this obsolete lookupmethod mess
-    const ns = noscriptOverlay.ns;
-   
-    if(ns.jsEnabled) return;
-    
-    var fixLinks  = ns.getPref("fixLinks", true);
-    if(!fixLinks) return;
-    
-    var noping = ns.getPref("noping", true);
-    if(!noping)  return;
-    
-    const lm = ns.lookupMethod;
-    var a = ev.originalTarget;
-    
-    var doc = lm(a, "ownerDocument")();
-    if(!doc) return;
-    
-    var url = lm(doc, "documentURI")();
-    if((!url) || ns.isJSEnabled(ns.getSite(url))) return;
-    
-    
-    while(!(a instanceof HTMLAnchorElement || a instanceof HTMLMapElement)) {
-      if(!(a = lm(a, "parentNode")())) return;
-    }
-    
-    const getAttr = lm(a, "getAttribute");
-    const setAttr = lm(a, "setAttribute");
-    
-    const href = getAttr("href");
-    
-    if(noping) {
-      var ping = getAttr("ping");
-      if(ping) {
-        lm(a, "removeAttribute")("ping");
-        setAttr("noping", ping);
-      }
-    }
-    
-    if(fixLinks) {
-      var jsURL;
-      if(href) {
-        jsURL = href.toLowerCase().indexOf("javascript:") == 0;
-        if(!(jsURL || href == "#")) return;
-      } else {
-        jsURL = false;
-      }
-      
-      var onclick = getAttr("onclick");
-      var fixedHref = fixedHref = (onclick && noscriptOverlay.extractLink(onclick)) || 
-                       (jsURL && noscriptOverlay.extractLink(href)) || "";
-      
-      if(fixedHref) {
-        setAttr("href", fixedHref);
-        var title = getAttr("title");
-        setAttr("title", title ? "[js] " + title : 
-          (onclick || "") + " " + href
-          );
-      }
-    }
-  },
-  extractLink: function(js) {
-    var match = js.match(/['"]([\/\w-\?\.#%=&:@]+)/);
-    return match && match[1];
-    
-  },
-  
   get prompter() {
     return noscriptUtil.prompter;
   }
@@ -128,9 +60,8 @@ var noscriptOverlay = noscriptUtil.service ?
       menu.setAttribute("hidden", "true");
       return;
     }
-    const status = document.getElementById("noscript-statusIcon");
-    menu.setAttribute("image",status.getAttribute("src"));
-    menu.setAttribute("tooltiptext", status.getAttribute("tooltiptext"));
+    this.updateStatusClass(menu);
+    menu.setAttribute("tooltiptext", this.statusIcon.getAttribute("tooltiptext"));
   }
 ,
   toggleMenuOpt: function(node) {
@@ -213,10 +144,8 @@ var noscriptOverlay = noscriptUtil.service ?
       seps.global.style.display = "";
       miGlobal.setAttribute("label",this.getString((global ? "forbid" : "allow") + "Global"));
       miGlobal.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!global)+")");
-      miGlobal.setAttribute("tooltiptext", document.getElementById("noscript-statusIcon").getAttribute("tooltiptext"));
-      miGlobal.setAttribute("image", this.getIcon(global ? "no" : "glb"));
-      
-      
+      miGlobal.setAttribute("tooltiptext", this.statusIcon.getAttribute("tooltiptext"));
+      miGlobal.setAttribute("class", "menuitem-iconic " + this.getStatusClass(global ? "no" : "glb"));
     } else {
       miGlobal.style.display = "none";
       seps.global.style.display = "none";
@@ -248,7 +177,7 @@ var noscriptOverlay = noscriptUtil.service ?
         untrustedMenu.removeChild(untrustedMenu.firstChild);
       }
       untrustedMenu.appendCmd = untrustedMenu.appendChild;
-      untrustedMenu.parentNode.setAttribute("image", this.getIcon("no", true));
+      this.updateStatusClass(untrustedMenu.parentNode, this.getStatusClass("no", true));
     }
     
     node = seps.insert.nextSibling;
@@ -351,8 +280,7 @@ var noscriptOverlay = noscriptUtil.service ?
         if(enabled && ns.isPermanent(menuSite)) {
           node.setAttribute("disabled", "true");
         } else {
-          cssClass += " menuitem-iconic";
-          node.setAttribute("image", this.getIcon(enabled ? "no" : "yes"));
+          cssClass += " menuitem-iconic ";
           if(enabled && ns.isTemp(menuSite)) cssClass += " noscript-temp";
         }
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
@@ -364,7 +292,6 @@ var noscriptOverlay = noscriptUtil.service ?
           if(showTemp) {
             extraNode = document.createElement("menuitem");
             extraNode.setAttribute("label", this.getString("allowTemp", [menuSite]));
-            extraNode.setAttribute("image", node.getAttribute("image"));
             extraNode.setAttribute("statustext", menuSite);
             extraNode.setAttribute("oncommand", "noscriptOverlay.menuAllow(true,this,true)");
             extraNode.setAttribute("class", cssClass + " noscript-temp noscript-allow");
@@ -374,7 +301,6 @@ var noscriptOverlay = noscriptUtil.service ?
           if(((showUntrusted && untrustedMenu) || showDistrust) && !untrusted) {
             extraNode = document.createElement("menuitem");
             extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
-            extraNode.setAttribute("image", this.getIcon("no", true));
             extraNode.setAttribute("statustext", menuSite);
             extraNode.setAttribute("class", cssClass + " noscript-distrust");
             extraNode.setAttribute("oncommand", "noscriptOverlay.menuAllow(false, this, false)");
@@ -469,10 +395,25 @@ var noscriptOverlay = noscriptUtil.service ?
     });
   }
 ,
-  _iconURL: null,
-  getIcon: function(lev, inactive) {
-    if(!this._iconURL) this._iconURL=document.getElementById("noscript-statusIcon").src;
-    return this._iconURL.replace(/[^\/]*(yes|no|glb|prt)(\d+\.)/,(inactive ? "inactive-" : "") + lev + "$2");
+  
+  _statusIcon: null,
+  get statusIcon() {
+    return this._statusIcon || document.getElementById("noscript-statusIcon");
+  },
+
+  getIcon: function(node) {
+    if(typeof(node) != "object") node = document.getElementById(node);
+    return node.ownerDocument.defaultView.getComputedStyle(node, null)
+            .getPropertyValue("list-style-image")
+            .replace(/.*url\s*\(\s*"?(.*)\"?\s*\).*/g, '$1');
+  },
+  
+  getStatusClass: function(lev, inactive, currentClass) {
+    return "noscript-" + (inactive ? "inactive-" : "") + lev;
+  },
+  updateStatusClass: function(node, className) {
+    if(!className) className = this.statusIcon.className.replace(/.*(\bnoscript-\S*(?:yes|no|glb|prt)).*/, "$1");
+    node.className = (node.className.replace(/\bnoscript-\S*(?:yes|no|glb|prt)\b/g, "") + " " + className).replace(/\s{2,}/g, " ");
   }
 ,
   _syncTimeout: null,
@@ -710,7 +651,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var origin = this.ns.getSite(requestInfo.origin);
     origin = (origin && "[" + origin + "]") || this.getString("untrustedOrigin");
     var label = this.getString("xss.notify.generic", [origin]);
-    var icon = this.getIcon("xss");
+    var icon = this.getIcon("noscript-statusXss");
     
     const refWidget = document.getElementById("noscript-options-ctx-menuitem");
     var buttonLabel = refWidget.getAttribute("label");
@@ -750,7 +691,7 @@ var noscriptOverlay = noscriptUtil.service ?
     
     if(box && this.ns.getPref("forbidMetaRefresh.notify", true)) {
       var label = this.getString("metaRefresh.notify", [info.uri, info.timeout])
-      var icon = this.getIcon("redirect");
+      var icon = this.getIcon("noscript-statusRedirect");
         
       if(box.appendNotification) { // Fx 2
       
@@ -895,18 +836,19 @@ var noscriptOverlay = noscriptUtil.service ?
     
     shortMessage += " | <SCRIPT>: " + totalScripts + " | J+F+P: " + totalPlugins;
     
-    var icon = this.getIcon(lev, !totalAnnoyances);
+    var icon = this.getIcon(this.statusIcon);
+    var className = this.getStatusClass(lev, !totalAnnoyances);
     
     var widget = document.getElementById("noscript-tbb");
     if(widget) {
       widget.setAttribute("tooltiptext", shortMessage);
-      widget.setAttribute("image", icon);  
+      this.updateStatusClass(widget, className); 
     }
     
-    widget = document.getElementById("noscript-statusIcon");
+    widget = this.statusIcon;
     widget.setAttribute("tooltiptext", shortMessage);
-    widget.setAttribute("src", icon);
-
+    this.updateStatusClass(widget, className);
+    
     if(notificationNeeded) { // notifications
       const doc = this.srcDocument;
       if(ns.getPref("notify", false)) { 
@@ -1084,6 +1026,11 @@ var noscriptOverlay = noscriptUtil.service ?
   
   listeners: {
     
+    onBrowserClick: function(ev) { 
+      noscriptUtil.service.processBrowserClick(ev.originalTarget);
+    },
+  
+    
     onTabClose: function(ev) {
       try {
         var browser = ev.target.linkedBrowser;
@@ -1168,7 +1115,7 @@ var noscriptOverlay = noscriptUtil.service ?
       context.addEventListener("popupshowing", this.onContextMenu, false);
       var b = getBrowser();
       
-      b.addEventListener("click", noscriptOverlay.fixLink, true);
+      b.addEventListener("click", this.onBrowserClick, true);
       const nsIWebProgress = Components.interfaces.nsIWebProgress;
       b.addProgressListener(this.webProgressListener, nsIWebProgress.NOTIFY_STATE_WINDOW | nsIWebProgress.NOTIFY_LOCATION);
       
@@ -1189,7 +1136,7 @@ var noscriptOverlay = noscriptUtil.service ?
     teardown: function() {
       var b = getBrowser();
       if(b) {
-        b.removeEventListener("click", noscriptOverlay.fixLink, true);
+        b.removeEventListener("click", this.onBrowserClick, true);
         if(b.tabContainer) {
           b.tabContainer.removeEventListener("TabClose", this.onTabClose, false);
         }

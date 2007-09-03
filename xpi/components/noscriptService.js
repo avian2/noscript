@@ -734,7 +734,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.1.6.16",
+  VERSION: "1.1.6.20",
   
   get wrappedJSObject() {
     return this;
@@ -878,7 +878,7 @@ NoscriptService.prototype = {
   forbidPlugins: false,
   forbidData: true,
   
-  forbidChromeScripts: true,
+  forbidChromeScripts: false,
   
   injectionCheck: 2,
   
@@ -992,6 +992,10 @@ NoscriptService.prototype = {
       break;
       case "filterXExceptions":
         this.updateRxPref(name, "", "", this.rxParsers.multi);
+      break;
+      
+      case "safeJSRx":
+        this.initSafeJSRx();
       break;
       
       case "allowClipboard":
@@ -1167,6 +1171,7 @@ NoscriptService.prototype = {
       "filterXPost", "filterXGet", 
       "filterXGetRx", "filterXGetUserRx", 
       "filterXExceptions",
+      "forbidChromeScripts",
       "forbidFlash", "forbidJava", "forbidPlugins", "forbidData",
       "forbidMetaRefresh",
       "global",
@@ -1884,9 +1889,13 @@ NoscriptService.prototype = {
                                                  : this.mainContentPolicy;
     this.shouldLoad = delegate.shouldLoad;
     this.shouldProcess = delegate.shouldProcess;
-    this.rejectCode = typeof(/ /) == "object" ? -4 : -3;
-    this.safeToplevel = this.getPref("safeToplevel", true);
+
     if(!this.mimeService) {
+      
+      this.rejectCode = typeof(/ /) == "object" ? -4 : -3;
+      this.safeToplevel = this.getPref("safeToplevel", true);
+      this.initSafeJSRx();
+      
       this.xcache = new XCache();
       this.mimeService = CC['@mozilla.org/uriloader/external-helper-app-service;1']
                                    .getService(CI.nsIMIMEService);
@@ -1942,7 +1951,7 @@ NoscriptService.prototype = {
   // nsIContentPolicy.TYPE_OBJECT_SUBREQUEST = 12
   // nsIContentPolicy.REJECT_SERVER = -3
   // nsIContentPolicy.ACCEPT = 1
-  
+  PING_DEFINED: "TYPE_PING" in CI.nsIContentPolicy,
   noopContentPolicy: {
     shouldLoad: function() { return 1; },
     shouldProcess: function() { return 1; }
@@ -1959,8 +1968,26 @@ NoscriptService.prototype = {
       var url, forbid, isJS, isFlash, isJava, mustAsk, scheme;
 
       switch(aContentType) {
+        case 1:
+          if(this.PING_DEFINED || 
+              !((aContext instanceof CI.nsIDOMHTMLElement) && aContext.getAttribute("ping"))) 
+            return 1;
+        
+        case 10: // TYPE_PING
+          if(this.jsEnabled || !this.getPref("noping", true) || 
+              aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec))
+            )
+            return 1;
+            
+          if(this.consoleDump & 1) 
+            this.dump("Blocked ping " + aRequestOrigin.spec + " -> " + aContentLocation.spec);
+       
+          return this.rejectCode;
+            
         case 2:
           if(this.forbidChromeScripts && this.checkForbiddenChrome(aContentLocation, aRequestOrigin)) {
+            if(this.consoleDump & 1) 
+              this.dump("Blocked chrome access, " + aRequestOrigin.spec + " -> " + aContentLocation.spec);
             return this.rejectCode;
           }
           forbid = isJS = true;
@@ -1996,7 +2023,9 @@ NoscriptService.prototype = {
             
             if(this.safeToplevel && (aContext instanceof CI.nsIDOMChromeWindow) &&
                 this.isNewBrowserWindow(aContext) &&
-                !/^(?:chrome|resource|file)$/.test(scheme)) {
+                !(/^(?:chrome|resource|file)$/.test(scheme) ||
+                  this.isSafeJSURL(aContentLocation.spec))
+                  ) {
               if(this.consoleDump) this.dump("Blocked " + aContentLocation.spec + ": can't open in a new toplevel window");
               return this.rejectCode;
             }
@@ -2012,17 +2041,20 @@ NoscriptService.prototype = {
             } else if(/^(?:data|javascript)$/.test(scheme)) { 
               //data: and javascript: URLs
               url = aContentLocation.spec;
-              if((this.forbidData && url != "javascript: eval(__firebugTemp__);" || url == "javascript:") && 
+              if(!this.isSafeJSURL(url) &&
+                ((this.forbidData && url != "javascript: eval(__firebugTemp__);" || url == "javascript:") && 
                   !this.isJSEnabled(this.getSite(aRequestOrigin.spec)) ||
                   aContext && this.isNewBrowserWindow(
                     (aContext instanceof CI.nsIDOMWindow) 
                       ? aContext
                       : aContext.ownerDocument.defaultView
                    )
+                )
                ) {
                  if(this.consoleDump & 1) 
                    this.dump("Blocked " + url + " from " + aRequestOrigin.spec);
-                 return this.rejectCode;
+                 
+                   return this.rejectCode;
               }
             } else if(scheme != aRequestOrigin.scheme && 
                 scheme != "chrome" && // faster path for common case
@@ -2117,6 +2149,19 @@ NoscriptService.prototype = {
     check: function() {
       return false;
     }
+  },
+  
+  safeJSRx: false,
+  initSafeJSRx: function() {
+    try {
+      this.safeJSRx = new RegExp("^\\s*" + this.getPref("safeJSRx", "") + "\\s*;?\\s*$");
+    } catch(e) {
+      this.safeJSRx = false;
+    }
+  },
+  isSafeJSURL: function(url) {
+    var js = url.replace(/^javascript:/i, "");
+    return this.safeJSRx && js != url && this.safeJSRx.test(js);
   },
   
   isExternalScheme: function(scheme) {
@@ -2385,7 +2430,8 @@ NoscriptService.prototype = {
             timeout = content[0];
             uri = uri.replace (/^\s*/, "").replace (/^URL/i, "URL").split("URL=", 2)[1];
             try {
-              this.domUtils.getChromeWindow(document.defaultView).noscriptOverlay.notifyMetaRefresh({ 
+              var chromeWin =  this.domUtils.getChromeWindow(document.defaultView).document.defaultView;
+              chromeWin.noscriptOverlay.notifyMetaRefresh({ 
                 docShell: docShell,
                 document: document,
                 baseURI: docShell.currentURI,
@@ -2706,7 +2752,7 @@ NoscriptService.prototype = {
     var docShell, doc, docURI, url;
     
     const pluginsCache = this.pluginsCache.get(browser);
-    const docURIs = {};
+    
     var cache;
     
     var document, domain;
@@ -2725,8 +2771,6 @@ NoscriptService.prototype = {
        // Collect document / cached plugin URLs
        url = this.getSite(docURI = document.documentURI);
        if(url) {
-         sites.push(url);
-         docURIs[docURI] = true;
          cache = pluginsCache.uris[docURI];
          if(cache) {
            for(var pluginURI in cache) {
@@ -2735,8 +2779,11 @@ NoscriptService.prototype = {
           }
           try {
             domain = document.domain;
-            if(domain && this.getDomain(url) != domain) sites.push(domain);
+            if(domain && domain != this.getDomain(url)) {
+              url = domain;
+            }
           } catch(e) {}
+          sites.push(url);
        }
 
        if(!document._NoScript_contentLoaded && (!(docShell instanceof nsIWebNavigation) || docShell.isLoadingDocument))
@@ -2751,7 +2798,11 @@ NoscriptService.prototype = {
     }
     
     for(var j = sites.length; j-- > 0;) {
-      if(!(/^[a-z]+:\/*[^\/\s]+/.test(sites[j]) || /^(?:file|resource|chrome):/.test(sites[j]))) {
+      url = sites[j];
+      if(/:/.test(url) && !(
+          /^[a-z]+:\/*[^\/\s]+/.test(url) || 
+          /^(?:file|resource|chrome):/.test(url)
+        )) {
         sites.splice(j, 1); // reject scheme-only URLs
       }
     }
@@ -2841,6 +2892,62 @@ NoscriptService.prototype = {
     ds.documentCharsetInfo.forcedCharset = as.getAtom(altCharset || "UTF-8");
     ds.reload(ds.LOAD_FLAGS_CHARSET_CHANGE);
     return true;
+  },
+  
+  processBrowserClick: function(a) {
+    if(this.jsEnabled || !this.getPref("fixLinks", true)) return;
+    var doc = a.ownerDocument;
+    if(!doc) return;
+    
+    var url = doc.documentURI;
+    if((!url) || this.isJSEnabled(this.getSite(url))) return;
+    
+    
+    while(!(a instanceof CI.nsIDOMHTMLAnchorElement || a instanceof CI.nsIDOMHTMLAreaElement)) {
+      if(!(a = a.parentNode)) return;
+    }
+    
+    const href = a.getAttribute("href");
+    // fix JavaScript links
+    var jsURL;
+    if(href) {
+      jsURL = /^javascript:/.test(href);
+      if(!(jsURL || href == "#")) return;
+    } else {
+      jsURL = false;
+    }
+    
+    var onclick = a.getAttribute("onclick");
+    var fixedHref = fixedHref = (onclick && this.extractJSLink(onclick)) || 
+                     (jsURL && this.extractJSLink(href)) || "";
+    
+    if(fixedHref) {
+      a.setAttribute("href", fixedHref);
+      var title = a.getAttribute("title");
+      a.setAttribute("title", title ? "[js] " + title : 
+          (onclick || "") + " " + href
+        );
+    }
+  },
+  
+  extractJSLink: function(js) {
+    const findLink = /(['"])([\/\w-\?\.#%=&:@]+)\1/g;
+    findLink.lastIndex = 0;
+    var maxScore = -1;
+    var score; 
+    var m, s, href;
+    while((m = findLink.exec(js))) {
+      s = m[2];
+      if(/^https?:\/\//.test(s)) return s;
+      score = 0;
+      if(s.indexOf("/") > -1) score += 2;
+      if(s.indexOf(".") > 0) score += 1;
+      if(score > maxScore) {
+        maxScore = score;
+        href = s;
+      }
+    }
+    return href || "";
   },
   
 

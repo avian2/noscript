@@ -90,7 +90,7 @@
 <!ENTITY noscriptUnsafeReload "بارگذاری مجدد ناامن">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
 <!ENTITY noscriptMatchSample "مثال تطابق الگو :">
 <!ENTITY noscriptReset "ریست">
 <!ENTITY noscriptReset.accesskey "R">

@@ -91,6 +91,8 @@ pref("noscript.jsredirectFollow", true);
 pref("noscript.safeToplevel", true);
 pref("noscript.utf7filter", true);
 
+pref("noscript.safeJSRx", "(?:window\\.)?close\\s*\\(\\)");
+
 pref("noscript.badInstall", false);
 
 pref("noscript.fixURI", true);

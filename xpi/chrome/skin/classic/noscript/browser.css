@@ -1,10 +1,5 @@
-#noscript-tbb {
+#palette-box #noscript-tbb {
   list-style-image: url("icon24.png");
-}
-
-/*  remove first selector when we've got both 24 and 16 full icon sets */
-toolbar #noscript-tbb, toolbar[iconsize="small"] #noscript-tbb {
-  list-style-image: url("no16.png");
 }
 
 #noscript-statusIcon, #noscript-statusLabel, #noscript-statusRedirect, #noscript-statusXss {
@@ -38,23 +33,26 @@ toolbar #noscript-tbb, toolbar[iconsize="small"] #noscript-tbb {
    list-style-image: url(xss16.png);
 }
 
-.noscript-yes {
+.noscript-yes, #noscript-tbb.noscript-yes, .noscript-allow {
   list-style-image: url(yes16.png);
 }
-.noscript-no {
+.noscript-no, #noscript-tbb.noscript-no, .noscript-forbid {
   list-style-image: url(no16.png);
 }
-.noscript-prt {
-  list-style-image: url(no16.png);
+.noscript-prt, #noscript-tbb.noscript-prt {
+  list-style-image: url(prt16.png);
+}
+.noscript-glb, #noscript-tbb.noscript-glb {
+  list-style-image: url(glb16.png);
 }
 
-.noscript-inactive-yes {
+.noscript-inactive-yes, #noscript-tbb.noscript-inactive-yes {
   list-style-image: url(inactive-yes16.png);
 }
-.noscript-inactive-no {
+.noscript-inactive-no, #noscript-tbb.noscript-inactive-no, .noscript-distrust, .noscript-untrusted {
   list-style-image: url(inactive-no16.png);
 }
-.noscript-inactive-prt {
+.noscript-inactive-prt, #noscript-tbb.noscript-inactive-prt {
   list-style-image: url(inactive-no16.png);
 }
 
