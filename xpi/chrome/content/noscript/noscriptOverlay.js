@@ -651,7 +651,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var origin = this.ns.getSite(requestInfo.origin);
     origin = (origin && "[" + origin + "]") || this.getString("untrustedOrigin");
     var label = this.getString("xss.notify.generic", [origin]);
-    var icon = this.getIcon("noscript-statusXss");
+   
     
     const refWidget = document.getElementById("noscript-options-ctx-menuitem");
     var buttonLabel = refWidget.getAttribute("label");
@@ -852,7 +852,9 @@ var noscriptOverlay = noscriptUtil.service ?
     if(notificationNeeded) { // notifications
       const doc = this.srcDocument;
       if(ns.getPref("notify", false)) { 
-        this.notificationShow(message, icon, !!doc._NoScript_messageShown);
+        this.notificationShow(message,
+          this.getIcon(widget), 
+          !!doc._NoScript_messageShown);
         doc._NoScript_messageShown = true;
       } else {
         this.notificationHide(); 

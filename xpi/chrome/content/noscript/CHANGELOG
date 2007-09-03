@@ -1,5 +1,10 @@
 NoScript ChangeLog
 
+v 1.1.6.21
+=====================================================================
+x Fixed infobar icon not always properly updated upon tab-switching
+  (regression from 1.1.6.20 feedback fix)
+
 v 1.1.6.20
 =====================================================================
 x Fixed inconsistent status icon feedback (thanks Alan Baxter)
