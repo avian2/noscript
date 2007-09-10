@@ -41,7 +41,11 @@
 <!ENTITY noscriptAdditionalPermissions "Permissions supplémentaires pour les sites de confiance">
 <!ENTITY noscriptAllowClipboard "Autoriser le copier/coller de texte riche du presse-papier">
 <!ENTITY noscriptAdditionalRestrictions "Restrictions supplémentaires pour les sites à risque">
+<!ENTITY noscriptPlugins "Greffons">
+<!ENTITY noscriptContentBlocker "Appliquer ces restrictions également aux sites de confiance">
 <!ENTITY noscriptForbidJava "Interdire Java™">
+<!ENTITY noscriptForbidWebBugs "Interdire &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Interdire Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Interdire Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Interdire les autres plugins">
 <!ENTITY noscriptReloadWarn "Ces options prendront effet sur les pages rechargées (manuellement) et les nouvelles pages">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Rétablir les valeurs par défaut">
 <!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">

@@ -41,7 +41,11 @@
 <!ENTITY noscriptAdditionalPermissions "Zusätzliche Berechtigungen für vertrauenswürdige Websites">
 <!ENTITY noscriptAllowClipboard "Einfügen von formatiertem Text (z.B. RTF) aus der Zwischenablage erlauben">
 <!ENTITY noscriptAdditionalRestrictions "Zusätzliche Einschränkungen für nicht vertrauenswürdige Websites">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Diese Einschränkungen auch auf vertrauenswürdige Websites anwenden">
 <!ENTITY noscriptForbidJava "Java™ verbieten">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; verbieten">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieten">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "Z">
 <!ENTITY noscriptResetDef "Auf Standardwerte zurücksetzen">
 <!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">

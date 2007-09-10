@@ -41,7 +41,11 @@
 <!ENTITY noscriptAdditionalPermissions "A megbízható webhelyek további engedélyei">
 <!ENTITY noscriptAllowClipboard "A rich text másolás és a külső vágólapról történő beillesztés engedélyezése">
 <!ENTITY noscriptAdditionalRestrictions "A megbízhatatlan webhelyek további korlátozásai">
+<!ENTITY noscriptPlugins "Beépülők">
+<!ENTITY noscriptContentBlocker "A korlátozások alkalmazása a megbízható webhelyekre is">
 <!ENTITY noscriptForbidJava "A Java™ tiltása">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; tiltása">
+<!ENTITY noscriptForbidSilverlight "A Microsoft® Silverlight™ tiltása">
 <!ENTITY noscriptForbidFlash "A Macromedia® Flash® tiltása">
 <!ENTITY noscriptForbidPlugins "Egyéb beépülő modulok tiltása">
 <!ENTITY noscriptReloadWarn "Ezek a beállítások új vagy (kézzel) újratöltött oldalaknál lépnek érvénybe">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "A">
 <!ENTITY noscriptResetDef "Alaphelyzetbe állít">
 <!ENTITY noscriptResetDef.accesskey "h">
+<!ENTITY noscriptOptionsWidth "40em">

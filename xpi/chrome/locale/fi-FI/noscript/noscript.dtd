@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "Salli rich text kopiointi ja liittäminen ulkoiselta leikepöydältä">
 <!ENTITY noscriptAdditionalRestrictions "Lisäestot estetyille sivustoille">
 <!ENTITY noscriptForbidJava "Estä Java™">
+<!ENTITY noscriptForbidWebBugs "Estä &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Estä Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Estä Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Estä muut lisäkkeet">
 <!ENTITY noscriptReloadWarn "Nämä asetukset tulevat voimaan kun avaaat tai lataat sivun uudelleen">
@@ -90,7 +92,7 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">

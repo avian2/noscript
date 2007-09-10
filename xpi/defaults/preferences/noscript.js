@@ -22,6 +22,7 @@ pref("noscript.mandatory", "chrome: about: resource:");
 pref("noscript.default", "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net gmail.com google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", false);
+pref("noscript.forbidSilverlight", true);
 pref("noscript.forbidPlugins", false);
 pref("noscript.forbidData", false);
 pref("noscript.sound.block", "chrome://noscript/skin/block.wav");
@@ -87,6 +88,7 @@ pref("noscript.globalwarning", true);
 
 pref("noscript.jsredirectIgnore", false);
 pref("noscript.jsredirectFollow", true);
+pref("noscript.jsredirectForceShow", false);
 
 pref("noscript.safeToplevel", true);
 pref("noscript.utf7filter", true);

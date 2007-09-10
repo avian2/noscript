@@ -209,15 +209,17 @@ var noscriptOverlay = noscriptUtil.service ?
       }
     };
     
-    const showAddress = ns.getPref("showAddress", false);
-    const showDomain = ns.getPref("showDomain", false);
-    const showBase = ns.getPref("showBaseDomain", true);
+    const locked = ns.locked;
+    const showAddress = locked || ns.getPref("showAddress", false);
+    const showDomain = !locked && ns.getPref("showDomain", false);
+    const showBase = !locked && ns.getPref("showBaseDomain", true);
     const showUntrusted = ns.getPref("showUntrusted", true);
     const showDistrust = ns.getPref("showDistrust", true);
     const showNothing = !(showAddress || showDomain || showBase || showUntrust);
     
+    
     const showPermanent = ns.getPref("showPermanent", true);
-    const showTemp = ns.getPref("showTemp", true);
+    const showTemp = !locked && ns.getPref("showTemp", true);
     
     var parent, extraNode;
     for(j = sites.length; j-->0;) {
@@ -274,10 +276,10 @@ var noscriptOverlay = noscriptUtil.service ?
         cssClass = isTop ? "noscript-toplevel noscript-cmd" : "noscript-cmd";
         node.setAttribute("label", this.getString((enabled ? "forbidLocal" : "allowLocal"), [menuSite]));
         node.setAttribute("statustext", menuSite);
-        node.setAttribute("oncommand", "noscriptOverlay.menuAllow(" + (!enabled) + ",this)");
+        node.setAttribute("oncommand", "noscriptOverlay.menuAllow(" + (!enabled) + ", this)");
         node.setAttribute("tooltiptext",
           this.getString("allowed." + (enabled ? "yes" : "no")));
-        if(enabled && ns.isPermanent(menuSite)) {
+        if(locked || enabled && ns.isPermanent(menuSite)) {
           node.setAttribute("disabled", "true");
         } else {
           cssClass += " menuitem-iconic ";
@@ -288,7 +290,7 @@ var noscriptOverlay = noscriptUtil.service ?
         if(showPermanent || enabled) 
           parent.appendCmd(node);
         
-        if(!enabled) {
+        if(!(enabled || locked)) {
           if(showTemp) {
             extraNode = document.createElement("menuitem");
             extraNode.setAttribute("label", this.getString("allowTemp", [menuSite]));
@@ -651,7 +653,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var origin = this.ns.getSite(requestInfo.origin);
     origin = (origin && "[" + origin + "]") || this.getString("untrustedOrigin");
     var label = this.getString("xss.notify.generic", [origin]);
-   
+    var icon = this.getIcon("noscript-statusXss");
     
     const refWidget = document.getElementById("noscript-options-ctx-menuitem");
     var buttonLabel = refWidget.getAttribute("label");
@@ -681,6 +683,9 @@ var noscriptOverlay = noscriptUtil.service ?
     }
   },
   
+  notifyMetaRefreshCallback: function(info) {
+    noscriptOverlay.notifyMetaRefresh(info);
+  },
   notifyMetaRefresh: function(info) {
     var browser = this.ns.domUtils.findBrowser(window, info.document.defaultView);
     if(!browser) return;
@@ -831,10 +836,12 @@ var noscriptOverlay = noscriptUtil.service ?
     var message = this.getString("allowed." + lev);
     var shortMessage = message.replace(/JavaScript/g, "JS");
     
-    if(notificationNeeded && allowed) message += ", " + allowed + "/" + total + " (" + allowedSites.join(", ") + ")";
-    message += " | <SCRIPT>: " + totalScripts + " | Java+Flash+Plugin: " + totalPlugins;
+    if(notificationNeeded && allowed) 
+      message += ", " + allowed + "/" + total + " (" + allowedSites.join(", ") + ")";
     
-    shortMessage += " | <SCRIPT>: " + totalScripts + " | J+F+P: " + totalPlugins;
+    var countsMessage = " | <SCRIPT>: " + totalScripts + " | <OBJECT>: " + totalPlugins;
+    message += countsMessage;
+    shortMessage += countsMessage;
     
     var icon = this.getIcon(this.statusIcon);
     var className = this.getStatusClass(lev, !totalAnnoyances);
@@ -1075,7 +1082,7 @@ var noscriptOverlay = noscriptUtil.service ?
           const ns = noscriptOverlay.ns;
           doc._NoScript_contentLoaded = true;
           if(w == w.top) {
-            ns.processMetaRefresh(doc);
+            ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
             if(w == window.content) {
               noscriptOverlay._syncUINow();
             }

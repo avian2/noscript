@@ -2,9 +2,13 @@
   list-style-image: url("icon24.png");
 }
 
-#noscript-statusIcon, #noscript-statusLabel, #noscript-statusRedirect, #noscript-statusXss {
+#noscript-statusIcon,
+#noscript-statusLabel,
+#noscript-statusRedirect,
+#noscript-statusXss {
   cursor: pointer;
 }
+
 .noscript-cmd {
   font-weight: normal;
 }
@@ -12,6 +16,7 @@
 .noscript-toplevel {
   font-weight: bold;
 }
+
 .noscript-temp {
   font-style: italic;
   font-weight: normal;
@@ -20,43 +25,70 @@
 .noscript-unsafe-reload {
   list-style-image: url(unsafe-reload16.png);
 }
-.noscript-redirect {
-  list-style-image: url(redirect16.png);
-}
+
 .noscript-console {
-   list-style-image: url(console16.png);
+  list-style-image: url(console16.png);
 }
 .noscript-faq {
-   list-style-image: url(faq16.png);
-}
-.noscript-xss {
-   list-style-image: url(xss16.png);
+  list-style-image: url(faq16.png);
 }
 
-.noscript-yes, #noscript-tbb.noscript-yes, .noscript-allow {
+.noscript-redirect,
+#noscript-statusRedirect {
+  list-style-image: url(redirect16.png);
+}
+.noscript-xss,
+#noscript-statusXss {
+  list-style-image: url(xss16.png);
+}
+
+.noscript-yes,
+#noscript-tbb.noscript-yes,
+#noscript-statusIcon.noscript-yes,
+.noscript-allow {
   list-style-image: url(yes16.png);
 }
-.noscript-no, #noscript-tbb.noscript-no, .noscript-forbid {
+.noscript-no,
+#noscript-tbb.noscript-no,
+#noscript-statusIcon.noscript-no,
+.noscript-forbid {
   list-style-image: url(no16.png);
 }
-.noscript-prt, #noscript-tbb.noscript-prt {
+.noscript-prt,
+#noscript-tbb.noscript-prt,
+#noscript-statusIcon.noscript-prt {
   list-style-image: url(prt16.png);
 }
-.noscript-glb, #noscript-tbb.noscript-glb {
+.noscript-glb,
+#noscript-tbb.noscript-glb,
+#noscript-statusIcon.noscript-glb,
+.noscript-inactive-glb,
+ #noscript-tbb.noscript-inactive-glb,
+#noscript-statusIcon.noscript-inactive-glb {
   list-style-image: url(glb16.png);
 }
 
-.noscript-inactive-yes, #noscript-tbb.noscript-inactive-yes {
+.noscript-inactive-yes,
+#noscript-tbb.noscript-inactive-yes,
+#noscript-statusIcon.noscript-inactive-yes {
   list-style-image: url(inactive-yes16.png);
 }
-.noscript-inactive-no, #noscript-tbb.noscript-inactive-no, .noscript-distrust, .noscript-untrusted {
+.noscript-inactive-no,
+#noscript-tbb.noscript-inactive-no,
+#noscript-statusIcon.noscript-inactive-no,
+.noscript-distrust,
+.noscript-untrusted {
   list-style-image: url(inactive-no16.png);
 }
-.noscript-inactive-prt, #noscript-tbb.noscript-inactive-prt {
+.noscript-inactive-prt,
+#noscript-tbb.noscript-inactive-prt,
+#noscript-statusIcon.noscript-inactive-prt {
   list-style-image: url(inactive-no16.png);
 }
 
-tab.noscript-xss, tab.noscript-yes, tab.noscript-no {
+tab.noscript-xss,
+tab.noscript-yes,
+tab.noscript-no {
   marker-offset: 24px;
 }
 

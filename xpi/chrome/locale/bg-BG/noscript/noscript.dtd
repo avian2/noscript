@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "Позволявай текстово копиране и поставяне от клипборда">
 <!ENTITY noscriptAdditionalRestrictions "Допълнителни забрани за недоверени сайтове">
 <!ENTITY noscriptForbidJava "Забрани Java™">
+<!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Забрани Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Забрани други плъгини">
 <!ENTITY noscriptReloadWarn "Тези опций ще имат ефект на нови или (ръчно) презаредени страници">
@@ -90,7 +92,7 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">

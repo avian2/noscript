@@ -39,12 +39,16 @@
 <!ENTITY noscriptSound.reset.accesskey "б">
 <!ENTITY noscriptAdvanced "Дополнительно">
 <!ENTITY noscriptAdditionalPermissions "Дополнительные возможности для доверяемых сайтов">
-<!ENTITY noscriptAllowClipboard "Расширенное копирование/вставка из внешнего буфера обмена">
+<!ENTITY noscriptAllowClipboard "Расширенные копирование/вставка из внешнего буфера обмена">
 <!ENTITY noscriptAdditionalRestrictions "Дополнительные ограничения для ненадёжных сайтов">
+<!ENTITY noscriptPlugins "Плагины">
+<!ENTITY noscriptContentBlocker "Применять эти ограничения и для доверенных сайтов">
 <!ENTITY noscriptForbidJava "Запретить отображение элементов Java™">
+<!ENTITY noscriptForbidWebBugs "Запретить отображение элементов &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Запретить отображение элементов Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Запретить отображение элементов Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Запретить отображение элементов других плагинов">
-<!ENTITY noscriptReloadWarn "Примечание: Установленные настройки вступают в силу либо на новой странице, либо после ручного обновления текущей страницы">
+<!ENTITY noscriptReloadWarn "Примечание: Установленные настройки вступают в силу либо на новой странице, либо после обновления текущей страницы (вручную)">
 <!ENTITY noscriptConfirmUnblock "Подтверждать временную разблокировку объекта на странице">
 <!ENTITY noscriptStatusLabel "Сообщения в строке состояния">
 <!ENTITY noscriptForbidBookmarklets "Запретить использование Bookmarklets">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "о">
 <!ENTITY noscriptResetDef "Сбросить настройки">
 <!ENTITY noscriptResetDef.accesskey "и">
+<!ENTITY noscriptOptionsWidth "40em">

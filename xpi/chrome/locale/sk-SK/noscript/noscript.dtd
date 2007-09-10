@@ -16,7 +16,7 @@
 <!ENTITY noscriptGloballyEnabled "Skripty všeobecne povolené (nebezpečné)">
 <!ENTITY noscriptAutoReload "Automaticky znovu načítať stránky, keď sa zmení povolenie">
 <!ENTITY noscriptGeneral "Všeobecné">
-<!ENTITY noscriptAppearance "Rozloženie">
+<!ENTITY noscriptAppearance "Vzhľad">
 <!ENTITY noscriptShow "Zobraziť...">
 <!ENTITY noscriptCtxMenu "Kontextová ponuka">
 <!ENTITY noscriptStatusIcon "Ikona v stavovom riadku">
@@ -37,11 +37,15 @@
 <!ENTITY noscriptSound.play.accesskey "h">
 <!ENTITY noscriptSound.reset "Obnoviť predvolené">
 <!ENTITY noscriptSound.reset.accesskey "r">
-<!ENTITY noscriptAdvanced "Rozšírené">
+<!ENTITY noscriptAdvanced "Spresniť">
 <!ENTITY noscriptAdditionalPermissions "Ďalšie povolenia pre dôveryhodné stránky">
 <!ENTITY noscriptAllowClipboard "Povoliť kopírovanie a prilepenie textu z externej schránky">
 <!ENTITY noscriptAdditionalRestrictions "Ďalšie obmedzenia pre nepovolené stránky">
+<!ENTITY noscriptPlugins "Zásuvné moduly">
+<!ENTITY noscriptContentBlocker "Použiť tieto obmedzenia aj na dôveryhodné stránky">
 <!ENTITY noscriptForbidJava "Zakázať Java™">
+<!ENTITY noscriptForbidWebBugs "Zakázať &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Zakázať Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Zakázať Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Zakázať ostatné zásuvné moduly">
 <!ENTITY noscriptReloadWarn "Tieto možnosti sa prejavia na nových (alebo na ručne znovu načítaných) stránkach">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "V">
 <!ENTITY noscriptResetDef "Vynulovať na predvolené">
 <!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">

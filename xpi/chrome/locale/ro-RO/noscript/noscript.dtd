@@ -41,7 +41,11 @@
 <!ENTITY noscriptAdditionalPermissions "Permisiuni suplimentare pentru paginile de încredere">
 <!ENTITY noscriptAllowClipboard "Permite copiere text îmbogăţit din clipboard extern">
 <!ENTITY noscriptAdditionalRestrictions "Restricţii suplimentare pentru paginile nesigure">
+<!ENTITY noscriptPlugins "Pluginuri">
+<!ENTITY noscriptContentBlocker "Foloseşte aceste restricţii şi pentru paginile de încredere">
 <!ENTITY noscriptForbidJava "Blochează Java™">
+<!ENTITY noscriptForbidWebBugs "Blochează &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Blochează Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Blochează Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Blochează alte pluginuri">
 <!ENTITY noscriptReloadWarn "Aceste opţiuni vor avea efect în paginile nou deschise sau reîncărcate (manual).">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "r">
 <!ENTITY noscriptResetDef "Iniţializare (valori implicite)">
 <!ENTITY noscriptResetDef.accesskey "v">
+<!ENTITY noscriptOptionsWidth "40em">

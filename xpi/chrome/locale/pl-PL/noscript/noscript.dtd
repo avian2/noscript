@@ -41,7 +41,11 @@
 <!ENTITY noscriptAdditionalPermissions "Dodatkowe uprawnienia dla zaufanych witryn">
 <!ENTITY noscriptAllowClipboard "Pozwól na kopiowanie/wklejanie z zewnętrznego schowka w formacie RTF">
 <!ENTITY noscriptAdditionalRestrictions "Dodatkowe ograniczenia dla niezaufanych witryn">
+<!ENTITY noscriptPlugins "Wtyczki">
+<!ENTITY noscriptContentBlocker "Zastosuj te ograniczenia także do zaufanych witryn">
 <!ENTITY noscriptForbidJava "Blokuj aplety Java™">
+<!ENTITY noscriptForbidWebBugs "Blokuj &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Blokuj aplety Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Blokuj animacje Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Blokuj inne wtyczki">
 <!ENTITY noscriptReloadWarn "Uwaga! Opcje te będą działały po odświeżeniu stron oraz w nowo otwieranych stronach.">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Przywróć domyślne">
 <!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">

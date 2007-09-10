@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "อนุญาตให้ริชเท็กซ์คัดลอกและวางจากคลิปบอร์ดภายนอก">
 <!ENTITY noscriptAdditionalRestrictions "การควบคุมที่เพิ่มขึ้นสำหรับไซต์ที่ไม่เชื่อถือ">
 <!ENTITY noscriptForbidJava "ไม่อนุญาตจาวาâ™">
+<!ENTITY noscriptForbidWebBugs "ไม่อนุญาต &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "ไม่อนุญาต Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "ไม่อนุญาต Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "ไม่อนุญาตตัวเสริมอื่น">
 <!ENTITY noscriptReloadWarn "ตัวเลือกเหล่านี้จะส่งผลกระทบในหน้าใหม่หรือหน้าที่เรียกใหม่ (ด้วยตัวเอง)">

@@ -36,10 +36,11 @@ var nsopt = {
     this.utils = new UIUtils(ns);
     this.utils.resumeTabSelections();
     
-    const widgets = ["urlText", "urlText","urlList", "jsglobal", "addButton", "removeButton"];
-    for(var j = widgets.length; j-- > 0;) 
-      this[widgets[j]] = document.getElementById(widgets[j]); 
-    
+    var locked = this.serv.locked;
+    for each (widget in ["urlText","urlList", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
+      this[widget] = document.getElementById(widget);
+      if(locked) this[widget].disabled = true;
+    }
      // forbid <a ping>
     var pingCbx = document.getElementById("mozopt-browser.send_pings");
     if(pingCbx.getAttribute("label").indexOf("Allow ") == 0) { 
@@ -58,6 +59,9 @@ var nsopt = {
         try {
           var val = mozilla ? ns.prefService.getBoolPref(prefName) : ns.getPref(prefName);
           checkbox.setAttribute("checked",inverse ? !val : val);
+          if(ns.prefService.prefIsLocked(mozilla ? prefName : "noscript." + prefName)) {
+            checkbox.setAttribute("disabled", true);
+          }
         } catch(ex) {}
       }
     );
@@ -333,7 +337,15 @@ var nsopt = {
     return null;
   },
   
-  
+  syncNsel: function(cbx) {
+    var blockNSWB = document.getElementById("opt-blockNSWB");
+    if(cbx.checked) {
+      blockNSWB.disabled = true;
+      blockNSWB.checked = true;
+    } else {
+      blockNSWB.disabled = false;
+    }
+  },
   
   buttonToTitle: function(btid) {
     return "NoScript - " + document.getElementById(btid).getAttribute("label");

@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "Cho phép copy và dán rich text từ clipboard bên ngoài">
 <!ENTITY noscriptAdditionalRestrictions "Những hạn chế bổ sung cho sites không tin cậy">
 <!ENTITY noscriptForbidJava "Cấm Java™">
+<!ENTITY noscriptForbidWebBugs "Cấm &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Cấm Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Cấm Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Cấm các plugins khác">
 <!ENTITY noscriptReloadWarn "Những tùy chọn này sẽ có hiệu quả trong trang mới hay trang được tải lại">

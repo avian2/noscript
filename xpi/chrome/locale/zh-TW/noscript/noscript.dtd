@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "允許從外部剪貼簿複製與貼上Rich Format Text">
 <!ENTITY noscriptAdditionalRestrictions "對不信任網站的額外限制">
 <!ENTITY noscriptForbidJava "禁止 Java™">
+<!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "禁止 Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "禁止其他外掛">
 <!ENTITY noscriptReloadWarn "這些選項會套用在新的或（手動）重讀的頁面">

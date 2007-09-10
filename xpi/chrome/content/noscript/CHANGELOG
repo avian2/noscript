@@ -1,5 +1,56 @@
 NoScript ChangeLog
 
+v 1.1.7
+=====================================================================
++ Further QA for release
++ Improvements in script redirection management
+
+v 1.1.6.27 (1.1.7RC2)
+=====================================================================
++ New "Forbid Web Bugs" option in the Advanced/Untrusted panel
+x Fixed startup "sudden death" issue (thanks Alan Baxter)
+
+v 1.1.6.26 (1.1.7RC1)
+=====================================================================
++ Moved plugin content options to a new top-level "Plugins" tab
++ New "Plugins/Forbid Microsoft® Silverlight™" option, enabled by 
+  default like "Plugins/Forbid Java™"
++ New "Plugins/Apply these restrictions to trusted sites too" option
++ Enchanced sensibility for the JS URL detection feature
++ New "jsredirectForceShow" option to always display JavaScript-only
+  navigation URLs at the bottom of pages, no matter what the visible
+  content is (per timeless' RFE)
++ UTF-8 escaping awareness for InjectionChecker pre-syntax evaluator
++ Arabic (thanks Nassim Dhaher)
++ Indonesian(thanks regfreak)
++ Experimental Intel MidBrowser support
++ Experimental preference locking support (look at the mozilla.cfg 
+  sample inside the XPI for details)
+x Fixed meta-refresh notification failing to appear sometimes
+x Cleanup of the conter-measures against Sirdarckcat's redirected 
+  script trick (available for Fx >= 2.0 only) with user feedback
+x Fixed full address no more shown in allowing menu for numeric IP
+  or TCP-IP explicit port URLs (thanks blahhhy for report)
+x noscriptOptionsWidth entity to localize option dialog size
+
+v 1.1.6.25
+=====================================================================
++ Fix for Sirdarckcat's JS redirection trick
+
+v 1.1.6.24
+=====================================================================
++ Fixed XSS notification infobar not showing
+
+v 1.1.6.23
+=====================================================================
++ Work-around for Daily Dilbert extension's CSS bug hijacking status
+  bar icons (thanks gumble and Archaeopterix for reporting)
+
+v 1.1.6.22
+=====================================================================
+x Fixed toolbar icon breaking when "Scripts Globally Allowed" and no
+  script found in page (thanks Claus Valca and Gecco for reporting)
+
 v 1.1.6.21
 =====================================================================
 x Fixed infobar icon not always properly updated upon tab-switching

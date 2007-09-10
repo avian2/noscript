@@ -1,0 +1,99 @@
+<!ENTITY noscriptOptions "Pilihan...">
+<!ENTITY noscriptOptions.accesskey "P">
+<!ENTITY noscriptOptionsLong "Pilihan NoScript">
+<!ENTITY noscriptAbout "Tentang NoScript...">
+<!ENTITY noscriptPermissionsText "Anda dapat menentukan situs web mana yang diijinkan menjalankan naskah. Masukkan alamat atau domain (contoh: &quot;http://www.site.com&quot; atau &quot;site.com&quot;) yang akan diberi ijin kemudian klik Ijinkan.">
+<!ENTITY noscriptWebAddress "Alamat situs web:">
+<!ENTITY noscriptAllow "Ijinkan">
+<!ENTITY noscriptAllow.accesskey "I">
+<!ENTITY noscriptForbid "Larang">
+<!ENTITY noscriptForbid.accesskey "L">
+<!ENTITY noscriptTrust "Tandai sebagai Terpercaya">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Tandai sebagai Tidak Terpercaya">
+<!ENTITY noscriptUntrust.accesskey "X">
+<!ENTITY noscriptRemoveSelected "Hapus situs terpilih">
+<!ENTITY noscriptGloballyEnabled "Seluruh naskah diperbolehkan (berbahaya)">
+<!ENTITY noscriptAutoReload "Otomatis mengambil ulang halaman yang terpengaruh saat perijinan berubah">
+<!ENTITY noscriptGeneral "Umum">
+<!ENTITY noscriptAppearance "Penampilan">
+<!ENTITY noscriptShow "Tampilkan...">
+<!ENTITY noscriptCtxMenu "Menu kontekstual">
+<!ENTITY noscriptStatusIcon "Ikon papan status">
+<!ENTITY noscriptFullAddr "Alamat Lengkap (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Domain Lengkap (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Dasar Domain level ke-2 (noscript.net)">
+<!ENTITY noscriptTempCmd "Ijinkan sementara [...]">
+<!ENTITY noscriptSound "Umpan balik suara saat naskah dihalangi">
+<!ENTITY noscriptImport "Impor">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Ekspor">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Tampilkan pesan tetang naskah yang dihalangi">
+<!ENTITY noscriptNotify.bottom "Taruh pesan di bawah">
+<!ENTITY noscriptSound.choose "Pilih">
+<!ENTITY noscriptSound.choose.accesskey "P">
+<!ENTITY noscriptSound.play "Mainkan">
+<!ENTITY noscriptSound.play.accesskey "M">
+<!ENTITY noscriptSound.reset "Reset ke awal">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Canggih">
+<!ENTITY noscriptAdditionalPermissions "Tambahan perijinan untuk situs terpercaya">
+<!ENTITY noscriptAllowClipboard "Perbolehkan copy dan paster rich text dari clipboard eksternal">
+<!ENTITY noscriptAdditionalRestrictions "Pembatasan tambahan untuk situs tidak terpercaya">
+<!ENTITY noscriptForbidJava "Larang Java™">
+<!ENTITY noscriptForbidWebBugs "Larang &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidFlash "Larang Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "Larang plugin lainnya">
+<!ENTITY noscriptReloadWarn "Pilihan ini akan berpengaruh pada halaman yang baru atau yang baru diambil ulang">
+<!ENTITY noscriptConfirmUnblock "Konfirmasi ulang sebelum membuka sementara penghalang suatu objek">
+<!ENTITY noscriptStatusLabel "Label papan status">
+<!ENTITY noscriptForbidBookmarklets "Larang bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Tampilkan ikon placeholder">
+<!ENTITY noscriptTruncateTitle "Potong judul dokumen">
+<!ENTITY noscriptFixLinks "Berusaha memperbaiki link JavaScript">
+<!ENTITY noscriptAllowBookmarks "Ijinkan bookmarks">
+<!ENTITY noscriptAllowViaBookmarks "Ijinkan situs dibuka melalui bookmarks">
+<!ENTITY noscriptAllowPing "Ijinkan &lt;a ping...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Ijinkan link lokal">
+<!ENTITY noscriptForbidPing "Larang &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Larang perubahan arah META didalam elemen &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "M">
+<!ENTITY noscriptWhitelist "Daftar putih">
+<!ENTITY noscriptPermissions "Ijin-ijin">
+<!ENTITY noscriptRefresh "Segarkan">
+<!ENTITY noscriptNotifications "Pemberitahuan">
+<!ENTITY noscriptToolbarToggle "Klik kiri pada toolbar NoScript membalikan">
+<!ENTITY noscriptTrusted "Terpercaya">
+<!ENTITY noscriptUntrusted "Tidak Terpercaya">
+<!ENTITY noscriptUnknown "Tidak diketahui">
+<!ENTITY noscriptAdd "Tambah">
+<!ENTITY noscriptAdd.accesskey "a">
+<!ENTITY noscriptClose "Tutup">
+<!ENTITY noscriptSiteManager "Manajer Situs">
+<!ENTITY noscriptSecurityManager "Manajer Keamanan">
+<!ENTITY noscriptPolicies "Kebijakan">
+<!ENTITY noscriptDefaultPolicies "Kebijakan awal">
+<!ENTITY noscriptSitePolicies "Kebijakan Situs">
+<!ENTITY noscriptNselNever "Sembunyikan elemen &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "Tampikan elemen &lt;noscript&gt; yang mengikuti &lt;script&gt; yang dihalangi">
+<!ENTITY noscriptAutoAllowTopLevel "Ijinkan sementara situs top-level untuk awal">
+<!ENTITY noscriptDescription "Perlindungan tambahan untuk FireFox Anda: NoScript mengijinkan JavaScript, Java (dan plugin lainnya) hanya untuk domain terpercaya pilihan Anda (misal: situs web-banking personal). Daftar putih ini menjadi dasar perlindungan dari penyalahgunaan lubang keamanan (yang diketahui maupun tidak) tanpa kehilangan fungsionalitas... Para ahli percaya: FireFox lebih aman bersama NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "halangi pemindai berdasar CSS">
+<!ENTITY noscriptOptFilterXGet "Bersihkan permintaan cross-site yang mencurigakan">
+<!ENTITY noscriptOptFilterXPost "Ubah permintaan POST cross-site menjadi permintaan GET tanpa data">
+<!ENTITY noscriptShowConsole "Tampilkan Penyangga">
+<!ENTITY noscriptShowConsole.accesskey "P">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Ambil ulang yang tidak aman">
+<!ENTITY noscriptUnsafeReload.accesskey "u">
+<!ENTITY noscriptXssExceptions "Pengecualian Perlindungan Anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Pencocokan tujuan regular expression ini tidak akan dilindungi dari XSS">
+<!ENTITY noscriptMatchSample "Conton pencocokan pola:">
+<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "Reset ke awal">
+<!ENTITY noscriptResetDef.accesskey "r">

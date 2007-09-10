@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "התר העתקה והדבקה של טקסט עשיר (rich text) מהלוח החיצוני">
 <!ENTITY noscriptAdditionalRestrictions "הגבלות נוספות על אתרים בלתי-מורשים">
 <!ENTITY noscriptForbidJava "אסור על ג&apos;אוה">
+<!ENTITY noscriptForbidWebBugs "אסור על &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "אסור על Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "אסור על פלאש">
 <!ENTITY noscriptForbidPlugins "אסור על תוספים אחרים">
 <!ENTITY noscriptReloadWarn "אפשרויות אלו ייכנסו לתוקף בדפים חדשים או דפים שנטענו מחדש ידנית">

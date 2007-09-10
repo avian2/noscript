@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "Пашыранае капіяванне/устаўка з знешняга буфера абмену">
 <!ENTITY noscriptAdditionalRestrictions "Дадатковыя абмежаванні для ненадзейных сайтаў">
 <!ENTITY noscriptForbidJava "Забараніць адлюстраванне элементаў Java™">
+<!ENTITY noscriptForbidWebBugs "Забараніць адлюстраванне элементаў &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Забараніць адлюстраванне элементаў Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Забараніць адлюстраванне элементаў Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Забараніць адлюстраванне элементаў іншых убудоваў">
 <!ENTITY noscriptReloadWarn "Нататка: Усталяваныя налады ўступаюць у сілу альбо на новай старонцы, альбо пасля ручнога абнаўлення бягучае старонкі">

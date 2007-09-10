@@ -41,8 +41,12 @@
 <!ENTITY noscriptAdditionalPermissions "Dodatečná povolení pro důvěryhodné stránky">
 <!ENTITY noscriptAllowClipboard "Povolit kopírování a vkládání textu z vnější schránky">
 <!ENTITY noscriptAdditionalRestrictions "Dodatečná omezení pro nedůvěryhodné stránky">
-<!ENTITY noscriptForbidJava "Zakázat Javu(tm)">
-<!ENTITY noscriptForbidFlash "Zakázat Macromedia(r) Flash(r)">
+<!ENTITY noscriptPlugins "Zásuvné moduly">
+<!ENTITY noscriptContentBlocker "Použít tato omezení i pro důvěryhodné stránky">
+<!ENTITY noscriptForbidJava "Zakázat Java™">
+<!ENTITY noscriptForbidWebBugs "Zakázat &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Zakázat Microsoft® Silverlight™">
+<!ENTITY noscriptForbidFlash "Zakázat Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">
 <!ENTITY noscriptReloadWarn "Tato nastavení se projeví u nově otevřených nebo (manuálně) aktualizovaných stránkách">
 <!ENTITY noscriptConfirmUnblock "Požadovat potvrzení při dočasném povolení objektu">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "V">
 <!ENTITY noscriptResetDef "Výchozí nastavení">
 <!ENTITY noscriptResetDef.accesskey "z">
+<!ENTITY noscriptOptionsWidth "40em">

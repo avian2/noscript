@@ -41,7 +41,11 @@
 <!ENTITY noscriptAdditionalPermissions "Papildomi leidimai patikimoms svetainėms">
 <!ENTITY noscriptAllowClipboard "Leisti formatuoto teksto kopijavimą ir įterpimą iš atmintinės">
 <!ENTITY noscriptAdditionalRestrictions "Papildomi draudimai nepatikimoms svetainėms">
+<!ENTITY noscriptPlugins "Įskiepiai">
+<!ENTITY noscriptContentBlocker "Pritaikyti šiuos draudimus taip pat ir patikimoms svetainėms">
 <!ENTITY noscriptForbidJava "Uždrausti Java™">
+<!ENTITY noscriptForbidWebBugs "Uždrausti &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Uždrausti Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Uždrausti Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Uždrausti kitus įskiepius">
 <!ENTITY noscriptReloadWarn "Šios nuostatos įsigalios naujoms arba (rankiniu būdu) įkrautoms iš naujo svetainėms">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "A">
 <!ENTITY noscriptResetDef "Atstatyti į pradines reikšmes">
 <!ENTITY noscriptResetDef.accesskey "Į">
+<!ENTITY noscriptOptionsWidth "40em">

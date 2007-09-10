@@ -41,7 +41,9 @@
 <!ENTITY noscriptAdditionalPermissions "Permisos adicionais para sitios de confianza">
 <!ENTITY noscriptAllowClipboard "Permitir copiar e pegar texto desde un portapapeis externo">
 <!ENTITY noscriptAdditionalRestrictions "Restricións adicionais para sitio non de confianza">
-<!ENTITY noscriptForbidJava "Non permitir Java ®">
+<!ENTITY noscriptForbidJava "Non permitir Java™">
+<!ENTITY noscriptForbidWebBugs "Non permitir &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Non permitir Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Non permitir Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Non permitir outros plugins">
 <!ENTITY noscriptReloadWarn "Estas opcións terán efecto en páxinas novas ou (manualmente) recargadas">

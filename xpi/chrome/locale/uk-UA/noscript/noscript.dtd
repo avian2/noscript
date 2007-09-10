@@ -6,12 +6,12 @@
 <!ENTITY noscriptWebAddress "Адреса web-сайту:">
 <!ENTITY noscriptAllow "Дозволити">
 <!ENTITY noscriptAllow.accesskey "о">
-<!ENTITY noscriptForbid "Forbid">
-<!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
-<!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
-<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptForbid "Заборонити">
+<!ENTITY noscriptForbid.accesskey "б">
+<!ENTITY noscriptTrust "Помітити як &quot;довірений&quot;">
+<!ENTITY noscriptTrust.accesskey "в">
+<!ENTITY noscriptUntrust "Помітити як &quot;не довірений&quot;">
+<!ENTITY noscriptUntrust.accesskey "е">
 <!ENTITY noscriptRemoveSelected "Видалити вибрані сайти">
 <!ENTITY noscriptGloballyEnabled "JavaScript повністю дозволений (небезпечно)">
 <!ENTITY noscriptAutoReload "Автоматично оновлювати сторінку після зміни для неї правил">
@@ -41,7 +41,11 @@
 <!ENTITY noscriptAdditionalPermissions "Додаткові права для довірених сайтів">
 <!ENTITY noscriptAllowClipboard "Вирішити розширене копіювання/вставку із зовнішнього буфера обміну">
 <!ENTITY noscriptAdditionalRestrictions "Додаткові обмеження для ненадійних сайтів">
+<!ENTITY noscriptPlugins "Модулі">
+<!ENTITY noscriptContentBlocker "Застосовувати ці обмеження і до довірених сайтів">
 <!ENTITY noscriptForbidJava "Заборонити Java™">
+<!ENTITY noscriptForbidWebBugs "Заборонити &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Заборонити Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Заборонити Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Заборонити інші плагини">
 <!ENTITY noscriptReloadWarn "Налаштування вступлять у силу на новій сторінці або після оновлення (вручну)">
@@ -92,7 +96,8 @@
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
 <!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
-<!ENTITY noscriptReset "Reset">
-<!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptReset "Відновити">
+<!ENTITY noscriptReset.accesskey "в">
+<!ENTITY noscriptResetDef "Відновити до початкових налаштувань">
+<!ENTITY noscriptResetDef.accesskey "н">
+<!ENTITY noscriptOptionsWidth "40em">

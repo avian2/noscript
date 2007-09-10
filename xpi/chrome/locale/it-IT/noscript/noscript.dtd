@@ -41,7 +41,11 @@
 <!ENTITY noscriptAdditionalPermissions "Permessi aggiuntivi per i siti fidati">
 <!ENTITY noscriptAllowClipboard "Permetti copia e incolla di testo formattato da altre applicazioni">
 <!ENTITY noscriptAdditionalRestrictions "Restrizioni aggiuntive per i siti non fidati">
+<!ENTITY noscriptPlugins "Plugin">
+<!ENTITY noscriptContentBlocker "Applica queste restrizioni anche ai siti fidati">
 <!ENTITY noscriptForbidJava "Vieta Java™">
+<!ENTITY noscriptForbidWebBugs "Vieta i &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Vieta Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Vieta Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Vieta altri plugin">
 <!ENTITY noscriptReloadWarn "Queste opzioni avranno effetto nelle nuove pagine e in quelle ricaricate (manualmente)">
@@ -79,8 +83,8 @@
 <!ENTITY noscriptAutoAllowTopLevel "Permetti temporaneamente il sito principale in automatico">
 <!ENTITY noscriptDescription "Protezione aggiuntiva per Firefox: NoScript consente l&apos;esecuzione di JavaScript, di Java (e, opzionalmente, degli altri plugin) solo per domini fidati di tua scelta (es. la tua banca online). Questo blocco preventivo basato su whitelist impedisce lo sfruttamento di vulnerabiltà della sicurezza (sia note che  addirittura ancora sconosciute!) li esperti confermeranno: Firefox è davvero più sicuro con NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blocca gli scanner basati su CSS">
-<!ENTITY noscriptOptFilterXGet "Filtra le richieste sospette di XSS provenienti da siti non fidato">
-<!ENTITY noscriptOptFilterXPost "Neutralizza le richieste POST (upload) sospette di XSS provenienti da un siti non fidati">
+<!ENTITY noscriptOptFilterXGet "Filtra le richieste sospette di XSS provenienti da siti non fidati">
+<!ENTITY noscriptOptFilterXPost "Neutralizza le richieste POST (upload) sospette di XSS provenienti da siti non fidati">
 <!ENTITY noscriptShowConsole "Mostra Console...">
 <!ENTITY noscriptShowConsole.accesskey "C">
 <!ENTITY noscriptXss "XSS">

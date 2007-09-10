@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
 <!ENTITY noscriptAdditionalRestrictions "Additional restrictions for untrusted sites">
 <!ENTITY noscriptForbidJava "Forbid Java™">
+<!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Forbid Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Forbid other plugins">
 <!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
@@ -90,7 +92,7 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">

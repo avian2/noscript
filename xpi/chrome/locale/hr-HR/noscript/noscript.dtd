@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "Dopusti kopiranje i lijepljenje obogaćenog teksta iz vanjskog međuspremnika">
 <!ENTITY noscriptAdditionalRestrictions "Dodatna ograničenja za neprovjerene stranice">
 <!ENTITY noscriptForbidJava "Zabrani Java™">
+<!ENTITY noscriptForbidWebBugs "Zabrani &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Zabrani Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Zabrani Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Zabrani druge dodatke">
 <!ENTITY noscriptReloadWarn "Ove postavke će imati učinka na novim ili (ručno) ponovno učitanim stranicama">
@@ -90,7 +92,7 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">

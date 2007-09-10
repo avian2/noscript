@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "クリップボードからリッチテキストのコピーとペーストを可能にする">
 <!ENTITY noscriptAdditionalRestrictions "信頼されていないサイトへの制限の追加">
 <!ENTITY noscriptForbidJava "Java&#8482; の禁止">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; の禁止">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight&#8482; の禁止">
 <!ENTITY noscriptForbidFlash "Macromedia&#174; Flash&#174; の禁止">
 <!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
 <!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページ、または再読込したページで有効になります">
@@ -90,7 +92,7 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">

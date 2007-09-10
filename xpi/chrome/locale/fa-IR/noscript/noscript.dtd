@@ -1,98 +1,103 @@
-<!ENTITY noscriptOptions "...تنظیمات">
-<!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript تنظیمات">
-<!ENTITY noscriptAbout "NoScript درباره">
-<!ENTITY noscriptPermissionsText ".شما می توانید سایت هایی را که اجازه اجرای اسکریپت دارند را مشخص کنید (&quot;http://www.site.com&quot; یا &quot;site.com&quot; آدرس سایت یا نام دامنه را وارد کنید(به عنوان مثال">
-<!ENTITY noscriptWebAddress "آدرس وب سایت:">
+<!ENTITY noscriptOptions "تنظیمات...">
+<!ENTITY noscriptOptions.accesskey "ت">
+<!ENTITY noscriptOptionsLong "تنظیمات NoScript">
+<!ENTITY noscriptAbout "درباره NoScript">
+<!ENTITY noscriptPermissionsText "شما می توانید سایت هایی را که اجازه اجرای اسکریپت دارند را مشخص کنید.آدرس سایت یا نام دامنه را وارد کنید.(به عنوان مثال &quot;http://www.site.com&quot; یا &quot;site.com&quot;)">
+<!ENTITY noscriptWebAddress "آدرس وب سایت :">
 <!ENTITY noscriptAllow "اجازه دادن">
-<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptAllow.accesskey "ا">
 <!ENTITY noscriptForbid "ممنوع">
-<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptForbid.accesskey "م">
 <!ENTITY noscriptTrust "علامت گدازی به عنوان تایید شده">
-<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptTrust.accesskey "ع">
 <!ENTITY noscriptUntrust "علامت گدازی به عنوان مشکوک">
-<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptUntrust.accesskey "ل">
 <!ENTITY noscriptRemoveSelected "پاک کردن سایت های انتخاب شده">
-<!ENTITY noscriptGloballyEnabled "(تمام اسکریپت ها مجوز دارند (خطرناک">
+<!ENTITY noscriptGloballyEnabled "تمام اسکریپت ها مجوز دارند (خطرناک)">
 <!ENTITY noscriptAutoReload "بارگذاری مجدد به صورت خودکار هنگام تغییر مجوزها">
 <!ENTITY noscriptGeneral "عمومی">
 <!ENTITY noscriptAppearance "تنظیمات ظاهری">
-<!ENTITY noscriptShow "...نمایش">
+<!ENTITY noscriptShow "نمایش...">
 <!ENTITY noscriptCtxMenu "نمایش در منوی کلیک راست">
 <!ENTITY noscriptStatusIcon "آیکون برنامه در نوار وضعیت">
-<!ENTITY noscriptFullAddr "(http://www.noscript.net) آدرس کامل">
-<!ENTITY noscriptFullDom "(http://www.noscript.net) نام کامل دامنه">
-<!ENTITY noscriptBaseDom "(noscript.net) سطح دوم نام دامنه ها">
-<!ENTITY noscriptTempCmd "[...] دادن مجوز موقت به">
+<!ENTITY noscriptFullAddr "آدرس کامل (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "نام کامل دامنه (http://www.noscript.net)">
+<!ENTITY noscriptBaseDom "سطح دوم نام دامنه ها (noscript.net)">
+<!ENTITY noscriptTempCmd "دادن مجوز موقت به [...]">
 <!ENTITY noscriptSound "پخش موزیک هنگام ممنوع شدن اسکریپت ها">
 <!ENTITY noscriptImport "ایمپورت">
-<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptImport.accesskey "ی">
 <!ENTITY noscriptExport "اکسپورت">
-<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptExport.accesskey "ک">
 <!ENTITY noscriptNotify "نمایش پیام هنگام متوقف شدن اسکریپت ها">
 <!ENTITY noscriptNotify.bottom "نمایش پیام در پایین صفحه">
 <!ENTITY noscriptSound.choose "انتخاب">
-<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.choose.accesskey "ن">
 <!ENTITY noscriptSound.play "پخش">
-<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.play.accesskey "پ">
 <!ENTITY noscriptSound.reset "بازگردانی تنظیمات اولیه">
-<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptSound.reset.accesskey "ب">
 <!ENTITY noscriptAdvanced "پیشرفته">
 <!ENTITY noscriptAdditionalPermissions "مجوزهای اضافی برای سایت های مورد اطمینان">
 <!ENTITY noscriptAllowClipboard "دادن مجوز برای کپی کردن و چسباندن متن سطح بالا">
 <!ENTITY noscriptAdditionalRestrictions "محدودیت بیشتر برای سایت های غیر مطمئن">
+<!ENTITY noscriptPlugins "افزودنی ها">
+<!ENTITY noscriptContentBlocker "اعمال این محدودیت ها روی سایت های مورد اطمینان">
 <!ENTITY noscriptForbidJava "Java ممنوع کردن">
-<!ENTITY noscriptForbidFlash "Macromedia Flash ممنوع کردن">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; ممنوع کردن">
+<!ENTITY noscriptForbidSilverlight "ممنوع کردن Microsoft® Silverlight">
+<!ENTITY noscriptForbidFlash "ممنوع کردن Macromedia Flash">
 <!ENTITY noscriptForbidPlugins "ممنوع کردن سایر پلاگین ها">
-<!ENTITY noscriptReloadWarn ".این تنظیمات روی پنجره های جدید اعمال خواهند شد">
+<!ENTITY noscriptReloadWarn "این تنظیمات روی پنجره های جدید اعمال خواهند شد.">
 <!ENTITY noscriptConfirmUnblock "پرسیدن سوال قبل مجوز دادن به اسکریپت های یک سایت">
 <!ENTITY noscriptStatusLabel "برچسب نوار وضعیت">
-<!ENTITY noscriptForbidBookmarklets ".ممنوع کردن سایت هایی که از نشانه گذاری ها باز می شوند">
+<!ENTITY noscriptForbidBookmarklets "ممنوع کردن سایت هایی که از نشانه گذاری ها باز می شوند.">
 <!ENTITY noscriptShowPlaceholder "نمایش آیکون">
 <!ENTITY noscriptTruncateTitle "کوتاه کردن عنوان پرونده">
 <!ENTITY noscriptFixLinks "اجازه دادن به لینک های جاوا اسکریپت">
-<!ENTITY noscriptAllowBookmarks ".دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند">
-<!ENTITY noscriptAllowViaBookmarks ".دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند">
-<!ENTITY noscriptAllowPing "&lt;a ping...&gt; اجازه دادن به">
+<!ENTITY noscriptAllowBookmarks "دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند.">
+<!ENTITY noscriptAllowViaBookmarks "دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند.">
+<!ENTITY noscriptAllowPing "اجازه دادن به &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "اجازه دادن به لینک های محلی">
-<!ENTITY noscriptForbidPing "&lt;a ping...&gt; ممنوع کردن">
-<!ENTITY noscriptForbidMetaRefresh "&lt;noscript&gt; در عناصر META ممنوع کردن تفییر مسیرهای">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptForbidPing "ممنوع کردن &lt;a ping...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "ممنوع کردن تفییر مسیرهای META  در عناصر &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "ر">
 <!ENTITY noscriptWhitelist "لیست سفید">
 <!ENTITY noscriptPermissions "مجوزها">
 <!ENTITY noscriptRefresh "بارگذاری مجدد">
 <!ENTITY noscriptNotifications "هشدارها">
-<!ENTITY noscriptToolbarToggle ".کلیک چپ روی کلید نوار ابزار برنامه مجوز های سایت فعلی را باز می کند">
+<!ENTITY noscriptToolbarToggle "کلیک چپ روی کلید نوار ابزار برنامه مجوز های سایت فعلی را باز می کند.">
 <!ENTITY noscriptTrusted "مورد تایید">
 <!ENTITY noscriptUntrusted "مشکوک">
 <!ENTITY noscriptUnknown "ناشناس">
 <!ENTITY noscriptAdd "افزودن">
-<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptAdd.accesskey "ز">
 <!ENTITY noscriptClose "بستن">
-<!ENTITY noscriptSiteManager "مدیر سایت">
-<!ENTITY noscriptSecurityManager "مدیر امنیت">
+<!ENTITY noscriptSiteManager "مدیریت سایت">
+<!ENTITY noscriptSecurityManager "مدیریت امنیت">
 <!ENTITY noscriptPolicies "راهنماها">
 <!ENTITY noscriptDefaultPolicies "راهنماهای پیشفرض">
 <!ENTITY noscriptSitePolicies "راهنمای مخصوص سایت">
-<!ENTITY noscriptNselNever "&lt;noscript&gt; مخفی کردن عناصر">
-<!ENTITY noscriptNselForce "&lt;noscript&gt; نمایش عناصر">
+<!ENTITY noscriptNselNever "مخفی کردن عناصر &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "نمایش عناصر &lt;noscript&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "اجازه دادن به سایت های رده بالا به صورت موقت و پیشفرض">
 <!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "CSS سد کردن اسکنرهای بر پایه">
+<!ENTITY noscriptOptBlockCssScanners "سد کردن اسکنرهای بر پایه CSS">
 <!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
 <!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
 <!ENTITY noscriptShowConsole "نمایش کنسول...">
-<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptShowConsole.accesskey "g">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS سوالات">
-<!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "بارگذاری مجدد ناامن">
-<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssFaq.accesskey "X">
+<!ENTITY noscriptUnsafeReload "بازآوری ناامن">
+<!ENTITY noscriptUnsafeReload.accesskey "ب">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "مثال تطابق الگو :">
 <!ENTITY noscriptReset "ریست">
-<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptReset.accesskey "ت">
 <!ENTITY noscriptResetDef "بازگردانی به تنظیمات اولیه">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptResetDef.accesskey "د">
+<!ENTITY noscriptOptionsWidth "40em">

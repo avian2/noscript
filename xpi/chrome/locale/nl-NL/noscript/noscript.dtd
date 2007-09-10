@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript Opties">
 <!ENTITY noscriptAbout "Over NoScript">
-<!ENTITY noscriptPermissionsText "U kunt aangeven welke webadressen u toestemming geeft om JavaScript te gebruiken. Type het adres of domein in (bijv. &quot;http://www.site.com&quot; of &quot;site.com&quot;) van de door u toegestane site; klik daarna op Toestaan.">
+<!ENTITY noscriptPermissionsText "Webadressen in deze lijst hebben toestemming om JavaScript te gebruiken. Type het adres of domein in (bijv. &quot;http://www.site.com&quot; of &quot;site.com&quot;) van de door u toegestane site; klik daarna op Toestaan.">
 <!ENTITY noscriptWebAddress "Webadres:">
 <!ENTITY noscriptAllow "Toestaan">
 <!ENTITY noscriptAllow.accesskey "T">
@@ -41,7 +41,11 @@
 <!ENTITY noscriptAdditionalPermissions "Aanvullende toestemming voor betrouwbare webpagina&apos;s">
 <!ENTITY noscriptAllowClipboard "Kopiëren en plakken van tekst met opmaakcodes vanaf een extern klembord toestaan">
 <!ENTITY noscriptAdditionalRestrictions "Aanvullende beperking voor onbetrouwbare webpagina&apos;s">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Deze beperkingen ook voor betrouwbare sites toepassen">
 <!ENTITY noscriptForbidJava "Java™ verbieden">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; verbieden">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieden">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieden">
 <!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
 <!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina&apos;s">
@@ -49,7 +53,7 @@
 <!ENTITY noscriptStatusLabel "Statusbalk label">
 <!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieden">
 <!ENTITY noscriptShowPlaceholder "Vervangend pictogram weergeven">
-<!ENTITY noscriptTruncateTitle "Documenttitels inkorten">
+<!ENTITY noscriptTruncateTitle "Document titels inkorten">
 <!ENTITY noscriptFixLinks "JavaScript koppelingen proberen te herstellen">
 <!ENTITY noscriptAllowBookmarks "Via een bladwijzer geopende sites toestaan">
 <!ENTITY noscriptAllowViaBookmarks "Via een bladwijzer geopende sites toestaan">
@@ -96,3 +100,4 @@
 <!ENTITY noscriptReset.accesskey "H">
 <!ENTITY noscriptResetDef "Standaardwaarden herstellen">
 <!ENTITY noscriptResetDef.accesskey "S">
+<!ENTITY noscriptOptionsWidth "40em">

@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "Tillåt klipp ut och kopiera från externt urklipp">
 <!ENTITY noscriptAdditionalRestrictions "Ytterliga restriktioner för ej betrodda webbplatser">
 <!ENTITY noscriptForbidJava "Förbjud Java™">
+<!ENTITY noscriptForbidWebBugs "Förbjud &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Förbjud Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Förbjud Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Förbjud andra insticksmoduler">
 <!ENTITY noscriptReloadWarn "Dessa alternativ kommer att börja gälla för nya eller (manuellt) uppdaterade webbsidor">
@@ -90,7 +92,7 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">

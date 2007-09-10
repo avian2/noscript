@@ -41,24 +41,28 @@
 <!ENTITY noscriptAdditionalPermissions "Flere tillatelsesinnstillinger for pålitelige sider">
 <!ENTITY noscriptAllowClipboard "Tillat kopiering/innliming av tekst med tekststiler fra ekstern utklippstavle">
 <!ENTITY noscriptAdditionalRestrictions "Tilleggsbegrensinger for upålitelige sider">
+<!ENTITY noscriptPlugins "PlugIns">
+<!ENTITY noscriptContentBlocker "Bruk disse restriksjonene på pålitelige sider">
 <!ENTITY noscriptForbidJava "Forby Java™">
-<!ENTITY noscriptForbidFlash "Forby Macromedia® Flash®">
+<!ENTITY noscriptForbidWebBugs "Forby &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Forby Microsoft® Silverlight™">
+<!ENTITY noscriptForbidFlash "Forby Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forby andre programtillegg">
 <!ENTITY noscriptReloadWarn "Disse innstillingene vil tre i kraft for nye eller (manuelt) oppdaterte nettsider">
 <!ENTITY noscriptConfirmUnblock "Spør om bekreftelse før midlertidig oppheving av blokkering av et nettsted">
 <!ENTITY noscriptStatusLabel "Statuslinje-beskjed">
 <!ENTITY noscriptForbidBookmarklets "Forby bokmerkelets">
 <!ENTITY noscriptShowPlaceholder "Vis plassholder-ikon">
-<!ENTITY noscriptTruncateTitle "Truncate dokumenttittler">
+<!ENTITY noscriptTruncateTitle "Kutt dokumenttittler">
 <!ENTITY noscriptFixLinks "Prøv å fikse JavaScript-lenker">
 <!ENTITY noscriptAllowBookmarks "Tillat sider gjennom bokmerker">
 <!ENTITY noscriptAllowViaBookmarks "Tillat sider gjennom bokmerker">
 <!ENTITY noscriptAllowPing "Tillat &lt;a ping...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Tillat lokale lenker">
 <!ENTITY noscriptForbidPing "Forby &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "Forby META viderekobling på insiden av &lt;noscript&gt;-elementer">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
-<!ENTITY noscriptWhitelist "Hvitelist">
+<!ENTITY noscriptWhitelist "Hviteliste">
 <!ENTITY noscriptPermissions "Tillatelser">
 <!ENTITY noscriptRefresh "Oppdater">
 <!ENTITY noscriptNotifications "Notifikasjoner">
@@ -78,10 +82,10 @@
 <!ENTITY noscriptNselForce "Vis &lt;noscript&gt;-element som følger et låst &lt;script&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillat top-level nettsteder som standard">
 <!ENTITY noscriptDescription "Ekstra beskyttelse for din Firefox">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
+<!ENTITY noscriptOptBlockCssScanners "Blokker CSS-baserte scannere">
+<!ENTITY noscriptOptFilterXGet "Sanitize kryss-side suspicious requests">
 <!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console...">
+<!ENTITY noscriptShowConsole "Vis konsoll">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
@@ -90,9 +94,10 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptMatchSample "Pattern matching sampleeksempel:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptResetDef "Reset til standard">
+<!ENTITY noscriptResetDef.accesskey "S">
+<!ENTITY noscriptOptionsWidth "40em">

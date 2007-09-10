@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "Permet copiar i enganxar text enriquit des d&apos;un porta-retalls extern">
 <!ENTITY noscriptAdditionalRestrictions "Restriccions addicionals per a llocs en què desconfieu">
 <!ENTITY noscriptForbidJava "Prohibeix el Java™">
+<!ENTITY noscriptForbidWebBugs "Prohibeix el &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Prohibeix el Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Prohibeix el Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Prohibeix d&apos;altres connectors">
 <!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pàgines noves o recarregades (manualment)">

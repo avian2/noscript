@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.1.6.21</em:version>
+   <em:version>1.1.7</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -34,10 +34,13 @@
    <em:contributor>Michela Venuto (inspiration)</em:contributor>
    <em:contributor>Mika Pirinen (Finnish translation)</em:contributor>
    <em:contributor>Mindaugas Jakutis (Lithuanian translation)</em:contributor>
-   <em:contributor>Mikes Kaszman Istvan (Hungarian translation)</em:contributor>
+   <em:contributor>Mikes Kaszmán István (Hungarian translation)</em:contributor>
    <em:contributor>MozUA (Ukrainian translation)</em:contributor>
+   <em:contributor>Nassim Dhaher (Arabic translation)</em:contributor>
    <em:contributor>Petr Jirsa (Czech translation)</em:contributor>
    <em:contributor>Pedram Veisi (Persian translation)</em:contributor>
+   <em:contributor>Raryel Costa Souza (Brazilian Portuguese)</em:contributor>
+   <em:contributor>regfreak (Indonesian translation)</em:contributor>
    <em:contributor>roebek (Galician translation)</em:contributor>
    <em:contributor>Qen (Thai translation)</em:contributor>
    <em:contributor>Slovak Soft (Slovak translation)</em:contributor>
@@ -78,7 +81,7 @@
       </Description>
    </em:targetApplication>
    
-   <!--SeaMonkey -->
+   <!-- SeaMonkey -->
    <em:targetApplication>
       <Description>
         <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
@@ -87,52 +90,417 @@
       </Description>
    </em:targetApplication>
    
+   <!-- MidBrowser -->
+   <em:targetApplication>
+      <Description>
+        <em:id>{aa5ca914-c309-495d-91cf-3141bbb04115}</em:id>
+        <em:minVersion>0.2</em:minVersion>
+        <em:maxVersion>3.0a8</em:maxVersion>
+      </Description>
+   </em:targetApplication>
+   
    <em:file>
      <Description about="urn:mozilla:extension:file:noscript.jar">
         <em:package>content/noscript/</em:package>
         <em:locale>content/noscript/en-US/</em:locale>
         <em:skin>skin/classic/noscript/</em:skin>
+        <!-- LOCALECHROME START -->
+        <em:locale>locale/ar/noscript/</em:locale>
+        <em:locale>locale/be-BY/noscript/</em:locale>
+        <em:locale>locale/bg-BG/noscript/</em:locale>
+        <em:locale>locale/ca-AD/noscript/</em:locale>
+        <em:locale>locale/cs-CZ/noscript/</em:locale>
+        <em:locale>locale/da-DK/noscript/</em:locale>
         <em:locale>locale/de-DE/noscript/</em:locale>
-        <em:locale>locale/fr-FR/noscript/</em:locale>
-        <em:locale>locale/fi-FI/noscript/</em:locale>
-        <em:locale>locale/it-IT/noscript/</em:locale>
-        <em:locale>locale/ja-JP/noscript/</em:locale>
-        <em:locale>locale/nl-NL/noscript/</em:locale>
-        <em:locale>locale/pt-PT/noscript/</em:locale>
-        <em:locale>locale/pt-BR/noscript/</em:locale>
-        <em:locale>locale/ca-AD/noscript/</em:locale> 
-        <em:locale>locale/uk-UA/noscript/</em:locale>
-        <em:locale>locale/th-TH/noscript/</em:locale>
-        <em:locale>locale/fa-IR/noscript/</em:locale>
         <em:locale>locale/el-GR/noscript/</em:locale>
         <em:locale>locale/en-GB/noscript/</em:locale>
+        <em:locale>locale/es-ES/noscript/</em:locale>
+        <em:locale>locale/fa-IR/noscript/</em:locale>
+        <em:locale>locale/fi-FI/noscript/</em:locale>
+        <em:locale>locale/fr-FR/noscript/</em:locale>
+        <em:locale>locale/gl-ES/noscript/</em:locale>
+        <em:locale>locale/he-IL/noscript/</em:locale>
         <em:locale>locale/hr-HR/noscript/</em:locale>
-        <em:locale>locale/pl-PL/noscript/</em:locale>
-        <em:locale>locale/cs-CZ/noscript/</em:locale>
-        <em:locale>locale/tr-TR/noscript/</em:locale>
-        <em:locale>locale/zh-TW/noscript/</em:locale>
-        <em:locale>locale/zh-CN/noscript/</em:locale>
-        <em:locale>locale/bg-BG/noscript/</em:locale>
+        <em:locale>locale/hu-HU/noscript/</em:locale>
+        <em:locale>locale/id-ID/noscript/</em:locale>
+        <em:locale>locale/it-IT/noscript/</em:locale>
+        <em:locale>locale/ja-JP/noscript/</em:locale>
+        <em:locale>locale/km-KH/noscript/</em:locale>
+        <em:locale>locale/lt-LT/noscript/</em:locale>
+        <em:locale>locale/mk-MK/noscript/</em:locale>
         <em:locale>locale/nb-NO/noscript/</em:locale>
+        <em:locale>locale/nl-NL/noscript/</em:locale>
+        <em:locale>locale/pl-PL/noscript/</em:locale>
+        <em:locale>locale/pt-BR/noscript/</em:locale>
+        <em:locale>locale/pt-PT/noscript/</em:locale>
+        <em:locale>locale/ro-RO/noscript/</em:locale>
         <em:locale>locale/ru-RU/noscript/</em:locale>
         <em:locale>locale/sk-SK/noscript/</em:locale>
-        <em:locale>locale/ro-RO/noscript/</em:locale>
-        <em:locale>locale/hu-HU/noscript/</em:locale>
-        <em:locale>locale/da-DK/noscript/</em:locale>
-        <em:locale>locale/mk-MK/noscript/</em:locale>
-        <em:locale>locale/sv-SE/noscript/</em:locale>
-        <em:locale>locale/vi-VN/noscript/</em:locale> 
-        <em:locale>locale/gl-ES/noscript/</em:locale> 
-        <em:locale>locale/km-KH/noscript/</em:locale>
-        <em:locale>locale/he-IL/noscript/</em:locale>
-        <em:locale>locale/be-BY/noscript/</em:locale>
-        <em:locale>locale/kh-KM/noscript/</em:locale>
-        <em:locale>locale/lt-LT/noscript/</em:locale>
         <em:locale>locale/sr-YU/noscript/</em:locale>
-        <em:locale>locale/es-ES/noscript/</em:locale>
+        <em:locale>locale/sv-SE/noscript/</em:locale>
+        <em:locale>locale/th-TH/noscript/</em:locale>
+        <em:locale>locale/tr-TR/noscript/</em:locale>
+        <em:locale>locale/uk-UA/noscript/</em:locale>
+        <em:locale>locale/vi-VN/noscript/</em:locale>
+        <em:locale>locale/zh-CN/noscript/</em:locale>
+        <em:locale>locale/zh-TW/noscript/</em:locale>
+        <!-- LOCALECHROME STOP -->
      </Description>
    </em:file>
+   
+   <!-- LOCALIZED START -->
 
+   <em:localized>
+      <Description>
+        <em:locale>ar</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>حماية اضا�?ية ل�?ير�?وكس الخاص بك: برنامج نوسكربت يسمح لجا�?اسكربت, جا�?ا(و اضا�?ات اخرى) للعمل �?قط للمواقع التي تختارها, مثال:موقع المصر�? المخصص لحسابك المنزلي. هذه القائمة المبنية على قاعدة الاعاقة  التح�?ظية تمنع استغلال الضع�? الامني , سواء كان معرو�? أو حتى غير معرو�?! بدون الت�?ريط بالعمل.. المحتر�?ون سيت�?قون أن �?ير�?وكس أكثر أمنا مع نوسكربت.:-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>be-BY</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>bg-BG</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Допълнителна защита за ваши�?т Firefox: NoScript позвол�?ва JavaScript, Java ( и други добавки ) �?амо за избрани от ва�? �?айтове ( като ваши�?т личен �?айт ). Превентира ек�?плоатации от в�?�?какъв вид ( познати и непознати! ) без �?леда от функционално�?т... Ек�?пертите ще �?е �?ъгла�?�?т: Съ�? NoScript ваши�?т Firefox е в безопа�?но�?т :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>ca-AD</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Protecció addicional per al teu Firefox...</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>cs-CZ</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Mimořádná ochrana pro váš Firefox: NoScript povoluje JavaScript, Javu (a další zásuvné moduly) pouze pro důvěryhodné servery dle vašeho výběru (např. vaše stránka pro home-banking). Tento seznam důvěryhodných serverů založený na preventivním blokování přístupu předchází zneužití bezpe�?nostních děr (známých a dokonce i neznámých!) bez jakékoli ztráty na funk�?nosti... Odborníci budou souhlasit: Firefox je skute�?ně bezpe�?nější s rozšířením NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>da-DK</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra protection for your Firefox...</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>de-DE</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Zusätzlicher Schutz für Ihren Browser: NoScript erlaubt das Ausführen von JavaScript, Java (und anderen Plugins) nur bei vertrauenswürdigen Domains Ihrer Wahl (z.B. Ihrer Homebanking-Website). Der auf einer Positivliste basierende präventive Ansatz zum Blockieren von Skripten verhindert das Ausnutzen von (bekannten und unbekannten!) Sicherheitslücken ohne Verlust an Funktionalität.</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>el-GR</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Π�?όσθετη π�?οστασία για τον Firefox. Οι ειδικοί συμφωνο�?ν: Το Noscript δίνει μεγαλ�?τε�?η ασφάλεια στον Firefox :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>en-GB</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox really is safer with NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>es-ES</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Protección extra para su Firefox: NoScript sólo permite JavaScript, Java y otros plugins en los sitios web de confianza que Ud. elija (como la web de su banco). Este planteamiento preventivo basado en una lista blanca evita que se puedan explotar vulnerabilidades (conocidas o incluso desconocidas) sin pérdida de funcionalidad... Los expertos lo confirmarán: Firefox es realmente más seguro con NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>fa-IR</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>محا�?ظت قوی از �?ایر�?اکس شما:این برنامه از اجرا شدن اسکریپت ها در سایت های مختل�? جلوگیری می کند.البته شما می توانید به اسکریپت های سایت های مورد اعتماد خود اجازه �?عالیت بدهید.</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>fi-FI</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Lisäsuoja Firefox selaimelle...</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>fr-FR</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Protection supplémentaire pour votre Firefox : NoScript ne permet l'exécution de scripts JavaScript que sur les domaines de confiance de votre choix (p.ex. le site de votre banque). Ce système de blocage préventif de scripts basé sur une liste blanche empêche l'exploitation de failles de sécurité (connues et même inconnues) sans perte de fonctionnalités… Les experts en conviendront : Firefox est réellement plus sûr avec NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>gl-ES</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>he-IL</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>הגנה מורחבת לדפדפן פיירפוקס: נוסקריפט מ�?פשרת ג'�?והסקריפט, ג'�?וה (והרחבות �?חרות) רק לשמות מתח�? (דומיין) לבחירתך (למשל, �?תר הבנק שלך).  גישה זו, המבוססת על &quot;רשימת מותרי�?" וחוסמת מר�?ש מה ש�?ינו מורשה, מונעת ניצול של פרצות �?בטחה (מוכרות ובלתי-מוכרות!) לל�? �?ובדן תפקוד... מומחי�? מסכימי�?: פיירפוקס בטוח יותר ע�? נוסקריפט :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>hr-HR</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Dodatna zaštita za Vaš Firefox: NoScript dopušta JavaScript, Java (i druge dodatke) samo za provjerene domene Vašeg izbora (npr. Vaša stranica Intenet bankarstva) . Ovaj pristup preventivnog blokiranja zasnovan na popisu dopuštenih sprije�?ava iskorištavanje sigurnosnih slabosti (znanih i neznanih) bez ikakvog gubitka funkcionalnosti... Stru�?njaci će se složiti: Firefox je zbilja sigurniji s NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>hu-HU</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra védelem a Firefoxhoz...</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>id-ID</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Perlindungan tambahan untuk FireFox Anda: NoScript mengijinkan JavaScript, Java (dan plugin lainnya) hanya untuk domain terpercaya pilihan Anda (misal: situs web-banking personal). Daftar putih ini menjadi dasar perlindungan dari penyalahgunaan lubang keamanan (yang diketahui maupun tidak) tanpa kehilangan fungsionalitas... Para ahli percaya: FireFox lebih aman bersama NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>it-IT</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Protezione aggiuntiva per Firefox: NoScript consente l'esecuzione di JavaScript, di Java (e, opzionalmente, degli altri plugin) solo per domini fidati di tua scelta (es. la tua banca online). Questo blocco preventivo basato su whitelist impedisce lo sfruttamento di vulnerabiltà della sicurezza (sia note che  addirittura ancora sconosciute!) senza perdita di funzionalità... Gli esperti confermeranno: Firefox è davvero più sicuro con NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>ja-JP</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>km-KH</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>lt-LT</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Papildoma apsauga jūsų Firefox naršyklei: NoScript leidžia JavaScript, Java (ir kitus įskiepius) tik jūsų pasirinktiems patikimiems domenams (pvz., jūsų banko interneto svetainei). Ši baltuoju sąrašu pagrįsta išankstinio blokavimo taktika neleidžia panaudoti saugumo skylių (žinomų ir net nežinomų!) neprarandant funkcionalumo... Ekspertai pritaria: Firefox tikrai saugesnis su NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>mk-MK</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Додатна заштита за вашиот прели�?тувач</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>nb-NO</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Ekstra beskyttelse for din Firefox</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>nl-NL</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra bescherming voor Firefox: NoScript staat JavaScript, Java (en andere plugins) alleen toe voor zelf gekozen betrouwbare domeinen (bijv. de internetbankieren website). Deze op toestemmingslijsten gebaseerde blokkering vooraf voorkomt exploitatie van beveiligings kwetsbaarheden (bekende en zelfs onbekende!) zonder verlies aan functionaliteit... Experts zullen bevestigen: Firefox is werkelijk veiliger met NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>pl-PL</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Zarządza wykonywaniem przez Firefoksa skryptów JavaScript, Flash i innych wtyczek</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>pt-BR</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Proteção extra para o seu Firefox: O NoScript permite JavaScripts, Java(e outros plugins) somente para os domínios confiáveis que você selecionar(por exemplo no site do seu internet banking). Esse bloqueio baseado em uma lista branca que começa vazia previne a exploração de vulnerabilidades de segurança (conhecidas e  até mesmo as desconhecidas!) sem perda de desempenho... Usuários especialistas concordam: o Firefox é realmente mais seguro com o NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>pt-PT</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Protecção extra para o seu Firefox...</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>ro-RO</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Protecţie suplimentară pentru Firefox. Permisiunile de a executa scripturi pot fi date doar paginilor de încredere.</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>ru-RU</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Эк�?тра защита дл�? Firefox: С помощью NoScript вы �?можете разрешать и�?полнение JavaScript, Java (и других плагинов) только дл�? доменов, у�?тановленных вами (например, ваш веб-�?айт). Белый �?пи�?ок, базирующий�?�? на принципе упреждающего блокировани�?, позвол�?ет предотвратить и�?пользование у�?звимо�?тей (изве�?тных и ещё не изве�?тных!) без потери функционально�?ти... Эк�?перты �?оглашают�?�?: Firefox дей�?твительно безопа�?нее �? NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>sk-SK</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra ochrana pre váš Firefox. NoScript povolí JavaScript, Javu (a �?alšie zásuvné moduly) len pre dôveryhodné domény podľa vášho výberu (napríklad webstránku vášho bankingu). Tento zoznam povolených založený na preventívnom blokovaní prístupu chráni pred zneužívaním bezpe�?nostných dier (známych aj neznámych) bez straty funk�?nosti. Odborníci by súhlasili: Firefox je s rozšírením NoScript naozaj bezpe�?nejší :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>sr-YU</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Додатна заштита за Ваш Firefox: NoScript дозвољава JavaScript, Java (и о�?тале додатке) �?амо доменима којима �?е верује по Вашем избору (нпр. Ваша е-banking веб �?трана). Овај превентивни при�?туп блокирања базиран на белој ли�?ти �?пречава и�?коришћавање безбедно�?них пропу�?та (познатих и чак и непознатих!) без икаквог губитка функционално�?ти... Ек�?перти ће �?е �?ложити: Firefox је заи�?та безбеднији �?а NoScript-ом :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>sv-SE</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Extra skydd för Firefox</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>th-TH</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>�?ารป้อง�?ันพิเศษสำหรับไฟร์ฟอ�?ซ์ของคุณ: NoScript ยอมรับจาวาสคริปต์�?ละจาวา(�?ละตัวเสริมอื่นๆ)เฉพาะโดเมนที่คุณเลือ�?(เช่น เว็บไซต์ธุร�?ิจส่วนตัวของคุณ) บั�?ชีขาวนี้บล็อ�?�?าร�?สวงหาผลประโยชน์ที่คืบคลานเข้ามา�?่อนของความปลอดภัยที่ไม่มั่นคง(ระบุ�?ละไม่ระบุ)ด้วยคุณประโยชน์...ผู้ใช้ระดับสูงจะเข้าใจ: ไฟร์ฟอ�?ซ์จะปลอดภัยขึ้นด้วยโนสคริปต์ :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>tr-TR</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Firefox için ek koruma eklentisi: NoScript eklentisi ile sadece güvendiğiniz sitelere JavaScript kullanımı için izin verebilir veya yasaklayabilirsiniz. Uzmanlar size firefon;un NoScript eklentisi ile daha güvenli olduğunu tavsiye edeceklerdir. :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>uk-UA</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Ек�?тра захи�?т дл�? Firefox: NoScript захищає ва�? від можливих зловми�?них дій JavaScript</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>vi-VN</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Thêm phần bảo vệ cho Firefox của bạn: NoScript chỉ cho phép JavaScript, Java (và các plugins khác) được chạy trong những trang web ch�?n lựa của bạn (v.d., web site ngân hàng của bạn).  Hướng đi dùng sổ trắng này ngăn chặn trước những khai thác lổ h�?ng bảo mật (biết trước và ngay cả chưa biết trước!) mà không mất đi tính năng... Các chuyên gia sẽ đồng ý: Firefox thật sự an toàn hơn với NoScript :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>zh-CN</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>为您的 Firefox �??供�?外�?护: NoScript �?��?许您所选择的信任域(例如您本国的银行网站)上的 JavaScript, Java (和其他�?�件)。该白�??�?�基于抢先�?过滤方法防止安全缺陷（已知，甚至是未知的�?）被利用，并且�?�?�失功能…… 专家们都�?��?：Firefox 加上 NoScript 真的是更加安全 :-)</em:description>
+      </Description>
+   </em:localized>
+
+
+   <em:localized>
+      <Description>
+        <em:locale>zh-TW</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>為您的 Firefox �??供�?外的�?護</em:description>
+      </Description>
+   </em:localized>
+
+   <!-- LOCALIZED STOP -->
  </Description>
 
 </RDF>

@@ -42,6 +42,8 @@
 <!ENTITY noscriptAllowClipboard "Дозволи rich text копирање и налепљивање из ектерног клипборда">
 <!ENTITY noscriptAdditionalRestrictions "Додатне забране за странице којима се не верује">
 <!ENTITY noscriptForbidJava "Забрани Java™">
+<!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
 <!ENTITY noscriptForbidFlash "Забрани Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Забрани остале додатке">
 <!ENTITY noscriptReloadWarn "Ова подешавања ће бити примењена на нове или (ручно) поново учитане стране">

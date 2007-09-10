@@ -50,12 +50,13 @@
   <script type="application/x-javascript" src="iaUI.js" />
   <script type="application/x-javascript" src="noscriptOptions.js" />
   
-  <vbox style="width: 40em">
+  <vbox style="width: &noscriptOptionsWidth;">
   <tabbox id="nsopt-tabsMain">
   <tabs>
     <!-- <tab label="&noscriptSiteManager;"/> -->
     <tab label="&noscriptGeneral;" id="nsopt-tabGeneral"/>
     <tab label="&noscriptWhitelist;" id="nsopt-tabWhitelist"/>
+    <tab label="&noscriptPlugins;" id="nsopt-tabPlugins"/>
     <tab label="&noscriptAppearance;" id="nsopt-tabAppearance"/>
     <tab label="&noscriptNotifications;" id="nsopt-tabNotifications"/>
     <tab label="&noscriptAdvanced;" id="nsopt-tabAdvanced"/>
@@ -143,9 +144,24 @@
   </vbox>
   </tabpanel><!-- END Whitelist -->
   
+  <tabpanel><!-- Plugins -->
+    <vbox flex="1">
+      <label class="header" value="&noscriptAdditionalRestrictions;" />
+        <separator />
+      <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
+      <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
+      <checkbox id="opt-forbidSilverlight" label="&noscriptForbidSilverlight;" />
+      <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+      <separator class="thin" />
+      <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
+      <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+      <separator/>
+      <checkbox id="opt-contentBlocker" label="&noscriptContentBlocker;" class="header" />
+    </vbox>
+  </tabpanel>
   
   <tabpanel><!-- Appearance -->
-  <vbox flex="1">
+    <vbox flex="1">
  
       <label class="header" value="&noscriptShow;"/>
      <groupbox>
@@ -218,49 +234,44 @@
   <tabpanel><!-- Advanced -->
     <vbox flex="1">
     <hbox><description style="white-space: normal">&noscriptReloadWarn;</description></hbox>
-  <tabbox id="nsopt-tabsAdvanced">
+  <tabbox id="nsopt-tabsAdvanced" flex="1">
       <tabs>
         <tab class="noscript-no" label=" &noscriptUntrusted; " id="nsopt-tabUntrusted" tooltiptext="&noscriptAdditionalRestrictions;"/>
         <tab class="noscript-yes" label=" &noscriptTrusted; " id="nsopt-tabTrusted" tooltiptext="&noscriptAdditionalPermissions;"/>
         <tab class="noscript-xss" label=" &noscriptXss; " id="nsopt-tabXss"/>
       </tabs>
-      <tabpanels>
+      <tabpanels flex="1">
           <tabpanel>
           <vbox flex="1">
             <label class="header" value="&noscriptAdditionalRestrictions;" />
-            <groupbox>
-              <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
-               <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
-               <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
-               <separator class="thin" />
-               <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
-               <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
-               
-             </groupbox>
-             <groupbox>
-                <!-- <checkbox id="opt-truncateTitle" label="&noscriptTruncateTitle;" /> -->
-                <checkbox id="opt-fixLinks" label="&noscriptFixLinks;" />
-                <checkbox id="opt-nselNever" label="&noscriptNselNever;" />
-                <checkbox id="opt-forbidMetaRefresh" label="&noscriptForbidMetaRefresh;" />
-                <separator class="thin"/>
+            <separator />
                 <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
                 <checkbox id="opt-noping" label="&noscriptForbidPing;" />
-             </groupbox>
+                <separator class="thin"/>
+                <checkbox id="opt-nselNever" label="&noscriptNselNever;" oncommand="nsopt.syncNsel(this)" />
+                <checkbox id="opt-blockNSWB" label="&noscriptForbidWebBugs;" />
+                <checkbox id="opt-forbidMetaRefresh" label="&noscriptForbidMetaRefresh;" />
+                <separator class="thin"/>
+                <checkbox id="opt-fixLinks" label="&noscriptFixLinks;" />
+             <separator />
+             <label class="text-link header" 
+              onclick="document.getElementById('nsopt-tabsMain').selectedTab = document.getElementById('nsopt-tabPlugins')"
+              value="&noscriptPlugins;" />
           </vbox>
          </tabpanel><!-- END additional restrictions -->
          
          <tabpanel><!-- Additional Permissions -->
             <vbox flex="1">
               <label class="header" value="&noscriptAdditionalPermissions;" />
-              <groupbox>
+                <separator />
               <checkbox id="opt-nselForce" label="&noscriptNselForce;" />
               <checkbox id="mozopt-browser.send_pings" label="&noscriptAllowPing;" />
-              </groupbox>
-              <groupbox>
+              
+              <separator class="thin" />
               <checkbox id="opt-allowClipboard" label="&noscriptAllowClipboard;" />
               <checkbox id="opt-allowLocalLinks" label="&noscriptAllowLocalLinks;" />
-              </groupbox>
-            </vbox>
+             
+             </vbox>
           </tabpanel><!-- END Additional Permissions -->
         
 
