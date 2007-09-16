@@ -44,6 +44,7 @@
 <!ENTITY noscriptForbidJava "Cấm Java™">
 <!ENTITY noscriptForbidWebBugs "Cấm &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Cấm Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Cấm &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Cấm Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Cấm các plugins khác">
 <!ENTITY noscriptReloadWarn "Những tùy chọn này sẽ có hiệu quả trong trang mới hay trang được tải lại">
@@ -55,9 +56,9 @@
 <!ENTITY noscriptFixLinks "Cố gắng sửa kết nối JavaScript">
 <!ENTITY noscriptAllowBookmarks "Cho phép sites được mở qua Đánh dấu">
 <!ENTITY noscriptAllowViaBookmarks "Cho phép sites được mở qua Đánh dấu">
-<!ENTITY noscriptAllowPing "Cho phép &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Cho phép &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Cho phép các liên kết nội tại">
-<!ENTITY noscriptForbidPing "Cấm &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Cấm &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Cấm đổi hướng bằng META trong các phần tử &lt;noscript&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Sổ trắng">
@@ -77,7 +78,7 @@
 <!ENTITY noscriptDefaultPolicies "Luật Mặc định">
 <!ENTITY noscriptSitePolicies "Luật Cho Site Riêng Biệt">
 <!ENTITY noscriptNselNever "Giấu các phần tử &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Hiển thị phần tử &lt;noscript&gt; mà theo một phần tử &lt;script&gt; bị chặn">
+<!ENTITY noscriptNselForce "Hiển thị phần tử &lt;noscript&gt; mà theo một phần tử &lt;SCRIPT&gt; bị chặn">
 <!ENTITY noscriptAutoAllowTopLevel "Tạm thời cho phép sites mức thứ nhất theo mặc định">
 <!ENTITY noscriptDescription "Thêm phần bảo vệ cho Firefox của bạn: NoScript chỉ cho phép JavaScript, Java (và các plugins khác) được chạy trong những miền/trang web lựa chọn của bạn (v.d.: trang web ngân hàng của bạn).  Hướng đi dùng sổ trắng này ngăn chạn trước những khai thác lổ hỏng bảo mật (biết trước và ngay cả chưa biết trước) mà không mất đi tính năng...  Các chuyên gia sẽ đồng ý: Firefox thật sự an toàn hơn với NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Chặn các trình quét CSS">

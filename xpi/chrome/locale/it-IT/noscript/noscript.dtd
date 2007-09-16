@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Vieta Java™">
 <!ENTITY noscriptForbidWebBugs "Vieta i &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Vieta Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Vieta &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Vieta Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Vieta altri plugin">
 <!ENTITY noscriptReloadWarn "Queste opzioni avranno effetto nelle nuove pagine e in quelle ricaricate (manualmente)">
@@ -60,7 +61,7 @@
 <!ENTITY noscriptAllowPing "Permetti il ping dai collegamenti">
 <!ENTITY noscriptAllowLocalLinks "Permetti collegamenti locali">
 <!ENTITY noscriptForbidPing "Vieta il ping dai collegamenti">
-<!ENTITY noscriptForbidMetaRefresh "Blocca i reindirizzamenti META dall&apos;interno di elementi &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Blocca i reindirizzamenti META dall&apos;interno di elementi &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Lista fidata">
 <!ENTITY noscriptPermissions "Permessi">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Politiche">
 <!ENTITY noscriptDefaultPolicies "Politiche predefinite">
 <!ENTITY noscriptSitePolicies "Politiche specifiche per i siti">
-<!ENTITY noscriptNselNever "Nascondi gli elementi &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Mostra l&apos;elemento &lt;noscript&gt; che segue un elemento &lt;script&gt; bloccato">
+<!ENTITY noscriptNselNever "Nascondi gli elementi &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Mostra l&apos;elemento &lt;NOSCRIPT&gt; che segue un elemento &lt;SCRIPT&gt; bloccato">
 <!ENTITY noscriptAutoAllowTopLevel "Permetti temporaneamente il sito principale in automatico">
 <!ENTITY noscriptDescription "Protezione aggiuntiva per Firefox: NoScript consente l&apos;esecuzione di JavaScript, di Java (e, opzionalmente, degli altri plugin) solo per domini fidati di tua scelta (es. la tua banca online). Questo blocco preventivo basato su whitelist impedisce lo sfruttamento di vulnerabiltà della sicurezza (sia note che  addirittura ancora sconosciute!) li esperti confermeranno: Firefox è davvero più sicuro con NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blocca gli scanner basati su CSS">

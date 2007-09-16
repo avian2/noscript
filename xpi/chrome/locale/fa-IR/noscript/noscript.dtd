@@ -57,10 +57,10 @@
 <!ENTITY noscriptFixLinks "اجازه دادن به لینک های جاوا اسکریپت">
 <!ENTITY noscriptAllowBookmarks "دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند.">
 <!ENTITY noscriptAllowViaBookmarks "دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند.">
-<!ENTITY noscriptAllowPing "اجازه دادن به &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "اجازه دادن به &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "اجازه دادن به لینک های محلی">
-<!ENTITY noscriptForbidPing "ممنوع کردن &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "ممنوع کردن تفییر مسیرهای META  در عناصر &lt;noscript&gt;">
+<!ENTITY noscriptForbidPing "ممنوع کردن &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "ممنوع کردن تفییر مسیرهای META  در عناصر &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "ر">
 <!ENTITY noscriptWhitelist "لیست سفید">
 <!ENTITY noscriptPermissions "مجوزها">
@@ -78,8 +78,8 @@
 <!ENTITY noscriptPolicies "راهنماها">
 <!ENTITY noscriptDefaultPolicies "راهنماهای پیشفرض">
 <!ENTITY noscriptSitePolicies "راهنمای مخصوص سایت">
-<!ENTITY noscriptNselNever "مخفی کردن عناصر &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "نمایش عناصر &lt;noscript&gt;">
+<!ENTITY noscriptNselNever "مخفی کردن عناصر &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "نمایش عناصر &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "اجازه دادن به سایت های رده بالا به صورت موقت و پیشفرض">
 <!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "سد کردن اسکنرهای بر پایه CSS">
@@ -94,7 +94,7 @@
 <!ENTITY noscriptUnsafeReload "بازآوری ناامن">
 <!ENTITY noscriptUnsafeReload.accesskey "ب">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
 <!ENTITY noscriptMatchSample "مثال تطابق الگو :">
 <!ENTITY noscriptReset "ریست">
 <!ENTITY noscriptReset.accesskey "ت">

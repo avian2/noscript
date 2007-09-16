@@ -44,6 +44,7 @@
 <!ENTITY noscriptForbidJava "禁止 Java™">
 <!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "禁止 Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "禁止其他外掛">
 <!ENTITY noscriptReloadWarn "這些選項會套用在新的或（手動）重讀的頁面">
@@ -55,9 +56,9 @@
 <!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
 <!ENTITY noscriptAllowBookmarks "Allow sites opened through bookmarks">
 <!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Allow &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Forbid &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Whitelist">
@@ -77,7 +78,7 @@
 <!ENTITY noscriptDefaultPolicies "Default Policies">
 <!ENTITY noscriptSitePolicies "Site Specific Policies">
 <!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
+<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
 <!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">

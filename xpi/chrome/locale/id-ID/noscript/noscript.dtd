@@ -54,9 +54,9 @@
 <!ENTITY noscriptFixLinks "Berusaha memperbaiki link JavaScript">
 <!ENTITY noscriptAllowBookmarks "Ijinkan bookmarks">
 <!ENTITY noscriptAllowViaBookmarks "Ijinkan situs dibuka melalui bookmarks">
-<!ENTITY noscriptAllowPing "Ijinkan &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Ijinkan &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Ijinkan link lokal">
-<!ENTITY noscriptForbidPing "Larang &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Larang &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Larang perubahan arah META didalam elemen &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "M">
 <!ENTITY noscriptWhitelist "Daftar putih">
@@ -75,8 +75,8 @@
 <!ENTITY noscriptPolicies "Kebijakan">
 <!ENTITY noscriptDefaultPolicies "Kebijakan awal">
 <!ENTITY noscriptSitePolicies "Kebijakan Situs">
-<!ENTITY noscriptNselNever "Sembunyikan elemen &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Tampikan elemen &lt;noscript&gt; yang mengikuti &lt;script&gt; yang dihalangi">
+<!ENTITY noscriptNselNever "Sembunyikan elemen &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Tampikan elemen &lt;NOSCRIPT&gt; yang mengikuti &lt;SCRIPT&gt; yang dihalangi">
 <!ENTITY noscriptAutoAllowTopLevel "Ijinkan sementara situs top-level untuk awal">
 <!ENTITY noscriptDescription "Perlindungan tambahan untuk FireFox Anda: NoScript mengijinkan JavaScript, Java (dan plugin lainnya) hanya untuk domain terpercaya pilihan Anda (misal: situs web-banking personal). Daftar putih ini menjadi dasar perlindungan dari penyalahgunaan lubang keamanan (yang diketahui maupun tidak) tanpa kehilangan fungsionalitas... Para ahli percaya: FireFox lebih aman bersama NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "halangi pemindai berdasar CSS">

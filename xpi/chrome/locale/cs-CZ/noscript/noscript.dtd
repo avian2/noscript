@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Zakázat Java™">
 <!ENTITY noscriptForbidWebBugs "Zakázat &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Zakázat Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Zakázat &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Zakázat Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">
 <!ENTITY noscriptReloadWarn "Tato nastavení se projeví u nově otevřených nebo (manuálně) aktualizovaných stránkách">
@@ -57,10 +58,10 @@
 <!ENTITY noscriptFixLinks "Pokusit se opravit odkazy tvořené JavaScriptem">
 <!ENTITY noscriptAllowBookmarks "Povolit stránky otevřené ze záložek">
 <!ENTITY noscriptAllowViaBookmarks "Povolit stránky otevřené ze záložek">
-<!ENTITY noscriptAllowPing "Povolit &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Povolit &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Povolit místní odkazy">
-<!ENTITY noscriptForbidPing "Zakázat &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Zakázat META přesměrování uvnitř elementů &lt;noscript&gt;">
+<!ENTITY noscriptForbidPing "Zakázat &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Zakázat META přesměrování uvnitř elementů &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "M">
 <!ENTITY noscriptWhitelist "Výjimky">
 <!ENTITY noscriptPermissions "Povolení">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Politika">
 <!ENTITY noscriptDefaultPolicies "Výchozí politika">
 <!ENTITY noscriptSitePolicies "Politika pro specifické stránky">
-<!ENTITY noscriptNselNever "Zakázat prvky &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Zobrazit prvek &lt;noscript&gt; následující po zablokovaném prvku &lt;script&gt;">
+<!ENTITY noscriptNselNever "Zakázat prvky &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Zobrazit prvek &lt;NOSCRIPT&gt; následující po zablokovaném prvku &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Dočasně povolit stránky domény nejvyšší úrovně">
 <!ENTITY noscriptDescription "Mimořádná ochrana pro váš Firefox: NoScript povoluje JavaScript, Javu (a další zásuvné moduly) pouze pro důvěryhodné servery dle vašeho výběru (např. vaše stránka pro home-banking). Tento seznam důvěryhodných serverů založený na preventivním blokování přístupu předchází zneužití bezpečnostních děr (známých a dokonce i neznámých!) bez jakékoli ztráty na funkčnosti... Odborníci budou souhlasit: Firefox je skutečně bezpečnější s rozšířením NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blokovat skenery založené na CSS">

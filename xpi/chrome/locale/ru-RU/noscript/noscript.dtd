@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Запретить отображение элементов Java™">
 <!ENTITY noscriptForbidWebBugs "Запретить отображение элементов &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Запретить отображение элементов Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Запретить отображение элементов &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Запретить отображение элементов Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Запретить отображение элементов других плагинов">
 <!ENTITY noscriptReloadWarn "Примечание: Установленные настройки вступают в силу либо на новой странице, либо после обновления текущей страницы (вручную)">
@@ -57,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Применять алгоритм исправления JavaScript-ссылок">
 <!ENTITY noscriptAllowBookmarks "Разрешать выполнение JavaScript всем веб-сайтам из закладок">
 <!ENTITY noscriptAllowViaBookmarks "Разрешать выполнение JavaScript всем веб-сайтам из закладок">
-<!ENTITY noscriptAllowPing "Разрешить веб-сайту использовать параметр &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Разрешить веб-сайту использовать параметр &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Разрешить локальные ссылки">
-<!ENTITY noscriptForbidPing "Запретить веб-сайту использовать параметр  &lt;a ping...&gt;">
+<!ENTITY noscriptForbidPing "Запретить веб-сайту использовать параметр  &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Запретить META перенаправления внутри элементов &lt;noscript&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "а">
 <!ENTITY noscriptWhitelist "Белый список">
@@ -79,7 +80,7 @@
 <!ENTITY noscriptDefaultPolicies "Политики по умолчанию">
 <!ENTITY noscriptSitePolicies "Специальные политики для сайтов">
 <!ENTITY noscriptNselNever "Скрывать элементы &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Показывать элемент &lt;noscript&gt; который блокирует &lt;script&gt;">
+<!ENTITY noscriptNselForce "Показывать элемент &lt;noscript&gt; который блокирует &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Временно разрешать базовым доменам 2-го уровня по умолчанию">
 <!ENTITY noscriptDescription "Экстра защита для Firefox: NoScript позволяет разрешать исполнение JavaScript, Java (и других плагинов) только доменам, которым доверяете (например, ваш веб-сайт). Белый список, основанный на принципе упреждающего блокирования, позволяет предотвратить использование уязвимостей (известных и ещё неизвестных!) без потери функциональности... Эксперты соглашаются: Firefox действительно безопаснее с NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Блокировать CSS-сканеры">

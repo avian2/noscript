@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Απαγόρευση εκτέλεσης Java™">
 <!ENTITY noscriptForbidWebBugs "Απαγόρευση εκτέλεσης &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Απαγόρευση εκτέλεσης Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Απαγόρευση εκτέλεσης &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Απαγόρευση εκτέλεσης Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Απαγόρευση εκτέλεσης άλλων πρόσθετων λειτουργιών">
 <!ENTITY noscriptReloadWarn "Αυτές οι επιλογές θα εφαρμοστούν σε σελίδες που θα ανανεώσετε μόνοι σας ή θα φορτώσετε από &apos;δω και πέρα">
@@ -57,10 +58,10 @@
 <!ENTITY noscriptFixLinks "Να γίνεται προσπάθεια διόρθωσης δεσμών JavaScript">
 <!ENTITY noscriptAllowBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
 <!ENTITY noscriptAllowViaBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
-<!ENTITY noscriptAllowPing "Να επιτρέπεται το &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Να επιτρέπεται το &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Να επιτρέπονται τοπικοί δεσμοί">
-<!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Να απαγορεύονται οι ανακατευθύνσεις META σε στοιχεία &lt;noscript&gt;">
+<!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Να απαγορεύονται οι ανακατευθύνσεις META σε στοιχεία &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "θ">
 <!ENTITY noscriptWhitelist "Λίστα επιτρεπομένων">
 <!ENTITY noscriptPermissions "Αδειοδοτήσεις">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Πολιτικές συμπεριφοράς">
 <!ENTITY noscriptDefaultPolicies "Αρχικές πολιτικές συμπεριφοράς">
 <!ENTITY noscriptSitePolicies "Πολιτικές συμπεριφοράς για συγκεκριμένους ιστότοπους">
-<!ENTITY noscriptNselNever "Απόκρυψη στοιχείων &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Προβολή του στοιχείου &lt;noscript&gt; που ακολουθεί μπλοκαρισμένα σενάρια εντολών">
+<!ENTITY noscriptNselNever "Απόκρυψη στοιχείων &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Προβολή του στοιχείου &lt;NOSCRIPT&gt; που ακολουθεί μπλοκαρισμένα σενάρια εντολών">
 <!ENTITY noscriptAutoAllowTopLevel "Να επιτρέπεται προσωρινά για τον βασικό ιστότοπο (ως αρχική ρύθμιση)">
 <!ENTITY noscriptDescription "Πρόσθετη προστασία για τον Firefox. Οι ειδικοί συμφωνούν: το NoScript δίνει μεγαλύτερη ασφάλεια στον Firefox. :-)">
 <!ENTITY noscriptOptBlockCssScanners "Μπλοκάρισμα ανιχνεύσεων CSS">

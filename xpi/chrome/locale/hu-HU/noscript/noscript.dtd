@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "A Java™ tiltása">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; tiltása">
 <!ENTITY noscriptForbidSilverlight "A Microsoft® Silverlight™ tiltása">
+<!ENTITY noscriptForbidIFrames "A &lt;IFRAME&gt; tiltása">
 <!ENTITY noscriptForbidFlash "A Macromedia® Flash® tiltása">
 <!ENTITY noscriptForbidPlugins "Egyéb beépülő modulok tiltása">
 <!ENTITY noscriptReloadWarn "Ezek a beállítások új vagy (kézzel) újratöltött oldalaknál lépnek érvénybe">
@@ -57,10 +58,10 @@
 <!ENTITY noscriptFixLinks "Kísérlet a JavaScript hivatkozások javítására">
 <!ENTITY noscriptAllowBookmarks "A könyvjelzőkben található összes webhely engedélyezése">
 <!ENTITY noscriptAllowViaBookmarks "A könyvjelzőből megnyitott webhelyek engedélyezése">
-<!ENTITY noscriptAllowPing "Engedélyezés: &lt;ping...&gt;">
+<!ENTITY noscriptAllowPing "Engedélyezés: &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Helyi linkek engedélyezése">
-<!ENTITY noscriptForbidPing "Letiltás: &lt;ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "META átirányítások letiltása a &lt;noscript&gt; elemekben">
+<!ENTITY noscriptForbidPing "Letiltás: &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "META átirányítások letiltása a &lt;NOSCRIPT&gt; elemekben">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "l">
 <!ENTITY noscriptWhitelist "Fehérlista">
 <!ENTITY noscriptPermissions "Engedélyek">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Kezelés">
 <!ENTITY noscriptDefaultPolicies "Alapértelmezett kezelés">
 <!ENTITY noscriptSitePolicies "Webhelyspecifikus kezelés">
-<!ENTITY noscriptNselNever "&lt;noscript&gt; elemek elrejtése">
-<!ENTITY noscriptNselForce "&lt;noscript&gt; elem megjelenítése, amely a blokkolt &lt;script&gt; után következik">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; elemek elrejtése">
+<!ENTITY noscriptNselForce "&lt;NOSCRIPT&gt; elem megjelenítése, amely a blokkolt &lt;SCRIPT&gt; után következik">
 <!ENTITY noscriptAutoAllowTopLevel "Legmagasabb szintű webhelyek ideiglenes engedélyezése">
 <!ENTITY noscriptDescription "Firefox extra védelme: NoScript engedélyezheti a JavaScript, Java (és más beépülőket) az Ön által megadott webhelyekre (pl. átutalások interneten keresztül). Ez a megbízható szervereket tartalmazó lista megelőző blokkoláson alapszik, így óv a támadásoktól a biztonsági réseken keresztül (ismert és ismeretlen!), mindezt működés közben... Az expertek egyetértenek: A Firefox a NoScript kiterjesztéssel valóban biztonságosabb :-)">
 <!ENTITY noscriptOptBlockCssScanners "CSS-alapú szkennerek blokkolása">

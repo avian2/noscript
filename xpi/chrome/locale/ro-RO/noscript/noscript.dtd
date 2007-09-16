@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Blochează Java™">
 <!ENTITY noscriptForbidWebBugs "Blochează &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Blochează Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Blochează &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Blochează Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Blochează alte pluginuri">
 <!ENTITY noscriptReloadWarn "Aceste opţiuni vor avea efect în paginile nou deschise sau reîncărcate (manual).">
@@ -57,10 +58,10 @@
 <!ENTITY noscriptFixLinks "Încearcă să repari legăturile JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permite toate siteurile din Semne de Carte">
 <!ENTITY noscriptAllowViaBookmarks "Permite toate siteurile din Semne de Carte">
-<!ENTITY noscriptAllowPing "Permite tagul &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Permite tagul &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Permite legături locale">
-<!ENTITY noscriptForbidPing "Blochează tagul &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Blocheazp redirectările META din elementele &lt;noscript&gt;">
+<!ENTITY noscriptForbidPing "Blochează tagul &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Blocheazp redirectările META din elementele &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "r">
 <!ENTITY noscriptWhitelist "Listă sigură">
 <!ENTITY noscriptPermissions "Permisiuni">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Reguli">
 <!ENTITY noscriptDefaultPolicies "Reguli implicite">
 <!ENTITY noscriptSitePolicies "Reguli dependente de locaţie">
-<!ENTITY noscriptNselNever "Ascunde elementele &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Arată elementele &lt;noscript&gt; care urmează unui script blocat">
+<!ENTITY noscriptNselNever "Ascunde elementele &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Arată elementele &lt;NOSCRIPT&gt; care urmează unui script blocat">
 <!ENTITY noscriptAutoAllowTopLevel "Implicit, permite temporar domeniilor top-level">
 <!ENTITY noscriptDescription "Protecţie suplimentară pentru Firefox: JavaScript, Java şi alte pluginuri sunt permise numai paginilor de încredere, pentru a bloca preemptiv exploatarea vulnerabilităţilor (cunoscute sau necunoscute) care pot afecta securitatea sistemului.">
 <!ENTITY noscriptOptBlockCssScanners "Blochează scanerele bazate pe CSS">

@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Forby Java™">
 <!ENTITY noscriptForbidWebBugs "Forby &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forby Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Forby &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Forby Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forby andre programtillegg">
 <!ENTITY noscriptReloadWarn "Disse innstillingene vil tre i kraft for nye eller (manuelt) oppdaterte nettsider">
@@ -57,10 +58,10 @@
 <!ENTITY noscriptFixLinks "Prøv å fikse JavaScript-lenker">
 <!ENTITY noscriptAllowBookmarks "Tillat sider gjennom bokmerker">
 <!ENTITY noscriptAllowViaBookmarks "Tillat sider gjennom bokmerker">
-<!ENTITY noscriptAllowPing "Tillat &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Tillat &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Tillat lokale lenker">
-<!ENTITY noscriptForbidPing "Forby &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forby META viderekobling på insiden av &lt;noscript&gt;-elementer">
+<!ENTITY noscriptForbidPing "Forby &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forby META viderekobling på insiden av &lt;NOSCRIPT&gt;-elementer">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Hviteliste">
 <!ENTITY noscriptPermissions "Tillatelser">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Polisie">
 <!ENTITY noscriptDefaultPolicies "Standard Polisier">
 <!ENTITY noscriptSitePolicies "Sidespesifike Polisier">
-<!ENTITY noscriptNselNever "Skjul &lt;noscript&gt;-elementer">
-<!ENTITY noscriptNselForce "Vis &lt;noscript&gt;-element som følger et låst &lt;script&gt;">
+<!ENTITY noscriptNselNever "Skjul &lt;NOSCRIPT&gt;-elementer">
+<!ENTITY noscriptNselForce "Vis &lt;NOSCRIPT&gt;-element som følger et låst &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillat top-level nettsteder som standard">
 <!ENTITY noscriptDescription "Ekstra beskyttelse for din Firefox">
 <!ENTITY noscriptOptBlockCssScanners "Blokker CSS-baserte scannere">
@@ -94,7 +95,7 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sampleeksempel:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">

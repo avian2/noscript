@@ -44,6 +44,7 @@
 <!ENTITY noscriptForbidJava "אסור על ג&apos;אוה">
 <!ENTITY noscriptForbidWebBugs "אסור על &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "אסור על Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "אסור על &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "אסור על פלאש">
 <!ENTITY noscriptForbidPlugins "אסור על תוספים אחרים">
 <!ENTITY noscriptReloadWarn "אפשרויות אלו ייכנסו לתוקף בדפים חדשים או דפים שנטענו מחדש ידנית">
@@ -55,10 +56,10 @@
 <!ENTITY noscriptFixLinks "נסה לתקן קישוריות ג&apos;אוהסקריפט">
 <!ENTITY noscriptAllowBookmarks "סמוך על אתרים שנפתחו דרך סימניות">
 <!ENTITY noscriptAllowViaBookmarks "סמוך על אתרים שנפתחו דרך סימניות">
-<!ENTITY noscriptAllowPing "התר &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "התר &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "התר קישוריות מקומיות">
-<!ENTITY noscriptForbidPing "אסור &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "אסור על הפניות META בתוך תגיות &lt;noscript&gt;">
+<!ENTITY noscriptForbidPing "אסור &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "אסור על הפניות META בתוך תגיות &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "רשימת מותרים">
 <!ENTITY noscriptPermissions "הרשאות">
@@ -76,8 +77,8 @@
 <!ENTITY noscriptPolicies "הגדרות">
 <!ENTITY noscriptDefaultPolicies "הגדרות ברירת מחדל">
 <!ENTITY noscriptSitePolicies "הגדרות ספציפיות לאתר">
-<!ENTITY noscriptNselNever "הסתר תגיות &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "הצג את תגית ה-&lt;noscript&gt; שבאה אחרי &lt;script&gt; חסום.">
+<!ENTITY noscriptNselNever "הסתר תגיות &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "הצג את תגית ה-&lt;NOSCRIPT&gt; שבאה אחרי &lt;SCRIPT&gt; חסום.">
 <!ENTITY noscriptAutoAllowTopLevel "כברירת מחדל, התר אתרים ראשיים באופן זמני">
 <!ENTITY noscriptDescription "הגנה מורחבת לפיירפוקס: נוסקריפט מאפשר ג&apos;אוהסקריפט, ג&apos;אוה (ותוספים אחרים) רק לאתרים מורשים לבחירתך (למשל, אתר הבנק).  גישה זו, של חסימה מראש על בסיס רשימת-מותרים, מונעת ניצול של פרצות אבטחה (מוכרות ואף בלתי-מוכרות!) בלי לאבד פונקציונליות... מומחים מסכימים: פיירפוקס בטוח יותר עם נוסקריפט. :-)">
 <!ENTITY noscriptOptBlockCssScanners "חסום סורקים מבוססי-CSS">

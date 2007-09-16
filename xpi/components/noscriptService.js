@@ -177,9 +177,9 @@ function Strings(chromeName) {
 }
 
 Strings.wrap = function(s, length, sep) {
-    if(!sep) sep = ' ';
+  if(!sep) sep = ' ';
     
-    function wrapPara(p) {
+  function wrapPara(p) {
     if(!length) length = 80;
     if(p.length <= length) return p;
     chunks = [];
@@ -740,7 +740,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.1.7",
+  VERSION: "1.1.7.2",
   
   get wrappedJSObject() {
     return this;
@@ -880,6 +880,7 @@ NoscriptService.prototype = {
   forbidFlash: false,
   forbidFlash: true,
   forbidPlugins: false,
+  forbidIFrames: false,
   forbidData: true,
   
   forbidChromeScripts: false,
@@ -962,11 +963,14 @@ NoscriptService.prototype = {
       case "forbidFlash":
       case "forbidSilverlight":
       case "forbidPlugins":
+      case "forbidIFrames":
       case "forbidData":
       case "forbidChromeScripts":
         this[name]=this.getPref(name, this[name]);
-        this.forbidSomeContent = this.forbidJava || this.forbidFlash || this.forbidSilverlight || this.forbidPlugins;
-        this.forbidAllContent = this.forbidJava && this.forbidFlash &&  this.forbidSilverlight || this.forbidPlugins;
+        this.forbidSomeContent = this.forbidJava || this.forbidFlash 
+            || this.forbidSilverlight || this.forbidPlugins || this.forbidIFrames;
+        this.forbidAllContent = this.forbidJava && this.forbidFlash 
+            &&  this.forbidSilverlight && this.forbidPlugins && this.forbidIFrames;
       break;
       
       case "filterXPost":
@@ -1189,7 +1193,8 @@ NoscriptService.prototype = {
       "filterXGetRx", "filterXGetUserRx", 
       "filterXExceptions",
       "forbidChromeScripts",
-      "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidData",
+      "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", 
+      "forbidIFrames", "forbidData",
       "forbidMetaRefresh",
       "global",
       "injectionCheck",
@@ -1950,7 +1955,7 @@ NoscriptService.prototype = {
   guessMime: function(uri) {
     try {
       var ext =  (uri instanceof CI.nsIURL) && uri.fileExtension;
-      return ext && this.mimeService.getTypeFromExtension(ext) || ""; 
+      return ext && this.mimeService.getTypeFromExtension(ext) || "";
     } catch(e) {
       return "";
     }
@@ -2013,7 +2018,8 @@ NoscriptService.prototype = {
           + "\n");
       }
       
-      var url, forbid, isJS, isJava, isFlash, isSilverlight, mustAsk, scheme;
+      var url, forbid, isJS, isJava, isFlash, isSilverlight,
+          blockThisFrame, mustAsk, scheme;
       
       try {
         switch(aContentType) {
@@ -2039,7 +2045,6 @@ NoscriptService.prototype = {
                 this.dump("Blocked chrome access, " + aRequestOrigin.spec + " -> " + aContentLocation.spec);
               return this.rejectCode;
             }
-            this.currentLoadingScript = null;
             forbid = isJS = true;
             break;
           case 3:
@@ -2063,10 +2068,16 @@ NoscriptService.prototype = {
               if(this.consoleDump) this.dump("Plugin document " + aContentLocation.spec);
               return 1; // plugin document, we'll handle it in our webprogress listener
             }
+            break;
             
           case 7:
             if(!aMimeTypeGuess) aMimeTypeGuess = this.guessMime(aContentLocation);
             
+            blockThisFrame = this.forbidIFrames && 
+              !(aContext instanceof CI.nsIDOMHTMLFrameElement) &&
+              !(aInternalCall || /^(?:chrome:|resource:|about:blank$)/.test(aContentLocation.spec) ||
+                  aRequestOrigin && aRequestOrigin.schemeIs("chrome"));
+          
           case 6:
             scheme = aContentLocation.scheme;
             
@@ -2083,7 +2094,7 @@ NoscriptService.prototype = {
            
               if(/^https?$/.test(scheme)) {
                 if(aRequestOrigin.prePath != aContentLocation.prePath) {
-                  if(aRequestOrigin.schemeIs("chrome") && aContext.ownerDocument &&
+                  if(aRequestOrigin.schemeIs("chrome") && aContext && aContext.ownerDocument &&
                     aContext.ownerDocument.defaultView.isNewToplevel){
                     this.requestWatchdog.externalLoad = aContentLocation.spec;
                   }
@@ -2123,15 +2134,18 @@ NoscriptService.prototype = {
               }
             }
             
-            if(((!this.forbidSomeContent)
-                || (!aMimeTypeGuess)
-                || aMimeTypeGuess.substring(0, 5) == "text/"
-                || aMimeTypeGuess == "application/xml" 
-                || aMimeTypeGuess == "application/xhtml+xml"
-                || aMimeTypeGuess.substring(0, 6) == "image/")
-                || !this.pluginForMime(aMimeTypeGuess)) {
+            if(!this.forbidSomeContent ||
+               !blockThisFrame && (
+                    !aMimeTypeGuess ||
+                    aMimeTypeGuess.substring(0, 5) == "text/"
+                    || aMimeTypeGuess == "application/xml" 
+                    || aMimeTypeGuess == "application/xhtml+xml"
+                    || aMimeTypeGuess.substring(0, 6) == "image/"
+                    || !this.pluginForMime(aMimeTypeGuess)
+                  )
+                ) 
               return 1;
-            }
+            
             break;
             
           default:
@@ -2141,22 +2155,32 @@ NoscriptService.prototype = {
         url = aContentLocation.spec;
         const origin = this.getSite(url);
         
+        this.currentLoadingURI = null;
         if(!forbid) {
+          var mimeKey = aMimeTypeGuess || "application/x-unknown"; 
           try {
-            if(this.pluginsCache.update(url, aMimeTypeGuess, origin, aRequestOrigin || aContentLocation, aContext)) 
+            if(this.pluginsCache.update(url, mimeKey, origin, aRequestOrigin || aContentLocation, aContext)) 
               return 1; // forceAllow
           } catch(ex) {
             dump("NoScriptService.pluginsCache.update():" + ex + "\n");
           }
-          
-          if(this.forbidSomeContent) {
-            var forbid = this.forbidAllContent;
-            if((!forbid) && aMimeTypeGuess) {
+          forbid = this.forbidAllContent || blockThisFrame;
+          if(!forbid && this.forbidSomeContent) {
+            if(aMimeTypeGuess) {
               forbid = 
-                (isFlash = (aMimeTypeGuess == "application/x-shockwave-flash" || aMimeTypeGuess == "application/futuresplash")) && this.forbidFlash ||
-                (isJava = /^application\/x-java\b/i.test(aMimeTypeGuess)) && this.forbidJava ||
-                (isSilverlight = /^application\/x-silverlight\b/i.test(aMimeTypeGuess)) && this.forbidSilverlight ||
-                (this.forbidPlugins && !(isJava || isFlash || isSilverlight));
+                (
+                  (isFlash = /^application\/(?:x-shockwave-flash|futuresplash)/i.test(aMimeTypeGuess)) ||
+                  (isJava = /^application\/x-java\b/i.test(aMimeTypeGuess)) || 
+                  (isSilverlight = /^application\/x-silverlight\b/i.test(aMimeTypeGuess)) 
+                ) &&
+                isFlash && this.forbidFlash || 
+                isJava && this.forbidJava || 
+                isSilverlight && this.forbidSilverlight;
+              if(forbid) {
+                if(isSilverlight) forbid = aContentLocation != aRequestOrigin || aContext.firstChild;
+              } else {
+                forbid = this.forbidPlugins;
+              }
             }
           }
         }
@@ -2167,29 +2191,30 @@ NoscriptService.prototype = {
             try {
               if(aContext && (aContentType == 5 || aContentType == 7)) {
                 if(aContext instanceof CI.nsIDOMNode
-                   && this.pluginPlaceholder) {  
-                  if(aMimeTypeGuess) {
-                    this.setPluginExtras(this.findObjectAncestor(aContext), 
+                   && this.pluginPlaceholder) {
+                
+                  this.setPluginExtras(this.findObjectAncestor(aContext), 
                     {
                       url: url,
-                      mime: aMimeTypeGuess
+                      mime: mimeKey
                     });
-                    const browser = this.domUtils.findBrowserForNode(aContext);
-                    if(browser && (browser.docShell instanceof CI.nsIWebNavigation) && !browser.docShell.isLoadingDocument) {
-                      browser.ownerDocument.defaultView.noscriptOverlay.syncUI(aContext.ownerDocument.defaultView);
-                    }
+                  const browser = this.domUtils.findBrowserForNode(aContext);
+                  if(browser && (browser.docShell instanceof CI.nsIWebNavigation) && !browser.docShell.isLoadingDocument) {
+                    browser.ownerDocument.defaultView.noscriptOverlay.syncUI(aContext.ownerDocument.defaultView);
                   }
+            
                 }
               }
             } finally {
               if(this.consoleDump & 1) 
-                dump("NoScript blocked " + url + " which is a " + aMimeTypeGuess + " from " + origin + "\n");
+                dump("NoScript blocked " + url + " of type " + aMimeTypeGuess + " from " + origin + "\n");
               return this.rejectCode;
             }
           }
-          // fix for Sirdarkcat redirected external script
-          if(isJS && /^https?/i.test(url)) {
-            this.currentLoadingScript = url;
+          // fix for Sirdarkcat redirected external content
+          if(/^https?/i.test(url)) {
+            this.currentLoadingURI = url;
+            this.currentLoadingType = aContentType;
           }
         }
       } catch(e) {
@@ -2305,7 +2330,8 @@ NoscriptService.prototype = {
     
     isForcedSomewhere: function(uri, mime) {
       return uri && new DOMUtils.createBrowserIterator().find(function(b) {
-        return b.__noscriptPluginsCache && b.__noscriptPluginsCache.forceAllow[uri] == mime;
+        var cache = b.__noscriptPluginsCache;
+        return cache && cache.forceAllow[uri] && cache.forceAllow[uri] == mime;
       });
     },
     
@@ -2367,7 +2393,7 @@ NoscriptService.prototype = {
         for(j = 0, len = links.length; j < len; j++) {
           l = links[j];
           if(!(l.href && /^https?/.test(l.href))) continue;
-          body.appendChild(l);
+          l = body.appendChild(l.cloneNode(true));
           l.style.visibility = "visible";
           l.style.display = "block";
           seen.push(l.href);
@@ -2677,15 +2703,19 @@ NoscriptService.prototype = {
           try {
             extras = this.getPluginExtras(object);
             if(extras) {
-              anchor = document.createElementNS(htmlNS, "a");
-              innerDiv = document.createElementNS(htmlNS, "div");
-              
-              anchor.href = extras.url;
-              title = (extras.mime ? extras.mime.replace("application/", "") + "@" : "@") + extras.url;
+              extras.tag = "<" + objectTag.toUpperCase() + ">";
               extras.alt = object.getAttribute("alt");
               
-              anchor.setAttribute("title", extras.alt ? title+" \"" + 
-                                           extras.alt + "\"" : title);
+              innerDiv = document.createElementNS(htmlNS, "div");
+              anchor = document.createElementNS(htmlNS, "a");
+
+              anchor.href = extras.url;
+
+              title = extras.tag + ", " +  
+                (extras.mime ? extras.mime.replace(/^application\/(?:x-)?/, "") + "@" : "@") + extras.url;
+              
+              anchor.setAttribute("title", extras.alt ? title + ' "' + 
+                                           extras.alt + '"' : title);
               
               with(anchor.style) {
                 padding = margin = borderWidth = "0px !important";
@@ -2695,12 +2725,15 @@ NoscriptService.prototype = {
                
               cssDef = "";
               for(cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
-                cssProp=style.item(cssCount);
+                cssProp = style.item(cssCount);
                 cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
               }
               innerDiv.setAttribute("style", cssDef + forcedCSS);
               innerDiv.style.display = "block";
-
+              innerDiv.style.visibility = "visible";
+              innerDiv.style.minWidth = "32px";
+              innerDiv.style.minHeight = "32px";
+              
               anchor.appendChild(innerDiv);
               
               if(style.width == "100%" || style.height == "100%") {
@@ -2777,6 +2810,7 @@ NoscriptService.prototype = {
             window: window,
             url: extras.url,
             mime: extras.mime,
+            tag: extras.tag,
             cache: cache,
             anchor: anchor,
             object: object,
@@ -2791,11 +2825,13 @@ NoscriptService.prototype = {
       var mime = ctx.mime;
       var url = ctx.url;
       if(ctx.window.noscriptUtil.confirm(
-          ctx.ns.getAllowObjectMessage(url, mime), 
+          ctx.ns.getAllowObjectMessage(url, ctx.tag + ", " + mime), 
           "confirmUnblock")) { 
         ctx.cache.forceAllow[url] = mime;
         var doc = ctx.anchor.ownerDocument;
-        if(mime == doc.contentType) { // stand-alone plugin
+        if(mime == doc.contentType && 
+            ctx.anchor == doc.body.firstChild && 
+            ctx.anchor == doc.body.lastChild) { // stand-alone plugin
           doc.location.reload();
         } else {
           ctx.ns.setExpando(ctx.anchor, "removedPlugin", null);
@@ -2861,8 +2897,8 @@ NoscriptService.prototype = {
        if(url) {
           try {
             if(document.domain && (domain = this.getDomain(url)) &&
-                docment.domain == domain) {
-              url = domain;
+                document.domain != domain) {
+              url = document.domain;
             }
           } catch(e) {}
           sites.push(url);
@@ -2876,8 +2912,8 @@ NoscriptService.prototype = {
           
           cache = redirCache && redirCache[docURI];
           if(cache) {
-            for each(url in cache) {
-              sites.push(url);
+            for each(redir in cache) {
+              sites.push(redir.site);
             }
           }
        }
@@ -2914,13 +2950,13 @@ NoscriptService.prototype = {
   // nsIChannelEventSink implementation
   onChannelRedirect: function(oldChannel , newChannel , flags) {
     if(oldChannel instanceof CI.nsIPropertyBag2) {
-      var isScript;
-      try { isScript = oldChannel.getPropertyAsBool("noscript_isScript"); } 
+      var contentType;
+      try { contentType = oldChannel.getPropertyAsUint32("noscript.contentType"); } 
       catch(e) { return; }
-      if(isScript) {
+      if(contentType) {
         var site = this.getSite(newChannel.URI.spec);
         if(this.isJSEnabled(site)) {
-          this.flagScriptRequest(newChannel);
+          this.flagRequestType(newChannel, contentType);
         } else {
           var rw = this.requestWatchdog;
           var win = rw.findWindow(newChannel);
@@ -2928,13 +2964,13 @@ NoscriptService.prototype = {
           if(browser && win) {
             var redirCache = this.getExpando(browser, "redirCache") || this.setExpando(browser, "redirCache", {});
             var cache = redirCache[win.document.documentURI] || (redirCache[win.document.documentURI] = []);
-            cache.push(site);
+            cache.push({ site: site, type: contentType });
           } else {
             if(this.consoleDump) this.dump("Cannot find window for " + newChannel.URI.spec);
           }
           if(this.consoleDump) this.dump("Blocked " + oldChannel.URI.spec + " -> " + newChannel.URI.spec + " redirected script");
           //throw NS_BINDING_ABORTED; // this lead to persistent "loading..." condition on some pages
-          newChannel.URI.spec = "data:application/x-javascript,";
+          newChannel.URI.spec = "data:application/x-noscript-blocked,";
           newChannel.loadFlags = newChannel.INHIBIT_CACHING | newChannel.LOAD_BYPASS_CACHE;
         }
       }
@@ -2942,17 +2978,18 @@ NoscriptService.prototype = {
   },
   
   
-  flagScriptRequest: function(req) {
+  flagRequestType: function(req, type) {
     if(req instanceof CI.nsIWritablePropertyBag2) {
-      req.setPropertyAsBool("noscript_isScript", true);
+      req.setPropertyAsUint32("noscript.contentType", type);
     }
   },
-  currentLoadingScript:null,
+  currentLoadingURI:null,
+  currentLoadingType: 0,
   // nsIWebProgressListener implementation
   onStateChange: function(wp, req, stateFlag, status) {
     if(!(req instanceof CI.nsIChannel)) return;
     var uri = req.URI;
-    if(this.currentLoadingScript == uri.spec) this.flagScriptRequest(req);
+    if(this.currentLoadingURI == uri.spec) this.flagRequestType(req, this.currentLoadingType);
   }, 
   onLocationChange: function(wp, req, location) {
     try {

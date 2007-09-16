@@ -44,6 +44,7 @@
 <!ENTITY noscriptForbidJava "Забрани Java™">
 <!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Забрани Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Забрани други плъгини">
 <!ENTITY noscriptReloadWarn "Тези опций ще имат ефект на нови или (ръчно) презаредени страници">
@@ -58,7 +59,7 @@
 <!ENTITY noscriptAllowPing "Разрешавай пинг...">
 <!ENTITY noscriptAllowLocalLinks "Allow local links">
 <!ENTITY noscriptForbidPing "Забравни пинг...">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Whitelist">
 <!ENTITY noscriptPermissions "Permissions">
@@ -76,8 +77,8 @@
 <!ENTITY noscriptPolicies "Policies">
 <!ENTITY noscriptDefaultPolicies "Default Policies">
 <!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
+<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
+<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Временно позволи използване на java от всички сайтове">
 <!ENTITY noscriptDescription "Допълнителна защита за вашият Firefox: NoScript позволява JavaScript, Java ( и други добавки ) само за избрани от вас сайтове ( като вашият личен сайт ). Превентира експлоатации от всякакъв вид ( познати и непознати! ) без следа от функционалност... Експертите ще се съгласят: Със NoScript вашият Firefox е в безопасност :-)">
 <!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
@@ -92,7 +93,7 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">

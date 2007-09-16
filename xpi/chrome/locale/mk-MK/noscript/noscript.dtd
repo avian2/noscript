@@ -76,7 +76,7 @@
 <!ENTITY noscriptDefaultPolicies "Основни начела">
 <!ENTITY noscriptSitePolicies "Посебни начела за местото">
 <!ENTITY noscriptNselNever "Никогаш не покажувај &lt;noscript&gt; елементи">
-<!ENTITY noscriptNselForce "Покажувај ги &lt;noscript&gt; елементите што се по блокирани &lt;script&gt; елементи">
+<!ENTITY noscriptNselForce "Покажувај ги &lt;noscript&gt; елементите што се по блокирани &lt;SCRIPT&gt; елементи">
 <!ENTITY noscriptAutoAllowTopLevel "Привремено дозволи за сите главни домени">
 <!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">

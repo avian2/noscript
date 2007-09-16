@@ -44,6 +44,7 @@
 <!ENTITY noscriptForbidJava "禁止 Java™">
 <!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "禁止 Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "禁止 其他插件">
 <!ENTITY noscriptReloadWarn "下面这些选项将在新页面中或(手动)重新载入后生效。">
@@ -55,10 +56,10 @@
 <!ENTITY noscriptFixLinks "尝试定位 JavaScript 链接">
 <!ENTITY noscriptAllowBookmarks "允许书签中的所有网站">
 <!ENTITY noscriptAllowViaBookmarks "允许通过书签打开站点">
-<!ENTITY noscriptAllowPing "允许&lt;ping...&gt;">
+<!ENTITY noscriptAllowPing "允许&lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "允许本地链接">
-<!ENTITY noscriptForbidPing "禁止&lt;ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "禁止 &lt;noscript&gt; 元素中的 META 重定向">
+<!ENTITY noscriptForbidPing "禁止&lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "禁止 &lt;NOSCRIPT&gt; 元素中的 META 重定向">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "白名单">
 <!ENTITY noscriptPermissions "许可">
@@ -76,8 +77,8 @@
 <!ENTITY noscriptPolicies "策略">
 <!ENTITY noscriptDefaultPolicies "默认策略">
 <!ENTITY noscriptSitePolicies "站点特殊策略">
-<!ENTITY noscriptNselNever "隐藏 &lt;noscript&gt; 元素">
-<!ENTITY noscriptNselForce "显示跟随被屏蔽的 &lt;script&gt; 的 &lt;noscript&gt; 元素">
+<!ENTITY noscriptNselNever "隐藏 &lt;NOSCRIPT&gt; 元素">
+<!ENTITY noscriptNselForce "显示跟随被屏蔽的 &lt;SCRIPT&gt; 的 &lt;NOSCRIPT&gt; 元素">
 <!ENTITY noscriptAutoAllowTopLevel "默认临时允许顶层站点">
 <!ENTITY noscriptDescription "为您的 Firefox 提供额外保护: NoScript 只允许您所选择的信任域(例如您本国的银行网站)上的 JavaScript, Java (和其他插件)。该白名单基于抢先式过滤方法防止安全缺陷（已知，甚至是未知的！）被利用，并且不损失功能…… 专家们都同意：Firefox 加上 NoScript 真的是更加安全 :-)">
 <!ENTITY noscriptOptBlockCssScanners "过滤基于 CSS 的扫描器">

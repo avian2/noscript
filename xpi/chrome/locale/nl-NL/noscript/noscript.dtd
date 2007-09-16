@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Java™ verbieden">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; verbieden">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieden">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieden">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieden">
 <!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
 <!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina&apos;s">
@@ -57,10 +58,10 @@
 <!ENTITY noscriptFixLinks "JavaScript koppelingen proberen te herstellen">
 <!ENTITY noscriptAllowBookmarks "Via een bladwijzer geopende sites toestaan">
 <!ENTITY noscriptAllowViaBookmarks "Via een bladwijzer geopende sites toestaan">
-<!ENTITY noscriptAllowPing "&lt;a ping...&gt; toestaan">
+<!ENTITY noscriptAllowPing "&lt;A PING...&gt; toestaan">
 <!ENTITY noscriptAllowLocalLinks "Locale koppelingen toestaan">
-<!ENTITY noscriptForbidPing "&lt;a ping...&gt; verbieden">
-<!ENTITY noscriptForbidMetaRefresh "META doorverwijzingen in &lt;noscript&gt; elementen verbieden">
+<!ENTITY noscriptForbidPing "&lt;A PING...&gt; verbieden">
+<!ENTITY noscriptForbidMetaRefresh "META doorverwijzingen in &lt;NOSCRIPT&gt; elementen verbieden">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "V">
 <!ENTITY noscriptWhitelist "Toestemmingenlijst">
 <!ENTITY noscriptPermissions "Toestemmingen">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Beleid">
 <!ENTITY noscriptDefaultPolicies "Standaard beleid">
 <!ENTITY noscriptSitePolicies "Site specifiek beleid">
-<!ENTITY noscriptNselNever "&lt;noscript&gt; elementen verbergen">
-<!ENTITY noscriptNselForce "Het &lt;noscript&gt; element dat na een geblokkeerd &lt;script&gt; volgt weergeven">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; elementen verbergen">
+<!ENTITY noscriptNselForce "Het &lt;NOSCRIPT&gt; element dat na een geblokkeerd &lt;SCRIPT&gt; volgt weergeven">
 <!ENTITY noscriptAutoAllowTopLevel "Standaard top-level sites tijdelijk toestaan">
 <!ENTITY noscriptDescription "Extra bescherming voor Firefox: NoScript staat JavaScript, Java (en andere plugins) alleen toe voor zelf gekozen betrouwbare domeinen (bijv. de internetbankieren website). Deze op toestemmingslijsten gebaseerde blokkering vooraf voorkomt exploitatie van beveiligings kwetsbaarheden (bekende en zelfs onbekende!) zonder verlies aan functionaliteit... Experts zullen bevestigen: Firefox is werkelijk veiliger met NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Op cross-site scripting (CSS) gebaseerde scanners blokkeren">

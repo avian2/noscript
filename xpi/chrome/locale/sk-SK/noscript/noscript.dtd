@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Zakázať Java™">
 <!ENTITY noscriptForbidWebBugs "Zakázať &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Zakázať Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Zakázať &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Zakázať Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Zakázať ostatné zásuvné moduly">
 <!ENTITY noscriptReloadWarn "Tieto možnosti sa prejavia na nových (alebo na ručne znovu načítaných) stránkach">
@@ -57,10 +58,10 @@
 <!ENTITY noscriptFixLinks "Pokúsiť sa opraviť prepojenia JavaScriptu">
 <!ENTITY noscriptAllowBookmarks "Povoliť všetky stránky nájdené v Záložkách">
 <!ENTITY noscriptAllowViaBookmarks "Povoliť stránky otvorené zo Záložiek">
-<!ENTITY noscriptAllowPing "Povoliť &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Povoliť &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Povoliť lokálne prepojenia">
-<!ENTITY noscriptForbidPing "Zakázať &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Zakázať presmerovanie META v rámci prvkov &lt;noscript&gt;">
+<!ENTITY noscriptForbidPing "Zakázať &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Zakázať presmerovanie META v rámci prvkov &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Zoznam povolených">
 <!ENTITY noscriptPermissions "Povolenia">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Politiky">
 <!ENTITY noscriptDefaultPolicies "Predvolené politiky">
 <!ENTITY noscriptSitePolicies "Politiky konkrétnej stránky">
-<!ENTITY noscriptNselNever "Skryť prvky &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Zobraziť prvok &lt;noscript&gt;, ktorý nasleduje za blokovaným &lt;script&gt;">
+<!ENTITY noscriptNselNever "Skryť prvky &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Zobraziť prvok &lt;NOSCRIPT&gt;, ktorý nasleduje za blokovaným &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Dočasne povoliť stránky najvyššej úrovne">
 <!ENTITY noscriptDescription "Extra ochrana pre Firefox: NoScript povolí JavaScript, Javu (a ďalšie doplnky) len pre dôveryhodné domény podľa vášho výberu (napríklad webovú stránku bankingu). Tento zoznam dôveryhodných serverov založený na preventívnom blokovaní chráni pred zneužitím bezpečnostných dier (známych aj neznámych!) bez straty funkčnosti... Experti budú súhlasiť: Firefox s rozšírením NoScript je naozaj bezpečnejší :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blokovať skenery CSS">

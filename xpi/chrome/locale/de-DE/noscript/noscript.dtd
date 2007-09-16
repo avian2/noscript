@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Java™ verbieten">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; verbieten">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieten">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieten">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
@@ -60,7 +61,7 @@
 <!ENTITY noscriptAllowPing "Klick-Verfolgung über das PING-Attribut für Links erlauben">
 <!ENTITY noscriptAllowLocalLinks "Links auf lokale Dateien erlauben">
 <!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">
-<!ENTITY noscriptForbidMetaRefresh "META-Weiterleitungen innerhalb von &lt;noscript&gt;-Elementen verbieten">
+<!ENTITY noscriptForbidMetaRefresh "META-Weiterleitungen innerhalb von &lt;NOSCRIPT&gt;-Elementen verbieten">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "W">
 <!ENTITY noscriptWhitelist "Positivliste">
 <!ENTITY noscriptPermissions "Berechtigungen">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Richtlinien">
 <!ENTITY noscriptDefaultPolicies "Standard-Richtlinien">
 <!ENTITY noscriptSitePolicies "Website-spezifische Richtlinien">
-<!ENTITY noscriptNselNever "&lt;noscript&gt;-Elemente ausblenden">
-<!ENTITY noscriptNselForce "&lt;noscript&gt;-Element, das einem blockierten &lt;script&gt; folgt, anzeigen">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;-Elemente ausblenden">
+<!ENTITY noscriptNselForce "&lt;NOSCRIPT&gt;-Element, das einem blockierten &lt;SCRIPT&gt; folgt, anzeigen">
 <!ENTITY noscriptAutoAllowTopLevel "Jeweils aktuelle Top-Level-Site temporär erlauben">
 <!ENTITY noscriptDescription "Zusätzlicher Schutz für Ihren Browser: NoScript erlaubt das Ausführen von JavaScript, Java (und anderen Plugins) nur bei vertrauenswürdigen Domains Ihrer Wahl (z.B. Ihrer Homebanking-Website). Der auf einer Positivliste basierende präventive Ansatz zum Blockieren von Skripten verhindert das Ausnutzen von (bekannten und unbekannten!) Sicherheitslücken ohne Verlust an Funktionalität.">
 <!ENTITY noscriptOptBlockCssScanners "Auf Cross-Site Scripting basierende Scanner blockieren">

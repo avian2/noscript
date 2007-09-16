@@ -44,6 +44,7 @@
 <!ENTITY noscriptForbidJava "Забрани Java™">
 <!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Забрани Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Забрани остале додатке">
 <!ENTITY noscriptReloadWarn "Ова подешавања ће бити примењена на нове или (ручно) поново учитане стране">
@@ -55,10 +56,10 @@
 <!ENTITY noscriptFixLinks "Покушај да поправиш JavaScript везе">
 <!ENTITY noscriptAllowBookmarks "Дозволи странице отворене преко Омиљено">
 <!ENTITY noscriptAllowViaBookmarks "Дозволи странице отворене преко Омиљено">
-<!ENTITY noscriptAllowPing "Дозволи &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Дозволи &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Дозволи локалне везе">
-<!ENTITY noscriptForbidPing "Забрани &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Забрани META редирекције унутар &lt;noscript&gt; елемената">
+<!ENTITY noscriptForbidPing "Забрани &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Забрани META редирекције унутар &lt;NOSCRIPT&gt; елемената">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "М">
 <!ENTITY noscriptWhitelist "Бела листа">
 <!ENTITY noscriptPermissions "Дозволе">
@@ -76,8 +77,8 @@
 <!ENTITY noscriptPolicies "Полисе">
 <!ENTITY noscriptDefaultPolicies "Подразумеване полисе">
 <!ENTITY noscriptSitePolicies "Полисе специфичне за стране">
-<!ENTITY noscriptNselNever "Сакриј &lt;noscript&gt; елементе">
-<!ENTITY noscriptNselForce "Прикажи &lt;noscript&gt; који се налази иза блокираног &lt;script&gt;">
+<!ENTITY noscriptNselNever "Сакриј &lt;NOSCRIPT&gt; елементе">
+<!ENTITY noscriptNselForce "Прикажи &lt;NOSCRIPT&gt; који се налази иза блокираног &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Привремено дозволи top-level стране као подразумевано">
 <!ENTITY noscriptDescription "Додатна заштита за ваш Firefox: NoScript дозвољава JavaScript, Java (и остале додатке) само доменима којима се верује по вашем избору (нпр. Ваша е-banking веб страна). Овај превентивни приступ блокирања базиран на белој листи спречава искоришћавање безбедносних пропуста (познатих и чак и непознатих!) без икаквог губитка функционалности... Експерти ће се сложити: Firefox је заиста безбеднији са NoScript-ом :-)">
 <!ENTITY noscriptOptBlockCssScanners "Блокирај CSS-базиране скенере">

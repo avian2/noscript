@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Uždrausti Java™">
 <!ENTITY noscriptForbidWebBugs "Uždrausti &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Uždrausti Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Uždrausti &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Uždrausti Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Uždrausti kitus įskiepius">
 <!ENTITY noscriptReloadWarn "Šios nuostatos įsigalios naujoms arba (rankiniu būdu) įkrautoms iš naujo svetainėms">
@@ -57,10 +58,10 @@
 <!ENTITY noscriptFixLinks "Bandyti sutaisyti JavaScript saitus">
 <!ENTITY noscriptAllowBookmarks "Suteikti leidimą svetainėms, atidarytoms iš adresyno">
 <!ENTITY noscriptAllowViaBookmarks "Suteikti leidimą svetainėms, atidarytoms iš adresyno">
-<!ENTITY noscriptAllowPing "Leisti &lt;a ping...&gt; elementus">
+<!ENTITY noscriptAllowPing "Leisti &lt;A PING...&gt; elementus">
 <!ENTITY noscriptAllowLocalLinks "Leisti saitus į vietines bylas">
-<!ENTITY noscriptForbidPing "Uždrausti &lt;a ping...&gt; elementus">
-<!ENTITY noscriptForbidMetaRefresh "Uždrausti &lt;META&gt; peradresavimus &lt;noscript&gt; elementuose">
+<!ENTITY noscriptForbidPing "Uždrausti &lt;A PING...&gt; elementus">
+<!ENTITY noscriptForbidMetaRefresh "Uždrausti &lt;META&gt; peradresavimus &lt;NOSCRIPT&gt; elementuose">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "Ž">
 <!ENTITY noscriptWhitelist "Baltasis sąrašas">
 <!ENTITY noscriptPermissions "Leidimai">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Nuostatos">
 <!ENTITY noscriptDefaultPolicies "Numatytos nuostatos">
 <!ENTITY noscriptSitePolicies "Specifinės svetainių nuostatos">
-<!ENTITY noscriptNselNever "Paslėpti &lt;noscript&gt; elementus">
-<!ENTITY noscriptNselForce "Rodyti &lt;noscript&gt; elementus, kurie eina po blokinio &lt;script&gt; elemento">
+<!ENTITY noscriptNselNever "Paslėpti &lt;NOSCRIPT&gt; elementus">
+<!ENTITY noscriptNselForce "Rodyti &lt;NOSCRIPT&gt; elementus, kurie eina po blokinio &lt;SCRIPT&gt; elemento">
 <!ENTITY noscriptAutoAllowTopLevel "Laikinai suteikti leidimą aukščiausiojo lygio svetainių adresams pagal nutylėjimą">
 <!ENTITY noscriptDescription "Papildoma apsauga jūsų Firefox naršyklei: NoScript leidžia JavaScript, Java (ir kitus įskiepius) tik jūsų pasirinktiems patikimiems domenams (pvz., jūsų banko interneto svetainei). Ši baltuoju sąrašu pagrįsta išankstinio blokavimo taktika neleidžia panaudoti saugumo skylių (žinomų ir net nežinomų!) neprarandant funkcionalumo... Ekspertai pritaria: Firefox tikrai saugesnis su NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blokuoti ieškiklius, pagrįstus CSS">

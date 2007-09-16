@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidJava "منع جافا">
 <!ENTITY noscriptForbidWebBugs "منع  &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "منع ميكروسوفت سلفرلايت">
+<!ENTITY noscriptForbidIFrames "منع &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "منع ماكروميديا فلاش">
 <!ENTITY noscriptForbidPlugins "منع إضافات أُخرى">
 <!ENTITY noscriptReloadWarn "سيتم تفعيل هذه الخيارات في الصفحات الجديدة أو الصفحات المعاد تحميلها (يدوياً)">
@@ -58,10 +59,10 @@
 <!ENTITY noscriptFixLinks "حاول تصحيح وصلات سكربتات جافا">
 <!ENTITY noscriptAllowBookmarks "السماح للمواقع المفتوحة من خلال المفضلة">
 <!ENTITY noscriptAllowViaBookmarks "السماح للمواقع المفتوحة من خلال المفضلة">
-<!ENTITY noscriptAllowPing "السماح ل &lt; أزّة...&gt;">
+<!ENTITY noscriptAllowPing "السماح ل &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "السماح لوصلات محلية">
-<!ENTITY noscriptForbidPing "منع &lt; أزّة...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "منع التوجيه المتغير من نوع مِتا داخل عناصر&lt;نوسكربت&gt;">
+<!ENTITY noscriptForbidPing "منع &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "منع التوجيه المتغير من نوع مِتا داخل عناصر&lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "ت">
 <!ENTITY noscriptWhitelist "القائمة البيضاء">
 <!ENTITY noscriptPermissions "رخص">
@@ -79,8 +80,8 @@
 <!ENTITY noscriptPolicies "عقود">
 <!ENTITY noscriptDefaultPolicies "عقود افتراضية">
 <!ENTITY noscriptSitePolicies "عقود خاصة بالمواقع">
-<!ENTITY noscriptNselNever "إخفاء عناصر &lt;نوسكربت&gt;">
-<!ENTITY noscriptNselForce "إظهار العنصر &lt;نوسكربت&gt; الذي يلي &lt;سكربت&gt; معترضة">
+<!ENTITY noscriptNselNever "إخفاء عناصر &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "إظهار العنصر &lt;NOSCRIPT&gt; الذي يلي &lt;SCRIPT&gt; معترضة">
 <!ENTITY noscriptAutoAllowTopLevel "السماح المؤقت لمواقع المستوى العلوي افتراضيا">
 <!ENTITY noscriptDescription "حماية اضافية لفيرفوكس الخاص بك: برنامج نوسكربت يسمح لجافاسكربت, جافا(و اضافات اخرى) للعمل فقط للمواقع التي تختارها, مثال:موقع المصرف المخصص لحسابك المنزلي. هذه القائمة المبنية على قاعدة الاعاقة  التحفظية تمنع استغلال الضعف الامني , سواء كان معروف أو حتى غير معروف! بدون التفريط بالعمل.. المحترفون سيتفقون أن فيرفوكس أكثر أمنا مع نوسكربت. :-)">
 <!ENTITY noscriptOptBlockCssScanners "اعتراض الماسح المبني على سي أس أس">

@@ -44,6 +44,7 @@
 <!ENTITY noscriptForbidJava "Prohibeix el Java™">
 <!ENTITY noscriptForbidWebBugs "Prohibeix el &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Prohibeix el Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Prohibeix el &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Prohibeix el Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Prohibeix d&apos;altres connectors">
 <!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pàgines noves o recarregades (manualment)">
@@ -55,10 +56,10 @@
 <!ENTITY noscriptFixLinks "Intenta arreglar els enllaços en JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permet tots els llocs que trobes a les adreces d&apos;interès">
 <!ENTITY noscriptAllowViaBookmarks "Permet els indrets oberts mitjançant les adreces d&apos;interès">
-<!ENTITY noscriptAllowPing "Permet &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Permet &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Perment enllaços locals">
-<!ENTITY noscriptForbidPing "Prohibeix &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Prohibeix redireccions META dins elements &lt;noscript&gt;">
+<!ENTITY noscriptForbidPing "Prohibeix &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Prohibeix redireccions META dins elements &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Llista blanca">
 <!ENTITY noscriptPermissions "Permissos">
@@ -76,8 +77,8 @@
 <!ENTITY noscriptPolicies "Política">
 <!ENTITY noscriptDefaultPolicies "Actuació per defecte">
 <!ENTITY noscriptSitePolicies "Actuació per a un lloc específic">
-<!ENTITY noscriptNselNever "Amaga els elements &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Mostra els elements &lt;noscript&gt; que segueixen a un &lt;script&gt; blocat">
+<!ENTITY noscriptNselNever "Amaga els elements &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Mostra els elements &lt;NOSCRIPT&gt; que segueixen a un &lt;SCRIPT&gt; blocat">
 <!ENTITY noscriptAutoAllowTopLevel "Permet els llocs de nivell més alt temporalment per defecte
 Temporarily allow top-level sites by default">
 <!ENTITY noscriptDescription "Protecció extra per al vostre Firefox: NoScript permet JavaScript, Java (i d&apos;altres connectors) només per a dominis de confiança de la vostra elecció (p.ex. el lloc web del vostre banc). Aquesta llista blanca de bloqueig preventiu prevé l&apos;explotació de vulnerabilitats de seguretat (les que coneixem i les que no!) sense perdre funcionalitat... Els experts hi estan d&apos;acord: Firefox és realment més segur amb NoScript :-)">

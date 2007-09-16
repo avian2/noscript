@@ -43,7 +43,8 @@
 <!ENTITY noscriptAdditionalRestrictions "信頼されていないサイトへの制限の追加">
 <!ENTITY noscriptForbidJava "Java&#8482; の禁止">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; の禁止">
-<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight&#8482; の禁止">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ の禁止">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; の禁止">
 <!ENTITY noscriptForbidFlash "Macromedia&#174; Flash&#174; の禁止">
 <!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
 <!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページ、または再読込したページで有効になります">
@@ -55,10 +56,10 @@
 <!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
 <!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">
 <!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Allow &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptForbidPing "Forbid &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Whitelist">
 <!ENTITY noscriptPermissions "Permissions">
@@ -76,8 +77,8 @@
 <!ENTITY noscriptPolicies "Policies">
 <!ENTITY noscriptDefaultPolicies "Default Policies">
 <!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;script&gt;">
+<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
+<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
 <!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
@@ -92,7 +93,7 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">

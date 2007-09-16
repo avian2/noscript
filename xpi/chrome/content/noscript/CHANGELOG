@@ -1,5 +1,22 @@
 NoScript ChangeLog
 
+v 1.1.7.2
+=====================================================================
++ Object placeholders' minimum size set to 32x32 for visibility
++ Object placeholder override for Microsoft® Silverlight™
+x Fixed "Forbid IFRAME" blocking also Flash (thanks niko322)
+x Fixed "Forbid IFRAME" blocking also regular frames (thanks ievans)
+x Fixed IFRAME in place activation shouldn't reload parent page
+
+v 1.1.7.1
+=====================================================================
++ New "Plugins/Forbid IFRAME" option per Gareth Hayes' and Om's 
+  request, see http://sla.ckers.org/forum/read.php?13,15701,15840
+x Fixed logic inconsistency between "Plugins/Forbid xyx" and
+  "Plugins/Forbid other plugins" (thanks Kadeos);
+x Fixed overzealous behaviour of JS link detection (thanks Kadeos and
+  plu for reporting)
+
 v 1.1.7
 =====================================================================
 + Further QA for release

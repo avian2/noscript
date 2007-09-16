@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Proibir Java™">
 <!ENTITY noscriptForbidWebBugs "Proibir &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Proibir Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Proibir &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Proibir Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Proibir outros plugins">
 <!ENTITY noscriptReloadWarn "Estas opções terão efeito em páginas novas ou (manualmente) atualizadas.">
@@ -57,10 +58,10 @@
 <!ENTITY noscriptFixLinks "Tentar corrigir links JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permitir sites abertos pelos favoritos">
 <!ENTITY noscriptAllowViaBookmarks "Permitir sites abertos pelos favoritos">
-<!ENTITY noscriptAllowPing "Permitir &lt;a ping...&gt;">
+<!ENTITY noscriptAllowPing "Permitir &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Permitir links locais">
-<!ENTITY noscriptForbidPing "Proibir &lt;a ping...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Proibir redirecionamentos META dentro de elementos &lt;noscript&gt;">
+<!ENTITY noscriptForbidPing "Proibir &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Proibir redirecionamentos META dentro de elementos &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Lista Branca">
 <!ENTITY noscriptPermissions "Permissões">
@@ -78,8 +79,8 @@
 <!ENTITY noscriptPolicies "Políticas">
 <!ENTITY noscriptDefaultPolicies "Políticas Padrão">
 <!ENTITY noscriptSitePolicies "Políticas Específicas do Site">
-<!ENTITY noscriptNselNever "Ocultar elementos &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Mostrar o elemento &lt;noscript&gt; que perseguiu um script bloqueedo &lt;script&gt;">
+<!ENTITY noscriptNselNever "Ocultar elementos &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Mostrar o elemento &lt;NOSCRIPT&gt; que perseguiu um script bloqueedo &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Permitir temporariamente todos os sites de alto nível por padrão">
 <!ENTITY noscriptDescription "Proteção extra para o seu Firefox: O NoScript permite JavaScripts, Java(e outros plugins) somente para os domínios confiáveis que você selecionar(por exemplo no site do seu internet banking). Esse bloqueio baseado em uma lista branca que começa vazia previne a exploração de vulnerabilidades de segurança (conhecidas e  até mesmo as desconhecidas!) sem perda de desempenho... Usuários especialistas concordam: o Firefox é realmente mais seguro com o NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Bloquear varredores baseados em CSS">

@@ -147,11 +147,14 @@
   <tabpanel><!-- Plugins -->
     <vbox flex="1">
       <label class="header" value="&noscriptAdditionalRestrictions;" />
+      <hbox><description style="white-space: normal">&noscriptReloadWarn;</description></hbox>
         <separator />
       <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
       <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
       <checkbox id="opt-forbidSilverlight" label="&noscriptForbidSilverlight;" />
       <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+       <separator class="thin" />
+      <checkbox id="opt-forbidIFrames" label="&noscriptForbidIFrames;" />
       <separator class="thin" />
       <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
       <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />

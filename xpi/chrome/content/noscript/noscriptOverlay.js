@@ -1089,11 +1089,16 @@ var noscriptOverlay = noscriptUtil.service ?
           } else {
             noscriptOverlay.syncUI(w.top);
           }
-          ns.detectJSRedirects(doc);
+          w.addEventListener("load", noscriptOverlay.listeners.onDocumentLoad, false);
         }
       }
     },
-    
+    onDocumentLoad: function(ev) {
+      if(ev.originalTarget instanceof HTMLDocument) {
+        ev.currentTarget.removeEventListener("load", arguments.callee, false);
+        noscriptOverlay.ns.detectJSRedirects(ev.originalTarget );
+      }
+    },
     onPageHide: function(ev) {
       ev.currentTarget.removeEventListener("pagehide", arguments.callee, true);
       noscriptOverlay.cleanupDocument(ev.originalTarget, true);
