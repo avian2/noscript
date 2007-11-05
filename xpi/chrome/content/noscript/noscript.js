@@ -71,9 +71,7 @@ var noscriptUtil = {
   },
   
   browse: function(url) {
-    var w = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                 .getService(Components.interfaces.nsIWindowMediator
-                 ).getMostRecentWindow("navigator:browser");
+    var w = this.service.domUtils.mostRecentBrowserWindow;
     if(w && !w.closed) {
       var browser = w.getBrowser();
       browser.selectedTab = browser.addTab(url, null);

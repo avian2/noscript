@@ -465,20 +465,45 @@ const DOMUtils = {
                   .getService(CI.nsIWindowMediator));
   },
   
+  _winType: null,
+  perWinType: function(delegate) {
+    var wm = this.windowMediator;
+    var w = null;
+    var aa = [].concat(arguments);
+    for each(var type in ['navigator:browser', 'emusic:window']) {
+     aa[0] = type;
+      w = delegate.apply(wm, aa);
+      if(w) {
+        this._winType = type;
+        break;
+      }
+    }
+    return w;
+  },
+  get mostRecentBrowserWindow() {
+    return this._winType 
+      ? this._wm.getMostRecentWindow(this._winType)
+      : this.perWinType(this.windowMediator.getMostRecentWindow, true);
+  },
+  get windowEnumerator() {
+    return this._winType 
+      ? this._wm.getZOrderDOMWindowEnumerator(this._winType, true)
+      : this.perWinType(this.windowMediator.getZOrderDOMWindowEnumerator, true);
+  },
   createBrowserIterator: function(initialWin) {
     return new BrowserIterator(initialWin);
   }
 };
 
 function BrowserIterator(initialWin) {
-  this.wm = DOMUtils.windowMediator;
   if(!(initialWin && initialWin.getBrowser)) {
-     initialWin = this.wm.getMostRecentWindow("navigator:browser");
+     initialWin = DOMUtils.mostRecentBrowserWindow;
   }
   this.currentWin = this.initialWin = initialWin;
   this.initPerWin();
 }
 BrowserIterator.prototype = {
+ 
   initPerWin: function() {
     var currentTB = this.currentWin && this.currentWin.getBrowser();
     if(currentTB) {
@@ -497,7 +522,7 @@ BrowserIterator.prototype = {
     }
     if(this.curTabIdx >= this.browsers.length) {
       if(!this.winEnum) {
-        this.winEnum = this.wm.getZOrderDOMWindowEnumerator("navigator:browser", true);
+        this.winEnum = DOMUtils.windowEnumerator;
       }
       if(this.winEnum.hasMoreElements()) {
         this.currentWin = this.winEnum.getNext();
@@ -740,7 +765,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.1.7.2",
+  VERSION: "1.1.7.6",
   
   get wrappedJSObject() {
     return this;
@@ -880,7 +905,8 @@ NoscriptService.prototype = {
   forbidFlash: false,
   forbidFlash: true,
   forbidPlugins: false,
-  forbidIFrames: false,
+  forbidIFrames: false, 
+  forbidIFramesContext: 1, // 0 = all iframes, 1 = different site, 2 = different domain, 3 = different TLD
   forbidData: true,
   
   forbidChromeScripts: false,
@@ -986,6 +1012,7 @@ NoscriptService.prototype = {
       case "truncateTitle":
       case "truncateTitleLen":
       case "forbidMetaRefresh":
+      case "forbidIFramesContext":
       case "injectionCheck":
       case "jsredirectFollow":
       case "jsredirectIgnore":
@@ -1194,7 +1221,7 @@ NoscriptService.prototype = {
       "filterXExceptions",
       "forbidChromeScripts",
       "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", 
-      "forbidIFrames", "forbidData",
+      "forbidIFrames", "forbidIFramesContext", "forbidData",
       "forbidMetaRefresh",
       "global",
       "injectionCheck",
@@ -1442,11 +1469,11 @@ NoscriptService.prototype = {
     return site;
   },
   
-  getDomain: function(site) {
+  getDomain: function(site, force) {
     try {
       const url = (site instanceof CI.nsIURL) ? site : SiteUtils.ios.newURI(site, null, null);
       const host = url.host;
-      return url.port == -1 && host[host.length - 1] != "." && 
+      return force || url.port == -1 && host[host.length - 1] != "." && 
             (host.lastIndexOf(".") > 0 || host == "localhost") ? host : null;
     } catch(e) {
       return null;
@@ -1708,6 +1735,7 @@ NoscriptService.prototype = {
     "sn": " cn ",
     "sos": " pl ",
     "store": " ro ",
+    "svr": " br ",
     "targi": " pl ",
     "tj": " cn ",
     "tm": " fr mc pl ro za ",
@@ -1913,11 +1941,6 @@ NoscriptService.prototype = {
   }
 ,
   
-  get lastWindow() {
-    return DOMUtils.windowMediator.getMostRecentWindow("navigator:browser");
-  },
-  
-  
   getAllowObjectMessage: function(url, mime) {
     url = this.siteUtils.crop(url);
     return this.getString("allowTemp", [url + "\n(" + mime + ")\n"]);
@@ -1963,7 +1986,7 @@ NoscriptService.prototype = {
   pluginForMime: function(mimeType) {
     if(!mimeType) return null;
     try {
-      var w = this.lastWindow;
+      var w = DOMUtils.mostRecentBrowserWindow;
       if(!(w && w.navigator)) return null;
       var mime = w.navigator.mimeTypes.namedItem(mimeType);
       return mime && mime.enabledPlugin || null;
@@ -2073,11 +2096,29 @@ NoscriptService.prototype = {
           case 7:
             if(!aMimeTypeGuess) aMimeTypeGuess = this.guessMime(aContentLocation);
             
-            blockThisFrame = this.forbidIFrames && 
-              !(aContext instanceof CI.nsIDOMHTMLFrameElement) &&
-              !(aInternalCall || /^(?:chrome:|resource:|about:blank$)/.test(aContentLocation.spec) ||
-                  aRequestOrigin && aRequestOrigin.schemeIs("chrome"));
-          
+            if(
+              (blockThisFrame = this.forbidIFrames && 
+                !(aContext instanceof CI.nsIDOMHTMLFrameElement) &&
+                !(aInternalCall || 
+                    /^(?:chrome:|resource:|about:blank$|wyciwyg:)/.test(aContentLocation.spec) ||
+                    aRequestOrigin && aRequestOrigin.schemeIs("chrome"))
+              )
+              ) {
+            switch(this.forbidIFramesContext) {
+              case 0: // all IFRAMES
+                break;
+              case 3: // same 2nd level domain
+                blockThisFrame = this.get2ndLevel(this.getDomain(aRequestOrigin)) != 
+                  this.get2ndLevel(this.getDomain(aContentLocation));
+                break;
+              case 2: // same domain
+                blockThisFrame = this.getDomain(aRequestOrigin) != this.getDomain(aContentLocation);
+                break;
+              case 1:
+                blockThisFrame = this.getSite(aRequestOrigin.spec) != this.getSite(aContentLocation.spec);
+             }
+           }
+            
           case 6:
             scheme = aContentLocation.scheme;
             
@@ -2371,12 +2412,12 @@ NoscriptService.prototype = {
   hasVisibleLinks: function(document) {
     var links = document.links;
     for(var j = 0, l; (l = links[j]); j++) {
-      if(l && l.href && /^https?/i.test(l.href) && l.offsetWidth && l.offsetHeight) return true;
+      if(l && l.href && /^https?/i.test(l.href) && (l.offsetWidth || l.offsetHeight)) return true;
     }
     return false;
   },
   detectJSRedirects: function(document) {
-    if(this.jsredirectIgnore) return 0;
+    if(this.jsredirectIgnore || this.jsEnabled) return 0;
     try {
       var hasVisibleLinks = this.hasVisibleLinks(document);
       if(!this.jsredirectForceShow && hasVisibleLinks || 
@@ -2385,8 +2426,13 @@ NoscriptService.prototype = {
       var j, len;
       var seen = [];
       var body = document.body;
-      body.style.visibility = "visible";
-      body.style.display = "block";
+      var cstyle = document.defaultView.getComputedStyle(body, "");
+      if(cstyle.visibility != "visible") {
+        body.style.visibility = "visible";
+      }
+      if(cstyle.display == "none") {
+        body.style.display = "block";
+      }
       if(!hasVisibleLinks && document.links[0]) {
         var links = document.links;
         var l;
@@ -2600,9 +2646,7 @@ NoscriptService.prototype = {
       (allowBookmarks || allowBookmarklets)) {
       try {
         if(allowBookmarklets && url.toLowerCase().indexOf("javascript:") == 0) {
-          var browserWindow =  Components.classes["@mozilla.org/appshell/window-mediator;1"]
-              .getService(Components.interfaces.nsIWindowMediator)
-              .getMostRecentWindow("navigator:browser");
+          var browserWindow = DOMUtils.mostRecentBrowserWindow;
           var browser = browserWindow.getBrowser().selectedBrowser;
           var site = this.getSite(browserWindow.noscriptOverlay.srcDocument.documentURI);
           if(browser && !this.isJSEnabled(site)) {
@@ -2895,13 +2939,12 @@ NoscriptService.prototype = {
        // Collect document / cached plugin URLs
        url = this.getSite(docURI = document.documentURI);
        if(url) {
-          try {
-            if(document.domain && (domain = this.getDomain(url)) &&
-                document.domain != domain) {
-              url = document.domain;
-            }
-          } catch(e) {}
-          sites.push(url);
+         try {
+           if(document.domain && document.domain != this.getDomain(url, true)) {
+             sites.push(document.domain);
+           }
+         } catch(e) {}
+         sites.push(url);
           
          cache = pluginsCache.uris[docURI];
          if(cache) {
@@ -3508,10 +3551,18 @@ RequestWatchdog.prototype = {
     var window = this.findWindow(channel);
     
     // neutralize window.name-based attack
-    if(window && window.name && /[^\w\-\s]/.test(window.name)) {
+    if(window && window.name) {
       originalAttempt = window.name;
-      window.name = window.name.replace(/[^\w\-\s]/g, " ");
-      ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');
+      
+      if(/[^\w\-\s]/.test(originalAttempt)) {
+        window.name = originalAttempt.replace(/[^\w\-\s]/g, " ");
+      }
+      if(originalAttempt.length > 15) {
+        window.name = window.name.substring(0, 14);
+      }
+      if(originalAttempt != window.name) {
+        ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');
+      }
     }
    
     if(globalJS || ns.isJSEnabled(originSite)) {
@@ -3555,11 +3606,7 @@ RequestWatchdog.prototype = {
     if(untrustedReload && browser) {
       this.resetUntrustedReloadInfo(browser, channel);
     }
-    
-    
-    
-    
-    
+
     // -- DANGER ZONE --
     
     var requestInfo = {
@@ -3869,7 +3916,7 @@ var InjectionChecker = {
     return (
       (score >= THRESHOLD) ||
     // assignment
-      /[\w$\]][\s\S]*(?:=[\s\S]*[\[\w$]|\(\s*\))/.test(expr) && 
+      /[\w$\]][\s\S]*(?:\+?=[\s\S]*[\[\w$]|\(\s*\))/.test(expr) && 
         (score += 1) >= THRESHOLD || 
     // dot notation
       /[\w$\]][\s\S]*\./.test(expr) && 
@@ -3975,7 +4022,7 @@ var InjectionChecker = {
     
   checkJSStunt: function(s) {
     // check noisy comments first
-    if(/\/\*[\s\S]*\*\//.test(s)) { 
+    if(/(?:\/\*[\s\S]*\*\/|\/\/.*[\r\n])/.test(s)) { 
       this.log("JS comments in " + s);
       return true; 
     }
@@ -3984,6 +4031,10 @@ var InjectionChecker = {
       this.log("location=name navigation attempt in " +s);
       return true;
     };
+    if(/[\w\$][\s\)]*setter\s*=/.test(s)) {
+      this.log("setter override attempt in " +s);
+      return true;
+    }
     // check well known and semi-obfuscated -- as in [...]() -- function calls
     var m = s.match(/\b(open|eval|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|Image|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*\([\s\S]*\)/);
     if(m) {
@@ -4229,7 +4280,7 @@ XSanitizer.prototype = {
     }
     
     if(this.brutal) { // injection checks were positive
-      s = s.replace(/[\(\)\=]/g, " ");
+      s = s.replace(/[\(\)\=]/g, " ").replace(/\b(setter|eval)\b/, String.toUpperCase);
     }
     
     return s;

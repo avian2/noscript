@@ -25,6 +25,9 @@ pref("noscript.forbidFlash", false);
 pref("noscript.forbidSilverlight", true);
 pref("noscript.forbidPlugins", false);
 pref("noscript.forbidIFrames", false);
+pref("noscript.forbidIFramesContext", 1);
+pref("noscript.forbidIFramesSameDomainUntrusted", false);
+
 pref("noscript.forbidData", false);
 pref("noscript.sound.block", "chrome://noscript/skin/block.wav");
 pref("noscript.allowClipboard", false);

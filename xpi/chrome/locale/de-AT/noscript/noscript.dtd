@@ -1,0 +1,104 @@
+<!ENTITY noscriptOptions "Einstellungen...">
+<!ENTITY noscriptOptions.accesskey "E">
+<!ENTITY noscriptOptionsLong "NoScript - Einstellungen">
+<!ENTITY noscriptAbout "Über NoScript...">
+<!ENTITY noscriptPermissionsText "Sie können festlegen, welchen Websites Sie das Ausführen von Skripten erlauben möchten. Geben Sie bitte die exakte Adresse oder die Domain der Website ein (z.B. &quot;http://www.site.com&quot; oder &quot;site.com&quot;), für die Sie dies zulassen möchten, und klicken Sie dann auf &quot;Erlauben&quot;.">
+<!ENTITY noscriptWebAddress "Adresse der Website:">
+<!ENTITY noscriptAllow "Erlauben">
+<!ENTITY noscriptAllow.accesskey "E">
+<!ENTITY noscriptForbid "Verbieten">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Als vertrauenswürdig einstufen">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Als nicht vertrauenswürdig einstufen">
+<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptRemoveSelected "Ausgewählte Websites entfernen">
+<!ENTITY noscriptGloballyEnabled "Skripte allgemein erlauben (nicht empfohlen)">
+<!ENTITY noscriptAutoReload "Betroffene Seiten beim Ändern der Berechtigungen automatisch neu laden">
+<!ENTITY noscriptGeneral "Allgemein">
+<!ENTITY noscriptAppearance "Aussehen">
+<!ENTITY noscriptShow "Folgende Elemente anzeigen:">
+<!ENTITY noscriptCtxMenu "Kontextmenüeinträge:">
+<!ENTITY noscriptStatusIcon "Symbol in der Statusleiste">
+<!ENTITY noscriptFullAddr "Vollständige Adressen (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Vollständige Domains (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Second-Level-Domains (noscript.net)">
+<!ENTITY noscriptTempCmd "[...] temporär erlauben">
+<!ENTITY noscriptSound "Klang ausgeben, wenn Skripte blockiert werden">
+<!ENTITY noscriptImport "Importieren...">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exportieren...">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Informationsleiste anzeigen, wenn Skripte blockiert werden">
+<!ENTITY noscriptNotify.bottom "Am unteren Rand anzeigen">
+<!ENTITY noscriptSound.choose "Durchsuchen...">
+<!ENTITY noscriptSound.choose.accesskey "D">
+<!ENTITY noscriptSound.play "Abspielen">
+<!ENTITY noscriptSound.play.accesskey "A">
+<!ENTITY noscriptSound.reset "Standard wiederherstellen">
+<!ENTITY noscriptSound.reset.accesskey "S">
+<!ENTITY noscriptAdvanced "Erweitert">
+<!ENTITY noscriptAdditionalPermissions "Zusätzliche Berechtigungen für vertrauenswürdige Websites">
+<!ENTITY noscriptAllowClipboard "Einfügen von formatiertem Text (z.B. RTF) aus der Zwischenablage erlauben">
+<!ENTITY noscriptAdditionalRestrictions "Zusätzliche Einschränkungen für nicht vertrauenswürdige Websites">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Diese Einschränkungen auch auf vertrauenswürdige Websites anwenden">
+<!ENTITY noscriptForbidJava "Java™ verbieten">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; verbieten">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieten">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieten">
+<!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
+<!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
+<!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
+<!ENTITY noscriptConfirmUnblock "Bestätigungsmeldung anzeigen, bevor ein Objekt temporär erlaubt wird">
+<!ENTITY noscriptStatusLabel "Informationstext in der Statusleiste">
+<!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieten">
+<!ENTITY noscriptShowPlaceholder "Platzhaltersymbol anzeigen">
+<!ENTITY noscriptTruncateTitle "Überlangen &quot;document.title&quot; kürzen (siehe Bug 319004)">
+<!ENTITY noscriptFixLinks "Versuchen, JavaScript-Links in normale Links umzuwandeln">
+<!ENTITY noscriptAllowBookmarks "Aus Lesezeichen geöffnete Websites erlauben">
+<!ENTITY noscriptAllowViaBookmarks "Aus Lesezeichen geöffnete Websites erlauben">
+<!ENTITY noscriptAllowPing "Klick-Verfolgung über das PING-Attribut für Links erlauben">
+<!ENTITY noscriptAllowLocalLinks "Links auf lokale Dateien erlauben">
+<!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">
+<!ENTITY noscriptForbidMetaRefresh "META-Weiterleitungen innerhalb von &lt;NOSCRIPT&gt;-Elementen verbieten">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "W">
+<!ENTITY noscriptWhitelist "Positivliste">
+<!ENTITY noscriptPermissions "Berechtigungen">
+<!ENTITY noscriptRefresh "Aktualisierung">
+<!ENTITY noscriptNotifications "Benachrichtigungen">
+<!ENTITY noscriptToolbarToggle "Berechtigungen für aktuelle Top-Level-Site mit Links-Klick auf die Symbolleisten-Schaltfläche umschalten">
+<!ENTITY noscriptTrusted "Vertrauenswürdig">
+<!ENTITY noscriptUntrusted "Nicht vertrauenswürdig">
+<!ENTITY noscriptUnknown "Unbekannt">
+<!ENTITY noscriptAdd "Hinzufügen">
+<!ENTITY noscriptAdd.accesskey "H">
+<!ENTITY noscriptClose "Schließen">
+<!ENTITY noscriptSiteManager "Site-Manager">
+<!ENTITY noscriptSecurityManager "Sicherheits-Manager">
+<!ENTITY noscriptPolicies "Richtlinien">
+<!ENTITY noscriptDefaultPolicies "Standard-Richtlinien">
+<!ENTITY noscriptSitePolicies "Website-spezifische Richtlinien">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;-Elemente ausblenden">
+<!ENTITY noscriptNselForce "&lt;NOSCRIPT&gt;-Element, das einem blockierten &lt;SCRIPT&gt; folgt, anzeigen">
+<!ENTITY noscriptAutoAllowTopLevel "Jeweils aktuelle Top-Level-Site temporär erlauben">
+<!ENTITY noscriptDescription "Zusätzlicher Schutz für Ihren Browser: NoScript erlaubt das Ausführen von JavaScript, Java (und anderen Plugins) nur bei vertrauenswürdigen Domains Ihrer Wahl (z.B. Ihrer Homebanking-Website). Der auf einer Positivliste basierende präventive Ansatz zum Blockieren von Skripten verhindert das Ausnutzen von (bekannten und unbekannten!) Sicherheitslücken ohne Verlust an Funktionalität.">
+<!ENTITY noscriptOptBlockCssScanners "Auf Cross-Site Scripting basierende Scanner blockieren">
+<!ENTITY noscriptOptFilterXGet "Anfragen bei Verdacht auf Cross-Site Scripting bereinigen">
+<!ENTITY noscriptOptFilterXPost "Cross-Site-POST-Anfragen in datenlose GET-Anfragen umwandeln">
+<!ENTITY noscriptShowConsole "Konsole anzeigen...">
+<!ENTITY noscriptShowConsole.accesskey "z">
+<!ENTITY noscriptXss "Cross-Site Scripting (XSS)">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "FAQ zu Cross-Site Scripting (engl.)...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsicheres Nachladen">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Ausnahmen vom XSS-Schutz">
+<!ENTITY noscriptXssExceptions.description "Zieladressen, die mit diesen regulären Ausdrücken übereinstimmen, werden vom XSS-Schutz ausgenommen">
+<!ENTITY noscriptMatchSample "Beispieladresse für Übereinstimmung:">
+<!ENTITY noscriptReset "Zurücksetzen">
+<!ENTITY noscriptReset.accesskey "Z">
+<!ENTITY noscriptResetDef "Auf Standardwerte zurücksetzen">
+<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">

@@ -466,7 +466,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var popup = document.getElementById("noscript-status-popup");
     if(statusIcon.hidden || statusIcon.parentNode.hidden) {
       var tbb = document.getElementById("noscript-tbb");
-      if(tbb) {
+      if(tbb && window.getComputedStyle(tbb.parentNode, "").display != "none") {
         tbb.open = true;
         return;
       }

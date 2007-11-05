@@ -1,5 +1,34 @@
 NoScript ChangeLog
 
+v 1.1.7.6
+=====================================================================
++ srv.br "special" TLD (thanks Rodrigo Ristow Branco)
++ Better protection against "setter" based XSS vectors and encoded
+  "name" payloads (thanks RSnake, Sirdarckcat and Kuza55, see 
+  http://ha.ckers.org/blog/20071104/owning-hackersorg-or-not/ )
++ Improved hidden links management, preserves original body CSS 
+  attributes when possible (thanks mdots)
+
+v 1.1.7.5
+=====================================================================
+x wyciwyg support for IFRAMEs
+
+v 1.1.7.4
+=====================================================================
++ new noscript.forbidIFramesContext about:config option controls
+  if actually enforcing IFRAME blocking depending on the parent page:
+  0 -- block always
+  1 -- block if parent is in a different site (default)
+  2 -- block if parent is in a different domain
+  3 -- block if parent is in a different 2nd level domain
++ Minefield version bump (0.3.0a9pre)
+x XSideBar keyboard shortcut compatibility (thanks Philip Chee)
+
+v 1.1.7.3
+=====================================================================
+x Work-around for hidden link detection being triggered by some CSS
+  reporting offsetHeight 0 for anchors (thanks Gerrit Heeres)
+
 v 1.1.7.2
 =====================================================================
 + Object placeholders' minimum size set to 32x32 for visibility
@@ -44,7 +73,7 @@ v 1.1.6.26 (1.1.7RC1)
 + Experimental preference locking support (look at the mozilla.cfg 
   sample inside the XPI for details)
 x Fixed meta-refresh notification failing to appear sometimes
-x Cleanup of the conter-measures against Sirdarckcat's redirected 
+x Cleanup of the counter-measures against Sirdarckcat's redirected 
   script trick (available for Fx >= 2.0 only) with user feedback
 x Fixed full address no more shown in allowing menu for numeric IP
   or TCP-IP explicit port URLs (thanks blahhhy for report)

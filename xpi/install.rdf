@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.1.7.2</em:version>
+   <em:version>1.1.7.6</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -59,7 +59,7 @@
      <Description>
      <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
      <em:minVersion>1.5</em:minVersion>
-     <em:maxVersion>3.0a8</em:maxVersion>
+     <em:maxVersion>3.0a9</em:maxVersion>
      </Description>
    </em:targetApplication>
 
@@ -95,9 +95,18 @@
       <Description>
         <em:id>{aa5ca914-c309-495d-91cf-3141bbb04115}</em:id>
         <em:minVersion>0.2</em:minVersion>
-        <em:maxVersion>3.0a8</em:maxVersion>
+        <em:maxVersion>3.0a9</em:maxVersion>
       </Description>
    </em:targetApplication>
+   
+   <!-- E Music -->
+   <em:targetApplication> <!-- eMusic -->
+			<Description>
+				<em:id>dlm@emusic.com</em:id>
+				<em:minVersion>1.0a4</em:minVersion>
+				<em:maxVersion>1.0.0.*</em:maxVersion>
+			</Description>
+		</em:targetApplication>
    
    <em:file>
      <Description about="urn:mozilla:extension:file:noscript.jar">
@@ -111,6 +120,7 @@
         <em:locale>locale/ca-AD/noscript/</em:locale>
         <em:locale>locale/cs-CZ/noscript/</em:locale>
         <em:locale>locale/da-DK/noscript/</em:locale>
+        <em:locale>locale/de-AT/noscript/</em:locale>
         <em:locale>locale/de-DE/noscript/</em:locale>
         <em:locale>locale/el-GR/noscript/</em:locale>
         <em:locale>locale/en-GB/noscript/</em:locale>
@@ -203,7 +213,14 @@
       </Description>
    </em:localized>
 
-
+   <em:localized>
+      <Description>
+        <em:locale>de-AT</em:locale>
+        <em:name>noscript</em:name>
+        <em:description>Zusätzlicher Schutz für Ihren Browser: NoScript erlaubt das Ausführen von JavaScript, Java (und anderen Plugins) nur bei vertrauenswürdigen Domains Ihrer Wahl (z.B. Ihrer Homebanking-Website). Der auf einer Positivliste basierende präventive Ansatz zum Blockieren von Skripten verhindert das Ausnutzen von (bekannten und unbekannten!) Sicherheitslücken ohne Verlust an Funktionalität.</em:description>
+      </Description>
+   </em:localized>
+   
    <em:localized>
       <Description>
         <em:locale>de-DE</em:locale>
