@@ -1,5 +1,10 @@
 NoScript ChangeLog
 
+v 1.1.7.7
+=====================================================================
+x Fixed installation problems with addons.mozilla.org automatic 
+  update
+
 v 1.1.7.6
 =====================================================================
 + srv.br "special" TLD (thanks Rodrigo Ristow Branco)
