@@ -26,6 +26,7 @@ pref("noscript.forbidSilverlight", true);
 pref("noscript.forbidPlugins", false);
 pref("noscript.forbidIFrames", false);
 pref("noscript.forbidIFramesContext", 1);
+pref("noscript.forbidIFramesParentTrustCheck", true);
 pref("noscript.forbidIFramesSameDomainUntrusted", false);
 
 pref("noscript.forbidData", false);
@@ -111,3 +112,11 @@ pref("noscript.urivalid.aim", "\\w[^\\\\\?&\\x00-\\x1f#]*(?:\\?[^\\\\\\x00-\\x1f
 pref("noscript.forbidExtProtSubdocs", true);
 
 pref("noscript.forbidChromeScripts", false);
+
+pref("noscript.forbidJarDocuments", true);
+pref("noscript.forbidJarDocumentsExceptions", "^jar:https://samples\\.noscript\\.net/sample_apps.jar!.*\\.xul$\n");
+pref("noscript.jarDoc.notify", true);
+
+pref("noscript.forbidXBL", true);
+
+pref("noscript.whitelistRegExp", "");

@@ -86,10 +86,8 @@
   list-style-image: url(inactive-no16.png);
 }
 
-tab.noscript-xss,
-tab.noscript-yes,
-tab.noscript-no {
-  marker-offset: 24px;
+.noscript-jar {
+  list-style-image: url(jar16.png);
 }
 
 .noscript-error {

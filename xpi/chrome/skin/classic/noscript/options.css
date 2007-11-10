@@ -9,3 +9,10 @@
   text-decoration: underline;
 }
 
+tab.noscript-xss,
+tab.noscript-yes,
+tab.noscript-no,
+tab.noscript-jar {
+  marker-offset: 24px;
+}
+

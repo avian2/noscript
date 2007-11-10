@@ -765,7 +765,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.1.7.7",
+  VERSION: "1.1.8",
   
   get wrappedJSObject() {
     return this;
@@ -895,11 +895,17 @@ NoscriptService.prototype = {
   truncateTitle: true,
   truncateTitleLen: 255,
   pluginPlaceholder: "chrome://noscript/skin/icon32.png",
-  showPlaceHolder: true,
+  showPlaceholder: true,
 
   forbidSomeContent: false,
   forbidAllContent: false,
   contentBlocker: false,
+  
+  forbidChromeScripts: false,
+  forbidData: true,
+  
+  forbidJarDocuments: true,
+  forbidJarDocumentsExceptions: null,
   
   forbidJava: true,
   forbidFlash: false,
@@ -907,9 +913,9 @@ NoscriptService.prototype = {
   forbidPlugins: false,
   forbidIFrames: false, 
   forbidIFramesContext: 1, // 0 = all iframes, 1 = different site, 2 = different domain, 3 = different TLD
-  forbidData: true,
-  
-  forbidChromeScripts: false,
+
+  forbidXBL: true,
+
   
   injectionCheck: 2,
   
@@ -922,6 +928,8 @@ NoscriptService.prototype = {
 
   filterXGetRx: "(?:<+(?=[^<>=\\d\\. ])|[\\\\'\"\\x00-\\x07\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F])",
   filterXGetUserRx: "",
+  
+  whitelistRegExp: null,
   
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
@@ -990,8 +998,6 @@ NoscriptService.prototype = {
       case "forbidSilverlight":
       case "forbidPlugins":
       case "forbidIFrames":
-      case "forbidData":
-      case "forbidChromeScripts":
         this[name]=this.getPref(name, this[name]);
         this.forbidSomeContent = this.forbidJava || this.forbidFlash 
             || this.forbidSilverlight || this.forbidPlugins || this.forbidIFrames;
@@ -1005,24 +1011,26 @@ NoscriptService.prototype = {
       case "blockXIntranet":
       case "safeToplevel":
       case "autoAllow":
-      case "consoleDump":
       case "contentBlocker":
       case "pluginPlaceholder":
       case "showPlaceholder":
       case "truncateTitle":
       case "truncateTitleLen":
+      case "forbidChromeScripts":
+      case "forbidData":
+      case "forbidJarDocuments":
       case "forbidMetaRefresh":
       case "forbidIFramesContext":
+      case "forbidXBL":
       case "injectionCheck":
       case "jsredirectFollow":
       case "jsredirectIgnore":
       case "jsredirectForceShow":
         this[name] = this.getPref(name, this[name]);
-        switch(name) {
-          case "consoleDump":
-            this.injectionChecker.logEnabled = !!this.consoleDump;
-          break;
-        }
+      break;
+      case "consoleDump":
+        this[name] = this.getPref(name, this[name]);
+        this.injectionChecker.logEnabled = !!this.consoleDump;
       break;
       case "global":
         this.globalJS = this.getPref(name, false);
@@ -1035,7 +1043,10 @@ NoscriptService.prototype = {
       case "filterXGetUserRx":
         this.updateRxPref(name, this[name], "g");
       break;
+      
+      case "forbidJarDocumentsExceptions":
       case "filterXExceptions":
+      case "whitelistRegExp":
         this.updateRxPref(name, "", "", this.rxParsers.multi);
       break;
       
@@ -1220,16 +1231,19 @@ NoscriptService.prototype = {
       "filterXGetRx", "filterXGetUserRx", 
       "filterXExceptions",
       "forbidChromeScripts",
+      "forbidJarDocuments", "forbidJarDocumentsExceptions",
       "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", 
       "forbidIFrames", "forbidIFramesContext", "forbidData",
       "forbidMetaRefresh",
+      "forbidXBL",
       "global",
       "injectionCheck",
       "jsredirectIgnore", "jsredirectFollow", "jsredirectForceShow",
       "nselNever", "nselForce",
       "pluginPlaceholder", "showPlaceholder",
       "temp", "untrusted",
-      "truncateTitle", "truncateTitleLen"
+      "truncateTitle", "truncateTitleLen",
+      "whitelistRegExp",
       ]) {
       try {
         this.syncPrefs(this.prefs, p);
@@ -1347,8 +1361,8 @@ NoscriptService.prototype = {
     return !!this.manualSites.matches(s);
   },
   setManual: function(s, b) {
-    if(b) this.untrustedSites.add(s);
-    else this.untrustedSites.remove(s, true);
+    if(b) this.manualSites.add(s);
+    else this.manualSites.remove(s, true);
     return b;
   },
   
@@ -1372,6 +1386,7 @@ NoscriptService.prototype = {
       ps.add(site);
       if(!fromScratch) {
         this.setUntrusted(site, false);
+        this.setManual(site, false);
       }
     } else {
       ps.remove(site, false, true);
@@ -1379,6 +1394,8 @@ NoscriptService.prototype = {
         this.setUntrusted(site, true);
       }
       if(this.autoAllow) {
+        this.setUntrusted(site, true);
+      } else {
         this.setManual(site, true);
       }
     }
@@ -1387,6 +1404,10 @@ NoscriptService.prototype = {
   }
 ,
   checkShorthands: function(site, map) {
+    if(this.whitelistRegExp && this.whitelistRegExp.test(site)) {
+      return true;
+    }
+    
     map = map || this.jsPolicySites.sitesMap;
     // port matching, with "0" as port wildcard  and * as nth level host wildcard
     if(/:\d+$/.test(site)) {
@@ -2027,46 +2048,56 @@ NoscriptService.prototype = {
   // nsIContentPolicy.TYPE_OBJECT_SUBREQUEST = 12
   // nsIContentPolicy.REJECT_SERVER = -3
   // nsIContentPolicy.ACCEPT = 1
-  PING_DEFINED: "TYPE_PING" in CI.nsIContentPolicy,
+  POLICY1_9: "TYPE_XBL" in CI.nsIContentPolicy,
   noopContentPolicy: {
     shouldLoad: function() { return 1; },
     shouldProcess: function() { return 1; }
   },
   cpConsoleFilter: [2, 5, 6, 7],
+  cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
+    this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
+        ", origin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + aContext + 
+        ", mime: " + aMimeTypeGuess + ", " + aInternalCall);
+  },
+  reject: function(what, args) {
+    if(this.consoleDump & 1 && args.length == 6) {
+      this.cpDump("BLOCKED " + what, args[0], args[1], args[2], args[3], args[4], args[5]);
+    }
+    return this.rejectCode;
+  },
   mainContentPolicy: {
     shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
       if(this.consoleDump && (this.consoleDump & 4) && this.cpConsoleFilter.indexOf(aContentType) > -1) {
-        dump("[noscript cp]: type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
-        ", origin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + aContext + ", mime: " + aMimeTypeGuess + ", " + aInternalCall
-          + "\n");
+        this.cpDump("processing", aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall);
       }
       
       var url, forbid, isJS, isJava, isFlash, isSilverlight,
           blockThisFrame, mustAsk, scheme;
-      
       try {
+        if(aContentType == 1 && !this.POLICY1_9) { // compatibility for type OTHER
+          if((aContext instanceof CI.nsIDOMHTMLDocument)) aContentType = 9;
+          if((aContext instanceof CI.nsIDOMHTMLElement) && aContext.getAttribute("ping")) aContentType = 10;
+        }
+        
         switch(aContentType) {
-          case 1:
-            if(this.PING_DEFINED || 
-                !((aContext instanceof CI.nsIDOMHTMLElement) && aContext.getAttribute("ping"))) 
-              return 1;
-          
+          case 9: // XBL - warning, in 1.8.x could also be XMLHttpRequest...
+            if(!this.forbidXBL || aContentLocation.schemeIs("chrome") ||
+                /^(chrome|resource)$/.test(aRequestOrigin.scheme) || // Grease Monkey Ajax comes from resource: hidden window
+                this.isJSEnabled(this.getSite(aContentLocation.spec))
+              ) return 1;
+            return this.reject("XBL", arguments);
+          break;
           case 10: // TYPE_PING
             if(this.jsEnabled || !this.getPref("noping", true) || 
                 aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec))
               )
               return 1;
               
-            if(this.consoleDump & 1) 
-              this.dump("Blocked ping " + aRequestOrigin.spec + " -> " + aContentLocation.spec);
-         
-            return this.rejectCode;
+            return this.reject("Ping", arguments);
               
           case 2:
             if(this.forbidChromeScripts && this.checkForbiddenChrome(aContentLocation, aRequestOrigin)) {
-              if(this.consoleDump & 1) 
-                this.dump("Blocked chrome access, " + aRequestOrigin.spec + " -> " + aContentLocation.spec);
-              return this.rejectCode;
+              return this.reject("Chrome Access", arguments);
             }
             forbid = isJS = true;
             break;
@@ -2075,8 +2106,7 @@ NoscriptService.prototype = {
               if(this.blockNSWB && (aContext instanceof CI.nsIDOMHTMLImageElement)) {
                   for(var parent = aContext; (parent = parent.parentNode);) {
                     if(parent.nodeName.toUpperCase() == "NOSCRIPT") {
-                      if(this.consoleDump & 1) this.dump("Blocked Tracking Image " + aContentLocation.spec);
-                      return this.rejectCode;
+                      return this.reject("Tracking Image", arguments);
                     }
                   }
                 }
@@ -2094,6 +2124,7 @@ NoscriptService.prototype = {
             break;
             
           case 7:
+            
             if(!aMimeTypeGuess) aMimeTypeGuess = this.guessMime(aContentLocation);
             
             if(
@@ -2120,6 +2151,10 @@ NoscriptService.prototype = {
            }
             
           case 6:
+            
+            if(this.checkJarDocument(aContentLocation, aContext)) 
+              return this.reject("JAR Document", arguments);
+            
             scheme = aContentLocation.scheme;
             
             if(aRequestOrigin && aRequestOrigin != aContentLocation) {
@@ -2129,8 +2164,7 @@ NoscriptService.prototype = {
                   !(/^(?:chrome|resource|file)$/.test(scheme) ||
                     this.isSafeJSURL(aContentLocation.spec))
                     ) {
-                if(this.consoleDump) this.dump("Blocked " + aContentLocation.spec + ": can't open in a new toplevel window");
-                return this.rejectCode;
+                return this.reject("Top Level Window Loading", arguments);
               }
            
               if(/^https?$/.test(scheme)) {
@@ -2154,10 +2188,7 @@ NoscriptService.prototype = {
                      ).isNewToplevel
                   )
                  ) {
-                   if(this.consoleDump & 1) 
-                     this.dump("Blocked " + url + " from " + aRequestOrigin.spec);
-                   
-                     return this.rejectCode;
+                   return this.reject("JavaScript/Data URL", arguments);
                 }
               } else if(scheme != aRequestOrigin.scheme && 
                   scheme != "chrome" && // faster path for common case
@@ -2166,11 +2197,10 @@ NoscriptService.prototype = {
                 if(aContentType != 6 && !aInternalCall && 
                     this.getPref("forbidExtProtSubdocs", true) && 
                     !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
-                  this.dump("Prevented " + aContentLocation.spec + " subdocument request from " + aRequestOrigin.spec);
-                  return this.rejectCode;
+                  return this.reject("External Protocol Subdocument", arguments);
                 }
                 if(!this.normalizeExternalURI(aContentLocation)) {
-                  return this.rejectCode;
+                  return this.reject("Invalid External URL", arguments);
                 }
               }
             }
@@ -2220,7 +2250,7 @@ NoscriptService.prototype = {
               if(forbid) {
                 if(isSilverlight) forbid = aContentLocation != aRequestOrigin || aContext.firstChild;
               } else {
-                forbid = this.forbidPlugins;
+                forbid = this.forbidPlugins & !(isJava || isFlash || isSilverlight);
               }
             }
           }
@@ -2228,7 +2258,10 @@ NoscriptService.prototype = {
         
         if(forbid) {
           if((this.contentBlocker && !isJS) || 
-              !(this.isJSEnabled(origin))) {
+              !(this.isJSEnabled(origin)) ||
+              (blockThisFrame && this.getPref("forbidIFramesParentTrustCheck", true) &&
+                  aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec)))
+            ) {
             try {
               if(aContext && (aContentType == 5 || aContentType == 7)) {
                 if(aContext instanceof CI.nsIDOMNode
@@ -2247,9 +2280,7 @@ NoscriptService.prototype = {
                 }
               }
             } finally {
-              if(this.consoleDump & 1) 
-                dump("NoScript blocked " + url + " of type " + aMimeTypeGuess + " from " + origin + "\n");
-              return this.rejectCode;
+              return this.reject("Forbidden Content", arguments);
             }
           }
           // fix for Sirdarkcat redirected external content
@@ -2259,9 +2290,7 @@ NoscriptService.prototype = {
           }
         }
       } catch(e) {
-        this.dump("FATAL ERROR IN CONTENT POLICY: " + e);
-        this.dump("FALL BACK TO BLOCKING " + aContentLocation && aContentLocation.spec);
-        return this.rejectCode;
+        return this.reject("Content (Fatal Error, " + e  + ")", arguments);
       }
       return 1;
     },
@@ -2386,7 +2415,7 @@ NoscriptService.prototype = {
   },
   setPluginExtras: function(obj, extras) {
     this.setExpando(obj, "pluginExtras", extras);
-    if(this.consoleDump) dump("Setting plugin extras on " + obj + " -> " + (this.getPluginExtras(obj) == extras)
+    if(this.consoleDump) this.dump("Setting plugin extras on " + obj + " -> " + (this.getPluginExtras(obj) == extras)
       + ", " + (extras && extras.toSource())  );
     return extras;
   },
@@ -2797,7 +2826,7 @@ NoscriptService.prototype = {
               this.setPluginExtras(anchor, extras);
               this.setExpando(anchor, "removedPlugin", object);
               
-              (replacements = replacements || []).push({object: object, placeHolder: anchor});
+              (replacements = replacements || []).push({object: object, placeholder: anchor});
               
             }
           } catch(objectEx) {
@@ -2808,14 +2837,14 @@ NoscriptService.prototype = {
     }
     
     if(replacements) {
-      this.createDeferredPlaceHolders(document.defaultView, replacements);
+      this.createDeferredPlaceholders(document.defaultView, replacements);
     }
   },
   
-  createDeferredPlaceHolders: function(window, replacements) {
+  createDeferredPlaceholders: function(window, replacements) {
     window.setTimeout(function() {
         for each(r in replacements) {
-          if(r.object.parentNode) r.object.parentNode.replaceChild(r.placeHolder, r.object);  
+          if(r.object.parentNode) r.object.parentNode.replaceChild(r.placeholder, r.object);  
         }
         replacements = null;
     }, 0);
@@ -3056,9 +3085,14 @@ NoscriptService.prototype = {
             }
           }
         }
-
+        
+        if(this.checkJarDocument(uri, domWindow)) {
+          req.cancel(0x804b0002);
+          return;
+        }
+        
         const topWin = domWindow == domWindow.top;
-          
+
         var browser = null;
         var overlay = null;
         var xssInfo = null;
@@ -3103,6 +3137,80 @@ NoscriptService.prototype = {
   onSecurityChange: function() {}, 
   onProgressChange: function() {}
   ,
+  
+  
+  checkJarDocument: function(uri, context) {
+    if(this.forbidJarDocuments && (uri instanceof CI.nsIJARURI) &&
+      !(/^(?:file|resource|chrome)$/.test(uri.JARFile.scheme) ||
+          this.forbidJarDocumentsExceptions &&
+          this.forbidJarDocumentsExceptions.test(uri.spec))
+      ) {
+               
+      if(context && this.getPref("jarDoc.notify", true)) {
+        var window = (context instanceof CI.nsIDOMWindow) && context || 
+          (context instanceof CI.nsIDOMDocumentView) && context.defaultView || 
+          (context instanceof CI.nsIDOMNode) && context.ownerDocument && context.ownerDocument.defaultView;
+        if(window) {
+          window.setTimeout(this.displayJarFeedback, 10, {
+            ns: this,
+            context: context,
+            uri: uri.spec,
+          });
+        } else {
+          this.dump("checkJarDocument -- window not found");
+        }
+      }
+      this.log("[NoScript] " + this.getString("jarDoc.notify", [uri.spec]));
+      return true;
+    }
+    return false;
+  },
+  
+  displayJarFeedback: function(info) {
+    var doc = (info.context instanceof CI.nsIDOMDocument) && info.context || 
+      info.context.contentDocument || info.context.document;
+    if(!doc) {
+      this.dump("displayJarFeedback -- document not found");
+      return;
+    }
+    var ns = info.ns;
+    var browser = ns.domUtils.findBrowserForNode(doc);
+    if(browser) {
+      var overlay = browser.ownerDocument.defaultView.noscriptOverlay;
+      if(overlay && overlay.notifyJarDocument({
+          uri: info.uri,
+          document: doc
+      })) return;
+    } else {
+      this.dump("displayJarFeedback -- browser not found... falling back to content notify");
+    }
+    
+    var message = ns.getString("jarDoc.notify", [ns.siteUtils.crop(info.uri)]) + 
+      "\n\n" + ns.getString("jarDoc.notify.reference");
+    
+    var rootNode = doc.documentElement.body || doc.documentElement;
+    const containerID = "noscript-jar-feedback";
+    var container = doc.getElementById(containerID);
+    if(container) container.parentNode.removeChild(container);
+    container = rootNode.insertBefore(doc.createElement("div"), rootNode.firstChild || null);
+    with(container.style) {
+      backgroundColor = "#fffff0";
+      borderBottom = "1px solid #444";
+      color = "black";
+      backgroundImage = "url(" + ns.pluginPlaceholder + ")";
+      backgroundPosition = "left top";
+      backgroundRepeat = "no-repeat";
+      paddingLeft = "40px";
+      margin = "0px";
+      parring = "8px";
+    }
+    container.id = "noscript-jar-feedback";
+    var description = container.appendChild(doc.createElement("pre"));
+    description.appendChild(doc.createTextNode(message));
+    description.innerHTML = description.innerHTML
+    .replace(/\b(http:\/\/noscript.net\/faq#jar)\b/g, 
+              '<a href="$1" title="NoScript JAR FAQ">$1</a>'); 
+  },
   // end nsIWebProgressListener
   
   neutralizeUTF7: function(window, altCharset) {
@@ -3424,9 +3532,7 @@ RequestWatchdog.prototype = {
       }
     }
     
-    // fast return if nothing to do here
-    if(!(ns.filterXPost || ns.filterXGet)) return; 
-    
+   
     var browser = null;
     
     var origin = xorigin && xorigin.spec || 
@@ -3488,6 +3594,20 @@ RequestWatchdog.prototype = {
     
     const globalJS = ns.globalJS;
     
+    if(!(globalJS || ns.isJSEnabled(targetSite))) {
+      // check wildcards
+      // http://url:0 matches all port except defaults
+      if(ns.checkShorthands(targetSite)) {
+          ns.autoTemp(targetSite);
+      } else {
+        if(ns.consoleDump) this.dump(channel, "Destination " + originalSpec + " is noscripted, SKIP");
+          return;
+      }
+    }
+    
+     // fast return if nothing to do here
+    if(!(ns.filterXPost || ns.filterXGet)) return; 
+    
     // noscript.injectionCheck about:config option adds first-line 
     // detection for XSS injections in GET requests originated by 
     // whitelisted sites and landing on top level windows. Value can be:
@@ -3513,16 +3633,8 @@ RequestWatchdog.prototype = {
       return;
     }
     
-    if(!(globalJS || ns.isJSEnabled(targetSite))) {
-      // check wildcards
-      // http://url:0 matches all port except defaults
-      if(ns.checkShorthands(targetSite)) {
-          ns.autoTemp(targetSite);
-      } else {
-        if(ns.consoleDump) this.dump(channel, "Destination " + originalSpec + " is noscripted, SKIP");
-          return;
-      }
-    }
+    
+    
     
     if(ns.filterXExceptions) {
       try {
@@ -4022,7 +4134,7 @@ var InjectionChecker = {
     
   checkJSStunt: function(s) {
     // check noisy comments first
-    if(/(?:\/\*[\s\S]*\*\/|\/\/.*[\r\n])/.test(s)) { 
+    if(/(?:\/\*[\s\S]*\*\/|[^:]\/\/.*[\r\n])/.test(s)) { 
       this.log("JS comments in " + s);
       return true; 
     }
@@ -4280,7 +4392,7 @@ XSanitizer.prototype = {
     }
     
     if(this.brutal) { // injection checks were positive
-      s = s.replace(/[\(\)\=]/g, " ").replace(/\b(setter|eval)\b/, String.toUpperCase);
+      s = s.replace(/[\(\)\=]/g, " ").replace(/\b(setter|eval|location|open)\b/, String.toUpperCase);
     }
     
     return s;

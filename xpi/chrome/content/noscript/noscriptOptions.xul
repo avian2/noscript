@@ -208,7 +208,8 @@
         <separator class="thin" />
         <hbox align="center">
           <checkbox id="opt-xss.notify" label="&noscriptXss;" /><!-- TODO: accesskey -->
-          <label class="text-link" style="font-weight: bold" value="?" onclick="noscriptUtil.openXssFaq()" tooltiptext="&noscriptXssFaq;" />
+          <label class="text-link" style="font-weight: bold" value="?" 
+            onclick="noscriptUtil.openFaq('xss')" tooltiptext="&noscriptXssFaq;" />
         </hbox>
         
         <separator class="thin" />
@@ -242,6 +243,7 @@
         <tab class="noscript-no" label=" &noscriptUntrusted; " id="nsopt-tabUntrusted" tooltiptext="&noscriptAdditionalRestrictions;"/>
         <tab class="noscript-yes" label=" &noscriptTrusted; " id="nsopt-tabTrusted" tooltiptext="&noscriptAdditionalPermissions;"/>
         <tab class="noscript-xss" label=" &noscriptXss; " id="nsopt-tabXss"/>
+        <tab class="noscript-jar" label=" &noscriptJar; " id="nsopt-tabJar"/>
       </tabs>
       <tabpanels flex="1">
           <tabpanel>
@@ -281,7 +283,7 @@
          <tabpanel><!-- XSS -->
          <vbox flex="1">
             <label class="text-link header" 
-              onclick="noscriptUtil.openXssFaq()" value="&noscriptXssFaq;"/>
+              onclick="noscriptUtil.openFaq('xss')" value="&noscriptXssFaq;"/>
             <checkbox id="opt-filterXGet" label="&noscriptOptFilterXGet;" />
             <checkbox id="opt-filterXPost" label="&noscriptOptFilterXPost;" />
             <separator class="thin" />
@@ -294,6 +296,23 @@
             </hbox>
           </vbox>
         </tabpanel>
+        
+        <tabpanel><!-- JAR -->
+         <vbox flex="1">
+            <label class="text-link header" 
+              onclick="noscriptUtil.openFaq('jar')" value="&noscriptJarFaq;"/>
+            <checkbox id="opt-forbidJarDocuments" label="&noscriptForbidJarDocuments;" />
+            <separator class="thin" />
+            <label class="header" value="&noscriptJarExceptions;" />
+            <description style="white-space: normal">&noscriptJarExceptions.description;</description>
+            <textbox id="jarEx-regexp" multiline="true" flex="1" /> 
+            <hbox align="center">
+              <label for="jarEx-sample" value="&noscriptMatchSample;" />
+              <textbox id="jarEx-sample" flex="1" value="jar:https://samples.noscript.net/sample_apps.jar!/application1.xul" />
+            </hbox>
+          </vbox>
+        </tabpanel>
+        
       </tabpanels>
       
       

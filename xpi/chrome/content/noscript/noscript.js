@@ -52,7 +52,10 @@ var noscriptUtil = {
   
   
   openXssOptions: function() {
-    this.openOptionsDialog({tabselIndexes: [4, 2]});
+    this.openOptionsDialog({tabselIndexes: [5, 2]});
+  },
+  openJarOptions: function() {
+    this.openOptionsDialog({tabselIndexes: [5, 3]});
   }
 ,
   openAboutDialog: function(params) {
@@ -66,9 +69,10 @@ var noscriptUtil = {
     toJavaScriptConsole();
   },
   
-  openXssFaq: function() {
-    this.browse("http://noscript.net/faq#xss");
+  openFaq: function(which) {
+    this.browse("http://noscript.net/faq#" + which);
   },
+  
   
   browse: function(url) {
     var w = this.service.domUtils.mostRecentBrowserWindow;

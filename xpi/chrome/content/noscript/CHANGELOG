@@ -1,5 +1,30 @@
 NoScript ChangeLog
 
+v 1.1.8
+=====================================================================
++ Version bump for Firefox 3
++ Temporarily allow sites matching the regular expression(s) in the 
+  noscript.whitelistRegExp about:config preference (thanks MaZe)
+x Further QA for release
+x Fixed chrome.manifest for eMusic Remote (thanks Mel Reyes)
+x Fixed shorthands broken when XSS protection was off (thanks MaZe)
+
+
+v 1.1.7.9
+=====================================================================
++ Notify bar for jar document blocking
+x Fixed GreaseMonkey's XMLHttpRequest compatibility regression
+x Fixed confusing option, "Forbid other plugins" shouldn't imply
+  forbidding Java, Flash and Silverlight.
+
+
+v 1.1.7.8
+=====================================================================
++ JAR uris are forbidden from loading as documents by default, see
+  http://noscript.net/faq#jar for details
++ Block untrusted XBL (thanks Sirdarckcat for inspiration)
+x Various IFrame blocking refinements
+
 v 1.1.7.7
 =====================================================================
 x Fixed installation problems with addons.mozilla.org automatic 

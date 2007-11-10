@@ -95,10 +95,16 @@
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS.">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Reset to defaults">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
+<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
+<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">

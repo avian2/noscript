@@ -179,9 +179,10 @@
         label="&noscriptXssFaq;"
         class="menuitem-iconic noscript-faq"
         accesskey="&noscriptXssFaq.accesskey;"
-        oncommand="noscriptUtil.openXssFaq()"
+        oncommand="noscriptUtil.openFaq('xss')"
       />
-              
+      <menuitem id="noscript-jar-opts" class="menuitem-iconic noscript-jar"
+        style="display: none !important" />
    </popup>
 </popupset>
 </window>

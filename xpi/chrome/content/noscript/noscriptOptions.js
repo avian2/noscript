@@ -91,6 +91,10 @@ var nsopt = {
         "xssEx", 
         ns.rxParsers.multi,
         ns.getPref("filterXExceptions"));
+    this.jarEx = new  RegExpController(
+        "jarEx", 
+        ns.rxParsers.multi,
+        ns.getPref("forbidJarDocumentsExceptions"));
     
     // hide incompatible options
     if(top.opener && top.opener.noscriptOverlay && !top.opener.noscriptOverlay.getNotificationBox()) {
@@ -152,10 +156,12 @@ var nsopt = {
     this.autoAllowGroup.persist();
     this.toggleGroup.persist();
     
-    var xssEx = this.xssEx.getValue();
-    if(this.xssEx.validate() || !/\S/.test(xssEx)) 
-      ns.setPref("filterXExceptions", xssEx);
-    
+    var exVal = this.xssEx.getValue();
+    if(this.xssEx.validate() || !/\S/.test(exVal)) 
+      ns.setPref("filterXExceptions", exVal);
+    var exVal = this.jarEx.getValue();
+    if(this.jarEx.validate() || !/\S/.test(exVal)) 
+      ns.setPref("forbidJarDocumentsExceptions", exVal);
     
     var global = this.jsglobal.getAttribute("checked") == "true";
     var untrustedSites = this.untrustedSites;

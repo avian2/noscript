@@ -95,9 +95,15 @@
 <!ENTITY noscriptUnsafeReload "Ricarica senza protezione">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Eccezioni alla protezione XSS">
-<!ENTITY noscriptXssExceptions.description "Le destinazioni che corrispondono a queste espressioni regolari NON riceveranno protezione XSS">
+<!ENTITY noscriptXssExceptions.description "Le destinazioni che corrispondono a queste espressioni regolari NON riceveranno protezione XSS.">
 <!ENTITY noscriptMatchSample "Esempio di corrispondenza:">
 <!ENTITY noscriptReset "Ripristina">
 <!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Ripristina ai valori originali">
+<!ENTITY noscriptResetDef "Ripristina i valori originali">
 <!ENTITY noscriptResetDef.accesskey "R">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Impedisci alle risorse JAR remote di essere caricate come documenti">
+<!ENTITY noscriptJarExceptions "Eccezioni al blocco dei documenti JAR">
+<!ENTITY noscriptJarExceptions.description "I documenti JAR che corrispondono a queste espressioni regolari NON saranno bloccati.">
