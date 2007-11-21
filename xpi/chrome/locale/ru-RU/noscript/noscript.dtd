@@ -102,3 +102,9 @@
 <!ENTITY noscriptResetDef "Сбросить настройки">
 <!ENTITY noscriptResetDef.accesskey "и">
 <!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "ЧаВо по JAR">
+<!ENTITY noscriptJarFaq.accesskey "а">
+<!ENTITY noscriptForbidJarDocuments "Блокировать удалённые JAR-ресурсы от загрузки в качестве документов">
+<!ENTITY noscriptJarExceptions "Исключения в блокировании JAR">
+<!ENTITY noscriptJarExceptions.description "JAR-документы, попадающие под одно из регулярных выражений НЕ будут заблокированы.">

@@ -95,10 +95,16 @@
 <!ENTITY noscriptUnsafeReload "Onveilig herladen">
 <!ENTITY noscriptUnsafeReload.accesskey "H">
 <!ENTITY noscriptXssExceptions "Uitzonderingen Anti-XSS bescherming">
-<!ENTITY noscriptXssExceptions.description "Bestemmingen die voldoen aan deze regulaire expressies zullen NIET beschermd worden tegen XSS">
+<!ENTITY noscriptXssExceptions.description "Bestemmingen die voldoen aan deze reguliere expressies zullen NIET beschermd worden tegen XSS">
 <!ENTITY noscriptMatchSample "Patroon overeenkomst voorbeeld:">
 <!ENTITY noscriptReset "Herstellen">
 <!ENTITY noscriptReset.accesskey "H">
 <!ENTITY noscriptResetDef "Standaardwaarden herstellen">
 <!ENTITY noscriptResetDef.accesskey "S">
 <!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Als document laden van JAR externe bronnen blokkeren">
+<!ENTITY noscriptJarExceptions "Uitzonderingen JAR document blokkering">
+<!ENTITY noscriptJarExceptions.description "JAR documenten die voldoen aan deze reguliere expressies zullen NIET geblokkeerd worden.">

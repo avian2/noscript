@@ -41,8 +41,12 @@
 <!ENTITY noscriptAdditionalPermissions "Tambahan perijinan untuk situs terpercaya">
 <!ENTITY noscriptAllowClipboard "Perbolehkan copy dan paster rich text dari clipboard eksternal">
 <!ENTITY noscriptAdditionalRestrictions "Pembatasan tambahan untuk situs tidak terpercaya">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Larang Java™">
 <!ENTITY noscriptForbidWebBugs "Larang &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Larang Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Larang plugin lainnya">
 <!ENTITY noscriptReloadWarn "Pilihan ini akan berpengaruh pada halaman yang baru atau yang baru diambil ulang">
@@ -97,3 +101,10 @@
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Reset ke awal">
 <!ENTITY noscriptResetDef.accesskey "r">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
+<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
+<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">

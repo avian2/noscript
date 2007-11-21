@@ -102,3 +102,9 @@
 <!ENTITY noscriptResetDef "Vynulovať na predvolené">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Blokovať načítanie vzdialených zdrojov JAR ako dokumentov">
+<!ENTITY noscriptJarExceptions "Výnimky z blokovania dokumentov JAR">
+<!ENTITY noscriptJarExceptions.description "Dokumenty JAR, ktoré zodpovedajú týmto regulárnym výrazom, NEBUDÚ blokované.">

@@ -41,8 +41,12 @@
 <!ENTITY noscriptAdditionalPermissions "Додатни овластувања за одобрени страници">
 <!ENTITY noscriptAllowClipboard "Дозволи вметнување на форматиран текст (на пример ХТМЛ)">
 <!ENTITY noscriptAdditionalRestrictions "Додатни забрани за неодобрени страници">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Оневозможи Јава (Java™)">
 <!ENTITY noscriptForbidWebBugs "Оневозможи &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Оневозможи Макромедија Флеш (Macromedia® Flash®)">
 <!ENTITY noscriptForbidPlugins "Оневозможи ги другите додатоци">
 <!ENTITY noscriptReloadWarn "Овие подесувања ќе важат при следното вчитување на страниците">
@@ -97,3 +101,10 @@
 <!ENTITY noscriptReset.accesskey "В">
 <!ENTITY noscriptResetDef "Врати ги старите вредности">
 <!ENTITY noscriptResetDef.accesskey "с">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
+<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
+<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">

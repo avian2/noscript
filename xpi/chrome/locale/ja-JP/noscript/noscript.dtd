@@ -41,6 +41,8 @@
 <!ENTITY noscriptAdditionalPermissions "信頼済みサイトへの許可の追加">
 <!ENTITY noscriptAllowClipboard "クリップボードからリッチテキストのコピーとペーストを可能にする">
 <!ENTITY noscriptAdditionalRestrictions "信頼されていないサイトへの制限の追加">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Java&#8482; の禁止">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; の禁止">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ の禁止">
@@ -99,3 +101,10 @@
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Reset to defaults">
 <!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
+<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
+<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">

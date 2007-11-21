@@ -197,7 +197,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var jsPSs = ns.jsPolicySites;
     var matchingSite;
     var menuSites, menuSite, scount;
-    var domain, pos, lastPos, dp;
+    var domain, pos, baseLen, dp;
     var untrusted;
     var cssClass;
     
@@ -234,26 +234,29 @@ var noscriptOverlay = noscriptUtil.service ?
         menuSites = [matchingSite];
       } else {
         domain = ns.getDomain(site);
+        
+        if(domain && ns.getPublicSuffix(domain) == domain) domain = null; // exclude TLDs
+        
         menuSites = (showAddress || showNothing || !domain) ? [site] : [];
         if(domain && (showDomain || showBase)) {
-
-          if(!(lastPos = ns.getTLDPos(domain))) {
-            // IP or TLD or 2nd level domain
+          baseLen = ns.getBaseDomain(domain).length; 
+          if(baseLen == domain.length) {
+            // IP or 2nd level domain
             if(!domainDupChecker.check(domain)) {
               menuSites[menuSites.length] = domain;
             }
           } else {
             dp = domain;
             for(pos = 0; (pos = domain.indexOf('.', pos)) > 0; dp = domain.substring(++pos)) {
-              if(pos == lastPos) {
+              if(baseLen == dp.length) {
                 if(menuSites.length > 0 && !showBase) continue;
               } else {
                 if(!showDomain) continue;
               }
               if(!domainDupChecker.check(dp)) {
                 menuSites[menuSites.length] = dp;
-                if(pos == lastPos) break;
               }
+              if(baseLen == dp.length) break;
             }
           }
         }

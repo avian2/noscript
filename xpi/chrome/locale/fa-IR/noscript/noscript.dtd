@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Java ممنوع کردن">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; ممنوع کردن">
 <!ENTITY noscriptForbidSilverlight "ممنوع کردن Microsoft® Silverlight">
+<!ENTITY noscriptForbidIFrames "ممنوع کردن &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "ممنوع کردن Macromedia Flash">
 <!ENTITY noscriptForbidPlugins "ممنوع کردن سایر پلاگین ها">
 <!ENTITY noscriptReloadWarn "این تنظیمات روی پنجره های جدید اعمال خواهند شد.">
@@ -101,3 +102,9 @@
 <!ENTITY noscriptResetDef "بازگردانی به تنظیمات اولیه">
 <!ENTITY noscriptResetDef.accesskey "د">
 <!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "پرسش و پاسخ JAR">
+<!ENTITY noscriptJarFaq.accesskey "پ">
+<!ENTITY noscriptForbidJarDocuments "بستن منابع JAR بارگذاری شده به صورت پرونده">
+<!ENTITY noscriptJarExceptions "استثناهای ممنوع کردن پرونده JAR">
+<!ENTITY noscriptJarExceptions.description "پرونده های JAR مستثنی شده بسته نمی شوند.">

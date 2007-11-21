@@ -41,6 +41,8 @@
 <!ENTITY noscriptAdditionalPermissions "Lisäoikeudet luotetuille sivustoille">
 <!ENTITY noscriptAllowClipboard "Salli rich text kopiointi ja liittäminen ulkoiselta leikepöydältä">
 <!ENTITY noscriptAdditionalRestrictions "Lisäestot estetyille sivustoille">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Estä Java™">
 <!ENTITY noscriptForbidWebBugs "Estä &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Estä Microsoft® Silverlight™">
@@ -99,3 +101,10 @@
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Reset to defaults">
 <!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
+<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
+<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">

@@ -102,3 +102,9 @@
 <!ENTITY noscriptResetDef "Przywróć domyślne">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "Pytania i odpowiedzi o JAR">
+<!ENTITY noscriptJarFaq.accesskey "R">
+<!ENTITY noscriptForbidJarDocuments "Blokuj zdalne źródła JAR wczytwane jako dokumenty">
+<!ENTITY noscriptJarExceptions "Wyjątki blokowania dokumentów JAR">
+<!ENTITY noscriptJarExceptions.description "Dokumenty JAR spełniające poniższe wyrażenia regularne nie będą blokowane">

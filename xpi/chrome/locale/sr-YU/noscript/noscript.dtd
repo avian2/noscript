@@ -41,6 +41,8 @@
 <!ENTITY noscriptAdditionalPermissions "Додатне дозволе за странице којима се верује">
 <!ENTITY noscriptAllowClipboard "Дозволи rich text копирање и налепљивање из ектерног клипборда">
 <!ENTITY noscriptAdditionalRestrictions "Додатне забране за странице којима се не верује">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Забрани Java™">
 <!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
@@ -99,3 +101,10 @@
 <!ENTITY noscriptReset.accesskey "Р">
 <!ENTITY noscriptResetDef "Ресетуј на подразумевано">
 <!ENTITY noscriptResetDef.accesskey "т">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
+<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
+<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">

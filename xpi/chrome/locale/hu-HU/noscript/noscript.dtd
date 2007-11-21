@@ -102,3 +102,9 @@
 <!ENTITY noscriptResetDef "Alaphelyzetbe állít">
 <!ENTITY noscriptResetDef.accesskey "h">
 <!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR GyIK">
+<!ENTITY noscriptJarFaq.accesskey "G">
+<!ENTITY noscriptForbidJarDocuments "A távoli JAR forrás dokumentumként történő betöltésének blokkolása">
+<!ENTITY noscriptJarExceptions "JAR dokumentumok blokkolásának kivételei">
+<!ENTITY noscriptJarExceptions.description "Akok a JAR dokumentumok, amelyek megfelelnek az alábbi szabályos kifejezéseknek, NEM LESZNEK blokkolva.">

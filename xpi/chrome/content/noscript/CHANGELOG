@@ -1,5 +1,29 @@
 NoScript ChangeLog
 
+v 1.1.8.3
+=====================================================================
++ The "noscript.tempGlobal" about:config preference causes the 
+  "Globally Allow" status to be revoked at the end of each session 
+  (thanks chconnor and Alan Baxter for suggestion)
++ The "noscript.lockPrivilegedUI" about:config preference blocks
+  Error Console and DOM Inspector (useful in locked down setup to 
+  prevent preferences from being unlocked by user's chrome JS code)
++ More reliable base domain recognition
++ Switch to nsIEffectiveTLDService on Gecko >= 1.9 (Firefox 3)
++ nsIEffectiveTLDService emulation on Gecko < 1.9 (Firefox 2)
+x Updated translations
+x Additional QA for release
+
+v 1.1.8.2
+=====================================================================
++ Friendlier IFrame handling (thanks war59312 and A. Baxter)
+x Fixed Silverlight new detection scheme broken by IFrame blocking
+x Fixed compatibility issue with Cooliris send link (thanks Tschua)
+
+v 1.1.8.1
+=====================================================================
++ More flexible and reliable redirection management
+
 v 1.1.8
 =====================================================================
 + Version bump for Firefox 3

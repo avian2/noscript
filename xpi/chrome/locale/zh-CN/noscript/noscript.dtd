@@ -41,6 +41,8 @@
 <!ENTITY noscriptAdditionalPermissions "对受信任站点的额外许可">
 <!ENTITY noscriptAllowClipboard "允许由外部剪贴板进行复杂文本的复制和粘贴">
 <!ENTITY noscriptAdditionalRestrictions "对不信任站点的额外限制">
+<!ENTITY noscriptPlugins "插件">
+<!ENTITY noscriptContentBlocker "对受信任站点仍然应用这些限制">
 <!ENTITY noscriptForbidJava "禁止 Java™">
 <!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
@@ -99,3 +101,10 @@
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "重置为默认值">
 <!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "阻止作为文档载入 JAR 远程资源">
+<!ENTITY noscriptJarExceptions "阻止 JAR 文档的例外情况">
+<!ENTITY noscriptJarExceptions.description "不阻止匹配以下正则表达式的 JAR 文档。">

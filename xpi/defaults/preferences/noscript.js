@@ -120,3 +120,7 @@ pref("noscript.jarDoc.notify", true);
 pref("noscript.forbidXBL", true);
 
 pref("noscript.whitelistRegExp", "");
+
+pref("noscript.tempGlobal", false);
+
+pref("noscript.lockPrivilegedUI", false);

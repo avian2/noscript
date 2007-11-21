@@ -23,7 +23,7 @@
 <!ENTITY noscriptFullAddr "Vollständige Adressen (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Vollständige Domains (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Second-Level-Domains (noscript.net)">
-<!ENTITY noscriptTempCmd "[...] temporär erlauben">
+<!ENTITY noscriptTempCmd "[…] temporär erlauben">
 <!ENTITY noscriptSound "Klang ausgeben, wenn Skripte blockiert werden">
 <!ENTITY noscriptImport "Importieren...">
 <!ENTITY noscriptImport.accesskey "I">
@@ -41,14 +41,14 @@
 <!ENTITY noscriptAdditionalPermissions "Zusätzliche Berechtigungen für vertrauenswürdige Websites">
 <!ENTITY noscriptAllowClipboard "Einfügen von formatiertem Text (z.B. RTF) aus der Zwischenablage erlauben">
 <!ENTITY noscriptAdditionalRestrictions "Zusätzliche Einschränkungen für nicht vertrauenswürdige Websites">
-<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptPlugins "Plug-ins">
 <!ENTITY noscriptContentBlocker "Diese Einschränkungen auch auf vertrauenswürdige Websites anwenden">
 <!ENTITY noscriptForbidJava "Java™ verbieten">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; verbieten">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieten">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieten">
 <!ENTITY noscriptForbidFlash "Macromedia® Flash® verbieten">
-<!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
+<!ENTITY noscriptForbidPlugins "Andere Plug-ins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
 <!ENTITY noscriptConfirmUnblock "Bestätigungsmeldung anzeigen, bevor ein Objekt temporär erlaubt wird">
 <!ENTITY noscriptStatusLabel "Informationstext in der Statusleiste">
@@ -82,7 +82,7 @@
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;-Elemente ausblenden">
 <!ENTITY noscriptNselForce "&lt;NOSCRIPT&gt;-Element, das einem blockierten &lt;SCRIPT&gt; folgt, anzeigen">
 <!ENTITY noscriptAutoAllowTopLevel "Jeweils aktuelle Top-Level-Site temporär erlauben">
-<!ENTITY noscriptDescription "Zusätzlicher Schutz für Ihren Browser: NoScript erlaubt das Ausführen von JavaScript, Java (und anderen Plugins) nur bei vertrauenswürdigen Domains Ihrer Wahl (z.B. Ihrer Homebanking-Website). Der auf einer Positivliste basierende präventive Ansatz zum Blockieren von Skripten verhindert das Ausnutzen von (bekannten und unbekannten!) Sicherheitslücken ohne Verlust an Funktionalität.">
+<!ENTITY noscriptDescription "Zusätzlicher Schutz für Ihren Browser: NoScript erlaubt das Ausführen von JavaScript, Java (und anderen Plug-ins) nur bei vertrauenswürdigen Domains Ihrer Wahl (z.B. Ihrer Homebanking-Website). Der auf einer Positivliste basierende präventive Ansatz zum Blockieren von Skripten verhindert das Ausnutzen von (bekannten und unbekannten!) Sicherheitslücken ohne Verlust an Funktionalität.">
 <!ENTITY noscriptOptBlockCssScanners "Auf Cross-Site Scripting basierende Scanner blockieren">
 <!ENTITY noscriptOptFilterXGet "Anfragen bei Verdacht auf Cross-Site Scripting bereinigen">
 <!ENTITY noscriptOptFilterXPost "Cross-Site-POST-Anfragen in datenlose GET-Anfragen umwandeln">
@@ -102,3 +102,9 @@
 <!ENTITY noscriptResetDef "Auf Standardwerte zurücksetzen">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Entfernte JAR-Dateien davon abhalten, als Dokumente geladen zu werden">
+<!ENTITY noscriptJarExceptions "Nicht zu blockierende JAR-Dokumente">
+<!ENTITY noscriptJarExceptions.description "JAR-Dokumente, die diesen regulären Ausdrücken entsprechen, werden NICHT blockiert.">

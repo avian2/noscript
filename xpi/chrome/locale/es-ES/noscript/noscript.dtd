@@ -102,3 +102,9 @@
 <!ENTITY noscriptResetDef "Restaurar predeterminados">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "FAQ sobre JAR">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Impedir elementos remotos JAR se carguen como documentos.">
+<!ENTITY noscriptJarExceptions "Excepciones al bloqueo de documentos JAR">
+<!ENTITY noscriptJarExceptions.description "Los documentos tipo JAR que coincidan con estas expresiones regulares NO se bloquearán.">

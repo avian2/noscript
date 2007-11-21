@@ -41,6 +41,8 @@
 <!ENTITY noscriptAdditionalPermissions "Permissos addicionals per a llocs de confiança">
 <!ENTITY noscriptAllowClipboard "Permet copiar i enganxar text enriquit des d&apos;un porta-retalls extern">
 <!ENTITY noscriptAdditionalRestrictions "Restriccions addicionals per a llocs en què desconfieu">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Prohibeix el Java™">
 <!ENTITY noscriptForbidWebBugs "Prohibeix el &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Prohibeix el Microsoft® Silverlight™">
@@ -100,3 +102,10 @@ Temporarily allow top-level sites by default">
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Reinicia a allò per defecte">
 <!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
+<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
+<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">

@@ -41,6 +41,8 @@
 <!ENTITY noscriptAdditionalPermissions "Các phép bổ sung cho sites tin cậy">
 <!ENTITY noscriptAllowClipboard "Cho phép copy và dán rich text từ clipboard bên ngoài">
 <!ENTITY noscriptAdditionalRestrictions "Những hạn chế bổ sung cho sites không tin cậy">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Đồng thời áp dụng những hạn chế này cho các sites tin cậy">
 <!ENTITY noscriptForbidJava "Cấm Java™">
 <!ENTITY noscriptForbidWebBugs "Cấm &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Cấm Microsoft® Silverlight™">
@@ -92,11 +94,17 @@
 <!ENTITY noscriptXssFaq.accesskey "G">
 <!ENTITY noscriptUnsafeReload "Tải Lại Không An Toàn">
 <!ENTITY noscriptUnsafeReload.accesskey "L">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions
-Luật Ngoại Trừ Cho Bảo Vệ Anti-XSS">
-<!ENTITY noscriptXssExceptions.description "Địa điểm đối chiếu với các regular expressions này sẽ KHÔNG được bảo vệ từ XSS">
-<!ENTITY noscriptMatchSample "Mẫu đối chiếu:">
+<!ENTITY noscriptXssExceptions "Các Ngoại Lệ Cho Bảo Vệ Anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Địa điểm hợp/giống với các biểu thức chính quy sau sẽ KHÔNG được bảo vệ từ XSS">
+<!ENTITY noscriptMatchSample "Biểu thức chính quy:">
 <!ENTITY noscriptReset "Hoàn Lại">
 <!ENTITY noscriptReset.accesskey "H">
 <!ENTITY noscriptResetDef "Hoàn lại giá trị mặc định">
 <!ENTITY noscriptResetDef.accesskey "c">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Chặn các tài nguyên từ xa dạng JAR được tải dưới dạng tài liệu">
+<!ENTITY noscriptJarExceptions "Các ngoại lệ cho ngăn chặn tài liệu dạng JAR">
+<!ENTITY noscriptJarExceptions.description "Các tài liệu dạng JAR hợp/giống với các biểu thức chính quy sau sẽ KHÔNG bị chặn.">

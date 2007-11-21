@@ -41,6 +41,8 @@
 <!ENTITY noscriptAdditionalPermissions "Güvenli sayfalar için ilave haklar">
 <!ENTITY noscriptAllowClipboard "Kopyala ve Yapıştır işlemine izin ver">
 <!ENTITY noscriptAdditionalRestrictions "Güvensiz sayfalar için ilave kısıtlamalar">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Java™ yasakla">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; yasakla">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ yasakla">
@@ -99,3 +101,10 @@
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Reset to defaults">
 <!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
+<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
+<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
