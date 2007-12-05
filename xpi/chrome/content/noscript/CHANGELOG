@@ -1,5 +1,50 @@
 NoScript ChangeLog
 
+v 1.1.9
+=====================================================================
+x Extra QA for release
++ Menu rendering speed optimizations
++ Emulated TLD Effective service up to 100x speedup
++ InjectionChecker performance up to 50x speedup (thanks therube)
++ Fixed leak regression from 1.1.8.3 redirection handling refinements
+  (thanks L. David Baron)
+x Fixed Firefox notifications not shown if NoScript notifications
+  were suppressed (thanks gecco)
+
+v 1.1.8.9
+=====================================================================
+x Fixed content-blocking regression (thanks L.A.R. Grizzly)
+
+v 1.1.8.8
+=====================================================================
+x Better Google Toolbar compatibility (thanks brandonksu)
+
+v 1.1.8.7
+=====================================================================
++ More consistent and compatible bottom notification bar
+
+v 1.1.8.6
+=====================================================================
++ "Notifications" option to change message bar automatic hiding delay
+x Fixed multiple profile problems on SeaMonkey (thanks therube)
+x Fixed incompatibility with Translation Panel and other extensions
+  (regression from 1.1.8.5 beta)
+
+v 1.1.8.5
+=====================================================================
++ Improved HTML attribute injection checks (thanks Gareth Heyes)
++ More flexible noscript.forbidXBL about:config preference:
+  0 - allow all XBL
+  1 - allow trusted and data: (Fx 3) XBL on any site
+  2 - allow trusted and data: (Fx 3) XBL on trusted sites
+  3 - allow only trusted XBL on trusted sites
+  4 - allow only trusted XBL from the same site or chrome (default)
+  5 - allow only chrome XBL
+
+v 1.1.8.4
+=====================================================================
+x Fixed installation issue on SeaMonkey 
+
 v 1.1.8.3
 =====================================================================
 + The "noscript.tempGlobal" about:config preference causes the 

@@ -42,6 +42,8 @@ pref("noscript.statusLabel", false);
 pref("noscript.forbidBookmarklets", false);
 pref("noscript.allowBookmarks", false);
 pref("noscript.notify.hideDelay", 5);
+pref("noscript.notify.hidePermanent", true);
+
 pref("noscript.notify.hide", false);
 pref("noscript.truncateTitleLen", 255);
 pref("noscript.truncateTitle", true);
@@ -117,7 +119,7 @@ pref("noscript.forbidJarDocuments", true);
 pref("noscript.forbidJarDocumentsExceptions", "^jar:https://samples\\.noscript\\.net/sample_apps.jar!.*\\.xul$\n");
 pref("noscript.jarDoc.notify", true);
 
-pref("noscript.forbidXBL", true);
+pref("noscript.forbidXBL", 4);
 
 pref("noscript.whitelistRegExp", "");
 

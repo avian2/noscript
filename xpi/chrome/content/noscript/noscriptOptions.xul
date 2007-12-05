@@ -202,8 +202,16 @@
           <checkbox id="opt-notify" label="&noscriptNotify;" />
           <vbox class="ia-indent">
             <checkbox id="opt-notify.bottom" label="&noscriptNotify.bottom;"  />
-            <checkbox id="opt-notify.hide" label="" />
-           </vbox>
+            <hbox align="baseline">
+              <checkbox id="opt-notify.hide" label="Hide after" />
+              <textbox id="notifyDelay" type="number" min="1" max="60"
+                oninput="nsopt.notifyHideDelay.onInput(this)"
+                onchange="nsopt.notifyHideDelay.onChange(this)"
+                maxlength="2" size="2" />
+              <label id="notifyDelayLabel" value="seconds" />
+              <spacer flex="1"/>
+            </hbox>
+          </vbox>
         </vbox>
         <separator class="thin" />
         <hbox align="center">

@@ -71,9 +71,11 @@ var nsopt = {
     document.getElementById("opt-showDistrust").setAttribute("label", noscriptUtil.getString("distrust", ["[...]"]));
     document.getElementById("opt-showGlobal").setAttribute("label", noscriptUtil.getString("allowGlobal"));
   
-    document.getElementById("opt-notify.hide").setAttribute("label",
-           noscriptUtil.getString("notifyHide", [ns.getPref("notify.hideDelay", 3)]));
-       
+    var notifyHideLabels = noscriptUtil.getString("notifyHide").split("%S");
+    document.getElementById("opt-notify.hide").setAttribute("label", notifyHideLabels[0]);
+    document.getElementById("notifyDelayLabel").setAttribute("value", notifyHideLabels[1]);
+    document.getElementById("notifyDelay").value = ns.getPref("notify.hideDelay", 5);
+    
     this.soundChooser.setSample(ns.getPref("sound.block"));
     
     this.autoAllowGroup = new ConditionalGroup(ns, "autoAllow", 0);
@@ -151,6 +153,9 @@ var nsopt = {
       }
     );
     
+    ns.setPref("notify.hideDelay", parseInt(document.getElementById("notifyDelay").value) || 
+              ns.getPref("notify.hideDelay", 5));
+
     ns.setPref("sound.block", this.soundChooser.getSample());
     
     this.autoAllowGroup.persist();
@@ -204,6 +209,15 @@ var nsopt = {
       }
     }
     this.addButton.setAttribute("disabled", !addEnabled);
+  },
+  
+  notifyHideDelay: {
+    onInput: function(txt) {
+      if(/\D/.test(txt.value)) txt.value = txt.value.replace(/\D/, "");
+    },
+    onChange: function(txt) {
+      txt.value = parseInt(txt.value) || noscriptUtil.service.getPref("notify.hideDelay", 5);
+    }
   },
   
   ensureVisible: function(site) {
