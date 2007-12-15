@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Forbid Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Forbid Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forbid other plugins">
 <!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
 <!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">

@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Zakázat &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Zakázat Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Zakázat &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Zakázat Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Zakázat Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">
 <!ENTITY noscriptReloadWarn "Tato nastavení se projeví u nově otevřených nebo (manuálně) aktualizovaných stránkách">
 <!ENTITY noscriptConfirmUnblock "Požadovat potvrzení při dočasném povolení objektu">

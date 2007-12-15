@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Blochează &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Blochează Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Blochează &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Blochează Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Blochează Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Blochează alte pluginuri">
 <!ENTITY noscriptReloadWarn "Aceste opţiuni vor avea efect în paginile nou deschise sau reîncărcate (manual).">
 <!ENTITY noscriptConfirmUnblock "Cere confirmare înainte de a debloca un obiect">

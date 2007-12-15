@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Uždrausti &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Uždrausti Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Uždrausti &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Uždrausti Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Uždrausti Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Uždrausti kitus įskiepius">
 <!ENTITY noscriptReloadWarn "Šios nuostatos įsigalios naujoms arba (rankiniu būdu) įkrautoms iš naujo svetainėms">
 <!ENTITY noscriptConfirmUnblock "Prašyti patvirtinimo prieš laikiną objekto atblokavimą">

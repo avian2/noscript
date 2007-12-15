@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Забрани Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Забрани Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Забрани други плъгини">
 <!ENTITY noscriptReloadWarn "Тези опций ще имат ефект на нови или (ръчно) презаредени страници">
 <!ENTITY noscriptConfirmUnblock "Искай разрешение преди временно да позволиш обект">

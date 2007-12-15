@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Larang &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Larang Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Larang Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Larang plugin lainnya">
 <!ENTITY noscriptReloadWarn "Pilihan ini akan berpengaruh pada halaman yang baru atau yang baru diambil ulang">
 <!ENTITY noscriptConfirmUnblock "Konfirmasi ulang sebelum membuka sementara penghalang suatu objek">

@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Bloquear &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Bloquear Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Bloquear &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Bloquear Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Bloquear Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Bloquear otros plugins">
 <!ENTITY noscriptReloadWarn "Estas opciones tendrán efecto en páginas nuevas o tras recargar manualmente">
 <!ENTITY noscriptConfirmUnblock "Pedir confirmación antes de desbloquear temporalmente un objeto">

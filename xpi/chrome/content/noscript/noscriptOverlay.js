@@ -1170,7 +1170,9 @@ var noscriptOverlay = noscriptUtil.service ?
     onDocumentLoad: function(ev) {
       if (ev.originalTarget instanceof HTMLDocument) {
         ev.currentTarget.removeEventListener("load", arguments.callee, false);
-        noscriptOverlay.ns.detectJSRedirects(ev.originalTarget );
+        ev.currentTarget.setTimeout(function() {
+          noscriptOverlay.ns.detectJSRedirects(this.document);
+        }, 0);
       }
     },
     onPageHide: function(ev) {
@@ -1333,7 +1335,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   install: function() {
-    this.ns.dump("*** OVERLAY INSTALL ***\n");
+    // this.ns.dump("*** OVERLAY INSTALL ***\n");
     this.ns.setPref("badInstall", false);
     window.addEventListener("load", this.listeners.onLoad, false);
   },
@@ -1348,7 +1350,7 @@ var noscriptOverlay = noscriptUtil.service ?
       }
       this.ns.cleanupBrowser(bb[j]);
     }
-    this.ns.dump("*** OVERLAY DISPOSE ***\n");
+    // this.ns.dump("*** OVERLAY DISPOSE ***\n");
   }
 } : {
   install: function() {

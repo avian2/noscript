@@ -6,11 +6,11 @@
 <!ENTITY noscriptWebAddress "網址：">
 <!ENTITY noscriptAllow "允許">
 <!ENTITY noscriptAllow.accesskey "A">
-<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid "禁止">
 <!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust "標記為信任的">
 <!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust "標記為不信任的">
 <!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "移除選取的網站">
 <!ENTITY noscriptGloballyEnabled "全面允許 JavaScript（危險)">
@@ -24,7 +24,7 @@
 <!ENTITY noscriptFullDom "完整的網域（www.noscript.net）">
 <!ENTITY noscriptBaseDom "第二層網域（noscript.net）">
 <!ENTITY noscriptTempCmd "暫時允許 [...]">
-<!ENTITY noscriptSound "有 Script 被阻擋時播放音效">
+<!ENTITY noscriptSound "有 Script 被封鎖時播放音效">
 <!ENTITY noscriptImport "匯入">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "匯出">
@@ -39,10 +39,10 @@
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "進階">
 <!ENTITY noscriptAdditionalPermissions "對於信任網站的額外許可">
-<!ENTITY noscriptAllowClipboard "允許從外部剪貼簿複製與貼上Rich Format Text">
+<!ENTITY noscriptAllowClipboard "允許從外部剪貼簿複製與貼上 Rich Format Text(圖片與文字並存格式)">
 <!ENTITY noscriptAdditionalRestrictions "對不信任網站的額外限制">
-<!ENTITY noscriptPlugins "Plugins">
-<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
+<!ENTITY noscriptPlugins "外掛">
+<!ENTITY noscriptContentBlocker "也應用這些限制到信任的網站">
 <!ENTITY noscriptForbidJava "禁止 Java™">
 <!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
@@ -54,57 +54,57 @@
 <!ENTITY noscriptStatusLabel "狀態列標籤">
 <!ENTITY noscriptForbidBookmarklets "禁止 Bookmarklets">
 <!ENTITY noscriptShowPlaceholder "顯示圖片預留位置">
-<!ENTITY noscriptTruncateTitle "Truncate document titles">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
-<!ENTITY noscriptAllowBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
+<!ENTITY noscriptTruncateTitle "縮短文件標題">
+<!ENTITY noscriptFixLinks "嘗試修復 JavaScript 連結">
+<!ENTITY noscriptAllowBookmarks "允許書籤裡的所有網站">
+<!ENTITY noscriptAllowViaBookmarks "允許用書籤開啟網站">
+<!ENTITY noscriptAllowPing "允許 &lt;A PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "允許本機連結">
+<!ENTITY noscriptForbidPing "禁止 &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "禁止 &lt;NoScript&gt; 元素中的 META 重新導向">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
-<!ENTITY noscriptWhitelist "Whitelist">
-<!ENTITY noscriptPermissions "Permissions">
-<!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifications "Notifications">
-<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
-<!ENTITY noscriptTrusted "Trusted">
-<!ENTITY noscriptUntrusted "Untrusted">
-<!ENTITY noscriptUnknown "Unknwon">
-<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptWhitelist "白名單">
+<!ENTITY noscriptPermissions "許可">
+<!ENTITY noscriptRefresh "重新整理">
+<!ENTITY noscriptNotifications "通知">
+<!ENTITY noscriptToolbarToggle "在 NoScript 工具列按鈕上按左鍵來固定目前第一層網域的許可">
+<!ENTITY noscriptTrusted "信任的">
+<!ENTITY noscriptUntrusted "不信任的">
+<!ENTITY noscriptUnknown "未知">
+<!ENTITY noscriptAdd "新增">
 <!ENTITY noscriptAdd.accesskey "A">
-<!ENTITY noscriptClose "Close">
-<!ENTITY noscriptSiteManager "Site Manager">
-<!ENTITY noscriptSecurityManager "Security Manager">
-<!ENTITY noscriptPolicies "Policies">
-<!ENTITY noscriptDefaultPolicies "Default Policies">
-<!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;noscript&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;noscript&gt; element which follows a blocked &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console...">
+<!ENTITY noscriptClose "關閉">
+<!ENTITY noscriptSiteManager "網站管理">
+<!ENTITY noscriptSecurityManager "安全管理">
+<!ENTITY noscriptPolicies "原則">
+<!ENTITY noscriptDefaultPolicies "預設原則">
+<!ENTITY noscriptSitePolicies "網站特殊原則">
+<!ENTITY noscriptNselNever "隱藏 &lt;NoScript&gt; 元素">
+<!ENTITY noscriptNselForce "顯示被封鎖的 &lt;Script&gt; 的 &lt;NoScript&gt; 元素">
+<!ENTITY noscriptAutoAllowTopLevel "預設暫時允許第一層網域">
+<!ENTITY noscriptDescription "為您的 Firefox 提供額外保護: NoScript 只允許您選擇的信任網域 (例如您的家庭金融網站) 上的 JavaScript, Java (和其他的外掛). 這份白名單基於預先處理來防止安全弱點 (已知和未知的!) 被利用，且不損失功能... 專家們都同意: Firefox 加上 NoScript 真的是更加安全 :-)">
+<!ENTITY noscriptOptBlockCssScanners "封鎖基於 CSS 的掃描器">
+<!ENTITY noscriptOptFilterXGet "消除跨站的可疑請除">
+<!ENTITY noscriptOptFilterXPost "轉換跨站 POST 請求為缺少資料的 GET 請求">
+<!ENTITY noscriptShowConsole "顯示控制台...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS 問與答...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload "不安全的重新讀取">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
-<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptXssExceptions "反 XSS 保護例外">
+<!ENTITY noscriptXssExceptions.description "符合這些規則表答式的目標將不會被保護不受 XSS (跨站腳本攻擊)">
+<!ENTITY noscriptMatchSample "樣本符合範例:">
+<!ENTITY noscriptReset "重置">
 <!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
+<!ENTITY noscriptResetDef "重置回預設">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR 問與答">
 <!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptForbidJarDocuments "防止 JAR 遠端資源被當成文件讀取">
+<!ENTITY noscriptJarExceptions "封鎖 JAR 文件的例外情況">
+<!ENTITY noscriptJarExceptions.description "符合這些規則表答式的 JAR 文件將不會被封鎖.">

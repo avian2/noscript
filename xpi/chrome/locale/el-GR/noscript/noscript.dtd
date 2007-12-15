@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Απαγόρευση εκτέλεσης &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Απαγόρευση εκτέλεσης Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Απαγόρευση εκτέλεσης &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Απαγόρευση εκτέλεσης Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Απαγόρευση εκτέλεσης Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Απαγόρευση εκτέλεσης άλλων πρόσθετων λειτουργιών">
 <!ENTITY noscriptReloadWarn "Αυτές οι επιλογές θα εφαρμοστούν σε σελίδες που θα ανανεώσετε μόνοι σας ή θα φορτώσετε από &apos;δω και πέρα">
 <!ENTITY noscriptConfirmUnblock "Να γίνεται ερώτηση πριν επιτραπεί προσωρινά ένα αντικείμενο">
@@ -103,8 +103,8 @@
 <!ENTITY noscriptResetDef.accesskey "σ">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptJarFaq "Συχνές ερωτήσεις JAR">
+<!ENTITY noscriptJarFaq.accesskey "σ">
+<!ENTITY noscriptForbidJarDocuments "Απαγόρευση φόρτωσης απομακρυσμένων πόρων JAR ως έγγραφα">
+<!ENTITY noscriptJarExceptions "Εξαιρέσεις απαγόρευσης εγγράφων JAR">
+<!ENTITY noscriptJarExceptions.description "ΔΕΝ θα απαγορεύονται τα έγγραφα JAR που ταιρίαζουν με αυτές τις κανονικές εκφράσεις.">

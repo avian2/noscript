@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Zabrani &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Zabrani Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Zabrani &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Zabrani Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Zabrani Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Zabrani druge dodatke">
 <!ENTITY noscriptReloadWarn "Ove postavke će imati učinka na novim ili (ručno) ponovno učitanim stranicama">
 <!ENTITY noscriptConfirmUnblock "Pitaj za potvrdu prije privremenog deblokiranja objekta">

@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Forbid Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Forbid Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forbid other plugins">
 <!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
 <!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">
@@ -108,3 +108,5 @@
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
 <!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp.accesskey "T">

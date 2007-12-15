@@ -1,5 +1,38 @@
 NoScript ChangeLog
 
+v 1.1.9.6
+=====================================================================
+x Object placeholder rendering optimization
+x Extra QA for release
+
+v 1.1.9.5
+=====================================================================
++ Plugins disabled by default on unknown sites
+x References to "Macromedia Flash" changed into "Adobe Flash"
+x Fixed wrong OBJECT count reported after 1st notification
+
+v 1.1.9.4
+=====================================================================
++ XBL protection compatible with extensions using XMLHttpRequest from
+  a content-triggered event handler (e.g. Book Burro or PriceDrop)
+
+v 1.1.9.3
+=====================================================================
++ non-destructive cross-site XBL protection (handles the same case as
+  https://bugzilla.mozilla.org/show_bug.cgi?id=387971)
+x Better edge-case handling in invisible links detection (thanks
+  Alexander Nikkta)
+
+v 1.1.9.2
+=====================================================================
++ Pre-scan optimization for unicode-escaped ASCII in InjectionChecker
++ Better compatibility with URLs containing HTML entities
+
+v 1.1.9.1
+=====================================================================
+x Work-around for Minefield content policy / DOM interaction
+  regression (thanks mmortal03)
+
 v 1.1.9
 =====================================================================
 x Extra QA for release

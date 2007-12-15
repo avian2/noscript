@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "禁止 Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "禁止 Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "禁止 其他插件">
 <!ENTITY noscriptReloadWarn "下面这些选项将在新页面中或(手动)重新载入后生效。">
 <!ENTITY noscriptConfirmUnblock "需要确认后再允许某些临时项目">

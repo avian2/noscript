@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Забрани Macromedia® Flash®">
+<!ENTITY noscriptForbidFlash "Забрани Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Забрани остале додатке">
 <!ENTITY noscriptReloadWarn "Ова подешавања ће бити примењена на нове или (ручно) поново учитане стране">
 <!ENTITY noscriptConfirmUnblock "Тражи потврду пре привременог скидања блокаде са објекта">
