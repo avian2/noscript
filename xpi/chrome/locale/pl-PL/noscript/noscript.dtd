@@ -105,6 +105,10 @@
 <!ENTITY noscriptJar "JAR">
 <!ENTITY noscriptJarFaq "Pytania i odpowiedzi o JAR">
 <!ENTITY noscriptJarFaq.accesskey "R">
-<!ENTITY noscriptForbidJarDocuments "Blokuj zdalne źródła JAR wczytwane jako dokumenty">
+<!ENTITY noscriptForbidJarDocuments "Blokuj zdalne źródła JAR wczytywane jako dokumenty">
 <!ENTITY noscriptJarExceptions "Wyjątki blokowania dokumentów JAR">
 <!ENTITY noscriptJarExceptions.description "Dokumenty JAR spełniające poniższe wyrażenia regularne nie będą blokowane">
+<!ENTITY noscriptRevokeTemp "Unieważniaj tymczasowe zezwolenia">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "Nie wyświetlaj ikon zamienników dla obiektów pochodzących z witryn określonych jako niezaufane">
+<!ENTITY noscriptCollapseBlockedObjects "Zwiń zablokowane obiekty">

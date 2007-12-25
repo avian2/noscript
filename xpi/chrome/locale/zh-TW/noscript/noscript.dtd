@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 選項">
 <!ENTITY noscriptAbout "關於 NoScript">
-<!ENTITY noscriptPermissionsText "您可以指定允許執行 JavaScript 的網站。輸入您欲允許的網址或網域（例如 &quot;http://www.site.com&quot; 或 &quot;site.com&quot;），然後點允許.">
+<!ENTITY noscriptPermissionsText "您可以指定允許執行 JavaScript 的網站。輸入您要允許的網址或網域（例如 &quot;http://www.site.com&quot; 或 &quot;site.com&quot;），然後按下允許.">
 <!ENTITY noscriptWebAddress "網址：">
 <!ENTITY noscriptAllow "允許">
 <!ENTITY noscriptAllow.accesskey "A">
@@ -14,7 +14,7 @@
 <!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "移除選取的網站">
 <!ENTITY noscriptGloballyEnabled "全面允許 JavaScript（危險)">
-<!ENTITY noscriptAutoReload "更改許可設定後自動重讀相關的頁面.">
+<!ENTITY noscriptAutoReload "更改許可設定後自動重新讀取相關的頁面.">
 <!ENTITY noscriptGeneral "一般">
 <!ENTITY noscriptAppearance "外觀">
 <!ENTITY noscriptShow "顯示...">
@@ -39,10 +39,10 @@
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "進階">
 <!ENTITY noscriptAdditionalPermissions "對於信任網站的額外許可">
-<!ENTITY noscriptAllowClipboard "允許從外部剪貼簿複製與貼上 Rich Format Text(圖片與文字並存格式)">
+<!ENTITY noscriptAllowClipboard "允許從外部剪貼簿複製與貼上 Rich Format Text(RTF格式)">
 <!ENTITY noscriptAdditionalRestrictions "對不信任網站的額外限制">
 <!ENTITY noscriptPlugins "外掛">
-<!ENTITY noscriptContentBlocker "也應用這些限制到信任的網站">
+<!ENTITY noscriptContentBlocker "一併將這些限制應用到信任的網站">
 <!ENTITY noscriptForbidJava "禁止 Java™">
 <!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
@@ -54,7 +54,7 @@
 <!ENTITY noscriptStatusLabel "狀態列標籤">
 <!ENTITY noscriptForbidBookmarklets "禁止 Bookmarklets">
 <!ENTITY noscriptShowPlaceholder "顯示圖片預留位置">
-<!ENTITY noscriptTruncateTitle "縮短文件標題">
+<!ENTITY noscriptTruncateTitle "簡短文件標題">
 <!ENTITY noscriptFixLinks "嘗試修復 JavaScript 連結">
 <!ENTITY noscriptAllowBookmarks "允許書籤裡的所有網站">
 <!ENTITY noscriptAllowViaBookmarks "允許用書籤開啟網站">
@@ -84,8 +84,8 @@
 <!ENTITY noscriptAutoAllowTopLevel "預設暫時允許第一層網域">
 <!ENTITY noscriptDescription "為您的 Firefox 提供額外保護: NoScript 只允許您選擇的信任網域 (例如您的家庭金融網站) 上的 JavaScript, Java (和其他的外掛). 這份白名單基於預先處理來防止安全弱點 (已知和未知的!) 被利用，且不損失功能... 專家們都同意: Firefox 加上 NoScript 真的是更加安全 :-)">
 <!ENTITY noscriptOptBlockCssScanners "封鎖基於 CSS 的掃描器">
-<!ENTITY noscriptOptFilterXGet "消除跨站的可疑請除">
-<!ENTITY noscriptOptFilterXPost "轉換跨站 POST 請求為缺少資料的 GET 請求">
+<!ENTITY noscriptOptFilterXGet "消除可疑的跨站請除">
+<!ENTITY noscriptOptFilterXPost "轉換跨站 POST 請求為不含數據的 GET 請求">
 <!ENTITY noscriptShowConsole "顯示控制台...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
@@ -94,12 +94,12 @@
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "不安全的重新讀取">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "反 XSS 保護例外">
+<!ENTITY noscriptXssExceptions "Anti-XSS 保護例外">
 <!ENTITY noscriptXssExceptions.description "符合這些規則表答式的目標將不會被保護不受 XSS (跨站腳本攻擊)">
 <!ENTITY noscriptMatchSample "樣本符合範例:">
-<!ENTITY noscriptReset "重置">
+<!ENTITY noscriptReset "恢復">
 <!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "重置回預設">
+<!ENTITY noscriptResetDef "恢復預設">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
@@ -108,3 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "防止 JAR 遠端資源被當成文件讀取">
 <!ENTITY noscriptJarExceptions "封鎖 JAR 文件的例外情況">
 <!ENTITY noscriptJarExceptions.description "符合這些規則表答式的 JAR 文件將不會被封鎖.">
+<!ENTITY noscriptRevokeTemp "取消暫時許可">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "無物件進入位置標誌符從標記信任的網站">
+<!ENTITY noscriptCollapseBlockedObjects "撤銷已封鎖的物件">

@@ -109,3 +109,7 @@
 <!ENTITY noscriptForbidJarDocuments "منع ملفات جار النائية من التحميل كمستندات">
 <!ENTITY noscriptJarExceptions "استثنآت اعتراض مستندات جار">
 <!ENTITY noscriptJarExceptions.description "لن يتم اعتراض مستندات جار مطابقة لهذه العبارات">
+<!ENTITY noscriptRevokeTemp "الغاء التراخيص المؤقتة">
+<!ENTITY noscriptRevokeTemp.accesskey "م">
+<!ENTITY noscriptNoUntrustedPlaceholder "لا توجد حوافظ مكان لمواد قادمة من مواقع محددة كغير آمنة">
+<!ENTITY noscriptCollapseBlockedObjects "تداعٍ المواد المعترضة">

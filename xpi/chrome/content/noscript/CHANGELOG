@@ -1,5 +1,43 @@
 NoScript ChangeLog
 
+v 1.2
+=====================================================================
++ Better protection against Flash-based XSS and other plugin-related
+  cross-site attacks
++ Better feedback for allowable sites from embedded redirections 
+  (thanks Leo Häfliger for report)
++ XSS filtering in subframes gets notified (was silent by default)
+x Fixed temporary allowed site prevents parent from being allowed
+  permanently (e.g. in auto-allow mode)
+x Fixed stand-alone WM plugin pages delayed blocking (thanks therube)
+x Extra QA for release
+x Updated localizations
+
+v 1.1.9.9
+=====================================================================
++ Hardened injection checker (thanks Gareth Heyes)
+x Better compatibility with Wikimedia sites
+x Fixed rtsp: and mms: plugin content always considered untrusted 
+  (thanks Florian Gerstenlauer for report)
+x Fixed one-click plugin activation (with no confirmation) sometimes
+  deferred to next page refresh (thanks Erwin J. Knöll for report)
+
+v 1.1.9.8
+=====================================================================
++ Experimental noscript.jsHack about:config preference containing JS
+  code to be executed before page loads in order to accomodate for
+  missing features (default implants a fake urchinTracker, see
+  http://forums.mozillazine.org/viewtopic.php?p=3183986#3183986)
+
+v 1.1.9.7
+=====================================================================
++ new "Revoke temporary permissions" command
++ new Plugins option: "Collapse blocked objects"
++ new Plugins option: "No placeholder for object coming from sites 
+  marked as untrusted"
+x Fixed OBJECT count bug when placholders are not shown
+x Work-around for IETab incompatibility with noscript.contentBlocker
+
 v 1.1.9.6
 =====================================================================
 x Object placeholder rendering optimization

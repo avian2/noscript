@@ -110,3 +110,6 @@
 <!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
 <!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
+<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
+

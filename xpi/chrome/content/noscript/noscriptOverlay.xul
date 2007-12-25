@@ -135,6 +135,8 @@
    
      <menuseparator class="noscript-sep-global" />
      <menuitem class="menuitem-iconic" />
+     
+     
      <menuseparator />
      <menuseparator class="noscript-sep-untrusted"/>
      <!-- dynamically inserted #noscript-menu-untrusted -->

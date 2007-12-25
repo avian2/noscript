@@ -5,7 +5,7 @@
 <!ENTITY noscriptPermissionsText "Você pode especificar os sites que podem executar JavaScripts. Escreva o endereço ou o domínio (ex &quot;http://www.site.com&quot; ou &quot;site.com&quot;) do site que deseja permitir e depois clique em Permitir.">
 <!ENTITY noscriptWebAddress "Endereço:">
 <!ENTITY noscriptAllow "Permitir">
-<!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptAllow.accesskey "I">
 <!ENTITY noscriptForbid "Proibir">
 <!ENTITY noscriptForbid.accesskey "F">
 <!ENTITY noscriptTrust "Marcar como Confiável">
@@ -20,7 +20,7 @@
 <!ENTITY noscriptShow "Mostrar...">
 <!ENTITY noscriptCtxMenu "Menu de Contexto">
 <!ENTITY noscriptStatusIcon "Ícone da Barra de Status">
-<!ENTITY noscriptFullAddr "Endereços completos(http://www.noscript.net)">
+<!ENTITY noscriptFullAddr "Endereços completos (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Domínios completos (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Base de domínios do 2º nível (noscript.net)">
 <!ENTITY noscriptTempCmd "Permitir temporariamente [...]">
@@ -34,7 +34,7 @@
 <!ENTITY noscriptSound.choose "Escolher">
 <!ENTITY noscriptSound.choose.accesskey "C">
 <!ENTITY noscriptSound.play "Tocar">
-<!ENTITY noscriptSound.play.accesskey "T">
+<!ENTITY noscriptSound.play.accesskey "a">
 <!ENTITY noscriptSound.reset "Restaurar padrões">
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "Avançado">
@@ -82,7 +82,7 @@
 <!ENTITY noscriptNselNever "Ocultar elementos &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptNselForce "Mostrar o elemento &lt;NOSCRIPT&gt; que perseguiu um script bloqueedo &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Permitir temporariamente todos os sites de alto nível por padrão">
-<!ENTITY noscriptDescription "Proteção extra para o seu Firefox: O NoScript permite JavaScripts, Java(e outros plugins) somente para os domínios confiáveis que você selecionar(por exemplo no site do seu internet banking). Esse bloqueio baseado em uma lista branca que começa vazia previne a exploração de vulnerabilidades de segurança (conhecidas e  até mesmo as desconhecidas!) sem perda de desempenho... Usuários especialistas concordam: o Firefox é realmente mais seguro com o NoScript :-)">
+<!ENTITY noscriptDescription "Proteção extra para o seu Firefox: O NoScript permite o uso de JavaScripts, Java(e outros plugins) somente para os domínios confiáveis que você selecionar(como por exemplo no site do seu internet banking). Esse bloqueio baseado em uma lista branca previne a exploração de vulnerabilidades de segurança (conhecidas e  até mesmo as desconhecidas!) sem perda de desempenho... Usuários e especialistas concordam: o Firefox é realmente mais seguro com o NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Bloquear varredores baseados em CSS">
 <!ENTITY noscriptOptFilterXGet "Desinfectar requerimentos suspeitos via site">
 <!ENTITY noscriptOptFilterXPost "Alterar requerimentos perigosos via site em requerimentos sem dados">
@@ -94,7 +94,7 @@
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Recarregamento Inseguro">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Proteção Anti-XSS através das excessões">
+<!ENTITY noscriptXssExceptions "Proteção Anti-XSS através das exceções">
 <!ENTITY noscriptXssExceptions.description "Os destinos que combinarem essas expressões NÃO serão protegidos do XSS">
 <!ENTITY noscriptMatchSample "Exemplo ilustrativo de combinação:">
 <!ENTITY noscriptReset "Restaurar">
@@ -108,3 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "Bloquear recursos remotos do JAR de serem carregados como documentos.">
 <!ENTITY noscriptJarExceptions "Exceções de bloqueio de documentos JAR.">
 <!ENTITY noscriptJarExceptions.description "Documentos JAR que combinarem com essas expressões NÂO serão bloqueados.">
+<!ENTITY noscriptRevokeTemp "Anular Permissões Temporárias">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "Nenhum placeholder para objetos provenientes de sites marcados como não confiáveis">
+<!ENTITY noscriptCollapseBlockedObjects "Quebrar objetos bloqueados">

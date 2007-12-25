@@ -108,3 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "Blokovať načítanie vzdialených zdrojov JAR ako dokumentov">
 <!ENTITY noscriptJarExceptions "Výnimky z blokovania dokumentov JAR">
 <!ENTITY noscriptJarExceptions.description "Dokumenty JAR, ktoré zodpovedajú týmto regulárnym výrazom, NEBUDÚ blokované.">
+<!ENTITY noscriptRevokeTemp "Zrušiť dočasné povolenia">
+<!ENTITY noscriptRevokeTemp.accesskey "d">
+<!ENTITY noscriptNoUntrustedPlaceholder "Žiadny zástupca pre objekty zo stránok označených ako nedôveryhodné">
+<!ENTITY noscriptCollapseBlockedObjects "Stlačiť blokované objekty">

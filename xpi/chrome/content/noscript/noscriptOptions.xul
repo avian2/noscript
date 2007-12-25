@@ -134,7 +134,8 @@
   </listbox>
   <separator class="thin"/>
   <hbox>
-    <button id="removeButton" disabled="false" label="&noscriptRemoveSelected;" oncommand="nsopt.remove()"/>
+    <button id="removeButton" disabled="true" label="&noscriptRemoveSelected;" oncommand="nsopt.remove()"/>
+    <button id="revokeButton" disabled="true" label="&noscriptRevokeTemp;" accesskey="&noscriptRevokeTemp.accesskey;"  oncommand="nsopt.revokeTemp()"/>
     <spacer flex="1" />
     <button id="importButton" label="&noscriptImport;" accesskey="&noscriptImport.accesskey;" 
       oncommand="nsopt.importExport('import')"/>
@@ -155,11 +156,15 @@
       <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
        <separator class="thin" />
       <checkbox id="opt-forbidIFrames" label="&noscriptForbidIFrames;" />
-      <separator class="thin" />
-      <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
-      <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
       <separator/>
       <checkbox id="opt-contentBlocker" label="&noscriptContentBlocker;" class="header" />
+      <separator/>
+      <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
+      <checkbox id="invopt-showUntrustedPlaceholder" label="&noscriptNoUntrustedPlaceholder;" />
+      <checkbox id="opt-collapseObject" label="&noscriptCollapseBlockedObjects;" />
+      <separator/>
+      <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+      
     </vbox>
   </tabpanel>
   

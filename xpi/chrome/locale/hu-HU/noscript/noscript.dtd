@@ -44,16 +44,16 @@
 <!ENTITY noscriptPlugins "Beépülők">
 <!ENTITY noscriptContentBlocker "A korlátozások alkalmazása a megbízható webhelyekre is">
 <!ENTITY noscriptForbidJava "A Java™ tiltása">
-<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; tiltása">
+<!ENTITY noscriptForbidWebBugs "A &quot;Web Bugs&quot; tiltása">
 <!ENTITY noscriptForbidSilverlight "A Microsoft® Silverlight™ tiltása">
-<!ENTITY noscriptForbidIFrames "A &lt;IFRAME&gt; tiltása">
-<!ENTITY noscriptForbidFlash "A Adobe® Flash® tiltása">
+<!ENTITY noscriptForbidIFrames "Az &lt;IFRAME&gt; tiltása">
+<!ENTITY noscriptForbidFlash "Az Adobe® Flash® tiltása">
 <!ENTITY noscriptForbidPlugins "Egyéb beépülő modulok tiltása">
 <!ENTITY noscriptReloadWarn "Ezek a beállítások új vagy (kézzel) újratöltött oldalaknál lépnek érvénybe">
 <!ENTITY noscriptConfirmUnblock "Megerősítés kérése egy objektum ideiglenes feloldása előtt">
 <!ENTITY noscriptStatusLabel "Az állapotsor címkéje">
 <!ENTITY noscriptForbidBookmarklets "A bookmarkletek (könyvjelzők) letiltása">
-<!ENTITY noscriptShowPlaceholder "A helyőrző ikon megjelenítése">
+<!ENTITY noscriptShowPlaceholder "A helykitöltő ikon megjelenítése">
 <!ENTITY noscriptTruncateTitle "A dokumentumok címeinek lerövidítése">
 <!ENTITY noscriptFixLinks "Kísérlet a JavaScript hivatkozások javítására">
 <!ENTITY noscriptAllowBookmarks "A könyvjelzőkben található összes webhely engedélyezése">
@@ -108,3 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "A távoli JAR forrás dokumentumként történő betöltésének blokkolása">
 <!ENTITY noscriptJarExceptions "JAR dokumentumok blokkolásának kivételei">
 <!ENTITY noscriptJarExceptions.description "Akok a JAR dokumentumok, amelyek megfelelnek az alábbi szabályos kifejezéseknek, NEM LESZNEK blokkolva.">
+<!ENTITY noscriptRevokeTemp "Ideiglenes hozzáférések visszavonása">
+<!ENTITY noscriptRevokeTemp.accesskey "v">
+<!ENTITY noscriptNoUntrustedPlaceholder "Nincs helykitöltő a megbízhatatlannak megjelölt webhelyekről érkező objektumoknál">
+<!ENTITY noscriptCollapseBlockedObjects "Blokkolt objektumok összecsukása">

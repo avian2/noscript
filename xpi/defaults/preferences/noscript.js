@@ -19,15 +19,15 @@ pref("noscript.showUntrusted", true);
 pref("noscript.showBaseDomain", true);
 pref("noscript.showGlobal", true);
 pref("noscript.mandatory", "chrome: about: resource:");
-pref("noscript.default", "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net gmail.com google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
+pref("noscript.default", "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
 pref("noscript.forbidSilverlight", true);
 pref("noscript.forbidPlugins", true);
+pref("noscript.forbidActiveContentParentTrustCheck", true);
 pref("noscript.forbidIFrames", false);
 pref("noscript.forbidIFramesContext", 1);
 pref("noscript.forbidIFramesParentTrustCheck", true);
-pref("noscript.forbidIFramesSameDomainUntrusted", false);
 
 pref("noscript.forbidData", false);
 pref("noscript.sound.block", "chrome://noscript/skin/block.wav");
@@ -70,7 +70,7 @@ pref("noscript.toggle.temp", true);
 pref("noscript.firstRunRedirection", true);
 
 pref("noscript.xss.notify", true);
-pref("noscript.xss.notify.subframes", false);
+pref("noscript.xss.notify.subframes", true);
 
 pref("noscript.xss.trustReloads", false);
 pref("noscript.xss.trustData", true);
@@ -126,3 +126,9 @@ pref("noscript.whitelistRegExp", "");
 pref("noscript.tempGlobal", false);
 
 pref("noscript.lockPrivilegedUI", false);
+
+
+pref("noscript.collapseObject", false);
+pref("noscript.showUntrustedPlaceholder", true);
+
+pref("noscript.jsHack", "window.urchinTracker = function() {}");

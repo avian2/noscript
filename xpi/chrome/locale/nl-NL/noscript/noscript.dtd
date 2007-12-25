@@ -108,3 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "Als document laden van JAR externe bronnen blokkeren">
 <!ENTITY noscriptJarExceptions "Uitzonderingen JAR document blokkering">
 <!ENTITY noscriptJarExceptions.description "JAR documenten die voldoen aan deze reguliere expressies zullen NIET geblokkeerd worden.">
+<!ENTITY noscriptRevokeTemp "Tijdelijke toestemmingen intrekken">
+<!ENTITY noscriptRevokeTemp.accesskey "s">
+<!ENTITY noscriptNoUntrustedPlaceholder "Geen vervangend pictogram voor objecten afkomstig van als onbetrouwbaar gemerkte sites">
+<!ENTITY noscriptCollapseBlockedObjects "Geblokkeerde objecten verbergen">

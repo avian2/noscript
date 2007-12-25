@@ -52,3 +52,4 @@ locale	noscript	km-KH	jar:chrome/noscript.jar!/locale/km-KH/noscript/
 locale	noscript	lt-LT	jar:chrome/noscript.jar!/locale/lt-LT/noscript/
 locale	noscript	sr-YU	jar:chrome/noscript.jar!/locale/sr-YU/noscript/
 locale	noscript	es-ES	jar:chrome/noscript.jar!/locale/es-ES/noscript/
+locale	noscript	es-AR	jar:chrome/noscript.jar!/locale/es-AR/noscript/

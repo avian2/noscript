@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 选项">
 <!ENTITY noscriptAbout "关于 NoScript">
-<!ENTITY noscriptPermissionsText "您可以指定允许执行脚本的网站。请输入您想要允许的网站地址或域名(例如: &quot;http://www.site.com&quot;或者&quot;site.com&quot;)然后单击“允许”。">
+<!ENTITY noscriptPermissionsText "您可以指定允许执行脚本的网站。请输入您想要允许的网站地址或域名(例如: “http://www.site.com”或者“site.com”)然后单击“允许”。">
 <!ENTITY noscriptWebAddress "网站地址:">
 <!ENTITY noscriptAllow "允许">
 <!ENTITY noscriptAllow.accesskey "A">
@@ -13,7 +13,7 @@
 <!ENTITY noscriptUntrust "标记为不可信">
 <!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "删除选择的网站">
-<!ENTITY noscriptGloballyEnabled "全域允许脚本(危险)">
+<!ENTITY noscriptGloballyEnabled "全局允许脚本(危险)">
 <!ENTITY noscriptAutoReload "更改许可设置后自动重新载入相关页面">
 <!ENTITY noscriptGeneral "常规">
 <!ENTITY noscriptAppearance "外观">
@@ -39,12 +39,12 @@
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "高级">
 <!ENTITY noscriptAdditionalPermissions "对受信任站点的额外许可">
-<!ENTITY noscriptAllowClipboard "允许由外部剪贴板进行复杂文本的复制和粘贴">
+<!ENTITY noscriptAllowClipboard "允许由外部剪贴板进行多信息文本的复制和粘贴">
 <!ENTITY noscriptAdditionalRestrictions "对不信任站点的额外限制">
 <!ENTITY noscriptPlugins "插件">
 <!ENTITY noscriptContentBlocker "对受信任站点仍然应用这些限制">
 <!ENTITY noscriptForbidJava "禁止 Java™">
-<!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidWebBugs "禁止“Web Bugs”">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "禁止 Adobe® Flash®">
@@ -52,7 +52,7 @@
 <!ENTITY noscriptReloadWarn "下面这些选项将在新页面中或(手动)重新载入后生效。">
 <!ENTITY noscriptConfirmUnblock "需要确认后再允许某些临时项目">
 <!ENTITY noscriptStatusLabel "状态栏标签">
-<!ENTITY noscriptForbidBookmarklets "禁止 Bookmarklet">
+<!ENTITY noscriptForbidBookmarklets "禁止 Bookmarklets">
 <!ENTITY noscriptShowPlaceholder "显示图像占位符">
 <!ENTITY noscriptTruncateTitle "截短文档标题">
 <!ENTITY noscriptFixLinks "尝试定位 JavaScript 链接">
@@ -61,13 +61,13 @@
 <!ENTITY noscriptAllowPing "允许&lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "允许本地链接">
 <!ENTITY noscriptForbidPing "禁止&lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "禁止 &lt;NOSCRIPT&gt; 元素中的 META 重定向">
+<!ENTITY noscriptForbidMetaRefresh "禁止 &lt;NOSCRIPT&gt; 元素内的 META 重定向">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "白名单">
 <!ENTITY noscriptPermissions "许可">
 <!ENTITY noscriptRefresh "刷新">
 <!ENTITY noscriptNotifications "通知">
-<!ENTITY noscriptToolbarToggle "左键点击 NoScript 工具栏按钮拴牢为当前顶层网站的许可">
+<!ENTITY noscriptToolbarToggle "左键单击 NoScript 工具栏按钮切换对当前顶层站点的许可">
 <!ENTITY noscriptTrusted "可信任">
 <!ENTITY noscriptUntrusted "不可信任">
 <!ENTITY noscriptUnknown "未知">
@@ -80,23 +80,23 @@
 <!ENTITY noscriptDefaultPolicies "默认策略">
 <!ENTITY noscriptSitePolicies "站点特殊策略">
 <!ENTITY noscriptNselNever "隐藏 &lt;NOSCRIPT&gt; 元素">
-<!ENTITY noscriptNselForce "显示跟随被屏蔽的 &lt;SCRIPT&gt; 的 &lt;NOSCRIPT&gt; 元素">
+<!ENTITY noscriptNselForce "显示已被屏蔽的 &lt;SCRIPT&gt; 标签下的 &lt;NOSCRIPT&gt; 元素">
 <!ENTITY noscriptAutoAllowTopLevel "默认临时允许顶层站点">
-<!ENTITY noscriptDescription "为您的 Firefox 提供额外保护: NoScript 只允许您所选择的信任域(例如您本国的银行网站)上的 JavaScript, Java (和其他插件)。该白名单基于抢先式过滤方法防止安全缺陷（已知，甚至是未知的！）被利用，并且不损失功能…… 专家们都同意：Firefox 加上 NoScript 真的是更加安全 :-)">
-<!ENTITY noscriptOptBlockCssScanners "过滤基于 CSS 的扫描器">
+<!ENTITY noscriptDescription "为您的 Firefox 提供额外保护: NoScript 只允许在您选择的信任域(例如您标示出的网站)上执行 JavaScript、Java 和其他插件。该白名单基于抢先阻止机制，在不损失任何功能的前提下，防止利用已知或未知安全漏洞的攻击。">
+<!ENTITY noscriptOptBlockCssScanners "阻止基于 CSS 的扫描器">
 <!ENTITY noscriptOptFilterXGet "净化跨站点的可疑请求">
-<!ENTITY noscriptOptFilterXPost "把跨站点 POST 请求转换成缺少数据的 GET 请求">
+<!ENTITY noscriptOptFilterXPost "把跨站点 POST 请求转换为最少数据的 GET 请求">
 <!ENTITY noscriptShowConsole "显示控制台...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS 问答...">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "非安全的重新载入">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "反 XSS 保护例外">
-<!ENTITY noscriptXssExceptions.description "匹配这些正则表达式的目标将不会被保护不受XSS(跨站脚本攻击)">
-<!ENTITY noscriptMatchSample "模式匹配样例:">
+<!ENTITY noscriptXssExceptions "Anti-XSS 保护的例外情况">
+<!ENTITY noscriptXssExceptions.description "匹配以下正则表达式的目标将不会被保护不遭受 XSS(跨站脚本攻击)。">
+<!ENTITY noscriptMatchSample "模式匹配示例:">
 <!ENTITY noscriptReset "重置">
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "重置为默认值">
@@ -108,3 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "阻止作为文档载入 JAR 远程资源">
 <!ENTITY noscriptJarExceptions "阻止 JAR 文档的例外情况">
 <!ENTITY noscriptJarExceptions.description "不阻止匹配以下正则表达式的 JAR 文档。">
+<!ENTITY noscriptRevokeTemp "撤销临时允许">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "对于已标记为不可信站点的对象不显示占位符">
+<!ENTITY noscriptCollapseBlockedObjects "瓦解已阻止的对象">

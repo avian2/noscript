@@ -142,7 +142,7 @@ var noscriptOverlay = noscriptUtil.service ?
     if (global || ns.getPref("showGlobal")) {
       miGlobal.style.display = "";
       seps.global.style.display = "";
-      miGlobal.setAttribute("label",this.getString((global ? "forbid" : "allow") + "Global"));
+      miGlobal.setAttribute("label", this.getString((global ? "forbid" : "allow") + "Global"));
       miGlobal.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!global)+")");
       miGlobal.setAttribute("tooltiptext", this.statusIcon.getAttribute("tooltiptext"));
       miGlobal.setAttribute("class", "menuitem-iconic " + this.getStatusClass(global ? "no" : "glb"));
@@ -153,7 +153,18 @@ var noscriptOverlay = noscriptUtil.service ?
     
     node = miGlobal.nextSibling;
     const mainMenu = node.parentNode;
-     
+    
+    if (/\bnoscript-revoke-temp\b/.test(node.className)) {
+      node.setAttribute("oncommand", "window.setTimeout(noscriptOverlay.eraseTemp, 0)");
+      if (ns.tempSites.sitesString) {
+        node.style.display = "";
+        seps.global.style.display = "";
+      } else {
+        node.style.display = "none";
+      }
+      node = node.nextSibling;
+    }
+
     var xssMenu = document.getElementById("noscript-xss-menu");
     
     if (xssMenu && node != xssMenu) {
@@ -193,6 +204,7 @@ var noscriptOverlay = noscriptUtil.service ?
     mainMenu.appendCmd = function(n) { this.insertBefore(n, seps.stop); };
 
     const sites = this.getSites();
+    
     var site, enabled, isTop, lev;
     var jsPSs = ns.jsPolicySites;
     var matchingSite;
@@ -200,8 +212,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var domain, pos, baseLen, dp;
     var untrusted;
     var cssClass;
-    
-    
+
     var domainDupChecker = {
       domains: {},
       check: function(d) {
@@ -222,6 +233,10 @@ var noscriptOverlay = noscriptUtil.service ?
     const showTemp = !locked && ns.getPref("showTemp", true);
     
     var parent, extraNode;
+    
+   
+    
+    
     for (j = sites.length; j-->0;) {
       site = sites[j];
       
@@ -363,6 +378,10 @@ var noscriptOverlay = noscriptUtil.service ?
 ,
   getBrowserDoc: function(browser) {
     return browser && browser.contentWindow && browser.contentWindow.document || null;
+  }
+,
+  eraseTemp: function() {
+    noscriptOverlay.ns.eraseTemp();
   }
 ,
   menuAllow: function(enabled, menuItem, temp) {
@@ -1103,7 +1122,7 @@ var noscriptOverlay = noscriptUtil.service ?
     },
     remove: function() {
       window.removeEventListener("keypress", this.listener, true);
-    },
+    }
   },
   
   listeners: {
@@ -1177,7 +1196,7 @@ var noscriptOverlay = noscriptUtil.service ?
     },
     onPageHide: function(ev) {
       ev.currentTarget.removeEventListener("pagehide", arguments.callee, true);
-      noscriptOverlay.cleanupDocument(ev.originalTarget, true);
+      noscriptOverlay.cleanupDocument(ev.originalTarget);
     },
     
     onContextMenu:  function(ev) { noscriptOverlay.prepareContextMenu(ev) },
@@ -1344,7 +1363,7 @@ var noscriptOverlay = noscriptUtil.service ?
 
     for (var bb = getBrowser().browsers, j = bb.length; j-- > 0;) {
       try {
-        this.cleanupDocument(bb[j].contentWindow.document);
+        this.cleanupDocument(bb[j].contentWindow.document, bb);
       } catch(e) {
         this.ns.dump(e);
       }

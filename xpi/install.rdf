@@ -5,11 +5,11 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.1.9.6</em:version>
+   <em:version>1.2</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
-   <em:contributor>Alberto Martínez &amp; Urko (Spanish translation)</em:contributor>
+   <em:contributor>Alberto Martínez, EduLeo &amp; Urko (Spanish translation)</em:contributor>
    <em:contributor>Asaf Bartov (Hebrew translation)</em:contributor>
    <em:contributor>Alf and Liesbeth (Dutch translation)</em:contributor>
    <em:contributor>Alexander Sokolov (Russian translation)</em:contributor>
@@ -124,6 +124,7 @@
         <em:locale>locale/de-DE/noscript/</em:locale>
         <em:locale>locale/el-GR/noscript/</em:locale>
         <em:locale>locale/en-GB/noscript/</em:locale>
+        <em:locale>locale/es-AR/noscript/</em:locale>
         <em:locale>locale/es-ES/noscript/</em:locale>
         <em:locale>locale/fa-IR/noscript/</em:locale>
         <em:locale>locale/fi-FI/noscript/</em:locale>

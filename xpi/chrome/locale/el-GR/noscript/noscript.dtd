@@ -44,7 +44,7 @@
 <!ENTITY noscriptPlugins "Πρόσθετες λειτουργίες">
 <!ENTITY noscriptContentBlocker "Εφαρμογή αυτών των περιορισμών και σε έμπιστους ιστότοπους">
 <!ENTITY noscriptForbidJava "Απαγόρευση εκτέλεσης Java™">
-<!ENTITY noscriptForbidWebBugs "Απαγόρευση εκτέλεσης &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidWebBugs "Απαγόρευση εκτέλεσης «Web Bugs»">
 <!ENTITY noscriptForbidSilverlight "Απαγόρευση εκτέλεσης Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Απαγόρευση εκτέλεσης &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Απαγόρευση εκτέλεσης Adobe® Flash®">
@@ -108,3 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "Απαγόρευση φόρτωσης απομακρυσμένων πόρων JAR ως έγγραφα">
 <!ENTITY noscriptJarExceptions "Εξαιρέσεις απαγόρευσης εγγράφων JAR">
 <!ENTITY noscriptJarExceptions.description "ΔΕΝ θα απαγορεύονται τα έγγραφα JAR που ταιρίαζουν με αυτές τις κανονικές εκφράσεις.">
+<!ENTITY noscriptRevokeTemp "Αναίρεση προσωρινών αδειοδοτήσεων">
+<!ENTITY noscriptRevokeTemp.accesskey "ν">
+<!ENTITY noscriptNoUntrustedPlaceholder "Χωρίς εικονίδια γεμίσματος για αντικείμενα από μη έμπιστους ιστότοπους">
+<!ENTITY noscriptCollapseBlockedObjects "Σύμπτυξη μπλοκαρισμένων αντικειμένων">

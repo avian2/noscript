@@ -51,6 +51,7 @@ var nsopt = {
     
     this.trustedSites = ns.jsPolicySites.clone();
     this.untrustedSites = ns.untrustedSites.clone();
+    this.tempSites = ns.tempSites.clone();
     this.populateUrlList();
     
     this.jsglobal.checked = ns.jsEnabled;
@@ -58,7 +59,7 @@ var nsopt = {
     this.utils.visitCheckboxes(function(prefName, inverse, checkbox, mozilla) {
         try {
           var val = mozilla ? ns.prefService.getBoolPref(prefName) : ns.getPref(prefName);
-          checkbox.setAttribute("checked",inverse ? !val : val);
+          checkbox.setAttribute("checked", inverse ? !val : val);
           if(ns.prefService.prefIsLocked(mozilla ? prefName : "noscript." + prefName)) {
             checkbox.setAttribute("disabled", true);
           }
@@ -171,12 +172,15 @@ var nsopt = {
     var global = this.jsglobal.getAttribute("checked") == "true";
     var untrustedSites = this.untrustedSites;
     var trustedSites = this.trustedSites;
+    var tempSites = this.tempSites;
     
     ns.safeCapsOp(function() {
       if(ns.untrustedSites.sitesString != untrustedSites.sitesString
-          || ns.jsPolicySites.sitesString != trustedSites.sitesString) {
+          || ns.jsPolicySites.sitesString != trustedSites.sitesString
+          || ns.tempSites.sitesString != tempSites.sitesString) {
         ns.untrustedSites.sitesString = untrustedSites.sitesString;
         ns.persistUntrusted();
+        ns.setPref("temp", tempSites.sitesString);
         ns.setJSEnabled(trustedSites.sitesList, true, true);
       }
       ns.jsEnabled = global;
@@ -193,13 +197,14 @@ var nsopt = {
       }
     }  
     this.removeButton.setAttribute("disabled", removeDisabled);
+    document.getElementById("revokeButton").setAttribute("disabled", !this.tempSites.sitesString);
     this.urlChanged();
   },
   
   urlChanged: function() {
     var url = this.urlText.value;
     if(url.match(/\s/)) url = this.urlText.value = url.replace(/\s/g,'');
-    var addEnabled = url.length > 0 && (url=this.serv.getSite(url)) ;
+    var addEnabled = url.length > 0 && (url = this.serv.getSite(url)) ;
     if(addEnabled) {
       var match = url.match(this.dom2);
       if(match) url = match[1];
@@ -239,6 +244,7 @@ var nsopt = {
     const dom2 = this.dom2;
     var site, item;
     var match, k, len;
+    var tempMap = this.tempSites.sitesMap;
     for(j = 0, len = sites.length; j < len; j++) {
       site = sites[j];
       // skip protocol + 2nd level domain URLs
@@ -249,7 +255,7 @@ var nsopt = {
       if(ns.isPermanent(site)) { 
         item.setAttribute("disabled", "true");
       }
-      item.style.fontStyle = ns.isTemp(site) ? "italic" : "normal";
+      item.style.fontStyle = (site in tempMap) ? "italic" : "normal";
     }
     this.urlListChanged();
   },
@@ -257,6 +263,7 @@ var nsopt = {
   allow: function() {
     const site = this.serv.getSite(this.urlText.value);
     this.trustedSites.add(site);
+    this.tempSites.remove(site, true, true); // see noscriptService#eraseTemp()
     this.untrustedSites.remove(site);
     this.populateUrlList();
     this.ensureVisible(site);
@@ -274,7 +281,7 @@ var nsopt = {
       var site = selectedItems[0].value;
       if(!ns.isPermanent(site)) {
         ul.removeItemAt(ul.getIndexOfItem(selectedItems[0]));
-        this.trustedSites.remove(site, true)
+        this.trustedSites.remove(site, true);
       }
       return;
     }
@@ -296,6 +303,14 @@ var nsopt = {
         ul.ensureIndexIsVisible(rowCount - 1);
       } 
     } catch(e) {}
+  },
+  
+  revokeTemp: function() {
+    const ns = this.serv;
+    this.trustedSites.remove(this.tempSites.sitesList, true, true); 
+    this.trustedSites.add(ns.permanentSites.sitesList);
+    this.tempSites.sitesString = "";
+    this.populateUrlList();
   },
   
   _soundChooser: null,

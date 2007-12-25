@@ -108,3 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "Bloquer le chargement des ressources distantes JAR comme documents.">
 <!ENTITY noscriptJarExceptions "Exceptions au blocage de documents JAR">
 <!ENTITY noscriptJarExceptions.description "Les documents JAR correspondant à ces expressions régulières ne seront pas bloqués.">
+<!ENTITY noscriptRevokeTemp "Révoquer les permissions temporaires">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "Ne pas réserver d&apos;espace pour les objets venant de sites marqués comme sites à risque">
+<!ENTITY noscriptCollapseBlockedObjects "Utiliser l&apos;espace libéré par les éléments bloqués">
