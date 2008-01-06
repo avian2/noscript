@@ -1,18 +1,18 @@
-<!ENTITY noscriptOptions "Tercihler">
-<!ENTITY noscriptOptions.accesskey "T">
-<!ENTITY noscriptOptionsLong "NoScript Tercihleri">
+<!ENTITY noscriptOptions "Seçenekler">
+<!ENTITY noscriptOptions.accesskey "S">
+<!ENTITY noscriptOptionsLong "NoScript Seçenekler">
 <!ENTITY noscriptAbout "NoScript Hakkında">
-<!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript izni vereceğinizi kolayca tanımlayabilirsiniz. Lütfen adresi tam olarak girin ve &apos;İzin ver&apos; düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
+<!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript izni vereceğinizi kolayca seçebilirsiniz. Lütfen adresi tam olarak girin ve &apos;İzin ver&apos; düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
 <!ENTITY noscriptWebAddress "Site adresi:">
 <!ENTITY noscriptAllow "İzin ver">
 <!ENTITY noscriptAllow.accesskey "E">
-<!ENTITY noscriptForbid "Forbid">
-<!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
-<!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
-<!ENTITY noscriptUntrust.accesskey "U">
-<!ENTITY noscriptRemoveSelected "Seçili sayfaları kaldır">
+<!ENTITY noscriptForbid "Yasakla">
+<!ENTITY noscriptForbid.accesskey "Y">
+<!ENTITY noscriptTrust "Güvenli Olarak İşaretle">
+<!ENTITY noscriptTrust.accesskey "G">
+<!ENTITY noscriptUntrust "Güvensiz Olarak İşaretle">
+<!ENTITY noscriptUntrust.accesskey "Z">
+<!ENTITY noscriptRemoveSelected "Seçili Siteleri Kaldır">
 <!ENTITY noscriptGloballyEnabled "JavaScript&apos;e genel olarak izin ver (tehlikeli)">
 <!ENTITY noscriptAutoReload "İzin hakları değişince sayfayı tekrar otomatikman yükle">
 <!ENTITY noscriptGeneral "Genel">
@@ -41,13 +41,13 @@
 <!ENTITY noscriptAdditionalPermissions "Güvenli sayfalar için ilave haklar">
 <!ENTITY noscriptAllowClipboard "Kopyala ve Yapıştır işlemine izin ver">
 <!ENTITY noscriptAdditionalRestrictions "Güvensiz sayfalar için ilave kısıtlamalar">
-<!ENTITY noscriptPlugins "Plugins">
-<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
-<!ENTITY noscriptForbidJava "Java™ yasakla">
-<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; yasakla">
-<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ yasakla">
-<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; yasakla">
-<!ENTITY noscriptForbidFlash "Adobe® Flash® yasakla">
+<!ENTITY noscriptPlugins "Eklentiler">
+<!ENTITY noscriptContentBlocker "Bu sınırlamaları güvenilen sitelere de uygula">
+<!ENTITY noscriptForbidJava "Java™&apos;yı engelle">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot;ı engelle">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™&apos;ı engelle">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt;&apos;i engelle">
+<!ENTITY noscriptForbidFlash "Adobe® Flash®&apos;ı engelle">
 <!ENTITY noscriptForbidPlugins "Diğer eklentileri yasakla">
 <!ENTITY noscriptReloadWarn "Bu ayarlar sadece yeni veya kendinizin yüklediği sayfalar için geçerlidir.">
 <!ENTITY noscriptConfirmUnblock "Bir nesneyi geçici olarak engellerken onay iste">
@@ -61,12 +61,12 @@
 <!ENTITY noscriptAllowPing "İzin ver &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Yerel bağlantılara izin ver">
 <!ENTITY noscriptForbidPing "Yasakla &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
-<!ENTITY noscriptWhitelist "Güvenilir listesi">
-<!ENTITY noscriptPermissions "Erişimler">
+<!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt; elementleri içinde META yenidenyönlendirmelerini engelle">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "M">
+<!ENTITY noscriptWhitelist "Beyazliste">
+<!ENTITY noscriptPermissions "İzinler">
 <!ENTITY noscriptRefresh "Tazele">
-<!ENTITY noscriptNotifications "Uyarılma">
+<!ENTITY noscriptNotifications "Uyarılar">
 <!ENTITY noscriptToolbarToggle "Araç çubuğundaki NoScript düğmesine sol tıklayarak sitenin erişim haklarını değiştirebilirsiniz.">
 <!ENTITY noscriptTrusted "Güvenli">
 <!ENTITY noscriptUntrusted "Güvensiz">
@@ -81,20 +81,20 @@
 <!ENTITY noscriptSitePolicies "Siteye özel kurallar">
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; öğelerini sakla">
 <!ENTITY noscriptNselForce "&lt;SCRIPT&gt;&apos;den sonra oluşan &lt;NOSCRIPT&gt; öğelerini göster">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
+<!ENTITY noscriptAutoAllowTopLevel "Varsayılan olarak aktif sitelere geçici izin verilir">
+<!ENTITY noscriptDescription "Firefox&apos;unuz için ekstra güvenlik: NoScript seçiminize göre, sadece izin verdiğiniz sitelerde Java (ve diğer eklentilere) izin verebilir. Bu Beyazliste temelli öngörmeli engelleme tekniği güvenlik açıklarını(bilinen ve bilinmeyen) kapatmaya yararken işlevsellik kaybına neden olmaz... Uzmanlar katılacaklardır: Firefox NoScript ile birlikte daha güvenli :-)">
+<!ENTITY noscriptOptBlockCssScanners "CSS-temelli tarayıcıları engelle">
+<!ENTITY noscriptOptFilterXGet "Çapraz-site şüpeli isteklerini temizle">
+<!ENTITY noscriptOptFilterXPost "Çapraz-site POST isteklerini GET&apos;e çevir">
 <!ENTITY noscriptShowConsole "Konsolu göster">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS SSS...">
 <!ENTITY noscriptXssFaq.accesskey "S">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
-<!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptUnsafeReload "Güvensiz TekrarYükleme">
+<!ENTITY noscriptUnsafeReload.accesskey "Y">
+<!ENTITY noscriptXssExceptions "Anti-XSS Koruma Ayrıcalıklıları">
 <!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
 <!ENTITY noscriptReset "Reset">
@@ -108,3 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
 <!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
+<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">

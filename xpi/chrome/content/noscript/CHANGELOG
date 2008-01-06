@@ -1,5 +1,42 @@
 NoScript ChangeLog
 
+v 1.2.6
+=====================================================================
+x Updated localizations
+x Extra QA for release
+
+v 1.2.5
+=====================================================================
+x Work-around for conflict with Tab Mix Plus dev. in Fx 3's Places
+  (http://tmp.garyr.net/forum/viewtopic.php?t=8052)
+
+v 1.2.4
+=====================================================================
+x Fixed NOSCRIPT content shown in pages allowed on the fly with
+  "Temporarily allow top-level sites" (thanks Pirlouy for report)
+
+v 1.2.3
+=====================================================================
++ Improved Injection Checker JSON compatibility, now recursively 
+  checking content of string attributes
+x Further JS syntax check optimizations
+x Fixed potential XBL-based crash after successful -moz-binding
+  injection (thanks Gareth Heyes for reporting)
+x More discreet XSS notification for subframes
+
+v 1.2.2
+=====================================================================
+x Changed noscript.filterXGetRx default to make single quote removal 
+  happen only after positive injection checks (thanks sirdarckcat for
+  suggestion)
+
+v 1.2.1
+=====================================================================
+x Fixed placeholder not shown for plugin content loaded in frames
+  (thanks Apoc2400)
+x Revised InjectionChecker made compatible with JSON GET parameters
+  (thanks "Wilderness Of Mirrors")
+
 v 1.2
 =====================================================================
 + Better protection against Flash-based XSS and other plugin-related

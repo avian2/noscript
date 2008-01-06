@@ -53,36 +53,41 @@ var noscriptBM = {
     }
     callback();
   },
-  
-  genericPatch: function(oldMethod, args) {
-    var node = this._view.selectedURINode;
-    if (!node) return;
-    const url = node.uri;
-    node = null;
-    var self = this;
-    var openCallback = function(url) { 
-      oldMethod.apply(self, args); 
-    }
-    if(!noscriptBM.handleBookmark(url, openCallback)) {
-      openCallback(url);
-    }
-  },
 
   handleBookmark: function(url, openCallback) {
     return noscriptUtil.service.handleBookmark(url, openCallback);
   },
-
+  
   patchPCMethod: function(m) {
     if(m in PlacesController.prototype) {
-      var oldMethod = PlacesController.prototype[m];
-      PlacesController.prototype[m] = function() { noscriptBM.genericPatch.call(this, oldMethod, arguments); };
+      // Dirty eval hack due to Tab Mix Plus conflict: http://tmp.garyr.net/forum/viewtopic.php?t=8052
+      PlacesController.prototype[m] = eval(PlacesController.prototype[m].toSource()
+        .replace(/\bPlacesUtils\.checkURLSecurity\(/, 'noscriptBM.checkURLSecurity('))
+    }
+  },
+  
+  checkURLSecurity: function(node) {
+    var patch = arguments.callee;
+    if(!PlacesUtils.checkURLSecurity(node)) return false;
+    if(patch._reentrant) return true;
+    try {
+      patch._reentrant = true;
+      const url = node.uri;
+      node = null;
+      var self = this;
+      return !noscriptBM.handleBookmark(url, function(url) {
+        patch.caller.apply(self, patch.caller.arguments);
+        self = null;
+      });
+    } finally {
+      arguments.callee._reentrant = false;
     }
   },
   
   onLoad: function(ev) {
     ev.currentTarget.removeEventListener("load", arguments.callee, false);
     if(!noscriptUtil.service) return;
-    
+ 
     if(window.BookmarksCommand) { // patch bookmark clicks
       noscriptBM.openOneBookmarkOriginal = BookmarksCommand.openOneBookmark;
       BookmarksCommand.openOneBookmark = noscriptBM.openOneBookmark;
@@ -92,11 +97,13 @@ var noscriptBM = {
       noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
       window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
     }
-    
+      
     if(typeof window.PlacesController == "function") {
-       var methods = ["openSelectedNodeIn"];
-      for(var j = methods.length; j-- > 0;)
-        noscriptBM.patchPCMethod(methods[j]);
+      window.setTimeout(function() {
+        var methods = ["openSelectedNodeIn", "openSelectedNodeWithEvent"];
+        for(var j = methods.length; j-- > 0;)
+          noscriptBM.patchPCMethod(methods[j]);
+      }, 0);
     }
   }
 };

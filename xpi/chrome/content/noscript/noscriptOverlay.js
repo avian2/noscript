@@ -1315,7 +1315,7 @@ var noscriptOverlay = noscriptUtil.service ?
     
     browserDOMWindow.wrappedJSObject.openURI = noscriptOverlay.browserAccess.openURI;
     
-    noscriptOverlay.ns.log("[NoScript] browserDOMWindow wrapped for external load interception");
+    noscriptOverlay.ns.dump("[NoScript] browserDOMWindow wrapped for external load interception");
   },
   
   browserAccess: {
@@ -1345,7 +1345,7 @@ var noscriptOverlay = noscriptUtil.service ?
       var w = null;
       try {
         w = nsBrowserAccess.prototype.openURI.apply(this, arguments);
-        if (external) ns.log("[NoScript] external load intercepted");
+        if (external) ns.dump("[NoScript] external load intercepted");
       } finally {
         if (external && !w) ns.requestWatchdog.externalLoad = null;
       }

@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.2</em:version>
+   <em:version>1.2.6</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -13,7 +13,7 @@
    <em:contributor>Asaf Bartov (Hebrew translation)</em:contributor>
    <em:contributor>Alf and Liesbeth (Dutch translation)</em:contributor>
    <em:contributor>Alexander Sokolov (Russian translation)</em:contributor>
-   <em:contributor>Batuhan Çetin(Turkish translation)</em:contributor>
+   <em:contributor>Batuhan Çetin and eveterinary (Turkish translation)</em:contributor>
    <em:contributor>Beerboy (Japanese translation)</em:contributor>
    <em:contributor>Carsten Winkler (Danish translation)</em:contributor>
    <em:contributor>Chiou Po-Jung (Chinese Traditional translation)</em:contributor>
@@ -43,6 +43,7 @@
    <em:contributor>regfreak (Indonesian translation)</em:contributor>
    <em:contributor>roebek (Galician translation)</em:contributor>
    <em:contributor>Qen (Thai translation)</em:contributor>
+   <em:contributor>seaousak (Korean translation)</em:contributor>
    <em:contributor>SlovakSoft (Slovak translation)</em:contributor>
    <em:contributor>Sonickydon (Greek translation)</em:contributor>
    <em:contributor>Thomas Weber &amp; Volker Hable (German translation)</em:contributor>
@@ -59,7 +60,7 @@
      <Description>
      <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
      <em:minVersion>1.5</em:minVersion>
-     <em:maxVersion>3.0b3pre</em:maxVersion>
+     <em:maxVersion>3.0b3</em:maxVersion>
      </Description>
    </em:targetApplication>
 
@@ -108,6 +109,25 @@
 			</Description>
 		</em:targetApplication>
    
+    <!-- Toolkit -->
+    <em:targetApplication>
+    <Description>
+      <em:id>toolkit@mozilla.org</em:id>
+      <em:minVersion>1.9a2</em:minVersion>
+      <em:maxVersion>1.9</em:maxVersion>
+    </Description>
+    </em:targetApplication>
+    
+    <!-- Songbird -->
+    <em:targetApplication>
+    <Description>
+      <em:id>songbird@songbirdnest.com</em:id>
+      <em:minVersion>0.3</em:minVersion>
+      <em:maxVersion>0.5pre</em:maxVersion>
+    </Description>
+    </em:targetApplication>
+    
+    
    <em:file>
      <Description about="urn:mozilla:extension:file:noscript.jar">
         <em:package>content/noscript/</em:package>
@@ -133,6 +153,7 @@
         <em:locale>locale/he-IL/noscript/</em:locale>
         <em:locale>locale/hr-HR/noscript/</em:locale>
         <em:locale>locale/hu-HU/noscript/</em:locale>
+        <em:locale>locale/ko-KR/noscript/</em:locale>
         <em:locale>locale/id-ID/noscript/</em:locale>
         <em:locale>locale/it-IT/noscript/</em:locale>
         <em:locale>locale/ja-JP/noscript/</em:locale>

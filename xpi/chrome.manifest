@@ -1,6 +1,8 @@
 overlay	chrome://navigator/content/navigatorOverlay.xul	chrome://noscript/content/noscriptOverlay.xul
 overlay   chrome://emusic/content/startup.xul   chrome://noscript/content/noscriptOverlay.xul 	
 overlay	chrome://browser/content/browser.xul	chrome://noscript/content/noscriptOverlay.xul
+overlay chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://noscript/content/noscriptOverlay.xul
+
 overlay	chrome://browser/content/pref/pref-features.xul	chrome://noscript/content/prefContent.xul
 
 overlay chrome://browser/content/bookmarks/bookmarksManager.xul chrome://noscript/content/noscriptBMOverlay.xul
@@ -17,6 +19,7 @@ locale	noscript	de-DE	jar:chrome/noscript.jar!/locale/de-DE/noscript/
 locale	noscript	fr-FR	jar:chrome/noscript.jar!/locale/fr-FR/noscript/
 locale	noscript	ar	jar:chrome/noscript.jar!/locale/ar/noscript/
 locale	noscript	fi-FI	jar:chrome/noscript.jar!/locale/fi-FI/noscript/
+locale	noscript	ko-KR	jar:chrome/noscript.jar!/locale/ko-KR/noscript/
 locale	noscript	id-ID	jar:chrome/noscript.jar!/locale/id-ID/noscript/
 locale	noscript	it-IT	jar:chrome/noscript.jar!/locale/it-IT/noscript/
 locale	noscript	nl-NL	jar:chrome/noscript.jar!/locale/nl-NL/noscript/

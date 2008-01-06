@@ -1,0 +1,114 @@
+<!ENTITY noscriptOptions "옵션...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript 옵션">
+<!ENTITY noscriptAbout "NoScript 정보...">
+<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
+<!ENTITY noscriptWebAddress "웹 사이트 주소">
+<!ENTITY noscriptAllow "허용">
+<!ENTITY noscriptAllow.accesskey "l">
+<!ENTITY noscriptForbid "금지">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "신뢰할 수 있는 사이트로 지정">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "신뢰할 수 없는 사이트로 지정">
+<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptRemoveSelected "선택된 사이트 삭제">
+<!ENTITY noscriptGloballyEnabled "스크립트 전면 허용(위험)">
+<!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
+<!ENTITY noscriptGeneral "일반">
+<!ENTITY noscriptAppearance "Appearance">
+<!ENTITY noscriptShow "Show...">
+<!ENTITY noscriptCtxMenu "Contextual menu">
+<!ENTITY noscriptStatusIcon "Status bar icon">
+<!ENTITY noscriptFullAddr "Full Addresses (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Full Domains (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
+<!ENTITY noscriptTempCmd "임시 허용[...]">
+<!ENTITY noscriptSound "Audio feedback when scripts are blocked">
+<!ENTITY noscriptImport "가져오기">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "내보내기">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "차단된 스크립트에 대한 정보 보여주기">
+<!ENTITY noscriptNotify.bottom "하단에 메시지 표시">
+<!ENTITY noscriptSound.choose "선택">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Play">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "기본 설정으로 복원">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "고급">
+<!ENTITY noscriptAdditionalPermissions "신뢰할 수 있는 사이트에 추가적인">
+<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
+<!ENTITY noscriptAdditionalRestrictions "신뢰할 수 없는 사이트에 대한 추가적인 제한 조치">
+<!ENTITY noscriptPlugins "플러그인">
+<!ENTITY noscriptContentBlocker "이 제한 조치를 신뢰할 수 있는 사이트에도 적용">
+<!ENTITY noscriptForbidJava "Java™ 금지">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; 금지">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ 금지">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; 금지">
+<!ENTITY noscriptForbidFlash "Adobe® Flash® 금지">
+<!ENTITY noscriptForbidPlugins "다른 플러그인 금지">
+<!ENTITY noscriptReloadWarn "이 옵션은 새로운 페이지 또는 (수동으로) 페이지를 다시 읽어들일 때 적용됩니다.">
+<!ENTITY noscriptConfirmUnblock "일시적으로 객체를 허용할 것인지를 확인합니다.">
+<!ENTITY noscriptStatusLabel "상태바 레이블">
+<!ENTITY noscriptForbidBookmarklets "북마크릿(bookmarklets) 금지">
+<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
+<!ENTITY noscriptTruncateTitle "Truncate document titles">
+<!ENTITY noscriptFixLinks "JavaScript 링크 수정 시도">
+<!ENTITY noscriptAllowBookmarks "북마크를 이용한 사이트 열기 허용">
+<!ENTITY noscriptAllowViaBookmarks "북마크를 이용한 사이트 열기 허용">
+<!ENTITY noscriptAllowPing "&lt;A PING...&gt; 허용">
+<!ENTITY noscriptAllowLocalLinks "로컬 링크 허용">
+<!ENTITY noscriptForbidPing "&lt;A PING...&gt; 금지">
+<!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptWhitelist "Whitelist">
+<!ENTITY noscriptPermissions "Permissions">
+<!ENTITY noscriptRefresh "Refresh">
+<!ENTITY noscriptNotifications "Notifications">
+<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
+<!ENTITY noscriptTrusted "Trusted">
+<!ENTITY noscriptUntrusted "Untrusted">
+<!ENTITY noscriptUnknown "Unknown">
+<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Close">
+<!ENTITY noscriptSiteManager "Site Manager">
+<!ENTITY noscriptSecurityManager "Security Manager">
+<!ENTITY noscriptPolicies "Policies">
+<!ENTITY noscriptDefaultPolicies "Default Policies">
+<!ENTITY noscriptSitePolicies "Site Specific Policies">
+<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
+<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "CSS 기반의 스캐너 차단">
+<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
+<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
+<!ENTITY noscriptShowConsole "콘솔 보기...">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "안전하지 않은">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptXssExceptions.description "이 정규 표현식과 일치하는">
+<!ENTITY noscriptMatchSample "패턴 매칭 샘플:">
+<!ENTITY noscriptReset "설정 복원">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "기본 설정으로 복원">
+<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "문서로 로드되는 JAR 원격 리소스 차단">
+<!ENTITY noscriptJarExceptions "예외를 차단하는 JAR 문서">
+<!ENTITY noscriptJarExceptions.description "이 정규 표현식과 일치하는 JAR 문서는 차단하지 않습니다.">
+<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "신뢰할 수 없는 사이트로 등록된 사이트">
+<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
