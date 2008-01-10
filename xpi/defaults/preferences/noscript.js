@@ -94,7 +94,7 @@ pref("noscript.blockCssScanners", true);
 pref("noscript.globalwarning", true);
 
 pref("noscript.jsredirectIgnore", false);
-pref("noscript.jsredirectFollow", true);
+pref("noscript.jsredirectFollow", false);
 pref("noscript.jsredirectForceShow", false);
 
 pref("noscript.safeToplevel", true);
@@ -132,3 +132,4 @@ pref("noscript.collapseObject", false);
 pref("noscript.showUntrustedPlaceholder", true);
 
 pref("noscript.jsHack", "window.urchinTracker = function() {}");
+pref("noscript.jsHackRegExp", "");

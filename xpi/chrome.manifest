@@ -1,6 +1,6 @@
 overlay	chrome://navigator/content/navigatorOverlay.xul	chrome://noscript/content/noscriptOverlay.xul
-overlay   chrome://emusic/content/startup.xul   chrome://noscript/content/noscriptOverlay.xul 	
-overlay	chrome://browser/content/browser.xul	chrome://noscript/content/noscriptOverlay.xul
+overlay chrome://emusic/content/startup.xul chrome://noscript/content/noscriptOverlay.xul
+overlay	chrome://browser/content/browser.xul chrome://noscript/content/noscriptOverlay.xul
 overlay chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://noscript/content/noscriptOverlay.xul
 
 overlay	chrome://browser/content/pref/pref-features.xul	chrome://noscript/content/prefContent.xul

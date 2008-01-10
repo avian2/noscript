@@ -1,5 +1,27 @@
 NoScript ChangeLog
 
+v 1.2.9
+=====================================================================
+x Set noscript.jsredirectFollow default to false
+x Extra QA for release
+
+v 1.2.8
+=====================================================================
++ Injection Checker optimization on very long query strings
+x Fixed OpenId XSS false positive on blogger.com (thanks dondado)
+
+v 1.2.7
+=====================================================================
+x Fixed Yahoo search XSS false positive by double checking valid JS
+  fragments for potential danger (10x firefoxisgreat2008 for report)
+x Fixed the "form fields forgotten" issue by disabling the jsHack
+  feature which caused it. If you need jsHack and you can afford this 
+  problem, just set the noscript.jsHackRegExp about:config preference 
+  to a regular expression matching the URLs where you want it enabled
+x Fixed content placeholders not showing on some sites
+x Fixed POST payload shouldn't stripped as a consequence of injection
+  checking (thanks theiago for report)
+
 v 1.2.6
 =====================================================================
 x Updated localizations

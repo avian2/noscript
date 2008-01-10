@@ -209,7 +209,7 @@ Strings.wrap = function(s, length, sep) {
     } else return p;
   }
   if (typeof(s) != "string") s = s.toString();
-  var paras = s.split(/\n/);
+  var paras = s.split("\n");
   
   for (var j = 0; j < paras.length; j++) paras[j] = wrapPara(paras[j]);
   return paras.join("\n");
@@ -780,7 +780,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.2.6",
+  VERSION: "1.2.9",
   
   get wrappedJSObject() {
     return this;
@@ -916,10 +916,12 @@ NoscriptService.prototype = {
   injectionCheckSubframes: true,
   
   jsredirectIgnore: false,
-  jsredirectFollow: true,
+  jsredirectFollow: false,
   jsredirectForceShow: false,
   
   jsHack: null,
+  jsHackRegExp: null,
+  jsHackEnabled: false,
   
   nselNever: false,
   nselForce: true,
@@ -1026,6 +1028,7 @@ NoscriptService.prototype = {
       case "jsredirectIgnore":
       case "jsredirectForceShow":
       case "jsHack":
+      case "jsHackEnabled":
         this[name] = this.getPref(name, this[name]);
       break;
       case "consoleDump":
@@ -1047,6 +1050,7 @@ NoscriptService.prototype = {
       case "forbidJarDocumentsExceptions":
       case "filterXExceptions":
       case "whitelistRegExp":
+      case "jsHackRegExp":
         this.updateRxPref(name, "", "", this.rxParsers.multi);
       break;
       
@@ -1257,7 +1261,7 @@ NoscriptService.prototype = {
       "forbidXBL",
       "global",
       "injectionCheck", "injectionCheckSubframes",
-      "jsredirectIgnore", "jsredirectFollow", "jsredirectForceShow", "jsHack",
+      "jsredirectIgnore", "jsredirectFollow", "jsredirectForceShow", "jsHack", "jsHackRegExp",
       "nselNever", "nselForce",
       "pluginPlaceholder", "showPlaceholder", "showUntrustedPlaceholder", "collapseObject",
       "temp", "untrusted",
@@ -2615,16 +2619,20 @@ NoscriptService.prototype = {
     const lm = this.lookupMethod;
     const HTMLElement = CI.nsIDOMHTMLElement;
     for (var node = script; (node = lm(node, "nextSibling")());) {
-      if (node instanceof HTMLElement) {
-        if (new String(lm(node, "tagName")()).toUpperCase() != "NOSCRIPT") return;
-        if (lm(node, "getAttribute")("class") == "noscript-show") return;
-        lm(node, "setAttribute")("class", "noscript-show");
-        var child = lm(node, "firstChild")();
-        if (lm(child, "nodeType")() != 3) return;
-        var el = lm(lm(node, "ownerDocument")(), "createElement")("span");
-        el.className = "noscript-show";
-        el.innerHTML = lm(child, "nodeValue")();
-        lm(node, "replaceChild")(el, child);
+      try {
+        if (node instanceof HTMLElement) {
+          if (new String(lm(node, "tagName")()).toUpperCase() != "NOSCRIPT") return;
+          if (lm(node, "getAttribute")("class") == "noscript-show") return;
+          lm(node, "setAttribute")("class", "noscript-show");
+          var child = lm(node, "firstChild")();
+          if (lm(child, "nodeType")() != 3) return;
+          var el = lm(lm(node, "ownerDocument")(), "createElement")("span");
+          el.className = "noscript-show";
+          el.innerHTML = lm(child, "nodeValue")();
+          lm(node, "replaceChild")(el, child);
+        }
+      } catch(e) {
+        this.dump(e.message + " while showing NOSCRIPT element");
       }
     }
   },
@@ -3235,11 +3243,11 @@ NoscriptService.prototype = {
           }
         }
         
-        // urchinTracker replacement hack
-        if(this.jsHack && /^http/.test(uri.scheme)) {
-          domWindow.location.href = "javascript:(function() { try {" + 
-              encodeURIComponent(this.jsHack) + 
-              "} catch(e) {}})()";
+        
+        if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(uri.spec)) {
+          try {
+            domWindow.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {}  void(0)");
+          } catch(jsHackEx) {}
         }
       }
     } catch(e) {
@@ -3248,8 +3256,7 @@ NoscriptService.prototype = {
   },
   onStatusChange: function() {},
   onSecurityChange: function() {}, 
-  onProgressChange: function() {}
-  ,
+  onProgressChange: function() {},
   
   
   checkJarDocument: function(uri, context) {
@@ -3773,7 +3780,7 @@ RequestWatchdog.prototype = {
     if(!globalJS) {
       if(ns.autoAllow) {
         window = window || this.findWindow(channel);
-        if (window == window.top) {
+        if (window && window == window.top) {
           targetSite = ns.getQuickSite(originalSpec, ns.autoAllow);
           if(targetSite && !ns.isJSEnabled(targetSite)) {
             ns.autoTemp(targetSite);
@@ -3905,7 +3912,9 @@ RequestWatchdog.prototype = {
     var requestInfo = new RequestInfo(channel, url, origin, window);
 
     // transform upload requests into no-data GETs
-    if (ns.filterXPost && (channel instanceof CI.nsIUploadChannel) && channel.uploadStream) {
+    if (ns.filterXPost && (channel instanceof CI.nsIUploadChannel) && channel.uploadStream
+      && !injectionAttempt // this will rule out the possibility we strip trusted to trusted uploads
+      ) {
       channel.requestMethod = "GET";
  
       requestInfo.unsafeRequest.postData = channel.uploadStream;
@@ -4173,11 +4182,11 @@ function SyntaxChecker() {
 
 SyntaxChecker.prototype = {
   lastError: null,
+  lastFunction: null,
   check: function(script) {
     this.sandbox.script = script;
      try {
-       Components.utils.evalInSandbox("new Function(script)", this.sandbox);
-       return true;
+       return !!(this.lastFunction = Components.utils.evalInSandbox("new Function(script)", this.sandbox));
      } catch(e) {
        this.lastError = e;
      }
@@ -4243,10 +4252,18 @@ var InjectionChecker = {
     return expr;
   }, 
   maybeJS: function(expr) {
+    if(/^[^\(\)="']+=[^\(\)='"]+$/.test(expr) && // commonest case, single assignment, no break
+      !/document|location|setter/.test(expr)) return false;
     return /(?:[\w$\]][\s\S]*[\(\[\.][\s\S]*(?:\([\s\S]*\)|=)|\b(?:eval|open|alert|confirm|prompt)[\s\S]*\(|\b(?:setter|location)[\s\S]*=)/
       .test(expr); 
   },
-  
+  checkLastFunction: function() {
+    return this.syntax.lastFunction && 
+      this.maybeJS(
+        this.syntax.lastFunction.toSource()
+        .replace(/[^\{]*?\{\s*([\s\S]*)\s*\}\s*/, "$1")
+      );
+  },
   checkJSBreak: function(s) {
     // Direct script injection breaking JS string literals or comments
     if (!this.maybeJS(s)) return false;
@@ -4257,7 +4274,7 @@ var InjectionChecker = {
     findInjection.lastIndex = 0;
     var breakSeq, subj, expr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
     
-    const MAX_TIME = 800, MAX_LOOPS = 100;
+    const MAX_TIME = 800, MAX_LOOPS = 400;
 
     const t = new Date().getTime();
     for (var m, iterations = 0; m = findInjection.exec(s);) {
@@ -4309,7 +4326,8 @@ var InjectionChecker = {
             (this.checkJSSyntax(script) ||
               /'.+/.test(script) && this.checkJSSyntax("''" + script + "'") ||
               /".+/.test(script) && this.checkJSSyntax('""' + script + '"')
-            )) {
+            ) && this.checkLastFunction()
+            ) {
             return true;
           }
           script = quote + quote + expr + quote;
@@ -4317,14 +4335,15 @@ var InjectionChecker = {
           script = expr;
         }
         
-        if (/^(?:[^'"\/\[\(]*[\]\)]|(?:''|"")[ \t]*[`\w]+|[^"'\/]*`)/.test(script)) {
+        if (/^(?:[^'"\/\[\(]*[\]\)]|(?:''|"")[ \t]*[`\w]+|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=])|.*(?:`|[^&]&[\w\.]+=[^=])[^"'\/]*$)/
+            .test(script.split("//")[0])) {
            this.log("SKIP (head syntax) " + script);
            break; // unrepairable syntax error in the head move left cursor forward 
         }
         
         if (this.maybeJS(this.reduceQuotes(expr))) {
 
-          if (this.checkJSSyntax(script)) {
+          if (this.checkJSSyntax(script) && this.checkLastFunction()) {
             this.log("JS Break Injection detected", t);
             return true;
           }
@@ -4334,7 +4353,7 @@ var InjectionChecker = {
           }
           errmsg = this.syntax.lastError.message;
           this.log(iterations + ": " + errmsg + "\n" + script + "\n---------------");
-          if (/left-hand|invalid flag after regular expression/.test(errmsg)) {
+          if (/left-hand|invalid flag after regular expression|missing ; before statement/.test(errmsg)) {
             break; // unrepairable syntax error (wrong assignment to a left-hand expression), move left cursor forward 
           } else if((m = errmsg.match(/\bmissing ([:\]\)]) /))) {
             len = subj.indexOf(m[1], len);
@@ -4636,7 +4655,7 @@ XSanitizer.prototype = {
     }
     
     if (this.brutal) { // injection checks were positive
-      s = s.replace(/['\(\)\=]/g, " ").replace(/(?:setter|eval|location|open)\b/g, String.toUpperCase);
+      s = s.replace(/['\(\)\=]/g, " ").replace(/(?:setter|eval|location|open|document\W*[\[\.])\b/g, String.toUpperCase);
     }
     
     return s == orig ? unsanitized : s;
