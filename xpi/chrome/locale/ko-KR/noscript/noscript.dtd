@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 옵션">
 <!ENTITY noscriptAbout "NoScript 정보...">
-<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
+<!ENTITY noscriptPermissionsText "스크립트 실행을 허용할 웹 사이틀르 지정할 수 있습니다. 스크립트를 허용할 사이트의 주소나 도메인 (예를 들면, &quot;http://www.site.com&quot; 또는 &quot;site.com&quot;)을 입력한 후 [허용] 버튼을 클릭합니다.">
 <!ENTITY noscriptWebAddress "웹 사이트 주소">
 <!ENTITY noscriptAllow "허용">
 <!ENTITY noscriptAllow.accesskey "l">
@@ -14,17 +14,17 @@
 <!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "선택된 사이트 삭제">
 <!ENTITY noscriptGloballyEnabled "스크립트 전면 허용(위험)">
-<!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
+<!ENTITY noscriptAutoReload "허용 정책이 변경되면 해당 페이지를 자동으로 다시 읽기">
 <!ENTITY noscriptGeneral "일반">
-<!ENTITY noscriptAppearance "Appearance">
-<!ENTITY noscriptShow "Show...">
-<!ENTITY noscriptCtxMenu "Contextual menu">
-<!ENTITY noscriptStatusIcon "Status bar icon">
-<!ENTITY noscriptFullAddr "Full Addresses (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Full Domains (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
+<!ENTITY noscriptAppearance "모양">
+<!ENTITY noscriptShow "다음 기능들을 보여줍니다...">
+<!ENTITY noscriptCtxMenu "상황에 따른 메뉴">
+<!ENTITY noscriptStatusIcon "상태표시줄 아이콘">
+<!ENTITY noscriptFullAddr "전체 주소(http://www.noscript.net)">
+<!ENTITY noscriptFullDom "전체 도메인(www.noscript.net)">
+<!ENTITY noscriptBaseDom "2수준 도메인(noscript.net)">
 <!ENTITY noscriptTempCmd "임시 허용[...]">
-<!ENTITY noscriptSound "Audio feedback when scripts are blocked">
+<!ENTITY noscriptSound "스크립트가 차단되었을 때 소리로 알림">
 <!ENTITY noscriptImport "가져오기">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "내보내기">
@@ -33,13 +33,13 @@
 <!ENTITY noscriptNotify.bottom "하단에 메시지 표시">
 <!ENTITY noscriptSound.choose "선택">
 <!ENTITY noscriptSound.choose.accesskey "C">
-<!ENTITY noscriptSound.play "Play">
+<!ENTITY noscriptSound.play "재생">
 <!ENTITY noscriptSound.play.accesskey "a">
 <!ENTITY noscriptSound.reset "기본 설정으로 복원">
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "고급">
-<!ENTITY noscriptAdditionalPermissions "신뢰할 수 있는 사이트에 추가적인">
-<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
+<!ENTITY noscriptAdditionalPermissions "신뢰할 수 있는 사이트에 대해서 다음을 추가적으로 허용">
+<!ENTITY noscriptAllowClipboard "외부 클립보드로부터 리치 텍스트 복사 및 붙여넣기 허용">
 <!ENTITY noscriptAdditionalRestrictions "신뢰할 수 없는 사이트에 대한 추가적인 제한 조치">
 <!ENTITY noscriptPlugins "플러그인">
 <!ENTITY noscriptContentBlocker "이 제한 조치를 신뢰할 수 있는 사이트에도 적용">
@@ -53,50 +53,50 @@
 <!ENTITY noscriptConfirmUnblock "일시적으로 객체를 허용할 것인지를 확인합니다.">
 <!ENTITY noscriptStatusLabel "상태바 레이블">
 <!ENTITY noscriptForbidBookmarklets "북마크릿(bookmarklets) 금지">
-<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
-<!ENTITY noscriptTruncateTitle "Truncate document titles">
+<!ENTITY noscriptShowPlaceholder "플레이스홀더 아이콘 표시">
+<!ENTITY noscriptTruncateTitle "문서 제목에서 양쪽끝에 있는 공백을 제거">
 <!ENTITY noscriptFixLinks "JavaScript 링크 수정 시도">
 <!ENTITY noscriptAllowBookmarks "북마크를 이용한 사이트 열기 허용">
 <!ENTITY noscriptAllowViaBookmarks "북마크를 이용한 사이트 열기 허용">
 <!ENTITY noscriptAllowPing "&lt;A PING...&gt; 허용">
 <!ENTITY noscriptAllowLocalLinks "로컬 링크 허용">
 <!ENTITY noscriptForbidPing "&lt;A PING...&gt; 금지">
-<!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt; 요소 내에 있는 META 리디렉션 제거">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
-<!ENTITY noscriptWhitelist "Whitelist">
-<!ENTITY noscriptPermissions "Permissions">
-<!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifications "Notifications">
-<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
-<!ENTITY noscriptTrusted "Trusted">
-<!ENTITY noscriptUntrusted "Untrusted">
-<!ENTITY noscriptUnknown "Unknown">
-<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptWhitelist "사용자 지정 목록">
+<!ENTITY noscriptPermissions "허용">
+<!ENTITY noscriptRefresh "새로고침">
+<!ENTITY noscriptNotifications "알림">
+<!ENTITY noscriptToolbarToggle "NoScript 툴바 버튼을 마우스 왼쪽버튼으르 클릭할 때맏 현재 최상위 사이트에 대한 허용 상태를 허용/비허용으로 변경합니다.">
+<!ENTITY noscriptTrusted "신뢰할 수 있는 사이트">
+<!ENTITY noscriptUntrusted "신뢰할 수 없는 사이트">
+<!ENTITY noscriptUnknown "알려지지 않음">
+<!ENTITY noscriptAdd "추가">
 <!ENTITY noscriptAdd.accesskey "A">
-<!ENTITY noscriptClose "Close">
-<!ENTITY noscriptSiteManager "Site Manager">
-<!ENTITY noscriptSecurityManager "Security Manager">
-<!ENTITY noscriptPolicies "Policies">
-<!ENTITY noscriptDefaultPolicies "Default Policies">
-<!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
+<!ENTITY noscriptClose "닫기">
+<!ENTITY noscriptSiteManager "사이트 관리자">
+<!ENTITY noscriptSecurityManager "보안 관리자">
+<!ENTITY noscriptPolicies "정책">
+<!ENTITY noscriptDefaultPolicies "기본 정책">
+<!ENTITY noscriptSitePolicies "사이트별 정책">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; 요소를 숨김">
+<!ENTITY noscriptNselForce "차단된 &lt;SCRIPT&gt; 다음에 오는 &lt;NOSCRIPT&gt; 요소 표시">
+<!ENTITY noscriptAutoAllowTopLevel "일시적으로 최상위 사이트를 허용">
+<!ENTITY noscriptDescription "FireFox(불여우)를 위한 한층 강화된 보안 기능: NoScript를 사용하면 여러분이 선택한 신뢰할 수 있는 도메인(예를 들면, 인터넷 뱅킹 웹 사이트)에 대해서만 JavaScript와 Java(또한 그 밖의 플러그인들 포함)를 허용합니다. 사용자 지정 목록(whitelist)에 기반을 분 선점형 차단 접근 방식을 통해 기능에 제약을 받지 않고 보안 위협 요소들(알려진 위협 요소 뿐만 아니라 알려지지 않은 위협 요소까지도!)을 사전에 차단합니다. 전문가들 역시 &quot;NoScript를 사용하면 FireFox가 좀더 안전해집니다!&quot;라고 말하고 있습니다. :-)">
 <!ENTITY noscriptOptBlockCssScanners "CSS 기반의 스캐너 차단">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
+<!ENTITY noscriptOptFilterXGet "의심스러운 크로스-사이트 요청 차단">
+<!ENTITY noscriptOptFilterXPost "크로스-사이트 POST 요청을 데이터 손실이 없는 GET 요청으로 변환">
 <!ENTITY noscriptShowConsole "콘솔 보기...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS FAQ">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "안전하지 않은">
+<!ENTITY noscriptUnsafeReload "안전하지 않은 상태로 다시 읽기">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "이 정규 표현식과 일치하는">
-<!ENTITY noscriptMatchSample "패턴 매칭 샘플:">
+<!ENTITY noscriptXssExceptions "안티-XSS 보호 예외 적용">
+<!ENTITY noscriptXssExceptions.description "다음 정규 표현식과 일치하는 대상은 XSS로부터 보호하지 않습니다">
+<!ENTITY noscriptMatchSample "패턴 매칭 예제:">
 <!ENTITY noscriptReset "설정 복원">
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "기본 설정으로 복원">
@@ -108,7 +108,7 @@
 <!ENTITY noscriptForbidJarDocuments "문서로 로드되는 JAR 원격 리소스 차단">
 <!ENTITY noscriptJarExceptions "예외를 차단하는 JAR 문서">
 <!ENTITY noscriptJarExceptions.description "이 정규 표현식과 일치하는 JAR 문서는 차단하지 않습니다.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp "일시적인 허용 취소">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "신뢰할 수 없는 사이트로 등록된 사이트">
-<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
+<!ENTITY noscriptNoUntrustedPlaceholder "신뢰할 수 없는 사이트로 등록된 사이트의 객체에 대해서는 플레이스홀더 표시하지 않음">
+<!ENTITY noscriptCollapseBlockedObjects "차단된 객체는 사용하지 않음">

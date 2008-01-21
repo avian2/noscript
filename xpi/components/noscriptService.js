@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 const CI = Components.interfaces;
 const CC = Components.classes;
+const STATE_START = CI.nsIWebProgressListener.STATE_START;
+const STATE_DOC = CI.nsIWebProgressListener.STATE_IS_DOCUMENT;
 const NS_BINDING_ABORTED = 0x804B0002;
 const CP_OK = 1;
 const CP_NOP = function() { return CP_OK };
@@ -34,6 +36,7 @@ const LOG_CHROME_WIN = 8;
 const LOG_XSS_FILTER = 16;
 const LOG_INJECTION_CHECK = 32;
 const LOG_LEAKS = 1024;
+const LOG_SNIFF = 2048;
 
 // component defined in this file
 const EXTENSION_ID="{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -780,7 +783,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.2.9",
+  VERSION: "1.3",
   
   get wrappedJSObject() {
     return this;
@@ -921,7 +924,6 @@ NoscriptService.prototype = {
   
   jsHack: null,
   jsHackRegExp: null,
-  jsHackEnabled: false,
   
   nselNever: false,
   nselForce: true,
@@ -1011,7 +1013,6 @@ NoscriptService.prototype = {
       case "safeToplevel":
       case "autoAllow":
       case "contentBlocker":
-      case "pluginPlaceholder":
       case "showPlaceholder":
       case "showUntrustedPlaceholder":
       case "collapseObject":
@@ -1028,7 +1029,6 @@ NoscriptService.prototype = {
       case "jsredirectIgnore":
       case "jsredirectForceShow":
       case "jsHack":
-      case "jsHackEnabled":
         this[name] = this.getPref(name, this[name]);
       break;
       case "consoleDump":
@@ -1066,13 +1066,13 @@ NoscriptService.prototype = {
       break;
       
       case "blockNSWB":
-        this[name] = this.getPref(name);
+      case "pluginPlaceholder":
       case "nselForce":
       case "nselNever":
         
       // case "blockCssScanners":
         this.updateCssPref(name);
-        if ((name = "nselNever") && this.getPref("nselNever") && !this.blockNSWB) {
+        if ((name == "nselNever") && this.getPref("nselNever") && !this.blockNSWB) {
           this.setPref("blockNSWB", true);
         }
       break;
@@ -1143,17 +1143,29 @@ NoscriptService.prototype = {
   },
   
   updateCssPref: function(name) {
-    var sheet = 
-    ({
-      nselForce: "noscript.noscript-show, span.noscript-show { display: inline !important } span.noscript-show { padding: 0px; margin: 0px; border: none; background: inherit; color: inherit }",
-      nselNever: "noscript, noscript * { display: none !important }",
-      blockCssScanners: "a:visited { background-image: none !important }",
-      blockNSWB: "noscript, noscript * { background-image: none !important; list-style-image: none !important }"
-    }[name]);
-    if (!sheet) return;
-
-    var value = this[name];
-    this[name] = value = this.getPref(name, value);
+    var value = this[name] = this.getPref(name, value);
+    var sheet;
+    switch(name) {
+      case "nselForce":
+        sheet = "noscript.noscript-show, span.noscript-show { display: inline !important } span.noscript-show { padding: 0px; margin: 0px; border: none; background: inherit; color: inherit }";
+        break;
+      case "nselNever":
+        sheet = "noscript, noscript * { display: none !important }";
+        break;
+      case "blockCssScanners":
+        sheet = "a:visited { background-image: none !important }";
+        break;
+      case "blockNSWB": 
+        sheet = "noscript, noscript * { background-image: none !important; list-style-image: none !important }";
+        break;
+      case "pluginPlaceholder": 
+        sheet = 'a.__noscriptPlaceholder__ > div:first-child { display: block !important; -moz-outline-color: #fc0 !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; -moz-outline-offset: -1px !important; background: #ffffe0 url("' + 
+                this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important; }' +
+                'noscript a.__noscriptPlaceholder__ { display: inline !important }';
+        break;
+      default:
+        return;
+    };
     this.updateStyleSheet(sheet, value);
   },
   
@@ -1217,6 +1229,7 @@ NoscriptService.prototype = {
     const osvr = CC['@mozilla.org/observer-service;1'].getService(CI.nsIObserverService);
     if (!this.requestWatchdog) {
       osvr.addObserver(this.requestWatchdog = new RequestWatchdog(this), "http-on-modify-request", true);
+      osvr.addObserver(this.requestWatchdog, "http-on-examine-response", true);
     }
     osvr.addObserver(this, "em-action-requested", true);
     
@@ -1330,6 +1343,7 @@ NoscriptService.prototype = {
       const osvr = CC['@mozilla.org/observer-service;1'].getService(CI.nsIObserverService);
       if (this.requestWatchdog) {
         osvr.removeObserver(this.requestWatchdog, "http-on-modify-request");
+        osvr.removeObserver(this.requestWatchdog, "http-on-examine-response");
         this.requestWatchdog = null;
       }
       osvr.removeObserver(this, "em-action-requested");
@@ -1986,7 +2000,9 @@ NoscriptService.prototype = {
   cpConsoleFilter: [2, 5, 6, 7],
   cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
     this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
-        ", origin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + aContext + 
+      ", origin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + 
+        ((aContext instanceof CI.nsIDOMHTMLElement) ? "<HTML Element>" // try not to cause side effects of toString() during load
+          : aContext)  + 
         ", mime: " + aMimeTypeGuess + ", " + aInternalCall);
   },
   reject: function(what, args) {
@@ -2182,7 +2198,7 @@ NoscriptService.prototype = {
               }
             }
             
-            if (!this.forbidSomeContent || (isLegacyFrame && !aInternalCall) ||
+            if (!this.forbidSomeContent ||
                !blockThisIFrame && (
                     !aMimeTypeGuess ||
                     aMimeTypeGuess.substring(0, 5) == "text/"
@@ -2261,25 +2277,23 @@ NoscriptService.prototype = {
               return CP_OK; // forceAllow
             }
           } catch(ex) {
-            dump("NoScriptService.pluginsCache.update():" + ex + "\n");
+            this.dump("pluginsCache.update():" + ex);
           }
+         
           try {
-            if (aContext && (aContentType == 5 || aContentType == 7)) {
+            if(isLegacyFrame) { // inject an embed and defer to load
+              this.blockLegacyFrame(aContext, aContentLocation, aInternalCall);
+            } else if (aContext && (aContentType == 5 || aContentType == 7)) {
               if (aContext instanceof CI.nsIDOMNode
                  && this.pluginPlaceholder) {
-              
-                this.setPluginExtras(this.findObjectAncestor(aContext), 
-                  {
-                    url: locationURL,
-                    mime: mimeKey
-                  });
-                try {
-                  this.syncUI(aContext);
-                } catch(uiEx) {
-                  // non fatal, maybe we've got no XUL UI in this embedding setup...
-                }
+                this.delayExec(this.tagForReplacement, 0, aContext, {
+                  url: locationURL,
+                  mime: mimeKey
+                });
               }
             }
+          } catch(ex) {
+            if(this.consoleDump) this.dump(ex);
           } finally {
             return this.reject("Forbidden " + (contentDocument ? ("IFrame " + contentDocument.URL) : "Content"), arguments);
           }
@@ -2300,6 +2314,46 @@ NoscriptService.prototype = {
     check: function() {
       return false;
     }
+  },
+  
+  tagForReplacement: function(embed, pluginExtras) {
+    try {
+      var browser = this.domUtils.findBrowserForNode(embed);
+      var pe = this.getExpando(browser, "pe") || this.setExpando(browser, "pe",  []);
+      pe.push({embed: embed, pluginExtras: pluginExtras});
+      try {
+        this.syncUI(embed);
+      } catch(noUIex) {
+        if(this.consoleDump) this.dump(noUIex);
+      }
+    } catch(ex) {
+      if(this.consoleDump) this.dump(
+        "Error tagging object [" + pluginExtras.mime + " from " + pluginExtras.url + "] for replacement: " + ex);
+    }
+  },
+  
+  blockLegacyFrame: function(frame, uri, sync) {
+    var verbose = this.consoleDump & LOG_CONTENT_BLOCK;
+    if(verbose) {
+      this.dump("Redirecting blocked legacy frame " + uri.spec);
+    }
+    var url = this.createPluginDocumentURL(uri);
+    if(sync) {
+      if(verbose) dump("Legacy frame plugin SYNC, setting to " + url + "\n");
+      frame.src = url;
+    } else {
+      frame.ownerDocument.defaultView.addEventListener("load", function(ev) {
+          if(verbose) dump("Legacy frame plugin ON PARENT LOAD, setting to " + url + "\n");
+          ev.currentTarget.removeEventListener("load", arguments.callee, false);
+          frame.src = url;
+      }, false);
+    }
+  },
+  
+  createPluginDocumentURL: function(uri) {
+    return 'data:text/html;charset=utf-8,' +
+        encodeURIComponent('<html><head></head><body style="padding: 0px; margin: 0px"><embed src="' +
+                  uri.spec + '" width="100%" height="100%"></embed></body></html>');
   },
   
   forbiddenIFrameContext: function(originURL, locationURL) {
@@ -2401,7 +2455,7 @@ NoscriptService.prototype = {
   
   syncUI: function(domNode) {
     const browser = this.domUtils.findBrowserForNode(domNode);
-    if (browser && (browser.docShell instanceof CI.nsIWebNavigation) && !browser.docShell.isLoadingDocument) {
+    if (browser && (browser.docShell instanceof CI.nsIWebProgress) && !browser.docShell.isLoadingDocument) {
       var overlay = this.findOverlay(browser);
       if(overlay) overlay.syncUI(domNode.ownerDocument.defaultView.top);
     }
@@ -2817,14 +2871,17 @@ NoscriptService.prototype = {
         if (extras) {
           
           if (!forcedCSS) {
-            forcedCSS = "; -moz-outline-color: red; -moz-outline-style: solid; -moz-outline-width: 1px; background: white url(\"" + 
-              pp + "\") no-repeat left top; opacity: 0.6; cursor: pointer; margin-top: 0px; margin-bottom: 0px; }";
+            
+            forcedCSS = ";";
+           
             try {
               if (object.parentNode == document.body && !object.nextSibling) { 
                 // raw plugin content
-                collapse = false
+                collapse = false;
+                forcedCSS = ";-moz-outline-style: none !important;";
               }
             } catch(e) {}
+            
           }
 
           try {
@@ -2852,6 +2909,7 @@ NoscriptService.prototype = {
               
               with(anchor.style) {
                 padding = margin = borderWidth = "0px";
+                MozOutlineOffset = "-1px"; 
                 display = "inline";
               }
               
@@ -2870,11 +2928,6 @@ NoscriptService.prototype = {
                   anchor.style.width = style.width;
                   anchor.style.height = style.height;
                   anchor.style.display = "block";
-                  
-                  if (object.parentNode == document.body &&
-                      style.width == "100%" && style.height == "100%") {
-                    innerDiv.style.border = "none";
-                  }
                 }  
                 innerDiv.style.minWidth = "32px";
                 innerDiv.style.minHeight = "32px";
@@ -3003,16 +3056,36 @@ NoscriptService.prototype = {
     sites.scriptCount = 0;
     sites.pluginCount = 0;
     sites.pluginExtras = [];
+    this._attachPluginExtras(browser);
     try {
       sites = this._enumerateSites(browser, sites);
     } catch(ex) {
-      if (this.consoleDump) {
-        dump("[NOSCRIPT ERROR!!!] Enumerating sites: " + ex);
-      }
+      if (this.consoleDump) this.dump("Error enumerating sites: " + ex);
     }
     return sites;
   },
   
+  _attachPluginExtras: function(browser) {
+    try {
+       var pe = this.getExpando(browser, "pe");
+       if (!pe) return;
+       var o;
+       for (var j = pe.length; j-- > 0;) {
+         o = pe[j];
+         try {
+           this.setPluginExtras(o.embed, o.pluginExtras);
+          } catch(e1) { 
+            if(this.consoleDump & LOG_CONTENT_BLOCK) 
+              this.dump("Error setting plugin extras: " + 
+                (o && o.pluginExtras && o.pluginExtras.url) + ", " + e1); 
+          }
+       }
+       this.setExpando(browser, "pe", null);
+    } catch(e2) {
+      if(this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Error attaching plugin extras: " + e2); 
+    }
+  },
+
   _enumerateSites: function(browser, sites) {
 
     const nsIWebNavigation = CI.nsIWebNavigation;
@@ -3122,20 +3195,22 @@ NoscriptService.prototype = {
         policyHints[4] = newChannel.contentType || oldChannel.contentType || policyHints[4];
       } catch(e) {}
       
-      try {
-        var type = policyHints[0];
-        var site = this.getSite(uri.spec);
-        var win = rw.findWindow(newChannel) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
-        var browser = win && rw.findBrowser(newChannel, win);
-        if (browser) {
-          var redirCache = this.getExpando(browser, "redirCache") || this.setExpando(browser, "redirCache", {});
-          var cache = redirCache[win.document.documentURI] || (redirCache[win.document.documentURI] = []);
-          cache.push({ site: site, type: type });
-        } else {
-          if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
+      var type = policyHints[0];
+      if(type != 6) { // not a document load? try to cache redirection for menus
+        try {
+          var site = this.getSite(uri.spec);
+          var win = rw.findWindow(newChannel) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
+          var browser = win && rw.findBrowser(newChannel, win);
+          if (browser) {
+            var redirCache = this.getExpando(browser, "redirCache") || this.setExpando(browser, "redirCache", {});
+            var cache = redirCache[win.document.documentURI] || (redirCache[win.document.documentURI] = []);
+            cache.push({ site: site, type: type });
+          } else {
+            if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
+          }
+        } catch(e) {
+          if (this.consoleDump) this.dump(e);
         }
-      } catch(e) {
-        if (this.consoleDump) this.dump(e);
       }
       if (this.shouldLoad.apply(this, policyHints) == CP_OK) { // accept
         rw.attachToChannel(newChannel, "noscript.policyHints", policyHints);
@@ -3158,10 +3233,11 @@ NoscriptService.prototype = {
     this.currentPolicyURI = this.currentPolicyHints = null;
   },
   // nsIWebProgressListener implementation
+  onLinkIconAvailable: function(x) {}, // tabbrowser.xml bug?
   onStateChange: function(wp, req, stateFlag, status) {
     if (req instanceof CI.nsIHttpChannel) {
       if (this.currentPolicyURI == req.URI) {
-        this.requestWatchdog.attachToChannel(req, "noscript.policyHints", this.currentPolicyHints);
+        this.requestWatchdog.attachToChannel(req, "noscript.policyHints",  this.currentPolicyHints);
       }
     }
     this.resetPolicyState();
@@ -3169,95 +3245,119 @@ NoscriptService.prototype = {
   onLocationChange: function(wp, req, location) {
     try {
       if (req && (req instanceof CI.nsIChannel) && req.isPending()) {
-        
-        const ns = this;
-        const rw = ns.requestWatchdog;
-        
-        const domWindow = rw.findWindow(req);
-        
+        const domWindow = this.requestWatchdog.findWindow(req); 
         if (!domWindow) return;
-        
-        const uri = req.URI;
-        
-        if (domWindow && domWindow.document && domWindow.document.characterSet == "UTF-7") {
-          if ((uri.schemeIs("http") || uri.schemeIs("https")) &&
-              this.getPref("utf7filter", true)) {
-            if (this.neutralizeUTF7(domWindow)) {
-              req.cancel(NS_BINDING_ABORTED);
-              return;
-            }
-          }
-        }
-        
-        if (this.checkJarDocument(uri, domWindow)) {
-          req.cancel(NS_BINDING_ABORTED);
-        }
-        
-        const topWin = domWindow == domWindow.top;
-
-        var browser = null;
-        var overlay = null;
-        var xssInfo = null;
-        
-
-        if (topWin) {
-          
-          if (domWindow instanceof CI.nsIDOMChromeWindow) return;
-        
-          browser = ns.domUtils.findBrowserForNode(domWindow);
-          overlay = ns.findOverlay(browser);
-          if (overlay) {
-            overlay.initContentWindow(domWindow);
-            overlay.setMetaRefreshInfo(null, browser);
-            xssInfo = rw.extractFromChannel(req, "noscript.XSS");
-            if (xssInfo) xssInfo.browser = browser;
-            rw.unsafeReload(browser, false);
-          }
-        }
-        
-       
-        if (ns.shouldLoad(7, uri, uri, domWindow, req.contentType, true) != CP_OK) {
-          req.cancel(NS_BINDING_ABORTED);
-          if (this.consoleDump) {
-            this.dump("Aborting plugin document");
-          }
-          
-          var embeds = domWindow.document.getElementsByTagName("embed");
-          var e;
-          var eType = "application/x-noscript-blocked";
-          var eURL = "data:" + eType + ",";
-          for (var j = embeds.length; j-- > 0;) {
-            e = embeds.item(j);
-            if (ns.shouldLoad(5, uri, null, e, req.contentType, true) != CP_OK) {
-              e.src = eURL;
-              e.type = eType;
-            }
-          }
-          if (xssInfo) overlay.notifyXSS(xssInfo);
-          
-          return;
-
-        } else {
-          if (topWin) {
-            if (xssInfo) overlay.notifyXSSOnLoad(xssInfo);
-          }
-        }
-        
-        
-        if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(uri.spec)) {
-          try {
-            domWindow.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {}  void(0)");
-          } catch(jsHackEx) {}
-        }
+        this.onBeforeLoad(req, domWindow);
       }
     } catch(e) {
-      if (ns.consoleDump) this.dump(e);
+      if (this.consoleDump) this.dump(e);
     }
   },
   onStatusChange: function() {},
   onSecurityChange: function() {}, 
   onProgressChange: function() {},
   
+  // accessory hacks
+  onContentSniffed: function(req) {
+    try {
+      if(this.consoleDump & LOG_SNIFF) {
+        try {
+          this.dump("OCS: " + req.URI.spec + ", " + req.contentType);
+        } catch(e) {
+          this.dump("OCS: " + req.URI.spec + ", CONTENT TYPE UNAVAILABLE YET");
+        }
+      }
+      const rw = this.requestWatchdog;
+      const domWindow = rw.findWindow(req);
+      if(domWindow == domWindow.top) return;
+      
+      this.onBeforeLoad(req, domWindow);
+    } catch(e) {
+      if (this.consoleDump) this.dump(e);
+    }
+  },
+  onBeforeLoad: function(req, domWindow) {
+    const uri = req.URI;
+    const rw = this.requestWatchdog;
+    if (domWindow && domWindow.document && domWindow.document.characterSet == "UTF-7") {
+      if ((uri.schemeIs("http") || uri.schemeIs("https")) &&
+          this.getPref("utf7filter", true)) {
+        if (this.neutralizeUTF7(domWindow)) {
+          req.cancel(NS_BINDING_ABORTED);
+          return;
+        }
+      }
+    }
+    
+    if (this.checkJarDocument(uri, domWindow)) {
+      req.cancel(NS_BINDING_ABORTED);
+    }
+    
+    const topWin = domWindow == domWindow.top;
+
+    var browser = null;
+    var overlay = null;
+    var xssInfo = null;
+    
+
+    if (topWin) {
+      
+      if (domWindow instanceof CI.nsIDOMChromeWindow) return;
+    
+      browser = this.domUtils.findBrowserForNode(domWindow);
+      overlay = this.findOverlay(browser);
+      if (overlay) {
+        overlay.initContentWindow(domWindow);
+        overlay.setMetaRefreshInfo(null, browser);
+        xssInfo = rw.extractFromChannel(req, "noscript.XSS");
+        if (xssInfo) xssInfo.browser = browser;
+        rw.unsafeReload(browser, false);
+      }
+    }
+    
+   
+    if (this.shouldLoad(7, uri, uri, domWindow, req.contentType, true) != CP_OK) {
+      req.cancel(NS_BINDING_ABORTED);
+      if (this.consoleDump) {
+        this.dump("Aborting plugin document");
+      }
+      
+      if(!topWin) {
+        // defer separate embed processing for frames
+        domWindow.location.href = this.createPluginDocumentURL(uri);
+        return;
+      }
+      
+      var embeds = domWindow.document.getElementsByTagName("embed");
+      
+     
+      var eType = "application/x-noscript-blocked";
+      var eURL = "data:" + eType + ",";
+      var e;
+      for (var j = embeds.length; j-- > 0;) {
+        e = embeds.item(j);
+        if (this.shouldLoad(5, uri, null, e, req.contentType, true) != CP_OK) {
+          e.src = eURL;
+          e.type = eType;
+        }
+      }
+      if (xssInfo) overlay.notifyXSS(xssInfo);
+      
+      return;
+
+    } else {
+      if (topWin) {
+        if (xssInfo) overlay.notifyXSSOnLoad(xssInfo);
+      }
+    }
+    
+    
+    if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(uri.spec)) {
+      try {
+        domWindow.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {}  void(0)");
+      } catch(jsHackEx) {}
+    }
+  },
   
   checkJarDocument: function(uri, context) {
     if (this.forbidJarDocuments && (uri instanceof CI.nsIJARURI) &&
@@ -3626,10 +3726,21 @@ RequestWatchdog.prototype = {
   },
   
   observe: function(subject, topic, data) {
-    try {
-      this.filterXSS(subject);
-    } catch(e) {
-      this.abort({ channel: subject, reason: e.message, silent: true });
+    if((this.ns.consoleDump & LOG_SNIFF) && (subject instanceof CI.nsIHttpChannel)) {
+      this.ns.dump(topic + ": " + subject.URI.spec + ", " + subject.loadFlags);
+    }
+    if (!((subject instanceof CI.nsIHttpChannel) && (subject.loadFlags & this.LOAD_DOCUMENT_URI))) return;
+    switch(topic) {
+      case "http-on-modify-request":
+        try {
+          this.filterXSS(subject);
+        } catch(e) {
+          this.abort({ channel: subject, reason: e.message, silent: true });
+        }
+        break;
+      case "http-on-examine-response":
+        this.ns.onContentSniffed(subject);
+      break;
     }
   },
   
@@ -3679,8 +3790,6 @@ RequestWatchdog.prototype = {
   },
   
   filterXSS: function(channel) {
-   
-    if (!((channel instanceof CI.nsIHttpChannel) && (channel.loadFlags & this.LOAD_DOCUMENT_URI))) return;
     
     const ns = this.ns;
     const url = channel.URI;
@@ -3693,7 +3802,7 @@ RequestWatchdog.prototype = {
       this.noscriptReload = null;
       try {
         if (ns.consoleDump) {
-          this.dump("Fast reload, original flags: " + 
+          this.dump(channel, "Fast reload, original flags: " + 
             channel.loadFlags + ", " + (channel.loadGroup && channel.loadGroup.loadFlags));
         }
         channel.loadFlags = (channel.loadFlags & ~CI.nsIChannel.VALIDATE_ALWAYS) | 
@@ -3703,7 +3812,7 @@ RequestWatchdog.prototype = {
                   CI.nsIChannel.LOAD_FROM_CACHE | CI.nsIChannel.VALIDATE_NEVER;
         }
         if (ns.consoleDump) {
-          this.dump("Fast reload, new flags: " + 
+          this.dump(channel, "Fast reload, new flags: " + 
             channel.loadFlags + ", " + (channel.loadGroup && channel.loadGroup.loadFlags));
         }
       } catch(e) {
@@ -3748,7 +3857,7 @@ RequestWatchdog.prototype = {
           if (ns.consoleDump) this.dump(channel, "ORIGIN (from channel.documentURI): " + origin);
         }
       } else {
-        if (ns.consoleDump) this.dump("***** NO ORIGIN CAN BE INFERRED!!! *****");
+        if (ns.consoleDump) this.dump(channel, "***** NO ORIGIN CAN BE INFERRED!!! *****");
       }
     } else {
       if (channel.loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI && channel.originalURI.spec == channel.URI.spec) {
@@ -3769,8 +3878,12 @@ RequestWatchdog.prototype = {
     originSite = originSite || su.getSite(origin);
     
     var host = channel.URI.host;
-    if (host[host.length - 1] == ".") {
-      channel.URI.host = this.dns.resolve(host, 2).canonicalName;
+    if (host[host.length - 1] == "." && this.ns.getPref("canonicalFQDN", true)) {
+      try {
+        channel.URI.host = this.dns.resolve(host, 2).canonicalName;
+      } catch(ex) {
+        this.dump(channel, ex);
+      }
     }
     
    
@@ -4040,7 +4153,7 @@ RequestWatchdog.prototype = {
   notify: function(requestInfo) {
     var msg = "[NoScript XSS] " + this.ns.getString("xss.reason." + requestInfo.reason, [ 
         requestInfo.originalAttempt || "N/A",
-        requestInfo.unsafeRequest.origin,
+        requestInfo.unsafeRequest && requestInfo.unsafeRequest.origin || "",
         requestInfo.sanitizedURI && requestInfo.sanitizedURI.spec || ""
       ]);
     this.dump(requestInfo.channel, "Notifying " + msg + "\n\n\n");
@@ -4253,8 +4366,8 @@ var InjectionChecker = {
   }, 
   maybeJS: function(expr) {
     if(/^[^\(\)="']+=[^\(\)='"]+$/.test(expr) && // commonest case, single assignment, no break
-      !/document|location|setter/.test(expr)) return false;
-    return /(?:[\w$\]][\s\S]*[\(\[\.][\s\S]*(?:\([\s\S]*\)|=)|\b(?:eval|open|alert|confirm|prompt)[\s\S]*\(|\b(?:setter|location)[\s\S]*=)/
+      !/document|location|setter|\/.*\/[\s\S]*source/.test(expr)) return false;
+    return /(?:[\w$\u0080-\uFFFF\]][\s\S]*[\(\[\.][\s\S]*(?:\([\s\S]*\)|=)|\b(?:eval|open|alert|confirm|prompt)[\s\S]*\(|\b(?:setter|location)[\s\S]*=)/
       .test(expr); 
   },
   checkLastFunction: function() {
@@ -4270,9 +4383,11 @@ var InjectionChecker = {
     
     s = s.replace(/\%\d+[a-z]\w*/gi, '`'); // cleanup most urlencoded noise
     
-    const findInjection = /(['"\n\r#\]\)]|[\/\?=&](?![\/\?=&])|\*\/)(?=([\s\S]*?(?:\([\s\S]*?\)|\[[\s\S]*?\]|(?:setter|location|\.[\w\$])[^&]*=[\s\S]*?[\w$\.\[\]\-]+)))/g;
+    const findInjection = 
+      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\([\s\S]*?\)|\[[\s\S]*?\]|(?:setter|location|\.[\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
+    
     findInjection.lastIndex = 0;
-    var breakSeq, subj, expr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
+    var breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
     
     const MAX_TIME = 800, MAX_LOOPS = 400;
 
@@ -4283,8 +4398,8 @@ var InjectionChecker = {
       subj = s.substring(findInjection.lastIndex);
 
       // quickly skip innocuous CGI patterns
-      if ((m = subj.match(/^(?:[\w\s\-\/&:]+=[\w\s\-\/:]+(?:&|$))+|\w+:\/\/[\w+\-\.]*/))) {
-        findInjection.lastIndex += m[0].length;
+      if ((m = subj.match(/^(?:(?:[\w\s\-\/&:]+=[\w\s\-\/:]+(?:&|$))+|\w+:\/\/\w[\w\-\.]*)/))) {
+        findInjection.lastIndex += m[0].length - 1;
         continue;
       }
       
@@ -4293,8 +4408,8 @@ var InjectionChecker = {
       bs = this.breakStops[quote || 'nq']  
 
       len = expr.length;
-
-      for (moved = false, hunt = !!expr; hunt;) {
+      
+      for (moved = false, hunt = !!expr, lastExpr = null; hunt;) {
         
         if (new Date().getTime() - t > MAX_TIME) {
           this.log("Too long execution time! Assuming DOS... " + s);
@@ -4320,6 +4435,12 @@ var InjectionChecker = {
           }
         }
         
+        if(lastExpr == expr) {
+          lastExpr = null;
+          continue;
+        }
+        lastExpr = expr;
+        
         if(quote) {
           script = this.syntax.unquote(quote + expr, quote);
           if(script && this.maybeJS(script) &&
@@ -4335,7 +4456,7 @@ var InjectionChecker = {
           script = expr;
         }
         
-        if (/^(?:[^'"\/\[\(]*[\]\)]|(?:''|"")[ \t]*[`\w]+|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=])|.*(?:`|[^&]&[\w\.]+=[^=])[^"'\/]*$)/
+        if (/^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=]))/
             .test(script.split("//")[0])) {
            this.log("SKIP (head syntax) " + script);
            break; // unrepairable syntax error in the head move left cursor forward 
@@ -4351,16 +4472,24 @@ var InjectionChecker = {
             this.log("Too many syntax checks! Assuming DOS... " + s, t);
             return true;
           }
-          errmsg = this.syntax.lastError.message;
-          this.log(iterations + ": " + errmsg + "\n" + script + "\n---------------");
-          if (/left-hand|invalid flag after regular expression|missing ; before statement/.test(errmsg)) {
-            break; // unrepairable syntax error (wrong assignment to a left-hand expression), move left cursor forward 
-          } else if((m = errmsg.match(/\bmissing ([:\]\)]) /))) {
-            len = subj.indexOf(m[1], len);
-            if (len > -1) {
-              expr = subj.substring(0, ++len);
-              moved = m[1] != ':';
-            } else break;
+          if(this.syntax.lastError) { // could be null if we're here thanks to checkLastFunction()
+            errmsg = this.syntax.lastError.message;
+            this.log(iterations + ": " + errmsg + "\n" + script + "\n---------------");
+            if (/left-hand|invalid flag after regular expression|missing ; before statement|invalid label/.test(errmsg)) {
+              break; // unrepairable syntax error (wrong assignment to a left-hand expression), move left cursor forward 
+            } else if((m = errmsg.match(/\bmissing ([:\]\)]) /))) {
+              len = subj.indexOf(m[1], len);
+              if (len > -1) {
+                expr = subj.substring(0, ++len);
+                moved = m[1] != ':';
+              } else break;
+            } else if(/unterminated string literal/.test(errmsg)) {
+              bsPos = subj.substring(len).search(/["']/);
+              if(bsPos > -1) {
+                 expr = subj.substring(0, len += bsPos + 1);
+                 moved = true;
+              } else break;
+            }
           }
         }
       }
@@ -4387,7 +4516,7 @@ var InjectionChecker = {
       this.log("location = name navigation attempt in " +s);
       return true;
     };
-    if (/[\w\$][\s\)]*setter\s*=/.test(s)) {
+    if (/[\w\$\u0080-\uFFFF\]][\s\)]*setter\s*=/.test(s)) {
       this.log("setter override attempt in " +s);
       return true;
     }

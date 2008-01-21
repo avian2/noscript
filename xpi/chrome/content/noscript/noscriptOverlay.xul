@@ -211,6 +211,12 @@
         />
         <menuseparator class="noscript-sep-global"/>
         <menuitem class="menuitem-iconic" />
+        
+        <menuitem id="noscript-revoke-temp-mi"
+          class="menuitem-iconic noscript-revoke-temp" 
+          label="&noscriptRevokeTemp;" accesskey="&noscriptRevokeTemp.accesskey;"
+          oncommand="noscriptOverlay.eraseTemp()"
+          />
         <menu id="noscript-xss-menu" class="menu-iconic noscript-xss" 
           onpopupshowing="event.stopPropagation()" label="&noscriptXss;">
          <menupopup id="noscript-xss-menupopup">

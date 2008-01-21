@@ -94,3 +94,8 @@
   color: red !important;
   background: #ffa !important;
 }
+
+.noscript-revoke-temp {
+  font-style: italic;
+  list-style-image: url(inactive-no16.png);
+}

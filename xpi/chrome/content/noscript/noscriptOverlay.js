@@ -153,17 +153,26 @@ var noscriptOverlay = noscriptUtil.service ?
     
     node = miGlobal.nextSibling;
     const mainMenu = node.parentNode;
-    
-    if (/\bnoscript-revoke-temp\b/.test(node.className)) {
-      node.setAttribute("oncommand", "window.setTimeout(noscriptOverlay.eraseTemp, 0)");
-      if (ns.tempSites.sitesString) {
-        node.style.display = "";
-        seps.global.style.display = "";
-      } else {
-        node.style.display = "none";
-      }
-      node = node.nextSibling;
+
+    if (!/\bnoscript-revoke-temp\b/.test(node.className)) {
+      node = mainMenu.insertBefore(document.getElementById("noscript-revoke-temp-mi").cloneNode(true), node);
+      node.id = "";
     }
+    if (ns.tempSites.sitesString) {
+      node.style.display = "";
+      seps.global.style.display = "";
+      node.setAttribute("tooltiptext",
+        // remove http/https/file CAPS hack entries 
+        ns.siteUtils.sanitizeString(ns.tempSites.sitesString.replace(/\b(?:https?|file):\/\//g, ""))
+          .split(/\s+/) 
+          // .join(",\n") // wait Firefox 3 with its multiline tooltips for this
+          .length
+        );
+    } else {
+      node.style.display = "none";
+    }
+    node = node.nextSibling;
+   
 
     var xssMenu = document.getElementById("noscript-xss-menu");
     
@@ -381,7 +390,10 @@ var noscriptOverlay = noscriptUtil.service ?
   }
 ,
   eraseTemp: function() {
-    noscriptOverlay.ns.eraseTemp();
+    noscriptOverlay.ns.safeCapsOp(function() {
+      noscriptOverlay.ns.eraseTemp();
+      noscriptOverlay.syncUI();
+    });
   }
 ,
   menuAllow: function(enabled, menuItem, temp) {
@@ -974,6 +986,7 @@ var noscriptOverlay = noscriptUtil.service ?
     browser = browser || ns.domUtils.findBrowserForNode(doc);
     if (browser) {
       ns.pluginsCache.purgeURIs(browser);
+      ns.setExpando(browser, "pe", null);
       this.notificationHide(browser, true);
     }
   },

@@ -1,35 +1,35 @@
 <!ENTITY noscriptOptions "Seçenekler">
 <!ENTITY noscriptOptions.accesskey "S">
-<!ENTITY noscriptOptionsLong "NoScript Seçenekler">
+<!ENTITY noscriptOptionsLong "NoScript Seçenekleri">
 <!ENTITY noscriptAbout "NoScript Hakkında">
-<!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript izni vereceğinizi kolayca seçebilirsiniz. Lütfen adresi tam olarak girin ve &apos;İzin ver&apos; düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
+<!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript&apos;e izni vereceğinizi kolayca seçebilirsiniz. Lütfen adresi tam olarak girin ve &apos;İzin ver&apos; düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
 <!ENTITY noscriptWebAddress "Site adresi:">
 <!ENTITY noscriptAllow "İzin ver">
-<!ENTITY noscriptAllow.accesskey "E">
-<!ENTITY noscriptForbid "Yasakla">
-<!ENTITY noscriptForbid.accesskey "Y">
-<!ENTITY noscriptTrust "Güvenli Olarak İşaretle">
+<!ENTITY noscriptAllow.accesskey "z">
+<!ENTITY noscriptForbid "Engelle">
+<!ENTITY noscriptForbid.accesskey "E">
+<!ENTITY noscriptTrust "Güvenilir Olarak İşaretle">
 <!ENTITY noscriptTrust.accesskey "G">
 <!ENTITY noscriptUntrust "Güvensiz Olarak İşaretle">
-<!ENTITY noscriptUntrust.accesskey "Z">
+<!ENTITY noscriptUntrust.accesskey "v">
 <!ENTITY noscriptRemoveSelected "Seçili Siteleri Kaldır">
-<!ENTITY noscriptGloballyEnabled "JavaScript&apos;e genel olarak izin ver (tehlikeli)">
-<!ENTITY noscriptAutoReload "İzin hakları değişince sayfayı tekrar otomatikman yükle">
+<!ENTITY noscriptGloballyEnabled "JavaScript&apos;e Tüm Siteler İçin Açıldı (Tehlikelidir)">
+<!ENTITY noscriptAutoReload "İzinler değişince etkilenen sayfayı otomatik olarak tazele">
 <!ENTITY noscriptGeneral "Genel">
 <!ENTITY noscriptAppearance "Görünüm">
 <!ENTITY noscriptShow "Göster...">
-<!ENTITY noscriptCtxMenu "İçerik menüsünde">
+<!ENTITY noscriptCtxMenu "NoScript Menüsü">
 <!ENTITY noscriptStatusIcon "Durum çubugunda ikon olarak">
 <!ENTITY noscriptFullAddr "Tam adres (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Bütün alan isimleri (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Alt alan isimleri (noscript.net)">
+<!ENTITY noscriptFullDom "Tam alanadı (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Temel 2nci seviye alanadı (noscript.net)">
 <!ENTITY noscriptTempCmd "[...] geçici olarak izin ver">
-<!ENTITY noscriptSound "Betikler engellenince ses dosyası çal">
+<!ENTITY noscriptSound "Kodlar engellenince ses dosyası çal">
 <!ENTITY noscriptImport "İçe aktar">
 <!ENTITY noscriptImport.accesskey "K">
 <!ENTITY noscriptExport "Dışa aktar">
 <!ENTITY noscriptExport.accesskey "A">
-<!ENTITY noscriptNotify "Betik engellendiğinde uyarı olarak göster">
+<!ENTITY noscriptNotify "Kod engellendiğinde uyar">
 <!ENTITY noscriptNotify.bottom "Uyarıları asağıdaki kenarda göster">
 <!ENTITY noscriptSound.choose "Seçin">
 <!ENTITY noscriptSound.choose.accesskey "S">
@@ -74,11 +74,11 @@
 <!ENTITY noscriptAdd "Ekle">
 <!ENTITY noscriptAdd.accesskey "E">
 <!ENTITY noscriptClose "Kapat">
-<!ENTITY noscriptSiteManager "Site yöneticisi">
-<!ENTITY noscriptSecurityManager "Güvenlik yöneticisi">
-<!ENTITY noscriptPolicies "Kurallar">
-<!ENTITY noscriptDefaultPolicies "Varsayılan kurallar">
-<!ENTITY noscriptSitePolicies "Siteye özel kurallar">
+<!ENTITY noscriptSiteManager "Site Yöneticisi">
+<!ENTITY noscriptSecurityManager "Güvenlik Yöneticisi">
+<!ENTITY noscriptPolicies "İlkeler">
+<!ENTITY noscriptDefaultPolicies "Varsayılan İlkeler">
+<!ENTITY noscriptSitePolicies "Siteye özel ilkeler">
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; öğelerini sakla">
 <!ENTITY noscriptNselForce "&lt;SCRIPT&gt;&apos;den sonra oluşan &lt;NOSCRIPT&gt; öğelerini göster">
 <!ENTITY noscriptAutoAllowTopLevel "Varsayılan olarak aktif sitelere geçici izin verilir">
@@ -95,20 +95,20 @@
 <!ENTITY noscriptUnsafeReload "Güvensiz TekrarYükleme">
 <!ENTITY noscriptUnsafeReload.accesskey "Y">
 <!ENTITY noscriptXssExceptions "Anti-XSS Koruma Ayrıcalıklıları">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
-<!ENTITY noscriptReset "Reset">
-<!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptXssExceptions.description "Aşağıdaki tanımlara uyan hedefler XSS&apos;e karşı KORUNMAYACAKLAR.">
+<!ENTITY noscriptMatchSample "Tanım uyum örneği:">
+<!ENTITY noscriptReset "Sıfırla">
+<!ENTITY noscriptReset.accesskey "s">
+<!ENTITY noscriptResetDef "Varsayılana Sıfırla">
+<!ENTITY noscriptResetDef.accesskey "v">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
-<!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
-<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
+<!ENTITY noscriptJarFaq "JAR SSS">
+<!ENTITY noscriptJarFaq.accesskey "S">
+<!ENTITY noscriptForbidJarDocuments "Uzak JAR kaynaklarının belge olarak yüklenmelerini engelle">
+<!ENTITY noscriptJarExceptions "JAR belgesi engelleme ayrıcalıklıları">
+<!ENTITY noscriptJarExceptions.description "Bu tanıma uyan JAR belgeleri ENGELLENMEYECEKTİR.">
+<!ENTITY noscriptRevokeTemp "Geçici İzinleri Kaldır">
+<!ENTITY noscriptRevokeTemp.accesskey "K">
+<!ENTITY noscriptNoUntrustedPlaceholder "Güvensiz işaretlenen sitelerden gelen nesnelerde yertutucuları gösterme">
+<!ENTITY noscriptCollapseBlockedObjects "Engellenen nesneleri daralt">

@@ -97,14 +97,18 @@
 <!ENTITY noscriptXssExceptions "יוצאים מכלל ההגנה נגד XSS">
 <!ENTITY noscriptXssExceptions.description "ביעדים שמתאימים לביטויים הרגולריים האלה *לא* תיחסם אפשרות XSS">
 <!ENTITY noscriptMatchSample "דוגמה לביטוי רגולרי">
-<!ENTITY noscriptReset "Reset">
-<!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptReset "אתחל">
+<!ENTITY noscriptReset.accesskey "א">
+<!ENTITY noscriptResetDef "אתחל חזרה לברירת מחדל">
+<!ENTITY noscriptResetDef.accesskey "ל">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptJarFaq "שאלות ותשובות על JAR">
+<!ENTITY noscriptJarFaq.accesskey "ש">
+<!ENTITY noscriptForbidJarDocuments "חסום פריטי JAR מרוחקים מלהיטען כמסמכים">
+<!ENTITY noscriptJarExceptions "יוצאים מן הכלל בחסימות JAR">
+<!ENTITY noscriptJarExceptions.description "פריטי JAR שעונים לביטויים רגולריים אלו *לא* ייחסמו">
+<!ENTITY noscriptRevokeTemp "בטל הרשאה זמנית">
+<!ENTITY noscriptRevokeTemp.accesskey "ט">
+<!ENTITY noscriptNoUntrustedPlaceholder "אל תציב ממלאי-מקום במקום פריטים מאתרים אסורים">
+<!ENTITY noscriptCollapseBlockedObjects "צמצם פריטים חסומים">

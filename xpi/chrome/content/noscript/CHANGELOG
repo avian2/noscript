@@ -1,5 +1,41 @@
 NoScript ChangeLog
 
+v 1.3
+=====================================================================
++ "Revoke temporary permissions" command in NoScript floating menus
++ Fixed plugin content placeholder sometime missing on background
+  tabs Linux issue (thanks WAPCE for report)
+
+v 1.2.9.6
+=====================================================================
++ Better plugin content placeholder management
++ noscript.canonicalFQDN about:config preference to control 
+  canonicalization of domains ending with a dot.
++ Updated translations
+
+v 1.2.9.5
+=====================================================================
++ Transparent blocking of non-text frames (thanks sam41177878)
+
+v 1.2.9.4
+=====================================================================
++ Tweaked preliminary URL screening optimizations to enhance 
+  Injection Cheker sensibility (thanks Gareth Heyes)
+
+v 1.2.9.3
+=====================================================================
++ Updated Injection Checker to take in account upper Unicode 
+  JavaScript identifiers (thanks Gareth Heyes)
+
+v 1.2.9.2
+=====================================================================
+x Further reduced false positives with post-syntax danger checks
+
+v 1.2.9.1
+=====================================================================
+x Fixed issues with trans-domain redirections, stacking entries in
+  the previously viewed site's menu (thanks Hanspeter Spalinger)
+
 v 1.2.9
 =====================================================================
 x Set noscript.jsredirectFollow default to false
