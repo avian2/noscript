@@ -783,7 +783,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.3",
+  VERSION: "1.3.1",
   
   get wrappedJSObject() {
     return this;
@@ -3069,11 +3069,10 @@ NoscriptService.prototype = {
     try {
        var pe = this.getExpando(browser, "pe");
        if (!pe) return;
-       var o;
-       for (var j = pe.length; j-- > 0;) {
+       for (var o, j = pe.length; j-- > 0;) {
          o = pe[j];
          try {
-           this.setPluginExtras(o.embed, o.pluginExtras);
+           this.setPluginExtras( this.findObjectAncestor(o.embed), o.pluginExtras);
           } catch(e1) { 
             if(this.consoleDump & LOG_CONTENT_BLOCK) 
               this.dump("Error setting plugin extras: " + 

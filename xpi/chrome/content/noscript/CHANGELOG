@@ -1,5 +1,10 @@
 NoScript ChangeLog
 
+v 1.3.1
+=====================================================================
+x Fixed missing plugin content placeholder regression on some gaming
+  sites (thanks Aerik and hewee for report)
+
 v 1.3
 =====================================================================
 + "Revoke temporary permissions" command in NoScript floating menus
