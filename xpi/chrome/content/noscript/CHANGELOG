@@ -1,5 +1,21 @@
 NoScript ChangeLog
 
+v 1.3.2
+=====================================================================
++ Scriptless support for history.go(x), history.forward() and 
+  history.back() links/buttons (thanks timeless for suggestion)
++ resource: URI path traversal protection
++ New "noscript.allowedMimeRegExp" about:config option to whitelist
+  some content types not to be blocked by "Forbid other plugins", for
+  instance "application/pdf" or "image/.*"
++ Plugin content is always forbidden if coming from sites explicitely
+  marked as "Untrusted" (blacklisted). This behavior can be disabled
+  by setting the "noscript.alwaysBlockUntrustedContent" about:config 
+  option to false (thanks NakedStranger for suggestion).
+x Fixed XSS false positive at mail.yahoo.com
+x noscript.jsredirectFollow preference more effective on blank but
+  not empty (i.e. space only) body (thanks timeless for suggestion)
+
 v 1.3.1
 =====================================================================
 x Fixed missing plugin content placeholder regression on some gaming

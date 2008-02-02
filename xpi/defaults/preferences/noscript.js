@@ -134,3 +134,6 @@ pref("noscript.showUntrustedPlaceholder", true);
 pref("noscript.jsHack", "window.urchinTracker = function() {}");
 pref("noscript.jsHackRegExp", "");
 pref("noscript.canonicalFQDN", true);
+
+pref("noscript.allowedMimeRegExp", "");
+pref("noscript.alwaysBlockUntrustedContent", true); 

@@ -1141,7 +1141,7 @@ var noscriptOverlay = noscriptUtil.service ?
   listeners: {
     
     onBrowserClick: function(ev) { 
-      noscriptUtil.service.processBrowserClick(ev.originalTarget);
+      noscriptUtil.service.processBrowserClick(ev);
     },
   
     
@@ -1291,7 +1291,7 @@ var noscriptOverlay = noscriptUtil.service ?
     const prevVer = ns.getPref("version", "");
     if (prevVer != ns.VERSION) {
       ns.setPref("version", ns.VERSION);
-      if (prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
+      if (prevVer && prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
       if (ns.getPref("firstRunRedirection", true)) {
           window.setTimeout(function() {
             const url = "http://noscript.net?ver=" + noscriptUtil.service.VERSION + "&prev=" + prevVer;

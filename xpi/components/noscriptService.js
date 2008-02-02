@@ -783,7 +783,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.3.1",
+  VERSION: "1.3.2",
   
   get wrappedJSObject() {
     return this;
@@ -913,7 +913,9 @@ NoscriptService.prototype = {
   forbidPlugins: false,
   forbidIFrames: false, 
   forbidIFramesContext: 1, // 0 = all iframes, 1 = different site, 2 = different domain, 3 = different base domain
-
+  
+  alwaysBlockUntrustedContent: true,
+  
   forbidXBL: 4,
   injectionCheck: 2,
   injectionCheckSubframes: true,
@@ -933,6 +935,7 @@ NoscriptService.prototype = {
   
   
   whitelistRegExp: null,
+  allowedMimeRegExp: null, 
   
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
@@ -1006,6 +1009,7 @@ NoscriptService.prototype = {
             &&  this.forbidSilverlight && this.forbidPlugins && this.forbidIFrames;
       break;
       
+      case "alwaysBlockUntrustedContent":
       case "filterXPost":
       case "filterXGet":
       case "blockCssScanners":
@@ -1042,18 +1046,27 @@ NoscriptService.prototype = {
       case "forbidMetaRefreshRemember":
         if (!this.getPref(name)) this.metaRefreshWhitelist = {};
       break;
+      
+      // single rx
       case "filterXGetRx":
       case "filterXGetUserRx":
         this.updateRxPref(name, this[name], "g");
       break;
       
+      // multiple rx
       case "forbidJarDocumentsExceptions":
       case "filterXExceptions":
-      case "whitelistRegExp":
       case "jsHackRegExp":
         this.updateRxPref(name, "", "", this.rxParsers.multi);
       break;
       
+      // multiple rx autoanchored
+      case "allowedMimeRegExp":
+      case "whitelistRegExp":
+        this.updateRxPref(name, "", "^", this.rxParsers.multi);
+      break;
+        
+        
       case "safeJSRx":
         this.initSafeJSRx();
       break;
@@ -1088,11 +1101,19 @@ NoscriptService.prototype = {
       return new RegExp(s, flags);
     },
     multi: function(s, flags) {
+      var anchor = /\^/.test(flags);
+      if(anchor) flags = flags.replace(/\^/g, '');
+       
       var lines = s.split(/[\n\r]+/);
       var rxx = [];
+      var l;
       for (var j = lines.length; j-- > 0;) {
-        if (/\S/.test(lines[j])) { 
-          rxx.push(new RegExp(lines[j], flags));
+        l = lines[j];
+        if (/\S/.test(l)) {
+          if(anchor && l[0] != '^') {
+            l = '^' + l + '$';
+          }
+          rxx.push(new RegExp(l, flags));
         } else {
           lines.splice(j, 1);
         }
@@ -1119,6 +1140,7 @@ NoscriptService.prototype = {
       try {
         this[name] = parseRx(this.getPref(name, def), flags);
       } catch(e) {
+        if(this.consoleDump) this.dump("Error parsing regular expression " + name + ", " + e);
         this[name] = parseRx(def, flags);
       }
     }
@@ -1260,6 +1282,7 @@ NoscriptService.prototype = {
     for each(var p in [
       "autoAllow",
       "allowClipboard", "allowLocalLinks",
+      "allowedMimeRegExp",
       "blockCssScanners", "blockCrossIntranet",
       "blockNSWB",
       "consoleDump", "contentBlocker",
@@ -1272,6 +1295,7 @@ NoscriptService.prototype = {
       "forbidIFrames", "forbidIFramesContext", "forbidData",
       "forbidMetaRefresh",
       "forbidXBL",
+      "alwaysBlockUntrustedContent",
       "global",
       "injectionCheck", "injectionCheckSubframes",
       "jsredirectIgnore", "jsredirectFollow", "jsredirectForceShow", "jsHack", "jsHackRegExp",
@@ -1962,17 +1986,21 @@ NoscriptService.prototype = {
                        .get("AChrom", CI.nsIFile),
   chromeRegistry: CC["@mozilla.org/chrome/chrome-registry;1"].getService(CI.nsIChromeRegistry),
   checkForbiddenChrome: function(url, origin) {
-    if (url.scheme == "chrome" && origin && !/^(?:chrome|resource|file|about)$/.test(origin.scheme)) {
-      var packageName = url.host;
-      if (packageName == "browser") return false; // fast path for commonest case
-      exception = this.getPref("forbidChromeExceptions." + packageName, false);
-      if (exception) return false;
-      var chromeURL = this.chromeRegistry.convertChromeURL(url);
-      if (chromeURL instanceof CI.nsIJARURI) 
-        chromeURL = chromeURL.JARFile;
-            
-      if (chromeURL instanceof CI.nsIFileURL && !this.browserChromeDir.contains(chromeURL.file, true)) {
-        return true;
+    if(origin && !/^(?:chrome|resource|about)$/.test(origin.scheme)) {
+      switch(url.scheme) {
+        case "chrome":
+          var packageName = url.host;
+          if (packageName == "browser") return false; // fast path for commonest case
+          exception = this.getPref("forbidChromeExceptions." + packageName, false);
+          if (exception) return false;
+          var chromeURL = this.chromeRegistry.convertChromeURL(url);
+          if (chromeURL instanceof CI.nsIJARURI) 
+            chromeURL = chromeURL.JARFile;
+                
+          return chromeURL instanceof CI.nsIFileURL && !this.browserChromeDir.contains(chromeURL.file, true);
+         
+        case "resource":
+          if(/\.\./.test(unescape(url.spec))) return true;
       }
     }
     return false;
@@ -2198,7 +2226,7 @@ NoscriptService.prototype = {
               }
             }
             
-            if (!this.forbidSomeContent ||
+            if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) ||
                !blockThisIFrame && (
                     !aMimeTypeGuess ||
                     aMimeTypeGuess.substring(0, 5) == "text/"
@@ -2220,7 +2248,7 @@ NoscriptService.prototype = {
         
         locationURL = locationURL || aContentLocation.spec;
         locationSite = locationSite || this.getSite(locationURL);
-        
+        var untrusted = this.isUntrusted(locationSite);
         
         
         if (isJS) {
@@ -2230,9 +2258,9 @@ NoscriptService.prototype = {
         if (!(forbid || locationSite == "chrome:")) {
           var mimeKey = aMimeTypeGuess || "application/x-unknown"; 
           
-          forbid = this.forbidAllContent || blockThisIFrame;
+          forbid = this.forbidAllContent || blockThisIFrame || untrusted && this.alwaysBlockUntrustedContent;
           if (!forbid && this.forbidSomeContent) {
-            if (aMimeTypeGuess) {
+            if (aMimeTypeGuess && !(this.allowedMimeRegExp && this.allowedMimeRegExp.test(aMimeTypeGuess))) {
               forbid = 
                 (
                   (isFlash = /^application\/(?:x-shockwave-flash|futuresplash)/i.test(aMimeTypeGuess)) ||
@@ -2601,9 +2629,10 @@ NoscriptService.prototype = {
                textAlign = "left";
              }
              window = document.defaultView;
-             follow = window == window.top &&  this.jsredirectFollow &&
+             follow = this.jsredirectFollow && window == window.top &&  
                !window.frames[0] &&
-               !document.evaluate( "//body//text()", document, null,  CI.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+               !document.evaluate('//body[normalize-space()!=""]', document, null, 
+                 CI.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
              document.body.appendChild(container);
           }
           url = m[1];
@@ -2615,7 +2644,7 @@ NoscriptService.prototype = {
              continue;
           }
           seen.push(a.href);
-          a.innerHTML = a.href;
+          a.appendChild(document.createTextNode(a.href));
           container.appendChild(document.createElement("br"));
         }
         
@@ -3443,16 +3472,20 @@ NoscriptService.prototype = {
     return true;
   },
   
-  processBrowserClick: function(a) {
+  processBrowserClick: function(ev) {
     if (this.jsEnabled || !this.getPref("fixLinks", true)) return;
+    
+    var a = ev.originalTarget;
     var doc = a.ownerDocument;
     if (!doc) return;
     
     var url = doc.documentURI;
     if ((!url) || this.isJSEnabled(this.getSite(url))) return;
     
+    var onclick;
     
     while (!(a instanceof CI.nsIDOMHTMLAnchorElement || a instanceof CI.nsIDOMHTMLAreaElement)) {
+      if ((onclick = a.getAttribute("onclick"))) break;
       if (!(a = a.parentNode)) return;
     }
     
@@ -3466,8 +3499,8 @@ NoscriptService.prototype = {
       jsURL = false;
     }
     
-    var onclick = a.getAttribute("onclick");
-    var fixedHref = fixedHref = (onclick && this.extractJSLink(onclick)) || 
+    onclick = onclick || a.getAttribute("onclick");
+    var fixedHref = (onclick && this.extractJSLink(onclick)) || 
                      (jsURL && this.extractJSLink(href)) || "";
     
     if (fixedHref) {
@@ -3476,6 +3509,24 @@ NoscriptService.prototype = {
       a.setAttribute("title", title ? "[js] " + title : 
           (onclick || "") + " " + href
         );
+    } else { // try processing history.go(n) //
+      onclick = onclick || jsURL;
+
+      jsURL = onclick.match(/history\s*\.\s*(?:go\s*\(\s*(-?\d+)\s*\)|(back|forward)\s*\(\s*)/);
+      jsURL = jsURL && (jsURL = jsURL[1] || jsURL[2]) && (jsURL == "back" ? -1 : jsURL == "forward" ? 1 : jsURL); 
+
+      if (!jsURL) return;
+      // jsURL now has our relative history index, let's navigate
+
+      var ds = this.domUtils.getDocShellFromWindow(doc.defaultView);
+      if (!ds) return;
+      var sh = ds.sessionHistory;
+      if (!sh) return;
+      
+      var idx = sh.index + jsURL;
+      if (idx < 0 || idx >= sh.count) return; // out of history bounds 
+      ds.gotoIndex(idx);
+      ev.preventDefault(); // probably not needed
     }
   },
   
@@ -4370,11 +4421,11 @@ var InjectionChecker = {
       .test(expr); 
   },
   checkLastFunction: function() {
-    return this.syntax.lastFunction && 
-      this.maybeJS(
-        this.syntax.lastFunction.toSource()
-        .replace(/[^\{]*?\{\s*([\s\S]*)\s*\}\s*/, "$1")
-      );
+    var expr = this.syntax.lastFunction;
+    expr = expr && this.syntax.lastFunction.toSource().match(/\{([\s\S]*)\}/);
+    return expr && (expr = expr[1]) && 
+      /=[\s\S]*cookie|(?:setter|location|\.\W*src)[\s\S]*=|[\[\(]/.test(expr) &&
+      this.maybeJS(expr);
   },
   checkJSBreak: function(s) {
     // Direct script injection breaking JS string literals or comments
