@@ -110,5 +110,8 @@
 <!ENTITY noscriptJarExceptions.description "Los documentos JAR coincidentes con estas expresiones regulares NO serán bloqueados.">
 <!ENTITY noscriptRevokeTemp "Revocar los permisos temporales">
 <!ENTITY noscriptRevokeTemp.accesskey "t">
-<!ENTITY noscriptNoUntrustedPlaceholder "No señalar objetos procedentes de sitios marcados como no fiables">
+<!ENTITY noscriptNoUntrustedPlaceholder "No reservar lugar para objetos procedentes de sitios marcados como no fiables">
 <!ENTITY noscriptCollapseBlockedObjects "Contraer objetos bloqueados">
+<!ENTITY noscriptExceptions "Excepciones...">
+<!ENTITY noscriptBlockedObjects "Objetos bloqueados">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquear todos los objetos procedentes de un sitio marcado como no fiable">

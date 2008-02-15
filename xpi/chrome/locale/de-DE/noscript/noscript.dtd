@@ -110,5 +110,8 @@
 <!ENTITY noscriptJarExceptions.description "JAR-Dokumente, die diesen regulären Ausdrücken entsprechen, werden NICHT blockiert.">
 <!ENTITY noscriptRevokeTemp "Temporäre Berechtigungen aufheben">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "Keine Platzhalter für Objekte von als nicht vertrauenswürdig eingestuften Seiten anzeigen">
+<!ENTITY noscriptNoUntrustedPlaceholder "Keine Platzhalter für Objekte von als nicht vertrauenswürdig eingestuften Sites anzeigen">
 <!ENTITY noscriptCollapseBlockedObjects "Platz von geblockten Elementen freigeben">
+<!ENTITY noscriptExceptions "Ausnahmen...">
+<!ENTITY noscriptBlockedObjects "Geblockte Objekte">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Jedes Objekt von als nicht vertrauenswürdig eingestuften Sites blockieren">

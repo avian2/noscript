@@ -99,3 +99,7 @@
   font-style: italic;
   list-style-image: url(inactive-no16.png);
 }
+
+.noscript-plugin {
+  list-style-image: url(plugin16.png);
+}

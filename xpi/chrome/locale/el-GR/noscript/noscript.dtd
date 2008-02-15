@@ -112,3 +112,6 @@
 <!ENTITY noscriptRevokeTemp.accesskey "ν">
 <!ENTITY noscriptNoUntrustedPlaceholder "Χωρίς εικονίδια γεμίσματος για αντικείμενα από μη έμπιστους ιστότοπους">
 <!ENTITY noscriptCollapseBlockedObjects "Σύμπτυξη μπλοκαρισμένων αντικειμένων">
+<!ENTITY noscriptExceptions "Εξαιρέσεις...">
+<!ENTITY noscriptBlockedObjects "Μπλοκαρισμένα αντικείμενα">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Μπλοκάρισμα κάθε αντικειμένου προερχόμενου από ιστότοπο σημειωμένο ως μη έμπιστο">

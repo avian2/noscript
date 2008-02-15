@@ -113,3 +113,6 @@
 <!ENTITY noscriptRevokeTemp.accesskey "م">
 <!ENTITY noscriptNoUntrustedPlaceholder "لا توجد حوافظ مكان لمواد قادمة من مواقع محددة كغير آمنة">
 <!ENTITY noscriptCollapseBlockedObjects "تداعٍ المواد المعترضة">
+<!ENTITY noscriptExceptions "استثناآت">
+<!ENTITY noscriptBlockedObjects "اشياء معترضة">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "اعترض كل شيئ آت من موقع محدد كغير موثوق">

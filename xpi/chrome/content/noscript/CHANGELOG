@@ -1,5 +1,62 @@
 NoScript ChangeLog
 
+v 1.4
+=====================================================================
++ Updated translations
+x Revised window.name injection checks to be more lenient on GModules
+x Extra QA for release
+x Fixed about dialog size to correctly show contributor list in any
+  language
+
+v 1.3.8
+=====================================================================
+x Fixed eMusic incompatibilities (thanks Mel Reyes)
+
+v 1.3.7
+=====================================================================
++ Added wildcard type entry in Blocked Objects temporary allow menu
+x Fixed minor bugs in Blocked Objects menu early implementation
+
+v 1.3.6
+=====================================================================
++ Descriptive icon for content types when possible on object 
+  placeholders and menu items
+x Improved CSS injection rules (thanks Azurite for report)
+
+v 1.3.5
+=====================================================================
++ More consistent plugin content temporary permissions management: 
+  object permissions are granted per-session(not bound to the current 
+  tab anymore) and honor the "Revoke Temporary Permissions" command.
++ "Temporary allow content-type@http://site.com" commands in the
+  "Blocked Objects" menu temporary allows plugin content matching a
+  certain mime type (e.g. shockwave-flash) on the whole site.
+x Increased readability of the "Blocked Objects" menu by using plain
+  font style instead of italics even if permissions are temporary
+x Reduced console pollution on Linux
+x Work-around for XPathResult not working in sandboxed bookmarklets
+
+
+v 1.3.4
+=====================================================================
++ "Blocked Objects" menu to temporarily allow plugin content even
+  when placeholder is hidden or not easy to see
++ "Block every object coming from a site marked as untrusted" option
+  in Plugins tab (checked by default)
+x Further XSS filter sensibility refinement
+x Fixed double separators sometimes in menus (thanks niko322)
+x Fixed "StumbleUpon Discovery" not compatible with "Forbid IFrames"
+  (thanks niko322)
+x Fixed URI protocol handler protection removing mailto: line breaks 
+  (thanks Alf Buchheim)
+
+v 1.3.3
+=====================================================================
+x Allow data: URIs in script src attributes on trusted sites (thanks
+  Kravvitz for report)
+x Fixed "a.getAttribute is not a function" issue (thanks wangyi6854
+  for report)
+
 v 1.3.2
 =====================================================================
 + Scriptless support for history.go(x), history.forward() and 

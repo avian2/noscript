@@ -110,5 +110,8 @@
 <!ENTITY noscriptJarExceptions.description "Dokumenty JAR spełniające poniższe wyrażenia regularne nie będą blokowane">
 <!ENTITY noscriptRevokeTemp "Unieważniaj tymczasowe zezwolenia">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "Nie wyświetlaj ikon zamienników dla obiektów pochodzących z witryn określonych jako niezaufane">
+<!ENTITY noscriptNoUntrustedPlaceholder "Nie wyświetlaj ikon zamienników dla obiektów pochodzących z witryn oznaczonych jako niezaufane">
 <!ENTITY noscriptCollapseBlockedObjects "Zwiń zablokowane obiekty">
+<!ENTITY noscriptExceptions "Wyjątki...">
+<!ENTITY noscriptBlockedObjects "Obiekty zablokowane">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokuj każdy obiekt pochodzący z witryny oznaczonej jako nieazaufana">

@@ -112,3 +112,6 @@
 <!ENTITY noscriptRevokeTemp.accesskey "s">
 <!ENTITY noscriptNoUntrustedPlaceholder "Geen vervangend pictogram voor objecten afkomstig van als onbetrouwbaar gemerkte sites">
 <!ENTITY noscriptCollapseBlockedObjects "Geblokkeerde objecten verbergen">
+<!ENTITY noscriptExceptions "Uitzonderingen...">
+<!ENTITY noscriptBlockedObjects "Geblokkeerde objecten">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Elk object afkomstig van een als onbetrouwbaar gemerkte site blokkeren">

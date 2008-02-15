@@ -112,3 +112,6 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "無物件進入位置標誌符從標記信任的網站">
 <!ENTITY noscriptCollapseBlockedObjects "撤銷已封鎖的物件">
+<!ENTITY noscriptExceptions "例外...">
+<!ENTITY noscriptBlockedObjects "已封鎖物件">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "封鎖每個來自不信任網站的物件">

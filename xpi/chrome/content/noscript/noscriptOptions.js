@@ -169,6 +169,10 @@ var nsopt = {
     if(this.jarEx.validate() || !/\S/.test(exVal)) 
       ns.setPref("forbidJarDocumentsExceptions", exVal);
     
+    if (this.tempRevoked) {
+      ns.resetAllowedObjects();
+    }
+    
     var global = this.jsglobal.getAttribute("checked") == "true";
     var untrustedSites = this.untrustedSites;
     var trustedSites = this.trustedSites;
@@ -197,7 +201,9 @@ var nsopt = {
       }
     }  
     this.removeButton.setAttribute("disabled", removeDisabled);
-    document.getElementById("revokeButton").setAttribute("disabled", !this.tempSites.sitesString);
+    document.getElementById("revokeButton")
+      .setAttribute("disabled", this.tempRevoked || 
+          !(this.tempSites.sitesString || this.serv.objectWhitelistLen));
     this.urlChanged();
   },
   
@@ -305,11 +311,13 @@ var nsopt = {
     } catch(e) {}
   },
   
+  tempRevoked: false,
   revokeTemp: function() {
     const ns = this.serv;
     this.trustedSites.remove(this.tempSites.sitesList, true, true); 
     this.trustedSites.add(ns.permanentSites.sitesList);
     this.tempSites.sitesString = "";
+    this.tempRevoked = true;
     this.populateUrlList();
   },
   

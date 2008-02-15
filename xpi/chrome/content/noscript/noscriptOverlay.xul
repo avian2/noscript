@@ -218,16 +218,30 @@
           oncommand="noscriptOverlay.eraseTemp()"
           />
         <menu id="noscript-xss-menu" class="menu-iconic noscript-xss" 
-          onpopupshowing="event.stopPropagation()" label="&noscriptXss;">
+          onpopupshowing="event.stopPropagation()" 
+          onpopuphidden="event.stopPropagation()" 
+          label="&noscriptXss;">
          <menupopup id="noscript-xss-menupopup">
          </menupopup>
        </menu>
         
        <menuseparator id="noscript-sep-untrusted-status" class="noscript-sep-untrusted"/>
-       <menu id="noscript-menu-untrusted" class="menu-iconic noscript-untrusted" 
-            onpopupshowing="event.stopPropagation()" label="&noscriptUntrusted;">
+       
+       <menu id="noscript-menu-blocked-objects" class="menu-iconic noscript-plugin" 
+            onpopupshowing="event.stopPropagation()"
+            onpopuphidden="event.stopPropagation()" 
+            label="&noscriptBlockedObjects;">
           <menupopup />
        </menu>
+       
+       <menu id="noscript-menu-untrusted" class="menu-iconic noscript-untrusted" 
+            onpopupshowing="event.stopPropagation()" 
+            onpopuphidden="event.stopPropagation()" 
+            label="&noscriptUntrusted;">
+          <menupopup />
+       </menu>
+       
+       
        
        <menuseparator class="noscript-sep-insert"/>
        <menuseparator class="noscript-sep-stop" hidden="true" />

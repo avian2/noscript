@@ -113,4 +113,6 @@
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
 <!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptBlockedObjects "Blocked Objects">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 

@@ -50,7 +50,7 @@
 <!ENTITY noscriptForbidFlash "Adobe® Flash® 금지">
 <!ENTITY noscriptForbidPlugins "다른 플러그인 금지">
 <!ENTITY noscriptReloadWarn "이 옵션은 새로운 페이지 또는 (수동으로) 페이지를 다시 읽어들일 때 적용됩니다.">
-<!ENTITY noscriptConfirmUnblock "일시적으로 객체를 허용할 것인지를 확인합니다.">
+<!ENTITY noscriptConfirmUnblock "일시적으로 개체를 허용할 것인지를 확인합니다.">
 <!ENTITY noscriptStatusLabel "상태바 레이블">
 <!ENTITY noscriptForbidBookmarklets "북마크릿(bookmarklets) 금지">
 <!ENTITY noscriptShowPlaceholder "플레이스홀더 아이콘 표시">
@@ -110,5 +110,8 @@
 <!ENTITY noscriptJarExceptions.description "이 정규 표현식과 일치하는 JAR 문서는 차단하지 않습니다.">
 <!ENTITY noscriptRevokeTemp "일시적인 허용 취소">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "신뢰할 수 없는 사이트로 등록된 사이트의 객체에 대해서는 플레이스홀더 표시하지 않음">
-<!ENTITY noscriptCollapseBlockedObjects "차단된 객체는 사용하지 않음">
+<!ENTITY noscriptNoUntrustedPlaceholder "신뢰할 수 없는 사이트로 등록된 사이트의 개체에 대해서는 플레이스홀더 표시하지 않음">
+<!ENTITY noscriptCollapseBlockedObjects "차단된 개체는 사용하지 않음">
+<!ENTITY noscriptExceptions "예외...">
+<!ENTITY noscriptBlockedObjects "차단된 개체들">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "신뢰할 수 없음으로 표시된 사이트의 모든 개체를 차단">

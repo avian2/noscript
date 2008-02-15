@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "B">
 <!ENTITY noscriptOptionsLong "A NoScript beállításai">
 <!ENTITY noscriptAbout "A NoScript névjegye">
-<!ENTITY noscriptPermissionsText "Megadhatja, hogy mely webhelyek számára engedélyezi a parancsfájlok futtatását. Írja be az engedélyezni kívánt webhely címét vagy tartománynevét (pl. &quot;http://www.webhely.hu&quot; vagy &quot;webhely.hu&quot;), majd kattintson az Engedélyezés gombra.">
+<!ENTITY noscriptPermissionsText "Megadhatja, hogy mely webhelyek számára engedélyezi a parancsfájlok futtatását. Írja be az engedélyezni kívánt webhely címét vagy tartomány nevét (pl. &quot;http://www.webhely.hu&quot; vagy &quot;webhely.hu&quot;), majd kattintson az Engedélyezés gombra.">
 <!ENTITY noscriptWebAddress "A webhely címe:">
 <!ENTITY noscriptAllow "Engedélyezés">
 <!ENTITY noscriptAllow.accesskey "N">
@@ -95,7 +95,7 @@
 <!ENTITY noscriptUnsafeReload "Megbízhatatlan újratöltése">
 <!ENTITY noscriptUnsafeReload.accesskey "N">
 <!ENTITY noscriptXssExceptions "Anti-XSS védelem kivételek">
-<!ENTITY noscriptXssExceptions.description "A következő reguláris kifejezéseknek megfelelő webhelyek NEM LESZNEK az XSS ellen védve">
+<!ENTITY noscriptXssExceptions.description "A következő reguláris kifejezéseknek megfelelő webhelyek NEM LESZNEK az XSS ellen védve.">
 <!ENTITY noscriptMatchSample "Sablon példa:">
 <!ENTITY noscriptReset "Alaphelyzet">
 <!ENTITY noscriptReset.accesskey "A">
@@ -103,12 +103,15 @@
 <!ENTITY noscriptResetDef.accesskey "h">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR GyIK">
+<!ENTITY noscriptJarFaq "JAR GYIK">
 <!ENTITY noscriptJarFaq.accesskey "G">
 <!ENTITY noscriptForbidJarDocuments "A távoli JAR forrás dokumentumként történő betöltésének blokkolása">
 <!ENTITY noscriptJarExceptions "JAR dokumentumok blokkolásának kivételei">
-<!ENTITY noscriptJarExceptions.description "Akok a JAR dokumentumok, amelyek megfelelnek az alábbi szabályos kifejezéseknek, NEM LESZNEK blokkolva.">
+<!ENTITY noscriptJarExceptions.description "Azok a JAR dokumentumok, amelyek megfelelnek az alábbi szabályos kifejezéseknek, NEM LESZNEK blokkolva.">
 <!ENTITY noscriptRevokeTemp "Ideiglenes hozzáférések visszavonása">
 <!ENTITY noscriptRevokeTemp.accesskey "v">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nincs helykitöltő a megbízhatatlannak megjelölt webhelyekről érkező objektumoknál">
 <!ENTITY noscriptCollapseBlockedObjects "Blokkolt objektumok összecsukása">
+<!ENTITY noscriptExceptions "Kivételek...">
+<!ENTITY noscriptBlockedObjects "Blokkolt objektumok">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Minden megbízhatatlanként megjelölt oldalról érkező objektum blokkolása">

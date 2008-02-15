@@ -112,3 +112,6 @@
 <!ENTITY noscriptRevokeTemp.accesskey "t">
 <!ENTITY noscriptNoUntrustedPlaceholder "Non mostrare icona sostitutiva per elementi segnalati come non fidati">
 <!ENTITY noscriptCollapseBlockedObjects "Collassa lo spazio occupato dagli oggetti bloccati">
+<!ENTITY noscriptExceptions "Eccezioni...">
+<!ENTITY noscriptBlockedObjects "Oggetti bloccati">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blocca tutti gli oggetti provenienti da siti segnalati come non fidati">

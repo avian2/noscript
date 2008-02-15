@@ -35,6 +35,7 @@ const LOG_CONTENT_INTERCEPT = 4;
 const LOG_CHROME_WIN = 8;
 const LOG_XSS_FILTER = 16;
 const LOG_INJECTION_CHECK = 32;
+const LOG_DOMUTILS = 64;
 const LOG_LEAKS = 1024;
 const LOG_SNIFF = 2048;
 
@@ -408,7 +409,10 @@ const SiteUtils = new function() {
 
 const DOMUtils = {
   lookupMethod: Components.utils ? Components.utils.lookupMethod : Components.lookupMethod,
-  
+  consoleDump: false,
+  dump: function(msg) {
+    if(this.consoleDump) dump("[NoScript DOMUtils] " + msg + "\n");
+  },
   findBrowser: function(chrome, win) {
     var gb = chrome.getBrowser();
     var browsers;
@@ -437,17 +441,24 @@ const DOMUtils = {
         } else return null; 
       }
       if (!ctx) return null;
-      ctx = ctx.top;
+      ctx = this.lookupMethod(ctx, "top")();
       
-      var bi = new this.createBrowserIterator(this.getChromeWindow(ctx));
+      var bi = this.createBrowserIterator(this.getChromeWindow(ctx));
       for (var b; b = bi.next();) {
-        if (b.contentWindow == ctx) return b;
+        try {
+          if (b.contentWindow == ctx) return b;
+        } catch(e1) {
+          this.dump("Skipping browser iteration: " + e1);
+        }
       }
-    } catch(e) {
+      this.dump("Browser not found for " + ctx);
+    } catch(e2) {
+      this.dump("Can't find browser for " + ctx + ": " + e2);
     } finally {
       if (bi) bi.dispose();
       ctx = null;
     }
+   
     return null;
   },
   
@@ -465,10 +476,10 @@ const DOMUtils = {
     
   getChromeWindow: function(window) {
     try {
-      return this.getDocShellFromWindow(window)
+      return this.lookupMethod(this.getDocShellFromWindow(window)
         .QueryInterface(CI.nsIDocShellTreeItem).rootTreeItem
         .QueryInterface(CI.nsIInterfaceRequestor)
-        .getInterface(CI.nsIDOMWindow);
+        .getInterface(CI.nsIDOMWindow), "window")();
     } catch(e) {
       return null;
     }
@@ -485,7 +496,7 @@ const DOMUtils = {
   perWinType: function(delegate) {
     var wm = this.windowMediator;
     var w = null;
-    var aa = [].concat(arguments);
+    var aa = Array.prototype.slice.call(arguments);
     for each(var type in ['navigator:browser', 'emusic:window']) {
      aa[0] = type;
       w = delegate.apply(wm, aa);
@@ -497,14 +508,13 @@ const DOMUtils = {
     return w;
   },
   get mostRecentBrowserWindow() {
-    return this._winType 
-      ? this._wm.getMostRecentWindow(this._winType)
-      : this.perWinType(this.windowMediator.getMostRecentWindow, true);
+    var res = this._winType && this._wm.getMostRecentWindow(this._winType, true);
+    return res || this.perWinType(this.windowMediator.getMostRecentWindow, true);
   },
+  
   get windowEnumerator() {
-    return this._winType 
-      ? this._wm.getZOrderDOMWindowEnumerator(this._winType, true)
-      : this.perWinType(this.windowMediator.getZOrderDOMWindowEnumerator, true);
+    var res = this._winType && this._wm.getZOrderDOMWindowEnumerator(this._winType, true);
+    return res || this.perWinType(this.windowMediator.getZOrderDOMWindowEnumerator, true);
   },
   createBrowserIterator: function(initialWin) {
     return new BrowserIterator(initialWin);
@@ -512,8 +522,8 @@ const DOMUtils = {
 };
 
 function BrowserIterator(initialWin) {
-  if (!(initialWin && initialWin.getBrowser)) {
-     initialWin = DOMUtils.mostRecentBrowserWindow;
+  if (!initialWin) {
+    initialWin = DOMUtils.mostRecentBrowserWindow;
   }
   this.currentWin = this.initialWin = initialWin;
   this.initPerWin();
@@ -521,48 +531,53 @@ function BrowserIterator(initialWin) {
 BrowserIterator.prototype = {
  
   initPerWin: function() {
-    var currentTB = this.currentWin && this.currentWin.getBrowser();
+    var currentTB = this.currentWin && this.currentWin.getBrowser && this.currentWin.getBrowser();
     if (currentTB) {
       this.browsers = currentTB.browsers;
-      this.currentTab = this.mostRecentTab = currentTB && currentTB.selectedBrowser;
-    } else {
-      this.currentTab = null;
-    }
+      this.currentTab = currentTB.selectedBrowser;
+    } else if(this.currentWin) {
+      try {
+        this.browsers = this.currentWin.document.getElementsByTagName("browser");
+        this.currentTab = this.browsers.length && this.browsers[0] || null;
+      } catch(e) {
+         this.currentTab = null;
+      }
+    } else this.currentTab = null;
+    this.mostRecentTab = this.currentTab;
     this.curTabIdx = 0;
   },
   next: function() {
     var ret = this.currentTab;
-    if (!ret) {
-      this.dispose();
-      return null;
-    }
+    this.currentTab = null;
+    if(ret) return ret;
+    if(!this.initialWin) return null;
     if (this.curTabIdx >= this.browsers.length) {
       if (!this.winEnum) {
         this.winEnum = DOMUtils.windowEnumerator;
       }
       if (this.winEnum.hasMoreElements()) {
         this.currentWin = this.winEnum.getNext();
-        if (this.currentWin == this.initialWin) return this.next();
-        this.initPerWin();
+        if (this.currentWin != this.initialWin){
+           this.initPerWin();
+        }
+        return this.next();
       } else {
-        this.currentTab = null;
-        return ret;
+        this.dispose();
+        return null;
       }
     }
     this.currentTab = this.browsers[this.curTabIdx++];
-    
     if (this.currentTab == this.mostRecentTab) this.next();
-    return ret;
+    return this.next();
   },
   dispose: function() {
-    if (!this.wm) return; // already disposed;
+    if (!this.initialWin) return; // already disposed;
     this.initialWin = 
       this.currentWin = 
       this.browsers = 
       this.currentTab = 
       this.mostRecentTab = 
       this.winEnum = 
-      this.wm = 
       null;
   },
   
@@ -783,7 +798,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.3.2",
+  VERSION: "1.4",
   
   get wrappedJSObject() {
     return this;
@@ -890,6 +905,8 @@ NoscriptService.prototype = {
   blockNSWB: false,
   
   consoleDump: 0,
+  consoleLog: false,
+  
   truncateTitle: true,
   truncateTitleLen: 255,
   pluginPlaceholder: "chrome://noscript/skin/icon32.png",
@@ -1033,11 +1050,13 @@ NoscriptService.prototype = {
       case "jsredirectIgnore":
       case "jsredirectForceShow":
       case "jsHack":
+      case "consoleLog":
         this[name] = this.getPref(name, this[name]);
       break;
       case "consoleDump":
         this[name] = this.getPref(name, this[name]);
         this.injectionChecker.logEnabled = this.consoleDump & LOG_INJECTION_CHECK;
+        this.domUtils.consoleDump = this.consoleDump & LOG_DOMUTILS;
       break;
       case "global":
         this.globalJS = this.getPref(name, false);
@@ -1181,9 +1200,10 @@ NoscriptService.prototype = {
         sheet = "noscript, noscript * { background-image: none !important; list-style-image: none !important }";
         break;
       case "pluginPlaceholder": 
-        sheet = 'a.__noscriptPlaceholder__ > div:first-child { display: block !important; -moz-outline-color: #fc0 !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; -moz-outline-offset: -1px !important; background: #ffffe0 url("' + 
-                this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; cursor: pointer !important; margin-top: 0px !important; margin-bottom: 0px !important; }' +
-                'noscript a.__noscriptPlaceholder__ { display: inline !important }';
+        sheet = 'a.__noscriptPlaceholder__ > div:first-child { display: block !important; -moz-outline-color: #fc0 !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; -moz-outline-offset: -1px !important; cursor: pointer !important; background: #ffffe0 url("' + 
+                    this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; margin-top: 0px !important; margin-bottom: 0px !important;} ' +
+                'a.__noscriptPlaceholder__ > div:first-child > div:first-child { display: block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
+                'noscript a.__noscriptPlaceholder__ { display: inline !important; }';
         break;
       default:
         return;
@@ -1285,7 +1305,7 @@ NoscriptService.prototype = {
       "allowedMimeRegExp",
       "blockCssScanners", "blockCrossIntranet",
       "blockNSWB",
-      "consoleDump", "contentBlocker",
+      "consoleDump", "consoleLog", "contentBlocker",
       "filterXPost", "filterXGet", 
       "filterXGetRx", "filterXGetUserRx", 
       "filterXExceptions",
@@ -1669,6 +1689,7 @@ NoscriptService.prototype = {
 ,
   _lastSnapshot: null,
   _lastGlobal: false,
+  _lastObjects: null,
   reloadWhereNeeded: function(snapshot, lastGlobal) {
     if (!snapshot) snapshot = this._lastSnapshot;
     const ps = this.jsPolicySites;
@@ -1678,10 +1699,17 @@ NoscriptService.prototype = {
       lastGlobal = this._lastGlobal;
     }
     this._lastGlobal = global;
+  
+    var lastObjects = this._lastObjects || this.objectWhitelist;
+    this._lastObjects = this.objectWhitelist;
     
     this.initContentPolicy();
     
-    if ((global == lastGlobal && ps.equals(snapshot)) || !snapshot) return false;
+    if (!snapshot || 
+        global == lastGlobal && lastObjects == this.objectWhitelist && 
+        ps.equals(snapshot)) 
+      return false;
+   
     
     if (!this.getPref("autoReload", true)) return false;
     if (global != lastGlobal && !this.getPref("autoReload.global", true)) return false; 
@@ -1702,13 +1730,15 @@ NoscriptService.prototype = {
     
     var bi = new this.domUtils.createBrowserIterator();
     for (var browser, j; browser = bi.next();) {
-      docSites = this.getSites(browser, true);
+      docSites = this.getSites(browser);
       for (j = docSites.length; j-- > 0;) {
         prevStatus = lastGlobal || !!snapshot.matches(docSites[j]);
         currStatus = global || !!(ps.matches(docSites[j]) || this.checkShorthands(docSites[j]));
         if (currStatus != prevStatus) {
           ret = true;
-          if (currStatus) this.requestWatchdog.setUntrustedReloadInfo(browser, true);
+          if (currStatus) 
+            this.requestWatchdog.setUntrustedReloadInfo(browser, true);
+          
           webNav = browser.webNavigation;
           url = webNav.currentURI;
           if (url.schemeIs("http") || url.schemeIs("https")) {
@@ -1737,13 +1767,53 @@ NoscriptService.prototype = {
           break;
         }
       }
+      
+      if(j < 0) { 
+        // check plugin objects
+        if (this.consoleDump & LOG_CONTENT_BLOCK) 
+          this.dump("Checking object permission changes: " + 
+              docSites.toSource() + ", " + lastObjects.toSource());
+          
+        if (this.checkObjectPermissionsChange(docSites, lastObjects)) {
+           ret = true;
+           this.quickReload(browser.webNavigation);
+        }
+      }
+      
       if (currentTabOnly) break;
     }
     bi.dispose();
     bi = null;
     return ret;
-  }
-,
+  },
+  
+  checkObjectPermissionsChange: function(sites, snapshot) {
+    if(this.objectWhitelist == snapshot) return false;
+    
+    for each (var s in sites.pluginSites) {
+      if ((s in snapshot) && !(s in this.objectWhitelist)) {
+        return true;
+      }
+    }
+    var egroup, e;
+    for each (egroup in sites.pluginExtras) {
+      for each (e in egroup) {
+        if (!e.placeholder && (e.url in snapshot) && !(e.url in this.objectWhitelist)) {
+           return true;
+        }
+      }
+    }
+    return false;
+  },
+  
+  quickReload: function(webNav) {
+    var uri = webNav.currentURI;
+    if (uri.schemeIs("http") || uri.schemeIs("https")) {
+      this.requestWatchdog.noscriptReload = uri.spec;
+    }
+    webNav.reload(webNav.LOAD_FLAGS_CHARSET_CHANGE);
+  },
+  
   eraseTemp: function() {
     // remove temporary PUNCTUALLY: 
     // keeps ancestors because the may be added as permanent after the temporary allow;
@@ -1751,6 +1821,7 @@ NoscriptService.prototype = {
     this.jsPolicySites.remove(this.tempSites.sitesList, true, true); 
     this.setJSEnabled(this.permanentSites.sitesList, true); // add permanent & save
     this.setPref("temp", ""); // flush temporary list
+    this.resetAllowedObjects();
   }
 ,
   _observingPolicies: false,
@@ -2061,7 +2132,13 @@ NoscriptService.prototype = {
       var originURL, locationURL, originSite, locationSite, scheme,
           forbid, isJS, isJava, isFlash, isSilverlight,
           isLegacyFrame, blockThisIFrame, contentDocument;
-          
+      
+      var logIntercept = this.consoleDump;
+      if(logIntercept) {
+        var logBlock = logIntercept & LOG_CONTENT_BLOCK;
+        logIntecept = logIntercept = LOG_CONTENT_INTERCEPT;
+      } else logBlock = false;
+      
       try {
         if (aContentType == 1 && !this.POLICY1_9) { // compatibility for type OTHER
           if (aContext instanceof CI.nsIDOMHTMLDocument) {
@@ -2072,8 +2149,10 @@ NoscriptService.prototype = {
           arguments[0] = aContentType;
         }
         
-        if (this.consoleDump && (this.consoleDump & LOG_CONTENT_INTERCEPT) && this.cpConsoleFilter.indexOf(aContentType) > -1) {
+        if (logIntercept && this.cpConsoleFilter.indexOf(aContentType) > -1) {
           this.cpDump("processing", aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall);
+          if (this.consoleDump & LOG_CONTENT_CALL)
+             this.dump(new Error().stack);
         }
 
         this.currentPolicyURI = aContentLocation;
@@ -2131,8 +2210,10 @@ NoscriptService.prototype = {
             if (aContentLocation && aRequestOrigin && 
                 (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) && 
                 (aContext instanceof CI.nsIDOMHTMLEmbedElement) &&
-                aMimeTypeGuess && this.pluginsCache.isForcedSomewhere(locationURL, aMimeTypeGuess)) {
-              if (this.consoleDump) this.dump("Plugin document " + locationURL);
+                aMimeTypeGuess && 
+                this.isAllowedObject(locationURL, aMimeTypeGuess)
+                ) {
+              if (logIntercept) this.dump("Plugin document " + locationURL);
               return CP_OK; // plugin document, we'll handle it in our webprogress listener
             }
             
@@ -2143,9 +2224,16 @@ NoscriptService.prototype = {
             
           case 7:
             locationURL = aContentLocation.spec;
-            if (locationURL == "about:blank" || /^chrome:/.test(locationURL)) return CP_OK;
+            originURL = aRequestOrigin && aRequestOrigin.spec;
+            if (locationURL == "about:blank" || /^chrome:/.test(locationURL)
+              || !originURL && (aContext instanceof CI.nsIDOMXULElement)  // custom browser like in Stumbleupon discovery window
+            ) return CP_OK;
             
-            if (!aMimeTypeGuess) aMimeTypeGuess = this.guessMime(aContentLocation);
+            if (!aMimeTypeGuess) {
+              aMimeTypeGuess = this.guessMime(aContentLocation);
+              if (logIntercept)
+                this.dump("Guessed MIME '" + aMimeTypeGuess + "' for location " + locationURL);
+            }
             
             isLegacyFrame = aContext instanceof CI.nsIDOMHTMLFrameElement;
             
@@ -2157,7 +2245,7 @@ NoscriptService.prototype = {
               blockThisIFrame = !(aInternalCall || 
                       /^(?:chrome|resource|wyciwyg):/.test(locationURL) ||
                       (
-                        (aRequestOrigin && (originURL = aRequestOrigin.spec))
+                        originURL
                           ? (/^chrome:/.test(originURL) ||
                             /^(?:data|javascript):/.test(locationURL) &&
                             contentDocument && originURL == contentDocument.URL)
@@ -2227,7 +2315,7 @@ NoscriptService.prototype = {
             }
             
             if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) ||
-               !blockThisIFrame && (
+                  !blockThisIFrame && (
                     !aMimeTypeGuess ||
                     aMimeTypeGuess.substring(0, 5) == "text/"
                     || aMimeTypeGuess == "application/xml" 
@@ -2235,24 +2323,33 @@ NoscriptService.prototype = {
                     || aMimeTypeGuess.substring(0, 6) == "image/"
                     || !this.pluginForMime(aMimeTypeGuess)
                   )
-                ) 
-              return CP_OK;
+              ) {
             
+              if (logBlock)
+                this.dump("Document OK: " + aMimeTypeGuess + "@" + (locationURL || aContentLocation.spec) + 
+                  " --- PGFM: " + this.pluginForMime(aMimeTypeGuess));
+
+              return CP_OK;
+            }
             break;
             
           default:
             return CP_OK;
         }
         
-        
-        
+
         locationURL = locationURL || aContentLocation.spec;
         locationSite = locationSite || this.getSite(locationURL);
         var untrusted = this.isUntrusted(locationSite);
         
         
+        if(logBlock)
+          this.dump("[CP PASS 2] " + aMimeTypeGuess + "/" + locationURL);
+
         if (isJS) {
-          return this.isJSEnabled(locationSite) ? CP_OK : this.reject("Script", arguments);
+          return aRequestOrigin && locationSite == this.getSite(aRequestOrigin.spec) || 
+            this.isJSEnabled(locationSite) || aContentLocation.scheme == "data" 
+            ? CP_OK : this.reject("Script", arguments);
         }
 
         if (!(forbid || locationSite == "chrome:")) {
@@ -2297,23 +2394,24 @@ NoscriptService.prototype = {
                     );
         }
         
+        this.delayExec(this.countObject, 0, aContext, locationSite);
+        
         if(forbid) {
           try {  // moved here because of http://forums.mozillazine.org/viewtopic.php?p=3173367#3173367
             if (aContext.__NoScript_allowedContent || 
-              this.pluginsCache.update(locationURL, mimeKey, locationSite, aRequestOrigin || aContentLocation, aContext)) {
+              this.isAllowedObject(locationURL, mimeKey, locationSite)) {
               aContext.__NoScript_allowedContent = true;
               return CP_OK; // forceAllow
             }
           } catch(ex) {
-            this.dump("pluginsCache.update():" + ex);
+            this.dump("Error checking plugin per-object permissions:" + ex);
           }
-         
+          
           try {
             if(isLegacyFrame) { // inject an embed and defer to load
               this.blockLegacyFrame(aContext, aContentLocation, aInternalCall);
             } else if (aContext && (aContentType == 5 || aContentType == 7)) {
-              if (aContext instanceof CI.nsIDOMNode
-                 && this.pluginPlaceholder) {
+              if (aContext instanceof CI.nsIDOMNode) {
                 this.delayExec(this.tagForReplacement, 0, aContext, {
                   url: locationURL,
                   mime: mimeKey
@@ -2326,11 +2424,12 @@ NoscriptService.prototype = {
             return this.reject("Forbidden " + (contentDocument ? ("IFrame " + contentDocument.URL) : "Content"), arguments);
           }
         } else {
-          // duplicated here because of http://forums.mozillazine.org/viewtopic.php?p=3173367#3173367
-          this.delayExec(this.pluginsCache.update, 0, 
-            locationURL, mimeKey, locationSite, aRequestOrigin || aContentLocation, aContext
-          );
+           if(this.consoleDump & LOG_CONTENT_CALL) {
+             this.dump(locationURL + " Allowed, " + new Error().stack);
+           }
         }
+        
+        
       } catch(e) {
         return this.reject("Content (Fatal Error, " + e  + ")", arguments);
       }
@@ -2346,8 +2445,9 @@ NoscriptService.prototype = {
   
   tagForReplacement: function(embed, pluginExtras) {
     try {
-      var browser = this.domUtils.findBrowserForNode(embed);
-      var pe = this.getExpando(browser, "pe") || this.setExpando(browser, "pe",  []);
+      if(!embed.ownerDocument) return;
+      var win = embed.ownerDocument.defaultView.top;
+      var pe = this.getExpando(win, "pe") || this.setExpando(win, "pe",  []);
       pe.push({embed: embed, pluginExtras: pluginExtras});
       try {
         this.syncUI(embed);
@@ -2356,7 +2456,9 @@ NoscriptService.prototype = {
       }
     } catch(ex) {
       if(this.consoleDump) this.dump(
-        "Error tagging object [" + pluginExtras.mime + " from " + pluginExtras.url + "] for replacement: " + ex);
+        "Error tagging object [" + pluginExtras.mime + " from " + pluginExtras.url +
+        " - top window " + win + ", embed " + embed +
+        "] for replacement: " + ex);
     }
   },
   
@@ -2489,46 +2591,52 @@ NoscriptService.prototype = {
     }
   },
   
-  pluginsCache: {
-    update: function(url, mime, origin, docURI, ctx) { // returns forceAllow for this url and mime
-      var browser = DOMUtils.findBrowserForNode(ctx);
-      if (browser) {
-        var cache = this.get(browser);
-        var uriCache = cache.uris;
-        var uriSpec = docURI.spec;
-        var origCache = uriCache[uriSpec] || (uriCache[uriSpec] = {});
-        origCache[origin] = true;
-        var forceMime = cache.forceAllow[url];
-        return forceMime && forceMime == mime;
+  objectWhitelist: {},
+  ALL_TYPES: ["*"],
+  objectWhitelistLen: 0,
+  isAllowedObject: function(url, mime, site) {
+    var types = this.objectWhitelist[url] || null;
+    if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1)) 
+      return true;
+    
+    if (arguments.length < 3) site = this.getSite(url);
+    
+    var types = site && this.objectWhitelist[site] || null;
+    return types && (types == this.ALL_TYPES || types.indexOf(mime) > -1);
+  },
+  
+  allowObject: function(url, mime) {
+    if (url in this.objectWhitelist) {
+      var types = this.objectWhitelist[url];
+      if(mime == "*") {
+        if(types == this.ALL_TYPES) return;
+        types = this.ALL_TYPES;
+      } else {
+        if(types.indexOf(mime) > -1) return;
+        types.push(mime);
       }
-      return false;
-    },
-    purge: function(cache, uris) {
-      var uriCache = cache.uris;
-      for (u in uriCache) {
-        if (!uris[u]) delete uriCache[u];
-      }
-    },
+    } else {
+      this.objectWhitelist[url] = mime == "*" ? this.ALL_TYPES : [mime];
+    }
+    this.objectWhitelistLen++;
+  },
+  
+  resetAllowedObjects: function() {
+    this.objectWhitelist = {};
+    this.objectWhitelistLen = 0;
+  },
+  
+  
+  countObject: function(embed, site) {
+    if(!site) return;
     
-    purgeURIs: function(browser) {
-      this.get(browser).uris = {}; 
-    },
-    
-    get: function(browser) {
-      return browser.__noscriptPluginsCache || 
-      (browser.__noscriptPluginsCache = { uris: {}, forceAllow: {} });
-    },
-    
-    isForcedSomewhere: function(uri, mime) {
-      return uri && new DOMUtils.createBrowserIterator().find(function(b) {
-        var cache = b.__noscriptPluginsCache;
-        return cache && cache.forceAllow[uri] && cache.forceAllow[uri] == mime;
-      });
-    },
-    
-    dispose: function(browser) {
-      delete browser.__noscriptPluginsCache;
-    },
+    var win = embed.ownerDocument.defaultView.top;
+    var os = win.__noscriptObjectSites || null;
+    if(os) {
+      if(os.indexOf(site) < 0) os.push(site);
+    } else {
+      win.__noscriptObjectSites = [site];
+    }
   },
   
   getPluginExtras: function(obj) {
@@ -2536,7 +2644,7 @@ NoscriptService.prototype = {
   },
   setPluginExtras: function(obj, extras) {
     this.setExpando(obj, "pluginExtras", extras);
-    if (this.consoleDump) this.dump("Setting plugin extras on " + obj + " -> " + (this.getPluginExtras(obj) == extras)
+    if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Setting plugin extras on " + obj + " -> " + (this.getPluginExtras(obj) == extras)
       + ", " + (extras && extras.toSource())  );
     return extras;
   },
@@ -2556,7 +2664,6 @@ NoscriptService.prototype = {
   
   cleanupBrowser: function(browser) {
     delete browser.__noscriptStorage;
-    this.pluginsCache.dispose(browser);
   },
   
   hasVisibleLinks: function(document) {
@@ -2823,7 +2930,8 @@ NoscriptService.prototype = {
                 sandbox.window = browserWindow.content;
                 sandbox.document = sandbox.window.document;
                 Components.utils.evalInSandbox(
-                  "with(window) { " + decodeURIComponent(url.replace(/^javascript:/i, "")) + " }", sandbox);
+                  "window.XPathResult = Components.interfaces.nsIDOMXPathResult; with(window) { " + 
+                    decodeURIComponent(url.replace(/^javascript:/i, "")) + " }", sandbox);
               } else {
                 openCallback(url);
               }
@@ -2842,6 +2950,18 @@ NoscriptService.prototype = {
     return false;
   },
   
+  mimeEssentials: function(mime) {
+     return mime && mime.replace(/^application\/(?:x-)?/, "") || "";
+  },
+  urlEssentials: function(s) {
+    // remove query, hash and intermediate path
+    return s.replace(/[#\?].*/g, '').replace(/(.*?\w\/).+?(\/[^\/]+)$/, '$1...$2');
+  },
+  cssMimeIcon: function(mime, size) {
+    return "url(\"moz-icon://noscript?size=" + size + "&contentType=" + mime.replace(/[^\w-\/]/g, "") + "\")";
+  },
+  
+  
   findObjectAncestor: function(embed) {
     if (embed instanceof CI.nsIDOMHTMLEmbedElement) {
       const objType = CI.nsIDOMHTMLObjectElement;
@@ -2856,8 +2976,7 @@ NoscriptService.prototype = {
     var pluginExtras = document.defaultView.__noscriptPluginExtras || [];
     document.defaultView.__noscriptPluginExtras = pluginExtras;
     sites.pluginExtras.push(pluginExtras);
-    var pp = this.showPlaceholder && this.pluginPlaceholder;
-    var replacePlugins = pp && this.forbidSomeContent;
+
     var collapse = this.collapseObject;
     
     const types = this._objectTypes || 
@@ -2872,7 +2991,7 @@ NoscriptService.prototype = {
     
     var objectType;
     var count, objects, object;
-    var anchor, innerDiv;
+    var anchor, innerDiv, iconSize;
     var extras;
     var style, cssLen, cssCount, cssProp, cssDef;
     var forcedCSS, style, astyle;
@@ -2887,7 +3006,7 @@ NoscriptService.prototype = {
           object = objects.item(count); 
         } catch(e) { 
           if (this.consoleDump) this.dump(e);
-          sites.pluginCount++;
+          //sites.pluginCount++;
           continue; 
         }
         if (!(object instanceof objectType) || // wrong type instantiated for this tag?!
@@ -2915,77 +3034,95 @@ NoscriptService.prototype = {
 
           try {
             
+            
+            extras.site = this.getSite(extras.url);
+            
+            if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site)) 
+              continue;
+            
             extras.tag = "<" + objectTag.toUpperCase() + ">";
             extras.title =  extras.tag + ", " +  
-                (extras.mime ? extras.mime.replace(/^application\/(?:x-)?/, "") + "@" 
-                             : "@") + extras.url;
-            if ((extras.alt = object.getAttribute("alt"))) {
+                this.mimeEssentials(extras.mime) + "@" + extras.url;
+            
+           if ((extras.alt = object.getAttribute("alt")))
               extras.title += ' "' + extras.alt + '"'
-            }
-  
-            if (replacePlugins && 
-                (this.showUntrustedPlaceholder || !this.isUntrusted(this.getSite(extras.url))
-                )) {
-              
-              innerDiv = document.createElementNS(htmlNS, "div");
-              anchor = document.createElementNS(htmlNS, "a");
-              
-              anchor.id = object.id;
-              anchor.href = extras.url;
+            
+            
+            anchor = document.createElementNS(htmlNS, "a");
+            anchor.id = object.id;
+            anchor.href = extras.url;
+            anchor.setAttribute("title", extras.title);
+            
+            this.setPluginExtras(anchor, extras);
+            this.setExpando(anchor, "removedPlugin", object);
+            
+            (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras});
+
+            if (this.showPlaceholder) {
+              anchor.addEventListener("click", this.objectClickListener.bind(this), false);
               anchor.className = "__noscriptPlaceholder__";
-              
-              anchor.setAttribute("title", extras.title);
-              
-              with(anchor.style) {
-                padding = margin = borderWidth = "0px";
-                MozOutlineOffset = "-1px"; 
-                display = "inline";
-              }
-              
-              if (!collapse) {
-                style = document.defaultView.getComputedStyle(object, null);
-                 
-                cssDef = "";
-                for (cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
-                  cssProp = style.item(cssCount);
-                  cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
-                }
-                
-                innerDiv.setAttribute("style", cssDef + forcedCSS);
-                
-                if (style.width == "100%" || style.height == "100%") {
-                  anchor.style.width = style.width;
-                  anchor.style.height = style.height;
-                  anchor.style.display = "block";
-                }  
-                innerDiv.style.minWidth = "32px";
-                innerDiv.style.minHeight = "32px";
-              } else {
-                innerDiv.setAttribute("style", forcedCSS);
-              }
-              
-              if(collapse || innerDiv.style.display == "none" || innerDiv.style.visibility == "hidden") {
-                innerDiv.style.width = anchor.style.width = "32px";
-                innerDiv.style.height = anchor.style.height = "32px";
-              }
-              
-              innerDiv.style.display = "block";
-              innerDiv.style.visibility = "visible";
-              
-              anchor.appendChild(innerDiv);
-
-              anchor.addEventListener("click", this.objectClickListener.bind(this), false); 
-              this.setPluginExtras(anchor, extras);
-              this.setExpando(anchor, "removedPlugin", object);
-              
-              (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras});
-
-              sites.pluginCount++;
             } else {
-              if (collapse) object.style.display = "none";
-              this.setPluginExtras(object, null);
-              pluginExtras.push(extras);
+               anchor.className = "";
+               if(collapse) anchor.style.display = "none";
+               else anchor.style.visibility = "hidden";
+               continue;
             }
+            
+            innerDiv = document.createElementNS(htmlNS, "div");
+            
+            with(anchor.style) {
+              padding = margin = borderWidth = "0px";
+              MozOutlineOffset = "-1px"; 
+              display = "inline";
+            }
+            
+            if (!collapse) {
+              style = document.defaultView.getComputedStyle(object, null);
+               
+              cssDef = "";
+              for (cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
+                cssProp = style.item(cssCount);
+                cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
+              }
+              
+              innerDiv.setAttribute("style", cssDef + forcedCSS);
+              
+              if (style.width == "100%" || style.height == "100%") {
+                anchor.style.width = style.width;
+                anchor.style.height = style.height;
+                anchor.style.display = "block";
+              }  
+              innerDiv.style.minWidth = "32px";
+              innerDiv.style.minHeight = "32px";
+            } else {
+              innerDiv.setAttribute("style", forcedCSS);
+            }
+            
+            if(collapse || innerDiv.style.display == "none" || innerDiv.style.visibility == "hidden") {
+              innerDiv.style.width = anchor.style.width = "32px";
+              innerDiv.style.height = anchor.style.height = "32px";
+            }
+              
+            innerDiv.style.display = "block";
+            innerDiv.style.visibility = "visible";
+            
+
+            anchor.appendChild(innerDiv);
+            
+            // icon div
+            innerDiv = innerDiv.appendChild(document.createElementNS(htmlNS, "div"));
+            if(collapse || style && parseInt(style.width) < 64 && parseInt(style.height) < 64) {
+              innerDiv.style.backgroundPosition = "bottom right";
+              iconSize = 16;
+            } else {
+              iconSize = 32;
+              innerDiv.style.backgroundPosition = "center";
+            }
+            innerDiv.style.backgroundImage = this.cssMimeIcon(extras.mime, iconSize);
+            
+            
+            // sites.pluginCount++;
+            
           } catch(objectEx) {
             dump("NoScript: " + objectEx + " processing plugin " + count + "@" + document.documentURI + "\n");
           }
@@ -2993,7 +3130,14 @@ NoscriptService.prototype = {
       }
     }
     
-    sites.pluginCount += pluginExtras.length;
+    // TODO: remove as soon as we're sure we don't want per-tab perms anymore
+    /*
+    var pel = pluginExtras.length;
+    sites.pluginCount += pel;
+    while(pel-- > 0)
+      sites.push(pluginExtras[pel].site); 
+   */
+   
     if (replacements) {
       this.delayExec(this.createPlaceholders, 0, replacements, pluginExtras);
     }
@@ -3003,6 +3147,7 @@ NoscriptService.prototype = {
     for each(var r in replacements) {
       if (r.object.parentNode) {
         r.object.parentNode.replaceChild(r.placeholder, r.object);
+        r.extras.placeholder = r.placeholder;
         pluginExtras.push(r.extras);
       }
     }
@@ -3022,30 +3167,35 @@ NoscriptService.prototype = {
       const object = ns.getExpando(anchor, "removedPlugin");
       
       if (object) try {
-
         if (ev.shiftKey) {
           anchor.style.display = "none";
           return;
         }
-        
-        
-        const extras = ns.getPluginExtras(anchor);
-        const browser = ns.domUtils.findBrowserForNode(anchor);
-        const cache = ns.pluginsCache.get(browser);
-        if (!(extras && extras.url && extras.mime && cache)) return;
-       
-        ns.delayExec(ns.checkAndEnableObject, 1,
-          {
-            window: browser.ownerDocument.defaultView,
-            extras: extras,
-            cache: cache,
-            anchor: anchor,
-            object: object
-          });
+        ns.checkAndEnablePlaceholder(anchor, object);
       } finally {
         ev.preventDefault();
+        ev.cancelBubble = true;
       }
     }
+  },
+  
+  checkAndEnablePlaceholder: function(anchor, object) {
+    if (!(object || (object = this.getExpando(anchor, "removedPlugin")))) 
+      return;
+    
+    const extras = this.getPluginExtras(anchor);
+    const browser = this.domUtils.findBrowserForNode(anchor);
+ 
+    if (!(extras && extras.url && extras.mime // && cache
+      )) return;
+   
+    this.delayExec(this.checkAndEnableObject, 1,
+      {
+        window: browser.ownerDocument.defaultView,
+        extras: extras,
+        anchor: anchor,
+        object: object
+      });
   },
   
   checkAndEnableObject: function(ctx) {
@@ -3055,7 +3205,7 @@ NoscriptService.prototype = {
     if (ctx.window.noscriptUtil.confirm(
         this.getAllowObjectMessage(url, extras.tag + ", " + mime), 
         "confirmUnblock")) {
-      ctx.cache.forceAllow[url] = mime;
+      this.allowObject(url, mime);
       var doc = ctx.anchor.ownerDocument;
       if (mime == doc.contentType && 
           ctx.anchor == doc.body.firstChild && 
@@ -3063,10 +3213,11 @@ NoscriptService.prototype = {
         doc.location.reload();
       } else {
         this.setExpando(ctx.anchor, "removedPlugin", null);
+        extras.placeholder = null;
         this.delayExec(function() {
           var obj = ctx.object.cloneNode(true);
-          obj.__NoScript_allowedContent = true;
           ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
+          obj.__NoScript_allowedContent = true;
           var pluginExtras = ctx.ownerDocument.defaultView.__noscriptPluginExtras;
           if(pluginExtras) {
             var pos = pluginExtras.indexOf(extras);
@@ -3085,7 +3236,8 @@ NoscriptService.prototype = {
     sites.scriptCount = 0;
     sites.pluginCount = 0;
     sites.pluginExtras = [];
-    this._attachPluginExtras(browser);
+    sites.pluginSites = [];
+
     try {
       sites = this._enumerateSites(browser, sites);
     } catch(ex) {
@@ -3094,21 +3246,21 @@ NoscriptService.prototype = {
     return sites;
   },
   
-  _attachPluginExtras: function(browser) {
+  _attachPluginExtras: function(win) {
     try {
-       var pe = this.getExpando(browser, "pe");
+       var pe = this.getExpando(win, "pe");
        if (!pe) return;
        for (var o, j = pe.length; j-- > 0;) {
          o = pe[j];
          try {
-           this.setPluginExtras( this.findObjectAncestor(o.embed), o.pluginExtras);
+           this.setPluginExtras(this.findObjectAncestor(o.embed), o.pluginExtras);
           } catch(e1) { 
             if(this.consoleDump & LOG_CONTENT_BLOCK) 
               this.dump("Error setting plugin extras: " + 
                 (o && o.pluginExtras && o.pluginExtras.url) + ", " + e1); 
           }
        }
-       this.setExpando(browser, "pe", null);
+       this.setExpando(win, "pe", null);
     } catch(e2) {
       if(this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Error attaching plugin extras: " + e2); 
     }
@@ -3124,11 +3276,8 @@ NoscriptService.prototype = {
         browser.docShell.ENUMERATE_FORWARDS
     );
     
-    var docShell, doc, docURI, url;
-    
-    const pluginsCache = this.pluginsCache.get(browser);
-   
-    var redirCache = this.getExpando(browser, "redirCache"); 
+    var docShell, docURI, url, win;
+
     var cache, redir;
     
     var document, domain;
@@ -3153,28 +3302,28 @@ NoscriptService.prototype = {
            }
          } catch(e) {}
          sites.push(url);
-          
-         cache = pluginsCache.uris[docURI];
-         if (cache) {
-           for (url in cache) {
-              sites.push(url);
-            }
+
+          for each(redir in this.getRedirCache(browser, docURI)) {
+            sites.push(redir.site);
           }
-          
-          cache = redirCache && redirCache[docURI];
-          if (cache) {
-            for each(redir in cache) {
-              sites.push(redir.site);
-            }
-          }
-          
+
           cache = document.defaultView.__noscriptBindingSites;
-          if(cache) {
-            sites.push.apply(sites, cache);
-          }
+          if(cache) sites.push.apply(sites, cache);
        }
        
-       if (!document.defaultView.__NoScript_contentLoaded && (!(docShell instanceof nsIWebNavigation) || docShell.isLoadingDocument))
+       win = document.defaultView;
+       if(win == win.top) {
+         cache = win.__noscriptObjectSites || null;
+         if(cache) {
+           if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource());
+           sites.push.apply(sites, cache);
+           sites.pluginCount += cache.length;
+           sites.pluginSites = cache;
+         }
+         this._attachPluginExtras(win);
+       }
+       
+       if (!win.__NoScript_contentLoaded && (!(docShell instanceof nsIWebNavigation) || docShell.isLoadingDocument))
          continue;
        
        // scripts
@@ -3191,7 +3340,7 @@ NoscriptService.prototype = {
       url = sites[j];
       if (/:/.test(url) && !(
           /^[a-z]+:\/*[^\/\s]+/.test(url) || 
-          /^(?:file|resource|chrome):/.test(url)
+          /^(?:file|resource|chrome):/.test(url) // */
         )) {
         sites.splice(j, 1); // reject scheme-only URLs
       }
@@ -3230,9 +3379,8 @@ NoscriptService.prototype = {
           var win = rw.findWindow(newChannel) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
           var browser = win && rw.findBrowser(newChannel, win);
           if (browser) {
-            var redirCache = this.getExpando(browser, "redirCache") || this.setExpando(browser, "redirCache", {});
-            var cache = redirCache[win.document.documentURI] || (redirCache[win.document.documentURI] = []);
-            cache.push({ site: site, type: type });
+            this.getRedirCache(browser, win.document.documentURI)
+                .push({ site: site, type: type });
           } else {
             if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
           }
@@ -3253,6 +3401,11 @@ NoscriptService.prototype = {
       uri.spec = "data:application/x-noscript-blocked,";
       newChannel.loadFlags = newChannel.INHIBIT_CACHING | newChannel.LOAD_BYPASS_CACHE;
     }
+  },
+  
+  getRedirCache: function(browser, uri) {
+    var redirCache = this.getExpando(browser, "redirCache") || this.setExpando(browser, "redirCache", {}) || {};
+    return redirCache[uri] || (redirCache[uri] = []);
   },
   
   currentPolicyURI:null,
@@ -3345,16 +3498,39 @@ NoscriptService.prototype = {
     
    
     if (this.shouldLoad(7, uri, uri, domWindow, req.contentType, true) != CP_OK) {
-      req.cancel(NS_BINDING_ABORTED);
-      if (this.consoleDump) {
-        this.dump("Aborting plugin document");
-      }
       
+      if (this.consoleDump & LOG_CONTENT_INTERCEPT)
+        this.dump("Plugin document content type detected");
+
       if(!topWin) {
+        // check if this is an iframe
+        var parentDoc = domWindow.parent.document;
+        var ff = parentDoc.getElementsByTagName("iframe");
+
+        for(var j = ff.length; j-- > 0;) {
+          if(ff[j].contentWindow == domWindow) {
+            // cause iframe placeholder
+            if(this.shouldLoad(5, uri, this.siteUtils.ios.newURI(parentDoc.documentURI, null, null), ff[j], req.contentType, true) == CP_OK)
+             return;
+          }
+        }
+        
+        if (this.consoleDump & LOG_CONTENT_BLOCK) 
+          this.dump("Deferring framed plugin document");
+        
+        req.cancel(NS_BINDING_ABORTED);
+        
+        browser = browser || this.domUtils.findBrowserForNode(domWindow);
+        this.getRedirCache(browser, uri.spec).push({site: this.getSite(domWindow.top.document.documentURI), type: 7});
         // defer separate embed processing for frames
         domWindow.location.href = this.createPluginDocumentURL(uri);
         return;
       }
+      
+      if (this.consoleDump & LOG_CONTENT_BLOCK) 
+        this.dump("Blocking top-level plugin document");
+
+      req.cancel(NS_BINDING_ABORTED);
       
       var embeds = domWindow.document.getElementsByTagName("embed");
       
@@ -3485,7 +3661,7 @@ NoscriptService.prototype = {
     var onclick;
     
     while (!(a instanceof CI.nsIDOMHTMLAnchorElement || a instanceof CI.nsIDOMHTMLAreaElement)) {
-      if ((onclick = a.getAttribute("onclick"))) break;
+      if (typeof(a.getAttribute) == "function" && (onclick = a.getAttribute("onclick"))) break;
       if (!(a = a.parentNode)) return;
     }
     
@@ -3499,7 +3675,7 @@ NoscriptService.prototype = {
       jsURL = false;
     }
     
-    onclick = onclick || a.getAttribute("onclick");
+    onclick = onclick ||  a.getAttribute("onclick");
     var fixedHref = (onclick && this.extractJSLink(onclick)) || 
                      (jsURL && this.extractJSLink(href)) || "";
     
@@ -3550,16 +3726,17 @@ NoscriptService.prototype = {
     return href || "";
   },
   
-
-  log: function(msg) {
-    var consoleService = CC["@mozilla.org/consoleservice;1"]
-                                 .getService(CI.nsIConsoleService);
-    consoleService.logStringMessage(msg);
-  },
   
+  consoleService: CC["@mozilla.org/consoleservice;1"].getService(CI.nsIConsoleService),
+  
+  log: function(msg) {
+    this.consoleService.logStringMessage(msg);
+  },
  
   dump: function(msg) {
-    dump("[NoScript] " + msg + "\n");
+    msg = "[NoScript] " + msg;
+    dump(msg + "\n");
+    if(this.consoleLog) this.log(msg);
   }
 };
 
@@ -3818,14 +3995,14 @@ RequestWatchdog.prototype = {
   checkWindowName: function(window) {
     var originalAttempt = window.name;
       
-    if (/[^\w\-\s]/.test(originalAttempt)) {
-      window.name = originalAttempt.replace(/[^\w\-\s]/g, " ");
+    if (/[%=\(]/.test(originalAttempt)) {
+      window.name = originalAttempt.replace(/[%=\(]/g, " ");
     }
     if (originalAttempt.length > 11) {
       try {
         if ((originalAttempt.length % 4 == 0)) { 
           var bin = window.atob(window.name);
-          if(/[=\(\)\[\]\.\\]/.test(bin) && InjectionChecker.syntax.check(bin)) {
+          if(/[=\(]/.test(bin) && InjectionChecker.syntax.check(bin)) {
             window.name = "BASE_64_XSS";
           }
         }
@@ -4400,7 +4577,8 @@ var InjectionChecker = {
     return bs.length % 2 ? "" : "\\";
   },
   reduceQuotes: function(s) {
-    if(!/['"]/.test(s)) return s;
+    if (!/['"]/.test(s) || /\/\*/.test(s)) 
+      return s;
     // drop noisy backslashes
     s = s.replace(/\\{2,}/g, this.reduceBackSlashes);
     
@@ -4434,18 +4612,25 @@ var InjectionChecker = {
     s = s.replace(/\%\d+[a-z]\w*/gi, '`'); // cleanup most urlencoded noise
     
     const findInjection = 
-      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\([\s\S]*?\)|\[[\s\S]*?\]|(?:setter|location|\.[\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
+      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\([\s\S]*?\)|\[[\s\S]*?\]|(?:setter|location|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
     
     findInjection.lastIndex = 0;
     var breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
     
-    const MAX_TIME = 800, MAX_LOOPS = 400;
+    const MAX_TIME = 1200, MAX_LOOPS = 400;
 
     const t = new Date().getTime();
+    
     for (var m, iterations = 0; m = findInjection.exec(s);) {
+      
+      subj = s.substring(findInjection.lastIndex);
+      if (!this.maybeJS(subj)) {
+         this.log("Fast escape on " + subj, t);
+         return false;
+      }
+      
       breakSeq = m[1];
       expr = m[2];
-      subj = s.substring(findInjection.lastIndex);
 
       // quickly skip innocuous CGI patterns
       if ((m = subj.match(/^(?:(?:[\w\s\-\/&:]+=[\w\s\-\/:]+(?:&|$))+|\w+:\/\/\w[\w\-\.]*)/))) {
@@ -4462,7 +4647,7 @@ var InjectionChecker = {
       for (moved = false, hunt = !!expr, lastExpr = null; hunt;) {
         
         if (new Date().getTime() - t > MAX_TIME) {
-          this.log("Too long execution time! Assuming DOS... " + s);
+          this.log("Too long execution time! " + iterations + " iterations. Assuming DOS... " + s);
           return true;
         }
         
@@ -4549,11 +4734,16 @@ var InjectionChecker = {
   },
     
   checkJSStunt: function(s) {
+
+   
     // check noisy comments first
-    if (/(?:\/\*[\s\S]*\*\/|[^:]\/\/.*[\r\n])/.test(s)) { 
+    if (
+      // /(?:\/\*[\s\S]*\*\/|[^:]\/\/.*[\r\n])/ // C-style comments are often found in rds.yahoo.com
+      /\/\/.*[\r\n]/.test(s)) { 
       this.log("JS comments in " + s);
       return true; 
     }
+   
     
     // Unicode ASCII escapes, no reason for this unless you're cheating!!!
     if(/\\u00[0-7][0-9a-f]/i.test(s)) {
@@ -4562,16 +4752,16 @@ var InjectionChecker = {
     }
     
     // simplest navigation acts (no dots, no round/square brackets) that we purposedly let slip from checkJSBreak 
-    if (/\blocation\s*=\s*name\b/.test(s)) { 
+    if (/\blocation\s*(?:\/\*[\s\S]*)=\s*(?:\/\*[\s\S]*)name\b/.test(s)) { 
       this.log("location = name navigation attempt in " +s);
       return true;
     };
-    if (/[\w\$\u0080-\uFFFF\]][\s\)]*setter\s*=/.test(s)) {
+    if (/[\w\$\u0080-\uFFFF\]](?:[\s\)]+|[\s\S]*\/\*[\s\S]*)setter\s*(?:\/\*[\s\S]*)?=/.test(s)) {
       this.log("setter override attempt in " +s);
       return true;
     }
     // check well known and semi-obfuscated -- as in [...]() -- function calls
-    var m = s.match(/\b(open|eval|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|Image|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*\([\s\S]*\)/);
+    var m = s.match(/\b(?:open|eval|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|Image|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/\*[\s\S]*?)?\([\s\S]*\)/);
     if (m) {
       var pos;
       var js = m[0];
@@ -4607,7 +4797,9 @@ var InjectionChecker = {
   },
   attributesChecker: new RegExp(
       "\\W(?:javascript|data):|@" + 
-      ("import|-moz-binding:url".replace(/[a-z\-:]/g, "\\W*$&")), 
+      ("import\\W*(?:\\/\\*[\\s\\S]*)*(?:[\"']|url[\\s\\S]*\\()" + 
+        "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
+        .replace(/[a-rt-z\-]/g, "\\W*$&"), 
       "gi"),
   checkAttributes: function(s) {
     return this.attributesChecker.test(s) ||

@@ -112,3 +112,6 @@
 <!ENTITY noscriptRevokeTemp.accesskey "K">
 <!ENTITY noscriptNoUntrustedPlaceholder "Güvensiz işaretlenen sitelerden gelen nesnelerde yertutucuları gösterme">
 <!ENTITY noscriptCollapseBlockedObjects "Engellenen nesneleri daralt">
+<!ENTITY noscriptExceptions "Hariç tutulanlar...">
+<!ENTITY noscriptBlockedObjects "Engellenen Nesneler">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Güvensiz olarak işaretlenen sitelerden gelen tüm nesneleri engelle">

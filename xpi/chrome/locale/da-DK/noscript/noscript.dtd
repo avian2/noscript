@@ -1,110 +1,117 @@
-<!ENTITY noscriptOptions "Options...">
-<!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript Options">
-<!ENTITY noscriptAbout "About NoScript">
-<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
-<!ENTITY noscriptWebAddress "Address of web site:">
-<!ENTITY noscriptAllow "Allow">
-<!ENTITY noscriptAllow.accesskey "A">
-<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptOptions "Indstillinger...">
+<!ENTITY noscriptOptions.accesskey "I">
+<!ENTITY noscriptOptionsLong "NoScript Indstillinger">
+<!ENTITY noscriptAbout "Om NoScript">
+<!ENTITY noscriptPermissionsText "Du kan angive hvilke hjemmesider der må udføre scripts. Indtast adresse eller domæne (f.eks. &quot;http://www.site.com&quot; eller &quot;site.com&quot;) på den side du ønsker at tillade og klik på Tillad.">
+<!ENTITY noscriptWebAddress "Hjemmesidens adresse:">
+<!ENTITY noscriptAllow "Tillad">
+<!ENTITY noscriptAllow.accesskey "T">
+<!ENTITY noscriptForbid "Forbyd">
 <!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
-<!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptTrust "Marker som betroet">
+<!ENTITY noscriptTrust.accesskey "B">
+<!ENTITY noscriptUntrust "Marker som ubetroet">
 <!ENTITY noscriptUntrust.accesskey "U">
-<!ENTITY noscriptRemoveSelected "Remove Selected Sites">
-<!ENTITY noscriptGloballyEnabled "Scripts Globally Allowed (dangerous)">
-<!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
-<!ENTITY noscriptGeneral "General">
-<!ENTITY noscriptAppearance "Appearance">
-<!ENTITY noscriptShow "Show...">
-<!ENTITY noscriptCtxMenu "Contextual menu">
-<!ENTITY noscriptStatusIcon "Status bar icon">
-<!ENTITY noscriptFullAddr "Full Addresses (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Full Domains (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
-<!ENTITY noscriptTempCmd "Temporarily allow [...]">
-<!ENTITY noscriptSound "Audio feedback when scripts are blocked">
-<!ENTITY noscriptImport "Import">
+<!ENTITY noscriptRemoveSelected "Fjern valgte sider">
+<!ENTITY noscriptGloballyEnabled "Scripts globalt tilladt (farligt)">
+<!ENTITY noscriptAutoReload "Automatisk genindlæs berørte sider når tilladelser ændres">
+<!ENTITY noscriptGeneral "Generelt">
+<!ENTITY noscriptAppearance "Udseende">
+<!ENTITY noscriptShow "Vis...">
+<!ENTITY noscriptCtxMenu "Genvejsmenu">
+<!ENTITY noscriptStatusIcon "Statuslinje ikon">
+<!ENTITY noscriptFullAddr "Hele adresser (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Hele domæner (www.noscript.net)">
+<!ENTITY noscriptBaseDom "2. niveau domæner (noscript.net)">
+<!ENTITY noscriptTempCmd "Midlertidig tillad [...]">
+<!ENTITY noscriptSound "Audio feedback når scripts bliver blokeret">
+<!ENTITY noscriptImport "Importer">
 <!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Export">
+<!ENTITY noscriptExport "Eksporter">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Show message about blocked scripts">
-<!ENTITY noscriptNotify.bottom "Place message at the bottom">
-<!ENTITY noscriptSound.choose "Choose">
-<!ENTITY noscriptSound.choose.accesskey "C">
-<!ENTITY noscriptSound.play "Play">
-<!ENTITY noscriptSound.play.accesskey "a">
-<!ENTITY noscriptSound.reset "Reset default">
-<!ENTITY noscriptSound.reset.accesskey "R">
-<!ENTITY noscriptAdvanced "Advanced">
-<!ENTITY noscriptAdditionalPermissions "Additional permissions for trusted sites">
-<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
-<!ENTITY noscriptAdditionalRestrictions "Additional restrictions for untrusted sites">
+<!ENTITY noscriptNotify "Vis meddelelse om blokerede scripts">
+<!ENTITY noscriptNotify.bottom "Placer meddelelsen nederst">
+<!ENTITY noscriptSound.choose "Vælg">
+<!ENTITY noscriptSound.choose.accesskey "V">
+<!ENTITY noscriptSound.play "Afspil">
+<!ENTITY noscriptSound.play.accesskey "A">
+<!ENTITY noscriptSound.reset "Nulstil standard">
+<!ENTITY noscriptSound.reset.accesskey "s">
+<!ENTITY noscriptAdvanced "Avanceret">
+<!ENTITY noscriptAdditionalPermissions "Yderligere tilladelser for betroede sider">
+<!ENTITY noscriptAllowClipboard "Tillad kopiering af formatteret tekst fra ekstern udklipsholder">
+<!ENTITY noscriptAdditionalRestrictions "Yderligere begrænsninger for ubetroede sider">
 <!ENTITY noscriptPlugins "Plugins">
-<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
-<!ENTITY noscriptForbidJava "Forbid Java™">
-<!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
-<!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
-<!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Forbid Adobe® Flash®">
-<!ENTITY noscriptForbidPlugins "Forbid other plugins">
-<!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
-<!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">
-<!ENTITY noscriptStatusLabel "Status bar label">
-<!ENTITY noscriptForbidBookmarklets "Forbid bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
-<!ENTITY noscriptTruncateTitle "Truncate document titles">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
-<!ENTITY noscriptAllowBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptContentBlocker "Anvend også disse begrænsninger til betroede sider">
+<!ENTITY noscriptForbidJava "Forbyd Java™">
+<!ENTITY noscriptForbidWebBugs "Forbyd &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Forbyd Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Forbyd &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFlash "Forbyd Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Forbyd andre plugins">
+<!ENTITY noscriptReloadWarn "Disse indstillinger træder i kraft på en ny eller en (manuelt) genindlæst side">
+<!ENTITY noscriptConfirmUnblock "Spørg før en midlertidig blokering af et objekt ophæves">
+<!ENTITY noscriptStatusLabel "Statuslinje etiket">
+<!ENTITY noscriptForbidBookmarklets "Forbyd bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Vis pladsholder ikon">
+<!ENTITY noscriptTruncateTitle "Afkort dokumenttitler">
+<!ENTITY noscriptFixLinks "Forsøg at fikse JavaScript links">
+<!ENTITY noscriptAllowBookmarks "Tillad sider åbnet gennem bogmærker">
+<!ENTITY noscriptAllowViaBookmarks "Tillad sider åbnet gennem bogmærker">
+<!ENTITY noscriptAllowPing "Tillad &lt;A PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Tillad lokale links">
+<!ENTITY noscriptForbidPing "Forbyd &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbyd META omdirigeringer i &lt;NOSCRIPT&gt; elementer">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "F">
 <!ENTITY noscriptWhitelist "Whitelist">
-<!ENTITY noscriptPermissions "Permissions">
-<!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifications "Notifications">
-<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
-<!ENTITY noscriptTrusted "Trusted">
-<!ENTITY noscriptUntrusted "Untrusted">
-<!ENTITY noscriptUnknown "Unknwon">
-<!ENTITY noscriptAdd "Add">
-<!ENTITY noscriptAdd.accesskey "A">
-<!ENTITY noscriptClose "Close">
-<!ENTITY noscriptSiteManager "Site Manager">
-<!ENTITY noscriptSecurityManager "Security Manager">
-<!ENTITY noscriptPolicies "Policies">
-<!ENTITY noscriptDefaultPolicies "Default Policies">
-<!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console...">
-<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptPermissions "Tilladelser">
+<!ENTITY noscriptRefresh "Genindlæs">
+<!ENTITY noscriptNotifications "Beskeder">
+<!ENTITY noscriptToolbarToggle "Venstreklik på NoScript knappen slår tilladelser for nuværende topniveau side til/fra">
+<!ENTITY noscriptTrusted "Betroet">
+<!ENTITY noscriptUntrusted "Ubetroet">
+<!ENTITY noscriptUnknown "Ukendt">
+<!ENTITY noscriptAdd "Tilføj">
+<!ENTITY noscriptAdd.accesskey "T">
+<!ENTITY noscriptClose "Luk">
+<!ENTITY noscriptSiteManager "Sidemanager">
+<!ENTITY noscriptSecurityManager "Sikkerhedsmanager">
+<!ENTITY noscriptPolicies "Retningslinjer">
+<!ENTITY noscriptDefaultPolicies "Standard retningslinjer">
+<!ENTITY noscriptSitePolicies "Sidespecifikke retningslinjer">
+<!ENTITY noscriptNselNever "Gem &lt;NOSCRIPT&gt; elementer">
+<!ENTITY noscriptNselForce "Vis &lt;NOSCRIPT&gt; elementet som følger et blokeret &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillad topniveau sider som standard">
+<!ENTITY noscriptDescription "Ekstra beskyttelse af din Firefox: NoScript tillader kun JavaScript, Java (og andre plugins) fra betroede domæner valgt af dig (f.eks. din home-banking hjemmeside). Denne whitelist-baserede forebyggende metode forhindrer udnyttelse af sikkerhedshuller (såvel kendte som ukendte!) uden tab af funktionalitet... Eksperter er enige: Firefox er mere sikker med NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Bloker CSS-baserede skannere">
+<!ENTITY noscriptOptFilterXGet "Rens mistænkelige cross-site forespørgsler">
+<!ENTITY noscriptOptFilterXPost "Omdan cross-site POST-forespørgsler til GET-forespørgsler uden data">
+<!ENTITY noscriptShowConsole "Vis konsol...">
+<!ENTITY noscriptShowConsole.accesskey "V">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
-<!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
-<!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
-<!ENTITY noscriptReset "Reset">
-<!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptXssFaq "XSS OSS...">
+<!ENTITY noscriptXssFaq.accesskey "O">
+<!ENTITY noscriptUnsafeReload "Usikker genindlæsning">
+<!ENTITY noscriptUnsafeReload.accesskey "U">
+<!ENTITY noscriptXssExceptions "Anti-XSS beskyttelsesundtagelser">
+<!ENTITY noscriptXssExceptions.description "Destinationer, som matcher disse regulære udtryk, vil IKKE blive beskyttet mod XSS">
+<!ENTITY noscriptMatchSample "Eksempel på matchmønster:">
+<!ENTITY noscriptReset "Nulstil">
+<!ENTITY noscriptReset.accesskey "N">
+<!ENTITY noscriptResetDef "Nulstil til standard">
+<!ENTITY noscriptResetDef.accesskey "s">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR OSS">
 <!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptForbidJarDocuments "Bloker indlæsning af af fremmede JAR-ressourcer som dokumenter">
+<!ENTITY noscriptJarExceptions "JAR dokument blokeringsundtagelser">
+<!ENTITY noscriptJarExceptions.description "JAR dokumenter der matcher disse regulære udtryk bliver IKKE blokeret.">
+<!ENTITY noscriptRevokeTemp "Tilbagekald midlertidige tilladelser">
+<!ENTITY noscriptRevokeTemp.accesskey "m">
+<!ENTITY noscriptNoUntrustedPlaceholder "Ingen pladsholdere til objekter fra sider der er markeret som ubetroede">
+<!ENTITY noscriptCollapseBlockedObjects "Sammenfold blokerede objekter">
+<!ENTITY noscriptExceptions "Undtagelser...">
+<!ENTITY noscriptBlockedObjects "Blokerede objekter">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Bloker alle objekter der kommer fra en side som er markeret som ubetroet">

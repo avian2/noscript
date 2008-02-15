@@ -112,3 +112,6 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Ne pas réserver d&apos;espace pour les objets venant de sites marqués comme sites à risque">
 <!ENTITY noscriptCollapseBlockedObjects "Utiliser l&apos;espace libéré par les éléments bloqués">
+<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptBlockedObjects "Objets bloqués">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquer tous les objets venant d&apos;un site marqué comme non fiables">

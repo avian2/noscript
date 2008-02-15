@@ -37,7 +37,7 @@
 <!ENTITY noscriptSound.play.accesskey "h">
 <!ENTITY noscriptSound.reset "Obnoviť predvolené">
 <!ENTITY noscriptSound.reset.accesskey "r">
-<!ENTITY noscriptAdvanced "Spresniť">
+<!ENTITY noscriptAdvanced "Spresnenie">
 <!ENTITY noscriptAdditionalPermissions "Ďalšie povolenia pre dôveryhodné stránky">
 <!ENTITY noscriptAllowClipboard "Povoliť kopírovanie a prilepenie textu z externej schránky">
 <!ENTITY noscriptAdditionalRestrictions "Ďalšie obmedzenia pre nepovolené stránky">
@@ -112,3 +112,6 @@
 <!ENTITY noscriptRevokeTemp.accesskey "d">
 <!ENTITY noscriptNoUntrustedPlaceholder "Žiadny zástupca pre objekty zo stránok označených ako nedôveryhodné">
 <!ENTITY noscriptCollapseBlockedObjects "Stlačiť blokované objekty">
+<!ENTITY noscriptExceptions "Výnimky...">
+<!ENTITY noscriptBlockedObjects "Blokované objekty">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokovať všetky objekty prichádzajúce zo stránky označenej ako nedôveryhodná">

@@ -5,13 +5,13 @@
 <!ENTITY noscriptPermissionsText "Você pode especificar os sites que podem executar JavaScripts. Escreva o endereço ou o domínio (ex &quot;http://www.site.com&quot; ou &quot;site.com&quot;) do site que deseja permitir e depois clique em Permitir.">
 <!ENTITY noscriptWebAddress "Endereço:">
 <!ENTITY noscriptAllow "Permitir">
-<!ENTITY noscriptAllow.accesskey "I">
+<!ENTITY noscriptAllow.accesskey "P">
 <!ENTITY noscriptForbid "Proibir">
-<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptForbid.accesskey "P">
 <!ENTITY noscriptTrust "Marcar como Confiável">
-<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptTrust.accesskey "C">
 <!ENTITY noscriptUntrust "Marcar como Não Confiável">
-<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptUntrust.accesskey "N">
 <!ENTITY noscriptRemoveSelected "Remover Sites Selecionados">
 <!ENTITY noscriptGloballyEnabled "JavaScript Globalmente Permitido (perigoso)">
 <!ENTITY noscriptAutoReload "Atualizar automaticamente a página atual quando as permissões são alteradas.">
@@ -32,9 +32,9 @@
 <!ENTITY noscriptNotify "Mostrar mensagens sobre os scripts bloqueados">
 <!ENTITY noscriptNotify.bottom "Mostrar mensagens no botão">
 <!ENTITY noscriptSound.choose "Escolher">
-<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.choose.accesskey "E">
 <!ENTITY noscriptSound.play "Tocar">
-<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.play.accesskey "T">
 <!ENTITY noscriptSound.reset "Restaurar padrões">
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "Avançado">
@@ -52,7 +52,7 @@
 <!ENTITY noscriptReloadWarn "Estas opções terão efeito em páginas novas ou (manualmente) atualizadas.">
 <!ENTITY noscriptConfirmUnblock "Pedir confirmação antes de desbloquear temporariamente um objeto">
 <!ENTITY noscriptStatusLabel "Informações na barra de status">
-<!ENTITY noscriptForbidBookmarklets "Proibir bookmarklets">
+<!ENTITY noscriptForbidBookmarklets "Proibir livretos de favoritos">
 <!ENTITY noscriptShowPlaceholder "Mostrar ícone de substituição">
 <!ENTITY noscriptTruncateTitle "Quebrar títulos dos documentos">
 <!ENTITY noscriptFixLinks "Tentar corrigir links JavaScript">
@@ -62,7 +62,7 @@
 <!ENTITY noscriptAllowLocalLinks "Permitir links locais">
 <!ENTITY noscriptForbidPing "Proibir &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Proibir redirecionamentos META dentro de elementos &lt;NOSCRIPT&gt;">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "A">
 <!ENTITY noscriptWhitelist "Lista Branca">
 <!ENTITY noscriptPermissions "Permissões">
 <!ENTITY noscriptRefresh "Atualizar">
@@ -80,18 +80,18 @@
 <!ENTITY noscriptDefaultPolicies "Políticas Padrão">
 <!ENTITY noscriptSitePolicies "Políticas Específicas do Site">
 <!ENTITY noscriptNselNever "Ocultar elementos &lt;NOSCRIPT&gt;">
-<!ENTITY noscriptNselForce "Mostrar o elemento &lt;NOSCRIPT&gt; que perseguiu um script bloqueedo &lt;SCRIPT&gt;">
+<!ENTITY noscriptNselForce "Mostrar o elemento &lt;NOSCRIPT&gt; que perseguiu um script bloqueado &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Permitir temporariamente todos os sites de alto nível por padrão">
-<!ENTITY noscriptDescription "Proteção extra para o seu Firefox: O NoScript permite o uso de JavaScripts, Java(e outros plugins) somente para os domínios confiáveis que você selecionar(como por exemplo no site do seu internet banking). Esse bloqueio baseado em uma lista branca previne a exploração de vulnerabilidades de segurança (conhecidas e  até mesmo as desconhecidas!) sem perda de desempenho... Usuários e especialistas concordam: o Firefox é realmente mais seguro com o NoScript :-)">
+<!ENTITY noscriptDescription "Proteção extra para o seu Firefox: O NoScript permite o uso de JavaScripts, Java (e outros plugins) somente para os domínios confiáveis que você selecionar (como por exemplo no site do seu internet banking). Esse bloqueio baseado em uma lista branca previne a exploração de vulnerabilidades de segurança (conhecidas e  até mesmo as desconhecidas!) sem perda de desempenho... Usuários e especialistas concordam: o Firefox é realmente mais seguro com o NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Bloquear varredores baseados em CSS">
 <!ENTITY noscriptOptFilterXGet "Desinfectar requerimentos suspeitos via site">
 <!ENTITY noscriptOptFilterXPost "Alterar requerimentos perigosos via site em requerimentos sem dados">
-<!ENTITY noscriptShowConsole "Mostrar...">
-<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptShowConsole "Mostrar Console...">
+<!ENTITY noscriptShowConsole.accesskey "M">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "Perguntas e respostas XSS ...">
-<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptXssFaq "Perguntas e respostas do XSS ...">
+<!ENTITY noscriptXssFaq.accesskey "P">
 <!ENTITY noscriptUnsafeReload "Recarregamento Inseguro">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Proteção Anti-XSS através das exceções">
@@ -100,15 +100,18 @@
 <!ENTITY noscriptReset "Restaurar">
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Restaurar para os padrões">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptResetDef.accesskey "p">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "FAQ do JAR">
-<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptJarFaq "Perguntas e respostas do JAR">
+<!ENTITY noscriptJarFaq.accesskey "r">
 <!ENTITY noscriptForbidJarDocuments "Bloquear recursos remotos do JAR de serem carregados como documentos.">
 <!ENTITY noscriptJarExceptions "Exceções de bloqueio de documentos JAR.">
 <!ENTITY noscriptJarExceptions.description "Documentos JAR que combinarem com essas expressões NÂO serão bloqueados.">
 <!ENTITY noscriptRevokeTemp "Anular Permissões Temporárias">
-<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptRevokeTemp.accesskey "A">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nenhum placeholder para objetos provenientes de sites marcados como não confiáveis">
 <!ENTITY noscriptCollapseBlockedObjects "Quebrar objetos bloqueados">
+<!ENTITY noscriptExceptions "Exceções...">
+<!ENTITY noscriptBlockedObjects "Objetos bloqueados">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquear todos os objetos provenientes de um site marcado como não confiável">

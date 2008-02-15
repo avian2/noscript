@@ -140,15 +140,13 @@ var noscriptOverlay = noscriptUtil.service ?
     const miGlobal = seps.global.nextSibling;
     
     if (global || ns.getPref("showGlobal")) {
-      miGlobal.style.display = "";
-      seps.global.style.display = "";
+      miGlobal.hidden = seps.global.hidden = false;
       miGlobal.setAttribute("label", this.getString((global ? "forbid" : "allow") + "Global"));
       miGlobal.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!global)+")");
       miGlobal.setAttribute("tooltiptext", this.statusIcon.getAttribute("tooltiptext"));
       miGlobal.setAttribute("class", "menuitem-iconic " + this.getStatusClass(global ? "no" : "glb"));
     } else {
-      miGlobal.style.display = "none";
-      seps.global.style.display = "none";
+      miGlobal.hidden = seps.global.hidden = true;
     }
     
     node = miGlobal.nextSibling;
@@ -158,18 +156,21 @@ var noscriptOverlay = noscriptUtil.service ?
       node = mainMenu.insertBefore(document.getElementById("noscript-revoke-temp-mi").cloneNode(true), node);
       node.id = "";
     }
-    if (ns.tempSites.sitesString) {
-      node.style.display = "";
-      seps.global.style.display = "";
+    if ((ns.tempSites.sitesString || ns.objectWhitelistLen) && ns.getPref("showRevokeTemp", true)) {
+      node.hidden = seps.global.hidden = false;
       node.setAttribute("tooltiptext",
         // remove http/https/file CAPS hack entries 
-        ns.siteUtils.sanitizeString(ns.tempSites.sitesString.replace(/\b(?:https?|file):\/\//g, ""))
-          .split(/\s+/) 
-          // .join(",\n") // wait Firefox 3 with its multiline tooltips for this
-          .length
-        );
+        "<SCRIPT>: " + 
+        (ns.tempSites.sitesString 
+          ? ns.siteUtils.sanitizeString(ns.tempSites.sitesString.replace(/\b(?:https?|file):\/\//g, ""
+              )).split(/\s+/) 
+              // .join(",\n") // wait Firefox 3 with its multiline tooltips for this
+              .length
+          : 0) +
+        " | <OBJECT>: " + ns.objectWhitelistLen
+      );
     } else {
-      node.style.display = "none";
+      node.hidden = true;
     }
     node = node.nextSibling;
    
@@ -186,16 +187,23 @@ var noscriptOverlay = noscriptUtil.service ?
     this.prepareOptItems(popup);
       
     var untrustedMenu = null;
+    var pluginsMenu = null;
     if (seps.untrusted) {
-      node = document.getElementById("noscript-menu-untrusted");
-      if (seps.untrusted.nextSibling != node) {
-        seps.untrusted.parentNode.insertBefore(node, seps.untrusted.nextSibling);
-      }
       
-      untrustedMenu = node.firstChild;
-      while (untrustedMenu.firstChild) {
-        untrustedMenu.removeChild(untrustedMenu.firstChild);
+      pluginsMenu = document.getElementById("noscript-menu-blocked-objects");
+      untrustedMenu = document.getElementById("noscript-menu-untrusted");
+      
+      with(seps.untrusted) {
+        if (nextSibling != pluginsMenu) {   
+          parentNode.insertBefore(untrustedMenu, nextSibling);
+          parentNode.insertBefore(pluginsMenu, untrustedMenu);
+        }
       }
+      // descend from menus to popups and clear children
+      for each(node in [pluginsMenu = pluginsMenu.firstChild, untrustedMenu = untrustedMenu.firstChild])
+        while (node.firstChild)
+          node.removeChild(node.firstChild);
+
       untrustedMenu.appendCmd = untrustedMenu.appendChild;
       this.updateStatusClass(untrustedMenu.parentNode, this.getStatusClass("no", true));
     }
@@ -213,6 +221,8 @@ var noscriptOverlay = noscriptUtil.service ?
     mainMenu.appendCmd = function(n) { this.insertBefore(n, seps.stop); };
 
     const sites = this.getSites();
+    
+    this.populatePluginsMenu(mainMenu, pluginsMenu, sites.pluginExtras);
     
     var site, enabled, isTop, lev;
     var jsPSs = ns.jsPolicySites;
@@ -352,27 +362,109 @@ var noscriptOverlay = noscriptUtil.service ?
       // this one can go away, better take our stuff back when done
       mainMenu.addEventListener("popuphidden", function(ev) {
         if (ev.target != ev.currentTarget) return;
-        ev.currentTarget.removeEventListener(ev.name, arguments.callee, false);
+        ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
         noscriptOverlay.prepareMenu(document.getElementById("noscript-status-popup"));
       }, false);
     }
     
   },
+
+  populatePluginsMenu: function(mainMenu, menu, extras) {
+    if (!menu) return;
+    
+    menu.parentNode.hidden = true;
+    const ns = this.ns;
+    if (!(extras && ns.getPref("showBlockedObjects", true)))
+      return;
+    
+    var egroup, e, node, i;
+    var pluginExtras = [];
+    i = 0;
+    for each(egroup in extras) {
+      for each(e in egroup) {
+         if(!e.placeholder) continue;
+         node = document.createElement("menuitem");
+         node.setAttribute("label", this.getString("allowTemp", [ns.urlEssentials(e.url)]));
+         node.setAttribute("tooltiptext", e.title);
+         node.setAttribute("oncommand", "noscriptOverlay.allowObject(" + i + ")");
+         node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-allow");
+         node.style.listStyleImage = ns.cssMimeIcon(e.mime, 16);
+         menu.appendChild(node);
+         pluginExtras[i++] = e;
+      }
+    }
+    if (i) {
+      noscriptOverlay.menuPluginExtras = pluginExtras;
+      mainMenu.addEventListener("popuphidden", function(ev) {
+          if (ev.currentTarget != ev.target) return;
+          ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
+          noscriptOverlay.menuPluginExtras = null;
+          noscriptOverlay.menuPluginSites = null;
+      }, false);
+      var pluginSites = {};
+      i = 0;
+      for each(e in pluginExtras) {
+        if(!(e.site && e.mime)) continue;
+        if (e.site in pluginSites) {
+          if (pluginSites[e.site].indexOf(e.mime) > -1) 
+            continue;
+          pluginSites[e.site].push(e.mime);
+        } else {
+          pluginSites[e.site] = ["*", e.mime];
+        }
+        i++;
+      }
+      if (i) {
+        noscriptOverlay.menuPluginSites = [];
+        i = 0;
+        var mime;
+        for (var site in pluginSites) {
+          menu.appendChild(document.createElement("menuseparator"));
+          for each(mime in pluginSites[site]) {
+            node = document.createElement("menuitem");
+            node.setAttribute("label", this.getString("allowTemp", [ns.mimeEssentials(mime) + "@" + site]));
+            node.setAttribute("tooltiptext", mime + "@" + site);
+            node.setAttribute("oncommand", "noscriptOverlay.allowObjectSite(" + i + ")");
+            node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-allow");
+            if(mime != "*")
+              node.style.listStyleImage = node.style.listStyleImage = ns.cssMimeIcon(mime, 16);
+
+            menu.appendChild(node);
+            noscriptOverlay.menuPluginSites[i++] = [site, mime];
+          }
+        }
+      }
+      menu.parentNode.hidden = false;
+    }
+  },
+  
+  allowObject: function(i) {
+    if(this.menuPluginExtras && this.menuPluginExtras[i] && this.menuPluginExtras[i].placeholder) 
+      this.ns.checkAndEnablePlaceholder(this.menuPluginExtras[i].placeholder);
+  },
+  allowObjectSite: function(i) {
+    if(this.menuPluginSites && this.menuPluginSites[i]) {
+      this.ns.allowObject(this.menuPluginSites[i][0], this.menuPluginSites[i][1]);
+      if (this.ns.getPref("autoReload", true))
+        this.ns.quickReload(gBrowser.selectedBrowser.webNavigation);
+    }
+  },
+  
   
   normalizeMenu: function(menu, hideParentIfEmpty) {
     if (!menu) return;
     var prev = null;
-    var wasSep = false;
+    var wasSep = true;
     var isSep, haveMenu = false;
     for (var i = menu.firstChild; i; i = i.nextSibling) {
       if (!i.hidden) {
         isSep = i.nodeName == "menuseparator";
-        if (isSep && (wasSep || !prev)) {
+        if (isSep && wasSep) {
           i.hidden = true;
         } else {
+          haveMenu = haveMenu || !isSep;
           prev = i;
           wasSep = isSep;
-          haveMenu = haveMenu || !isSep;
         }
       }
     }
@@ -509,7 +601,7 @@ var noscriptOverlay = noscriptUtil.service ?
       } else {
         popup.addEventListener("popuphidden", function(ev) {
             if (ev.currentTarget != ev.target) return;
-            ev.target.removeEventListener("popuphidden", arguments.callee, false);
+            ev.target.removeEventListener(ev.type, arguments.callee, false);
             ev.target.parentNode.hidden = !noscriptOverlay.ns.getPref("statusIcon", true);
         }, false);
         statusIcon.hidden = false;
@@ -690,7 +782,7 @@ var noscriptOverlay = noscriptUtil.service ?
   
   notifyXSSOnLoad: function(requestInfo) {
     requestInfo.browser.addEventListener("DOMContentLoaded", function(ev) {
-      requestInfo.browser.removeEventListener("DOMContentLoaded", arguments.callee, false);
+      requestInfo.browser.removeEventListener(ev.type, arguments.callee, false);
       if (requestInfo.unsafeRequest && requestInfo.unsafeRequest.issued) return;
       noscriptOverlay.notifyXSS(requestInfo);
     }, false);
@@ -767,7 +859,7 @@ var noscriptOverlay = noscriptUtil.service ?
       }
       browser.addEventListener("beforeunload", function(ev) {
         if (ev.originalTarget == info.document || ev.originalTarget == browser) {
-          browser.removeEventListener("beforeunload", arguments.callee, false);
+          browser.removeEventListener(ev.type, arguments.callee, false);
           if (notification && notification == box.currentNotification) {
             box.removeCurrentNotification();
           } else {
@@ -820,7 +912,7 @@ var noscriptOverlay = noscriptUtil.service ?
       );
     browser.addEventListener("beforeunload", function(ev) {
       if (ev.originalTarget == info.document || ev.originalTarget == browser) {
-        browser.removeEventListener("beforeunload", arguments.callee, false);
+        browser.removeEventListener(ev.type, arguments.callee, false);
         if (notification && notification == box.currentNotification) {
           box.removeCurrentNotification();
         } 
@@ -985,7 +1077,6 @@ var noscriptOverlay = noscriptUtil.service ?
     const ns = this.ns;
     browser = browser || ns.domUtils.findBrowserForNode(doc);
     if (browser) {
-      ns.pluginsCache.purgeURIs(browser);
       ns.setExpando(browser, "pe", null);
       this.notificationHide(browser, true);
     }
@@ -1328,7 +1419,8 @@ var noscriptOverlay = noscriptUtil.service ?
     
     browserDOMWindow.wrappedJSObject.openURI = noscriptOverlay.browserAccess.openURI;
     
-    noscriptOverlay.ns.dump("[NoScript] browserDOMWindow wrapped for external load interception");
+    if(noscriptOverlay.ns.consoleDump) 
+      noscriptOverlay.ns.dump("[NoScript] browserDOMWindow wrapped for external load interception");
   },
   
   browserAccess: {
