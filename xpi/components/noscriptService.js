@@ -1,7 +1,7 @@
 /***** BEGIN LICENSE BLOCK *****
 
 NoScript - a Firefox extension for whitelist driven safe JavaScript execution
-Copyright (C) 2004-2007 Giorgio Maone - g.maone@informaction.com
+Copyright (C) 2004-2008 Giorgio Maone - g.maone@informaction.com
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
-// XPCOM Scaffolding
+// Scaffolding
 
 const CI = Components.interfaces;
 const CC = Components.classes;
@@ -159,7 +159,10 @@ const URIValidator = {
     if (!this.validators) this.init();
     var validator = this.validators[scheme];
     try {
-      return validator && validator.test(decodeURI(parts.join(":")));
+      // using unescape rather than decodeURI for a reason:
+      // many external URL (e.g. mailto) default to ISO8859, and we would fail,
+      // but on the other hand rules marking as invalid non-null high unicode chars are unlikely (let's hope it) 
+      return validator && validator.test(unescape(parts.join(":"))); 
     } catch(e) {
       return false;
     }
@@ -798,7 +801,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.4",
+  VERSION: "1.4.9",
   
   get wrappedJSObject() {
     return this;
@@ -915,7 +918,6 @@ NoscriptService.prototype = {
   collapseObject: false,
   
   forbidSomeContent: false,
-  forbidAllContent: false,
   contentBlocker: false,
   
   forbidChromeScripts: false,
@@ -943,6 +945,7 @@ NoscriptService.prototype = {
   
   jsHack: null,
   jsHackRegExp: null,
+  silverlightPatch: false,
   
   nselNever: false,
   nselForce: true,
@@ -1022,8 +1025,6 @@ NoscriptService.prototype = {
         this[name]=this.getPref(name, this[name]);
         this.forbidSomeContent = this.forbidJava || this.forbidFlash 
             || this.forbidSilverlight || this.forbidPlugins || this.forbidIFrames;
-        this.forbidAllContent = this.forbidJava && this.forbidFlash 
-            &&  this.forbidSilverlight && this.forbidPlugins && this.forbidIFrames;
       break;
       
       case "alwaysBlockUntrustedContent":
@@ -1051,6 +1052,7 @@ NoscriptService.prototype = {
       case "jsredirectForceShow":
       case "jsHack":
       case "consoleLog":
+      case "silverlightPatch":
         this[name] = this.getPref(name, this[name]);
       break;
       case "consoleDump":
@@ -1205,6 +1207,7 @@ NoscriptService.prototype = {
                 'a.__noscriptPlaceholder__ > div:first-child > div:first-child { display: block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
                 'noscript a.__noscriptPlaceholder__ { display: inline !important; }';
         break;
+        
       default:
         return;
     };
@@ -1322,6 +1325,7 @@ NoscriptService.prototype = {
       "nselNever", "nselForce",
       "pluginPlaceholder", "showPlaceholder", "showUntrustedPlaceholder", "collapseObject",
       "temp", "untrusted",
+      "silverlightPatch",
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp",
       ]) {
@@ -1770,10 +1774,12 @@ NoscriptService.prototype = {
       
       if(j < 0) { 
         // check plugin objects
-        if (this.consoleDump & LOG_CONTENT_BLOCK) 
-          this.dump("Checking object permission changes: " + 
-              docSites.toSource() + ", " + lastObjects.toSource());
-          
+        if (this.consoleDump & LOG_CONTENT_BLOCK) {
+          this.dump("Checking object permission changes...");
+          try {
+            this.dump(docSites.toSource() + ", " + lastObjects.toSource());
+          } catch(e) {}
+        }
         if (this.checkObjectPermissionsChange(docSites, lastObjects)) {
            ret = true;
            this.quickReload(browser.webNavigation);
@@ -1789,7 +1795,11 @@ NoscriptService.prototype = {
   
   checkObjectPermissionsChange: function(sites, snapshot) {
     if(this.objectWhitelist == snapshot) return false;
-    
+    var s, url;
+    for (url in snapshot) {
+      s = this.getSite(url);
+      if (!(s in snapshot)) snapshot[s] = snapshot[url];
+    }
     for each (var s in sites.pluginSites) {
       if ((s in snapshot) && !(s in this.objectWhitelist)) {
         return true;
@@ -2120,7 +2130,7 @@ NoscriptService.prototype = {
         break;
       case 9:
         // our take on https://bugzilla.mozilla.org/show_bug.cgi?id=387971
-        args[1].spec = "chrome://noscript/content/nop.xbl#nop";
+        args[1].spec = "chrome://noscript/content/noscript.xbl#nop";
         return 1;
     }
     return this.rejectCode;
@@ -2131,20 +2141,25 @@ NoscriptService.prototype = {
       
       var originURL, locationURL, originSite, locationSite, scheme,
           forbid, isJS, isJava, isFlash, isSilverlight,
-          isLegacyFrame, blockThisIFrame, contentDocument;
+          isLegacyFrame, blockThisIFrame, contentDocument,
+          logIntercept, logBlock;
       
-      var logIntercept = this.consoleDump;
+      logIntercept = this.consoleDump;
       if(logIntercept) {
-        var logBlock = logIntercept & LOG_CONTENT_BLOCK;
-        logIntecept = logIntercept = LOG_CONTENT_INTERCEPT;
+        logBlock = logIntercept & LOG_CONTENT_BLOCK;
+        logIntercept = logIntercept & LOG_CONTENT_INTERCEPT;
       } else logBlock = false;
       
       try {
         if (aContentType == 1 && !this.POLICY1_9) { // compatibility for type OTHER
           if (aContext instanceof CI.nsIDOMHTMLDocument) {
             aContentType = arguments.callee.caller ? 11 : 9;
-          } else if ((aContext instanceof CI.nsIDOMHTMLElement) && aContext.getAttribute("ping")) {
-            aContentType = 10;
+          } else if ((aContext instanceof CI.nsIDOMHTMLElement)) {
+            if ((aContext instanceof CI.nsIDOMHTMLEmbedElement || aContext instanceof CI.nsIDOMHTMLObjectElement)) {
+              aContentType = 12;
+            } else if (aContext.getAttribute("ping")) {
+              aContentType = 10;
+            }
           }
           arguments[0] = aContentType;
         }
@@ -2169,9 +2184,7 @@ NoscriptService.prototype = {
             var win = aContext.defaultView;
             locationURL = aContentLocation.spec;
             if(win) {
-              (win.__noscriptBindingSites = (win.__noscriptBindingSites || [])).push(
-                this.getSite(locationURL)
-              );
+              this.getExpando(win, "bindingSites", []).push(this.getSite(locationURL));
             }
             return this.forbiddenXBLContext(originURL, locationURL) ?
               this.reject("XBL", arguments) : 1;
@@ -2332,7 +2345,16 @@ NoscriptService.prototype = {
               return CP_OK;
             }
             break;
+          
             
+          case 12:
+            // Silverlight mindless activation scheme :(
+            if (!this.forbidSilverlight 
+                || !this.getExpando(aContext, "silverlight") || this.getExpando(aContext, "allowed"))
+              return CP_OK;
+
+            aMimeTypeGuess = "application/x-silverlight";
+            break;
           default:
             return CP_OK;
         }
@@ -2347,7 +2369,17 @@ NoscriptService.prototype = {
           this.dump("[CP PASS 2] " + aMimeTypeGuess + "/" + locationURL);
 
         if (isJS) {
-          return aRequestOrigin && locationSite == this.getSite(aRequestOrigin.spec) || 
+          originSite = aRequestOrigin && this.getSite(aRequestOrigin.spec);
+          
+          // Silverlight hack
+          
+          if (this.contentBlocker && this.forbidSilverlight && this.silverlightPatch &&
+                originSite && /^(?:https?|file):/.test(originSite)) {
+            this.applySilverlightPatch(aContext.ownerDocument);
+          }
+          
+          
+          return originSite && locationSite == originSite || 
             this.isJSEnabled(locationSite) || aContentLocation.scheme == "data" 
             ? CP_OK : this.reject("Script", arguments);
         }
@@ -2355,7 +2387,7 @@ NoscriptService.prototype = {
         if (!(forbid || locationSite == "chrome:")) {
           var mimeKey = aMimeTypeGuess || "application/x-unknown"; 
           
-          forbid = this.forbidAllContent || blockThisIFrame || untrusted && this.alwaysBlockUntrustedContent;
+          forbid = blockThisIFrame || untrusted && this.alwaysBlockUntrustedContent;
           if (!forbid && this.forbidSomeContent) {
             if (aMimeTypeGuess && !(this.allowedMimeRegExp && this.allowedMimeRegExp.test(aMimeTypeGuess))) {
               forbid = 
@@ -2368,9 +2400,28 @@ NoscriptService.prototype = {
                 isJava && this.forbidJava || 
                 isSilverlight && this.forbidSilverlight;
               if (forbid) {
-                if (isSilverlight) forbid = aContentLocation != aRequestOrigin || aContext.firstChild;
+                if (isSilverlight) {
+                  forbid = aContentLocation != aRequestOrigin || aContext.firstChild;
+                  if(forbid && aContentType != 12) {
+                    this.setExpando(aContext, "silverlight", true);
+                    if (!aContentLocation.spec == "data:,") {
+                      try {
+                        aContentLocation.spec = "data:,"; // normalize URL
+                      } catch(fex) {
+                        if (this.consoleDump) this.dump("Couldn't normalize " + aContentLocation.spec + " to data:, - " + fex);
+                      }
+                    }
+                    locationURL = this.resolveSilverlightURL(aRequestOrigin, aContext);
+                    locationSite = this.getSite(locationURL);
+                  }
+                } else if (isFlash) {
+                  locationURL = this.addFlashVars(locationURL, aContext);
+                }
               } else {
                 forbid = this.forbidPlugins && !(isJava || isFlash || isSilverlight);
+                if (forbid) {
+                  locationURL = this.addObjectParams(locationURL, aContext);
+                }
               }
             }
           }
@@ -2384,23 +2435,26 @@ NoscriptService.prototype = {
           var originOK = originSite 
             ? this.isJSEnabled(originSite) 
             : /^(?:javascript|data):/.test(originURL); // if we've got such an origin, parent should be trusted
-            
-          var locationOK = locationSite 
-            ? this.isJSEnabled(locationSite) 
-            : /^(?:javascript|data):/.test(locationURL) && originOK; // use origin for javascript: or data:
           
-          forbid = !(locationOK && (originOK || !this.getPref(blockThisIFrame 
-                                   ? "forbidIFramesParentTrustCheck" : "forbidActiveContentParentTrustCheck", true))
-                    );
+          var locationOK = locationSite 
+                ? this.isJSEnabled(locationSite) 
+                : // use origin for javascript: or data:
+                  /^(?:javascript|data):/.test(locationURL) && originOK
+          ;
+
+          forbid = !(locationOK && (originOK || 
+            !this.getPref(blockThisIFrame 
+            ? "forbidIFramesParentTrustCheck" : "forbidActiveContentParentTrustCheck", true)
+            ));
         }
-        
+
         this.delayExec(this.countObject, 0, aContext, locationSite);
-        
+
         if(forbid) {
           try {  // moved here because of http://forums.mozillazine.org/viewtopic.php?p=3173367#3173367
-            if (aContext.__NoScript_allowedContent || 
+            if (this.getExpando(aContext, "allowed") || 
               this.isAllowedObject(locationURL, mimeKey, locationSite)) {
-              aContext.__NoScript_allowedContent = true;
+              this.setExpando(aContext, "allowed", true);
               return CP_OK; // forceAllow
             }
           } catch(ex) {
@@ -2410,7 +2464,7 @@ NoscriptService.prototype = {
           try {
             if(isLegacyFrame) { // inject an embed and defer to load
               this.blockLegacyFrame(aContext, aContentLocation, aInternalCall);
-            } else if (aContext && (aContentType == 5 || aContentType == 7)) {
+            } else if (aContext && (aContentType == 5 || aContentType == 7 || aContentType == 12)) {
               if (aContext instanceof CI.nsIDOMNode) {
                 this.delayExec(this.tagForReplacement, 0, aContext, {
                   url: locationURL,
@@ -2424,14 +2478,17 @@ NoscriptService.prototype = {
             return this.reject("Forbidden " + (contentDocument ? ("IFrame " + contentDocument.URL) : "Content"), arguments);
           }
         } else {
-           if(this.consoleDump & LOG_CONTENT_CALL) {
+          if(isSilverlight) {
+            this.setExpando(aContext, "silverlight", aContentType != 12);
+          }
+          if(this.consoleDump & LOG_CONTENT_CALL) {
              this.dump(locationURL + " Allowed, " + new Error().stack);
-           }
+          }
         }
         
         
       } catch(e) {
-        return this.reject("Content (Fatal Error, " + e  + ")", arguments);
+        return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
       }
       return CP_OK;
     },
@@ -2443,12 +2500,71 @@ NoscriptService.prototype = {
     }
   },
   
+  addFlashVars: function(url, embed) {
+    // add flashvars to have a better URL ID
+    try {
+      var flashvars = embed.getAttribute("flashvars");
+      if (flashvars) url += "#!flashvars#" + encodeURI(flashvars); 
+    } catch(e) {
+      if (this.consoleDump) this.dump("Couldn't add flashvars to " + url + ":" + fex);
+    }
+    return url;
+  },
+  
+  addObjectParams: function(url, embed) {
+    try {
+      var params = embed.getElementsByTagName("param");
+      if(!params.length) return url;
+      
+      var pp = [];
+      for(var j = params.length; j-- > 0;) {
+        pp.push(encodeURIComponent(params[j].name) + "=" + encodeURIComponent(params[j].value));
+      }
+      url += "#!objparams#" + pp.join("&");
+    } catch(e) {
+      if (this.consoleDump) this.dump("Couldn't add object params to " + url + ":" + fex);
+    }
+    return url;
+  },
+  
+  resolveSilverlightURL: function(uri, embed) {
+    if(!uri) return "";
+    var url = "";
+    try {
+      
+      var params = embed.getElementsByTagName("param");
+      if (!params.length) return uri.spec;
+      
+      var name, value, pp = [];
+      for (var j = params.length; j-- > 0;) { // iteration inverse order is important for "source"!
+        name = params[j].name;
+        value = params[j].value;
+        if(!(name && value)) continue;
+        
+        if (!url && name.toLowerCase() == "source") {
+          try {
+             url = uri.resolve(value);
+             continue;
+          } catch(e) {
+            if (this.consoleDump)  
+              this.dump("Couldn't resolve Silverlight URL " + uri.spec + " + " + value + ":" + e);
+            url = uri.spec;
+          }
+        }
+        pp.push(encodeURIComponent(name) + "=" + encodeURIComponent(value));
+      }
+      return (url || uri.spec) + "#!objparams#" + pp.join("&");
+    } catch(fex) {
+      if (this.consoleDump)  this.dump("Couldn't resolve Silverlight URL " + uri.spec + ":" + fex);
+    }
+    return uri.spec;
+  },
+  
   tagForReplacement: function(embed, pluginExtras) {
     try {
       if(!embed.ownerDocument) return;
       var win = embed.ownerDocument.defaultView.top;
-      var pe = this.getExpando(win, "pe") || this.setExpando(win, "pe",  []);
-      pe.push({embed: embed, pluginExtras: pluginExtras});
+      this.getExpando(win, "pe",  []).push({embed: embed, pluginExtras: pluginExtras});
       try {
         this.syncUI(embed);
       } catch(noUIex) {
@@ -2631,11 +2747,11 @@ NoscriptService.prototype = {
     if(!site) return;
     
     var win = embed.ownerDocument.defaultView.top;
-    var os = win.__noscriptObjectSites || null;
+    var os = this.getExpando(win, "objectSites");
     if(os) {
       if(os.indexOf(site) < 0) os.push(site);
     } else {
-      win.__noscriptObjectSites = [site];
+      this.setExpando(win, "objectSites", [site]);
     }
   },
   
@@ -2649,15 +2765,13 @@ NoscriptService.prototype = {
     return extras;
   },
   
-  expandoMarker: {},
-  getExpando: function(domObject, key) {
-    return domObject && domObject.__noscriptStorage && 
-           domObject.__noscriptStorage.__marker == this.expandoMarker && 
-           domObject.__noscriptStorage[key] || null;
+  getExpando: function(domObject, key, defValue) {
+    return domObject && domObject.__noscriptStorage && domObject.__noscriptStorage[key] || 
+           (defValue ? this.setExpando(domObject, key, defValue) : null);
   },
   setExpando: function(domObject, key, value) {
     if (!domObject) return null;
-    if (!domObject.__noscriptStorage) domObject.__noscriptStorage = { __marker: this.expandoMarker };
+    if (!domObject.__noscriptStorage) domObject.__noscriptStorage = {};
     domObject.__noscriptStorage[key] = value;
     return value;
   },
@@ -2929,9 +3043,16 @@ NoscriptService.prototype = {
                 var sandbox = Components.utils.Sandbox(browserWindow.content);
                 sandbox.window = browserWindow.content;
                 sandbox.document = sandbox.window.document;
-                Components.utils.evalInSandbox(
+                var retVal = Components.utils.evalInSandbox(
                   "window.XPathResult = Components.interfaces.nsIDOMXPathResult; with(window) { " + 
                     decodeURIComponent(url.replace(/^javascript:/i, "")) + " }", sandbox);
+                if(typeof(retVal) != "undefined") { // emulate JS url return value replacing content
+                  try {
+                    sandbox.document.documentElement.innerHTML = retVal; 
+                  } catch(e) {
+                    if(this.consoleDump) this.dump(e);
+                  }
+                }
               } else {
                 openCallback(url);
               }
@@ -2971,10 +3092,15 @@ NoscriptService.prototype = {
     }
     return embed;
   },
-  _objectTypes: null,
+  
+  findPluginExtras: function(document) {
+    return this.getExpando(document.defaultView, "pluginExtras", []);
+  },
+  
+  _objectTypes: null, 
   processObjectElements: function(document, sites) {
-    var pluginExtras = document.defaultView.__noscriptPluginExtras || [];
-    document.defaultView.__noscriptPluginExtras = pluginExtras;
+    var pluginExtras = this.findPluginExtras(document);
+    sites.pluginCount += pluginExtras.length;
     sites.pluginExtras.push(pluginExtras);
 
     var collapse = this.collapseObject;
@@ -3006,7 +3132,6 @@ NoscriptService.prototype = {
           object = objects.item(count); 
         } catch(e) { 
           if (this.consoleDump) this.dump(e);
-          //sites.pluginCount++;
           continue; 
         }
         if (!(object instanceof objectType) || // wrong type instantiated for this tag?!
@@ -3017,6 +3142,8 @@ NoscriptService.prototype = {
         
         
         if (extras) {
+          
+          sites.pluginCount++;
           
           if (!forcedCSS) {
             
@@ -3033,8 +3160,7 @@ NoscriptService.prototype = {
           }
 
           try {
-            
-            
+
             extras.site = this.getSite(extras.url);
             
             if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site)) 
@@ -3059,7 +3185,7 @@ NoscriptService.prototype = {
             (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras});
 
             if (this.showPlaceholder) {
-              anchor.addEventListener("click", this.objectClickListener.bind(this), false);
+              anchor.addEventListener("click", this.objectClickListener.bind(this), true);
               anchor.className = "__noscriptPlaceholder__";
             } else {
                anchor.className = "";
@@ -3077,21 +3203,22 @@ NoscriptService.prototype = {
             }
             
             if (!collapse) {
-              style = document.defaultView.getComputedStyle(object, null);
-               
               cssDef = "";
-              for (cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
-                cssProp = style.item(cssCount);
-                cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
+              style = document.defaultView.getComputedStyle(object, null);
+              if (style) {
+                for (cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
+                  cssProp = style.item(cssCount);
+                  cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
+                }
+                
+                innerDiv.setAttribute("style", cssDef + forcedCSS);
+                
+                if (style.width == "100%" || style.height == "100%") {
+                  anchor.style.width = style.width;
+                  anchor.style.height = style.height;
+                  anchor.style.display = "block";
+                }
               }
-              
-              innerDiv.setAttribute("style", cssDef + forcedCSS);
-              
-              if (style.width == "100%" || style.height == "100%") {
-                anchor.style.width = style.width;
-                anchor.style.height = style.height;
-                anchor.style.display = "block";
-              }  
               innerDiv.style.minWidth = "32px";
               innerDiv.style.minHeight = "32px";
             } else {
@@ -3120,24 +3247,13 @@ NoscriptService.prototype = {
             }
             innerDiv.style.backgroundImage = this.cssMimeIcon(extras.mime, iconSize);
             
-            
-            // sites.pluginCount++;
-            
           } catch(objectEx) {
             dump("NoScript: " + objectEx + " processing plugin " + count + "@" + document.documentURI + "\n");
           }
         }
       }
     }
-    
-    // TODO: remove as soon as we're sure we don't want per-tab perms anymore
-    /*
-    var pel = pluginExtras.length;
-    sites.pluginCount += pel;
-    while(pel-- > 0)
-      sites.push(pluginExtras[pel].site); 
-   */
-   
+
     if (replacements) {
       this.delayExec(this.createPlaceholders, 0, replacements, pluginExtras);
     }
@@ -3148,7 +3264,7 @@ NoscriptService.prototype = {
       if (r.object.parentNode) {
         r.object.parentNode.replaceChild(r.placeholder, r.object);
         r.extras.placeholder = r.placeholder;
-        pluginExtras.push(r.extras);
+        this._collectPluginExtras(pluginExtras, r.extras);
       }
     }
   },
@@ -3191,6 +3307,7 @@ NoscriptService.prototype = {
    
     this.delayExec(this.checkAndEnableObject, 1,
       {
+        browser: browser,
         window: browser.ownerDocument.defaultView,
         extras: extras,
         anchor: anchor,
@@ -3198,27 +3315,38 @@ NoscriptService.prototype = {
       });
   },
   
+  confirmEnableObject: function(win, extras) {
+    return win.noscriptUtil.confirm(
+      this.getAllowObjectMessage(extras.url, 
+          (extras.tag || "<OBJECT>") + ", " + extras.mime), 
+      "confirmUnblock"
+    );
+  },
+  
   checkAndEnableObject: function(ctx) {
     var extras = ctx.extras;
-    var mime = extras.mime;
-    var url = extras.url;
-    if (ctx.window.noscriptUtil.confirm(
-        this.getAllowObjectMessage(url, extras.tag + ", " + mime), 
-        "confirmUnblock")) {
+    if (this.confirmEnableObject(ctx.window, extras)) {
+
+      var mime = extras.mime;
+      var url = extras.url;
+      
       this.allowObject(url, mime);
       var doc = ctx.anchor.ownerDocument;
       if (mime == doc.contentType && 
           ctx.anchor == doc.body.firstChild && 
           ctx.anchor == doc.body.lastChild) { // stand-alone plugin
         doc.location.reload();
+      } else if (this.getExpando(ctx, "silverlight")) {
+        this.allowObject(doc.documentURI, mime);
+        this.quickReload(ctx.browser.webNavigation);
       } else {
         this.setExpando(ctx.anchor, "removedPlugin", null);
         extras.placeholder = null;
         this.delayExec(function() {
           var obj = ctx.object.cloneNode(true);
           ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
-          obj.__NoScript_allowedContent = true;
-          var pluginExtras = ctx.ownerDocument.defaultView.__noscriptPluginExtras;
+          this.setExpando(obj, "allowed", true);
+          var pluginExtras = this.findPluginExtras(ctx.ownerDocument);
           if(pluginExtras) {
             var pos = pluginExtras.indexOf(extras);
             if(pos > -1) pluginExtras.splice(pos, 1);
@@ -3241,7 +3369,7 @@ NoscriptService.prototype = {
     try {
       sites = this._enumerateSites(browser, sites);
     } catch(ex) {
-      if (this.consoleDump) this.dump("Error enumerating sites: " + ex);
+      if (this.consoleDump) this.dump("Error enumerating sites: " + ex + "," + ex.stack);
     }
     return sites;
   },
@@ -3253,6 +3381,10 @@ NoscriptService.prototype = {
        for (var o, j = pe.length; j-- > 0;) {
          o = pe[j];
          try {
+           if (this.getExpando(o, "silverlight")) {
+             o.embed = this._attachSilverlightExtras(o.embed, o.pluginExtras);
+             if (!o.embed) continue; // skip unconiditionally to prevent in-page Silverlight placeholders
+           }
            this.setPluginExtras(this.findObjectAncestor(o.embed), o.pluginExtras);
           } catch(e1) { 
             if(this.consoleDump & LOG_CONTENT_BLOCK) 
@@ -3265,7 +3397,62 @@ NoscriptService.prototype = {
       if(this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Error attaching plugin extras: " + e2); 
     }
   },
-
+  
+  _collectPluginExtras: function(pluginExtras, extras) {
+    for (var e, j = pluginExtras.length; j-- > 0;) {
+      e = pluginExtras[j];
+      if (e == extras) return false;
+      if (e.mime == extras.mime && e.url == extras.url) {
+        if (!e.placeholder) {
+          pluginExtras.splice(j, 1, extras);
+          return true;
+        }
+        return false;
+      }
+    }
+    pluginExtras.push(extras);
+    return true;
+  },
+ 
+  _silverlightInstalledHack: null,
+  applySilverlightPatch: function(doc) {
+    try {
+      if(!this._silverlightInstalledHack) {
+        this._silverlightInstalledHack = "javascript:" + escape("(" + 
+        function() {
+          HTMLObjectElement.prototype.IsVersionSupported = function(n) { return this.type == 'application/x-silverlight'; };
+        }.toSource()
+        + ")()");
+      }
+      var win = doc && doc.defaultView;
+      if (!win || this.getExpando(win, "silverlightHack")) return;
+      if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Emulating SilverlightControl.IsVersionSupported()");
+      this.setExpando(win, "silverlightHack", true);
+      win.location.href = this._silverlightInstalledHack;
+    } catch(e) {
+       if (this.consoleDump) this.dump(e);
+    }
+  },
+  
+  _attachSilverlightExtras: function(embed, extras) {
+    extras.silverlight = true;
+    var pluginExtras = this.findPluginExtras(embed.ownerDocument);
+    if (this._collectPluginExtras(pluginExtras, extras)) {
+      extras.site = this.getSite(extras.url);
+      try {
+        // try to work around the IsInstalled() Silverlight machinery
+        if (!embed.firstChild) { // dummy embed
+          exras.dummy = true;
+          return null;
+        }
+        extras.dummy = false;
+      } catch(e) {
+        if(this.consoleDump) this.dump(e);
+      }
+    }
+    return embed;
+  },
+  
   _enumerateSites: function(browser, sites) {
 
     const nsIWebNavigation = CI.nsIWebNavigation;
@@ -3278,7 +3465,7 @@ NoscriptService.prototype = {
     
     var docShell, docURI, url, win;
 
-    var cache, redir;
+    var cache, redir, tmpPluginCount;
     
     var document, domain;
     while (docShells.hasMoreElements()) {
@@ -3307,25 +3494,27 @@ NoscriptService.prototype = {
             sites.push(redir.site);
           }
 
-          cache = document.defaultView.__noscriptBindingSites;
+          cache = this.getExpando(document.defaultView, "bindingSites");
           if(cache) sites.push.apply(sites, cache);
        }
        
        win = document.defaultView;
-       if(win == win.top) {
-         cache = win.__noscriptObjectSites || null;
+       tmpPluginCount = 0;
+       if (win == win.top) {
+         cache = this.getExpando(win, "objectSites");
          if(cache) {
            if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource());
            sites.push.apply(sites, cache);
-           sites.pluginCount += cache.length;
-           sites.pluginSites = cache;
+           tmpPluginCount = cache.length;
+           sites.pluginSites.push.apply(sites, cache);
          }
          this._attachPluginExtras(win);
        }
        
-       if (!win.__NoScript_contentLoaded && (!(docShell instanceof nsIWebNavigation) || docShell.isLoadingDocument))
+       if (!this.getExpando(win, "contentLoaded") && (!(docShell instanceof nsIWebNavigation) || docShell.isLoadingDocument)) {
+         sites.pluginCount += tmpPluginCount;
          continue;
-       
+       }
        // scripts
        this.processScriptElements(document, sites);
        
@@ -3404,7 +3593,7 @@ NoscriptService.prototype = {
   },
   
   getRedirCache: function(browser, uri) {
-    var redirCache = this.getExpando(browser, "redirCache") || this.setExpando(browser, "redirCache", {}) || {};
+    var redirCache = this.getExpando(browser, "redirCache", {});
     return redirCache[uri] || (redirCache[uri] = []);
   },
   
@@ -3555,11 +3744,14 @@ NoscriptService.prototype = {
       }
     }
     
-    
-    if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(uri.spec)) {
-      try {
-        domWindow.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {}  void(0)");
-      } catch(jsHackEx) {}
+    try {
+      
+      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(uri.spec)) {
+        try {
+          domWindow.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {}  void(0)");
+        } catch(jsHackEx) {}
+      }
+    } catch(e) {
     }
   },
   
@@ -3672,7 +3864,7 @@ NoscriptService.prototype = {
       jsURL = /^javascript:/.test(href);
       if (!(jsURL || href == "#")) return;
     } else {
-      jsURL = false;
+      jsURL = "";
     }
     
     onclick = onclick ||  a.getAttribute("onclick");
@@ -3687,7 +3879,8 @@ NoscriptService.prototype = {
         );
     } else { // try processing history.go(n) //
       onclick = onclick || jsURL;
-
+      if(!onclick) return;
+      
       jsURL = onclick.match(/history\s*\.\s*(?:go\s*\(\s*(-?\d+)\s*\)|(back|forward)\s*\(\s*)/);
       jsURL = jsURL && (jsURL = jsURL[1] || jsURL[2]) && (jsURL == "back" ? -1 : jsURL == "forward" ? 1 : jsURL); 
 
@@ -3995,7 +4188,7 @@ RequestWatchdog.prototype = {
   checkWindowName: function(window) {
     var originalAttempt = window.name;
       
-    if (/[%=\(]/.test(originalAttempt)) {
+    if (/[%=\(]/.test(originalAttempt) && InjectionChecker.checkJSSyntax(originalAttempt)) {
       window.name = originalAttempt.replace(/[%=\(]/g, " ");
     }
     if (originalAttempt.length > 11) {
@@ -4006,10 +4199,12 @@ RequestWatchdog.prototype = {
             window.name = "BASE_64_XSS";
           }
         }
-      } catch(e) {} 
-      if (window.name.length > 19) {
-        window.name = window.name.substring(0, 19);
+      } catch(e) {}
+      /*
+      if (window.name.length > 31) {
+        window.name = window.name.substring(0, 31);
       }
+      */
     }
     if (originalAttempt != window.name) {
       this.ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');
@@ -4543,6 +4738,10 @@ SyntaxChecker.prototype = {
   }
 };
 
+function fuzzify(s) {
+  return s.replace(/\w/g, '\\W*$&');
+}
+
 var InjectionChecker = {
   syntax: new SyntaxChecker(),
   _log: function(msg, t) {
@@ -4591,12 +4790,24 @@ var InjectionChecker = {
        s = expr;
     }
     return expr;
-  }, 
+  },
+  
+  
+  _singleAssignmentRx: new RegExp(
+    fuzzify('document|location|setter')
+    + '|/.*/[\\s\\S]*' + fuzzify('source')
+  ),
+  _maybeJSRx: new RegExp(
+    '(?:[\\w$\\u0080-\\uFFFF\\]][\\s\\S]*[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|(?:' +
+    fuzzify('eval|open|alert|confirm|prompt') + 
+    ')[\\s\\S]*\\(|(?:' +
+    fuzzify('setter|location') +
+    ')[\\s\\S]*=)'
+  ),
   maybeJS: function(expr) {
     if(/^[^\(\)="']+=[^\(\)='"]+$/.test(expr) && // commonest case, single assignment, no break
-      !/document|location|setter|\/.*\/[\s\S]*source/.test(expr)) return false;
-    return /(?:[\w$\u0080-\uFFFF\]][\s\S]*[\(\[\.][\s\S]*(?:\([\s\S]*\)|=)|\b(?:eval|open|alert|confirm|prompt)[\s\S]*\(|\b(?:setter|location)[\s\S]*=)/
-      .test(expr); 
+      !this._singleAssignmentRx.test(expr)) return false;
+    return this._maybeJSRx.test(expr); 
   },
   checkLastFunction: function() {
     var expr = this.syntax.lastFunction;
@@ -4612,7 +4823,7 @@ var InjectionChecker = {
     s = s.replace(/\%\d+[a-z]\w*/gi, '`'); // cleanup most urlencoded noise
     
     const findInjection = 
-      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\([\s\S]*?\)|\[[\s\S]*?\]|(?:setter|location|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
+      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\([\s\S]*?\)|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
     
     findInjection.lastIndex = 0;
     var breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
@@ -4751,12 +4962,12 @@ var InjectionChecker = {
       return true;
     }
     
-    // simplest navigation acts (no dots, no round/square brackets) that we purposedly let slip from checkJSBreak 
-    if (/\blocation\s*(?:\/\*[\s\S]*)=\s*(?:\/\*[\s\S]*)name\b/.test(s)) { 
+    // simplest navigation act (no dots, no round/square brackets)
+    if (/\bl\W*o\W*c\W*a\W*t\W*i\W*o\W*n\W*(?:\/\*[\s\S]*)=\W*(?:\/\*[\s\S]*)n\W*a\W*m\W*e(?:\W+|$)/.test(s)) { 
       this.log("location = name navigation attempt in " +s);
       return true;
     };
-    if (/[\w\$\u0080-\uFFFF\]](?:[\s\)]+|[\s\S]*\/\*[\s\S]*)setter\s*(?:\/\*[\s\S]*)?=/.test(s)) {
+    if (/[\w\$\u0080-\uFFFF\]](?:[\s\)]+|[\s\S]*\/\*[\s\S]*)s\W*e\W*t\W*t\W*e\W*r\W*(?:\/\*[\s\S]*)?=/.test(s)) {
       this.log("setter override attempt in " +s);
       return true;
     }
@@ -4807,8 +5018,7 @@ var InjectionChecker = {
   },
   
   HTMLChecker: new RegExp("<\\W*/?(?:" + 
-    ("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video"
-        .replace(/[a-z]/g, "\\W*$&")) + 
+   fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video") + 
     ")|[/'\"\\s\\x08]\\W*(?:FSCommand|on[a-z]{3,}[\\s\\x08]*=)", 
     "gi"),
   checkHTML: function(s, ignorEntities) {
@@ -4886,7 +5096,12 @@ XSanitizer.prototype = {
         url.filePath = this.sanitizeURIComponent(url.filePath); // true == lenient == allow ()=
       }
       // sanitize query
-      if (url.query) url.query = this.sanitizeQuery(url.query, changes);
+      if (url.query) {
+        url.query = this.sanitizeQuery(url.query, changes);
+        if (this.brutal) {
+          url.query = this.sanitizeWholeQuery(url.query, changes);
+        }
+      }
       // sanitize fragment
       var fragPos = url.path.indexOf("#");
       if (url.ref || fragPos > -1) {
@@ -4921,10 +5136,21 @@ XSanitizer.prototype = {
     return changes;
   },
   
+  sanitizeWholeQuery: function(query, changes) {
+    var original = query;
+    query = Entities.convertAll(query);
+    if (query == original) return query;
+    var unescaped = unescape(original);
+    query = this.sanitize(unescaped);
+    if (query == unescaped) return original;
+    if(changes) changes.qs = true;
+    return escape(query);
+  },
   
   sanitizeQuery: function(query, changes, sep) {
     // replace every character matching noscript.filterXGetRx with a single ASCII space (0x20)
     changes = changes || {};
+    
     if (!sep) {
       sep = query.indexOf("&") > -1 ? "&" : ";" 
     }
@@ -5026,11 +5252,25 @@ XSanitizer.prototype = {
     }
     
     if (this.brutal) { // injection checks were positive
-      s = s.replace(/['\(\)\=]/g, " ").replace(/(?:setter|eval|location|open|document\W*[\[\.])\b/g, String.toUpperCase);
+      s = s.replace(/['\(\)\=]/g, " ")
+           .replace(this._brutalReplRx, String.toUpperCase);
     }
     
     return s == orig ? unsanitized : s;
-  }
+  },
+  
+  _regularReplRx: new RegExp(
+    fuzzify('(?:javascript|data)') + '\\W*:+|' +
+      fuzzify('-moz-binding|@import'), 
+    "ig"
+  ),
+  _brutalReplRx: new RegExp(
+    '(?:' +
+      fuzzify('setter|location|open|document') +
+      '\\W*[\\[\\.])',
+    "g"
+  ),
+  
 };
 
 

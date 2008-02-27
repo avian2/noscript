@@ -1,5 +1,58 @@
 NoScript ChangeLog
 
+v 1.4.9
+=====================================================================
++ Improved Silverlight object identity based on "source" param
+
+v 1.4.8
+=====================================================================
++ Better differentiation of Flash-based movie players and other 
+  general purpose plugin content instances by taking in account 
+  flashvars attributes and param elements.
++ Improved Silverlight placeholders, now shown in real time and
+  supporting more activation schemes
+
+v 1.4.7
+=====================================================================
++ Safe Silverlight placeholders restored by emulating the 
+  IsVersionSupported() machinery (placeholders are usually delayed
+  by 3 secs or more)
+
+v 1.4.6
+=====================================================================
+x Silverlight plugin objects in content blocking mode made completely 
+  disabled (not just content-less) until they're allowed per-page
+x Work around for a conflict with the PDF Download extension conflict
+  (thanks greenknight for report)
+
+v 1.4.5
+=====================================================================
+x Fixed Silverlight unblocking hooks not working if all kinds of
+  plugin content and IFrames are blocked (thanks al_9x for report)
+
+v 1.4.4
+=====================================================================
++ Content unblocking machinery made compatible with new Silverlight 
+  activation schemes (thanks al_9x and Alan Baxter for report)
+
+v 1.4.3
+=====================================================================
++ Further fuzzification of injection checker patterns
+x Slightly released window.name checks to allow some legitimate frame
+  tricks, e.g. in eBay Cross-promotions (thanks jlovie for report)
+x External URI validation decoding changed to accomodate ISO-8859 and 
+  other encodings, rather than UTF-8 only (thanks Alf Buccheim)
+  
+v 1.4.2
+=====================================================================
++ Bookmarklet return values support on Mozilla trunk 
+x Fixed mailto: empty URL (new mail message) considered invalid
+ 
+v 1.4.1
+=====================================================================
+x Fixed "onclick.match is not a function" issue when clicking on
+  named anchors with no href (thanks wangyi6854 for report)
+
 v 1.4
 =====================================================================
 + Updated translations
@@ -348,7 +401,7 @@ v 1.1.7.6
 + srv.br "special" TLD (thanks Rodrigo Ristow Branco)
 + Better protection against "setter" based XSS vectors and encoded
   "name" payloads (thanks RSnake, Sirdarckcat and Kuza55, see 
-  http://ha.ckers.org/blog/20071104/owning-hackersorg-or-not/ )
+  http://ha.ckers.org/blog/20081104/owning-hackersorg-or-not/ )
 + Improved hidden links management, preserves original body CSS 
   attributes when possible (thanks mdots)
 

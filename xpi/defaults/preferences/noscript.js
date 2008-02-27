@@ -112,7 +112,7 @@ pref("noscript.fixURI.exclude", "");
 pref("noscript.blockNSWB", false);
 
 pref("noscript.urivalid.aim", "\\w[^\\\\\?&\\x00-\\x1f#]*(?:\\?[^\\\\\\x00-\\x1f#]*(?:#[\\w\\-\\.\\+@]{2,32})?)?");
-pref("noscript.urivalid.mailto", "[^\\x00-\\x07\\x09\\x0b\\x0c\\x0e-\\x1f]+");
+pref("noscript.urivalid.mailto", "[^\\x00-\\x07\\x09\\x0b\\x0c\\x0e-\\x1f]*");
 
 pref("noscript.forbidExtProtSubdocs", true);
 
@@ -142,3 +142,5 @@ pref("noscript.allowedMimeRegExp", "");
 pref("noscript.alwaysBlockUntrustedContent", true); 
 
 pref("noscript.consoleLog", false);
+
+pref("noscript.silverlightPatch", true);

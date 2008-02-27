@@ -1,7 +1,7 @@
 /***** BEGIN LICENSE BLOCK *****
 
 NoScript - a Firefox extension for whitelist driven safe JavaScript execution
-Copyright (C) 2004-2007 Giorgio Maone - g.maone@informaction.com
+Copyright (C) 2004-2008 Giorgio Maone - g.maone@informaction.com
 
 Contributors: 
   Higmmer
@@ -221,9 +221,11 @@ var noscriptOverlay = noscriptUtil.service ?
     mainMenu.appendCmd = function(n) { this.insertBefore(n, seps.stop); };
 
     const sites = this.getSites();
-    
-    this.populatePluginsMenu(mainMenu, pluginsMenu, sites.pluginExtras);
-    
+    try {
+      this.populatePluginsMenu(mainMenu, pluginsMenu, sites.pluginExtras);
+    } catch(e) {
+      if(ns.consoleDump) ns.dump("Error populating plugins menu: " + e);
+    }
     var site, enabled, isTop, lev;
     var jsPSs = ns.jsPolicySites;
     var matchingSite;
@@ -382,9 +384,14 @@ var noscriptOverlay = noscriptUtil.service ?
     i = 0;
     for each(egroup in extras) {
       for each(e in egroup) {
-         if(!e.placeholder) continue;
+         
+         if(e.tag && !e.placeholder) continue;
          node = document.createElement("menuitem");
-         node.setAttribute("label", this.getString("allowTemp", [ns.urlEssentials(e.url)]));
+         
+         e.label = e.label || ns.mimeEssentials(e.mime) + "@" + ns.urlEssentials(e.url);
+         e.title = e.title || e.label.split("@")[0] + e.url;
+  
+         node.setAttribute("label", this.getString("allowTemp", [e.label]));
          node.setAttribute("tooltiptext", e.title);
          node.setAttribute("oncommand", "noscriptOverlay.allowObject(" + i + ")");
          node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-allow");
@@ -439,17 +446,25 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   allowObject: function(i) {
-    if(this.menuPluginExtras && this.menuPluginExtras[i] && this.menuPluginExtras[i].placeholder) 
-      this.ns.checkAndEnablePlaceholder(this.menuPluginExtras[i].placeholder);
+    if(this.menuPluginExtras && this.menuPluginExtras[i]) {
+      var e = this.menuPluginExtras[i];
+      if(e.placeholder) {
+        this.ns.checkAndEnablePlaceholder(e.placeholder);
+      } else if (this.ns.confirmEnableObject(window, e)) {
+        this.allowObjectURL(e.url, e.mime);
+      }
+    }
   },
   allowObjectSite: function(i) {
     if(this.menuPluginSites && this.menuPluginSites[i]) {
-      this.ns.allowObject(this.menuPluginSites[i][0], this.menuPluginSites[i][1]);
-      if (this.ns.getPref("autoReload", true))
-        this.ns.quickReload(gBrowser.selectedBrowser.webNavigation);
+      this.allowObjectURL(this.menuPluginSites[i][0], this.menuPluginSites[i][1]);
     }
   },
-  
+  allowObjectURL: function(url, mime) {
+    this.ns.allowObject(url, mime);
+    if (this.ns.getPref("autoReload", true))
+        this.ns.quickReload(gBrowser.selectedBrowser.webNavigation);
+  },
   
   normalizeMenu: function(menu, hideParentIfEmpty) {
     if (!menu) return;
@@ -481,7 +496,7 @@ var noscriptOverlay = noscriptUtil.service ?
     return browser && browser.contentWindow && browser.contentWindow.document || null;
   }
 ,
-  eraseTemp: function() {
+  revokeTemp: function() {
     noscriptOverlay.ns.safeCapsOp(function() {
       noscriptOverlay.ns.eraseTemp();
       noscriptOverlay.syncUI();
@@ -1044,14 +1059,14 @@ var noscriptOverlay = noscriptUtil.service ?
       if (this.notify) { 
         this.notificationShow(message,
           this.getIcon(widget), 
-          !(win._NoScript_messageShown && this.notifyHidePermanent));
-        win._NoScript_messageShown = true;
+          !(ns.getExpando(win, "messageShown") && this.notifyHidePermanent));
+        ns.setExpando(win, "messageShown", true);
       } else {
         this.notificationHide(); 
       }
-      if (!win._NoScript_soundPlayed) {
+      if (!ns.getExpando(win, "soundPlayed")) {
         ns.soundNotify(window.content.location.href);
-        win._NoScript_soundPlayed = true;
+        ns.setExpando(win, "soundPlayed");
       }
     } else {
       this.notificationHide();
@@ -1277,7 +1292,7 @@ var noscriptOverlay = noscriptUtil.service ?
         var w = doc.defaultView;
         if (w) {
           const ns = noscriptOverlay.ns;
-          w.__NoScript_contentLoaded = true;
+          noscriptOverlay.ns.setExpando(w, "contentLoaded", true);
           if (w == w.top) {
             ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
             if (w == window.content) {
@@ -1311,6 +1326,7 @@ var noscriptOverlay = noscriptUtil.service ?
       try {
         noscriptOverlay.listeners.setup(); 
         noscriptOverlay.wrapBrowserAccess();
+        window.setTimeout(noscriptOverlay.pdfDownloadHack, 0);
       } catch(e) {
         var msg = "[NoScript] Error initializing new window " + e + "\n"; 
         noscriptOverlay.ns.log(msg);
@@ -1456,6 +1472,13 @@ var noscriptOverlay = noscriptUtil.service ?
       }
       return w;
     }
+  },
+  
+  pdfDownloadHack: function() {
+    if (typeof(mouseClick) != "function") return;
+    var tb = getBrowser();
+    tb.removeEventListener("click", mouseClick, true);
+    tb.addEventListener("click", mouseClick, false);
   },
   
   install: function() {

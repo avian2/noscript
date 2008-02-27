@@ -2,4 +2,5 @@
 <bindings xmlns="http://www.mozilla.org/xbl"  xmlns:html="http://www.w3.org/1999/xhtml">
 <binding id="nop">
 </binding>
+</binding>
 </bindings>
