@@ -123,6 +123,7 @@ pref("noscript.forbidJarDocumentsExceptions", "^jar:https://samples\\.noscript\\
 pref("noscript.jarDoc.notify", true);
 
 pref("noscript.forbidXBL", 4);
+pref("noscript.forbidXHR", 1);
 
 pref("noscript.whitelistRegExp", "");
 

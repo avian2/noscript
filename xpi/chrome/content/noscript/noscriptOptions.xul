@@ -154,18 +154,17 @@
       <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
       <checkbox id="opt-forbidSilverlight" label="&noscriptForbidSilverlight;" />
       <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
-       <separator class="thin" />
+      <separator class="thin" />
       <checkbox id="opt-forbidIFrames" label="&noscriptForbidIFrames;" />
       <separator/>
       <checkbox id="opt-contentBlocker" label="&noscriptContentBlocker;" class="header" />
       <checkbox id="opt-alwaysBlockUntrustedContent" label="&noscriptAlwaysBlockUntrustedContent;" />
-      <separator/>
+      <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+      <separator class="thin" />
       <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
       <checkbox id="invopt-showUntrustedPlaceholder" label="&noscriptNoUntrustedPlaceholder;" />
       <checkbox id="opt-collapseObject" label="&noscriptCollapseBlockedObjects;" />
-      <separator/>
-      <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
-      
+
     </vbox>
   </tabpanel>
   
@@ -180,24 +179,23 @@
     
     <groupbox class="ia-indent">
       <caption><checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" /></caption>
-       
-       <checkbox id="opt-showPermanent" label="Allow [...]" />
-       <checkbox id="opt-showTemp" label="&noscriptTempCmd;" />
-       <checkbox id="opt-showDistrust" label="Mark [...] as untrusted" />
-       <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
-       
-       <separator class="thin" />
-       
-       <checkbox id="opt-showBaseDomain" label="&noscriptBaseDom;" />
-       <checkbox id="opt-showDomain" label="&noscriptFullDom;" />
-       <checkbox id="opt-showAddress" label="&noscriptFullAddr;" />
-       
-       
-         
-       <separator class="thin" />
+       <hbox>
+         <vbox flex="1">
+           <checkbox id="opt-showPermanent" label="Allow [...]" />
+           <checkbox id="opt-showTemp" label="&noscriptTempCmd;" />
+           <checkbox id="opt-showDistrust" label="Mark [...] as untrusted" />
+         </vbox>
+         <vbox flex="1">
+           <checkbox id="opt-showBaseDomain" label="&noscriptBaseDom;" />
+           <checkbox id="opt-showDomain" label="&noscriptFullDom;" />
+           <checkbox id="opt-showAddress" label="&noscriptFullAddr;" />
+         </vbox>
+       </hbox>
+       <separator />
        <checkbox id="opt-showGlobal" label="Allow Globally" />
-       <checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
+       <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
        <checkbox id="opt-showBlockedObjects" label="&noscriptBlockedObjects;" />
+       <checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
      </groupbox>
     
   </vbox>

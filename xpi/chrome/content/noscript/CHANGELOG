@@ -1,5 +1,32 @@
 NoScript ChangeLog
 
+1.4.9.5
+=====================================================================
+x Version bumb for Firefox 3.0b5pre
+
+1.4.9.4
+=====================================================================
++ Added client-side policy control for new Firefox 3 cross-site XHR,
+  configurable via noscript.forbidXHR about:config preference:
+  0 - Allow any XHR
+  1 - Allow cross-site XHR across trusted sites only (default)
+  2 - Allow same-site XHR only (like Firefox 2)
+  3 - Forbid all XHR
+
+1.4.9.3
+=====================================================================
+x Fixed Firebug JS injection causing blocked IFrame
+x Fixed plugin document detection making Acrobat Reader plugin hang
+
+1.4.9.2
+=====================================================================
+x Minor InjectionChecker enhancements
+
+1.4.9.1
+=====================================================================
+x Reduced vertical size of NoScript options panel for better usage
+  on constrained devices (thanks pstepper for report)
+
 v 1.4.9
 =====================================================================
 + Improved Silverlight object identity based on "source" param

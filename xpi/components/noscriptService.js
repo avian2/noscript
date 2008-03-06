@@ -801,7 +801,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.4.9",
+  VERSION: "1.4.9.5",
   
   get wrappedJSObject() {
     return this;
@@ -936,6 +936,7 @@ NoscriptService.prototype = {
   alwaysBlockUntrustedContent: true,
   
   forbidXBL: 4,
+  forbidXHR: 2,
   injectionCheck: 2,
   injectionCheckSubframes: true,
   
@@ -1046,6 +1047,7 @@ NoscriptService.prototype = {
       case "forbidMetaRefresh":
       case "forbidIFramesContext":
       case "forbidXBL":
+      case "forbidXHR":
       case "injectionCheck":
       case "jsredirectFollow":
       case "jsredirectIgnore":
@@ -1317,7 +1319,7 @@ NoscriptService.prototype = {
       "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", 
       "forbidIFrames", "forbidIFramesContext", "forbidData",
       "forbidMetaRefresh",
-      "forbidXBL",
+      "forbidXBL", "forbidXHR",
       "alwaysBlockUntrustedContent",
       "global",
       "injectionCheck", "injectionCheckSubframes",
@@ -2131,7 +2133,7 @@ NoscriptService.prototype = {
       case 9:
         // our take on https://bugzilla.mozilla.org/show_bug.cgi?id=387971
         args[1].spec = "chrome://noscript/content/noscript.xbl#nop";
-        return 1;
+        return CP_OK;
     }
     return this.rejectCode;
   },
@@ -2175,20 +2177,14 @@ NoscriptService.prototype = {
         
         switch (aContentType) {
           case 9: // XBL - warning, in 1.8.x could also be XMLHttpRequest...
-            if (!this.forbidXBL || aContentLocation.schemeIs("chrome") ||
-               !aRequestOrigin || 
-             // GreaseMonkey Ajax comes from resource: hidden window
-             // Google Toolbar Ajax from about:blank
-               /^(?:chrome:|resource:|about:blank)/.test(originURL = aRequestOrigin.spec) 
-              ) return CP_OK;
-            var win = aContext.defaultView;
-            locationURL = aContentLocation.spec;
-            if(win) {
-              this.getExpando(win, "bindingSites", []).push(this.getSite(locationURL));
-            }
-            return this.forbiddenXBLContext(originURL, locationURL) ?
-              this.reject("XBL", arguments) : 1;
-          break;
+            return this.forbidXBL && !aContentLocation.schemeIs("chrome") && 
+              this.forbiddenXMLRequest(aRequestOrigin, aContentLocation, aContext, this.forbiddenXBLContext) 
+              ? this.reject("XBL", arguments) : CP_OK;
+          
+          case 11: // in Firefox 3 we check for cross-site XHR
+            return this.forbidXHR && 
+              this.forbiddenXMLRequest(aRequestOrigin, aContentLocation, aContext, this.forbiddenXHRContext) 
+               ? this.reject("XHR", arguments) : CP_OK;
           
           case 10: // TYPE_PING
             if (this.jsEnabled || !this.getPref("noping", true) || 
@@ -2260,8 +2256,12 @@ NoscriptService.prototype = {
                       (
                         originURL
                           ? (/^chrome:/.test(originURL) ||
-                            /^(?:data|javascript):/.test(locationURL) &&
-                            contentDocument && originURL == contentDocument.URL)
+                             /^(?:data|javascript):/.test(locationURL) &&
+                             (contentDocument && originURL == contentDocument.URL ||
+                              this.isFirebugJSURL(locationURL) ||
+                              this.forbidContent && locationURL == this._silverlightInstalledHack
+                             )
+                            )
                           : contentDocument && 
                             this.getSite(contentDocument.URL) == (locationSite = this.getSite(locationURL))
                        )
@@ -2296,7 +2296,7 @@ NoscriptService.prototype = {
                 //data: and javascript: URLs
                 locationURL = locationURL || aContentLocation.spec;
                 if (!this.isSafeJSURL(locationURL) &&
-                  ((this.forbidData && locationURL != "javascript: eval(__firebugTemp__);" || locationURL == "javascript:") && 
+                  ((this.forbidData && !this.isFirebugJSURL(locationURL) || locationURL == "javascript:") && 
                     !this.isJSEnabled(originSite = this.getSite(originURL = originURL || aRequestOrigin.spec)) ||
                     aContext && (
                       (aContext instanceof CI.nsIDOMWindow) 
@@ -2407,8 +2407,8 @@ NoscriptService.prototype = {
                     if (!aContentLocation.spec == "data:,") {
                       try {
                         aContentLocation.spec = "data:,"; // normalize URL
-                      } catch(fex) {
-                        if (this.consoleDump) this.dump("Couldn't normalize " + aContentLocation.spec + " to data:, - " + fex);
+                      } catch(normEx) {
+                        if (this.consoleDump) this.dump("Couldn't normalize " + aContentLocation.spec + " to data:, - " + normEx);
                       }
                     }
                     locationURL = this.resolveSilverlightURL(aRequestOrigin, aContext);
@@ -2461,21 +2461,24 @@ NoscriptService.prototype = {
             this.dump("Error checking plugin per-object permissions:" + ex);
           }
           
-          try {
-            if(isLegacyFrame) { // inject an embed and defer to load
+          if(isLegacyFrame) { // inject an embed and defer to load
               this.blockLegacyFrame(aContext, aContentLocation, aInternalCall);
-            } else if (aContext && (aContentType == 5 || aContentType == 7 || aContentType == 12)) {
-              if (aContext instanceof CI.nsIDOMNode) {
-                this.delayExec(this.tagForReplacement, 0, aContext, {
-                  url: locationURL,
-                  mime: mimeKey
-                });
+              if (!aInternalCall) return CP_OK; 
+          } else {
+            try {
+              if (aContext && (aContentType == 5 || aContentType == 7 || aContentType == 12)) {
+                if (aContext instanceof CI.nsIDOMNode) {
+                  this.delayExec(this.tagForReplacement, 0, aContext, {
+                    url: locationURL,
+                    mime: mimeKey
+                  });
+                }
               }
+            } catch(ex) {
+              if(this.consoleDump) this.dump(ex);
+            } finally {
+              return this.reject("Forbidden " + (contentDocument ? ("IFrame " + contentDocument.URL) : "Content"), arguments);
             }
-          } catch(ex) {
-            if(this.consoleDump) this.dump(ex);
-          } finally {
-            return this.reject("Forbidden " + (contentDocument ? ("IFrame " + contentDocument.URL) : "Content"), arguments);
           }
         } else {
           if(isSilverlight) {
@@ -2500,19 +2503,36 @@ NoscriptService.prototype = {
     }
   },
   
+  
+  forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
+    var originURL, locationURL;
+    if (!aRequestOrigin || 
+         // GreaseMonkey Ajax comes from resource: hidden window
+         // Google Toolbar Ajax from about:blank
+           /^(?:chrome:|resource:|about:blank)/.test(originURL = aRequestOrigin.spec) ||
+           // Web Developer extension "appears" to XHR towards about:blank
+           (locationURL = aContentLocation.spec) == "about:blank"
+          ) return false;
+    var win = aContext.defaultView;
+    if(win) {
+      this.getExpando(win, "bindingSites", []).push(this.getSite(locationURL));
+    }
+    return forbidDelegate.call(this, originURL, locationURL);
+  },
+  
   addFlashVars: function(url, embed) {
     // add flashvars to have a better URL ID
-    try {
+    if (embed instanceof CI.nsIDOMElement) try {
       var flashvars = embed.getAttribute("flashvars");
       if (flashvars) url += "#!flashvars#" + encodeURI(flashvars); 
     } catch(e) {
-      if (this.consoleDump) this.dump("Couldn't add flashvars to " + url + ":" + fex);
+      if (this.consoleDump) this.dump("Couldn't add flashvars to " + url + ":" + e);
     }
     return url;
   },
   
   addObjectParams: function(url, embed) {
-    try {
+    if (embed instanceof CI.nsIDOMElement) try {
       var params = embed.getElementsByTagName("param");
       if(!params.length) return url;
       
@@ -2522,7 +2542,7 @@ NoscriptService.prototype = {
       }
       url += "#!objparams#" + pp.join("&");
     } catch(e) {
-      if (this.consoleDump) this.dump("Couldn't add object params to " + url + ":" + fex);
+      if (this.consoleDump) this.dump("Couldn't add object params to " + url + ":" + e);
     }
     return url;
   },
@@ -2530,7 +2550,8 @@ NoscriptService.prototype = {
   resolveSilverlightURL: function(uri, embed) {
     if(!uri) return "";
     var url = "";
-    try {
+    
+    if (embed instanceof CI.nsIDOMElement) try {
       
       var params = embed.getElementsByTagName("param");
       if (!params.length) return uri.spec;
@@ -2554,8 +2575,8 @@ NoscriptService.prototype = {
         pp.push(encodeURIComponent(name) + "=" + encodeURIComponent(value));
       }
       return (url || uri.spec) + "#!objparams#" + pp.join("&");
-    } catch(fex) {
-      if (this.consoleDump)  this.dump("Couldn't resolve Silverlight URL " + uri.spec + ":" + fex);
+    } catch(e1) {
+      if (this.consoleDump)  this.dump("Couldn't resolve Silverlight URL " + uri.spec + ":" + e1);
     }
     return uri.spec;
   },
@@ -2618,22 +2639,39 @@ NoscriptService.prototype = {
   },
   
   forbiddenXBLContext: function(originURL, locationURL) {
-    var xblSite = this.getSite(locationURL);
+    var locationSite = this.getSite(locationURL);
     var originSite = this.getSite(originURL);
     switch (this.forbidXBL) {
       case 4: // allow only trusted XBL from the same site or chrome (default)
-        if (xblSite != originSite) return true;
+        if (locationSite != originSite) return true;
       case 3: // allow only trusted XBL on trusted sites
-        if (!xblSite) return true;
+        if (!locationSite) return true;
       case 2: // allow trusted and data: (Fx 3) XBL on trusted sites
         if (!this.isJSEnabled(originSite)) return true;
       case 1: // allow trusted and data: (Fx 3) XBL on any site
-        if (!(this.isJSEnabled(xblSite) || /^data:/.test(xblSite))) return true;
+        if (!(this.isJSEnabled(locationSite) || /^data:/.test(locationURL))) return true;
       case 0: // allow all XBL
         return false;
     }
     return true;
   },
+  
+  forbiddenXHRContext: function(originURL, locationURL) {
+    var locationSite = this.getSite(locationURL);
+    // var originSite = this.getSite(originURL);
+    switch (this.forbidXHR) {
+      case 3: // forbid all XHR
+        return true;
+      case 2: // allow same-site XHR only
+        if (locationSite != originSite) return true;
+      case 1: // allow trusted XHR targets only
+        if (!(this.isJSEnabled(locationSite))) return true;
+      case 0: // allow all XBL
+        return false;
+    }
+    return true;
+  },
+  
   
   safeJSRx: false,
   initSafeJSRx: function() {
@@ -2646,6 +2684,10 @@ NoscriptService.prototype = {
   isSafeJSURL: function(url) {
     var js = url.replace(/^javascript:/i, "");
     return this.safeJSRx && js != url && this.safeJSRx.test(js);
+  },
+  
+  isFirebugJSURL: function(url) {
+    return url == "javascript: eval(__firebugTemp__);"
   },
   
   isExternalScheme: function(scheme) {
@@ -2772,7 +2814,8 @@ NoscriptService.prototype = {
   setExpando: function(domObject, key, value) {
     if (!domObject) return null;
     if (!domObject.__noscriptStorage) domObject.__noscriptStorage = {};
-    domObject.__noscriptStorage[key] = value;
+    if (domObject.__noscriptStorage) domObject.__noscriptStorage[key] = value;
+    else if(this.consoleDump) this.dump("Warning: cannot set expando " + key + " to value " + value);
     return value;
   },
   
@@ -3691,7 +3734,7 @@ NoscriptService.prototype = {
       if (this.consoleDump & LOG_CONTENT_INTERCEPT)
         this.dump("Plugin document content type detected");
 
-      if(!topWin) {
+      if(!topWin) { 
         // check if this is an iframe
         var parentDoc = domWindow.parent.document;
         var ff = parentDoc.getElementsByTagName("iframe");
@@ -3919,6 +3962,9 @@ NoscriptService.prototype = {
     return href || "";
   },
   
+  createXSanitizer: function() {
+    return new XSanitizer(this.filterXGetRx, this.filterXGetUserRx);
+  },
   
   consoleService: CC["@mozilla.org/consoleservice;1"].getService(CI.nsIConsoleService),
   
@@ -4463,7 +4509,7 @@ RequestWatchdog.prototype = {
     
     if (ns.filterXGet && ns.filterXGetRx) {
       var changes = null;
-      var xsan = new XSanitizer(ns.filterXGetRx, ns.filterXGetUserRx);
+      var xsan = ns.createXSanitizer();
       // sanitize referrer
       if (channel.referrer && channel.referrer.spec) {
         originalAttempt = channel.referrer.spec;
@@ -4743,6 +4789,8 @@ function fuzzify(s) {
 }
 
 var InjectionChecker = {
+  fuzzify: fuzzify,
+  Entities: Entities,
   syntax: new SyntaxChecker(),
   _log: function(msg, t) {
     if (t) msg += " - TIME: " + (new Date().getTime() - t);
@@ -4799,7 +4847,7 @@ var InjectionChecker = {
   ),
   _maybeJSRx: new RegExp(
     '(?:[\\w$\\u0080-\\uFFFF\\]][\\s\\S]*[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|(?:' +
-    fuzzify('eval|open|alert|confirm|prompt') + 
+    fuzzify('eval|open|alert|confirm|prompt|set(?:Timeout|Interval)|[fF]unction') + 
     ')[\\s\\S]*\\(|(?:' +
     fuzzify('setter|location') +
     ')[\\s\\S]*=)'
@@ -4813,7 +4861,7 @@ var InjectionChecker = {
     var expr = this.syntax.lastFunction;
     expr = expr && this.syntax.lastFunction.toSource().match(/\{([\s\S]*)\}/);
     return expr && (expr = expr[1]) && 
-      /=[\s\S]*cookie|(?:setter|location|\.\W*src)[\s\S]*=|[\[\(]/.test(expr) &&
+      /=[\s\S]*cookie|(?:setter|document|location|\.\W*src)[\s\S]*=|[\[\(]/.test(expr) &&
       this.maybeJS(expr);
   },
   checkJSBreak: function(s) {
@@ -4963,16 +5011,16 @@ var InjectionChecker = {
     }
     
     // simplest navigation act (no dots, no round/square brackets)
-    if (/\bl\W*o\W*c\W*a\W*t\W*i\W*o\W*n\W*(?:\/\*[\s\S]*)=\W*(?:\/\*[\s\S]*)n\W*a\W*m\W*e(?:\W+|$)/.test(s)) { 
+    if (/\bl\W*o\W*c\W*a\W*t\W*i\W*o\W*n\W*(?:\/\*[\s\S]*|\s*)=\W*(?:\/\*[\s\S]*|\s*)n\W*a\W*m\W*e(?:\W+|$)/.test(s)) { 
       this.log("location = name navigation attempt in " +s);
       return true;
-    };
+    }
     if (/[\w\$\u0080-\uFFFF\]](?:[\s\)]+|[\s\S]*\/\*[\s\S]*)s\W*e\W*t\W*t\W*e\W*r\W*(?:\/\*[\s\S]*)?=/.test(s)) {
       this.log("setter override attempt in " +s);
       return true;
     }
     // check well known and semi-obfuscated -- as in [...]() -- function calls
-    var m = s.match(/\b(?:open|eval|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|Image|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/\*[\s\S]*?)?\([\s\S]*\)/);
+    var m = s.match(/\b(?:open|eval|set(?:Timeout|Interval)|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|Image|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/\*[\s\S]*?)?\([\s\S]*\)/);
     if (m) {
       var pos;
       var js = m[0];
@@ -5252,7 +5300,7 @@ XSanitizer.prototype = {
     }
     
     if (this.brutal) { // injection checks were positive
-      s = s.replace(/['\(\)\=]/g, " ")
+      s = s.replace(/['\(\)\=\[\]]/g, " ")
            .replace(this._brutalReplRx, String.toUpperCase);
     }
     
@@ -5265,9 +5313,7 @@ XSanitizer.prototype = {
     "ig"
   ),
   _brutalReplRx: new RegExp(
-    '(?:' +
-      fuzzify('setter|location|open|document') +
-      '\\W*[\\[\\.])',
+    '(?:' + fuzzify('setter|location|cookie|name|document') + ')',
     "g"
   ),
   
