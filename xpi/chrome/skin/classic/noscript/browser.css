@@ -22,9 +22,16 @@
   font-weight: normal;
 }
 
+
+.noscript-plugin .noscript-temp {
+  font-style: normal;
+}
+
 .noscript-unsafe-reload {
   list-style-image: url(unsafe-reload16.png);
 }
+
+
 
 .noscript-console {
   list-style-image: url(console16.png);
@@ -48,6 +55,13 @@
 .noscript-allow {
   list-style-image: url(yes16.png);
 }
+
+.noscript-temp.noscript-allow {
+  list-style-image: url(temp16.png);
+}
+
+
+
 .noscript-no,
 #noscript-tbb.noscript-no,
 #noscript-statusIcon.noscript-no,
@@ -68,6 +82,10 @@
   list-style-image: url(glb16.png);
 }
 
+.noscript-no.noscript-glb {
+  list-style-image: url(glb-no16.png);
+}
+
 .noscript-inactive-yes,
 #noscript-tbb.noscript-inactive-yes,
 #noscript-statusIcon.noscript-inactive-yes {
@@ -75,11 +93,16 @@
 }
 .noscript-inactive-no,
 #noscript-tbb.noscript-inactive-no,
-#noscript-statusIcon.noscript-inactive-no,
-.noscript-distrust,
-.noscript-untrusted {
+#noscript-statusIcon.noscript-inactive-no
+{
   list-style-image: url(inactive-no16.png);
 }
+.noscript-distrust,
+.noscript-untrusted {
+  list-style-image: url(untrusted16.png);
+}
+
+
 .noscript-inactive-prt,
 #noscript-tbb.noscript-inactive-prt,
 #noscript-statusIcon.noscript-inactive-prt {
@@ -96,8 +119,7 @@
 }
 
 .noscript-revoke-temp {
-  font-style: italic;
-  list-style-image: url(inactive-no16.png);
+  list-style-image: url(revtemp16.png);
 }
 
 .noscript-plugin {

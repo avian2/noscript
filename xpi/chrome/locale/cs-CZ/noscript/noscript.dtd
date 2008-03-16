@@ -112,3 +112,6 @@
 <!ENTITY noscriptRevokeTemp.accesskey "č">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nezobrazovat zástupnou ikonu pro objekty pocházející z nedůvěryhodných stránek">
 <!ENTITY noscriptCollapseBlockedObjects "Skrýt zablokované objekty">
+<!ENTITY noscriptExceptions "Výjimky">
+<!ENTITY noscriptBlockedObjects "Blokované objekty">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokovat každý objekt pocházející z nedůvěryhodné stránky">

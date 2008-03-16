@@ -801,7 +801,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.4.9.5",
+  VERSION: "1.5",
   
   get wrappedJSObject() {
     return this;
@@ -2177,7 +2177,7 @@ NoscriptService.prototype = {
         
         switch (aContentType) {
           case 9: // XBL - warning, in 1.8.x could also be XMLHttpRequest...
-            return this.forbidXBL && !aContentLocation.schemeIs("chrome") && 
+            return this.forbidXBL && 
               this.forbiddenXMLRequest(aRequestOrigin, aContentLocation, aContext, this.forbiddenXBLContext) 
               ? this.reject("XBL", arguments) : CP_OK;
           
@@ -2399,6 +2399,12 @@ NoscriptService.prototype = {
                 isFlash && this.forbidFlash || 
                 isJava && this.forbidJava || 
                 isSilverlight && this.forbidSilverlight;
+              
+              // see http://heasman.blogspot.com/2008/03/defeating-same-origin-policy-part-i.html
+              if (isJava && /[^\w\.]/.test(aContext.getAttribute("code") || "")) {
+                return this.reject("Illegal Java code attribute " + aContext.getAttribute("code"), arguments);
+              }
+              
               if (forbid) {
                 if (isSilverlight) {
                   forbid = aContentLocation != aRequestOrigin || aContext.firstChild;
@@ -2506,7 +2512,7 @@ NoscriptService.prototype = {
   
   forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
     var originURL, locationURL;
-    if (!aRequestOrigin || 
+    if (aContentLocation.schemeIs("chrome") || !aRequestOrigin || 
          // GreaseMonkey Ajax comes from resource: hidden window
          // Google Toolbar Ajax from about:blank
            /^(?:chrome:|resource:|about:blank)/.test(originURL = aRequestOrigin.spec) ||
@@ -3074,36 +3080,8 @@ NoscriptService.prototype = {
     if ((!this.jsEnabled) && 
       (allowBookmarks || allowBookmarklets)) {
       try {
-        if (allowBookmarklets && url.toLowerCase().indexOf("javascript:") == 0) {
-          var browserWindow = DOMUtils.mostRecentBrowserWindow;
-          var browser = browserWindow.getBrowser().selectedBrowser;
-          var site = this.getSite(browserWindow.content.document.documentURI);
-          if (browser && !this.isJSEnabled(site)) {
-            var snapshot = this.jsPolicySites.sitesString;
-            try {
-              this.setJSEnabled(site, true);
-              if (Components.utils && typeof(/ /) == "object") { // direct evaluation, after bug 351633 landing
-                var sandbox = Components.utils.Sandbox(browserWindow.content);
-                sandbox.window = browserWindow.content;
-                sandbox.document = sandbox.window.document;
-                var retVal = Components.utils.evalInSandbox(
-                  "window.XPathResult = Components.interfaces.nsIDOMXPathResult; with(window) { " + 
-                    decodeURIComponent(url.replace(/^javascript:/i, "")) + " }", sandbox);
-                if(typeof(retVal) != "undefined") { // emulate JS url return value replacing content
-                  try {
-                    sandbox.document.documentElement.innerHTML = retVal; 
-                  } catch(e) {
-                    if(this.consoleDump) this.dump(e);
-                  }
-                }
-              } else {
-                openCallback(url);
-              }
-              return true;
-            } finally {
-              this.flushCAPS(snapshot);
-            }
-          }
+        if (allowBookmarklets && /^\s*(?:javascript|data):/i.test(url)) {
+          this.executeJSURL(url, openCallback);
         } else if(allowBookmarks) {
           this.setJSEnabled(this.getSite(url), true);
         }
@@ -3114,6 +3092,46 @@ NoscriptService.prototype = {
     return false;
   },
   
+  executeJSURL: function(url, openCallback) {
+    var browserWindow = DOMUtils.mostRecentBrowserWindow;
+    var browser = browserWindow.getBrowser().selectedBrowser;
+    if(!browser) return false;
+    
+    var window = browser.contentWindow;
+    if(!window) return false;
+    
+    var site = this.getSite(window.document.documentURI) || this.getExpando(browser, "jsSite");
+    if (!this.isJSEnabled(site)) {
+      if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
+      var snapshot = this.jsPolicySites.sitesString;
+      var async = /^\s*data:/i.test(url) || Components.utils && typeof(/ /) == "object"; // async evaluation, after bug 351633 landing
+      try {
+        this.setTemp(site, true);
+        this.setJSEnabled(site, true);
+        if (async) {
+          var sandbox = Components.utils.Sandbox(window);
+          sandbox.window = window;
+          sandbox.jsURL = url;
+          Components.utils.evalInSandbox("window.location.href = jsURL", sandbox);
+        } else {
+          openCallback(url);
+        }
+        return true;
+      } finally {
+        if(async) {
+          this.delayExec(this.postExecuteJSURL, 0, browser, site, snapshot);
+        } else {
+          this.postExecuteJSURL(browser, site, snapshot);
+        }
+      }
+    }
+  },
+  
+  postExecuteJSURL: function(browser, site, snapshot) {
+    this.flushCAPS(snapshot);
+    this.setExpando(browser, "jsSite", site);
+  },
+
   mimeEssentials: function(mime) {
      return mime && mime.replace(/^application\/(?:x-)?/, "") || "";
   },
@@ -3527,7 +3545,7 @@ NoscriptService.prototype = {
        url = this.getSite(docURI = document.documentURI);
        if (url) {
          try {
-           if (document.domain && document.domain != this.getDomain(url, true)) {
+           if (document.domain && document.domain != this.getDomain(url, true) && url != "chrome:") {
              sites.unshift(document.domain);
            }
          } catch(e) {}
@@ -3692,14 +3710,9 @@ NoscriptService.prototype = {
   onBeforeLoad: function(req, domWindow) {
     const uri = req.URI;
     const rw = this.requestWatchdog;
-    if (domWindow && domWindow.document && domWindow.document.characterSet == "UTF-7") {
-      if ((uri.schemeIs("http") || uri.schemeIs("https")) &&
-          this.getPref("utf7filter", true)) {
-        if (this.neutralizeUTF7(domWindow)) {
-          req.cancel(NS_BINDING_ABORTED);
-          return;
-        }
-      }
+    
+    if (domWindow && domWindow.document && (uri.schemeIs("http") || uri.schemeIs("https"))) {
+       this.filterUTF7(req, domWindow); 
     }
     
     if (this.checkJarDocument(uri, domWindow)) {
@@ -3872,15 +3885,19 @@ NoscriptService.prototype = {
   },
   // end nsIWebProgressListener
   
-  neutralizeUTF7: function(window, altCharset) {
-
-    var ds = this.domUtils.getDocShellFromWindow(window);
-    var as = CC["@mozilla.org/atom-service;1"].getService(CI.nsIAtomService);
-    ds.documentCharsetInfo.forcedCharset = as.getAtom(altCharset || "UTF-8");
-    ds.stop(ds.STOP_ALL);
-    ds.reload(ds.LOAD_FLAGS_CHARSET_CHANGE);
-   
-    return true;
+  filterUTF7: function(req, window) {
+    try {
+      var ds = this.domUtils.getDocShellFromWindow(window);
+      var as = CC["@mozilla.org/atom-service;1"].getService(CI.nsIAtomService);
+      if(window.document.documentCharset == "UTF-7" ||
+        !req.contentCharset && (ds.documentCharsetInfo.parentCharset + "") == "UTF-7") {
+        if(this.consoleDump) this.dump("Neutralizing UTF-7 charset!");
+        ds.documentCharsetInfo.forcedCharset = as.getAtom("UTF-8");
+        ds.documentCharsetInfo.parentCharset = ds.documentCharsetInfo.forcedCharset;
+      }
+    } catch(e) { 
+      if(this.consoleDump) this.dump("Error filtering charset: " + e) 
+    }
   },
   
   processBrowserClick: function(ev) {

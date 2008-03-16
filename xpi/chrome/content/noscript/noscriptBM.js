@@ -42,15 +42,23 @@ var noscriptBM = {
   handleURLBarCommand: function() {
     if(!(window.gURLBar && gURLBar.value))
       return;
-    var shortcut = gURLBar.value;
-    var jsrx = /\s*javascript:/i;
+   
     var originalArguments = arguments;
     callback = function() { noscriptBM.handleURLBarCommandOriginal.apply(window, originalArguments); };
-    if(window.getShortcutOrURI && (shortcut.indexOf(" ") > 0  && !jsrx.test(shortcut) || shortcut.indexOf(":") < 0)) {
+    
+    var shortcut = gURLBar.value;
+    var jsrx = /^\s*(?:data|javascript):/i;
+    var isJS = jsrx.test(shortcut);
+    var allowJS = noscriptUtil.service.getPref("noscript.allowURLBarJS", true);
+    
+    if (isJS && allowJS) {
+      if(noscriptUtil.service.executeJSURL(shortcut, callback)) return;
+    } else if (window.getShortcutOrURI && (shortcut.indexOf(" ") > 0  && !isJS || shortcut.indexOf(":") < 0)) {
       var url = getShortcutOrURI(shortcut, {});
       if(jsrx.test(url) && noscriptBM.handleBookmark(url, callback))
         return;
     }
+    
     callback();
   },
 
@@ -58,17 +66,17 @@ var noscriptBM = {
     return noscriptUtil.service.handleBookmark(url, openCallback);
   },
   
-  patchPCMethod: function(m) {
-    if(m in PlacesController.prototype) {
+  patchPlacesMethod: function(k, m) {
+    if(m in k) {
       // Dirty eval hack due to Tab Mix Plus conflict: http://tmp.garyr.net/forum/viewtopic.php?t=8052
-      PlacesController.prototype[m] = eval(PlacesController.prototype[m].toSource()
-        .replace(/\bPlacesUtils\.checkURLSecurity\(/, 'noscriptBM.checkURLSecurity('))
+      k[m] = eval(k[m].toSource()
+        .replace(/\b\w+\.checkURLSecurity\(/, 'noscriptBM.checkURLSecurity('))
     }
   },
   
   checkURLSecurity: function(node) {
     var patch = arguments.callee;
-    if(!PlacesUtils.checkURLSecurity(node)) return false;
+    if(!noscriptBM.placesUtils.checkURLSecurity(node)) return false;
     if(patch._reentrant) return true;
     try {
       patch._reentrant = true;
@@ -97,12 +105,13 @@ var noscriptBM = {
       noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
       window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
     }
-      
-    if(typeof window.PlacesController == "function") {
+    var pu = window.PlacesUIUtils || window.PlacesUtils || false;
+    if (typeof(pu) == "object") {
+      noscriptBM.placesUtils = pu;
       window.setTimeout(function() {
-        var methods = ["openSelectedNodeIn", "openSelectedNodeWithEvent"];
-        for(var j = methods.length; j-- > 0;)
-          noscriptBM.patchPCMethod(methods[j]);
+        var methods = ["openNodeIn", "openSelectedNodeWithEvent"];
+        for each (method in methods)
+          noscriptBM.patchPlacesMethod(pu, method);
       }, 0);
     }
   }

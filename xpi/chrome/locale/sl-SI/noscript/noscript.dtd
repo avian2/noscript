@@ -1,0 +1,117 @@
+<!ENTITY noscriptOptions "Možnosti...">
+<!ENTITY noscriptOptions.accesskey "M">
+<!ENTITY noscriptOptionsLong "NoScript Možnosti">
+<!ENTITY noscriptAbout "O NoScript programu...">
+<!ENTITY noscriptPermissionsText "Določite lahko na katerih straneh bo izvajanje skript dovoljeno. Vnesite naslov ali domeno (pr. &quot;http://www.domena.com&quot; or &quot;domena.com&quot;) strani, na kateri želite omogočiti izvajanje skript in kliknite Dovoli.">
+<!ENTITY noscriptWebAddress "Naslov strani:">
+<!ENTITY noscriptAllow "Dovoli">
+<!ENTITY noscriptAllow.accesskey "D">
+<!ENTITY noscriptForbid "Prepreči">
+<!ENTITY noscriptForbid.accesskey "P">
+<!ENTITY noscriptTrust "Označi kot varno">
+<!ENTITY noscriptTrust.accesskey "V">
+<!ENTITY noscriptUntrust "Označi kot nevarno">
+<!ENTITY noscriptUntrust.accesskey "N">
+<!ENTITY noscriptRemoveSelected "Odstrani označene strani">
+<!ENTITY noscriptGloballyEnabled "Omogočeno vsesplošno izvajanje skript (nevarno)">
+<!ENTITY noscriptAutoReload "Avtomatsko osveži strani ob spremembi pravic">
+<!ENTITY noscriptGeneral "Splošno">
+<!ENTITY noscriptAppearance "Izgled">
+<!ENTITY noscriptShow "Prikaži...">
+<!ENTITY noscriptCtxMenu "Kontekstualni meni">
+<!ENTITY noscriptStatusIcon "Ikono v statusni vrstici">
+<!ENTITY noscriptFullAddr "Polen naslov (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Polne domene (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Osnovne domene drugega reda (noscript.net)">
+<!ENTITY noscriptTempCmd "Začasno omogoči [...]">
+<!ENTITY noscriptSound "Zvočni signal ob onemogočenih skriptah">
+<!ENTITY noscriptImport "Uvozi">
+<!ENTITY noscriptImport.accesskey "U">
+<!ENTITY noscriptExport "Izvozi">
+<!ENTITY noscriptExport.accesskey "I">
+<!ENTITY noscriptNotify "Prikaži sporočilo o blokiranih skriptah">
+<!ENTITY noscriptNotify.bottom "Prikaži sporočilo na dnu">
+<!ENTITY noscriptSound.choose "Prebrskaj">
+<!ENTITY noscriptSound.choose.accesskey "r">
+<!ENTITY noscriptSound.play "Predvajaj">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Ponastavi">
+<!ENTITY noscriptSound.reset.accesskey "o">
+<!ENTITY noscriptAdvanced "Napredno">
+<!ENTITY noscriptAdditionalPermissions "Dodatna dovoljenja za zaupanja vredne strani">
+<!ENTITY noscriptAllowClipboard "Omogoči kopiranje in lepljenje obogatenega besedila s sistemskega odložišča">
+<!ENTITY noscriptAdditionalRestrictions "Dodatne omejitve za zaupanja nevredne strani">
+<!ENTITY noscriptPlugins "Vtičniki">
+<!ENTITY noscriptContentBlocker "Uporabi te omejitve tudi na zaupanja vrednih straneh">
+<!ENTITY noscriptForbidJava "Onemogoči Javo™">
+<!ENTITY noscriptForbidWebBugs "Onemogoči &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Onemogoči Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Onemogoči &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFlash "Onemogoči Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Onemogoči druge vtičnike">
+<!ENTITY noscriptReloadWarn "Te nastavitve bodo stopile v veljavo na novih oz. (ročno) osveženih straneh">
+<!ENTITY noscriptConfirmUnblock "Zahtevaj potrditev preden začasno omogočiš določen predmet">
+<!ENTITY noscriptStatusLabel "Opis v statusni vrstici">
+<!ENTITY noscriptForbidBookmarklets "Onemogoči bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Prikaži ikono pri blokiranih predmetih">
+<!ENTITY noscriptTruncateTitle "Odreži naslove dokumentov">
+<!ENTITY noscriptFixLinks "Poskušaj popraviti JavaScript povezave">
+<!ENTITY noscriptAllowBookmarks "Dovoli odpiranje strani preko bookmarkov">
+<!ENTITY noscriptAllowViaBookmarks "Dovoli odpiranje strani preko bookmarkov">
+<!ENTITY noscriptAllowPing "Dovoli &lt;A PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Dovoli lokalne povezave">
+<!ENTITY noscriptForbidPing "Onemogoči &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Onemogoči META preusmeritve znotraj &lt;NOSCRIPT&gt; elementov">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "P">
+<!ENTITY noscriptWhitelist "Seznam dovoljenih strani">
+<!ENTITY noscriptPermissions "Dovoljenja">
+<!ENTITY noscriptRefresh "Osveži">
+<!ENTITY noscriptNotifications "Obvestila">
+<!ENTITY noscriptToolbarToggle "Z levim klikom na NoScript gumbu v orodni vrstici se spremenijo dovoljenja za trenutno vrhnjo domeno">
+<!ENTITY noscriptTrusted "Varno">
+<!ENTITY noscriptUntrusted "Nevarno">
+<!ENTITY noscriptUnknown "Neznano">
+<!ENTITY noscriptAdd "Dodaj">
+<!ENTITY noscriptAdd.accesskey "D">
+<!ENTITY noscriptClose "Zapri">
+<!ENTITY noscriptSiteManager "Upravitelj strani">
+<!ENTITY noscriptSecurityManager "Upravitelj varnosti">
+<!ENTITY noscriptPolicies "Politike">
+<!ENTITY noscriptDefaultPolicies "Privzete politike">
+<!ENTITY noscriptSitePolicies "Specifične politike strani">
+<!ENTITY noscriptNselNever "Skrij &lt;NOSCRIPT&gt; elemente">
+<!ENTITY noscriptNselForce "Prikaži &lt;NOSCRIPT&gt; elemente, ki sledijo blokiranemu &lt;SCRIPT&gt; elementu">
+<!ENTITY noscriptAutoAllowTopLevel "Privzeto začasno dovoli vrhnje domene">
+<!ENTITY noscriptDescription "Dodatna zaščita za vaš Firefox: NoScript omogoči izvajanje JavaScript, Java (in drugih vtičnikov) samo na zaupanja vrednih domenah po vaši izbiri (pr. domača stran vaše spletne banke). S pristopom varnih seznamov onemogočimo izkoriščanje varnostnih lukenj (znanih in neznanih!) brez izgub funkcionalnosti... Strokovnjaki se bodo strinjali: Firefox je bolj varen z uporabo NoScript-a :-)">
+<!ENTITY noscriptOptBlockCssScanners "Prepreči CSS-osnovane skenerje">
+<!ENTITY noscriptOptFilterXGet "Saniraj sumljive zahtevke drugih strani">
+<!ENTITY noscriptOptFilterXPost "Preoblikuj cross-site POST zahtevke v data-less GET zahtevke">
+<!ENTITY noscriptShowConsole "Prikaži konzolo...">
+<!ENTITY noscriptShowConsole.accesskey "P">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Nevarna osvežitev">
+<!ENTITY noscriptUnsafeReload.accesskey "o">
+<!ENTITY noscriptXssExceptions "Izjeme pri XSS zaščiti">
+<!ENTITY noscriptXssExceptions.description "Naslovi, ki ustrezajo spodaj predpisanim vzorcem NE BODO zaščiteni pred XSS ranljivostmi">
+<!ENTITY noscriptMatchSample "Primer ujemanja vzorca:">
+<!ENTITY noscriptReset "Ponastavi">
+<!ENTITY noscriptReset.accesskey "P">
+<!ENTITY noscriptResetDef "Ponastavi na privzete vrednosti">
+<!ENTITY noscriptResetDef.accesskey "n">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Prepreči odpiranje oddaljenih JAR virov kot dokumentov">
+<!ENTITY noscriptJarExceptions "Izjeme pri preprečevanju JAR dokumentov">
+<!ENTITY noscriptJarExceptions.description "JAR dokumenti, ki ustrezajo spodaj predpisanim vzorcem NE BODO blokirani.">
+<!ENTITY noscriptRevokeTemp "Prekliči začasne pravice">
+<!ENTITY noscriptRevokeTemp.accesskey "Z">
+<!ENTITY noscriptNoUntrustedPlaceholder "Ne prikaži okvirja predmetov, ki izvirajo iz zaupanja nevrednih strani">
+<!ENTITY noscriptCollapseBlockedObjects "Skrij blokirane predmete">
+<!ENTITY noscriptExceptions "Izjeme...">
+<!ENTITY noscriptBlockedObjects "Blokirani predmeti">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokiraj vsak predmet, ki prihaja z zaupanja nevrednih strani">

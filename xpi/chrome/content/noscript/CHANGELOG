@@ -1,8 +1,41 @@
 NoScript ChangeLog
 
+1.5
+=====================================================================
++ Slovenian translation (thanks Tomaž Mačus)
+x Special bookmark management made compatible with Suiterunner's
+  sidebar (thanks therube for reporting)
+x Extra QA for release
+
+1.4.9.9
+=====================================================================
+x Bookmarklet handling code adapted again to cope with methods moved
+  from PlacesUtils to PlacesUIUtils after Fx 3 beta 4
+
+1.4.9.8
+=====================================================================
++ Prevention of Java applet same origin policy bypass via malformed
+  class name (see http://tinyurl.com/2u387t)
++ Improved icons
+x Fixed chrome "domain" showing in menus (thanks Aerik)
+
+1.4.9.7
+=====================================================================
++ New noscript.allowURLBarJS about:config preference allows 
+  javascript: and data: URLs to be run interactively from the 
+  location bar, e.g. for bookmarklet testing, even if currently 
+  displayed site is not whitelisted (default true)
++ Improved overall bookmarklet compatibility on Firefox 3
+x Adapted bookmarklet handling code to latest Places refactoring with
+  openXXX() methods in PlaceUtils (thanks Tobu for report)
+
+1.4.9.6
+=====================================================================
+x Fixed "Forbid chrome:" menu items on some pages (thanks niko322)
+
 1.4.9.5
 =====================================================================
-x Version bumb for Firefox 3.0b5pre
+x Version bump for Firefox 3.0b5pre
 
 1.4.9.4
 =====================================================================

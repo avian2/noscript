@@ -144,7 +144,7 @@ var noscriptOverlay = noscriptUtil.service ?
       miGlobal.setAttribute("label", this.getString((global ? "forbid" : "allow") + "Global"));
       miGlobal.setAttribute("oncommand","noscriptOverlay.menuAllow("+(!global)+")");
       miGlobal.setAttribute("tooltiptext", this.statusIcon.getAttribute("tooltiptext"));
-      miGlobal.setAttribute("class", "menuitem-iconic " + this.getStatusClass(global ? "no" : "glb"));
+      miGlobal.setAttribute("class", "menuitem-iconic noscript-glb " + this.getStatusClass(global ? "no" : "yes"));
     } else {
       miGlobal.hidden = seps.global.hidden = true;
     }
@@ -394,7 +394,7 @@ var noscriptOverlay = noscriptUtil.service ?
          node.setAttribute("label", this.getString("allowTemp", [e.label]));
          node.setAttribute("tooltiptext", e.title);
          node.setAttribute("oncommand", "noscriptOverlay.allowObject(" + i + ")");
-         node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-allow");
+         node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-temp noscript-allow");
          node.style.listStyleImage = ns.cssMimeIcon(e.mime, 16);
          menu.appendChild(node);
          pluginExtras[i++] = e;
@@ -432,7 +432,7 @@ var noscriptOverlay = noscriptUtil.service ?
             node.setAttribute("label", this.getString("allowTemp", [ns.mimeEssentials(mime) + "@" + site]));
             node.setAttribute("tooltiptext", mime + "@" + site);
             node.setAttribute("oncommand", "noscriptOverlay.allowObjectSite(" + i + ")");
-            node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-allow");
+            node.setAttribute("class", "menuitem-iconic noscript-temp noscript-cmd noscript-allow");
             if(mime != "*")
               node.style.listStyleImage = node.style.listStyleImage = ns.cssMimeIcon(mime, 16);
 

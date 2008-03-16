@@ -145,3 +145,5 @@ pref("noscript.alwaysBlockUntrustedContent", true);
 pref("noscript.consoleLog", false);
 
 pref("noscript.silverlightPatch", true);
+
+pref("noscript.allowURLBarJS", true);
