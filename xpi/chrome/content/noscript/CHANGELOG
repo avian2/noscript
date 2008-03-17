@@ -1,5 +1,15 @@
 NoScript ChangeLog
 
+1.5.2
+=====================================================================
+x Fixed unwanted blocking of some trusted Java applets thanks Mick 
+  Bramhall for report)
+
+1.5.1
+=====================================================================
+x Slightly revised icon set (thanks Karlosak and WAPCE for hints)
+x Fixed bookmarklets invoked twice on untrusted sites (thanks al_9x)
+
 1.5
 =====================================================================
 + Slovenian translation (thanks Tomaž Mačus)

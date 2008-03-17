@@ -801,7 +801,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.5",
+  VERSION: "1.5.2",
   
   get wrappedJSObject() {
     return this;
@@ -2401,7 +2401,7 @@ NoscriptService.prototype = {
                 isSilverlight && this.forbidSilverlight;
               
               // see http://heasman.blogspot.com/2008/03/defeating-same-origin-policy-part-i.html
-              if (isJava && /[^\w\.]/.test(aContext.getAttribute("code") || "")) {
+              if (isJava && /(?:[^\/\w\.\$]|^\s*\/\/)/.test(aContext.getAttribute("code") || "")) {
                 return this.reject("Illegal Java code attribute " + aContext.getAttribute("code"), arguments);
               }
               
@@ -3081,10 +3081,12 @@ NoscriptService.prototype = {
       (allowBookmarks || allowBookmarklets)) {
       try {
         if (allowBookmarklets && /^\s*(?:javascript|data):/i.test(url)) {
-          this.executeJSURL(url, openCallback);
+          var ret = this.executeJSURL(url, openCallback);
         } else if(allowBookmarks) {
           this.setJSEnabled(this.getSite(url), true);
         }
+        
+        return ret;
       } catch(silentEx) {
         dump(silentEx);
       }
