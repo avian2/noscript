@@ -801,7 +801,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.5.2",
+  VERSION: "1.5.6",
   
   get wrappedJSObject() {
     return this;
@@ -831,11 +831,11 @@ NoscriptService.prototype = {
           }
           break;
         case "em-action-requested":
-          if ( (subject instanceof CI.nsIUpdateItem)
+          if ((subject instanceof CI.nsIUpdateItem)
               && subject.id == EXTENSION_ID ) {
             if (data == "item-uninstalled" || data == "item-disabled") {
               this.uninstalling = true;
-            } else if(data == "item-enabled") {
+            } else if (data == "item-enabled") {
               this.uninstalling = false;
             }
           }
@@ -2253,13 +2253,13 @@ NoscriptService.prototype = {
            
               blockThisIFrame = !(aInternalCall || 
                       /^(?:chrome|resource|wyciwyg):/.test(locationURL) ||
+                      locationURL == this._silverlightInstalledHack ||
                       (
                         originURL
                           ? (/^chrome:/.test(originURL) ||
                              /^(?:data|javascript):/.test(locationURL) &&
                              (contentDocument && originURL == contentDocument.URL ||
-                              this.isFirebugJSURL(locationURL) ||
-                              this.forbidContent && locationURL == this._silverlightInstalledHack
+                              this.isFirebugJSURL(locationURL)
                              )
                             )
                           : contentDocument && 
@@ -3940,7 +3940,7 @@ NoscriptService.prototype = {
           (onclick || "") + " " + href
         );
     } else { // try processing history.go(n) //
-      onclick = onclick || jsURL;
+      onclick = onclick || href;
       if(!onclick) return;
       
       jsURL = onclick.match(/history\s*\.\s*(?:go\s*\(\s*(-?\d+)\s*\)|(back|forward)\s*\(\s*)/);
@@ -4811,8 +4811,9 @@ var InjectionChecker = {
   fuzzify: fuzzify,
   Entities: Entities,
   syntax: new SyntaxChecker(),
-  _log: function(msg, t) {
+  _log: function(msg, t, i) {
     if (t) msg += " - TIME: " + (new Date().getTime() - t);
+    if (i) msg += " - ITER: " + i;
     this.dump("[NoScript InjectionChecker] " + msg + "\n");
   },
   dump: dump,
@@ -4821,6 +4822,7 @@ var InjectionChecker = {
   set logEnabled(v) { this.log = v ? this._log : function() {}; },
   
   checkJSSyntax: function(s) {
+    if (/^(?:''|"")?[^\('"]*\)/.test(s)) s = "x(" + s + ")"; // bracket balancing for micro injections like "''),eval(name,''"
     if (this.syntax.check(s + "/**/")) {
       this.log("Valid fragment " + s);
       return true;
@@ -4860,16 +4862,16 @@ var InjectionChecker = {
   },
   
   
-  _singleAssignmentRx: new RegExp(
+  _singleAssignmentRx: new RegExp('\\b(?:' +
     fuzzify('document|location|setter')
-    + '|/.*/[\\s\\S]*' + fuzzify('source')
+    + ')\\b|/.*/[\\s\\S]*' + fuzzify('source')
   ),
   _maybeJSRx: new RegExp(
-    '(?:[\\w$\\u0080-\\uFFFF\\]][\\s\\S]*[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|(?:' +
+    '(?:[\\w$\\u0080-\\uFFFF\\]][\\s\\S]*[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
     fuzzify('eval|open|alert|confirm|prompt|set(?:Timeout|Interval)|[fF]unction') + 
-    ')[\\s\\S]*\\(|(?:' +
+    ')\\b[\\s\\S]*\\(|\\b(?:' +
     fuzzify('setter|location') +
-    ')[\\s\\S]*=)'
+    ')\\b[\\s\\S]*=)'
   ),
   maybeJS: function(expr) {
     if(/^[^\(\)="']+=[^\(\)='"]+$/.test(expr) && // commonest case, single assignment, no break
@@ -4880,7 +4882,7 @@ var InjectionChecker = {
     var expr = this.syntax.lastFunction;
     expr = expr && this.syntax.lastFunction.toSource().match(/\{([\s\S]*)\}/);
     return expr && (expr = expr[1]) && 
-      /=[\s\S]*cookie|(?:setter|document|location|\.\W*src)[\s\S]*=|[\[\(]/.test(expr) &&
+      /=[\s\S]*cookie|\b(?:setter|document|location|\.\W*src)[\s\S]*=|[\[\(]/.test(expr) &&
       this.maybeJS(expr);
   },
   checkJSBreak: function(s) {
@@ -4890,32 +4892,49 @@ var InjectionChecker = {
     s = s.replace(/\%\d+[a-z]\w*/gi, '`'); // cleanup most urlencoded noise
     
     const findInjection = 
-      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\([\s\S]*?\)|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
+      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
     
     findInjection.lastIndex = 0;
-    var breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
+    var m, breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
     
-    const MAX_TIME = 1200, MAX_LOOPS = 400;
+    // JSON reduction
+    m = s.match(/\{[\s\S]*\}/);
+    if (m) {
+       expr = m[0];
+       script = this.reduceQuotes(expr);
+       if (!/[\(=\.]/.test(script) && 
+          this.checkJSSyntax("JSON = " + script) // no-assignment JSON fails with "invalid label"
+       ) { 
+          this.log("Reducing JSON " + expr);
+          s = s.replace(expr, "{_JSON_: 0}");
+       }
+    }
+
+    const MAX_TIME = 3000, MAX_LOOPS = 400;
 
     const t = new Date().getTime();
+    var iterations = 0;
     
-    for (var m, iterations = 0; m = findInjection.exec(s);) {
+    while ((m = findInjection.exec(s))) {
       
       subj = s.substring(findInjection.lastIndex);
       if (!this.maybeJS(subj)) {
-         this.log("Fast escape on " + subj, t);
+         this.log("Fast escape on " + subj, t, iterations);
          return false;
       }
       
       breakSeq = m[1];
-      expr = m[2];
-
+      expr = subj.match(/^[\s\S]*?[=\)]/);
+      expr = expr && expr[0] || m[2];
+      if (expr.length < m[2].length) expr = m[2];
+      
       // quickly skip innocuous CGI patterns
-      if ((m = subj.match(/^(?:(?:[\w\s\-\/&:]+=[\w\s\-\/:]+(?:&|$))+|\w+:\/\/\w[\w\-\.]*)/))) {
+      if ((m = subj.match(/^(?:(?:[\w \-\/&:]+=[\w \-\/:\+%]+(?:&|$)){2,}|\w+:\/\/\w[\w\-\.]*)/))) {
         findInjection.lastIndex += m[0].length - 1;
         continue;
       }
       
+     
       
       quote = breakSeq == '"' || breakSeq == "'" ? breakSeq : '';
       bs = this.breakStops[quote || 'nq']  
@@ -4925,7 +4944,7 @@ var InjectionChecker = {
       for (moved = false, hunt = !!expr, lastExpr = null; hunt;) {
         
         if (new Date().getTime() - t > MAX_TIME) {
-          this.log("Too long execution time! " + iterations + " iterations. Assuming DOS... " + s);
+          this.log("Too long execution time! Assuming DOS... " + s, t, iterations);
           return true;
         }
         
@@ -4971,23 +4990,23 @@ var InjectionChecker = {
         
         if (/^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=]))/
             .test(script.split("//")[0])) {
-           this.log("SKIP (head syntax) " + script);
+           this.log("SKIP (head syntax) " + script, t, iterations);
            break; // unrepairable syntax error in the head move left cursor forward 
         }
         
         if (this.maybeJS(this.reduceQuotes(expr))) {
 
           if (this.checkJSSyntax(script) && this.checkLastFunction()) {
-            this.log("JS Break Injection detected", t);
+            this.log("JS Break Injection detected", t, iterations);
             return true;
           }
           if (++iterations > MAX_LOOPS) {
-            this.log("Too many syntax checks! Assuming DOS... " + s, t);
+            this.log("Too many syntax checks! Assuming DOS... " + s, t, iterations);
             return true;
           }
           if(this.syntax.lastError) { // could be null if we're here thanks to checkLastFunction()
             errmsg = this.syntax.lastError.message;
-            this.log(iterations + ": " + errmsg + "\n" + script + "\n---------------");
+            this.log(errmsg + "\n" + script + "\n---------------", t, iterations);
             if (/left-hand|invalid flag after regular expression|missing ; before statement|invalid label/.test(errmsg)) {
               break; // unrepairable syntax error (wrong assignment to a left-hand expression), move left cursor forward 
             } else if((m = errmsg.match(/\bmissing ([:\]\)]) /))) {
@@ -5007,7 +5026,7 @@ var InjectionChecker = {
         }
       }
     }
-    this.log(s, t);
+    this.log(s, t, iterations);
     return false;
   },
     

@@ -50,6 +50,7 @@ function ConditionalGroup(serv, prefName, def) {
   this.cbx = document.getElementById("cbx-" + prefName);
   this.sel = document.getElementById("sel-" + prefName);
   var value = this.serv.getPref(prefName, def);
+  this.defaultIndex = typeof(def) == "number" ? def : 0;
   this.cbx.checked =  !!value;
   this.sel.selectedIndex = value ? value - 1 : def;
   var instance = this;
@@ -61,6 +62,9 @@ function ConditionalGroup(serv, prefName, def) {
 ConditionalGroup.prototype = {
   changed: function() {
     this.sel.disabled = !this.cbx.checked;
+    if(this.cbx.checked && this.sel.selectedIndex < 0) {
+      this.sel.selectedIndex = this.defaultIndex;
+    }
   },
   getValue: function() {
     return this.cbx.checked && this.sel.selectedIndex + 1 || 0;

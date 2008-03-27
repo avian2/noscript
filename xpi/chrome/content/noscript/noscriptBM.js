@@ -49,7 +49,7 @@ var noscriptBM = {
     var shortcut = gURLBar.value;
     var jsrx = /^\s*(?:data|javascript):/i;
     var isJS = jsrx.test(shortcut);
-    var allowJS = noscriptUtil.service.getPref("noscript.allowURLBarJS", true);
+    var allowJS = noscriptUtil.service.getPref("allowURLBarJS", true);
     
     if (isJS && allowJS) {
       if(noscriptUtil.service.executeJSURL(shortcut, callback)) return;

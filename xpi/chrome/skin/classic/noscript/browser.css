@@ -13,15 +13,16 @@
   font-weight: normal;
 }
 
-.noscript-toplevel {
-  font-weight: bold;
-}
 
-.noscript-temp {
+
+.noscript-temp, .noscript-cmd.noscript-temp {
   font-style: italic;
   font-weight: normal;
 }
 
+.noscript-toplevel, .noscript-toplevel.noscript-temp.noscript-forbid {
+  font-weight: bold;
+}
 
 .noscript-plugin .noscript-temp {
   font-style: normal;

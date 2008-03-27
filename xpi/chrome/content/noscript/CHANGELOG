@@ -1,5 +1,24 @@
 NoScript ChangeLog
 
+1.5.6
+=====================================================================
+x Minor enhancements to IFRAME blocking
+
+1.5.5
+=====================================================================
++ Bracket balancing for inline JS literal-breaking micro injections
+
+1.5.4
+=====================================================================
++ InjectionChecker speed optimizations, preventing timeout on overly
+  complex JSON requests (thanks John Danfort for report)
+
+1.5.3
+=====================================================================
++ Forbid toplevel site command in bold (thanks therube)
+x Fixed rare XSS false positives on iGoogle
+x Fixed "allowURLBarJS" preference cannot be disabled (thanks Aerik)
+
 1.5.2
 =====================================================================
 x Fixed unwanted blocking of some trusted Java applets thanks Mick 
