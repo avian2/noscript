@@ -9,10 +9,15 @@
   text-decoration: underline;
 }
 
-tab.noscript-xss,
-tab.noscript-yes,
-tab.noscript-no,
-tab.noscript-jar {
+tabbox#nsopt-tabsAdvanced tab image.tab-icon {
+  width: 16px !important;
+  height: 16px !important;
+  max-height: 16px !important;
+  max-width: 16px !important;
+}
+
+tabbox#nsopt-tabsAdvanced tab {
+  min-height: 16px;
   marker-offset: 24px;
 }
 

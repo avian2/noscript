@@ -1,5 +1,19 @@
 NoScript ChangeLog
 
+1.5.8
+=====================================================================
+x Optimization of Injection Checker for iGoogle Calendar Widget
+  (thanks JonCage for report)
+x Fixed edge-case false positives due to URL encoding mixed to 
+  symmetric brackets(thanks Lundholm for report)
+x Fixed legacy Seamonkey UI regression introduced by Songbird 
+  compatibility (thanks therube for report)
+
+1.5.7
+=====================================================================
++ Tweaked for Songbird compatibility
+x Version bumb for Firefox 3.0pre 
+
 1.5.6
 =====================================================================
 x Minor enhancements to IFRAME blocking

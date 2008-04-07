@@ -74,13 +74,13 @@ var noscriptUtil = {
   },
   
   
-  browse: function(url) {
+  browse: function(url, features) {
     var w = this.service.domUtils.mostRecentBrowserWindow;
     if(w && !w.closed) {
       var browser = w.getBrowser();
       browser.selectedTab = browser.addTab(url, null);
     } else {
-      window.open(url, "_blank")
+      window.open(url, "_blank", features || null)
     }
   }
   

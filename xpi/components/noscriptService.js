@@ -500,7 +500,7 @@ const DOMUtils = {
     var wm = this.windowMediator;
     var w = null;
     var aa = Array.prototype.slice.call(arguments);
-    for each(var type in ['navigator:browser', 'emusic:window']) {
+    for each(var type in ['navigator:browser', 'emusic:window', 'Songbird:Main']) {
      aa[0] = type;
       w = delegate.apply(wm, aa);
       if (w) {
@@ -511,12 +511,12 @@ const DOMUtils = {
     return w;
   },
   get mostRecentBrowserWindow() {
-    var res = this._winType && this._wm.getMostRecentWindow(this._winType, true);
+    var res = this._winType && this.windowMediator.getMostRecentWindow(this._winType, true);
     return res || this.perWinType(this.windowMediator.getMostRecentWindow, true);
   },
   
   get windowEnumerator() {
-    var res = this._winType && this._wm.getZOrderDOMWindowEnumerator(this._winType, true);
+    var res = this._winType && this.windowMediator.getZOrderDOMWindowEnumerator(this._winType, true);
     return res || this.perWinType(this.windowMediator.getZOrderDOMWindowEnumerator, true);
   },
   createBrowserIterator: function(initialWin) {
@@ -801,7 +801,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.5.6",
+  VERSION: "1.5.8",
   
   get wrappedJSObject() {
     return this;
@@ -4889,7 +4889,7 @@ var InjectionChecker = {
     // Direct script injection breaking JS string literals or comments
     if (!this.maybeJS(s)) return false;
     
-    s = s.replace(/\%\d+[a-z]\w*/gi, '`'); // cleanup most urlencoded noise
+    s = s.replace(/\%\d+[a-z\(]\w*/gi, '`'); // cleanup most urlencoded noise
     
     const findInjection = 
       /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
@@ -4909,8 +4909,8 @@ var InjectionChecker = {
           s = s.replace(expr, "{_JSON_: 0}");
        }
     }
-
-    const MAX_TIME = 3000, MAX_LOOPS = 400;
+    
+    const MAX_TIME = 4000, MAX_LOOPS = 400;
 
     const t = new Date().getTime();
     var iterations = 0;
@@ -4929,7 +4929,7 @@ var InjectionChecker = {
       if (expr.length < m[2].length) expr = m[2];
       
       // quickly skip innocuous CGI patterns
-      if ((m = subj.match(/^(?:(?:[\w \-\/&:]+=[\w \-\/:\+%]+(?:&|$)){2,}|\w+:\/\/\w[\w\-\.]*)/))) {
+      if ((m = subj.match(/^(?:(?:[\?\w \-\/&:]+=[\w \-\/:\+%]+(?:&|$)){2,}|\w+:\/\/\w[\w\-\.]*)/))) {
         findInjection.lastIndex += m[0].length - 1;
         continue;
       }

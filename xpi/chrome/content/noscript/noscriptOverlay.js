@@ -1265,6 +1265,8 @@ var noscriptOverlay = noscriptUtil.service ?
     },
     
     webProgressListener: {
+      QueryInterface: noscriptUtil.service.generateQI([
+        Components.interfaces.nsIWebProgressListener]),
       STATE_STOP: Components.interfaces.nsIWebProgressListener.STATE_STOP,
       onLocationChange: function(aWebProgress, aRequest, aLocation) {
         const domWindow = aWebProgress.DOMWindow;
@@ -1484,6 +1486,7 @@ var noscriptOverlay = noscriptUtil.service ?
   install: function() {
     // this.ns.dump("*** OVERLAY INSTALL ***\n");
     this.ns.setPref("badInstall", false);
+    this.ns.domUtils._winType = document.documentElement.getAttribute("windowtype");
     window.addEventListener("load", this.listeners.onLoad, false);
   },
 

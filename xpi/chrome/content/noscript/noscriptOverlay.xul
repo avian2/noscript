@@ -107,90 +107,89 @@
   </menu>
 </popup>
 
-<window id="main-window">
-<popupset><!-- we use a private anonymous (no id) popup set for SeaMonkey compatibility -->
-  <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
-    <menuseparator />
-     <menuitem 
-      label="&noscriptOptions;"
-      accesskey="&noscriptOptions.accesskey;"
-      oncommand="noscriptUtil.openOptionsDialog()"
-      tooltiptext="&noscriptOptionsLong;"
-      />
-     <menuitem id="noscript-mi-opt-notify"
-      label="&noscriptNotify;"
-      oncommand="noscriptOverlay.toggleMenuOpt(this)"
-      type="checkbox" autocheck="true"
-      />
-     <menuitem id="noscript-mi-opt-notify.bottom"
-        label="&noscriptNotify.bottom;"
-         oncommand="noscriptOverlay.toggleMenuOpt(this)"
-         type="checkbox" autocheck="true"
-      />
-     <menuitem id="noscript-mi-opt-sound"
-      label="&noscriptSound;"
-      oncommand="noscriptOverlay.toggleMenuOpt(this)"
-      type="checkbox" autocheck="true"
-      />
-   
-     <menuseparator class="noscript-sep-global" />
-     <menuitem class="menuitem-iconic" />
-     
-     
-     <menuseparator />
-     <menuseparator class="noscript-sep-untrusted"/>
-     <!-- dynamically inserted #noscript-menu-untrusted -->
-      
-      <menuseparator class="noscript-sep-insert"/>
-       <menuseparator class="noscript-sep-stop" hidden="true" />
-   </popup>
-   
-   
-   
-   <popup id="noscript-xss-popup" onpopupshowing="noscriptOverlay.prepareXssMenu(this)">
-      <menuitem id="noscript-mi-xss-console" 
-        label="&noscriptShowConsole;"
-        class="menuitem-iconic noscript-console"
-        accesskey="&noscriptShowConsole.accesskey;"
-        oncommand="noscriptUtil.openConsole()"
-       />
-       
-       <menuitem id="noscript-mi-xss-unsafe-reload"
-        class="menuitem-iconic noscript-unsafe-reload"
-        label="&noscriptUnsafeReload;"
-        accesskey="&noscriptUnsafeReload.accesskey;"
-        oncommand="noscriptOverlay.unsafeReload()"
-       />
-    
-       <menuseparator />
-       <menuitem id="noscript-mi-xss-opt-xss.notify"
-        label="&noscriptNotifications;"
-        type="checkbox" autocheck="true"
-        oncommand="noscriptOverlay.toggleMenuOpt(this)"
-       />
-      
-       <menuitem id="noscript-mi-xss-options" 
-        label="&noscriptOptions;"
-        class="menuitem-iconic noscript-options"
-        accesskey="&noscriptOptions.accesskey;"
-        oncommand="noscriptUtil.openXssOptions()"
-      />
-      
-      <menuseparator />
-      <menuitem id="noscript-mi-xss-faq" 
-        label="&noscriptXssFaq;"
-        class="menuitem-iconic noscript-faq"
-        accesskey="&noscriptXssFaq.accesskey;"
-        oncommand="noscriptUtil.openFaq('xss')"
-      />
-      <menuitem id="noscript-jar-opts" class="menuitem-iconic noscript-jar"
-        style="display: none !important" />
-   </popup>
-</popupset>
-</window>
-
 
 <statusbar id="status-bar">
+
+  <popupset><!-- we use a private anonymous (no id) popup set for SeaMonkey compatibility -->
+    <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+      <menuseparator />
+       <menuitem 
+        label="&noscriptOptions;"
+        accesskey="&noscriptOptions.accesskey;"
+        oncommand="noscriptUtil.openOptionsDialog()"
+        tooltiptext="&noscriptOptionsLong;"
+        />
+       <menuitem id="noscript-mi-opt-notify"
+        label="&noscriptNotify;"
+        oncommand="noscriptOverlay.toggleMenuOpt(this)"
+        type="checkbox" autocheck="true"
+        />
+       <menuitem id="noscript-mi-opt-notify.bottom"
+          label="&noscriptNotify.bottom;"
+           oncommand="noscriptOverlay.toggleMenuOpt(this)"
+           type="checkbox" autocheck="true"
+        />
+       <menuitem id="noscript-mi-opt-sound"
+        label="&noscriptSound;"
+        oncommand="noscriptOverlay.toggleMenuOpt(this)"
+        type="checkbox" autocheck="true"
+        />
+     
+       <menuseparator class="noscript-sep-global" />
+       <menuitem class="menuitem-iconic" />
+       
+       
+       <menuseparator />
+       <menuseparator class="noscript-sep-untrusted"/>
+       <!-- dynamically inserted #noscript-menu-untrusted -->
+        
+        <menuseparator class="noscript-sep-insert"/>
+         <menuseparator class="noscript-sep-stop" hidden="true" />
+     </popup>
+     
+     
+     
+     <popup id="noscript-xss-popup" onpopupshowing="noscriptOverlay.prepareXssMenu(this)">
+        <menuitem id="noscript-mi-xss-console" 
+          label="&noscriptShowConsole;"
+          class="menuitem-iconic noscript-console"
+          accesskey="&noscriptShowConsole.accesskey;"
+          oncommand="noscriptUtil.openConsole()"
+         />
+         
+         <menuitem id="noscript-mi-xss-unsafe-reload"
+          class="menuitem-iconic noscript-unsafe-reload"
+          label="&noscriptUnsafeReload;"
+          accesskey="&noscriptUnsafeReload.accesskey;"
+          oncommand="noscriptOverlay.unsafeReload()"
+         />
+      
+         <menuseparator />
+         <menuitem id="noscript-mi-xss-opt-xss.notify"
+          label="&noscriptNotifications;"
+          type="checkbox" autocheck="true"
+          oncommand="noscriptOverlay.toggleMenuOpt(this)"
+         />
+        
+         <menuitem id="noscript-mi-xss-options" 
+          label="&noscriptOptions;"
+          class="menuitem-iconic noscript-options"
+          accesskey="&noscriptOptions.accesskey;"
+          oncommand="noscriptUtil.openXssOptions()"
+        />
+        
+        <menuseparator />
+        <menuitem id="noscript-mi-xss-faq" 
+          label="&noscriptXssFaq;"
+          class="menuitem-iconic noscript-faq"
+          accesskey="&noscriptXssFaq.accesskey;"
+          oncommand="noscriptUtil.openFaq('xss')"
+        />
+        <menuitem id="noscript-jar-opts" class="menuitem-iconic noscript-jar"
+          style="display: none !important" />
+     </popup>
+  </popupset>
+
 
   <statusbarpanel id="noscript-statusIcon" insertbefore="statusbar-updates"
     class="statusbarpanel-menu-iconic noscript-no"

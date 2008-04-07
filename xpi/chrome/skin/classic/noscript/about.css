@@ -4,11 +4,17 @@
   background-image: none;
 }
 
+dialog, .dialog-content-box {
+  background: white none;
+  border: none;
+}
 
 #clientBox {
   color: #000;
   padding: 0px; margin: 0px;
   max-height: 400px;
+  background: white none;
+  border: none;
 }
 
 #clientBoxInternal {
