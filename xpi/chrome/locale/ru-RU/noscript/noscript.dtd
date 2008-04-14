@@ -14,7 +14,7 @@
 <!ENTITY noscriptUntrust.accesskey "в">
 <!ENTITY noscriptRemoveSelected "Удалить выбранные сайты">
 <!ENTITY noscriptGloballyEnabled "Полностью разрешать выполнение JavaScript на страницах (опасно)">
-<!ENTITY noscriptAutoReload "Автоматически обновлять страницу после изменения для неё правил">
+<!ENTITY noscriptAutoReload "Автоматически обновлять зависимые страницы при изменении правил">
 <!ENTITY noscriptGeneral "Основные">
 <!ENTITY noscriptAppearance "Внешний вид">
 <!ENTITY noscriptShow "Отображать следующие элементы NoScript...">
@@ -24,7 +24,7 @@
 <!ENTITY noscriptFullDom "Полные домены (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Базовые домены 2-го уровня (noscript.net)">
 <!ENTITY noscriptTempCmd "Временно разрешить [...]">
-<!ENTITY noscriptSound "Проигрывать аудиофайл при блокировке скриптов">
+<!ENTITY noscriptSound "Звуковое оповещение при блокировке скриптов">
 <!ENTITY noscriptImport "Импорт">
 <!ENTITY noscriptImport.accesskey "м">
 <!ENTITY noscriptExport "Экспорт">
@@ -44,12 +44,12 @@
 <!ENTITY noscriptPlugins "Плагины">
 <!ENTITY noscriptContentBlocker "Применять эти ограничения и для доверенных сайтов">
 <!ENTITY noscriptForbidJava "Запретить отображение элементов Java™">
-<!ENTITY noscriptForbidWebBugs "Запретить отображение элементов &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidWebBugs "Запретить отображение «Web Bugs»">
 <!ENTITY noscriptForbidSilverlight "Запретить отображение элементов Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Запретить отображение элементов &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Запретить отображение элементов Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Запретить отображение элементов других плагинов">
-<!ENTITY noscriptReloadWarn "Примечание: Установленные настройки вступают в силу либо на новой странице, либо после обновления текущей страницы (вручную)">
+<!ENTITY noscriptReloadWarn "Примечание: изменённые настройки вступают в силу либо на новой странице, либо после обновления текущей страницы (вручную)">
 <!ENTITY noscriptConfirmUnblock "Подтверждать временную разблокировку объекта на странице">
 <!ENTITY noscriptStatusLabel "Сообщения в строке состояния">
 <!ENTITY noscriptForbidBookmarklets "Запретить использование Bookmarklets">
@@ -80,7 +80,7 @@
 <!ENTITY noscriptDefaultPolicies "Политики по умолчанию">
 <!ENTITY noscriptSitePolicies "Специальные политики для сайтов">
 <!ENTITY noscriptNselNever "Скрывать элементы &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Показывать элемент &lt;noscript&gt; который блокирует &lt;SCRIPT&gt;">
+<!ENTITY noscriptNselForce "Показывать элемент &lt;noscript&gt; который следует за заблокированным &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Временно разрешать базовым доменам 2-го уровня по умолчанию">
 <!ENTITY noscriptDescription "Экстра защита для Firefox: NoScript позволяет разрешать исполнение JavaScript, Java (и других плагинов) только доменам, которым доверяете (например, ваш веб-сайт). Белый список, основанный на принципе упреждающего блокирования, позволяет предотвратить использование уязвимостей (известных и ещё неизвестных!) без потери функциональности... Эксперты соглашаются: Firefox действительно безопаснее с NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Блокировать CSS-сканеры">
@@ -95,7 +95,7 @@
 <!ENTITY noscriptUnsafeReload "Небезопасное обновление">
 <!ENTITY noscriptUnsafeReload.accesskey "е">
 <!ENTITY noscriptXssExceptions "Исключения анти-XSS защиты">
-<!ENTITY noscriptXssExceptions.description "Путь, попадающий под одно из регулярных выражений НЕ будет защищаться против XSS.">
+<!ENTITY noscriptXssExceptions.description "Объекты, которые соответствуют этим маскам, НЕ будет защищаться против XSS.">
 <!ENTITY noscriptMatchSample "Пример шаблона:">
 <!ENTITY noscriptReset "Сброс">
 <!ENTITY noscriptReset.accesskey "о">
@@ -107,11 +107,11 @@
 <!ENTITY noscriptJarFaq.accesskey "а">
 <!ENTITY noscriptForbidJarDocuments "Блокировать удалённые JAR-ресурсы от загрузки в качестве документов">
 <!ENTITY noscriptJarExceptions "Исключения в блокировании JAR">
-<!ENTITY noscriptJarExceptions.description "JAR-документы, попадающие под одно из регулярных выражений НЕ будут заблокированы.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptJarExceptions.description "JAR-документы, соответствующие маске, НЕ будут блокированы.">
+<!ENTITY noscriptRevokeTemp "Отменить временные разрешения">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
+<!ENTITY noscriptNoUntrustedPlaceholder "Не отмечать объекты, которые расположены на ненадежных сайтах">
 <!ENTITY noscriptCollapseBlockedObjects "Сворачивать заблокированные объекты">
 <!ENTITY noscriptExceptions "Исключения...">
 <!ENTITY noscriptBlockedObjects "Заблокированные объекты">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Блокировать любой объект с сайтов отмеченных недоверенными">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Блокировать любой объект с недоверенных сайтов">

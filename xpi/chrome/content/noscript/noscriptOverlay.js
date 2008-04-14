@@ -550,8 +550,8 @@ var noscriptOverlay = noscriptUtil.service ?
     return "noscript-" + (inactive ? "inactive-" : "") + lev;
   },
   updateStatusClass: function(node, className) {
-    if (!className) className = this.statusIcon.className.replace(/.*(\bnoscript-\S*(?:yes|no|glb|prt)).*/, "$1");
-    node.className = (node.className.replace(/\bnoscript-\S*(?:yes|no|glb|prt)\b/g, "") + " " + className).replace(/\s{2,}/g, " ");
+    if (!className) className = this.statusIcon.className.replace(/.*(\bnoscript-\S*(?:yes|no|glb|prt|yu)).*/, "$1");
+    node.className = (node.className.replace(/\bnoscript-\S*(?:yes|no|glb|prt|yu)\b/g, "") + " " + className).replace(/\s{2,}/g, " ");
   }
 ,
   _syncTimeout: null,
@@ -1007,6 +1007,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var notificationNeeded = false;
     var allowedSites = [];
     var allowed = 0;
+    var untrusted = 0;
     if (global) {
       lev = "glb";
     } else {
@@ -1023,11 +1024,15 @@ var noscriptOverlay = noscriptUtil.service ?
             allowedSites.push(site);
           }
         } else {
-          notificationNeeded = notificationNeeded || url != "about:blank" && !untrustedSites.matches(url);
+          if(!notificationNeeded && url != "about:blank") {
+            if(untrustedSites.matches(url)) untrusted++;
+            else notificationNeeded = true;
+          }
         }
       }
       allowed = allowedSites.length;
-      lev = (allowed == total && sites.length > 0) ? "yes" : allowed == 0 ? "no" : "prt";
+      lev = (allowed == total && sites.length > 0) ? "yes" : allowed == 0 ? "no" 
+            : (untrusted > 0 && !notificationNeeded ? "yu" : "prt");
       notificationNeeded = notificationNeeded && totalAnnoyances > 0;
     }
     

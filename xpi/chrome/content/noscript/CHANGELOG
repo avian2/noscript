@@ -1,6 +1,37 @@
 NoScript ChangeLog
 
-1.5.8
+v 1.6
+=====================================================================
++ Specific shadowed status icon for pages where some origins are
+  allowed and all the remaining have been marked as untrusted
++ Reviewed Russian translation (Alexander Sokolov and Sergei Smirnov)
+x Dropped blockCssScanners code (SafeHistory and SafeCache extensions
+  provide better prevention against navigation history sniffing)
++ Further QA for release
+
+v 1.5.9.2
+=====================================================================
+x Fixed some Error Console noise (thanks timeless)
+x Better Seamonkey installation algorithm (thanks therube)
+
+v 1.5.9.1
+=====================================================================
+x Fixed infinite loop on some pages if noscript.blockCssScanners is 
+  true (thanks tlu and Itsnow for report)
+x Placeholder compatibility with latest trunk 
+  (https://bugzilla.mozilla.org/show_bug.cgi?id=292789)
+x Better installer for Seamonkey classic
+
+v 1.5.9
+=====================================================================
+x Fixed regression from Songbird compatibility, making the Options
+  button on the notification bar unusable when status bar was hidden
+x Turned default for noscript.xss.trustExternal value to true
+x Experimental protection against getComputedStyle() history sniffing
+  attacks (you can enable it switching the noscript.blockCssScanners
+  about:config preference to true)
+
+v 1.5.8
 =====================================================================
 x Optimization of Injection Checker for iGoogle Calendar Widget
   (thanks JonCage for report)
@@ -9,60 +40,60 @@ x Fixed edge-case false positives due to URL encoding mixed to
 x Fixed legacy Seamonkey UI regression introduced by Songbird 
   compatibility (thanks therube for report)
 
-1.5.7
+v 1.5.7
 =====================================================================
 + Tweaked for Songbird compatibility
-x Version bumb for Firefox 3.0pre 
+x Version bump for Firefox 3.0pre 
 
-1.5.6
+v 1.5.6
 =====================================================================
 x Minor enhancements to IFRAME blocking
 
-1.5.5
+v 1.5.5
 =====================================================================
 + Bracket balancing for inline JS literal-breaking micro injections
 
-1.5.4
+v 1.5.4
 =====================================================================
 + InjectionChecker speed optimizations, preventing timeout on overly
   complex JSON requests (thanks John Danfort for report)
 
-1.5.3
+v 1.5.3
 =====================================================================
 + Forbid toplevel site command in bold (thanks therube)
 x Fixed rare XSS false positives on iGoogle
 x Fixed "allowURLBarJS" preference cannot be disabled (thanks Aerik)
 
-1.5.2
+v 1.5.2
 =====================================================================
 x Fixed unwanted blocking of some trusted Java applets thanks Mick 
   Bramhall for report)
 
-1.5.1
+v 1.5.1
 =====================================================================
 x Slightly revised icon set (thanks Karlosak and WAPCE for hints)
 x Fixed bookmarklets invoked twice on untrusted sites (thanks al_9x)
 
-1.5
+v 1.5
 =====================================================================
 + Slovenian translation (thanks Tomaž Mačus)
 x Special bookmark management made compatible with Suiterunner's
   sidebar (thanks therube for reporting)
 x Extra QA for release
 
-1.4.9.9
+v 1.4.9.9
 =====================================================================
 x Bookmarklet handling code adapted again to cope with methods moved
   from PlacesUtils to PlacesUIUtils after Fx 3 beta 4
 
-1.4.9.8
+v 1.4.9.8
 =====================================================================
 + Prevention of Java applet same origin policy bypass via malformed
   class name (see http://tinyurl.com/2u387t)
 + Improved icons
 x Fixed chrome "domain" showing in menus (thanks Aerik)
 
-1.4.9.7
+v 1.4.9.7
 =====================================================================
 + New noscript.allowURLBarJS about:config preference allows 
   javascript: and data: URLs to be run interactively from the 
@@ -72,15 +103,15 @@ x Fixed chrome "domain" showing in menus (thanks Aerik)
 x Adapted bookmarklet handling code to latest Places refactoring with
   openXXX() methods in PlaceUtils (thanks Tobu for report)
 
-1.4.9.6
+v 1.4.9.6
 =====================================================================
 x Fixed "Forbid chrome:" menu items on some pages (thanks niko322)
 
-1.4.9.5
+v 1.4.9.5
 =====================================================================
 x Version bump for Firefox 3.0b5pre
 
-1.4.9.4
+v 1.4.9.4
 =====================================================================
 + Added client-side policy control for new Firefox 3 cross-site XHR,
   configurable via noscript.forbidXHR about:config preference:
@@ -89,16 +120,16 @@ x Version bump for Firefox 3.0b5pre
   2 - Allow same-site XHR only (like Firefox 2)
   3 - Forbid all XHR
 
-1.4.9.3
+v 1.4.9.3
 =====================================================================
 x Fixed Firebug JS injection causing blocked IFrame
 x Fixed plugin document detection making Acrobat Reader plugin hang
 
-1.4.9.2
+v 1.4.9.2
 =====================================================================
 x Minor InjectionChecker enhancements
 
-1.4.9.1
+v 1.4.9.1
 =====================================================================
 x Reduced vertical size of NoScript options panel for better usage
   on constrained devices (thanks pstepper for report)

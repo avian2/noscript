@@ -88,7 +88,7 @@ var noscriptBM = {
         self = null;
       });
     } finally {
-      arguments.callee._reentrant = false;
+      patch._reentrant = false;
     }
   },
   

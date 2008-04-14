@@ -74,6 +74,14 @@
 #noscript-statusIcon.noscript-prt {
   list-style-image: url(prt16.png);
 }
+
+.noscript-yu,
+#noscript-tbb.noscript-yu,
+#noscript-statusIcon.noscript-yu {
+  list-style-image: url(yu16.png);
+}
+
+
 .noscript-glb,
 #noscript-tbb.noscript-glb,
 #noscript-statusIcon.noscript-glb,
@@ -109,6 +117,13 @@
 #noscript-statusIcon.noscript-inactive-prt {
   list-style-image: url(inactive-no16.png);
 }
+
+.noscript-inactive-yu,
+#noscript-tbb.noscript-inactive-yu,
+#noscript-statusIcon.noscript-inactive-yu {
+  list-style-image: url(inactive-yu16.png);
+}
+
 
 .noscript-jar {
   list-style-image: url(jar16.png);

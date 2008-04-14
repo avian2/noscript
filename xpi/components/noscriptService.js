@@ -792,16 +792,12 @@ PolicySites.prototype = {
   }
 }
 
-
-
-
-
 function NoscriptService() {
   this.register();
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.5.8",
+  VERSION: "1.6",
   
   get wrappedJSObject() {
     return this;
@@ -902,8 +898,7 @@ NoscriptService.prototype = {
   
   // Preference driven properties
   autoAllow: false,
-  
-  blockCssScanning: true,
+
   blockCrossIntranet: true,
   blockNSWB: false,
   
@@ -912,7 +907,7 @@ NoscriptService.prototype = {
   
   truncateTitle: true,
   truncateTitleLen: 255,
-  pluginPlaceholder: "chrome://noscript/skin/icon32.png",
+  
   showPlaceholder: true,
   showUntrustedPlaceholder: true,
   collapseObject: false,
@@ -1031,12 +1026,10 @@ NoscriptService.prototype = {
       case "alwaysBlockUntrustedContent":
       case "filterXPost":
       case "filterXGet":
-      case "blockCssScanners":
       case "blockXIntranet":
       case "safeToplevel":
       case "autoAllow":
       case "contentBlocker":
-      case "showPlaceholder":
       case "showUntrustedPlaceholder":
       case "collapseObject":
       case "truncateTitle":
@@ -1102,11 +1095,9 @@ NoscriptService.prototype = {
       break;
       
       case "blockNSWB":
-      case "pluginPlaceholder":
       case "nselForce":
       case "nselNever":
-        
-      // case "blockCssScanners":
+      case "showPlaceholder":
         this.updateCssPref(name);
         if ((name == "nselNever") && this.getPref("nselNever") && !this.blockNSWB) {
           this.setPref("blockNSWB", true);
@@ -1197,13 +1188,10 @@ NoscriptService.prototype = {
       case "nselNever":
         sheet = "noscript, noscript * { display: none !important }";
         break;
-      case "blockCssScanners":
-        sheet = "a:visited { background-image: none !important }";
-        break;
       case "blockNSWB": 
         sheet = "noscript, noscript * { background-image: none !important; list-style-image: none !important }";
         break;
-      case "pluginPlaceholder": 
+      case "showPlaceholder": 
         sheet = 'a.__noscriptPlaceholder__ > div:first-child { display: block !important; -moz-outline-color: #fc0 !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; -moz-outline-offset: -1px !important; cursor: pointer !important; background: #ffffe0 url("' + 
                     this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; margin-top: 0px !important; margin-bottom: 0px !important;} ' +
                 'a.__noscriptPlaceholder__ > div:first-child > div:first-child { display: block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
@@ -1259,6 +1247,23 @@ NoscriptService.prototype = {
   mozJSEnabled: true,
   disabled: false
 ,
+  // random resource aliases
+  contentBase: null,
+  skinBase: null,
+  pluginPlaceholder: "",
+  
+  _initResources: function() {
+    const ios = SiteUtils.ios;
+    var resProt = ios.getProtocolHandler("resource").QueryInterface(CI.nsIResProtocolHandler);
+    var base;
+    for each(var r in ["skin", "content"]) {
+      base = "noscript_" + Math.random();
+      resProt.setSubstitution(base, ios.newURI("chrome:noscript/" + r + "/", null, null));
+      this[r + "Base"] = "resource://" + base + "/";
+    }
+    this.pluginPlaceholder = this.skinBase + "icon32.png";
+  },
+  
   init: function() {
     if (this._inited) return false;
     try {
@@ -1270,6 +1275,8 @@ NoscriptService.prototype = {
     }
     this._inited = true;
     
+    this._initResources();
+
     this.initTldService();
     this.xcache = new XCache();
     
@@ -1308,7 +1315,7 @@ NoscriptService.prototype = {
       "autoAllow",
       "allowClipboard", "allowLocalLinks",
       "allowedMimeRegExp",
-      "blockCssScanners", "blockCrossIntranet",
+      "blockCrossIntranet",
       "blockNSWB",
       "consoleDump", "consoleLog", "contentBlocker",
       "filterXPost", "filterXGet", 
@@ -1325,7 +1332,7 @@ NoscriptService.prototype = {
       "injectionCheck", "injectionCheckSubframes",
       "jsredirectIgnore", "jsredirectFollow", "jsredirectForceShow", "jsHack", "jsHackRegExp",
       "nselNever", "nselForce",
-      "pluginPlaceholder", "showPlaceholder", "showUntrustedPlaceholder", "collapseObject",
+      "showPlaceholder", "showUntrustedPlaceholder", "collapseObject",
       "temp", "untrusted",
       "silverlightPatch",
       "truncateTitle", "truncateTitleLen",
@@ -2132,7 +2139,7 @@ NoscriptService.prototype = {
         break;
       case 9:
         // our take on https://bugzilla.mozilla.org/show_bug.cgi?id=387971
-        args[1].spec = "chrome://noscript/content/noscript.xbl#nop";
+        args[1].spec = this.contentBase + "noscript.xbl#nop";
         return CP_OK;
     }
     return this.rejectCode;
@@ -2201,17 +2208,17 @@ NoscriptService.prototype = {
             forbid = isJS = true;
             break;
           case 3: // IMAGES
-            try {
-              if (this.blockNSWB && (aContext instanceof CI.nsIDOMHTMLImageElement)) {
-                  for (var parent = aContext; (parent = parent.parentNode);) {
-                    if (parent.nodeName.toUpperCase() == "NOSCRIPT") {
-                      return this.reject("Tracking Image", arguments);
-                    }
-                  }
+            if (this.blockNSWB && (aContext instanceof CI.nsIDOMHTMLImageElement)) {
+              try {
+                for (var parent = aContext; (parent = parent.parentNode);) {
+                  if (parent.nodeName.toUpperCase() == "NOSCRIPT")
+                    return this.reject("Tracking Image", arguments);
                 }
               } catch(e) {
                 this.dump(e)
               }
+            }
+
             this.resetPolicyState();
             return CP_OK;
 
@@ -2509,6 +2516,9 @@ NoscriptService.prototype = {
     }
   },
   
+  checkCssScanner: function(doc, uri) {
+    
+  },
   
   forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
     var originURL, locationURL;
@@ -3803,10 +3813,10 @@ NoscriptService.prototype = {
     }
     
     try {
-      
-      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(uri.spec)) {
+      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(uri.spec) && !domWindow._noscriptJsHack) {
         try {
-          domWindow.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {}  void(0)");
+          domWindow._nosriptJsHack = true;
+          domWindow.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {} void(0)");
         } catch(jsHackEx) {}
       }
     } catch(e) {
@@ -3891,7 +3901,7 @@ NoscriptService.prototype = {
     try {
       var ds = this.domUtils.getDocShellFromWindow(window);
       var as = CC["@mozilla.org/atom-service;1"].getService(CI.nsIAtomService);
-      if(window.document.documentCharset == "UTF-7" ||
+      if(window.document.characterSet == "UTF-7" ||
         !req.contentCharset && (ds.documentCharsetInfo.parentCharset + "") == "UTF-7") {
         if(this.consoleDump) this.dump("Neutralizing UTF-7 charset!");
         ds.documentCharsetInfo.forcedCharset = as.getAtom("UTF-8");
@@ -4755,7 +4765,8 @@ var Entities = {
   convert: function(e) {
     try {
       this.htmlNode.innerHTML = e;
-      return this.htmlNode.firstChild.nodeValue;
+      var child = this.htmlNode.firstChild || null;
+      return child && child.nodeValue || e;
     } catch(ex) {
       return e;
     }

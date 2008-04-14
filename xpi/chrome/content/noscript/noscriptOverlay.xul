@@ -107,10 +107,11 @@
   </menu>
 </popup>
 
+<window id="main-window">
+<popupset id="mainPopupSet"></popupset><!-- SeaMonkey compatibility -->
+</window>
 
-<statusbar id="status-bar">
-
-  <popupset><!-- we use a private anonymous (no id) popup set for SeaMonkey compatibility -->
+<popupset id="mainPopupSet">
     <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
       <menuseparator />
        <menuitem 
@@ -190,6 +191,9 @@
      </popup>
   </popupset>
 
+
+
+<statusbar id="status-bar">
 
   <statusbarpanel id="noscript-statusIcon" insertbefore="statusbar-updates"
     class="statusbarpanel-menu-iconic noscript-no"
