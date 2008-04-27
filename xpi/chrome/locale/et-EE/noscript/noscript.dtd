@@ -1,0 +1,117 @@
+<!ENTITY noscriptOptions "Sätted...">
+<!ENTITY noscriptOptions.accesskey "S">
+<!ENTITY noscriptOptionsLong "NoScripti sätted">
+<!ENTITY noscriptAbout "Täpsemalt lisast NoScript...">
+<!ENTITY noscriptPermissionsText "Sa saad määrata, millistel veebilehtedel lubatakse skripte käivitada. Kirjuta veebilehe või domeeni aadress, mida soovid lubada (nt &quot;http://www.site.com&quot; või &quot;site.com&quot;) ja klõpsa Luba nuppu">
+<!ENTITY noscriptWebAddress "Veebisaidi aadress:">
+<!ENTITY noscriptAllow "Luba">
+<!ENTITY noscriptAllow.accesskey "L">
+<!ENTITY noscriptForbid "Keela">
+<!ENTITY noscriptForbid.accesskey "K">
+<!ENTITY noscriptTrust "Märgi usaldusväärseks">
+<!ENTITY noscriptTrust.accesskey "u">
+<!ENTITY noscriptUntrust "Märgi mitteusaldusväärseks">
+<!ENTITY noscriptUntrust.accesskey "m">
+<!ENTITY noscriptRemoveSelected "Kustuta valitud saidid">
+<!ENTITY noscriptGloballyEnabled "Skriptid on lubatud (ohtlik)">
+<!ENTITY noscriptAutoReload "Õiguste muutumisel laetakse mõjustatud lehed automaatselt uuesti">
+<!ENTITY noscriptGeneral "Üldine">
+<!ENTITY noscriptAppearance "Välimus">
+<!ENTITY noscriptShow "Näita...">
+<!ENTITY noscriptCtxMenu "Kontekstimenüü">
+<!ENTITY noscriptStatusIcon "Ikoon olekuribal">
+<!ENTITY noscriptFullAddr "Täielikud aadressid (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Täielikud domeenid (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Teise taseme domeenid (noscript.net)">
+<!ENTITY noscriptTempCmd "Luba ajutiselt [...]">
+<!ENTITY noscriptSound "Teata heliga skriptide blokeerimisest">
+<!ENTITY noscriptImport "Impordi">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Ekspordi">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Näita teadet blokeeritud skriptide kohta">
+<!ENTITY noscriptNotify.bottom "Aseta sõnum allserva">
+<!ENTITY noscriptSound.choose "Vali">
+<!ENTITY noscriptSound.choose.accesskey "V">
+<!ENTITY noscriptSound.play "Mängi">
+<!ENTITY noscriptSound.play.accesskey "M">
+<!ENTITY noscriptSound.reset "Lähtesta">
+<!ENTITY noscriptSound.reset.accesskey "h">
+<!ENTITY noscriptAdvanced "Muud">
+<!ENTITY noscriptAdditionalPermissions "Lisaõigused usaldusväärsetele saitidele">
+<!ENTITY noscriptAllowClipboard "Luba vormindatud teksti kopeerimist ja asetamist välisest lõikepuhvrist">
+<!ENTITY noscriptAdditionalRestrictions "Lisapiirangud mitteusaldusväärsetele saitidele">
+<!ENTITY noscriptPlugins "Pluginad">
+<!ENTITY noscriptContentBlocker "Kehtesta antud piirangud ka usaldusväärsete saitide jaoks">
+<!ENTITY noscriptForbidJava "Keela Java™">
+<!ENTITY noscriptForbidWebBugs "Keela &quot;veebivead&quot;">
+<!ENTITY noscriptForbidSilverlight "Keela Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Keela &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFlash "Keela Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Keela teised pluginad">
+<!ENTITY noscriptReloadWarn "Need valikud jõustuvad uutel või (käsitsi) uuesti laetud lehtedel">
+<!ENTITY noscriptConfirmUnblock "Küsi kinnitust enne objekti ajutist blokeerimist">
+<!ENTITY noscriptStatusLabel "Pealdis olekuribal">
+<!ENTITY noscriptForbidBookmarklets "Keela bookmarklet&apos;id">
+<!ENTITY noscriptShowPlaceholder "Näita kohatäitja ikooni">
+<!ENTITY noscriptTruncateTitle "Lühenda dokumendi päiseid">
+<!ENTITY noscriptFixLinks "Ürita parandada JavaScripti linke">
+<!ENTITY noscriptAllowBookmarks "Luba saidid, mis on avatud järjehoidjate kaudu">
+<!ENTITY noscriptAllowViaBookmarks "Luba saidid, mis on avatud järjehoidjate kaudu">
+<!ENTITY noscriptAllowPing "Luba &lt;A PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Luba kohalikke linke">
+<!ENTITY noscriptForbidPing "Keela &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Keela META ümbersuunamised &lt;NOSCRIPT&gt; elementide sees">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "m">
+<!ENTITY noscriptWhitelist "Valge nimekiri">
+<!ENTITY noscriptPermissions "Õigused">
+<!ENTITY noscriptRefresh "Värskenda">
+<!ENTITY noscriptNotifications "Märguanded">
+<!ENTITY noscriptToolbarToggle "Vasak hiireklõps NoScript tööriistaribal lülitab ümber praeguse tipptaseme saidi õigused.">
+<!ENTITY noscriptTrusted "Usaldusväärsed">
+<!ENTITY noscriptUntrusted "Mitteusaldusväärsed">
+<!ENTITY noscriptUnknown "Teadmata">
+<!ENTITY noscriptAdd "Lisa">
+<!ENTITY noscriptAdd.accesskey "L">
+<!ENTITY noscriptClose "Sulge">
+<!ENTITY noscriptSiteManager "Saitide haldur">
+<!ENTITY noscriptSecurityManager "Turvalisuse haldur">
+<!ENTITY noscriptPolicies "Reeglid">
+<!ENTITY noscriptDefaultPolicies "Vaikereeglid">
+<!ENTITY noscriptSitePolicies "Saidi-spetsiiflised reeglid">
+<!ENTITY noscriptNselNever "Peida &lt;NOSCRIPT&gt; elemendid">
+<!ENTITY noscriptNselForce "Näita &lt;NOSCRIPT&gt; elementi, mis järgneb blokeeritud &lt;SCRIPT&gt; elemendile">
+<!ENTITY noscriptAutoAllowTopLevel "Luba ajutiselt vaikimisi tipptaseme saidid">
+<!ENTITY noscriptDescription "Lisakaitse Firefoxile: NoScript lubab JavaSkripti, Javat (ja teisi pluginaid) ainult usaldusväärsetest domeenidest sinu valikul (nt kodupanga veebilehel). Antud nn valgel nimekirjal põhinev blokeerimine hoiab ära tuntud ja isegi tundmatute turvaaukude kuritahtlikku ärakasutamist ilma funktsionaalsust kaotamata... Eksperdid nõustuvad, et Firefox on turvalisem koos NoScriptiga :-)">
+<!ENTITY noscriptOptBlockCssScanners "Blokeeri CSS-põhinevad skannerid">
+<!ENTITY noscriptOptFilterXGet "Puhasta kahtlased saitidevahelised päringud">
+<!ENTITY noscriptOptFilterXPost "Muuda saitidevahelised POST-päringud andmevabadeks GET-päringuteks">
+<!ENTITY noscriptShowConsole "Näita konsooli...">
+<!ENTITY noscriptShowConsole.accesskey "k">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS KKK">
+<!ENTITY noscriptXssFaq.accesskey "K">
+<!ENTITY noscriptUnsafeReload "Mitteturvaline uuestilaadimine">
+<!ENTITY noscriptUnsafeReload.accesskey "M">
+<!ENTITY noscriptXssExceptions "Erandid murdskriptimise vastases kaitses">
+<!ENTITY noscriptXssExceptions.description "Sihtkohti, mis sobivad antud regulaaravaldistega, ei kaitsta XSS suhtes.">
+<!ENTITY noscriptMatchSample "Mallvõrdluse näide">
+<!ENTITY noscriptReset "Lähtesta">
+<!ENTITY noscriptReset.accesskey "L">
+<!ENTITY noscriptResetDef "Taasta algsätted">
+<!ENTITY noscriptResetDef.accesskey "a">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR KKK">
+<!ENTITY noscriptJarFaq.accesskey "K">
+<!ENTITY noscriptForbidJarDocuments "Blokeeri JAR kaugressursside laadimist dokumentidena">
+<!ENTITY noscriptJarExceptions "JAR dokumendi blokeerimise erandid">
+<!ENTITY noscriptJarExceptions.description "Ei blokeerita JAR dokumente, mis sobivad antud regulaaravaldistega.">
+<!ENTITY noscriptRevokeTemp "Tühista ajutised õigused">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "Kohatäitjad puuduvad objektidel, mis tulevad mitteusaldusväärsetelt saitidelt">
+<!ENTITY noscriptCollapseBlockedObjects "Blokeeritud objektid ahendatakse">
+<!ENTITY noscriptExceptions "Erandid...">
+<!ENTITY noscriptBlockedObjects "Blokeeritud objektid">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokeeri kõik mitteusaldusväärsetelt saitidelt pärinevad objektid">

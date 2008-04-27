@@ -797,7 +797,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.6",
+  VERSION: "1.6.4",
   
   get wrappedJSObject() {
     return this;
@@ -1636,7 +1636,9 @@ NoscriptService.prototype = {
         if (CI.nsIEffectiveTLDService) {
           var srv = CC["@mozilla.org/network/effective-tld-service;1"]
                   .getService(CI.nsIEffectiveTLDService);
-          if (typeof(srv.getBaseDomainFromHost) == "function") {
+          if (typeof(srv.getBaseDomainFromHost) == "function"
+              && srv.getBaseDomainFromHost("bbc.co.uk") == "bbc.co.uk" // check, some implementations are "fake" (e.g. Songbird's)
+            ) {
             return this._tldService = srv;
           }
         }
@@ -4087,6 +4089,12 @@ RequestWatchdog.prototype = {
   noscriptReload: null,
   LOAD_DOCUMENT_URI: CI.nsIChannel.LOAD_DOCUMENT_URI,
   
+  get dummyPost() {
+    var dummyPost = CC["@mozilla.org/io/string-input-stream;1"].createInstance();
+    dummyPost.setData("", 0);
+    this.__defineGetter__("dummyPost", function() { return dummyPost; });
+  },
+  
   QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
   
   getUnsafeRequest: function(browser) {
@@ -4095,6 +4103,7 @@ RequestWatchdog.prototype = {
   setUnsafeRequest: function(browser, request) {
     return this.ns.setExpando(browser, "unsafeRequest", request);
   },
+  
   
   unsafeReload: function(browser, start) {
     this.ns.setExpando(browser, "unsafeReload", start);
@@ -4526,9 +4535,8 @@ RequestWatchdog.prototype = {
       && !injectionAttempt // this will rule out the possibility we strip trusted to trusted uploads
       ) {
       channel.requestMethod = "GET";
- 
       requestInfo.unsafeRequest.postData = channel.uploadStream;
-      channel.uploadStream = null;
+      channel.setUploadStream(this.dummyUpload, "", -1);
       this.notify(this.addXssInfo(requestInfo, {
         reason: "filterXPost",
         originalAttempt: originalSpec,

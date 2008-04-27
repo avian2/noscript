@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.6";
+const APP_VERSION = "1.6.4";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
@@ -12,7 +12,7 @@ const APP_LOCALES = [
   "fi-FI","fr-FR","it-IT","nl-NL","tr-TR","zh-CN","ru-RU","bg-BG","ro-RO",
   "uk-UA", "th-TH", "fa-IR", "el-GR", "hr-HR", "he-IL", "be-BY", "vi-VN",
   "sk-SK", "hu-HU", "mk-MK", "da-DK", "sv-SE", "lt-LT", "zh-TW", // "sr-YU",
-  "id-ID", "es-AR", "ar", "de-AT", "ko-KR", // "sl-SI",
+  "id-ID", "es-AR", "ar", "de-AT", "ko-KR", "et-EE", // "sl-SI",
   "en-US"
   ];
 

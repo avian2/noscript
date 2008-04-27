@@ -1,5 +1,22 @@
 NoScript ChangeLog
 
+v 1.6.4
+=====================================================================
+x More effective cross-site POST blocking
++ Estonian translation (thanks aivo)
+
+v 1.6.3
+=====================================================================
+x Work-around for Songbird 0.5 bug (nsIEffectiveTLDService present 
+  but not really working)
+
+v 1.6.1
+=====================================================================
++ Better feedback for blacklisted items on the page, by appending 
+  untrusted sites count to "Untrusted" menu label
+x Fixed bogus "allowed.yu" label for partially allowed pages where
+  all forbidden sites are marked as untrusted
+
 v 1.6
 =====================================================================
 + Specific shadowed status icon for pages where some origins are

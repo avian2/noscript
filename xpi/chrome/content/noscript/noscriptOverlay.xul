@@ -55,7 +55,7 @@
       oncommand="if(event.target == this) if(!noscriptOverlay.toggleCurrentPage()) this.open = true"
       onclick="if(event.button == 2) { event.preventDefault(); this.open = true; }"
    >
-   <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+   <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
          <menuseparator class="noscript-sep-insert" hidden="true" />
          
          <menuseparator class="noscript-sep-stop-untrusted"/>
@@ -82,7 +82,7 @@
 
 <popup id="contentAreaContextMenu">
   <menu id="noscript-context-menu" class="menu-iconic" label="NoScript" >
-    <menupopup id="noscript-context-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+    <menupopup id="noscript-context-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
          <menuseparator class="noscript-sep-insert" hidden="true" />
          <menuseparator class="noscript-sep-stop-untrusted"/>
          <!-- dynamically inserted #noscript-menu-untrusted -->
@@ -112,7 +112,7 @@
 </window>
 
 <popupset id="mainPopupSet">
-    <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+    <popup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
       <menuseparator />
        <menuitem 
         label="&noscriptOptions;"
@@ -200,7 +200,7 @@
     hidden="false"
     onclick="if(event.button == 2) { event.preventDefault(); noscriptOverlay.showUI() }"
     >
-    <menupopup id="noscript-status-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+    <menupopup id="noscript-status-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
        <menuitem
           label="&noscriptAbout;"
           tooltiptext="&noscriptAbout;"
@@ -253,7 +253,7 @@
   <statusbarpanel id="noscript-statusLabel" insertbefore="statusbar-updates"
     hidden="true"
     >
-    <popup id="noscript-statusLabel-popup" onpopupshowing="noscriptOverlay.prepareMenu(this)">
+    <popup id="noscript-statusLabel-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
      <menuitem
         label="&noscriptAbout;"
         tooltiptext="&noscriptAbout;"
