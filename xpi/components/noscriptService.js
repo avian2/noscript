@@ -797,7 +797,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.6.4",
+  VERSION: "1.6.5",
   
   get wrappedJSObject() {
     return this;
@@ -2503,8 +2503,6 @@ NoscriptService.prototype = {
              this.dump(locationURL + " Allowed, " + new Error().stack);
           }
         }
-        
-        
       } catch(e) {
         return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
       }
@@ -2869,11 +2867,13 @@ NoscriptService.prototype = {
       var seen = [];
       var body = document.body;
       var cstyle = document.defaultView.getComputedStyle(body, "");
-      if (cstyle.visibility != "visible") {
-        body.style.visibility = "visible";
-      }
-      if (cstyle.display == "none") {
-        body.style.display = "block";
+      if (cstyle) {
+        if (cstyle.visibility != "visible") {
+          body.style.visibility = "visible";
+        }
+        if (cstyle.display == "none") {
+          body.style.display = "block";
+        }
       }
       if (!hasVisibleLinks && document.links[0]) {
         var links = document.links;
@@ -4239,7 +4239,7 @@ RequestWatchdog.prototype = {
         try {
           this.filterXSS(subject);
         } catch(e) {
-          this.abort({ channel: subject, reason: e.message, silent: true });
+          this.abort({ channel: subject, reason: e + " --- " + e.stack, silent: true });
         }
         break;
       case "http-on-examine-response":
@@ -4588,6 +4588,7 @@ RequestWatchdog.prototype = {
       xsan.brutal = injectionAttempt;
       changes = xsan.sanitizeURL(url);
       if (changes.minor) {
+        this.proxyHack(channel);
         this.notify(this.addXssInfo(requestInfo, {
           reason: "filterXGet",
           originalAttempt: originalAttempt,
@@ -4620,6 +4621,24 @@ RequestWatchdog.prototype = {
     }
   },
   
+  proxyHack: function(channel) {
+    // Work-around for channel.URI not being used directly here:
+    // http://mxr.mozilla.org/mozilla/source/netwerk/protocol/http/src/nsHttpChannel.cpp#504
+    
+    var proxyInfo = CI.nsIProxiedChannel && (channel instanceof CI.nsIProxiedChannel) 
+      ? channel.proxyInfo
+      : Components.classes["@mozilla.org/network/protocol-proxy-service;1"]
+          .getService(Components.interfaces.nsIProtocolProxyService)
+          .resolve(channel.URI, 0);
+     if (proxyInfo && proxyInfo.type == "http") {
+       if (channel.URI.userPass == "") {
+         channel.URI.userPass = "xss:xss";
+         // resetting this bit will avoid auth confirmation prompt
+         channel.loadFlags = channel.loadFlags & ~channel.LOAD_INITIAL_DOCUMENT_URI;
+       }
+     }
+  },
+  
   abort: function(requestInfo) {
     var channel = requestInfo.channel;
     if (channel instanceof CI.nsIRequest) {
@@ -4635,6 +4654,7 @@ RequestWatchdog.prototype = {
       */
     }
     this.dump(channel, "Aborted - " + requestInfo.reason);
+ 
     this.notify(requestInfo);
   },
   
@@ -5077,7 +5097,7 @@ var InjectionChecker = {
       return true;
     }
     // check well known and semi-obfuscated -- as in [...]() -- function calls
-    var m = s.match(/\b(?:open|eval|set(?:Timeout|Interval)|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|Image|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/\*[\s\S]*?)?\([\s\S]*\)/);
+    var m = s.match(/\b(?:open|eval|set(?:Timeout|Interval)|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/\*[\s\S]*?)?\([\s\S]*\)/);
     if (m) {
       var pos;
       var js = m[0];

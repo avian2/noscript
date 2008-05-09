@@ -1,5 +1,11 @@
 NoScript ChangeLog
 
+v 1.6.5
+=====================================================================
+x Fixed XSS URL sanitization issue with some proxy configurations
+  (thanks Philipp Gühring for reporting and testing)
+x Fixed false positives caused by Image(...).jpg file names
+
 v 1.6.4
 =====================================================================
 x More effective cross-site POST blocking
