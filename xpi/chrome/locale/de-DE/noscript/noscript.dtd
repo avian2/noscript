@@ -28,7 +28,7 @@
 <!ENTITY noscriptImport "Importieren...">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Exportieren...">
-<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptExport.accesskey "x">
 <!ENTITY noscriptNotify "Informationsleiste anzeigen, wenn Skripte blockiert werden">
 <!ENTITY noscriptNotify.bottom "Am unteren Rand anzeigen">
 <!ENTITY noscriptSound.choose "Durchsuchen...">

@@ -607,7 +607,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   showUI: function() {
-    var statusIcon = document.getElementById("noscript-statusIcon");
+    var statusIcon = this.statusicon;
     var popup = document.getElementById("noscript-status-popup");
     if (statusIcon.hidden || statusIcon.parentNode.hidden) {
       var tbb = document.getElementById("noscript-tbb");
@@ -1125,12 +1125,12 @@ var noscriptOverlay = noscriptUtil.service ?
       }
       switch (data) {
         case "statusIcon": case "statusLabel":
-        window.setTimeout(function() {
-            var widget =document.getElementById("noscript-" + data);
-            if (widget) {
-              widget.setAttribute("hidden", !noscriptOverlay.ns.getPref(data))
-            }
-          }, 0);
+          window.setTimeout(function() {
+              var widget =document.getElementById("noscript-" + data);
+              if (widget) {
+                widget.setAttribute("hidden", !noscriptOverlay.ns.getPref(data))
+              }
+            }, 0);
          break;
          case "notify":
          case "notify.bottom":

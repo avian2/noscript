@@ -1,5 +1,19 @@
 NoScript ChangeLog
 
+v 1.6.7
+=====================================================================
++ Base64 decoding in URI Injection Checker, thanks Zoiz for Yahoo PoC
+  -- see http://zoiz.web.id/xss-corner/base64-encoded-xss.html
+x Extra NOSCRIPT element showing won't add SCRIPT elements on buggy
+  pages like evite.com (thanks zgendron and other reporters)
+
+v 1.6.6
+=====================================================================
+x Fixed two bytes subnet shorthands broken if protocol is specified
+x Fixed subnet shorthands not matching URLs with non-standard ports
+x Firefox 3.0.* version bump
+x Fixed XSS false positive on block.opendns.com
+
 v 1.6.5
 =====================================================================
 x Fixed XSS URL sanitization issue with some proxy configurations

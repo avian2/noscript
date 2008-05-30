@@ -797,7 +797,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.6.5",
+  VERSION: "1.6.7",
   
   get wrappedJSObject() {
     return this;
@@ -1550,9 +1550,9 @@ NoscriptService.prototype = {
         }
       }
     }
-    // check IP leftmost portion up to 2nd byte (e.g. 192.168 or 10.0.0)
-    var m = site.match(/^(https?:\/\/((\d+\.\d+)\.\d+))\.\d+(?:\d|$)/);
-    return m && (map[m[1]] || map[m[2]] || map[m[3]]);
+    // check IP leftmost portion up to 2nd byte (e.g. [http://]192.168 or [http://]10.0.0)
+    var m = site.match(/^(https?:\/\/)((\d+\.\d+)\.\d+)\.\d+(?::\d|$)/);
+    return m && (map[m[2]] || map[m[3]] || map[m[1] + m[2]] || map[m[1] + m[3]]);
   }
 ,
   flushCAPS: function(sitesString) {
@@ -2375,7 +2375,7 @@ NoscriptService.prototype = {
         
         
         if(logBlock)
-          this.dump("[CP PASS 2] " + aMimeTypeGuess + "/" + locationURL);
+          this.dump("[CP PASS 2] " + aMimeTypeGuess + "*" + locationURL);
 
         if (isJS) {
           originSite = aRequestOrigin && this.getSite(aRequestOrigin.spec);
@@ -2717,7 +2717,7 @@ NoscriptService.prototype = {
     var uriSpec = uri.spec;
     var uriValid = this.uriValidator.validate(uriSpec);
     var fixURI = this.getPref("fixURI", true) && 
-      this.getPref("fixURI.exclude", "").split(/[^\w-]+/)
+      this.getPref("fixURI.exclude", "").split(/[^\w\-]+/)
           .indexOf(uri.scheme) < 0;
     var msg;
     if (!uriValid) {
@@ -2963,10 +2963,11 @@ NoscriptService.prototype = {
         isHTMLScript = script instanceof HTMLElement;
         if (isHTMLScript) {
           scriptSrc = script.src;
-        } else {
+        } else if(script) {
           scriptSrc = script.getAttribute("src");
           if (!/^[a-z]+:\/\//i.test(scriptSrc)) continue;
-        }
+        } else continue;
+        
         scriptSrc = this.getSite(scriptSrc);
         if (scriptSrc) {
           sites.push(scriptSrc);
@@ -2980,21 +2981,24 @@ NoscriptService.prototype = {
     }
   },
   
-  showNextNoscriptElement: function(script, doc) { // TODO: dexpcomize!!!
-    const lm = this.lookupMethod;
+  showNextNoscriptElement: function(script, doc) { 
     const HTMLElement = CI.nsIDOMHTMLElement;
-    for (var node = script; (node = lm(node, "nextSibling")());) {
+    var child, el, ss, j;
+    for (var node = script; node = node.nextSibling;) {
       try {
         if (node instanceof HTMLElement) {
-          if (new String(lm(node, "tagName")()).toUpperCase() != "NOSCRIPT") return;
-          if (lm(node, "getAttribute")("class") == "noscript-show") return;
-          lm(node, "setAttribute")("class", "noscript-show");
-          var child = lm(node, "firstChild")();
-          if (lm(child, "nodeType")() != 3) return;
-          var el = lm(lm(node, "ownerDocument")(), "createElement")("span");
+          if (node.tagName.toUpperCase() != "NOSCRIPT") return;
+          if (node.getAttribute("class") == "noscript-show") return;
+          node.setAttribute("class", "noscript-show");
+          child = node.firstChild;
+          if (child.nodeType != 3) return;
+          el = node.ownerDocument.createElement("span");
           el.className = "noscript-show";
-          el.innerHTML = lm(child, "nodeValue")();
-          lm(node, "replaceChild")(el, child);
+          el.innerHTML = child.nodeValue;
+          // remove noscript script children, see evite.com bug 
+          ss = el.getElementsByTagName("script");
+          for(j = ss.length; j-- > 0;) el.removeChild(ss[j]);
+          node.replaceChild(el, child);
         }
       } catch(e) {
         this.dump(e.message + " while showing NOSCRIPT element");
@@ -3139,6 +3143,8 @@ NoscriptService.prototype = {
         }
       }
     }
+    
+    return false;
   },
   
   postExecuteJSURL: function(browser, site, snapshot) {
@@ -3840,7 +3846,7 @@ NoscriptService.prototype = {
           window.setTimeout(this.displayJarFeedback, 10, {
             ns: this,
             context: context,
-            uri: uri.spec,
+            uri: uri.spec
           });
         } else {
           this.dump("checkJarDocument -- window not found");
@@ -4411,8 +4417,6 @@ RequestWatchdog.prototype = {
         targetSite = su.getSite(originalSpec);
         if(!ns.isJSEnabled(targetSite)) {
           if (ns.checkShorthands(targetSite)) {
-            // check wildcards
-            // http://url:0 matches all port except defaults
              ns.autoTemp(targetSite);
           } else { 
             if (ns.consoleDump) this.dump(channel, "Destination " + originalSpec + " is noscripted, SKIP");
@@ -4913,7 +4917,7 @@ var InjectionChecker = {
     ')\\b[\\s\\S]*=)'
   ),
   maybeJS: function(expr) {
-    if(/^[^\(\)="']+=[^\(\)='"]+$/.test(expr) && // commonest case, single assignment, no break
+    if(/^(?:[^\(\)="']+=[^\(\)='"]+|[\?a-z_0-9;,&=\/]+)$/i.test(expr) && // commonest case, single assignment or simple assignments, no break
       !this._singleAssignmentRx.test(expr)) return false;
     return this._maybeJSRx.test(expr); 
   },
@@ -5097,7 +5101,7 @@ var InjectionChecker = {
       return true;
     }
     // check well known and semi-obfuscated -- as in [...]() -- function calls
-    var m = s.match(/\b(?:open|eval|set(?:Timeout|Interval)|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/\*[\s\S]*?)?\([\s\S]*\)/);
+    var m = s.match(/\b(?:open|eval|Script|set(?:Timeout|Interval)|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/\*[\s\S]*?)?\([\s\S]*\)/);
     if (m) {
       var pos;
       var js = m[0];
@@ -5146,8 +5150,44 @@ var InjectionChecker = {
    fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video") + 
     ")|[/'\"\\s\\x08]\\W*(?:FSCommand|on[a-z]{3,}[\\s\\x08]*=)", 
     "gi"),
-  checkHTML: function(s, ignorEntities) {
+  checkHTML: function(s) {
     return this.HTMLChecker.test(s);
+  },
+  
+  base64: false,
+  checkBase64: function(url) {
+    var frags, j, k, l, pos, ff, f, tested;
+    this.base64 = false;
+    // standard base64
+    frags = url.match(/[A-Za-z0-9\+\/]{12,}/g);
+    tested = null;
+    for (j = 0; j < frags.length; j++) {
+      ff = frags[j].split('/');
+      for (l = ff.length; l > 0; l--)
+        for(k = 0; k < l; k++) {
+          if (this.checkBase64Frag((f = ff.slice(k, l).join('/'))))
+            return true;
+          (tested = tested || []).push(f);
+        }
+    }
+    // URL base64 variant, see http://en.wikipedia.org/wiki/Base64#URL_applications
+    frags = url.match(/[A-Za-z0-9\-_]{12,}/g);
+    for (j = 0; j < frags.length; j++) {
+      f = frags[j].replace(/-/g, '+').replace(/_/, '/');
+      if ((!tested || tested.indexOf(f) < 0) && this.checkBase64Frag(f)) return true;
+    }
+    return false;
+  },
+  
+  checkBase64Frag: function(f) {
+    try {
+        s = atob(f);
+        if(this.checkHTML(s) || this.checkJS(s)) {
+          this.log("Detected BASE64 encoded injection: " + f);
+          return this.base64 = true;
+        }
+    } catch(e) {}
+    return false;
   },
   
   checkURL: function(url, depth) {
@@ -5156,9 +5196,10 @@ var InjectionChecker = {
     var currentURL = url, prevURL = null;
     // let's assume protocol and host are safe
     currentURL = currentURL.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "");
+    this.base64 = false;
     for (depth = depth || 2; depth-- > 0 && currentURL != prevURL;) {
       try {
-        if (this.checkHTML(currentURL) || this.checkJS(currentURL)) return true;
+        if (this.checkHTML(currentURL) || this.checkJS(currentURL) || this.checkBase64(currentURL)) return true;
         prevURL = currentURL;
         try {
           currentURL = decodeURIComponent(currentURL);
@@ -5203,9 +5244,12 @@ function XSanitizer(primaryBlacklist, extraBlacklist) {
 
 XSanitizer.prototype = {
   brutal: false,
+  base64: false,
   sanitizeURL: function(url) {
     var original = url.clone();
     this.brutal = this.brutal || this.injectionChecker.checkURL(url.spec);
+    this.base64 = this.injectionChecker.base64;
+    
     const changes = { minor: false, major: false, qs: false };
     // sanitize credentials
     if (url.username) url.username = this.sanitizeEnc(url.username);
@@ -5244,6 +5288,10 @@ XSanitizer.prototype = {
     var urlSpec = url.spec;
     var neutralized = Entities.neutralizeAll(urlSpec, /[^\\'"\x00-\x07\x09\x0B\x0C\x0E-\x1F\x7F<>]/);
     if (urlSpec != neutralized) url.spec = neutralized;
+    
+    if (this.base64) {
+      url.spec = url.prePath; // drastic, but with base64 we cannot take the risk!
+    }
     
     if (url.getRelativeSpec(original) && unescape(url.spec) != unescape(original.spec)) { // ok, this seems overkill but take my word, the double check is needed
       changes.minor = true;
@@ -5392,7 +5440,7 @@ XSanitizer.prototype = {
   _brutalReplRx: new RegExp(
     '(?:' + fuzzify('setter|location|cookie|name|document') + ')',
     "g"
-  ),
+  )
   
 };
 
