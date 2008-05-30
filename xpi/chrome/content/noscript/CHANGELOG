@@ -1,5 +1,9 @@
 NoScript ChangeLog
 
+v 1.6.8
+=====================================================================
+x Fixed false positives in new Base64 decoding Injection Checker
+
 v 1.6.7
 =====================================================================
 + Base64 decoding in URI Injection Checker, thanks Zoiz for Yahoo PoC

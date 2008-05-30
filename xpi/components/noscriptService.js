@@ -797,7 +797,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.6.7",
+  VERSION: "1.6.8",
   
   get wrappedJSObject() {
     return this;
@@ -5155,33 +5155,38 @@ var InjectionChecker = {
   },
   
   base64: false,
+  base64tested: [],
   checkBase64: function(url) {
     var frags, j, k, l, pos, ff, f, tested;
     this.base64 = false;
     // standard base64
     frags = url.match(/[A-Za-z0-9\+\/]{12,}/g);
-    tested = null;
-    for (j = 0; j < frags.length; j++) {
-      ff = frags[j].split('/');
-      for (l = ff.length; l > 0; l--)
-        for(k = 0; k < l; k++) {
-          if (this.checkBase64Frag((f = ff.slice(k, l).join('/'))))
-            return true;
-          (tested = tested || []).push(f);
-        }
+    tested = this.base64tested;
+    if (frags) {
+      for (j = 0; j < frags.length; j++) {
+        ff = frags[j].split('/');
+        for (l = ff.length; l > 0; l--)
+          for(k = 0; k < l; k++) {
+            if (this.checkBase64Frag((f = ff.slice(k, l).join('/'))))
+              return true;
+            tested.push(f);
+          }
+      }
     }
     // URL base64 variant, see http://en.wikipedia.org/wiki/Base64#URL_applications
     frags = url.match(/[A-Za-z0-9\-_]{12,}/g);
-    for (j = 0; j < frags.length; j++) {
-      f = frags[j].replace(/-/g, '+').replace(/_/, '/');
-      if ((!tested || tested.indexOf(f) < 0) && this.checkBase64Frag(f)) return true;
+    if (frags) {
+      for (j = 0; j < frags.length; j++) {
+        f = frags[j].replace(/-/g, '+').replace(/_/, '/');
+        if (tested.indexOf(f) < 0 && this.checkBase64Frag(f)) return true;
+      }
     }
     return false;
   },
   
   checkBase64Frag: function(f) {
     try {
-        s = atob(f);
+        var s = atob(f);
         if(this.checkHTML(s) || this.checkJS(s)) {
           this.log("Detected BASE64 encoded injection: " + f);
           return this.base64 = true;
@@ -5197,6 +5202,7 @@ var InjectionChecker = {
     // let's assume protocol and host are safe
     currentURL = currentURL.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "");
     this.base64 = false;
+    this.base64tested = [];
     for (depth = depth || 2; depth-- > 0 && currentURL != prevURL;) {
       try {
         if (this.checkHTML(currentURL) || this.checkJS(currentURL) || this.checkBase64(currentURL)) return true;
