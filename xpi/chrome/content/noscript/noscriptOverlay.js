@@ -607,7 +607,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   showUI: function() {
-    var statusIcon = this.statusicon;
+    var statusIcon = this.statusIcon;
     var popup = document.getElementById("noscript-status-popup");
     if (statusIcon.hidden || statusIcon.parentNode.hidden) {
       var tbb = document.getElementById("noscript-tbb");

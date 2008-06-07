@@ -1,5 +1,20 @@
 NoScript ChangeLog
 
+v 1.6.9
+=====================================================================
++ Firefox 3.1a1pre compatibility
+x Faster Base64 injection checks
+
+v 1.6.8.2
+=====================================================================
++ Better reporting of dynamically included external scripts, e.g.
+  ajax.googleapis.com on goosh.org
+
+v 1.6.8.1
+=====================================================================
+x Fixed regression: right-click on the status bar and "open UI"
+  keyboard shortcut broken.
+
 v 1.6.8
 =====================================================================
 x Fixed false positives in new Base64 decoding Injection Checker

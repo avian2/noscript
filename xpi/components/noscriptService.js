@@ -264,7 +264,7 @@ const SiteUtils = new function() {
   const _uriFixup = this.uriFixup = CC["@mozilla.org/docshell/urifixup;1"]
     .getService(CI.nsIURIFixup);
   
-  function sorter(a,b) {
+  function sorter(a, b) {
     if (a == b) return 0;
     if (!a) return 1;
     if (!b) return -1;
@@ -797,7 +797,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.6.8",
+  VERSION: "1.6.9",
   
   get wrappedJSObject() {
     return this;
@@ -2387,9 +2387,11 @@ NoscriptService.prototype = {
             this.applySilverlightPatch(aContext.ownerDocument);
           }
           
+          if (originSite && locationSite == originSite) return CP_OK;
           
-          return originSite && locationSite == originSite || 
-            this.isJSEnabled(locationSite) || aContentLocation.scheme == "data" 
+          this.getExpando(aContext.ownerDocument.defaultView.top, "codeSites", []).push(locationSite);
+          
+          return this.isJSEnabled(locationSite) || aContentLocation.scheme == "data" 
             ? CP_OK : this.reject("Script", arguments);
         }
 
@@ -2531,7 +2533,7 @@ NoscriptService.prototype = {
           ) return false;
     var win = aContext.defaultView;
     if(win) {
-      this.getExpando(win, "bindingSites", []).push(this.getSite(locationURL));
+      this.getExpando(win.top, "codeSites", []).push(this.getSite(locationURL));
     }
     return forbidDelegate.call(this, originURL, locationURL);
   },
@@ -3562,6 +3564,7 @@ NoscriptService.prototype = {
        }
        
        // Collect document / cached plugin URLs
+       win = document.defaultView;
        url = this.getSite(docURI = document.documentURI);
        if (url) {
          try {
@@ -3575,11 +3578,10 @@ NoscriptService.prototype = {
             sites.push(redir.site);
           }
 
-          cache = this.getExpando(document.defaultView, "bindingSites");
-          if(cache) sites.push.apply(sites, cache);
+          
        }
        
-       win = document.defaultView;
+       
        tmpPluginCount = 0;
        if (win == win.top) {
          cache = this.getExpando(win, "objectSites");
@@ -3590,6 +3592,9 @@ NoscriptService.prototype = {
            sites.pluginSites.push.apply(sites, cache);
          }
          this._attachPluginExtras(win);
+         
+         cache = this.getExpando(win, "codeSites");
+         if(cache) sites.push.apply(sites, cache);
        }
        
        if (!this.getExpando(win, "contentLoaded") && (!(docShell instanceof nsIWebNavigation) || docShell.isLoadingDocument)) {
@@ -5157,19 +5162,18 @@ var InjectionChecker = {
   base64: false,
   base64tested: [],
   checkBase64: function(url) {
-    var frags, j, k, l, pos, ff, f, tested;
+    var frags, j, k, l, pos, ff, f;
     this.base64 = false;
     // standard base64
     frags = url.match(/[A-Za-z0-9\+\/]{12,}/g);
-    tested = this.base64tested;
     if (frags) {
       for (j = 0; j < frags.length; j++) {
         ff = frags[j].split('/');
         for (l = ff.length; l > 0; l--)
           for(k = 0; k < l; k++) {
-            if (this.checkBase64Frag((f = ff.slice(k, l).join('/'))))
+            f = ff.slice(k, l).join('/');
+            if (f.length >= 12 && this.checkBase64Frag(f))
               return true;
-            tested.push(f);
           }
       }
     }
@@ -5178,26 +5182,29 @@ var InjectionChecker = {
     if (frags) {
       for (j = 0; j < frags.length; j++) {
         f = frags[j].replace(/-/g, '+').replace(/_/, '/');
-        if (tested.indexOf(f) < 0 && this.checkBase64Frag(f)) return true;
+        if (this.checkBase64Frag(f)) return true;
       }
     }
     return false;
   },
   
   checkBase64Frag: function(f) {
-    try {
-        var s = atob(f);
-        if(this.checkHTML(s) || this.checkJS(s)) {
-          this.log("Detected BASE64 encoded injection: " + f);
-          return this.base64 = true;
-        }
-    } catch(e) {}
+    if (this.base64tested.indexOf(f) < 0) {
+      this.base64tested.push(f);
+      try {
+          var s = atob(f);
+          if(this.checkHTML(s) || this.checkJS(s)) {
+            this.log("Detected BASE64 encoded injection: " + f);
+            return this.base64 = true;
+          }
+      } catch(e) {}
+    }
     return false;
   },
   
   checkURL: function(url, depth) {
 
-    // iterate escaping until there's no more to escape
+    // iterate escaping until there's nothing more to escape
     var currentURL = url, prevURL = null;
     // let's assume protocol and host are safe
     currentURL = currentURL.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "");
