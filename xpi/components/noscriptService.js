@@ -797,7 +797,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.6.9",
+  VERSION: "1.6.9.1",
   
   get wrappedJSObject() {
     return this;
@@ -3725,7 +3725,7 @@ NoscriptService.prototype = {
       }
       const rw = this.requestWatchdog;
       const domWindow = rw.findWindow(req);
-      if(domWindow == domWindow.top) return;
+      if(!domWindow || domWindow == domWindow.top) return;
       
       this.onBeforeLoad(req, domWindow);
     } catch(e) {
@@ -3743,6 +3743,8 @@ NoscriptService.prototype = {
     if (this.checkJarDocument(uri, domWindow)) {
       req.cancel(NS_BINDING_ABORTED);
     }
+    
+    if (!domWindow) return;
     
     const topWin = domWindow == domWindow.top;
 
@@ -4283,23 +4285,18 @@ RequestWatchdog.prototype = {
   checkWindowName: function(window) {
     var originalAttempt = window.name;
       
-    if (/[%=\(]/.test(originalAttempt) && InjectionChecker.checkJSSyntax(originalAttempt)) {
-      window.name = originalAttempt.replace(/[%=\(]/g, " ");
+    if (/[%=\(\\]/.test(originalAttempt) && InjectionChecker.checkJS(originalAttempt)) {
+      window.name = originalAttempt.replace(/[%=\(\\]/g, " ");
     }
     if (originalAttempt.length > 11) {
       try {
         if ((originalAttempt.length % 4 == 0)) { 
           var bin = window.atob(window.name);
-          if(/[=\(]/.test(bin) && InjectionChecker.syntax.check(bin)) {
+          if(/[=\(\\]/.test(bin) && InjectionChecker.checkJS(bin)) {
             window.name = "BASE_64_XSS";
           }
         }
       } catch(e) {}
-      /*
-      if (window.name.length > 31) {
-        window.name = window.name.substring(0, 31);
-      }
-      */
     }
     if (originalAttempt != window.name) {
       this.ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');
@@ -4860,8 +4857,11 @@ var InjectionChecker = {
   Entities: Entities,
   syntax: new SyntaxChecker(),
   _log: function(msg, t, i) {
-    if (t) msg += " - TIME: " + (new Date().getTime() - t);
-    if (i) msg += " - ITER: " + i;
+    if(!(i || t)) msg += " - " + Components.stack.caller
+    else {
+      if (t) msg += " - TIME: " + (new Date().getTime() - t);
+      if (i) msg += " - ITER: " + i;
+    }
     this.dump("[NoScript InjectionChecker] " + msg + "\n");
   },
   dump: dump,
@@ -4892,6 +4892,7 @@ var InjectionChecker = {
   reduceBackSlashes: function(bs) {
     return bs.length % 2 ? "" : "\\";
   },
+  
   reduceQuotes: function(s) {
     if (!/['"]/.test(s) || /\/\*/.test(s)) 
       return s;
@@ -4909,6 +4910,23 @@ var InjectionChecker = {
     return expr;
   },
   
+  reduceJSON: function(s) {
+    var m, script, prev;
+    while((m = s.match(/\{[^\{\}]+\}/g))) {
+      prev = s;
+      for each(expr in m) {
+        script = this.reduceQuotes(expr);
+        if (!/[\(=\.]/.test(script) && 
+           this.checkJSSyntax("JSON = " + script) // no-assignment JSON fails with "invalid label"
+        ) { 
+          this.log("Reducing JSON " + expr);
+          s = s.replace(expr, "_JSON_");
+        }
+      }
+      if (s == prev) break;
+    }
+    return s;
+  },
   
   _singleAssignmentRx: new RegExp('\\b(?:' +
     fuzzify('document|location|setter')
@@ -4935,28 +4953,18 @@ var InjectionChecker = {
   },
   checkJSBreak: function(s) {
     // Direct script injection breaking JS string literals or comments
-    if (!this.maybeJS(s)) return false;
     
-    s = s.replace(/\%\d+[a-z\(]\w*/gi, '`'); // cleanup most urlencoded noise
+    if (!/[\\=\(]/.test(s)) return false; // quick preliminary screen
+    
+    s = this.reduceJSON(s.replace(/\%\d+[a-z\(]\w*/gi, '`')); // cleanup most urlencoded noise and reduce JSON
+    
+    if (!this.maybeJS(s)) return false;
     
     const findInjection = 
       /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
     
     findInjection.lastIndex = 0;
     var m, breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
-    
-    // JSON reduction
-    m = s.match(/\{[\s\S]*\}/);
-    if (m) {
-       expr = m[0];
-       script = this.reduceQuotes(expr);
-       if (!/[\(=\.]/.test(script) && 
-          this.checkJSSyntax("JSON = " + script) // no-assignment JSON fails with "invalid label"
-       ) { 
-          this.log("Reducing JSON " + expr);
-          s = s.replace(expr, "{_JSON_: 0}");
-       }
-    }
     
     const MAX_TIME = 4000, MAX_LOOPS = 400;
 
@@ -5055,9 +5063,9 @@ var InjectionChecker = {
           if(this.syntax.lastError) { // could be null if we're here thanks to checkLastFunction()
             errmsg = this.syntax.lastError.message;
             this.log(errmsg + "\n" + script + "\n---------------", t, iterations);
-            if (/left-hand|invalid flag after regular expression|missing ; before statement|invalid label/.test(errmsg)) {
+            if (/left-hand|invalid flag after regular expression|missing ; before statement|invalid label|illegal character/.test(errmsg)) {
               break; // unrepairable syntax error (wrong assignment to a left-hand expression), move left cursor forward 
-            } else if((m = errmsg.match(/\bmissing ([:\]\)]) /))) {
+            } else if((m = errmsg.match(/\bmissing ([:\]\)\}]) /))) {
               len = subj.indexOf(m[1], len);
               if (len > -1) {
                 expr = subj.substring(0, ++len);
@@ -5077,7 +5085,8 @@ var InjectionChecker = {
     this.log(s, t, iterations);
     return false;
   },
-    
+  
+  
   checkJSStunt: function(s) {
 
    
@@ -5088,14 +5097,7 @@ var InjectionChecker = {
       this.log("JS comments in " + s);
       return true; 
     }
-   
-    
-    // Unicode ASCII escapes, no reason for this unless you're cheating!!!
-    if(/\\u00[0-7][0-9a-f]/i.test(s)) {
-      this.log("Unicode-escaped ASCII, why would you?");
-      return true;
-    }
-    
+
     // simplest navigation act (no dots, no round/square brackets)
     if (/\bl\W*o\W*c\W*a\W*t\W*i\W*o\W*n\W*(?:\/\*[\s\S]*|\s*)=\W*(?:\/\*[\s\S]*|\s*)n\W*a\W*m\W*e(?:\W+|$)/.test(s)) { 
       this.log("location = name navigation attempt in " +s);
@@ -5124,10 +5126,27 @@ var InjectionChecker = {
   },
   
   checkJS: function(s, ignoreEntities) {
-    if (this.checkAttributes(s) || this.checkJSStunt(s) || this.checkJSBreak(s)) return true;
+    this.log(s);
+    if (this.checkAttributes(s)) return true;
+    
+    // Unicode ASCII escapes, no reason for this unless you're cheating!!!
+    if (/\\u00(?:22|27|2f)/i.test(s)) {
+      this.log("Unicode-escaped ASCII, why would you?");
+      return true;
+    }
+    
+    s = this.unescapeJS(s); // convert remainig unicode escapes
+    
+    if (this.checkJSStunt(s) || this.checkJSBreak(s)) return true;
     if (ignoreEntities) return false;
     var converted = Entities.convertAll(s);
     return (converted != s) && this.checkJS(converted, true);
+  },
+  
+  unescapeJS: function(s) {
+    return s.replace(/\\u([0-9a-f]{4})/gi, function(s, c) {
+      return String.fromCharCode(parseInt(c, 16));
+    });
   },
   
   unescapeCSS: function(s) {
@@ -5156,12 +5175,15 @@ var InjectionChecker = {
     ")|[/'\"\\s\\x08]\\W*(?:FSCommand|on[a-z]{3,}[\\s\\x08]*=)", 
     "gi"),
   checkHTML: function(s) {
+    this.log(s);
     return this.HTMLChecker.test(s);
   },
   
   base64: false,
   base64tested: [],
+  get base64Decoder() { return Base64 }, // exposed here just for debugging purposes
   checkBase64: function(url) {
+    this.log(url);
     var frags, j, k, l, pos, ff, f;
     this.base64 = false;
     // standard base64
@@ -5192,8 +5214,8 @@ var InjectionChecker = {
     if (this.base64tested.indexOf(f) < 0) {
       this.base64tested.push(f);
       try {
-          var s = atob(f);
-          if(this.checkHTML(s) || this.checkJS(s)) {
+          var s = Base64.decode(f);
+          if(s && this.checkHTML(s) || this.checkJS(s)) {
             this.log("Detected BASE64 encoded injection: " + f);
             return this.base64 = true;
           }
@@ -5456,5 +5478,44 @@ XSanitizer.prototype = {
   )
   
 };
+
+// we need this because of https://bugzilla.mozilla.org/show_bug.cgi?id=439276
+
+var Base64 = {
+
+  decode : function (input) {
+    var output = '';
+    var chr1, chr2, chr3;
+    var enc1, enc2, enc3, enc4;
+    var i = 0;
+    
+    // if (/[^A-Za-z0-9\+\/\=]/.test(input)) return ""; // we don't need this, caller checks for us
+
+    const k = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    while (i < input.length) {
+
+        enc1 = k.indexOf(input.charAt(i++));
+        enc2 = k.indexOf(input.charAt(i++));
+        enc3 = k.indexOf(input.charAt(i++));
+        enc4 = k.indexOf(input.charAt(i++));
+
+        chr1 = (enc1 << 2) | (enc2 >> 4);
+        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+        chr3 = ((enc3 & 3) << 6) | enc4;
+
+        output += String.fromCharCode(chr1);
+
+        if (enc3 != 64) {
+          output += String.fromCharCode(chr2);
+        }
+        if (enc4 != 64) {
+          output += String.fromCharCode(chr3);
+        }
+
+    }
+    return output;
+
+  }
+}
 
 

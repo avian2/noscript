@@ -1,5 +1,13 @@
 NoScript ChangeLog
 
+v 1.6.9.1
+=====================================================================
++ Improved XSS JavaScript unicode escape handling
++ Recursive JSON reduction, dramatically cutting analysis time on
+  complex JSON URLs, e.g. for some Orkut widgets
+x Critical work-around for
+  https://bugzilla.mozilla.org/show_bug.cgi?id=439276
+
 v 1.6.9
 =====================================================================
 + Firefox 3.1a1pre compatibility
@@ -212,7 +220,7 @@ v 1.4.6
 =====================================================================
 x Silverlight plugin objects in content blocking mode made completely 
   disabled (not just content-less) until they're allowed per-page
-x Work around for a conflict with the PDF Download extension conflict
+x Work-around for a conflict with the PDF Download extension conflict
   (thanks greenknight for report)
 
 v 1.4.5
@@ -1430,7 +1438,7 @@ v 1.1.3.6
 v 1.1.3.5
 =====================================================================
 + "Truncate title" option: enabled by default, even on whitelisted
-  sites, is a quick & dirty work around for Firefox DOS bug 319004
+  sites, is a quick & dirty work-around for Firefox DOS bug 319004
 + "com.xy" 2nd level domains are always considered special TLDs
 + Other special TLDs added
 x Fixed "Forbid other plugins" semantics: Java and Flash should
@@ -1541,7 +1549,7 @@ v 1.0.8
   doesn't enable it for non-standard ports (thanks to jayvdb for
   suggestion)
 + Stop every browser activity before changing policies (this should
-  be a workaround for most crashes dued to Firefox CAPS bugs)
+  be a work-around for most crashes dued to Firefox CAPS bugs)
 
 v 1.0.7
 =====================================================================
@@ -1577,7 +1585,7 @@ x Fixed menu layout (thanks to TheOneKEA for report)
 v 1.0.4
 =====================================================================
 + Automatically creates http:// and https:// prefixed URLs when a 2nd
-  level domain (xyz.com) is allowed, as a workaround for Firefox not 
+  level domain (xyz.com) is allowed, as a work-around for Firefox not 
   matching URLs with a raw 2nd level domain if no protocol is listed
   (thanks to Laura for report)
 + "Allowed" status feedback for chrome:// URLs (pacanukeha)
@@ -1619,7 +1627,7 @@ v 1.0.1
   mozilla.org, you allow www.mozilla.org, addons.mozilla.org etc.)
 + German translation (thanks to my friend Thomas Weber)
 x Fixed localization issue
-x Work around for Firefox occasional crashes
+x Work-around for Firefox occasional crashes
 
 v 1.0.0
 =====================================================================
