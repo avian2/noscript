@@ -797,7 +797,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.6.9.2",
+  VERSION: "1.6.9.3",
   
   get wrappedJSObject() {
     return this;
@@ -5254,9 +5254,9 @@ var InjectionChecker = {
   checkURL: function(url) {
 
     // iterate escaping until there's nothing more to escape
-    var currentURL = url, prevURL = null;
+
     // let's assume protocol and host are safe
-    currentURL = currentURL.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "");
+    url = url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "");
     this.base64 = false;
     this.base64tested = [];
     
@@ -5273,11 +5273,18 @@ var InjectionChecker = {
     if (--depth <= 0)
       return false;
     
-    var nextURL = this.urlUnescape(url);
+    if (/\+/.test(url) && this.checkRecursive(this.urlUnescape(url.replace(/\+/g, ' '), depth)))
+      return true;
     
-    return /\+/.test(url) && this.checkRecursive(this.urlUnescape(url.replace(/\+/g, ' '), depth)) ||
-      nextURL != url && this.checkRecursive(nextURL, depth) ||
-      (url = this.ebayUnescape(nextURL)) != nextURL && this.checkRecursive(url, depth) 
+    var unescaped = this.urlUnescape(url);
+    if (unescaped != url && this.checkRecursive(unescaped, depth))
+      return true;
+    
+    url = this.ebayUnescape(unescaped);
+    if (url != unescaped && this.checkRecursive(url, depth))
+      return true;
+    
+    return false;
   },
   
   urlUnescape: function(url) {

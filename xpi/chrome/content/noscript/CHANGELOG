@@ -1,5 +1,10 @@
 NoScript ChangeLog
 
+v 1.6.9.3
+=====================================================================
+x Fixed Injection Checker false positive regression on URIs which
+  contain encoded newline characters (thanks Kostas)
+
 v 1.6.9.2
 =====================================================================
 x Fixed Injection Checker checking ASCII 43 as a "plus" sign but not
