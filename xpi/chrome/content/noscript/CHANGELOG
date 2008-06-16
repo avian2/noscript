@@ -1,5 +1,14 @@
 NoScript ChangeLog
 
+v 1.6.9.2
+=====================================================================
+x Fixed Injection Checker checking ASCII 43 as a "plus" sign but not
+  as a www-form-encoded space (thanks Sirdarckcat for report)
+x Google search anti-XSS exception now checks for real TLDs, rather
+  than short 2nd level domains (thanks Sirdarckcat for report)
++ Refactored unescaping flow, allowing for easier extension
++ Ebay-style unescaping
+
 v 1.6.9.1
 =====================================================================
 + Improved XSS JavaScript unicode escape handling

@@ -797,7 +797,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.6.9.1",
+  VERSION: "1.6.9.2",
   
   get wrappedJSObject() {
     return this;
@@ -4462,7 +4462,9 @@ RequestWatchdog.prototype = {
     
     if (ns.filterXExceptions) {
       try {
-        if (ns.filterXExceptions.test(decodeURI(originalSpec))) { 
+        if (ns.filterXExceptions.test(decodeURI(originalSpec)) &&
+            !this.isBadException(host)
+            ) {
           // "safe" xss target exception
           if (ns.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
           return;
@@ -4625,6 +4627,12 @@ RequestWatchdog.prototype = {
         this.setUnsafeRequest(requestInfo.browser, requestInfo.unsafeRequest);
       }
     }
+  },
+  
+  isBadException: function(host) {
+    // TLD check for google search
+    var m = host.match(/\bgoogle\.((?:[a-z]{1,3}\.)?[a-z]+)$/i);
+    return !m || this.ns.getPublicSuffix(host) == m[1];
   },
   
   proxyHack: function(channel) {
@@ -4954,8 +4962,6 @@ var InjectionChecker = {
   checkJSBreak: function(s) {
     // Direct script injection breaking JS string literals or comments
     
-    if (!/[\\=\(]/.test(s)) return false; // quick preliminary screen
-    
     s = this.reduceJSON(s.replace(/\%\d+[a-z\(]\w*/gi, '`')); // cleanup most urlencoded noise and reduce JSON
     
     if (!this.maybeJS(s)) return false;
@@ -5071,7 +5077,7 @@ var InjectionChecker = {
                 expr = subj.substring(0, ++len);
                 moved = m[1] != ':';
               } else break;
-            } else if(/unterminated string literal/.test(errmsg)) {
+            } else if(!quote && /unterminated string literal/.test(errmsg)) {
               bsPos = subj.substring(len).search(/["']/);
               if(bsPos > -1) {
                  expr = subj.substring(0, len += bsPos + 1);
@@ -5125,22 +5131,43 @@ var InjectionChecker = {
     return false;
   },
   
-  checkJS: function(s, ignoreEntities) {
-    this.log(s);
-    if (this.checkAttributes(s)) return true;
+  checkJS: function(s, opts) {
     
-    // Unicode ASCII escapes, no reason for this unless you're cheating!!!
-    if (/\\u00(?:22|27|2f)/i.test(s)) {
-      this.log("Unicode-escaped ASCII, why would you?");
+    // recursive escaping options
+    if (!opts) opts = { uni: true, ent: true };
+    
+    var hasUnicodeEscapes = opts.uni && /\\u[0-9a-f]{4}/.test(s);
+    if (hasUnicodeEscapes && /\\u00(?:22|27|2f)/i.test(s)) {
+      this.log("Unicode-escaped lower ASCII, why would you?");
       return true;
     }
     
-    s = this.unescapeJS(s); // convert remainig unicode escapes
+    // the hardcore job!
+    if (this.checkAttributes(s)) return true;
+    if (/[\\=\(]/.test(s) && // quick preliminary screen
+        this.checkJSStunt(s) || this.checkJSBreak(s))
+      return true;
     
-    if (this.checkJSStunt(s) || this.checkJSBreak(s)) return true;
-    if (ignoreEntities) return false;
-    var converted = Entities.convertAll(s);
-    return (converted != s) && this.checkJS(converted, true);
+    
+    // recursive cross-unescaping
+    
+    if (hasUnicodeEscapes &&
+        this.checkJS(this.unescapeJS(s), {
+          ent: false, // even if we introduce new entities, they're unrelevant because happen post-spidermonkey
+          uni: false
+        })) 
+      return true;
+    
+    if (opts.ent) {
+      converted = Entities.convertAll(s);
+      if (converted != s && this.checkJS(converted, {
+          ent: false,
+          uni: true // we might have introduced new unicode escapes
+        }))
+        return true;
+    }
+    
+    return false;
   },
   
   unescapeJS: function(s) {
@@ -5224,7 +5251,7 @@ var InjectionChecker = {
     return false;
   },
   
-  checkURL: function(url, depth) {
+  checkURL: function(url) {
 
     // iterate escaping until there's nothing more to escape
     var currentURL = url, prevURL = null;
@@ -5232,22 +5259,40 @@ var InjectionChecker = {
     currentURL = currentURL.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "");
     this.base64 = false;
     this.base64tested = [];
-    for (depth = depth || 2; depth-- > 0 && currentURL != prevURL;) {
-      try {
-        if (this.checkHTML(currentURL) || this.checkJS(currentURL) || this.checkBase64(currentURL)) return true;
-        prevURL = currentURL;
-        try {
-          currentURL = decodeURIComponent(currentURL);
-        } catch(warn) {
-          this.log("Problem decoding " + currentURL + " (" + url + "), maybe not an UTF-8 encoding? " + warn.message);
-          currentURL = unescape(currentURL);
-        }
-      } catch(ex) {
-        this.log("Error checking " + currentURL + " (" + url + ")" + ex.message);
-        return true;
-      }
+    
+    return this.checkRecursive(url, 2);
+  },
+  
+  checkRecursive: function(url, depth) {
+    if (typeof(depth) != "number")
+      depth = 2;
+    
+    if (this.checkHTML(url) || this.checkJS(url) || this.checkBase64(url))
+      return true;
+    
+    if (--depth <= 0)
+      return false;
+    
+    var nextURL = this.urlUnescape(url);
+    
+    return /\+/.test(url) && this.checkRecursive(this.urlUnescape(url.replace(/\+/g, ' '), depth)) ||
+      nextURL != url && this.checkRecursive(nextURL, depth) ||
+      (url = this.ebayUnescape(nextURL)) != nextURL && this.checkRecursive(url, depth) 
+  },
+  
+  urlUnescape: function(url) {
+    try {
+      return decodeURIComponent(url);
+    } catch(warn) {
+      this.log("Problem decoding " + url + ", maybe not an UTF-8 encoding? " + warn.message);
+      return unescape(url);
     }
-    return false;
+  },
+  
+  ebayUnescape: function(url) {
+    return url.replace(/Q([\da-fA-F]{2})/g, function(s, c) {
+      return String.fromCharCode(parseInt(c, 16));
+    });
   },
   
   test: function(url) {
@@ -5461,7 +5506,8 @@ XSanitizer.prototype = {
     
     if (this.brutal) { // injection checks were positive
       s = s.replace(/['\(\)\=\[\]]/g, " ")
-           .replace(this._brutalReplRx, String.toUpperCase);
+           .replace(this._brutalReplRx, String.toUpperCase)
+           .replace(/Q[\da-fA-Fa]{2}/g, "Q20"); // Ebay-style escaping
     }
     
     return s == orig ? unsanitized : s;
