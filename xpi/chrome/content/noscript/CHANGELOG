@@ -1,5 +1,10 @@
 NoScript ChangeLog
 
+v 1.7.1
+=====================================================================
+x Fixed changing permissions on one tab reload all tabs issue (thanks
+  redhat71 for reporting)
+
 v 1.7
 =====================================================================
 + JS redirect detector sensibility enhancement (thanks timeless)

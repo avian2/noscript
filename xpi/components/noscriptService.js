@@ -798,7 +798,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.7",
+  VERSION: "1.7.1",
   
   get wrappedJSObject() {
     return this;
@@ -1509,9 +1509,10 @@ NoscriptService.prototype = {
 ,
   jsPolicySites: new PolicySites(),
   isJSEnabled: function(s) {
-    return this.globalJS
-      ? !(this.alwaysBlockUntrustedContent && this.untrustedSites.matches(s))
-      : this.jsPolicySites.matches(s) && !this.untrustedSites.matches(s);
+    return !(this.globalJS
+      ? this.alwaysBlockUntrustedContent && this.untrustedSites.matches(s)
+      : !this.jsPolicySites.matches(s) || this.untrustedSites.matches(s)
+    );
   },
   setJSEnabled: function(site, is, fromScratch, manually) {
     const ps = this.jsPolicySites;
@@ -1758,7 +1759,7 @@ NoscriptService.prototype = {
       docSites = this.getSites(browser);
       for (j = docSites.length; j-- > 0;) {
         prevStatus = lastGlobal && !this.alwaysBlockUntrustedContent || !!snapshot.matches(docSites[j]);
-        currStatus = this.isJSEnabled(docSites[j]) || this.checkShorthands(docSites[j]);
+        currStatus = this.isJSEnabled(docSites[j]) || !!this.checkShorthands(docSites[j]);
         if (currStatus != prevStatus) {
           ret = true;
           if (currStatus) 
