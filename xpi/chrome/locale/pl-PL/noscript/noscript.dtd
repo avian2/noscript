@@ -13,24 +13,24 @@
 <!ENTITY noscriptUntrust "Oznacz jako niezaufaną">
 <!ENTITY noscriptUntrust.accesskey "N">
 <!ENTITY noscriptRemoveSelected "Usuń wybrane witryny">
-<!ENTITY noscriptGloballyEnabled "Pozwól na wykonywanie skryptów JavaScript (niebezpieczne)">
-<!ENTITY noscriptAutoReload "Automatycznie odśwież stronę po zmianie uprawnień">
+<!ENTITY noscriptGloballyEnabled "Pozwalaj na wykonywanie skryptów JavaScript (niebezpieczne)">
+<!ENTITY noscriptAutoReload "Automatycznie odświeżaj stronę po zmianie uprawnień">
 <!ENTITY noscriptGeneral "Ogólne">
 <!ENTITY noscriptAppearance "Wygląd">
-<!ENTITY noscriptShow "Wyświetl:">
+<!ENTITY noscriptShow "Wyświetlaj:">
 <!ENTITY noscriptCtxMenu "Menu kontekstowe">
 <!ENTITY noscriptStatusIcon "Ikonę na pasku stanu">
 <!ENTITY noscriptFullAddr "Nie blokuj z  [...]  (pełny adres np. http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Nie blokuj z  [...]  (pełna domena np. www.noscript.net)">
 <!ENTITY noscriptBaseDom "Nie blokuj z  [...]  (podstawa domeny np. noscript.net)">
 <!ENTITY noscriptTempCmd "Tymczasowo nie blokuj z  [...]">
-<!ENTITY noscriptSound "Odtwórz dźwięk, gdy skrypty są blokowane">
+<!ENTITY noscriptSound "Odtwarzaj dźwięk, gdy skrypty są blokowane">
 <!ENTITY noscriptImport "Importuj">
 <!ENTITY noscriptImport.accesskey "I">
 <!ENTITY noscriptExport "Eksportuj">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Wyświetl powiadomienie o blokowanych skryptach">
-<!ENTITY noscriptNotify.bottom "Umieść powiadomienie na dole okna przeglądarki">
+<!ENTITY noscriptNotify "Wyświetlaj powiadomienie o blokowanych skryptach">
+<!ENTITY noscriptNotify.bottom "Umieszczaj powiadomienie na dole okna przeglądarki">
 <!ENTITY noscriptSound.choose "Przeglądaj">
 <!ENTITY noscriptSound.choose.accesskey "P">
 <!ENTITY noscriptSound.play "Odtwórz">
@@ -39,7 +39,7 @@
 <!ENTITY noscriptSound.reset.accesskey "D">
 <!ENTITY noscriptAdvanced "Zaawansowane">
 <!ENTITY noscriptAdditionalPermissions "Dodatkowe uprawnienia dla zaufanych witryn">
-<!ENTITY noscriptAllowClipboard "Pozwól na kopiowanie/wklejanie z zewnętrznego schowka w formacie RTF">
+<!ENTITY noscriptAllowClipboard "Pozwalaj na kopiowanie/wklejanie z zewnętrznego schowka w formacie RTF">
 <!ENTITY noscriptAdditionalRestrictions "Dodatkowe ograniczenia dla niezaufanych witryn">
 <!ENTITY noscriptPlugins "Wtyczki">
 <!ENTITY noscriptContentBlocker "Zastosuj te ograniczenia także do zaufanych witryn">
@@ -53,21 +53,21 @@
 <!ENTITY noscriptConfirmUnblock "Pytaj o potwierdzenie przed czasowym odblokowaniem obiektu">
 <!ENTITY noscriptStatusLabel "Informacje na pasku stanu">
 <!ENTITY noscriptForbidBookmarklets "Blokuj skryptozakładki">
-<!ENTITY noscriptShowPlaceholder "Wyświetl ikonę zamiennika">
+<!ENTITY noscriptShowPlaceholder "Wyświetlaj ikonę zamiennika">
 <!ENTITY noscriptTruncateTitle "Skracaj tytuły dokumentów">
 <!ENTITY noscriptFixLinks "Próbuj przekształcić odnośniki JavaScript w normalne odnośniki">
-<!ENTITY noscriptAllowBookmarks "Pozwól na wykonywanie skryptów witrynom otwieranym z folderu &quot;Zakładki&quot;">
-<!ENTITY noscriptAllowViaBookmarks "Pozwól na wykonywanie skryptów witrynom otwieranym z folderu &quot;Zakładki&quot;">
-<!ENTITY noscriptAllowPing "Pozwól na &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Pozwól na wykonywanie skryptów lokalnym odnośnikom">
-<!ENTITY noscriptForbidPing "Zabroń &lt;A PING...&gt;">
+<!ENTITY noscriptAllowBookmarks "Pozwalaj na wykonywanie skryptów witrynom otwieranym z folderu &quot;Zakładki&quot;">
+<!ENTITY noscriptAllowViaBookmarks "Pozwalaj na wykonywanie skryptów witrynom otwieranym z folderu &quot;Zakładki&quot;">
+<!ENTITY noscriptAllowPing "Pozwalaj na &lt;A PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Pozwalaj na wykonywanie skryptów lokalnym odnośnikom">
+<!ENTITY noscriptForbidPing "Nie pozwalaj na&lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Nie pozwalaj na przekierowania META znajdujące się wewnątrz elementu HTML &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Zaufane witryny">
 <!ENTITY noscriptPermissions "Zezwolenia">
 <!ENTITY noscriptRefresh "Odświeżanie">
 <!ENTITY noscriptNotifications "Powiadomienia">
-<!ENTITY noscriptToolbarToggle "Naciśnięcie lpm na przycisk &quot;NoScript&quot; zmienia zezwolenia dla aktywnej witryny">
+<!ENTITY noscriptToolbarToggle "Naciśnięcie l.p.m. przycisku &quot;NoScript&quot; zmienia zezwolenia dla aktywnej witryny">
 <!ENTITY noscriptTrusted "Zaufane">
 <!ENTITY noscriptUntrusted "Niezaufane">
 <!ENTITY noscriptUnknown "Nieznana">
@@ -80,12 +80,12 @@
 <!ENTITY noscriptDefaultPolicies "Działania domyślne">
 <!ENTITY noscriptSitePolicies "Działania specyficzne dla danej witryny">
 <!ENTITY noscriptNselNever "Nie wyświetlaj składników pobieranych z elementu HTML &lt;NOSCRIPT&gt;">
-<!ENTITY noscriptNselForce "Wyświetl składniki pobierane z blokowanych witryn przez element &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Wyświetlaj składniki pobierane z blokowanych witryn przez element &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Domyślne, czasowo dozwolone witryny">
 <!ENTITY noscriptDescription "Dodatkowe zabezpieczenie Firefoksa. NoScript pozwala na wykonywanie kodów JavaScript, Java i innych wtyczek tylko wybranym przez użytkownika zaufanym domenom np. strony bankowe. Lista zaufanych domen pozwala zabezpieczyć się przed znanymi i nieznanymi witrynami próbującymi przechwycić dane o użytkowniku. Eksperci potwierdzają, że Firefox z zainstalowanym NoScript jest bezpieczniejszy.">
 <!ENTITY noscriptOptBlockCssScanners "Blokuj skanery oparte na cross-site scripting (XSS)">
-<!ENTITY noscriptOptFilterXGet "Usuń podejrzane żądania">
-<!ENTITY noscriptOptFilterXPost "Zamień żądania cross-site POST na data-less GET">
+<!ENTITY noscriptOptFilterXGet "Usuwaj podejrzane żądania">
+<!ENTITY noscriptOptFilterXPost "Zamieniaj żądania cross-site POST na data-less GET">
 <!ENTITY noscriptShowConsole "Wyświetl konsolę">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
@@ -111,7 +111,9 @@
 <!ENTITY noscriptRevokeTemp "Unieważniaj tymczasowe zezwolenia">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nie wyświetlaj ikon zamienników dla obiektów pochodzących z witryn oznaczonych jako niezaufane">
-<!ENTITY noscriptCollapseBlockedObjects "Zwiń zablokowane obiekty">
+<!ENTITY noscriptCollapseBlockedObjects "Zwijaj zablokowane obiekty">
 <!ENTITY noscriptExceptions "Wyjątki...">
 <!ENTITY noscriptBlockedObjects "Obiekty zablokowane">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokuj każdy obiekt pochodzący z witryny oznaczonej jako nieazaufana">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokuj każdy obiekt pochodzący z witryny oznaczonej jako niezaufana">
+<!ENTITY noscriptTempAllowPage "Tymczasowo nie blokuj na tej stronie">
+<!ENTITY noscriptTempAllowPage.accesskey "M">

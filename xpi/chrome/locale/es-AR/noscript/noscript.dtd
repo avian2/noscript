@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Excepciones...">
 <!ENTITY noscriptBlockedObjects "Objetos bloqueados">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquear todos los objetos procedentes de un sitio marcado como no fiable">
+<!ENTITY noscriptTempAllowPage "Permitir temporalmente toda esta página">
+<!ENTITY noscriptTempAllowPage.accesskey "P">

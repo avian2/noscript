@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Kivételek...">
 <!ENTITY noscriptBlockedObjects "Blokkolt objektumok">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Minden megbízhatatlanként megjelölt oldalról érkező objektum blokkolása">
+<!ENTITY noscriptTempAllowPage "Parancsfájlok ideiglenes engedélyezése az oldalon">
+<!ENTITY noscriptTempAllowPage.accesskey "i">

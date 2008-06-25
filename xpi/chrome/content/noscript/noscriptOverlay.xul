@@ -220,6 +220,11 @@
           label="&noscriptRevokeTemp;" accesskey="&noscriptRevokeTemp.accesskey;"
           oncommand="noscriptOverlay.revokeTemp()"
           />
+        <menuitem id="noscript-temp-allow-page-mi"
+         class="menuitem-iconic noscript-temp noscript-allow" 
+         label="&noscriptTempAllowPage;" accesskey="&noscriptTempAllowPage.accesskey;"
+         oncommand="noscriptOverlay.allowPage()"
+         />
         <menu id="noscript-xss-menu" class="menu-iconic noscript-xss" 
           onpopupshowing="event.stopPropagation()" 
           onpopuphidden="event.stopPropagation()" 
@@ -246,8 +251,10 @@
        
        
        
-       <menuseparator class="noscript-sep-insert"/>
-       <menuseparator class="noscript-sep-stop" hidden="true" />
+      <menuseparator class="noscript-sep-insert"/>
+      <menuseparator class="noscript-sep-stop" hidden="true" />
+      
+       
     </menupopup>
   </statusbarpanel>
   <statusbarpanel id="noscript-statusLabel" insertbefore="statusbar-updates"

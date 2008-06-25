@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Undtagelser...">
 <!ENTITY noscriptBlockedObjects "Blokerede objekter">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloker alle objekter der kommer fra en side som er markeret som ubetroet">
+<!ENTITY noscriptTempAllowPage "Midlertidigt tillad hele denne side">
+<!ENTITY noscriptTempAllowPage.accesskey "h">

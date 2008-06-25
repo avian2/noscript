@@ -43,7 +43,7 @@
 <!ENTITY noscriptAllowClipboard "السماح لنسخ ولصق النص الغني من ذاكرة نسخ خارجية">
 <!ENTITY noscriptAdditionalRestrictions "قيود اضافية على المواقع الغير موثوق بها">
 <!ENTITY noscriptPlugins "إضافات">
-<!ENTITY noscriptContentBlocker "تطبيق هذه القيود للمواقع الموثوقة أبضا">
+<!ENTITY noscriptContentBlocker "تطبيق هذه القيود للمواقع الموثوقة أيضا">
 <!ENTITY noscriptForbidJava "منع جافا">
 <!ENTITY noscriptForbidWebBugs "منع  &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "منع ميكروسوفت سلفرلايت">
@@ -52,23 +52,23 @@
 <!ENTITY noscriptForbidPlugins "منع إضافات أُخرى">
 <!ENTITY noscriptReloadWarn "سيتم تفعيل هذه الخيارات في الصفحات الجديدة أو الصفحات المعاد تحميلها (يدوياً)">
 <!ENTITY noscriptConfirmUnblock "اطلب التصديق قبل فك اعتراض عنصر بشكل مؤقت">
-<!ENTITY noscriptStatusLabel "وصف شريط الوضع">
-<!ENTITY noscriptForbidBookmarklets "منع الصفيحات المفضلة">
+<!ENTITY noscriptStatusLabel "وصف شريط الحالة">
+<!ENTITY noscriptForbidBookmarklets "منع الصفيحات المفضّلة">
 <!ENTITY noscriptShowPlaceholder "إظهار رمز حافظ المكان">
 <!ENTITY noscriptTruncateTitle "اقتضاب عناوين الملفات">
 <!ENTITY noscriptFixLinks "حاول تصحيح وصلات سكربتات جافا">
 <!ENTITY noscriptAllowBookmarks "السماح للمواقع المفتوحة من خلال المفضلة">
 <!ENTITY noscriptAllowViaBookmarks "السماح للمواقع المفتوحة من خلال المفضلة">
 <!ENTITY noscriptAllowPing "السماح ل &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "السماح لوصلات محلية">
+<!ENTITY noscriptAllowLocalLinks "السماح للوصلات المحلية">
 <!ENTITY noscriptForbidPing "منع &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "منع التوجيه المتغير من نوع مِتا داخل عناصر&lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh "منع التوجيه المتغير من نوع ميتا داخل عناصر &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "ت">
 <!ENTITY noscriptWhitelist "القائمة البيضاء">
 <!ENTITY noscriptPermissions "رخص">
 <!ENTITY noscriptRefresh "إنعاش">
 <!ENTITY noscriptNotifications "إشعارات">
-<!ENTITY noscriptToolbarToggle "النقر اليساري على مفتاح شريط نوسكربت يفعل الرخص لمواقع  المستوى العُلُوي">
+<!ENTITY noscriptToolbarToggle "النقر اليساري على مفتاح شريط نوسكربت يفعّل الرخص لمواقع  المستوى العُلُوي">
 <!ENTITY noscriptTrusted "موثوق">
 <!ENTITY noscriptUntrusted "غير موثوق">
 <!ENTITY noscriptUnknown "غير معروف">
@@ -109,10 +109,12 @@
 <!ENTITY noscriptForbidJarDocuments "منع ملفات جار النائية من التحميل كمستندات">
 <!ENTITY noscriptJarExceptions "استثنآت اعتراض مستندات جار">
 <!ENTITY noscriptJarExceptions.description "لن يتم اعتراض مستندات جار مطابقة لهذه العبارات">
-<!ENTITY noscriptRevokeTemp "الغاء التراخيص المؤقتة">
+<!ENTITY noscriptRevokeTemp "الغاء الرخص المؤقتة">
 <!ENTITY noscriptRevokeTemp.accesskey "م">
 <!ENTITY noscriptNoUntrustedPlaceholder "لا توجد حوافظ مكان لمواد قادمة من مواقع محددة كغير آمنة">
 <!ENTITY noscriptCollapseBlockedObjects "تداعٍ المواد المعترضة">
 <!ENTITY noscriptExceptions "استثناآت">
 <!ENTITY noscriptBlockedObjects "اشياء معترضة">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "اعترض كل شيئ آت من موقع محدد كغير موثوق">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "اعترض كل شيء آت من موقع محدّد كغير موثوق">
+<!ENTITY noscriptTempAllowPage "السماح المؤقت للصفحة الحالية">
+<!ENTITY noscriptTempAllowPage.accesskey "س">

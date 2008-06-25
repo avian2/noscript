@@ -196,6 +196,7 @@
        <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
        <checkbox id="opt-showBlockedObjects" label="&noscriptBlockedObjects;" />
        <checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
+       <checkbox id="opt-showTempAllowPage" label="&noscriptTempAllowPage;" />
      </groupbox>
     
   </vbox>

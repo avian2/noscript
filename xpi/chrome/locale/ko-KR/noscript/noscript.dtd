@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "예외...">
 <!ENTITY noscriptBlockedObjects "차단된 개체들">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "신뢰할 수 없음으로 표시된 사이트의 모든 개체를 차단">
+<!ENTITY noscriptTempAllowPage "일시적으로 허용">
+<!ENTITY noscriptTempAllowPage.accesskey "P">

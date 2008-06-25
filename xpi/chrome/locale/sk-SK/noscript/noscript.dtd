@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Výnimky...">
 <!ENTITY noscriptBlockedObjects "Blokované objekty">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokovať všetky objekty prichádzajúce zo stránky označenej ako nedôveryhodná">
+<!ENTITY noscriptTempAllowPage "Dočasne povoliť celú túto stránku">
+<!ENTITY noscriptTempAllowPage.accesskey "D">

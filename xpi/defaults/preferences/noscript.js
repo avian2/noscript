@@ -20,6 +20,7 @@ pref("noscript.showBaseDomain", true);
 pref("noscript.showGlobal", true);
 pref("noscript.showRevokeTemp", true);
 pref("noscript.showBlockedObjects", true);
+pref("noscript.showTempAllowPage", true);
 pref("noscript.mandatory", "chrome: about: resource:");
 pref("noscript.default", "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com recaptcha.net");
 pref("noscript.forbidJava", true);
@@ -31,7 +32,7 @@ pref("noscript.forbidIFrames", false);
 pref("noscript.forbidIFramesContext", 1);
 pref("noscript.forbidIFramesParentTrustCheck", true);
 
-pref("noscript.forbidData", false);
+pref("noscript.forbidData", true);
 pref("noscript.sound.block", "chrome://noscript/skin/block.wav");
 pref("noscript.allowClipboard", false);
 pref("noscript.allowLocalLinks", false);
@@ -146,4 +147,4 @@ pref("noscript.silverlightPatch", true);
 
 pref("noscript.allowURLBarJS", true);
 
-pref("security.chrome_access.noscript", true);
+pref("noscript.docShellJSBlocking", true);

@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Izjeme...">
 <!ENTITY noscriptBlockedObjects "Blokirani predmeti">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokiraj vsak predmet, ki prihaja z zaupanja nevrednih strani">
+<!ENTITY noscriptTempAllowPage "Začasno omogoči vse na tej strani">
+<!ENTITY noscriptTempAllowPage.accesskey "S">

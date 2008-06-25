@@ -749,11 +749,12 @@ PolicySites.prototype = {
         }
         if (!keepDown) {
           for (match in sm) { // remove descendants
-            if ((site == this.matches(match)) && site != match) {
-              delete sm[match];
+            if ((site == this.matches(match))) {
+              if (site != match) delete sm[match];
               change = true;
             }
           }
+          this._remove(site);
         }
       }
     
@@ -797,7 +798,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.6.9.3",
+  VERSION: "1.7",
   
   get wrappedJSObject() {
     return this;
@@ -929,6 +930,7 @@ NoscriptService.prototype = {
   forbidIFramesContext: 1, // 0 = all iframes, 1 = different site, 2 = different domain, 3 = different base domain
   
   alwaysBlockUntrustedContent: true,
+  docShellJSBlocking: true,
   
   forbidXBL: 4,
   forbidXHR: 2,
@@ -1030,6 +1032,7 @@ NoscriptService.prototype = {
       case "safeToplevel":
       case "autoAllow":
       case "contentBlocker":
+      case "docShellJSBlocking":
       case "showUntrustedPlaceholder":
       case "collapseObject":
       case "truncateTitle":
@@ -1318,6 +1321,7 @@ NoscriptService.prototype = {
       "blockCrossIntranet",
       "blockNSWB",
       "consoleDump", "consoleLog", "contentBlocker",
+      "docShellJSBlocking",
       "filterXPost", "filterXGet", 
       "filterXGetRx", "filterXGetUserRx", 
       "filterXExceptions",
@@ -1474,7 +1478,7 @@ NoscriptService.prototype = {
     return !!this.untrustedSites.matches(s);
   },
   setUntrusted: function(s, b) {
-    var change = b ? this.untrustedSites.add(s) : this.untrustedSites.remove(s, true);
+    var change = b ? this.untrustedSites.add(s) : this.untrustedSites.remove(s, false, true);
     if (change) {
       this.persistUntrusted();
     }
@@ -1504,24 +1508,24 @@ NoscriptService.prototype = {
   }
 ,
   jsPolicySites: new PolicySites(),
-  isJSEnabled: function(site) {
-    return (!!this.jsPolicySites.matches(site));
+  isJSEnabled: function(s) {
+    return this.globalJS
+      ? !(this.alwaysBlockUntrustedContent && this.untrustedSites.matches(s))
+      : this.jsPolicySites.matches(s) && !this.untrustedSites.matches(s);
   },
-  setJSEnabled: function(site, is, fromScratch) {
+  setJSEnabled: function(site, is, fromScratch, manually) {
     const ps = this.jsPolicySites;
     if (fromScratch) ps.sitesString = this.permanentSites.sitesString;
     if (is) {
       ps.add(site);
       if (!fromScratch) {
-        this.setUntrusted(site, false);
+        this.untrustedSites.remove(site, false, !manually); // if user choose to manually allow we cannot keep descendant blacklisted
         this.setManual(site, false);
       }
     } else {
       ps.remove(site, false, true);
-      if (this.getPref("forbidImpliesUntrust", false)) {
-        this.setUntrusted(site, true);
-      }
-      if (this.autoAllow) {
+      if (this.forbidImpliesUntrust) {
+        this._lastSnapshot.add(site);
         this.setUntrusted(site, true);
       } else {
         this.setManual(site, true);
@@ -1529,7 +1533,12 @@ NoscriptService.prototype = {
     }
     this.flushCAPS();
     return is;
+  },
+  
+  get forbidImpliesUntrust() {
+    return this.globalJS || this.autoAllow || this.getPref("forbidImpliesUntrust", false);
   }
+  
 ,
   checkShorthands: function(site, map) {
     if (this.whitelistRegExp && this.whitelistRegExp.test(site)) {
@@ -1720,9 +1729,10 @@ NoscriptService.prototype = {
     
     this.initContentPolicy();
     
-    if (!snapshot || 
+    if (!snapshot ||
         global == lastGlobal && lastObjects == this.objectWhitelist && 
-        ps.equals(snapshot)) 
+        ps.equals(snapshot)
+        ) 
       return false;
    
     
@@ -1747,8 +1757,8 @@ NoscriptService.prototype = {
     for (var browser, j; browser = bi.next();) {
       docSites = this.getSites(browser);
       for (j = docSites.length; j-- > 0;) {
-        prevStatus = lastGlobal || !!snapshot.matches(docSites[j]);
-        currStatus = global || !!(ps.matches(docSites[j]) || this.checkShorthands(docSites[j]));
+        prevStatus = lastGlobal && !this.alwaysBlockUntrustedContent || !!snapshot.matches(docSites[j]);
+        currStatus = this.isJSEnabled(docSites[j]) || this.checkShorthands(docSites[j]);
         if (currStatus != prevStatus) {
           ret = true;
           if (currStatus) 
@@ -1839,7 +1849,11 @@ NoscriptService.prototype = {
     // remove temporary PUNCTUALLY: 
     // keeps ancestors because the may be added as permanent after the temporary allow;
     // keeps descendants because they may already have been permanent before the temporary, and then shadowed
-    this.jsPolicySites.remove(this.tempSites.sitesList, true, true); 
+    this.jsPolicySites.remove(this.tempSites.sitesList, true, true);
+    // if in blacklist mode, put back temporarily allowed in blacklist
+    if (this.globalJS && this.alwaysBlockUntrustedContent)
+      this.untrustedSites.add(this.tempSites.sitesList);
+
     this.setJSEnabled(this.permanentSites.sitesList, true); // add permanent & save
     this.setPref("temp", ""); // flush temporary list
     this.resetAllowedObjects();
@@ -2039,7 +2053,7 @@ NoscriptService.prototype = {
   shouldLoad: CP_NOP,
   shouldProcess: CP_NOP,
   initContentPolicy: function() {
-    var delegate = this.disabled || this.getPref("global", false) 
+    var delegate = this.disabled || (this.globalJS && !this.alwaysBlockUntrustedContent)   
       ? this.noopContentPolicy
       : this.mainContentPolicy;
     this.shouldLoad = delegate.shouldLoad;
@@ -2892,7 +2906,7 @@ NoscriptService.prototype = {
       const scripts = document.getElementsByTagName("script");
       if (!scripts[0]) return 0;
       var follow = false;
-      const findURL = /(?:(?:\b(?:open|replace)\s*\(|(?:\b(?:href|location|src|path|pathname|search)|(?:[Pp]ath|UR[IL]|[uU]r[il]))\s*=)\s*['"]|['"](?=https?:\/\/\w|\w*[\.\/\?]))([\?\/\.a-z][^\s'"]*)/g;
+      const findURL = /(?:(?:\b(?:open|replace)\s*\(|(?:\b(?:href|location|src|path|pathname|search)|(?:[Pp]ath|UR[IL]|[uU]r[il]))\s*=)\s*['"]|['"](?=https?:\/\/\w|\w*[\.\/\?]))([\?\/\.\w\-%\&][^\s'"]*)/g;
       findURL.lastIndex = 0;
       var code, m, url, a;
       var container = null;
@@ -3126,6 +3140,7 @@ NoscriptService.prototype = {
       var snapshot = this.jsPolicySites.sitesString;
       var async = /^\s*data:/i.test(url) || Components.utils && typeof(/ /) == "object"; // async evaluation, after bug 351633 landing
       try {
+        browser.webNavigation.allowJavascript = true;
         this.setTemp(site, true);
         this.setJSEnabled(site, true);
         if (async) {
@@ -3152,6 +3167,7 @@ NoscriptService.prototype = {
   postExecuteJSURL: function(browser, site, snapshot) {
     this.flushCAPS(snapshot);
     this.setExpando(browser, "jsSite", site);
+    browser.webNavigation.allowJavascript = false;
   },
 
   mimeEssentials: function(mime) {
@@ -3733,19 +3749,21 @@ NoscriptService.prototype = {
     }
   },
   onBeforeLoad: function(req, domWindow) {
+    
+    if (!domWindow) return;
+    
     const uri = req.URI;
     const rw = this.requestWatchdog;
     
-    if (domWindow && domWindow.document && (uri.schemeIs("http") || uri.schemeIs("https"))) {
-       this.filterUTF7(req, domWindow); 
+    var docShell = null;
+    if (domWindow.document && (uri.schemeIs("http") || uri.schemeIs("https"))) {
+      this.filterUTF7(req, domWindow, docShell = this.domUtils.getDocShellFromWindow(domWindow)); 
     }
     
     if (this.checkJarDocument(uri, domWindow)) {
       req.cancel(NS_BINDING_ABORTED);
     }
-    
-    if (!domWindow) return;
-    
+ 
     const topWin = domWindow == domWindow.top;
 
     var browser = null;
@@ -3826,17 +3844,41 @@ NoscriptService.prototype = {
         if (xssInfo) overlay.notifyXSSOnLoad(xssInfo);
       }
     }
+    this._prepareJSEnv(uri.spec, domWindow, docShell);
+    
+    
+  },
+  
+  _prepareJSEnv: function(url, win, docShell) {
+    var site = this.getSite(url);
+    var jsEnabled = this.isJSEnabled(site);
+    if (!jsEnabled) {
+      if (this.docShellJSBlocking || this.isUntrusted(site)) {
+        docShell = docShell || this.domUtils.getDocShellFromWindow(win);
+        if (docShell && docShell.allowJavascript) {
+          win.addEventListener("pagehide", function(ev) {
+            var win = ev.currentTarget;
+            if (win != ev.originalTarget.defaultView)
+              return; // should never happen
+            docShell.allowJavascript = true;
+            win.removeEventListener(ev.type, arguments.callee, false);
+          }, false);
+          docShell.allowJavascript = false;
+        }
+      }
+      return;
+    }
     
     try {
-      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(uri.spec) && !domWindow._noscriptJsHack) {
+      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !win._noscriptJsHack) {
         try {
-          domWindow._nosriptJsHack = true;
-          domWindow.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {} void(0)");
+          win._noscriptJsHack = true;
+          win.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {} void(0)");
         } catch(jsHackEx) {}
       }
-    } catch(e) {
-    }
+    } catch(e) {}
   },
+  
   
   checkJarDocument: function(uri, context) {
     if (this.forbidJarDocuments && (uri instanceof CI.nsIJARURI) &&
@@ -3912,9 +3954,8 @@ NoscriptService.prototype = {
   },
   // end nsIWebProgressListener
   
-  filterUTF7: function(req, window) {
+  filterUTF7: function(req, window, ds) {
     try {
-      var ds = this.domUtils.getDocShellFromWindow(window);
       var as = CC["@mozilla.org/atom-service;1"].getService(CI.nsIAtomService);
       if(window.document.characterSet == "UTF-7" ||
         !req.contentCharset && (ds.documentCharsetInfo.parentCharset + "") == "UTF-7") {
@@ -4106,6 +4147,7 @@ RequestWatchdog.prototype = {
     var dummyPost = CC["@mozilla.org/io/string-input-stream;1"].createInstance();
     dummyPost.setData("", 0);
     this.__defineGetter__("dummyPost", function() { return dummyPost; });
+    return dummyPost;
   },
   
   QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
@@ -4632,7 +4674,7 @@ RequestWatchdog.prototype = {
   isBadException: function(host) {
     // TLD check for google search
     var m = host.match(/\bgoogle\.((?:[a-z]{1,3}\.)?[a-z]+)$/i);
-    return !m || this.ns.getPublicSuffix(host) == m[1];
+    return m && this.ns.getPublicSuffix(host) != m[1];
   },
   
   proxyHack: function(channel) {
@@ -4860,18 +4902,34 @@ function fuzzify(s) {
   return s.replace(/\w/g, '\\W*$&');
 }
 
+const IC_WINDOW_OPENER_PATTERN = fuzzify("alert|confirm|prompt|open|print");
+const IC_EVENT_PATTERN = fuzzify("on") + "(?:\\W*[a-z]){3,}";
+
 var InjectionChecker = {
   fuzzify: fuzzify,
   Entities: Entities,
   syntax: new SyntaxChecker(),
   _log: function(msg, t, i) {
-    if(!(i || t)) msg += " - " + Components.stack.caller
+    if (msg) msg = this._printable(msg);
+    if(!(i || t)) {
+      msg += " - LINES: ";
+      var lines = [];
+      for (var stack = Components.stack; (stack = stack.caller);) {
+        lines.push(stack.lineNumber);
+      }
+      msg += lines.join(", ");
+    }
     else {
       if (t) msg += " - TIME: " + (new Date().getTime() - t);
       if (i) msg += " - ITER: " + i;
     }
     this.dump("[NoScript InjectionChecker] " + msg + "\n");
   },
+  
+  _printable: function (msg) {
+    return msg.replace(/[^\u0020-\u007e]/g, function(s) { return "{" + s.charCodeAt(0).toString(16) + "}"; });
+  },
+  
   dump: dump,
   log: function() {},
   get logEnabled() { return this.log == this._log; },
@@ -4935,39 +4993,80 @@ var InjectionChecker = {
     }
     return s;
   },
-  
+
   _singleAssignmentRx: new RegExp('\\b(?:' +
     fuzzify('document|location|setter')
-    + ')\\b|/.*/[\\s\\S]*' + fuzzify('source')
+    + ')\\b|/.*/[\\s\\S]*' + fuzzify('source|') + // regular expression source extraction
+    IC_EVENT_PATTERN + "\\W*=[\\s\\S]*(?:" + IC_WINDOW_OPENER_PATTERN +
+    ")|=[\\s\\S]*(?:" + IC_WINDOW_OPENER_PATTERN + ")[\\s\\S]+" + IC_EVENT_PATTERN + "\\W*="
+                    // event-based DOS
   ),
   _maybeJSRx: new RegExp(
     '(?:[\\w$\\u0080-\\uFFFF\\]][\\s\\S]*[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
-    fuzzify('eval|open|alert|confirm|prompt|set(?:Timeout|Interval)|[fF]unction') + 
+    fuzzify('eval|set(?:Timeout|Interval)|[fF]unction|') + IC_WINDOW_OPENER_PATTERN +
     ')\\b[\\s\\S]*\\(|\\b(?:' +
     fuzzify('setter|location') +
     ')\\b[\\s\\S]*=)'
   ),
   maybeJS: function(expr) {
-    if(/^(?:[^\(\)="']+=[^\(\)='"]+|[\?a-z_0-9;,&=\/]+)$/i.test(expr) && // commonest case, single assignment or simple assignments, no break
-      !this._singleAssignmentRx.test(expr)) return false;
-    return this._maybeJSRx.test(expr); 
+    if(/^(?:[^\(\)="']+=[^\(\)='"]+|[\?a-z_0-9;,&=\/]+)$/i.test(expr)) // commonest case, single assignment or simple assignments, no break
+      return this._singleAssignmentRx.test(expr);
+    return this._singleAssignmentRx.test(expr) || this._maybeJSRx.test(expr); 
   },
   checkLastFunction: function() {
     var expr = this.syntax.lastFunction;
     expr = expr && this.syntax.lastFunction.toSource().match(/\{([\s\S]*)\}/);
     return expr && (expr = expr[1]) && 
-      /=[\s\S]*cookie|\b(?:setter|document|location|\.\W*src)[\s\S]*=|[\[\(]/.test(expr) &&
-      this.maybeJS(expr);
+      (/=[\s\S]*cookie|\b(?:setter|document|location|\.\W*src)[\s\S]*=|[\[\(]/.test(expr) ||
+      this.maybeJS(expr)
+      );
+  },
+  
+  _createInvalidRanges: function() {
+    function x(n) { return '\\x' + n.toString(16); }
+    
+    var ret = "";
+    var first = -1;
+    var last = -1;
+    var cur = 0x7e;
+    while(cur++ <= 0xff) {
+      try {
+        eval("var _" + String.fromCharCode(cur) + "_=1");
+      } catch(e) {
+        if (!/illegal char/.test(e.message)) continue;
+        if (first == -1) {
+          first = last = cur;
+          ret += x(cur);
+          continue;
+        }
+        if (cur - last == 1) {
+          last = cur;
+          continue;
+        }
+  
+        if(last != first) ret += "-" + x(last);
+        ret+= x(cur);
+        last = first = cur;
+      }
+    }
+    return ret;
+  },
+  get invalidChars() {
+    var rx = new RegExp("^[^\"'/]*[" + this._createInvalidRanges() + "][^\"'/]*$");
+    this.__defineGetter__("invalidChars", function() { return rx; })
+    return rx;
   },
   checkJSBreak: function(s) {
     // Direct script injection breaking JS string literals or comments
     
     s = this.reduceJSON(s.replace(/\%\d+[a-z\(]\w*/gi, '`')); // cleanup most urlencoded noise and reduce JSON
-    
     if (!this.maybeJS(s)) return false;
     
+    const invalidChars = this.invalidChars;
     const findInjection = 
-      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
+      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|\W*o\W*n(?:\W*\w){3,}|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
+    
+    
     
     findInjection.lastIndex = 0;
     var m, breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
@@ -4992,6 +5091,7 @@ var InjectionChecker = {
       
       // quickly skip innocuous CGI patterns
       if ((m = subj.match(/^(?:(?:[\?\w \-\/&:]+=[\w \-\/:\+%]+(?:&|$)){2,}|\w+:\/\/\w[\w\-\.]*)/))) {
+        this.log("Skipping CGI pattern in " + subj);
         findInjection.lastIndex += m[0].length - 1;
         continue;
       }
@@ -5034,6 +5134,11 @@ var InjectionChecker = {
           continue;
         }
         lastExpr = expr;
+        
+        if(invalidChars.test(expr)) {
+          this.log("Quick skipping invalid chars");
+          continue;
+        }
         
         if(quote) {
           script = this.syntax.unquote(quote + expr, quote);
@@ -5095,7 +5200,7 @@ var InjectionChecker = {
   
   checkJSStunt: function(s) {
 
-   
+    /*   
     // check noisy comments first
     if (
       // /(?:\/\*[\s\S]*\*\/|[^:]\/\/.*[\r\n])/ // C-style comments are often found in rds.yahoo.com
@@ -5103,18 +5208,19 @@ var InjectionChecker = {
       this.log("JS comments in " + s);
       return true; 
     }
-
+    */
+    
     // simplest navigation act (no dots, no round/square brackets)
-    if (/\bl\W*o\W*c\W*a\W*t\W*i\W*o\W*n\W*(?:\/\*[\s\S]*|\s*)=\W*(?:\/\*[\s\S]*|\s*)n\W*a\W*m\W*e(?:\W+|$)/.test(s)) { 
+    if (/\bl\W*o\W*c\W*a\W*t\W*i\W*o\W*n\W*(?:\/[\/\*][\s\S]*|\s*)=\W*(?:\/[\/\*][\s\S]*|\s*)n\W*a\W*m\W*e(?:\W+|$)/.test(s)) { 
       this.log("location = name navigation attempt in " +s);
       return true;
     }
-    if (/[\w\$\u0080-\uFFFF\]](?:[\s\)]+|[\s\S]*\/\*[\s\S]*)s\W*e\W*t\W*t\W*e\W*r\W*(?:\/\*[\s\S]*)?=/.test(s)) {
+    if (/[\w\$\u0080-\uFFFF\]](?:[\s\)]+|[\s\S]*\/[\/\*][\s\S]*)s\W*e\W*t\W*t\W*e\W*r\W*(?:\/[\/\*][\s\S]*)?=/.test(s)) {
       this.log("setter override attempt in " +s);
       return true;
     }
     // check well known and semi-obfuscated -- as in [...]() -- function calls
-    var m = s.match(/\b(?:open|eval|Script|set(?:Timeout|Interval)|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/\*[\s\S]*?)?\([\s\S]*\)/);
+    var m = s.match(/\b(?:open|eval|Script|set(?:Timeout|Interval)|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/[\/\*][\s\S]*?)?\([\s\S]*\)/);
     if (m) {
       var pos;
       var js = m[0];
@@ -5132,7 +5238,7 @@ var InjectionChecker = {
   },
   
   checkJS: function(s, opts) {
-    
+    this.log(s);
     // recursive escaping options
     if (!opts) opts = { uni: true, ent: true };
     
@@ -5145,7 +5251,7 @@ var InjectionChecker = {
     // the hardcore job!
     if (this.checkAttributes(s)) return true;
     if (/[\\=\(]/.test(s) && // quick preliminary screen
-        this.checkJSStunt(s) || this.checkJSBreak(s))
+        (this.checkJSStunt(s) || this.checkJSBreak(s)))
       return true;
     
     
@@ -5191,16 +5297,16 @@ var InjectionChecker = {
       ("import\\W*(?:\\/\\*[\\s\\S]*)*(?:[\"']|url[\\s\\S]*\\()" + 
         "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
         .replace(/[a-rt-z\-]/g, "\\W*$&"), 
-      "gi"),
+      "i"),
   checkAttributes: function(s) {
     return this.attributesChecker.test(s) ||
         /\\/.test(s) && this.attributesChecker.test(this.unescapeCSS(s));
   },
   
-  HTMLChecker: new RegExp("<\\W*/?(?:" + 
+  HTMLChecker: new RegExp("<\\W*(?:" + 
    fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video") + 
     ")|[/'\"\\s\\x08]\\W*(?:FSCommand|on[a-z]{3,}[\\s\\x08]*=)", 
-    "gi"),
+    "i"),
   checkHTML: function(s) {
     this.log(s);
     return this.HTMLChecker.test(s);
@@ -5526,7 +5632,8 @@ XSanitizer.prototype = {
     "ig"
   ),
   _brutalReplRx: new RegExp(
-    '(?:' + fuzzify('setter|location|cookie|name|document') + ')',
+    '(?:' + fuzzify('setter|location|cookie|name|document|') +
+    IC_WINDOW_OPENER_PATTERN + '|' + IC_EVENT_PATTERN + ')',
     "g"
   )
   

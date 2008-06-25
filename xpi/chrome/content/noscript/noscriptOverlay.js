@@ -124,6 +124,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var j, k, node;
     
     const global = ns.jsEnabled;
+    const blockUntrusted = global && ns.alwaysBlockUntrustedContent;
     
     var allSeps = popup.getElementsByTagName("menuseparator");
    
@@ -155,11 +156,12 @@ var noscriptOverlay = noscriptUtil.service ?
     
     node = miGlobal.nextSibling;
     const mainMenu = node.parentNode;
-
-    if (!/\bnoscript-revoke-temp\b/.test(node.className)) {
-      node = mainMenu.insertBefore(document.getElementById("noscript-revoke-temp-mi").cloneNode(true), node);
-      node.id = "";
+    
+    var tempMenuItem = document.getElementById("noscript-revoke-temp-mi");
+    if (node != tempMenuItem) {
+      node = mainMenu.insertBefore(tempMenuItem, node);
     }
+    
     if ((ns.tempSites.sitesString || ns.objectWhitelistLen) && ns.getPref("showRevokeTemp", true)) {
       node.hidden = seps.global.hidden = false;
       node.setAttribute("tooltiptext",
@@ -177,8 +179,14 @@ var noscriptOverlay = noscriptUtil.service ?
       node.hidden = true;
     }
     node = node.nextSibling;
-   
-
+    
+    tempMenuItem = document.getElementById("noscript-temp-allow-page-mi");
+    if (node != tempMenuItem) {
+      mainMenu.insertBefore(tempMenuItem, node)
+    } else {
+      node = node.nextSibling;
+    }
+    
     var xssMenu = document.getElementById("noscript-xss-menu");
     
     if (xssMenu && node != xssMenu) {
@@ -252,22 +260,30 @@ var noscriptOverlay = noscriptUtil.service ?
     const showUntrusted = ns.getPref("showUntrusted", true);
     const showDistrust = ns.getPref("showDistrust", true);
     const showNothing = !(showAddress || showDomain || showBase || showUntrust);
-    
+    const forbidImpliesUntrust = ns.forbidImpliesUntrust;
     
     const showPermanent = ns.getPref("showPermanent", true);
     const showTemp = !locked && ns.getPref("showTemp", true);
     
     var parent, extraNode;
-    var untrustedCount = 0;
+    var untrustedCount = 0, unknownCount = 0;
+    const untrustedSites = ns.untrustedSites;
+    
     
     for (j = sites.length; j-->0;) {
       site = sites[j];
       
       matchingSite = jsPSs.matches(site);
+      untrusted = untrustedSites.matches(site);
+      if (untrusted) {
+        matchingSite = null;
+      } else if (blockUntrusted && !matchingSite) {
+        matchingSite = site;
+      }
       enabled = !!matchingSite;
       isTop = site == sites.topURL;
       
-      if (enabled) {
+      if (enabled && !global) {
         if (domainDupChecker.check(matchingSite)) continue;
         menuSites = [matchingSite];
       } else {
@@ -284,7 +300,7 @@ var noscriptOverlay = noscriptUtil.service ?
           if (baseLen == domain.length) {
             // IP or 2nd level domain
             if (!domainDupChecker.check(domain)) {
-              menuSites[menuSites.length] = domain;
+              menuSites.push(domain);
             }
           } else {
             dp = domain;
@@ -295,12 +311,13 @@ var noscriptOverlay = noscriptUtil.service ?
                 if (!showDomain) continue;
               }
               if (!domainDupChecker.check(dp)) {
-                menuSites[menuSites.length] = dp;
+                menuSites.push(dp);
               }
               if (baseLen == dp.length) break;
             }
           }
         }
+        
       }
       
       if (seps.stop.previousSibling.nodeName != "menuseparator") {
@@ -312,8 +329,11 @@ var noscriptOverlay = noscriptUtil.service ?
       for (scount = menuSites.length; scount-- > 0;) {
         menuSite = menuSites[scount];
         
-        if (untrusted = (!enabled) && ns.isUntrusted(menuSite)) 
+        untrusted = !enabled && (blockUntrusted || ns.isUntrusted(menuSite));
+        if (untrusted) 
           untrustedCount++;
+        else if (!enabled)
+          unknownCount++;
         
         parent = (untrusted && showUntrusted) ? untrustedMenu : mainMenu;
         if (!parent) continue;
@@ -358,14 +378,21 @@ var noscriptOverlay = noscriptUtil.service ?
         }
       }
       
+      if (untrustedMenu && untrustedMenu.firstChild) {
+        untrustedMenu.appendCmd(document.createElement("menuseparator"));
+      }
     }
     if (untrustedMenu && untrustedMenu.firstChild) {
-      untrustedMenu.appendCmd(document.createElement("menuseparator"));
       if (untrustedCount) 
         with(untrustedMenu.parentNode)
           setAttribute("label", getAttribute("label") +
             " (" + untrustedCount + ")"); // see above for cleanup
     }
+
+    
+    
+    tempMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", false));
+
     this.normalizeMenu(untrustedMenu, true);
     this.normalizeMenu(mainMenu, false);
     
@@ -454,6 +481,17 @@ var noscriptOverlay = noscriptUtil.service ?
     }
   },
   
+  allowPage: function(permanent) {
+    const ns = this.ns;
+    const sites = this.getSites();
+    const unknown = [];
+    for (var j = sites.length; j-- > 0;) {
+      if (!(ns.isJSEnabled(sites[j]) || ns.isUntrusted(sites[j])))
+        unknown.push(sites[j]);
+    }
+    if (unknown.length) this.safeAllow(unknown, true, !permanent);
+  },
+  
   allowObject: function(i) {
     if(this.menuPluginExtras && this.menuPluginExtras[i]) {
       var e = this.menuPluginExtras[i];
@@ -534,7 +572,7 @@ var noscriptOverlay = noscriptUtil.service ?
     ns.safeCapsOp(function() {
       if (site) {
         ns.setTemp(site, enabled && temp);
-        ns.setJSEnabled(site, enabled);
+        ns.setJSEnabled(site, enabled, false, true);
       } else {
         ns.jsEnabled = enabled;
       }
@@ -559,8 +597,8 @@ var noscriptOverlay = noscriptUtil.service ?
     return "noscript-" + (inactive ? "inactive-" : "") + lev;
   },
   updateStatusClass: function(node, className) {
-    if (!className) className = this.statusIcon.className.replace(/.*(\bnoscript-\S*(?:yes|no|glb|prt|yu)).*/, "$1");
-    node.className = (node.className.replace(/\bnoscript-\S*(?:yes|no|glb|prt|yu)\b/g, "") + " " + className).replace(/\s{2,}/g, " ");
+    if (!className) className = this.statusIcon.className.replace(/.*(\bnoscript-\S*(?:yes|no|glb|prt|yu|untrusted)).*/, "$1");
+    node.className = (node.className.replace(/\bnoscript-\S*(?:yes|no|glb|prt|yu|untrusted)\b/g, "") + " " + className).replace(/\s{2,}/g, " ");
   }
 ,
   _syncTimeout: null,
@@ -1017,7 +1055,8 @@ var noscriptOverlay = noscriptUtil.service ?
     var allowedSites = [];
     var allowed = 0;
     var untrusted = 0;
-    if (global) {
+    var isUntrusted = false;
+    if (global && !ns.alwaysBlockUntrustedContent) {
       lev = "glb";
     } else {
       var s = sites.length;
@@ -1025,7 +1064,8 @@ var noscriptOverlay = noscriptUtil.service ?
       var url, site;
       while (s-- > 0) {
         url = sites[s];
-        site = jsPSs.matches(url);
+        isUntrusted = untrustedSites.matches(url);
+        site = !isUntrusted && (global ? url : jsPSs.matches(url));
         if (site) {
           if (ns.isPermanent(site) || allowedSites.indexOf(site) > -1) {
             total--;
@@ -1034,18 +1074,21 @@ var noscriptOverlay = noscriptUtil.service ?
           }
         } else {
           if(!notificationNeeded && url != "about:blank") {
-            if(untrustedSites.matches(url)) untrusted++;
+            if(isUntrusted) untrusted++;
             else notificationNeeded = true;
           }
         }
       }
       allowed = allowedSites.length;
-      lev = (allowed == total && sites.length > 0) ? "yes" : allowed == 0 ? "no" 
+      lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
+            : allowed == 0 ? (global ? "untrusted" : "no") 
             : (untrusted > 0 && !notificationNeeded ? "yu" : "prt");
       notificationNeeded = notificationNeeded && totalAnnoyances > 0;
     }
     
-    var message = this.getString("allowed." + (lev == "yu" ? "prt" : lev));
+    var message = this.getString("allowed." +
+        (lev == "yu" ? "prt" : lev == "untrusted" ? "no" : lev));
+    
     var shortMessage = message.replace(/JavaScript/g, "JS");
     
     if (notificationNeeded && allowed) 

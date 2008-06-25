@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Erandid...">
 <!ENTITY noscriptBlockedObjects "Blokeeritud objektid">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokeeri kõik mitteusaldusväärsetelt saitidelt pärinevad objektid">
+<!ENTITY noscriptTempAllowPage "Luba ajutiselt kõik sellel lehel">
+<!ENTITY noscriptTempAllowPage.accesskey "a">

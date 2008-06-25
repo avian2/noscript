@@ -92,7 +92,7 @@
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "FAQ sobre XSS...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Recarga en modo seguro">
+<!ENTITY noscriptUnsafeReload "Recarga en modo inseguro">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Excepciones a la protección anti XSS">
 <!ENTITY noscriptXssExceptions.description "Los destinos que coincidan con estas expresiones regulares NO estarán protegidos frente a XSS">
@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Excepciones...">
 <!ENTITY noscriptBlockedObjects "Objetos bloqueados">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquear todos los objetos provenientes de sitios no fiables">
+<!ENTITY noscriptTempAllowPage "Permitir temporalmente toda la página">
+<!ENTITY noscriptTempAllowPage.accesskey "g">

@@ -1,5 +1,49 @@
 NoScript ChangeLog
 
+v 1.7
+=====================================================================
++ JS redirect detector sensibility enhancement (thanks timeless)
++ "Temporarily allow all this page" command made visible by default
+
+v 1.6.9.9
+=====================================================================
++ More consistent UI in blacklist mode
+x Fixed "Allow Scripts Gloabally" not working anymore
+
+v 1.6.9.8
+=====================================================================
+x Restored the noscript.forbidData preference to its orginal "true"
+  default value (thanks Sirdarckcat for reporting an issue in the
+  about:blank context prevented by this change)
+
+v 1.6.9.7
+=====================================================================
+x Fixed malfunctioning XUL error pages issue caused by the new
+  docShell-level JavaScript blocking
+x Fixed visualization issue on the toolbar in blacklist mode when all
+  scripts of a page are untrusted
+x Hide "Revoke temporary permissions" menu item in blacklist mode
+
+v 1.6.9.6
+=====================================================================
++ New "Temporarily allow all this page" command (hidden by default,
+  to be enabled in NoScript Options|Appearance)
++ noscript.docShellJSBlocking about:config preference controlling
+  the new additional docShell-level JavaScript permission enforcement
++ Separators in Untrusted menu
+
+v 1.6.9.5
+=====================================================================
++ Micro event-based DOS injections detection (thanks thornmaker)
++ (EXPERIMENTAL) More consistent blacklist behavior, blocking objects
+  even if  "Scripts globally allowed" is checked, unless
+  "Plugins|Block every object coming from an untrusted site" is off
+
+v 1.6.9.4
+=====================================================================
+x Base64 decoded invalid characters handling optimization
+x Regression fix: XSS exceptions not being honored (thanks hi_RAM)
+
 v 1.6.9.3
 =====================================================================
 x Fixed Injection Checker false positive regression on URIs which

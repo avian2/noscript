@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Εξαιρέσεις...">
 <!ENTITY noscriptBlockedObjects "Μπλοκαρισμένα αντικείμενα">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Μπλοκάρισμα κάθε αντικειμένου προερχόμενου από ιστότοπο σημειωμένο ως μη έμπιστο">
+<!ENTITY noscriptTempAllowPage "Να επιτρέπονται προς το παρόν για τη σελίδα">
+<!ENTITY noscriptTempAllowPage.accesskey "σ">

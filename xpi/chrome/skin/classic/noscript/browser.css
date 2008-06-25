@@ -86,7 +86,7 @@
 #noscript-tbb.noscript-glb,
 #noscript-statusIcon.noscript-glb,
 .noscript-inactive-glb,
- #noscript-tbb.noscript-inactive-glb,
+#noscript-tbb.noscript-inactive-glb,
 #noscript-statusIcon.noscript-inactive-glb {
   list-style-image: url(glb16.png);
 }
@@ -107,7 +107,12 @@
   list-style-image: url(inactive-no16.png);
 }
 .noscript-distrust,
-.noscript-untrusted {
+.noscript-untrusted,
+#noscript-tbb.noscript-untrusted,
+#noscript-tbb.noscript-inactive-untrusted,
+#noscript-statusIcon.noscript-untrusted
+#noscript-statusIcon.noscript-inactive-untrusted
+{
   list-style-image: url(untrusted16.png);
 }
 

@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Hariç tutulanlar...">
 <!ENTITY noscriptBlockedObjects "Engellenen Nesneler">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Güvensiz olarak işaretlenen sitelerden gelen tüm nesneleri engelle">
+<!ENTITY noscriptTempAllowPage "Tüm bu sayfalara geçici izin ver">
+<!ENTITY noscriptTempAllowPage.accesskey "G">

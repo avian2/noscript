@@ -10,7 +10,7 @@
 <!ENTITY noscriptForbid.accesskey "F">
 <!ENTITY noscriptTrust "Mark as Trusted">
 <!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust "Märk som ej betrodd">
 <!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "Ta bort markerade webbplatser">
 <!ENTITY noscriptGloballyEnabled "Skript är tillåtna globalt (farligt)">
@@ -69,7 +69,7 @@
 <!ENTITY noscriptNotifications "Notifications">
 <!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
 <!ENTITY noscriptTrusted "Trusted">
-<!ENTITY noscriptUntrusted "Untrusted">
+<!ENTITY noscriptUntrusted "Ej betrodd">
 <!ENTITY noscriptUnknown "Unknwon">
 <!ENTITY noscriptAdd "Add">
 <!ENTITY noscriptAdd.accesskey "A">
@@ -108,3 +108,12 @@
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
 <!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptRevokeTemp "Återkalla temporära tillstånd">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "Ingen placeholder för objekt från ej betrodda platser">
+<!ENTITY noscriptCollapseBlockedObjects "Minimiera blokcerade objekt">
+<!ENTITY noscriptExceptions "Undantag...">
+<!ENTITY noscriptBlockedObjects "Blockerade objekt">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blockera alla objekt från ej betrodda platser">
+<!ENTITY noscriptTempAllowPage "Tillåt denna sida tillfälligt">
+<!ENTITY noscriptTempAllowPage.accesskey "P">

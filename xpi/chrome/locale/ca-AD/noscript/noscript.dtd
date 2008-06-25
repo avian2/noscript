@@ -109,3 +109,12 @@ Temporarily allow top-level sites by default">
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
 <!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptRevokeTemp "Revocar els permisos temporals">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "No marcador de posició d&apos;objectes procedents de llocs marcats com a no confiables">
+<!ENTITY noscriptCollapseBlockedObjects "Tancar els objectes bloquejats">
+<!ENTITY noscriptExceptions "Excepcions...">
+<!ENTITY noscriptBlockedObjects "Objectes Bloquejats">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquejar tots els objectes procedents de llocs marcats com a no confiables">
+<!ENTITY noscriptTempAllowPage "Temporalment permet tota aquesta pàgina">
+<!ENTITY noscriptTempAllowPage.accesskey "P">
