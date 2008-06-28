@@ -25,6 +25,7 @@ const CI = Components.interfaces;
 const CC = Components.classes;
 const STATE_START = CI.nsIWebProgressListener.STATE_START;
 const STATE_DOC = CI.nsIWebProgressListener.STATE_IS_DOCUMENT;
+const STATE_START_DOC = STATE_START | STATE_DOC
 const NS_BINDING_ABORTED = 0x804B0002;
 const CP_OK = 1;
 const CP_NOP = function() { return CP_OK };
@@ -36,6 +37,7 @@ const LOG_CHROME_WIN = 8;
 const LOG_XSS_FILTER = 16;
 const LOG_INJECTION_CHECK = 32;
 const LOG_DOMUTILS = 64;
+const LOG_JS = 128;
 const LOG_LEAKS = 1024;
 const LOG_SNIFF = 2048;
 
@@ -329,14 +331,14 @@ const SiteUtils = new function() {
   
   this.list2set = function(sl) {
     // kill duplicates
-    var prevSite="";
+    var prevSite = "";
     var site;
-    for (var j = sl.length; j-->0;) {
-      site=sl[j];
+    for (var j = sl.length; j--> 0;) {
+      site = sl[j];
       if ((!site) || site == prevSite) { 
         sl.splice(j, 1);
       } else {
-        prevSite=site;
+        prevSite = site;
       }
     }
     return sl;
@@ -738,6 +740,7 @@ PolicySites.prototype = {
     const sm = this.sitesMap;
     var change = false;
     var site, match;
+    var tmp= keepDown ? null : new PolicySites();
     for (var j = sites.length; j-- > 0;) {
       site = sites[j];
       if (site[site.length-1] != ":") { // not a scheme only site
@@ -748,8 +751,9 @@ PolicySites.prototype = {
           }
         }
         if (!keepDown) {
+          tmp.sitesString = site;
           for (match in sm) { // remove descendants
-            if ((site == this.matches(match))) {
+            if (tmp.matches(match)) {
               if (site != match) delete sm[match];
               change = true;
             }
@@ -798,7 +802,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.7.1",
+  VERSION: "1.7.4",
   
   get wrappedJSObject() {
     return this;
@@ -930,7 +934,7 @@ NoscriptService.prototype = {
   forbidIFramesContext: 1, // 0 = all iframes, 1 = different site, 2 = different domain, 3 = different base domain
   
   alwaysBlockUntrustedContent: true,
-  docShellJSBlocking: true,
+  docShellJSBlocking: 1, // 0 - don't touch docShells, 1 - block untrusted, 2 - block not whitelisted
   
   forbidXBL: 4,
   forbidXHR: 2,
@@ -954,6 +958,7 @@ NoscriptService.prototype = {
   
   whitelistRegExp: null,
   allowedMimeRegExp: null, 
+  hideOnUnloadRegExp: null,
   
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
@@ -1025,7 +1030,7 @@ NoscriptService.prototype = {
             || this.forbidSilverlight || this.forbidPlugins || this.forbidIFrames;
       break;
       
-      case "alwaysBlockUntrustedContent":
+      
       case "filterXPost":
       case "filterXGet":
       case "blockXIntranet":
@@ -1062,6 +1067,11 @@ NoscriptService.prototype = {
         this.globalJS = this.getPref(name, false);
       break;
       
+      case "alwaysBlockUntrustedContent":
+        this[name] = this.getPref(name, this[name]);
+        this.initContentPolicy();
+      break;
+      
       case "forbidMetaRefreshRemember":
         if (!this.getPref(name)) this.metaRefreshWhitelist = {};
       break;
@@ -1080,6 +1090,8 @@ NoscriptService.prototype = {
       break;
       
       // multiple rx autoanchored
+      case "hideOnUnloadRegExp":
+        this.updateStyleSheet("." + this.hideObjClassName + " {display: none !important}", true);
       case "allowedMimeRegExp":
       case "whitelistRegExp":
         this.updateRxPref(name, "", "^", this.rxParsers.multi);
@@ -1195,10 +1207,10 @@ NoscriptService.prototype = {
         sheet = "noscript, noscript * { background-image: none !important; list-style-image: none !important }";
         break;
       case "showPlaceholder": 
-        sheet = 'a.__noscriptPlaceholder__ > div:first-child { display: block !important; -moz-outline-color: #fc0 !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; -moz-outline-offset: -1px !important; cursor: pointer !important; background: #ffffe0 url("' + 
+        sheet = '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: block !important; -moz-outline-color: #fc0 !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; -moz-outline-offset: -1px !important; cursor: pointer !important; background: #ffffe0 url("' + 
                     this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; margin-top: 0px !important; margin-bottom: 0px !important;} ' +
-                'a.__noscriptPlaceholder__ > div:first-child > div:first-child { display: block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
-                'noscript a.__noscriptPlaceholder__ { display: inline !important; }';
+                '.__noscriptPlaceholder__1 > .__noscriptPlaceholder__2 { display: block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
+                'noscript .__noscriptPlaceholder__ { display: inline !important; }';
         break;
         
       default:
@@ -1253,6 +1265,12 @@ NoscriptService.prototype = {
   // random resource aliases
   contentBase: null,
   skinBase: null,
+  hideObjClassName: "__noscriptHideObj__",
+  get hideObjClassNameRx() {
+    var rx = new RegExp("\\b" + this.hideObjClassName + "\\s*", "g");
+    this.__defineGetter__("hideObjClassNameRx", function() { return rx; });
+    return rx;
+  },
   pluginPlaceholder: "",
   
   _initResources: function() {
@@ -1281,6 +1299,7 @@ NoscriptService.prototype = {
     this._initResources();
 
     this.initTldService();
+    
     this.xcache = new XCache();
     
     const osvr = CC['@mozilla.org/observer-service;1'].getService(CI.nsIObserverService);
@@ -1317,7 +1336,7 @@ NoscriptService.prototype = {
     for each(var p in [
       "autoAllow",
       "allowClipboard", "allowLocalLinks",
-      "allowedMimeRegExp",
+      "allowedMimeRegExp", "hideOnUnloadRegExp",
       "blockCrossIntranet",
       "blockNSWB",
       "consoleDump", "consoleLog", "contentBlocker",
@@ -1348,6 +1367,7 @@ NoscriptService.prototype = {
         dump("[NoScript init error] " + e + " setting " + p + "\n");
       }
     }
+    
     
     
     this.setupJSCaps();
@@ -1520,7 +1540,9 @@ NoscriptService.prototype = {
     if (is) {
       ps.add(site);
       if (!fromScratch) {
-        this.untrustedSites.remove(site, false, !manually); // if user choose to manually allow we cannot keep descendant blacklisted
+        if (this.untrustedSites.remove(site, false, !manually)) // if user choose to manually allow we cannot keep descendant blacklisted
+          this.persistUntrusted();
+        
         this.setManual(site, false);
       }
     } else {
@@ -1852,8 +1874,10 @@ NoscriptService.prototype = {
     // keeps descendants because they may already have been permanent before the temporary, and then shadowed
     this.jsPolicySites.remove(this.tempSites.sitesList, true, true);
     // if in blacklist mode, put back temporarily allowed in blacklist
-    if (this.globalJS && this.alwaysBlockUntrustedContent)
-      this.untrustedSites.add(this.tempSites.sitesList);
+    if (this.globalJS && this.alwaysBlockUntrustedContent &&
+        this.untrustedSites.add(this.tempSites.sitesList)) {
+      this.persistUntrusted();
+    }
 
     this.setJSEnabled(this.permanentSites.sitesList, true); // add permanent & save
     this.setPref("temp", ""); // flush temporary list
@@ -2156,12 +2180,21 @@ NoscriptService.prototype = {
         break;
       case 9:
         // our take on https://bugzilla.mozilla.org/show_bug.cgi?id=387971
-        args[1].spec = this.contentBase + "noscript.xbl#nop";
+        args[1].spec = this.nopXBL;
         return CP_OK;
     }
     return this.rejectCode;
   },
-
+  
+  get nopXBL() {
+    var url = this.POLICY1_9
+      ? "chrome://global/content/bindings/general.xml#basecontrol"
+      : this.contentBase + "noscript.xbl#nop";
+    
+    this.__defineGetter__("nopXBL", function() { return url });
+    return url;
+  },
+  
   mainContentPolicy: {
     shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
       
@@ -2326,7 +2359,7 @@ NoscriptService.prototype = {
                       (aContext instanceof CI.nsIDOMWindow) 
                         ? aContext
                         : aContext.ownerDocument.defaultView
-                     ).isNewToplevel
+                    ).isNewToplevel
                   )
                  ) {
                    return this.reject("JavaScript/Data URL", arguments);
@@ -2533,10 +2566,6 @@ NoscriptService.prototype = {
     }
   },
   
-  checkCssScanner: function(doc, uri) {
-    
-  },
-  
   forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
     var originURL, locationURL;
     if (aContentLocation.schemeIs("chrome") || !aRequestOrigin || 
@@ -2672,17 +2701,22 @@ NoscriptService.prototype = {
   },
   
   forbiddenXBLContext: function(originURL, locationURL) {
+    if (locationURL == this.nopXBL) return false; // always allow our nop binding
+    
     var locationSite = this.getSite(locationURL);
     var originSite = this.getSite(originURL);
+   
     switch (this.forbidXBL) {
-      case 4: // allow only trusted XBL from the same site or chrome (default)
-        if (locationSite != originSite) return true;
+      case 4: // allow only XBL from the same trusted site or chrome (default)
+        if (locationSite != originSite) return true; // chrome is checked by the caller checkXML
       case 3: // allow only trusted XBL on trusted sites
         if (!locationSite) return true;
       case 2: // allow trusted and data: (Fx 3) XBL on trusted sites
-        if (!this.isJSEnabled(originSite)) return true;
+        if (!(this.isJSEnabled(originSite) ||
+              /^file:/.test(locationURL) // we trust local files to allow Linux theming
+             )) return true;
       case 1: // allow trusted and data: (Fx 3) XBL on any site
-        if (!(this.isJSEnabled(locationSite) || /^data:/.test(locationURL))) return true;
+        if (!(this.isJSEnabled(locationSite) || /^(?:data|file|resource):/.test(locationURL))) return true;
       case 0: // allow all XBL
         return false;
     }
@@ -3295,6 +3329,7 @@ NoscriptService.prototype = {
             }
             
             innerDiv = document.createElementNS(htmlNS, "div");
+            innerDiv.className = "__noscriptPlaceholder__1";
             
             with(anchor.style) {
               padding = margin = borderWidth = "0px";
@@ -3338,6 +3373,8 @@ NoscriptService.prototype = {
             
             // icon div
             innerDiv = innerDiv.appendChild(document.createElementNS(htmlNS, "div"));
+            innerDiv.className = "__noscriptPlaceholder__2";
+            
             if(collapse || style && parseInt(style.width) < 64 && parseInt(style.height) < 64) {
               innerDiv.style.backgroundPosition = "bottom right";
               iconSize = 16;
@@ -3585,7 +3622,7 @@ NoscriptService.prototype = {
        url = this.getSite(docURI = document.documentURI);
        if (url) {
          try {
-           if (document.domain && document.domain != this.getDomain(url, true) && url != "chrome:") {
+           if (document.domain && document.domain != this.getDomain(url, true) && url != "chrome:" && url != "about:blank") {
              sites.unshift(document.domain);
            }
          } catch(e) {}
@@ -3641,6 +3678,7 @@ NoscriptService.prototype = {
     
     sites.topURL = sites[0] || '';
     return this.sortedSiteSet(sites);
+    
   },
   
   findOverlay: function(browser) {
@@ -3714,13 +3752,20 @@ NoscriptService.prototype = {
       }
     }
     this.resetPolicyState();
-  }, 
+    
+    // handle docshell JS switching
+    if ((stateFlag & STATE_START_DOC) == STATE_START_DOC && req instanceof CI.nsIChannel)
+      this._handleDocJS1(wp.DOMWindow, req);
+  },
   onLocationChange: function(wp, req, location) {
     try {
-      if (req && (req instanceof CI.nsIChannel) && req.isPending()) {
-        const domWindow = this.requestWatchdog.findWindow(req); 
-        if (!domWindow) return;
-        this.onBeforeLoad(req, domWindow);
+      if (req && (req instanceof CI.nsIChannel)) {
+        this._handleDocJS2(wp.DOMWindow, req);
+
+        if (this.consoleDump & LOG_JS)
+          this.dump("Location Change - req.URI: " + req.URI.spec + ", window.location: " +
+                  (wp.DOMWindow && wp.DOMWindow.location.href) + ", location: " + location.spec);
+        this.onBeforeLoad(req, wp.DOMWindow, location);
       }
     } catch(e) {
       if (this.consoleDump) this.dump(e);
@@ -3744,19 +3789,20 @@ NoscriptService.prototype = {
       const domWindow = rw.findWindow(req);
       if(!domWindow || domWindow == domWindow.top) return;
       
-      this.onBeforeLoad(req, domWindow);
+      this.onBeforeLoad(req, domWindow, req.URI);
     } catch(e) {
       if (this.consoleDump) this.dump(e);
     }
   },
-  onBeforeLoad: function(req, domWindow) {
+  onBeforeLoad: function(req, domWindow, location) {
     
     if (!domWindow) return;
     
-    const uri = req.URI;
+    const uri = location;
     const rw = this.requestWatchdog;
     
     var docShell = null;
+    
     if (domWindow.document && (uri.schemeIs("http") || uri.schemeIs("https"))) {
       this.filterUTF7(req, domWindow, docShell = this.domUtils.getDocShellFromWindow(domWindow)); 
     }
@@ -3764,7 +3810,10 @@ NoscriptService.prototype = {
     if (this.checkJarDocument(uri, domWindow)) {
       req.cancel(NS_BINDING_ABORTED);
     }
- 
+  
+   
+    
+    
     const topWin = domWindow == domWindow.top;
 
     var browser = null;
@@ -3779,7 +3828,6 @@ NoscriptService.prototype = {
       browser = this.domUtils.findBrowserForNode(domWindow);
       overlay = this.findOverlay(browser);
       if (overlay) {
-        overlay.initContentWindow(domWindow);
         overlay.setMetaRefreshInfo(null, browser);
         xssInfo = rw.extractFromChannel(req, "noscript.XSS");
         if (xssInfo) xssInfo.browser = browser;
@@ -3787,6 +3835,7 @@ NoscriptService.prototype = {
       }
     }
     
+    this._handleDocJS3(uri.spec, domWindow, docShell);
    
     if (this.shouldLoad(7, uri, uri, domWindow, req.contentType, true) != CP_OK) {
       
@@ -3845,31 +3894,84 @@ NoscriptService.prototype = {
         if (xssInfo) overlay.notifyXSSOnLoad(xssInfo);
       }
     }
-    this._prepareJSEnv(uri.spec, domWindow, docShell);
-    
+
     
   },
   
-  _prepareJSEnv: function(url, win, docShell) {
-    var site = this.getSite(url);
-    var jsEnabled = this.isJSEnabled(site);
-    if (!jsEnabled) {
-      if (this.docShellJSBlocking || this.isUntrusted(site)) {
-        docShell = docShell || this.domUtils.getDocShellFromWindow(win);
-        if (docShell && docShell.allowJavascript) {
-          win.addEventListener("pagehide", function(ev) {
-            var win = ev.currentTarget;
-            if (win != ev.originalTarget.defaultView)
-              return; // should never happen
-            docShell.allowJavascript = true;
-            win.removeEventListener(ev.type, arguments.callee, false);
-          }, false);
-          docShell.allowJavascript = false;
+  
+  _handleDocJS1: function(win, req) {
+    if (win instanceof CI.nsIDOMChromeWindow) return;
+    try {
+      var url = req.originalURI.spec;
+      var jsEnabled;
+
+      const docShellJSBlocking = this.docShellJSBlocking;
+      
+      if (!docShellJSBlocking) return;
+      
+      var docShell = this.domUtils.getDocShellFromWindow(win);
+      
+      if (docShellJSBlocking & 2) { // block not whitelisted
+        jsEnabled = url && this.isJSEnabled(this.getSite(url)) || /^about:/.test(url);
+      } else if (docShellJSBlocking & 1) { // block untrusted only
+        jsEnabled = !this.isUntrusted(this.getSite(url));
+      } else return;
+      
+      const dump = this.consoleDump & LOG_JS;
+      const prevStatus = docShell.allowJavascript;
+      
+      // Trying to be kind with other docShell-level blocking apps (such as Tab Mix Plus), we
+      // check if we're the ones who actually blocked this docShell, or if this channel is out of our control
+      var prevBlocked = this.getExpando(win.document, "prevBlocked");
+      prevBlocked = prevBlocked ? prevBlocked.value : "?";
+
+      if (dump)
+        this.dump("DocShell JS Switch: " + url + " - " + jsEnabled + "/" + prevStatus + "/" + prevBlocked);
+      
+      if (jsEnabled && !prevStatus) {
+        
+        // be nice with other blockers
+        if (!prevBlocked) return;
+        
+        // purge body events
+        try {
+          var aa = win.document.body && win.document.body.attributes;
+          if (aa) for (var j = aa.length; j-- > 0;) {
+            if(/^on/i.test(aa[j].name)) aa[j].value = "";
+          }
+        } catch(e1) {
+          if (this.consoleDump & LOG_JS)
+            this.dump("Error purging body attributes: " + e2);
         }
       }
-      return;
+      
+      this.requestWatchdog.attachToChannel(req, "noscript.dsjsBlocked",
+                { value: // !jsEnabled && (prevBlocked || prevStatus)
+                        // we're the cause of the current disablement if
+                        // we're disabling and (was already blocked by us or was not blocked)
+                        !(jsEnabled || !(prevBlocked || prevStatus)) // De Morgan for the above, i.e.
+                        // we're the cause of the current disablement unless
+                        // we're enabling or (was already blocked by someone else = was not (blocked by us or enabled))
+                        // we prefer the latter because it coerces to boolean
+                });
+      
+      docShell.allowJavascript = jsEnabled;
+    } catch(e2) {
+      if (this.consoleDump & LOG_JS)
+        this.dump("Error switching DS JS: " + e2);
     }
-    
+  },
+  
+  _handleDocJS2: function(win, req) {
+    // called at the beginning of onLocationChange
+    this.setExpando(win.document,  "prevBlocked",
+        this.requestWatchdog.extractFromChannel(req, "noscript.dsjsBlocked")
+    );
+  },
+  
+  _handleDocJS3: function(url, win, docShell) {
+    // called at the end of onLocationChange
+    if (docShell && !docShell.allowJavascript) return;
     try {
       if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !win._noscriptJsHack) {
         try {
@@ -3880,6 +3982,10 @@ NoscriptService.prototype = {
     } catch(e) {}
   },
   
+  beforeManualAllow: function(win) {
+    // reset prevBlock info, to forcibly allow docShell JS
+    this.setExpando(win.document, "prevBlock", { value: "m" });
+  },
   
   checkJarDocument: function(uri, context) {
     if (this.forbidJarDocuments && (uri instanceof CI.nsIJARURI) &&
@@ -4904,7 +5010,7 @@ function fuzzify(s) {
 }
 
 const IC_WINDOW_OPENER_PATTERN = fuzzify("alert|confirm|prompt|open|print");
-const IC_EVENT_PATTERN = fuzzify("on") + "(?:\\W*[a-z]){3,}";
+const IC_EVENT_PATTERN = fuzzify("on(?:load|page|unload|ready|error|focus|blur|mouse)") + "(?:\\W*[a-z])*";
 
 var InjectionChecker = {
   fuzzify: fuzzify,
@@ -5306,7 +5412,7 @@ var InjectionChecker = {
   
   HTMLChecker: new RegExp("<\\W*(?:" + 
    fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video") + 
-    ")|[/'\"\\s\\x08]\\W*(?:FSCommand|on[a-z]{3,}[\\s\\x08]*=)", 
+    ")|[/'\"]\\W*(?:FSCommand|onerror|on[a-df-z]{3,}[\\s\\x08]*=)", 
     "i"),
   checkHTML: function(s) {
     this.log(s);

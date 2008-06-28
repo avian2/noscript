@@ -147,4 +147,6 @@ pref("noscript.silverlightPatch", true);
 
 pref("noscript.allowURLBarJS", true);
 
-pref("noscript.docShellJSBlocking", true);
+pref("noscript.docShellJSBlocking", 1);
+
+pref("noscript.hideOnUnloadRegExp", "video/.*");

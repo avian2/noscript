@@ -233,6 +233,13 @@ var noscriptOverlay = noscriptUtil.service ?
     mainMenu.appendCmd = function(n) { this.insertBefore(n, seps.stop); };
 
     const sites = this.getSites();
+    j = sites.indexOf(sites.topURL);
+    if (j > 0) {
+      sites.splice(j, 1);
+      sites.unshift(sites.topURL);
+    }
+    
+    
     try {
       this.populatePluginsMenu(mainMenu, pluginsMenu, sites.pluginExtras);
     } catch(e) {
@@ -268,6 +275,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var parent, extraNode;
     var untrustedCount = 0, unknownCount = 0;
     const untrustedSites = ns.untrustedSites;
+    var docJSBlocked = false;
     
     
     for (j = sites.length; j-->0;) {
@@ -280,8 +288,11 @@ var noscriptOverlay = noscriptUtil.service ?
       } else if (blockUntrusted && !matchingSite) {
         matchingSite = site;
       }
-      enabled = !!matchingSite;
+      
       isTop = site == sites.topURL;
+      enabled = !!matchingSite;
+      docJSBlocked = enabled && isTop && !gBrowser.selectedBrowser.webNavigation.allowJavascript;
+      if (docJSBlocked) enabled = false;
       
       if (enabled && !global) {
         if (domainDupChecker.check(matchingSite)) continue;
@@ -340,7 +351,10 @@ var noscriptOverlay = noscriptUtil.service ?
         
         node = document.createElement("menuitem");
         cssClass = isTop ? "noscript-toplevel noscript-cmd" : "noscript-cmd";
-        node.setAttribute("label", this.getString((enabled ? "forbidLocal" : "allowLocal"), [menuSite]));
+        
+        domain = isTop && docJSBlocked ? "[ " + menuSite + " ]" : menuSite;
+        
+        node.setAttribute("label", this.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]));
         node.setAttribute("statustext", menuSite);
         node.setAttribute("oncommand", "noscriptOverlay.menuAllow(" + (!enabled) + ", this)");
         node.setAttribute("tooltiptext",
@@ -359,7 +373,7 @@ var noscriptOverlay = noscriptUtil.service ?
         if (!(enabled || locked)) {
           if (showTemp) {
             extraNode = document.createElement("menuitem");
-            extraNode.setAttribute("label", this.getString("allowTemp", [menuSite]));
+            extraNode.setAttribute("label", this.getString("allowTemp", [domain]));
             extraNode.setAttribute("statustext", menuSite);
             extraNode.setAttribute("oncommand", "noscriptOverlay.menuAllow(true,this,true)");
             extraNode.setAttribute("class", cssClass + " noscript-temp noscript-allow");
@@ -569,10 +583,14 @@ var noscriptOverlay = noscriptUtil.service ?
 ,
   safeAllow: function(site, enabled, temp) {
     const ns = this.ns;
+    var webNav = gBrowser.selectedBrowser.webNavigation;
     ns.safeCapsOp(function() {
       if (site) {
         ns.setTemp(site, enabled && temp);
         ns.setJSEnabled(site, enabled, false, true);
+        if (enabled && ns.isJSEnabled(ns.getSite(webNav.currentURI.spec))) {
+          webNav.allowJavascript = true;  
+        }
       } else {
         ns.jsEnabled = enabled;
       }
@@ -1066,6 +1084,10 @@ var noscriptOverlay = noscriptUtil.service ?
         url = sites[s];
         isUntrusted = untrustedSites.matches(url);
         site = !isUntrusted && (global ? url : jsPSs.matches(url));
+        
+        if (site && url == sites.topURL && !gBrowser.selectedBrowser.webNavigation.allowJavascript)
+          site = null;
+          
         if (site) {
           if (ns.isPermanent(site) || allowedSites.indexOf(site) > -1) {
             total--;
@@ -1301,6 +1323,60 @@ var noscriptOverlay = noscriptUtil.service ?
     }
   },
   
+  hideObject: function(p, o) {
+    if (!p.mimeRx.test(o.type)) return;
+    
+    var r = p.document.createElement("object");
+    r.style.width = o.offsetWidth + "px";
+    r.style.height = o.offsetHeight + "px";
+    r.style.display = "inline-block";
+    o.className += " " + p.className;
+    o.parentNode.insertBefore(r, o);
+  },
+  
+  showObject: function(p, o) {
+    var cs = o.className;
+    cs = cs.replace(p.classRx, '');
+    if (cs != o.className) {
+      o.className = cs;
+      var r = o.previousSibling;
+      if (r instanceof HTMLObjectElement) {
+        r.parentNode.removeChild(r);
+      }
+    }
+  },
+  
+  _tags: ["object", "embed"],
+  toggleObjectsVisibility: function(d, v) {
+    var ns = noscriptOverlay.ns;
+    var rx = ns.hideOnUnloadRegExp;
+    if (!rx) return;
+    var callback = v ? noscriptOverlay.showObject : noscriptOverlay.hideObject;
+    var params = {
+      document: d,
+      mimeRx: rx,
+      classRx: noscriptOverlay.ns.hideObjClassNameRx,
+      className: ns.hideObjClassName
+    };
+    var aa = null;
+    var j;
+    for each(var t in this._tags) {
+      var oo = d.getElementsByTagName(t);
+      j = oo.length;
+      if (j) {
+        aa = aa || [oo[--j]];
+        while(j-- > 0) {
+          aa.push(oo[j]);
+        }
+      }
+    }
+    if (aa) {
+      for (j = aa.length; j-- > 0;) {
+        callback(params, aa[j]);
+      }
+    }
+  },
+  
   listeners: {
     
     onBrowserClick: function(ev) { 
@@ -1372,9 +1448,18 @@ var noscriptOverlay = noscriptUtil.service ?
         }, 0);
       }
     },
+    
+    onPageShow: function(ev) {
+      if (ev.persisted && (ev.target instanceof HTMLDocument)) {
+        noscriptOverlay.toggleObjectsVisibility(ev.target, true);
+      }
+    },
     onPageHide: function(ev) {
-      ev.currentTarget.removeEventListener("pagehide", arguments.callee, true);
-      noscriptOverlay.cleanupDocument(ev.originalTarget);
+      var d = ev.target;
+      if (d instanceof HTMLDocument) {
+        noscriptOverlay.cleanupDocument(d);
+        noscriptOverlay.toggleObjectsVisibility(d, false);
+      }
     },
     
     onContextMenu:  function(ev) { noscriptOverlay.prepareContextMenu(ev) },
@@ -1416,8 +1501,12 @@ var noscriptOverlay = noscriptUtil.service ?
       if (b.tabContainer) {
         b.tabContainer.addEventListener("TabClose", this.onTabClose, false);
       }
-
+      
       window.addEventListener("DOMContentLoaded", this.onContentLoad, false);
+      
+      
+      window.addEventListener("pageshow", this.onPageShow, true);
+      window.addEventListener("pagehide", this.onPageHide, true);
 
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
@@ -1439,7 +1528,9 @@ var noscriptOverlay = noscriptUtil.service ?
         
         b.removeProgressListener(this.webProgressListener);
       }
-  
+      
+      window.removeEventListener("pagehide", this.onPageHide, true);
+      window.removeEventListener("pageshow", this.onPageShow, true);
       window.removeEventListener("DOMContentLoaded", this.onContentLoad, false);
 
       noscriptOverlay.prefsObserver.remove();

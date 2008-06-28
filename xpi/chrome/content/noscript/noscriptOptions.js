@@ -358,8 +358,8 @@ var nsopt = {
   },
   
   importList: function(file) {
-    var all = this.serv.readFile(file);
-    var untrustedPos = all.indexOf("\n[UNTRUSTED]\n");
+    var all = this.serv.readFile(file).replace(/\s+/g, "\n");
+    var untrustedPos = all.indexOf("[UNTRUSTED]");
     if(untrustedPos < 0) {
       this.trustedSites.sitesString += "\n" + all;
     } else {

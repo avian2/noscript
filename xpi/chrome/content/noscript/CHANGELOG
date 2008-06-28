@@ -1,5 +1,38 @@
 NoScript ChangeLog
 
+v 1.7.4
+=====================================================================
++ Force top level site to be always the most reachable in the menu
+  (on the bottom)
+x Fixed import issue with edited lists using DOS newlines
+x Minor cascading permissions bug fixes (sometimes a subdomain was
+  not removed from the blacklist when its parent was whitelisted,
+  leading to usability confusion because blacklist always prevails)
+x Experimental work-around for a WMP crash when a page containing an
+  embedded movie is opened in the same window where another movie
+  is already playing (thanks SledgeFox for reporting)
+
+v 1.7.3
+=====================================================================
+x Minor refinements to the docShell JS blocking machinery to make it
+  play nice with other docShell-based permission handlers, such as
+  Tab Mix Plus
+
+v 1.7.2
+=====================================================================
++ New values for the noscript.docShellJSBlocking preference:
+  0 - no docShell JS blocking
+  1 - (default) docShell JS blocking for untrusted sites (enables
+    effective blacklists for defalut-deny modes)
+  2 - docShell JS blocking for every non-whitelisted site (enables
+  cross-frame inheritance of JS blocking)
+x Fixed JavaScript enablement failing on some framed pages until
+  the site is opened in a new tab (thanks rukia for reporting)
+x Fixed Firefox preference window not showing with some Linux themes
+  (thanks tom1978 for reporting)
+x Fixed micro-injection false positive with 1password.com logins
+  (thanks bwoodruff)
+
 v 1.7.1
 =====================================================================
 x Fixed changing permissions on one tab reload all tabs issue (thanks
