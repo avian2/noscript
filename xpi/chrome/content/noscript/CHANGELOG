@@ -1,5 +1,59 @@
 NoScript ChangeLog
 
+v 1.7.6
+=====================================================================
+x QA for release
+
+v 1.7.5.4
+=====================================================================
++ "Temporary allow all this page" will affect the most specific
+  targets listed in NoScript's menu among "2nd level base domains",
+  "full domains" or "full addresses", unless it's overridden by the
+  noscript.allowPageLevel about:config preference (1 = full address,
+  2 = full domain, 3 = 2nd level base domain)
+x noscript.autoReload.allTabsOnPageAction about:config preference set
+  to false by default, to prevent confusion among untrained users
+
+v 1.7.5.3
+=====================================================================
++ "Temporary allow all this page" will reload the current tab only,
+  behavior controlled by noscript.autoReload.allTabsOnPageAction
+  about:config preference (thanks robertmarley for hinting)
++ Whitelisting sites from NoScript Options|Whitelist obeys to the
+  noscript.untrustedGranularity preference
+x Fixed "about:" DocShell being JavaScript-disabled (thanks therube
+  for reporting)
+x Fixed "about:cache" becoming unresponsive if JS link detection is
+  enabled (thanks Martin Focke for reporting)
+
+v 1.7.5.2
+=====================================================================
++ Work-around for NewTabURL buggy detection of a new tab
+x Optimization of InjectionChecker for long nested URLs, e.g. those
+  used by some gmodules widgets
+
+v 1.7.5.1
+=====================================================================
++ noscript.requireReloadRegExp about:config preference to force
+  quick page reload on allowing for selected plugin mime types
++ Moveplayer plugin page reloading for one-click enablement
+
+v 1.7.5
+=====================================================================
+x Finer grained blacklist management: "Mark as untrusted" menu items
+  are shown in the Untrusted menu also for currently allowed sites,
+  and allowing a domain does not remove its descendants from the
+  untrusted blacklist by default. The new about:config preference
+  noscript.untrustedGranularity  controls how manually whitelisting
+  a domain affects the untrusted blacklist status of descendants:
+  0 - always delist descendants from the untrusted blacklist
+  1 - keep descendants blacklisted for temporary allow actions
+  2 - keep descendants blacklisted for permanent allow actions
+  3 - (default) always keep descendants blacklisted
+  4 - delist blacklisted descendants when allowing a site marked as
+      untrusted
+  All these values can be put in OR (the 3 default is actually 2|1)
+
 v 1.7.4
 =====================================================================
 + Force top level site to be always the most reachable in the menu

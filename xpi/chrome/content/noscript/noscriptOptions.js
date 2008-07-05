@@ -270,7 +270,7 @@ var nsopt = {
     const site = this.serv.getSite(this.urlText.value);
     this.trustedSites.add(site);
     this.tempSites.remove(site, true, true); // see noscriptService#eraseTemp()
-    this.untrustedSites.remove(site);
+    this.untrustedSites.remove(site, false, !this.serv.mustCascadeTrust(site, false));
     this.populateUrlList();
     this.ensureVisible(site);
     this.addButton.setAttribute("disabled", "true");
@@ -366,7 +366,7 @@ var nsopt = {
       this.trustedSites.sitesString += "\n" + all.substring(0, untrustedPos);
       this.untrustedSites.sitesString += all.substring(all.indexOf("\n", untrustedPos + 2));
     }
-    this.untrustedSites.remove(this.trustedSites.sitesList);
+    this.untrustedSites.remove(this.trustedSites.sitesList, false, true);
     this.populateUrlList();
     return null;
   },

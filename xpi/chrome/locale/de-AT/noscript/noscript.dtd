@@ -108,5 +108,5 @@
 <!ENTITY noscriptForbidJarDocuments "Entfernte JAR-Dateien davon abhalten, als Dokumente geladen zu werden">
 <!ENTITY noscriptJarExceptions "Nicht zu blockierende JAR-Dokumente">
 <!ENTITY noscriptJarExceptions.description "JAR-Dokumente, die diesen regulären Ausdrücken entsprechen, werden NICHT blockiert.">
-<!ENTITY noscriptTempAllowPage "Alle diese Dokument temporär erlauben">
-<!ENTITY noscriptTempAllowPage.accesskey "D">
+<!ENTITY noscriptTempAllowPage "Ganze Seite temporär erlauben">
+<!ENTITY noscriptTempAllowPage.accesskey "S">

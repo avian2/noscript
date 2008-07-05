@@ -7,7 +7,7 @@
 <!ENTITY noscriptAllow "Erlauben">
 <!ENTITY noscriptAllow.accesskey "E">
 <!ENTITY noscriptForbid "Verbieten">
-<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptForbid.accesskey "V">
 <!ENTITY noscriptTrust "Als vertrauenswürdig einstufen">
 <!ENTITY noscriptTrust.accesskey "T">
 <!ENTITY noscriptUntrust "Als nicht vertrauenswürdig einstufen">
@@ -115,5 +115,5 @@
 <!ENTITY noscriptExceptions "Ausnahmen...">
 <!ENTITY noscriptBlockedObjects "Geblockte Objekte">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Jedes Objekt von als nicht vertrauenswürdig eingestuften Sites blockieren">
-<!ENTITY noscriptTempAllowPage "Alle diese Dokument temporär erlauben">
-<!ENTITY noscriptTempAllowPage.accesskey "D">
+<!ENTITY noscriptTempAllowPage "Ganze Seite temporär erlauben">
+<!ENTITY noscriptTempAllowPage.accesskey "S">

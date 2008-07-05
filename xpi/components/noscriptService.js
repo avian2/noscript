@@ -698,7 +698,7 @@ PolicySites.prototype = {
     var pos = site.indexOf(':') + 1;
     if (pos > 0 && (pos == site.length || site[pos] == '/')) {
       if (sm[match = site.substring(0, pos)]) return match; // scheme match
-      if (++pos >= site.length || site[pos] != '/') return site == "about:" ? "about:" : "";
+      if (++pos >= site.length || site[pos] != '/') return "";
       match = site.substring(pos + 1);
       dots = 0;
     } else {
@@ -802,7 +802,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.7.4",
+  VERSION: "1.7.6",
   
   get wrappedJSObject() {
     return this;
@@ -959,6 +959,7 @@ NoscriptService.prototype = {
   whitelistRegExp: null,
   allowedMimeRegExp: null, 
   hideOnUnloadRegExp: null,
+  requireReloadRegExp: null,
   
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
@@ -1093,6 +1094,7 @@ NoscriptService.prototype = {
       case "hideOnUnloadRegExp":
         this.updateStyleSheet("." + this.hideObjClassName + " {display: none !important}", true);
       case "allowedMimeRegExp":
+      case "requireReloadRegExp":
       case "whitelistRegExp":
         this.updateRxPref(name, "", "^", this.rxParsers.multi);
       break;
@@ -1336,7 +1338,7 @@ NoscriptService.prototype = {
     for each(var p in [
       "autoAllow",
       "allowClipboard", "allowLocalLinks",
-      "allowedMimeRegExp", "hideOnUnloadRegExp",
+      "allowedMimeRegExp", "hideOnUnloadRegExp", "requireReloadRegExp",
       "blockCrossIntranet",
       "blockNSWB",
       "consoleDump", "consoleLog", "contentBlocker",
@@ -1527,6 +1529,22 @@ NoscriptService.prototype = {
     return false;
   }
 ,
+  mustCascadeTrust: function(sites, temp) {
+    var untrustedGranularity = this.getPref("untrustedGranularity", 3);
+    /*  noscript.untrustedGranularity  controls how manually whitelisting
+        a domain affects the untrusted blacklist status of descendants:
+        0 - always delist descendants from the untrusted blacklist
+        1 - keep descendants blacklisted for temporary allow actions
+        2 - keep descendants blacklisted for permanent allow actions
+        3 - (default) always keep descendants blacklisted
+        4 - delist blacklisted descendants of a site marked as untrusted
+        All these values can be put in OR (the 3 default is actually 2 | 1)
+    */
+    var single = !(typeof(site) == "object" && ("push" in site)); // not an array
+    return !((untrustedGranularity & 1) && !temp || (untrustedGranularity & 2) && temp)
+      || (untrustedGranularity & 4) && single && this.isUntrusted(site);
+  }
+,
   jsPolicySites: new PolicySites(),
   isJSEnabled: function(s) {
     return !(this.globalJS
@@ -1534,13 +1552,13 @@ NoscriptService.prototype = {
       : !this.jsPolicySites.matches(s) || this.untrustedSites.matches(s)
     );
   },
-  setJSEnabled: function(site, is, fromScratch, manually) {
+  setJSEnabled: function(site, is, fromScratch, cascadeTrust) {
     const ps = this.jsPolicySites;
     if (fromScratch) ps.sitesString = this.permanentSites.sitesString;
     if (is) {
       ps.add(site);
       if (!fromScratch) {
-        if (this.untrustedSites.remove(site, false, !manually)) // if user choose to manually allow we cannot keep descendant blacklisted
+        if (this.untrustedSites.remove(site, false, !cascadeTrust)) 
           this.persistUntrusted();
         
         this.setManual(site, false);
@@ -1650,6 +1668,11 @@ NoscriptService.prototype = {
     return site;
   },
   
+  get preferredSiteLevel() {
+    return this.getPref("showAddress", false) ? 1 : this.getPref("showDomain", false) ? 2 : 3;
+  },
+  
+  
   getDomain: function(site, force) {
     try {
       const url = (site instanceof CI.nsIURL) ? site : SiteUtils.ios.newURI(site, null, null);
@@ -1726,25 +1749,23 @@ NoscriptService.prototype = {
      }
   }
 ,
-  safeCapsOp: function(callback) {
+  safeCapsOp: function(callback, reloadCurrentTabOnly) {
     this.delayExec(function() {
       callback();
       this.savePrefs();
-      this.reloadWhereNeeded();
+      this.reloadWhereNeeded(reloadCurrentTabOnly);
      }, 1);
   }
 ,
   _lastSnapshot: null,
   _lastGlobal: false,
   _lastObjects: null,
-  reloadWhereNeeded: function(snapshot, lastGlobal) {
-    if (!snapshot) snapshot = this._lastSnapshot;
+  reloadWhereNeeded: function(currentTabOnly) {
+    var snapshot = this._lastSnapshot;
     const ps = this.jsPolicySites;
     this._lastSnapshot = ps.clone();
     const global = this.jsEnabled;
-    if (typeof(lastGlobal) == "undefined") {
-      lastGlobal = this._lastGlobal;
-    }
+    var lastGlobal = this._lastGlobal;
     this._lastGlobal = global;
   
     var lastObjects = this._lastObjects || this.objectWhitelist;
@@ -1760,8 +1781,9 @@ NoscriptService.prototype = {
    
     
     if (!this.getPref("autoReload", true)) return false;
-    if (global != lastGlobal && !this.getPref("autoReload.global", true)) return false; 
-    const currentTabOnly = !this.getPref("autoReload.allTabs", true);
+    if (global != lastGlobal && !this.getPref("autoReload.global", true)) return false;
+    
+    currentTabOnly = currentTabOnly || !this.getPref("autoReload.allTabs", true);
     var useHistory = this.getPref("xss.reload.useHistory", false);
     var useHistoryExceptCurrent = this.getPref("xss.reload.useHistory.exceptCurrent", true);
     
@@ -2910,8 +2932,9 @@ NoscriptService.prototype = {
   detectJSRedirects: function(document) {
     if (this.jsredirectIgnore || this.jsEnabled) return 0;
     try {
+      if (!/^https?:/.test(document.documentURI)) return 0;
       var hasVisibleLinks = this.hasVisibleLinks(document);
-      if (!this.jsredirectForceShow && hasVisibleLinks || 
+      if (!this.jsredirectForceShow && hasVisibleLinks ||
           this.isJSEnabled(this.getSite(document.documentURI))) 
         return 0;
       var j, len;
@@ -3472,10 +3495,12 @@ NoscriptService.prototype = {
       if (mime == doc.contentType && 
           ctx.anchor == doc.body.firstChild && 
           ctx.anchor == doc.body.lastChild) { // stand-alone plugin
-        doc.location.reload();
+          doc.location.reload();
+      } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime)) {
+        this.quickReload(this.domUtils.getDocShellFromWindow(doc.defaultView));
       } else if (this.getExpando(ctx, "silverlight")) {
         this.allowObject(doc.documentURI, mime);
-        this.quickReload(ctx.browser.webNavigation);
+        this.quickReload(this.domUtils.getDocShellFromWindow(doc.defaultView));
       } else {
         this.setExpando(ctx.anchor, "removedPlugin", null);
         extras.placeholder = null;
@@ -3836,8 +3861,15 @@ NoscriptService.prototype = {
     }
     
     this._handleDocJS3(uri.spec, domWindow, docShell);
-   
-    if (this.shouldLoad(7, uri, uri, domWindow, req.contentType, true) != CP_OK) {
+    
+    var contentType;
+    try {
+      contentType = req.contentType;
+    } catch(e) {
+      contentType = "";
+    }
+    
+    if (this.shouldLoad(7, uri, uri, domWindow, contentType, true) != CP_OK) {
       
       if (this.consoleDump & LOG_CONTENT_INTERCEPT)
         this.dump("Plugin document content type detected");
@@ -3850,7 +3882,7 @@ NoscriptService.prototype = {
         for(var j = ff.length; j-- > 0;) {
           if(ff[j].contentWindow == domWindow) {
             // cause iframe placeholder
-            if(this.shouldLoad(5, uri, this.siteUtils.ios.newURI(parentDoc.documentURI, null, null), ff[j], req.contentType, true) == CP_OK)
+            if(this.shouldLoad(5, uri, this.siteUtils.ios.newURI(parentDoc.documentURI, null, null), ff[j], contentType, true) == CP_OK)
              return;
           }
         }
@@ -3880,7 +3912,7 @@ NoscriptService.prototype = {
       var e;
       for (var j = embeds.length; j-- > 0;) {
         e = embeds.item(j);
-        if (this.shouldLoad(5, uri, null, e, req.contentType, true) != CP_OK) {
+        if (this.shouldLoad(5, uri, null, e, contentType, true) != CP_OK) {
           e.src = eURL;
           e.type = eType;
         }
@@ -3900,14 +3932,20 @@ NoscriptService.prototype = {
   
   
   _handleDocJS1: function(win, req) {
-    if (win instanceof CI.nsIDOMChromeWindow) return;
+    
+    const docShellJSBlocking = this.docShellJSBlocking;
+    if (!docShellJSBlocking || (win instanceof CI.nsIDOMChromeWindow)) return;
+    
+    
     try {
       var url = req.originalURI.spec;
-      var jsEnabled;
-
-      const docShellJSBlocking = this.docShellJSBlocking;
       
-      if (!docShellJSBlocking) return;
+      if (!(req.loadFlags & req.LOAD_INITIAL_DOCUMENT_URI) &&
+          url == "about:blank" // new tab
+        ) 
+        return;
+      
+      var jsEnabled;
       
       var docShell = this.domUtils.getDocShellFromWindow(win);
       
@@ -5176,7 +5214,7 @@ var InjectionChecker = {
     
     
     findInjection.lastIndex = 0;
-    var m, breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg;
+    var m, breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg, pos;
     
     const MAX_TIME = 4000, MAX_LOOPS = 400;
 
@@ -5281,19 +5319,37 @@ var InjectionChecker = {
           if(this.syntax.lastError) { // could be null if we're here thanks to checkLastFunction()
             errmsg = this.syntax.lastError.message;
             this.log(errmsg + "\n" + script + "\n---------------", t, iterations);
-            if (/left-hand|invalid flag after regular expression|missing ; before statement|invalid label|illegal character/.test(errmsg)) {
-              break; // unrepairable syntax error (wrong assignment to a left-hand expression), move left cursor forward 
-            } else if((m = errmsg.match(/\bmissing ([:\]\)\}]) /))) {
+            if(!quote) {
+              if (/left-hand/.test(errmsg)) {
+                m = subj.match(/^([^\]\(\\'"=\?]+?)[\w$\u0080-\uffff\s]+[=\?]/);
+                if (m) {
+                  findInjection.lastIndex += m[1].length - 1;
+                }
+                break;
+              } else if (/unterminated string literal/.test(errmsg)) {
+                bsPos = subj.substring(len).search(/["']/);
+                if(bsPos > -1) {
+                  expr = subj.substring(0, len += bsPos + 1);
+                  moved = true;
+                } else break;
+              } else if (/syntax error/.test(errmsg)) {
+                bsPos = subj.indexOf("//");
+                if (bsPos > -1) {
+                  pos = subj.search(/['"\n\\\(]|\/\*/);
+                  if (pos < 0 || pos > bsPos)
+                    break;
+                }
+              }
+            } else if (/left-hand/.test(errmsg)) break;
+            
+            if (/invalid flag after regular expression|missing ; before statement|invalid label|illegal character/.test(errmsg)) {
+              break; // unrepairable syntax error, move left cursor forward 
+            }
+            if((m = errmsg.match(/\bmissing ([:\]\)\}]) /))) {
               len = subj.indexOf(m[1], len);
               if (len > -1) {
                 expr = subj.substring(0, ++len);
                 moved = m[1] != ':';
-              } else break;
-            } else if(!quote && /unterminated string literal/.test(errmsg)) {
-              bsPos = subj.substring(len).search(/["']/);
-              if(bsPos > -1) {
-                 expr = subj.substring(0, len += bsPos + 1);
-                 moved = true;
               } else break;
             }
           }
@@ -5306,16 +5362,6 @@ var InjectionChecker = {
   
   
   checkJSStunt: function(s) {
-
-    /*   
-    // check noisy comments first
-    if (
-      // /(?:\/\*[\s\S]*\*\/|[^:]\/\/.*[\r\n])/ // C-style comments are often found in rds.yahoo.com
-      /\/\/.*[\r\n]/.test(s)) { 
-      this.log("JS comments in " + s);
-      return true; 
-    }
-    */
     
     // simplest navigation act (no dots, no round/square brackets)
     if (/\bl\W*o\W*c\W*a\W*t\W*i\W*o\W*n\W*(?:\/[\/\*][\s\S]*|\s*)=\W*(?:\/[\/\*][\s\S]*|\s*)n\W*a\W*m\W*e(?:\W+|$)/.test(s)) { 

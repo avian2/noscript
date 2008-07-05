@@ -37,8 +37,8 @@ var noscriptOverlay = noscriptUtil.service ?
     if (!level) return false;
     
     const url = ns.getQuickSite(content.document.documentURI, level);
-    
-    this.safeAllow(url, !ns.isJSEnabled(url), ns.getPref("toggle.temp"));
+    if (url)
+      this.safeAllow(url, !ns.isJSEnabled(url), ns.getPref("toggle.temp"));
     return true;
   },
 
@@ -294,7 +294,7 @@ var noscriptOverlay = noscriptUtil.service ?
       docJSBlocked = enabled && isTop && !gBrowser.selectedBrowser.webNavigation.allowJavascript;
       if (docJSBlocked) enabled = false;
       
-      if (enabled && !global) {
+      if (enabled && !global || (matchingSite = untrusted)) {
         if (domainDupChecker.check(matchingSite)) continue;
         menuSites = [matchingSite];
       } else {
@@ -370,8 +370,8 @@ var noscriptOverlay = noscriptUtil.service ?
         if (showPermanent || enabled) 
           parent.appendCmd(node);
         
-        if (!(enabled || locked)) {
-          if (showTemp) {
+        if (!locked) {
+          if (showTemp && !enabled) {
             extraNode = document.createElement("menuitem");
             extraNode.setAttribute("label", this.getString("allowTemp", [domain]));
             extraNode.setAttribute("statustext", menuSite);
@@ -380,7 +380,7 @@ var noscriptOverlay = noscriptUtil.service ?
             extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
             parent.appendCmd(extraNode);
           }
-          if (((showUntrusted && untrustedMenu) || showDistrust) && !untrusted) {
+          if (((showUntrusted && untrustedMenu) || showDistrust && !enabled) && !untrusted) {
             extraNode = document.createElement("menuitem");
             extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
             extraNode.setAttribute("statustext", menuSite);
@@ -499,9 +499,12 @@ var noscriptOverlay = noscriptUtil.service ?
     const ns = this.ns;
     const sites = this.getSites();
     const unknown = [];
+    const level = ns.getPref("allowPageLevel", 0) || ns.preferredSiteLevel;
+    var site;
     for (var j = sites.length; j-- > 0;) {
-      if (!(ns.isJSEnabled(sites[j]) || ns.isUntrusted(sites[j])))
-        unknown.push(sites[j]);
+      site = ns.getQuickSite(sites[j], level);
+      if (!(ns.isJSEnabled(site) || ns.isUntrusted(site)))
+        unknown.push(site);
     }
     if (unknown.length) this.safeAllow(unknown, true, !permanent);
   },
@@ -516,6 +519,7 @@ var noscriptOverlay = noscriptUtil.service ?
       }
     }
   },
+  
   allowObjectSite: function(i) {
     if(this.menuPluginSites && this.menuPluginSites[i]) {
       this.allowObjectURL(this.menuPluginSites[i][0], this.menuPluginSites[i][1]);
@@ -584,18 +588,27 @@ var noscriptOverlay = noscriptUtil.service ?
   safeAllow: function(site, enabled, temp) {
     const ns = this.ns;
     var webNav = gBrowser.selectedBrowser.webNavigation;
+    var reloadCurrentTabOnly = (site instanceof Array) &&
+      !ns.getPref("autoReload.allTabsOnPageAction", false);
+
     ns.safeCapsOp(function() {
       if (site) {
+        
         ns.setTemp(site, enabled && temp);
-        ns.setJSEnabled(site, enabled, false, true);
-        if (enabled && ns.isJSEnabled(ns.getSite(webNav.currentURI.spec))) {
-          webNav.allowJavascript = true;  
+        ns.setJSEnabled(site, enabled, false, ns.mustCascadeTrust(site, temp));
+        
+        if (enabled && !webNav.allowJavascript) {
+          var curSite = ns.getSite(webNav.currentURI.spec);
+          if (ns.isJSEnabled(curSite)) {
+            ns._lastSnapshot.remove(curSite); // force reload
+          }
+          webNav.allowJavascript = true;
         }
       } else {
         ns.jsEnabled = enabled;
       }
       noscriptOverlay.syncUI();
-    });
+    }, reloadCurrentTabOnly);
   }
 ,
   
@@ -1244,7 +1257,7 @@ var noscriptOverlay = noscriptUtil.service ?
     execute: function(cmd) {
       switch (cmd) {
         case 'toggle':
-          noscriptOverlay.toggleCurrentPage(3);
+          noscriptOverlay.toggleCurrentPage(noscriptOverlay.ns.preferredSiteLevel);
           break;
         case 'ui':
            noscriptOverlay.showUI();

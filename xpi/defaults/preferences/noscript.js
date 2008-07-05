@@ -2,6 +2,7 @@ pref("extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description", "chrome://
 pref("noscript.autoReload", true);
 pref("noscript.autoReload.global", true);
 pref("noscript.autoReload.allTabs", true);
+pref("noscript.autoReload.allTabsOnPageAction", true);
 pref("noscript.autoReload.useHistory", false);
 pref("noscript.autoReload.useHistory.exceptCurrent", true);
 pref("noscript.ctxMenu", true);
@@ -59,6 +60,7 @@ pref("noscript.nselNever", false);
 pref("noscript.nselNoMeta", true);
 pref("noscript.autoAllow", 0);
 pref("noscript.toolbarToggle", 3);
+pref("noscript.allowPageLevel", 0);
 pref("noscript.forbidImpliesUntrust", false);
 pref("noscript.keys.toggle", "ctrl shift VK_BACK_SLASH.|");
 pref("noscript.keys.ui", "ctrl shift S");
@@ -150,3 +152,6 @@ pref("noscript.allowURLBarJS", true);
 pref("noscript.docShellJSBlocking", 1);
 
 pref("noscript.hideOnUnloadRegExp", "video/.*");
+
+pref("noscript.untrustedGranularity", 3);
+pref("noscript.requireReloadRegExp", "application/x-vnd\\.moveplayer\\b.*");
