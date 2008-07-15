@@ -88,8 +88,7 @@ pref("noscript.filterXGetRx", "(?:<+(?=[^<>=\\d\\. ])|[\\\\\"\\x00-\\x07\\x09\\x
 pref("noscript.filterXGetUserRx", "");
 pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
 pref("noscript.injectionCheck", 2);
-pref("noscript.injectionCheck.timeout", 800);
-pref("noscript.injectionCheck.loops", 20);
+
 
 pref("noscript.blockXIntranet", true);
 pref("noscript.intranetMaskRx", "^(127\\.[\\d.]+)");

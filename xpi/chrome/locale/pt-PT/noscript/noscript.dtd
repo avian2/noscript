@@ -59,15 +59,15 @@
 <!ENTITY noscriptAllowBookmarks "Permitir todos os sites que se encontrem nos Marcadores">
 <!ENTITY noscriptAllowViaBookmarks "Permitir páginas abertas através dos Marcadore">
 <!ENTITY noscriptAllowPing "Permitir &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
+<!ENTITY noscriptAllowLocalLinks "Permitir links locais">
 <!ENTITY noscriptForbidPing "Proibir &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh "Proibir redirecionamentos META dentro de elementos &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Lista Branca">
 <!ENTITY noscriptPermissions "Permissões">
 <!ENTITY noscriptRefresh "Actualizar">
 <!ENTITY noscriptNotifications "Notificações">
-<!ENTITY noscriptToolbarToggle "CLique esquerdo na barra de ferramentas do NoScript altera as permissões para o site de topo actual">
+<!ENTITY noscriptToolbarToggle "Clique esquerdo na barra de ferramentas do NoScript altera as permissões para o site de topo actual">
 <!ENTITY noscriptTrusted "Confiável">
 <!ENTITY noscriptUntrusted "Não Confiável">
 <!ENTITY noscriptUnknown "Desconhecido">
@@ -79,32 +79,41 @@
 <!ENTITY noscriptPolicies "Políticas">
 <!ENTITY noscriptDefaultPolicies "Políticas Pré-definidas">
 <!ENTITY noscriptSitePolicies "Políticas Especificas do Site">
-<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console...">
-<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptNselNever "Ocultar elementos &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Mostrar o elemento &lt;NOSCRIPT&gt; que perseguiu um script bloqueado &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Permitir temporariamente todos os sites de alto nível por padrão">
+<!ENTITY noscriptDescription "Proteção extra para o seu Firefox: O NoScript permite o uso de JavaScripts, Java (e outros plugins) somente para os domínios confiáveis que você selecionar (como por exemplo no site do seu internet banking). Esse bloqueio baseado em uma lista branca previne a exploração de vulnerabilidades de segurança (conhecidas e  até mesmo as desconhecidas!) sem perda de desempenho... Usuários e especialistas concordam: o Firefox é realmente mais seguro com o NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Bloquear varredores baseados em CSS">
+<!ENTITY noscriptOptFilterXGet "Desinfectar requerimentos suspeitos via site">
+<!ENTITY noscriptOptFilterXPost "Alterar requerimentos perigosos via site em requerimentos sem dados">
+<!ENTITY noscriptShowConsole "Mostrar Console...">
+<!ENTITY noscriptShowConsole.accesskey "M">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
-<!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptXssFaq "Perguntas e respostas do XSS ...">
+<!ENTITY noscriptXssFaq.accesskey "P">
+<!ENTITY noscriptUnsafeReload "Recarregamento Inseguro">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
-<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptXssExceptions "Proteção Anti-XSS através das exceções">
+<!ENTITY noscriptXssExceptions.description "Os destinos que combinarem essas expressões NÃO serão protegidos do XSS">
+<!ENTITY noscriptMatchSample "Exemplo ilustrativo de combinação:">
+<!ENTITY noscriptReset "Restaurar">
 <!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptResetDef "Restaurar para os padrões">
+<!ENTITY noscriptResetDef.accesskey "p">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptJarFaq "Perguntas e respostas do JAR">
+<!ENTITY noscriptJarFaq.accesskey "r">
+<!ENTITY noscriptForbidJarDocuments "Bloquear recursos remotos do JAR de serem carregados como documentos.">
+<!ENTITY noscriptJarExceptions "Exceções de bloqueio de documentos JAR.">
+<!ENTITY noscriptJarExceptions.description "Documentos JAR que combinarem com essas expressões NÂO serão bloqueados.">
+<!ENTITY noscriptRevokeTemp "Anular Permissões Temporárias">
+<!ENTITY noscriptRevokeTemp.accesskey "A">
+<!ENTITY noscriptNoUntrustedPlaceholder "Nenhum placeholder para objetos provenientes de sites marcados como não confiáveis">
+<!ENTITY noscriptCollapseBlockedObjects "Quebrar objetos bloqueados">
+<!ENTITY noscriptExceptions "Exceções...">
+<!ENTITY noscriptBlockedObjects "Objetos bloqueados">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquear todos os objetos provenientes de um site marcado como não confiável">
+<!ENTITY noscriptTempAllowPage "Autorizar tudo temporariamente nesta página">
+<!ENTITY noscriptTempAllowPage.accesskey "P">

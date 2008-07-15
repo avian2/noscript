@@ -108,3 +108,12 @@
 <!ENTITY noscriptForbidJarDocuments "Chặn các tài nguyên từ xa dạng JAR được tải dưới dạng tài liệu">
 <!ENTITY noscriptJarExceptions "Các ngoại lệ cho ngăn chặn tài liệu dạng JAR">
 <!ENTITY noscriptJarExceptions.description "Các tài liệu dạng JAR hợp/giống với các biểu thức chính quy sau sẽ KHÔNG bị chặn.">
+<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
+<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
+<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptBlockedObjects "Blocked Objects">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
+<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
+<!ENTITY noscriptTempAllowPage.accesskey "P">

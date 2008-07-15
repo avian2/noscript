@@ -802,7 +802,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.7.6",
+  VERSION: "1.7.6.4",
   
   get wrappedJSObject() {
     return this;
@@ -1506,8 +1506,8 @@ NoscriptService.prototype = {
     }
     return b;
   },
-  persistUntrusted: function() {
-    this.setPref("untrusted", this.untrustedSites.sitesString);
+  persistUntrusted: function(snapshot) {
+    this.setPref("untrusted", snapshot || this.untrustedSites.sitesString);
   },
   
   manualSites: new PolicySites(),
@@ -3195,12 +3195,16 @@ NoscriptService.prototype = {
     var site = this.getSite(window.document.documentURI) || this.getExpando(browser, "jsSite");
     if (!this.isJSEnabled(site)) {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
-      var snapshot = this.jsPolicySites.sitesString;
+      var snapshots = {
+        trusted: this.jsPolicySites.sitesString,
+        untrusted: this.untrustedSites.sitesString,
+        docJS: browser.webNavigation.allowJavascript
+      };
       var async = /^\s*data:/i.test(url) || Components.utils && typeof(/ /) == "object"; // async evaluation, after bug 351633 landing
       try {
         browser.webNavigation.allowJavascript = true;
         this.setTemp(site, true);
-        this.setJSEnabled(site, true);
+        this.setJSEnabled(site, true)
         if (async) {
           var sandbox = Components.utils.Sandbox(window);
           sandbox.window = window;
@@ -3212,9 +3216,9 @@ NoscriptService.prototype = {
         return true;
       } finally {
         if(async) {
-          this.delayExec(this.postExecuteJSURL, 0, browser, site, snapshot);
+          this.delayExec(this.postExecuteJSURL, 0, browser, site, snapshots);
         } else {
-          this.postExecuteJSURL(browser, site, snapshot);
+          this.postExecuteJSURL(browser, site, snapshots);
         }
       }
     }
@@ -3222,10 +3226,14 @@ NoscriptService.prototype = {
     return false;
   },
   
-  postExecuteJSURL: function(browser, site, snapshot) {
-    this.flushCAPS(snapshot);
+  postExecuteJSURL: function(browser, site, snapshots, dsJS) {
+    if (this.consoleDump & LOG_JS)
+      this.dump("Restoring snapshot permissions on " + site + "/" + (browser.webNavigation.isLoadingDocument ? "loading" : browser.webNavigation.currentURI.spec));
+    this.persistUntrusted(snapshots.untrusted); 
+    this.flushCAPS(snapshots.trusted);
     this.setExpando(browser, "jsSite", site);
-    browser.webNavigation.allowJavascript = false;
+    if (!browser.webNavigation.isLoadingDocument && this.getSite(browser.webNavigation.currentURI.spec) == site)
+      browser.webNavigation.allowJavascript = snapshots.docJS;
   },
 
   mimeEssentials: function(mime) {
@@ -5049,7 +5057,10 @@ function fuzzify(s) {
 
 const IC_WINDOW_OPENER_PATTERN = fuzzify("alert|confirm|prompt|open|print");
 const IC_EVENT_PATTERN = fuzzify("on(?:load|page|unload|ready|error|focus|blur|mouse)") + "(?:\\W*[a-z])*";
-
+const IC_EVENT_DOS_PATTERN =
+      "\\b(?:" + IC_EVENT_PATTERN + ")[\\s\\S]*=[\\s\\S]*\\b(?:" + IC_WINDOW_OPENER_PATTERN + ")\\b"
+      + "|\\b(?:" + IC_WINDOW_OPENER_PATTERN + ")\\b[\\s\\S]+\\b(?:" + IC_EVENT_PATTERN + ")[\\s\\S]*=";
+      
 var InjectionChecker = {
   fuzzify: fuzzify,
   Entities: Entities,
@@ -5139,24 +5150,26 @@ var InjectionChecker = {
     return s;
   },
 
-  _singleAssignmentRx: new RegExp('\\b(?:' +
-    fuzzify('document|location|setter')
-    + ')\\b|/.*/[\\s\\S]*' + fuzzify('source|') + // regular expression source extraction
-    IC_EVENT_PATTERN + "\\W*=[\\s\\S]*(?:" + IC_WINDOW_OPENER_PATTERN +
-    ")|=[\\s\\S]*(?:" + IC_WINDOW_OPENER_PATTERN + ")[\\s\\S]+" + IC_EVENT_PATTERN + "\\W*="
-                    // event-based DOS
+  _singleAssignmentRx: new RegExp(
+    "\\b(?:" + fuzzify('document|location|setter') + ")\\b" 
+    // + "|/.*/[\\s\\S]*\\b" + fuzzify('source') + "\\b"   // regular expression source extraction
+    + '|' + IC_EVENT_DOS_PATTERN
   ),
   _maybeJSRx: new RegExp(
-    '(?:[\\w$\\u0080-\\uFFFF\\]][\\s\\S]*[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
-    fuzzify('eval|set(?:Timeout|Interval)|[fF]unction|') + IC_WINDOW_OPENER_PATTERN +
+    '[\\w$\\u0080-\\uFFFF\\]][\\s\\S]*[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
+    fuzzify('eval|set(?:Timeout|Interval)|[fF]unction|Script') + IC_WINDOW_OPENER_PATTERN +
     ')\\b[\\s\\S]*\\(|\\b(?:' +
     fuzzify('setter|location') +
-    ')\\b[\\s\\S]*=)'
+    ')\\b[\\s\\S]*=|' +
+    IC_EVENT_DOS_PATTERN
   ),
   maybeJS: function(expr) {
     if(/^(?:[^\(\)="']+=[^\(\)='"]+|[\?a-z_0-9;,&=\/]+)$/i.test(expr)) // commonest case, single assignment or simple assignments, no break
       return this._singleAssignmentRx.test(expr);
-    return this._singleAssignmentRx.test(expr) || this._maybeJSRx.test(expr); 
+    if (/^(?:[\w\-\.]+\/)*[\w\-\s]+\([\w\-\s]+\)$/.test(expr)) // typical "call like" Wiki URL pattern
+      return /\b(?:eval|set(?:Timeout|Interval)|[F|f]unction|Script|open|alert|confirm|prompt|print|on\w+)\s*\(/.test(expr);
+    
+    return this._maybeJSRx.test(expr); 
   },
   checkLastFunction: function() {
     var expr = this.syntax.lastFunction;
@@ -5235,7 +5248,7 @@ var InjectionChecker = {
       if (expr.length < m[2].length) expr = m[2];
       
       // quickly skip innocuous CGI patterns
-      if ((m = subj.match(/^(?:(?:[\?\w \-\/&:]+=[\w \-\/:\+%]+(?:&|$)){2,}|\w+:\/\/\w[\w\-\.]*)/))) {
+      if ((m = subj.match(/^(?:(?:\.*[\?\w\-\/&:`]+=[\w \-\/:\+%#,`]*(?:[&\|]|$)){2,}|\w+:\/\/\w[\w\-\.]*)/))) {
         this.log("Skipping CGI pattern in " + subj);
         findInjection.lastIndex += m[0].length - 1;
         continue;
@@ -5368,10 +5381,7 @@ var InjectionChecker = {
       this.log("location = name navigation attempt in " +s);
       return true;
     }
-    if (/[\w\$\u0080-\uFFFF\]](?:[\s\)]+|[\s\S]*\/[\/\*][\s\S]*)s\W*e\W*t\W*t\W*e\W*r\W*(?:\/[\/\*][\s\S]*)?=/.test(s)) {
-      this.log("setter override attempt in " +s);
-      return true;
-    }
+    
     // check well known and semi-obfuscated -- as in [...]() -- function calls
     var m = s.match(/\b(?:open|eval|Script|set(?:Timeout|Interval)|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/[\/\*][\s\S]*?)?\([\s\S]*\)/);
     if (m) {
@@ -5501,7 +5511,7 @@ var InjectionChecker = {
       this.base64tested.push(f);
       try {
           var s = Base64.decode(f);
-          if(s && this.checkHTML(s) || this.checkJS(s)) {
+          if(s && s.replace(/[^\w\(\)]/g, '').length > 7 && (this.checkHTML(s) || this.checkJS(s))) {
             this.log("Detected BASE64 encoded injection: " + f);
             return this.base64 = true;
           }
@@ -5559,24 +5569,6 @@ var InjectionChecker = {
     return url.replace(/Q([\da-fA-F]{2})/g, function(s, c) {
       return String.fromCharCode(parseInt(c, 16));
     });
-  },
-  
-  test: function(url) {
-    
-    t = new Date().getTime();
-    this.checkURL(url);
-    this.dump("********** " + (new Date().getTime() - t) + " **********");
-  },
-  testSamples: function() {
-    for each(u in [
-      "http://pagead2.googlesyndication.com/cpa/ads?client=ca-pub-1563315177023518&cpa_choice=CAAQwLOkgwIaCEjO5OMYO7UfKMi84IEB&oe=UTF-8&dt=1183686874437&lmt=1183686871&prev_fmts=120x60_as_rimg&format=120x60_as_rimg&output=html&correlator=1183686872530&url=http%3A%2F%2Facme.com%2Fforum&region=_google_cpa_region_&ref=http%3A%2F%2Facme.com%2Fgetit&cc=100&flash=9&u_h=1200&u_w=1920&u_ah=1170&u_aw=1920&u_cd=32&u_tz=120&u_his=6&u_java=true&u_nplug=32&u_nmime=118"
-      ,
-      "http://ha.ckers.org/xss.swf?a=0:0;a/**/setter=eval;b/**/setter=atob;a=b=name;",
-      "http://ha.ckers.org/xss.swf?a=0:0;a setter=eval;b setter=atob;a=b=name;",
-      "http://demo.php-ids.org/?test=_%3Deval%2C__%3Dunescape%2C___%3Dlocation%2C_%28__%28___%29%29#%0aalert(%22xss%22%29",
-      "http://demo.php-ids.org/?test=',a%3D0%7C%7C'ev'%2B'al'%2Cb%3D0%7C%7Clocation.hash%2Cc%3D0%7C%7C'sub'%2B'str'%2C1%5Ba%5D(b%5Bc%5D(1))+'#alert('xss')",
-      "http://some.wiki.com/wiki.media/Heroes(Comics)"
-      ]) this.test(unescape(u));
   }
 };
 

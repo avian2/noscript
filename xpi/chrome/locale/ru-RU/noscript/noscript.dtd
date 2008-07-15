@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "Исключения...">
 <!ENTITY noscriptBlockedObjects "Заблокированные объекты">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Блокировать любой объект с недоверенных сайтов">
+<!ENTITY noscriptTempAllowPage "Временно разрешить на этой странице">
+<!ENTITY noscriptTempAllowPage.accesskey "о">

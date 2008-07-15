@@ -115,3 +115,5 @@
 <!ENTITY noscriptExceptions "例外...">
 <!ENTITY noscriptBlockedObjects "已阻止的对象">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "阻止来自已经标记为不可信站点的任何对象">
+<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
+<!ENTITY noscriptTempAllowPage.accesskey "P">

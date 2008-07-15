@@ -236,7 +236,7 @@ var noscriptOverlay = noscriptUtil.service ?
     j = sites.indexOf(sites.topURL);
     if (j > 0) {
       sites.splice(j, 1);
-      sites.unshift(sites.topURL);
+      sites.push(sites.topURL);
     }
     
     
@@ -248,7 +248,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var site, enabled, isTop, lev;
     var jsPSs = ns.jsPolicySites;
     var matchingSite;
-    var menuSites, menuSite, scount;
+    var menuGroups, menuSites, menuSite, scount;
     var domain, pos, baseLen, dp;
     var untrusted;
     var cssClass;
@@ -277,8 +277,8 @@ var noscriptOverlay = noscriptUtil.service ?
     const untrustedSites = ns.untrustedSites;
     var docJSBlocked = false;
     
-    
-    for (j = sites.length; j-->0;) {
+    menuGroups = [];
+    for (j = sites.length; j-- > 0;) {
       site = sites[j];
       
       matchingSite = jsPSs.matches(site);
@@ -327,16 +327,23 @@ var noscriptOverlay = noscriptUtil.service ?
               if (baseLen == dp.length) break;
             }
           }
-        }
-        
+        }  
       }
-      
+      menuSites.isTop = isTop;
+      menuSites.enabled = enabled;
+      menuGroups.push(menuSites);
+    }
+    
+    for (j = menuGroups.length; j-- > 0;) {
+
       if (seps.stop.previousSibling.nodeName != "menuseparator") {
         mainMenu.appendCmd(document.createElement("menuseparator"));
       }
       
- 
-   
+      menuSites = menuGroups[j];
+      isTop = menuSites.isTop;
+      enabled = menuSites.enabled;
+      
       for (scount = menuSites.length; scount-- > 0;) {
         menuSite = menuSites[scount];
         
@@ -562,10 +569,11 @@ var noscriptOverlay = noscriptUtil.service ?
   }
 ,
   revokeTemp: function() {
-    noscriptOverlay.ns.safeCapsOp(function() {
-      noscriptOverlay.ns.eraseTemp();
+    const ns = noscriptOverlay.ns;
+    ns.safeCapsOp(function() {
+      ns.eraseTemp();
       noscriptOverlay.syncUI();
-    });
+    }, !ns.getPref("autoReload.allTabsOnPageAction", true));
   }
 ,
   menuAllow: function(enabled, menuItem, temp) {
@@ -589,7 +597,7 @@ var noscriptOverlay = noscriptUtil.service ?
     const ns = this.ns;
     var webNav = gBrowser.selectedBrowser.webNavigation;
     var reloadCurrentTabOnly = (site instanceof Array) &&
-      !ns.getPref("autoReload.allTabsOnPageAction", false);
+      !ns.getPref("autoReload.allTabsOnPageAction", true);
 
     ns.safeCapsOp(function() {
       if (site) {
