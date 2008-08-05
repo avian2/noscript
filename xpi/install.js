@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.7.7";
+const APP_VERSION = "1.7.8";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
@@ -33,17 +33,20 @@ function myPerformInstall(secondTry) {
   var err;
   initInstall(APP_NAME, APP_PACKAGE, APP_VERSION);
   
-  function checkChrome(folder) {
+  function chromeExistsIn(folder) {
     var chrome = getFolder(folder, APP_JAR_FILE);
-    if (chrome && File.isDirectory(chrome))
-      File.dirRemove(chrome);
-    return !chrome || !File.isDirectory(chrome); 
+    var isDir = File.isDirectory(chrome);
+    if (!isDir) isDir = /\/$/.test(chrome);
+    if (isDir)
+      File.dirRemove(chrome);  
+    return !chrome || !isDir;
   }
+  
   if(!secondTry) {  
     // profile installs only work since 2003-03-06
-    instToProfile = checkChrome(getFolder("Profile", "chrome")) ||
-      (!checkChrome(getFolder("chrome")) && 
-        buildID > 2003030600 && !!confirm(INST_TO_PROFILE));
+    instToProfile = chromeExistsIn(getFolder("Profile", "chrome")) ||
+      !chromeExistsIn(getFolder("chrome")) && 
+        buildID > 2003030600 && !!confirm(INST_TO_PROFILE);
   }
 
   var chromef = instToProfile ? getFolder("Profile", "chrome") : getFolder("chrome");

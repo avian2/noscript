@@ -490,11 +490,10 @@ const DOMUtils = {
     }
   },
   
-  _wm: null,
   get windowMediator() {
-    return this._wm || (this._wm = 
-        CC['@mozilla.org/appshell/window-mediator;1']
-                  .getService(CI.nsIWindowMediator));
+    delete this.windowMediator;
+    return this.windowMediator = CC['@mozilla.org/appshell/window-mediator;1']
+                  .getService(CI.nsIWindowMediator);
   },
   
   _winType: null,
@@ -802,7 +801,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.7.6.4",
+  VERSION: "1.7.8",
   
   get wrappedJSObject() {
     return this;
@@ -988,6 +987,7 @@ NoscriptService.prototype = {
   
   resetDefaults: function() {
     this.resetDefaultGeneralPrefs();
+    this.jsEnabled = false;
     this.resetDefaultSitePrefs();
   },
   syncPrefs: function(branch, name) {
@@ -1003,7 +1003,10 @@ NoscriptService.prototype = {
         break;
       case "temp":
         this.tempSites.sitesString = this.getPref(name, "");
-        break;
+      break;
+      case "gtemp":
+        this.gTempSites.sitesString = this.getPref(name, "");
+      break;
       case "untrusted":
         this.untrustedSites.sitesString = this.getPref(name, "");
         break;
@@ -1269,9 +1272,9 @@ NoscriptService.prototype = {
   skinBase: null,
   hideObjClassName: "__noscriptHideObj__",
   get hideObjClassNameRx() {
-    var rx = new RegExp("\\b" + this.hideObjClassName + "\\s*", "g");
-    this.__defineGetter__("hideObjClassNameRx", function() { return rx; });
-    return rx;
+    const v = new RegExp("\\b" + this.hideObjClassName + "\\s*", "g");
+    this.__defineGetter__("hideObjClassNameRx", function() { return v; });
+    return v;
   },
   pluginPlaceholder: "",
   
@@ -1358,7 +1361,7 @@ NoscriptService.prototype = {
       "jsredirectIgnore", "jsredirectFollow", "jsredirectForceShow", "jsHack", "jsHackRegExp",
       "nselNever", "nselForce",
       "showPlaceholder", "showUntrustedPlaceholder", "collapseObject",
-      "temp", "untrusted",
+      "temp", "untrusted", "gtemp",
       "silverlightPatch",
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp",
@@ -1366,7 +1369,7 @@ NoscriptService.prototype = {
       try {
         this.syncPrefs(this.prefs, p);
       } catch(e) {
-        dump("[NoScript init error] " + e + " setting " + p + "\n");
+        dump("[NoScript init error] " + e.stack + " setting " + p + "\n");
       }
     }
     
@@ -1402,9 +1405,10 @@ NoscriptService.prototype = {
       this.jsEnabled = false;
     
     this.eraseTemp();
-    // this.sanitize2ndLevs();
     
     this.reloadWhereNeeded(); // init snapshot
+    
+    this.savePrefs(); // flush preferences to file
     
     // hook on redirections (non persistent, otherwise crashes on 1.8.x)
     CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
@@ -1482,17 +1486,23 @@ NoscriptService.prototype = {
   }
 ,
   tempSites: new PolicySites(),
+  gTempSites: new PolicySites(),
   isTemp: function(s) {
-    return s in this.tempSites.sitesMap;
+    return s in (this.globalJS ? this.gTempSites : this.tempSites).sitesMap;
   }
 ,
   setTemp: function(s, b) {
-    var change = b 
-      ? this.tempSites.add(s) 
-      : this.tempSites.remove(s, true, true); // keeps up and down, see #eraseTemp() 
-    if (change) {
-      this.setPref("temp", this.tempSites.sitesString);
+    const sites = {
+      "temp": this.tempSites,
+      "gtemp": this.gTempSites
+    };
+    for (var p in sites) {
+      if (b
+          ? (p[0] != "g" || this.globalJS) && sites[p].add(s)
+          : sites[p].remove(s, true, true) // keeps up and down, see #eraseTemp() 
+      ) this.setPref(p, sites[p].sitesString);
     }
+    return b;
   },
   
   untrustedSites: new PolicySites(),
@@ -1566,7 +1576,6 @@ NoscriptService.prototype = {
     } else {
       ps.remove(site, false, true);
       if (this.forbidImpliesUntrust) {
-        this._lastSnapshot.add(site);
         this.setUntrusted(site, true);
       } else {
         this.setManual(site, true);
@@ -1645,6 +1654,7 @@ NoscriptService.prototype = {
       this.caps.clearUserPref("default.javascript.enabled");
     } catch(e) {}
     this.defaultCaps.setCharPref(prefName, enabled ? "allAccess" : "noAccess");
+    
     this.setPref("global", enabled);
     if (enabled) {
       this.mozJSPref.setBoolPref("enabled", true);
@@ -1763,11 +1773,12 @@ NoscriptService.prototype = {
   reloadWhereNeeded: function(currentTabOnly) {
     var snapshot = this._lastSnapshot;
     const ps = this.jsPolicySites;
-    this._lastSnapshot = ps.clone();
     const global = this.jsEnabled;
     var lastGlobal = this._lastGlobal;
     this._lastGlobal = global;
-  
+    this._lastSnapshot = global ? this.untrustedSites.clone() : ps.clone();
+    
+
     var lastObjects = this._lastObjects || this.objectWhitelist;
     this._lastObjects = this.objectWhitelist;
     
@@ -1778,31 +1789,34 @@ NoscriptService.prototype = {
         ps.equals(snapshot)
         ) 
       return false;
-   
+  
     
     if (!this.getPref("autoReload", true)) return false;
     if (global != lastGlobal && !this.getPref("autoReload.global", true)) return false;
     
-    currentTabOnly = currentTabOnly || !this.getPref("autoReload.allTabs", true);
+    currentTabOnly = currentTabOnly || !this.getPref("autoReload.allTabs", true) ||
+      global != lastGlobal && !this.getPref("autoReload.allTabsOnGlobal", false);
+    
     var useHistory = this.getPref("xss.reload.useHistory", false);
     var useHistoryExceptCurrent = this.getPref("xss.reload.useHistory.exceptCurrent", true);
-    
+      
     var ret = false;
     var docSites, site;
     var prevStatus, currStatus;
     
     var webNav, url;
-    
     const nsIWebNavigation = CI.nsIWebNavigation;
     const nsIURL = CI.nsIURL;
     const LOAD_FLAGS = nsIWebNavigation.LOAD_FLAGS_NONE;
+ 
     const untrustedReload = !this.getPref("xss.trustReloads", false);
-    
+
     var bi = new this.domUtils.createBrowserIterator();
     for (var browser, j; browser = bi.next();) {
       docSites = this.getSites(browser);
       for (j = docSites.length; j-- > 0;) {
-        prevStatus = lastGlobal && !this.alwaysBlockUntrustedContent || !!snapshot.matches(docSites[j]);
+ 
+        prevStatus = lastGlobal ? !(this.alwaysBlockUntrustedContent && snapshot.matches(docSites[j])) : !!snapshot.matches(docSites[j]);
         currStatus = this.isJSEnabled(docSites[j]) || !!this.checkShorthands(docSites[j]);
         if (currStatus != prevStatus) {
           ret = true;
@@ -1882,8 +1896,34 @@ NoscriptService.prototype = {
     return false;
   },
   
-  quickReload: function(webNav) {
+  quickReload: function(webNav, checkNullCache) {
+    if (!(webNav instanceof CI.nsIWebNavigation)) {
+      webNav = this.domUtils.getDocShellFromWindow(webNav);
+    }
+    
     var uri = webNav.currentURI;
+    
+    if (checkNullCache && (webNav instanceof CI.nsIWebPageDescriptor)) {
+      try {
+        var ch = this.siteUtils.ios.newChannel(uri.spec, null, null);
+        if (ch instanceof CI.nsICachingChannel) {
+          ch.loadFlags |= ch.LOAD_ONLY_FROM_CACHE;
+          ch.cacheKey = webNav.currentDescriptor.QueryInterface(CI.nsISHEntry).cacheKey
+          if (ch.open().available() == 0) {
+            webNav.reload(webNav.LOAD_FLAGS_BYPASS_CACHE);
+            return;
+          }
+        }
+      } catch(e) {
+        if (this.consoleDump) this.dump(e);
+      } finally {
+        try {
+          ch.close();
+        } catch(e1) {}
+      }
+    }
+    
+
     if (uri.schemeIs("http") || uri.schemeIs("https")) {
       this.requestWatchdog.noscriptReload = uri.spec;
     }
@@ -1895,14 +1935,15 @@ NoscriptService.prototype = {
     // keeps ancestors because the may be added as permanent after the temporary allow;
     // keeps descendants because they may already have been permanent before the temporary, and then shadowed
     this.jsPolicySites.remove(this.tempSites.sitesList, true, true);
-    // if in blacklist mode, put back temporarily allowed in blacklist
-    if (this.globalJS && this.alwaysBlockUntrustedContent &&
-        this.untrustedSites.add(this.tempSites.sitesList)) {
+    // if allowed in blacklist mode, put back temporarily allowed in blacklist
+    if (this.untrustedSites.add(this.gTempSites.sitesList)) {
       this.persistUntrusted();
     }
-
-    this.setJSEnabled(this.permanentSites.sitesList, true); // add permanent & save
-    this.setPref("temp", ""); // flush temporary list
+    
+    this.setPref("temp", ""); 
+    this.setPref("gtemp", "");
+    
+    this.setJSEnabled(this.permanentSites.sitesList, true); // add permanent
     this.resetAllowedObjects();
   }
 ,
@@ -1986,6 +2027,7 @@ NoscriptService.prototype = {
       try {
         this.clearUserPref("policynames");
       } catch(ex1) {}
+      
       this.eraseTemp();
       this.savePrefs();
     } catch(ex) {}
@@ -2027,7 +2069,7 @@ NoscriptService.prototype = {
         prefs.setIntPref(name,value);
         break;
       default:
-        throw new Error("Unsupported type "+typeof(value)+" for preference "+name);
+        throw new Error("Unsupported type " + typeof(value) + " for preference "+name);
     }
   }
 ,
@@ -2135,29 +2177,40 @@ NoscriptService.prototype = {
     } catch(e) { return null; }
   },
   
-  browserChromeDir: CC["@mozilla.org/file/directory_service;1"].getService(CI.nsIProperties)
-                       .get("AChrom", CI.nsIFile),
-  chromeRegistry: CC["@mozilla.org/chrome/chrome-registry;1"].getService(CI.nsIChromeRegistry),
   checkForbiddenChrome: function(url, origin) {
-    if(origin && !/^(?:chrome|resource|about)$/.test(origin.scheme)) {
-      switch(url.scheme) {
-        case "chrome":
-          var packageName = url.host;
-          if (packageName == "browser") return false; // fast path for commonest case
-          exception = this.getPref("forbidChromeExceptions." + packageName, false);
-          if (exception) return false;
-          var chromeURL = this.chromeRegistry.convertChromeURL(url);
-          if (chromeURL instanceof CI.nsIJARURI) 
-            chromeURL = chromeURL.JARFile;
-                
-          return chromeURL instanceof CI.nsIFileURL && !this.browserChromeDir.contains(chromeURL.file, true);
-         
-        case "resource":
-          if(/\.\./.test(unescape(url.spec))) return true;
+    var f, browserChromeDir, chromeRegistry;
+    try {
+      browserChromeDir = CC["@mozilla.org/file/directory_service;1"].getService(CI.nsIProperties)
+                       .get("AChrom", CI.nsIFile);
+      chromeRegistry = CC["@mozilla.org/chrome/chrome-registry;1"].getService(CI.nsIChromeRegistry);
+      
+      f = function(url, origin) {
+        if(origin && !/^(?:chrome|resource|about)$/.test(origin.scheme)) {
+          switch(url.scheme) {
+            case "chrome":
+              var packageName = url.host;
+              if (packageName == "browser") return false; // fast path for commonest case
+              exception = this.getPref("forbidChromeExceptions." + packageName, false);
+              if (exception) return false;
+              var chromeURL = chromeRegistry.convertChromeURL(url);
+              if (chromeURL instanceof CI.nsIJARURI) 
+                chromeURL = chromeURL.JARFile;
+                    
+              return chromeURL instanceof CI.nsIFileURL && !browserChromeDir.contains(chromeURL.file, true);
+             
+            case "resource":
+              if(/\.\./.test(unescape(url.spec))) return true;
+          }
+        }
+        return false;
       }
+    } catch(e) {
+      f = function() { return false; }
     }
-    return false;
+    this.checkForbiddenChrome = f;
+    return this.checkForbiddenChrome(url, origin);
   },
+  
   // nsIContentPolicy interface
   // we use numeric constants for performance sake: 
   // nsIContentPolicy.TYPE_OTHER = 1
@@ -2209,12 +2262,11 @@ NoscriptService.prototype = {
   },
   
   get nopXBL() {
-    var url = this.POLICY1_9
+    const v = this.POLICY1_9
       ? "chrome://global/content/bindings/general.xml#basecontrol"
       : this.contentBase + "noscript.xbl#nop";
-    
-    this.__defineGetter__("nopXBL", function() { return url });
-    return url;
+    this.__defineGetter__("nopXBL", function() { return v; });
+    return v;
   },
   
   mainContentPolicy: {
@@ -2487,15 +2539,15 @@ NoscriptService.prototype = {
               }
               
               if (forbid) {
-                if (isSilverlight) {
-                  forbid = aContentLocation != aRequestOrigin || aContext.firstChild;
-                  if(forbid && aContentType != 12) {
+                 if (isSilverlight) {
+                  forbid = aContentType != 12 && aInternalCall;
+                  if(forbid) {
                     this.setExpando(aContext, "silverlight", true);
-                    if (!aContentLocation.spec == "data:,") {
+                    if (aContentLocation.spec != "data:application/x-silverlight,") {
                       try {
-                        aContentLocation.spec = "data:,"; // normalize URL
+                        aContentLocation.spec = "data:application/x-silverlight,"; // normalize URL
                       } catch(normEx) {
-                        if (this.consoleDump) this.dump("Couldn't normalize " + aContentLocation.spec + " to data:, - " + normEx);
+                        if (this.consoleDump) this.dump("Couldn't normalize " + aContentLocation.spec + " to empty data URL - " + normEx);
                       }
                     }
                     locationURL = this.resolveSilverlightURL(aRequestOrigin, aContext);
@@ -2633,10 +2685,11 @@ NoscriptService.prototype = {
   
   resolveSilverlightURL: function(uri, embed) {
     if(!uri) return "";
-    var url = "";
     
-    if (embed instanceof CI.nsIDOMElement) try {
+    
+    if (typeof(embed) == "object" && embed instanceof CI.nsIDOMElement) try {
       
+      var url = "";
       var params = embed.getElementsByTagName("param");
       if (!params.length) return uri.spec;
       
@@ -2712,10 +2765,10 @@ NoscriptService.prototype = {
       case 0: // all IFRAMES
         return true;
       case 3: // different 2nd level domain
-        return this.getBaseDomain(this.getDomain(originURL)) != 
-          this.getBaseDomain(this.getDomain(locationURL));
+        return this.getBaseDomain(this.getDomain(originURL, true)) != 
+          this.getBaseDomain(this.getDomain(locationURL, true));
       case 2: // different domain
-        return this.getDomain(originURL) != this.getDomain(locationURL);
+        return this.getDomain(originURL, true) != this.getDomain(locationURL, true);
       case 1: // different site
         return this.getSite(originURL) != this.getSite(locationURL);
      }
@@ -3503,12 +3556,12 @@ NoscriptService.prototype = {
       if (mime == doc.contentType && 
           ctx.anchor == doc.body.firstChild && 
           ctx.anchor == doc.body.lastChild) { // stand-alone plugin
-          doc.location.reload();
+          this.quickReload(doc.defaultView, true);
       } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime)) {
-        this.quickReload(this.domUtils.getDocShellFromWindow(doc.defaultView));
+        this.quickReload(doc.defaultView);
       } else if (this.getExpando(ctx, "silverlight")) {
         this.allowObject(doc.documentURI, mime);
-        this.quickReload(this.domUtils.getDocShellFromWindow(doc.defaultView));
+        this.quickReload(doc.defaultView);
       } else {
         this.setExpando(ctx.anchor, "removedPlugin", null);
         extras.placeholder = null;
@@ -3879,6 +3932,8 @@ NoscriptService.prototype = {
     
     if (this.shouldLoad(7, uri, uri, domWindow, contentType, true) != CP_OK) {
       
+      req.loadFlags |= req.INHIBIT_CACHING;
+      
       if (this.consoleDump & LOG_CONTENT_INTERCEPT)
         this.dump("Plugin document content type detected");
 
@@ -4153,11 +4208,17 @@ NoscriptService.prototype = {
                      (jsURL && this.extractJSLink(href)) || "";
     
     if (fixedHref) {
-      a.setAttribute("href", fixedHref);
-      var title = a.getAttribute("title");
-      a.setAttribute("title", title ? "[js] " + title : 
+      // check if it's a JS button
+      if (/^(?:button|input)$/i.test(a.tagName) && a.type == "button") {
+        a.ownerDocument.defaultView.open(fixedHref, "_self");
+        ev.preventDefault();
+      } else { // normal link
+        a.setAttribute("href", fixedHref);
+        var title = a.getAttribute("title");
+        a.setAttribute("title", title ? "[js] " + title : 
           (onclick || "") + " " + href
         );
+      }
     } else { // try processing history.go(n) //
       onclick = onclick || href;
       if(!onclick) return;
@@ -4297,10 +4358,10 @@ RequestWatchdog.prototype = {
   LOAD_DOCUMENT_URI: CI.nsIChannel.LOAD_DOCUMENT_URI,
   
   get dummyPost() {
-    var dummyPost = CC["@mozilla.org/io/string-input-stream;1"].createInstance();
-    dummyPost.setData("", 0);
-    this.__defineGetter__("dummyPost", function() { return dummyPost; });
-    return dummyPost;
+    const v = CC["@mozilla.org/io/string-input-stream;1"].createInstance();
+    v.setData("", 0);
+    this.__defineGetter__("dummyPost", function() { return v; });
+    return v;
   },
   
   QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
@@ -4637,9 +4698,8 @@ RequestWatchdog.prototype = {
     
     var injectionCheck = ns.injectionCheck;
     
-    if (originSite == targetSite && 
-       (injectionCheck < 3 || channel.requestMethod != "GET") 
-      ) return; // same origin, fast return
+    if (originSite == targetSite && injectionCheck < 3) 
+      return; // same origin, fast return
     
     if (this.callback && this.callback(channel, origin)) return;
     
@@ -4681,6 +4741,8 @@ RequestWatchdog.prototype = {
     
     var originalAttempt;
     var injectionAttempt = false;
+    var postInjection = false;
+    
     window = window || this.findWindow(channel);
     
     // neutralize window.name-based attack
@@ -4691,14 +4753,22 @@ RequestWatchdog.prototype = {
     if (globalJS || ns.isJSEnabled(originSite)) {
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel, window), channel);
       
+      // origin is trusted, check for injections
       
       injectionAttempt = injectionCheck && (injectionCheck > 1 || ns.isTemp(originSite)) &&
-        (!window || ns.injectionCheckSubframes || window == window.top) &&
-        ns.injectionChecker.checkURL(originalSpec);
-      
+        (!window || ns.injectionCheckSubframes || window == window.top);
+        
       if (injectionAttempt) {
-        if (ns.consoleDump) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
-      } else {
+        postInjection = channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel);
+        injectionAttempt = ns.injectionChecker.checkURL(originalSpec);
+        
+        if (ns.consoleDump) {
+          if (injectionAttempt) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
+          if (postInjection) this.dump(channel, "Detected POST injection attempt at level "  + injectionCheck);
+        }
+      }
+      
+      if (!(injectionAttempt || postInjection)) {
         if (ns.consoleDump) this.dump(channel, "externalLoad flag is " + externalLoad);
 
         if (externalLoad) { // external origin ?
@@ -4734,15 +4804,16 @@ RequestWatchdog.prototype = {
     var requestInfo = new RequestInfo(channel, url, origin, window);
 
     // transform upload requests into no-data GETs
-    if (ns.filterXPost && (channel instanceof CI.nsIUploadChannel) && channel.uploadStream
-      && !injectionAttempt // this will rule out the possibility we strip trusted to trusted uploads
+    if (ns.filterXPost &&
+        (postInjection || !injectionAttempt) && // don't strip trusted to trusted uploads if they passed injection checks 
+        (channel instanceof CI.nsIUploadChannel) && channel.uploadStream
       ) {
       channel.requestMethod = "GET";
       requestInfo.unsafeRequest.postData = channel.uploadStream;
       channel.setUploadStream(this.dummyUpload, "", -1);
       this.notify(this.addXssInfo(requestInfo, {
         reason: "filterXPost",
-        originalAttempt: originalSpec,
+        originalAttempt: originalSpec + (postInjection ? "§DATA§" + postInjection : ""),
         silent: untrustedReload
       }));
     }
@@ -4753,7 +4824,7 @@ RequestWatchdog.prototype = {
       // sanitize referrer
       if (channel.referrer && channel.referrer.spec) {
         originalAttempt = channel.referrer.spec;
-        xsan.brutal = true;
+        xsan.brutal = /'"</.test(Entities.convertAll(unescape(originalAttempt)));
         try {
           if (channel.referrer instanceof CI.nsIURL) {
             changes = xsan.sanitizeURL(channel.referrer);
@@ -4768,7 +4839,7 @@ RequestWatchdog.prototype = {
           if (!changes) {
             changes = { 
               minor: !channel.referrer.spec || 
-                     decodeURI(originalAttempt) != decodeURI(channel.referrer.spec) 
+                      unescape(originalAttempt) != unescape(channel.referrer.spec) 
             };
           }
           if (changes.minor) {
@@ -4974,20 +5045,19 @@ RequestWatchdog.prototype = {
 
 
 var Entities = {
-  _htmlNode: null,
-
- 
+  
   get htmlNode() {
-    return this._htmlNode || (this._htmlNode =
+    delete this.htmlNode;
+    return this.htmlNode =
       (function() {
         try {
           // we need a loose HTML node, only way to get it today seems using hidden window
           var as = CC["@mozilla.org/appshell/appShellService;1"].getService(CI.nsIAppShellService);
           as.hiddenDOMWindow.addEventListener("unload", function(ev) {
             ev.currentTarget.removeEventListener("unload", arguments.callee, false);
-            Entities._htmlNode = null;
+            Entities.htmlNode = null;
             doc = null;
-            // dump("*** Free Entities._htmlNode ***\n");
+            // dump("*** Free Entities.htmlNode ***\n");
           }, false);
           return as.hiddenDOMWindow.document.createElement("body");
         } catch(e) {
@@ -4997,7 +5067,6 @@ var Entities = {
             .createElementNS("http://www.w3.org/1999/xhtml", "body")
         }
       })()
-      );
   },
   convert: function(e) {
     try {
@@ -5063,7 +5132,7 @@ const IC_EVENT_DOS_PATTERN =
       
 var InjectionChecker = {
   fuzzify: fuzzify,
-  Entities: Entities,
+  entities: Entities,
   syntax: new SyntaxChecker(),
   _log: function(msg, t, i) {
     if (msg) msg = this._printable(msg);
@@ -5092,7 +5161,11 @@ var InjectionChecker = {
   set logEnabled(v) { this.log = v ? this._log : function() {}; },
   
   checkJSSyntax: function(s) {
-    if (/^(?:''|"")?[^\('"]*\)/.test(s)) s = "x(" + s + ")"; // bracket balancing for micro injections like "''),eval(name,''"
+    // bracket balancing for micro injections like "''),eval(name,''"
+    if (/^(?:''|"")?[^\('"]*\)/.test(s)) s = "x((((\n" + s + "\n))))";
+    if (/^(?:''|"")?[^\['"]*\\]/.test(s)) s = "y[y[y[y[\n" + s + "\n]]]]";
+    if (/^(?:''|"")?[^\{'"]*\}/.test(s)) s = "function z() {\n" + s + "\n}";
+    
     if (this.syntax.check(s + "/**/")) {
       this.log("Valid fragment " + s);
       return true;
@@ -5100,15 +5173,14 @@ var InjectionChecker = {
     return false;
   },
   
-  _breakStops: null,
   get breakStops() {
-    if (this._breakStops) return this._breakStops;
     var def = "\\/\\?&#;\n\r";
     var bs = {
       nq: new RegExp("[" + def + "]")
     };
     Array.forEach("'\"", function(c) { bs[c] = new RegExp("[" + def + c + "]"); });
-    return this._breakStops = bs;
+    delete this.breakStops;  
+    return this.breakStops = bs;
   },
   
   reduceBackSlashes: function(bs) {
@@ -5138,11 +5210,14 @@ var InjectionChecker = {
       prev = s;
       for each(expr in m) {
         script = this.reduceQuotes(expr);
-        if (!/[\(=\.]/.test(script) && 
+        if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(script)) {
+           this.log("Reducing pseudo-JSON " + expr);
+           s = s.replace(expr, "{PJS:ON}");
+        } else if (!/[\(=\.]/.test(script) && 
            this.checkJSSyntax("JSON = " + script) // no-assignment JSON fails with "invalid label"
         ) { 
           this.log("Reducing JSON " + expr);
-          s = s.replace(expr, "_JSON_");
+          s = s.replace(expr, "{JS:ON}");
         }
       }
       if (s == prev) break;
@@ -5156,8 +5231,8 @@ var InjectionChecker = {
     + '|' + IC_EVENT_DOS_PATTERN
   ),
   _maybeJSRx: new RegExp(
-    '[\\w$\\u0080-\\uFFFF\\]][\\s\\S]*[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
-    fuzzify('eval|set(?:Timeout|Interval)|[fF]unction|Script') + IC_WINDOW_OPENER_PATTERN +
+    '[\\w$\\u0080-\\uFFFF\\]\\)]\\s*(?:\\/[\\/\\*][\\s\\S]*|\\s*)[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
+    fuzzify('eval|set(?:Timeout|Interval)|[fF]unction|Script|') + IC_WINDOW_OPENER_PATTERN +
     ')\\b[\\s\\S]*\\(|\\b(?:' +
     fuzzify('setter|location') +
     ')\\b[\\s\\S]*=|' +
@@ -5166,10 +5241,12 @@ var InjectionChecker = {
   maybeJS: function(expr) {
     if(/^(?:[^\(\)="']+=[^\(\)='"]+|[\?a-z_0-9;,&=\/]+)$/i.test(expr)) // commonest case, single assignment or simple assignments, no break
       return this._singleAssignmentRx.test(expr);
-    if (/^(?:[\w\-\.]+\/)*[\w\-\s]+\([\w\-\s]+\)$/.test(expr)) // typical "call like" Wiki URL pattern
+    if (/^(?:[\w\-\.]+\/)*\(*[\w\-\s]+\([\w\-\s]+\)[\w\-\s]*\)*$/.test(expr)) // typical "call like" Wiki URL pattern + bracketed session IDs
       return /\b(?:eval|set(?:Timeout|Interval)|[F|f]unction|Script|open|alert|confirm|prompt|print|on\w+)\s*\(/.test(expr);
     
-    return this._maybeJSRx.test(expr); 
+    return this._maybeJSRx.test(
+        expr.replace(/(?:^|[\/;&#])[\w\-]+\.[\w\-]+[\?;\&#]/g, '', expr) // remolve neutral dotted substrings
+    ); 
   },
   checkLastFunction: function() {
     var expr = this.syntax.lastFunction;
@@ -5210,9 +5287,8 @@ var InjectionChecker = {
     return ret;
   },
   get invalidChars() {
-    var rx = new RegExp("^[^\"'/]*[" + this._createInvalidRanges() + "][^\"'/]*$");
-    this.__defineGetter__("invalidChars", function() { return rx; })
-    return rx;
+    delete this.invalidChars;
+    return this.invalidChars = new RegExp("^[^\"'/]*[" + this._createInvalidRanges() + "][^\"'/]*$");
   },
   checkJSBreak: function(s) {
     // Direct script injection breaking JS string literals or comments
@@ -5521,14 +5597,10 @@ var InjectionChecker = {
   },
   
   checkURL: function(url) {
-
-    // iterate escaping until there's nothing more to escape
-
     // let's assume protocol and host are safe
     url = url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "");
     this.base64 = false;
     this.base64tested = [];
-    
     return this.checkRecursive(url, 2);
   },
   
@@ -5569,7 +5641,68 @@ var InjectionChecker = {
     return url.replace(/Q([\da-fA-F]{2})/g, function(s, c) {
       return String.fromCharCode(parseInt(c, 16));
     });
+  },
+  
+  checkPost: function(channel) {
+    if (!((channel instanceof CI.nsIUploadChannel)
+          && channel.uploadStream && (channel.uploadStream instanceof CI.nsISeekableStream)))
+      return false;
+    this.log("Extracting post data...");
+    var postData = null;
+    try {
+      var us = channel.uploadStream;
+      us.seek(0, 0);
+      const sis = CC['@mozilla.org/binaryinputstream;1'].createInstance(CI.nsIBinaryInputStream);
+      sis.setInputStream(us);
+      postData  = sis.readBytes(sis.available());
+
+      us.seek(0, 0); // rewind
+      var m = postData.match(/^Content-type: multipart\/form-data;\s*boundary=(\S*)/i);
+
+      var chunks = this.parsePost(postData.substring(postData.indexOf("\r\n\r\n") + 2), m && m[1]);
+
+      for (var j = 0, len = chunks.length; j < len; j++) {
+        if (chunks[j].length > 6 && this.checkRecursive(chunks[j], 2)) return chunks[j];
+      }
+    } catch(ex) {
+      return ex;
+    }
+    
+    return false; 
+  },
+  
+  parsePost: function(postData, boundary) {
+    var chunks = [], parts, j, len;
+
+    if (boundary) { // multipart/form-data, see http://www.faqs.org/ftp/rfc/rfc2388.txt
+
+      parts = postData.split("--" + boundary);
+      for(j = 0, len = parts.length; j < len; j++) {
+        m = parts[j].match(/^\s*Content-Disposition: form-data; name="(.*?)"(?:;\s*filename="(.*)"|[^;])\r?\n(Content-Type: \w)?.*\r?\n/i);
+
+        if (m) {
+          // name and filename are backslash-quoted according to RFC822
+          if (m[1]) chunks.push(m[1].replace(/\\\\/g, "\\")); // name and file name 
+          if (m[2]) {
+            chunks.push(m[2].replace(/\\\\/g, "\\")); // filename
+            if (m[3]) continue; // Content-type: skip, it's a file
+          }
+          chunks.push(parts[j].substring(m[0].length)); // parameter body
+        } else {
+          // malformed part, check it all 
+          chunks.push(parts[j])
+        }
+      }
+    } else {
+      var parts = postData.split("&");
+      for (j = 0, len = parts.length; j < parts; j++) {
+        m = parts[j].split("=");
+        chunks.push(m[0], m[1]);
+      }
+    }
+    return chunks;
   }
+  
 };
 
 
@@ -5666,13 +5799,25 @@ XSanitizer.prototype = {
       sep = query.indexOf("&") > -1 ? "&" : ";" 
     }
     const parms = query.split(sep);
-    var j, pieces, k, pz, origPz, encodedPz, nestedURI, qpos, apos;
+    var j, pieces, k, pz, origPz, encodedPz, nestedURI, qpos, apos, encodeURL;
     
     for (j = parms.length; j-- > 0;) {
       pieces = parms[j].split("=");
       try {
         for (k = pieces.length; k-- > 0;) {
-          origPz = pz = decodeURIComponent(encodedPz = pieces[k]);
+          encodedPz = pieces[k];
+          pz = null;
+          if (encodedPz.indexOf("+") < 0) {
+            try {
+              pz = decodeURIComponent(encodedPz);
+              encodeURL = encodeURIComponent;
+            } catch(e) {}
+          }
+          if (pz == null) {
+            pz = unescape(encodedPz);
+            encodeURL = escape;
+          }
+          origPz = pz;
           nestedURI = null;
           if (/^https?:\/\//i.test(pz)) {
             // try to sanitize as a nested URL
@@ -5705,7 +5850,7 @@ XSanitizer.prototype = {
             if (origPz != pz) changes.qs = true;
           }
           
-          pieces[k] = encodedPz.indexOf("+") > - 1 ? escape(pz) : encodeURIComponent(pz);
+          pieces[k] = encodeURL(pz);
         }
         parms[j] = pieces.join("=");
       } catch(e) { 

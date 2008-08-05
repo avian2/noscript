@@ -130,6 +130,19 @@
 }
 
 
+.noscript-yu-glb, .noscript-inactive-yu-glb,
+#noscript-tbb.noscript-yu-glb, #noscript-tbb.noscript-inactive-yu-glb,
+#noscript-statusIcon.noscript-yu-glb, #noscript-statusIcon.noscript-inactive-yu-glb {
+  list-style-image: url(yu-glb16.png);
+}
+
+.noscript-untrusted-glb, .noscript-inactive-untrusted-glb,
+#noscript-tbb.noscript-untrusted-glb, #noscript-tbb.noscript-inactive-untrusted-glb,
+#noscript-statusIcon.noscript-untrusted-glb, #noscript-statusIcon.noscript-inactive-untrusted-glb {
+  list-style-image: url(untrusted-glb16.png);
+}
+
+
 .noscript-jar {
   list-style-image: url(jar16.png);
 }

@@ -3,6 +3,7 @@ pref("noscript.autoReload", true);
 pref("noscript.autoReload.global", true);
 pref("noscript.autoReload.allTabs", true);
 pref("noscript.autoReload.allTabsOnPageAction", true);
+pref("noscript.autoReload.allTabsOnGlobal", false);
 pref("noscript.autoReload.useHistory", false);
 pref("noscript.autoReload.useHistory.exceptCurrent", true);
 pref("noscript.ctxMenu", true);
@@ -88,7 +89,7 @@ pref("noscript.filterXGetRx", "(?:<+(?=[^<>=\\d\\. ])|[\\\\\"\\x00-\\x07\\x09\\x
 pref("noscript.filterXGetUserRx", "");
 pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
 pref("noscript.injectionCheck", 2);
-
+pref("noscript.injectionCheckPost", true);
 
 pref("noscript.blockXIntranet", true);
 pref("noscript.intranetMaskRx", "^(127\\.[\\d.]+)");
@@ -154,3 +155,5 @@ pref("noscript.hideOnUnloadRegExp", "video/.*");
 
 pref("noscript.untrustedGranularity", 3);
 pref("noscript.requireReloadRegExp", "application/x-vnd\\.moveplayer\\b.*");
+
+pref("noscript.trustEV", false);

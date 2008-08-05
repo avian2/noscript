@@ -96,17 +96,17 @@ var noscriptBM = {
     ev.currentTarget.removeEventListener("load", arguments.callee, false);
     if(!noscriptUtil.service) return;
  
-    if(window.BookmarksCommand) { // patch bookmark clicks
+    if(window.BookmarksCommand && !noscriptBM.openOneBookmarkOriginal) { // patch bookmark clicks
       noscriptBM.openOneBookmarkOriginal = BookmarksCommand.openOneBookmark;
       BookmarksCommand.openOneBookmark = noscriptBM.openOneBookmark;
     }
     
-    if(window.handleURLBarCommand) { // patch URLBar for keyword-triggered bookmarklets
+    if(window.handleURLBarCommand && !noscriptBM.handleURLBarCommandOriginal) { // patch URLBar for keyword-triggered bookmarklets
       noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
       window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
     }
     var pu = window.PlacesUIUtils || window.PlacesUtils || false;
-    if (typeof(pu) == "object") {
+    if (typeof(pu) == "object" && !noscriptBM.placesUtils) {
       noscriptBM.placesUtils = pu;
       window.setTimeout(function() {
         var methods = ["openNodeIn", "openSelectedNodeWithEvent"];

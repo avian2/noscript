@@ -48,7 +48,8 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   get prompter() {
-    return noscriptUtil.prompter;
+    delete this.prompter;
+    return this.prompter = noscriptUtil.prompter;
   },
   
   onMenuShowing: function(ev) {
@@ -162,13 +163,15 @@ var noscriptOverlay = noscriptUtil.service ?
       node = mainMenu.insertBefore(tempMenuItem, node);
     }
     
-    if ((ns.tempSites.sitesString || ns.objectWhitelistLen) && ns.getPref("showRevokeTemp", true)) {
+    var tempSites = ns.gTempSites.sitesString;
+    tempSites = tempSites && (tempSites + " " + ns.tempSites.sitesString).replace(/\s+$/g, '') || ns.tempSites.sitesString;
+    if ((tempSites || ns.objectWhitelistLen) && ns.getPref("showRevokeTemp", true)) {
       node.hidden = seps.global.hidden = false;
       node.setAttribute("tooltiptext",
         // remove http/https/file CAPS hack entries 
         "<SCRIPT>: " + 
-        (ns.tempSites.sitesString 
-          ? ns.siteUtils.sanitizeString(ns.tempSites.sitesString.replace(/\b(?:https?|file):\/\//g, ""
+        (tempSites 
+          ? ns.siteUtils.sanitizeString(tempSites.replace(/\b(?:https?|file):\/\//g, ""
               )).split(/\s+/) 
               // .join(",\n") // wait Firefox 3 with its multiline tooltips for this
               .length
@@ -267,7 +270,7 @@ var noscriptOverlay = noscriptUtil.service ?
     const showUntrusted = ns.getPref("showUntrusted", true);
     const showDistrust = ns.getPref("showDistrust", true);
     const showNothing = !(showAddress || showDomain || showBase || showUntrust);
-    const forbidImpliesUntrust = ns.forbidImpliesUntrust;
+    // const forbidImpliesUntrust = ns.forbidImpliesUntrust;
     
     const showPermanent = ns.getPref("showPermanent", true);
     const showTemp = !locked && ns.getPref("showTemp", true);
@@ -374,7 +377,7 @@ var noscriptOverlay = noscriptUtil.service ?
         }
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
         
-        if (showPermanent || enabled) 
+        if ((showPermanent || enabled) && !(global && enabled)) 
           parent.appendCmd(node);
         
         if (!locked) {
@@ -387,14 +390,14 @@ var noscriptOverlay = noscriptUtil.service ?
             extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
             parent.appendCmd(extraNode);
           }
-          if (((showUntrusted && untrustedMenu) || showDistrust && !enabled) && !untrusted) {
+          if (((showUntrusted && untrustedMenu) || showDistrust && !enabled || blockUntrusted) && !untrusted) {
             extraNode = document.createElement("menuitem");
             extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
             extraNode.setAttribute("statustext", menuSite);
             extraNode.setAttribute("class", cssClass + " noscript-distrust");
             extraNode.setAttribute("oncommand", "noscriptOverlay.menuAllow(false, this, false)");
             extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
-            (showUntrusted ? untrustedMenu : mainMenu).appendCmd(extraNode);
+            (showUntrusted && !blockUntrusted ? untrustedMenu : mainMenu).appendCmd(extraNode);
           }
         }
       }
@@ -608,7 +611,12 @@ var noscriptOverlay = noscriptUtil.service ?
         if (enabled && !webNav.allowJavascript) {
           var curSite = ns.getSite(webNav.currentURI.spec);
           if (ns.isJSEnabled(curSite)) {
-            ns._lastSnapshot.remove(curSite); // force reload
+            // force reload
+            if (ns.jsEnabled) {
+              ns._lastSnapshot.add(curSite); 
+            } else {
+              ns._lastSnapshot.remove(curSite); 
+            }
           }
           webNav.allowJavascript = true;
         }
@@ -620,9 +628,11 @@ var noscriptOverlay = noscriptUtil.service ?
   }
 ,
   
-  _statusIcon: null,
   get statusIcon() {
-    return this._statusIcon || document.getElementById("noscript-statusIcon");
+    var statusIcon = document.getElementById("noscript-statusIcon");
+    if (!statusIcon) return null; // avoid mess with early calls
+    delete this.statusIcon;
+    return this.statusIcon = statusIcon;
   },
 
   getIcon: function(node) {
@@ -1124,8 +1134,8 @@ var noscriptOverlay = noscriptUtil.service ?
       }
       allowed = allowedSites.length;
       lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
-            : allowed == 0 ? (global ? "untrusted" : "no") 
-            : (untrusted > 0 && !notificationNeeded ? "yu" : "prt");
+            : allowed == 0 ? (global ? "untrusted-glb" : "no") 
+            : (untrusted > 0 && !notificationNeeded ? (global ? "yu-glb" : "yu") : "prt");
       notificationNeeded = notificationNeeded && totalAnnoyances > 0;
     }
     
@@ -1637,7 +1647,7 @@ var noscriptOverlay = noscriptUtil.service ?
       var w = null;
       try {
         w = nsBrowserAccess.prototype.openURI.apply(this, arguments);
-        if (external) ns.dump("[NoScript] external load intercepted");
+        if (external && ns.consoleDump) ns.dump("[NoScript] external load intercepted");
       } finally {
         if (external && !w) ns.requestWatchdog.externalLoad = null;
       }

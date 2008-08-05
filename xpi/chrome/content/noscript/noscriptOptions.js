@@ -52,6 +52,7 @@ var nsopt = {
     this.trustedSites = ns.jsPolicySites.clone();
     this.untrustedSites = ns.untrustedSites.clone();
     this.tempSites = ns.tempSites.clone();
+    this.gTempSites = ns.gTempSites.clone();
     this.populateUrlList();
     
     this.jsglobal.checked = ns.jsEnabled;
@@ -177,14 +178,17 @@ var nsopt = {
     var untrustedSites = this.untrustedSites;
     var trustedSites = this.trustedSites;
     var tempSites = this.tempSites;
+    var gTempSites = this.gTempSites;
     
     ns.safeCapsOp(function() {
       if(ns.untrustedSites.sitesString != untrustedSites.sitesString
           || ns.jsPolicySites.sitesString != trustedSites.sitesString
-          || ns.tempSites.sitesString != tempSites.sitesString) {
+          || ns.tempSites.sitesString != tempSites.sitesString
+          || ns.gTempSites.sitesString != gTempSites.sitesString) {
         ns.untrustedSites.sitesString = untrustedSites.sitesString;
         ns.persistUntrusted();
         ns.setPref("temp", tempSites.sitesString);
+        ns.setPref("gtemp", gTempSites.sitesString);
         ns.setJSEnabled(trustedSites.sitesList, true, true);
       }
       ns.jsEnabled = global;
@@ -203,7 +207,7 @@ var nsopt = {
     this.removeButton.setAttribute("disabled", removeDisabled);
     document.getElementById("revokeButton")
       .setAttribute("disabled", this.tempRevoked || 
-          !(this.tempSites.sitesString || this.serv.objectWhitelistLen));
+          !(this.tempSites.sitesString || this.gTempSites.sitesString || this.serv.objectWhitelistLen));
     this.urlChanged();
   },
   
@@ -250,6 +254,8 @@ var nsopt = {
     const dom2 = this.dom2;
     var site, item;
     var match, k, len;
+    var tempSites = this.gTempSites.clone();
+    tempSites.add(this.tempSites.sitesList);
     var tempMap = this.tempSites.sitesMap;
     for(j = 0, len = sites.length; j < len; j++) {
       site = sites[j];
@@ -270,6 +276,8 @@ var nsopt = {
     const site = this.serv.getSite(this.urlText.value);
     this.trustedSites.add(site);
     this.tempSites.remove(site, true, true); // see noscriptService#eraseTemp()
+    this.gTempSites.remove(site, true, true);
+    
     this.untrustedSites.remove(site, false, !this.serv.mustCascadeTrust(site, false));
     this.populateUrlList();
     this.ensureVisible(site);
@@ -314,9 +322,12 @@ var nsopt = {
   tempRevoked: false,
   revokeTemp: function() {
     const ns = this.serv;
-    this.trustedSites.remove(this.tempSites.sitesList, true, true); 
+    this.trustedSites.remove(this.tempSites.sitesList, true, true);
+    this.trustedSites.remove(this.gTempSites.sitesList, true, true);
+    this.untrustedSites.add(this.gTempSites.sitesList);
     this.trustedSites.add(ns.permanentSites.sitesList);
     this.tempSites.sitesString = "";
+    this.gTempSites.sitesString = "";
     this.tempRevoked = true;
     this.populateUrlList();
   },

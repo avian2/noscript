@@ -1,26 +1,28 @@
 var noscriptUtil = {
   chromeBase: "chrome://noscript/content/",
   chromeName: "noscript",
-  _service: null, 
   get service() {
-    if(this._service) return this._service;
-    var s = null;
-    for(var attempt=1; attempt<=2;attempt++) {
+    var ns = null;
+    for(var attempt=1; attempt <= 2 ;attempt++) {
       try {
-       s = Components.classes["@maone.net/noscript-service;1"].getService().wrappedJSObject;
-       break;
+        ns = Components.classes["@maone.net/noscript-service;1"].getService().wrappedJSObject;
+        break;
       } catch(ex) {
         dump(ex.message);
         window.navigator.plugins.refresh();
       }
     }
-    if(s != null) {
-      s.init();
+    if(ns != null) {
+      ns.init();
     }
-    return this._service = s;
-  }, 
+    delete this.service;
+    return this.service = ns;
+  },
+  
   get prompter() {
-    return Components.classes["@mozilla.org/embedcomp/prompt-service;1"
+    delete this.prompter;
+    return this.prompter =
+      Components.classes["@mozilla.org/embedcomp/prompt-service;1"
           ].getService(Components.interfaces.nsIPromptService);
   }
 ,
@@ -39,7 +41,7 @@ var noscriptUtil = {
   },
 
   getString: function(key, parms) {
-    return this._service.getString(key, parms);
+    return this.service.getString(key, parms);
   }
 ,
   openOptionsDialog: function(params) {
