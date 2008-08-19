@@ -801,7 +801,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.7.8",
+  VERSION: "1.7.9",
   
   get wrappedJSObject() {
     return this;
@@ -1740,8 +1740,8 @@ NoscriptService.prototype = {
 ,
 
   delayExec: function(callback, delay) {
-     const timer = CC["@mozilla.org/timer;1"].createInstance(
-        CI.nsITimer);
+    const timer = CC["@mozilla.org/timer;1"].createInstance(
+      CI.nsITimer);
      var args = Array.prototype.slice.call(arguments, 2);
      timer.initWithCallback({ 
          notify: this.delayedRunner,
@@ -3014,35 +3014,43 @@ NoscriptService.prototype = {
           seen.push(l.href);
         }
       }
-      const scripts = document.getElementsByTagName("script");
-      if (!scripts[0]) return 0;
-      var follow = false;
-      const findURL = /(?:(?:\b(?:open|replace)\s*\(|(?:\b(?:href|location|src|path|pathname|search)|(?:[Pp]ath|UR[IL]|[uU]r[il]))\s*=)\s*['"]|['"](?=https?:\/\/\w|\w*[\.\/\?]))([\?\/\.\w\-%\&][^\s'"]*)/g;
-      findURL.lastIndex = 0;
+      
       var code, m, url, a;
       var container = null;
       var window;
-   
-      for (j = 0, len = scripts.length; j < len; j++) {
-        code = scripts[j].innerHTML;
+      
+      code = body && body.getAttribute("onload");
+      const sources = code ? [code] : [];
+      var scripts = document.getElementsByTagName("script");
+      for (j = 0, len = scripts.length; j < len; j++) sources.push(scripts[j].innerHTML);
+      scripts = null;
+      
+      if (!sources[0]) return 0;
+      var follow = false;
+      const findURL = /(?:(?:\b(?:open|replace)\s*\(|(?:\b(?:href|location|src|path|pathname|search)|(?:[Pp]ath|UR[IL]|[uU]r[il]))\s*=)\s*['"]|['"](?=https?:\/\/\w|\w*[\.\/\?]))([\?\/\.\w\-%\&][^\s'"]*)/g;
+
+ 
+      for (j = 0, len = sources.length; j < len; j++) {
+        findURL.lastIndex = 0;
+        code = sources[j];
         while ((m = findURL.exec(code))) {
           if (!container) {
-             container = document.createElement("div");
-             with(container.style) {
-               backgroundImage = 'url("' + this.pluginPlaceholder + '")';
-               backgroundRepeat = "no-repeat";
-               backgroundPosition = "2px 2px";
-               padding = "4px 4px 4px 40px";
-               display = "block";
-               minHeight = "32px";
-               textAlign = "left";
-             }
-             window = document.defaultView;
-             follow = this.jsredirectFollow && window == window.top &&  
-               !window.frames[0] &&
-               !document.evaluate('//body[normalize-space()!=""]', document, null, 
-                 CI.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-             document.body.appendChild(container);
+            container = document.createElement("div");
+            with(container.style) {
+              backgroundImage = 'url("' + this.pluginPlaceholder + '")';
+              backgroundRepeat = "no-repeat";
+              backgroundPosition = "2px 2px";
+              padding = "4px 4px 4px 40px";
+              display = "block";
+              minHeight = "32px";
+              textAlign = "left";
+            }
+            window = document.defaultView;
+            follow = this.jsredirectFollow && window == window.top &&  
+              !window.frames[0] &&
+              !document.evaluate('//body[normalize-space()!=""]', document, null, 
+                CI.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            document.body.appendChild(container);
           }
           url = m[1];
           a = document.createElement("a");
@@ -3060,11 +3068,9 @@ NoscriptService.prototype = {
         if (follow && seen.length == 1) {
           this.log("[NoScript Following JS Redirection]: " + seen[0] + " FROM " + document.location.href); 
           
-          this.doFollowMetaRefresh(mi = {
-            baseURI: this.siteUtils.ios.newURI(document.documentURI, null, null),
+          this.doFollowMetaRefresh({
             uri: seen[0],
-            document: document,
-            docShell: this.domUtils.getDocShellFromWindow(document.defaultView)
+            document: document
           });
           
         }
@@ -3181,14 +3187,15 @@ NoscriptService.prototype = {
     }
   },
   doFollowMetaRefresh: function(metaRefreshInfo, forceRemember) {
+    var document = metaRefreshInfo.document;
     if (forceRemember || this.getPref("forbidMetaRefresh.remember", false)) {
-      var document = metaRefreshInfo.document;
       this.metaRefreshWhitelist[document.documentURI] = metaRefreshInfo.uri;
     }
-    var docShell = metaRefreshInfo.docShell;
-    this.enableMetaRefresh(metaRefreshInfo.docShell);
+    var docShell = metaRefreshInfo.docShell || this.domUtils.getDocShellFromWindow(document.defaultView); 
+    this.enableMetaRefresh(docShell);
     if (docShell instanceof CI.nsIRefreshURI) {
-      docShell.setupRefreshURIFromHeader(metaRefreshInfo.baseURI, "0;" + metaRefreshInfo.uri);
+      var baseURI = metaRefreshInfo.baseURI || this.siteUtils.ios.newURI(document.documentURI, null, null);
+      docShell.setupRefreshURIFromHeader(baseURI, "0;" + metaRefreshInfo.uri);
     }
   },
   doBlockMetaRefresh: function(metaRefreshInfo) {
@@ -4210,7 +4217,10 @@ NoscriptService.prototype = {
     if (fixedHref) {
       // check if it's a JS button
       if (/^(?:button|input)$/i.test(a.tagName) && a.type == "button") {
-        a.ownerDocument.defaultView.open(fixedHref, "_self");
+        this.doFollowMetaRefresh({
+          document: a.ownerDocument,
+          uri: fixedHref
+        });
         ev.preventDefault();
       } else { // normal link
         a.setAttribute("href", fixedHref);
@@ -5016,9 +5026,10 @@ RequestWatchdog.prototype = {
   
   findWindow: function(channel) {
     try {
-      return channel.notificationCallbacks.QueryInterface(
-        CI.nsIInterfaceRequestor).getInterface(
-        CI.nsIDOMWindow);
+      return (channel.notificationCallbacks || channel.loadGroup.notificationCallbacks)
+        .QueryInterface(
+          CI.nsIInterfaceRequestor).getInterface(
+          CI.nsIDOMWindow);
     } catch(e) {
       return null;
     }
@@ -5152,7 +5163,7 @@ var InjectionChecker = {
   },
   
   _printable: function (msg) {
-    return msg.replace(/[^\u0020-\u007e]/g, function(s) { return "{" + s.charCodeAt(0).toString(16) + "}"; });
+    return msg.toString().replace(/[^\u0020-\u007e]/g, function(s) { return "{" + s.charCodeAt(0).toString(16) + "}"; });
   },
   
   dump: dump,
@@ -5559,24 +5570,44 @@ var InjectionChecker = {
     var frags, j, k, l, pos, ff, f;
     this.base64 = false;
     // standard base64
-    frags = url.match(/[A-Za-z0-9\+\/]{12,}/g);
+    // notice that we cut at 8192 chars because of stack overflow in JS regexp implementation
+    // (limit appears to be 65335, but cutting here seems quicker for big strings)
+    // therefore we need to rejoin continuous strings manually
+    frags = url.match(/[A-Za-z0-9\+\/]{12,8191}[^A-Za-z0-9\+\/]?/g);
     if (frags) {
+      f = '';
       for (j = 0; j < frags.length; j++) {
-        ff = frags[j].split('/');
-        for (l = ff.length; l > 0; l--)
+        if (/[A-Za-z0-9\+\/]$/.test(frags[j])) {
+          f += frags[j];
+          if (j < frags.length - 1) continue;
+        } else {
+          f += frags[j].substring(frags[j].length - 1);
+        }
+        ff = f.split('/');
+        for (l = ff.length; l > 0; l--) {
           for(k = 0; k < l; k++) {
             f = ff.slice(k, l).join('/');
             if (f.length >= 12 && this.checkBase64Frag(f))
               return true;
           }
+        }
+        f = '';
       }
     }
     // URL base64 variant, see http://en.wikipedia.org/wiki/Base64#URL_applications
-    frags = url.match(/[A-Za-z0-9\-_]{12,}/g);
+    frags = url.match(/[A-Za-z0-9\-_]{12,8191}[^A-Za-z0-9\-_]?/g);
     if (frags) {
+      f = '';
       for (j = 0; j < frags.length; j++) {
-        f = frags[j].replace(/-/g, '+').replace(/_/, '/');
+        if (/[A-Za-z0-9\-_]$/.test(frags[j])) {
+          f += frags[j];
+          if (j < frags.length - 1) continue;
+        } else {
+          f += frags[j].substring(frags[j].length - 1);
+        }
+        f = f.replace(/-/g, '+').replace(/_/, '/');
         if (this.checkBase64Frag(f)) return true;
+        f = '';
       }
     }
     return false;
@@ -5648,63 +5679,149 @@ var InjectionChecker = {
           && channel.uploadStream && (channel.uploadStream instanceof CI.nsISeekableStream)))
       return false;
     this.log("Extracting post data...");
-    var postData = null;
+    var ic = this;
+    return new PostChecker(channel.uploadStream).check(
+      function(chunk) {
+        return chunk.length > 6 && ic.checkRecursive(chunk, 2) && chunk;
+      }
+    );
+  }
+  
+};
+
+function PostChecker(uploadStream) {
+  this.uploadStream = uploadStream;  
+}
+
+PostChecker.prototype = {
+  boundary: null,
+  isFile: false,
+  postData: '',
+  check: function(callback) {
+    var m, chunks, data, size, available, ret;
+    const BUF_SIZE = 3 * 1024 * 1024; // 3MB
+    const MAX_FIELD_SIZE = BUF_SIZE;
     try {
-      var us = channel.uploadStream;
+      var us = this.uploadStream;
       us.seek(0, 0);
       const sis = CC['@mozilla.org/binaryinputstream;1'].createInstance(CI.nsIBinaryInputStream);
       sis.setInputStream(us);
-      postData  = sis.readBytes(sis.available());
+      
+      // reset status
+      delete this.boundary;
+      delete this.isFile;
+      delete this.postData;
+      var t = new Date().getTime(), t2 = t, d;
+      if((available = sis.available())) do {
+        size = this.postData.length;
+        if (size >= MAX_FIELD_SIZE) return size + " bytes or more in one non-file field, assuming memory DOS attempt!";
 
-      us.seek(0, 0); // rewind
-      var m = postData.match(/^Content-type: multipart\/form-data;\s*boundary=(\S*)/i);
+        data = sis.readBytes(Math.min(available, BUF_SIZE));
 
-      var chunks = this.parsePost(postData.substring(postData.indexOf("\r\n\r\n") + 2), m && m[1]);
-
-      for (var j = 0, len = chunks.length; j < len; j++) {
-        if (chunks[j].length > 6 && this.checkRecursive(chunks[j], 2)) return chunks[j];
-      }
+        if (size != 0) {
+          this.postData += data;
+        } else {
+           if (data.length == 0) return false;
+           this.postData = data;
+        }
+        available = sis.available();
+        chunks = this.parse(!available);
+      
+        for (var j = 0, len = chunks.length; j < len; j++) {
+          ret = callback(chunks[j]);
+          if (ret) return ret;
+        }
+      } while(available)
     } catch(ex) {
+      dump(ex + "\n" + ex.stack + "\n");
       return ex;
+    } finally {
+        try {
+          us.seek(0, 0); // rewind
+        } catch(e) {}
     }
-    
     return false; 
   },
   
-  parsePost: function(postData, boundary) {
-    var chunks = [], parts, j, len;
+  parse: function(eof) {
+    var postData = this.postData;
+    
+    if (typeof(this.boundary) != "string") {
+      m = postData.match(/^Content-type: multipart\/form-data;\s*boundary=(\S*)/i);
+      this.boundary = m && m[1] || '';
+      if (this.boundary) this.boundary = "--" + this.boundary;
+      postData = postData.substring(postData.indexOf("\r\n\r\n") + 2);
+    }
 
-    if (boundary) { // multipart/form-data, see http://www.faqs.org/ftp/rfc/rfc2388.txt
+    this.postData = '';
 
-      parts = postData.split("--" + boundary);
-      for(j = 0, len = parts.length; j < len; j++) {
-        m = parts[j].match(/^\s*Content-Disposition: form-data; name="(.*?)"(?:;\s*filename="(.*)"|[^;])\r?\n(Content-Type: \w)?.*\r?\n/i);
+    var boundary = this.boundary;
+   
+    var chunks = [];
+    var j, len;
 
+    if (boundary) { // multipart/form-data, see http://www.faqs.org/ftp/rfc/rfc2388.txt  
+      if(postData.indexOf(boundary) < 0) {
+        // skip big file chunks
+        return chunks;
+      }
+      parts = postData.split(boundary);
+      
+      var part, last;
+      for(j = 0, len = parts.length; j < len;) {
+        part = parts[j];
+        last = ++j == len;
+        if (j == 1 && part.length && this.isFile) {
+          // skip file internal terminal chunk
+          this.isFile = false;
+          continue;
+        }
+        m = part.match(/^\s*Content-Disposition: form-data; name="(.*?)"(?:;\s*filename="(.*)"|[^;])\r?\n(Content-Type: \w)?.*\r?\n/i);
+        
         if (m) {
           // name and filename are backslash-quoted according to RFC822
           if (m[1]) chunks.push(m[1].replace(/\\\\/g, "\\")); // name and file name 
           if (m[2]) {
             chunks.push(m[2].replace(/\\\\/g, "\\")); // filename
-            if (m[3]) continue; // Content-type: skip, it's a file
+            if (m[3]) {
+              // Content-type: skip, it's a file
+              this.isFile = true;
+              
+              if (last && !eof) 
+                this.postData = part.substring(part.length - boundary.length);
+
+              continue; 
+            }
           }
-          chunks.push(parts[j].substring(m[0].length)); // parameter body
+          if (eof || !last) {
+            chunks.push(part.substring(m[0].length)); // parameter body
+          } else {
+            this.postData = part;
+          }
+          this.isFile = false;
         } else {
-          // malformed part, check it all 
-          chunks.push(parts[j])
+          // malformed part, check it all or push it back
+          if (eof || !last) {
+            chunks.push(part)
+          } else {
+            this.postData = this.isFile ? part.substring(part.length - boundary.length) : part;
+          }
         }
       }
     } else {
-      var parts = postData.split("&");
-      for (j = 0, len = parts.length; j < parts; j++) {
+      this.isFile = false;
+      parts = postData.split("&");
+      if (!eof) this.postData = parts.pop();
+      
+      for (j = 0, len = parts.length; j < len; j++) {
         m = parts[j].split("=");
-        chunks.push(m[0], m[1]);
+        chunks.push(m[0]);
+        if (m.length > 1) chunks.push(m[1]);
       }
     }
     return chunks;
   }
-  
-};
-
+}
 
 
 function XSanitizer(primaryBlacklist, extraBlacklist) {

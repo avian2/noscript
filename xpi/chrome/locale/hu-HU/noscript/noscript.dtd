@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Minden megbízhatatlanként megjelölt oldalról érkező objektum blokkolása">
 <!ENTITY noscriptTempAllowPage "Parancsfájlok ideiglenes engedélyezése az oldalon">
 <!ENTITY noscriptTempAllowPage.accesskey "i">
+<!ENTITY noscriptAllowPage "Parancsfájlok engedélyezése az oldalon">
+<!ENTITY noscriptAllowPage.accesskey "e">
+<!ENTITY noscriptTempToPerm "Oldal jogosultságok állandósítása">
+<!ENTITY noscriptTempToPerm.accesskey "j">

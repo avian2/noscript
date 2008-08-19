@@ -31,14 +31,15 @@ var noscriptOverlay = noscriptUtil.service ?
     return noscriptUtil.getString(key, parms);
   }
 ,
-  toggleCurrentPage: function(force) {
+  toggleCurrentPage: function(forceLevel) {
     const ns = this.ns;
-    var level = ns.getPref("toolbarToggle", 3) || force;
+    var level = ns.getPref("toolbarToggle", 3) || forceLevel;
     if (!level) return false;
     
     const url = ns.getQuickSite(content.document.documentURI, level);
     if (url)
       this.safeAllow(url, !ns.isJSEnabled(url), ns.getPref("toggle.temp"));
+    
     return true;
   },
 
@@ -276,7 +277,7 @@ var noscriptOverlay = noscriptUtil.service ?
     const showTemp = !locked && ns.getPref("showTemp", true);
     
     var parent, extraNode;
-    var untrustedCount = 0, unknownCount = 0;
+    var untrustedCount = 0, unknownCount = 0, tempCount = 0;
     const untrustedSites = ns.untrustedSites;
     var docJSBlocked = false;
     
@@ -373,7 +374,10 @@ var noscriptOverlay = noscriptUtil.service ?
           node.setAttribute("disabled", "true");
         } else {
           cssClass += " menuitem-iconic ";
-          if (enabled && ns.isTemp(menuSite)) cssClass += " noscript-temp";
+          if (enabled && ns.isTemp(menuSite)) {
+            cssClass += " noscript-temp";
+            tempCount++;
+          }
         }
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
         
@@ -390,7 +394,7 @@ var noscriptOverlay = noscriptUtil.service ?
             extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
             parent.appendCmd(extraNode);
           }
-          if (((showUntrusted && untrustedMenu) || showDistrust && !enabled || blockUntrusted) && !untrusted) {
+          if (((showUntrusted && untrustedMenu || showDistrust) && !(domain in jsPSs.sitesMap) || blockUntrusted) && !untrusted) {
             extraNode = document.createElement("menuitem");
             extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
             extraNode.setAttribute("statustext", menuSite);
@@ -415,8 +419,12 @@ var noscriptOverlay = noscriptUtil.service ?
 
     
     
-    tempMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", false));
-
+    // temp allow all this page
+    tempMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", true));
+    // allow all this page
+    tempMenuItem.parentNode.insertBefore(document.getElementById("noscript-allow-page-mi"),
+        tempMenuItem.nextSibling).hidden = unknownCount + tempCount == 0 || !ns.getPref("showAllowPage", true);
+    
     this.normalizeMenu(untrustedMenu, true);
     this.normalizeMenu(mainMenu, false);
     
@@ -513,7 +521,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var site;
     for (var j = sites.length; j-- > 0;) {
       site = ns.getQuickSite(sites[j], level);
-      if (!(ns.isJSEnabled(site) || ns.isUntrusted(site)))
+      if (!(ns.isJSEnabled(site) && !(permanent && ns.isTemp(site))  || ns.isUntrusted(site)))
         unknown.push(site);
     }
     if (unknown.length) this.safeAllow(unknown, true, !permanent);

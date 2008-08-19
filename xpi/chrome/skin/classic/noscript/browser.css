@@ -57,6 +57,7 @@
   list-style-image: url(yes16.png);
 }
 
+#noscript-tbb-temp-page,
 .noscript-temp.noscript-allow {
   list-style-image: url(temp16.png);
 }
@@ -152,6 +153,7 @@
   background: #ffa !important;
 }
 
+#noscript-tbb-revoke-temp,
 .noscript-revoke-temp {
   list-style-image: url(revtemp16.png);
 }

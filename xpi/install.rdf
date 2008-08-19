@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.7.8</em:version>
+   <em:version>1.7.9</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -26,7 +26,7 @@
    <em:contributor>Georgi Marchev (Bulgarian translation)</em:contributor>
    <em:contributor>Håvard Mork (Norwegian bokmål translation)</em:contributor>
    <em:contributor>Hwasung Kim (Places bookmarklet patch)</em:contributor>
-   <em:contributor>Ivan Pesic (Serbian translation)</em:contributor>
+   <em:contributor>Ivan Pesic, dragan021 (Serbian translation)</em:contributor>
    <em:contributor>Jameka (Swedish translation)</em:contributor>
    <em:contributor>Joan-Josep Bargues (Catalan translation)</em:contributor>
    <em:contributor>Krcko (Croatian translation)</em:contributor>
@@ -40,6 +40,7 @@
    <em:contributor>MozUA (Ukrainian translation)</em:contributor>
    <em:contributor>Nassim Dhaher (Arabic translation)</em:contributor>
    <em:contributor>Pedram Veisi (Persian translation)</em:contributor>
+   <em:contributor>Peter Bradley (Welsh translation)</em:contributor>
    <em:contributor>Raryel Costa Souza (Brazilian Portuguese)</em:contributor>
    <em:contributor>regfreak (Indonesian translation)</em:contributor>
    <em:contributor>roebek (Galician translation)</em:contributor>
@@ -62,7 +63,7 @@
      <Description>
      <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
      <em:minVersion>1.5.0.4</em:minVersion>
-     <em:maxVersion>3.1a1pre</em:maxVersion>
+     <em:maxVersion>3.1a2pre</em:maxVersion>
      </Description>
    </em:targetApplication>
 
@@ -80,7 +81,7 @@
       <Description>
         <em:id>{a463f10c-3994-11da-9945-000d60ca027b}</em:id>
         <em:minVersion>0.4</em:minVersion>
-        <em:maxVersion>1.2.*</em:maxVersion>
+        <em:maxVersion>2.0.*</em:maxVersion>
       </Description>
    </em:targetApplication>
    
@@ -98,7 +99,7 @@
       <Description>
         <em:id>{aa5ca914-c309-495d-91cf-3141bbb04115}</em:id>
         <em:minVersion>0.2</em:minVersion>
-        <em:maxVersion>3.0.*</em:maxVersion>
+        <em:maxVersion>3.1.*</em:maxVersion>
       </Description>
    </em:targetApplication>
    
@@ -125,7 +126,7 @@
     <Description>
       <em:id>songbird@songbirdnest.com</em:id>
       <em:minVersion>0.5</em:minVersion>
-      <em:maxVersion>0.7pre</em:maxVersion>
+      <em:maxVersion>0.8.0pre</em:maxVersion>
     </Description>
     </em:targetApplication>
     
@@ -180,6 +181,9 @@
         <em:locale>locale/vi-VN/noscript/</em:locale>
         <em:locale>locale/zh-CN/noscript/</em:locale>
         <em:locale>locale/zh-TW/noscript/</em:locale>
+        <em:locale>locale/cy-GB/noscript/</em:locale>
+        <em:locale>locale/sr-RS/noscript/</em:locale>
+      
         <!-- LOCALECHROME STOP -->
      </Description>
    </em:file>

@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquear todos os objetos provenientes de um site marcado como não confiável">
 <!ENTITY noscriptTempAllowPage "Autorizar tudo temporariamente nesta página">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Permitir todos nesta página">
+<!ENTITY noscriptAllowPage.accesskey "P">
+<!ENTITY noscriptTempToPerm "Tornar as permissões da página permanentes">
+<!ENTITY noscriptTempToPerm.accesskey "t">

@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokovat každý objekt pocházející z nedůvěryhodné stránky">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Povolit pro celou stránku">
+<!ENTITY noscriptAllowPage.accesskey "s">
+<!ENTITY noscriptTempToPerm "Udělit trvale povolení pro tuto stránku">
+<!ENTITY noscriptTempToPerm.accesskey "t">

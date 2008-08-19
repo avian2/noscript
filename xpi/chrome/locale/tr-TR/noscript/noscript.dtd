@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Güvensiz olarak işaretlenen sitelerden gelen tüm nesneleri engelle">
 <!ENTITY noscriptTempAllowPage "Tüm bu sayfalara geçici izin ver">
 <!ENTITY noscriptTempAllowPage.accesskey "G">
+<!ENTITY noscriptAllowPage "Tüm bu sayfalara İzin Ver">
+<!ENTITY noscriptAllowPage.accesskey "z">
+<!ENTITY noscriptTempToPerm "Sayfa izinlerini kalıcı yap">
+<!ENTITY noscriptTempToPerm.accesskey "k">

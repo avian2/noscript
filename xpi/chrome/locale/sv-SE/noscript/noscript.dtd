@@ -1,17 +1,17 @@
 <!ENTITY noscriptOptions "Alternativ...">
-<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptions.accesskey "A">
 <!ENTITY noscriptOptionsLong "NoScript-alternativ">
 <!ENTITY noscriptAbout "Om NoScript">
 <!ENTITY noscriptPermissionsText "Det är möjligt att specificera vilka webbplatser som tillåts använda skript. Skriv webbadressen eller domänen (ex. &quot;http://www.webbplats.se&quot; eller &quot;webbplats.se&quot;) för den webbplats där skript ska tillåtas. Klicka sedan på &quot;Tillåt&quot;.">
 <!ENTITY noscriptWebAddress "Webbplatsadress:">
 <!ENTITY noscriptAllow "Tillåt">
-<!ENTITY noscriptAllow.accesskey "A">
-<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptAllow.accesskey "T">
+<!ENTITY noscriptForbid "Förbjud">
 <!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust "Markera som betrodd">
 <!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Märk som ej betrodd">
-<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptUntrust "Markera som ej betrodd">
+<!ENTITY noscriptUntrust.accesskey "F">
 <!ENTITY noscriptRemoveSelected "Ta bort markerade webbplatser">
 <!ENTITY noscriptGloballyEnabled "Skript är tillåtna globalt (farligt)">
 <!ENTITY noscriptAutoReload "Uppdatera berörda webbsidor när skripttillstånd ändras">
@@ -30,90 +30,94 @@
 <!ENTITY noscriptExport "Exportera">
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Visa meddelande om blockerade skript">
-<!ENTITY noscriptNotify.bottom "Placera meddelande längst ned">
+<!ENTITY noscriptNotify.bottom "Placera nya meddelande längst ned">
 <!ENTITY noscriptSound.choose "Välj">
-<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.choose.accesskey "V">
 <!ENTITY noscriptSound.play "Spela">
-<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.play.accesskey "S">
 <!ENTITY noscriptSound.reset "Återställ standard">
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "Avancerat">
 <!ENTITY noscriptAdditionalPermissions "Ytterligare tillstånd för betrodda webbplatser">
 <!ENTITY noscriptAllowClipboard "Tillåt klipp ut och kopiera från externt urklipp">
 <!ENTITY noscriptAdditionalRestrictions "Ytterliga restriktioner för ej betrodda webbplatser">
-<!ENTITY noscriptPlugins "Plugins">
-<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
+<!ENTITY noscriptPlugins "Tillägg">
+<!ENTITY noscriptContentBlocker "Använd begränsingarna på betrodda platser också">
 <!ENTITY noscriptForbidJava "Förbjud Java™">
 <!ENTITY noscriptForbidWebBugs "Förbjud &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Förbjud Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Förbjud &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFlash "Förbjud Adobe® Flash®">
-<!ENTITY noscriptForbidPlugins "Förbjud andra insticksmoduler">
+<!ENTITY noscriptForbidPlugins "Förbjud andra tillägg">
 <!ENTITY noscriptReloadWarn "Dessa alternativ kommer att börja gälla för nya eller (manuellt) uppdaterade webbsidor">
-<!ENTITY noscriptConfirmUnblock "Fråga efter bekräftelse innan temporär avblockering av ett objekt sker">
+<!ENTITY noscriptConfirmUnblock "Fråga innan temporär avblockering av ett objekt sker">
 <!ENTITY noscriptStatusLabel "Statusfältsetikett">
 <!ENTITY noscriptForbidBookmarklets "Förbjud bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Visa placeholderikon">
+<!ENTITY noscriptShowPlaceholder "Visa platshållarikon">
 <!ENTITY noscriptTruncateTitle "Korta av dokumenttitlar">
-<!ENTITY noscriptFixLinks "Försök laga JavaSkript-länkar">
+<!ENTITY noscriptFixLinks "Försök reparera JavaSkript-länkar">
 <!ENTITY noscriptAllowBookmarks "Tillåt webbplatser som öppnas från bokmärken">
 <!ENTITY noscriptAllowViaBookmarks "Tillåt webbplatser som öppnas från bokmärken">
 <!ENTITY noscriptAllowPing "Tillåt &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
+<!ENTITY noscriptAllowLocalLinks "Tillåt lokala länkar">
 <!ENTITY noscriptForbidPing "Förbjud &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
-<!ENTITY noscriptWhitelist "Whitelist">
-<!ENTITY noscriptPermissions "Permissions">
-<!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifications "Notifications">
-<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
-<!ENTITY noscriptTrusted "Trusted">
+<!ENTITY noscriptForbidMetaRefresh "Förbjud META omdirigering inuti &lt;NOSCRIPT&gt; element">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "F">
+<!ENTITY noscriptWhitelist "Vitlista">
+<!ENTITY noscriptPermissions "Behörigheter">
+<!ENTITY noscriptRefresh "Uppdatera">
+<!ENTITY noscriptNotifications "Notifieringar">
+<!ENTITY noscriptToolbarToggle "Vänsterklick på NoScripts verktygsknapp växlar behörighet för aktuell webbsida">
+<!ENTITY noscriptTrusted "Betrodd">
 <!ENTITY noscriptUntrusted "Ej betrodd">
-<!ENTITY noscriptUnknown "Unknwon">
-<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptUnknown "Okänd">
+<!ENTITY noscriptAdd "Lägg till">
 <!ENTITY noscriptAdd.accesskey "A">
-<!ENTITY noscriptClose "Close">
-<!ENTITY noscriptSiteManager "Site Manager">
-<!ENTITY noscriptSecurityManager "Security Manager">
-<!ENTITY noscriptPolicies "Policies">
-<!ENTITY noscriptDefaultPolicies "Default Policies">
-<!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console...">
-<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptClose "Stäng">
+<!ENTITY noscriptSiteManager "Platshanterare">
+<!ENTITY noscriptSecurityManager "Säkerhetshanterare">
+<!ENTITY noscriptPolicies "Riktlinjer">
+<!ENTITY noscriptDefaultPolicies "Standardriktlinjer">
+<!ENTITY noscriptSitePolicies "Platsspecifika riktlinjer">
+<!ENTITY noscriptNselNever "Dölj &lt;NOSCRIPT&gt; element">
+<!ENTITY noscriptNselForce "Visa &lt;NOSCRIPT&gt; element som följer ett blockerat &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Tillåt top-nivå platser tillfälligt">
+<!ENTITY noscriptDescription "Extra skydd för Firefox: NoScript tillåter JavaScript, Java (och andra tillägg) endast för betrodda domäner du valt (t ex din internetbank). Denna vitlistebaserade förebyggande blockering förhindrar uttnyttjande av säkerhetsproblem (både kända och okända) utan förlust av funktionalitet... Experter är överens: Firefox är verkligen säkrare med NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Blockera CSS-baserade scanners">
+<!ENTITY noscriptOptFilterXGet "Tvätta misstänkta XSS förfrågningar">
+<!ENTITY noscriptOptFilterXPost "Ändra XSS POST förfrågningar till datalösa GET förfrågningar">
+<!ENTITY noscriptShowConsole "Visa konsoll...">
+<!ENTITY noscriptShowConsole.accesskey "K">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload "Osäker omladdning">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptXssExceptions "Anti-XSS undantag">
+<!ENTITY noscriptXssExceptions.description "Destinationer som matchar dessa reguljära uttryck kommer INTE att skyddas mot XSS.">
+<!ENTITY noscriptMatchSample "Exempel på mönster:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
+<!ENTITY noscriptResetDef "Återställ till standard">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
 <!ENTITY noscriptJarFaq "JAR FAQ">
 <!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptForbidJarDocuments "Blockera JAR fjärresurser som laddas som dokument">
+<!ENTITY noscriptJarExceptions "Undantag för JAR dokumentblockering">
+<!ENTITY noscriptJarExceptions.description "JAR dokument som matchar dessa reguljära uttryck kommer INTE att blockeras.">
 <!ENTITY noscriptRevokeTemp "Återkalla temporära tillstånd">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "Ingen placeholder för objekt från ej betrodda platser">
-<!ENTITY noscriptCollapseBlockedObjects "Minimiera blokcerade objekt">
+<!ENTITY noscriptNoUntrustedPlaceholder "Visa inte platshållare för objekt från ej betrodda platser">
+<!ENTITY noscriptCollapseBlockedObjects "Minimera blockerade objekt">
 <!ENTITY noscriptExceptions "Undantag...">
 <!ENTITY noscriptBlockedObjects "Blockerade objekt">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blockera alla objekt från ej betrodda platser">
 <!ENTITY noscriptTempAllowPage "Tillåt denna sida tillfälligt">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Tillåt allt på denna sida">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Spara sidtillstånd permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">

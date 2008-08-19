@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokuj każdy obiekt pochodzący z witryny oznaczonej jako niezaufana">
 <!ENTITY noscriptTempAllowPage "Tymczasowo nie blokuj na tej stronie">
 <!ENTITY noscriptTempAllowPage.accesskey "M">
+<!ENTITY noscriptAllowPage "Zezwalaj na wszystko tej stronie">
+<!ENTITY noscriptAllowPage.accesskey "W">
+<!ENTITY noscriptTempToPerm "Określ jako stałe ustawienia dla tej strony">
+<!ENTITY noscriptTempToPerm.accesskey "S">

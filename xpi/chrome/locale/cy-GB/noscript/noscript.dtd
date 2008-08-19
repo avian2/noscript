@@ -1,0 +1,123 @@
+<!ENTITY noscriptOptions "Opsiynau">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "Opsiynau NoScript">
+<!ENTITY noscriptAbout "Yngylch NoScript">
+<!ENTITY noscriptPermissionsText "Cewch enwi pa wefannau sy&apos;n cael rhedeg sgriptiau. Teipiwch gyfeiriad neu barth (e.e. &quot;http://www.site.com&quot; neu &quot;site.com&quot;) y safle rydych eisiau ei ganiatau ac wedyn cliciwch Caniatau.">
+<!ENTITY noscriptWebAddress "Cyfeiriad wefan">
+<!ENTITY noscriptAllow "Caniatau">
+<!ENTITY noscriptAllow.accesskey "I">
+<!ENTITY noscriptForbid "Gwahardd">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Marcio&apos;n Ddilys">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Marcio&apos;n Annilys">
+<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptRemoveSelected "Diddymu&apos;r Wefannau Sydd Wedi&apos;u Dewis">
+<!ENTITY noscriptGloballyEnabled "Caniateir sgriptiau ymhobman (peryglus)">
+<!ENTITY noscriptAutoReload "Ail-lwytho&apos;n awtomatig y tudalennau sydd wedi&apos;u haffeithio wrth fod hawliau&apos;n newid.">
+<!ENTITY noscriptGeneral "Cyffredinol">
+<!ENTITY noscriptAppearance "Ymddangosiad">
+<!ENTITY noscriptShow "Dangos...">
+<!ENTITY noscriptCtxMenu "Dewislen gyd-destunol">
+<!ENTITY noscriptStatusIcon "Eicon y bar statws">
+<!ENTITY noscriptFullAddr "Cyfeiriadau llawn (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Parthau llawn (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Sylfaen Parthau&apos;r 2ail lefel (noscript.net)">
+<!ENTITY noscriptTempCmd "Caniatau dros dro [...]">
+<!ENTITY noscriptSound "Adborth clywedol pan fydd sgriptiau wedi&apos;u rhwystro">
+<!ENTITY noscriptImport "Mewnforio">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Allforio">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Dangos negeseuon am sgriptiau sydd wedi&apos;u rhwystro">
+<!ENTITY noscriptNotify.bottom "Lleoli negeseuon ar y gwaelod">
+<!ENTITY noscriptSound.choose "Dewis">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Chwarae">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Ailosod y diffygwerth">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Uwch">
+<!ENTITY noscriptAdditionalPermissions "Hawliau ychwanegol ar gyfer wefannau dilys">
+<!ENTITY noscriptAllowClipboard "Caniatau copi testun bras o&apos;r clip-fwrdd allanol">
+<!ENTITY noscriptAdditionalRestrictions "Rhwystau ychwanegol ar gyfer wefannau annilys">
+<!ENTITY noscriptPlugins "Atodyn">
+<!ENTITY noscriptContentBlocker "Rhoi&apos;r rhwystrau hyn ar waith ar wefannau dilys hefyd">
+<!ENTITY noscriptForbidJava "Gwahardd Java™">
+<!ENTITY noscriptForbidWebBugs "Gwahardd &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Gwahardd Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Gwahardd &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFlash "Gwahardd Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Gwahardd atodynnau eraill">
+<!ENTITY noscriptReloadWarn "Daw&apos;r opsiynau hyn i rym ar dudalennau newydd neu&apos;r rhai sydd wedi&apos;u ail-lwytho (trwy waith law)">
+<!ENTITY noscriptConfirmUnblock "Gofyn am gadarnhad cyn datrwystro gwrthrych dros dro">
+<!ENTITY noscriptStatusLabel "Label y bar statws">
+<!ENTITY noscriptForbidBookmarklets "Gwahardd nodau tudalen">
+<!ENTITY noscriptShowPlaceholder "Dangos eicon cadw lle">
+<!ENTITY noscriptTruncateTitle "Blaendorri teitlau dogfennau">
+<!ENTITY noscriptFixLinks "Ceisio trwsio dolennau JavaScript">
+<!ENTITY noscriptAllowBookmarks "Caniatau agor wefannau trwy nodau tudalen">
+<!ENTITY noscriptAllowViaBookmarks "Caniatau wefannau agorwyd trwy nodau tudalen">
+<!ENTITY noscriptAllowPing "Caniatau &lt;PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Caniatau dolennau lleol">
+<!ENTITY noscriptForbidPing "Gwahardd &lt;PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Gwahardd dargyfeiriadau META mewn elfennau &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptWhitelist "Gwenrestr">
+<!ENTITY noscriptPermissions "Hawliau">
+<!ENTITY noscriptRefresh "Adfywio">
+<!ENTITY noscriptNotifications "Hysbysiadau">
+<!ENTITY noscriptToolbarToggle "Clicio chwith ar far offer NoScript yn toglo hawliau ar gyfer y wefan lefel-uchaf presennol">
+<!ENTITY noscriptTrusted "Dilys">
+<!ENTITY noscriptUntrusted "Annilys">
+<!ENTITY noscriptUnknown "Anhysbys">
+<!ENTITY noscriptAdd "Ychwanegu">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Cau">
+<!ENTITY noscriptSiteManager "Rheolwr y wefannau">
+<!ENTITY noscriptSecurityManager "Rheolwr diogelwch">
+<!ENTITY noscriptPolicies "Polisiau">
+<!ENTITY noscriptDefaultPolicies "Polisiau diofyn">
+<!ENTITY noscriptSitePolicies "Polisiau penodol y wefan">
+<!ENTITY noscriptNselNever "Cuddio elfennau &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Dangos yr elfen &lt;NOSCRIPT&gt; sy&apos;n dilyn elfan &lt;SCRIPT&gt; waharddedig">
+<!ENTITY noscriptAutoAllowTopLevel "Caniatau&apos;n ddiofyn dros dro wefannau lefel-uchaf">
+<!ENTITY noscriptDescription "Diogelwch ychwanegol ar gyfer Firefox: bydd NoScript yn caniatau JavaScript, Java (ac atodynnau eraill) dim ond ar gyfer y parthau dilys yr ydych chi wedi&apos;u dewis (e.e. eich wefan bancio gartref). Mae&apos;r dull rhwystro rhag blaen seiliedig ar wenrestr hwn yn atal camddefnyddio gwendidau diogelwch (hysbys a hyd yn oed anhysbys) heb golli unrhyw alluoedd... Bydd arbennigwyr yn cydsynio: gwirioneddol safach yw Firefox gyda NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Rhwystro sganwyr CSS-seiliedig">
+<!ENTITY noscriptOptFilterXGet "Glanhau ceisiadau amheus traws wefannol">
+<!ENTITY noscriptOptFilterXPost "Trawsffurfio ceisiadau POST traws wefannol yn geisiadau GET">
+<!ENTITY noscriptShowConsole "Dangos y Consol...">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Ail-lwytho anniogel">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Eithriadau Amddiffyniad Gwrth-XSS">
+<!ENTITY noscriptXssExceptions.description "NI amddiffynir y cyrchfannau sy&apos;n cyfateb i&apos;r mynegiadau rheolaidd hyn yn erbyn XSS.">
+<!ENTITY noscriptMatchSample "Sampl cyfateb i batrwm:">
+<!ENTITY noscriptReset "Ailosod">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "Ailosod y diffygwerthoedd">
+<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Rhwystro adnoddau hirbell JAR rhag cael eu llwytho fel dogfennau">
+<!ENTITY noscriptJarExceptions "Eithriada rhwystro dogfennau JAR">
+<!ENTITY noscriptJarExceptions.description "NI rywstrir y dogfennau JAR sy&apos;n cyfateb i&apos;r mynegiadau rheolaidd hyn.">
+<!ENTITY noscriptRevokeTemp "Dirymu Hawliau Dros Dro">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "Dim lle i&apos;w gadw ar gyfer gwrthychau a ddaw o wefannau wedi&apos;u marcio&apos;n annilys">
+<!ENTITY noscriptCollapseBlockedObjects "Talfyrru gwrthrychau wedi&apos;u rhwystro">
+<!ENTITY noscriptExceptions "Eithriadau...">
+<!ENTITY noscriptBlockedObjects "Gwrthrychau wedi&apos;u rhywstro">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Rhwystro pob gwrthrych a ddaw o wefan wedi&apos;i marcio&apos;n annilys">
+<!ENTITY noscriptTempAllowPage "Caniatau y dudalen hon dros dro">
+<!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Caniatau y dudalen hon i gyd">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Sefydlogi hawliau tudalennau">
+<!ENTITY noscriptTempToPerm.accesskey "m">

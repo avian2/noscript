@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Elk object afkomstig van een als onbetrouwbaar gemerkte site blokkeren">
 <!ENTITY noscriptTempAllowPage "Alles op deze pagina tijdelijk toestaan">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Alles op deze pagina toestaan">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Pagina toestemmingen definitief maken">
+<!ENTITY noscriptTempToPerm.accesskey "m">

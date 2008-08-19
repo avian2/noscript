@@ -104,11 +104,11 @@
       </radiogroup>
     </groupbox>
     
-    <groupbox>
+
      <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
      <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
      <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
-    </groupbox>
+   
   
   </vbox>
   </tabpanel><!-- END General -->
@@ -192,11 +192,18 @@
          </vbox>
        </hbox>
        <separator />
-       <checkbox id="opt-showGlobal" label="Allow Globally" />
-       <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
-       <checkbox id="opt-showBlockedObjects" label="&noscriptBlockedObjects;" />
-       <checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
-       <checkbox id="opt-showTempAllowPage" label="&noscriptTempAllowPage;" />
+       <hbox>
+          <vbox flex="1">
+            <checkbox id="opt-showGlobal" label="Allow Globally" />
+            <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
+            <checkbox id="opt-showBlockedObjects" label="&noscriptBlockedObjects;" />
+          </vbox>
+          <vbox flex="1">
+            <checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
+            <checkbox id="opt-showTempAllowPage" label="&noscriptTempAllowPage;" />
+            <checkbox id="opt-showAllowPage" label="&noscriptAllowPage;" />
+          </vbox>
+        </hbox>
      </groupbox>
     
   </vbox>

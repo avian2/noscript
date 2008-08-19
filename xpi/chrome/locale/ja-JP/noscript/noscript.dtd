@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "オプション...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript オプション">
-<!ENTITY noscriptAbout "NoScriptについて">
+<!ENTITY noscriptAbout "NoScriptについて...">
 <!ENTITY noscriptPermissionsText "JavaScriptを許可するサイトを指定する事ができます。許可したいサイトのアドレスかドメインを入力して、ボタンを押してください。(例: &quot;http://www.site.com&quot; または &quot;site.com&quot;)">
 <!ENTITY noscriptWebAddress "ウェブサイトのアドレス:">
 <!ENTITY noscriptAllow "許可する">
@@ -41,13 +41,13 @@
 <!ENTITY noscriptAdditionalPermissions "信頼済みサイトへの許可の追加">
 <!ENTITY noscriptAllowClipboard "クリップボードからリッチテキストのコピーとペーストを可能にする">
 <!ENTITY noscriptAdditionalRestrictions "信頼されていないサイトへの制限の追加">
-<!ENTITY noscriptPlugins "Plugins">
-<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
-<!ENTITY noscriptForbidJava "Java&#8482; の禁止">
+<!ENTITY noscriptPlugins "プラグイン">
+<!ENTITY noscriptContentBlocker "信頼しているサイトにもこれらの制限を適用する">
+<!ENTITY noscriptForbidJava "Java™ の禁止">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; の禁止">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ の禁止">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; の禁止">
-<!ENTITY noscriptForbidFlash "Adobe&#174; Flash&#174; の禁止">
+<!ENTITY noscriptForbidFlash "Adobe® Flash® の禁止">
 <!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
 <!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページ、または再読込したページで有効になります">
 <!ENTITY noscriptConfirmUnblock "オブジェクトを一時的に許可する前に確認する">
@@ -55,22 +55,22 @@
 <!ENTITY noscriptForbidBookmarklets "ブックマークレットの禁止">
 <!ENTITY noscriptShowPlaceholder "プレースホルダーとアイコンを表示する">
 <!ENTITY noscriptTruncateTitle "ページタイトルを切り詰める">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
-<!ENTITY noscriptAllowBookmarks "Allow all sites found in bookmarks">
-<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
+<!ENTITY noscriptFixLinks "JavaScriptリンクの修正を試みる">
+<!ENTITY noscriptAllowBookmarks "ブックマークにある全てのサイトを許可する">
+<!ENTITY noscriptAllowViaBookmarks "ブックマークから開いたサイトを許可する">
+<!ENTITY noscriptAllowPing "&lt;A PING...&gt;を許可する">
+<!ENTITY noscriptAllowLocalLinks "ローカルリンクを許可する">
+<!ENTITY noscriptForbidPing "&lt;A PING...&gt;を禁止する">
+<!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt;要素内でのMETAリダイレクションを禁止する">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Whitelist">
 <!ENTITY noscriptPermissions "Permissions">
 <!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifications "Notifications">
-<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
+<!ENTITY noscriptNotifications "通知">
+<!ENTITY noscriptToolbarToggle "NoScriptツールバーボタンの左クリックで現在のトップレベルサイトの許可設定をトグルする">
 <!ENTITY noscriptTrusted "Trusted">
 <!ENTITY noscriptUntrusted "Untrusted">
-<!ENTITY noscriptUnknown "Unknwon">
+<!ENTITY noscriptUnknown "Unknown">
 <!ENTITY noscriptAdd "Add">
 <!ENTITY noscriptAdd.accesskey "A">
 <!ENTITY noscriptClose "Close">
@@ -79,13 +79,13 @@
 <!ENTITY noscriptPolicies "Policies">
 <!ENTITY noscriptDefaultPolicies "Default Policies">
 <!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;要素を隠す">
+<!ENTITY noscriptNselForce "ブロックした&lt;SCRIPT&gt;に引き続く&lt;NOSCRIPT&gt;を表示する">
+<!ENTITY noscriptAutoAllowTopLevel "トップレベルサイトはデフォルトで一時的に許可する">
 <!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
+<!ENTITY noscriptOptFilterXGet "クロスサイトの疑いのあるリクエストをサニタイズする">
+<!ENTITY noscriptOptFilterXPost "クロスサイトのPOSTリクエストを、同じ情報を持つGETリクエストに変換する">
 <!ENTITY noscriptShowConsole "Show Console...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
@@ -94,9 +94,9 @@
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptXssExceptions "対XSS保護の例外設定">
+<!ENTITY noscriptXssExceptions.description "これらの正規表現にマッチングする送り先はXSSから保護されません">
+<!ENTITY noscriptMatchSample "パターンマッチングの例:">
 <!ENTITY noscriptReset "Reset">
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Reset to defaults">
@@ -105,15 +105,19 @@
 <!ENTITY noscriptJar "JAR">
 <!ENTITY noscriptJarFaq "JAR FAQ">
 <!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptForbidJarDocuments "JARリモートリソースがドキュメントとして読み込まれるのをブロックする">
+<!ENTITY noscriptJarExceptions "JARドキュメントブロックの例外設定">
+<!ENTITY noscriptJarExceptions.description "これらの正規表現にマッチングするJARドキュメントはブロックされません。">
+<!ENTITY noscriptRevokeTemp "一時的な許可を取り消す">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
-<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
+<!ENTITY noscriptNoUntrustedPlaceholder "サイトからオブジェクトのためのプレースホルダーがない場合は信頼できないものとして記録する">
+<!ENTITY noscriptCollapseBlockedObjects "ブロックしたオブジェクトを折りたたむ">
 <!ENTITY noscriptExceptions "Exceptions...">
-<!ENTITY noscriptBlockedObjects "Blocked Objects">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
-<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
+<!ENTITY noscriptBlockedObjects "ブロックしたオブジェクト">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "信頼できないと記録されたサイトからの全てのオブジェクトをブロックする">
+<!ENTITY noscriptTempAllowPage "このページの全てを一時的に許可する">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "このページの全てを許可する">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "ページの許可設定を恒久的にする">
+<!ENTITY noscriptTempToPerm.accesskey "m">

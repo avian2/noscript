@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Блокиране на всеки обект идващ от сайт маркиран като ненадежден">
 <!ENTITY noscriptTempAllowPage "Временно разрешаване на всичко за тази страница">
 <!ENTITY noscriptTempAllowPage.accesskey "р">
+<!ENTITY noscriptAllowPage "Разрешаване на всичко на страницата">
+<!ENTITY noscriptAllowPage.accesskey "в">
+<!ENTITY noscriptTempToPerm "Запомняне на разрешенията">
+<!ENTITY noscriptTempToPerm.accesskey "м">

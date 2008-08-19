@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokiraj vsak predmet, ki prihaja z zaupanja nevrednih strani">
 <!ENTITY noscriptTempAllowPage "Začasno omogoči vse na tej strani">
 <!ENTITY noscriptTempAllowPage.accesskey "S">
+<!ENTITY noscriptAllowPage "Dovoli vse na tej strani">
+<!ENTITY noscriptAllowPage.accesskey "D">
+<!ENTITY noscriptTempToPerm "Spremeni dovoljenja za stran v trajna">
+<!ENTITY noscriptTempToPerm.accesskey "t">

@@ -104,7 +104,7 @@
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
 <!ENTITY noscriptJarFaq "Preguntas frecuentes sobre JAR">
-<!ENTITY noscriptJarFaq.accesskey "P">
+<!ENTITY noscriptJarFaq.accesskey "J">
 <!ENTITY noscriptForbidJarDocuments "Bloquear recursos JAR remotos que se carguen como documentos">
 <!ENTITY noscriptJarExceptions "Excepciones al bloqueo de documentos JAR">
 <!ENTITY noscriptJarExceptions.description "Los documentos JAR coincidentes con estas expresiones regulares NO serán bloqueados.">
@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquear todos los objetos procedentes de un sitio marcado como no fiable">
 <!ENTITY noscriptTempAllowPage "Permitir temporalmente toda esta página">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Admitir toda esta página">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Hacer permanentes los permisos de la página">
+<!ENTITY noscriptTempToPerm.accesskey "m">

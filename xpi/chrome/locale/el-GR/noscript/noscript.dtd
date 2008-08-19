@@ -64,7 +64,7 @@
 <!ENTITY noscriptForbidMetaRefresh "Να απαγορεύονται οι ανακατευθύνσεις META σε στοιχεία &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "θ">
 <!ENTITY noscriptWhitelist "Λίστα επιτρεπομένων">
-<!ENTITY noscriptPermissions "Αδειοδοτήσεις">
+<!ENTITY noscriptPermissions "Δικαιώματα">
 <!ENTITY noscriptRefresh "Ανανέωση">
 <!ENTITY noscriptNotifications "Ειδοποιήσεις">
 <!ENTITY noscriptToolbarToggle "Εναλλαγή δικαιωμάτων για τον βασικό ιστότοπο με αριστερό κλικ στο εικονίδιο της εργαλειοθήκης">
@@ -115,5 +115,9 @@
 <!ENTITY noscriptExceptions "Εξαιρέσεις...">
 <!ENTITY noscriptBlockedObjects "Μπλοκαρισμένα αντικείμενα">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Μπλοκάρισμα κάθε αντικειμένου προερχόμενου από ιστότοπο σημειωμένο ως μη έμπιστο">
-<!ENTITY noscriptTempAllowPage "Να επιτρέπονται προς το παρόν για τη σελίδα">
+<!ENTITY noscriptTempAllowPage "Να επιτρέπεται προσωρινά γενικά για τη σελίδα">
 <!ENTITY noscriptTempAllowPage.accesskey "σ">
+<!ENTITY noscriptAllowPage "Να επιτρέπεται γενικά για τη σελίδα">
+<!ENTITY noscriptAllowPage.accesskey "ε">
+<!ENTITY noscriptTempToPerm "Μετατροπή δικαιώματων σελίδας σε μόνιμα">
+<!ENTITY noscriptTempToPerm.accesskey "ν">

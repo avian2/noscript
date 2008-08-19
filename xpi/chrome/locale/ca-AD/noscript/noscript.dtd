@@ -118,3 +118,7 @@ Temporarily allow top-level sites by default">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquejar tots els objectes procedents de llocs marcats com a no confiables">
 <!ENTITY noscriptTempAllowPage "Temporalment permet tota aquesta pàgina">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Accepta tot el d&apos;aquesta pàgina">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Dona permisos permanentment">
+<!ENTITY noscriptTempToPerm.accesskey "d">

@@ -116,4 +116,8 @@
 <!ENTITY noscriptBlockedObjects "已封鎖物件">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "封鎖每個來自不信任網站的物件">
 <!ENTITY noscriptTempAllowPage "暫時允許此頁面的所有物件">
-<!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptTempAllowPage.accesskey "p">
+<!ENTITY noscriptAllowPage "全面允許本頁物件">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "為本頁建立永久許可">
+<!ENTITY noscriptTempToPerm.accesskey "m">

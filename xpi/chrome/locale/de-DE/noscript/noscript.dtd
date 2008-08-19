@@ -33,7 +33,7 @@
 <!ENTITY noscriptNotify.bottom "Am unteren Rand anzeigen">
 <!ENTITY noscriptSound.choose "Durchsuchen...">
 <!ENTITY noscriptSound.choose.accesskey "D">
-<!ENTITY noscriptSound.play "Abspielen">
+<!ENTITY noscriptSound.play "Anhören">
 <!ENTITY noscriptSound.play.accesskey "A">
 <!ENTITY noscriptSound.reset "Standard wiederherstellen">
 <!ENTITY noscriptSound.reset.accesskey "S">
@@ -115,5 +115,9 @@
 <!ENTITY noscriptExceptions "Ausnahmen...">
 <!ENTITY noscriptBlockedObjects "Geblockte Objekte">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Jedes Objekt von als nicht vertrauenswürdig eingestuften Sites blockieren">
-<!ENTITY noscriptTempAllowPage "Ganze Seite temporär erlauben">
-<!ENTITY noscriptTempAllowPage.accesskey "S">
+<!ENTITY noscriptTempAllowPage "Temporär alle Beschränkungen für diese Seite aufheben">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
+<!ENTITY noscriptAllowPage "Alle Beschränkungen für diese Seite aufheben">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Berechtigungen dieser Seite speichern">
+<!ENTITY noscriptTempToPerm.accesskey "b">

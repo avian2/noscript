@@ -19,7 +19,7 @@
 <!ENTITY noscriptAppearance "Udseende">
 <!ENTITY noscriptShow "Vis...">
 <!ENTITY noscriptCtxMenu "Genvejsmenu">
-<!ENTITY noscriptStatusIcon "Statuslinje ikon">
+<!ENTITY noscriptStatusIcon "Statuslinje-ikon">
 <!ENTITY noscriptFullAddr "Hele adresser (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Hele domæner (www.noscript.net)">
 <!ENTITY noscriptBaseDom "2. niveau domæner (noscript.net)">
@@ -51,9 +51,9 @@
 <!ENTITY noscriptForbidPlugins "Forbyd andre plugins">
 <!ENTITY noscriptReloadWarn "Disse indstillinger træder i kraft på en ny eller en (manuelt) genindlæst side">
 <!ENTITY noscriptConfirmUnblock "Spørg før en midlertidig blokering af et objekt ophæves">
-<!ENTITY noscriptStatusLabel "Statuslinje etiket">
+<!ENTITY noscriptStatusLabel "Statuslinje-etiket">
 <!ENTITY noscriptForbidBookmarklets "Forbyd bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Vis pladsholder ikon">
+<!ENTITY noscriptShowPlaceholder "Vis pladsholder-ikon">
 <!ENTITY noscriptTruncateTitle "Afkort dokumenttitler">
 <!ENTITY noscriptFixLinks "Forsøg at fikse JavaScript links">
 <!ENTITY noscriptAllowBookmarks "Tillad sider åbnet gennem bogmærker">
@@ -106,7 +106,7 @@
 <!ENTITY noscriptJarFaq "JAR OSS">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Bloker indlæsning af af fremmede JAR-ressourcer som dokumenter">
-<!ENTITY noscriptJarExceptions "JAR dokument blokeringsundtagelser">
+<!ENTITY noscriptJarExceptions "JAR dokument blokerings-undtagelser">
 <!ENTITY noscriptJarExceptions.description "JAR dokumenter der matcher disse regulære udtryk bliver IKKE blokeret.">
 <!ENTITY noscriptRevokeTemp "Tilbagekald midlertidige tilladelser">
 <!ENTITY noscriptRevokeTemp.accesskey "m">
@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloker alle objekter der kommer fra en side som er markeret som ubetroet">
 <!ENTITY noscriptTempAllowPage "Midlertidigt tillad hele denne side">
 <!ENTITY noscriptTempAllowPage.accesskey "h">
+<!ENTITY noscriptAllowPage "Tillad hele denne side">
+<!ENTITY noscriptAllowPage.accesskey "T">
+<!ENTITY noscriptTempToPerm "Gør tilladelserne for side permanente">
+<!ENTITY noscriptTempToPerm.accesskey "G">

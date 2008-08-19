@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokeeri kõik mitteusaldusväärsetelt saitidelt pärinevad objektid">
 <!ENTITY noscriptTempAllowPage "Luba ajutiselt kõik sellel lehel">
 <!ENTITY noscriptTempAllowPage.accesskey "a">
+<!ENTITY noscriptAllowPage "Luba kõik antud lehel">
+<!ENTITY noscriptAllowPage.accesskey "K">
+<!ENTITY noscriptTempToPerm "Sea lehe õigused püsivaks">
+<!ENTITY noscriptTempToPerm.accesskey "m">

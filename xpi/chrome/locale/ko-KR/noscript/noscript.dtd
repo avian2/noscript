@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 옵션">
 <!ENTITY noscriptAbout "NoScript 정보...">
-<!ENTITY noscriptPermissionsText "스크립트 실행을 허용할 웹 사이틀르 지정할 수 있습니다. 스크립트를 허용할 사이트의 주소나 도메인 (예를 들면, &quot;http://www.site.com&quot; 또는 &quot;site.com&quot;)을 입력한 후 [허용] 버튼을 클릭합니다.">
+<!ENTITY noscriptPermissionsText "스크립트 실행을 허용할 웹 사이트를 지정할 수 있습니다. 스크립트를 허용할 사이트의 주소나 도메인 (예를 들면, &quot;http://www.site.com&quot; 또는 &quot;site.com&quot;)을 입력한 후 [허용] 버튼을 클릭합니다.">
 <!ENTITY noscriptWebAddress "웹 사이트 주소">
 <!ENTITY noscriptAllow "허용">
 <!ENTITY noscriptAllow.accesskey "l">
@@ -67,7 +67,7 @@
 <!ENTITY noscriptPermissions "허용">
 <!ENTITY noscriptRefresh "새로고침">
 <!ENTITY noscriptNotifications "알림">
-<!ENTITY noscriptToolbarToggle "NoScript 툴바 버튼을 마우스 왼쪽버튼으르 클릭할 때맏 현재 최상위 사이트에 대한 허용 상태를 허용/비허용으로 변경합니다.">
+<!ENTITY noscriptToolbarToggle "NoScript 툴바 버튼을 마우스 왼쪽버튼으로 클릭하면 현재 최상위 사이트에 대한 허용 상태를 허용/비허용으로 변경합니다.">
 <!ENTITY noscriptTrusted "신뢰할 수 있는 사이트">
 <!ENTITY noscriptUntrusted "신뢰할 수 없는 사이트">
 <!ENTITY noscriptUnknown "알려지지 않음">
@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "신뢰할 수 없음으로 표시된 사이트의 모든 개체를 차단">
 <!ENTITY noscriptTempAllowPage "일시적으로 허용">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "이 페이지 모두 허용">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "페이지 권한을 영구적으로 저장하기">
+<!ENTITY noscriptTempToPerm.accesskey "m">

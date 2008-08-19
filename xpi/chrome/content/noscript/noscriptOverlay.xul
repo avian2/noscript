@@ -78,6 +78,20 @@
           />
     </menupopup>
    </toolbarbutton>
+  <toolbarbutton id="noscript-tbb-temp-page"
+    tooltiptext="&noscriptTempAllowPage;"
+    buttonstyle="pictures"
+    class="toolbarbutton-1 noscript-temp noscript-allow"
+    label="&noscriptTempAllowPage;"
+    oncommand="noscriptOverlay.allowPage()"
+  />
+  <toolbarbutton id="noscript-tbb-revoke-temp"
+    tooltiptext="&noscriptRevokeTemp;"
+    buttonstyle="pictures"
+    class="toolbarbutton-1 noscript-revoke-temp"
+    label="&noscriptRevokeTemp;"
+    oncommand="noscriptOverlay.revokeTemp()"
+  />
 </toolbarpalette>
 
 <popup id="contentAreaContextMenu">
@@ -224,6 +238,11 @@
          class="menuitem-iconic noscript-temp noscript-allow" 
          label="&noscriptTempAllowPage;" accesskey="&noscriptTempAllowPage.accesskey;"
          oncommand="noscriptOverlay.allowPage()"
+         />
+        <menuitem id="noscript-allow-page-mi"
+         class="menuitem-iconic noscript-allow" 
+         label="&noscriptAllowPage;" accesskey="&noscriptAllowPage.accesskey;"
+         oncommand="noscriptOverlay.allowPage(true)"
          />
         <menu id="noscript-xss-menu" class="menu-iconic noscript-xss" 
           onpopupshowing="event.stopPropagation()" 

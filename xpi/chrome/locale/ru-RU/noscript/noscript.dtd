@@ -109,7 +109,7 @@
 <!ENTITY noscriptJarExceptions "Исключения в блокировании JAR">
 <!ENTITY noscriptJarExceptions.description "JAR-документы, соответствующие маске, НЕ будут блокированы.">
 <!ENTITY noscriptRevokeTemp "Отменить временные разрешения">
-<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptRevokeTemp.accesskey "е">
 <!ENTITY noscriptNoUntrustedPlaceholder "Не отмечать объекты, которые расположены на ненадежных сайтах">
 <!ENTITY noscriptCollapseBlockedObjects "Сворачивать заблокированные объекты">
 <!ENTITY noscriptExceptions "Исключения...">
@@ -117,3 +117,7 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Блокировать любой объект с недоверенных сайтов">
 <!ENTITY noscriptTempAllowPage "Временно разрешить на этой странице">
 <!ENTITY noscriptTempAllowPage.accesskey "о">
+<!ENTITY noscriptAllowPage "Разрешить всё на этой странице">
+<!ENTITY noscriptAllowPage.accesskey "а">
+<!ENTITY noscriptTempToPerm "Сохранить установленные разрешения">
+<!ENTITY noscriptTempToPerm.accesskey "о">
