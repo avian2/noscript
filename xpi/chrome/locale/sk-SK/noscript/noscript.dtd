@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Možnosti...">
+<!ENTITY noscriptOptions "Možnosti…">
 <!ENTITY noscriptOptions.accesskey "M">
 <!ENTITY noscriptOptionsLong "NoScript – Možnosti">
 <!ENTITY noscriptAbout "O rozšírení NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Automaticky znovu načítať stránky, keď sa zmení povolenie">
 <!ENTITY noscriptGeneral "Všeobecné">
 <!ENTITY noscriptAppearance "Vzhľad">
-<!ENTITY noscriptShow "Zobraziť...">
+<!ENTITY noscriptShow "Zobraziť…">
 <!ENTITY noscriptCtxMenu "Kontextová ponuka">
 <!ENTITY noscriptStatusIcon "Ikona v stavovom riadku">
 <!ENTITY noscriptFullAddr "Celé adresy (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Celé domény (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Základňa pre subdomény (noscript.net)">
-<!ENTITY noscriptTempCmd "Dočasne povoliť [...]">
+<!ENTITY noscriptTempCmd "Dočasne povoliť […]">
 <!ENTITY noscriptSound "Zvukový signál pri zablokovaní skriptov">
 <!ENTITY noscriptImport "Importovať">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Pokúsiť sa opraviť prepojenia JavaScriptu">
 <!ENTITY noscriptAllowBookmarks "Povoliť všetky stránky nájdené v Záložkách">
 <!ENTITY noscriptAllowViaBookmarks "Povoliť stránky otvorené zo Záložiek">
-<!ENTITY noscriptAllowPing "Povoliť &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Povoliť &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Povoliť lokálne prepojenia">
-<!ENTITY noscriptForbidPing "Zakázať &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Zakázať &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Zakázať presmerovanie META v rámci prvkov &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Zoznam povolených">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "Skryť prvky &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptNselForce "Zobraziť prvok &lt;NOSCRIPT&gt;, ktorý nasleduje za blokovaným &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Dočasne povoliť stránky najvyššej úrovne">
-<!ENTITY noscriptDescription "Extra ochrana pre Firefox: NoScript povolí JavaScript, Javu (a ďalšie doplnky) len pre dôveryhodné domény podľa vášho výberu (napríklad webovú stránku bankingu). Tento zoznam dôveryhodných serverov založený na preventívnom blokovaní chráni pred zneužitím bezpečnostných dier (známych aj neznámych!) bez straty funkčnosti... Experti budú súhlasiť: Firefox s rozšírením NoScript je naozaj bezpečnejší :-)">
+<!ENTITY noscriptDescription "Extra ochrana pre Firefox: NoScript povolí JavaScript, Javu (a ďalšie doplnky) len pre dôveryhodné domény podľa vášho výberu (napríklad webovú stránku bankingu). Tento zoznam dôveryhodných serverov založený na preventívnom blokovaní chráni pred zneužitím bezpečnostných dier (známych aj neznámych!) bez straty funkčnosti… Experti budú súhlasiť: Firefox s rozšírením NoScript je naozaj bezpečnejší :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blokovať skenery CSS">
 <!ENTITY noscriptOptFilterXGet "Ošetriť podozrivé požiadavky cross-site">
 <!ENTITY noscriptOptFilterXPost "Prepnúť požiadavky POST cross-site na údajovo bezstratové požiadavky GET">
-<!ENTITY noscriptShowConsole "Zobraziť konzolu...">
+<!ENTITY noscriptShowConsole "Zobraziť konzolu…">
 <!ENTITY noscriptShowConsole.accesskey "k">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS FAQ…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Nebezpečné znovunačítanie">
 <!ENTITY noscriptUnsafeReload.accesskey "N">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "d">
 <!ENTITY noscriptNoUntrustedPlaceholder "Žiadny zástupca pre objekty zo stránok označených ako nedôveryhodné">
 <!ENTITY noscriptCollapseBlockedObjects "Stlačiť blokované objekty">
-<!ENTITY noscriptExceptions "Výnimky...">
+<!ENTITY noscriptExceptions "Výnimky…">
 <!ENTITY noscriptBlockedObjects "Blokované objekty">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokovať všetky objekty prichádzajúce zo stránky označenej ako nedôveryhodná">
 <!ENTITY noscriptTempAllowPage "Dočasne povoliť celú túto stránku">

@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Alternativ...">
+<!ENTITY noscriptOptions "Alternativ…">
 <!ENTITY noscriptOptions.accesskey "A">
 <!ENTITY noscriptOptionsLong "NoScript-alternativ">
 <!ENTITY noscriptAbout "Om NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Uppdatera berörda webbsidor när skripttillstånd ändras">
 <!ENTITY noscriptGeneral "Allmänt">
 <!ENTITY noscriptAppearance "Utseende">
-<!ENTITY noscriptShow "Visa...">
+<!ENTITY noscriptShow "Visa…">
 <!ENTITY noscriptCtxMenu "Snabbmeny">
 <!ENTITY noscriptStatusIcon "Statusfältsikon">
 <!ENTITY noscriptFullAddr "Hela adresser (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Hela domäner (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Andranivå-domäner (noscript.net)">
-<!ENTITY noscriptTempCmd "Tillåt tillfälligt [...]">
+<!ENTITY noscriptTempCmd "Tillåt tillfälligt […]">
 <!ENTITY noscriptSound "Spela upp ljud när skript blockeras">
 <!ENTITY noscriptImport "Importera">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Försök reparera JavaSkript-länkar">
 <!ENTITY noscriptAllowBookmarks "Tillåt webbplatser som öppnas från bokmärken">
 <!ENTITY noscriptAllowViaBookmarks "Tillåt webbplatser som öppnas från bokmärken">
-<!ENTITY noscriptAllowPing "Tillåt &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Tillåt &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Tillåt lokala länkar">
-<!ENTITY noscriptForbidPing "Förbjud &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Förbjud &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Förbjud META omdirigering inuti &lt;NOSCRIPT&gt; element">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "F">
 <!ENTITY noscriptWhitelist "Vitlista">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "Dölj &lt;NOSCRIPT&gt; element">
 <!ENTITY noscriptNselForce "Visa &lt;NOSCRIPT&gt; element som följer ett blockerat &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Tillåt top-nivå platser tillfälligt">
-<!ENTITY noscriptDescription "Extra skydd för Firefox: NoScript tillåter JavaScript, Java (och andra tillägg) endast för betrodda domäner du valt (t ex din internetbank). Denna vitlistebaserade förebyggande blockering förhindrar uttnyttjande av säkerhetsproblem (både kända och okända) utan förlust av funktionalitet... Experter är överens: Firefox är verkligen säkrare med NoScript :-)">
+<!ENTITY noscriptDescription "Extra skydd för Firefox: NoScript tillåter JavaScript, Java (och andra tillägg) endast för betrodda domäner du valt (t ex din internetbank). Denna vitlistebaserade förebyggande blockering förhindrar uttnyttjande av säkerhetsproblem (både kända och okända) utan förlust av funktionalitet… Experter är överens: Firefox är verkligen säkrare med NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blockera CSS-baserade scanners">
 <!ENTITY noscriptOptFilterXGet "Tvätta misstänkta XSS förfrågningar">
 <!ENTITY noscriptOptFilterXPost "Ändra XSS POST förfrågningar till datalösa GET förfrågningar">
-<!ENTITY noscriptShowConsole "Visa konsoll...">
+<!ENTITY noscriptShowConsole "Visa konsoll…">
 <!ENTITY noscriptShowConsole.accesskey "K">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS FAQ…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Osäker omladdning">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Visa inte platshållare för objekt från ej betrodda platser">
 <!ENTITY noscriptCollapseBlockedObjects "Minimera blockerade objekt">
-<!ENTITY noscriptExceptions "Undantag...">
+<!ENTITY noscriptExceptions "Undantag…">
 <!ENTITY noscriptBlockedObjects "Blockerade objekt">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blockera alla objekt från ej betrodda platser">
 <!ENTITY noscriptTempAllowPage "Tillåt denna sida tillfälligt">

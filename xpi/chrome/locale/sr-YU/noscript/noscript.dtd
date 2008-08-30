@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Подешавања...">
+<!ENTITY noscriptOptions "Подешавања…">
 <!ENTITY noscriptOptions.accesskey "П">
 <!ENTITY noscriptOptionsLong "NoScript подешавања">
 <!ENTITY noscriptAbout "О NoScript-у">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Аутоматски поново учитај стране које су обухваћене променом дозвола">
 <!ENTITY noscriptGeneral "Опште">
 <!ENTITY noscriptAppearance "Изглед">
-<!ENTITY noscriptShow "Прикажи...">
+<!ENTITY noscriptShow "Прикажи…">
 <!ENTITY noscriptCtxMenu "Контекстни мени">
 <!ENTITY noscriptStatusIcon "Икона на статусној линији">
 <!ENTITY noscriptFullAddr "Пуне адресе (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Пуни домени (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Базни домени другог нивоа (noscript.net)">
-<!ENTITY noscriptTempCmd "Привремено дозволи [...]">
+<!ENTITY noscriptTempCmd "Привремено дозволи […]">
 <!ENTITY noscriptSound "Звучно обавештење када су скриптови блокирани">
 <!ENTITY noscriptImport "Увоз">
 <!ENTITY noscriptImport.accesskey "У">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Покушај да поправиш JavaScript везе">
 <!ENTITY noscriptAllowBookmarks "Дозволи странице отворене преко Омиљено">
 <!ENTITY noscriptAllowViaBookmarks "Дозволи странице отворене преко Омиљено">
-<!ENTITY noscriptAllowPing "Дозволи &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Дозволи &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Дозволи локалне везе">
-<!ENTITY noscriptForbidPing "Забрани &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Забрани &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Забрани META редирекције унутар &lt;NOSCRIPT&gt; елемената">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "М">
 <!ENTITY noscriptWhitelist "Бела листа">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "Сакриј &lt;NOSCRIPT&gt; елементе">
 <!ENTITY noscriptNselForce "Прикажи &lt;NOSCRIPT&gt; који се налази иза блокираног &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Привремено дозволи top-level стране као подразумевано">
-<!ENTITY noscriptDescription "Додатна заштита за ваш Firefox: NoScript дозвољава JavaScript, Java (и остале додатке) само доменима којима се верује по вашем избору (нпр. Ваша е-banking веб страна). Овај превентивни приступ блокирања базиран на белој листи спречава искоришћавање безбедносних пропуста (познатих и чак и непознатих!) без икаквог губитка функционалности... Експерти ће се сложити: Firefox је заиста безбеднији са NoScript-ом :-)">
+<!ENTITY noscriptDescription "Додатна заштита за ваш Firefox: NoScript дозвољава JavaScript, Java (и остале додатке) само доменима којима се верује по вашем избору (нпр. Ваша е-banking веб страна). Овај превентивни приступ блокирања базиран на белој листи спречава искоришћавање безбедносних пропуста (познатих и чак и непознатих!) без икаквог губитка функционалности… Експерти ће се сложити: Firefox је заиста безбеднији са NoScript-ом :-)">
 <!ENTITY noscriptOptBlockCssScanners "Блокирај CSS-базиране скенере">
 <!ENTITY noscriptOptFilterXGet "Очисти сумњиве cross-site захтеве">
 <!ENTITY noscriptOptFilterXPost "Претвори cross-site POST захтеве у GET захтеве без података">
-<!ENTITY noscriptShowConsole "Прикажи конзолу...">
+<!ENTITY noscriptShowConsole "Прикажи конзолу…">
 <!ENTITY noscriptShowConsole.accesskey "р">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS ЧПП...">
+<!ENTITY noscriptXssFaq "XSS ЧПП…">
 <!ENTITY noscriptXssFaq.accesskey "Ч">
 <!ENTITY noscriptUnsafeReload "Небезбедно поновно учитавање">
 <!ENTITY noscriptUnsafeReload.accesskey "б">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptExceptions "Exceptions…">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">

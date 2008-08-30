@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Opties...">
+<!ENTITY noscriptOptions "Opties…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript Opties">
 <!ENTITY noscriptAbout "Over NoScript">
@@ -23,7 +23,7 @@
 <!ENTITY noscriptFullAddr "Volledige adressen (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Volledige domeinen (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Hoofd (2e niveau) domeinen (noscript.net)">
-<!ENTITY noscriptTempCmd "[...] tijdelijk toestaan">
+<!ENTITY noscriptTempCmd "[…] tijdelijk toestaan">
 <!ENTITY noscriptSound "Geluid afspelen wanneer scripts worden geblokkeerd">
 <!ENTITY noscriptImport "Importeren">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "JavaScript koppelingen proberen te herstellen">
 <!ENTITY noscriptAllowBookmarks "Via een bladwijzer geopende sites toestaan">
 <!ENTITY noscriptAllowViaBookmarks "Via een bladwijzer geopende sites toestaan">
-<!ENTITY noscriptAllowPing "&lt;A PING...&gt; toestaan">
+<!ENTITY noscriptAllowPing "&lt;A PING…&gt; toestaan">
 <!ENTITY noscriptAllowLocalLinks "Locale koppelingen toestaan">
-<!ENTITY noscriptForbidPing "&lt;A PING...&gt; verbieden">
+<!ENTITY noscriptForbidPing "&lt;A PING…&gt; verbieden">
 <!ENTITY noscriptForbidMetaRefresh "META doorverwijzingen in &lt;NOSCRIPT&gt; elementen verbieden">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "V">
 <!ENTITY noscriptWhitelist "Toestemmingenlijst">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; elementen verbergen">
 <!ENTITY noscriptNselForce "Het &lt;NOSCRIPT&gt; element dat na een geblokkeerd &lt;SCRIPT&gt; volgt weergeven">
 <!ENTITY noscriptAutoAllowTopLevel "Standaard top-level sites tijdelijk toestaan">
-<!ENTITY noscriptDescription "Extra bescherming voor Firefox: NoScript staat JavaScript, Java (en andere plugins) alleen toe voor zelf gekozen betrouwbare domeinen (bijv. de internetbankieren website). Deze op toestemmingslijsten gebaseerde blokkering vooraf voorkomt exploitatie van beveiligings kwetsbaarheden (bekende en zelfs onbekende!) zonder verlies aan functionaliteit... Experts zullen bevestigen: Firefox is werkelijk veiliger met NoScript :-)">
+<!ENTITY noscriptDescription "Extra bescherming voor Firefox: NoScript staat JavaScript, Java (en andere plugins) alleen toe voor zelf gekozen betrouwbare domeinen (bijv. de internetbankieren website). Deze op toestemmingslijsten gebaseerde blokkering vooraf voorkomt exploitatie van beveiligings kwetsbaarheden (bekende en zelfs onbekende!) zonder verlies aan functionaliteit… Experts zullen bevestigen: Firefox is werkelijk veiliger met NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Op cross-site scripting (CSS) gebaseerde scanners blokkeren">
 <!ENTITY noscriptOptFilterXGet "Verdachte cross-site verzoeken zuiveren">
 <!ENTITY noscriptOptFilterXPost "Cross-site POST verzoeken omzetten in data-vrije GET verzoeken">
-<!ENTITY noscriptShowConsole "Console weergeven...">
+<!ENTITY noscriptShowConsole "Console weergeven…">
 <!ENTITY noscriptShowConsole.accesskey "w">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS FAQ…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Onveilig herladen">
 <!ENTITY noscriptUnsafeReload.accesskey "H">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "s">
 <!ENTITY noscriptNoUntrustedPlaceholder "Geen vervangend pictogram voor objecten afkomstig van als onbetrouwbaar gemerkte sites">
 <!ENTITY noscriptCollapseBlockedObjects "Geblokkeerde objecten verbergen">
-<!ENTITY noscriptExceptions "Uitzonderingen...">
+<!ENTITY noscriptExceptions "Uitzonderingen…">
 <!ENTITY noscriptBlockedObjects "Geblokkeerde objecten">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Elk object afkomstig van een als onbetrouwbaar gemerkte site blokkeren">
 <!ENTITY noscriptTempAllowPage "Alles op deze pagina tijdelijk toestaan">

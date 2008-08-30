@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Innstillinger...">
+<!ENTITY noscriptOptions "Innstillinger…">
 <!ENTITY noscriptOptions.accesskey "I">
 <!ENTITY noscriptOptionsLong "NoScript-innstillinger">
 <!ENTITY noscriptAbout "Om NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Automatisk last inn sider som blir berørt, når tillatelser endres">
 <!ENTITY noscriptGeneral "Generelt">
 <!ENTITY noscriptAppearance "Utseende">
-<!ENTITY noscriptShow "Vis...">
+<!ENTITY noscriptShow "Vis…">
 <!ENTITY noscriptCtxMenu "Kontekstmeny">
 <!ENTITY noscriptStatusIcon "Statuslinje-ikon">
 <!ENTITY noscriptFullAddr "Fullstendige Adresser (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Fullstendige Domener (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Andrenivås Domener (noscript.net)">
-<!ENTITY noscriptTempCmd "Midlertidig tillat [...]">
+<!ENTITY noscriptTempCmd "Midlertidig tillat […]">
 <!ENTITY noscriptSound "Lydsignal når skript blir blokkert">
 <!ENTITY noscriptImport "Importer">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Prøv å fikse JavaScript-lenker">
 <!ENTITY noscriptAllowBookmarks "Tillat sider gjennom bokmerker">
 <!ENTITY noscriptAllowViaBookmarks "Tillat sider gjennom bokmerker">
-<!ENTITY noscriptAllowPing "Tillat &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Tillat &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Tillat lokale lenker">
-<!ENTITY noscriptForbidPing "Forby &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Forby &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Forby META viderekobling på insiden av &lt;NOSCRIPT&gt;-elementer">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Hviteliste">
@@ -90,7 +90,7 @@
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS FAQ…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptExceptions "Exceptions…">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">

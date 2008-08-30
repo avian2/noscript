@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Beállítások...">
+<!ENTITY noscriptOptions "Beállítások…">
 <!ENTITY noscriptOptions.accesskey "B">
 <!ENTITY noscriptOptionsLong "A NoScript beállításai">
 <!ENTITY noscriptAbout "A NoScript névjegye">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Az érintett oldalak automatikus újratöltése az engedélyek megváltoztatásakor">
 <!ENTITY noscriptGeneral "Általános">
 <!ENTITY noscriptAppearance "Megjelenés">
-<!ENTITY noscriptShow "Megjelenítés...">
+<!ENTITY noscriptShow "Megjelenítés…">
 <!ENTITY noscriptCtxMenu "Helyi menü">
 <!ENTITY noscriptStatusIcon "Ikon az állapotsoron">
 <!ENTITY noscriptFullAddr "Teljes címek (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Teljes tartományok (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Alap 2. szintű tartományok (noscript.net)">
-<!ENTITY noscriptTempCmd "Ideiglenes engedélyezés [...]">
+<!ENTITY noscriptTempCmd "Ideiglenes engedélyezés […]">
 <!ENTITY noscriptSound "Hangjelzés a parancsfájlok blokkolásakor">
 <!ENTITY noscriptImport "Importálás">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Kísérlet a JavaScript hivatkozások javítására">
 <!ENTITY noscriptAllowBookmarks "A könyvjelzőkben található összes webhely engedélyezése">
 <!ENTITY noscriptAllowViaBookmarks "A könyvjelzőből megnyitott webhelyek engedélyezése">
-<!ENTITY noscriptAllowPing "Engedélyezés: &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Engedélyezés: &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Helyi linkek engedélyezése">
-<!ENTITY noscriptForbidPing "Letiltás: &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Letiltás: &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "META átirányítások letiltása a &lt;NOSCRIPT&gt; elemekben">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "l">
 <!ENTITY noscriptWhitelist "Fehérlista">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; elemek elrejtése">
 <!ENTITY noscriptNselForce "&lt;NOSCRIPT&gt; elem megjelenítése, amely a blokkolt &lt;SCRIPT&gt; után következik">
 <!ENTITY noscriptAutoAllowTopLevel "Legmagasabb szintű webhelyek ideiglenes engedélyezése">
-<!ENTITY noscriptDescription "Firefox extra védelme: NoScript engedélyezheti a JavaScript, Java (és más beépülőket) az Ön által megadott webhelyekre (pl. átutalások interneten keresztül). Ez a megbízható szervereket tartalmazó lista megelőző blokkoláson alapszik, így óv a támadásoktól a biztonsági réseken keresztül (ismert és ismeretlen!), mindezt működés közben... Az expertek egyetértenek: A Firefox a NoScript kiterjesztéssel valóban biztonságosabb :-)">
+<!ENTITY noscriptDescription "Firefox extra védelme: NoScript engedélyezheti a JavaScript, Java (és más beépülőket) az Ön által megadott webhelyekre (pl. átutalások interneten keresztül). Ez a megbízható szervereket tartalmazó lista megelőző blokkoláson alapszik, így óv a támadásoktól a biztonsági réseken keresztül (ismert és ismeretlen!), mindezt működés közben… Az expertek egyetértenek: A Firefox a NoScript kiterjesztéssel valóban biztonságosabb :-)">
 <!ENTITY noscriptOptBlockCssScanners "CSS-alapú szkennerek blokkolása">
 <!ENTITY noscriptOptFilterXGet "Gyanús XSS hozzáférések kezelése">
 <!ENTITY noscriptOptFilterXPost "POST hozzáférés átváltása GET hozzáférésre">
-<!ENTITY noscriptShowConsole "Konzol megjelenítése...">
+<!ENTITY noscriptShowConsole "Konzol megjelenítése…">
 <!ENTITY noscriptShowConsole.accesskey "K">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS GYIK...">
+<!ENTITY noscriptXssFaq "XSS GYIK…">
 <!ENTITY noscriptXssFaq.accesskey "G">
 <!ENTITY noscriptUnsafeReload "Megbízhatatlan újratöltése">
 <!ENTITY noscriptUnsafeReload.accesskey "N">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "v">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nincs helykitöltő a megbízhatatlannak megjelölt webhelyekről érkező objektumoknál">
 <!ENTITY noscriptCollapseBlockedObjects "Blokkolt objektumok összecsukása">
-<!ENTITY noscriptExceptions "Kivételek...">
+<!ENTITY noscriptExceptions "Kivételek…">
 <!ENTITY noscriptBlockedObjects "Blokkolt objektumok">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Minden megbízhatatlanként megjelölt oldalról érkező objektum blokkolása">
 <!ENTITY noscriptTempAllowPage "Parancsfájlok ideiglenes engedélyezése az oldalon">

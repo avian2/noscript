@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "İzinler değişince etkilenen sayfayı otomatik olarak tazele">
 <!ENTITY noscriptGeneral "Genel">
 <!ENTITY noscriptAppearance "Görünüm">
-<!ENTITY noscriptShow "Göster...">
+<!ENTITY noscriptShow "Göster…">
 <!ENTITY noscriptCtxMenu "NoScript Menüsü">
 <!ENTITY noscriptStatusIcon "Durum çubugunda ikon olarak">
 <!ENTITY noscriptFullAddr "Tam adres (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Tam alanadı (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Temel 2nci seviye alanadı (noscript.net)">
-<!ENTITY noscriptTempCmd "[...] geçici olarak izin ver">
+<!ENTITY noscriptTempCmd "[…] geçici olarak izin ver">
 <!ENTITY noscriptSound "Kodlar engellenince ses dosyası çal">
 <!ENTITY noscriptImport "İçe aktar">
 <!ENTITY noscriptImport.accesskey "K">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "JavaScript bağlantılarını düzeltmeye çalış">
 <!ENTITY noscriptAllowBookmarks "Yer imlerimde kayıtlı sitelere izin ver">
 <!ENTITY noscriptAllowViaBookmarks "Yer imlerinden açılan sitelere izin ver">
-<!ENTITY noscriptAllowPing "İzin ver &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "İzin ver &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Yerel bağlantılara izin ver">
-<!ENTITY noscriptForbidPing "Yasakla &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Yasakla &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt; elementleri içinde META yenidenyönlendirmelerini engelle">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "M">
 <!ENTITY noscriptWhitelist "Beyazliste">
@@ -82,7 +82,7 @@
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; öğelerini sakla">
 <!ENTITY noscriptNselForce "&lt;SCRIPT&gt;&apos;den sonra oluşan &lt;NOSCRIPT&gt; öğelerini göster">
 <!ENTITY noscriptAutoAllowTopLevel "Varsayılan olarak aktif sitelere geçici izin verilir">
-<!ENTITY noscriptDescription "Firefox&apos;unuz için ekstra güvenlik: NoScript seçiminize göre, sadece izin verdiğiniz sitelerde Java (ve diğer eklentilere) izin verebilir. Bu Beyazliste temelli öngörmeli engelleme tekniği güvenlik açıklarını(bilinen ve bilinmeyen) kapatmaya yararken işlevsellik kaybına neden olmaz... Uzmanlar katılacaklardır: Firefox NoScript ile birlikte daha güvenli :-)">
+<!ENTITY noscriptDescription "Firefox&apos;unuz için ekstra güvenlik: NoScript seçiminize göre, sadece izin verdiğiniz sitelerde Java (ve diğer eklentilere) izin verebilir. Bu Beyazliste temelli öngörmeli engelleme tekniği güvenlik açıklarını(bilinen ve bilinmeyen) kapatmaya yararken işlevsellik kaybına neden olmaz… Uzmanlar katılacaklardır: Firefox NoScript ile birlikte daha güvenli :-)">
 <!ENTITY noscriptOptBlockCssScanners "CSS-temelli tarayıcıları engelle">
 <!ENTITY noscriptOptFilterXGet "Çapraz-site şüpeli isteklerini temizle">
 <!ENTITY noscriptOptFilterXPost "Çapraz-site POST isteklerini GET&apos;e çevir">
@@ -90,7 +90,7 @@
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS SSS...">
+<!ENTITY noscriptXssFaq "XSS SSS…">
 <!ENTITY noscriptXssFaq.accesskey "S">
 <!ENTITY noscriptUnsafeReload "Güvensiz TekrarYükleme">
 <!ENTITY noscriptUnsafeReload.accesskey "Y">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "K">
 <!ENTITY noscriptNoUntrustedPlaceholder "Güvensiz işaretlenen sitelerden gelen nesnelerde yertutucuları gösterme">
 <!ENTITY noscriptCollapseBlockedObjects "Engellenen nesneleri daralt">
-<!ENTITY noscriptExceptions "Hariç tutulanlar...">
+<!ENTITY noscriptExceptions "Hariç tutulanlar…">
 <!ENTITY noscriptBlockedObjects "Engellenen Nesneler">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Güvensiz olarak işaretlenen sitelerden gelen tüm nesneleri engelle">
 <!ENTITY noscriptTempAllowPage "Tüm bu sayfalara geçici izin ver">

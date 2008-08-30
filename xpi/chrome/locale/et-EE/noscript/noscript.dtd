@@ -1,7 +1,7 @@
-<!ENTITY noscriptOptions "Sätted...">
+<!ENTITY noscriptOptions "Sätted…">
 <!ENTITY noscriptOptions.accesskey "S">
 <!ENTITY noscriptOptionsLong "NoScripti sätted">
-<!ENTITY noscriptAbout "Täpsemalt lisast NoScript...">
+<!ENTITY noscriptAbout "Täpsemalt lisast NoScript…">
 <!ENTITY noscriptPermissionsText "Sa saad määrata, millistel veebilehtedel lubatakse skripte käivitada. Kirjuta veebilehe või domeeni aadress, mida soovid lubada (nt &quot;http://www.site.com&quot; või &quot;site.com&quot;) ja klõpsa Luba nuppu">
 <!ENTITY noscriptWebAddress "Veebisaidi aadress:">
 <!ENTITY noscriptAllow "Luba">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Õiguste muutumisel laetakse mõjustatud lehed automaatselt uuesti">
 <!ENTITY noscriptGeneral "Üldine">
 <!ENTITY noscriptAppearance "Välimus">
-<!ENTITY noscriptShow "Näita...">
+<!ENTITY noscriptShow "Näita…">
 <!ENTITY noscriptCtxMenu "Kontekstimenüü">
 <!ENTITY noscriptStatusIcon "Ikoon olekuribal">
 <!ENTITY noscriptFullAddr "Täielikud aadressid (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Täielikud domeenid (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Teise taseme domeenid (noscript.net)">
-<!ENTITY noscriptTempCmd "Luba ajutiselt [...]">
+<!ENTITY noscriptTempCmd "Luba ajutiselt […]">
 <!ENTITY noscriptSound "Teata heliga skriptide blokeerimisest">
 <!ENTITY noscriptImport "Impordi">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Ürita parandada JavaScripti linke">
 <!ENTITY noscriptAllowBookmarks "Luba saidid, mis on avatud järjehoidjate kaudu">
 <!ENTITY noscriptAllowViaBookmarks "Luba saidid, mis on avatud järjehoidjate kaudu">
-<!ENTITY noscriptAllowPing "Luba &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Luba &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Luba kohalikke linke">
-<!ENTITY noscriptForbidPing "Keela &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Keela &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Keela META ümbersuunamised &lt;NOSCRIPT&gt; elementide sees">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "m">
 <!ENTITY noscriptWhitelist "Valge nimekiri">
@@ -82,11 +82,11 @@
 <!ENTITY noscriptNselNever "Peida &lt;NOSCRIPT&gt; elemendid">
 <!ENTITY noscriptNselForce "Näita &lt;NOSCRIPT&gt; elementi, mis järgneb blokeeritud &lt;SCRIPT&gt; elemendile">
 <!ENTITY noscriptAutoAllowTopLevel "Luba ajutiselt vaikimisi tipptaseme saidid">
-<!ENTITY noscriptDescription "Lisakaitse Firefoxile: NoScript lubab JavaSkripti, Javat (ja teisi pluginaid) ainult usaldusväärsetest domeenidest sinu valikul (nt kodupanga veebilehel). Antud nn valgel nimekirjal põhinev blokeerimine hoiab ära tuntud ja isegi tundmatute turvaaukude kuritahtlikku ärakasutamist ilma funktsionaalsust kaotamata... Eksperdid nõustuvad, et Firefox on turvalisem koos NoScriptiga :-)">
+<!ENTITY noscriptDescription "Lisakaitse Firefoxile: NoScript lubab JavaSkripti, Javat (ja teisi pluginaid) ainult usaldusväärsetest domeenidest sinu valikul (nt kodupanga veebilehel). Antud nn valgel nimekirjal põhinev blokeerimine hoiab ära tuntud ja isegi tundmatute turvaaukude kuritahtlikku ärakasutamist ilma funktsionaalsust kaotamata… Eksperdid nõustuvad, et Firefox on turvalisem koos NoScriptiga :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blokeeri CSS-põhinevad skannerid">
 <!ENTITY noscriptOptFilterXGet "Puhasta kahtlased saitidevahelised päringud">
 <!ENTITY noscriptOptFilterXPost "Muuda saitidevahelised POST-päringud andmevabadeks GET-päringuteks">
-<!ENTITY noscriptShowConsole "Näita konsooli...">
+<!ENTITY noscriptShowConsole "Näita konsooli…">
 <!ENTITY noscriptShowConsole.accesskey "k">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Kohatäitjad puuduvad objektidel, mis tulevad mitteusaldusväärsetelt saitidelt">
 <!ENTITY noscriptCollapseBlockedObjects "Blokeeritud objektid ahendatakse">
-<!ENTITY noscriptExceptions "Erandid...">
+<!ENTITY noscriptExceptions "Erandid…">
 <!ENTITY noscriptBlockedObjects "Blokeeritud objektid">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokeeri kõik mitteusaldusväärsetelt saitidelt pärinevad objektid">
 <!ENTITY noscriptTempAllowPage "Luba ajutiselt kõik sellel lehel">

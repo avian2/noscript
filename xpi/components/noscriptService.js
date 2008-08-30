@@ -801,7 +801,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.7.9",
+  VERSION: "1.8",
   
   get wrappedJSObject() {
     return this;
@@ -4693,6 +4693,12 @@ RequestWatchdog.prototype = {
         }
       }
     }
+    
+    if (!(origin || (window = this.findWindow(channel)))) {
+      if (ns.consoleDump) this.dump(channel, "-- This channel doesn't belong to any window/origin: internal browser or extension request, skipping. --");
+      return;
+    }
+    
      // fast return if nothing to do here
     if (!(ns.filterXPost || ns.filterXGet)) return; 
     
@@ -4760,7 +4766,11 @@ RequestWatchdog.prototype = {
       this.checkWindowName(window);
     }
    
-    if (globalJS || ns.isJSEnabled(originSite)) {
+    if (globalJS || ns.isJSEnabled(originSite) ||
+        !origin // we consider null origin as "trusted" (i.e. we check for injections but 
+                // don't strip POST unconditionally) to make some extensions (e.g. Google Gears) 
+                // work. For dangerous edge cases we should have moz-null-principal: now, anyway ,
+      ) {
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel, window), channel);
       
       // origin is trusted, check for injections
@@ -4769,7 +4779,7 @@ RequestWatchdog.prototype = {
         (!window || ns.injectionCheckSubframes || window == window.top);
         
       if (injectionAttempt) {
-        postInjection = channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel);
+        postInjection = originSite != "chrome:" && channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel);
         injectionAttempt = ns.injectionChecker.checkURL(originalSpec);
         
         if (ns.consoleDump) {
@@ -5235,6 +5245,17 @@ var InjectionChecker = {
     }
     return s;
   },
+  
+  reduceXML: function(s) {
+    var t;
+    while(/^[^"]*</.test(s)) {
+        t = s.replace(/^([^"]*)<\s*\/?[a-zA-Z][\w\:\-]+(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+]*")*[\+\s]*\/?>/, '$1;xml;');
+        if (t == s) break;
+        s = t;
+    }
+    if (t) { s = s.replace(/(?:\s*;xml;\s*)+/g, ';xml;') };
+    return s;
+  },
 
   _singleAssignmentRx: new RegExp(
     "\\b(?:" + fuzzify('document|location|setter') + ")\\b" 
@@ -5304,7 +5325,9 @@ var InjectionChecker = {
   checkJSBreak: function(s) {
     // Direct script injection breaking JS string literals or comments
     
-    s = this.reduceJSON(s.replace(/\%\d+[a-z\(]\w*/gi, '`')); // cleanup most urlencoded noise and reduce JSON
+    // cleanup most urlencoded noise and reduce JSON/XML
+    s = this.reduceXML(this.reduceJSON(s.replace(/\%\d+[a-z\(]\w*/gi, '`')));
+    
     if (!this.maybeJS(s)) return false;
     
     const invalidChars = this.invalidChars;
@@ -5567,7 +5590,10 @@ var InjectionChecker = {
   get base64Decoder() { return Base64 }, // exposed here just for debugging purposes
   checkBase64: function(url) {
     this.log(url);
+    var t = new Date().getTime();
     var frags, j, k, l, pos, ff, f;
+    const MAX_TIME = 4000;
+    const DOS_MSG = "Too long execution time, assuming DOS in Base64 checks";
     this.base64 = false;
     // standard base64
     // notice that we cut at 8192 chars because of stack overflow in JS regexp implementation
@@ -5584,8 +5610,17 @@ var InjectionChecker = {
           f += frags[j].substring(frags[j].length - 1);
         }
         ff = f.split('/');
-        for (l = ff.length; l > 0; l--) {
+        l = ff.length;
+        if (l > 255) {
+          this.log("More than 255 base64 slash chunks, assuming DOS");
+          return true;
+        }
+        for (; l > 0; l--) {
           for(k = 0; k < l; k++) {
+            if (new Date().getTime() - t >MAX_TIME) {
+                this.log(DOS_MSG);
+                return true;
+            }
             f = ff.slice(k, l).join('/');
             if (f.length >= 12 && this.checkBase64Frag(f))
               return true;
@@ -5599,6 +5634,10 @@ var InjectionChecker = {
     if (frags) {
       f = '';
       for (j = 0; j < frags.length; j++) {
+        if (new Date().getTime() - t > MAX_TIME) {
+          this.log(DOS_MSG);
+          return true;
+        }
         if (/[A-Za-z0-9\-_]$/.test(frags[j])) {
           f += frags[j];
           if (j < frags.length - 1) continue;
@@ -5908,10 +5947,13 @@ XSanitizer.prototype = {
     return escape(query);
   },
   
+  _queryRecursionLevel: 0,
   sanitizeQuery: function(query, changes, sep) {
+    const MAX_RECUR = 2;
+    
+    var canRecur = this._queryRecursionLevel++ < MAX_RECUR;
     // replace every character matching noscript.filterXGetRx with a single ASCII space (0x20)
     changes = changes || {};
-    
     if (!sep) {
       sep = query.indexOf("&") > -1 ? "&" : ";" 
     }
@@ -5920,6 +5962,8 @@ XSanitizer.prototype = {
     
     for (j = parms.length; j-- > 0;) {
       pieces = parms[j].split("=");
+      
+      
       try {
         for (k = pieces.length; k-- > 0;) {
           encodedPz = pieces[k];
@@ -5935,8 +5979,14 @@ XSanitizer.prototype = {
             encodeURL = escape;
           }
           origPz = pz;
+          
+          // recursion for nested (partial?) URIs
+          
+          
+          
           nestedURI = null;
-          if (/^https?:\/\//i.test(pz)) {
+          
+          if (canRecur && /^https?:\/\//i.test(pz)) {
             // try to sanitize as a nested URL
             try {
               nestedURI = SiteUtils.ios.newURI(pz, null, null).QueryInterface(CI.nsIURL);
@@ -5948,33 +5998,30 @@ XSanitizer.prototype = {
           }
           
           if (!nestedURI) {
-            qpos = pz.indexOf("?");
-            spos = pz.search(/[&;]/);
-            if (qpos > -1 && spos > qpos) { 
+            if (canRecur &&
+                 (qpos = pz.indexOf("?")) > - 1 &&
+                 (spos = pz.search(/[&;]/) > qpos)) { 
               // recursive query string?
-              if (qpos > -1 && spos > qpos) {
-                // recursively sanitize it as a whole qs
-                pz = this.sanitizeQuery(pz, changes);
-              } else {
-                // split, sanitize and rejoin
-                pz = [ this.sanitize(pz.substring(0, qpos)), 
-                       this.sanitizeQuery(pz.substring(qpos + 1), changes)
-                     ].join("?")
-              }
+              // split, sanitize and rejoin
+              pz = [ this.sanitize(pz.substring(0, qpos)), 
+                    this.sanitizeQuery(pz.substring(qpos + 1), changes)
+                   ].join("?")
+              
             } else {
               pz = this.sanitize(pz);
             }
             if (origPz != pz) changes.qs = true;
           }
-          
+            
           pieces[k] = encodeURL(pz);
         }
         parms[j] = pieces.join("=");
       } catch(e) { 
         // decoding exception, skip this param
         parms.splice(j, 1);
-      }
+      } 
     }
+    this._queryRecursionLevel--;
     return parms.join(sep);
   },
   

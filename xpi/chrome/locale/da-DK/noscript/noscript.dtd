@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Indstillinger...">
+<!ENTITY noscriptOptions "Indstillinger…">
 <!ENTITY noscriptOptions.accesskey "I">
 <!ENTITY noscriptOptionsLong "NoScript Indstillinger">
 <!ENTITY noscriptAbout "Om NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Automatisk genindlæs berørte sider når tilladelser ændres">
 <!ENTITY noscriptGeneral "Generelt">
 <!ENTITY noscriptAppearance "Udseende">
-<!ENTITY noscriptShow "Vis...">
+<!ENTITY noscriptShow "Vis…">
 <!ENTITY noscriptCtxMenu "Genvejsmenu">
 <!ENTITY noscriptStatusIcon "Statuslinje-ikon">
 <!ENTITY noscriptFullAddr "Hele adresser (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Hele domæner (www.noscript.net)">
 <!ENTITY noscriptBaseDom "2. niveau domæner (noscript.net)">
-<!ENTITY noscriptTempCmd "Midlertidig tillad [...]">
+<!ENTITY noscriptTempCmd "Midlertidig tillad […]">
 <!ENTITY noscriptSound "Audio feedback når scripts bliver blokeret">
 <!ENTITY noscriptImport "Importer">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Forsøg at fikse JavaScript links">
 <!ENTITY noscriptAllowBookmarks "Tillad sider åbnet gennem bogmærker">
 <!ENTITY noscriptAllowViaBookmarks "Tillad sider åbnet gennem bogmærker">
-<!ENTITY noscriptAllowPing "Tillad &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Tillad &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Tillad lokale links">
-<!ENTITY noscriptForbidPing "Forbyd &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Forbyd &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Forbyd META omdirigeringer i &lt;NOSCRIPT&gt; elementer">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "F">
 <!ENTITY noscriptWhitelist "Whitelist">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "Gem &lt;NOSCRIPT&gt; elementer">
 <!ENTITY noscriptNselForce "Vis &lt;NOSCRIPT&gt; elementet som følger et blokeret &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillad topniveau sider som standard">
-<!ENTITY noscriptDescription "Ekstra beskyttelse af din Firefox: NoScript tillader kun JavaScript, Java (og andre plugins) fra betroede domæner valgt af dig (f.eks. din home-banking hjemmeside). Denne whitelist-baserede forebyggende metode forhindrer udnyttelse af sikkerhedshuller (såvel kendte som ukendte!) uden tab af funktionalitet... Eksperter er enige: Firefox er mere sikker med NoScript :-)">
+<!ENTITY noscriptDescription "Ekstra beskyttelse af din Firefox: NoScript tillader kun JavaScript, Java (og andre plugins) fra betroede domæner valgt af dig (f.eks. din home-banking hjemmeside). Denne whitelist-baserede forebyggende metode forhindrer udnyttelse af sikkerhedshuller (såvel kendte som ukendte!) uden tab af funktionalitet… Eksperter er enige: Firefox er mere sikker med NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Bloker CSS-baserede skannere">
 <!ENTITY noscriptOptFilterXGet "Rens mistænkelige cross-site forespørgsler">
 <!ENTITY noscriptOptFilterXPost "Omdan cross-site POST-forespørgsler til GET-forespørgsler uden data">
-<!ENTITY noscriptShowConsole "Vis konsol...">
+<!ENTITY noscriptShowConsole "Vis konsol…">
 <!ENTITY noscriptShowConsole.accesskey "V">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS OSS...">
+<!ENTITY noscriptXssFaq "XSS OSS…">
 <!ENTITY noscriptXssFaq.accesskey "O">
 <!ENTITY noscriptUnsafeReload "Usikker genindlæsning">
 <!ENTITY noscriptUnsafeReload.accesskey "U">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "m">
 <!ENTITY noscriptNoUntrustedPlaceholder "Ingen pladsholdere til objekter fra sider der er markeret som ubetroede">
 <!ENTITY noscriptCollapseBlockedObjects "Sammenfold blokerede objekter">
-<!ENTITY noscriptExceptions "Undtagelser...">
+<!ENTITY noscriptExceptions "Undtagelser…">
 <!ENTITY noscriptBlockedObjects "Blokerede objekter">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloker alle objekter der kommer fra en side som er markeret som ubetroet">
 <!ENTITY noscriptTempAllowPage "Midlertidigt tillad hele denne side">

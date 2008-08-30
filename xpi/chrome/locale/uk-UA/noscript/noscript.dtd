@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Налаштування...">
+<!ENTITY noscriptOptions "Налаштування…">
 <!ENTITY noscriptOptions.accesskey "ш">
 <!ENTITY noscriptOptionsLong "Налаштування NoScript">
 <!ENTITY noscriptAbout "Про розширення">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Автоматично оновлювати сторінку після зміни для неї правил">
 <!ENTITY noscriptGeneral "Основні">
 <!ENTITY noscriptAppearance "Зовнішній вигляд">
-<!ENTITY noscriptShow "Показувати...">
+<!ENTITY noscriptShow "Показувати…">
 <!ENTITY noscriptCtxMenu "Контексне меню">
 <!ENTITY noscriptStatusIcon "Ікону в рядку статусу">
 <!ENTITY noscriptFullAddr "Повні адреси (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Повні домени (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Базові домени 2-го рівня (noscript.net)">
-<!ENTITY noscriptTempCmd "Тимчасово дозволити [...]">
+<!ENTITY noscriptTempCmd "Тимчасово дозволити […]">
 <!ENTITY noscriptSound "Програти аудіо-файл якщо заблокований скрипт">
 <!ENTITY noscriptImport "Імпорт">
 <!ENTITY noscriptImport.accesskey "м">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Пробувати виправляти посилання JavaScript">
 <!ENTITY noscriptAllowBookmarks "Дозволяти всім сайтам знайденим в закладках">
 <!ENTITY noscriptAllowViaBookmarks "Дозволити сайти, відкриті через закладки">
-<!ENTITY noscriptAllowPing "Дозволити &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Дозволити &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Дозволити локальні посилання">
-<!ENTITY noscriptForbidPing "Заборонити &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Заборонити &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;noscript&gt; elements">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Білий список">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "Приховати &lt;noscript&gt; елементи">
 <!ENTITY noscriptNselForce "Показати &lt;noscript&gt; елементи при заблокованому &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality… Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
 <!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
 <!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console...">
+<!ENTITY noscriptShowConsole "Show Console…">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS FAQ…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptExceptions "Exceptions…">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">

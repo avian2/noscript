@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Настройки...">
+<!ENTITY noscriptOptions "Настройки…">
 <!ENTITY noscriptOptions.accesskey "а">
 <!ENTITY noscriptOptionsLong "Настройки NoScript">
 <!ENTITY noscriptAbout "О расширении">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Автоматически обновлять зависимые страницы при изменении правил">
 <!ENTITY noscriptGeneral "Основные">
 <!ENTITY noscriptAppearance "Внешний вид">
-<!ENTITY noscriptShow "Отображать следующие элементы NoScript...">
+<!ENTITY noscriptShow "Отображать следующие элементы NoScript…">
 <!ENTITY noscriptCtxMenu "Пункт в контекстном меню">
 <!ENTITY noscriptStatusIcon "Значок в строке состояния">
 <!ENTITY noscriptFullAddr "Полные адреса (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Полные домены (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Базовые домены 2-го уровня (noscript.net)">
-<!ENTITY noscriptTempCmd "Временно разрешить [...]">
+<!ENTITY noscriptTempCmd "Временно разрешить […]">
 <!ENTITY noscriptSound "Звуковое оповещение при блокировке скриптов">
 <!ENTITY noscriptImport "Импорт">
 <!ENTITY noscriptImport.accesskey "м">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Применять алгоритм исправления JavaScript-ссылок">
 <!ENTITY noscriptAllowBookmarks "Разрешать выполнение JavaScript всем веб-сайтам из закладок">
 <!ENTITY noscriptAllowViaBookmarks "Разрешать выполнение JavaScript всем веб-сайтам из закладок">
-<!ENTITY noscriptAllowPing "Разрешить веб-сайту использовать параметр &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Разрешить веб-сайту использовать параметр &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Разрешить локальные ссылки">
-<!ENTITY noscriptForbidPing "Запретить веб-сайту использовать параметр  &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Запретить веб-сайту использовать параметр  &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Запретить META перенаправления внутри элементов &lt;noscript&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "а">
 <!ENTITY noscriptWhitelist "Белый список">
@@ -82,11 +82,11 @@
 <!ENTITY noscriptNselNever "Скрывать элементы &lt;noscript&gt;">
 <!ENTITY noscriptNselForce "Показывать элемент &lt;noscript&gt; который следует за заблокированным &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Временно разрешать базовым доменам 2-го уровня по умолчанию">
-<!ENTITY noscriptDescription "Экстра защита для Firefox: NoScript позволяет разрешать исполнение JavaScript, Java (и других плагинов) только доменам, которым доверяете (например, ваш веб-сайт). Белый список, основанный на принципе упреждающего блокирования, позволяет предотвратить использование уязвимостей (известных и ещё неизвестных!) без потери функциональности... Эксперты соглашаются: Firefox действительно безопаснее с NoScript :-)">
+<!ENTITY noscriptDescription "Экстра защита для Firefox: NoScript позволяет разрешать исполнение JavaScript, Java (и других плагинов) только доменам, которым доверяете (например, ваш веб-сайт). Белый список, основанный на принципе упреждающего блокирования, позволяет предотвратить использование уязвимостей (известных и ещё неизвестных!) без потери функциональности… Эксперты соглашаются: Firefox действительно безопаснее с NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Блокировать CSS-сканеры">
 <!ENTITY noscriptOptFilterXGet "Фильтровать запросы, подозреваемые в XSS">
 <!ENTITY noscriptOptFilterXPost "Заменять XSS POST-запросы на GET-запросы без данных">
-<!ENTITY noscriptShowConsole "Открыть консоль...">
+<!ENTITY noscriptShowConsole "Открыть консоль…">
 <!ENTITY noscriptShowConsole.accesskey "о">
 <!ENTITY noscriptXss "XSS (межсайтовый скриптинг)">
 <!ENTITY noscriptXss.accesskey "X">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "е">
 <!ENTITY noscriptNoUntrustedPlaceholder "Не отмечать объекты, которые расположены на ненадежных сайтах">
 <!ENTITY noscriptCollapseBlockedObjects "Сворачивать заблокированные объекты">
-<!ENTITY noscriptExceptions "Исключения...">
+<!ENTITY noscriptExceptions "Исключения…">
 <!ENTITY noscriptBlockedObjects "Заблокированные объекты">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Блокировать любой объект с недоверенных сайтов">
 <!ENTITY noscriptTempAllowPage "Временно разрешить на этой странице">

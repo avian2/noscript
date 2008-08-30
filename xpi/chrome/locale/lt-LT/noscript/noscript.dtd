@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Nuostatos...">
+<!ENTITY noscriptOptions "Nuostatos…">
 <!ENTITY noscriptOptions.accesskey "N">
 <!ENTITY noscriptOptionsLong "NoScript nuostatos">
 <!ENTITY noscriptAbout "Apie NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Automatiškai įkelti iš naujo puslapius, kai jų leidimai pasikeičia">
 <!ENTITY noscriptGeneral "Bendrosios">
 <!ENTITY noscriptAppearance "Išvaizda">
-<!ENTITY noscriptShow "Rodyti...">
+<!ENTITY noscriptShow "Rodyti…">
 <!ENTITY noscriptCtxMenu "Kontekstinį meniu">
 <!ENTITY noscriptStatusIcon "Būsenos juostos ikoną">
 <!ENTITY noscriptFullAddr "Pilniems adresams (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Pilniems domenams (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Antrojo lygio domenams (noscript.net)">
-<!ENTITY noscriptTempCmd "Laikinai leisti [...]">
+<!ENTITY noscriptTempCmd "Laikinai leisti […]">
 <!ENTITY noscriptSound "Groti garsinį pranešimą, kai programiniai kodai blokuojami">
 <!ENTITY noscriptImport "Importuoti">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Bandyti sutaisyti JavaScript saitus">
 <!ENTITY noscriptAllowBookmarks "Suteikti leidimą svetainėms, atidarytoms iš adresyno">
 <!ENTITY noscriptAllowViaBookmarks "Suteikti leidimą svetainėms, atidarytoms iš adresyno">
-<!ENTITY noscriptAllowPing "Leisti &lt;A PING...&gt; elementus">
+<!ENTITY noscriptAllowPing "Leisti &lt;A PING…&gt; elementus">
 <!ENTITY noscriptAllowLocalLinks "Leisti saitus į vietines bylas">
-<!ENTITY noscriptForbidPing "Uždrausti &lt;A PING...&gt; elementus">
+<!ENTITY noscriptForbidPing "Uždrausti &lt;A PING…&gt; elementus">
 <!ENTITY noscriptForbidMetaRefresh "Uždrausti &lt;META&gt; peradresavimus &lt;NOSCRIPT&gt; elementuose">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "Ž">
 <!ENTITY noscriptWhitelist "Baltasis sąrašas">
@@ -82,7 +82,7 @@
 <!ENTITY noscriptNselNever "Paslėpti &lt;NOSCRIPT&gt; elementus">
 <!ENTITY noscriptNselForce "Rodyti &lt;NOSCRIPT&gt; elementus, kurie eina po blokinio &lt;SCRIPT&gt; elemento">
 <!ENTITY noscriptAutoAllowTopLevel "Laikinai suteikti leidimą aukščiausiojo lygio svetainių adresams pagal nutylėjimą">
-<!ENTITY noscriptDescription "Papildoma apsauga jūsų Firefox naršyklei: NoScript leidžia JavaScript, Java (ir kitus įskiepius) tik jūsų pasirinktiems patikimiems domenams (pvz., jūsų banko interneto svetainei). Ši baltuoju sąrašu pagrįsta išankstinio blokavimo taktika neleidžia panaudoti saugumo skylių (žinomų ir net nežinomų!) neprarandant funkcionalumo... Ekspertai pritaria: Firefox tikrai saugesnis su NoScript :-)">
+<!ENTITY noscriptDescription "Papildoma apsauga jūsų Firefox naršyklei: NoScript leidžia JavaScript, Java (ir kitus įskiepius) tik jūsų pasirinktiems patikimiems domenams (pvz., jūsų banko interneto svetainei). Ši baltuoju sąrašu pagrįsta išankstinio blokavimo taktika neleidžia panaudoti saugumo skylių (žinomų ir net nežinomų!) neprarandant funkcionalumo… Ekspertai pritaria: Firefox tikrai saugesnis su NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blokuoti ieškiklius, pagrįstus CSS">
 <!ENTITY noscriptOptFilterXGet "Nukenksminti įtartinas tarp-svetainines užklausas">
 <!ENTITY noscriptOptFilterXPost "Paversti tarp-svetainines POST užklausas į tuščias GET užklausas">
@@ -90,7 +90,7 @@
 <!ENTITY noscriptShowConsole.accesskey "K">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS DPK...">
+<!ENTITY noscriptXssFaq "XSS DPK…">
 <!ENTITY noscriptXssFaq.accesskey "D">
 <!ENTITY noscriptUnsafeReload "Nesaugus perkrovimas">
 <!ENTITY noscriptUnsafeReload.accesskey "P">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptExceptions "Exceptions…">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">

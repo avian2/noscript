@@ -1,7 +1,7 @@
-<!ENTITY noscriptOptions "Možnosti...">
+<!ENTITY noscriptOptions "Možnosti…">
 <!ENTITY noscriptOptions.accesskey "M">
 <!ENTITY noscriptOptionsLong "NoScript Možnosti">
-<!ENTITY noscriptAbout "O NoScript programu...">
+<!ENTITY noscriptAbout "O NoScript programu…">
 <!ENTITY noscriptPermissionsText "Določite lahko na katerih straneh bo izvajanje skript dovoljeno. Vnesite naslov ali domeno (pr. &quot;http://www.domena.com&quot; or &quot;domena.com&quot;) strani, na kateri želite omogočiti izvajanje skript in kliknite Dovoli.">
 <!ENTITY noscriptWebAddress "Naslov strani:">
 <!ENTITY noscriptAllow "Dovoli">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Avtomatsko osveži strani ob spremembi pravic">
 <!ENTITY noscriptGeneral "Splošno">
 <!ENTITY noscriptAppearance "Izgled">
-<!ENTITY noscriptShow "Prikaži...">
+<!ENTITY noscriptShow "Prikaži…">
 <!ENTITY noscriptCtxMenu "Kontekstualni meni">
 <!ENTITY noscriptStatusIcon "Ikono v statusni vrstici">
 <!ENTITY noscriptFullAddr "Polen naslov (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Polne domene (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Osnovne domene drugega reda (noscript.net)">
-<!ENTITY noscriptTempCmd "Začasno omogoči [...]">
+<!ENTITY noscriptTempCmd "Začasno omogoči […]">
 <!ENTITY noscriptSound "Zvočni signal ob onemogočenih skriptah">
 <!ENTITY noscriptImport "Uvozi">
 <!ENTITY noscriptImport.accesskey "U">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Poskušaj popraviti JavaScript povezave">
 <!ENTITY noscriptAllowBookmarks "Dovoli odpiranje strani preko bookmarkov">
 <!ENTITY noscriptAllowViaBookmarks "Dovoli odpiranje strani preko bookmarkov">
-<!ENTITY noscriptAllowPing "Dovoli &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Dovoli &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Dovoli lokalne povezave">
-<!ENTITY noscriptForbidPing "Onemogoči &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Onemogoči &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Onemogoči META preusmeritve znotraj &lt;NOSCRIPT&gt; elementov">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "P">
 <!ENTITY noscriptWhitelist "Seznam dovoljenih strani">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "Skrij &lt;NOSCRIPT&gt; elemente">
 <!ENTITY noscriptNselForce "Prikaži &lt;NOSCRIPT&gt; elemente, ki sledijo blokiranemu &lt;SCRIPT&gt; elementu">
 <!ENTITY noscriptAutoAllowTopLevel "Privzeto začasno dovoli vrhnje domene">
-<!ENTITY noscriptDescription "Dodatna zaščita za vaš Firefox: NoScript omogoči izvajanje JavaScript, Java (in drugih vtičnikov) samo na zaupanja vrednih domenah po vaši izbiri (pr. domača stran vaše spletne banke). S pristopom varnih seznamov onemogočimo izkoriščanje varnostnih lukenj (znanih in neznanih!) brez izgub funkcionalnosti... Strokovnjaki se bodo strinjali: Firefox je bolj varen z uporabo NoScript-a :-)">
+<!ENTITY noscriptDescription "Dodatna zaščita za vaš Firefox: NoScript omogoči izvajanje JavaScript, Java (in drugih vtičnikov) samo na zaupanja vrednih domenah po vaši izbiri (pr. domača stran vaše spletne banke). S pristopom varnih seznamov onemogočimo izkoriščanje varnostnih lukenj (znanih in neznanih!) brez izgub funkcionalnosti… Strokovnjaki se bodo strinjali: Firefox je bolj varen z uporabo NoScript-a :-)">
 <!ENTITY noscriptOptBlockCssScanners "Prepreči CSS-osnovane skenerje">
 <!ENTITY noscriptOptFilterXGet "Saniraj sumljive zahtevke drugih strani">
 <!ENTITY noscriptOptFilterXPost "Preoblikuj cross-site POST zahtevke v data-less GET zahtevke">
-<!ENTITY noscriptShowConsole "Prikaži konzolo...">
+<!ENTITY noscriptShowConsole "Prikaži konzolo…">
 <!ENTITY noscriptShowConsole.accesskey "P">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS FAQ…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Nevarna osvežitev">
 <!ENTITY noscriptUnsafeReload.accesskey "o">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "Z">
 <!ENTITY noscriptNoUntrustedPlaceholder "Ne prikaži okvirja predmetov, ki izvirajo iz zaupanja nevrednih strani">
 <!ENTITY noscriptCollapseBlockedObjects "Skrij blokirane predmete">
-<!ENTITY noscriptExceptions "Izjeme...">
+<!ENTITY noscriptExceptions "Izjeme…">
 <!ENTITY noscriptBlockedObjects "Blokirani predmeti">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokiraj vsak predmet, ki prihaja z zaupanja nevrednih strani">
 <!ENTITY noscriptTempAllowPage "Začasno omogoči vse na tej strani">

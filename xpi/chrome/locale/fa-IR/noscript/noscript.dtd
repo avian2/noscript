@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "تنظیمات...">
+<!ENTITY noscriptOptions "تنظیمات…">
 <!ENTITY noscriptOptions.accesskey "ت">
 <!ENTITY noscriptOptionsLong "تنظیمات NoScript">
 <!ENTITY noscriptAbout "درباره NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "بارگذاری مجدد به صورت خودکار هنگام تغییر مجوزها">
 <!ENTITY noscriptGeneral "عمومی">
 <!ENTITY noscriptAppearance "تنظیمات ظاهری">
-<!ENTITY noscriptShow "نمایش...">
+<!ENTITY noscriptShow "نمایش…">
 <!ENTITY noscriptCtxMenu "نمایش در منوی کلیک راست">
 <!ENTITY noscriptStatusIcon "آیکون برنامه در نوار وضعیت">
 <!ENTITY noscriptFullAddr "آدرس کامل (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "نام کامل دامنه (http://www.noscript.net)">
 <!ENTITY noscriptBaseDom "سطح دوم نام دامنه ها (noscript.net)">
-<!ENTITY noscriptTempCmd "دادن مجوز موقت به [...]">
+<!ENTITY noscriptTempCmd "دادن مجوز موقت به […]">
 <!ENTITY noscriptSound "پخش موزیک هنگام ممنوع شدن اسکریپت ها">
 <!ENTITY noscriptImport "ایمپورت">
 <!ENTITY noscriptImport.accesskey "ی">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "اجازه دادن به لینک های جاوا اسکریپت">
 <!ENTITY noscriptAllowBookmarks "دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند.">
 <!ENTITY noscriptAllowViaBookmarks "دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند.">
-<!ENTITY noscriptAllowPing "اجازه دادن به &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "اجازه دادن به &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "اجازه دادن به لینک های محلی">
-<!ENTITY noscriptForbidPing "ممنوع کردن &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "ممنوع کردن &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "ممنوع کردن تفییر مسیرهای META  در عناصر &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "ر">
 <!ENTITY noscriptWhitelist "لیست سفید">
@@ -82,11 +82,11 @@
 <!ENTITY noscriptNselNever "مخفی کردن عناصر &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptNselForce "نمایش عناصر &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "اجازه دادن به سایت های رده بالا به صورت موقت و پیشفرض">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality… Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "سد کردن اسکنرهای بر پایه CSS">
 <!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
 <!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "نمایش کنسول...">
+<!ENTITY noscriptShowConsole "نمایش کنسول…">
 <!ENTITY noscriptShowConsole.accesskey "g">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">

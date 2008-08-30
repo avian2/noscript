@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Αυτόματη ανανέωση των σελίδων που επηρεάζονται από την αλλαγή δικαιωμάτων">
 <!ENTITY noscriptGeneral "Γενικά">
 <!ENTITY noscriptAppearance "Εμφάνιση">
-<!ENTITY noscriptShow "Προβολή...">
+<!ENTITY noscriptShow "Προβολή…">
 <!ENTITY noscriptCtxMenu "Μενού περιεχομένου">
 <!ENTITY noscriptStatusIcon "Εικονίδιο γραμμής κατάστασης">
 <!ENTITY noscriptFullAddr "Πλήρεις διευθύνσεις (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Πλήρεις τομείς (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Δευτερεύοντες βασικοί τομείς (noscript.net)">
-<!ENTITY noscriptTempCmd "Να επιτρέπονται προσωρινά [...]">
+<!ENTITY noscriptTempCmd "Να επιτρέπονται προσωρινά […]">
 <!ENTITY noscriptSound "Ηχητική σήμανση όταν μπλοκάρονται σενάρια εντολών">
 <!ENTITY noscriptImport "Εισαγωγή">
 <!ENTITY noscriptImport.accesskey "Ε">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Να γίνεται προσπάθεια διόρθωσης δεσμών JavaScript">
 <!ENTITY noscriptAllowBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
 <!ENTITY noscriptAllowViaBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
-<!ENTITY noscriptAllowPing "Να επιτρέπεται το &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Να επιτρέπεται το &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Να επιτρέπονται τοπικοί δεσμοί">
-<!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Να απαγορεύονται οι ανακατευθύνσεις META σε στοιχεία &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "θ">
 <!ENTITY noscriptWhitelist "Λίστα επιτρεπομένων">
@@ -86,11 +86,11 @@
 <!ENTITY noscriptOptBlockCssScanners "Μπλοκάρισμα ανιχνεύσεων CSS">
 <!ENTITY noscriptOptFilterXGet "Εκκαθάριση αιτημάτων ύποπτων ως cross-site scripting">
 <!ENTITY noscriptOptFilterXPost "Μετατροπή αιτημάτων cross-site POST σε κενά περιεχομένου αιτήματα GET">
-<!ENTITY noscriptShowConsole "Προβολή κονσόλας...">
+<!ENTITY noscriptShowConsole "Προβολή κονσόλας…">
 <!ENTITY noscriptShowConsole.accesskey "κ">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "Συχνές ερωτήσεις XSS...">
+<!ENTITY noscriptXssFaq "Συχνές ερωτήσεις XSS…">
 <!ENTITY noscriptXssFaq.accesskey "χ">
 <!ENTITY noscriptUnsafeReload "Μη ασφαλής ανανέωση">
 <!ENTITY noscriptUnsafeReload.accesskey "Μ">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "ν">
 <!ENTITY noscriptNoUntrustedPlaceholder "Χωρίς εικονίδια γεμίσματος για αντικείμενα από μη έμπιστους ιστότοπους">
 <!ENTITY noscriptCollapseBlockedObjects "Σύμπτυξη μπλοκαρισμένων αντικειμένων">
-<!ENTITY noscriptExceptions "Εξαιρέσεις...">
+<!ENTITY noscriptExceptions "Εξαιρέσεις…">
 <!ENTITY noscriptBlockedObjects "Μπλοκαρισμένα αντικείμενα">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Μπλοκάρισμα κάθε αντικειμένου προερχόμενου από ιστότοπο σημειωμένο ως μη έμπιστο">
 <!ENTITY noscriptTempAllowPage "Να επιτρέπεται προσωρινά γενικά για τη σελίδα">

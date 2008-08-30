@@ -20,6 +20,7 @@ pref("noscript.showDistrust", true);
 pref("noscript.showUntrusted", true);
 pref("noscript.showBaseDomain", true);
 pref("noscript.showGlobal", true);
+pref("noscript.showTempToPerm", true);
 pref("noscript.showRevokeTemp", true);
 pref("noscript.showBlockedObjects", true);
 pref("noscript.showTempAllowPage", true);

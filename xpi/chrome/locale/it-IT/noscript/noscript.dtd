@@ -1,7 +1,7 @@
-<!ENTITY noscriptOptions "Opzioni...">
+<!ENTITY noscriptOptions "Opzioni…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opzioni NoScript">
-<!ENTITY noscriptAbout "Informazioni su NoScript...">
+<!ENTITY noscriptAbout "Informazioni su NoScript…">
 <!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l&apos;esecuzione degli script è consentita. Digitare l&apos;indirizzo o il dominio (es. &quot;http://www.sito.com&quot; oppure &quot;sito.com&quot;)  e fare clic su Permetti.">
 <!ENTITY noscriptWebAddress "Indirizzo del sito:">
 <!ENTITY noscriptAllow "Permetti">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Aggiorna automaticamente la pagina quando i permessi cambiano">
 <!ENTITY noscriptGeneral "Generale">
 <!ENTITY noscriptAppearance "Aspetto">
-<!ENTITY noscriptShow "Mostra...">
+<!ENTITY noscriptShow "Mostra…">
 <!ENTITY noscriptCtxMenu "Menu contestuale">
 <!ENTITY noscriptStatusIcon "Icona sulla barra di stato">
 <!ENTITY noscriptFullAddr "Indirizzi completi">
 <!ENTITY noscriptFullDom "Dominii completi">
 <!ENTITY noscriptBaseDom "Dominii base (di secondo livello)">
-<!ENTITY noscriptTempCmd "Permetti temporaneamente [...]">
+<!ENTITY noscriptTempCmd "Permetti temporaneamente […]">
 <!ENTITY noscriptSound "Notifica audio per gli script bloccati">
 <!ENTITY noscriptImport "Importa">
 <!ENTITY noscriptImport.accesskey "I">
@@ -67,7 +67,7 @@
 <!ENTITY noscriptPermissions "Permessi">
 <!ENTITY noscriptRefresh "Aggiorna">
 <!ENTITY noscriptNotifications "Notifiche">
-<!ENTITY noscriptToolbarToggle "Il click sinistro sul pulsante della barra inverte i permessi per il sito principale">
+<!ENTITY noscriptToolbarToggle "Il clic sinistro sul pulsante della barra inverte i permessi per il sito principale">
 <!ENTITY noscriptTrusted "Fidato">
 <!ENTITY noscriptUntrusted "Non fidato">
 <!ENTITY noscriptUnknown "Sconosciuto">
@@ -86,11 +86,11 @@
 <!ENTITY noscriptOptBlockCssScanners "Blocca gli scanner basati su CSS">
 <!ENTITY noscriptOptFilterXGet "Filtra le richieste sospette di XSS provenienti da siti non fidati">
 <!ENTITY noscriptOptFilterXPost "Neutralizza le richieste POST (upload) sospette di XSS provenienti da siti non fidati">
-<!ENTITY noscriptShowConsole "Mostra Console...">
+<!ENTITY noscriptShowConsole "Mostra Console…">
 <!ENTITY noscriptShowConsole.accesskey "C">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "FAQ sul XSS...">
+<!ENTITY noscriptXssFaq "FAQ sul XSS…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Ricarica senza protezione">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -111,11 +111,11 @@
 <!ENTITY noscriptRevokeTemp "Revoca i permessi temporanei">
 <!ENTITY noscriptRevokeTemp.accesskey "t">
 <!ENTITY noscriptNoUntrustedPlaceholder "Non mostrare icona sostitutiva per elementi segnalati come non fidati">
-<!ENTITY noscriptCollapseBlockedObjects "Collassa lo spazio occupato dagli oggetti bloccati">
-<!ENTITY noscriptExceptions "Eccezioni...">
+<!ENTITY noscriptCollapseBlockedObjects "Comprimi lo spazio occupato dagli oggetti bloccati">
+<!ENTITY noscriptExceptions "Eccezioni…">
 <!ENTITY noscriptBlockedObjects "Oggetti bloccati">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blocca tutti gli oggetti provenienti da siti segnalati come non fidati">
-<!ENTITY noscriptTempAllowPage "Permetti temporarneamente tutta la pagina">
+<!ENTITY noscriptTempAllowPage "Permetti temporaneamente tutta la pagina">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
 <!ENTITY noscriptAllowPage "Permetti tutta la pagina">
 <!ENTITY noscriptAllowPage.accesskey "a">

@@ -120,6 +120,15 @@ var noscriptOverlay = noscriptUtil.service ?
     return popup;
   },
   
+  tempSitesForTooltip: function(tempSites) {
+    // remove http/https/file CAPS hack entries
+    if (!tempSites) return "0 | ";
+    tempSites = this.ns.siteUtils.sanitizeString(tempSites.replace(/\b(?:https?|file):\/\//g, "")).split(/\s+/);
+    return (typeof(/ /) == "object") // Fx 3, multiline tooltips
+        ? tempSites.join(", ") + "\n\n"
+        : tempSites.length + " | ";
+  },
+  
   prepareMenu: function(popup) {
     const ns = this.ns;
 
@@ -169,16 +178,9 @@ var noscriptOverlay = noscriptUtil.service ?
     if ((tempSites || ns.objectWhitelistLen) && ns.getPref("showRevokeTemp", true)) {
       node.hidden = seps.global.hidden = false;
       node.setAttribute("tooltiptext",
-        // remove http/https/file CAPS hack entries 
-        "<SCRIPT>: " + 
-        (tempSites 
-          ? ns.siteUtils.sanitizeString(tempSites.replace(/\b(?:https?|file):\/\//g, ""
-              )).split(/\s+/) 
-              // .join(",\n") // wait Firefox 3 with its multiline tooltips for this
-              .length
-          : 0) +
-        " | <OBJECT>: " + ns.objectWhitelistLen
-      );
+        "<SCRIPT>: " + (this.tempSitesForTooltip(tempSites)) +
+        "<OBJECT>: " + ns.objectWhitelistLen
+        );
     } else {
       node.hidden = true;
     }
@@ -420,10 +422,30 @@ var noscriptOverlay = noscriptUtil.service ?
     
     
     // temp allow all this page
-    tempMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", true));
+    if (!(tempMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", true)))) {
+      tempMenuItem.setAttribute("tooltiptext", this.allowPage(false, true).join(", "));
+    }
+
+    
     // allow all this page
-    tempMenuItem.parentNode.insertBefore(document.getElementById("noscript-allow-page-mi"),
-        tempMenuItem.nextSibling).hidden = unknownCount + tempCount == 0 || !ns.getPref("showAllowPage", true);
+    node = document.getElementById("noscript-allow-page-mi");
+    if (node.nextSibling != tempMenuItem) {
+      tempMenuItem.parentNode.insertBefore(node, tempMenuItem);
+    }
+    if (!(node.hidden = unknownCount == 0 || !ns.getPref("showAllowPage", true))) {
+      node.setAttribute("tooltiptext", this.allowPage(true, true).join(", "));
+    }
+    
+    // make permanent
+    node = document.getElementById("noscript-temp2perm-mi");
+    if (tempMenuItem.nextSibling != node) {
+      tempMenuItem.parentNode.insertBefore(node, tempMenuItem.nextSibling);
+    }
+    if (!(node.hidden = tempCount == 0 || !ns.getPref("showTempToPerm"))) {
+      node.setAttribute("tooltiptext", this.tempToPerm(true).join(", "));
+    }
+    
+    
     
     this.normalizeMenu(untrustedMenu, true);
     this.normalizeMenu(mainMenu, false);
@@ -513,7 +535,7 @@ var noscriptOverlay = noscriptUtil.service ?
     }
   },
   
-  allowPage: function(permanent) {
+  allowPage: function(permanent, justTell) {
     const ns = this.ns;
     const sites = this.getSites();
     const unknown = [];
@@ -521,10 +543,20 @@ var noscriptOverlay = noscriptUtil.service ?
     var site;
     for (var j = sites.length; j-- > 0;) {
       site = ns.getQuickSite(sites[j], level);
-      if (!(ns.isJSEnabled(site) && !(permanent && ns.isTemp(site))  || ns.isUntrusted(site)))
+      
+      if (permanent === -1 // tempToPerm
+          ? ns.isTemp(site) && ns.isJSEnabled(site) 
+          : !(ns.isJSEnabled(site) || ns.isUntrusted(site)))
         unknown.push(site);
     }
-    if (unknown.length) this.safeAllow(unknown, true, !permanent);
+    if (!justTell) {
+      if (unknown.length) this.safeAllow(unknown, true, !permanent);
+    }
+    return unknown;
+  },
+  
+  tempToPerm: function(justTell) {
+    return this.allowPage(-1, justTell);
   },
   
   allowObject: function(i) {

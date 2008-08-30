@@ -229,21 +229,29 @@
         <menuseparator class="noscript-sep-global"/>
         <menuitem class="menuitem-iconic" />
         
+        
+        
         <menuitem id="noscript-revoke-temp-mi"
           class="menuitem-iconic noscript-revoke-temp" 
           label="&noscriptRevokeTemp;" accesskey="&noscriptRevokeTemp.accesskey;"
           oncommand="noscriptOverlay.revokeTemp()"
           />
+         <menuitem id="noscript-allow-page-mi"
+         class="menuitem-iconic noscript-allow" 
+         label="&noscriptAllowPage;" accesskey="&noscriptAllowPage.accesskey;"
+         oncommand="noscriptOverlay.allowPage(true)"
+         />
         <menuitem id="noscript-temp-allow-page-mi"
          class="menuitem-iconic noscript-temp noscript-allow" 
          label="&noscriptTempAllowPage;" accesskey="&noscriptTempAllowPage.accesskey;"
          oncommand="noscriptOverlay.allowPage()"
          />
-        <menuitem id="noscript-allow-page-mi"
-         class="menuitem-iconic noscript-allow" 
-         label="&noscriptAllowPage;" accesskey="&noscriptAllowPage.accesskey;"
-         oncommand="noscriptOverlay.allowPage(true)"
-         />
+         <menuitem id="noscript-temp2perm-mi"
+          class="menuitem-iconic noscript-allow" 
+          label="&noscriptTempToPerm;" accesskey="&noscriptTempToPerm.accesskey;"
+          oncommand="noscriptOverlay.tempToPerm()"
+          />
+       
         <menu id="noscript-xss-menu" class="menu-iconic noscript-xss" 
           onpopupshowing="event.stopPropagation()" 
           onpopuphidden="event.stopPropagation()" 

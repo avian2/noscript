@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "הגדרות...">
+<!ENTITY noscriptOptions "הגדרות…">
 <!ENTITY noscriptOptions.accesskey "ג">
 <!ENTITY noscriptOptionsLong "הגדרות נוסקריפט">
 <!ENTITY noscriptAbout "על אודות נוסקריפט">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "טען מחדש דפים שמושפעים משינוי הרשאות באופן אוטומטי">
 <!ENTITY noscriptGeneral "כללי">
 <!ENTITY noscriptAppearance "תצוגה">
-<!ENTITY noscriptShow "הצג...">
+<!ENTITY noscriptShow "הצג…">
 <!ENTITY noscriptCtxMenu "תפריט הקשר">
 <!ENTITY noscriptStatusIcon "צלמית שורת מצב">
 <!ENTITY noscriptFullAddr "כתובות מלאות (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "מתחמים מלאים (www.noscript.net)">
 <!ENTITY noscriptBaseDom "מתחמי בסיס ברמה שנייה (noscript.net)">
-<!ENTITY noscriptTempCmd "זמנית התר [...]">
+<!ENTITY noscriptTempCmd "זמנית התר […]">
 <!ENTITY noscriptSound "תן משוב צלילי כשסקריפטים נחסמים">
 <!ENTITY noscriptImport "יבא">
 <!ENTITY noscriptImport.accesskey "י">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "נסה לתקן קישוריות ג&apos;אוהסקריפט">
 <!ENTITY noscriptAllowBookmarks "סמוך על אתרים שנפתחו דרך סימניות">
 <!ENTITY noscriptAllowViaBookmarks "סמוך על אתרים שנפתחו דרך סימניות">
-<!ENTITY noscriptAllowPing "התר &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "התר &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "התר קישוריות מקומיות">
-<!ENTITY noscriptForbidPing "אסור &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "אסור &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "אסור על הפניות META בתוך תגיות &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "רשימת מותרים">
@@ -82,11 +82,11 @@
 <!ENTITY noscriptNselNever "הסתר תגיות &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptNselForce "הצג את תגית ה-&lt;NOSCRIPT&gt; שבאה אחרי &lt;SCRIPT&gt; חסום.">
 <!ENTITY noscriptAutoAllowTopLevel "כברירת מחדל, התר אתרים ראשיים באופן זמני">
-<!ENTITY noscriptDescription "הגנה מורחבת לפיירפוקס: נוסקריפט מאפשר ג&apos;אוהסקריפט, ג&apos;אוה (ותוספים אחרים) רק לאתרים מורשים לבחירתך (למשל, אתר הבנק).  גישה זו, של חסימה מראש על בסיס רשימת-מותרים, מונעת ניצול של פרצות אבטחה (מוכרות ואף בלתי-מוכרות!) בלי לאבד פונקציונליות... מומחים מסכימים: פיירפוקס בטוח יותר עם נוסקריפט. :-)">
+<!ENTITY noscriptDescription "הגנה מורחבת לפיירפוקס: נוסקריפט מאפשר ג&apos;אוהסקריפט, ג&apos;אוה (ותוספים אחרים) רק לאתרים מורשים לבחירתך (למשל, אתר הבנק).  גישה זו, של חסימה מראש על בסיס רשימת-מותרים, מונעת ניצול של פרצות אבטחה (מוכרות ואף בלתי-מוכרות!) בלי לאבד פונקציונליות… מומחים מסכימים: פיירפוקס בטוח יותר עם נוסקריפט. :-)">
 <!ENTITY noscriptOptBlockCssScanners "חסום סורקים מבוססי-CSS">
 <!ENTITY noscriptOptFilterXGet "בטל בקשות חשודות לאתרים מצד שלישי">
 <!ENTITY noscriptOptFilterXPost "הפוך בקשות POST מאתרים מצד שלישי לבקשות GET ללא נתונים נלווים">
-<!ENTITY noscriptShowConsole "הצג מסוף...">
+<!ENTITY noscriptShowConsole "הצג מסוף…">
 <!ENTITY noscriptShowConsole.accesskey "מ">
 <!ENTITY noscriptXss "XSS (סקריפטים מאתרים מצד שלישי)">
 <!ENTITY noscriptXss.accesskey "X">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "ט">
 <!ENTITY noscriptNoUntrustedPlaceholder "אל תציב ממלאי-מקום במקום פריטים מאתרים אסורים">
 <!ENTITY noscriptCollapseBlockedObjects "צמצם פריטים חסומים">
-<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptExceptions "Exceptions…">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">

@@ -1,7 +1,7 @@
-<!ENTITY noscriptOptions "Pilihan...">
+<!ENTITY noscriptOptions "Pilihan…">
 <!ENTITY noscriptOptions.accesskey "P">
 <!ENTITY noscriptOptionsLong "Pilihan NoScript">
-<!ENTITY noscriptAbout "Tentang NoScript...">
+<!ENTITY noscriptAbout "Tentang NoScript…">
 <!ENTITY noscriptPermissionsText "Anda dapat menentukan situs web mana yang diijinkan menjalankan naskah. Masukkan alamat atau domain (contoh: &quot;http://www.site.com&quot; atau &quot;site.com&quot;) yang akan diberi ijin kemudian klik Ijinkan.">
 <!ENTITY noscriptWebAddress "Alamat situs web:">
 <!ENTITY noscriptAllow "Ijinkan">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Otomatis mengambil ulang halaman yang terpengaruh saat perijinan berubah">
 <!ENTITY noscriptGeneral "Umum">
 <!ENTITY noscriptAppearance "Penampilan">
-<!ENTITY noscriptShow "Tampilkan...">
+<!ENTITY noscriptShow "Tampilkan…">
 <!ENTITY noscriptCtxMenu "Menu kontekstual">
 <!ENTITY noscriptStatusIcon "Ikon papan status">
 <!ENTITY noscriptFullAddr "Alamat Lengkap (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Domain Lengkap (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Dasar Domain level ke-2 (noscript.net)">
-<!ENTITY noscriptTempCmd "Ijinkan sementara [...]">
+<!ENTITY noscriptTempCmd "Ijinkan sementara […]">
 <!ENTITY noscriptSound "Umpan balik suara saat naskah dihalangi">
 <!ENTITY noscriptImport "Impor">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Berusaha memperbaiki link JavaScript">
 <!ENTITY noscriptAllowBookmarks "Ijinkan bookmarks">
 <!ENTITY noscriptAllowViaBookmarks "Ijinkan situs dibuka melalui bookmarks">
-<!ENTITY noscriptAllowPing "Ijinkan &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "Ijinkan &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Ijinkan link lokal">
-<!ENTITY noscriptForbidPing "Larang &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "Larang &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Larang perubahan arah META didalam elemen &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "M">
 <!ENTITY noscriptWhitelist "Daftar putih">
@@ -82,7 +82,7 @@
 <!ENTITY noscriptNselNever "Sembunyikan elemen &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptNselForce "Tampikan elemen &lt;NOSCRIPT&gt; yang mengikuti &lt;SCRIPT&gt; yang dihalangi">
 <!ENTITY noscriptAutoAllowTopLevel "Ijinkan sementara situs top-level untuk awal">
-<!ENTITY noscriptDescription "Perlindungan tambahan untuk FireFox Anda: NoScript mengijinkan JavaScript, Java (dan plugin lainnya) hanya untuk domain terpercaya pilihan Anda (misal: situs web-banking personal). Daftar putih ini menjadi dasar perlindungan dari penyalahgunaan lubang keamanan (yang diketahui maupun tidak) tanpa kehilangan fungsionalitas... Para ahli percaya: FireFox lebih aman bersama NoScript :-)">
+<!ENTITY noscriptDescription "Perlindungan tambahan untuk FireFox Anda: NoScript mengijinkan JavaScript, Java (dan plugin lainnya) hanya untuk domain terpercaya pilihan Anda (misal: situs web-banking personal). Daftar putih ini menjadi dasar perlindungan dari penyalahgunaan lubang keamanan (yang diketahui maupun tidak) tanpa kehilangan fungsionalitas… Para ahli percaya: FireFox lebih aman bersama NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "halangi pemindai berdasar CSS">
 <!ENTITY noscriptOptFilterXGet "Bersihkan permintaan cross-site yang mencurigakan">
 <!ENTITY noscriptOptFilterXPost "Ubah permintaan POST cross-site menjadi permintaan GET tanpa data">
@@ -90,7 +90,7 @@
 <!ENTITY noscriptShowConsole.accesskey "P">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS FAQ…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Ambil ulang yang tidak aman">
 <!ENTITY noscriptUnsafeReload.accesskey "u">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptExceptions "Exceptions…">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">

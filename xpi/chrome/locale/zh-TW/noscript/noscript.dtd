@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "選項...">
+<!ENTITY noscriptOptions "選項…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 選項">
 <!ENTITY noscriptAbout "關於 NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "更改許可設定後自動重新讀取相關的頁面.">
 <!ENTITY noscriptGeneral "一般">
 <!ENTITY noscriptAppearance "外觀">
-<!ENTITY noscriptShow "顯示...">
+<!ENTITY noscriptShow "顯示…">
 <!ENTITY noscriptCtxMenu "右鍵選單">
 <!ENTITY noscriptStatusIcon "狀態列圖示">
 <!ENTITY noscriptFullAddr "完整的網址（http://www.noscript.net）">
 <!ENTITY noscriptFullDom "完整的網域（www.noscript.net）">
 <!ENTITY noscriptBaseDom "第二層網域（noscript.net）">
-<!ENTITY noscriptTempCmd "暫時允許 [...]">
+<!ENTITY noscriptTempCmd "暫時允許 […]">
 <!ENTITY noscriptSound "有 Script 被封鎖時播放音效">
 <!ENTITY noscriptImport "匯入">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "嘗試修復 JavaScript 連結">
 <!ENTITY noscriptAllowBookmarks "允許書籤裡的所有網站">
 <!ENTITY noscriptAllowViaBookmarks "允許用書籤開啟網站">
-<!ENTITY noscriptAllowPing "允許 &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "允許 &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "允許本機連結">
-<!ENTITY noscriptForbidPing "禁止 &lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "禁止 &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "禁止 &lt;NoScript&gt; 元素中的 META 重新導向">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "白名單">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "隱藏 &lt;NoScript&gt; 元素">
 <!ENTITY noscriptNselForce "顯示被封鎖的 &lt;Script&gt; 的 &lt;NoScript&gt; 元素">
 <!ENTITY noscriptAutoAllowTopLevel "預設暫時允許第一層網域">
-<!ENTITY noscriptDescription "為您的 Firefox 提供額外保護: NoScript 只允許您選擇的信任網域 (例如您的家庭金融網站) 上的 JavaScript, Java (和其他的外掛). 這份白名單基於預先處理來防止安全弱點 (已知和未知的!) 被利用，且不損失功能... 專家們都同意: Firefox 加上 NoScript 真的是更加安全 :-)">
+<!ENTITY noscriptDescription "為您的 Firefox 提供額外保護: NoScript 只允許您選擇的信任網域 (例如您的家庭金融網站) 上的 JavaScript, Java (和其他的外掛). 這份白名單基於預先處理來防止安全弱點 (已知和未知的!) 被利用，且不損失功能… 專家們都同意: Firefox 加上 NoScript 真的是更加安全 :-)">
 <!ENTITY noscriptOptBlockCssScanners "封鎖基於 CSS 的掃描器">
 <!ENTITY noscriptOptFilterXGet "消除可疑的跨站請除">
 <!ENTITY noscriptOptFilterXPost "轉換跨站 POST 請求為不含數據的 GET 請求">
-<!ENTITY noscriptShowConsole "顯示控制台...">
+<!ENTITY noscriptShowConsole "顯示控制台…">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS 問與答...">
+<!ENTITY noscriptXssFaq "XSS 問與答…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "不安全的重新讀取">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "無物件進入位置標誌符從標記信任的網站">
 <!ENTITY noscriptCollapseBlockedObjects "撤銷已封鎖的物件">
-<!ENTITY noscriptExceptions "例外...">
+<!ENTITY noscriptExceptions "例外…">
 <!ENTITY noscriptBlockedObjects "已封鎖物件">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "封鎖每個來自不信任網站的物件">
 <!ENTITY noscriptTempAllowPage "暫時允許此頁面的所有物件">

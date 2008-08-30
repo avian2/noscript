@@ -197,11 +197,12 @@
             <checkbox id="opt-showGlobal" label="Allow Globally" />
             <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
             <checkbox id="opt-showBlockedObjects" label="&noscriptBlockedObjects;" />
+						<checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
           </vbox>
           <vbox flex="1">
-            <checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
-            <checkbox id="opt-showTempAllowPage" label="&noscriptTempAllowPage;" />
             <checkbox id="opt-showAllowPage" label="&noscriptAllowPage;" />
+            <checkbox id="opt-showTempAllowPage" label="&noscriptTempAllowPage;" />
+						<checkbox id="opt-showTempToPerm" label="&noscriptTempToPerm;" />
           </vbox>
         </hbox>
      </groupbox>

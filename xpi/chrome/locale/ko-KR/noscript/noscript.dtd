@@ -1,7 +1,7 @@
-<!ENTITY noscriptOptions "옵션...">
+<!ENTITY noscriptOptions "옵션…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 옵션">
-<!ENTITY noscriptAbout "NoScript 정보...">
+<!ENTITY noscriptAbout "NoScript 정보…">
 <!ENTITY noscriptPermissionsText "스크립트 실행을 허용할 웹 사이트를 지정할 수 있습니다. 스크립트를 허용할 사이트의 주소나 도메인 (예를 들면, &quot;http://www.site.com&quot; 또는 &quot;site.com&quot;)을 입력한 후 [허용] 버튼을 클릭합니다.">
 <!ENTITY noscriptWebAddress "웹 사이트 주소">
 <!ENTITY noscriptAllow "허용">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "허용 정책이 변경되면 해당 페이지를 자동으로 다시 읽기">
 <!ENTITY noscriptGeneral "일반">
 <!ENTITY noscriptAppearance "모양">
-<!ENTITY noscriptShow "다음 기능들을 보여줍니다...">
+<!ENTITY noscriptShow "다음 기능들을 보여줍니다…">
 <!ENTITY noscriptCtxMenu "상황에 따른 메뉴">
 <!ENTITY noscriptStatusIcon "상태표시줄 아이콘">
 <!ENTITY noscriptFullAddr "전체 주소(http://www.noscript.net)">
 <!ENTITY noscriptFullDom "전체 도메인(www.noscript.net)">
 <!ENTITY noscriptBaseDom "2수준 도메인(noscript.net)">
-<!ENTITY noscriptTempCmd "임시 허용[...]">
+<!ENTITY noscriptTempCmd "임시 허용[…]">
 <!ENTITY noscriptSound "스크립트가 차단되었을 때 소리로 알림">
 <!ENTITY noscriptImport "가져오기">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "JavaScript 링크 수정 시도">
 <!ENTITY noscriptAllowBookmarks "북마크를 이용한 사이트 열기 허용">
 <!ENTITY noscriptAllowViaBookmarks "북마크를 이용한 사이트 열기 허용">
-<!ENTITY noscriptAllowPing "&lt;A PING...&gt; 허용">
+<!ENTITY noscriptAllowPing "&lt;A PING…&gt; 허용">
 <!ENTITY noscriptAllowLocalLinks "로컬 링크 허용">
-<!ENTITY noscriptForbidPing "&lt;A PING...&gt; 금지">
+<!ENTITY noscriptForbidPing "&lt;A PING…&gt; 금지">
 <!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt; 요소 내에 있는 META 리디렉션 제거">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "사용자 지정 목록">
@@ -86,7 +86,7 @@
 <!ENTITY noscriptOptBlockCssScanners "CSS 기반의 스캐너 차단">
 <!ENTITY noscriptOptFilterXGet "의심스러운 크로스-사이트 요청 차단">
 <!ENTITY noscriptOptFilterXPost "크로스-사이트 POST 요청을 데이터 손실이 없는 GET 요청으로 변환">
-<!ENTITY noscriptShowConsole "콘솔 보기...">
+<!ENTITY noscriptShowConsole "콘솔 보기…">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "신뢰할 수 없는 사이트로 등록된 사이트의 개체에 대해서는 플레이스홀더 표시하지 않음">
 <!ENTITY noscriptCollapseBlockedObjects "차단된 개체는 사용하지 않음">
-<!ENTITY noscriptExceptions "예외...">
+<!ENTITY noscriptExceptions "예외…">
 <!ENTITY noscriptBlockedObjects "차단된 개체들">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "신뢰할 수 없음으로 표시된 사이트의 모든 개체를 차단">
 <!ENTITY noscriptTempAllowPage "일시적으로 허용">
