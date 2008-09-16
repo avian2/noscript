@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Налады…">
+<!ENTITY noscriptOptions "Налады...">
 <!ENTITY noscriptOptions.accesskey "а">
 <!ENTITY noscriptOptionsLong "Налады NoScript">
 <!ENTITY noscriptAbout "Аб пашырэнні">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Аўтаматычна абнаўляць старонку пасля змены для яе правілаў">
 <!ENTITY noscriptGeneral "Асноўныя">
 <!ENTITY noscriptAppearance "Знешні выгляд">
-<!ENTITY noscriptShow "Адлюстроўваць наступныя элементы NoScript…">
+<!ENTITY noscriptShow "Адлюстроўваць наступныя элементы NoScript...">
 <!ENTITY noscriptCtxMenu "Пункт у кантэкстным меню">
 <!ENTITY noscriptStatusIcon "Значок у радку стану">
 <!ENTITY noscriptFullAddr "Поўныя адрасы (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Поўныя дамены (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Базавыя дамены 2-го ўзроўня (noscript.net)">
-<!ENTITY noscriptTempCmd "Часова дазволіць […]">
+<!ENTITY noscriptTempCmd "Часова дазволіць [...]">
 <!ENTITY noscriptSound "Прайграваць аўдыёфайл пры блакаванні скрыптоў">
 <!ENTITY noscriptImport "Імпарт">
 <!ENTITY noscriptImport.accesskey "м">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Ужываць алгарытм выпраўлення JavaScript-спасылкаў">
 <!ENTITY noscriptAllowBookmarks "Дазваляць выкананне JavaScript усім вэб-сайтам з закладкаў">
 <!ENTITY noscriptAllowViaBookmarks "Дазваляць выкананне JavaScript усім вэб-сайтам з закладкаў">
-<!ENTITY noscriptAllowPing "Дазволіць вэб-сайту выкарыстаць параметр &lt;A PING…&gt;">
+<!ENTITY noscriptAllowPing "Дазволіць вэб-сайту выкарыстаць параметр &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Дазволіць лакальныя спасылкі">
-<!ENTITY noscriptForbidPing "Забараніць вэб-сайту выкарыстаць параметр  &lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "Забараніць вэб-сайту выкарыстаць параметр  &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Белы спіс">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "Хаваць элементы &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptNselForce "Паказваць элемент &lt;NOSCRIPT&gt; які блакуе &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Часова дазваляць базавым даменам 2-го ўзроўня па змаўчанні">
-<!ENTITY noscriptDescription "Экстра абарона для Firefox: NoScript дазваляе дазваляць выкананне JavaScript, Java (і іншых убудоваў) толькі даменам, якім давяраеце (напрыклад, ваш вэб-сайт). Белы спіс, заснаваны на прынцыпе папераджальнага блакавання, дазваляе прадухіліць выкарыстанне ўразлівасцяў (вядомых і яшчэ невядомых!) без страты функцыянальнасці… Эксперты згаджаюцца: Firefox сапраўды бяспечней з NoScript :-)">
+<!ENTITY noscriptDescription "Экстра абарона для Firefox: NoScript дазваляе дазваляць выкананне JavaScript, Java (і іншых убудоваў) толькі даменам, якім давяраеце (напрыклад, ваш вэб-сайт). Белы спіс, заснаваны на прынцыпе папераджальнага блакавання, дазваляе прадухіліць выкарыстанне ўразлівасцяў (вядомых і яшчэ невядомых!) без страты функцыянальнасці... Эксперты згаджаюцца: Firefox сапраўды бяспечней з NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Блакаваць CSS-сканары">
 <!ENTITY noscriptOptFilterXGet "Фільтраваць запыты, падазраваныя на XSS">
 <!ENTITY noscriptOptFilterXPost "Замяняць XSS POST-запыты на GET-запыты без дадзеных">
-<!ENTITY noscriptShowConsole "Show Console…">
+<!ENTITY noscriptShowConsole "Show Console...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ…">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -103,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
@@ -112,8 +112,12 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions…">
+<!ENTITY noscriptExceptions "Exceptions...">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">

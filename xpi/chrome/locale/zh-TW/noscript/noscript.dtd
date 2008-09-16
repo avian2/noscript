@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "A">
 <!ENTITY noscriptTempToPerm "為本頁建立永久許可">
 <!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS問與答...">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "特性">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "禁止主動頁面的內容除非它來自安全的(HTTPS)連線:">
+<!ENTITY noscriptHttps.never "永不">
+<!ENTITY noscriptHttps.proxy "當使用代理時(需要搭配Tor)">
+<!ENTITY noscriptHttps.always "總是">
+<!ENTITY noscriptHttpsForced "強制下面網站使用安全的(HTTPS)連線:">
+<!ENTITY noscriptHttpsForcedExceptions "下面網站永不強制安全的(HTTPS)連線:">
+<!ENTITY noscriptSecureCookies "啟用自動安全Cookies管理">
+<!ENTITY noscriptSecureCookiesForced "強制下面網站藉由HTTPS加密所有Cookies:">
+<!ENTITY noscriptSecureCookiesExceptions "忽略下面網站不安全的Cookies藉由HTTPS:">

@@ -796,12 +796,15 @@ PolicySites.prototype = {
   }
 }
 
+var singleton;
+
 function NoscriptService() {
+  singleton = this;
   this.register();
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8",
+  VERSION: "1.8.1",
   
   get wrappedJSObject() {
     return this;
@@ -960,6 +963,13 @@ NoscriptService.prototype = {
   hideOnUnloadRegExp: null,
   requireReloadRegExp: null,
   
+  secureCookies: true,
+  secureCookiesExceptions: null,
+  secureCookiesForced: null,
+  httpsForced: null,
+  httpsForcedExceptions: null,
+  allowHttpsOnly: 0,
+  
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
     var children = prefs.getChildList("", {});
@@ -1060,8 +1070,18 @@ NoscriptService.prototype = {
       case "jsHack":
       case "consoleLog":
       case "silverlightPatch":
+      case "secureCookies":
+      case "allowHttpsOnly":
         this[name] = this.getPref(name, this[name]);
       break;
+      
+      case "secureCookiesExceptions":
+      case "secureCookiesForced":
+      case "httpsForced":
+      case "httpsForcedExceptions":
+        this[name] = URIPatternList.create(this.getPref(name, ''));
+      break;
+
       case "consoleDump":
         this[name] = this.getPref(name, this[name]);
         this.injectionChecker.logEnabled = this.consoleDump & LOG_INJECTION_CHECK;
@@ -1321,7 +1341,7 @@ NoscriptService.prototype = {
     const prefserv = this.prefService = CC["@mozilla.org/preferences-service;1"]
       .getService(CI.nsIPrefService).QueryInterface(CI.nsIPrefBranch);
 
-    const PBI=CI.nsIPrefBranch2;
+    const PBI = CI.nsIPrefBranch2;
     this.caps = prefserv.getBranch("capability.policy.").QueryInterface(PBI);
     this.defaultCaps = prefserv.getDefaultBranch(this.caps.root);
 
@@ -1363,6 +1383,8 @@ NoscriptService.prototype = {
       "showPlaceholder", "showUntrustedPlaceholder", "collapseObject",
       "temp", "untrusted", "gtemp",
       "silverlightPatch",
+      "secureCookies", "secureCookiesExceptions", "secureCookiesForced",
+      "httpsForced", "httpsForcedExceptions", "allowHttpsOnly",
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp",
       ]) {
@@ -1555,11 +1577,16 @@ NoscriptService.prototype = {
       || (untrustedGranularity & 4) && single && this.isUntrusted(site);
   }
 ,
+  isForbiddenByHttpsStatus: function(s) {
+    return this.allowHttpsOnly && HTTPS.shouldForbid(s);
+  }
+,
   jsPolicySites: new PolicySites(),
   isJSEnabled: function(s) {
     return !(this.globalJS
       ? this.alwaysBlockUntrustedContent && this.untrustedSites.matches(s)
       : !this.jsPolicySites.matches(s) || this.untrustedSites.matches(s)
+        || this.isForbiddenByHttpsStatus(s)
     );
   },
   setJSEnabled: function(site, is, fromScratch, cascadeTrust) {
@@ -2142,7 +2169,7 @@ NoscriptService.prototype = {
   shouldLoad: CP_NOP,
   shouldProcess: CP_NOP,
   initContentPolicy: function() {
-    var delegate = this.disabled || (this.globalJS && !this.alwaysBlockUntrustedContent)   
+    var delegate = this.disabled || (this.globalJS && !(this.alwaysBlockUntrustedContent || this.contentBlocker))   
       ? this.noopContentPolicy
       : this.mainContentPolicy;
     this.shouldLoad = delegate.shouldLoad;
@@ -2389,8 +2416,9 @@ NoscriptService.prototype = {
                         originURL
                           ? (/^chrome:/.test(originURL) ||
                              /^(?:data|javascript):/.test(locationURL) &&
-                             (contentDocument && originURL == contentDocument.URL ||
-                              this.isFirebugJSURL(locationURL)
+                              (contentDocument && (originURL == contentDocument.URL
+                                                    || /^(?:data:|javascript:|about:blank$)/.test(contentDocument.URL)
+                              ) || this.isFirebugJSURL(locationURL)
                              )
                             )
                           : contentDocument && 
@@ -2534,7 +2562,7 @@ NoscriptService.prototype = {
                 isSilverlight && this.forbidSilverlight;
               
               // see http://heasman.blogspot.com/2008/03/defeating-same-origin-policy-part-i.html
-              if (isJava && /(?:[^\/\w\.\$]|^\s*\/\/)/.test(aContext.getAttribute("code") || "")) {
+              if (isJava && /(?:[^\/\w\.\$\:]|^\s*\/\/)/.test(aContext.getAttribute("code") || "")) {
                 return this.reject("Illegal Java code attribute " + aContext.getAttribute("code"), arguments);
               }
               
@@ -3777,6 +3805,7 @@ NoscriptService.prototype = {
   findOverlay: function(browser) {
     return browser && browser.ownerDocument.defaultView.noscriptOverlay;
   },
+  
 
   // nsIChannelEventSink implementation
 
@@ -3824,6 +3853,7 @@ NoscriptService.prototype = {
       uri.spec = "data:application/x-noscript-blocked,";
       newChannel.loadFlags = newChannel.INHIBIT_CACHING | newChannel.LOAD_BYPASS_CACHE;
     }
+  
   },
   
   getRedirCache: function(browser, uri) {
@@ -3847,11 +3877,23 @@ NoscriptService.prototype = {
     this.resetPolicyState();
     
     // handle docshell JS switching
-    if ((stateFlag & STATE_START_DOC) == STATE_START_DOC && req instanceof CI.nsIChannel)
+    if ((stateFlag & STATE_START_DOC) == STATE_START_DOC && req instanceof CI.nsIChannel) {
+      var uri;
+      if (this.httpsForced && (uri = req.URI).schemeIs("http") && this.httpsForced.test(uri.spec) &&
+          !(this.httpsForcedExceptions && this.httpsForcedExceptions.test(uri.spec))) {
+        var uri = uri.clone();
+        uri.scheme = "https";
+        wp.DOMWindow.location = uri.spec;
+        this.log("[NoScript Force HTTPS] " + uri.spec);
+      }
+      
       this._handleDocJS1(wp.DOMWindow, req);
+    }
   },
   onLocationChange: function(wp, req, location) {
-    try {
+
+    try {      
+      
       if (req && (req instanceof CI.nsIChannel)) {
         this._handleDocJS2(wp.DOMWindow, req);
 
@@ -3887,6 +3929,7 @@ NoscriptService.prototype = {
       if (this.consoleDump) this.dump(e);
     }
   },
+  
   onBeforeLoad: function(req, domWindow, location) {
     
     if (!domWindow) return;
@@ -4022,7 +4065,8 @@ NoscriptService.prototype = {
       if (docShellJSBlocking & 2) { // block not whitelisted
         jsEnabled = url && this.isJSEnabled(this.getSite(url)) || /^about:/.test(url);
       } else if (docShellJSBlocking & 1) { // block untrusted only
-        jsEnabled = !this.isUntrusted(this.getSite(url));
+        var site = this.getSite(url);
+        jsEnabled = !(this.isUntrusted(site) || this.isForbiddenByHttpsStatus(site));
       } else return;
       
       const dump = this.consoleDump & LOG_JS;
@@ -4089,6 +4133,8 @@ NoscriptService.prototype = {
       }
     } catch(e) {}
   },
+  
+
   
   beforeManualAllow: function(win) {
     // reset prevBlock info, to forcibly allow docShell JS
@@ -4520,14 +4566,29 @@ RequestWatchdog.prototype = {
         } catch(e) {
           this.abort({ channel: subject, reason: e + " --- " + e.stack, silent: true });
         }
-        break;
+      break;
       case "http-on-examine-response":
         this.ns.onContentSniffed(subject);
+        HTTPS.handleSecureCookies(subject);
       break;
     }
   },
   
-
+  _listeners: [],
+  addCrossSiteListener: function(l) {
+    if (!this._listeners.indexOf(l) > -1) this._listeners.push(l);
+  },
+  removeCrossSiteListener: function(l) {
+    var pos = this._listeners.indexOf(l);
+    if (pos > -1) this._listeners.splice(pos);
+  },
+  
+  onCrossSiteRequest: function(channel, origin, browser) {
+    for each (l in this._listeners) {
+      l.onCrossSiteRequest(channel, origin, browser, this);
+    }
+  },
+  
   isHome: function(url) {
     return url instanceof CI.nsIURL &&
       this.getHomes().some(function(urlSpec) {
@@ -4610,7 +4671,7 @@ RequestWatchdog.prototype = {
         || this.extractInternalReferrerSpec(channel) || null;
 
     var untrustedReload = false;
-   
+
     var originSite = null;
     
     if (!origin) {
@@ -4619,8 +4680,12 @@ RequestWatchdog.prototype = {
            var breadCrumbs = [originalSpec];
            originSite = this.traceBack(channel, breadCrumbs);
            if (originSite) {
-             origin = breadCrumbs.join(">>>");
-             if (ns.consoleDump) this.dump(channel, "TRACEBACK ORIGIN: " + originSite + " FROM " + origin);
+              origin = breadCrumbs.join(">>>");
+              if (ns.consoleDump) this.dump(channel, "TRACEBACK ORIGIN: " + originSite + " FROM " + origin);
+              if ((channel instanceof CI.nsIUploadChannel) && channel.uploadStream) {
+                if (ns.consoleDump) this.dump(channel, "Traceable upload with no origin, probably extension. Resetting origin!");
+                origin = originSite = "";
+              }
            } else {
              // check untrusted reload
              browser = this.findBrowser(channel);
@@ -4669,8 +4734,8 @@ RequestWatchdog.prototype = {
    
     var targetSite;
     const globalJS = ns.globalJS;
-    
-    if(!globalJS) {
+    var trustedTarget = globalJS;
+    if(!trustedTarget) {
       if(ns.autoAllow) {
         window = window || this.findWindow(channel);
         if (window && window == window.top) {
@@ -4680,16 +4745,14 @@ RequestWatchdog.prototype = {
           }
           targetSite = su.getSite(originalSpec);
         }
+        trustedTarget = true;
       }
       if(!targetSite) {
         targetSite = su.getSite(originalSpec);
-        if(!ns.isJSEnabled(targetSite)) {
-          if (ns.checkShorthands(targetSite)) {
-             ns.autoTemp(targetSite);
-          } else { 
-            if (ns.consoleDump) this.dump(channel, "Destination " + originalSpec + " is noscripted, SKIP");
-            return;
-          }
+        trustedTarget = ns.isJSEnabled(targetSite);
+        if(!trustedTarget && ns.checkShorthands(targetSite)) {
+          ns.autoTemp(targetSite);
+          trustedTarget = true;
         }
       }
     }
@@ -4698,10 +4761,7 @@ RequestWatchdog.prototype = {
       if (ns.consoleDump) this.dump(channel, "-- This channel doesn't belong to any window/origin: internal browser or extension request, skipping. --");
       return;
     }
-    
-     // fast return if nothing to do here
-    if (!(ns.filterXPost || ns.filterXGet)) return; 
-    
+      
     if(!targetSite) targetSite = su.getSite(originalSpec);
     
     // noscript.injectionCheck about:config option adds first-line 
@@ -4714,11 +4774,21 @@ RequestWatchdog.prototype = {
     
     var injectionCheck = ns.injectionCheck;
     
-    if (originSite == targetSite && injectionCheck < 3) 
-      return; // same origin, fast return
+    if (originSite == targetSite) {
+      if (injectionCheck < 3) return; // same origin, fast return
+    } else {
+      this.onCrossSiteRequest(channel, origin, browser = browser || this.findBrowser(channel));  
+    }
     
     if (this.callback && this.callback(channel, origin)) return;
     
+    if (!trustedTarget) {
+      if (ns.consoleDump) this.dump(channel, "Target is not Javascript-enabled, skipping xSS checks.");
+      return;
+    }
+    
+     // fast return if nothing to do here
+    if (!(ns.filterXPost || ns.filterXGet)) return;   
     
     var externalLoad = this.externalLoad && this.externalLoad == originalSpec;
     if (externalLoad) {
@@ -4727,9 +4797,6 @@ RequestWatchdog.prototype = {
       if (ns.consoleDump) this.dump(channel, "UNSAFE RELOAD of [" + originalSpec +"] from [" + origin + "], SKIP");
       return;
     }
-    
-    
-    
     
     if (ns.filterXExceptions) {
       try {
@@ -4779,8 +4846,8 @@ RequestWatchdog.prototype = {
         (!window || ns.injectionCheckSubframes || window == window.top);
         
       if (injectionAttempt) {
-        postInjection = originSite != "chrome:" && channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel);
-        injectionAttempt = ns.injectionChecker.checkURL(originalSpec);
+        postInjection = ns.filterXPost && (!origin || originSite != "chrome:") && channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel);
+        injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(originalSpec);
         
         if (ns.consoleDump) {
           if (injectionAttempt) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
@@ -4833,7 +4900,7 @@ RequestWatchdog.prototype = {
       channel.setUploadStream(this.dummyUpload, "", -1);
       this.notify(this.addXssInfo(requestInfo, {
         reason: "filterXPost",
-        originalAttempt: originalSpec + (postInjection ? "§DATA§" + postInjection : ""),
+        originalAttempt: originalSpec + (postInjection ? "Â§DATAÂ§" + postInjection : ""),
         silent: untrustedReload
       }));
     }
@@ -5181,11 +5248,20 @@ var InjectionChecker = {
   get logEnabled() { return this.log == this._log; },
   set logEnabled(v) { this.log = v ? this._log : function() {}; },
   
+  
+  bb: function(brac, s, kets) {
+    for(var j = 3; j-- > 0;) {
+      s = brac + s + kets;
+      if (this.checkJSSyntax(s)) return true;
+    }
+    return false;
+  },
+  
   checkJSSyntax: function(s) {
     // bracket balancing for micro injections like "''),eval(name,''"
-    if (/^(?:''|"")?[^\('"]*\)/.test(s)) s = "x((((\n" + s + "\n))))";
-    if (/^(?:''|"")?[^\['"]*\\]/.test(s)) s = "y[y[y[y[\n" + s + "\n]]]]";
-    if (/^(?:''|"")?[^\{'"]*\}/.test(s)) s = "function z() {\n" + s + "\n}";
+    if (/^(?:''|"")?[^\('"]*\)/.test(s)) return this.bb("x(\n", s, "\n)");
+    if (/^(?:''|"")?[^\['"]*\\]/.test(s)) return this.bb("y[\n", s, "\n]");
+    if (/^(?:''|"")?[^\{'"]*\}/.test(s)) return this.bb("function z() {\n", s, "\n}");
     
     if (this.syntax.check(s + "/**/")) {
       this.log("Valid fragment " + s);
@@ -5195,7 +5271,7 @@ var InjectionChecker = {
   },
   
   get breakStops() {
-    var def = "\\/\\?&#;\n\r";
+    var def = "\\/\\?&#;"; // we don't split by newline, because it's relevant only if there's a trailing comment (see checkURL())
     var bs = {
       nq: new RegExp("[" + def + "]")
     };
@@ -5249,7 +5325,7 @@ var InjectionChecker = {
   reduceXML: function(s) {
     var t;
     while(/^[^"]*</.test(s)) {
-        t = s.replace(/^([^"]*)<\s*\/?[a-zA-Z][\w\:\-]+(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+]*")*[\+\s]*\/?>/, '$1;xml;');
+        t = s.replace(/^([^"]*)<\??\s*\/?[a-zA-Z][\w\:\-]+(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+]*")*[\+\s]*\/?\??>/, '$1;xml;');
         if (t == s) break;
         s = t;
     }
@@ -5326,20 +5402,21 @@ var InjectionChecker = {
     // Direct script injection breaking JS string literals or comments
     
     // cleanup most urlencoded noise and reduce JSON/XML
-    s = this.reduceXML(this.reduceJSON(s.replace(/\%\d+[a-z\(]\w*/gi, '`')));
+    s = this.reduceXML(this.reduceJSON(s.replace(/\%\d+[a-z\(]\w*/gi, '`')
+            .replace(/[\r\n]+/g, "\n").replace(/[\x01-\x09\x0b-\x20]+/g, ' ')));
     
     if (!this.maybeJS(s)) return false;
     
     const invalidChars = this.invalidChars;
     const findInjection = 
-      /(['"\n\r#\]\)]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|\W*o\W*n(?:\W*\w){3,}|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
+      /(['"#;]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|\W*o\W*n(?:\W*\w){3,}|\.[@\*\w\$\u0080-\uFFFF])[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
     
     
     
     findInjection.lastIndex = 0;
     var m, breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg, pos;
     
-    const MAX_TIME = 4000, MAX_LOOPS = 400;
+    const MAX_TIME = 5000, MAX_LOOPS = 400;
 
     const t = new Date().getTime();
     var iterations = 0;
@@ -5667,8 +5744,8 @@ var InjectionChecker = {
   },
   
   checkURL: function(url) {
-    // let's assume protocol and host are safe
-    url = url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "");
+    // let's assume protocol and host are safe, but we keep the leading double slash to keep comments in account
+    url = url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "//"); 
     this.base64 = false;
     this.base64tested = [];
     return this.checkRecursive(url, 2);
@@ -6132,4 +6209,470 @@ var Base64 = {
   }
 }
 
+function Cookie(s, host) {
+  this.parse(s, host);
+}
+Cookie.computeId = function(c) {
+  return c.name + ";" + c.host + "/" + c.path;
+}
+
+Cookie.attributes = { host: 'domain', path: 'path', expires: 'expires', isHttpOnly: 'HttpOnly', isSecure: 'Secure' };
+Cookie.prototype = {
+  
+  name: '',
+  value: '',
+  source: '',
+  domain: '',
+  host: '',
+  rawHost: '',
+  path: '',
+  secure: false,
+  httponly: false,
+  session: true,
+  expires: 0,
+  
+  id: '',
+  
+  
+  toString: function() {
+    var c = [this['name'] + "=" + this.value];
+    var v;
+    const aa = Cookie.attributes;
+    for (var k in aa) {
+      var p = aa[k];
+      v = this[k];
+      switch(typeof(v)) {
+        case "string":
+          if (v) c.push(p + "=" + v);
+          break;
+        case "boolean":
+          if (v) c.push(p);
+          break;
+        case "number":
+          if (!this.isSession) c.push(p + "=" + new Date(v * 1000).toUTCString());
+          break;
+      }
+    }
+    return c.join("; ");
+  },
+  parse: function(s, host) {
+    if (this.source) {
+      // cleanup for recycle
+      for (p in this) {
+        if (typeof (p) != "function") delete this[p];
+      }
+    }
+    this.source = s;
+    this.host = host;
+    
+    var parts = s.split(/;\s*/);
+    var nv = parts.shift().split("=");
+    
+    this.name = nv.shift() || '';
+    this.value = nv.join('=') || '';
+    
+    var n, v;
+    for each (p in parts) {
+      nv = p.split("=");
+      switch (n = nv[0].toLowerCase()) {
+        case 'expires':
+          v = Math.round(Date.parse((nv[1] || '').replace(/\-/g, ' ')) / 1000);
+        break;
+        case 'domain':
+        case 'path':
+          v = nv[1] || '';
+          break;
+        case 'secure':
+        case 'httponly':
+          v = true;
+          break;
+        default:
+          n = 'unknown'
+      }
+      this[n] = v;
+    }
+    if (!this.expires) {
+      this.session = true;
+      this.expires = Math.round(new Date() / 1000) + 31536000;  
+    }
+    if (this.domain) {
+      if (!this.isDomain) this.domain = "." + this.domain;
+      this.host = this.domain;
+    }
+    this.rawHost = this.host.replace(/^./, '');
+    
+    this.id = Cookie.computeId(this);
+  },
+  
+  
+  get cookieManager() {
+    delete Cookie.prototype.cookieManager;
+    var cman =  CC["@mozilla.org/cookiemanager;1"]
+      .getService(CI.nsICookieManager2).QueryInterface(CI.nsICookieManager);
+    return Cookie.prototype.cookieManager = cman; 
+  },
+  belongsTo: function(host, path) {
+    if (path && this.path && path.indexOf(this.path) != 0) return false;
+    var d = this.domain;
+    return d ? host == d || this.isDomain && host.slice(-d.length) == d : host == this.rawHost;
+  },
+  save: function() {
+    this.save = ("cookieExists" in this.cookieManager)
+      ? function() { this.cookieManager.add(this.host, this.path, this.name, this.value, this.secure, this.httponly, this.session, this.expires); }
+      : function() { this.cookieManager.add(this.host, this.path, this.name, this.value, this.secure,                this.session, this.expires);}
+    ;
+    return this.save();
+  },
+  exists: function() {
+    var cc = this.cookieManager.enumerator;
+    while(cc.hasMoreElements()) {
+      if (this.sameAs(cc.getNext())) return true;
+    }
+    return false;
+  },
+  
+  sameAs: function(c) {
+    (c instanceof CI.nsICookie) && (c instanceof CI.nsICookie2);
+    return Cookie.computeId(c) == this.id;
+  },
+  
+  // nsICookie2 interface extras
+  get isSecure() { return this.secure; },
+  get expiry() { return this.expires; },
+  get isSession() { return this.session; },
+  get isHttpOnly() { return this.httponly; },
+  get isDomain() { return this.domain && this.domain[0] == '.'; },
+  policy: 0,
+  status: 0,
+  QueryInterface: xpcom_generateQI([CI.nsICookie, CI.nsICookie2, CI.nsISupports])
+  
+}
+
+var HTTPS = {
+  get service() {
+    delete this.service;
+    return this.service = singleton;
+  },
+  
+  log: function(msg) {
+    var ns = this.service;
+    this.log = ns.getPref("https.showInConsole", true)
+      ? function(msg) { ns.log("[NoScript HTTPS] " + msg); }
+      : function(msg) {}
+      
+    return this.log(msg);
+  },
+  
+  onCrossSiteRequest: function(channel, origin, browser, rw) {
+    try {
+      this.handleCrossSiteCookies(channel, origin, browser);
+    } catch(e) {
+      this.log(e + " --- " + e.stack);
+    }
+
+  },
+  
+  registered: false,
+  handleSecureCookies: function(req) {
+  /*
+    we check HTTPS response setting cookies and
+    1) if host is in the noscript.secureCookiesExceptions list we let
+     it pass through
+    2) if host is in the noscript.secureCookiesForced list we append a
+       ";Secure" flag to every non-secure cookie set by this response
+    3) otherwise, we just log unsafe cookies BUT if no secure cookie
+       is set, we patch all these cookies with ";Secure" like in #2.
+       However, if current request redirects (directly or indirectly)
+       to an unencrypted final URI, we remove our ";Secure" patch to
+       ensure compatibility (ref: mail.yahoo.com and hotmail.com unsafe
+       behavior on 11 Sep 2008)
+  */
+    
+    const ns = this.service;
+    if (!ns.secureCookies) return;
+    
+    var uri = req.URI;
+    
+    if (uri.schemeIs("https") &&
+        !(ns.secureCookiesExceptions && ns.secureCookiesExceptions.test(uri.spec)) &&
+        (req instanceof CI.nsIHttpChannel)) {
+      try {
+        var host = uri.host;
+        try {
+          var cookies = req.getResponseHeader("Set-Cookie");
+        } catch(mayHappen) {
+          return;
+        }
+        if (cookies) {
+          var forced = ns.secureCookiesForced && ns.secureCookiesForced.test(uri.spec);
+          var secureFound = false;
+          var unsafe = null;
+         
+          const rw = ns.requestWatchdog;
+          var browser = rw.findBrowser(req);
+          
+          if (!browser) {
+            if (ns.consoleDump) ns.dump("Browser not found for " + uri.spec);
+          }
+          
+          var unsafeMap = ns.getExpando(browser, "unsafeCookies") || {};
+          var c;
+          for each (var cs in cookies.split("\n")) {
+            c = new Cookie(cs, host);
+            if (c.secure) {
+              // this.log("Secure cookie set by server: " + c);
+              secureFound = true;
+              delete unsafeMap[c.id];
+            } else {
+              if (!unsafe) unsafe = [];
+              unsafe.push(c);
+            }
+          }
+          
+          if (!unsafe || secureFound && !forced) return;
+
+          var msg;
+          if (forced || !secureFound) {
+            req.setResponseHeader("Set-Cookie", "", false);
+            msg = forced ? "FORCED SECURE" : "AUTOMATIC SECURE";
+            forced = true;
+          } else {
+            msg = "DETECTED INSECURE";
+          }
+          
+          if (!this.registered) {
+            this.registered = true;
+            rw.addCrossSiteListener(this);
+          }
+          
+          ns.setExpando(browser, "unsafeCookies", unsafeMap);
+          msg += " on https://" + host + ": ";
+          for each (c in unsafe) {
+            if (forced) {
+              c.secure = true;
+              req.setResponseHeader("Set-Cookie", c.source + ";Secure", true);
+              unsafeMap[c.id] = c;
+            }
+            this.log(msg + c);
+          }
+          
+        }
+      } catch(e) {
+        if (ns.consoleDump) ns.dump(e);
+      }
+    }
+  },
+  
+  handleCrossSiteCookies: function(req, origin, browser) {
+    const ns = this.service;
+     
+    const unsafeCookies = browser && ns.getExpando(browser, "unsafeCookies");
+    if (!unsafeCookies) return;
+    
+    var uri = req.URI;
+    var dscheme = uri.scheme;
+    
+    var oparts = origin && origin.match(/^https?:\/\/([^\/:]+).*?(\/.*)/);
+    if (!(oparts && /https?/.test(dscheme))) return; 
+    
+    var dsecure = dscheme == "https";
+    
+   
+    var dhost = uri.host;
+    var dpath = uri.path;
+    
+    var ohost = oparts[1];
+    var opath = oparts[2];
+    
+    var ocookieCount = 0, totCount = 0;
+    var dcookies = [];
+    var c;
+    
+    for (var k in unsafeCookies) {
+      c = unsafeCookies[k];
+      if (!c.exists()) {
+        delete unsafeCookies[k];
+      } else {
+        totCount++;
+        if (c.belongsTo(dhost, dpath) && c.secure != dsecure) { // either secure on http or not secure on https
+          dcookies.push(c);
+        }
+        if (c.belongsTo(ohost, opath)) {
+          ocookieCount++;
+        }
+      }
+    }
+    
+    if (!totCount) {
+      ns.setExpando(browser, "unsafeCookies", null);
+      return;
+    }
+    
+    // We want to "desecurify" cookies only if cross-navigation to unsafe
+    // destination originates from a site sharing some secured cookies
+
+    if (ocookieCount == 0 && !dsecure || !dcookies.length) return; 
+    
+    if (dsecure) {
+      this.log("Detected cross site navigation with secured cookies: " + origin + " -> " + uri.spec);
+    } else {
+      this.log("Detected unsafe navigation with NoScript-secured cookies: " + origin + " -> " + uri.spec);
+      this.log(uri.prePath + " cannot support secure cookies because it does not use HTTPS. Consider forcing HTTPS for " + uri.host + " in NoScript's Advanced HTTPS options panel.")
+    }
+    
+    var cs = CC['@mozilla.org/cookieService;1'].getService(CI.nsICookieService).getCookieString(uri, req);
+      
+    for each (c in dcookies) {
+      c.secure = dsecure;
+      c.save();
+      this.log("Toggled secure flag on " + c);
+    }
+
+    if (cs) {
+      Array.prototype.push.apply(
+        dcookies, cs.split(/\s*;\s*/).map(function(cs) { var nv = cs.split("="); return { name: nv.shift(), value: nv.join("=") } })
+         .filter(function(c) { return dcookies.every(function(x) { return x.name != c.name }) })
+      );
+    }
+
+    cs = dcookies.map(function(c) { return c.name + "=" + c.value }).join("; ");
+
+    this.log("Sending Cookie for " + dhost + ": " + cs);
+    req.setRequestHeader("Cookie", cs, false); // "false" because merge syntax breaks Cookie header
+  },
+  
+  shouldForbid: function(site) {
+    const ns = this.service;
+    switch(ns.allowHttpsOnly) {
+      case 0:
+        return false;
+      case 1:
+        return /^(?:ht|f)tp:\/\//.test(site) && this.isProxied(site);
+      case 2:
+        return /^(?:ht|f)tp:\/\//.test(site);
+    }
+    return false;
+  },
+  
+  isProxied: function(u) {
+    var ps = CC["@mozilla.org/network/protocol-proxy-service;1"].getService(CI.nsIProtocolProxyService);
+    var ios = this.service.siteUtils.ios;
+    this.isProxied = function(u) {
+      try {
+        if (!(u instanceof CI.nsIURI)) {
+          u = ios.newURI(u, null, null);
+        }
+        return ps.resolve(u, 0).type != "direct";
+      } catch(e) {
+        return false;
+      }
+    }
+  }
+  
+}
+
+function URIPatternList(s) {
+  this.source = s;
+  this.rx = this.parse(s);
+}
+URIPatternList.create = function(s) {
+  return s && new URIPatternList(s);
+}
+
+URIPatternList.prototype = {
+  test: function(u) {
+    return this.rx && this.rx.test(u);  
+  },
+  
+  parse: function(s) {
+    try {
+      var rxSource = s.split(/\s+/).map(function(p) {
+        if (!/\w+/.test(p)) return null;
+        
+        if(!/[^\w\-/:%@;&#\?\.\*]/.test(p)) {
+         
+          // either simple or glob
+          const hasPath = /^(?:\w+:\/\/|)[^\/]+\//.test(p);
+          const hasScheme = /^[a-z]\w+:(?:\/+|[^/]*\D)/.test(p);
+
+          p = p.replace(/[\.\?\-]/g, "\\$&"); // escape special regexp chars
+
+          if (!hasScheme) { // adjust for no protocol
+            p = "[a-z]+\\w+://" + p;
+          }
+
+          
+
+          if (!hasPath) { // adjust for no path
+            p += "(?:[/\\?#]|$)";
+          }
+          
+          if (!/\*/.test(p)) {
+            // simple "starts with..." site matching
+            return '^' + p;
+          }
+          
+          // glob matching
+          if (hasPath) p += '$'; 
+
+          return '^' + p.replace(/^([^\/:]+:\/*)\*/, "$1[^/]*").replace(/\*/g, '.*?');
+        } 
+        // raw regexp!
+        try {
+         new RegExp(p); // check syntax
+        } catch(e) {
+          dump("[NoScript] Illegal regexp in URIPatternList: " + p + " -- " + e + "\n");
+          return null;
+        }
+        return p;
+      }).filter(function(p) { return p }).join("|");
+        
+      return new RegExp(rxSource);
+    } catch(e) {
+      dump("[NoScript] Illegal URIPatternList: " + s + " -- " + e + "\n");
+      return null;
+    }
+  }
+}
+
+
+var PlacesPrefs = {
+  save: function(prefs) {
+    // http://developer.mozilla.org/en/nsINavBookmarksService
+    var bmsvc = Components.classes["@mozilla.org/browser/nav-bookmarks-service;1"]
+                      .getService(Components.interfaces.nsINavBookmarksService);
+    const folderName = "... NoScript ...";
+    const bookmarkName = folderName;
+    
+    var parentId = bmsvc.bookmarksMenuFolder;
+    var folderId = bmsvc.getChildFolder(parentId, folderName);
+    
+    // bmsvc.removeItem(folderId); folderId = 0;
+    
+    if (folderId == 0) {
+      folderId = bmsvc.createFolder(parentId, folderName, -1);
+      bmsvc.setFolderReadonly(folderId, true);
+    }
+    
+    //print(folderId);
+    
+    var query = "build=here&a=query";
+    
+    var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                       .getService(Components.interfaces.nsIIOService);
+    var uri = ios.newURI("noscript://preferences?" + query, null, null);
+    
+    try {
+      id = bmsvc.getIdForItemAt(folderId, 0);
+    } catch(e) {
+      id = 0;
+    }
+    if (id) {
+      bmsvc.changeBookmarkURI(id, uri);
+    } else {
+      bmsvc.insertBookmark(folderId, uri, 0, bookmarkName);
+    }
+    // print(id);
+  }
+}
 

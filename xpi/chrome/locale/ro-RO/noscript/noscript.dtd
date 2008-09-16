@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Opţiuni…">
+<!ENTITY noscriptOptions "Opţiuni...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Particularizare NoScript">
 <!ENTITY noscriptAbout "Despre NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Reîncarcă automat paginile atunci când permisiunile se schimbă">
 <!ENTITY noscriptGeneral "General">
 <!ENTITY noscriptAppearance "Vizualizare">
-<!ENTITY noscriptShow "Arată…">
+<!ENTITY noscriptShow "Arată...">
 <!ENTITY noscriptCtxMenu "Meniu contextual">
 <!ENTITY noscriptStatusIcon "Pictogramă pe bara de stare">
 <!ENTITY noscriptFullAddr "Adrese complete (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Nume domeniu complete (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Nume domeniu de nivel 2 (noscript.net)">
-<!ENTITY noscriptTempCmd "Permite temporar […]">
+<!ENTITY noscriptTempCmd "Permite temporar [...]">
 <!ENTITY noscriptSound "Atenţionează sonor când scripturile sunt blocate">
 <!ENTITY noscriptImport "Import">
 <!ENTITY noscriptImport.accesskey "I">
@@ -31,7 +31,7 @@
 <!ENTITY noscriptExport.accesskey "E">
 <!ENTITY noscriptNotify "Afişează un mesaj când scripturile sunt blocate">
 <!ENTITY noscriptNotify.bottom "Poziţionează mesajul în partea de jos a ferestrei">
-<!ENTITY noscriptSound.choose "Alege…">
+<!ENTITY noscriptSound.choose "Alege...">
 <!ENTITY noscriptSound.choose.accesskey "A">
 <!ENTITY noscriptSound.play "Redare">
 <!ENTITY noscriptSound.play.accesskey "R">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Încearcă să repari legăturile JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permite toate siteurile din Semne de Carte">
 <!ENTITY noscriptAllowViaBookmarks "Permite toate siteurile din Semne de Carte">
-<!ENTITY noscriptAllowPing "Permite tagul &lt;A PING…&gt;">
+<!ENTITY noscriptAllowPing "Permite tagul &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Permite legături locale">
-<!ENTITY noscriptForbidPing "Blochează tagul &lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "Blochează tagul &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Blocheazp redirectările META din elementele &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "r">
 <!ENTITY noscriptWhitelist "Listă sigură">
@@ -86,11 +86,11 @@
 <!ENTITY noscriptOptBlockCssScanners "Blochează scanerele bazate pe CSS">
 <!ENTITY noscriptOptFilterXGet "Curăţă solicitările suspecte de exploatare de tipul Cross-Site Scripting">
 <!ENTITY noscriptOptFilterXPost "Transformă solicitările POST către pagini diferite în solicitări GET">
-<!ENTITY noscriptShowConsole "Arată Consola JavaScript….">
+<!ENTITY noscriptShowConsole "Arată Consola JavaScript....">
 <!ENTITY noscriptShowConsole.accesskey "a">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ…">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Reîncărcare nesigură">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -103,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "v">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
@@ -112,8 +112,12 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions…">
+<!ENTITY noscriptExceptions "Exceptions...">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">

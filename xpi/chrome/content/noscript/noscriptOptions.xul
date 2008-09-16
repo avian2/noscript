@@ -52,15 +52,15 @@
   
   <vbox style="width: &noscriptOptionsWidth;">
   <tabbox id="nsopt-tabsMain">
-  <tabs>
-    <!-- <tab label="&noscriptSiteManager;"/> -->
-    <tab label="&noscriptGeneral;" id="nsopt-tabGeneral"/>
-    <tab label="&noscriptWhitelist;" id="nsopt-tabWhitelist"/>
-    <tab label="&noscriptPlugins;" id="nsopt-tabPlugins"/>
-    <tab label="&noscriptAppearance;" id="nsopt-tabAppearance"/>
-    <tab label="&noscriptNotifications;" id="nsopt-tabNotifications"/>
-    <tab label="&noscriptAdvanced;" id="nsopt-tabAdvanced"/>
-  </tabs>
+    <tabs>
+      <!-- <tab label="&noscriptSiteManager;"/> -->
+      <tab label="&noscriptGeneral;" id="nsopt-tabGeneral"/>
+      <tab label="&noscriptWhitelist;" id="nsopt-tabWhitelist"/>
+      <tab label="&noscriptPlugins;" id="nsopt-tabPlugins"/>
+      <tab label="&noscriptAppearance;" id="nsopt-tabAppearance"/>
+      <tab label="&noscriptNotifications;" id="nsopt-tabNotifications"/>
+      <tab label="&noscriptAdvanced;" id="nsopt-tabAdvanced"/>
+    </tabs>
     <tabpanels>
    <!-- 
     <tabpanel>
@@ -232,7 +232,8 @@
         <hbox align="center">
           <checkbox id="opt-xss.notify" label="&noscriptXss;" /><!-- TODO: accesskey -->
           <label class="text-link" style="font-weight: bold" value="?" 
-            onclick="noscriptUtil.openFaq('xss')" tooltiptext="&noscriptXssFaq;" />
+            onclick="noscriptUtil.openFaq('xss')"
+                 tooltiptext="&noscriptXssFaq;" />
         </hbox>
         
         <separator class="thin" />
@@ -267,6 +268,7 @@
         <tab class="noscript-yes" label=" &noscriptTrusted; " id="nsopt-tabTrusted" tooltiptext="&noscriptAdditionalPermissions;"/>
         <tab class="noscript-xss" label=" &noscriptXss; " id="nsopt-tabXss"/>
         <tab class="noscript-jar" label=" &noscriptJar; " id="nsopt-tabJar"/>
+        <tab class="noscript-https" label=" &noscriptHttps; " id="nsopt-tabHttps"/>
       </tabs>
       <tabpanels flex="1">
           <tabpanel>
@@ -306,7 +308,9 @@
          <tabpanel><!-- XSS -->
          <vbox flex="1">
             <label class="text-link header" 
-              onclick="noscriptUtil.openFaq('xss')" value="&noscriptXssFaq;"/>
+              onclick="noscriptUtil.openFaq('xss')" value="&noscriptXssFaq;"
+              accesskey="&noscriptXssFaq.accesskey;"
+              />
             <checkbox id="opt-filterXGet" label="&noscriptOptFilterXGet;" />
             <checkbox id="opt-filterXPost" label="&noscriptOptFilterXPost;" />
             <separator class="thin" />
@@ -323,7 +327,9 @@
         <tabpanel><!-- JAR -->
          <vbox flex="1">
             <label class="text-link header" 
-              onclick="noscriptUtil.openFaq('jar')" value="&noscriptJarFaq;"/>
+              accesskey="&noscriptHttpsFaq.accesskey;"
+              onclick="noscriptUtil.openFaq('jar')"
+              value="&noscriptJarFaq;"/>
             <checkbox id="opt-forbidJarDocuments" label="&noscriptForbidJarDocuments;" />
             <separator class="thin" />
             <label class="header" value="&noscriptJarExceptions;" />
@@ -333,6 +339,54 @@
               <label for="jarEx-sample" value="&noscriptMatchSample;" />
               <textbox id="jarEx-sample" flex="1" value="jar:https://samples.noscript.net/sample_apps.jar!/application1.xul" />
             </hbox>
+          </vbox>
+        </tabpanel>
+        
+        <tabpanel><!-- HTTPS -->
+         <vbox flex="1">
+            <label class="text-link header"
+              accesskey="&noscriptHttpsFaq.accesskey;"
+              onclick="noscriptUtil.openFaq('https')"
+              value="&noscriptHttpsFaq;"/>
+            
+            <tabbox id="nsopt-tabsHttps" flex="1">
+              <tabs>
+                <tab label=" &noscriptHttps.behavior; " id="nsopt-tabHttpsBehavior" />
+                <tab label=" &noscriptHttps.cookies; " id="nsopt-tabHttpsCookies"/>
+              </tabs>
+            
+              <tabpanels flex="1">
+                <tabpanel>
+                  <vbox flex="1">
+                    <description control="sel-allowHttpsOnly" style="white-space: normal">&noscriptHttps.description;</description>
+                    <menulist id="sel-allowHttpsOnly">
+                      <menupopup id="mp-allowHttpsOnly">
+                        <menuitem label="&noscriptHttps.never;" value="0" selected="true" />
+                        <menuitem label="&noscriptHttps.proxy;" value="1"/>
+                        <menuitem label="&noscriptHttps.always;" value="3"/>
+                      </menupopup>
+                    </menulist>
+                    <separator class="thin" />  
+                    <description style="white-space: normal">&noscriptHttpsForced;</description>
+                    <textbox id="opt-httpsForced" multiline="true" flex="1" />
+                    <description style="white-space: normal">&noscriptHttpsForcedExceptions;</description>
+                    <textbox id="opt-httpsForcedExceptions" multiline="true" flex="1" />
+                  </vbox>
+                </tabpanel>
+                <tabpanel>
+                  <vbox flex="1">
+                    <groupbox>
+                      <caption><checkbox id="opt-secureCookies" label="&noscriptSecureCookies;" oncommand="nsopt.utils.syncGroup(this)" /></caption>
+                      <description style="white-space: normal">&noscriptSecureCookiesForced;</description>
+                      <textbox id="opt-secureCookiesForced" multiline="true" flex="1" />
+                      <separator class="thin" />
+                      <description style="white-space: normal">&noscriptSecureCookiesExceptions;</description>
+                      <textbox id="opt-secureCookiesExceptions" multiline="true" flex="1" />
+                    </groupbox>
+                  </vbox>
+                </tabpanel>
+              </tabpanels>
+            </tabbox>
           </vbox>
         </tabpanel>
         

@@ -103,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "R">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Impedisci alle risorse JAR remote di essere caricate come documenti">
 <!ENTITY noscriptJarExceptions "Eccezioni al blocco dei documenti JAR">
@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "a">
 <!ENTITY noscriptTempToPerm "Rendi permanenti i permessi della pagina">
 <!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "FAQ su HTTPS…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Comportamento">
+<!ENTITY noscriptHttps.cookies "Cookie">
+<!ENTITY noscriptHttps.description "Proibisci i contenuti attivi dal web non serviti da HTTPS">
+<!ENTITY noscriptHttps.never "Mai">
+<!ENTITY noscriptHttps.proxy "Quando uso un proxy (raccomandato con Tor)">
+<!ENTITY noscriptHttps.always "Sempre">
+<!ENTITY noscriptHttpsForced "Costringi i seguenti siti a usare connessioni sicure (HTTPS):">
+<!ENTITY noscriptHttpsForcedExceptions "Non forzare mai connessioni sicure (HTTPS) per i seguenti siti:">
+<!ENTITY noscriptSecureCookies "Abilita la gestione automatica dei cookie sicuri">
+<!ENTITY noscriptSecureCookiesForced "Forza connessioni sicure per tutti i cookie creati in HTTPS dai seguenti siti:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignora i cookie non sicuri creati in HTTPS dai seguenti siti:">

@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript - opcje">
 <!ENTITY noscriptAbout "O NoScript">
-<!ENTITY noscriptPermissionsText "Tutaj można określić witryny internetowe, które będą mogły uruchamiać skrypty. Proszę wpisać adres lub domenę witryny (np: &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) i nacisnąć przycisk &quot;Pozwól&quot;.">
+<!ENTITY noscriptPermissionsText "Tutaj można określić witryny internetowe, które będą mogły uruchamiać skrypty. Proszę wprowadzić adres lub domenę witryny (np: &quot;http://www.witryna.pl&quot; lub &quot;witryna.pl&quot;) i nacisnąć przycisk &quot;Pozwól&quot;.">
 <!ENTITY noscriptWebAddress "Adres witryny:">
 <!ENTITY noscriptAllow "Pozwól">
 <!ENTITY noscriptAllow.accesskey "P">
@@ -89,9 +89,9 @@
 <!ENTITY noscriptShowConsole "Wyświetl konsolę">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
-<!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "Pytania i odpowiedzi o XSS">
-<!ENTITY noscriptXssFaq.accesskey "S">
+<!ENTITY noscriptXss.accesskey "S">
+<!ENTITY noscriptXssFaq "XSS - Pytania i odpowiedzi…">
+<!ENTITY noscriptXssFaq.accesskey "X">
 <!ENTITY noscriptUnsafeReload "Odśwież bez zabezpieczeń">
 <!ENTITY noscriptUnsafeReload.accesskey "W">
 <!ENTITY noscriptXssExceptions "Wyjątki zabezpieczeń Anty-XSS">
@@ -103,12 +103,12 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "Pytania i odpowiedzi o JAR">
+<!ENTITY noscriptJarFaq "JAR - Pytania i odpowiedzi…">
 <!ENTITY noscriptJarFaq.accesskey "R">
 <!ENTITY noscriptForbidJarDocuments "Blokuj zdalne źródła JAR wczytywane jako dokumenty">
 <!ENTITY noscriptJarExceptions "Wyjątki blokowania dokumentów JAR">
 <!ENTITY noscriptJarExceptions.description "Dokumenty JAR spełniające poniższe wyrażenia regularne nie będą blokowane">
-<!ENTITY noscriptRevokeTemp "Unieważniaj tymczasowe zezwolenia">
+<!ENTITY noscriptRevokeTemp "Unieważnij tymczasowe zezwolenia">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nie wyświetlaj ikon zamienników dla obiektów pochodzących z witryn oznaczonych jako niezaufane">
 <!ENTITY noscriptCollapseBlockedObjects "Zwijaj zablokowane obiekty">
@@ -117,7 +117,21 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokuj każdy obiekt pochodzący z witryny oznaczonej jako niezaufana">
 <!ENTITY noscriptTempAllowPage "Tymczasowo nie blokuj na tej stronie">
 <!ENTITY noscriptTempAllowPage.accesskey "M">
-<!ENTITY noscriptAllowPage "Zezwalaj na wszystko tej stronie">
+<!ENTITY noscriptAllowPage "Zezwól na wszystko tej stronie">
 <!ENTITY noscriptAllowPage.accesskey "W">
 <!ENTITY noscriptTempToPerm "Określ jako stałe ustawienia dla tej strony">
 <!ENTITY noscriptTempToPerm.accesskey "S">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS - Pytania i odpowiedzi…">
+<!ENTITY noscriptHttpsFaq.accesskey "H">
+<!ENTITY noscriptHttps.behavior "Zachowanie">
+<!ENTITY noscriptHttps.cookies "Ciasteczka">
+<!ENTITY noscriptHttps.description "Działanie aktywnej zawartości, łącznie z pochodzącą z bezpiecznego połączenia:">
+<!ENTITY noscriptHttps.never "Dopuszczaj">
+<!ENTITY noscriptHttps.proxy "Nie dopuszczaj, gdy jest używane proxy (zalecane przy używaniu Tor)">
+<!ENTITY noscriptHttps.always "Nie dopuszczaj">
+<!ENTITY noscriptHttpsForced "Zawsze stosuj bezpieczne połączenia z następującymi witrynami:">
+<!ENTITY noscriptHttpsForcedExceptions "Nigdy nie stosuj bezpiecznych połączeń z następującymi witrynami:">
+<!ENTITY noscriptSecureCookies "Zarządzaj automatycznie bezpiecznymi ciasteczkami">
+<!ENTITY noscriptSecureCookiesForced "Stosuj szyfrowanie ciasteczek ustawionych przez HTTPS dla następujących witryn:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignoruj niebezpieczne ciasteczka ustawione przez HTTPS dla następujących witryn:">

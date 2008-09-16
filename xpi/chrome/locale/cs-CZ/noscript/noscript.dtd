@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Nastavení…">
+<!ENTITY noscriptOptions "Nastavení...">
 <!ENTITY noscriptOptions.accesskey "N">
 <!ENTITY noscriptOptionsLong "Nastavení NoScript">
 <!ENTITY noscriptAbout "O rozšíření NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Automaticky aktualizovat stránky při změně povolení">
 <!ENTITY noscriptGeneral "Obecné">
 <!ENTITY noscriptAppearance "Zobrazení">
-<!ENTITY noscriptShow "Zobrazit…">
+<!ENTITY noscriptShow "Zobrazit...">
 <!ENTITY noscriptCtxMenu "Místní nabídka">
 <!ENTITY noscriptStatusIcon "Ikona ve stavovém řádku">
 <!ENTITY noscriptFullAddr "Úplné adresy (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Úplné domény (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Domény druhého řádu (noscript.net)">
-<!ENTITY noscriptTempCmd "Dočasně povolit […]">
+<!ENTITY noscriptTempCmd "Dočasně povolit [...]">
 <!ENTITY noscriptSound "Přehrát zvuk pokud jsou skripty zablokovány">
 <!ENTITY noscriptImport "Otevřít">
 <!ENTITY noscriptImport.accesskey "O">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Pokusit se opravit odkazy tvořené JavaScriptem">
 <!ENTITY noscriptAllowBookmarks "Povolit stránky otevřené ze záložek">
 <!ENTITY noscriptAllowViaBookmarks "Povolit stránky otevřené ze záložek">
-<!ENTITY noscriptAllowPing "Povolit &lt;A PING…&gt;">
+<!ENTITY noscriptAllowPing "Povolit &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Povolit místní odkazy">
-<!ENTITY noscriptForbidPing "Zakázat &lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "Zakázat &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Zakázat META přesměrování uvnitř elementů &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "M">
 <!ENTITY noscriptWhitelist "Výjimky">
@@ -82,11 +82,11 @@
 <!ENTITY noscriptNselNever "Zakázat prvky &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptNselForce "Zobrazit prvek &lt;NOSCRIPT&gt; následující po zablokovaném prvku &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Dočasně povolit stránky domény nejvyšší úrovně">
-<!ENTITY noscriptDescription "Mimořádná ochrana pro váš Firefox: NoScript povoluje JavaScript, Javu (a další zásuvné moduly) pouze pro důvěryhodné servery dle vašeho výběru (např. vaše stránka pro home-banking). Tento seznam důvěryhodných serverů založený na preventivním blokování přístupu předchází zneužití bezpečnostních děr (známých a dokonce i neznámých!) bez jakékoli ztráty na funkčnosti… Odborníci budou souhlasit: Firefox je skutečně bezpečnější s rozšířením NoScript :-)">
+<!ENTITY noscriptDescription "Mimořádná ochrana pro váš Firefox: NoScript povoluje JavaScript, Javu (a další zásuvné moduly) pouze pro důvěryhodné servery dle vašeho výběru (např. vaše stránka pro home-banking). Tento seznam důvěryhodných serverů založený na preventivním blokování přístupu předchází zneužití bezpečnostních děr (známých a dokonce i neznámých!) bez jakékoli ztráty na funkčnosti... Odborníci budou souhlasit: Firefox je skutečně bezpečnější s rozšířením NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blokovat skenery založené na CSS">
 <!ENTITY noscriptOptFilterXGet "Zajistit podezřelé původce požadavku">
 <!ENTITY noscriptOptFilterXPost "Převést požadavky POST napříč stránkou na požadavky GET neobsahující data.">
-<!ENTITY noscriptShowConsole "Zobrazit konzolu…">
+<!ENTITY noscriptShowConsole "Zobrazit konzolu...">
 <!ENTITY noscriptShowConsole.accesskey "k">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
@@ -103,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "z">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">

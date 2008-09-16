@@ -1,7 +1,7 @@
-<!ENTITY noscriptOptions "خيارات…">
+<!ENTITY noscriptOptions "خيارات...">
 <!ENTITY noscriptOptions.accesskey "خ">
 <!ENTITY noscriptOptionsLong "خيارات نوسكربت">
-<!ENTITY noscriptAbout "حول برنامج نوسكربت…">
+<!ENTITY noscriptAbout "حول برنامج نوسكربت...">
 <!ENTITY noscriptPermissionsText "يمكنك تعيين المواقع المسموح لها تنفيذ سكربتات. أدخل العنوان أو المجال, مثال
 (&quot;http://www.site.com) أو (site.com&quot;) للموقع الذي تود السماح له ومن ثم اختر سماح.">
 <!ENTITY noscriptWebAddress "عنوان الموقع:">
@@ -24,7 +24,7 @@
 <!ENTITY noscriptFullAddr "عناوين كاملة (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "مجالات كاملة(www.noscript.net)">
 <!ENTITY noscriptBaseDom "مجالات مبنية على المستوى الثاني (noscript.net)">
-<!ENTITY noscriptTempCmd "السماح مؤقتاً ل[…]">
+<!ENTITY noscriptTempCmd "السماح مؤقتاً ل[...]">
 <!ENTITY noscriptSound "متابعة صوتية عندما تكون السكربتات معتَرَضة">
 <!ENTITY noscriptImport "استيراد">
 <!ENTITY noscriptImport.accesskey "س">
@@ -59,9 +59,9 @@
 <!ENTITY noscriptFixLinks "حاول تصحيح وصلات سكربتات جافا">
 <!ENTITY noscriptAllowBookmarks "السماح للمواقع المفتوحة من خلال المفضلة">
 <!ENTITY noscriptAllowViaBookmarks "السماح للمواقع المفتوحة من خلال المفضلة">
-<!ENTITY noscriptAllowPing "السماح ل &lt;A PING…&gt;">
+<!ENTITY noscriptAllowPing "السماح ل &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "السماح للوصلات المحلية">
-<!ENTITY noscriptForbidPing "منع &lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "منع &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "منع التوجيه المتغير من نوع ميتا داخل عناصر &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "ت">
 <!ENTITY noscriptWhitelist "القائمة البيضاء">
@@ -118,3 +118,21 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "اعترض كل شيء آت من موقع محدّد كغير موثوق">
 <!ENTITY noscriptTempAllowPage "السماح المؤقت للصفحة الحالية">
 <!ENTITY noscriptTempAllowPage.accesskey "س">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "أتش تي تي بي الآمن">
+<!ENTITY noscriptHttpsFaq "الأسئلة المتكررة حول  أتش تي تي بي الآمن">
+<!ENTITY noscriptHttpsFaq.accesskey "ش">
+<!ENTITY noscriptHttps.behavior "التصرّف">
+<!ENTITY noscriptHttps.cookies "الكعكات">
+<!ENTITY noscriptHttps.description "منع محتويات الشبكة الا اذا كانت عن طريق اتصال آمن">
+<!ENTITY noscriptHttps.never "أبداً">
+<!ENTITY noscriptHttps.proxy "عند استعمال بروكسي">
+<!ENTITY noscriptHttps.always "دائماً">
+<!ENTITY noscriptHttpsForced "إجبار هذه المواقع على استعمال اتصالات آمنة">
+<!ENTITY noscriptHttpsForcedExceptions "عدم إجبار هذه المواقع على استعمال اتصالات آمنة">
+<!ENTITY noscriptSecureCookies "تفعيل الادارة الآلية للكعكات الآمنة">
+<!ENTITY noscriptSecureCookiesForced "أجبار التشفير لجميع الكعكات عبر اتصال آمن للمواقع التالية:">
+<!ENTITY noscriptSecureCookiesExceptions "اهمال الكعكات الغير آمنة عبر  اتصال آمن للمواقع التالية:">

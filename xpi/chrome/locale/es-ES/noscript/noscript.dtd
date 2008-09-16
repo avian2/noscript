@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Configuración de NoScript">
 <!ENTITY noscriptAbout "Acerca de NoScript">
-<!ENTITY noscriptPermissionsText "Aquí puede especificar las páginas web a las que va a permitir ejecutar código JavaScript. Escriba la dirección de la web que quiera incluir, y después haga clic en &apos;Permitir&apos; (ej. &apos;http://www.paginaweb.com&apos; o &apos;paginaweb.com&apos;).">
+<!ENTITY noscriptPermissionsText "Aquí puede especificar las páginas web a las que va a permitir ejecutar código JavaScript. Escriba la dirección de la web que quiera incluir (ej. &apos;http://www.paginaweb.com&apos; o &apos;paginaweb.com&apos;) y después pulse &apos;Permitir&apos;.">
 <!ENTITY noscriptWebAddress "Dirección de la página web:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">
@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "P">
 <!ENTITY noscriptTempToPerm "Hacer permanentes los permisos de la página">
 <!ENTITY noscriptTempToPerm.accesskey "H">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "FAQ HTTPS">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Comportamiento">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Prohibir contenidos web activos salvo que provengan de una conexión segura (HTTPS)">
+<!ENTITY noscriptHttps.never "Nunca">
+<!ENTITY noscriptHttps.proxy "Cuando se use un proxy (recomendado con Tor)">
+<!ENTITY noscriptHttps.always "Siempre">
+<!ENTITY noscriptHttpsForced "Obligar a usar conexiones seguras (HTTPS) a los siguientes sitios:">
+<!ENTITY noscriptHttpsForcedExceptions "No obligar nunca a usar conexiones seguras (HTTPS) a los siguientes sitios:">
+<!ENTITY noscriptSecureCookies "Activar la gestión automática segura de cookies">
+<!ENTITY noscriptSecureCookiesForced "Obligar a encriptar todas las cookies recibidas por HTTPS en los siguientes sitios:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignorar cookies no seguras recibidas por HTTPS de los siguientes sitios:">

@@ -74,8 +74,8 @@
 <!ENTITY noscriptAdd "Tilføj">
 <!ENTITY noscriptAdd.accesskey "T">
 <!ENTITY noscriptClose "Luk">
-<!ENTITY noscriptSiteManager "Sidemanager">
-<!ENTITY noscriptSecurityManager "Sikkerhedsmanager">
+<!ENTITY noscriptSiteManager "Stedhåndtering">
+<!ENTITY noscriptSecurityManager "Sikkerheds-håndtering">
 <!ENTITY noscriptPolicies "Retningslinjer">
 <!ENTITY noscriptDefaultPolicies "Standard retningslinjer">
 <!ENTITY noscriptSitePolicies "Sidespecifikke retningslinjer">
@@ -91,7 +91,7 @@
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS OSS…">
-<!ENTITY noscriptXssFaq.accesskey "O">
+<!ENTITY noscriptXssFaq.accesskey "X">
 <!ENTITY noscriptUnsafeReload "Usikker genindlæsning">
 <!ENTITY noscriptUnsafeReload.accesskey "U">
 <!ENTITY noscriptXssExceptions "Anti-XSS beskyttelsesundtagelser">
@@ -104,7 +104,7 @@
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
 <!ENTITY noscriptJarFaq "JAR OSS">
-<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptJarFaq.accesskey "J">
 <!ENTITY noscriptForbidJarDocuments "Bloker indlæsning af af fremmede JAR-ressourcer som dokumenter">
 <!ENTITY noscriptJarExceptions "JAR dokument blokerings-undtagelser">
 <!ENTITY noscriptJarExceptions.description "JAR dokumenter der matcher disse regulære udtryk bliver IKKE blokeret.">
@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "T">
 <!ENTITY noscriptTempToPerm "Gør tilladelserne for side permanente">
 <!ENTITY noscriptTempToPerm.accesskey "G">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS OSS…">
+<!ENTITY noscriptHttpsFaq.accesskey "H">
+<!ENTITY noscriptHttps.behavior "Opførsel">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Forbyd aktiv webindhold med mindre det kommer fra en sikker (HTTPS) forbindelse:">
+<!ENTITY noscriptHttps.never "Aldrig">
+<!ENTITY noscriptHttps.proxy "Når proxy anvendes (anbefales med Tor)">
+<!ENTITY noscriptHttps.always "Altid">
+<!ENTITY noscriptHttpsForced "Tving de følgende steder til at anvende sikre (HTTPS) forbindelser:">
+<!ENTITY noscriptHttpsForcedExceptions "Tving aldrig sikre (HTTPS) forbindelser for de følgende steder:">
+<!ENTITY noscriptSecureCookies "Aktiver automatisk sikker cookies-håndtering">
+<!ENTITY noscriptSecureCookiesForced "Tving kryptering for alle cookies sat over HTTPS af de følgende steder:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignorer usikre cookies sat over HTTPS af de følgende steder:">

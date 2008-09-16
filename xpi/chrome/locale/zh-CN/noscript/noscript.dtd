@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "选项…">
+<!ENTITY noscriptOptions "选项...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 选项">
 <!ENTITY noscriptAbout "关于 NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "更改许可设置后自动重新载入相关页面">
 <!ENTITY noscriptGeneral "常规">
 <!ENTITY noscriptAppearance "外观">
-<!ENTITY noscriptShow "显示…">
+<!ENTITY noscriptShow "显示...">
 <!ENTITY noscriptCtxMenu "右键菜单">
 <!ENTITY noscriptStatusIcon "状态栏图标">
 <!ENTITY noscriptFullAddr "完整地址 (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "子域名 (www.noscript.net)">
 <!ENTITY noscriptBaseDom "泛域名 (noscript.net)">
-<!ENTITY noscriptTempCmd "暂时允许 […]">
+<!ENTITY noscriptTempCmd "暂时允许 [...]">
 <!ENTITY noscriptSound "脚本被阻止时提示声音">
 <!ENTITY noscriptImport "导入">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "尝试定位 JavaScript 链接">
 <!ENTITY noscriptAllowBookmarks "允许书签中的所有网站">
 <!ENTITY noscriptAllowViaBookmarks "允许通过书签打开站点">
-<!ENTITY noscriptAllowPing "允许&lt;A PING…&gt;">
+<!ENTITY noscriptAllowPing "允许&lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "允许本地链接">
-<!ENTITY noscriptForbidPing "禁止&lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "禁止&lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "禁止 &lt;NOSCRIPT&gt; 元素内的 META 重定向">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "白名单">
@@ -86,11 +86,11 @@
 <!ENTITY noscriptOptBlockCssScanners "阻止基于 CSS 的扫描器">
 <!ENTITY noscriptOptFilterXGet "净化跨站点的可疑请求">
 <!ENTITY noscriptOptFilterXPost "把跨站点 POST 请求转换为最少数据的 GET 请求">
-<!ENTITY noscriptShowConsole "显示控制台…">
+<!ENTITY noscriptShowConsole "显示控制台...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ…">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "非安全的重新载入">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -103,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "阻止作为文档载入 JAR 远程资源">
 <!ENTITY noscriptJarExceptions "阻止 JAR 文档的例外情况">
@@ -112,8 +112,12 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "对于已标记为不可信站点的对象不显示占位符">
 <!ENTITY noscriptCollapseBlockedObjects "瓦解已阻止的对象">
-<!ENTITY noscriptExceptions "例外…">
+<!ENTITY noscriptExceptions "例外...">
 <!ENTITY noscriptBlockedObjects "已阻止的对象">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "阻止来自已经标记为不可信站点的任何对象">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">

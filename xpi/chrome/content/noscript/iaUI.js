@@ -40,7 +40,28 @@ UIUtils.prototype = {
         callback(match[2], match[1] == "inv", checkbox, match[1] == "moz");
       }
     }
+  },
+  
+  visitTextboxes: function(callback) {
+    const rxOpt=/^opt-(.*)/;
+    var j, box, match;
+    const opts = document.getElementsByTagName("textbox");
+    for(j = opts.length; j-- > 0;) {
+      box = opts[j];
+      if((match = box.id.match(rxOpt))) {
+        callback(match[1], box);
+      }
+    }
+  },
+  
+  syncGroup: function(caption) {
+    var b = !caption.checked;
+    var node = caption.parentNode;
+    while((node = node.nextSibling)) {
+      node.disabled = b;
+    }
   }
+  
 };
 
 

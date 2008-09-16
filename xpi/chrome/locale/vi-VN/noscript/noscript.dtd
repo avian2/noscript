@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Tự động tải lại trang ảnh hưởng khi các phép được thay đổi">
 <!ENTITY noscriptGeneral "Tổng quát">
 <!ENTITY noscriptAppearance "Giao diện">
-<!ENTITY noscriptShow "Hiển thị…">
+<!ENTITY noscriptShow "Hiển thị...">
 <!ENTITY noscriptCtxMenu "Menu ngữ cảnh">
 <!ENTITY noscriptStatusIcon "Icon trong Thanh trạng thái">
 <!ENTITY noscriptFullAddr "Địa chỉ đầy đủ (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Tên miền đầy đủ (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Tên miền mức thứ nhì (noscript.net)">
-<!ENTITY noscriptTempCmd "Tạm thời cho phép […]">
+<!ENTITY noscriptTempCmd "Tạm thời cho phép [...]">
 <!ENTITY noscriptSound "Âm thanh cho biết khi scripts bị chặn/cấm">
 <!ENTITY noscriptImport "Nhập">
 <!ENTITY noscriptImport.accesskey "N">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Cố gắng sửa kết nối JavaScript">
 <!ENTITY noscriptAllowBookmarks "Cho phép sites được mở qua Đánh dấu">
 <!ENTITY noscriptAllowViaBookmarks "Cho phép sites được mở qua Đánh dấu">
-<!ENTITY noscriptAllowPing "Cho phép &lt;A PING…&gt;">
+<!ENTITY noscriptAllowPing "Cho phép &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Cho phép các liên kết nội tại">
-<!ENTITY noscriptForbidPing "Cấm &lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "Cấm &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Cấm đổi hướng bằng META trong các phần tử &lt;noscript&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Sổ trắng">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "Giấu các phần tử &lt;noscript&gt;">
 <!ENTITY noscriptNselForce "Hiển thị phần tử &lt;noscript&gt; mà theo một phần tử &lt;SCRIPT&gt; bị chặn">
 <!ENTITY noscriptAutoAllowTopLevel "Tạm thời cho phép sites mức thứ nhất theo mặc định">
-<!ENTITY noscriptDescription "Thêm phần bảo vệ cho Firefox của bạn: NoScript chỉ cho phép JavaScript, Java (và các plugins khác) được chạy trong những miền/trang web lựa chọn của bạn (v.d.: trang web ngân hàng của bạn).  Hướng đi dùng sổ trắng này ngăn chạn trước những khai thác lổ hỏng bảo mật (biết trước và ngay cả chưa biết trước) mà không mất đi tính năng…  Các chuyên gia sẽ đồng ý: Firefox thật sự an toàn hơn với NoScript :-)">
+<!ENTITY noscriptDescription "Thêm phần bảo vệ cho Firefox của bạn: NoScript chỉ cho phép JavaScript, Java (và các plugins khác) được chạy trong những miền/trang web lựa chọn của bạn (v.d.: trang web ngân hàng của bạn).  Hướng đi dùng sổ trắng này ngăn chạn trước những khai thác lổ hỏng bảo mật (biết trước và ngay cả chưa biết trước) mà không mất đi tính năng...  Các chuyên gia sẽ đồng ý: Firefox thật sự an toàn hơn với NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Chặn các trình quét CSS">
 <!ENTITY noscriptOptFilterXGet "Làm sạch các yêu cầu cross-site đáng ngờ">
 <!ENTITY noscriptOptFilterXPost "Đổi các yêu cầu dạng POST cross-site sang yêu cầu dạng GET">
-<!ENTITY noscriptShowConsole "Hiển thị Console…">
+<!ENTITY noscriptShowConsole "Hiển thị Console...">
 <!ENTITY noscriptShowConsole.accesskey "s">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS Câu Hỏi Thường Gặp…">
+<!ENTITY noscriptXssFaq "XSS Câu Hỏi Thường Gặp...">
 <!ENTITY noscriptXssFaq.accesskey "G">
 <!ENTITY noscriptUnsafeReload "Tải Lại Không An Toàn">
 <!ENTITY noscriptUnsafeReload.accesskey "L">
@@ -103,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "c">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Chặn các tài nguyên từ xa dạng JAR được tải dưới dạng tài liệu">
 <!ENTITY noscriptJarExceptions "Các ngoại lệ cho ngăn chặn tài liệu dạng JAR">
@@ -112,8 +112,12 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions…">
+<!ENTITY noscriptExceptions "Exceptions...">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">

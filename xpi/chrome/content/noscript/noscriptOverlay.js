@@ -267,9 +267,10 @@ var noscriptOverlay = noscriptUtil.service ?
     };
     
     const locked = ns.locked;
-    const showAddress = locked || ns.getPref("showAddress", false);
-    const showDomain = !locked && ns.getPref("showDomain", false);
-    const showBase = !locked && ns.getPref("showBaseDomain", true);
+    const addressOnly = locked;
+    const showAddress = addressOnly || ns.getPref("showAddress", false);;
+    const showDomain = !addressOnly && ns.getPref("showDomain", false);
+    const showBase = !addressOnly && ns.getPref("showBaseDomain", true);
     const showUntrusted = ns.getPref("showUntrusted", true);
     const showDistrust = ns.getPref("showDistrust", true);
     const showNothing = !(showAddress || showDomain || showBase || showUntrust);
@@ -304,7 +305,7 @@ var noscriptOverlay = noscriptUtil.service ?
         if (domainDupChecker.check(matchingSite)) continue;
         menuSites = [matchingSite];
       } else {
-        domain = ns.getDomain(site);
+        domain = !ns.isForbiddenByHttpsStatus(site) && ns.getDomain(site);
         
         if (domain && (dp = ns.getPublicSuffix(domain)) == domain) 
           domain = null; // exclude TLDs
@@ -340,6 +341,8 @@ var noscriptOverlay = noscriptUtil.service ?
       menuGroups.push(menuSites);
     }
     
+    var blurred;
+    
     for (j = menuGroups.length; j-- > 0;) {
 
       if (seps.stop.previousSibling.nodeName != "menuseparator") {
@@ -372,7 +375,9 @@ var noscriptOverlay = noscriptUtil.service ?
         node.setAttribute("oncommand", "noscriptOverlay.menuAllow(" + (!enabled) + ", this)");
         node.setAttribute("tooltiptext",
           this.getString("allowed." + (enabled ? "yes" : "no")));
-        if (locked || enabled && ns.isPermanent(menuSite)) {
+        
+        blurred = false;
+        if (locked || (enabled ? ns.isPermanent(menuSite) : blurred = ns.isForbiddenByHttpsStatus(menuSite))) {
           node.setAttribute("disabled", "true");
         } else {
           cssClass += " menuitem-iconic ";
@@ -381,13 +386,14 @@ var noscriptOverlay = noscriptUtil.service ?
             tempCount++;
           }
         }
+        
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
         
         if ((showPermanent || enabled) && !(global && enabled)) 
           parent.appendCmd(node);
         
         if (!locked) {
-          if (showTemp && !enabled) {
+          if (showTemp && !(enabled || blurred)) {
             extraNode = document.createElement("menuitem");
             extraNode.setAttribute("label", this.getString("allowTemp", [domain]));
             extraNode.setAttribute("statustext", menuSite);
@@ -1541,7 +1547,9 @@ var noscriptOverlay = noscriptUtil.service ?
       try {
         noscriptOverlay.listeners.setup(); 
         noscriptOverlay.wrapBrowserAccess();
-        window.setTimeout(noscriptOverlay.pdfDownloadHack, 0);
+        var hacks = noscriptOverlay.Hacks;
+        hacks.torButton();
+        window.setTimeout(hacks.pdfDownload, 0);
       } catch(e) {
         var msg = "[NoScript] Error initializing new window " + e + "\n"; 
         noscriptOverlay.ns.log(msg);
@@ -1631,6 +1639,10 @@ var noscriptOverlay = noscriptUtil.service ?
     }
   },
   
+  isBrowserEnabled: function(browser) {
+    browser = browser || gBrowser.selectedBrowser;
+    return this.ns.jsEnabled(this.ns.getSite(browser.currentURI.prePath));
+  },
  
   
   wrapBrowserAccess: function() { // called onload
@@ -1695,11 +1707,25 @@ var noscriptOverlay = noscriptUtil.service ?
     }
   },
   
-  pdfDownloadHack: function() {
-    if (typeof(mouseClick) != "function") return;
-    var tb = getBrowser();
-    tb.removeEventListener("click", mouseClick, true);
-    tb.addEventListener("click", mouseClick, false);
+  Hacks: {
+  
+    pdfDownload: function() {
+      if (typeof(mouseClick) != "function") return;
+      var tb = getBrowser();
+      tb.removeEventListener("click", mouseClick, true);
+      tb.addEventListener("click", mouseClick, false);
+    },
+    
+    torButton: function() {
+      if (typeof(window.torbutton_update_tags) == "function") {
+        // we make TorButton aware that we could have a part in suppressing JavaScript on the browser
+        noscriptOverlay.ns.log("TB: " + window.torbutton_update_tags);
+        window.eval(
+          window.torbutton_update_tags.toSource().replace(/\bgetBoolPref\("javascript\.enabled"\)/g,
+          "$& && (!noscriptOverlay || noscriptOverlay.isBrowserEnabled(browser))"));
+        noscriptOverlay.ns.log("Patched TB: " + window.torbutton_update_tags);
+      }
+    }
   },
   
   install: function() {

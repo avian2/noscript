@@ -68,6 +68,10 @@ var nsopt = {
       }
     );
     
+    this.utils.visitTextboxes(function(prefName, box) {
+      box.value = ns.getPref(prefName);  
+    });
+    
     document.getElementById("opt-showPermanent").setAttribute("label", noscriptUtil.getString("allowLocal", ["[...]"]));
     document.getElementById("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp", ["[...]"]));
     document.getElementById("opt-showDistrust").setAttribute("label", noscriptUtil.getString("distrust", ["[...]"]));
@@ -82,6 +86,9 @@ var nsopt = {
     
     this.autoAllowGroup = new ConditionalGroup(ns, "autoAllow", 0);
     this.toggleGroup = new ConditionalGroup(ns, "toolbarToggle", 3);
+    
+    var val = ns.getPref("allowHttpsOnly", 0);
+    document.getElementById("sel-allowHttpsOnly").selectedIndex = (val < 0 || val > 2) ? 0 : val;
     
     var shortcut = ns.getPref("keys.toggle");
     if(shortcut) {
@@ -155,6 +162,10 @@ var nsopt = {
       }
     );
     
+    this.utils.visitTextboxes(function(prefName, box) {
+      ns.setPref(prefName, box.value);
+    });
+    
     ns.setPref("notify.hideDelay", parseInt(document.getElementById("notifyDelay").value) || 
               ns.getPref("notify.hideDelay", 5));
 
@@ -162,6 +173,8 @@ var nsopt = {
     
     this.autoAllowGroup.persist();
     this.toggleGroup.persist();
+    
+    ns.setPref("allowHttpsOnly", document.getElementById("sel-allowHttpsOnly").selectedIndex);
     
     var exVal = this.xssEx.getValue();
     if(this.xssEx.validate() || !/\S/.test(exVal)) 
@@ -404,6 +417,9 @@ var nsopt = {
   buttonToTitle: function(btid) {
     return "NoScript - " + document.getElementById(btid).getAttribute("label");
   }
+  
+  
+  
 }
 
 /*

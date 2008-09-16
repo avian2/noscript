@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "а">
 <!ENTITY noscriptTempToPerm "Сохранить установленные разрешения">
 <!ENTITY noscriptTempToPerm.accesskey "о">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "ЧаВо по HTTPS">
+<!ENTITY noscriptHttpsFaq.accesskey "а">
+<!ENTITY noscriptHttps.behavior "Поведение">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Запрещать активное веб-содержимое за исключением защищённых (HTTPS) соединений:">
+<!ENTITY noscriptHttps.never "Никогда">
+<!ENTITY noscriptHttps.proxy "При использовании прокси (рекомендуется Tor)">
+<!ENTITY noscriptHttps.always "Всегда">
+<!ENTITY noscriptHttpsForced "Заставлять указанным сайтам использовать защищённое (HTTPS) соединение:">
+<!ENTITY noscriptHttpsForcedExceptions "Не принуждать использовать защищённое (HTTPS) соединение для сайтов:">
+<!ENTITY noscriptSecureCookies "Автоматическая система управления безопасностью cookies">
+<!ENTITY noscriptSecureCookiesForced "Использовать шифрование для всех cookies устанавливаемых через HTTPS со следующих сайтов:">
+<!ENTITY noscriptSecureCookiesExceptions "Игнорировать небезопасные cookies устанавливаемые через HTTPS со следующих сайтов:">

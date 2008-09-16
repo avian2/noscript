@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Recharger les pages affectées automatiquement après avoir changé les permissions">
 <!ENTITY noscriptGeneral "Général">
 <!ENTITY noscriptAppearance "Apparence">
-<!ENTITY noscriptShow "Afficher…">
+<!ENTITY noscriptShow "Afficher...">
 <!ENTITY noscriptCtxMenu "Menu contextuel">
 <!ENTITY noscriptStatusIcon "Icône dans la barre d&apos;état">
 <!ENTITY noscriptFullAddr "Adresses complètes (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Domaines complets (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Domaines de second niveau (noscript.net)">
-<!ENTITY noscriptTempCmd "Autoriser temporairement […]">
+<!ENTITY noscriptTempCmd "Autoriser temporairement [...]">
 <!ENTITY noscriptSound "Retour audio quand des scripts sont bloqués">
 <!ENTITY noscriptImport "Importer">
 <!ENTITY noscriptImport.accesskey "I">
@@ -86,7 +86,7 @@
 <!ENTITY noscriptOptBlockCssScanners "Bloquer les scanners basés sur des CSS">
 <!ENTITY noscriptOptFilterXGet "Nettoyer les requêtes suspicieuses entre sites">
 <!ENTITY noscriptOptFilterXPost "Transformer les requêtes POST entre sites en requêtes GET sans données">
-<!ENTITY noscriptShowConsole "Afficher la console…">
+<!ENTITY noscriptShowConsole "Afficher la console...">
 <!ENTITY noscriptShowConsole.accesskey "A">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
@@ -112,7 +112,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Ne pas réserver d&apos;espace pour les objets venant de sites marqués comme sites à risque">
 <!ENTITY noscriptCollapseBlockedObjects "Utiliser l&apos;espace libéré par les éléments bloqués">
-<!ENTITY noscriptExceptions "Exceptions…">
+<!ENTITY noscriptExceptions "Exceptions...">
 <!ENTITY noscriptBlockedObjects "Objets bloqués">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquer tous les objets venant d&apos;un site marqué comme non fiables">
 <!ENTITY noscriptTempAllowPage "Autoriser cette page temporairement">
@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "A">
 <!ENTITY noscriptTempToPerm "Rendre les permissions de cette page permanentes">
 <!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "FAQ HTTPS...">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Comportement">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Interdire le contenu web actif, sauf s&apos;il vient d&apos;une connexion sécurisée (HTTPS) :">
+<!ENTITY noscriptHttps.never "Jamais">
+<!ENTITY noscriptHttps.proxy "Lors de l&apos;utilisation d&apos;un proxy (recommandé avec Tor)">
+<!ENTITY noscriptHttps.always "Toujours">
+<!ENTITY noscriptHttpsForced "Forcer les sites suivants à utiliser une connexion sécurisée (HTTPS) :">
+<!ENTITY noscriptHttpsForcedExceptions "Ne jamais forcer les sites suivants à utiliser une connexion sécurisée (HTTPS) :">
+<!ENTITY noscriptSecureCookies "Activer la Gestion Sécurisée Automatique des Cookies">
+<!ENTITY noscriptSecureCookiesForced "Forcer le chiffrement pour tous les cookies définis par HTTPS pour les sites suivants :">
+<!ENTITY noscriptSecureCookiesExceptions "Ignorer les cookies non sûrs définis par HTTPS pour les sites suivants :">

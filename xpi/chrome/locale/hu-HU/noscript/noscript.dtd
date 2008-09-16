@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "e">
 <!ENTITY noscriptTempToPerm "Oldal jogosultságok állandósítása">
 <!ENTITY noscriptTempToPerm.accesskey "j">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS GyIK...">
+<!ENTITY noscriptHttpsFaq.accesskey "y">
+<!ENTITY noscriptHttps.behavior "Viselkedés">
+<!ENTITY noscriptHttps.cookies "Sütik">
+<!ENTITY noscriptHttps.description "Aktív tartalom letiltása, ha nem biztonságos kapcsolatról (HTTPS) ered:">
+<!ENTITY noscriptHttps.never "Soha">
+<!ENTITY noscriptHttps.proxy "Ha proxy szerver van használatban (Tor ajánlott)">
+<!ENTITY noscriptHttps.always "Mindig">
+<!ENTITY noscriptHttpsForced "Biztonságos hozzáférés (HTTPS) erőltetése az alábbi oldalaknál:">
+<!ENTITY noscriptHttpsForcedExceptions "Ne erőltesse a biztonságos hozzáférést (HTTPS) az alábbi oldalaknál:">
+<!ENTITY noscriptSecureCookies "Biztonságos sütik automatikus kezelésének engedélyezése">
+<!ENTITY noscriptSecureCookiesForced "Sütik titkosításának erőltetése, amelyek HTTPS segítségével lettek beállítva az alábbi oldalakon:">
+<!ENTITY noscriptSecureCookiesExceptions "Veszélyes sütik figyelmen kívül hagyása, amelyek HTTPS segítségével lettek beállítva az alábbi oldalakon:">

@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Opcións…">
+<!ENTITY noscriptOptions "Opcións...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcións de NoScript">
 <!ENTITY noscriptAbout "Acerca de NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Recargar automaticamente as páxinas afectadas cando os permisos cambien">
 <!ENTITY noscriptGeneral "Xeral">
 <!ENTITY noscriptAppearance "Aspecto">
-<!ENTITY noscriptShow "Amosar…">
+<!ENTITY noscriptShow "Amosar...">
 <!ENTITY noscriptCtxMenu "Menú contextual">
 <!ENTITY noscriptStatusIcon "Icona da barra de estado">
 <!ENTITY noscriptFullAddr "Enderezos completos (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Dominios (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Dominios base de segundo nivel (noscript.net)">
-<!ENTITY noscriptTempCmd "Permitir temporalmente […]">
+<!ENTITY noscriptTempCmd "Permitir temporalmente [...]">
 <!ENTITY noscriptSound "Audio feedback when scripts are blocked">
 <!ENTITY noscriptImport "Importar">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Tentar fixar ligazóns Javascript">
 <!ENTITY noscriptAllowBookmarks "Permitir enderezos abertos mediante bookmarks">
 <!ENTITY noscriptAllowViaBookmarks "Permitir enderezos abertos mediante bookmarks">
-<!ENTITY noscriptAllowPing "Permitir &lt;A PING…&gt;">
+<!ENTITY noscriptAllowPing "Permitir &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Permitir enderezos locais">
-<!ENTITY noscriptForbidPing "Non permitir &lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "Non permitir &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Non permitir redireccións META dentro de elementos &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Lista branca">
@@ -82,7 +82,7 @@
 <!ENTITY noscriptNselNever "Ocultar elementos &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptNselForce "Amosar o elemento &lt;NOSCRIPT&gt; que siga a un &lt;SCRIPT&gt; blocado">
 <!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality… Experts will agree: Firefox is really safer with NoScript :-)">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Bloquear escáners baseados en CSS">
 <!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
 <!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
@@ -103,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
@@ -112,8 +112,12 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions…">
+<!ENTITY noscriptExceptions "Exceptions...">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">

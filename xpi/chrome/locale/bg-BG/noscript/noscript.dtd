@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "в">
 <!ENTITY noscriptTempToPerm "Запомняне на разрешенията">
 <!ENTITY noscriptTempToPerm.accesskey "м">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS ЧЗВ">
+<!ENTITY noscriptHttpsFaq.accesskey "Ч">
+<!ENTITY noscriptHttps.behavior "Действие">
+<!ENTITY noscriptHttps.cookies "Бисквитки">
+<!ENTITY noscriptHttps.description "Забраняване на активно съдържание, освен ако не идва от защитена (HTTPS) връзка:">
+<!ENTITY noscriptHttps.never "Никога">
+<!ENTITY noscriptHttps.proxy "При използване на прокски (препоръчително Tor)">
+<!ENTITY noscriptHttps.always "Винаги">
+<!ENTITY noscriptHttpsForced "Принуждаване на следните сайтове да използват защитена (HTTPS) връзка:">
+<!ENTITY noscriptHttpsForcedExceptions "Никога да не се използва защитена връзка за следните сайтове:">
+<!ENTITY noscriptSecureCookies "Разрешаване на автоматичното управление на защитени бисквитки">
+<!ENTITY noscriptSecureCookiesForced "Принуждаване за криптиране на всички бисквитки получени от HTTPS, за следните сайтове:">
+<!ENTITY noscriptSecureCookiesExceptions "Игнориране на незащитените бисквитки за следните сайтове:">

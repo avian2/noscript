@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Opcions…">
+<!ENTITY noscriptOptions "Opcions...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcions de NoScript">
 <!ENTITY noscriptAbout "Quant a NoScript">
@@ -23,7 +23,7 @@
 <!ENTITY noscriptFullAddr "Adreces completes (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Dominis complets (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Dominis de segon nivell (noscript.net)">
-<!ENTITY noscriptTempCmd "Permet temporalment […]">
+<!ENTITY noscriptTempCmd "Permet temporalment [...]">
 <!ENTITY noscriptSound "Reprodueix un so en blocar les seqüències">
 <!ENTITY noscriptImport "Importa">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Intenta arreglar els enllaços en JavaScript">
 <!ENTITY noscriptAllowBookmarks "Permet tots els llocs que trobes a les adreces d&apos;interès">
 <!ENTITY noscriptAllowViaBookmarks "Permet els indrets oberts mitjançant les adreces d&apos;interès">
-<!ENTITY noscriptAllowPing "Permet &lt;A PING…&gt;">
+<!ENTITY noscriptAllowPing "Permet &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Perment enllaços locals">
-<!ENTITY noscriptForbidPing "Prohibeix &lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "Prohibeix &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Prohibeix redireccions META dins elements &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Llista blanca">
@@ -83,15 +83,15 @@
 <!ENTITY noscriptNselForce "Mostra els elements &lt;NOSCRIPT&gt; que segueixen a un &lt;SCRIPT&gt; blocat">
 <!ENTITY noscriptAutoAllowTopLevel "Permet els llocs de nivell més alt temporalment per defecte
 Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Protecció extra per al vostre Firefox: NoScript permet JavaScript, Java (i d&apos;altres connectors) només per a dominis de confiança de la vostra elecció (p.ex. el lloc web del vostre banc). Aquesta llista blanca de bloqueig preventiu prevé l&apos;explotació de vulnerabilitats de seguretat (les que coneixem i les que no!) sense perdre funcionalitat… Els experts hi estan d&apos;acord: Firefox és realment més segur amb NoScript :-)">
+<!ENTITY noscriptDescription "Protecció extra per al vostre Firefox: NoScript permet JavaScript, Java (i d&apos;altres connectors) només per a dominis de confiança de la vostra elecció (p.ex. el lloc web del vostre banc). Aquesta llista blanca de bloqueig preventiu prevé l&apos;explotació de vulnerabilitats de seguretat (les que coneixem i les que no!) sense perdre funcionalitat... Els experts hi estan d&apos;acord: Firefox és realment més segur amb NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Bloca els escanejos basats en CSS">
 <!ENTITY noscriptOptFilterXGet "Saneja les peticions sospitoses a través d&apos;un lloc">
 <!ENTITY noscriptOptFilterXPost "Transforma les peticions POST a través d&apos;un lloc en peticions GET sense tantes dades">
-<!ENTITY noscriptShowConsole "Mostra la Consola…">
+<!ENTITY noscriptShowConsole "Mostra la Consola...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS PMF…">
+<!ENTITY noscriptXssFaq "XSS PMF...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "No és segur recarregar">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -104,7 +104,7 @@ Temporarily allow top-level sites by default">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
@@ -113,7 +113,7 @@ Temporarily allow top-level sites by default">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No marcador de posició d&apos;objectes procedents de llocs marcats com a no confiables">
 <!ENTITY noscriptCollapseBlockedObjects "Tancar els objectes bloquejats">
-<!ENTITY noscriptExceptions "Excepcions…">
+<!ENTITY noscriptExceptions "Excepcions...">
 <!ENTITY noscriptBlockedObjects "Objectes Bloquejats">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquejar tots els objectes procedents de llocs marcats com a no confiables">
 <!ENTITY noscriptTempAllowPage "Temporalment permet tota aquesta pàgina">
@@ -122,3 +122,17 @@ Temporarily allow top-level sites by default">
 <!ENTITY noscriptAllowPage.accesskey "A">
 <!ENTITY noscriptTempToPerm "Dona permisos permanentment">
 <!ENTITY noscriptTempToPerm.accesskey "d">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Comportament">
+<!ENTITY noscriptHttps.cookies "Galetes">
+<!ENTITY noscriptHttps.description "Prohibir contingut web a no ser que es tracti d&apos;una connexió segura (HTTPS):">
+<!ENTITY noscriptHttps.never "Mai">
+<!ENTITY noscriptHttps.proxy "Quan usi un proxy (recomanat amb Tor)">
+<!ENTITY noscriptHttps.always "Sempre">
+<!ENTITY noscriptHttpsForced "Forçar el seguir llocs que usin connexions segures (HTTPS):">
+<!ENTITY noscriptHttpsForcedExceptions "Mai forçar llocs que usin connexions segures (HTTPS):">
+<!ENTITY noscriptSecureCookies "Activar Manegament Automàtic de Galetes Segures">
+<!ENTITY noscriptSecureCookiesForced "Forçar encriptació per totes les galetes creades amb HTTPS pels següents llocs:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignorar galetes insegures creades amb HTTPS pels següents llocs:">

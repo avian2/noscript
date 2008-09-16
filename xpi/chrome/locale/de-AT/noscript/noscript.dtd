@@ -1,7 +1,7 @@
-<!ENTITY noscriptOptions "Einstellungen…">
+<!ENTITY noscriptOptions "Einstellungen...">
 <!ENTITY noscriptOptions.accesskey "E">
 <!ENTITY noscriptOptionsLong "NoScript - Einstellungen">
-<!ENTITY noscriptAbout "Über NoScript…">
+<!ENTITY noscriptAbout "Über NoScript...">
 <!ENTITY noscriptPermissionsText "Sie können festlegen, welchen Websites Sie das Ausführen von Skripten erlauben möchten. Geben Sie bitte die exakte Adresse oder die Domain der Website ein (z.B. &quot;http://www.site.com&quot; oder &quot;site.com&quot;), für die Sie dies zulassen möchten, und klicken Sie dann auf &quot;Erlauben&quot;.">
 <!ENTITY noscriptWebAddress "Adresse der Website:">
 <!ENTITY noscriptAllow "Erlauben">
@@ -23,15 +23,15 @@
 <!ENTITY noscriptFullAddr "Vollständige Adressen (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Vollständige Domains (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Second-Level-Domains (noscript.net)">
-<!ENTITY noscriptTempCmd "[…] temporär erlauben">
+<!ENTITY noscriptTempCmd "[...] temporär erlauben">
 <!ENTITY noscriptSound "Klang ausgeben, wenn Skripte blockiert werden">
-<!ENTITY noscriptImport "Importieren…">
+<!ENTITY noscriptImport "Importieren...">
 <!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Exportieren…">
+<!ENTITY noscriptExport "Exportieren...">
 <!ENTITY noscriptExport.accesskey "x">
 <!ENTITY noscriptNotify "Informationsleiste anzeigen, wenn Skripte blockiert werden">
 <!ENTITY noscriptNotify.bottom "Am unteren Rand anzeigen">
-<!ENTITY noscriptSound.choose "Durchsuchen…">
+<!ENTITY noscriptSound.choose "Durchsuchen...">
 <!ENTITY noscriptSound.choose.accesskey "D">
 <!ENTITY noscriptSound.play "Abspielen">
 <!ENTITY noscriptSound.play.accesskey "A">
@@ -86,11 +86,11 @@
 <!ENTITY noscriptOptBlockCssScanners "Auf Cross-Site Scripting basierende Scanner blockieren">
 <!ENTITY noscriptOptFilterXGet "Anfragen bei Verdacht auf Cross-Site Scripting bereinigen">
 <!ENTITY noscriptOptFilterXPost "Cross-Site-POST-Anfragen in datenlose GET-Anfragen umwandeln">
-<!ENTITY noscriptShowConsole "Konsole anzeigen…">
+<!ENTITY noscriptShowConsole "Konsole anzeigen...">
 <!ENTITY noscriptShowConsole.accesskey "z">
 <!ENTITY noscriptXss "Cross-Site Scripting (XSS)">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "FAQ zu Cross-Site Scripting (engl.)…">
+<!ENTITY noscriptXssFaq "FAQ zu Cross-Site Scripting (engl.)...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Unsicheres Nachladen">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -103,10 +103,21 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Entfernte JAR-Dateien davon abhalten, als Dokumente geladen zu werden">
 <!ENTITY noscriptJarExceptions "Nicht zu blockierende JAR-Dokumente">
 <!ENTITY noscriptJarExceptions.description "JAR-Dokumente, die diesen regulären Ausdrücken entsprechen, werden NICHT blockiert.">
+<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
+<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
+<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptBlockedObjects "Blocked Objects">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Ganze Seite temporär erlauben">
 <!ENTITY noscriptTempAllowPage.accesskey "S">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">

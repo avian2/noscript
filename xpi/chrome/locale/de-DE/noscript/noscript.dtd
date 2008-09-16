@@ -103,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ (engl.)">
+<!ENTITY noscriptJarFaq "JAR FAQ (engl.)…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Entfernte JAR-Dateien davon abhalten, als Dokumente geladen zu werden">
 <!ENTITY noscriptJarExceptions "Nicht zu blockierende JAR-Dokumente">
@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "A">
 <!ENTITY noscriptTempToPerm "Berechtigungen dieser Seite speichern">
 <!ENTITY noscriptTempToPerm.accesskey "b">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ (engl.)…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Verhalten">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Aktive Webinhalte verbieten, es sei denn, sie stammen aus einer gesicherten (HTTPS) Verbindung:">
+<!ENTITY noscriptHttps.never "Niemals">
+<!ENTITY noscriptHttps.proxy "Bei Verwendung eines Proxy (empfohlen bei Anonymisierungsdienste wie Tor)">
+<!ENTITY noscriptHttps.always "Immer">
+<!ENTITY noscriptHttpsForced "Gesicherte (HTTPS) Verbindung für folgende Adressen erzwingen:">
+<!ENTITY noscriptHttpsForcedExceptions "Niemals die Verwendung einer gesicherter (HTTPS) Verbindungen für folgende Adressen erzwingen:">
+<!ENTITY noscriptSecureCookies "Automatisches sicheres Cookie-Management aktivieren">
+<!ENTITY noscriptSecureCookiesForced "Gesicherte (HTTPS) Verbindung für alle Cookies folgender Adressen erzwingen:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">

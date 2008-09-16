@@ -159,3 +159,11 @@ pref("noscript.untrustedGranularity", 3);
 pref("noscript.requireReloadRegExp", "application/x-vnd\\.moveplayer\\b.*");
 
 pref("noscript.trustEV", false);
+
+pref("noscript.secureCookies", true);
+pref("noscript.secureCookiesExceptions", "");
+pref("noscript.secureCookiesForced", "");
+pref("noscript.httpsForced", "");
+pref("noscript.allowHttpsOnly", 0);
+
+pref("noscript.https.showInConsole", true);

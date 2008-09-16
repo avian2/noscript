@@ -1,4 +1,4 @@
-<!ENTITY noscriptOptions "Options…">
+<!ENTITY noscriptOptions "Options...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript Options">
 <!ENTITY noscriptAbout "About NoScript">
@@ -17,13 +17,13 @@
 <!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
 <!ENTITY noscriptGeneral "General">
 <!ENTITY noscriptAppearance "Appearance">
-<!ENTITY noscriptShow "Show…">
+<!ENTITY noscriptShow "Show...">
 <!ENTITY noscriptCtxMenu "Contextual menu">
 <!ENTITY noscriptStatusIcon "Status bar icon">
 <!ENTITY noscriptFullAddr "Full Addresses (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Full Domains (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
-<!ENTITY noscriptTempCmd "Temporarily allow […]">
+<!ENTITY noscriptTempCmd "Temporarily allow [...]">
 <!ENTITY noscriptSound "Audio feedback when scripts are blocked">
 <!ENTITY noscriptImport "Import">
 <!ENTITY noscriptImport.accesskey "I">
@@ -58,9 +58,9 @@
 <!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
 <!ENTITY noscriptAllowBookmarks "Allow sites opened through bookmarks">
 <!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;A PING…&gt;">
+<!ENTITY noscriptAllowPing "Allow &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "Forbid &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "Whitelist">
@@ -82,15 +82,15 @@
 <!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
 <!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality… Experts will agree: Firefox really is safer with NoScript :-)">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox really is safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
 <!ENTITY noscriptOptFilterXGet "Sanitise cross-site suspicious requests">
 <!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console…">
+<!ENTITY noscriptShowConsole "Show Console...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ…">
+<!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Unsafe Reload">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -103,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
@@ -112,8 +112,12 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions…">
+<!ENTITY noscriptExceptions "Exceptions...">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">

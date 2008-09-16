@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "ε">
 <!ENTITY noscriptTempToPerm "Μετατροπή δικαιώματων σελίδας σε μόνιμα">
 <!ENTITY noscriptTempToPerm.accesskey "ν">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "Συχνές ερωτήσεις HTTPS">
+<!ENTITY noscriptHttpsFaq.accesskey "ε">
+<!ENTITY noscriptHttps.behavior "Συμπεριφορά">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Να απαγορεύεται ενεργό περιεχόμενο εκτός κι αν παρέχεται μέσω ασφαλούς (HTTPS) σύνδεσης:">
+<!ENTITY noscriptHttps.never "Ποτέ">
+<!ENTITY noscriptHttps.proxy "Όταν γίνεται χρήση διαμεσολαβητή (συνιστάται για το δίκτυο Tor)">
+<!ENTITY noscriptHttps.always "Πάντα">
+<!ENTITY noscriptHttpsForced "Εξαναγκασμός των παρακάτω ιστότοπων σε χρήση ασφαλούς (HTTPS) σύνδεσης:">
+<!ENTITY noscriptHttpsForcedExceptions "Να μην γίνεται εξαναγκασμός χρήσης ασφαλούς (HTTPS) σύνδεσης για τους παρακάτω ιστότοπους:">
+<!ENTITY noscriptSecureCookies "Ενεργοποίηση αυτόματης ασφαλούς διαχείρισης cookies">
+<!ENTITY noscriptSecureCookiesForced "Εξαναγκασμός κρυπτογράφησης σε όλα τα cookies που εγκαταστάθηκαν μέσω HTTPS από τους ακόλουθους ιστότοπους:">
+<!ENTITY noscriptSecureCookiesExceptions "Να αγνοούνται μη ασφαλή cookies που εγκαταστάθηκαν μέσω HTTPS από τους ακόλουθους ιστότοπους:">
