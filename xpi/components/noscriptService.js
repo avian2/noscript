@@ -804,7 +804,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.1.2",
+  VERSION: "1.8.1.3",
   
   get wrappedJSObject() {
     return this;
@@ -1631,12 +1631,14 @@ NoscriptService.prototype = {
     // port matching, with "0" as port wildcard  and * as nth level host wildcard
     if (/:\d+$/.test(site)) {
       var key = site.replace(/\d+$/, "0");
-      if (map[key]) return true;
-      var keys = key.split(".");
+      if (map[key] || map[site]) return true;
+      var keys = site.split(".");
       if (keys.length > 1) {
         var prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
         while (keys.length > 2) {
           keys.shift();
+          key = prefix + keys.join(".");
+          if (map[key] || map[key.replace(/\d+$/, "0")]) return true;
           if (map[prefix + keys.join(".")]) return true;
         }
       }
@@ -2161,7 +2163,6 @@ NoscriptService.prototype = {
     return this.getString("allowTemp", [url + "\n(" + mime + ")\n"]);
   }
 ,
-  forPatch: function(f) { return eval(f); },
   lookupMethod: DOMUtils.lookupMethod,
   domUtils: DOMUtils,
   siteUtils: SiteUtils,
@@ -6330,7 +6331,7 @@ Cookie.prototype = {
       if (!this.isDomain) this.domain = "." + this.domain;
       this.host = this.domain;
     }
-    this.rawHost = this.host.replace(/^./, '');
+    this.rawHost = this.host.replace(/^\./, '');
     
     this.id = Cookie.computeId(this);
   },

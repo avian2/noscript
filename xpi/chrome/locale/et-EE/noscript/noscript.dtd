@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "K">
 <!ENTITY noscriptTempToPerm "Sea lehe õigused püsivaks">
 <!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS KKK...">
+<!ENTITY noscriptHttpsFaq.accesskey "K">
+<!ENTITY noscriptHttps.behavior "Käitumine">
+<!ENTITY noscriptHttps.cookies "Küpsised">
+<!ENTITY noscriptHttps.description "Aktiivse veebi sisu keelatakse kui see ei tule turvalise (HTTPS) ühenduse kaudu:">
+<!ENTITY noscriptHttps.never "Mitte kunagi">
+<!ENTITY noscriptHttps.proxy "Puhverserverit kasutades (soovitatav torrenti puhul)">
+<!ENTITY noscriptHttps.always "Alati">
+<!ENTITY noscriptHttpsForced "Sunni järgnevaid saite kasutama turvalist (HTTPS) ühendust:">
+<!ENTITY noscriptHttpsForcedExceptions "Turvalist (HTTPS) ühendust ei sunnita kunagi järgnevate saitide korral:">
+<!ENTITY noscriptSecureCookies "Automaatne turvaküpsiste haldamine lubatud">
+<!ENTITY noscriptSecureCookiesForced "Kõik järgnevate saitide poolt HTTPS kaudu loodud küpsised krüpteeritakse">
+<!ENTITY noscriptSecureCookiesExceptions "Kõiki järgnevate saitide poolt HTTPS kaudu loodud mitteturvalisi küpsiseid eiratakse">

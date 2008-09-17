@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "A">
 <!ENTITY noscriptTempToPerm "Pagina toestemmingen definitief maken">
 <!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ...">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Gedrag">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Actieve webinhoud verbieden tenzij afkomstig van een veilige (HTTPS) verbinding:">
+<!ENTITY noscriptHttps.never "Nooit">
+<!ENTITY noscriptHttps.proxy "Bij gebruik van een proxy (aanbevolen voor Tor)">
+<!ENTITY noscriptHttps.always "Altijd">
+<!ENTITY noscriptHttpsForced "Onderstaande sites dwingen om veilige (HTTPS) verbindingen te gebruiken:">
+<!ENTITY noscriptHttpsForcedExceptions "Onderstaande sites NOOIT dwingen om veilige (HTTPS) verbindingen te gebruiken:">
+<!ENTITY noscriptSecureCookies "Automatisch beveiligd cookiebeheer inschakelen">
+<!ENTITY noscriptSecureCookiesForced "Alle cookies ingesteld via HTTPS door onderstaande sites dwingen versleuteling te gebruiken:">
+<!ENTITY noscriptSecureCookiesExceptions "Onveilige cookies ingesteld via HTTPS door onderstaande sites negeren:">

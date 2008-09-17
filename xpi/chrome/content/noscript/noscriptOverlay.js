@@ -1641,7 +1641,7 @@ var noscriptOverlay = noscriptUtil.service ?
   
   isBrowserEnabled: function(browser) {
     browser = browser || gBrowser.selectedBrowser;
-    return this.ns.jsEnabled(this.ns.getSite(browser.currentURI.prePath));
+    return browser.docShell.allowJavascript;
   },
  
   

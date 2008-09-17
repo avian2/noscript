@@ -126,12 +126,12 @@
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
 <!ENTITY noscriptHttps.behavior "Verhalten">
 <!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Aktive Webinhalte verbieten, es sei denn, sie stammen aus einer gesicherten (HTTPS) Verbindung:">
+<!ENTITY noscriptHttps.description "Aktive Webinhalte verbieten, es sei denn, sie stammen aus einer verschlüsselten (HTTPS) Verbindung:">
 <!ENTITY noscriptHttps.never "Niemals">
-<!ENTITY noscriptHttps.proxy "Bei Verwendung eines Proxy (empfohlen bei Anonymisierungsdienste wie Tor)">
+<!ENTITY noscriptHttps.proxy "Bei Verwendung eines Proxy (empfohlen bei Anonymisierungsdiensten wie Tor)">
 <!ENTITY noscriptHttps.always "Immer">
-<!ENTITY noscriptHttpsForced "Gesicherte (HTTPS) Verbindung für folgende Adressen erzwingen:">
-<!ENTITY noscriptHttpsForcedExceptions "Niemals die Verwendung einer gesicherter (HTTPS) Verbindungen für folgende Adressen erzwingen:">
+<!ENTITY noscriptHttpsForced "Verschlüsselte (HTTPS) Verbindung für folgende Adressen erzwingen:">
+<!ENTITY noscriptHttpsForcedExceptions "Für folgende Adressen niemals die Verwendung verschlüsselter (HTTPS) Verbindung erzwingen:">
 <!ENTITY noscriptSecureCookies "Automatisches sicheres Cookie-Management aktivieren">
-<!ENTITY noscriptSecureCookiesForced "Gesicherte (HTTPS) Verbindung für alle Cookies folgender Adressen erzwingen:">
-<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptSecureCookiesForced "Überprüfung der Cookies über verschlüsselte (HTTPS) Verbindungen für folgende Adressen erzwingen:">
+<!ENTITY noscriptSecureCookiesExceptions "Unsichere Cookies bei verschlüsselter (HTTPS) Verbindung bei folgenden Adressen abweisen:">

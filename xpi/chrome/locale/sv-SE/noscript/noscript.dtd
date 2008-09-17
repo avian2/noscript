@@ -2,8 +2,8 @@
 <!ENTITY noscriptOptions.accesskey "A">
 <!ENTITY noscriptOptionsLong "NoScript-alternativ">
 <!ENTITY noscriptAbout "Om NoScript">
-<!ENTITY noscriptPermissionsText "Det är möjligt att specificera vilka webbplatser som tillåts använda skript. Skriv webbadressen eller domänen (ex. &quot;http://www.webbplats.se&quot; eller &quot;webbplats.se&quot;) för den webbplats där skript ska tillåtas. Klicka sedan på &quot;Tillåt&quot;.">
-<!ENTITY noscriptWebAddress "Webbplatsadress:">
+<!ENTITY noscriptPermissionsText "Ange vilka webbplatser som får köra skript. Skriv webbadressen eller domänen (t ex. &quot;http://www.webbplats.se&quot; eller &quot;webbplats.se&quot;) för den webbplats där skript ska tillåtas. Klicka sedan på &quot;Tillåt&quot;.">
+<!ENTITY noscriptWebAddress "Sidans adress:">
 <!ENTITY noscriptAllow "Tillåt">
 <!ENTITY noscriptAllow.accesskey "T">
 <!ENTITY noscriptForbid "Förbjud">
@@ -12,7 +12,7 @@
 <!ENTITY noscriptTrust.accesskey "T">
 <!ENTITY noscriptUntrust "Markera som ej betrodd">
 <!ENTITY noscriptUntrust.accesskey "F">
-<!ENTITY noscriptRemoveSelected "Ta bort markerade webbplatser">
+<!ENTITY noscriptRemoveSelected "Ta bort markerade platser">
 <!ENTITY noscriptGloballyEnabled "Skript är tillåtna globalt (farligt)">
 <!ENTITY noscriptAutoReload "Uppdatera berörda webbsidor när skripttillstånd ändras">
 <!ENTITY noscriptGeneral "Allmänt">
@@ -67,7 +67,7 @@
 <!ENTITY noscriptPermissions "Behörigheter">
 <!ENTITY noscriptRefresh "Uppdatera">
 <!ENTITY noscriptNotifications "Notifieringar">
-<!ENTITY noscriptToolbarToggle "Vänsterklick på NoScripts verktygsknapp växlar behörighet för aktuell webbsida">
+<!ENTITY noscriptToolbarToggle "Vänsterklicka på NoScripts verktygsknapp för att ändra behörighet för aktuell webbsida">
 <!ENTITY noscriptTrusted "Betrodd">
 <!ENTITY noscriptUntrusted "Ej betrodd">
 <!ENTITY noscriptUnknown "Okänd">
@@ -122,16 +122,16 @@
 <!ENTITY noscriptTempToPerm "Spara sidtillstånd permanent">
 <!ENTITY noscriptTempToPerm.accesskey "m">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ...">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
 <!ENTITY noscriptHttps.behavior "Beteende">
 <!ENTITY noscriptHttps.cookies "Kakor">
-<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
+<!ENTITY noscriptHttps.description "Förbjud aktivt innehåll utom om det kommer från en säker (HTTPS) anslutning:">
 <!ENTITY noscriptHttps.never "Aldrig">
-<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
+<!ENTITY noscriptHttps.proxy "Vid användande av proxy (rekommenderas för Tor)">
 <!ENTITY noscriptHttps.always "Alltid">
-<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
-<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
-<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
-<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptHttpsForced "Tvinga dessa platser att använda säkra anslutningar (HTTPS):">
+<!ENTITY noscriptHttpsForcedExceptions "Tvinga aldrig dessa platser att använda säkra anslutningar (HTTPS):">
+<!ENTITY noscriptSecureCookies "Aktivera automatisk säker hantering av kakor">
+<!ENTITY noscriptSecureCookiesForced "Tvinga kryptering för alla kakor över HTTPS för dessa platser:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignorera osäkra kakor som skickas över HTTPS för dessa platser:">
