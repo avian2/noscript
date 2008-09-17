@@ -160,9 +160,12 @@ pref("noscript.requireReloadRegExp", "application/x-vnd\\.moveplayer\\b.*");
 
 pref("noscript.trustEV", false);
 
-pref("noscript.secureCookies", true);
+pref("noscript.secureCookies", false);
 pref("noscript.secureCookiesExceptions", "");
 pref("noscript.secureCookiesForced", "");
+pref("noscript.secureCookies.recycle", false);
+pref("noscript.secureCookies.perTab", false);
+
 pref("noscript.httpsForced", "");
 pref("noscript.allowHttpsOnly", 0);
 
