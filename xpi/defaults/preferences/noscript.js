@@ -33,7 +33,7 @@ pref("noscript.forbidSilverlight", true);
 pref("noscript.forbidPlugins", true);
 pref("noscript.forbidActiveContentParentTrustCheck", true);
 pref("noscript.forbidIFrames", false);
-pref("noscript.forbidIFramesContext", 1);
+pref("noscript.forbidIFramesContext", 3);
 pref("noscript.forbidIFramesParentTrustCheck", true);
 
 pref("noscript.forbidData", true);
@@ -136,6 +136,8 @@ pref("noscript.lockPrivilegedUI", false);
 
 
 pref("noscript.collapseObject", false);
+pref("noscript.opacizeObject", 1);
+
 pref("noscript.showUntrustedPlaceholder", true);
 
 pref("noscript.jsHack", "window.urchinTracker = function() {}");
@@ -170,3 +172,9 @@ pref("noscript.httpsForced", "");
 pref("noscript.allowHttpsOnly", 0);
 
 pref("noscript.https.showInConsole", true);
+
+pref("noscript.clearClick", 1);
+pref("noscript.clearClick.plugins", true);
+pref("noscript.clearClick.prompt", true);
+
+pref("noscript.emulateFrameBreak", true);

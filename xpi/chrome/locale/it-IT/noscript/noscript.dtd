@@ -135,3 +135,12 @@
 <!ENTITY noscriptSecureCookies "Abilita la gestione automatica dei cookie sicuri">
 <!ENTITY noscriptSecureCookiesForced "Forza connessioni sicure per tutti i cookie creati in HTTPS dai seguenti siti:">
 <!ENTITY noscriptSecureCookiesExceptions "Ignora i cookie non sicuri creati in HTTPS dai seguenti siti:">
+<!ENTITY noscriptClearClickTitle "Avviso di ClearClick">
+<!ENTITY noscriptClearClickHeader "Possibile tentativo di &quot;clickjacking&quot; o camuffamento">
+<!ENTITY noscriptClearClickDescription "NoScript ha intercettato un'interazione del mouse o della tastiera con un elemento parzialmente nascosto. Cliccare sull'immagine sotto per confrontare la versione ostruita con quella svelata.">
+<!ENTITY noscriptClearClickOpt "Abilita la protezione ClearClick sulle pagine…">
+<!ENTITY noscriptOpacizeOpt "Opacizza gli oggetti incorporati nelle pagine…">
+<!ENTITY noscriptTrustedPagesAdj "fidate">
+<!ENTITY noscriptUntrustedPagesAdj "non fidate">
+<!ENTITY noscriptKeepLocked "Mantieni bloccato questo elemento (consigliabile)">
+<!ENTITY noscriptEmbeddings "Oggetti incorporati">

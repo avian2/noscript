@@ -135,3 +135,12 @@
 <!ENTITY noscriptSecureCookies "Zarządzaj automatycznie bezpiecznymi ciasteczkami">
 <!ENTITY noscriptSecureCookiesForced "Stosuj szyfrowanie ciasteczek ustawionych przez HTTPS dla następujących witryn:">
 <!ENTITY noscriptSecureCookiesExceptions "Ignoruj niebezpieczne ciasteczka ustawione przez HTTPS dla następujących witryn:">
+<!ENTITY noscriptClearClickTitle "Ostrzeżenia kliknięć ukrytych obiektów">
+<!ENTITY noscriptClearClickHeader "Potencjalne zagrożenie przechwytywania kliknięć/Próba przywrócenia prawidłowego interfejsu">
+<!ENTITY noscriptClearClickDescription "NoScript przechwycił interakcję myszy lub klawiatury z częściowo ukrytym elementem. Kliknij na powyższym obrazku, aby wyświetlić/schować ukrytą wersję.">
+<!ENTITY noscriptClearClickOpt "Zabezpieczenia kliknięć ukrytych obiektów na stronach internetowych">
+<!ENTITY noscriptOpacizeOpt "Widoczność osadzonych obiektów na stronach internetowych">
+<!ENTITY noscriptTrustedPagesAdj "zaufana">
+<!ENTITY noscriptUntrustedPagesAdj "niezaufana">
+<!ENTITY noscriptKeepLocked "Pozostaw ten element zablokowany (zalecane)">
+<!ENTITY noscriptEmbeddings "Obiekty osadzone">

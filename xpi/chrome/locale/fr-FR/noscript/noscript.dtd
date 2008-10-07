@@ -96,7 +96,7 @@
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Exceptions de protection anti-XSS">
 <!ENTITY noscriptXssExceptions.description "Les destinations correspondantes aux expressions régulières suivantes ne seront pas protégées contre les scripts entre sites XSS">
-<!ENTITY noscriptMatchSample "Example de motif :">
+<!ENTITY noscriptMatchSample "Exemple de motif :">
 <!ENTITY noscriptReset "Réinitialiser">
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Rétablir les valeurs par défaut">
@@ -135,3 +135,12 @@
 <!ENTITY noscriptSecureCookies "Activer la Gestion Sécurisée Automatique des Cookies">
 <!ENTITY noscriptSecureCookiesForced "Forcer le chiffrement pour tous les cookies définis par HTTPS pour les sites suivants :">
 <!ENTITY noscriptSecureCookiesExceptions "Ignorer les cookies non sûrs définis par HTTPS pour les sites suivants :">
+<!ENTITY noscriptClearClickTitle "Avertissement ClearClick">
+<!ENTITY noscriptClearClickHeader "Clickjacking potentiel / rétablissement de tentative d&apos;UI">
+<!ENTITY noscriptClearClickDescription "NoScript a intercepté une interaction de la souris ou du clavier avec une élément partiellement caché. Cliquez sur l&apos;image en-dessus pour passer de la version cachée à la version visible.">
+<!ENTITY noscriptClearClickOpt "Protection ClearClick sur les pages…">
+<!ENTITY noscriptOpacizeOpt "Opacifier les objets embarqués dans les pages">
+<!ENTITY noscriptTrustedPagesAdj "fiable">
+<!ENTITY noscriptUntrustedPagesAdj "non fiable">
+<!ENTITY noscriptKeepLocked "Garder cet environnement verrouillé (recommandé)">
+<!ENTITY noscriptEmbeddings "Objets embarqués">

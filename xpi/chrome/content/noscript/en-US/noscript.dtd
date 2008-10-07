@@ -135,3 +135,13 @@
 <!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
 <!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
 <!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptClearClickTitle "ClearClick Warning">
+<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
+<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
+<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
+<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
+<!ENTITY noscriptTrustedPagesAdj "trusted">
+<!ENTITY noscriptUntrustedPagesAdj "untrusted">
+<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
+<!ENTITY noscriptEmbeddings "Embedded Objects">
+

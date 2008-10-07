@@ -121,3 +121,26 @@
 <!ENTITY noscriptAllowPage.accesskey "A">
 <!ENTITY noscriptTempToPerm "ページの許可設定を恒久的にする">
 <!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ...">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "振る舞い">
+<!ENTITY noscriptHttps.cookies "Cookie">
+<!ENTITY noscriptHttps.description "セキュアな(HTTPS)接続によらない動的コンテンツを:">
+<!ENTITY noscriptHttps.never "常に許可する">
+<!ENTITY noscriptHttps.proxy "プロキシを使っているときに禁止する(Torでの推奨)">
+<!ENTITY noscriptHttps.always "常に禁止する">
+<!ENTITY noscriptHttpsForced "以下のサイトに対してはセキュアな(HTTPS)接続を強制する:">
+<!ENTITY noscriptHttpsForcedExceptions "以下のサイトに対してはセキュアな(HTTPS)接続を強制しない:">
+<!ENTITY noscriptSecureCookies "自動セキュアCookie管理を有効にする">
+<!ENTITY noscriptSecureCookiesForced "以下のサイトからのHTTPSによってセットされた全てのcookieの暗号化を強制する:">
+<!ENTITY noscriptSecureCookiesExceptions "以下のサイトからのHTTPSによってセットされた安全でないcookieを無視する:">
+<!ENTITY noscriptClearClickTitle "ClearClick警告">
+<!ENTITY noscriptClearClickHeader "Clickjacking / UI Redressingの可能性があります!">
+<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
+<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
+<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
+<!ENTITY noscriptTrustedPagesAdj "trusted">
+<!ENTITY noscriptUntrustedPagesAdj "untrusted">
+<!ENTITY noscriptKeepLocked "この要素をロックしたままにする(推奨)">
+<!ENTITY noscriptEmbeddings "埋め込みオブジェクト">

@@ -21,3 +21,13 @@ tabbox#nsopt-tabsAdvanced > tab {
   marker-offset: 24px;
 }
 
+#imgs-stack {
+  -moz-user-focus: normal;
+}
+
+#imgs-stack:focus {
+  outline: 1px dotted #444;
+}
+.flexible-cbx {
+  white-space: normal;
+}

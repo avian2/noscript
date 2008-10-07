@@ -135,3 +135,12 @@
 <!ENTITY noscriptSecureCookies "啟用自動安全Cookies管理">
 <!ENTITY noscriptSecureCookiesForced "強制下面網站藉由HTTPS加密所有Cookies:">
 <!ENTITY noscriptSecureCookiesExceptions "忽略下面網站不安全的Cookies藉由HTTPS:">
+<!ENTITY noscriptClearClickTitle "解除點選警告">
+<!ENTITY noscriptClearClickHeader "潛在的點選劫持/使用者介面補償企圖攻擊!">
+<!ENTITY noscriptClearClickDescription "NoScript 攔截一個滑鼠或鍵盤操作的隱藏元素. 點選圖片將會進行對上述過程之間的阻止和解除改變.">
+<!ENTITY noscriptClearClickOpt "解除頁面上的點選保護...">
+<!ENTITY noscriptOpacizeOpt "半透明化本頁嵌入的物件...">
+<!ENTITY noscriptTrustedPagesAdj "可信任">
+<!ENTITY noscriptUntrustedPagesAdj "不信任">
+<!ENTITY noscriptKeepLocked "保持鎖定此元素(推薦)">
+<!ENTITY noscriptEmbeddings "嵌入的物件">

@@ -135,3 +135,12 @@
 <!ENTITY noscriptSecureCookies "Ενεργοποίηση αυτόματης ασφαλούς διαχείρισης cookies">
 <!ENTITY noscriptSecureCookiesForced "Εξαναγκασμός κρυπτογράφησης σε όλα τα cookies που εγκαταστάθηκαν μέσω HTTPS από τους ακόλουθους ιστότοπους:">
 <!ENTITY noscriptSecureCookiesExceptions "Να αγνοούνται μη ασφαλή cookies που εγκαταστάθηκαν μέσω HTTPS από τους ακόλουθους ιστότοπους:">
+<!ENTITY noscriptClearClickTitle "Προειδοποίηση clearClick">
+<!ENTITY noscriptClearClickHeader "Πιθανή προσπάθεια επικάλυψης UI / Clickjacking!">
+<!ENTITY noscriptClearClickDescription "Το NoScript εντόπισε αλληλεπίδραση του ποντικιού ή του πληκτρολογίου με ένα μερικώς κρυφό στοιχείο. Κάντε κλικ στην παραπάνω εικόνα για εναλλαγή ανάμεσα στην απαγορευμένη και την επιτρεπόμενη εκδοχή.">
+<!ENTITY noscriptClearClickOpt "Προστασία clearClick σε ιστότοπους...">
+<!ENTITY noscriptOpacizeOpt "Ανάδειξη ενσωματωμένων αντικειμένων σε ιστότοπους...">
+<!ENTITY noscriptTrustedPagesAdj "έμπιστους">
+<!ENTITY noscriptUntrustedPagesAdj "μη έμπιστους">
+<!ENTITY noscriptKeepLocked "Διατήρηση κλειδώματος στοιχείου (συνιστάται)">
+<!ENTITY noscriptEmbeddings "Ενσωματωμένα αντικείμενα">

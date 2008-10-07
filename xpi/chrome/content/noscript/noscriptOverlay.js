@@ -479,9 +479,10 @@ var noscriptOverlay = noscriptUtil.service ?
     var pluginExtras = [];
     i = 0;
     for each(egroup in extras) {
-      for each(e in egroup) {
+      for (i = egroup.length; i-- > 0;) {
+         e = egroup[i];
          
-         if(e.tag && !e.placeholder) continue;
+         if(typeof(e) == "object" && (e.tag && !e.placeholder)) continue;
          node = document.createElement("menuitem");
          
          e.label = e.label || ns.mimeEssentials(e.mime) + "@" + ns.urlEssentials(e.url);
@@ -493,10 +494,10 @@ var noscriptOverlay = noscriptUtil.service ?
          node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-temp noscript-allow");
          node.style.listStyleImage = ns.cssMimeIcon(e.mime, 16);
          menu.appendChild(node);
-         pluginExtras[i++] = e;
+         pluginExtras.push(e);
       }
     }
-    if (i) {
+    if (pluginExtras.length) {
       noscriptOverlay.menuPluginExtras = pluginExtras;
       mainMenu.addEventListener("popuphidden", function(ev) {
           if (ev.currentTarget != ev.target) return;
@@ -556,7 +557,11 @@ var noscriptOverlay = noscriptUtil.service ?
         unknown.push(site);
     }
     if (!justTell) {
-      if (unknown.length) this.safeAllow(unknown, true, !permanent);
+      if (unknown.length) {
+        var browser = gBrowser.selectedBrowser;
+        ns.setExpando(browser, "allowPageURL", browser.docShell.currentURI.spec);
+        this.safeAllow(unknown, true, !permanent);
+      }
     }
     return unknown;
   },
@@ -1511,6 +1516,7 @@ var noscriptOverlay = noscriptUtil.service ?
               noscriptOverlay._syncUINow();
             }
           } else {
+            ns.frameContentLoaded(w);
             noscriptOverlay.syncUI(w.top);
           }
           w.addEventListener("load", noscriptOverlay.listeners.onDocumentLoad, false);

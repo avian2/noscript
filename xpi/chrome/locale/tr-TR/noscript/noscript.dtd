@@ -121,3 +121,17 @@
 <!ENTITY noscriptAllowPage.accesskey "z">
 <!ENTITY noscriptTempToPerm "Sayfa izinlerini kalıcı yap">
 <!ENTITY noscriptTempToPerm.accesskey "k">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS SSS...">
+<!ENTITY noscriptHttpsFaq.accesskey "S">
+<!ENTITY noscriptHttps.behavior "Davranis">
+<!ENTITY noscriptHttps.cookies "Cerezler">
+<!ENTITY noscriptHttps.description "Aktif icerik guvenli baglanti uzerinden gelmezse(HTTPS) engelle:">
+<!ENTITY noscriptHttps.never "Asla">
+<!ENTITY noscriptHttps.proxy "Proksi kullanirken(Tor kullanirken tavsiye edilir)">
+<!ENTITY noscriptHttps.always "Herzaman">
+<!ENTITY noscriptHttpsForced "Bu siteleri guvenli baglanti kullanmaya zorla(HTTPS):">
+<!ENTITY noscriptHttpsForcedExceptions "Bu siteleri guvenli baglanti(HTTPS) kullanmaya asla zorlama:">
+<!ENTITY noscriptSecureCookies "Otomatik Guvenli Cerez Yonetimini aktive et">
+<!ENTITY noscriptSecureCookiesForced "Bu sitelerin cerezlerinin HTTPS uzerinden gonderilmesine zorla:">
+<!ENTITY noscriptSecureCookiesExceptions "Guvensiz HTTPS uzerinden gonderilen cerezleri bu siteler icin yoksay:">

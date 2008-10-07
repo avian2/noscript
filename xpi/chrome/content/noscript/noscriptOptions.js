@@ -113,6 +113,15 @@ var nsopt = {
       document.getElementById("fx-notifications").setAttribute("hidden", "true");
     }
     
+    ["clearClick", "opacizeObject"].forEach(function(c) {
+      var pref = ns.getPref(c);
+      Array.forEach(document.getElementsByClassName(c + "Opt"), function(cbx) {        
+        cbx.setAttribute("checked", !(pref & parseInt(cbx.getAttribute("value"))) ? "false" : "true");
+
+      });
+    });
+    
+    
     // document.getElementById("policy-tree").view = policyModel;
     window.sizeToContent();
     
@@ -165,6 +174,15 @@ var nsopt = {
     this.utils.visitTextboxes(function(prefName, box) {
       ns.setPref(prefName, box.value);
     });
+    
+    ["clearClick", "opacizeObject"].forEach(function(c) {
+      var pref = 0;
+      Array.forEach(document.getElementsByClassName(c + "Opt"), function(cbx) {
+        if (cbx.checked) pref = pref | parseInt(cbx.getAttribute("value"));
+      });
+      ns.setPref(c, pref);
+    });
+    
     
     ns.setPref("notify.hideDelay", parseInt(document.getElementById("notifyDelay").value) || 
               ns.getPref("notify.hideDelay", 5));

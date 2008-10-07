@@ -82,7 +82,7 @@
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; 요소를 숨김">
 <!ENTITY noscriptNselForce "차단된 &lt;SCRIPT&gt; 다음에 오는 &lt;NOSCRIPT&gt; 요소 표시">
 <!ENTITY noscriptAutoAllowTopLevel "일시적으로 최상위 사이트를 허용">
-<!ENTITY noscriptDescription "FireFox(불여우)를 위한 한층 강화된 보안 기능: NoScript를 사용하면 여러분이 선택한 신뢰할 수 있는 도메인(예를 들면, 인터넷 뱅킹 웹 사이트)에 대해서만 JavaScript와 Java(또한 그 밖의 플러그인들 포함)를 허용합니다. 사용자 지정 목록(whitelist)에 기반을 분 선점형 차단 접근 방식을 통해 기능에 제약을 받지 않고 보안 위협 요소들(알려진 위협 요소 뿐만 아니라 알려지지 않은 위협 요소까지도!)을 사전에 차단합니다. 전문가들 역시 &quot;NoScript를 사용하면 FireFox가 좀더 안전해집니다!&quot;라고 말하고 있습니다. :-)">
+<!ENTITY noscriptDescription "FireFox(불여우)를 위한 한층 강화된 보안 기능: NoScript를 사용하면 여러분이 선택한 신뢰할 수 있는 도메인(예를 들면, 인터넷 뱅킹 웹 사이트)에 대해서만 JavaScript와 Java(또한 그 밖의 플러그인들 포함)를 허용합니다. 사용자 지정 목록(whitelist)에 기반을 둔 선점형 차단 접근 방식을 통해 기능에 제약을 받지 않고 보안 위협 요소들(알려진 위협 요소 뿐만 아니라 알려지지 않은 위협 요소까지도!)을 사전에 차단합니다. 전문가들 역시 &quot;NoScript를 사용하면 FireFox가 좀더 안전해집니다!&quot;라고 말하고 있습니다. :-)">
 <!ENTITY noscriptOptBlockCssScanners "CSS 기반의 스캐너 차단">
 <!ENTITY noscriptOptFilterXGet "의심스러운 크로스-사이트 요청 차단">
 <!ENTITY noscriptOptFilterXPost "크로스-사이트 POST 요청을 데이터 손실이 없는 GET 요청으로 변환">
@@ -121,3 +121,26 @@
 <!ENTITY noscriptAllowPage.accesskey "A">
 <!ENTITY noscriptTempToPerm "페이지 권한을 영구적으로 저장하기">
 <!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS 자주묻는질문...">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "행위">
+<!ENTITY noscriptHttps.cookies "쿠키">
+<!ENTITY noscriptHttps.description "안전한(HTTPS) 연결에 대해서만 웹 컨텐츠 활성화 허용:">
+<!ENTITY noscriptHttps.never "항상 아님">
+<!ENTITY noscriptHttps.proxy "프락시를 사용할 때(Tor 추천)">
+<!ENTITY noscriptHttps.always "항상">
+<!ENTITY noscriptHttpsForced "다음 사이트에 대해서 강제로 안전한(HTTPS) 연결 시도:">
+<!ENTITY noscriptHttpsForcedExceptions "다음 사이트에 대해서는 안전한(HTTPS) 연결 시도 안함:">
+<!ENTITY noscriptSecureCookies "자동 보안 쿠기 관리자 활성화">
+<!ENTITY noscriptSecureCookiesForced "다음 사이트에 대해서는 HTTPS 상의 모든 쿠키를 강제로 암호화:">
+<!ENTITY noscriptSecureCookiesExceptions "다음 사이트에 대해서는 HTTPS 상의 안전하지 않은 쿠키를 무시:">
+<!ENTITY noscriptClearClickTitle "ClearClick 경고">
+<!ENTITY noscriptClearClickHeader "잠재적인 클릭재킹(Clickjacking) 또는 UI 변경 시도!">
+<!ENTITY noscriptClearClickDescription "NoScript가 숨겨진 요소에서 처리하는 마우스나 키보드 작동을 가로챘습니다. 상단에 있는 이미지를 클릭하여 차단된 버전과 그렇지 않은 버전간에 전환할 수 있습니다.">
+<!ENTITY noscriptClearClickOpt "페이지에 대해서 ClearClick 보호 수행...">
+<!ENTITY noscriptOpacizeOpt "페이지에 있는 포함 객체들을 불투명 설정...">
+<!ENTITY noscriptTrustedPagesAdj "신뢰된 페이지">
+<!ENTITY noscriptUntrustedPagesAdj "신뢰되지 않은 페이지">
+<!ENTITY noscriptKeepLocked "이 요소를 잠금니다(추천)">
+<!ENTITY noscriptEmbeddings "포함된 객체들">

@@ -1,7 +1,7 @@
-<!ENTITY noscriptOptions "Подесувања">
-<!ENTITY noscriptOptions.accesskey "П">
-<!ENTITY noscriptOptionsLong "Подесувања за „NoScript“">
-<!ENTITY noscriptAbout "За „NoScript“">
+<!ENTITY noscriptOptions "Опции...">
+<!ENTITY noscriptOptions.accesskey "О">
+<!ENTITY noscriptOptionsLong "NoScript Опции">
+<!ENTITY noscriptAbout "За NoScript...">
 <!ENTITY noscriptPermissionsText "Можете да ги назначите страните, на кои што скриптите ќе бидат дозволени. Напишете ја дозволената адреса (на пример http://www.site.com или site.com) и кликнете „Дозволи“">
 <!ENTITY noscriptWebAddress "Адреса на дозволената веб страна">
 <!ENTITY noscriptAllow "Дозволи">
@@ -19,9 +19,9 @@
 <!ENTITY noscriptAppearance "Изглед">
 <!ENTITY noscriptShow "Прикажи...">
 <!ENTITY noscriptCtxMenu "Контекстуално мени (при десен клик)">
-<!ENTITY noscriptStatusIcon "Сликичка на статусната лента">
-<!ENTITY noscriptFullAddr "Целосна адреса (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Целосен домен (www.noscript.net)">
+<!ENTITY noscriptStatusIcon "Икона на статусната лента">
+<!ENTITY noscriptFullAddr "Целосни адреси (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Целосни домени (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Основа на доменот (noscript.net)">
 <!ENTITY noscriptTempCmd "Привремено дозволи за [...]">
 <!ENTITY noscriptSound "Звук при блокирање на скрипти">
@@ -86,14 +86,14 @@
 <!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
 <!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
 <!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console...">
-<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptShowConsole "Покажи ја Конзолата...">
+<!ENTITY noscriptShowConsole.accesskey "П">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
-<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptUnsafeReload "Небезбедно Вчитување">
+<!ENTITY noscriptUnsafeReload.accesskey "В">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
 <!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
 <!ENTITY noscriptMatchSample "Pattern matching sample:">
@@ -112,12 +112,26 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
 <!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
-<!ENTITY noscriptBlockedObjects "Blocked Objects">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
-<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
-<!ENTITY noscriptTempAllowPage.accesskey "P">
-<!ENTITY noscriptAllowPage "Allow all this page">
-<!ENTITY noscriptAllowPage.accesskey "A">
-<!ENTITY noscriptTempToPerm "Make page permissions permanent">
-<!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptExceptions "Исклучоци...">
+<!ENTITY noscriptBlockedObjects "Блокирани Објекти">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Блокирај го секој објект кој доаѓа од страница означена како без доверба">
+<!ENTITY noscriptTempAllowPage "Привремено дозволи ја целата оваа страница">
+<!ENTITY noscriptTempAllowPage.accesskey "П">
+<!ENTITY noscriptAllowPage "Дозволи ја целата оваа страница">
+<!ENTITY noscriptAllowPage.accesskey "Д">
+<!ENTITY noscriptTempToPerm "Направи ги овие дозволи на страницата трајни">
+<!ENTITY noscriptTempToPerm.accesskey "Н">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Однесување">
+<!ENTITY noscriptHttps.cookies "Колачиња">
+<!ENTITY noscriptHttps.description "Забрани активна веб содржина освен ако не доаѓа од безбедно (HTTPS) поврзување:">
+<!ENTITY noscriptHttps.never "Никогаш">
+<!ENTITY noscriptHttps.proxy "Кога се користи прокси(препорачливо со Tor)">
+<!ENTITY noscriptHttps.always "Секогаш">
+<!ENTITY noscriptHttpsForced "Присили ги следните страници да користат безбедни (HTTPS) поврзувања:">
+<!ENTITY noscriptHttpsForcedExceptions "Никогаш не присилувај безбедни (HTTPS) поврзувања за следните страници:">
+<!ENTITY noscriptSecureCookies "Овозможи Автоматски Менаџмент на Безбедните Колачиња">
+<!ENTITY noscriptSecureCookiesForced "Присили енкрипција за сите колачиња поставени од следните страници преку HTTPS:">
+<!ENTITY noscriptSecureCookiesExceptions "Игнорирај несигурни колачиња поставени од следните страници преку HTTPS:">

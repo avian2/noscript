@@ -136,3 +136,12 @@ Temporarily allow top-level sites by default">
 <!ENTITY noscriptSecureCookies "Activar Manegament Automàtic de Galetes Segures">
 <!ENTITY noscriptSecureCookiesForced "Forçar encriptació per totes les galetes creades amb HTTPS pels següents llocs:">
 <!ENTITY noscriptSecureCookiesExceptions "Ignorar galetes insegures creades amb HTTPS pels següents llocs:">
+<!ENTITY noscriptClearClickTitle "Advertència ClearClick">
+<!ENTITY noscriptClearClickHeader "Clickjacking Potencial / Intent de corregir UI">
+<!ENTITY noscriptClearClickDescription "NoScript ha interceptat una interacció de ratolí o reclat amb parcialment element ocult. Clica a la imatge superior per passar de la obstrucció a una versió neta.">
+<!ENTITY noscriptClearClickOpt "Protecció de ClearClick a les pàgines...">
+<!ENTITY noscriptOpacizeOpt "Opacitar objectes incrustats a les pàgines...">
+<!ENTITY noscriptTrustedPagesAdj "de confiança">
+<!ENTITY noscriptUntrustedPagesAdj "de no confiança">
+<!ENTITY noscriptKeepLocked "Mantenir aquest element bloquejat (recomanat)">
+<!ENTITY noscriptEmbeddings "Objectes Incrustats">

@@ -135,3 +135,12 @@
 <!ENTITY noscriptSecureCookies "Aktivera automatisk säker hantering av kakor">
 <!ENTITY noscriptSecureCookiesForced "Tvinga kryptering för alla kakor över HTTPS för dessa platser:">
 <!ENTITY noscriptSecureCookiesExceptions "Ignorera osäkra kakor som skickas över HTTPS för dessa platser:">
+<!ENTITY noscriptClearClickTitle "ClearClick varning">
+<!ENTITY noscriptClearClickHeader "Potentiell Clickjacking /UI redressing försök!">
+<!ENTITY noscriptClearClickDescription "NoScript fångade upp musklick eller tangentbordsklick med ett delvis dolt element. Klicka på bilden ovan för att växla mellan dold och klartext version.">
+<!ENTITY noscriptClearClickOpt "ClearClick skydd på sidor...">
+<!ENTITY noscriptOpacizeOpt "Markera inbäddade objekt på sidor...">
+<!ENTITY noscriptTrustedPagesAdj "betrodd">
+<!ENTITY noscriptUntrustedPagesAdj "ej betrodd">
+<!ENTITY noscriptKeepLocked "Lås detta element permanent (rekommenderas)">
+<!ENTITY noscriptEmbeddings "Inbäddade objekt">

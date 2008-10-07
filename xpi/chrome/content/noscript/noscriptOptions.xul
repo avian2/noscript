@@ -149,22 +149,42 @@
     <vbox flex="1">
       <label class="header" value="&noscriptAdditionalRestrictions;" />
       <hbox><description style="white-space: normal">&noscriptReloadWarn;</description></hbox>
-        <separator />
-      <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
-      <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
-      <checkbox id="opt-forbidSilverlight" label="&noscriptForbidSilverlight;" />
-      <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
-      <separator class="thin" />
-      <checkbox id="opt-forbidIFrames" label="&noscriptForbidIFrames;" />
+      <separator/>
+      <hbox class="flexible-cbx">
+        <vbox>
+          <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
+          <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
+          <checkbox id="opt-forbidSilverlight" label="&noscriptForbidSilverlight;" />
+          <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+          <separator class="thin" />
+          <checkbox id="opt-forbidIFrames" label="&noscriptForbidIFrames;" />
+        </vbox>
+        <vbox flex="1">
+          <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+          <separator class="thin" />
+          <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
+          <checkbox id="invopt-showUntrustedPlaceholder" label="&noscriptNoUntrustedPlaceholder;" />
+          <checkbox id="opt-collapseObject" label="&noscriptCollapseBlockedObjects;" />
+        </vbox>
+      </hbox>
       <separator/>
       <checkbox id="opt-contentBlocker" label="&noscriptContentBlocker;" class="header" />
       <checkbox id="opt-alwaysBlockUntrustedContent" label="&noscriptAlwaysBlockUntrustedContent;" />
-      <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
-      <separator class="thin" />
-      <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
-      <checkbox id="invopt-showUntrustedPlaceholder" label="&noscriptNoUntrustedPlaceholder;" />
-      <checkbox id="opt-collapseObject" label="&noscriptCollapseBlockedObjects;" />
-
+      <separator/>
+      <hbox>
+        <vbox>
+          <hbox><label value="&noscriptClearClickOpt;" /><spacer flex="1" />
+            <checkbox id="cc1" class="clearClickOpt" value="1" label="&noscriptUntrustedPagesAdj;"/>
+            <checkbox id="cc2" class="clearClickOpt" value="2" label="&noscriptTrustedPagesAdj;"/>
+          </hbox>
+          <separator class="thin" />
+          <hbox><label value="&noscriptOpacizeOpt;" /><spacer flex="1" />
+            <checkbox id="oo1" class="opacizeObjectOpt" value="1" label="&noscriptUntrustedPagesAdj;"/>
+            <checkbox id="cc2" class="opacizeObjectOpt" value="2" label="&noscriptTrustedPagesAdj;"/>
+          </hbox>
+        </vbox>
+        <spacer flex="1" />
+      </hbox>
     </vbox>
   </tabpanel>
   
@@ -238,6 +258,8 @@
         
         <separator class="thin" />
         <checkbox id="opt-forbidMetaRefresh.notify" label="&noscriptForbidMetaRefresh;"/><!-- TODO: accesskey -->
+        <separator />
+        <checkbox id="opt-clearClick.prompt" label="&noscriptClearClickTitle;"/>
       </groupbox>
       <groupbox class="ia-indent">
         <caption><checkbox id="opt-sound" label="&noscriptSound;" /></caption>

@@ -135,3 +135,12 @@
 <!ENTITY noscriptSecureCookies "Activar a gestão automática segura de cookies">
 <!ENTITY noscriptSecureCookiesForced "Forçar cifra para todos os cookies aplicada sobre HTTPS pelos seguintes sítios:">
 <!ENTITY noscriptSecureCookiesExceptions "Ignorar cookies não seguros aplicada sobre HTTPS pelos seguintes sítios:">
+<!ENTITY noscriptClearClickTitle "Limpar aviso com clique">
+<!ENTITY noscriptClearClickHeader "Potencial Clickjacking / Tentativa de mudar UI">
+<!ENTITY noscriptClearClickDescription "O NoScript interceptou uma interacção do rato ou do teclado com um elemento parcialmene oculto. Clique na imagem acima para mudar entre a versão limpa e a obstruída">
+<!ENTITY noscriptClearClickOpt "Limpar aviso com clique nas páginas...">
+<!ENTITY noscriptOpacizeOpt "Opacize objectos embutidos nas páginas...">
+<!ENTITY noscriptTrustedPagesAdj "de confiança">
+<!ENTITY noscriptUntrustedPagesAdj "não é de confiança">
+<!ENTITY noscriptKeepLocked "Manter este elemento fechado (recomendado)">
+<!ENTITY noscriptEmbeddings "Objectos embebidos">

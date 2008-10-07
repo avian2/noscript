@@ -134,4 +134,4 @@
 <!ENTITY noscriptHttpsForcedExceptions "Für folgende Adressen niemals die Verwendung verschlüsselter (HTTPS) Verbindung erzwingen:">
 <!ENTITY noscriptSecureCookies "Automatisches sicheres Cookie-Management aktivieren">
 <!ENTITY noscriptSecureCookiesForced "Überprüfung der Cookies über verschlüsselte (HTTPS) Verbindungen für folgende Adressen erzwingen:">
-<!ENTITY noscriptSecureCookiesExceptions "Unsichere Cookies bei verschlüsselter (HTTPS) Verbindung bei folgenden Adressen abweisen:">
+<!ENTITY noscriptSecureCookiesExceptions "Unsichere Cookies bei verschlüsselter (HTTPS) Verbindung bei folgenden Adressen ignorieren:">

@@ -135,3 +135,12 @@
 <!ENTITY noscriptSecureCookies "Omogoči avtomatsko varno upravljanje piškotkov">
 <!ENTITY noscriptSecureCookiesForced "Vsili šifriranje za vse piškotke ustvarjene preko HTTPS za sledeče strani:">
 <!ENTITY noscriptSecureCookiesExceptions "Prezri nevarne piškotke ustvarjene preko HTTPS za sledeče strani:">
+<!ENTITY noscriptClearClickTitle "ClearClick Opozorilo">
+<!ENTITY noscriptClearClickHeader "Morebiten poskus ugrabitve klika oz. uporabniškega vmesnika.">
+<!ENTITY noscriptClearClickDescription "NoScript je zaznal interakcijo miške oz. tipkovnice z delno prikritim elementom. Kliknite na zgornjo sliko za prikaz prikrite in prave različice.">
+<!ENTITY noscriptClearClickOpt "ClearClick zaščita na straneh...">
+<!ENTITY noscriptOpacizeOpt "Opacize vstavljeni predmeti na straneh...">
+<!ENTITY noscriptTrustedPagesAdj "zaupljiv">
+<!ENTITY noscriptUntrustedPagesAdj "nezaupljiv">
+<!ENTITY noscriptKeepLocked "Naj bo ta element zaklenjen (priporočeno)">
+<!ENTITY noscriptEmbeddings "Vstavljeni predmeti">
