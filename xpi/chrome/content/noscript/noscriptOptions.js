@@ -115,7 +115,7 @@ var nsopt = {
     
     ["clearClick", "opacizeObject"].forEach(function(c) {
       var pref = ns.getPref(c);
-      Array.forEach(document.getElementsByClassName(c + "Opt"), function(cbx) {        
+      Array.forEach(document.getElementById(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {        
         cbx.setAttribute("checked", !(pref & parseInt(cbx.getAttribute("value"))) ? "false" : "true");
 
       });
@@ -177,7 +177,7 @@ var nsopt = {
     
     ["clearClick", "opacizeObject"].forEach(function(c) {
       var pref = 0;
-      Array.forEach(document.getElementsByClassName(c + "Opt"), function(cbx) {
+      Array.forEach(document.getElementById(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {
         if (cbx.checked) pref = pref | parseInt(cbx.getAttribute("value"));
       });
       ns.setPref(c, pref);

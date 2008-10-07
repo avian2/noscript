@@ -173,14 +173,14 @@
       <separator/>
       <hbox>
         <vbox>
-          <hbox><label value="&noscriptClearClickOpt;" /><spacer flex="1" />
-            <checkbox id="cc1" class="clearClickOpt" value="1" label="&noscriptUntrustedPagesAdj;"/>
-            <checkbox id="cc2" class="clearClickOpt" value="2" label="&noscriptTrustedPagesAdj;"/>
+          <hbox id="clearClickOpts"><label value="&noscriptClearClickOpt;" /><spacer flex="1" />
+            <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
+            <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
           </hbox>
           <separator class="thin" />
-          <hbox><label value="&noscriptOpacizeOpt;" /><spacer flex="1" />
-            <checkbox id="oo1" class="opacizeObjectOpt" value="1" label="&noscriptUntrustedPagesAdj;"/>
-            <checkbox id="cc2" class="opacizeObjectOpt" value="2" label="&noscriptTrustedPagesAdj;"/>
+          <hbox id="opacizeObjectOpts"><label value="&noscriptOpacizeOpt;" /><spacer flex="1" />
+            <checkbox id="oo1" value="1" label="&noscriptUntrustedPagesAdj;"/>
+            <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
           </hbox>
         </vbox>
         <spacer flex="1" />
@@ -258,8 +258,7 @@
         
         <separator class="thin" />
         <checkbox id="opt-forbidMetaRefresh.notify" label="&noscriptForbidMetaRefresh;"/><!-- TODO: accesskey -->
-        <separator />
-        <checkbox id="opt-clearClick.prompt" label="&noscriptClearClickTitle;"/>
+        
       </groupbox>
       <groupbox class="ia-indent">
         <caption><checkbox id="opt-sound" label="&noscriptSound;" /></caption>
@@ -276,8 +275,11 @@
             oncommand="nsopt.soundChooser.play()" />
           <button label="&noscriptSound.reset;" accesskey="&noscriptSound.reset.accesskey;"
             oncommand="nsopt.soundChooser.setSample(null)" />
-        </hbox>        
+        </hbox>
+        
       </groupbox>
+      <separator />
+        <checkbox id="opt-clearClick.prompt" label="&noscriptClearClickTitle;"/>
     </vbox>
   </tabpanel><!-- END Notifications -->
   

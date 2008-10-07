@@ -40,7 +40,7 @@ const LOG_DOMUTILS = 64;
 const LOG_JS = 128;
 const LOG_LEAKS = 1024;
 const LOG_SNIFF = 2048;
-const LOG_CLEAR_CLICK = 4096;
+const LOG_CLEARCLICK = 4096;
 
 const WHERE_UNTRUSTED = 1;
 const WHERE_TRUSTED = 2;
@@ -809,7 +809,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.2",
+  VERSION: "1.8.2.1",
   
   get wrappedJSObject() {
     return this;
@@ -1053,7 +1053,7 @@ NoscriptService.prototype = {
             || this.forbidSilverlight || this.forbidPlugins || this.forbidIFrames;
       break;
       
-      case "clearClick":
+    
       case "emulateFrameBreak":
       case "filterXPost":
       case "filterXGet":
@@ -1154,6 +1154,7 @@ NoscriptService.prototype = {
       case "nselNever":
       case "showPlaceholder":
       case "opacizeObject":
+      case "clearClick":
         this.updateCssPref(name);
         if ((name == "nselNever") && this.getPref("nselNever") && !this.blockNSWB) {
           this.setPref("blockNSWB", true);
@@ -1253,9 +1254,11 @@ NoscriptService.prototype = {
                 '.__noscriptPlaceholder__1 > .__noscriptPlaceholder__2 { display: block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
                 'noscript .__noscriptPlaceholder__ { display: inline !important; }';
         break;
+      case "clearClick":
       case "opacizeObject":
         sheet = ".__noscriptOpacized__ { opacity: 1 !important; min-width: 52px !important; min-height: 52px !important; } " +
-                ".__noscriptScrolling__ { overflow: auto !important }";
+                ".__noscriptScrolling__ { overflow: auto !important }" +
+                ".__noscriptHidden__ { visibility: hidden !important }";
                 
       break;
       default:
@@ -7049,7 +7052,7 @@ ClearClickHandler.prototype = {
     if (!d || o.__clearClickManUnlocked || o != ev.originalTarget) return;
     
     const ns = this.ns;
-    var verbose = ns.consoleDump & LOG_CLEAR_CLICK;
+    var verbose = ns.consoleDump & LOG_CLEARCLICK;
     var etype = ev.type;
     if (etype == "blur") {
       if (verbose) ns.dump("ClearClick: resetting status on " + ev.target + " for " + etype);
@@ -7067,7 +7070,9 @@ ClearClickHandler.prototype = {
     
     var obstructed;
     
-    var img = /mouse/.test(etype) && { x: ev.pageX, y: ev.pageY } || { x: 0, y: 0};
+    var img = /mouse/.test(etype)
+              && { x: ev.pageX, y: ev.pageY, debug: ev.ctrlKey && ev.shiftKey && ns.getPref("clearClick.debug") }
+              || { x: 0, y: 0};
     var primaryEvent = /^(?:mousedown|keydown)$/.test(etype) ||
         // submit button generates a syntethic click if any text-control receives [Enter]: we must consider this "primary"
            etype == "click" && ev.screenX == 0 && ev.screenY == 0 && ev.pageX == 0 && ev.pageY == 0 && ev.clientX == 0 && ev.clientY == 0 && ev.target.form &&
@@ -7133,8 +7138,9 @@ ClearClickHandler.prototype = {
       r.y = c.top;
     } else {
       c = d.getBoxObjectFor(d.documentElement);
-      r.x = b.screenX - c.screenX;
-      r.y = b.screenY - c.screenY; 
+      var w = d.defaultView;
+      r.x = b.screenX - c.screenX - w.pageXOffset; 
+      r.y = b.screenY - c.screenY - w.pageYOffset;
     }
     return r;
   },
@@ -7181,7 +7187,7 @@ ClearClickHandler.prototype = {
     
     var browser = DOMUtils.findBrowserForNode(top);
     
-    var shownCS, sheet, viewer, embedCSS;
+    var shownCS, sheet, viewer, embedCSS, sheetObj;
     if (isEmbed) { // objects and embeds
       embedCSS = o.className;
       if (this.ns.getPref("clearClick.plugins", true)) {
@@ -7189,9 +7195,17 @@ ClearClickHandler.prototype = {
         viewer = ds.contentViewer && false;
         if (viewer) viewer.enableRendering = false; 
         shownCS = "__noscriptShown__";
-        sheet = "body * { visibility: hidden !important } body ." + shownCS + " { visibility: visible !important; opacity: 1 !important }"
+        sheet = "body * { visibility: hidden !important } body ." + shownCS + " { visibility: visible !important; opacity: 1 !important }";
         o.className += " " + shownCS;
-        this.ns.updateStyleSheet(sheet, true);
+        if (Components.ID('{41d979dc-ea03-4235-86ff-1e3c090c5630}')
+               .equals(CI.nsIStyleSheetService)) {
+          // Gecko < 1.9, asynchronous user sheets force ugly work-around
+          sheetObj = d.createElement("style");
+          sheetObj.innerHTML = sheet;
+          d.documentElement.appendChild(sheetObj);
+        } else { // 
+          this.ns.updateStyleSheet(sheet, true);
+        }
       } else {
         o.className += " __noscriptOpacized__";
       }
@@ -7223,14 +7237,20 @@ ClearClickHandler.prototype = {
     c.height = box.height;
     var ctx = c.getContext("2d");
     
+    if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
+    
     ctx.drawWindow(w, box.x + w.pageXOffset, box.y + w.pageYOffset, box.width, box.height, bg);
     var img1 = c.toDataURL();
     
     
     if (typeof(embedCSS) == "string") o.className = embedCSS;
     if (sheet) {
-      this.ns.updateStyleSheet(sheet, false);
-      viewer.enableRendering = true;
+      if (sheetObj) {
+        d.documentElement.removeChild(sheetObj);
+      } else {
+        this.ns.updateStyleSheet(sheet, false);
+      }
+      if (viewer) viewer.enableRendering = true;
     }
     
     var rootBox = this.getBox(browser);
@@ -7258,7 +7278,9 @@ ClearClickHandler.prototype = {
         if (!img2) img2 = tmpImg;
       }
     }
-    ctx.restore();
+    
+    if (img.debug) ret = true;
+    
     if (ret)
       img.value =
       {

@@ -176,5 +176,6 @@ pref("noscript.https.showInConsole", true);
 pref("noscript.clearClick", 1);
 pref("noscript.clearClick.plugins", true);
 pref("noscript.clearClick.prompt", true);
+pref("noscript.clearClick.debug", false);
 
 pref("noscript.emulateFrameBreak", true);
