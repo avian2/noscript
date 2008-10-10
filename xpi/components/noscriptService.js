@@ -809,7 +809,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.2.2",
+  VERSION: "1.8.2.3",
   
   get wrappedJSObject() {
     return this;
@@ -6109,7 +6109,7 @@ var InjectionChecker = {
   
   checkPostStream: function(stream) {
      var ic = this;
-     return new PostChecker(channel.uploadStream).check(
+     return new PostChecker(stream).check(
       function(chunk) {
         return chunk.length > 6 && ic.checkRecursive(chunk, 2) && chunk;
       }
@@ -7159,8 +7159,11 @@ ClearClickHandler.prototype = {
       var dx = c.left - b.x;
       for(p = o; !(fixed = w.getComputedStyle(p, "display") == "fixed");) {
         p = p.offsetParent;
-        if (p) dx += p.scrollLeft || 0;
+        if (p && p != d.documentElement) dx += p.scrollLeft || 0;
         else break;
+      }
+      if (!fixed) {
+        dx += d.documentElement.scrollLeft || 0;
       }
       
       r.screenX += dx;
@@ -7184,7 +7187,7 @@ ClearClickHandler.prototype = {
 
     if (verbose) ns.dump(o + r.toSource() + " -- box: " + b.x + "," + b.y);
     return r;
-},
+  },
   
   getBG: function(w) {
     var bg = w.document.body && w.getComputedStyle(w.document.body, '').backgroundColor || "white";
