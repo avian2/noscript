@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "禁止 &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "禁止 Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "禁止其他外掛">
 <!ENTITY noscriptReloadWarn "這些選項會套用在新的或（手動）重讀的頁面">

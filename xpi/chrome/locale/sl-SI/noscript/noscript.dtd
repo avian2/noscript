@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Onemogoči &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Onemogoči Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Onemogoči &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Onemogoči &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Onemogoči Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Onemogoči druge vtičnike">
 <!ENTITY noscriptReloadWarn "Te nastavitve bodo stopile v veljavo na novih oz. (ročno) osveženih straneh">

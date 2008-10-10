@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Забрани &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Забрани Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Забрани други плъгини">
 <!ENTITY noscriptReloadWarn "Тези настройки ще имат ефект на нови или (ръчно) презаредени страници">
@@ -135,3 +136,12 @@
 <!ENTITY noscriptSecureCookies "Разрешаване на автоматичното управление на защитени бисквитки">
 <!ENTITY noscriptSecureCookiesForced "Принуждаване за криптиране на всички бисквитки получени от HTTPS, за следните сайтове:">
 <!ENTITY noscriptSecureCookiesExceptions "Игнориране на незащитените бисквитки за следните сайтове:">
+<!ENTITY noscriptClearClickTitle "ClearClick предупреждение">
+<!ENTITY noscriptClearClickHeader "Потенциална опасност от клик-отвличане/опит за пренасочване!">
+<!ENTITY noscriptClearClickDescription "NoScript прихвана взаимодействие между скрит елемент и мишката или клавиатурата. Натиснете върху картинката отгоре, за да превключите между подозрителната и чистата версия.">
+<!ENTITY noscriptClearClickOpt "ClearClick защита на страници...">
+<!ENTITY noscriptOpacizeOpt "Избледняване на вградени обекти на страници...">
+<!ENTITY noscriptTrustedPagesAdj "доверени">
+<!ENTITY noscriptUntrustedPagesAdj "недоверени">
+<!ENTITY noscriptKeepLocked "Остави този елемент заключен (препоръчително)">
+<!ENTITY noscriptEmbeddings "Вградени обекти">

@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; verbieden">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieden">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieden">
+<!ENTITY noscriptForbidFrames "&lt;FRAME&gt; verbieden">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® verbieden">
 <!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
 <!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina&apos;s">
@@ -135,3 +136,12 @@
 <!ENTITY noscriptSecureCookies "Automatisch beveiligd cookiebeheer inschakelen">
 <!ENTITY noscriptSecureCookiesForced "Alle cookies ingesteld via HTTPS door onderstaande sites dwingen versleuteling te gebruiken:">
 <!ENTITY noscriptSecureCookiesExceptions "Onveilige cookies ingesteld via HTTPS door onderstaande sites negeren:">
+<!ENTITY noscriptClearClickTitle "&apos;ClearClick&apos; waarschuwing">
+<!ENTITY noscriptClearClickHeader "Potentiële poging tot &apos;Clickjacking&apos; / aanpassing gebruikersinterface!">
+<!ENTITY noscriptClearClickDescription "NoScript heeft een muis of toetsenbord interactie met een gedeeltelijk verborgen element onderschept. Door te klikken op onderstaande afbeelding wordt van de belemmerende naar de zichtbare versie omgeschakeld.">
+<!ENTITY noscriptClearClickOpt "&apos;ClearClick&apos; bescherming inschakelen op pagina&apos;s gemarkeerd als...">
+<!ENTITY noscriptOpacizeOpt "Ingebouwde objecten zichtbaar maken op pagina&apos;s gemarkeerd als...">
+<!ENTITY noscriptTrustedPagesAdj "betrouwbaar">
+<!ENTITY noscriptUntrustedPagesAdj "onbetrouwbaar">
+<!ENTITY noscriptKeepLocked "Dit element geblokkeerd houden (aanbevolen)">
+<!ENTITY noscriptEmbeddings "Ingebouwde objecten">

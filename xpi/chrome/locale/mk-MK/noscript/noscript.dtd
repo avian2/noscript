@@ -3,7 +3,7 @@
 <!ENTITY noscriptOptionsLong "NoScript Опции">
 <!ENTITY noscriptAbout "За NoScript...">
 <!ENTITY noscriptPermissionsText "Можете да ги назначите страните, на кои што скриптите ќе бидат дозволени. Напишете ја дозволената адреса (на пример http://www.site.com или site.com) и кликнете „Дозволи“">
-<!ENTITY noscriptWebAddress "Адреса на дозволената веб страна">
+<!ENTITY noscriptWebAddress "Адреса на дозволената веб страна:">
 <!ENTITY noscriptAllow "Дозволи">
 <!ENTITY noscriptAllow.accesskey "Д">
 <!ENTITY noscriptForbid "Забрани">
@@ -30,7 +30,7 @@
 <!ENTITY noscriptExport "Извези">
 <!ENTITY noscriptExport.accesskey "И">
 <!ENTITY noscriptNotify "Порака при блокирање на скрипти">
-<!ENTITY noscriptNotify.bottom "Смести ја на дното">
+<!ENTITY noscriptNotify.bottom "Смести ја пораката на дното">
 <!ENTITY noscriptSound.choose "Одберете звук">
 <!ENTITY noscriptSound.choose.accesskey "О">
 <!ENTITY noscriptSound.play "Пушти го звукот">
@@ -42,24 +42,25 @@
 <!ENTITY noscriptAllowClipboard "Дозволи вметнување на форматиран текст (на пример ХТМЛ)">
 <!ENTITY noscriptAdditionalRestrictions "Додатни забрани за неодобрени страници">
 <!ENTITY noscriptPlugins "Plugins">
-<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
+<!ENTITY noscriptContentBlocker "Примени ги овие ограничувања исто така и за страниците од доверба">
 <!ENTITY noscriptForbidJava "Оневозможи Јава (Java™)">
 <!ENTITY noscriptForbidWebBugs "Оневозможи &quot;Web Bugs&quot;">
-<!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
-<!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidSilverlight "Оневозможи Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Оневозможи &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Оневозможи &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Оневозможи Макромедија Флеш (Macromedia® Flash®)">
 <!ENTITY noscriptForbidPlugins "Оневозможи ги другите додатоци">
 <!ENTITY noscriptReloadWarn "Овие подесувања ќе важат при следното вчитување на страниците">
 <!ENTITY noscriptConfirmUnblock "Побарај одобрување пред привремено одблокирање на објектот">
 <!ENTITY noscriptStatusLabel "Информација на статусната лента">
 <!ENTITY noscriptForbidBookmarklets "Оневозможи зачувување на врската">
-<!ENTITY noscriptShowPlaceholder "Покажи слика како замена за блокираниот објект">
+<!ENTITY noscriptShowPlaceholder "Покажи икона на резервираното место">
 <!ENTITY noscriptTruncateTitle "Скрати ги насловите на документите">
-<!ENTITY noscriptFixLinks "Обиди се врските со Јаваскрипт да ги претвориш во обични">
-<!ENTITY noscriptAllowBookmarks "Дозволи ги скриптите за сите страни од обележувачите">
-<!ENTITY noscriptAllowViaBookmarks "Дозволи ги скриптите за сите страни отворени преку обележувачите">
+<!ENTITY noscriptFixLinks "Обиди се да ги поправиш JavaScript линковите">
+<!ENTITY noscriptAllowBookmarks "Дозволи ги страниците отворени преку обележувачите">
+<!ENTITY noscriptAllowViaBookmarks "Дозволи ги страниците отворени преку обележувачите">
 <!ENTITY noscriptAllowPing "Овозможи следење на вашите кликови преку атрибутот „ping“ (&lt;a ping=...&gt;)">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
+<!ENTITY noscriptAllowLocalLinks "Дозволи local links">
 <!ENTITY noscriptForbidPing "Оневозможи следење на вашите кликови преку атрибутот „ping“ (&lt;a ping=...&gt;)">
 <!ENTITY noscriptForbidMetaRefresh "Забрани „META“ пренасочувања во &lt;noscript&gt; елементи">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "З">
@@ -108,10 +109,10 @@
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
 <!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp "Отповикај ги Привремените Дозволи">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
-<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
+<!ENTITY noscriptCollapseBlockedObjects "Спушти ги блокираните објекти">
 <!ENTITY noscriptExceptions "Исклучоци...">
 <!ENTITY noscriptBlockedObjects "Блокирани Објекти">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Блокирај го секој објект кој доаѓа од страница означена како без доверба">
@@ -135,3 +136,12 @@
 <!ENTITY noscriptSecureCookies "Овозможи Автоматски Менаџмент на Безбедните Колачиња">
 <!ENTITY noscriptSecureCookiesForced "Присили енкрипција за сите колачиња поставени од следните страници преку HTTPS:">
 <!ENTITY noscriptSecureCookiesExceptions "Игнорирај несигурни колачиња поставени од следните страници преку HTTPS:">
+<!ENTITY noscriptClearClickTitle "ClearClick Предупредување">
+<!ENTITY noscriptClearClickHeader "Потенцијален обид за Clickjacking / UI Redressing!">
+<!ENTITY noscriptClearClickDescription "NoScript пресретна интеракција на глушецот или тастатурата со делумно скриен елемент. Кликни на сликата погоре за промена помеѓу спречената и чистата верзија.">
+<!ENTITY noscriptClearClickOpt "ClearClick заштита на страниците...">
+<!ENTITY noscriptOpacizeOpt "Направи ги непроѕирни вградените објекти на страниците...">
+<!ENTITY noscriptTrustedPagesAdj "со доверба">
+<!ENTITY noscriptUntrustedPagesAdj "без доверба">
+<!ENTITY noscriptKeepLocked "Задржи го овој елемент заклучен (препорачливо)">
+<!ENTITY noscriptEmbeddings "Вградени Објекти">

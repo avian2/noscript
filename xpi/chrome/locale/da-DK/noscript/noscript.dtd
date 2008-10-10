@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Forbyd &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forbyd Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forbyd &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Forbyd &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Forbyd Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forbyd andre plugins">
 <!ENTITY noscriptReloadWarn "Disse indstillinger træder i kraft på en ny eller en (manuelt) genindlæst side">

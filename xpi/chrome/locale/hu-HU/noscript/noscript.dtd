@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "A &quot;Web Bugs&quot; tiltása">
 <!ENTITY noscriptForbidSilverlight "A Microsoft® Silverlight™ tiltása">
 <!ENTITY noscriptForbidIFrames "Az &lt;IFRAME&gt; tiltása">
+<!ENTITY noscriptForbidFrames "Az &lt;FRAME&gt; tiltása">
 <!ENTITY noscriptForbidFlash "Az Adobe® Flash® tiltása">
 <!ENTITY noscriptForbidPlugins "Egyéb beépülő modulok tiltása">
 <!ENTITY noscriptReloadWarn "Ezek a beállítások új vagy (kézzel) újratöltött oldalaknál lépnek érvénybe">
@@ -135,3 +136,12 @@
 <!ENTITY noscriptSecureCookies "Biztonságos sütik automatikus kezelésének engedélyezése">
 <!ENTITY noscriptSecureCookiesForced "Sütik titkosításának erőltetése, amelyek HTTPS segítségével lettek beállítva az alábbi oldalakon:">
 <!ENTITY noscriptSecureCookiesExceptions "Veszélyes sütik figyelmen kívül hagyása, amelyek HTTPS segítségével lettek beállítva az alábbi oldalakon:">
+<!ENTITY noscriptClearClickTitle "ClearClick figyelmeztetések">
+<!ENTITY noscriptClearClickHeader "Kattintás után hamisítványgyanús viselkedés lehetséges!">
+<!ENTITY noscriptClearClickDescription "A NoScript billentyűzet vagy egér kölcsönhatását észlelte egy részlegesen rejtett objektummal. A képre kattintva válthat a gyanús és a tiszta változat között.">
+<!ENTITY noscriptClearClickOpt "ClearClick védelem a">
+<!ENTITY noscriptOpacizeOpt "Beágyazott objektumok beállítása nem átlátszónak a">
+<!ENTITY noscriptTrustedPagesAdj "biztonságos oldalakon">
+<!ENTITY noscriptUntrustedPagesAdj "nem biztonságos oldalakon">
+<!ENTITY noscriptKeepLocked "Az elem blokkolása a továbbiakban is (ajánlott)">
+<!ENTITY noscriptEmbeddings "Beágyazott objektumok">

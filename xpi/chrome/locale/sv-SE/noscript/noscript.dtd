@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Förbjud &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Förbjud Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Förbjud &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Förbjud &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Förbjud Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Förbjud andra tillägg">
 <!ENTITY noscriptReloadWarn "Dessa alternativ kommer att börja gälla för nya eller (manuellt) uppdaterade webbsidor">

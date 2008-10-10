@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; verbieten">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieten">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieten">
+<!ENTITY noscriptForbidFrames "&lt;FRAME&gt; verbieten">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plug-ins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
@@ -135,3 +136,12 @@
 <!ENTITY noscriptSecureCookies "Automatisches sicheres Cookie-Management aktivieren">
 <!ENTITY noscriptSecureCookiesForced "Überprüfung der Cookies über verschlüsselte (HTTPS) Verbindungen für folgende Adressen erzwingen:">
 <!ENTITY noscriptSecureCookiesExceptions "Unsichere Cookies bei verschlüsselter (HTTPS) Verbindung bei folgenden Adressen ignorieren:">
+<!ENTITY noscriptClearClickTitle "ClearClick Warnung">
+<!ENTITY noscriptClearClickHeader "Potentielles Clickjacking / UI Redressing Versuch!">
+<!ENTITY noscriptClearClickDescription "NoScript wehrt ein Maus- oder Tastatur-Eingabe mit einem teilweise versteckten Element ab. Klick auf das Bild oberhalb um zwischen der verdeckten und der klaren Version zu wechseln.">
+<!ENTITY noscriptClearClickOpt "ClearClick Schutz auf ">
+<!ENTITY noscriptOpacizeOpt "Undurchsichtig eingebettete Objekte auf ">
+<!ENTITY noscriptTrustedPagesAdj "vertrauenswürdigen Seiten">
+<!ENTITY noscriptUntrustedPagesAdj "nicht vertrauenswürdigen /">
+<!ENTITY noscriptKeepLocked "Element gesperrt halten (empfohlen)">
+<!ENTITY noscriptEmbeddings "Eingebettete Objekte">

@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Απαγόρευση εκτέλεσης «Web Bugs»">
 <!ENTITY noscriptForbidSilverlight "Απαγόρευση εκτέλεσης Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Απαγόρευση εκτέλεσης &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Απαγόρευση εκτέλεσης &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Απαγόρευση εκτέλεσης Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Απαγόρευση εκτέλεσης άλλων πρόσθετων λειτουργιών">
 <!ENTITY noscriptReloadWarn "Αυτές οι επιλογές θα εφαρμοστούν σε σελίδες που θα ανανεώσετε μόνοι σας ή θα φορτώσετε από &apos;δω και πέρα">

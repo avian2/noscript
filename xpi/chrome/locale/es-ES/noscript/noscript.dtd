@@ -19,7 +19,7 @@
 <!ENTITY noscriptAppearance "Presentación">
 <!ENTITY noscriptShow "Mostrar…">
 <!ENTITY noscriptCtxMenu "Menú contextual">
-<!ENTITY noscriptStatusIcon "Icono en la barra de estado de Firefox">
+<!ENTITY noscriptStatusIcon "Icono en la barra de estado">
 <!ENTITY noscriptFullAddr "Direcciones completas (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Dominios completos (www.noscript.net)">
 <!ENTITY noscriptBaseDom "Dominios de segundo nivel (noscript.net)">
@@ -47,11 +47,12 @@
 <!ENTITY noscriptForbidWebBugs "Bloquear &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Bloquear Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Bloquear &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Bloquear &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Bloquear Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Bloquear otros plugins">
 <!ENTITY noscriptReloadWarn "Estas opciones tendrán efecto en páginas nuevas o tras recargar manualmente">
 <!ENTITY noscriptConfirmUnblock "Pedir confirmación antes de desbloquear temporalmente un objeto">
-<!ENTITY noscriptStatusLabel "Etiqueta en la barra de estado">
+<!ENTITY noscriptStatusLabel "Etiqueta informativa en la barra de estado">
 <!ENTITY noscriptForbidBookmarklets "Bloquear Bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Mostrar indicador de objeto bloqueado (placeholder)">
 <!ENTITY noscriptTruncateTitle "Truncar títulos de documentos">
@@ -135,3 +136,12 @@
 <!ENTITY noscriptSecureCookies "Activar la gestión automática segura de cookies">
 <!ENTITY noscriptSecureCookiesForced "Obligar a encriptar todas las cookies recibidas por HTTPS en los siguientes sitios:">
 <!ENTITY noscriptSecureCookiesExceptions "Ignorar cookies no seguras recibidas por HTTPS de los siguientes sitios:">
+<!ENTITY noscriptClearClickTitle "Aviso de ClearClick">
+<!ENTITY noscriptClearClickHeader "¡Posible intento de clickjacking / camuflaje de UI!">
+<!ENTITY noscriptClearClickDescription "NoScript interceptó una interacción de ratón o teclado con un elemento parcialmente oculto. Pulse en la imagen superior para comparar la versión oculta y la ya revelada.">
+<!ENTITY noscriptClearClickOpt "Usar la protección ClearClick en páginas...">
+<!ENTITY noscriptOpacizeOpt "Hacer opacos los objetos incrustados en páginas...">
+<!ENTITY noscriptTrustedPagesAdj "fiables">
+<!ENTITY noscriptUntrustedPagesAdj "no fiables">
+<!ENTITY noscriptKeepLocked "Mantener bloqueado ese elemento (recomendado)">
+<!ENTITY noscriptEmbeddings "Objetos incrustados">

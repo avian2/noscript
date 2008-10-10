@@ -33,8 +33,10 @@ pref("noscript.forbidSilverlight", true);
 pref("noscript.forbidPlugins", true);
 pref("noscript.forbidActiveContentParentTrustCheck", true);
 pref("noscript.forbidIFrames", false);
-pref("noscript.forbidIFramesContext", 3);
+pref("noscript.forbidIFramesContext", 2);
 pref("noscript.forbidIFramesParentTrustCheck", true);
+pref("noscript.forbidFrames", false);
+pref("noscript.forbidMixedFrames", true);
 
 pref("noscript.forbidData", true);
 pref("noscript.sound.block", "chrome://noscript/skin/block.wav");
@@ -140,7 +142,7 @@ pref("noscript.opacizeObject", 1);
 
 pref("noscript.showUntrustedPlaceholder", true);
 
-pref("noscript.jsHack", "window.urchinTracker = function() {}");
+pref("noscript.jsHack", "(function(){var _0=function(){};with(window)urchinTracker=_0,pageTracker={_setDomainName:_0,_trackPageview:_0,_initData:_0},_gat={_getTracker:function(){return window.pageTracker}}})()");
 pref("noscript.jsHackRegExp", "");
 pref("noscript.canonicalFQDN", true);
 

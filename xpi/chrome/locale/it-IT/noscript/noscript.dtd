@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Vieta i &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Vieta Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Vieta &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Vieta &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Vieta Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Vieta altri plugin">
 <!ENTITY noscriptReloadWarn "Queste opzioni avranno effetto nelle nuove pagine e in quelle ricaricate (manualmente)">

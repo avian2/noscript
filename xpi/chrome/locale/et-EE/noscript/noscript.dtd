@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Keela &quot;veebivead&quot;">
 <!ENTITY noscriptForbidSilverlight "Keela Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Keela &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Keela &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Keela Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Keela teised pluginad">
 <!ENTITY noscriptReloadWarn "Need valikud jõustuvad uutel või (käsitsi) uuesti laetud lehtedel">
@@ -135,3 +136,12 @@
 <!ENTITY noscriptSecureCookies "Automaatne turvaküpsiste haldamine lubatud">
 <!ENTITY noscriptSecureCookiesForced "Kõik järgnevate saitide poolt HTTPS kaudu loodud küpsised krüpteeritakse">
 <!ENTITY noscriptSecureCookiesExceptions "Kõiki järgnevate saitide poolt HTTPS kaudu loodud mitteturvalisi küpsiseid eiratakse">
+<!ENTITY noscriptClearClickTitle "ClearClick hoiatus">
+<!ENTITY noscriptClearClickHeader "Võimalik kliki röövimise/kasutajaliidese parandamise katse!">
+<!ENTITY noscriptClearClickDescription "NoScript pidas kinni hiire või klaviatuuri interaktsiooni osaliselt varjatud elemendiga. Hiireklõps ülaloleval pildil lülitab ümber tõkestatud ja puhastatud versiooni vahel.">
+<!ENTITY noscriptClearClickOpt "ClearClick kaitse lehtedel...">
+<!ENTITY noscriptOpacizeOpt "Manusobjektid tehakse läbipaistmatuks lehtedel...">
+<!ENTITY noscriptTrustedPagesAdj "usaldatud">
+<!ENTITY noscriptUntrustedPagesAdj "mitteusaldatud">
+<!ENTITY noscriptKeepLocked "Lukusta antud element (soovitatav)">
+<!ENTITY noscriptEmbeddings "Manusobjektid">

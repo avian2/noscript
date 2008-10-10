@@ -48,6 +48,7 @@
 <!ENTITY noscriptForbidWebBugs "منع  &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "منع ميكروسوفت سلفرلايت">
 <!ENTITY noscriptForbidIFrames "منع &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "منع &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "منع ماكروميديا فلاش">
 <!ENTITY noscriptForbidPlugins "منع إضافات أُخرى">
 <!ENTITY noscriptReloadWarn "سيتم تفعيل هذه الخيارات في الصفحات الجديدة أو الصفحات المعاد تحميلها (يدوياً)">
@@ -136,3 +137,12 @@
 <!ENTITY noscriptSecureCookies "تفعيل الادارة الآلية للكعكات الآمنة">
 <!ENTITY noscriptSecureCookiesForced "أجبار التشفير لجميع الكعكات عبر اتصال آمن للمواقع التالية:">
 <!ENTITY noscriptSecureCookiesExceptions "اهمال الكعكات الغير آمنة عبر  اتصال آمن للمواقع التالية:">
+<!ENTITY noscriptClearClickTitle "ClearClick Warning">
+<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
+<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
+<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
+<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
+<!ENTITY noscriptTrustedPagesAdj "trusted">
+<!ENTITY noscriptUntrustedPagesAdj "untrusted">
+<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
+<!ENTITY noscriptEmbeddings "Embedded Objects">

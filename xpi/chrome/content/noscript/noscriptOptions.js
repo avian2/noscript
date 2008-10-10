@@ -121,6 +121,10 @@ var nsopt = {
       });
     });
     
+    if (!ns.clearClickHandler.isSupported(document))
+      ["clearClickOpts", "opt-clearClick.prompt"].forEach(function(id) {
+        document.getElementById(id).setAttribute("hidden", "true"); // Fx <= 1.5
+      });
     
     // document.getElementById("policy-tree").view = policyModel;
     window.sizeToContent();

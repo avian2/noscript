@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Заборонити «Web Bugs»">
 <!ENTITY noscriptForbidSilverlight "Заборонити Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Заборонити &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Заборонити &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Заборонити Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Заборонити інші плагини">
 <!ENTITY noscriptReloadWarn "Налаштування вступлять у силу на новій сторінці або після оновлення (вручну)">

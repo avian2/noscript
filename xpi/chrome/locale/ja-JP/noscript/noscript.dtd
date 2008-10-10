@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; の禁止">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ の禁止">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; の禁止">
+<!ENTITY noscriptForbidFrames "&lt;FRAME&gt; の禁止">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® の禁止">
 <!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
 <!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページ、または再読込したページで有効になります">
@@ -82,17 +83,18 @@
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;要素を隠す">
 <!ENTITY noscriptNselForce "ブロックした&lt;SCRIPT&gt;に引き続く&lt;NOSCRIPT&gt;を表示する">
 <!ENTITY noscriptAutoAllowTopLevel "トップレベルサイトはデフォルトで一時的に許可する">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
+<!ENTITY noscriptDescription "Firefoxをさらに安全にします: NoScriptはJavaScript, Java（およびその他のプラグイン）を、（あなたが使うオンラインバンキングサイトなど）あなたが選んだ信頼できるサイトでのみ実行可能にします。このホワイトリストによる予防的ブロック手法によって、機能性を減じることなく
+セキュリティ脆弱性への攻撃（既知と未知とに関わらず！）を防ぎます。専門家は同意するでしょう： FirefoxはNoScriptを使うことで本当にさらに安全になります:-)">
+<!ENTITY noscriptOptBlockCssScanners "CSSベースのスキャナをブロックする">
 <!ENTITY noscriptOptFilterXGet "クロスサイトの疑いのあるリクエストをサニタイズする">
 <!ENTITY noscriptOptFilterXPost "クロスサイトのPOSTリクエストを、同じ情報を持つGETリクエストに変換する">
-<!ENTITY noscriptShowConsole "Show Console...">
+<!ENTITY noscriptShowConsole "エラーコンソールを表示する...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload "安全でない再読み込み">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "対XSS保護の例外設定">
 <!ENTITY noscriptXssExceptions.description "これらの正規表現にマッチングする送り先はXSSから保護されません">
@@ -112,7 +114,7 @@
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "サイトからオブジェクトのためのプレースホルダーがない場合は信頼できないものとして記録する">
 <!ENTITY noscriptCollapseBlockedObjects "ブロックしたオブジェクトを折りたたむ">
-<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptExceptions "例外...">
 <!ENTITY noscriptBlockedObjects "ブロックしたオブジェクト">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "信頼できないと記録されたサイトからの全てのオブジェクトをブロックする">
 <!ENTITY noscriptTempAllowPage "このページの全てを一時的に許可する">

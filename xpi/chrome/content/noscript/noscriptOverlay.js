@@ -559,7 +559,7 @@ var noscriptOverlay = noscriptUtil.service ?
     if (!justTell) {
       if (unknown.length) {
         var browser = gBrowser.selectedBrowser;
-        ns.setExpando(browser, "allowPageURL", browser.docShell.currentURI.spec);
+        ns.setExpando(browser, "allowPageURL", content.document.URL);
         this.safeAllow(unknown, true, !permanent);
       }
     }

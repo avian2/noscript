@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Blokuj &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Blokuj aplety Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Blokuj aplety &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Blokuj aplety &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Blokuj animacje Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Blokuj inne wtyczki">
 <!ENTITY noscriptReloadWarn "Uwaga! Opcje te będą działały po odświeżeniu stron oraz w nowo otwieranych stronach.">

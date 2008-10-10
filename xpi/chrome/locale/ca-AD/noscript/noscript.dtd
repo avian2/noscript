@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Prohibeix el &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Prohibeix el Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Prohibeix el &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Prohibeix el &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Prohibeix el Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Prohibeix d&apos;altres connectors">
 <!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pàgines noves o recarregades (manualment)">

@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Forbid &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Forbid Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forbid other plugins">
 <!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
@@ -137,9 +138,9 @@
 <!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
 <!ENTITY noscriptClearClickTitle "ClearClick Warning">
 <!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
+<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image below to cycle between the obstructed and the clear version.">
 <!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
+<!ENTITY noscriptOpacizeOpt "Opaque embedded objects on pages…">
 <!ENTITY noscriptTrustedPagesAdj "trusted">
 <!ENTITY noscriptUntrustedPagesAdj "untrusted">
 <!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">

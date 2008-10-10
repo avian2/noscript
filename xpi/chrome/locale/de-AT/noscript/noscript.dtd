@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; verbieten">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieten">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieten">
+<!ENTITY noscriptForbidFrames "&lt;FRAME&gt; verbieten">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
@@ -108,16 +109,39 @@
 <!ENTITY noscriptForbidJarDocuments "Entfernte JAR-Dateien davon abhalten, als Dokumente geladen zu werden">
 <!ENTITY noscriptJarExceptions "Nicht zu blockierende JAR-Dokumente">
 <!ENTITY noscriptJarExceptions.description "JAR-Dokumente, die diesen regulären Ausdrücken entsprechen, werden NICHT blockiert.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp "Temporäre Berechtigungen aufheben">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
-<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
-<!ENTITY noscriptBlockedObjects "Blocked Objects">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
-<!ENTITY noscriptTempAllowPage "Ganze Seite temporär erlauben">
-<!ENTITY noscriptTempAllowPage.accesskey "S">
-<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptNoUntrustedPlaceholder "Keine Platzhalter für Objekte von als nicht vertrauenswürdig eingestuften Sites anzeigen">
+<!ENTITY noscriptCollapseBlockedObjects "Platz von geblockten Elementen freigeben">
+<!ENTITY noscriptExceptions "Ausnahmen…">
+<!ENTITY noscriptBlockedObjects "Geblockte Objekte">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Jedes Objekt von als nicht vertrauenswürdig eingestuften Sites blockieren">
+<!ENTITY noscriptTempAllowPage "Temporär alle Beschränkungen für diese Seite aufheben">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
+<!ENTITY noscriptAllowPage "Alle Beschränkungen für diese Seite aufheben">
 <!ENTITY noscriptAllowPage.accesskey "A">
-<!ENTITY noscriptTempToPerm "Make page permissions permanent">
-<!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptTempToPerm "Berechtigungen dieser Seite speichern">
+<!ENTITY noscriptTempToPerm.accesskey "b">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ (engl.)…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Verhalten">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Aktive Webinhalte verbieten, es sei denn, sie stammen aus einer verschlüsselten (HTTPS) Verbindung:">
+<!ENTITY noscriptHttps.never "Niemals">
+<!ENTITY noscriptHttps.proxy "Bei Verwendung eines Proxy (empfohlen bei Anonymisierungsdiensten wie Tor)">
+<!ENTITY noscriptHttps.always "Immer">
+<!ENTITY noscriptHttpsForced "Verschlüsselte (HTTPS) Verbindung für folgende Adressen erzwingen:">
+<!ENTITY noscriptHttpsForcedExceptions "Für folgende Adressen niemals die Verwendung verschlüsselter (HTTPS) Verbindung erzwingen:">
+<!ENTITY noscriptSecureCookies "Automatisches sicheres Cookie-Management aktivieren">
+<!ENTITY noscriptSecureCookiesForced "Überprüfung der Cookies über verschlüsselte (HTTPS) Verbindungen für folgende Adressen erzwingen:">
+<!ENTITY noscriptSecureCookiesExceptions "Unsichere Cookies bei verschlüsselter (HTTPS) Verbindung bei folgenden Adressen ignorieren:">
+<!ENTITY noscriptClearClickTitle "ClearClick Warnung">
+<!ENTITY noscriptClearClickHeader "Potentielles Clickjacking / UI Redressing Versuch!">
+<!ENTITY noscriptClearClickDescription "NoScript wehrt ein Maus- oder Tastatur-Eingabe mit einem teilweise versteckten Element ab. Klick auf das Bild oberhalb um zwischen der verdeckten und der klaren Version zu wechseln.">
+<!ENTITY noscriptClearClickOpt "ClearClick Schutz auf ">
+<!ENTITY noscriptOpacizeOpt "Undurchsichtig eingebettete Objekte auf ">
+<!ENTITY noscriptTrustedPagesAdj "vertrauenswürdigen Seiten">
+<!ENTITY noscriptUntrustedPagesAdj "nicht vertrauenswürdigen /">
+<!ENTITY noscriptKeepLocked "Element gesperrt halten (empfohlen)">
+<!ENTITY noscriptEmbeddings "Eingebettete Objekte">
