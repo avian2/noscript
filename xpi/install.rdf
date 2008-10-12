@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.8.2.4</em:version>
+   <em:version>1.8.2.8</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -27,6 +27,7 @@
    <em:contributor>Håvard Mork (Norwegian bokmål translation)</em:contributor>
    <em:contributor>Hwasung Kim (Places bookmarklet patch)</em:contributor>
    <em:contributor>Ivan Pesic, dragan021 (Serbian translation)</em:contributor>
+   <em:contributor>Ivan Jonoski (Macedonian translation)</em:contributor>
    <em:contributor>Jameka (Swedish translation)</em:contributor>
    <em:contributor>Joan-Josep Bargues (Catalan translation)</em:contributor>
    <em:contributor>Krcko (Croatian translation)</em:contributor>
