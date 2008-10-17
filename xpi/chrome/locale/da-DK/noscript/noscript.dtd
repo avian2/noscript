@@ -137,10 +137,10 @@
 <!ENTITY noscriptSecureCookiesForced "Tving kryptering for alle cookies sat over HTTPS af de følgende steder:">
 <!ENTITY noscriptSecureCookiesExceptions "Ignorer usikre cookies sat over HTTPS af de følgende steder:">
 <!ENTITY noscriptClearClickTitle "ClearClick advarsel">
-<!ENTITY noscriptClearClickHeader "Potentiel klik-kapring/UI afhjælper forsøg!">
-<!ENTITY noscriptClearClickDescription "NoScript hindrede en muse- eller tastatur-interaktion med et delvist skjult element. Klik på billedet ovenover for at veksle mellem den blokerede og den frie version.">
-<!ENTITY noscriptClearClickOpt "ClearClick-beskyttelse på sider...">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
+<!ENTITY noscriptClearClickHeader "Potentiel klik-kapring/UI Redress forsøg!">
+<!ENTITY noscriptClearClickDescription "NoScript hindrede en muse- eller tastatur-interaktion med et delvist skjult element. Klik på billedet nedenunder for, at veksle mellem den blokerede og den frie version.">
+<!ENTITY noscriptClearClickOpt "ClearClick-beskyttelse på sider markeret som...">
+<!ENTITY noscriptOpacizeOpt "Gør indlejrede objekter uigennemsigtige på sider markeret som...">
 <!ENTITY noscriptTrustedPagesAdj "betroede">
 <!ENTITY noscriptUntrustedPagesAdj "ubetroede">
 <!ENTITY noscriptKeepLocked "Bevar dette element låst (anbefalet)">

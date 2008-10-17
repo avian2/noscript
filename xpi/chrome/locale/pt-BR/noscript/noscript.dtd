@@ -47,7 +47,6 @@
 <!ENTITY noscriptForbidWebBugs "Proibir &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Proibir Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Proibir &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Proibir &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Proibir Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Proibir outros plugins">
 <!ENTITY noscriptReloadWarn "Estas opções terão efeito em páginas novas ou (manualmente) atualizadas.">
@@ -123,25 +122,25 @@
 <!ENTITY noscriptTempToPerm "Tornar as permissões da página permanentes">
 <!ENTITY noscriptTempToPerm.accesskey "o">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq "FAQ HTTPS">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
-<!ENTITY noscriptHttps.behavior "Behavior">
+<!ENTITY noscriptHttps.behavior "Comportamento">
 <!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
-<!ENTITY noscriptHttps.never "Never">
-<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
-<!ENTITY noscriptHttps.always "Always">
-<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
-<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
-<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
-<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warning">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
-<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptHttps.description "Proibir conteúdo web ativo a não ser que venha de uma conexão segura (HTTPS).">
+<!ENTITY noscriptHttps.never "Nunca">
+<!ENTITY noscriptHttps.proxy "Quando estiver usando um proxy (recomendado com Tor)">
+<!ENTITY noscriptHttps.always "Sempre">
+<!ENTITY noscriptHttpsForced "Forçar os sites seguintes a usarem conexões seguras (HTTPS):">
+<!ENTITY noscriptHttpsForcedExceptions "Nunca forçar conexão segura (HTTPS) para os sites seguintes:">
+<!ENTITY noscriptSecureCookies "Ativar Gerenciamento Automático e Seguro de Cookies">
+<!ENTITY noscriptSecureCookiesForced "Forçar encriptação para todos os cookies usados por HTTPS pelos sites seguintes:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignorara cookies inseguros usados por HTTPS pelos sites seguintes:">
+<!ENTITY noscriptClearClickTitle "Alerte de ClearClick">
+<!ENTITY noscriptClearClickHeader "Clickjacking em potencial / Tentativa de redirecionamento da interface do usuário!">
+<!ENTITY noscriptClearClickDescription "O NoScript interceptou uma interação por mouse ou teclado com um elemento parcialmente oculto. Clique na imagem para rodar entre a versão oculta e a versão clara.">
+<!ENTITY noscriptClearClickOpt "Proteção Clearclick nas páginas...">
+<!ENTITY noscriptOpacizeOpt "Tornar opacos objetos integrados às páginas...">
+<!ENTITY noscriptTrustedPagesAdj "confiável">
+<!ENTITY noscriptUntrustedPagesAdj "não confiável">
+<!ENTITY noscriptKeepLocked "Manter esse elemento travado (recomendado)">
+<!ENTITY noscriptEmbeddings "Objetos Integrados">

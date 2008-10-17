@@ -44,7 +44,7 @@ var noscriptBM = {
       return;
    
     var originalArguments = arguments;
-    callback = function() { noscriptBM.handleURLBarCommandOriginal.apply(window, originalArguments); };
+    var callback = function() { noscriptBM.handleURLBarCommandOriginal.apply(window, originalArguments); };
     
     var shortcut = gURLBar.value;
     var jsrx = /^\s*(?:data|javascript):/i;

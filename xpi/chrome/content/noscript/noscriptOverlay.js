@@ -825,10 +825,13 @@ var noscriptOverlay = noscriptUtil.service ?
           n.getAttribute("value") == "noscript"
           && noscriptOverlay.notificationPos == "bottom") {
         const stack = this._noscriptBottomStack_;
-        while (stack.firstChild) 
+        /*
+         while (stack.firstChild) 
           stack.removeChild(stack.firstChild);
         
         stack.appendChild(n);
+        */
+        stack.insertBefore(n, null);
         var hbox = n.ownerDocument.getAnonymousElementByAttribute(
                       n, "class", "notification-inner outset");
         if (hbox) {
@@ -906,6 +909,7 @@ var noscriptOverlay = noscriptUtil.service ?
       }
       const popup = "noscript-notify-popup";
       if (box.appendNotification) { // >= Fx 2.0
+        if (box._closedNotification && !box._closedNotification.parentNode) box._closedNotification = null; // work around for notification bug
         widget =  box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_MEDIUM,
                   [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]);
         
@@ -1114,17 +1118,27 @@ var noscriptOverlay = noscriptUtil.service ?
     }
   },
   
-  notificationHide: function(browser, immediate) { // Modified by Higmmer
+  notificationHide: function(browser, auto) { // Modified by Higmmer
     var box = this.getNotificationBox(null, browser);
     var widget = this.getNsNotification(box); // Modified by Higmmer
     if (widget) {
       if (widget.parentNode) {
         box = widget.parentNode.parentNode;
         if (box && box.removeNotification) {
-          if (immediate && box.currentNotification == widget) {
+          if (auto) return true; // Fx 3 automatic hides
+          
+          if (box.currentNotification == widget) {
             box.currentNotification = null;
           }
           box.removeNotification(widget);
+          // work-around for bottom browser rendering bug
+          box.style.width = "";
+          window.setTimeout(function() {
+            box.style.width = "100%"
+            window.setTimeout(function() {
+              box.style.width = "";
+            }, 10);
+          }, 10);
         } else if (widget.close) {
           widget.close();
         } else {
@@ -1223,14 +1237,14 @@ var noscriptOverlay = noscriptUtil.service ?
           !(ns.getExpando(win, "messageShown") && this.notifyHidePermanent));
         ns.setExpando(win, "messageShown", true);
       } else {
-        this.notificationHide(); 
+        this.notificationHide(null, true); 
       }
       if (!ns.getExpando(win, "soundPlayed")) {
         ns.soundNotify(window.content.location.href);
         ns.setExpando(win, "soundPlayed");
       }
     } else {
-      this.notificationHide();
+      this.notificationHide(null, true);
       message = shortMessage = "";
     }
     

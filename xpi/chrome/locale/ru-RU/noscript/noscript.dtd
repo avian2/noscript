@@ -47,7 +47,6 @@
 <!ENTITY noscriptForbidWebBugs "Запретить отображение «Web Bugs»">
 <!ENTITY noscriptForbidSilverlight "Запретить отображение элементов Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Запретить отображение элементов &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Запретить отображение элементов &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Запретить отображение элементов Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Запретить отображение элементов других плагинов">
 <!ENTITY noscriptReloadWarn "Примечание: изменённые настройки вступают в силу либо на новой странице, либо после обновления текущей страницы (вручную)">
@@ -136,12 +135,12 @@
 <!ENTITY noscriptSecureCookies "Автоматическая система управления безопасностью cookies">
 <!ENTITY noscriptSecureCookiesForced "Использовать шифрование для всех cookies устанавливаемых через HTTPS со следующих сайтов:">
 <!ENTITY noscriptSecureCookiesExceptions "Игнорировать небезопасные cookies устанавливаемые через HTTPS со следующих сайтов:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warning">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
-<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptClearClickTitle "Предупреждения ClearClick">
+<!ENTITY noscriptClearClickHeader "Возможно Clickjacking / Попытка изменения UI">
+<!ENTITY noscriptClearClickDescription "NoScript пресёк выполнение операции с частично скрытым элементом. Нажмите на изображения чтобы увидеть разницу.">
+<!ENTITY noscriptClearClickOpt "ClearClick-защита на страницах...">
+<!ENTITY noscriptOpacizeOpt "Изменять прозрачность встроенных объектов на страницах...">
+<!ENTITY noscriptTrustedPagesAdj "доверенных">
+<!ENTITY noscriptUntrustedPagesAdj "недоверенных">
+<!ENTITY noscriptKeepLocked "Оставить этот элемент заблокированным (рекомендуется)">
+<!ENTITY noscriptEmbeddings "Встроенные объекты">
