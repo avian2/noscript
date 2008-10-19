@@ -789,24 +789,38 @@ var noscriptOverlay = noscriptUtil.service ?
 
     var nb = gb.getNotificationBox(browser);
     
-    if (nb && pos == "bottom") 
-      this.patchNotificationBox(nb);
+    if (nb) 
+      this.patchNotificationBox(nb, pos);
    
     return nb;
   },
-  patchNotificationBox: function(nb) {
-    if (nb._noscriptBottomStack_) return;
+  patchNotificationBox: function(nb, pos) {
+    if (nb._noscriptPatched) return;
+    
+    nb._noscriptPatched = true;
+    
+    nb.__defineGetter__("_closedNotification", function() {
+      var cn = this.__ns__closedNotification;
+      return (cn && cn.parentNode ? cn : null);
+    });
+    
+    nb.__defineSetter__("_closedNotification", function(cn) {
+      this.__ns__closedNotification = cn;
+    });
+    
+    if (pos != "bottom") return;
+    
     nb._dom_ = {};
     const METHODS = this.notificationBoxPatch;
     for (m in METHODS) {
       nb._dom_[m] = nb[m];
       nb[m] = METHODS[m];
     }
-    
+
     var stacks =  nb.getElementsByTagName("stack");
     var stack = null;
     for (var j = stacks.length; j-- > 0;) {
-      if (stacks[j].getAttribute("class") ==  "noscript-bottom-notify") {
+      if (stacks[j].getAttribute("class") == "noscript-bottom-notify") {
         stack = stacks[j];
         break;
       }
@@ -1118,32 +1132,24 @@ var noscriptOverlay = noscriptUtil.service ?
     }
   },
   
-  notificationHide: function(browser, auto) { // Modified by Higmmer
+  notificationHide: function(browser) { // Modified by Higmmer
     var box = this.getNotificationBox(null, browser);
     var widget = this.getNsNotification(box); // Modified by Higmmer
     if (widget) {
-      if (widget.parentNode) {
-        box = widget.parentNode.parentNode;
-        if (box && box.removeNotification) {
-          if (auto) return true; // Fx 3 automatic hides
-          
-          if (box.currentNotification == widget) {
-            box.currentNotification = null;
-          }
-          box.removeNotification(widget);
-          // work-around for bottom browser rendering bug
-          box.style.width = "";
-          window.setTimeout(function() {
-            box.style.width = "100%"
-            window.setTimeout(function() {
-              box.style.width = "";
-            }, 10);
-          }, 10);
-        } else if (widget.close) {
-          widget.close();
-        } else {
-          widget.setAttribute("hidden", "true");
+      if (widget.close) {
+        if (box.currentNotification == widget) {
+          box.currentNotification = null;
         }
+        widget.close();
+        box.style.width = "";
+        window.setTimeout(function() {
+          box.style.width = "100%"
+          window.setTimeout(function() {
+            box.style.width = "";
+          }, 10);
+        }, 10);
+      } else {
+        widget.setAttribute("hidden", "true");
       }
       return true;
     }
@@ -1237,14 +1243,14 @@ var noscriptOverlay = noscriptUtil.service ?
           !(ns.getExpando(win, "messageShown") && this.notifyHidePermanent));
         ns.setExpando(win, "messageShown", true);
       } else {
-        this.notificationHide(null, true); 
+        this.notificationHide(); 
       }
       if (!ns.getExpando(win, "soundPlayed")) {
         ns.soundNotify(window.content.location.href);
         ns.setExpando(win, "soundPlayed");
       }
     } else {
-      this.notificationHide(null, true);
+      this.notificationHide();
       message = shortMessage = "";
     }
     
@@ -1268,7 +1274,7 @@ var noscriptOverlay = noscriptUtil.service ?
     browser = browser || ns.domUtils.findBrowserForNode(doc);
     if (browser) {
       ns.setExpando(browser, "pe", null);
-      this.notificationHide(browser, true);
+      // this.notificationHide(browser);
     }
   },
   
