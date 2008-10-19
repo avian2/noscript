@@ -836,7 +836,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.3.2",
+  VERSION: "1.8.3.3",
   
   get wrappedJSObject() {
     return this;
@@ -4135,60 +4135,48 @@ NoscriptService.prototype = {
     const rw = this.requestWatchdog;
     const uri = newChannel.URI;
     const policyHints = rw.extractFromChannel(oldChannel, "noscript.policyHints");
-    
-    if (policyHints) {
-      // 0: aContentType, 1: aContentLocation, 2: aRequestOrigin, 3: aContext, 4: aMimeTypeGuess, 5: aInternalCall
-      
-      policyHints[1] = uri;
-      
-      var ctx = policyHints[3];
-      
-      if (!this.isJSEnabled(oldChannel.URI.spec)) policyHints[2] = oldChannel.URI;
-      try {
-        policyHints[4] = newChannel.contentType || oldChannel.contentType || policyHints[4];
-      } catch(e) {}
-      
-      var browser, win;
-      var type = policyHints[0];
-      if(type != 6) { // not a document load? try to cache redirection for menus
-        try {
-          var site = this.getSite(uri.spec);
-          win = rw.findWindow(newChannel) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
-          browser = win && rw.findBrowser(newChannel, win);
-          if (browser) {
-            this.getRedirCache(browser, win.document.documentURI)
-                .push({ site: site, type: type });
-          } else {
-            if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
-          }
-        } catch(e) {
-          if (this.consoleDump) this.dump(e);
-        }
-      }
-      
-      if (this.shouldLoad.apply(this, policyHints) != CP_OK) { // forbid
-        if (this.consoleDump) {
-          this.dump("Blocked " + oldChannel.URI.spec + " -> " + uri.spec + " redirection of type " + type);
-        }
-        // we can't cancel, otherwise the loading looks "suspended"
-        // oldChannel.cancel(NS_BINDING_ABORTED);
-        // newChannel.cancel(NS_BINDING_ABORTED);
+    try {
+      if (policyHints) {
+        // 0: aContentType, 1: aContentLocation, 2: aRequestOrigin, 3: aContext, 4: aMimeTypeGuess, 5: aInternalCall
         
-        newChannel.loadFlags = newChannel.INHIBIT_CACHING | newChannel.LOAD_BYPASS_CACHE;
-        const deadURI = "https://255.255.255.255/NS_BLOCKED";
+        policyHints[1] = uri;
+        
+        var ctx = policyHints[3];
+        
+        if (!this.isJSEnabled(oldChannel.URI.spec)) policyHints[2] = oldChannel.URI;
         try {
-          newChannel.URI.spec = deadURI
-        } catch(e) {
+          policyHints[4] = newChannel.contentType || oldChannel.contentType || policyHints[4];
+        } catch(e) {}
+        
+        var browser, win;
+        var type = policyHints[0];
+        if(type != 6) { // not a document load? try to cache redirection for menus
+          try {
+            var site = this.getSite(uri.spec);
+            win = rw.findWindow(newChannel) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
+            browser = win && rw.findBrowser(newChannel, win);
+            if (browser) {
+              this.getRedirCache(browser, win.document.documentURI)
+                  .push({ site: site, type: type });
+            } else {
+              if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
+            }
+          } catch(e) {
+            if (this.consoleDump) this.dump(e);
+          }
         }
-        if (deadURI != newChannel.URI.spec) throw NS_BINDING_ABORTED;
-        if (this.consoleDump) {
-          this.dump("Blocked " + oldChannel.URI.spec + " -> " + uri.spec + " redirection of type " + type);
+        
+        if (this.shouldLoad.apply(this, policyHints) != CP_OK) { // forbid
+          if (this.consoleDump) {
+            this.dump("Blocked " + oldChannel.URI.spec + " -> " + uri.spec + " redirection of type " + type);
+          }
+          throw NS_BINDING_ABORTED;
         }
-        return;
-      }
-      
-      rw.attachToChannel(newChannel, "noscript.policyHints", policyHints);
-      this.resetPolicyState(); 
+        
+        rw.attachToChannel(newChannel, "noscript.policyHints", policyHints);
+      } 
+    } finally {
+      this.resetPolicyState();
     }
     
     // Document transitions
