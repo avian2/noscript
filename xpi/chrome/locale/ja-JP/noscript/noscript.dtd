@@ -40,21 +40,20 @@
 <!ENTITY noscriptAdvanced "詳細設定">
 <!ENTITY noscriptAdditionalPermissions "信頼済みサイトへの許可の追加">
 <!ENTITY noscriptAllowClipboard "クリップボードからリッチテキストのコピーとペーストを可能にする">
-<!ENTITY noscriptAdditionalRestrictions "信頼されていないサイトへの制限の追加">
+<!ENTITY noscriptAdditionalRestrictions "信頼していないサイトへの制限の追加">
 <!ENTITY noscriptPlugins "プラグイン">
 <!ENTITY noscriptContentBlocker "信頼しているサイトにもこれらの制限を適用する">
 <!ENTITY noscriptForbidJava "Java™ の禁止">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; の禁止">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ の禁止">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; の禁止">
-<!ENTITY noscriptForbidFrames "&lt;FRAME&gt; の禁止">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® の禁止">
 <!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
 <!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページ、または再読込したページで有効になります">
 <!ENTITY noscriptConfirmUnblock "オブジェクトを一時的に許可する前に確認する">
 <!ENTITY noscriptStatusLabel "ステータスバーラベル">
 <!ENTITY noscriptForbidBookmarklets "ブックマークレットの禁止">
-<!ENTITY noscriptShowPlaceholder "プレースホルダーとアイコンを表示する">
+<!ENTITY noscriptShowPlaceholder "プレースホルダーアイコンを表示する">
 <!ENTITY noscriptTruncateTitle "ページタイトルを切り詰める">
 <!ENTITY noscriptFixLinks "JavaScriptリンクの修正を試みる">
 <!ENTITY noscriptAllowBookmarks "ブックマークにある全てのサイトを許可する">
@@ -112,7 +111,7 @@
 <!ENTITY noscriptJarExceptions.description "これらの正規表現にマッチングするJARドキュメントはブロックされません。">
 <!ENTITY noscriptRevokeTemp "一時的な許可を取り消す">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "サイトからオブジェクトのためのプレースホルダーがない場合は信頼できないものとして記録する">
+<!ENTITY noscriptNoUntrustedPlaceholder "信頼できないと記録されたサイトからのオブジェクトにはプレースホルダーを表示しない">
 <!ENTITY noscriptCollapseBlockedObjects "ブロックしたオブジェクトを折りたたむ">
 <!ENTITY noscriptExceptions "例外...">
 <!ENTITY noscriptBlockedObjects "ブロックしたオブジェクト">
@@ -139,10 +138,10 @@
 <!ENTITY noscriptSecureCookiesExceptions "以下のサイトからのHTTPSによってセットされた安全でないcookieを無視する:">
 <!ENTITY noscriptClearClickTitle "ClearClick警告">
 <!ENTITY noscriptClearClickHeader "Clickjacking / UI Redressingの可能性があります!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
+<!ENTITY noscriptClearClickDescription "NoScriptは部分的に隠された要素へのマウスやキーボードの関与を阻止しました。上部のイメージをクリックすることで、遮られている版と遮られていない版を交互に表示します。">
+<!ENTITY noscriptClearClickOpt "ClearClick保護を行う:">
+<!ENTITY noscriptOpacizeOpt "埋め込みオブジェクトをOpacizeする:">
+<!ENTITY noscriptTrustedPagesAdj "信頼しているページ">
+<!ENTITY noscriptUntrustedPagesAdj "信頼していないページ">
 <!ENTITY noscriptKeepLocked "この要素をロックしたままにする(推奨)">
 <!ENTITY noscriptEmbeddings "埋め込みオブジェクト">

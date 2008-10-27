@@ -273,7 +273,7 @@ var noscriptOverlay = noscriptUtil.service ?
     const showBase = !addressOnly && ns.getPref("showBaseDomain", true);
     const showUntrusted = ns.getPref("showUntrusted", true);
     const showDistrust = ns.getPref("showDistrust", true);
-    const showNothing = !(showAddress || showDomain || showBase || showUntrust);
+    const showNothing = !(showAddress || showDomain || showBase || showUntrusted);
     // const forbidImpliesUntrust = ns.forbidImpliesUntrust;
     
     const showPermanent = ns.getPref("showPermanent", true);
@@ -475,12 +475,12 @@ var noscriptOverlay = noscriptUtil.service ?
     if (!(extras && ns.getPref("showBlockedObjects", true)))
       return;
     
-    var egroup, e, node, i;
+    var egroup, e, node, j;
     var pluginExtras = [];
-    i = 0;
+    var i = 0;
     for each(egroup in extras) {
-      for (i = egroup.length; i-- > 0;) {
-         e = egroup[i];
+      for (j = egroup.length; j-- > 0;) {
+         e = egroup[j];
          
          if(typeof(e) == "object" && (e.tag && !e.placeholder)) continue;
          node = document.createElement("menuitem");
@@ -494,7 +494,7 @@ var noscriptOverlay = noscriptUtil.service ?
          node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-temp noscript-allow");
          node.style.listStyleImage = ns.cssMimeIcon(e.mime, 16);
          menu.appendChild(node);
-         pluginExtras.push(e);
+         pluginExtras[i++] = e;
       }
     }
     if (pluginExtras.length) {
@@ -547,14 +547,18 @@ var noscriptOverlay = noscriptUtil.service ?
     const sites = this.getSites();
     const unknown = [];
     const level = ns.getPref("allowPageLevel", 0) || ns.preferredSiteLevel;
+    const trusted = ns.jsPolicySites;
+    const tempToPerm = permanent === -1;
     var site;
     for (var j = sites.length; j-- > 0;) {
-      site = ns.getQuickSite(sites[j], level);
-      
-      if (permanent === -1 // tempToPerm
-          ? ns.isTemp(site) && ns.isJSEnabled(site) 
-          : !(ns.isJSEnabled(site) || ns.isUntrusted(site)))
-        unknown.push(site);
+      if (tempToPerm) {
+        site = trusted.matches(sites[j]);
+        if (!(site && ns.isTemp(site)) || ns.isUntrusted(site)) continue;
+      } else {
+        site = ns.getQuickSite(sites[j], level);
+        if (ns.isJSEnabled(site) || ns.isUntrusted(site)) continue;
+      }
+      unknown.push(site);
     }
     if (!justTell) {
       if (unknown.length) {
@@ -1274,7 +1278,6 @@ var noscriptOverlay = noscriptUtil.service ?
     browser = browser || ns.domUtils.findBrowserForNode(doc);
     if (browser) {
       ns.setExpando(browser, "pe", null);
-      // this.notificationHide(browser);
     }
   },
   

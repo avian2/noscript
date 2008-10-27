@@ -47,7 +47,6 @@
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot;ı engelle">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™&apos;ı engelle">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt;&apos;i engelle">
-<!ENTITY noscriptForbidFrames "&lt;FRAME&gt;&apos;i engelle">
 <!ENTITY noscriptForbidFlash "Adobe® Flash®&apos;ı engelle">
 <!ENTITY noscriptForbidPlugins "Diğer eklentileri yasakla">
 <!ENTITY noscriptReloadWarn "Bu ayarlar sadece yeni veya kendinizin yüklediği sayfalar için geçerlidir.">
@@ -136,12 +135,12 @@
 <!ENTITY noscriptSecureCookies "Otomatik Guvenli Cerez Yonetimini aktive et">
 <!ENTITY noscriptSecureCookiesForced "Bu sitelerin cerezlerinin HTTPS uzerinden gonderilmesine zorla:">
 <!ENTITY noscriptSecureCookiesExceptions "Guvensiz HTTPS uzerinden gonderilen cerezleri bu siteler icin yoksay:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warning">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
-<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptClearClickTitle "TemizTik Uyarisi">
+<!ENTITY noscriptClearClickHeader "Potansiyel TiklamaHilesi/YenidenAdresleme Denemesi">
+<!ENTITY noscriptClearClickDescription "NoScript kismen gizlenmis olan bir element ile fare veya klavyenin etkilesimini engelledi. Engellenmis ve temiz versiyonu arasinda gecis yapmak icin ustteki resme tiklayin.">
+<!ENTITY noscriptClearClickOpt "TemizTik korumasi yap...">
+<!ENTITY noscriptOpacizeOpt "Sayfaya gömülü nesneleri opaklastir...">
+<!ENTITY noscriptTrustedPagesAdj "guvenilenlerde">
+<!ENTITY noscriptUntrustedPagesAdj "guvensizlerde">
+<!ENTITY noscriptKeepLocked "Bu nesneyi kilitli olarak birak (tavsiye edilir)">
+<!ENTITY noscriptEmbeddings "Gömülü Nesneler">

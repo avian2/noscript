@@ -836,7 +836,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.3.3",
+  VERSION: "1.8.3.6",
   
   get wrappedJSObject() {
     return this;
@@ -1286,9 +1286,10 @@ NoscriptService.prototype = {
         break;
       case "clearClick":
       case "opacizeObject":
-        sheet = ".__noscriptOpacized__ { opacity: 1 !important; min-width: 52px !important; min-height: 52px !important; visibility: visible; } " +
-                "iframe.__noscriptOpacized__ { display: block !important } object.__noscriptOpacized__, embed.__noscriptOpacized__ { display: inline !important } " +
-                ".__noscriptScrolling__ { overflow: auto !important } " +
+        sheet = ".__noscriptOpacized__ { opacity: 1 !important; visibility: visible; } " +
+                "iframe.__noscriptOpacized__ { display: block !important; } " +
+                "object.__noscriptOpacized__, embed.__noscriptOpacized__ { display: inline !important } " +
+                ".__noscriptScrolling__ { overflow: auto !important; min-width: 52px !important; min-height: 52px !important } " +
                 ".__noscriptHidden__ { visibility: hidden !important } " +
                 ".__noscriptAdjustedText__ { text-align: left !important; text-decoration: none !important }";
                 
@@ -7490,7 +7491,7 @@ ClearClickHandler.prototype = {
     var zoom = this.getZoom(browser);
     
     var shownCS, sheet, viewer, sheetObj;
-    var cssPatch1;
+    var cssPatch;
     var frame, frameClass;
     var bgStyle;
     var gfx, ex;
@@ -7505,7 +7506,8 @@ ClearClickHandler.prototype = {
           if (viewer) viewer.enableRendering = false; 
           shownCS = "__noscriptShown__" + Math.round(Math.random() * 9999999).toString(16) + "_" + Math.round(Math.random() * 9999999).toString(16);
           sheet = "body * { visibility: hidden !important } body ." + shownCS + " { visibility: visible !important; opacity: 1 !important }";
-          cssPatch1 = this.collectAncestors(o, true).forEach(function(o) { this.classPush(o, o.className + " " + shownCS); }, this);
+          (cssPatch = this.collectAncestors(o, true))
+            .forEach(function(o) { this.classPush(o, o.className + " " + shownCS); }, this);
           if (this.oldStyle) {
             // Gecko < 1.9, asynchronous user sheets force ugly work-around
             sheetObj = d.createElement("style");
@@ -7611,7 +7613,7 @@ ClearClickHandler.prototype = {
       
     } finally {
     
-      if (cssPatch1) cssPatch1.forEach(function(o) { this.classPop(o); }, this);
+      if (cssPatch) cssPatch.forEach(function(o) { this.classPop(o); }, this);
       if (sheet) {
         if (sheetObj) {
           d.documentElement.removeChild(sheetObj);

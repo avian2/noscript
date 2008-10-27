@@ -39,7 +39,7 @@ var noscriptBM = {
   },
   
   handleURLBarCommandOriginal: null,
-  handleURLBarCommand: function() {
+  handleURLBarCommand: function() { // Fx 3.0 command bar interception
     if(!(window.gURLBar && gURLBar.value))
       return;
    
@@ -60,6 +60,12 @@ var noscriptBM = {
     }
     
     callback();
+  },
+  
+  loadURI: function() { // Fx 3.1 command bar interception
+    return (window.gURLBar && window.gURLBar.handleCommand == arguments.callee.caller) 
+           ? noscriptBM.handleURLBarCommand.apply(window, arguments)
+           : noscriptBM.handleURLBarCommandOriginal.apply(window, arguments);
   },
 
   handleBookmark: function(url, openCallback) {
@@ -95,15 +101,20 @@ var noscriptBM = {
   onLoad: function(ev) {
     ev.currentTarget.removeEventListener("load", arguments.callee, false);
     if(!noscriptUtil.service) return;
- 
-    if(window.BookmarksCommand && !noscriptBM.openOneBookmarkOriginal) { // patch bookmark clicks
+    
+    // patch bookmark clicks
+    if(window.BookmarksCommand && !noscriptBM.openOneBookmarkOriginal) { 
       noscriptBM.openOneBookmarkOriginal = BookmarksCommand.openOneBookmark;
       BookmarksCommand.openOneBookmark = noscriptBM.openOneBookmark;
     }
     
-    if(window.handleURLBarCommand && !noscriptBM.handleURLBarCommandOriginal) { // patch URLBar for keyword-triggered bookmarklets
+    // patch URLBar for keyword-triggered bookmarklets
+    if(window.handleURLBarCommand && !noscriptBM.handleURLBarCommandOriginal) { // Fx 3.0
       noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
       window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
+    } else { // Fx 3.1
+      noscriptBM.handleURLBarCommandOriginal = window.loadURI;
+      window.loadURI = noscriptBM.loadURI;
     }
     var pu = window.PlacesUIUtils || window.PlacesUtils || false;
     if (typeof(pu) == "object" && !noscriptBM.placesUtils) {

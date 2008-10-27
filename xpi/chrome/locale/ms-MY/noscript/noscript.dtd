@@ -1,146 +1,146 @@
-<!ENTITY noscriptOptions "Options…">
+<!ENTITY noscriptOptions "Tetapan...">
 <!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript Options">
-<!ENTITY noscriptAbout "About NoScript…">
-<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
-<!ENTITY noscriptWebAddress "Address of web site:">
-<!ENTITY noscriptAllow "Allow">
-<!ENTITY noscriptAllow.accesskey "l">
-<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptOptionsLong "Tetapan NoScript">
+<!ENTITY noscriptAbout "Tentang NoScript">
+<!ENTITY noscriptPermissionsText "Anda boleh menentukan laman web yang anda benarkan skripnya diproses. Taipkan alamat atau domain(contoh:&quot;http://www.tapak.com&quot; atau &quot;tapak.com&quot;) laman web yang diingini dan klik Benarkan">
+<!ENTITY noscriptWebAddress "Alamat laman web:">
+<!ENTITY noscriptAllow "Benarkan">
+<!ENTITY noscriptAllow.accesskey "I">
+<!ENTITY noscriptForbid "Halang">
 <!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust "Tanda sebagai Dipercayai">
 <!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust "Tanda sebagai Tidak Dipercayai">
 <!ENTITY noscriptUntrust.accesskey "U">
-<!ENTITY noscriptRemoveSelected "Remove Selected Sites">
-<!ENTITY noscriptGloballyEnabled "Scripts Globally Allowed (dangerous)">
-<!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
-<!ENTITY noscriptGeneral "General">
-<!ENTITY noscriptAppearance "Appearance">
-<!ENTITY noscriptShow "Show…">
-<!ENTITY noscriptCtxMenu "Contextual menu">
-<!ENTITY noscriptStatusIcon "Status bar icon">
-<!ENTITY noscriptFullAddr "Full Addresses (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Full Domains (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
-<!ENTITY noscriptTempCmd "Temporarily allow […]">
-<!ENTITY noscriptSound "Audio feedback when scripts are blocked">
-<!ENTITY noscriptImport "Import">
+<!ENTITY noscriptRemoveSelected "Buang laman yang dipilih">
+<!ENTITY noscriptGloballyEnabled "Semua skrip diproses secara biasa (bahaya)">
+<!ENTITY noscriptAutoReload "Muat turun semula muka laman secara automatik apabila tetapan ditukar">
+<!ENTITY noscriptGeneral "Umum">
+<!ENTITY noscriptAppearance "Luaran">
+<!ENTITY noscriptShow "Tunjukkan...">
+<!ENTITY noscriptCtxMenu "Menu konteks">
+<!ENTITY noscriptStatusIcon "Bar status ikon">
+<!ENTITY noscriptFullAddr "Alamat penuh (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Domain penuh (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Dasar sekunder domain(noscript.net)">
+<!ENTITY noscriptTempCmd "Proses[...] buat masa ini">
+<!ENTITY noscriptSound "Terima audio apabila skrip dihalang.">
+<!ENTITY noscriptImport "Impot">
 <!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Export">
+<!ENTITY noscriptExport "Ekspot">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Show message about blocked scripts">
-<!ENTITY noscriptNotify.bottom "Place message at the bottom">
-<!ENTITY noscriptSound.choose "Choose">
+<!ENTITY noscriptNotify "Tunjukkan mesej tentang skrip yang dihalang">
+<!ENTITY noscriptNotify.bottom "Letakkan mesej dibawah">
+<!ENTITY noscriptSound.choose "Pilih">
 <!ENTITY noscriptSound.choose.accesskey "C">
-<!ENTITY noscriptSound.play "Play">
+<!ENTITY noscriptSound.play "Mainkan">
 <!ENTITY noscriptSound.play.accesskey "a">
-<!ENTITY noscriptSound.reset "Reset default">
+<!ENTITY noscriptSound.reset "Tetapkan semula kepada asal">
 <!ENTITY noscriptSound.reset.accesskey "R">
-<!ENTITY noscriptAdvanced "Advanced">
-<!ENTITY noscriptAdditionalPermissions "Additional permissions for trusted sites">
-<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
-<!ENTITY noscriptAdditionalRestrictions "Additional restrictions for untrusted sites">
-<!ENTITY noscriptPlugins "Plugins">
-<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
-<!ENTITY noscriptForbidJava "Forbid Java™">
-<!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
-<!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
-<!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFlash "Forbid Adobe® Flash®">
-<!ENTITY noscriptForbidPlugins "Forbid other plugins">
-<!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
-<!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">
-<!ENTITY noscriptStatusLabel "Status bar label">
-<!ENTITY noscriptForbidBookmarklets "Forbid bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
-<!ENTITY noscriptTruncateTitle "Truncate document titles">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
-<!ENTITY noscriptAllowBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;A PING…&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;A PING…&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
+<!ENTITY noscriptAdvanced "Lanjutan">
+<!ENTITY noscriptAdditionalPermissions "Kebenaran Tambahan untuk sumber dipercayai">
+<!ENTITY noscriptAllowClipboard "Benarkan teks disalin (copy dan paste) untuk clipboard luaran">
+<!ENTITY noscriptAdditionalRestrictions "Syarat tambahan untuk laman Tidak Dipercatai">
+<!ENTITY noscriptPlugins "Plugin">
+<!ENTITY noscriptContentBlocker "Laksanakan syarat ini untuk laman yang dipercayai ini juga">
+<!ENTITY noscriptForbidJava "Halang Java™">
+<!ENTITY noscriptForbidWebBugs "Halang &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Halang Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Halang &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFlash "Halang Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Halang plugin lain">
+<!ENTITY noscriptReloadWarn "Tetapan ini akan kesan apabila muka laman yang dimuat turun semula.">
+<!ENTITY noscriptConfirmUnblock "Tanya dahulu sebelum objek dihalang untuk sementara">
+<!ENTITY noscriptStatusLabel "Label status bar">
+<!ENTITY noscriptForbidBookmarklets "Halang bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Tunjukkan ikon placeholder">
+<!ENTITY noscriptTruncateTitle "Buang tajuk dokumen">
+<!ENTITY noscriptFixLinks "Cubaan untuk membaiki link JavaScript">
+<!ENTITY noscriptAllowBookmarks "Benarkan laman dibuka melalui bookmarks">
+<!ENTITY noscriptAllowViaBookmarks "Benarkan laman dibuka melalui bookmarks">
+<!ENTITY noscriptAllowPing "Benarkan &lt;A PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Benarkan link tempatan">
+<!ENTITY noscriptForbidPing "Halang &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Halang META pengarah di dalam unsur &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
-<!ENTITY noscriptWhitelist "Whitelist">
-<!ENTITY noscriptPermissions "Permissions">
-<!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifications "Notifications">
-<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
-<!ENTITY noscriptTrusted "Trusted">
-<!ENTITY noscriptUntrusted "Untrusted">
-<!ENTITY noscriptUnknown "Unknown">
-<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptWhitelist "Senarai putih">
+<!ENTITY noscriptPermissions "Kebenaran">
+<!ENTITY noscriptRefresh "Pulihkan">
+<!ENTITY noscriptNotifications "Notifikasi">
+<!ENTITY noscriptToolbarToggle "Klik kiri pada butang NoScript toolbar Kebenaran untuk laman top-level semasa">
+<!ENTITY noscriptTrusted "Dipercayai">
+<!ENTITY noscriptUntrusted "Tidak Dipercayai">
+<!ENTITY noscriptUnknown "Tidak Diketahui">
+<!ENTITY noscriptAdd "Tambah">
 <!ENTITY noscriptAdd.accesskey "A">
-<!ENTITY noscriptClose "Close">
-<!ENTITY noscriptSiteManager "Site Manager">
-<!ENTITY noscriptSecurityManager "Security Manager">
-<!ENTITY noscriptPolicies "Policies">
-<!ENTITY noscriptDefaultPolicies "Default Policies">
-<!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality… Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console…">
+<!ENTITY noscriptClose "Tutup">
+<!ENTITY noscriptSiteManager "Laman Pengurusan">
+<!ENTITY noscriptSecurityManager "Pengurusan Sekuriti">
+<!ENTITY noscriptPolicies "Polisi">
+<!ENTITY noscriptDefaultPolicies "Polisi Asal">
+<!ENTITY noscriptSitePolicies "Butiran Polisi Laman">
+<!ENTITY noscriptNselNever "Sembunyikan unsur &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Tunjukkan unsur &lt;NOSCRIPT&gt; apabila &lt;SCRIPT&gt; dihalang">
+<!ENTITY noscriptAutoAllowTopLevel "Benarkan sementara laman top-level secara biasa">
+<!ENTITY noscriptDescription "Perlindungaan tambahan untuk Firefox anda: NoScript membenarkan JavaScript, Java (dan plugin-plugin lain) hanya untuk laman yang anda percayai (contoh:laman web bank). Senarai putih berdasarkan pre-emptive menghalang eksploitasi pada sekuriti (yang diketahui dan tidak diketahui!) tanpa pengurangan fungsi... Pakar-pakar telah menyetujui bahawa: Firefox adalah benar-benar selamat dengan NoScript:-)">
+<!ENTITY noscriptOptBlockCssScanners "Halang pengesan CSS">
+<!ENTITY noscriptOptFilterXGet "Membersihkan laman yang disyaki">
+<!ENTITY noscriptOptFilterXPost "Tukarkan permintaan cross-site POST kepada permintaan data GET">
+<!ENTITY noscriptShowConsole "Tunjukkan Konsol...">
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ…">
+<!ENTITY noscriptXssFaq "Soalan Kerap Ditanya XSS">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload "Muat turun semula secara tidak selamat">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS.">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
-<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptXssExceptions "Pengecualian Perlindungan Anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Padanan ekspresi ini tidak akan dilindungi dari XSS">
+<!ENTITY noscriptMatchSample "Sampel padanan paten:">
+<!ENTITY noscriptReset "Tetapan semula">
 <!ENTITY noscriptReset.accesskey "s">
-<!ENTITY noscriptResetDef "Reset to defaults">
+<!ENTITY noscriptResetDef "Tetapkan kepada asal">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
+<!ENTITY noscriptJarFaq "Soalan Kerap Ditanya JAR">
 <!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptForbidJarDocuments "Halang sumber pemandu JAR dari dimuat sebagai dokumen">
+<!ENTITY noscriptJarExceptions "Pengecualian halang dokumen JAR">
+<!ENTITY noscriptJarExceptions.description "Dokumen JAR padanan ekspresi TIDAK akan dihalang.">
+<!ENTITY noscriptRevokeTemp "Kembalikan semula Kebenaran Sementara">
 <!ENTITY noscriptRevokeTemp.accesskey "R">
-<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
-<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions…">
-<!ENTITY noscriptBlockedObjects "Blocked Objects">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
-<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
+<!ENTITY noscriptNoUntrustedPlaceholder "Tiada tempaat letak untuk objek yang datang dari laman ditanda sebagai Tidak Dipercayai">
+<!ENTITY noscriptCollapseBlockedObjects "Musnahkan objek yang dihalang">
+<!ENTITY noscriptExceptions "Pengecualian...">
+<!ENTITY noscriptBlockedObjects "Objek yang Dihalang">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Halang setiap objek yang datang dari laman yang ditanda sebagai Tidak Dipercayai">
+<!ENTITY noscriptTempAllowPage "Benarkan laman ini sementara">
 <!ENTITY noscriptTempAllowPage.accesskey "T">
-<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage "Benarkan laman ini">
 <!ENTITY noscriptAllowPage.accesskey "A">
-<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm "Kekalkan kebenaran laman">
 <!ENTITY noscriptTempToPerm.accesskey "M">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq "Soalan Kerap Ditanya HTTPS">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
-<!ENTITY noscriptHttps.behavior "Behavior">
+<!ENTITY noscriptHttps.behavior "Sifat">
 <!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
-<!ENTITY noscriptHttps.never "Never">
-<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
-<!ENTITY noscriptHttps.always "Always">
-<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
-<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
-<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
-<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptHttps.description "Halang butiran aktif laman melainkan datang dari (HTTPS) yang dipercayai:">
+<!ENTITY noscriptHttps.never "Tidak sama sekali">
+<!ENTITY noscriptHttps.proxy "Apabila menggunakan proxy (disyorkan dengan Tor)">
+<!ENTITY noscriptHttps.always "Sentiasa">
+<!ENTITY noscriptHttpsForced "Paksa hubungan (HTTPS) yang dipercayai untuk laman berikut:">
+<!ENTITY noscriptHttpsForcedExceptions "Jangan paksa hubungan (HTTPS) yang dipercayai untuk laman berikut:">
+<!ENTITY noscriptSecureCookies "Aktifkan Pengurusan Perlindungan Cookies Automatik">
+<!ENTITY noscriptSecureCookiesForced "Paksa enkripsi untuk semua cookies menetapkan HTTPS untuk laman berikut:">
+<!ENTITY noscriptSecureCookiesExceptions "Biarkan cookies yang tidak selamat menetapkan HTTPS untuk laman web berikut:">
 <!ENTITY noscriptClearClickTitle "ClearClick Warning">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
-<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptClearClickHeader "Keupayaan Clickjacking / Cubaan menukarkan UI!">
+<!ENTITY noscriptClearClickDescription "NoScript diinteraksi bertindih pada tetikus atau papan kekunci dengan sebahagian unsur disembunyikan. Klik pada imej diatas untuk dikitar antara versi yang dihalang atau jelas.">
+<!ENTITY noscriptClearClickOpt "Perlindungan ClearClick pada laman...">
+<!ENTITY noscriptOpacizeOpt "Kesankan objek yang dimuatkan didalam laman ini...">
+<!ENTITY noscriptTrustedPagesAdj "dipercayai">
+<!ENTITY noscriptUntrustedPagesAdj "tidak dipercayai">
+<!ENTITY noscriptKeepLocked "Sentiasa kunci unsur ini (disyorkan)">
+<!ENTITY noscriptEmbeddings "Objek yang dipasang">

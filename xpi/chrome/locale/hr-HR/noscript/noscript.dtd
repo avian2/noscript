@@ -47,7 +47,6 @@
 <!ENTITY noscriptForbidWebBugs "Zabrani &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Zabrani Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Zabrani &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Zabrani &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Zabrani Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Zabrani druge dodatke">
 <!ENTITY noscriptReloadWarn "Ove postavke će imati učinka na novim ili (ručno) ponovno učitanim stranicama">
@@ -123,25 +122,25 @@
 <!ENTITY noscriptTempToPerm "Make page permissions permanent">
 <!ENTITY noscriptTempToPerm.accesskey "m">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq "Često postavljena pitanja u vezi HTTPS-a">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
-<!ENTITY noscriptHttps.behavior "Behavior">
-<!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
-<!ENTITY noscriptHttps.never "Never">
-<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
-<!ENTITY noscriptHttps.always "Always">
-<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
-<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
-<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
-<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warning">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
-<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptHttps.behavior "Ponašanje">
+<!ENTITY noscriptHttps.cookies "Kolačiće">
+<!ENTITY noscriptHttps.description "Zabraniti aktivni web-sadržaj ukoliko ne potječe iz sigurne (HTTPS) konekcije">
+<!ENTITY noscriptHttps.never "Nikada">
+<!ENTITY noscriptHttps.proxy "Kada se koristi proxy (preporučeno sa Tor-om)">
+<!ENTITY noscriptHttps.always "Uvijek">
+<!ENTITY noscriptHttpsForced "Prisiliti sljedeće sajtove da koriste sigurnu (HTTPS) konekciju">
+<!ENTITY noscriptHttpsForcedExceptions "Nikada ne prisiliti korištenje sigurne (HTTPS) konekcije za sljedeće sajtove">
+<!ENTITY noscriptSecureCookies "Dozvoliti automatičnu upravu sigurnih kolačića">
+<!ENTITY noscriptSecureCookiesForced "Prisiliti enkripciju za sve kolačiće podešene preko HTTPS-a kod sljedećih sajta:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignorirati nesigurne kolačiće podešene preko HTTPS-a kod sljedećih sajta:">
+<!ENTITY noscriptClearClickTitle "ClearClick-upozorenje">
+<!ENTITY noscriptClearClickHeader "Mogući Clickjacking/UI Redressing napad">
+<!ENTITY noscriptClearClickDescription "NoScript je primjetio interakciju miša ili tastatura sa djelomićno sakrivenim elementom. Klikni na gornju sliku kako bi promjenio između zaklonjene i jasne verzije">
+<!ENTITY noscriptClearClickOpt "ClearClick-zaštita na stranicama...">
+<!ENTITY noscriptOpacizeOpt "Zamutiti ugrađene objekte na stranicama...">
+<!ENTITY noscriptTrustedPagesAdj "pouzdane">
+<!ENTITY noscriptUntrustedPagesAdj "nepouzdane">
+<!ENTITY noscriptKeepLocked "Držati zaključan ovaj elemenat (preporučeno)">
+<!ENTITY noscriptEmbeddings "Ugrađeni objekti">

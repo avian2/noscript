@@ -64,3 +64,4 @@ locale	noscript	es-AR	jar:chrome/noscript.jar!/locale/es-AR/noscript/
 locale	noscript	et-EE	jar:chrome/noscript.jar!/locale/et-EE/noscript/
 locale	noscript	cy-GB	jar:chrome/noscript.jar!/locale/cy-GB/noscript/
 locale	noscript	sr-RS	jar:chrome/noscript.jar!/locale/sr-RS/noscript/
+locale	noscript	ms-MY jar:chrome/noscript.jar!/locale/ms-MY/noscript/
