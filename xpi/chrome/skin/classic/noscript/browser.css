@@ -165,3 +165,54 @@
   list-style-image: url(plugin16.png);
 }
 
+#noscript-statusXss.noscript-fennec {
+  background-color: #bbb;
+  -moz-border-left-colors: #fff #f8f8f8 #eee #e8e8e8 #ddd #d8d8d8 #ccc #c8c8c8;
+  -moz-border-right-colors: #888888 #888 #989898 #999 #a8a8a8 #aaa #b8b8b8 #bbb;
+  -moz-border-radius: 8px;
+  border-left-width: 8px;
+  border-right-width: 8px;
+  border-style: solid;
+}
+
+#noscript-tbb.noscript-fennec {
+  -moz-border-radius: 8px;
+  border: 2px solid #444;
+  -moz-border-bottom-colors: #aaa #888;
+  -moz-border-top-colors: #666 #444;
+  -moz-border-left-colors: #aaa #888;
+  -moz-border-right-colors: #aaa #888;
+  padding-left: 4px;
+  margin: 0px;
+  width: 40px;
+  height: 40px;
+  background-color: #eee;
+}
+
+
+
+#noscript-sticky-ui {
+  cursor: pointer;
+}
+
+#noscript-sticky-ui > button, #noscript-sticky-ui-pag > button {
+  -moz-appearance: none;
+  -moz-binding: url(chrome://global/content/bindings/menu.xml#menuitem-iconic);
+  padding: 2px;
+}
+
+#noscript-sticky-ui > button, .noscript-menu {
+  background-color: menu !important;
+  opacity: 1.0;
+  color: menutext;
+}
+
+.noscript-menu {
+  border: 1px solid #444;
+  padding: 2px;
+}
+
+#noscript-sticky-ui > button:hover {
+  background: highlight !important;
+  color: highlighttext !important;
+}

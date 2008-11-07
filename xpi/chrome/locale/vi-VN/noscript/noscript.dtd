@@ -1,147 +1,146 @@
 <!ENTITY noscriptOptions "Tùy chọn">
-<!ENTITY noscriptOptions.accesskey "n">
+<!ENTITY noscriptOptions.accesskey "y">
 <!ENTITY noscriptOptionsLong "Tùy chọn cho NoScript">
-<!ENTITY noscriptAbout "Thông tin về NoScript">
-<!ENTITY noscriptPermissionsText "Bạn có thể chỉ định web sites nào được phép chạy scripts. Gõ địa chỉ hay tên miền (v.d, &quot;http://www.site.com&quot; hay &quot;site.com&quot;) của site mà bạn muốn cho phép, rồi nhấn Cho phép.">
-<!ENTITY noscriptWebAddress "Địa chỉ của web site:">
+<!ENTITY noscriptAbout "Thông tin về NoScript...">
+<!ENTITY noscriptPermissionsText "Bạn có thể chỉ định trang web nào được phép chạy script. Gõ địa chỉ hay tên miền (v.d. &quot;http://www.nhaccodien.com&quot; hay &quot;nhaccodien.com&quot;) của trang mà bạn muốn cho phép, rồi nhấn Cho phép.">
+<!ENTITY noscriptWebAddress "Địa chỉ của trang web:">
 <!ENTITY noscriptAllow "Cho phép">
 <!ENTITY noscriptAllow.accesskey "C">
 <!ENTITY noscriptForbid "Ngăn cấm">
-<!ENTITY noscriptForbid.accesskey "M">
-<!ENTITY noscriptTrust "Tin cậy">
+<!ENTITY noscriptForbid.accesskey "N">
+<!ENTITY noscriptTrust "Đánh dấu Tin cậy">
 <!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Không tin cậy">
+<!ENTITY noscriptUntrust "Đánh dấu Không tin cậy">
 <!ENTITY noscriptUntrust.accesskey "K">
-<!ENTITY noscriptRemoveSelected "Xóa Sites Đang Chọn">
-<!ENTITY noscriptGloballyEnabled "Scripts Đang Luôn Luôn Chạy (nguy hiểm)">
-<!ENTITY noscriptAutoReload "Tự động tải lại trang ảnh hưởng khi các phép được thay đổi">
+<!ENTITY noscriptRemoveSelected "Xóa Trang Đã Chọn">
+<!ENTITY noscriptGloballyEnabled "Script Được Cho Phép Ở Mọi Trang (nguy hiểm)">
+<!ENTITY noscriptAutoReload "Tự động tải lại trang bị ảnh hưởng khi quyền hạn thay đổi">
 <!ENTITY noscriptGeneral "Tổng quát">
 <!ENTITY noscriptAppearance "Giao diện">
 <!ENTITY noscriptShow "Hiển thị...">
-<!ENTITY noscriptCtxMenu "Menu ngữ cảnh">
-<!ENTITY noscriptStatusIcon "Icon trong Thanh trạng thái">
+<!ENTITY noscriptCtxMenu "Trình đơn ngữ cảnh">
+<!ENTITY noscriptStatusIcon "Biểu tượng trong thanh trạng thái">
 <!ENTITY noscriptFullAddr "Địa chỉ đầy đủ (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Tên miền đầy đủ (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Tên miền mức thứ nhì (noscript.net)">
+<!ENTITY noscriptBaseDom "Tên miền cấp hai (noscript.net)">
 <!ENTITY noscriptTempCmd "Tạm thời cho phép [...]">
-<!ENTITY noscriptSound "Âm thanh cho biết khi scripts bị chặn/cấm">
+<!ENTITY noscriptSound "Âm thanh cho biết khi script bị chặn">
 <!ENTITY noscriptImport "Nhập">
 <!ENTITY noscriptImport.accesskey "N">
 <!ENTITY noscriptExport "Xuất">
 <!ENTITY noscriptExport.accesskey "X">
-<!ENTITY noscriptNotify "Hiện thông tin về scripts bị chặn">
+<!ENTITY noscriptNotify "Hiện thông tin về script bị chặn">
 <!ENTITY noscriptNotify.bottom "Đặt thông tin ở bên dưới">
 <!ENTITY noscriptSound.choose "Chọn">
 <!ENTITY noscriptSound.choose.accesskey "C">
 <!ENTITY noscriptSound.play "Nghe">
 <!ENTITY noscriptSound.play.accesskey "e">
-<!ENTITY noscriptSound.reset "Hoàn mặc định">
-<!ENTITY noscriptSound.reset.accesskey "H">
+<!ENTITY noscriptSound.reset "Đưa về mặc định">
+<!ENTITY noscriptSound.reset.accesskey "v">
 <!ENTITY noscriptAdvanced "Nâng cao">
-<!ENTITY noscriptAdditionalPermissions "Các phép bổ sung cho sites tin cậy">
-<!ENTITY noscriptAllowClipboard "Cho phép copy và dán rich text từ clipboard bên ngoài">
-<!ENTITY noscriptAdditionalRestrictions "Những hạn chế bổ sung cho sites không tin cậy">
+<!ENTITY noscriptAdditionalPermissions "Quyền hạn bổ sung cho các trang tin cậy">
+<!ENTITY noscriptAllowClipboard "Cho phép chép và dán văn bản đa dạng từ clipboard bên ngoài">
+<!ENTITY noscriptAdditionalRestrictions "Những hạn chế bổ sung cho các trang không tin cậy">
 <!ENTITY noscriptPlugins "Plugins">
-<!ENTITY noscriptContentBlocker "Đồng thời áp dụng những hạn chế này cho các sites tin cậy">
+<!ENTITY noscriptContentBlocker "Đồng thời áp dụng những hạn chế này cho các trang tin cậy">
 <!ENTITY noscriptForbidJava "Cấm Java™">
 <!ENTITY noscriptForbidWebBugs "Cấm &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Cấm Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Cấm &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Cấm &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Cấm Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Cấm các plugins khác">
 <!ENTITY noscriptReloadWarn "Những tùy chọn này sẽ có hiệu quả trong trang mới hay trang được tải lại">
-<!ENTITY noscriptConfirmUnblock "Hỏi xác nhận trước khi tạm thời không cấm một đối tượng">
-<!ENTITY noscriptStatusLabel "Nhãn hiệu cho thanh trạng thái">
+<!ENTITY noscriptConfirmUnblock "Hỏi xác nhận trước khi tạm thời không chặn một đối tượng">
+<!ENTITY noscriptStatusLabel "Nhãn cho thanh trạng thái">
 <!ENTITY noscriptForbidBookmarklets "Cấm bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Hiển thị icon giữ chỗ">
-<!ENTITY noscriptTruncateTitle "Cắt ngắn tựa đề của văn bản">
-<!ENTITY noscriptFixLinks "Cố gắng sửa kết nối JavaScript">
-<!ENTITY noscriptAllowBookmarks "Cho phép sites được mở qua Đánh dấu">
-<!ENTITY noscriptAllowViaBookmarks "Cho phép sites được mở qua Đánh dấu">
+<!ENTITY noscriptShowPlaceholder "Hiển thị biểu tượng giữ chỗ">
+<!ENTITY noscriptTruncateTitle "Cắt ngắn tựa đề của tài liệu">
+<!ENTITY noscriptFixLinks "Cố gắng sửa liên kết JavaScript">
+<!ENTITY noscriptAllowBookmarks "Cho phép các trang được mở qua Đánh dấu">
+<!ENTITY noscriptAllowViaBookmarks "Cho phép các trang được mở qua Đánh dấu">
 <!ENTITY noscriptAllowPing "Cho phép &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "Cho phép các liên kết nội tại">
 <!ENTITY noscriptForbidPing "Cấm &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Cấm đổi hướng bằng META trong các phần tử &lt;noscript&gt;">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptForbidMetaRefresh "Cấm đổi hướng bằng META trong các phần tử &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "M">
 <!ENTITY noscriptWhitelist "Sổ trắng">
-<!ENTITY noscriptPermissions "Các phép">
+<!ENTITY noscriptPermissions "Quyền hạn">
 <!ENTITY noscriptRefresh "Tải lại">
 <!ENTITY noscriptNotifications "Khai báo">
-<!ENTITY noscriptToolbarToggle "Nhấn nút trái chuột vào nút NoScript trên thanh công cụ tắt/mở các phép cho site mức-cao-nhất hiện tại">
+<!ENTITY noscriptToolbarToggle "Nhấn chuột trái vào nút NoScript trên thanh công cụ để tắt/mở quyền hạn cho trang miền cấp một hiện tại">
 <!ENTITY noscriptTrusted "Tin cậy">
 <!ENTITY noscriptUntrusted "Không tin cậy">
 <!ENTITY noscriptUnknown "Không biết">
 <!ENTITY noscriptAdd "Thêm">
-<!ENTITY noscriptAdd.accesskey "m">
+<!ENTITY noscriptAdd.accesskey "T">
 <!ENTITY noscriptClose "Đóng">
-<!ENTITY noscriptSiteManager "Quản lý Site">
-<!ENTITY noscriptSecurityManager "Quản lý Bảo mật">
-<!ENTITY noscriptPolicies "Luật">
-<!ENTITY noscriptDefaultPolicies "Luật Mặc định">
-<!ENTITY noscriptSitePolicies "Luật Cho Site Riêng Biệt">
-<!ENTITY noscriptNselNever "Giấu các phần tử &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Hiển thị phần tử &lt;noscript&gt; mà theo một phần tử &lt;SCRIPT&gt; bị chặn">
-<!ENTITY noscriptAutoAllowTopLevel "Tạm thời cho phép sites mức thứ nhất theo mặc định">
-<!ENTITY noscriptDescription "Thêm phần bảo vệ cho Firefox của bạn: NoScript chỉ cho phép JavaScript, Java (và các plugins khác) được chạy trong những miền/trang web lựa chọn của bạn (v.d.: trang web ngân hàng của bạn).  Hướng đi dùng sổ trắng này ngăn chạn trước những khai thác lổ hỏng bảo mật (biết trước và ngay cả chưa biết trước) mà không mất đi tính năng...  Các chuyên gia sẽ đồng ý: Firefox thật sự an toàn hơn với NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Chặn các trình quét CSS">
+<!ENTITY noscriptSiteManager "Quản lí Trang">
+<!ENTITY noscriptSecurityManager "Quản lí Bảo mật">
+<!ENTITY noscriptPolicies "Chính sách">
+<!ENTITY noscriptDefaultPolicies "Chính sách Mặc định">
+<!ENTITY noscriptSitePolicies "Chính sách Cho trang Riêng biệt">
+<!ENTITY noscriptNselNever "Ẩn các phần tử &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Hiển thị phần tử &lt;noscript&gt; đi sau một phần tử &lt;SCRIPT&gt; bị chặn">
+<!ENTITY noscriptAutoAllowTopLevel "Tạm thời cho phép trang miền cấp một theo mặc định">
+<!ENTITY noscriptDescription "Thêm sự bảo vệ cho Firefox của bạn: NoScript chỉ cho phép JavaScript, Java (và các plugins khác) được chạy trên những tên miền đáng tin mà bạn chọn (v.d., trang web ngân hàng của bạn). Hướng đi chặn trước dựa trên sổ trắng này ngăn chặn việc khai thác lổ hỏng bảo mật (biết trước và ngay cả chưa biết!) mà không mất đi tính năng... Các chuyên gia sẽ đồng ý rằng: Firefox thật sự an toàn hơn với NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Chặn các trình quét dựa trên CSS">
 <!ENTITY noscriptOptFilterXGet "Làm sạch các yêu cầu cross-site đáng ngờ">
 <!ENTITY noscriptOptFilterXPost "Đổi các yêu cầu dạng POST cross-site sang yêu cầu dạng GET">
-<!ENTITY noscriptShowConsole "Hiển thị Console...">
-<!ENTITY noscriptShowConsole.accesskey "s">
+<!ENTITY noscriptShowConsole "Hiển thị Bảng kiểm soát...">
+<!ENTITY noscriptShowConsole.accesskey "H">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS Câu Hỏi Thường Gặp...">
-<!ENTITY noscriptXssFaq.accesskey "G">
+<!ENTITY noscriptXssFaq.accesskey "C">
 <!ENTITY noscriptUnsafeReload "Tải Lại Không An Toàn">
 <!ENTITY noscriptUnsafeReload.accesskey "L">
-<!ENTITY noscriptXssExceptions "Các Ngoại Lệ Cho Bảo Vệ Anti-XSS">
-<!ENTITY noscriptXssExceptions.description "Địa điểm hợp/giống với các biểu thức chính quy sau sẽ KHÔNG được bảo vệ từ XSS">
-<!ENTITY noscriptMatchSample "Biểu thức chính quy:">
-<!ENTITY noscriptReset "Hoàn Lại">
+<!ENTITY noscriptXssExceptions "Các Ngoại Lệ Phòng Ngừa Anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Đích đến phù hợp với các biểu thức quy tắc này sẽ KHÔNG được bảo vệ tránh khỏi XSS.">
+<!ENTITY noscriptMatchSample "Mẫu phù hợp:">
+<!ENTITY noscriptReset "Hoàn lại">
 <!ENTITY noscriptReset.accesskey "H">
-<!ENTITY noscriptResetDef "Hoàn lại giá trị mặc định">
-<!ENTITY noscriptResetDef.accesskey "c">
+<!ENTITY noscriptResetDef "Hoàn lại về mặc định">
+<!ENTITY noscriptResetDef.accesskey "v">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptJarFaq "JAR Câu Hỏi Thường Gặp…">
+<!ENTITY noscriptJarFaq.accesskey "C">
 <!ENTITY noscriptForbidJarDocuments "Chặn các tài nguyên từ xa dạng JAR được tải dưới dạng tài liệu">
 <!ENTITY noscriptJarExceptions "Các ngoại lệ cho ngăn chặn tài liệu dạng JAR">
-<!ENTITY noscriptJarExceptions.description "Các tài liệu dạng JAR hợp/giống với các biểu thức chính quy sau sẽ KHÔNG bị chặn.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
-<!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
-<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
-<!ENTITY noscriptBlockedObjects "Blocked Objects">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
-<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
-<!ENTITY noscriptTempAllowPage.accesskey "P">
-<!ENTITY noscriptAllowPage "Allow all this page">
-<!ENTITY noscriptAllowPage.accesskey "A">
-<!ENTITY noscriptTempToPerm "Make page permissions permanent">
-<!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptJarExceptions.description "Các tài liệu dạng JAR phù hợp với các biểu thức quy tắc sau sẽ KHÔNG bị chặn.">
+<!ENTITY noscriptRevokeTemp "Hủy Bỏ Quyền Hạn Tạm Thời">
+<!ENTITY noscriptRevokeTemp.accesskey "Q">
+<!ENTITY noscriptNoUntrustedPlaceholder "Không có phần giữ chỗ nào cho các đối tượng đến từ các trang bị đánh dấu không tin cậy.">
+<!ENTITY noscriptCollapseBlockedObjects "Thu gọn các đối tượng bị chặn">
+<!ENTITY noscriptExceptions "Ngoại lệ...">
+<!ENTITY noscriptBlockedObjects "Các đối tượng bị Chặn">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Chặn mọi đối tượng đến từ một trang bị đánh dấu không tin cậy.">
+<!ENTITY noscriptTempAllowPage "Tạm thời cho phép tất cả trên trang này">
+<!ENTITY noscriptTempAllowPage.accesskey "m">
+<!ENTITY noscriptAllowPage "Cho phép tất cả trên trang này">
+<!ENTITY noscriptAllowPage.accesskey "o">
+<!ENTITY noscriptTempToPerm "Đặt quyền hạn vĩnh viễn cho trang này">
+<!ENTITY noscriptTempToPerm.accesskey "q">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
-<!ENTITY noscriptHttpsFaq.accesskey "Q">
-<!ENTITY noscriptHttps.behavior "Behavior">
-<!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
-<!ENTITY noscriptHttps.never "Never">
-<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
-<!ENTITY noscriptHttps.always "Always">
-<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
-<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
-<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
-<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warning">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
-<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptHttpsFaq "HTTPS Câu Hỏi Thường Gặp...">
+<!ENTITY noscriptHttpsFaq.accesskey "S">
+<!ENTITY noscriptHttps.behavior "Hành vi">
+<!ENTITY noscriptHttps.cookies "Cookie">
+<!ENTITY noscriptHttps.description "Cấm nội dung web hoạt động trừ khi nó đến từ một kết nối an toàn (HTTPS):">
+<!ENTITY noscriptHttps.never "Không bao giờ">
+<!ENTITY noscriptHttps.proxy "Khi sử dụng một proxy (khuyên dùng cho Tor)">
+<!ENTITY noscriptHttps.always "Luôn luôn">
+<!ENTITY noscriptHttpsForced "Cấm các trang sau sử dụng kết nối an toàn (HTTPS):">
+<!ENTITY noscriptHttpsForcedExceptions "Không bao giờ bắt buộc kết nối an toàn (HTTPS) cho các trang sau:">
+<!ENTITY noscriptSecureCookies "Kích Hoạt Việc Quản Lí Cookie An Toàn Tự Động">
+<!ENTITY noscriptSecureCookiesForced "Bắt buộc mã hóa đối với tất cả cookie được tạo qua HTTPS bởi các trang sau:">
+<!ENTITY noscriptSecureCookiesExceptions "Bỏ qua các cookie không an toàn được tạo qua HTTPS bởi các trang sau:">
+<!ENTITY noscriptClearClickTitle "Cảnh Báo XóaNhấn">
+<!ENTITY noscriptClearClickHeader "Tiềm Ẩn Hành Động Chuyển Hướng Giao Diện / Chiếm Quyền Nhấp Chuột!">
+<!ENTITY noscriptClearClickDescription "NoScript chặn một tương tác chuột hoặc bàn phím bởi một phần tử bị ẩn một phần. Nhấn lên hình ở trên để chuyển qua lại giữa phiên bản ban đầu và phiên bản đã chặn.">
+<!ENTITY noscriptClearClickOpt "Phòng ngừa XóaNhấn trên trang...">
+<!ENTITY noscriptOpacizeOpt "Làm trong suốt các đối tượng được nhúng trên trang...">
+<!ENTITY noscriptTrustedPagesAdj "tin cậy">
+<!ENTITY noscriptUntrustedPagesAdj "không tin cậy">
+<!ENTITY noscriptKeepLocked "Khóa phần tử này (khuyên dùng)">
+<!ENTITY noscriptEmbeddings "Các Đối Tượng Được Nhúng">

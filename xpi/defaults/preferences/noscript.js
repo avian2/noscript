@@ -175,9 +175,15 @@ pref("noscript.allowHttpsOnly", 0);
 
 pref("noscript.https.showInConsole", true);
 
-pref("noscript.clearClick", 1);
+pref("noscript.clearClick", 3);
 pref("noscript.clearClick.plugins", true);
 pref("noscript.clearClick.prompt", true);
 pref("noscript.clearClick.debug", false);
 
 pref("noscript.emulateFrameBreak", true);
+
+pref("noscript.stickyUI.liveReload", false);
+pref("noscript.stickyUI", false);
+pref("noscript.stickyUI.onKeyboard", true);
+
+pref("noscript.ignorePorts", true)

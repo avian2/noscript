@@ -145,4 +145,6 @@
 <!ENTITY noscriptUntrustedPagesAdj "untrusted">
 <!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
 <!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">
 

@@ -45,7 +45,7 @@ var noscriptOverlay = noscriptUtil.service ?
 
   
   getSites: function() {
-    return this.ns.getSites(gBrowser.selectedBrowser);
+    return this.ns.getSites(this.currentBrowser);
   },
   
   get prompter() {
@@ -56,6 +56,17 @@ var noscriptOverlay = noscriptUtil.service ?
   onMenuShowing: function(ev) {
     if (ev.currentTarget != ev.originalTarget) return;
     this.prepareMenu(ev.target);
+  },
+  
+  
+  _reloadDirty: false,
+  onStickyUIHidden: function(ev) {
+    
+    if (this._reloadDirty && !this.liveReload) {
+      this.ns.reloadWhereNeeded();
+    }
+    this._reloadDirty = false;
+    ev.currentTarget._lastClosed = new Date().getTime();
   },
 
   prepareContextMenu: function(ev) {
@@ -116,7 +127,6 @@ var noscriptOverlay = noscriptUtil.service ?
         parent.appendChild(n);
       }
     }
-    
     return popup;
   },
   
@@ -129,9 +139,27 @@ var noscriptOverlay = noscriptUtil.service ?
         : tempSites.length + " | ";
   },
   
-  prepareMenu: function(popup) {
+  
+  _currentPopup: null,
+  _maxItems: 999, // disable pagination
+  
+  prepareMenu: function(popup, sites, offset) {
+    offset = offset || 0;
+    const sticky = popup == this.stickyUI;
+    const maxItems = sticky ? this._maxItems || Math.round(window.screen.availHeight / 32 - 6) : 999;
+    const nextOffset = offset + maxItems;
+    
+    if (sticky) {
+      with (popup.style) {
+        opacity = cursor = "";
+      }
+    }
+    
+    
+    
+    this._currentPopup = popup;
     const ns = this.ns;
-
+    
     var j, k, node;
     
     const global = ns.jsEnabled;
@@ -167,6 +195,9 @@ var noscriptOverlay = noscriptUtil.service ?
     
     node = miGlobal.nextSibling;
     const mainMenu = node.parentNode;
+    
+    
+    
     
     var tempMenuItem = document.getElementById("noscript-revoke-temp-mi");
     if (node != tempMenuItem) {
@@ -238,11 +269,12 @@ var noscriptOverlay = noscriptUtil.service ?
 
     mainMenu.appendCmd = function(n) { this.insertBefore(n, seps.stop); };
 
-    const sites = this.getSites();
+    sites = sites || this.getSites();
     j = sites.indexOf(sites.topURL);
-    if (j > 0) {
+    if (j > -1 && j != (sticky ? sites.length - 1 : 0)) {
       sites.splice(j, 1);
-      sites.push(sites.topURL);
+      if (sticky) sites.push(sites.topURL);
+      else sites.unshift(sites.topURL);
     }
     
     
@@ -279,13 +311,13 @@ var noscriptOverlay = noscriptUtil.service ?
     const showPermanent = ns.getPref("showPermanent", true);
     const showTemp = !locked && ns.getPref("showTemp", true);
     
-    var parent, extraNode;
+    var parent = null, extraNode = null;
     var untrustedCount = 0, unknownCount = 0, tempCount = 0;
     const untrustedSites = ns.untrustedSites;
     var docJSBlocked = false;
     
     menuGroups = [];
-    for (j = sites.length; j-- > 0;) {
+    for (j = 0; j< sites.length; j++) {
       site = sites[j];
       
       matchingSite = jsPSs.matches(site);
@@ -298,7 +330,7 @@ var noscriptOverlay = noscriptUtil.service ?
       
       isTop = site == sites.topURL;
       enabled = !!matchingSite;
-      docJSBlocked = enabled && isTop && !gBrowser.selectedBrowser.webNavigation.allowJavascript;
+      docJSBlocked = enabled && isTop && !this.currentBrowser.webNavigation.allowJavascript;
       if (docJSBlocked) enabled = false;
       
       if (enabled && !global || (matchingSite = untrusted)) {
@@ -307,8 +339,11 @@ var noscriptOverlay = noscriptUtil.service ?
       } else {
         domain = !ns.isForbiddenByHttpsStatus(site) && ns.getDomain(site);
         
-        if (domain && (dp = ns.getPublicSuffix(domain)) == domain) 
-          domain = null; // exclude TLDs
+        if ((dp = ns.getPublicSuffix(domain)) == domain || // exclude TLDs
+            (this.ignorePorts && site.test(/:\d+$/) && this.isJSEnabled(domain) != enabled) // exclude ancestors with different permissions
+          ) {
+          domain = null; 
+        }
         
         menuSites = (showAddress || showNothing || !domain) ? [site] : [];
         if (domain && (showDomain || showBase)) {
@@ -341,7 +376,17 @@ var noscriptOverlay = noscriptUtil.service ?
       menuGroups.push(menuSites);
     }
     
+    var elementKind, labelName;
+    if (sticky) {
+      elementKind = "button";
+      labelName = "label";
+    } else {
+      elementKind = "menuitem";
+      labelName = "label";
+    }
+    
     var blurred;
+    var mainItems = 0;
     
     for (j = menuGroups.length; j-- > 0;) {
 
@@ -365,16 +410,39 @@ var noscriptOverlay = noscriptUtil.service ?
         parent = (untrusted && showUntrusted) ? untrustedMenu : mainMenu;
         if (!parent) continue;
         
-        node = document.createElement("menuitem");
-        cssClass = isTop ? "noscript-toplevel noscript-cmd" : "noscript-cmd";
+
+        if (sticky && (parent == mainMenu)) {
+          // Menu pagination
+          if (mainItems++ < offset || mainItems > nextOffset) continue;
+          
+          if (mainItems == offset || mainItems == nextOffset) {
+            node = document.getElementById("noscript-sticky-ui-pag");
+         
+            if (mainItems == offset) {
+              extraNode = node.firstChild;
+              if (!(extraNode.disabled = offset < maxItems)) { 
+                extraNode.data = (mainItems - maxItems); // prev offset
+                extraNode.nextSibling.disabled = true;
+                node.hidden = false;
+              } else {
+                node.hidden = true;
+              }
+            }
+            
+            if (mainItems == nextOffset) {
+              extraNode = node.firstChild.nextSibling;
+              extraNode.disabled = false;
+              extraNode.data = nextOffset;
+              node.hidden = false;
+            }
+          }
+                
+        }
         
         domain = isTop && docJSBlocked ? "[ " + menuSite + " ]" : menuSite;
         
-        node.setAttribute("label", this.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]));
-        node.setAttribute("statustext", menuSite);
-        node.setAttribute("oncommand", "noscriptOverlay.menuAllow(" + (!enabled) + ", this)");
-        node.setAttribute("tooltiptext",
-          this.getString("allowed." + (enabled ? "yes" : "no")));
+        node = document.createElement(parent == mainMenu ? elementKind : "menuitem");
+        cssClass = isTop ? "noscript-toplevel noscript-cmd" : "noscript-cmd";
         
         blurred = false;
         if (locked || (enabled ? ns.isPermanent(menuSite) : blurred = ns.isForbiddenByHttpsStatus(menuSite))) {
@@ -387,6 +455,13 @@ var noscriptOverlay = noscriptUtil.service ?
           }
         }
         
+        node.setAttribute(labelName, this.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]));
+        node.setAttribute("statustext", menuSite);
+        node.setAttribute("oncommand", "return noscriptOverlay.menuAllow(" + (!enabled) + ", this)");
+        node.setAttribute("tooltiptext",
+          this.getString("allowed." + (enabled ? "yes" : "no")));
+
+        
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
         
         if ((showPermanent || enabled) && !(global && enabled)) 
@@ -394,22 +469,23 @@ var noscriptOverlay = noscriptUtil.service ?
         
         if (!locked) {
           if (showTemp && !(enabled || blurred)) {
-            extraNode = document.createElement("menuitem");
-            extraNode.setAttribute("label", this.getString("allowTemp", [domain]));
+            extraNode = document.createElement(parent == mainMenu ? elementKind : "menuitem");
+            extraNode.setAttribute(labelName, this.getString("allowTemp", [domain]));
             extraNode.setAttribute("statustext", menuSite);
-            extraNode.setAttribute("oncommand", "noscriptOverlay.menuAllow(true,this,true)");
+            extraNode.setAttribute("oncommand", "return noscriptOverlay.menuAllow(true,this,true)");
             extraNode.setAttribute("class", cssClass + " noscript-temp noscript-allow");
             extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
             parent.appendCmd(extraNode);
           }
           if (((showUntrusted && untrustedMenu || showDistrust) && !(domain in jsPSs.sitesMap) || blockUntrusted) && !untrusted) {
-            extraNode = document.createElement("menuitem");
-            extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
+            parent = (showUntrusted && !blockUntrusted ? untrustedMenu : mainMenu);
+            extraNode = document.createElement(parent == mainMenu ? elementKind : "menuitem");
+            extraNode.setAttribute(labelName, this.getString("distrust", [menuSite]));
             extraNode.setAttribute("statustext", menuSite);
             extraNode.setAttribute("class", cssClass + " noscript-distrust");
-            extraNode.setAttribute("oncommand", "noscriptOverlay.menuAllow(false, this, false)");
+            extraNode.setAttribute("oncommand", "return noscriptOverlay.menuAllow(false, this, false)");
             extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
-            (showUntrusted && !blockUntrusted ? untrustedMenu : mainMenu).appendCmd(extraNode);
+            parent.appendCmd(extraNode);
           }
         }
       }
@@ -465,6 +541,17 @@ var noscriptOverlay = noscriptUtil.service ?
       }, false);
     }
     
+  },
+
+  reverse: function(m) {
+    var a = [];
+    var mi;
+    while((mi = m.lastChild)) {
+      a.push(m.removeChild(mi));
+    }
+    for each(mi in a) {
+      m.appendChild(mi);
+    }
   },
 
   populatePluginsMenu: function(mainMenu, menu, extras) {
@@ -562,7 +649,7 @@ var noscriptOverlay = noscriptUtil.service ?
     }
     if (!justTell) {
       if (unknown.length) {
-        var browser = gBrowser.selectedBrowser;
+        var browser = this.currentBrowser;
         ns.setExpando(browser, "allowPageURL", content.document.URL);
         this.safeAllow(unknown, true, !permanent);
       }
@@ -593,7 +680,7 @@ var noscriptOverlay = noscriptUtil.service ?
   allowObjectURL: function(url, mime) {
     this.ns.allowObject(url, mime);
     if (this.ns.getPref("autoReload", true))
-        this.ns.quickReload(gBrowser.selectedBrowser.webNavigation);
+        this.ns.quickReload(this.currentBrowser.webNavigation);
   },
   
   normalizeMenu: function(menu, hideParentIfEmpty) {
@@ -636,26 +723,42 @@ var noscriptOverlay = noscriptUtil.service ?
 ,
   menuAllow: function(enabled, menuItem, temp) {
     var site = null;
+    var reloadPolicy = 0;
     if (menuItem) { // local 
       site = menuItem.getAttribute("statustext");
-      if (!site) return;
+      if (!site) return true;
+      menuItem.disabled = true;
       if (menuItem.getAttribute("class").indexOf("-distrust") > -1) {
         this.ns.setUntrusted(site, true);
+      }
+      
+      if (menuItem.parentNode == this.stickyUI) {
+        // sticky UI feedback
+        with(this.stickyUI.style) {
+          opacity = ".5";
+          cursor = "wait";
+        }
+        this._reloadDirty = true;
+        reloadPolicy = this.liveReload ? 1 : -1;
       }
     } else { // global
       if (enabled && this.ns.getPref("globalwarning", true) &&
           !this.prompter.confirm(window, this.getString("global.warning.title"),
                                 this.getString("global.warning.text"))
-         ) return;
+         ) return true;
     }
-    this.safeAllow(site, enabled, temp);
+    this.safeAllow(site, enabled, temp, reloadPolicy);
+    return !this._stickyBox;
   }
 ,
-  safeAllow: function(site, enabled, temp) {
+  safeAllow: function(site, enabled, temp, reloadPolicy) {
     const ns = this.ns;
-    var webNav = gBrowser.selectedBrowser.webNavigation;
-    var reloadCurrentTabOnly = (site instanceof Array) &&
-      !ns.getPref("autoReload.allTabsOnPageAction", true);
+    var webNav = this.currentBrowser.webNavigation;
+    
+    if (!reloadPolicy && (site instanceof Array) &&
+          !ns.getPref("autoReload.allTabsOnPageAction", true)) {
+      reloadPolicy = 1 // current tab only, for multiple items
+    }
 
     ns.safeCapsOp(function() {
       if (site) {
@@ -679,12 +782,12 @@ var noscriptOverlay = noscriptUtil.service ?
         ns.jsEnabled = enabled;
       }
       noscriptOverlay.syncUI();
-    }, reloadCurrentTabOnly);
+    }, reloadPolicy);
   }
 ,
   
   get statusIcon() {
-    var statusIcon = document.getElementById("noscript-statusIcon");
+    var statusIcon = document.getElementById("noscript-statusIcon") || document.getElementById("noscript-tbb");
     if (!statusIcon) return null; // avoid mess with early calls
     delete this.statusIcon;
     return this.statusIcon = statusIcon;
@@ -724,8 +827,9 @@ var noscriptOverlay = noscriptUtil.service ?
   
   syncXssWidget: function(widget) {
     if (!widget) widget = document.getElementById("noscript-statusXss");
+    if (!widget) return;
     const ns = this.ns;
-    var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(gBrowser.selectedBrowser);
+    var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(this.currentBrowser);
     if (unsafeRequest && !unsafeRequest.issued) {
       widget.removeAttribute("hidden");
       widget.setAttribute("tooltiptext", "XSS [" +
@@ -738,6 +842,7 @@ var noscriptOverlay = noscriptUtil.service ?
   
   syncRedirectWidget: function() {
     var widget = document.getElementById("noscript-statusRedirect");
+    if (!widget) return;
     var info = this.getMetaRefreshInfo();
     if (!info) {
       widget.setAttribute("hidden", true);
@@ -748,32 +853,62 @@ var noscriptOverlay = noscriptUtil.service ?
         this.getString("metaRefresh.notify.follow") + " [" + info.uri + "]"); 
   },
   
-  showUI: function() {
-    var statusIcon = this.statusIcon;
-    var popup = document.getElementById("noscript-status-popup");
-    if (statusIcon.hidden || statusIcon.parentNode.hidden) {
-      var tbb = document.getElementById("noscript-tbb");
-      if (tbb && window.getComputedStyle(tbb.parentNode, "").display != "none") {
-        tbb.open = true;
-        return;
-      }
-      if (statusIcon.parentNode.hidden) {
-        window.setTimeout(function() {
-          var popup = document.getElementById("noscript-notify-popup");
-          var ref = document.getElementById("appcontent");
-          popup.showPopup(ref, ref.boxObject.screenX, ref.boxObject.screenY);
-        }, 0);
-        return;
-      } else {
-        popup.addEventListener("popuphidden", function(ev) {
-            if (ev.currentTarget != ev.target) return;
-            ev.target.removeEventListener(ev.type, arguments.callee, false);
-            ev.target.parentNode.hidden = !noscriptOverlay.ns.getPref("statusIcon", true);
-        }, false);
-        statusIcon.hidden = false;
-      }
+  get stickyUI() {
+    var ui = document.getElementById("noscript-sticky-ui");
+    if (ui == null) return null;
+    delete this.stickyUI;
+    if (!ui.openPopup) ui = null;
+    else {
+      ui.hidden = false;
+      if (window.Browser) {
+        // Fennec tweaks
+        ui.className = "noscript-menu";
+        var p = document.getAnonymousElementByAttribute(ui, "class", "popup-internal-box");
+        var d = p.ownerDocument;
+        var s = null;
+        for each (id in ["scrollbutton-up", "scrollbutton-down"]) {
+          s = d.getAnonymousElementByAttribute(p, "anonid", id).style;
+          s.minHeight = "40px";
+          s.borderColor = "#888";
+          s.borderStyle = "solid";
+          s.borderWidth = "1px";
+        }
+      }      
     }
-    popup.showPopup();
+    return this.stickyUI = ui;
+  },
+  
+  get useStickyUI() {
+    return this.ns.getPref("stickyUI");
+  },
+  
+  showUI: function(event, position) {
+    var popup = null;
+    var parent = event && event.currentTarget;
+    
+    var useSticky = position || this.useStickyUI && event && event.button != 2;
+    if (!parent) { // keyboard shortcut
+      useSticky = useSticky || this.ns.getPref("stickyUI.onKeyboard");
+      parent = document.documentElement;
+    } else if (parent.popup) {
+      popup = document.getElementById(parent.popup);
+    }
+    
+    if (event) event.preventDefault();
+    
+    if (useSticky && (popup = this.stickyUI)) {
+      if (popup.state != "closed" || (new Date() - (popup._lastClosed || 0)) < 300) {
+        popup.hidePopup();
+      } else {
+        popup.openPopup(parent,
+                        position || (parent.tagName == "statusbarpanel" ? "before_start" : "overlap"),
+                        0, 0, true, true);
+      }
+      return;
+    }
+    
+    popup = popup || document.getElementById("noscript-status-popup");
+    popup.showPopup(parent, parent.boxObject.screenX, parent.boxObject.screenY);
   }
 ,
   get notificationPos() {
@@ -918,7 +1053,7 @@ var noscriptOverlay = noscriptUtil.service ?
      
       var buttonLabel, buttonAccesskey;
       if (gb.getNotificationBox || /\baButtonAccesskey\b/i.test(gb.showMessage.toSource())) {
-        const refWidget = document.getElementById("noscript-options-ctx-menuitem");
+        const refWidget = document.getElementById("noscript-options-menuitem");
         buttonLabel = refWidget.getAttribute("label");
         buttonAccesskey = refWidget.getAttribute("accesskey");
       } else { // Fx < 1.5
@@ -957,7 +1092,10 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   getAltNotificationBox: function(browser, value, canAppend) {
-    const box = this.getNotificationBox(this.altNotificationPos, browser);
+    
+    const box = (window.Browser && Browser.getNotificationBox)
+      ? Browser.getNotificationBox()
+      : this.getNotificationBox(this.altNotificationPos, browser);
     if (canAppend || (box && 
         box.getNotificationWithValue &&
         box.getNotificationWithValue(value))) return null;
@@ -982,10 +1120,11 @@ var noscriptOverlay = noscriptUtil.service ?
     var label = this.getString("xss.notify.generic", [origin]);
     var icon = this.getIcon("noscript-statusXss");
     
-    const refWidget = document.getElementById("noscript-options-ctx-menuitem");
+    const refWidget = document.getElementById("noscript-options-menuitem");
     var buttonLabel = refWidget.getAttribute("label");
     var buttonAccesskey = refWidget.getAttribute("accesskey");
-    var popup = "noscript-xss-popup";
+    var popup = document.getElementById("noscript-xss-popup");
+    if (window.Browser) popup.className = "noscript-menu";
     
     const tabBrowser = getBrowser();
     if (tabBrowser.showMessage) { // Fx 1.5
@@ -993,7 +1132,7 @@ var noscriptOverlay = noscriptUtil.service ?
           requestInfo.browser, 
           icon, label, 
           buttonLabel, null,
-          null, popup, this.altNotificationPos, true,
+          null, popup.id, this.altNotificationPos, true,
           buttonAccesskey);
     } else { // Fx >= 2.0
       box.appendNotification(
@@ -1004,7 +1143,7 @@ var noscriptOverlay = noscriptUtil.service ?
         [{
           label: buttonLabel,
           accessKey: buttonAccesskey,
-          popup: popup
+          popup: popup.id
          }]
         );
     }
@@ -1058,10 +1197,10 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   setMetaRefreshInfo: function(value, browser) {
-    return this.ns.setExpando(browser || gBrowser.selectedBrowser, "metaRefreshInfo", value);
+    return this.ns.setExpando(browser || this.currentBrowser, "metaRefreshInfo", value);
   },
   getMetaRefreshInfo: function(browser) {
-    return this.ns.getExpando(browser || gBrowser.selectedBrowser, "metaRefreshInfo");
+    return this.ns.getExpando(browser || this.currentBrowser, "metaRefreshInfo");
   },
   followMetaRefresh: function(event) {
     this.ns.doFollowMetaRefresh(this.getMetaRefreshInfo(), event.shiftKey);
@@ -1108,7 +1247,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   unsafeReload: function() {
-    const browser = gBrowser.selectedBrowser;
+    const browser = this.currentBrowser;
     const ns = this.ns;
     const rw = ns.requestWatchdog;
     var unsafeRequest = rw.getUnsafeRequest(browser);
@@ -1172,6 +1311,11 @@ var noscriptOverlay = noscriptUtil.service ?
     this.syncRedirectWidget();
     
     const sites = this.getSites();
+    
+    if (this._currentPopup && this._currentPopup == this.stickyUI && !this._currentPopup.hidden) {
+      this.prepareMenu(this._currentPopup, sites);
+    }
+    
     var totalScripts = sites.scriptCount;
     var totalPlugins = sites.pluginCount;
     var totalAnnoyances = totalScripts + totalPlugins;
@@ -1191,7 +1335,7 @@ var noscriptOverlay = noscriptUtil.service ?
         isUntrusted = untrustedSites.matches(url);
         site = !isUntrusted && (global ? url : jsPSs.matches(url));
         
-        if (site && url == sites.topURL && !gBrowser.selectedBrowser.webNavigation.allowJavascript)
+        if (site && url == sites.topURL && !this.currentBrowser.webNavigation.allowJavascript)
           site = null;
           
         if (site) {
@@ -1259,12 +1403,14 @@ var noscriptOverlay = noscriptUtil.service ?
     }
     
     widget = document.getElementById("noscript-statusLabelValue");
-    widget.setAttribute("value", shortMessage);
-    widget.parentNode.style.display = message ? "block" : "none";
+    if (widget) {
+      widget.setAttribute("value", shortMessage);
+      widget.parentNode.style.display = message ? "block" : "none";
+    }
   }
 ,
-  notifyHideTimeout: 0
-,
+  notifyHideTimeout: 0,
+  liveReload: false,
   
   initContentWindow: function(window) {
     window.addEventListener("pagehide", this.listeners.onPageHide, true);
@@ -1301,22 +1447,28 @@ var noscriptOverlay = noscriptUtil.service ?
                 widget.setAttribute("hidden", !noscriptOverlay.ns.getPref(data))
               }
             }, 0);
-         break;
-         case "notify":
-         case "notify.bottom":
-           noscriptOverlay[data.replace(/\.b/, 'B')] = this.ns.getPref(data);
-           if(this._registered) noscriptOverlay.notificationHide();
-         break;
-         case "keys.ui":
-         case "keys.toggle":
-           noscriptOverlay.shortcutKeys.setup(data.replace(/^keys\./, ""), this.ns.getPref(data, ""));
-           break;
-         break;
-         case "notify.hidePermanent":
-         case "notify.hideDelay":
-         case "notify.hide":
-           noscriptOverlay[data.replace(/\.h/, 'H')] = this.ns.getPref(data);
-         break;
+        break;
+        
+        case "notify":
+        case "notify.bottom":
+          noscriptOverlay[data.replace(/\.b/, 'B')] = this.ns.getPref(data);
+          if(this._registered) noscriptOverlay.notificationHide();
+        break;
+        
+        case "keys.ui":
+        case "keys.toggle":
+          noscriptOverlay.shortcutKeys.setup(data.replace(/^keys\./, ""), this.ns.getPref(data, ""));
+        break;
+        
+        case "notify.hidePermanent":
+        case "notify.hideDelay":
+        case "notify.hide":
+          noscriptOverlay[data.replace(/\.h/, 'H')] = this.ns.getPref(data);
+        break;
+        
+        case "stickyUI.liveReload":
+          noscriptOverlay.liveReload = this.ns.getPref(data);
+        break;
       }
     },
     _registered: false,
@@ -1327,7 +1479,8 @@ var noscriptOverlay = noscriptUtil.service ?
         "statusIcon", "statusLabel", 
         "keys.ui", "keys.toggle",
         "notify", "notify.bottom",
-        "notify.hide", "notify.hidePermanent", "notify.hideDelay"
+        "notify.hide", "notify.hidePermanent", "notify.hideDelay",
+        "stickyUI.liveReload"
         ];
       for (var j = 0; j < initPrefs.length; j++) {
         this.observe(null, null, initPrefs[j]);
@@ -1351,9 +1504,9 @@ var noscriptOverlay = noscriptUtil.service ?
         case 'toggle':
           noscriptOverlay.toggleCurrentPage(noscriptOverlay.ns.preferredSiteLevel);
           break;
-        case 'ui':
-           noscriptOverlay.showUI();
-           break;
+        case 'ui': 
+          noscriptOverlay.showUI(null);
+          break;
       }
     },
     
@@ -1660,16 +1813,44 @@ var noscriptOverlay = noscriptUtil.service ?
       if (ns.getPref("firstRunRedirection", true)) {
           window.setTimeout(function() {
             const url = "http://noscript.net?ver=" + noscriptUtil.service.VERSION + "&prev=" + prevVer;
-            const browser = getBrowser();
-            browser.selectedTab = browser.addTab(url, null);
+            noscriptUtil.browse(url);
             noscriptUtil.service.savePrefs();
           }, 100);
        }
     }
   },
   
+  get _browserReady() {
+    return window.gBrowser || window.Browser && window.Browser._content;
+  },
+  get currentBrowser() {
+    if (!this._browserReady) return null;
+    delete this.currentBrowser;
+    this.__defineGetter__("currentBrowser",
+      window.gBrowser
+      ? function() { return gBrowser.selectedBrowser; }
+      : function() { return Browser.currentBrowser; }
+    );
+    return this.currentBrowser;
+  },
+  
+  get browsers() {
+    if (!this._browserReady) return [];
+    delete this.browsers;
+    this.__defineGetter__("browsers",
+     window.gBrowser
+      ? function() { return gBrowser.browsers; }
+      : function() { return Browser._content.browsers; }
+    );
+    if (window.Browser) {
+      getBrowserForDisplay = function() { Browser._content.getBrowserForDisplay.apply(Browser._content, arguments); };
+    }
+    return this.browsers;
+  },
+  
   isBrowserEnabled: function(browser) {
-    browser = browser || gBrowser.selectedBrowser;
+    if (!this.ns.jsEnabled) return false;
+    browser = browser || this.currentBrowser;
     return browser.docShell.allowJavascript;
   },
  
@@ -1766,7 +1947,7 @@ var noscriptOverlay = noscriptUtil.service ?
 
   dispose: function() {
 
-    for (var bb = getBrowser().browsers, j = bb.length; j-- > 0;) {
+    for (var bb = this.browsers, j = bb.length; j-- > 0;) {
       try {
         this.cleanupDocument(bb[j].contentWindow.document, bb);
       } catch(e) {
@@ -1796,7 +1977,8 @@ var noscriptOverlay = noscriptUtil.service ?
       window.setTimeout(function() {
         alert("NoScript is not properly installed and cannot operate correctly.\n" + 
               "Please install it again and check the Install FAQ section on http://noscript.net/faq if this problem persists.");
-        gBrowser.selectedTab = gBrowser.addTab("http://noscript.net/faq#faqsec2", null);
+        noscriptUtil.browse("http://noscript.net/faq#faqsec2", null);
+          
       },10);
     }, false);
   }

@@ -68,7 +68,11 @@ var noscriptUtil = {
   }
 ,
   openConsole: function() {
-    toJavaScriptConsole();
+    if (window.toJavaScriptConsole) {
+        toJavaScriptConsole();
+    } else {
+        window.open("chrome://global/content/console.xul", "_js_console_", "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar");
+    }
   },
   
   openFaq: function(which) {
@@ -78,9 +82,8 @@ var noscriptUtil = {
   
   browse: function(url, features) {
     var w = this.service.domUtils.mostRecentBrowserWindow;
-    if(w && !w.closed) {
-      var browser = w.getBrowser();
-      browser.selectedTab = browser.addTab(url, null);
+    if(w && !w.closed && w.gBrowser) {
+      gBrowser.selectedTab = gBrowser.addTab(url, null);
     } else {
       window.open(url, "_blank", features || null)
     }

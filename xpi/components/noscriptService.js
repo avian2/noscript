@@ -427,12 +427,15 @@ const DOMUtils = {
     if(this.consoleDump) dump("[NoScript DOMUtils] " + msg + "\n");
   },
   findBrowser: function(chrome, win) {
-    var gb = chrome.getBrowser();
-    var browsers;
-    if (!(gb && (browsers = gb.browsers))) return null;
     
-    var browser = gb.selectedBrowser;
+    var overlay = chrome.noscriptOverlay;
+    if (!overlay) return null;
+    
+    var browser = overlay.currentBrowser;
     if (browser.contentWindow == win) return browser;
+    
+    var browsers = overlay.browsers;
+    if (!browsers) return null;
     
     for (var j = browsers.length; j-- > 0;) {
       browser = browsers[j];
@@ -567,10 +570,10 @@ function BrowserIterator(initialWin) {
 BrowserIterator.prototype = {
  
   initPerWin: function() {
-    var currentTB = this.currentWin && this.currentWin.getBrowser && this.currentWin.getBrowser();
-    if (currentTB) {
-      this.browsers = currentTB.browsers;
-      this.currentTab = currentTB.selectedBrowser;
+    var overlay = this.currentWin && this.currentWin.noscriptOverlay;
+    if (overlay) {
+      this.browsers = overlay.browsers;
+      this.currentTab = overlay.currentBrowser;
     } else if(this.currentWin) {
       try {
         this.browsers = this.currentWin.document.getElementsByTagName("browser");
@@ -836,7 +839,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.3.6",
+  VERSION: "1.8.4",
   
   get wrappedJSObject() {
     return this;
@@ -950,7 +953,7 @@ NoscriptService.prototype = {
   showPlaceholder: true,
   showUntrustedPlaceholder: true,
   collapseObject: false,
-  opacizeObject: 1,
+  opaqueObject: 1,
   clearClick: 3,
 
   
@@ -999,6 +1002,7 @@ NoscriptService.prototype = {
   allowedMimeRegExp: null, 
   hideOnUnloadRegExp: null,
   requireReloadRegExp: null,
+  ignorePorts: true,
   
   secureCookies: true,
   secureCookiesExceptions: null,
@@ -1103,6 +1107,7 @@ NoscriptService.prototype = {
       case "forbidIFramesContext":
       case "forbidXBL":
       case "forbidXHR":
+      case "ignorePorts":
       case "injectionCheck":
       case "jsredirectFollow":
       case "jsredirectIgnore":
@@ -1285,13 +1290,13 @@ NoscriptService.prototype = {
                 'noscript .__noscriptPlaceholder__ { display: inline !important; }';
         break;
       case "clearClick":
-      case "opacizeObject":
-        sheet = ".__noscriptOpacized__ { opacity: 1 !important; visibility: visible; } " +
-                "iframe.__noscriptOpacized__ { display: block !important; } " +
-                "object.__noscriptOpacized__, embed.__noscriptOpacized__ { display: inline !important } " +
+      case "opaqueObject":
+        sheet = ".__noscriptOpaqued__ { opacity: 1 !important; visibility: visible; } " +
+                "iframe.__noscriptOpaqued__ { display: block !important; } " +
+                "object.__noscriptOpaqued__, embed.__noscriptOpaqued__ { display: inline !important } " +
                 ".__noscriptScrolling__ { overflow: auto !important; min-width: 52px !important; min-height: 52px !important } " +
                 ".__noscriptHidden__ { visibility: hidden !important } " +
-                ".__noscriptAdjustedText__ { text-align: left !important; text-decoration: none !important }";
+                ".__noscriptOpaqueBG__ { background: white !important }";
                 
       break;
       default:
@@ -1432,13 +1437,13 @@ NoscriptService.prototype = {
       "forbidMetaRefresh",
       "forbidXBL", "forbidXHR",
       "alwaysBlockUntrustedContent",
-      "global",
+      "global", "ignorePorts",
       "injectionCheck", "injectionCheckSubframes",
       "jsredirectIgnore", "jsredirectFollow", "jsredirectForceShow",
       "jsHack", "jsHackRegExp",
       "emulateFrameBreak",
       "nselNever", "nselForce",
-      "clearClick", "opacizeObject",
+      "clearClick", "opaqueObject",
       "showPlaceholder", "showUntrustedPlaceholder", "collapseObject", 
       "temp", "untrusted", "gtemp",
       "silverlightPatch",
@@ -1682,18 +1687,24 @@ NoscriptService.prototype = {
     }
     
     map = map || this.jsPolicySites.sitesMap;
-    // port matching, with "0" as port wildcard  and * as nth level host wildcard
+    
     if (/:\d+$/.test(site)) {
-      var key = site.replace(/\d+$/, "0");
-      if (map[key] || map[site]) return true;
-      var keys = site.split(".");
-      if (keys.length > 1) {
-        var prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
-        while (keys.length > 2) {
-          keys.shift();
-          key = prefix + keys.join(".");
-          if (map[key] || map[key.replace(/\d+$/, "0")]) return true;
-          if (map[prefix + keys.join(".")]) return true;
+      if (this.ignorePorts) {
+        // default match ignoring port
+        if (this.isJSEnabled(site.replace(/:\d+$/, ''))) return true;
+      } else {
+        // port matching, with "0" as port wildcard  and * as nth level host wildcard
+        var key = site.replace(/\d+$/, "0");
+        if (map[key] || map[site]) return true;
+        var keys = site.split(".");
+        if (keys.length > 1) {
+          var prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
+          while (keys.length > 2) {
+            keys.shift();
+            key = prefix + keys.join(".");
+            if (map[key] || map[key.replace(/\d+$/, "0")]) return true;
+            if (map[prefix + keys.join(".")]) return true;
+          }
         }
       }
     }
@@ -1775,7 +1786,7 @@ NoscriptService.prototype = {
     try {
       const url = (site instanceof CI.nsIURL) ? site : SiteUtils.ios.newURI(site, null, null);
       const host = url.host;
-      return force || url.port == -1 && host[host.length - 1] != "." && 
+      return force || (this.ignorePorts || url.port == -1) && host[host.length - 1] != "." && 
             (host.lastIndexOf(".") > 0 || host == "localhost") ? host : '';
     } catch(e) {
       return '';
@@ -1847,11 +1858,16 @@ NoscriptService.prototype = {
      }
   }
 ,
-  safeCapsOp: function(callback, reloadCurrentTabOnly) {
+  RELOAD_NO: -1,
+  RELOAD_CURRENT: 1,
+  RELOAD_ALL: 0,
+  safeCapsOp: function(callback, reloadPolicy) {
     this.delayExec(function() {
       callback();
       this.savePrefs();
-      this.reloadWhereNeeded(reloadCurrentTabOnly);
+      if (reloadPolicy != this.RELOAD_NO) {
+        this.reloadWhereNeeded(reloadPolicy == this.RELOAD_CURRENT);
+      }
      }, 1);
   }
 ,
@@ -2524,7 +2540,7 @@ NoscriptService.prototype = {
                 locationURL = locationURL || aContentLocation.spec;
                 if (!(this.isSafeJSURL(locationURL) || this.isPluginDocumentURL(locationURL, "iframe")) &&
                   ((this.forbidData && !this.isFirebugJSURL(locationURL) || locationURL == "javascript:") && 
-                    !this.isJSEnabled(originSite = this.getSite(originURL = originURL || aRequestOrigin.spec)) ||
+                    this.forbiddenJSDataDoc(locationURL, originSite = this.getSite(originURL = originURL || aRequestOrigin.spec), aContext) ||
                     aContext && (
                       (aContext instanceof CI.nsIDOMWindow) 
                         ? aContext
@@ -2532,7 +2548,7 @@ NoscriptService.prototype = {
                     ).isNewToplevel
                   )
                  ) {
-                   return this.reject("JavaScript/Data URL", arguments);
+                  return this.reject("JavaScript/Data URL", arguments);
                 }
               } else if(scheme != aRequestOrigin.scheme && 
                   scheme != "chrome" && // faster path for common case
@@ -2569,7 +2585,7 @@ NoscriptService.prototype = {
               
               if (aContext instanceof CI.nsIDOMElement) {
                 // this is alternate to what we do in countObject, since we can't get there
-                  this.delayExec(this.opacizeIfNeeded, 0, aContext);
+                  this.delayExec(this.opaqueIfNeeded, 0, aContext);
               }
               
               if (logBlock)
@@ -2621,11 +2637,18 @@ NoscriptService.prototype = {
           
           this.getExpando(aContext.ownerDocument.defaultView.top, "codeSites", []).push(locationSite);
           
-          // normalize locationSite erasing port
-          return this.isJSEnabled(locationSite.replace(/:\d+$/, '')) || aContentLocation.scheme == "data"
-            ? CP_OK : this.reject("Script", arguments);
+          
+          forbid = !this.isJSEnabled(locationSite);
+          if (forbid && this.ignorePorts && /:\d+$/.test(locationSite)) {
+            forbid = !this.isJSEnabled(locationSite.replace(/:\d+$/, ''));
+          }
+          
+          return ((untrusted || forbid) && aContentLocation.scheme != "data")
+            ? this.reject("Script", arguments) : CP_OK;
         }
+        
 
+        
         if (!(forbid || locationSite == "chrome:")) {
           var mimeKey = aMimeTypeGuess || "application/x-unknown"; 
           
@@ -2649,7 +2672,8 @@ NoscriptService.prototype = {
               
               if (forbid) {
                  if (isSilverlight) {
-                  forbid = aContentType != 12 && aInternalCall;
+                  if (logIntercept) this.dump("Silverlight " + aContentLocation.spec + " " + typeof(aContext) + " " + aContentType + ", " + aInternalCall);
+                  forbid = aContentType != 12 && (aInternalCall || !this.POLICY1_9);
                   if(forbid) {
                     this.setExpando(aContext, "silverlight", true);
                     if (!aContentLocation.schemeIs("data") && aContentLocation.spec != "data:application/x-silverlight,") {
@@ -2689,7 +2713,13 @@ NoscriptService.prototype = {
                 : // use origin for javascript: or data:
                   /^(?:javascript|data):/.test(locationURL) && originOK
           ;
-
+          
+          if (!locationOK && locationSite && this.ignorePorts && /:\d+$/.test(locationSite)) {
+            if (this.isJSEnabled(locationSite.replace(/:\d+$/, ''))) {
+              locationOK = this.autoTemp(locationSite);
+            }
+          }
+          
           forbid = !(locationOK && (originOK || 
             !this.getPref(blockThisIFrame 
             ? "forbidIFramesParentTrustCheck" : "forbidActiveContentParentTrustCheck", true)
@@ -2747,6 +2777,10 @@ NoscriptService.prototype = {
     check: function() {
       return false;
     }
+  },
+  
+  forbiddenJSDataDoc: function(locationURL, originSite, aContext) {
+    return !(!originSite || /^moz-nullprincipal:/.test(originSite) || this.isJSEnabled(originSite));
   },
   
   forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
@@ -3070,7 +3104,7 @@ NoscriptService.prototype = {
     } else {
       this.setExpando(win, "objectSites", [site]);
     }
-    this.opacizeIfNeeded(embed, doc);
+    this.opaqueIfNeeded(embed, doc);
   },
   
   getPluginExtras: function(obj) {
@@ -3446,7 +3480,7 @@ NoscriptService.prototype = {
   
   executeJSURL: function(url, openCallback) {
     var browserWindow = DOMUtils.mostRecentBrowserWindow;
-    var browser = browserWindow.getBrowser().selectedBrowser;
+    var browser = browserWindow.noscriptOverlay.currentBrowser;
     if(!browser) return false;
     
     var window = browser.contentWindow;
@@ -3521,18 +3555,18 @@ NoscriptService.prototype = {
   
   findPluginExtras: function(document) {
     var res = this.getExpando(document.defaultView, "pluginExtras", []);
-    if ("opacizeHere" in res) return res;
+    if ("opaqueHere" in res) return res;
     var url = document.defaultView.location.href;
-    res.opacizeHere = this.appliesHere(this.opacizeObject, url) && /^(?:ht|f)tps?:/i.test(url);
+    res.opaqueHere = this.appliesHere(this.opaqueObject, url) && /^(?:ht|f)tps?:/i.test(url);
     return res;
   },
   
   
-  OpacizeHandlers: {
+  OpaqueHandlers: {
     
-    getOpacized: function(w) {
-      const cs = "__noscriptOpacized__";
-      if (w.__noscriptOpacizedObjects) return w.__noscriptOpacizedObjects;
+    getOpaqued: function(w) {
+      const cs = "__noscriptOpaqued__";
+      if (w.__noscriptOpaquedObjects) return w.__noscriptOpaquedObjects;
       var doc = w.document;
       if (doc.getElementsByClassName) return Array.slice(doc.getElementsByClassName(cs));
       var results = [];
@@ -3551,7 +3585,7 @@ NoscriptService.prototype = {
         var w = ev.currentTarget;
         
         var o, s, cs;
-        var oo = self.getOpacized(w);
+        var oo = self.getOpaqued(w);
         var d = w.document;
         var de = d.documentElement;
         var db = d.body;
@@ -3575,7 +3609,7 @@ NoscriptService.prototype = {
             w.setTimeout(arguments.callee, ev.timeout, ev);
             break;
           case "load":
-            w.__noscriptOpacizedObjects = null;
+            w.__noscriptOpaquedObjects = null;
           default:
             w.removeEventListener(ev.type, arguments.callee, false);
         }
@@ -3589,11 +3623,11 @@ NoscriptService.prototype = {
       w.setTimeout(this.fixScrollers, ev.timeout, ev);
     },
     
-    getOpacizedObjects: function(w, noscroll) {
-      var oo = w.__noscriptOpacizedObjects;
+    getOpaquedObjects: function(w, noscroll) {
+      var oo = w.__noscriptOpaquedObjects;
       if (!oo) {
         oo = [];
-        w.__noscriptOpacizedObjects = oo;
+        w.__noscriptOpaquedObjects = oo;
         if (!noscroll) {
           w.addEventListener("load", this.fixScrollers, false);
           w.addEventListener("DOMContentLoaded", this.fixScrollers, false);
@@ -3605,33 +3639,33 @@ NoscriptService.prototype = {
     
   },
   
-  opacize: function(o, scrollNow) {
-    if (o.__noscriptOpacized) return;
+  opaque: function(o, scrollNow) {
+    if (o.__noscriptOpaqued) return;
     try {
       
       if (o.contentDocument && this.clearClickHandler.sameSiteParents(o.contentDocument.defaultView)) return;
       
       var d = o.ownerDocument;
       var w = d.defaultView;
-      var oh = this.OpacizeHandlers;
-      var oo = oh.getOpacizedObjects(w, scrollNow || this.clearClickHandler.isSupported(d) && this.appliesHere(this.clearClick, w.top.location.href));
+      var oh = this.OpaqueHandlers;
+      var oo = oh.getOpaquedObjects(w, scrollNow || this.clearClickHandler.isSupported(d) && this.appliesHere(this.clearClick, w.top.location.href));
       if (scrollNow) oh.scheduleFixScrollers(w, 1);
       do {
-        o.__noscriptOpacized = true;
+        o.__noscriptOpaqued = true;
         o.style.opacity = "";
-        DOMUtils.addClass(o, "__noscriptOpacized__");
+        DOMUtils.addClass(o, "__noscriptOpaqued__");
         oo.push(o);
         if (this.consoleDump & LOG_CLEARCLICK) this.dump("Opacizing " + o.tagName);
         o = o.parentNode;
-      } while(o && o.style && !o.__noscriptOpacized);
+      } while(o && o.style && !o.__noscriptOpaqued);
     } catch(e) {
       this.dump("Error opacizing " + o.tagName + ": " + e.message + ", " + e.stack);
     }
   },
   
-  opacizeIfNeeded: function(o, doc) {
-    if (this.findPluginExtras(doc || o.ownerDocument).opacizeHere)
-      this.opacize(o);
+  opaqueIfNeeded: function(o, doc) {
+    if (this.findPluginExtras(doc || o.ownerDocument).opaqueHere)
+      this.opaque(o);
   },
   
   appliesHere: function(pref, url) {
@@ -3670,7 +3704,7 @@ NoscriptService.prototype = {
     
     var replacements = null;
     
-    var opacize = pluginExtras.opacizeHere;
+    var opaque = pluginExtras.opaqueHere;
     
     for (var objectTag in types) {
       objects = document.getElementsByTagName(objectTag);
@@ -3683,7 +3717,7 @@ NoscriptService.prototype = {
           continue; 
         }
         
-        if (opacize) this.opacize(object);
+        if (opaque) this.opaque(object);
         
         if (!(object instanceof objectType) || // wrong type instantiated for this tag?!
             this.findObjectAncestor(object) != object // skip "embed" if nested into "object"
@@ -4032,6 +4066,8 @@ NoscriptService.prototype = {
         browser.docShell.ENUMERATE_FORWARDS
     );
     
+    var loading = false;
+    
     var docShell, docURI, url, win;
 
     var cache, redir, tmpPluginCount;
@@ -4094,6 +4130,7 @@ NoscriptService.prototype = {
        
        if (!this.getExpando(win, "contentLoaded") && (!(docShell instanceof nsIWebNavigation) || docShell.isLoadingDocument)) {
          sites.pluginCount += tmpPluginCount;
+         loading = true;
          continue;
        }
        
@@ -4121,6 +4158,11 @@ NoscriptService.prototype = {
     
     
     sites.topURL = sites[0] || '';
+    
+    if (loading) try {
+      browser.ownerDocument.defaultView.noscriptOverlay.syncUI();
+    } catch(e) {}
+    
     return this.sortedSiteSet(sites);
     
   },
@@ -4592,7 +4634,8 @@ NoscriptService.prototype = {
     if (!doc) return;
     
     var url = doc.documentURI;
-    if ((!url) || this.isJSEnabled(this.getSite(url))) return;
+    var site = url && this.getSite(url);
+    if (!site || this.isJSEnabled(site)) return;
     
     var onclick;
     
@@ -5775,7 +5818,7 @@ var InjectionChecker = {
     findInjection.lastIndex = 0;
     var m, breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg, pos;
     
-    const MAX_TIME = 5000, MAX_LOOPS = 400;
+    const MAX_TIME = 8000, MAX_LOOPS = 400;
 
     const t = new Date().getTime();
     var iterations = 0;
@@ -7182,6 +7225,27 @@ ClearClickHandler.prototype = {
     return true;
   },
   
+  _whitelist: {},
+  isWhitelisted: function(w) {
+    var l = this._whitelist[w.location.href];
+    if (!l) return false;
+    var pp = [];
+    for(var p = w.parent; p != w; w = p, p = w.parent) {
+      pp.push(p.location.href);
+    }
+    return l.indexOf(pp.join(" ")) > -1;
+  },
+  whitelist: function(w) {
+    if (this.isWhitelisted(w)) return;
+    var l = this._whitelist[w.location.href] || [];
+    var pp = [];
+    for(var p = w.parent; p != w; w = p, p = w.parent) {
+      pp.push(p.location.href);
+    }
+    l.push(pp.join(" "));
+  },
+  
+  
   isEmbed: function(o) {
     return (o instanceof CI.nsIDOMHTMLObjectElement || o instanceof CI.nsIDOMHTMLEmbedElement) && !o.contentDocument;
   },
@@ -7348,7 +7412,9 @@ ClearClickHandler.prototype = {
         this.isSemanticContainer(o) ||
         !ns.appliesHere(ns.clearClick, top.location.href) ||
         (o.__clearClickUnlocked = !(isEmbed = this.isEmbed(o)) && // plugin embedding?
-                  (w == w.top || this.sameSiteParents(w)) || // cross-site document?
+            (w == w.top || w.__clearClickUnlocked ||
+              (w.__clearClickUnlocked = this.isWhitelisted(w))
+              || this.sameSiteParents(w)) || // cross-site document?
         ns.getPluginExtras(o) // NS placeholder?
         )
       ) return;
@@ -7415,7 +7481,7 @@ ClearClickHandler.prototype = {
         try {
           this.prompting = true;
           var params = {
-            url: ((o instanceof CI.nsIDOMHTMLObjectElement) && o.src) || ((o instanceof CI.nsIDOMHTMLObjectElement) && o.data) || o.ownerDocument.URL,
+            url: isEmbed && (o.src || o.data) || o.ownerDocument.URL,
             img: ctx.img,
             locked: false
           };
@@ -7425,7 +7491,8 @@ ClearClickHandler.prototype = {
             "chrome, dialog, dependent, centerscreen, modal",
             params);
           if (!params.locked) {
-            o.__clearClickUnlocked = true
+            w.__clearClickUnlocked = o.__clearClickUnlocked = true
+            this.whitelist(w);
           }
         } finally {
           this.prompting = false;
@@ -7496,7 +7563,7 @@ ClearClickHandler.prototype = {
     var bgStyle;
     var gfx, ex;
     var box, curtain;
-    
+    var objClass = o.className;
     try {
       
       if (ctx.isEmbed) { // objects and embeds
@@ -7506,6 +7573,7 @@ ClearClickHandler.prototype = {
           if (viewer) viewer.enableRendering = false; 
           shownCS = "__noscriptShown__" + Math.round(Math.random() * 9999999).toString(16) + "_" + Math.round(Math.random() * 9999999).toString(16);
           sheet = "body * { visibility: hidden !important } body ." + shownCS + " { visibility: visible !important; opacity: 1 !important }";
+          o.className = objClass + " __noscriptOpaqueBG__";
           (cssPatch = this.collectAncestors(o, true))
             .forEach(function(o) { this.classPush(o, o.className + " " + shownCS); }, this);
           if (this.oldStyle) {
@@ -7517,9 +7585,9 @@ ClearClickHandler.prototype = {
             this.ns.updateStyleSheet(sheet, true);
           }
         } else {
-          DOMUtils.addClass(o, "__noscriptOpacized__");
+          DOMUtils.addClass(o, "__noscriptOpaqued__");
         }
-      } else if ((frame = w.frameElement) && frame.__noscriptOpacized) {
+      } else if ((frame = w.frameElement) && frame.__noscriptOpaqued) {
         frameClass = frame.className;
         DOMUtils.removeClass(frame, "__noscriptScrolling__");
         // maybe we could go up in the gerarchy, but it's probably not worth the effort
@@ -7531,9 +7599,9 @@ ClearClickHandler.prototype = {
 
       if (frame) {
         curtain = d.createElementNS(HTML_NS, "div");
+        box = d.getBoxObjectFor(d.documentElement);
         with(curtain.style) {
           top = left = "0px";
-          box = d.getBoxObjectFor(d.documentElement);
           width = box.width + "px";
           height = box.height + "px";
           position = "absolute";
@@ -7544,7 +7612,24 @@ ClearClickHandler.prototype = {
         var fbox = this.getBox(frame);
         clientHeight = Math.min(clientHeight, fbox.height - 4 - (parseInt(s.paddingTop) || 0) - (parseInt(s.borderTopWidth) || 0) - (parseInt(s.paddingBottom) || 0) - (parseInt(s.borderBottomHeight) || 0));   
         clientWidth = Math.min(clientWidth, fbox.width - 4 - (parseInt(s.paddingLeft) || 0) - (parseInt(s.borderLeftWidth) || 0) - (parseInt(s.paddingRight) || 0) - (parseInt(s.borderRightWidth) || 0));
-      }     
+      } else {
+        // some plugin objects are drawn as blank if zoom != 1
+        if (zoom != 1) {
+          curtain = d.createElementNS(HTML_NS, "div");
+          box = d.getBoxObjectFor(d.documentElement);
+          with(curtain.style) {
+  
+            top = box.y + "px";
+            left = box.x + "px";
+           
+            width = box.width + "px";
+            height = box.height + "px";
+            position = "absolute";
+            zIndex = "99999999";
+            background = this.rndColor();
+          }
+        }
+      }        
 
       var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), this.minWidth) ;
       var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), this.minHeight);
@@ -7552,10 +7637,11 @@ ClearClickHandler.prototype = {
       box = this.getBox(o, d, w);
       
       // expand to parent form if needed
-      var form = o.form; 
+      var form = o.form;
+      var formBox = null;
       if (frame && (form || (form = this.findParentForm(o)))) {
 
-        var formBox = this.getBox(form, d, w);
+        formBox = this.getBox(form, d, w);
         if (!(formBox.width && formBox.height)) { // some idiots put <form> as first child of <table> :(
           formBox = this.getBox(form.offsetParent || form.parentNode, d, w);
           if (!(formBox.width && formBox.height)) {
@@ -7588,12 +7674,31 @@ ClearClickHandler.prototype = {
       d.documentElement.style.background = bg;
       
       // clip, slide in viewport and trim
+      
       var vp = { 
         x: d.body && d.body.scrollLeft || d.documentElement.scrollLeft, 
         y: d.body && d.body.scrollTop || d.documentElement.scrollTop, 
         width: clientWidth, 
         height: clientHeight 
       };
+      
+      if (ctx.isEmbed) { // check in-page vieport
+        for(form = o; form = form.parentNode;) {
+
+          if ((form.offsetWidth < box.width || form.offsetHeight < box.height) &&
+              w.getComputedStyle(form, '').overflow != "visible") {
+            
+            // check if we're being fooled by some super-zoomed applet
+            if (box.width / 4 <= form.offsetWidth && box.height / 4 <= form.offsetHeight) {
+              formBox = this.getBox(form, d, w);
+              box.width = Math.max(this.minWidth, form.clientWidth - (box.x - formBox.x) );
+              box.height = Math.max(this.minHeight, form.offsetHeight - (box.y - formBox.y));
+            }
+            break;
+          }
+        }
+      }
+      
       
       // print("Fitting " + box.toSource() + " in " + vp.toSource() + " - zoom: " + zoom);
       this._constrain(box, "x", "width", maxWidth, vp, ctx.x, zoom);
@@ -7687,6 +7792,7 @@ ClearClickHandler.prototype = {
       if (typeof(frameClass) == "string") frame.className = frameClass;
       if (curtain && curtain.parentNode) curtain.parentNode.removeChild(curtain);
       if (typeof(bgStyle) == "string") d.documentElement.style.background = bgStyle;
+      o.className = objClass;
       if (viewer) viewer.enableRendering = true;
     }
     
