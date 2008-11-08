@@ -1849,7 +1849,6 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   isBrowserEnabled: function(browser) {
-    if (!this.ns.jsEnabled) return false;
     browser = browser || this.currentBrowser;
     return browser.docShell.allowJavascript;
   },

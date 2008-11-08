@@ -839,7 +839,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.4",
+  VERSION: "1.8.4.1",
   
   get wrappedJSObject() {
     return this;
