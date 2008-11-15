@@ -117,7 +117,6 @@ var nsopt = {
       var pref = ns.getPref(c);
       Array.forEach(document.getElementById(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {        
         cbx.setAttribute("checked", !(pref & parseInt(cbx.getAttribute("value"))) ? "false" : "true");
-
       });
     });
     

@@ -63,7 +63,7 @@ var noscriptBM = {
   },
   
   loadURI: function() { // Fx 3.1 command bar interception
-    return (window.gURLBar && window.gURLBar.handleCommand == arguments.callee.caller) 
+    return (window.gURLBar && window.gURLBar.handleCommand && window.gURLBar.handleCommand == arguments.callee.caller) 
            ? noscriptBM.handleURLBarCommand.apply(window, arguments)
            : noscriptBM.handleURLBarCommandOriginal.apply(window, arguments);
   },

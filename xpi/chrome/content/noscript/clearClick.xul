@@ -46,7 +46,7 @@
   
   <script type="application/x-javascript" src="noscript.js" />
   <script type="application/x-javascript" src="clearClick.js" />
-	<hbox style="width: 450px">
+	<hbox style="width: 400px">
 		<vbox>
 			<image src="chrome://noscript/skin/icon32.png" width="32" height="32" />
 	  </vbox>
@@ -58,13 +58,19 @@
 				<stack id="imgs-stack" align="center" 
 							 onkeypress="if (event.which > 9) ClearClick.swap(this)"
 								onclick="ClearClick.swap(this)">
-					<image id="fakeImg" src="" width="400" height="300" style="border: 2px solid #800"/>
-					<image id="trueImg" src="" width="400" height="300" style="border: 2px solid #080"/>
+					<image id="fakeImg" src="" width="350" height="200" style="border: 2px solid #800"/>
+					<image id="trueImg" src="" width="350" height="200" style="border: 2px solid #080"/>
 				</stack>
 			</vbox>
 	  </hbox>
 		<label class="text-link" id="hiddenContentURL" onclick="ClearClick.browse()" value="" />
 		<checkbox id="keepLocked" label="&noscriptKeepLocked;" checked="true" />
+    <separator/>
+    <hbox id="clearClickOpts" align="center">
+      <label value="&noscriptClearClickOpt;" />
+      <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
+      <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
+    </hbox>
 		</vbox>
    </hbox>
 </dialog>

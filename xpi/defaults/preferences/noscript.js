@@ -183,7 +183,7 @@ pref("noscript.clearClick.debug", false);
 pref("noscript.emulateFrameBreak", true);
 
 pref("noscript.stickyUI.liveReload", false);
-pref("noscript.stickyUI", false);
+pref("noscript.stickyUI", true);
 pref("noscript.stickyUI.onKeyboard", true);
 
 pref("noscript.ignorePorts", true)

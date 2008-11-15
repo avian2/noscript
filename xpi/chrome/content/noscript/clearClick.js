@@ -21,6 +21,12 @@ var ClearClick = {
     
     if (url.length > 50) url = url.substring(0, 23) + "..." + url.slice(-23);
     document.getElementById("hiddenContentURL").value = url;
+    
+    var pref = noscriptUtil.service.getPref("clearClick");
+    Array.forEach(document.getElementById("clearClickOpts").getElementsByTagName("checkbox"), function(cbx) {        
+      cbx.setAttribute("checked", !(pref & parseInt(cbx.getAttribute("value"))) ? "false" : "true");
+    });
+    
   },
   
   browse: function() {
@@ -35,6 +41,11 @@ var ClearClick = {
   
   end: function() {
     this.params.locked = document.getElementById("keepLocked").checked;
+    var pref = 0;
+    Array.forEach(document.getElementById("clearClickOpts").getElementsByTagName("checkbox"), function(cbx) {
+      if (cbx.checked) pref = pref | parseInt(cbx.getAttribute("value"));
+    });
+    noscriptUtil.service.setPref("clearClick", pref);
   },
   
   swap: function(stack) {

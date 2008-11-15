@@ -308,7 +308,7 @@ const SiteUtils = new function() {
         case "javascript": case "data": 
           return "";
         case "about":
-          return /about:neterror(\?|$)/.test(url) ? "about:neterror" : url;
+          return url.split(/[\?#]/, 1)[0];
         case "chrome":
           return "chrome:";
       }
@@ -458,8 +458,8 @@ const DOMUtils = {
       }
       if (!ctx) return null;
       ctx = this.lookupMethod(ctx, "top")();
-      
       var bi = this.createBrowserIterator(this.getChromeWindow(ctx));
+      
       for (var b; b = bi.next();) {
         try {
           if (b.contentWindow == ctx) return b;
@@ -492,10 +492,10 @@ const DOMUtils = {
     
   getChromeWindow: function(window) {
     try {
-      return this.lookupMethod(this.getDocShellFromWindow(window)
+      return this.getDocShellFromWindow(window)
         .QueryInterface(CI.nsIDocShellTreeItem).rootTreeItem
         .QueryInterface(CI.nsIInterfaceRequestor)
-        .getInterface(CI.nsIDOMWindow), "window")();
+        .getInterface(CI.nsIDOMWindow).window;
     } catch(e) {
       return null;
     }
@@ -570,25 +570,22 @@ function BrowserIterator(initialWin) {
 BrowserIterator.prototype = {
  
   initPerWin: function() {
-    var overlay = this.currentWin && this.currentWin.noscriptOverlay;
+    var overlay = this.currentWin && (this.currentWin.wrappedJSObject || this.currentWin).noscriptOverlay;
     if (overlay) {
       this.browsers = overlay.browsers;
       this.currentTab = overlay.currentBrowser;
-    } else if(this.currentWin) {
-      try {
-        this.browsers = this.currentWin.document.getElementsByTagName("browser");
-        this.currentTab = this.browsers.length && this.browsers[0] || null;
-      } catch(e) {
-         this.currentTab = null;
-      }
-    } else this.currentTab = null;
+    } else  {
+      this.currentTab = this.currentWin = null;
+      this.browsers = [];
+    }
     this.mostRecentTab = this.currentTab;
     this.curTabIdx = 0;
   },
+  
   next: function() {
     var ret = this.currentTab;
     this.currentTab = null;
-    if(ret) return ret;
+    if(ret != null) return ret.wrappedJSObject || ret;
     if(!this.initialWin) return null;
     if (this.curTabIdx >= this.browsers.length) {
       if (!this.winEnum) {
@@ -839,7 +836,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.4.1",
+  VERSION: "1.8.5",
   
   get wrappedJSObject() {
     return this;
@@ -1295,6 +1292,7 @@ NoscriptService.prototype = {
                 "iframe.__noscriptOpaqued__ { display: block !important; } " +
                 "object.__noscriptOpaqued__, embed.__noscriptOpaqued__ { display: inline !important } " +
                 ".__noscriptScrolling__ { overflow: auto !important; min-width: 52px !important; min-height: 52px !important } " +
+                ".__noscriptNoScrolling__ { overflow: hidden !important } " +
                 ".__noscriptHidden__ { visibility: hidden !important } " +
                 ".__noscriptOpaqueBG__ { background: white !important }";
                 
@@ -2049,6 +2047,7 @@ NoscriptService.prototype = {
     
     this.setJSEnabled(this.permanentSites.sitesList, true); // add permanent
     this.resetAllowedObjects();
+    if (this.clearClickHandler) this.clearClickHandler.resetWhitelist();
   }
 ,
   _observingPolicies: false,
@@ -3684,7 +3683,7 @@ NoscriptService.prototype = {
     frame: CI.nsIDOMHTMLFrameElement,
     object: CI.nsIDOMHTMLObjectElement
   },
-  processObjectElements: function(document, sites) {
+  processObjectElements: function(document, sites, loaded) {
     var pluginExtras = this.findPluginExtras(document);
     sites.pluginCount += pluginExtras.length;
     sites.pluginExtras.push(pluginExtras);
@@ -3707,6 +3706,8 @@ NoscriptService.prototype = {
     var opaque = pluginExtras.opaqueHere;
     
     for (var objectTag in types) {
+      if (!loaded && !/frame/.test(objectTag)) continue;
+      
       objects = document.getElementsByTagName(objectTag);
       objectType = types[objectTag];
       for (count = objects.length; count-- > 0;) {
@@ -3935,7 +3936,7 @@ NoscriptService.prototype = {
           doc.body.removeChild(ctx.anchor); // TODO: add a throbber
           if (isLegacyFrame) {
             this.setExpando(doc.defaultView.frameElement, "allowed", true);
-            doc.defaultView.location.replace(url);
+            doc.defaultView.frameElement.src = url;
           } else this.quickReload(doc.defaultView, true);
       } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime)) {
         this.quickReload(doc.defaultView);
@@ -4058,8 +4059,9 @@ NoscriptService.prototype = {
   
   _enumerateSites: function(browser, sites) {
 
-    const nsIWebNavigation = CI.nsIWebNavigation;
+    
     const nsIDocShell = CI.nsIDocShell;
+    const nsIWebProgress = CI.nsIWebProgress;
     
     const docShells = browser.docShell.getDocShellEnumerator(
         CI.nsIDocShellTreeItem.typeContent,
@@ -4099,8 +4101,8 @@ NoscriptService.prototype = {
               this.setTemp(document.domain, true);
               this.setJSEnabled(document.domain, true);
               this.quickReload(win);
-             }
-             sites.unshift(document.domain);
+            }
+            sites.unshift(document.domain);
            }
          } catch(e) {}
          sites.push(url);
@@ -4128,19 +4130,20 @@ NoscriptService.prototype = {
          if(cache) sites.push.apply(sites, cache);
        }
        
-       if (!this.getExpando(win, "contentLoaded") && (!(docShell instanceof nsIWebNavigation) || docShell.isLoadingDocument)) {
+       var loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
+       if (!(this.getExpando(win, "contentLoaded") || loaded)) {
          sites.pluginCount += tmpPluginCount;
          loading = true;
          continue;
        }
        
-       this.getExpando(browser, "allowPageURL", null);
+       this.setExpando(browser, "allowPageURL", null);
        
        // scripts
-       this.processScriptElements(document, sites);
+       this.processScriptElements(document, sites, loaded);
        
        // plugins
-       this.processObjectElements(document, sites);
+       this.processObjectElements(document, sites, loaded);
 
     }
     
@@ -5143,7 +5146,6 @@ RequestWatchdog.prototype = {
           }
           targetSite = su.getSite(originalSpec);
         }
-        trustedTarget = true;
       }
       if(!trustedTarget) {
         targetSite = su.getSite(originalSpec);
@@ -5205,8 +5207,15 @@ RequestWatchdog.prototype = {
           if (ns.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
           return;
         }
+        
+        if (ns.filterXExceptions.test("@" + decodeURI(origin))) {
+          if (ns.consoleDump) this.dump(channel, "Safe origin according to filterXExceptions: " + ns.filterXExceptions.toString());
+          return;
+        }
+        
       } catch(e) {}
     }
+    
     
     
     if (!originSite) { // maybe data or javascript URL?
@@ -5749,7 +5758,7 @@ var InjectionChecker = {
     IC_EVENT_DOS_PATTERN
   ),
   maybeJS: function(expr) {
-    if(/^(?:[^\(\)="']+=[^\(\)='"]+|[\?a-z_0-9;,&=\/]+)$/i.test(expr)) // commonest case, single assignment or simple assignments, no break
+    if(/^(?:[^\(\)="']+=[^\(\)='"]+|(?:[\?a-z_0-9;,&=\/]|\.[\d\.]+)*)$/i.test(expr)) // commonest case, single assignment or simple assignments, no break
       return this._singleAssignmentRx.test(expr);
     if (/^(?:[\w\-\.]+\/)*\(*[\w\-\s]+\([\w\-\s]+\)[\w\-\s]*\)*$/.test(expr)) // typical "call like" Wiki URL pattern + bracketed session IDs
       return /\b(?:eval|set(?:Timeout|Interval)|[F|f]unction|Script|open|alert|confirm|prompt|print|on\w+)\s*\(/.test(expr);
@@ -6074,7 +6083,7 @@ var InjectionChecker = {
   checkBase64: function(url) {
     this.log(url);
     var t = new Date().getTime();
-    var frags, j, k, l, pos, ff, f;
+    var frags, curf, j, k, l, pos, ff, f;
     const MAX_TIME = 4000;
     const DOS_MSG = "Too long execution time, assuming DOS in Base64 checks";
     this.base64 = false;
@@ -6083,15 +6092,16 @@ var InjectionChecker = {
     // (limit appears to be 65335, but cutting here seems quicker for big strings)
     // therefore we need to rejoin continuous strings manually
     url = url.replace(/\s+/g, ''); // base64 can be splitted across lines
-    frags = url.match(/[A-Za-z0-9\+\/]{12,8191}[^A-Za-z0-9\+\/]?/g);
+    frags = url.match(/[A-Za-z0-9\+\/]{12,8191}=*[^A-Za-z0-9\+\/=]?/g);
     if (frags) {
       f = '';
       for (j = 0; j < frags.length; j++) {
-        if (/[A-Za-z0-9\+\/]$/.test(frags[j])) {
-          f += frags[j];
+        curf = frags[j];
+        if (/[A-Za-z0-9\+\/]$/.test(curf)) {
+          f += curf;
           if (j < frags.length - 1) continue;
         } else {
-          f += frags[j].substring(frags[j].length - 1);
+          f += curf.substring(0, curf.length - 1);
         }
         ff = f.split('/');
         l = ff.length;
@@ -6122,11 +6132,12 @@ var InjectionChecker = {
           this.log(DOS_MSG);
           return true;
         }
-        if (/[A-Za-z0-9\-_]$/.test(frags[j])) {
-          f += frags[j];
+        curf = frags[j];
+        if (/[A-Za-z0-9\-_]$/.test(curf)) {
+          f += curf;
           if (j < frags.length - 1) continue;
         } else {
-          f += frags[j].substring(frags[j].length - 1);
+          f += curf.substring(0, curf.length - 1);
         }
         f = f.replace(/-/g, '+').replace(/_/, '/');
         if (this.checkBase64Frag(f)) return true;
@@ -6153,30 +6164,36 @@ var InjectionChecker = {
   checkURL: function(url) {
     // let's assume protocol and host are safe, but we keep the leading double slash to keep comments in account
     url = url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "//"); 
-    this.base64 = false;
-    this.base64tested = [];
-    return this.checkRecursive(url, 2);
+    return this.checkRecursive(url);
   },
   
-  checkRecursive: function(url, depth) {
+  checkRecursive: function(s, depth, isPost) {
     if (typeof(depth) != "number")
-      depth = 2;
+      depth = 3;
+    this.isPost = isPost || false;
+    this.base64 = false;
+    this.base64tested = [];
+    return this._checkRecursive(s, depth);
+  },
+  
+  _checkRecursive: function(s, depth) {
     
-    if (this.checkHTML(url) || this.checkJS(url) || this.checkBase64(url))
+    
+    if ((!this.isPost && this.checkBase64(s)) || this.checkHTML(s) || this.checkJS(s))
       return true;
     
     if (--depth <= 0)
       return false;
     
-    if (/\+/.test(url) && this.checkRecursive(this.urlUnescape(url.replace(/\+/g, ' '), depth)))
+    if (/\+/.test(s) && this._checkRecursive(this.urlUnescape(s.replace(/\+/g, ' '), depth)))
       return true;
     
-    var unescaped = this.urlUnescape(url);
-    if (unescaped != url && this.checkRecursive(unescaped, depth))
+    var unescaped = this.urlUnescape(s);
+    if (unescaped != s && this._checkRecursive(unescaped, depth))
       return true;
     
-    url = this.ebayUnescape(unescaped);
-    if (url != unescaped && this.checkRecursive(url, depth))
+    s = this.ebayUnescape(unescaped);
+    if (s != unescaped && this._checkRecursive(s, depth))
       return true;
     
     return false;
@@ -6209,7 +6226,7 @@ var InjectionChecker = {
      var ic = this;
      return new PostChecker(stream).check(
       function(chunk) {
-        return chunk.length > 6 && ic.checkRecursive(chunk, 2) && chunk;
+        return chunk.length > 6 && ic.checkRecursive(chunk, 2, true) && chunk;
       }
     );
   },
@@ -7226,6 +7243,7 @@ ClearClickHandler.prototype = {
   },
   
   _whitelist: {},
+  get whitelistLen () { return this._whitelist.__count__; },
   isWhitelisted: function(w) {
     var l = this._whitelist[w.location.href];
     if (!l) return false;
@@ -7237,14 +7255,15 @@ ClearClickHandler.prototype = {
   },
   whitelist: function(w) {
     if (this.isWhitelisted(w)) return;
-    var l = this._whitelist[w.location.href] || [];
+    var u = w.location.href;
+    var l = this._whitelist[u] || (this._whitelist[u] = []);
     var pp = [];
     for(var p = w.parent; p != w; w = p, p = w.parent) {
       pp.push(p.location.href);
     }
     l.push(pp.join(" "));
   },
-  
+  resetWhitelist: function() { this._whitelist = {}; },
   
   isEmbed: function(o) {
     return (o instanceof CI.nsIDOMHTMLObjectElement || o instanceof CI.nsIDOMHTMLEmbedElement) && !o.contentDocument;
@@ -7331,7 +7350,24 @@ ClearClickHandler.prototype = {
   
   _constrain: function(box, axys, dim, max, vp, center, zoom) {
     var scr = "screen" + axys.toUpperCase();
-    var n = box[axys], l = box[dim];
+    // trim bounds to take in account fancy overlay borders
+    var l = box[dim];
+    var n = box[axys];
+    
+    if (l > 6) {
+      var bleft = Math.floor(l * .1) // 20% border
+      var bright = bleft;
+      if (bleft + n > center) {
+        bleft = center - n;
+      } else if (l + n - center < bright) {
+        bright = l + n - center;
+      } 
+      box[dim] = (l -= (bleft + bright));
+      box[axys] = (n += bleft);
+      box[scr] += bleft * zoom;
+      
+    }
+   
     var d;
     if (l > max) {
       // resize
@@ -7339,9 +7375,8 @@ ClearClickHandler.prototype = {
         var halfMax = Math.round(max / 2);
         var nn = center - halfMax;
         if (nn > n) {
-          var exceed = n + l - center + halfMax;
-          if (exceed > 0) {
-            nn = Math.max(n, nn - exceed);
+          if (center + halfMax > n + l) {
+            nn = (n + l) - max;
           }
           box[axys] = nn;
           box[scr] += (nn - n) * zoom;
@@ -7361,13 +7396,6 @@ ClearClickHandler.prototype = {
     if (d) {
       box[axys] += d;
       box[scr] += d * zoom;
-    }
-    
-    // trim bounds to take in account fancy overlay borders
-    if (l > 24) {
-      box[dim] -= 8;
-      box[scr] += 4 * zoom;
-      box[axys] += 4
     }
   },
   
@@ -7473,29 +7501,33 @@ ClearClickHandler.prototype = {
       if (verbose) ns.dump("ClearClick: unlocking " + ev.target.tagName + " " + etype);
       p.unlocked = true;
     } else {
-      p.ts = ts;
+      
       this.swallowEvent(ev);
       ns.log("[NoScript ClearClick] Swallowed event " + etype + " on " + this.forLog(o) + " at " + w.location.href, true);
-      
-      if (primaryEvent && ctx.img && ns.getPref("clearClick.prompt") && !this.prompting) {
-        try {
-          this.prompting = true;
-          var params = {
-            url: isEmbed && (o.src || o.data) || o.ownerDocument.URL,
-            img: ctx.img,
-            locked: false
-          };
-          ns.domUtils.findBrowserForNode(w).ownerDocument.defaultView.openDialog(
-            "chrome://noscript/content/clearClick.xul",
-            "noscriptClearClick",
-            "chrome, dialog, dependent, centerscreen, modal",
-            params);
-          if (!params.locked) {
-            w.__clearClickUnlocked = o.__clearClickUnlocked = true
-            this.whitelist(w);
+      var docShell = ns.domUtils.getDocShellFromWindow(w);
+      var loading = docShell && (docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument;
+      if (!loading) {
+        p.ts = ts;
+        if (primaryEvent && ctx.img && ns.getPref("clearClick.prompt") && !this.prompting) {
+          try {
+            this.prompting = true;
+            var params = {
+              url: isEmbed && (o.src || o.data) || o.ownerDocument.URL,
+              img: ctx.img,
+              locked: false
+            };
+            ns.domUtils.findBrowserForNode(w).ownerDocument.defaultView.openDialog(
+              "chrome://noscript/content/clearClick.xul",
+              "noscriptClearClick",
+              "chrome, dialog, dependent, centerscreen, modal",
+              params);
+            if (!params.locked) {
+              w.__clearClickUnlocked = o.__clearClickUnlocked = true
+              this.whitelist(w);
+            }
+          } finally {
+            this.prompting = false;
           }
-        } finally {
-          this.prompting = false;
         }
       }
     }
@@ -7558,14 +7590,15 @@ ClearClickHandler.prototype = {
     var zoom = this.getZoom(browser);
     
     var shownCS, sheet, viewer, sheetObj;
-    var cssPatch;
-    var frame, frameClass;
+    
     var bgStyle;
     var gfx, ex;
     var box, curtain;
-    var objClass = o.className;
+    
+    var frame, frameClass;
+    var objClass, cssPatch;
+    
     try {
-      
       if (ctx.isEmbed) { // objects and embeds
         if (this.ns.getPref("clearClick.plugins", true)) {
           var ds = browser.docShell;
@@ -7573,7 +7606,8 @@ ClearClickHandler.prototype = {
           if (viewer) viewer.enableRendering = false; 
           shownCS = "__noscriptShown__" + Math.round(Math.random() * 9999999).toString(16) + "_" + Math.round(Math.random() * 9999999).toString(16);
           sheet = "body * { visibility: hidden !important } body ." + shownCS + " { visibility: visible !important; opacity: 1 !important }";
-          o.className = objClass + " __noscriptOpaqueBG__";
+          
+          o.className = (objClass = o.className) + " __noscriptOpaqueBG__";
           (cssPatch = this.collectAncestors(o, true))
             .forEach(function(o) { this.classPush(o, o.className + " " + shownCS); }, this);
           if (this.oldStyle) {
@@ -7587,7 +7621,7 @@ ClearClickHandler.prototype = {
         } else {
           DOMUtils.addClass(o, "__noscriptOpaqued__");
         }
-      } else if ((frame = w.frameElement) && frame.__noscriptOpaqued) {
+      } else if ((frame = w.frameElement)) {
         frameClass = frame.className;
         DOMUtils.removeClass(frame, "__noscriptScrolling__");
         // maybe we could go up in the gerarchy, but it's probably not worth the effort
@@ -7599,11 +7633,9 @@ ClearClickHandler.prototype = {
 
       if (frame) {
         curtain = d.createElementNS(HTML_NS, "div");
-        box = d.getBoxObjectFor(d.documentElement);
         with(curtain.style) {
           top = left = "0px";
-          width = box.width + "px";
-          height = box.height + "px";
+          width = height = "100%";
           position = "absolute";
           zIndex = "99999999";
           background = this.rndColor();
@@ -7613,19 +7645,19 @@ ClearClickHandler.prototype = {
         clientHeight = Math.min(clientHeight, fbox.height - 4 - (parseInt(s.paddingTop) || 0) - (parseInt(s.borderTopWidth) || 0) - (parseInt(s.paddingBottom) || 0) - (parseInt(s.borderBottomHeight) || 0));   
         clientWidth = Math.min(clientWidth, fbox.width - 4 - (parseInt(s.paddingLeft) || 0) - (parseInt(s.borderLeftWidth) || 0) - (parseInt(s.paddingRight) || 0) - (parseInt(s.borderRightWidth) || 0));
       } else {
-        // some plugin objects are drawn as blank if zoom != 1
+        // some plugin objects are drawn as blank if zoom != 1,
+        // or can transparently overlap other objects if positioned absolutely
+       
         if (zoom != 1) {
           curtain = d.createElementNS(HTML_NS, "div");
-          box = d.getBoxObjectFor(d.documentElement);
+          
           with(curtain.style) {
-  
-            top = box.y + "px";
-            left = box.x + "px";
-           
-            width = box.width + "px";
-            height = box.height + "px";
+            top = o.offsetTop + "px";
+            left = o.offsetLeft + "px";
+            width = o.offsetWidth + "px";
+            height = o.offsetHeight + "px";
             position = "absolute";
-            zIndex = "99999999";
+            zIndex = w.getComputedStyle(o, '').zIndex;
             background = this.rndColor();
           }
         }
@@ -7711,11 +7743,21 @@ ClearClickHandler.prototype = {
       
       if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
       
-      if (curtain) d.documentElement.appendChild(curtain);
+      if (curtain) {
+        if (ctx.isEmbed) {
+          if (o.nextSibling) {
+            o.parentNode.insertBefore(curtain, o.nextSibling);
+          } else {
+            o.parentNode.appendChild(curtain);
+          }
+        } else {
+          (d.body || d.documentElement).appendChild(curtain);
+        }
+      }
       
       gfx.drawWindow(w, box.x, box.y, c.width, c.height, bg);
       var img1 = c.toDataURL();
-      
+    } catch(ex) {
     } finally {
     
       if (cssPatch) cssPatch.forEach(function(o) { this.classPop(o); }, this);
@@ -7792,7 +7834,7 @@ ClearClickHandler.prototype = {
       if (typeof(frameClass) == "string") frame.className = frameClass;
       if (curtain && curtain.parentNode) curtain.parentNode.removeChild(curtain);
       if (typeof(bgStyle) == "string") d.documentElement.style.background = bgStyle;
-      o.className = objClass;
+      if (typeof(objClass) == "string") o.className = objClass;
       if (viewer) viewer.enableRendering = true;
     }
     

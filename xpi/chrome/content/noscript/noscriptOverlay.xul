@@ -42,7 +42,7 @@
     <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />
   </stringbundleset>
 
-
+  
 
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="noscript-tbb" 
@@ -52,31 +52,32 @@
       class="toolbarbutton-1 noscript-no"
       label="NoScript"
       type="menu-button"
-      oncommand="if(event.target == this) if(!noscriptOverlay.toggleCurrentPage()) this.open = true"
-      onclick="if(event.button == 2) { event.preventDefault(); this.open = true; }"
+      oncommand="if(event.target == this) if(noscriptOverlay.toggleCurrentPage()) event.preventDefault();"
+      oncontextmenu="noscriptOverlay.onContextMenu(event);"
     >
       <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
-           <menuseparator class="noscript-sep-insert" hidden="true" />
-           
-           <menuseparator class="noscript-sep-stop-untrusted"/>
-           <!-- dynamically inserted #noscript-menu-untrusted -->
-           
-           <menuseparator class="noscript-sep-global" />
-           <menuitem class="menuitem-iconic" />
-           <menuseparator />
-           <menuitem id="noscript-options-tbb-menuitem"
-            label="&noscriptOptions;"
-            accesskey="&noscriptOptions.accesskey;"
-            oncommand="noscriptUtil.openOptionsDialog()"
-            tooltiptext="&noscriptOptionsLong;"
-            class="menuitem-iconic noscript-options"
-            />
-            <menuitem id="noscript-about-tbb-menuitem"
-              label="&noscriptAbout;"
-              tooltiptext="&noscriptAbout;"
-              oncommand="noscriptUtil.openAboutDialog()"
-            />
+        <menuseparator class="noscript-sep-insert" hidden="true" />
+        
+        <menuseparator class="noscript-sep-stop-untrusted"/>
+       
+        
+        <menuseparator class="noscript-sep-global" />
+        <menuitem class="menuitem-iconic" />
+        <menuseparator />
+        <menuitem id="noscript-options-tbb-menuitem"
+         label="&noscriptOptions;"
+         accesskey="&noscriptOptions.accesskey;"
+         oncommand="noscriptUtil.openOptionsDialog()"
+         tooltiptext="&noscriptOptionsLong;"
+         class="menuitem-iconic noscript-options"
+         />
+         <menuitem id="noscript-about-tbb-menuitem"
+           label="&noscriptAbout;"
+           tooltiptext="&noscriptAbout;"
+           oncommand="noscriptUtil.openAboutDialog()"
+         />
       </menupopup>
+    
     </toolbarbutton>
     <toolbarbutton id="noscript-tbb-temp-page"
       tooltiptext="&noscriptTempAllowPage;"
@@ -96,7 +97,7 @@
   
   <popup id="contentAreaContextMenu">
     <menu id="noscript-context-menu" class="menu-iconic" label="NoScript" >
-      <menupopup id="noscript-context-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
+      <menupopup id="noscript-context-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event, true)">
            <menuseparator class="noscript-sep-insert" hidden="true" />
            <menuseparator class="noscript-sep-stop-untrusted"/>
            <!-- dynamically inserted #noscript-menu-untrusted -->
@@ -126,7 +127,7 @@
   </window>
 
   <popupset id="mainPopupSet">
-    <menupopup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
+    <menupopup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event, true)">
       <menuseparator />
        <menuitem
         id="noscript-options-menuitem"
@@ -250,20 +251,10 @@
      
      
      <menupopup id="noscript-sticky-ui"
-      onpopupshowing="noscriptOverlay.prepareMenu(this)"
-      onpopuphidden="noscriptOverlay.onStickyUIHidden(event)"
+      onpopupshowing="noscriptOverlay.onMenuShowing(event)"
       position="after_end"
       >
-      <hbox id="noscript-sticky-ui-pag"
-        oncommand="noscriptOverlay.prepareMenu(this.parentNode, null, event.originalTarget.data)"
-        hidden="true"
-        >
-        <button id="noscript-panel-ui-prev" label="&#x2190;" tooltiptext="&noscriptPrev;"/>
-        <button id="noscript-panel-ui-next" label="&#x2192;" tooltiptext="&noscriptNext;" />
-        <spacer flex="1" />
-        <button id="noscript-panel-ui-exit" label="X" tooltiptext="&noscriptClose;" oncommand="noscriptOverlay.stickyUI.hidePopup()" />
-        
-      </hbox>
+      
       <menuseparator class="noscript-sep-insert" hidden="true" />
       
       <menuseparator class="noscript-sep-stop-untrusted"/>
@@ -282,7 +273,11 @@
       
     </menupopup>
     
-    <menupopup id="noscript-status-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
+   
+    
+    <menupopup id="noscript-status-popup"
+      onpopupshowing="noscriptOverlay.onMenuShowing(event)"
+      >
       <menuitem
           label="&noscriptAbout;"
           tooltiptext="&noscriptAbout;"
@@ -312,20 +307,21 @@
 
 <statusbar id="status-bar">
 
-  <statusbarpanel id="noscript-statusIcon" insertbefore="statusbar-updates"
+  <statusbarpanel id="noscript-statusIcon"
+    insertbefore="statusbar-updates"
     class="statusbarpanel-menu-iconic noscript-no"
     hidden="false"
-    onclick="noscriptOverlay.showUI(event)"
+    oncontextmenu="noscriptOverlay.onContextMenu(event)"
     />
-  <statusbarpanel id="noscript-statusLabel" insertbefore="statusbar-updates"
+  <statusbarpanel id="noscript-statusLabel"
+    insertbefore="statusbar-updates"
     hidden="true"
-    popup="noscript-status-popup"
-    >
-   <vbox flex="1" align="center" pack="center"  context="noscript-statusLabel-popup" >  
-    <label id="noscript-statusLabelValue"/>
-   </vbox>   
-   
- </statusbarpanel>
+    context="noscript-statusLabel-popup"
+  >
+    <vbox flex="1" align="center" pack="center">
+      <label id="noscript-statusLabelValue"/>
+    </vbox>   
+  </statusbarpanel>
    
   <statusbarpanel id="noscript-statusXss" insertbefore="statusbar-updates"
     class="statusbarpanel-menu-iconic noscript-xss"

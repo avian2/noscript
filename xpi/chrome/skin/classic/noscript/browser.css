@@ -92,7 +92,7 @@
   list-style-image: url(glb16.png);
 }
 
-.noscript-no.noscript-glb {
+.noscript-no.noscript-glb, .noscript-forbid.noscript-glb, {
   list-style-image: url(glb-no16.png);
 }
 
@@ -187,32 +187,28 @@
   width: 40px;
   height: 40px;
   background-color: #eee;
+  -moz-user-focus: ignore;
 }
-
-
 
 #noscript-sticky-ui {
   cursor: pointer;
+  -moz-binding: url("chrome://noscript/content/noscript.xbl#scrollable-popup");
 }
 
-#noscript-sticky-ui > button, #noscript-sticky-ui-pag > button {
-  -moz-appearance: none;
-  -moz-binding: url(chrome://global/content/bindings/menu.xml#menuitem-iconic);
-  padding: 2px;
-}
-
-#noscript-sticky-ui > button, .noscript-menu {
+.noscript-menu, .noscript-menu menupopup {
   background-color: menu !important;
   opacity: 1.0;
   color: menutext;
-}
-
-.noscript-menu {
   border: 1px solid #444;
   padding: 2px;
 }
 
-#noscript-sticky-ui > button:hover {
-  background: highlight !important;
-  color: highlighttext !important;
+menupopup[sticky="true"] {
+  border: 2px solid #444;
+}
+
+menupopup[sticky="true"][disabled="true"] {
+  border: 2px solid #ccc;
+  cursor: wait;
+  opacity: .5;
 }

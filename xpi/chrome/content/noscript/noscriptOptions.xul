@@ -128,7 +128,7 @@
   </hbox>
   <listbox id="urlList" seltype="multiple" 
     onselect="nsopt.urlListChanged()"
-    onkeyup="if(event.keyCode==event.DOM_VK_DELETE) nsopt.remove();"
+    onkeyup="if (event.keyCode == event.DOM_VK_DELETE) nsopt.remove();"
     flex="1"
     rows="8"
   >
