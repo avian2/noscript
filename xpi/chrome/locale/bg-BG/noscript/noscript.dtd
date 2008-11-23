@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "недоверени">
 <!ENTITY noscriptKeepLocked "Остави този елемент заключен (препоръчително)">
 <!ENTITY noscriptEmbeddings "Вградени обекти">
+<!ENTITY noscriptPrev "Предишен">
+<!ENTITY noscriptNext "Следващ">

@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "不信任">
 <!ENTITY noscriptKeepLocked "保持鎖定此元素(推薦)">
 <!ENTITY noscriptEmbeddings "嵌入的物件">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

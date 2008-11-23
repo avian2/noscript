@@ -92,7 +92,7 @@
   list-style-image: url(glb16.png);
 }
 
-.noscript-no.noscript-glb, .noscript-forbid.noscript-glb, {
+.noscript-no.noscript-glb, .noscript-forbid.noscript-glb {
   list-style-image: url(glb-no16.png);
 }
 
@@ -204,11 +204,16 @@
 }
 
 menupopup[sticky="true"] {
-  border: 2px solid #444;
+  border: 3px solid #444 !important;
+  -moz-border-bottom-colors: #222 #888 #222;
+  -moz-border-top-colors: #222 #888 #222;
+  -moz-border-left-colors: #222 #888 #222;
+  -moz-border-right-colors: #222 #888 #222;
 }
 
 menupopup[sticky="true"][disabled="true"] {
-  border: 2px solid #ccc;
+  border: 3px solid #ccc;
   cursor: wait;
-  opacity: .5;
+  background-color: #ccc;
+  color: #888;
 }

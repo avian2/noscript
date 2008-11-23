@@ -836,7 +836,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.5",
+  VERSION: "1.8.6",
   
   get wrappedJSObject() {
     return this;
@@ -1291,10 +1291,11 @@ NoscriptService.prototype = {
         sheet = ".__noscriptOpaqued__ { opacity: 1 !important; visibility: visible; } " +
                 "iframe.__noscriptOpaqued__ { display: block !important; } " +
                 "object.__noscriptOpaqued__, embed.__noscriptOpaqued__ { display: inline !important } " +
+                ".__noscriptJustOpaqued__ { opacity: 1 !important } " +
                 ".__noscriptScrolling__ { overflow: auto !important; min-width: 52px !important; min-height: 52px !important } " +
                 ".__noscriptNoScrolling__ { overflow: hidden !important } " +
                 ".__noscriptHidden__ { visibility: hidden !important } " +
-                ".__noscriptOpaqueBG__ { background: white !important }";
+                ".__noscriptBlank__ { background-color: white !important; color: white !important; border-color: white !important; background-image: none !important }";
                 
       break;
       default:
@@ -4068,7 +4069,7 @@ NoscriptService.prototype = {
         browser.docShell.ENUMERATE_FORWARDS
     );
     
-    var loading = false;
+    var loading = false, loaded = false, domLoaded = false;
     
     var docShell, docURI, url, win;
 
@@ -4077,76 +4078,78 @@ NoscriptService.prototype = {
     var document, domain;
     while (docShells.hasMoreElements()) {
        
-       docShell = docShells.getNext();
-       document = (docShell instanceof nsIDocShell) &&
-                  docShell.contentViewer && docShell.contentViewer.DOMDocument;
-       if (!document) continue;
-       
-       // Truncate title as needed
-       if (this.truncateTitle && document.title.length > this.truncateTitleLen) {
-         document.title = document.title.substring(0, this.truncateTitleLen);
-       }
-       
-       // Collect document / cached plugin URLs
-       win = document.defaultView;
-       url = this.getSite(docURI = document.documentURI);
-       if (url) {
-         try {
-           if (document.domain && document.domain != this.getDomain(url, true) && url != "chrome:" && url != "about:blank") {
-            
-            // temporary allow changed document.domain on allow page
-             if (this.getExpando(browser, "allowPageURL") == browser.docShell.currentURI.spec &&
-                 this.getBaseDomain(document.domain).length >= document.domain.length &&
-                 !(this.isJSEnabled(document.domain) || this.isUntrusted(document.domain))) {
-              this.setTemp(document.domain, true);
-              this.setJSEnabled(document.domain, true);
-              this.quickReload(win);
-            }
-            sites.unshift(document.domain);
+      docShell = docShells.getNext();
+      document = (docShell instanceof nsIDocShell) &&
+                 docShell.contentViewer && docShell.contentViewer.DOMDocument;
+      if (!document) continue;
+      
+      // Truncate title as needed
+      if (this.truncateTitle && document.title.length > this.truncateTitleLen) {
+        document.title = document.title.substring(0, this.truncateTitleLen);
+      }
+      
+      // Collect document / cached plugin URLs
+      win = document.defaultView;
+      url = this.getSite(docURI = document.documentURI);
+      
+      if (url) {
+        try {
+          if (document.domain && document.domain != this.getDomain(url, true) && url != "chrome:" && url != "about:blank") {
+           // temporary allow changed document.domain on allow page
+            if (this.getExpando(browser, "allowPageURL") == browser.docShell.currentURI.spec &&
+                this.getBaseDomain(document.domain).length >= document.domain.length &&
+                !(this.isJSEnabled(document.domain) || this.isUntrusted(document.domain))) {
+             this.setTemp(document.domain, true);
+             this.setJSEnabled(document.domain, true);
+             this.quickReload(win);
            }
-         } catch(e) {}
-         sites.push(url);
-
-          for each(redir in this.getRedirCache(browser, docURI)) {
-            sites.push(redir.site);
+           sites.unshift(document.domain);
           }
+        } catch(e) {}
+        sites.push(url);
 
-          
-       }
+        for each(redir in this.getRedirCache(browser, docURI)) {
+          sites.push(redir.site);
+        }
+      }
        
        
-       tmpPluginCount = 0;
-       if (win == win.top) {
-         cache = this.getExpando(win, "objectSites");
-         if(cache) {
-           if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource());
-           sites.push.apply(sites, cache);
-           tmpPluginCount = cache.length;
-           sites.pluginSites.push.apply(sites, cache);
-         }
-         this._attachPluginExtras(win);
-         
-         cache = this.getExpando(win, "codeSites");
-         if(cache) sites.push.apply(sites, cache);
-       }
+      tmpPluginCount = 0;
+      
+      domLoaded = this.getExpando(win, "contentLoaded");
+      
+      if (win == win.top) {
+        cache = this.getExpando(win, "objectSites");
+        if(cache) {
+          if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource());
+          sites.push.apply(sites, cache);
+          tmpPluginCount = cache.length;
+          sites.pluginSites.push.apply(sites, cache);
+        }
+        this._attachPluginExtras(win);
+        
+        cache = this.getExpando(win, "codeSites");
+        if(cache) sites.push.apply(sites, cache);
+        
+        if (domLoaded) this.setExpando(browser, "allowPageURL", null);
+      }
        
-       var loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
-       if (!(this.getExpando(win, "contentLoaded") || loaded)) {
-         sites.pluginCount += tmpPluginCount;
-         loading = true;
-         continue;
-       }
+      loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
+      if (!(domLoaded || loaded)) {
+        sites.pluginCount += tmpPluginCount;
+        loading = true;
+        continue;
+      }
        
-       this.setExpando(browser, "allowPageURL", null);
+      
        
        // scripts
-       this.processScriptElements(document, sites, loaded);
+      this.processScriptElements(document, sites, loaded);
        
        // plugins
-       this.processObjectElements(document, sites, loaded);
+      this.processObjectElements(document, sites, loaded);
 
     }
-    
    
     var j;
     for (j = sites.length; j-- > 0;) {
@@ -7355,16 +7358,16 @@ ClearClickHandler.prototype = {
     var n = box[axys];
     
     if (l > 6) {
-      var bleft = Math.floor(l * .1) // 20% border
-      var bright = bleft;
-      if (bleft + n > center) {
-        bleft = center - n;
-      } else if (l + n - center < bright) {
-        bright = l + n - center;
+      var bStart = Math.floor(l * .1) // 20% border
+      var bEnd = bStart;
+      if (bStart + n > center) {
+        bStart = center - n;
+      } else if (l + n - center < bEnd) {
+        bEnd = l + n - center;
       } 
-      box[dim] = (l -= (bleft + bright));
-      box[axys] = (n += bleft);
-      box[scr] += bleft * zoom;
+      box[dim] = (l -= (bStart + bEnd));
+      box[axys] = (n += bStart);
+      box[scr] += bStart * zoom;
       
     }
    
@@ -7540,26 +7543,7 @@ ClearClickHandler.prototype = {
     }
     return null;
   },
-  collectAncestors: function(o, inclusive) {
-    var res = inclusive ? [o] : [];
-    while((o = o.parentNode)) res.push(o);
-    return res;
-  },
   
-  classPush: function(o, alt) {
-    if (typeof(o.__clearClickClass) != "string") o.__clearClickClass = o.className;
-    if (typeof(alt) != "undefined") o.className = alt;
-  },
-  classPop: function(o) {
-    if (typeof(o.__clearClickClass) == "string") o.className = o.__clearClickClass;
-    o.__clearClickClass = null;
-  },
-  
-  get oldStyle() {
-    delete this.__proto__.oldStyle;
-    return this.__proto__.oldStyle = Components.ID('{41d979dc-ea03-4235-86ff-1e3c090c5630}')
-                 .equals(CI.nsIStyleSheetService);
-  },
   
   zoom: function(b, z) {
     if (z == 1) return b;
@@ -7588,54 +7572,49 @@ ClearClickHandler.prototype = {
     var bg = this.getBG(w);
     var browser = DOMUtils.findBrowserForNode(top);
     var zoom = this.getZoom(browser);
-    
-    var shownCS, sheet, viewer, sheetObj;
-    
+
     var bgStyle;
     var gfx, ex;
     var box, curtain;
     
-    var frame, frameClass;
-    var objClass, cssPatch;
+    var frame, frameClass, objClass, viewer;
+    
+    var docPatcher = new DocPatcher(this.ns, o);
+    
+    var ex = null;
+    var sheet = null;
     
     try {
+      docPatcher.opaque(true);
+       
       if (ctx.isEmbed) { // objects and embeds
         if (this.ns.getPref("clearClick.plugins", true)) {
           var ds = browser.docShell;
           viewer = ds.contentViewer && false;
-          if (viewer) viewer.enableRendering = false; 
-          shownCS = "__noscriptShown__" + Math.round(Math.random() * 9999999).toString(16) + "_" + Math.round(Math.random() * 9999999).toString(16);
-          sheet = "body * { visibility: hidden !important } body ." + shownCS + " { visibility: visible !important; opacity: 1 !important }";
-          
-          o.className = (objClass = o.className) + " __noscriptOpaqueBG__";
-          (cssPatch = this.collectAncestors(o, true))
-            .forEach(function(o) { this.classPush(o, o.className + " " + shownCS); }, this);
-          if (this.oldStyle) {
-            // Gecko < 1.9, asynchronous user sheets force ugly work-around
-            sheetObj = d.createElement("style");
-            sheetObj.innerHTML = sheet;
-            d.documentElement.appendChild(sheetObj);
-          } else { // 
-            this.ns.updateStyleSheet(sheet, true);
-          }
+          objClass = new ClassyObj(o);
+          objClass.append(" __noscriptBlank__");
+          docPatcher.blankPositioned(true);
+          docPatcher.clean(true);
         } else {
           DOMUtils.addClass(o, "__noscriptOpaqued__");
         }
-      } else if ((frame = w.frameElement)) {
-        frameClass = frame.className;
-        DOMUtils.removeClass(frame, "__noscriptScrolling__");
-        // maybe we could go up in the gerarchy, but it's probably not worth the effort
-        
       }
       
-      var clientHeight = d.documentElement.clientHeight || d.body && d.body.clientHeight || 0;
-      var clientWidth =  d.documentElement.clientWidth ||  d.body && d.body.clientWidth || 0;
+      if ((frame = w.frameElement)) {
+        frameClass = new ClassyObj(frame);
+        DOMUtils.removeClass(frame, "__noscriptScrolling__");
+      }
+      
+      var clientHeight = d.documentElement.clientHeight;
+      var clientWidth =  d.documentElement.clientWidth;
 
-      if (frame) {
+      if (!ctx.isEmbed) {
         curtain = d.createElementNS(HTML_NS, "div");
         with(curtain.style) {
           top = left = "0px";
-          width = height = "100%";
+          width = w.innerWidth + "px";
+          height = w.innerHeight + "px";
+          padding = margin = borderWidth = "0px";
           position = "absolute";
           zIndex = "99999999";
           background = this.rndColor();
@@ -7644,24 +7623,7 @@ ClearClickHandler.prototype = {
         var fbox = this.getBox(frame);
         clientHeight = Math.min(clientHeight, fbox.height - 4 - (parseInt(s.paddingTop) || 0) - (parseInt(s.borderTopWidth) || 0) - (parseInt(s.paddingBottom) || 0) - (parseInt(s.borderBottomHeight) || 0));   
         clientWidth = Math.min(clientWidth, fbox.width - 4 - (parseInt(s.paddingLeft) || 0) - (parseInt(s.borderLeftWidth) || 0) - (parseInt(s.paddingRight) || 0) - (parseInt(s.borderRightWidth) || 0));
-      } else {
-        // some plugin objects are drawn as blank if zoom != 1,
-        // or can transparently overlap other objects if positioned absolutely
-       
-        if (zoom != 1) {
-          curtain = d.createElementNS(HTML_NS, "div");
-          
-          with(curtain.style) {
-            top = o.offsetTop + "px";
-            left = o.offsetLeft + "px";
-            width = o.offsetWidth + "px";
-            height = o.offsetHeight + "px";
-            position = "absolute";
-            zIndex = w.getComputedStyle(o, '').zIndex;
-            background = this.rndColor();
-          }
-        }
-      }        
+      }      
 
       var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), this.minWidth) ;
       var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), this.minHeight);
@@ -7671,7 +7633,7 @@ ClearClickHandler.prototype = {
       // expand to parent form if needed
       var form = o.form;
       var formBox = null;
-      if (frame && (form || (form = this.findParentForm(o)))) {
+      if (frame && !ctx.isEmbed && (form || (form = this.findParentForm(o)))) {
 
         formBox = this.getBox(form, d, w);
         if (!(formBox.width && formBox.height)) { // some idiots put <form> as first child of <table> :(
@@ -7689,7 +7651,7 @@ ClearClickHandler.prototype = {
           if (box.x + Math.min(box.width, maxWidth) < ctx.x) {
             delta = ctx.x + 4 - maxWidth - box.x;
             box.x += delta;
-            box.screenX += delta;
+            box.screenX += delta * zoom;
             box.width = Math.min(box.width, maxWidth);
           }
           if (box.y + Math.min(box.height, maxHeight) < ctx.y) {
@@ -7723,8 +7685,17 @@ ClearClickHandler.prototype = {
             // check if we're being fooled by some super-zoomed applet
             if (box.width / 4 <= form.offsetWidth && box.height / 4 <= form.offsetHeight) {
               formBox = this.getBox(form, d, w);
-              box.width = Math.max(this.minWidth, form.clientWidth - (box.x - formBox.x) );
-              box.height = Math.max(this.minHeight, form.offsetHeight - (box.y - formBox.y));
+              
+              if (box.x < formBox.x) {
+                box.x = formBox.x;
+                box.screenX = formBox.screenX;
+              }
+              if (box.y < formBox.y) { 
+                box.y = formBox.y;
+                box.screenY = formBox.screenY;
+              }
+              if (box.width + box.x > formBox.width + formBox.x) box.width = Math.max(this.minWidth, form.clientWidth - (box.x - formBox.x));
+              if (box.height + box.y > formBox.height + formBox.y) box.height = Math.max(this.minHeight, form.offsetHeight - (box.y - formBox.y));
             }
             break;
           }
@@ -7743,31 +7714,16 @@ ClearClickHandler.prototype = {
       
       if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
       
-      if (curtain) {
-        if (ctx.isEmbed) {
-          if (o.nextSibling) {
-            o.parentNode.insertBefore(curtain, o.nextSibling);
-          } else {
-            o.parentNode.appendChild(curtain);
-          }
-        } else {
-          (d.body || d.documentElement).appendChild(curtain);
-        }
+      if (curtain && frame) {
+        d.documentElement.appendChild(curtain);
       }
       
       gfx.drawWindow(w, box.x, box.y, c.width, c.height, bg);
       var img1 = c.toDataURL();
     } catch(ex) {
+      this.ns.dump(ex + ": " + ex.stack);
     } finally {
-    
-      if (cssPatch) cssPatch.forEach(function(o) { this.classPop(o); }, this);
-      if (sheet) {
-        if (sheetObj) {
-          d.documentElement.removeChild(sheetObj);
-        } else {
-          this.ns.updateStyleSheet(sheet, false);
-        }
-      }
+      docPatcher.clean(false);
     }
     
     try {
@@ -7780,7 +7736,9 @@ ClearClickHandler.prototype = {
       var offsetY = (box.screenY - rootBox.screenY) / zoom;
       var ret = true;
       var img2,  tmpImg;
-      const offs = [0, -1, 1, -2, 2, -3, -3];
+      
+      const offs = ctx.isEmbed ? [0] : [0, -1, 1, -2, 2, -3, -3];
+      
       checkImage:
       for each(var x in offs) {
         for each(var y in offs) {
@@ -7794,31 +7752,71 @@ ClearClickHandler.prototype = {
           if (!img2) img2 = tmpImg;
         }
       }
+      
+      if (ret && !curtain && ctx.isEmbed && zoom != 1) {
+        curtain = d.createElementNS(HTML_NS, "div");
+        if (docPatcher) curtain.className = docPatcher.shownCS;
+        with(curtain.style) {
+          top = o.offsetTop + "px";
+          left = o.offsetLeft + "px";
+          width = o.offsetWidth + "px";
+          height = o.offsetHeight + "px";
+          position = "absolute";
+          zIndex = w.getComputedStyle(o, '').zIndex;
+          background = this.rndColor();
+        }
+        
+        if (o.nextSibling) {
+          o.parentNode.insertBefore(curtain, o.nextSibling);
+        } else {
+          o.parentNode.appendChild(curtain);
+        }
+        gfx.clearRect(0, 0, c.width, c.height);
+        gfx.drawWindow(w, box.x, box.y, c.width, c.height, bg);
+        img1 = c.toDataURL();
+        ret = img1 != img2;
+      }
     
     
       if (ctx.debug) {
         ret = true;
         img2 = tmpImg;
       }
+      
       if (ret) {
         
         if (curtain) {
 
           if (ctx.debug) {
-            with(curtain.style) {
+            
+            if (docPatcher.cleanSheet) {
+              curtain.id = "curtain_" + docPatcher.rndId();
+              docPatcher.cleanSheet += " #" + curtain.id + " { opacity: .4 !important }";
+            }
+            
+            with(curtain.style) {  
               opacity = ".4";
               MozOutlineStyle = "solid";
               MozOutlineWidth = "1px";
+              MozOutlineColor = "red";
             }
           } else {
             curtain.parentNode.removeChild(curtain);
           }
           gfx.clearRect(0, 0, c.width, c.height);
-          gfx.drawWindow(w, box.x, box.y, c.width, c.height, bg);
-          img1 = c.toDataURL();
-          gfx.clearRect(0, 0, c.width, c.height);
           gfx.drawWindow(top, offsetX, offsetY, c.width, c.height, bg);
           img2 = c.toDataURL();
+          
+          if (ctx.isEmbed) docPatcher.clean(true);
+          
+          try {
+            gfx.clearRect(0, 0, c.width, c.height);
+            gfx.drawWindow(w, box.x, box.y, c.width, c.height, bg);
+            img1 = c.toDataURL();
+          } catch(ex) {}
+          finally {
+            docPatcher.clean(false);
+          }
         }
         
         ctx.img =
@@ -7831,10 +7829,16 @@ ClearClickHandler.prototype = {
       }
     
     } finally {
-      if (typeof(frameClass) == "string") frame.className = frameClass;
+      if (ctx.isEmbed) docPatcher.blankPositioned(false);
+      
+      
       if (curtain && curtain.parentNode) curtain.parentNode.removeChild(curtain);
       if (typeof(bgStyle) == "string") d.documentElement.style.background = bgStyle;
-      if (typeof(objClass) == "string") o.className = objClass;
+     
+      docPatcher.opaque(false);
+      
+      if (objClass) objClass.reset();
+      if (frameClass) frameClass.reset();
       if (viewer) viewer.enableRendering = true;
     }
     
@@ -7844,3 +7848,191 @@ ClearClickHandler.prototype = {
   }
   
 }
+
+function ClassyObj(o) {
+  this.o = o;
+  if (o.hasAttribute("class")) this.c = o.className;
+}
+ClassyObj.prototype = {
+  o: null,
+  c: null,
+  append: function(newC) {
+    this.o.className = this.c ? this.c + newC : newC;
+  },
+  reset: function() {
+    if (this.c == null) this.o.removeAttribute("class");
+    else this.o.className = this.c;
+  }
+}
+
+function DocPatcher(ns, o) {
+  this.ns = ns;
+  this.o = o;
+  this.shownCS = " __noscriptShown__" + this.rndId();
+}
+
+DocPatcher.prototype = {
+  rndId: function() {
+    return Math.round(Math.random() * 9999999).toString(16) + "_" + Math.round(Math.random() * 9999999).toString(16);
+  },
+  
+  collectAncestors: function(o) {
+    var res = [];
+    for(; o && o.hasAttribute; o = o.parentNode) res.push(new ClassyObj(o));
+    return res;
+  },
+  
+  collectPositioned: function(d) {
+    var t = new Date();
+    const w = d.defaultView;
+    const res = [];
+    var s = null, p = '', n = null;
+
+    const obox = d.getBoxObjectFor(this.o);
+    const otop = obox.y;
+    const obottom = otop + obox.height;
+    const oleft = obox.x;
+    const oright = oleft + obox.width;
+    
+    var c = '', b = null;
+    var hasPos = false;
+    const posn = [];
+    
+    const tw = d.createTreeWalker(d, CI.nsIDOMNodeFilter.SHOW_ELEMENT, null, false);
+    for (var n = null; (n = tw.nextNode());) {
+      b = d.getBoxObjectFor(n);
+      if (b.y + b.height < otop || b.y > obottom ||
+          b.x + b.width < oleft || b.x > oright)
+        continue;
+      
+      s = w.getComputedStyle(n, '');
+      p = s.position;
+      if (p == "absolute" || p == "fixed") {
+        c = " __noscriptPositioned__";
+        n.__noscriptPos = hasPos = true;
+        posn.push(n);
+      } else { 
+        hasPos = hasPos && n.parentNode.__noscriptPos;
+        if (!hasPos) continue;
+        c = '';
+        n.__noscriptPos = true;
+        posn.push(n);
+      }
+      
+      if (s.backgroundImage != "none" || s.backgroundColor != "transparent") {
+        c += " __noscriptBlank__";
+      };
+      
+      
+      if (c) {
+        res.push(n = new ClassyObj(n));
+        n.append(c);
+      }
+    }
+    
+    for each(n in posn) n.__noscriptPos = false;
+    
+    if(this.ns.consoleDump) this.ns.dump("DocPatcher.collectPositioned(): " + (new Date() - t));
+    return res;
+  },
+  
+  collectOpaqued: function(o, oo) {
+    if (!oo) oo = { opacity: 1, res: [] };
+    
+    var w = o.ownerDocument.defaultView;
+    
+    var opacity;
+    var co = null;
+    for(; o && o.hasAttribute; o = o.parentNode) {
+      opacity = parseFloat(w.getComputedStyle(o, '').opacity);
+      if (opacity < 1) {
+        if ((oo.opacity *= opacity) < .3) return []; // too much combined transparency!
+        oo.res.push(new ClassyObj(o));
+      }
+    }
+       
+    o = w.frameElement;
+    return o ? this.collectOpaqued(o, oo) : oo.res;
+  },
+  
+  forceVisible: function(co) {
+    co.append(this.shownCS); 
+  },
+  
+  forceOpaque: function(co) {
+    co.append(" __noscriptJustOpaqued__");
+  },
+  
+  resetClass: function(co) {
+    co.reset();
+  },
+  
+  _ancestors: null,
+  _cleanSheetHandle: null,
+  clean: function(toggle) {
+    if (toggle) {
+      if (!this._ancestors) {
+        this.cleanSheet = "body * { visibility: hidden !important } body ." + this.shownCS.substring(1) + " { visibility: visible !important; opacity: 1 !important }";
+        this._ancestors = this.collectAncestors(this.o);
+      }
+      this._ancestors.forEach(this.forceVisible, this);
+      this._cleanSheetHandle = this.applySheet(this.cleanSheet);
+    } else if (this._ancestors) {
+      this._ancestors.forEach(this.resetClass);
+      this.removeSheet(this._cleanSheetHandle);
+    }
+  },
+  
+  _positioned: null,
+  _blankSheetHandle: null,
+  blankSheet: ".__noscriptPositioned__ * { color: white !important; border-color: white !important; }",
+  blankPositioned: function(toggle) {
+    if (toggle) {
+      this._positioned = this.collectPositioned(this.o.ownerDocument);
+      this._blankSheetHandle = this.applySheet(this.blankSheet);
+    } else if (this._positioned) {
+      this._positioned.forEach(this.resetClass);
+      this.removeSheet(this._blankSheetHandle);
+    }
+  },
+  
+  _opaqued: null,
+  opaque: function(toggle) {
+    if (toggle) {
+      this._opaqued = this._opaqued || this.collectOpaqued(this.o);
+      this._opaqued.forEach(this.forceOpaque);
+    } else if (this._opaqued) {
+      this._opaqued.forEach(this.resetClass);
+    }
+  },
+  
+  get oldStyle() {
+    delete this.__proto__.oldStyle;
+    return this.__proto__.oldStyle = Components.ID('{41d979dc-ea03-4235-86ff-1e3c090c5630}')
+                 .equals(CI.nsIStyleSheetService);
+  },
+  applySheet: function(sheet) {
+    var sheetHandle = null;
+    if (this.oldStyle) {
+      // Gecko < 1.9, asynchronous user sheets force ugly work-around
+      var d = this.o.ownerDocument;
+      sheetHandle = d.createElement("style");
+      sheetHandle.innerHTML = sheet;
+      d.documentElement.appendChild(sheetHandle);
+    } else { // 
+      this.ns.updateStyleSheet(sheetHandle = sheet, true);
+    }
+    return sheetHandle;
+  },
+  removeSheet: function(sheetHandle) {
+    if (sheetHandle) {
+      if (this.oldStyle) {
+        this.o.ownerDocument.documentElement.removeChild(sheetHandle);
+      } else {
+        this.ns.updateStyleSheet(sheetHandle, false);
+      }
+    }
+  }
+}
+
+

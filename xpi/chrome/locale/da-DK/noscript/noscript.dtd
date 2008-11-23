@@ -79,7 +79,7 @@
 <!ENTITY noscriptSecurityManager "Sikkerheds-håndtering">
 <!ENTITY noscriptPolicies "Retningslinjer">
 <!ENTITY noscriptDefaultPolicies "Standard retningslinjer">
-<!ENTITY noscriptSitePolicies "Sidespecifikke retningslinjer">
+<!ENTITY noscriptSitePolicies "Specifikke retningslinjer">
 <!ENTITY noscriptNselNever "Gem &lt;NOSCRIPT&gt; elementer">
 <!ENTITY noscriptNselForce "Vis &lt;NOSCRIPT&gt; elementet som følger et blokeret &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillad topniveau sider som standard">
@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "ubetroede">
 <!ENTITY noscriptKeepLocked "Bevar dette element låst (anbefalet)">
 <!ENTITY noscriptEmbeddings "Indlejrede objekter">
+<!ENTITY noscriptPrev "Forrige">
+<!ENTITY noscriptNext "Næste">

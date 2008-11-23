@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "nem biztonságos oldalakon">
 <!ENTITY noscriptKeepLocked "Az elem blokkolása a továbbiakban is (ajánlott)">
 <!ENTITY noscriptEmbeddings "Beágyazott objektumok">
+<!ENTITY noscriptPrev "Előző">
+<!ENTITY noscriptNext "Következő">

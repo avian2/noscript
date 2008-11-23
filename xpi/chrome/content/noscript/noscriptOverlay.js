@@ -822,7 +822,7 @@ var noscriptOverlay = noscriptUtil.service ?
           this._currentPopup.setAttribute("disabled", "true");
         }
         this._reloadDirty = true;
-        reloadPolicy = this.liveReload ? 1 : -1;
+        reloadPolicy = this.liveReload ? this.ns.RELOAD_CURRENT : this.ns.RELOAD_NO;
       }
 
     }
@@ -837,8 +837,8 @@ var noscriptOverlay = noscriptUtil.service ?
           !ns.getPref("autoReload.allTabsOnPageAction", true)) {
       reloadPolicy = 1 // current tab only, for multiple items
     }
-
-    ns.safeCapsOp(function() {
+    
+    function op() {
       if (site) {
         
         ns.setTemp(site, enabled && temp);
@@ -859,8 +859,15 @@ var noscriptOverlay = noscriptUtil.service ?
       } else {
         ns.jsEnabled = enabled;
       }
-      noscriptOverlay.syncUI();
-    }, reloadPolicy);
+      if (reloadPolicy == ns.RELOAD_NO) noscriptOverlay._syncUINow();
+      else noscriptOverlay.syncUI();
+    }
+    
+    if (reloadPolicy == ns.RELOAD_NO) op()
+    else {
+      ns.setExpando(window.content, "contentLoaded", false);
+      ns.safeCapsOp(op, reloadPolicy);
+    }
   }
 ,
   

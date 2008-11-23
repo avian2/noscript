@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "ej betrodd">
 <!ENTITY noscriptKeepLocked "Lås detta element permanent (rekommenderas)">
 <!ENTITY noscriptEmbeddings "Inbäddade objekt">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "nezaupljiv">
 <!ENTITY noscriptKeepLocked "Naj bo ta element zaklenjen (priporočeno)">
 <!ENTITY noscriptEmbeddings "Vstavljeni predmeti">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

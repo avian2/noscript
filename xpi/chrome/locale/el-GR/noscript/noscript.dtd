@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "μη έμπιστους">
 <!ENTITY noscriptKeepLocked "Διατήρηση κλειδώματος στοιχείου (συνιστάται)">
 <!ENTITY noscriptEmbeddings "Ενσωματωμένα αντικείμενα">
+<!ENTITY noscriptPrev "Προηγούμενο">
+<!ENTITY noscriptNext "Επόμενο">

@@ -104,7 +104,7 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
+<!ENTITY noscriptJarFaq "JAR-FAQ (engl.)…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Entfernte JAR-Dateien davon abhalten, als Dokumente geladen zu werden">
 <!ENTITY noscriptJarExceptions "Nicht zu blockierende JAR-Dokumente">
@@ -127,21 +127,23 @@
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
 <!ENTITY noscriptHttps.behavior "Verhalten">
 <!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Aktive Webinhalte verbieten, es sei denn, sie stammen aus einer verschlüsselten (HTTPS) Verbindung:">
+<!ENTITY noscriptHttps.description "Aktive Webinhalte verbieten, es sei denn, sie stammen aus einer verschlüsselten Verbindung (HTTPS):">
 <!ENTITY noscriptHttps.never "Niemals">
 <!ENTITY noscriptHttps.proxy "Bei Verwendung eines Proxy (empfohlen bei Anonymisierungsdiensten wie Tor)">
 <!ENTITY noscriptHttps.always "Immer">
-<!ENTITY noscriptHttpsForced "Verschlüsselte (HTTPS) Verbindung für folgende Adressen erzwingen:">
+<!ENTITY noscriptHttpsForced "Verschlüsselte Verbindung (HTTPS) für folgende Adressen erzwingen:">
 <!ENTITY noscriptHttpsForcedExceptions "Für folgende Adressen niemals die Verwendung verschlüsselter (HTTPS) Verbindung erzwingen:">
 <!ENTITY noscriptSecureCookies "Automatisches sicheres Cookie-Management aktivieren">
-<!ENTITY noscriptSecureCookiesForced "Überprüfung der Cookies über verschlüsselte (HTTPS) Verbindungen für folgende Adressen erzwingen:">
-<!ENTITY noscriptSecureCookiesExceptions "Unsichere Cookies bei verschlüsselter (HTTPS) Verbindung bei folgenden Adressen ignorieren:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warnung">
-<!ENTITY noscriptClearClickHeader "Potentielles Clickjacking / UI Redressing Versuch!">
+<!ENTITY noscriptSecureCookiesForced "Überprüfung der Cookies über verschlüsselte Verbindungen (HTTPS) für folgende Adressen erzwingen:">
+<!ENTITY noscriptSecureCookiesExceptions "Unsichere Cookies bei verschlüsselter Verbindung (HTTPS) bei folgenden Adressen ignorieren:">
+<!ENTITY noscriptClearClickTitle "ClearClick-Warnung">
+<!ENTITY noscriptClearClickHeader "Potentielle Clickjacking-Attacke / Versuch einer UI-Umadressierung!">
 <!ENTITY noscriptClearClickDescription "NoScript wehrt ein Maus- oder Tastatur-Eingabe mit einem teilweise versteckten Element ab. Klick auf das Bild oberhalb um zwischen der verdeckten und der klaren Version zu wechseln.">
-<!ENTITY noscriptClearClickOpt "ClearClick Schutz auf ">
-<!ENTITY noscriptOpacizeOpt "Undurchsichtig eingebettete Objekte auf ">
+<!ENTITY noscriptClearClickOpt "ClearClick-Schutz auf">
+<!ENTITY noscriptOpacizeOpt "Undurchsichtig eingebettete Objekte auf">
 <!ENTITY noscriptTrustedPagesAdj "vertrauenswürdigen Seiten">
 <!ENTITY noscriptUntrustedPagesAdj "nicht vertrauenswürdigen /">
 <!ENTITY noscriptKeepLocked "Element gesperrt halten (empfohlen)">
 <!ENTITY noscriptEmbeddings "Eingebettete Objekte">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

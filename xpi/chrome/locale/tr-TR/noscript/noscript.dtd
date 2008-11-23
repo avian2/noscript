@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot;ı engelle">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™&apos;ı engelle">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt;&apos;i engelle">
+<!ENTITY noscriptForbidFrames "&lt;FRAMES&gt;&apos;i engelle">
 <!ENTITY noscriptForbidFlash "Adobe® Flash®&apos;ı engelle">
 <!ENTITY noscriptForbidPlugins "Diğer eklentileri yasakla">
 <!ENTITY noscriptReloadWarn "Bu ayarlar sadece yeni veya kendinizin yüklediği sayfalar için geçerlidir.">
@@ -144,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "guvensizlerde">
 <!ENTITY noscriptKeepLocked "Bu nesneyi kilitli olarak birak (tavsiye edilir)">
 <!ENTITY noscriptEmbeddings "Gömülü Nesneler">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

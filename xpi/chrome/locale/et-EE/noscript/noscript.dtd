@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "mitteusaldatud">
 <!ENTITY noscriptKeepLocked "Lukusta antud element (soovitatav)">
 <!ENTITY noscriptEmbeddings "Manusobjektid">
+<!ENTITY noscriptPrev "Eelmine">
+<!ENTITY noscriptNext "Järgmine">

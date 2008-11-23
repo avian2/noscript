@@ -146,3 +146,5 @@ Temporarily allow top-level sites by default">
 <!ENTITY noscriptUntrustedPagesAdj "de no confiança">
 <!ENTITY noscriptKeepLocked "Mantenir aquest element bloquejat (recomanat)">
 <!ENTITY noscriptEmbeddings "Objectes Incrustats">
+<!ENTITY noscriptPrev "Anterior">
+<!ENTITY noscriptNext "Següent">

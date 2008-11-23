@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; の禁止">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ の禁止">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; の禁止">
+<!ENTITY noscriptForbidFrames "&lt;FRAMES&gt; の禁止">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® の禁止">
 <!ENTITY noscriptForbidPlugins "その他のプラグインの禁止">
 <!ENTITY noscriptReloadWarn "これらのオプションは新たに開いたページ、または再読込したページで有効になります">

@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "без доверба">
 <!ENTITY noscriptKeepLocked "Задржи го овој елемент заклучен (препорачливо)">
 <!ENTITY noscriptEmbeddings "Вградени Објекти">
+<!ENTITY noscriptPrev "Претходно">
+<!ENTITY noscriptNext "Следно">

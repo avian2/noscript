@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Halang &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Halang Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Halang &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Halang &lt;FRAMES&gt;">
 <!ENTITY noscriptForbidFlash "Halang Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Halang plugin lain">
 <!ENTITY noscriptReloadWarn "Tetapan ini akan kesan apabila muka laman yang dimuat turun semula.">
@@ -144,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "tidak dipercayai">
 <!ENTITY noscriptKeepLocked "Sentiasa kunci unsur ini (disyorkan)">
 <!ENTITY noscriptEmbeddings "Objek yang dipasang">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

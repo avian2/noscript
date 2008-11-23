@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "nedôveryhodných stránkach">
 <!ENTITY noscriptKeepLocked "Ponechať tento prvok blokovaný (odporúča sa)">
 <!ENTITY noscriptEmbeddings "Vložené objekty">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

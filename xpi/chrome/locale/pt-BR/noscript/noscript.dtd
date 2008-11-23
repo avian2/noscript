@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Proibir &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Proibir Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Proibir &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Proibir &lt;FRAMES&gt;">
 <!ENTITY noscriptForbidFlash "Proibir Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Proibir outros plugins">
 <!ENTITY noscriptReloadWarn "Estas opções terão efeito em páginas novas ou (manualmente) atualizadas.">
@@ -144,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "não confiável">
 <!ENTITY noscriptKeepLocked "Manter esse elemento travado (recomendado)">
 <!ENTITY noscriptEmbeddings "Objetos Integrados">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

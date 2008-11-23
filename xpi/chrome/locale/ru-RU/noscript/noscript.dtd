@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Запретить отображение «Web Bugs»">
 <!ENTITY noscriptForbidSilverlight "Запретить отображение элементов Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Запретить отображение элементов &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Запретить отображение элементов &lt;FRAMES&gt;">
 <!ENTITY noscriptForbidFlash "Запретить отображение элементов Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Запретить отображение элементов других плагинов">
 <!ENTITY noscriptReloadWarn "Примечание: изменённые настройки вступают в силу либо на новой странице, либо после обновления текущей страницы (вручную)">
@@ -144,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "недоверенных">
 <!ENTITY noscriptKeepLocked "Оставить этот элемент заблокированным (рекомендуется)">
 <!ENTITY noscriptEmbeddings "Встроенные объекты">
+<!ENTITY noscriptPrev "Предыдущий">
+<!ENTITY noscriptNext "Следующий">

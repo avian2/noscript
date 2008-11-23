@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "não é de confiança">
 <!ENTITY noscriptKeepLocked "Manter este elemento fechado (recomendado)">
 <!ENTITY noscriptEmbeddings "Objectos embebidos">
+<!ENTITY noscriptPrev "Anterior">
+<!ENTITY noscriptNext "Seguinte">

@@ -47,6 +47,7 @@
 <!ENTITY noscriptForbidWebBugs "Cấm &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Cấm Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Cấm &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Cấm &lt;FRAMES&gt;">
 <!ENTITY noscriptForbidFlash "Cấm Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Cấm các plugins khác">
 <!ENTITY noscriptReloadWarn "Những tùy chọn này sẽ có hiệu quả trong trang mới hay trang được tải lại">
@@ -144,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "không tin cậy">
 <!ENTITY noscriptKeepLocked "Khóa phần tử này (khuyên dùng)">
 <!ENTITY noscriptEmbeddings "Các Đối Tượng Được Nhúng">
+<!ENTITY noscriptPrev "Trước">
+<!ENTITY noscriptNext "Tiếp">

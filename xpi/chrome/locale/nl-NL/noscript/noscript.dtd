@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "onbetrouwbaar">
 <!ENTITY noscriptKeepLocked "Dit element geblokkeerd houden (aanbevolen)">
 <!ENTITY noscriptEmbeddings "Ingebouwde objecten">
+<!ENTITY noscriptPrev "Vorige">
+<!ENTITY noscriptNext "Volgende">

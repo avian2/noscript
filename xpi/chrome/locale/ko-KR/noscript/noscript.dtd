@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "신뢰되지 않은 페이지">
 <!ENTITY noscriptKeepLocked "이 요소를 잠금니다(추천)">
 <!ENTITY noscriptEmbeddings "포함된 객체들">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

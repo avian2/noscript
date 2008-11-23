@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "no fiables">
 <!ENTITY noscriptKeepLocked "Mantener bloqueado ese elemento (recomendado)">
 <!ENTITY noscriptEmbeddings "Objetos incrustados">
+<!ENTITY noscriptPrev "Anterior">
+<!ENTITY noscriptNext "Siguiente">

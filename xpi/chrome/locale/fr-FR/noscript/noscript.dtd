@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "non fiable">
 <!ENTITY noscriptKeepLocked "Garder cet environnement verrouillé (recommandé)">
 <!ENTITY noscriptEmbeddings "Objets embarqués">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">

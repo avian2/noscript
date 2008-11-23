@@ -18,11 +18,11 @@
 <!ENTITY noscriptGeneral "Основні">
 <!ENTITY noscriptAppearance "Зовнішній вигляд">
 <!ENTITY noscriptShow "Показувати…">
-<!ENTITY noscriptCtxMenu "Контексне меню">
+<!ENTITY noscriptCtxMenu "Контекстне меню">
 <!ENTITY noscriptStatusIcon "Іконку в рядку статусу">
 <!ENTITY noscriptFullAddr "Повні адреси (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "Повні домени (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Базові домени 2-го рівня (noscript.net)">
+<!ENTITY noscriptBaseDom "Базові домени другого рівня (noscript.net)">
 <!ENTITY noscriptTempCmd "Тимчасово дозволити […]">
 <!ENTITY noscriptSound "Програти аудіо-файл якщо заблокований скрипт">
 <!ENTITY noscriptImport "Імпорт">
@@ -49,7 +49,7 @@
 <!ENTITY noscriptForbidIFrames "Заборонити &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Заборонити &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Заборонити Macromedia® Flash®">
-<!ENTITY noscriptForbidPlugins "Заборонити інші плагини">
+<!ENTITY noscriptForbidPlugins "Заборонити інші модулі">
 <!ENTITY noscriptReloadWarn "Налаштування вступлять у силу на новій сторінці або після оновлення (вручну)">
 <!ENTITY noscriptConfirmUnblock "Питати підтвердження перед тимчасовим розблокуванням об’єкту">
 <!ENTITY noscriptStatusLabel "Повідомлення в рядку статусу">
@@ -62,13 +62,13 @@
 <!ENTITY noscriptAllowPing "Дозволити &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Дозволити локальні посилання">
 <!ENTITY noscriptForbidPing "Заборонити &lt;A PING…&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Заборонити редиректи META в елементах &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Заборонити перенаправлення META в елементах &lt;noscript&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "M">
 <!ENTITY noscriptWhitelist "Білий список">
 <!ENTITY noscriptPermissions "Дозволи">
 <!ENTITY noscriptRefresh "Оновлення">
 <!ENTITY noscriptNotifications "Сповіщення">
-<!ENTITY noscriptToolbarToggle "Клацання лівою клавішею мишкі по кнопці NoScript на панелі перемикає дозволи для поточного сайту верхнього рівня">
+<!ENTITY noscriptToolbarToggle "Клацання лівою клавішею мишки по кнопці NoScript перемикає дозволи для поточного сайту верхнього рівня">
 <!ENTITY noscriptTrusted "Довірені">
 <!ENTITY noscriptUntrusted "Недовірені">
 <!ENTITY noscriptUnknown "Невідомий">
@@ -127,17 +127,17 @@
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
 <!ENTITY noscriptHttps.behavior "Поведінка">
 <!ENTITY noscriptHttps.cookies "Куки">
-<!ENTITY noscriptHttps.description "Заборонити активний веб-зміс якщо він походить не з безпечного  з’єднання (HTTPS):">
+<!ENTITY noscriptHttps.description "Заборонити активний веб-зміст якщо він походить не з безпечного з’єднання (HTTPS):">
 <!ENTITY noscriptHttps.never "Ніколи">
 <!ENTITY noscriptHttps.proxy "Коли використовується проксі (рекомендовано з Tor)">
 <!ENTITY noscriptHttps.always "Завжди">
-<!ENTITY noscriptHttpsForced "Примусити наступні сайти використовувати безпечне з’єднання (HTTPS):">
-<!ENTITY noscriptHttpsForcedExceptions "Ніколи не примушувати безпечне з’єднання (HTTPS) на наступних сайтах:">
+<!ENTITY noscriptHttpsForced "Нав’язувати наступни сайтам безпечне з’єднання (HTTPS):">
+<!ENTITY noscriptHttpsForcedExceptions "Ніколи не нав’язувати безпечне з’єднання (HTTPS) на наступних сайтах:">
 <!ENTITY noscriptSecureCookies "Дозволити автоматичне безпечне керування куками">
 <!ENTITY noscriptSecureCookiesForced "Примусити шифрувати всі куки, що ставляться через HTTPS з наступних сайтів:">
 <!ENTITY noscriptSecureCookiesExceptions "Ігнорувати небезпечні куки поставлені через HTTPS з наступних сайтів:">
 <!ENTITY noscriptClearClickTitle "Попередження ClearClick">
-<!ENTITY noscriptClearClickHeader "Потенційна спроба клікджекінгу /підміни інтерфейсу!">
+<!ENTITY noscriptClearClickHeader "Потенційна спроба кражі клацань (clickjacking) /підміни інтерфейсу!">
 <!ENTITY noscriptClearClickDescription "NoScript перехопив взаємодію мишки чи клавіатури з частково прихованим елементом. Клацніть на малюнку зверху для перемикання між заслоненою та чистою версіями.">
 <!ENTITY noscriptClearClickOpt "Захист сторінок ClearClick…">
 <!ENTITY noscriptOpacizeOpt "Зробити вбудовані об’єкти непрозорими…">
@@ -145,3 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "недовірені">
 <!ENTITY noscriptKeepLocked "Продовжувати блокувати цей об’єкт (рекомендовано)">
 <!ENTITY noscriptEmbeddings "Вбудовані об’єкти">
+<!ENTITY noscriptPrev "Попереднє">
+<!ENTITY noscriptNext "Наступне">
