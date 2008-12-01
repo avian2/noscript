@@ -1,11 +1,11 @@
 <!ENTITY noscriptOptions "选项...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 选项">
-<!ENTITY noscriptAbout "关于 NoScript">
+<!ENTITY noscriptAbout "关于 NoScript...">
 <!ENTITY noscriptPermissionsText "您可以指定允许执行脚本的网站。请输入您想要允许的网站地址或域名(例如: “http://www.site.com”或者“site.com”)然后单击“允许”。">
 <!ENTITY noscriptWebAddress "网站地址:">
 <!ENTITY noscriptAllow "允许">
-<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptAllow.accesskey "l">
 <!ENTITY noscriptForbid "禁止">
 <!ENTITY noscriptForbid.accesskey "F">
 <!ENTITY noscriptTrust "标记为可信任">
@@ -13,7 +13,7 @@
 <!ENTITY noscriptUntrust "标记为不可信">
 <!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "删除选择的网站">
-<!ENTITY noscriptGloballyEnabled "全局允许脚本(危险)">
+<!ENTITY noscriptGloballyEnabled "全局允许脚本 (危险)">
 <!ENTITY noscriptAutoReload "更改许可设置后自动重新载入相关页面">
 <!ENTITY noscriptGeneral "常规">
 <!ENTITY noscriptAppearance "外观">
@@ -23,7 +23,7 @@
 <!ENTITY noscriptFullAddr "完整地址 (http://www.noscript.net)">
 <!ENTITY noscriptFullDom "子域名 (www.noscript.net)">
 <!ENTITY noscriptBaseDom "泛域名 (noscript.net)">
-<!ENTITY noscriptTempCmd "暂时允许 [...]">
+<!ENTITY noscriptTempCmd "临时允许 [...]">
 <!ENTITY noscriptSound "脚本被阻止时提示声音">
 <!ENTITY noscriptImport "导入">
 <!ENTITY noscriptImport.accesskey "I">
@@ -44,13 +44,13 @@
 <!ENTITY noscriptPlugins "插件">
 <!ENTITY noscriptContentBlocker "对受信任站点仍然应用这些限制">
 <!ENTITY noscriptForbidJava "禁止 Java™">
-<!ENTITY noscriptForbidWebBugs "禁止“Web Bugs”">
+<!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "禁止 &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "禁止 Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "禁止 其他插件">
-<!ENTITY noscriptReloadWarn "下面这些选项将在新页面中或(手动)重新载入后生效。">
+<!ENTITY noscriptReloadWarn "下面这些选项将在新页面中或 (手动) 重新载入后生效。">
 <!ENTITY noscriptConfirmUnblock "需要确认后再允许某些临时项目">
 <!ENTITY noscriptStatusLabel "状态栏标签">
 <!ENTITY noscriptForbidBookmarklets "禁止 Bookmarklets">
@@ -59,9 +59,9 @@
 <!ENTITY noscriptFixLinks "尝试定位 JavaScript 链接">
 <!ENTITY noscriptAllowBookmarks "允许书签中的所有网站">
 <!ENTITY noscriptAllowViaBookmarks "允许通过书签打开站点">
-<!ENTITY noscriptAllowPing "允许&lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "允许 &lt;A PING...&gt;">
 <!ENTITY noscriptAllowLocalLinks "允许本地链接">
-<!ENTITY noscriptForbidPing "禁止&lt;A PING...&gt;">
+<!ENTITY noscriptForbidPing "禁止 &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "禁止 &lt;NOSCRIPT&gt; 元素内的 META 重定向">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptWhitelist "白名单">
@@ -83,7 +83,7 @@
 <!ENTITY noscriptNselNever "隐藏 &lt;NOSCRIPT&gt; 元素">
 <!ENTITY noscriptNselForce "显示已被屏蔽的 &lt;SCRIPT&gt; 标签下的 &lt;NOSCRIPT&gt; 元素">
 <!ENTITY noscriptAutoAllowTopLevel "默认临时允许顶层站点">
-<!ENTITY noscriptDescription "为您的 Firefox 提供额外保护: NoScript 只允许在您选择的信任域(例如您标示出的网站)上执行 JavaScript、Java 和其他插件。该白名单基于抢先阻止机制，在不损失任何功能的前提下，防止利用已知或未知安全漏洞的攻击。">
+<!ENTITY noscriptDescription "为您的 Firefox 提供额外保护: NoScript 只允许在您选择的信任域 (例如您标示出的网站) 上执行 JavaScript、Java 和其他插件。该白名单基于抢先阻止机制，在不损失任何功能的前提下，防止利用已知或未知安全漏洞的攻击。">
 <!ENTITY noscriptOptBlockCssScanners "阻止基于 CSS 的扫描器">
 <!ENTITY noscriptOptFilterXGet "净化跨站点的可疑请求">
 <!ENTITY noscriptOptFilterXPost "把跨站点 POST 请求转换为最少数据的 GET 请求">
@@ -96,10 +96,10 @@
 <!ENTITY noscriptUnsafeReload "非安全的重新载入">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS 保护的例外情况">
-<!ENTITY noscriptXssExceptions.description "匹配以下正则表达式的目标将不会被保护不遭受 XSS(跨站脚本攻击)。">
+<!ENTITY noscriptXssExceptions.description "匹配以下正则表达式的目标将不会被保护不遭受 XSS (跨站脚本攻击)。">
 <!ENTITY noscriptMatchSample "模式匹配示例:">
 <!ENTITY noscriptReset "重置">
-<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptReset.accesskey "S">
 <!ENTITY noscriptResetDef "重置为默认值">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
@@ -110,40 +110,40 @@
 <!ENTITY noscriptJarExceptions "阻止 JAR 文档的例外情况">
 <!ENTITY noscriptJarExceptions.description "不阻止匹配以下正则表达式的 JAR 文档。">
 <!ENTITY noscriptRevokeTemp "撤销临时允许">
-<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptRevokeTemp.accesskey "R">
 <!ENTITY noscriptNoUntrustedPlaceholder "对于已标记为不可信站点的对象不显示占位符">
 <!ENTITY noscriptCollapseBlockedObjects "瓦解已阻止的对象">
 <!ENTITY noscriptExceptions "例外...">
 <!ENTITY noscriptBlockedObjects "已阻止的对象">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "阻止来自已经标记为不可信站点的任何对象">
-<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
-<!ENTITY noscriptTempAllowPage.accesskey "P">
-<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptTempAllowPage "临时允许本页面所有对象">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
+<!ENTITY noscriptAllowPage "允许本页面所有对象">
 <!ENTITY noscriptAllowPage.accesskey "A">
-<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm "永久许可页面临时允许对象">
 <!ENTITY noscriptTempToPerm.accesskey "m">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ...">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
-<!ENTITY noscriptHttps.behavior "Behavior">
+<!ENTITY noscriptHttps.behavior "特性">
 <!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
-<!ENTITY noscriptHttps.never "Never">
-<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
-<!ENTITY noscriptHttps.always "Always">
-<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
-<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
-<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
-<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warning">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
-<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
-<!ENTITY noscriptPrev "Previuous">
-<!ENTITY noscriptNext "Next">
+<!ENTITY noscriptHttps.description "禁止活动的页面內容除非它來自安全的 (HTTPS) 连接:">
+<!ENTITY noscriptHttps.never "从不">
+<!ENTITY noscriptHttps.proxy "当使用代理时 (推荐配合 Tor 使用)">
+<!ENTITY noscriptHttps.always "总是">
+<!ENTITY noscriptHttpsForced "强制以下站点使用安全的 (HTTPS) 连接:">
+<!ENTITY noscriptHttpsForcedExceptions "永不强制以下站点使用安全的 (HTTPS) 连接:">
+<!ENTITY noscriptSecureCookies "启用自动安全 Cookies 管理">
+<!ENTITY noscriptSecureCookiesForced "强制以下站点通过 HTTPS 加密所有 Cookies 设置:">
+<!ENTITY noscriptSecureCookiesExceptions "以下站点通过 HTTPS 忽略不安全的 Cookies 设置:">
+<!ENTITY noscriptClearClickTitle "ClearClick 警告">
+<!ENTITY noscriptClearClickHeader "潜在的点击劫持 (Clickjacking) / UI 跳转攻击!">
+<!ENTITY noscriptClearClickDescription "NoScript 拦截了一个与隱藏元素互动的鼠标或键盘操作。 点击图片切换拦截和取消拦截。">
+<!ENTITY noscriptClearClickOpt "启用 ClearClick 保护于">
+<!ENTITY noscriptOpacizeOpt "禁用嵌入对象透明属性于">
+<!ENTITY noscriptTrustedPagesAdj "可信任页面">
+<!ENTITY noscriptUntrustedPagesAdj "不可信任页面">
+<!ENTITY noscriptKeepLocked "保持锁定此元素 (推荐)">
+<!ENTITY noscriptEmbeddings "嵌入的对象">
+<!ENTITY noscriptPrev "上一个">
+<!ENTITY noscriptNext "下一个">

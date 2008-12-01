@@ -437,7 +437,7 @@ var noscriptOverlay = noscriptUtil.service ?
         domain = !ns.isForbiddenByHttpsStatus(site) && ns.getDomain(site);
         
         if ((dp = ns.getPublicSuffix(domain)) == domain || // exclude TLDs
-            (this.ignorePorts && site.test(/:\d+$/) && this.isJSEnabled(domain) != enabled) // exclude ancestors with different permissions
+            ns.ignorePorts && /:\d+$/.test(site) && ns.isJSEnabled(domain) != enabled // exclude ancestors with different permissions
           ) {
           domain = null; 
         }
@@ -476,9 +476,6 @@ var noscriptOverlay = noscriptUtil.service ?
     
     var blurred;
 
-    
-    
-    
     const untrustedFrag = showUntrusted ? document.createDocumentFragment() : null;
     const mainFrag = document.createDocumentFragment();
     const sep = document.createElement("menuseparator");
@@ -751,8 +748,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   allowObjectURL: function(url, mime) {
     this.ns.allowObject(url, mime);
-    if (this.ns.getPref("autoReload", true))
-        this.ns.quickReload(this.currentBrowser.webNavigation);
+    this.ns.reloadAllowedObjects(this.currentBrowser);
   },
   
   normalizeMenu: function(menu, hideParentIfEmpty) {
@@ -1110,6 +1106,8 @@ var noscriptOverlay = noscriptUtil.service ?
     const gb = getBrowser();
     const browser = gb.selectedBrowser;
     
+    const popup = "noscript-notify-popup";
+    
     var widget = this.getNsNotification(box);
     if (widget) {
      if (widget.localName == "notification") {
@@ -1134,7 +1132,7 @@ var noscriptOverlay = noscriptUtil.service ?
         buttonLabel = "";
         buttonAccesskey = "";
       }
-      const popup = "noscript-notify-popup";
+      
       if (box.appendNotification) { // >= Fx 2.0
         // if (box._closedNotification && !box._closedNotification.parentNode) box._closedNotification = null; // work around for notification bug
         widget =  box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_MEDIUM,
@@ -1157,7 +1155,11 @@ var noscriptOverlay = noscriptUtil.service ?
      this.notifyHideTimeout = window.setTimeout(
        function() {
          if (browser == gb.selectedBrowser) {
-           noscriptOverlay.notificationHide(browser);
+            if (document.getElementById(popup) == noscriptOverlay._currentPopup) {
+              noscriptOverlay.notifyHideTimeout = window.setTimeout(arguments.callee, 1000);
+              return;
+            }
+            noscriptOverlay.notificationHide(browser);
          }
        },
        1000 * delay);

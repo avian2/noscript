@@ -4,6 +4,7 @@ pref("noscript.autoReload.global", true);
 pref("noscript.autoReload.allTabs", true);
 pref("noscript.autoReload.allTabsOnPageAction", true);
 pref("noscript.autoReload.allTabsOnGlobal", false);
+pref("noscript.autoReload.onMultiContent", false);
 pref("noscript.autoReload.useHistory", false);
 pref("noscript.autoReload.useHistory.exceptCurrent", true);
 pref("noscript.ctxMenu", true);
@@ -186,4 +187,7 @@ pref("noscript.stickyUI.liveReload", false);
 pref("noscript.stickyUI", true);
 pref("noscript.stickyUI.onKeyboard", true);
 
-pref("noscript.ignorePorts", true)
+pref("noscript.ignorePorts", true);
+
+pref("noscript.cp.last", true);
+pref("noscript.abp.removeTabs", false);
