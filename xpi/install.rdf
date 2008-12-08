@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.8.7</em:version>
+   <em:version>1.8.7.4</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -31,6 +31,7 @@
    <em:contributor>Jameka (Swedish translation)</em:contributor>
    <em:contributor>Joan-Josep Bargues (Catalan translation)</em:contributor>
    <em:contributor>Joshua Issac (Malay translation)</em:contributor>
+   <em:contributor>Khaled Hosny &amp; Nassim Dhaher (Arabic translation)</em:contributor>
    <em:contributor>Krcko (Croatian translation)</em:contributor>
    <em:contributor>Ian Moody (English GB translation)</em:contributor>
    <em:contributor>LocaLiceR (Hungarian translation)</em:contributor>
@@ -40,7 +41,6 @@
    <em:contributor>Mindaugas Jakutis (Lithuanian translation)</em:contributor>
    <em:contributor>Mikes Kaszmán István (Hungarian translation)</em:contributor>
    <em:contributor>MozUA (Ukrainian translation)</em:contributor>
-   <em:contributor>Nassim Dhaher (Arabic translation)</em:contributor>
    <em:contributor>Pedram Veisi (Persian translation)</em:contributor>
    <em:contributor>Peter Bradley (Welsh translation)</em:contributor>
    <em:contributor>Raryel Costa Souza (Brazilian Portuguese)</em:contributor>
@@ -66,7 +66,7 @@
      <Description>
      <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
      <em:minVersion>1.5</em:minVersion>
-     <em:maxVersion>3.1b3pre</em:maxVersion>
+     <em:maxVersion>3.2a1pre</em:maxVersion>
      </Description>
    </em:targetApplication>
 
@@ -84,7 +84,7 @@
       <Description>
         <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
         <em:minVersion>1.1</em:minVersion>
-        <em:maxVersion>2.0a2</em:maxVersion>
+        <em:maxVersion>2.0a3</em:maxVersion>
       </Description>
    </em:targetApplication>
    

@@ -1485,6 +1485,24 @@ var noscriptOverlay = noscriptUtil.service ?
       widget.setAttribute("value", shortMessage);
       widget.parentNode.style.display = message ? "" : "none";
     }
+    
+    widget =  document.getElementById("noscript-tbb-revoke-temp");
+    if (widget) {
+      if (ns.gTempSites.sitesString || ns.tempSites.sitesString || ns.objectWhitelistLen || ns.clearClickHandler && ns.clearClickHandler.whitelistLen) {
+        widget.removeAttribute("disabled");
+      } else {
+        widget.setAttribute("disabled", "true");
+      }
+    }
+    
+    widget =  document.getElementById("noscript-tbb-temp-page");
+    if (widget) {
+      if (allowed < total) {
+        widget.removeAttribute("disabled");
+      } else {
+        widget.setAttribute("disabled", "true");
+      }
+    }
   }
 ,
   notifyHideTimeout: 0,

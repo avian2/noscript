@@ -217,3 +217,7 @@ menupopup[sticky="true"][disabled="true"] {
   background-color: #ccc;
   color: #888;
 }
+
+#noscript-tbb-revoke-temp[disabled="true"], #noscript-tbb-temp-page[disabled="true"] {
+  opacity: .5;
+}

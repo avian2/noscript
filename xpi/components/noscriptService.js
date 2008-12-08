@@ -844,7 +844,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.7",
+  VERSION: "1.8.7.4",
   
   get wrappedJSObject() {
     return this;
@@ -1269,7 +1269,7 @@ NoscriptService.prototype = {
       cpName = this.POLICY_NAME + "." + baseName + "." + names[j];
       try {
         if (enabled) {
-          this.caps.setCharPref(cpName,"allAccess");
+          this.caps.setCharPref(cpName, "allAccess");
         } else {
           if (this.caps.prefHasUserValue(cpName)) {
             this.caps.clearUserPref(cpName);
@@ -2619,8 +2619,8 @@ NoscriptService.prototype = {
             
             if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) ||
                   !blockThisIFrame && (
-                    !aMimeTypeGuess ||
-                    aMimeTypeGuess.substring(0, 5) == "text/"
+                    !aMimeTypeGuess 
+                    || aMimeTypeGuess.substring(0, 5) == "text/"
                     || aMimeTypeGuess == "application/xml" 
                     || aMimeTypeGuess == "application/xhtml+xml"
                     || aMimeTypeGuess.substring(0, 6) == "image/"
@@ -2668,11 +2668,15 @@ NoscriptService.prototype = {
         if (isJS) {
           originSite = aRequestOrigin && this.getSite(aRequestOrigin.spec);
           
+          // we must guess the right context here, see https://bugzilla.mozilla.org/show_bug.cgi?id=464754
+          
+          aContext = aContext.ownerDocument || aContext; // this way we always have a document
+          
           // Silverlight hack
           
           if (this.contentBlocker && this.forbidSilverlight && this.silverlightPatch &&
                 originSite && /^(?:https?|file):/.test(originSite)) {
-            this.applySilverlightPatch(aContext.ownerDocument);
+            this.applySilverlightPatch(aContext);
           }
           
           
@@ -2680,7 +2684,7 @@ NoscriptService.prototype = {
           
           if (originSite && locationSite == originSite) return CP_OK;
           
-          this.getExpando(aContext.ownerDocument.defaultView.top, "codeSites", []).push(locationSite);
+          this.getExpando(aContext.defaultView.top, "codeSites", []).push(locationSite);
           
           
           forbid = !this.isJSEnabled(locationSite);
@@ -4354,9 +4358,14 @@ NoscriptService.prototype = {
     
     // handle docshell JS switching and other early duties
     if ((stateFlag & STATE_START_DOC) == STATE_START_DOC && req instanceof CI.nsIChannel) {
+      
+      if (!(req.loadFlags & req.LOAD_INITIAL_DOCUMENT_URI) &&
+          req.URI.spec == "about:blank" // new tab, we shouldn't touch it otherwise we break stuff like newTabURL
+        ) 
+        return;
+      
       var w = wp.DOMWindow;
-      
-      
+
       if (w && w.frameElement) {
         var ph = this.requestWatchdog.extractFromChannel(req, "noscript.policyHints", true);
         if (ph && this.shouldLoad(7, req.URI, ph[2], w.frameElement, '', CP_FRAMECHECK) != CP_OK) { // late frame/iframe check
@@ -4468,7 +4477,7 @@ NoscriptService.prototype = {
       contentType = "";
     }
     
-    if (this.shouldLoad(7, uri, uri, domWindow, contentType, CP_FRAMECHECK) != CP_OK) {
+    if (this.shouldLoad(7, uri, uri, domWindow, contentType, CP_SHOULDPROCESS) != CP_OK) {
       
       req.loadFlags |= req.INHIBIT_CACHING;
       
@@ -4542,14 +4551,7 @@ NoscriptService.prototype = {
       
       var url = req.URI.spec;
       if (!/^https?:/.test(url)) url = req.originalURI.spec;
-      
-      if (!(req.loadFlags & req.LOAD_INITIAL_DOCUMENT_URI) &&
-          url == "about:blank" // new tab
-        ) 
-        return;
-      
-     
-      
+
       var jsEnabled;
       
       var docShell = this.domUtils.getDocShellFromWindow(win) ||
@@ -5718,7 +5720,7 @@ function fuzzify(s) {
 }
 
 const IC_WINDOW_OPENER_PATTERN = fuzzify("alert|confirm|prompt|open|print");
-const IC_EVENT_PATTERN = fuzzify("on(?:load|page|unload|ready|error|focus|blur|mouse)") + "(?:\\W*[a-z])*";
+const IC_EVENT_PATTERN = fuzzify("on(?:load|page|before|unload|ready|error|focus|blur|key|mouse|click|dbl|change|select|reset|submit|context|copy|cut|paste)") + "(?:\\W*[a-z])*";
 const IC_EVENT_DOS_PATTERN =
       "\\b(?:" + IC_EVENT_PATTERN + ")[\\s\\S]*=[\\s\\S]*\\b(?:" + IC_WINDOW_OPENER_PATTERN + ")\\b"
       + "|\\b(?:" + IC_WINDOW_OPENER_PATTERN + ")\\b[\\s\\S]+\\b(?:" + IC_EVENT_PATTERN + ")[\\s\\S]*=";
@@ -6168,7 +6170,7 @@ var InjectionChecker = {
   
   HTMLChecker: new RegExp("<\\W*(?:[^>\\s]*:)?\\W*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video") + 
-    ")|[/'\"]\\W*(?:FSCommand|onerror|on[a-df-z]{3,}[\\s\\x08]*=)", 
+    ")|[/'\"]\\W*(?:FSCommand|on(?:error|[a-df-z][a-z]{2,}))[\\s\\x08]*=", 
     "i"),
   checkHTML: function(s) {
     this.log(s);
@@ -7527,6 +7529,8 @@ ClearClickHandler.prototype = {
     if (!(d && this.isSupported(d))) return;
     
     const w = d.defaultView;
+    if (!w) return;
+    
     const top = w.top;
     const ns = this.ns;
     
@@ -7658,8 +7662,7 @@ ClearClickHandler.prototype = {
   maxHeight: 200,
   minWidth: 160,
   minHeight: 100,
-  checkObstruction: function(o, ctx) {
-    
+  checkObstruction: function(o, ctx) {   
     var d = o.ownerDocument;
     var w = d.defaultView;
     var top = w.top;
@@ -7684,7 +7687,7 @@ ClearClickHandler.prototype = {
     var img1 = null, img2 = null, tmpImg = null;
     
     function snapshot(w, x, y) {
-      gfx.drawWindow(w, x, y, c.width, c.height, bg);
+      gfx.drawWindow(w, Math.round(x), Math.round(y), c.width, c.height, bg);
       return c.toDataURL();
     }
     
@@ -7723,8 +7726,7 @@ ClearClickHandler.prototype = {
         DOMUtils.removeClass(frame, "__noscriptScrolling__");
       }
       
-      var clientHeight = w.innerHeight;
-      var clientWidth =  w.innerWidth;
+      
 
       if (!ctx.isEmbed) {
         curtain = d.createElementNS(HTML_NS, "div");
@@ -7739,12 +7741,17 @@ ClearClickHandler.prototype = {
         }
         var s = w.parent.getComputedStyle(frame, '');
         var fbox = this.getBox(frame);
-        clientHeight = Math.min(clientHeight, fbox.height - 4 - (parseInt(s.paddingTop) || 0) - (parseInt(s.borderTopWidth) || 0) - (parseInt(s.paddingBottom) || 0) - (parseInt(s.borderBottomHeight) || 0));   
-        clientWidth = Math.min(clientWidth, fbox.width - 4 - (parseInt(s.paddingLeft) || 0) - (parseInt(s.borderLeftWidth) || 0) - (parseInt(s.paddingRight) || 0) - (parseInt(s.borderRightWidth) || 0));
-      }      
-
-      var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), this.minWidth) ;
-      var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), this.minHeight);
+      }     
+      
+      if (curtain && frame) {
+        d.documentElement.appendChild(curtain);
+      }
+      
+      var clientHeight = Math.max(w.innerHeight - 32, d.documentElement.clientHeight);
+      var clientWidth =  Math.max(w.innerWidth - 32, d.documentElement.clientWidth);
+      
+      var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), this.minWidth) / zoom ;
+      var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), this.minHeight) / zoom;
 
       box = this.getBox(o, d, w);
       
@@ -7788,12 +7795,12 @@ ClearClickHandler.prototype = {
       // clip, slide in viewport and trim
       
       var vp = { 
-        x: d.body && d.body.scrollLeft || d.documentElement.scrollLeft, 
-        y: d.body && d.body.scrollTop || d.documentElement.scrollTop, 
+        x: (d.body && d.body.scrollLeft || 0) + d.documentElement.scrollLeft, 
+        y: (d.body && d.body.scrollTop || 0) + d.documentElement.scrollTop, 
         width: clientWidth, 
         height: clientHeight 
       };
-      
+
       if (ctx.isEmbed) { // check in-page vieport
         for(form = o; form = form.parentNode;) {
 
@@ -7825,7 +7832,8 @@ ClearClickHandler.prototype = {
       box.oW = box.width;
       box.oH = box.height;
       
-      // print("Fitting " + box.toSource() + " in " + vp.toSource() + " - zoom: " + zoom);
+      // print("Fitting " + box.toSource() + " in " + vp.toSource() + " - zoom: " + zoom + " - ctx " + ctx.x + ", " + ctx.y + " - max " + maxWidth + ", " + maxHeight);
+
       this._constrain(box, "x", "width", maxWidth, vp, ctx.x, zoom);
       this._constrain(box, "y", "height", maxHeight, vp, ctx.y, zoom);
       // print(box.toSource());     
@@ -7836,9 +7844,7 @@ ClearClickHandler.prototype = {
       
       if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
       
-      if (curtain && frame) {
-        d.documentElement.appendChild(curtain);
-      }
+      
       
       img1 = snapshot(w, box.x, box.y);
     } catch(ex) {
@@ -7859,11 +7865,11 @@ ClearClickHandler.prototype = {
       var tmpImg;
       
       const offs = ctx.isEmbed ? [0] : [0, -1, 1, -2, 2, -3, -3];
-      
+
       checkImage:
       for each(var x in offs) {
         for each(var y in offs) {
-          tmpImg = snapshot(top, offsetX + x, offsetY + y);
+          tmpImg = snapshot(top, offsetX + x * zoom, offsetY + y * zoom);
           if (img1 == tmpImg) {
             ret = false;
             break checkImage;
