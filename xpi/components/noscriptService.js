@@ -844,7 +844,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.7.4",
+  VERSION: "1.8.7.6",
   
   get wrappedJSObject() {
     return this;
@@ -4014,8 +4014,10 @@ NoscriptService.prototype = {
       var isLegacyFrame = this.isLegacyFrameDocument(doc);
        
       if ((isLegacyFrame || mime == doc.contentType) && 
-          ctx.anchor == doc.body.firstChild && 
-          ctx.anchor == doc.body.lastChild) { // stand-alone plugin or frame
+          (ctx.anchor == doc.body.firstChild && 
+           ctx.anchor == doc.body.lastChild ||
+           (ctx.object instanceof CI.nsIDOMHTMLEmbedElement) && ctx.object.src != url)
+        ) { // stand-alone plugin or frame
           doc.body.removeChild(ctx.anchor); // TODO: add a throbber
           if (isLegacyFrame) {
             this.setExpando(doc.defaultView.frameElement, "allowed", true);
@@ -4032,6 +4034,7 @@ NoscriptService.prototype = {
         this.delayExec(function() {
           this.removeAbpTab(ctx.anchor);
           var obj = ctx.object.cloneNode(true);
+          
           ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
           this.setExpando(obj, "allowed", true);
           var pluginExtras = this.findPluginExtras(ctx.ownerDocument);
@@ -4510,8 +4513,7 @@ NoscriptService.prototype = {
       req.cancel(NS_BINDING_ABORTED);
       
       var embeds = domWindow.document.getElementsByTagName("embed");
-      
-     
+
       var eType = "application/x-noscript-blocked";
       var eURL = "data:" + eType + ",";
       var e;
@@ -5812,20 +5814,47 @@ var InjectionChecker = {
     return expr;
   },
   
+  get json() {
+    delete this.json;
+    try {
+      this.json = CC["@mozilla.org/dom/json;1"].createInstance(CI.nsIJSON);
+    } catch(e) {
+      this.json = null;
+    }
+    return this.json;
+  },
   reduceJSON: function(s) {
     var m, script, prev;
-    while((m = s.match(/\{[^\{\}]+\}/g))) {
+    
+    // optimistic case first, one big JSON block
+    m = s.match(/{[\s\S]*}/);
+    if (!m) return s;
+    expr = m[0];
+    var json = this.json;
+    if (json) try {
+      json.decode(expr);
+      this.log("Reducing big JSON " + expr);
+      return s.replace(expr, '_JSON_');
+    } catch(e) {}
+    
+    while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
       prev = s;
       for each(expr in m) {
+        if (json) try {
+          json.decode(expr);
+          this.log("Reducing JSON " + expr);
+          s = s.replace(expr, '"_JSON_"');
+          continue;
+        } catch(e) {}
         script = this.reduceQuotes(expr);
         if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(script)) {
            this.log("Reducing pseudo-JSON " + expr);
-           s = s.replace(expr, "{PJS:ON}");
+           s = s.replace(expr, '"_PseudoJSON_"');
         } else if (!/[\(=\.]/.test(script) && 
            this.checkJSSyntax("JSON = " + script) // no-assignment JSON fails with "invalid label"
         ) { 
-          this.log("Reducing JSON " + expr);
-          s = s.replace(expr, "{JS:ON}");
+          this.log("Reducing slow JSON " + expr);
+          s = s.replace(expr, '"_SlowJSON_"');
         }
       }
       if (s == prev) break;
@@ -5845,10 +5874,16 @@ var InjectionChecker = {
   },
 
   _singleAssignmentRx: new RegExp(
-    "\\b(?:" + fuzzify('document|location|setter') + ")\\b" 
-    // + "|/.*/[\\s\\S]*\\b" + fuzzify('source') + "\\b"   // regular expression source extraction
-    + '|' + IC_EVENT_DOS_PATTERN
+    "(?:\\b" + fuzzify('document') + "\\b[\\s\\S]*\\.|\\s" + fuzzify('setter') + "\\b[\\s\\S]*=)|"
+      + IC_EVENT_DOS_PATTERN
   ),
+  _locationRx: new RegExp(
+    "\\b" + fuzzify('location') + "\\b[\\s\\S]*="
+  ),
+  _nameRx: new RegExp(
+    "=[\\s\\S]*\\b" + fuzzify('name') + "\\b"
+  ),
+  
   _maybeJSRx: new RegExp(
     '[\\w$\\u0080-\\uFFFF\\]\\)]\\s*(?:\\/[\\/\\*][\\s\\S]*|\\s*)[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
     fuzzify('eval|set(?:Timeout|Interval)|[fF]unction|Script|') + IC_WINDOW_OPENER_PATTERN +
@@ -5858,8 +5893,8 @@ var InjectionChecker = {
     IC_EVENT_DOS_PATTERN
   ),
   maybeJS: function(expr) {
-    if(/^(?:[^\(\)="']+=[^\(\)='"]+|(?:[\?a-z_0-9;,&=\/]|\.[\d\.]+)*)$/i.test(expr)) // commonest case, single assignment or simple assignments, no break
-      return this._singleAssignmentRx.test(expr);
+    if(/^(?:[^\(\)="']+=[^\(\)='"]+|(?:[\?a-z_0-9;,&=\/]|\.[\d\.])*)$/i.test(expr)) // commonest case, single assignment or simple chained assignments, no break
+      return this._singleAssignmentRx.test(expr) || this._locationRx.test(expr) && this._nameRx.test(expr);
     if (/^(?:[\w\-\.]+\/)*\(*[\w\-\s]+\([\w\-\s]+\)[\w\-\s]*\)*$/.test(expr)) // typical "call like" Wiki URL pattern + bracketed session IDs
       return /\b(?:eval|set(?:Timeout|Interval)|[F|f]unction|Script|open|alert|confirm|prompt|print|on\w+)\s*\(/.test(expr);
     

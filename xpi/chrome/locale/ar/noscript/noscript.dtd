@@ -134,13 +134,13 @@
 <!ENTITY noscriptHttpsForced "افرض استعمال اتصالات آمنة على هذه المواقع">
 <!ENTITY noscriptHttpsForcedExceptions "لا تفرض استعمال اتصالات آمنة على هذه المواقع">
 <!ENTITY noscriptSecureCookies "فعّل الادارة الآلية للكعكات الآمنة">
-<!ENTITY noscriptSecureCookiesForced "افتر تعمية كل الكعكات المحددة عبر اتصال آمن للمواقع التالية:">
+<!ENTITY noscriptSecureCookiesForced "افرض تعمية كل الكعكات المحددة عبر اتصال آمن للمواقع التالية:">
 <!ENTITY noscriptSecureCookiesExceptions "أهمل الكعكات غير الآمنة عبر اتصال آمن للمواقع التالية:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warning">
+<!ENTITY noscriptClearClickTitle "امسح التحذيؤ">
 <!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
 <!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
+<!ENTITY noscriptClearClickOpt "ارفع الحماية عن الصفحات…">
+<!ENTITY noscriptOpacizeOpt "حسّن العناصر المُضمّنة في الصفحات…">
 <!ENTITY noscriptTrustedPagesAdj "موثوق">
 <!ENTITY noscriptUntrustedPagesAdj "غير موثوق">
 <!ENTITY noscriptKeepLocked "اترك هذا العنصر موصدا (مفضّل)">
