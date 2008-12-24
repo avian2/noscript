@@ -844,7 +844,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.7.6",
+  VERSION: "1.8.8",
   
   get wrappedJSObject() {
     return this;
@@ -4242,7 +4242,7 @@ NoscriptService.prototype = {
       url = sites[j];
       if (/:/.test(url) && !(
           /^[a-z]+:\/*[^\/\s]+/.test(url) || 
-          /^(?:file|resource|chrome):/.test(url) // */
+          this.getSite(url + "x") == url // doesn't this URL type support host?
         )) {
         sites.splice(j, 1); // reject scheme-only URLs
       }
@@ -5285,8 +5285,12 @@ RequestWatchdog.prototype = {
     if (this.callback && this.callback(channel, origin)) return;
     
     if (!trustedTarget) {
-      if (ns.consoleDump) this.dump(channel, "Target is not Javascript-enabled, skipping xSS checks.");
-      return;
+      if (ns.injectionChecker.checkHTML(unescape(originalSpec)) && ns.getPref("injectionCheckHTML", true)) {
+        if (ns.consoleDump) this.dump(channel, "JavaScript disabled target positive to HTML injection check!");
+      } else {
+        if (ns.consoleDump) this.dump(channel, "Target is not Javascript-enabled, skipping XSS checks.");
+        return;
+      }
     }
     
      // fast return if nothing to do here
@@ -5827,38 +5831,45 @@ var InjectionChecker = {
     var m, script, prev;
     
     // optimistic case first, one big JSON block
-    m = s.match(/{[\s\S]*}/);
-    if (!m) return s;
-    expr = m[0];
-    var json = this.json;
-    if (json) try {
-      json.decode(expr);
-      this.log("Reducing big JSON " + expr);
-      return s.replace(expr, '_JSON_');
-    } catch(e) {}
-    
-    while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
-      prev = s;
-      for each(expr in m) {
-        if (json) try {
+    do {
+      script = s;
+      m = s.match(/{[\s\S]*}/);
+      if (!m) return s;
+      expr = m[0];
+      var json = this.json;
+      if (json) {
+        try {
           json.decode(expr);
-          this.log("Reducing JSON " + expr);
-          s = s.replace(expr, '"_JSON_"');
-          continue;
+          this.log("Reducing big JSON " + expr);
+          return s.replace(expr, '_JSON_');
         } catch(e) {}
-        script = this.reduceQuotes(expr);
-        if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(script)) {
-           this.log("Reducing pseudo-JSON " + expr);
-           s = s.replace(expr, '"_PseudoJSON_"');
-        } else if (!/[\(=\.]/.test(script) && 
-           this.checkJSSyntax("JSON = " + script) // no-assignment JSON fails with "invalid label"
-        ) { 
-          this.log("Reducing slow JSON " + expr);
-          s = s.replace(expr, '"_SlowJSON_"');
-        }
       }
-      if (s == prev) break;
-    }
+      while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
+        prev = s;
+  
+        for each(expr in m) {
+          if (json) try {
+            json.decode(expr);
+            this.log("Reducing JSON " + expr);
+            s = s.replace(expr, '"_JSON_"');
+            continue;
+          } catch(e) {}
+          script = this.reduceQuotes(expr);
+          if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(script)) {
+             this.log("Reducing pseudo-JSON " + expr);
+             s = s.replace(expr, '"_PseudoJSON_"');
+          } else if (!/[\(=\.]|[^:\s]\s*\[|:\s*(?:location|document)\b/.test(script) && 
+             this.checkJSSyntax("JSON = " + script) // no-assignment JSON fails with "invalid label"
+          ) { 
+            this.log("Reducing slow JSON " + expr);
+            s = s.replace(expr, '"_SlowJSON_"');
+          }
+        }
+        if (s == prev) break;
+      }
+      
+    } while (s != script);
+
     return s;
   },
   
@@ -6712,7 +6723,7 @@ XSanitizer.prototype = {
     // regular duty
     s = s.replace(this.primaryBlacklist, " ");
     
-    s = s.replace(/javascript\s*:+|data\s*:+|-moz-binding|@import/ig, function(m) { return m.replace(/\W/g, " "); });
+    s = s.replace(/\bjavascript:+|\bdata:+[\s\w\-\/]*,|-moz-binding|@import/ig, function(m) { return m.replace(/\W/g, " "); });
     
     if (this.extraBlacklist) { // additional user-defined blacklist for emergencies
       s = s.replace(this.extraBlacklist, " "); 
@@ -7699,6 +7710,8 @@ ClearClickHandler.prototype = {
   minHeight: 100,
   checkObstruction: function(o, ctx) {   
     var d = o.ownerDocument;
+    var dElem = d.documentElement;
+    
     var w = d.defaultView;
     var top = w.top;
     var browser = DOMUtils.findBrowserForNode(top);
@@ -7762,16 +7775,22 @@ ClearClickHandler.prototype = {
       }
       
       
-
+      var clientHeight = Math.max(w.innerHeight - 32, dElem.clientHeight);
+      var clientWidth =  Math.max(w.innerWidth - 32, dElem.clientWidth);
+      // print(dElem.clientWidth + "," +  dElem.clientHeight + " - "  + w.innerWidth + "," + w.innerHeight);
+      
       if (!ctx.isEmbed) {
         curtain = d.createElementNS(HTML_NS, "div");
         with(curtain.style) {
           top = left = "0px";
-          width = (w.innerWidth + w.scrollX) + "px";
-          height = (w.innerHeight + w.scrollY) + "px";
-          padding = margin = borderWidth = "0px";
+          
+          width = (clientWidth + w.scrollX) + "px";
+          height = (clientHeight + w.scrollY) + "px";
+
+          padding = margin = borderWidth = MozOutlineWidth = "0px";
           position = "absolute";
           zIndex = "99999999";
+          
           background = this.rndColor();
         }
         var s = w.parent.getComputedStyle(frame, '');
@@ -7779,11 +7798,8 @@ ClearClickHandler.prototype = {
       }     
       
       if (curtain && frame) {
-        d.documentElement.appendChild(curtain);
+        dElem.appendChild(curtain);
       }
-      
-      var clientHeight = Math.max(w.innerHeight - 32, d.documentElement.clientHeight);
-      var clientWidth =  Math.max(w.innerWidth - 32, d.documentElement.clientWidth);
       
       var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), this.minWidth) / zoom ;
       var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), this.minHeight) / zoom;
@@ -7824,14 +7840,14 @@ ClearClickHandler.prototype = {
         }
       }
 
-      bgStyle = d.documentElement.style.background;
-      d.documentElement.style.background = bg;
+      bgStyle = dElem.style.background;
+      dElem.style.background = bg;
       
       // clip, slide in viewport and trim
       
       var vp = { 
-        x: (d.body && d.body.scrollLeft || 0) + d.documentElement.scrollLeft, 
-        y: (d.body && d.body.scrollTop || 0) + d.documentElement.scrollTop, 
+        x: (d.body && d.body.scrollLeft || 0) + dElem.scrollLeft, 
+        y: (d.body && d.body.scrollTop || 0) + dElem.scrollTop, 
         width: clientWidth, 
         height: clientHeight 
       };
@@ -7913,7 +7929,7 @@ ClearClickHandler.prototype = {
         }
       }
       
-      if (ret && !curtain && ctx.isEmbed && zoom != 1) {
+      if (ret && !curtain && ctx.isEmbed) {
         curtain = d.createElementNS(HTML_NS, "div");
         if (docPatcher) curtain.className = docPatcher.shownCS;
         with(curtain.style) {
@@ -7969,12 +7985,8 @@ ClearClickHandler.prototype = {
               docPatcher.cleanSheet += " #" + curtain.id + " { opacity: .4 !important }";
             }
             
-            with(curtain.style) {  
-              opacity = ".4";
-              MozOutlineStyle = "solid";
-              MozOutlineWidth = "1px";
-              MozOutlineColor = "red";
-            }
+            curtain.style.opacity = ".4"
+            
           } else {
             curtain.parentNode.removeChild(curtain);
           }
@@ -7995,7 +8007,7 @@ ClearClickHandler.prototype = {
       
       
       if (curtain && curtain.parentNode) curtain.parentNode.removeChild(curtain);
-      if (typeof(bgStyle) == "string") d.documentElement.style.background = bgStyle;
+      if (typeof(bgStyle) == "string") dElem.style.background = bgStyle;
      
       docPatcher.opaque(false);
       

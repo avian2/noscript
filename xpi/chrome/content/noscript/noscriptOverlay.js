@@ -1922,7 +1922,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   get _browserReady() {
-    return window.gBrowser || window.Browser && window.Browser._content;
+    return window.gBrowser || window.Browser && (window.Browser._canvasBrowser || window.Browser._content);
   },
   get currentBrowser() {
     if (!this._browserReady) return null;
@@ -1938,12 +1938,10 @@ var noscriptOverlay = noscriptUtil.service ?
   get browsers() {
     if (!this._browserReady) return [];
     delete this.browsers;
-    this.__defineGetter__("browsers",
-     window.gBrowser
-      ? function() { return gBrowser.browsers; }
-      : function() { return Browser._content.browsers; }
-    );
-    if (window.Browser) {
+    var browsersContainer = window.gBrowser || window.Browser._canvasBrowser || window.Browser._content; 
+    this.__defineGetter__("browsers", function() { return browsersContainer.browsers; });
+     
+    if (window.Browser._content) { // Fennec Alpha 1
       getBrowserForDisplay = function() { Browser._content.getBrowserForDisplay.apply(Browser._content, arguments); };
     }
     return this.browsers;
