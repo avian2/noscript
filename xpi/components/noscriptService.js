@@ -844,7 +844,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.8",
+  VERSION: "1.8.8.5",
   
   get wrappedJSObject() {
     return this;
@@ -2776,7 +2776,9 @@ NoscriptService.prototype = {
         }
 
         this.delayExec(this.countObject, 0, aContext, locationSite);
-
+        
+        forbid = forbid && !(/^file:\/\/\//.test(locationURL) && /^resource:/.test(originURL || (aRequestOrigin && aRequestOrigin.spec || ""))); // fire.fm work around
+        
         if (forbid) {
           try {  // moved here because of http://forums.mozillazine.org/viewtopic.php?p=3173367#3173367
             if (this.getExpando(aContext, "allowed") || 
@@ -4241,7 +4243,7 @@ NoscriptService.prototype = {
     for (j = sites.length; j-- > 0;) {
       url = sites[j];
       if (/:/.test(url) && !(
-          /^[a-z]+:\/*[^\/\s]+/.test(url) || 
+          /^(?:file:\/\/|[a-z]+:\/*[^\/\s]+)/.test(url) || 
           this.getSite(url + "x") == url // doesn't this URL type support host?
         )) {
         sites.splice(j, 1); // reject scheme-only URLs
@@ -5285,7 +5287,7 @@ RequestWatchdog.prototype = {
     if (this.callback && this.callback(channel, origin)) return;
     
     if (!trustedTarget) {
-      if (ns.injectionChecker.checkHTML(unescape(originalSpec)) && ns.getPref("injectionCheckHTML", true)) {
+      if (ns.injectionChecker.checkNoscript(unescape(originalSpec)) && ns.getPref("injectionCheckHTML", true)) {
         if (ns.consoleDump) this.dump(channel, "JavaScript disabled target positive to HTML injection check!");
       } else {
         if (ns.consoleDump) this.dump(channel, "Target is not Javascript-enabled, skipping XSS checks.");
@@ -5349,7 +5351,7 @@ RequestWatchdog.prototype = {
     if (globalJS || ns.isJSEnabled(originSite) ||
         !origin // we consider null origin as "trusted" (i.e. we check for injections but 
                 // don't strip POST unconditionally) to make some extensions (e.g. Google Gears) 
-                // work. For dangerous edge cases we should have moz-null-principal: now, anyway ,
+                // work. For dangerous edge cases we should have moz-null-principal: now, anyway.
       ) {
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel, window), channel);
       
@@ -5828,11 +5830,11 @@ var InjectionChecker = {
     return this.json;
   },
   reduceJSON: function(s) {
-    var m, script, prev;
+    var m, whole, qred, prev;
     
     // optimistic case first, one big JSON block
     do {
-      script = s;
+      whole = s;
       m = s.match(/{[\s\S]*}/);
       if (!m) return s;
       expr = m[0];
@@ -5844,6 +5846,8 @@ var InjectionChecker = {
           return s.replace(expr, '_JSON_');
         } catch(e) {}
       }
+      
+      // heavier duty, scattered JSON blocks
       while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
         prev = s;
   
@@ -5854,21 +5858,22 @@ var InjectionChecker = {
             s = s.replace(expr, '"_JSON_"');
             continue;
           } catch(e) {}
-          script = this.reduceQuotes(expr);
-          if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(script)) {
+          qred = this.reduceQuotes(expr);
+          if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(qred)) {
              this.log("Reducing pseudo-JSON " + expr);
              s = s.replace(expr, '"_PseudoJSON_"');
-          } else if (!/[\(=\.]|[^:\s]\s*\[|:\s*(?:location|document)\b/.test(script) && 
-             this.checkJSSyntax("JSON = " + script) // no-assignment JSON fails with "invalid label"
+          } else if (!/[\(=\.]|[^:\s]\s*\[|:\s*(?:location|document|eval|open)\b/.test(qred) && 
+             this.checkJSSyntax("JSON = " + qred) // no-assignment JSON fails with "invalid label"
           ) { 
             this.log("Reducing slow JSON " + expr);
             s = s.replace(expr, '"_SlowJSON_"');
           }
         }
+        
         if (s == prev) break;
       }
       
-    } while (s != script);
+    } while (s != whole);
 
     return s;
   },
@@ -6223,13 +6228,21 @@ var InjectionChecker = {
     return this.HTMLChecker.test(s);
   },
   
+  NoscriptChecker: new RegExp("<\\W*(?:[^>\\s]*:)?\\W*(?:" +
+    fuzzify("form|style|link|object|embed|applet|iframe|frame|meta|svg|video") + ")"
+    ),
+  checkNoscript: function(s) {
+    this.log(s);
+    return this.NoscriptChecker.test(s);
+  },
+  
   base64: false,
   base64tested: [],
   get base64Decoder() { return Base64 }, // exposed here just for debugging purposes
   checkBase64: function(url) {
     this.log(url);
     var t = new Date().getTime();
-    var frags, curf, j, k, l, pos, ff, f;
+    var frags, curf, j, k, pos, ff, f;
     const MAX_TIME = 4000;
     const DOS_MSG = "Too long execution time, assuming DOS in Base64 checks";
     this.base64 = false;
@@ -6250,21 +6263,21 @@ var InjectionChecker = {
           f += curf.substring(0, curf.length - 1);
         }
         ff = f.split('/');
-        l = ff.length;
-        if (l > 255) {
+        if (ff.length > 255) {
           this.log("More than 255 base64 slash chunks, assuming DOS");
           return true;
         }
-        for (; l > 0; l--) {
-          for(k = 0; k < l; k++) {
-            if (new Date().getTime() - t >MAX_TIME) {
-                this.log(DOS_MSG);
-                return true;
-            }
-            f = ff.slice(k, l).join('/');
-            if (f.length >= 12 && this.checkBase64Frag(f))
+        while (ff.length) {
+          
+          if (new Date().getTime() - t > MAX_TIME) {
+              this.log(DOS_MSG);
               return true;
           }
+          f = ff.join('/');
+          if (f.length >= 12 && this.checkBase64Frag(f))
+            return true;
+          
+          ff.shift();
         }
         f = '';
       }
@@ -6308,7 +6321,7 @@ var InjectionChecker = {
   },
   
   checkURL: function(url) {
-    // let's assume protocol and host are safe, but we keep the leading double slash to keep comments in account
+    // let's assume protocol and host are safe, but keep the leading double slash to keep comments in account
     url = url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "//"); 
     return this.checkRecursive(url);
   },
@@ -6325,7 +6338,7 @@ var InjectionChecker = {
   _checkRecursive: function(s, depth) {
     
     
-    if ((!this.isPost && this.checkBase64(s)) || this.checkHTML(s) || this.checkJS(s))
+    if (this.checkHTML(s) || this.checkJS(s))
       return true;
     
     if (--depth <= 0)
@@ -6335,6 +6348,9 @@ var InjectionChecker = {
       return true;
     
     var unescaped = this.urlUnescape(s);
+    
+    if (!this.isPost && this.checkBase64(s.replace(/^\/{1,3}/, ''))) return true;
+    
     if (unescaped != s && this._checkRecursive(unescaped, depth))
       return true;
     
@@ -7704,6 +7720,33 @@ ClearClickHandler.prototype = {
     return "#" + ("000000".substring(c.length)) + c; 
   },
   
+  getScrollbarDims: function(d) {
+    var b = d.body;
+    var outer = d.createElement("div");
+    var inner = outer.appendChild(d.createElement("div"));
+    var w, h;
+    with(outer.style) {
+      position = "absolute";
+      display = "block";
+      width = height = "200px";
+      top = left = "-400px";
+      overflow = "hidden";
+    }
+    with(inner.style) {
+      position = "static";
+      display = "block";
+      width = height = "400px";
+    }
+    b.appendChild(outer);
+    w = outer.clientWidth;
+    h = outer.clientHeight;
+    outer.style.overflow = "auto";
+    w -= outer.clientWidth;
+    h -= outer.clientHeight;
+    b.removeChild(outer);
+    return { w: w, h: h };
+  },
+  
   maxWidth: 350,
   maxHeight: 200,
   minWidth: 160,
@@ -7752,160 +7795,160 @@ ClearClickHandler.prototype = {
       img2 = tmpImg = snapshot(top, x2, y2);
       return (img1 != img2); 
     }
-    
+    var sd = this.getScrollbarDims(d);
+
     try {
-      docPatcher.opaque(true);
-       
-      if (ctx.isEmbed) { // objects and embeds
-        if (this.ns.getPref("clearClick.plugins", true)) {
-          var ds = browser.docShell;
-          viewer = ds.contentViewer && false;
-          objClass = new ClassyObj(o);
-          objClass.append(" __noscriptBlank__");
-          docPatcher.blankPositioned(true);
-          docPatcher.clean(true);
-        } else {
-          DOMUtils.addClass(o, "__noscriptOpaqued__");
+      try {
+        docPatcher.opaque(true);
+         
+        if (ctx.isEmbed) { // objects and embeds
+          if (this.ns.getPref("clearClick.plugins", true)) {
+            var ds = browser.docShell;
+            viewer = ds.contentViewer && false;
+            objClass = new ClassyObj(o);
+            objClass.append(" __noscriptBlank__");
+            docPatcher.blankPositioned(true);
+            docPatcher.clean(true);
+          } else {
+            DOMUtils.addClass(o, "__noscriptOpaqued__");
+          }
         }
-      }
-      
-      if ((frame = w.frameElement)) {
-        frameClass = new ClassyObj(frame);
-        DOMUtils.removeClass(frame, "__noscriptScrolling__");
-      }
-      
-      
-      var clientHeight = Math.max(w.innerHeight - 32, dElem.clientHeight);
-      var clientWidth =  Math.max(w.innerWidth - 32, dElem.clientWidth);
-      // print(dElem.clientWidth + "," +  dElem.clientHeight + " - "  + w.innerWidth + "," + w.innerHeight);
-      
-      if (!ctx.isEmbed) {
-        curtain = d.createElementNS(HTML_NS, "div");
-        with(curtain.style) {
-          top = left = "0px";
-          
-          width = (clientWidth + w.scrollX) + "px";
-          height = (clientHeight + w.scrollY) + "px";
-
-          padding = margin = borderWidth = MozOutlineWidth = "0px";
-          position = "absolute";
-          zIndex = "99999999";
-          
-          background = this.rndColor();
+        
+        if ((frame = w.frameElement)) {
+          frameClass = new ClassyObj(frame);
+          DOMUtils.removeClass(frame, "__noscriptScrolling__");
         }
-        var s = w.parent.getComputedStyle(frame, '');
-        var fbox = this.getBox(frame);
-      }     
-      
-      if (curtain && frame) {
-        dElem.appendChild(curtain);
-      }
-      
-      var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), this.minWidth) / zoom ;
-      var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), this.minHeight) / zoom;
-
-      box = this.getBox(o, d, w);
-      
-      // expand to parent form if needed
-      var form = o.form;
-      var formBox = null;
-      if (frame && !ctx.isEmbed && (form || (form = this.findParentForm(o)))) {
-
-        formBox = this.getBox(form, d, w);
-        if (!(formBox.width && formBox.height)) { // some idiots put <form> as first child of <table> :(
-          formBox = this.getBox(form.offsetParent || form.parentNode, d, w);
-          if (!(formBox.width && formBox.height)) {
-            formBox = this.getBox(form.parentNode.offsetParent || o.offsetParent, d, w);
+        
+        
+        var clientHeight = Math.max(w.innerHeight - sd.w, dElem.clientHeight);
+        var clientWidth =  Math.max(w.innerWidth - sd.h, dElem.clientWidth);
+        // print(dElem.clientWidth + "," +  dElem.clientHeight + " - "  + w.innerWidth + "," + w.innerHeight);
+        
+        if (!ctx.isEmbed) {
+          curtain = d.createElementNS(HTML_NS, "div");
+          with(curtain.style) {
+            top = left = "0px";
+            
+            width = (clientWidth + w.scrollX) + "px";
+            height = (clientHeight + w.scrollY) + "px";
+  
+            padding = margin = borderWidth = MozOutlineWidth = "0px";
+            position = "absolute";
+            zIndex = "99999999";
+            
+            background = this.rndColor();
+          }
+          var s = w.parent.getComputedStyle(frame, '');
+          var fbox = this.getBox(frame);
+        }     
+        
+        if (curtain && frame) {
+          dElem.appendChild(curtain);
+        }
+        
+        var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), this.minWidth) / zoom ;
+        var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), this.minHeight) / zoom;
+  
+        box = this.getBox(o, d, w);
+        
+        // expand to parent form if needed
+        var form = o.form;
+        var formBox = null;
+        if (frame && !ctx.isEmbed && (form || (form = this.findParentForm(o)))) {
+  
+          formBox = this.getBox(form, d, w);
+          if (!(formBox.width && formBox.height)) { // some idiots put <form> as first child of <table> :(
+            formBox = this.getBox(form.offsetParent || form.parentNode, d, w);
+            if (!(formBox.width && formBox.height)) {
+              formBox = this.getBox(form.parentNode.offsetParent || o.offsetParent, d, w);
+            }
+          }
+    
+          if (formBox.width && formBox.height) {
+            ctx.x = ctx.x || box.x + box.width;
+            ctx.y = ctx.y || box.y + box.height;
+            box = formBox;
+            var delta;
+            if (box.x + Math.min(box.width, maxWidth) < ctx.x) {
+              delta = ctx.x + 4 - maxWidth - box.x;
+              box.x += delta;
+              box.screenX += delta * zoom;
+              box.width = Math.min(box.width, maxWidth);
+            }
+            if (box.y + Math.min(box.height, maxHeight) < ctx.y) {
+              delta = ctx.y + 4 - maxHeight - box.y;
+              box.y += delta;
+              box.screenY += delta * zoom;
+              box.height = Math.min(box.height, maxHeight);
+            }
+            o = form;
           }
         }
   
-        if (formBox.width && formBox.height) {
-          ctx.x = ctx.x || box.x + box.width;
-          ctx.y = ctx.y || box.y + box.height;
-          box = formBox;
-          var delta;
-          if (box.x + Math.min(box.width, maxWidth) < ctx.x) {
-            delta = ctx.x + 4 - maxWidth - box.x;
-            box.x += delta;
-            box.screenX += delta * zoom;
-            box.width = Math.min(box.width, maxWidth);
-          }
-          if (box.y + Math.min(box.height, maxHeight) < ctx.y) {
-            delta = ctx.y + 4 - maxHeight - box.y;
-            box.y += delta;
-            box.screenY += delta * zoom;
-            box.height = Math.min(box.height, maxHeight);
-          }
-          o = form;
-        }
-      }
+        bgStyle = dElem.style.background;
+        dElem.style.background = bg;
+        
+        // clip, slide in viewport and trim
+        
+        var vp = { 
+          x: w.scrollX, 
+          y: w.scrollY, 
+          width: Math.max(w.innerWidth - sd.w, 1), 
+          height: Math.max(w.innerHeight - sd.h, 1)
+        };
 
-      bgStyle = dElem.style.background;
-      dElem.style.background = bg;
-      
-      // clip, slide in viewport and trim
-      
-      var vp = { 
-        x: (d.body && d.body.scrollLeft || 0) + dElem.scrollLeft, 
-        y: (d.body && d.body.scrollTop || 0) + dElem.scrollTop, 
-        width: clientWidth, 
-        height: clientHeight 
-      };
-
-      if (ctx.isEmbed) { // check in-page vieport
-        for(form = o; form = form.parentNode;) {
-
-          if ((form.offsetWidth < box.width || form.offsetHeight < box.height) &&
-              w.getComputedStyle(form, '').overflow != "visible") {
-            
-            // check if we're being fooled by some super-zoomed applet
-            if (box.width / 4 <= form.offsetWidth && box.height / 4 <= form.offsetHeight) {
-              formBox = this.getBox(form, d, w);
+        if (ctx.isEmbed) { // check in-page vieport
+          for(form = o; form = form.parentNode;) {
+  
+            if ((form.offsetWidth < box.width || form.offsetHeight < box.height) &&
+                w.getComputedStyle(form, '').overflow != "visible") {
               
-              if (box.x < formBox.x) {
-                box.x = formBox.x;
-                box.screenX = formBox.screenX;
+              // check if we're being fooled by some super-zoomed applet
+              if (box.width / 4 <= form.offsetWidth && box.height / 4 <= form.offsetHeight) {
+                formBox = this.getBox(form, d, w);
+                
+                if (box.x < formBox.x) {
+                  box.x = formBox.x;
+                  box.screenX = formBox.screenX;
+                }
+                if (box.y < formBox.y) { 
+                  box.y = formBox.y;
+                  box.screenY = formBox.screenY;
+                }
+                if (box.width + box.x > formBox.width + formBox.x) box.width = Math.max(this.minWidth, form.clientWidth - (box.x - formBox.x));
+                if (box.height + box.y > formBox.height + formBox.y) box.height = Math.max(this.minHeight, form.offsetHeight - (box.y - formBox.y));
               }
-              if (box.y < formBox.y) { 
-                box.y = formBox.y;
-                box.screenY = formBox.screenY;
-              }
-              if (box.width + box.x > formBox.width + formBox.x) box.width = Math.max(this.minWidth, form.clientWidth - (box.x - formBox.x));
-              if (box.height + box.y > formBox.height + formBox.y) box.height = Math.max(this.minHeight, form.offsetHeight - (box.y - formBox.y));
+              break;
             }
-            break;
           }
         }
+        
+        box.oX = box.x;
+        box.oY = box.y;
+        box.oW = box.width;
+        box.oH = box.height;
+        
+        // print("Fitting " + box.toSource() + " in " + vp.toSource() + " - zoom: " + zoom + " - ctx " + ctx.x + ", " + ctx.y + " - max " + maxWidth + ", " + maxHeight);
+  
+        this._constrain(box, "x", "width", maxWidth, vp, ctx.x, zoom);
+        this._constrain(box, "y", "height", maxHeight, vp, ctx.y, zoom);
+        // print(box.toSource());     
+        
+        c.width = box.width;
+        c.height = box.height;
+        
+        
+        if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
+        
+        
+        
+        img1 = snapshot(w, box.x, box.y);
+      
+      } finally {
+        docPatcher.clean(false);
       }
-      
-      box.oX = box.x;
-      box.oY = box.y;
-      box.oW = box.width;
-      box.oH = box.height;
-      
-      // print("Fitting " + box.toSource() + " in " + vp.toSource() + " - zoom: " + zoom + " - ctx " + ctx.x + ", " + ctx.y + " - max " + maxWidth + ", " + maxHeight);
-
-      this._constrain(box, "x", "width", maxWidth, vp, ctx.x, zoom);
-      this._constrain(box, "y", "height", maxHeight, vp, ctx.y, zoom);
-      // print(box.toSource());     
-      
-      c.width = box.width;
-      c.height = box.height;
-      
-      
-      if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
-      
-      
-      
-      img1 = snapshot(w, box.x, box.y);
-    } catch(ex) {
-      this.ns.dump(ex + ": " + ex.stack);
-      throw ex;
-    } finally {
-      docPatcher.clean(false);
-    }
     
-    try {
+  
       var rootElement = top.document.documentElement;
      
       var rootBox = rootElement.ownerDocument.getBoxObjectFor(rootElement);
@@ -8031,11 +8074,15 @@ ClassyObj.prototype = {
   o: null,
   c: null,
   append: function(newC) {
-    this.o.className = this.c ? this.c + newC : newC;
+    try {
+      this.o.className = this.c ? this.c + newC : newC;
+    } catch(e) {}
   },
   reset: function() {
-    if (this.c == null) this.o.removeAttribute("class");
-    else this.o.className = this.c;
+    try {
+      if (this.c == null) this.o.removeAttribute("class");
+      else this.o.className = this.c;
+    } catch(e) {}
   }
 }
 
