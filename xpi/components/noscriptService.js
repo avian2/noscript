@@ -844,7 +844,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.8.5",
+  VERSION: "1.8.8.8",
   
   get wrappedJSObject() {
     return this;
@@ -2775,6 +2775,7 @@ NoscriptService.prototype = {
             ));
         }
 
+        
         this.delayExec(this.countObject, 0, aContext, locationSite);
         
         forbid = forbid && !(/^file:\/\/\//.test(locationURL) && /^resource:/.test(originURL || (aRequestOrigin && aRequestOrigin.spec || ""))); // fire.fm work around
@@ -2810,11 +2811,12 @@ NoscriptService.prototype = {
             }
           }
         } else {
+          
           if (isSilverlight) {
             this.setExpando(aContext, "silverlight", aContentType != 12);
           }
           if (this.consoleDump & LOG_CONTENT_CALL) {
-             this.dump(locationURL + " Allowed, " + new Error().stack);
+            this.dump(locationURL + " Allowed, " + new Error().stack);
           }
         }
       } catch(e) {
@@ -3145,6 +3147,7 @@ NoscriptService.prototype = {
   countObject: function(embed, site) {
     if(!site) return;
     var doc = embed.ownerDocument;
+    
     var win = doc.defaultView.top;
     var os = this.getExpando(win, "objectSites");
     if(os) {
@@ -3152,6 +3155,7 @@ NoscriptService.prototype = {
     } else {
       this.setExpando(win, "objectSites", [site]);
     }
+    
     this.opaqueIfNeeded(embed, doc);
   },
   
@@ -4474,6 +4478,8 @@ NoscriptService.prototype = {
     
     
     this._handleDocJS3(uri.spec, domWindow, docShell);
+    
+    domWindow.addEventListener("DOMNodeRemoved", CP_NOP, true); // hack for bug 472495
     
     var contentType;
     try {
@@ -5978,7 +5984,7 @@ var InjectionChecker = {
     findInjection.lastIndex = 0;
     var m, breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg, pos;
     
-    const MAX_TIME = 8000, MAX_LOOPS = 400;
+    const MAX_TIME = 8000, MAX_LOOPS = 600;
 
     const t = new Date().getTime();
     var iterations = 0;
@@ -5998,7 +6004,7 @@ var InjectionChecker = {
       
       // quickly skip (mis)leading innocuous CGI patterns
       if ((m = subj.match(
-        /^(?:(?:\.*[\?\w\-\/&:`]+=[\w \-\/:\+%#,`]*(?:[&\|]|$)){2,}|\w+:\/\/\w[\w\-\.]*)/
+        /^(?:(?:[\.\?\w\-\/&:`\[\]]+=[\w \-:\+%#,`\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/
         // r2l, chained query string parameters, protocol://domain, ...
         ))) {
        
@@ -6084,7 +6090,7 @@ var InjectionChecker = {
           }
           if(this.syntax.lastError) { // could be null if we're here thanks to checkLastFunction()
             errmsg = this.syntax.lastError.message;
-            this.log(errmsg + "\n" + script + "\n---------------", t, iterations);
+            this.log(errmsg + " --- " + script + " --- ", t, iterations);
             if(!quote) {
               if (/left-hand/.test(errmsg)) {
                 m = subj.match(/^([^\]\(\\'"=\?]+?)[\w$\u0080-\uffff\s]+[=\?]/);
@@ -6104,6 +6110,9 @@ var InjectionChecker = {
                   pos = subj.search(/['"\n\\\(]|\/\*/);
                   if (pos < 0 || pos > bsPos)
                     break;
+                }
+                if (/^([\w\[\]]*=)?\w*&[\w\[\]]*=/.test(subj)) { // CGI param concatenation
+                  break;
                 }
               }
             } else if (/left-hand/.test(errmsg)) break;
@@ -7562,7 +7571,7 @@ ClearClickHandler.prototype = {
   },
   
   createCanvas: function(doc) {
-    return doc.createElementNS(HTML_NS, "canvas");
+    return doc.__clearClickCanvas || (doc.__clearClickCanvas = doc.createElementNS(HTML_NS, "canvas"));
   },
   
   isSupported: function(doc) {
@@ -7720,38 +7729,13 @@ ClearClickHandler.prototype = {
     return "#" + ("000000".substring(c.length)) + c; 
   },
   
-  getScrollbarDims: function(d) {
-    var b = d.body;
-    var outer = d.createElement("div");
-    var inner = outer.appendChild(d.createElement("div"));
-    var w, h;
-    with(outer.style) {
-      position = "absolute";
-      display = "block";
-      width = height = "200px";
-      top = left = "-400px";
-      overflow = "hidden";
-    }
-    with(inner.style) {
-      position = "static";
-      display = "block";
-      width = height = "400px";
-    }
-    b.appendChild(outer);
-    w = outer.clientWidth;
-    h = outer.clientHeight;
-    outer.style.overflow = "auto";
-    w -= outer.clientWidth;
-    h -= outer.clientHeight;
-    b.removeChild(outer);
-    return { w: w, h: h };
-  },
-  
+   
   maxWidth: 350,
   maxHeight: 200,
   minWidth: 160,
   minHeight: 100,
-  checkObstruction: function(o, ctx) {   
+  _NO_SCROLLBARS: {w: 0, h: 0},
+  checkObstruction:  function(o, ctx) {   
     var d = o.ownerDocument;
     var dElem = d.documentElement;
     
@@ -7795,7 +7779,7 @@ ClearClickHandler.prototype = {
       img2 = tmpImg = snapshot(top, x2, y2);
       return (img1 != img2); 
     }
-    var sd = this.getScrollbarDims(d);
+    var sd = this._NO_SCROLLBARS;
 
     try {
       try {
@@ -7817,11 +7801,24 @@ ClearClickHandler.prototype = {
         if ((frame = w.frameElement)) {
           frameClass = new ClassyObj(frame);
           DOMUtils.removeClass(frame, "__noscriptScrolling__");
+          sd = (function() {
+            var fw = frame.clientWidth, fh = frame.clientHeight;
+            var dw = dElem.clientWidth, dh = dElem.clientHeight;
+            var w = Math.min(fw, dw), h = Math.min(fh, dh);
+            var b = d.body;
+            if (b) {
+              var bw = b.clientWidth;
+              if (bw < fw && (bw > dw || dw > fw)) w = bw; 
+              var bh = b.clientHeight;
+              if (bh < fh && (bh > dh || dh > fh)) h = bh;
+            }
+            
+            return {w: fw - w, h: fh - h };
+          })();    
         }
         
-        
-        var clientHeight = Math.max(w.innerHeight - sd.w, dElem.clientHeight);
-        var clientWidth =  Math.max(w.innerWidth - sd.h, dElem.clientWidth);
+        var clientHeight = w.innerHeight - sd.h;
+        var clientWidth =  w.innerWidth - sd.w;
         // print(dElem.clientWidth + "," +  dElem.clientHeight + " - "  + w.innerWidth + "," + w.innerHeight);
         
         if (!ctx.isEmbed) {
@@ -7893,8 +7890,8 @@ ClearClickHandler.prototype = {
         var vp = { 
           x: w.scrollX, 
           y: w.scrollY, 
-          width: Math.max(w.innerWidth - sd.w, 1), 
-          height: Math.max(w.innerHeight - sd.h, 1)
+          width: Math.max(w.innerWidth - sd.w, 32), 
+          height: Math.max(w.innerHeight - sd.h, 32)
         };
 
         if (ctx.isEmbed) { // check in-page vieport

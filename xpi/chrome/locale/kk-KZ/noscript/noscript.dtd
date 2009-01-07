@@ -1,0 +1,149 @@
+<!ENTITY noscriptOptions "Баптаулары">
+<!ENTITY noscriptOptions.accesskey "Б">
+<!ENTITY noscriptOptionsLong "NoScript баптаулары">
+<!ENTITY noscriptAbout "NoScript туралы...">
+<!ENTITY noscriptPermissionsText "Қай сайттарға JavaScript орындауға рұқсат екенін көрсете аласыз. Рұқсат етілетін сайттың домен адресін енгізіңіз (мысалы, &quot;http://www.site.com&quot; немесе &quot;site.com&quot;), содан кейін Рұқсат ету басыңыз.">
+<!ENTITY noscriptWebAddress "Веб-сайт адресі:">
+<!ENTITY noscriptAllow "Рұқсат ету">
+<!ENTITY noscriptAllow.accesskey "Р">
+<!ENTITY noscriptForbid "Тыйым салу">
+<!ENTITY noscriptForbid.accesskey "ы">
+<!ENTITY noscriptTrust "Рұқсат етілген деп белгілеу">
+<!ENTITY noscriptTrust.accesskey "с">
+<!ENTITY noscriptUntrust "Тыйым салынған деп белгілеу">
+<!ENTITY noscriptUntrust.accesskey "н">
+<!ENTITY noscriptRemoveSelected "Ерекшеленген сайттарды өшіру">
+<!ENTITY noscriptGloballyEnabled "JavaScript толық рұқсат етілген (қауіпті)">
+<!ENTITY noscriptAutoReload "Ережелер өзгергенде оған қатысты парақтарды жаңарту">
+<!ENTITY noscriptGeneral "Жалпы">
+<!ENTITY noscriptAppearance "Түрі">
+<!ENTITY noscriptShow "Көрсету...">
+<!ENTITY noscriptCtxMenu "Контекст мәзірінде көрсету">
+<!ENTITY noscriptStatusIcon "Қалып-күй жолағында көрсету">
+<!ENTITY noscriptFullAddr "Адрестер толығымен (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Домендер толығымен (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Базалық 2-ші деңгейлі домендер (noscript.net)">
+<!ENTITY noscriptTempCmd "Уақытша рұқсат ету […]">
+<!ENTITY noscriptSound "Скриптерді блоктау кезінде аудио сигнал беру">
+<!ENTITY noscriptImport "Импорт">
+<!ENTITY noscriptImport.accesskey "м">
+<!ENTITY noscriptExport "Экспорт">
+<!ENTITY noscriptExport.accesskey "к">
+<!ENTITY noscriptNotify "Блокталған скриптер туралы хабарлама көрсету">
+<!ENTITY noscriptNotify.bottom "Терезенің астынан хабарлама көрсету">
+<!ENTITY noscriptSound.choose "Таңдау">
+<!ENTITY noscriptSound.choose.accesskey "д">
+<!ENTITY noscriptSound.play "Ойнау">
+<!ENTITY noscriptSound.play.accesskey "й">
+<!ENTITY noscriptSound.reset "Бастапқы түріне келтіру">
+<!ENTITY noscriptSound.reset.accesskey "р">
+<!ENTITY noscriptAdvanced "Кеңейтілген">
+<!ENTITY noscriptAdditionalPermissions "Сенімді сайттар үшін кеңейтілген баптаулар">
+<!ENTITY noscriptAllowClipboard "Сыртқы алмасу буферінен көшіру/кірістіруді рұқсат ету">
+<!ENTITY noscriptAdditionalRestrictions "Сенімсіз сайттар үшін кеңейтілген баптаулар">
+<!ENTITY noscriptPlugins "Плагиндер">
+<!ENTITY noscriptContentBlocker "Бұл шектеулерді сенімді сайттар үшін де қолдану">
+<!ENTITY noscriptForbidJava "Java™ тыйым салу">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; тыйым салу">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ тыйым салу">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; тыйым салу">
+<!ENTITY noscriptForbidFrames "&lt;FRAME&gt; тыйым салу">
+<!ENTITY noscriptForbidFlash "Adobe® Flash® тыйым салу">
+<!ENTITY noscriptForbidPlugins "Басқа плагиндерге тыйым салу">
+<!ENTITY noscriptReloadWarn "Бұл баптаулар тек жаңа ашылған немесе қайта жүктелген (қолмен) парақтар үшін істейді">
+<!ENTITY noscriptConfirmUnblock "Объектті уақытша рұқсат ету алдында растауды сұрау">
+<!ENTITY noscriptStatusLabel "Қалып-күй жолағындағы хабарламалар">
+<!ENTITY noscriptForbidBookmarklets "Bookmarklets қолдануға тыйым салу">
+<!ENTITY noscriptShowPlaceholder "Блокталған элементтің орнын қоршаумен көрсету">
+<!ENTITY noscriptTruncateTitle "Құжаттың тым ұзын атын қысқарту">
+<!ENTITY noscriptFixLinks "JavaScript сілтемелерін өндеуді қолдану">
+<!ENTITY noscriptAllowBookmarks "Бетбелгілерден ашылған сайтқа рұқсат ету">
+<!ENTITY noscriptAllowViaBookmarks "Бетбелгілерден ашылған сайтқа рұқсат ету">
+<!ENTITY noscriptAllowPing "&lt;A PING…&gt; рұқсат ету">
+<!ENTITY noscriptAllowLocalLinks "Локалды сілтемелерді рұқсат ету">
+<!ENTITY noscriptForbidPing "&lt;A PING…&gt; тыйым салу">
+<!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt; элементінің ішінде META бағдарлауды оқшаулау">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "ш">
+<!ENTITY noscriptWhitelist "Рұқсат етілген тізім">
+<!ENTITY noscriptPermissions "Рұқсаттар">
+<!ENTITY noscriptRefresh "Жаңарту">
+<!ENTITY noscriptNotifications "Хабарламалар">
+<!ENTITY noscriptToolbarToggle "NoScript таңбашасына шерту арқылы сайт үшін рұқсаттарды ауыстыру">
+<!ENTITY noscriptTrusted "Сенімді">
+<!ENTITY noscriptUntrusted "Сенімсіз">
+<!ENTITY noscriptUnknown "Белгісіз">
+<!ENTITY noscriptAdd "Қосу">
+<!ENTITY noscriptAdd.accesskey "с">
+<!ENTITY noscriptClose "Жабу">
+<!ENTITY noscriptSiteManager "Сайт менеджері">
+<!ENTITY noscriptSecurityManager "Қауіпсіздік менджері">
+<!ENTITY noscriptPolicies "Ережелер">
+<!ENTITY noscriptDefaultPolicies "Бастапқы ережелер">
+<!ENTITY noscriptSitePolicies "Сайтқа қатысты ережелер">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; элементтерін жасыру">
+<!ENTITY noscriptNselForce "Блокталған &lt;SCRIPT&gt; соңынан келген &lt;NOSCRIPT&gt; элементін көрсету">
+<!ENTITY noscriptAutoAllowTopLevel "Уақытша жоғарғы деңгейлі сайттарға рұқсат беру">
+<!ENTITY noscriptDescription "Firefox үшін экстра қорғаныс: NoScript көмегімен сіз JavaScript, Java (және басқа плагиндер) орындалуын тек өзіңіз көрсеткен домендер үшін рұқсат ете аласыз (мысалы, өзіңіздің веб-сайтыңыз). Рұқсат етілген тізім, алдын-ала блоктауға негізделіп, функционалдылыққа әсер етпей-ақ осалдылықтардың алдын алуға көмектеседі (белгілі және белгісіз!)… Мамандар келіседі: NoScript қолдану Firefox жұмысын қауіпсіз етеді:-)">
+<!ENTITY noscriptOptBlockCssScanners "CSS-негізделген сканерлерді оқшаулау">
+<!ENTITY noscriptOptFilterXGet "CSS сұранымдарын оқшаулау">
+<!ENTITY noscriptOptFilterXPost "Сайт аралық POST сұранымдарын мәліметі жоқ GET сұранымдарына айналдыру">
+<!ENTITY noscriptShowConsole "Консольді көрсету...">
+<!ENTITY noscriptShowConsole.accesskey "у">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "Х">
+<!ENTITY noscriptXssFaq "XSS жиі қойылатын сұрақтары...">
+<!ENTITY noscriptXssFaq.accesskey "й">
+<!ENTITY noscriptUnsafeReload "Қауіпсіз емес қайта жүктелу">
+<!ENTITY noscriptUnsafeReload.accesskey "з">
+<!ENTITY noscriptXssExceptions "Анти-XSS қорғаудың ерекше ережелері">
+<!ENTITY noscriptXssExceptions.description "Бұл маскаларға сәйкес келетін объектілер XSS қарсы ҚОРҒАЛМАЙДЫ.">
+<!ENTITY noscriptMatchSample "Шаблон мысалы:">
+<!ENTITY noscriptReset "Тастау">
+<!ENTITY noscriptReset.accesskey "с">
+<!ENTITY noscriptResetDef "Бастапқы түріне келтіру">
+<!ENTITY noscriptResetDef.accesskey "н">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR жиі қойылатын сұрақтары...">
+<!ENTITY noscriptJarFaq.accesskey "й">
+<!ENTITY noscriptForbidJarDocuments "Құжат ретінде жүктелетін JAR ресурстарын оқшаулау">
+<!ENTITY noscriptJarExceptions "JAR құжаттарын">
+<!ENTITY noscriptJarExceptions.description "Бұл маскаларға сәйкес келетін JAR-құжаттар ОҚШАУЛАНБАЙДЫ.">
+<!ENTITY noscriptRevokeTemp "Уақытша рұқсаттарды қайта шақыру">
+<!ENTITY noscriptRevokeTemp.accesskey "р">
+<!ENTITY noscriptNoUntrustedPlaceholder "Сенімсіз деп белгіленген сайттан келген объектілер үшін қоршау жоқ">
+<!ENTITY noscriptCollapseBlockedObjects "Блокталған объектілерді жинау">
+<!ENTITY noscriptExceptions "Ерекше ережелер...">
+<!ENTITY noscriptBlockedObjects "Блокталған объектілер">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Сенімсіз деп белгіленген сайттан келген әр объектті блоктау">
+<!ENTITY noscriptTempAllowPage "Бұл парақтағы барлығына рұқсат ету">
+<!ENTITY noscriptTempAllowPage.accesskey "т">
+<!ENTITY noscriptAllowPage "Бұл парақтағы бар құрамасына рұқсат ету">
+<!ENTITY noscriptAllowPage.accesskey "е">
+<!ENTITY noscriptTempToPerm "Орнатылған рұқсаттарды сақтау">
+<!ENTITY noscriptTempToPerm.accesskey "у">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS жиі қойылатын сұрақтары...">
+<!ENTITY noscriptHttpsFaq.accesskey "и">
+<!ENTITY noscriptHttps.behavior "Әрекеттері">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Қорғалған байланыс (HTTPS) болмаса, активті веб-құраманы оқшаулау:">
+<!ENTITY noscriptHttps.never "Ешқашан">
+<!ENTITY noscriptHttps.proxy "Прокси қолданған кезде (Tor ұсынылады)">
+<!ENTITY noscriptHttps.always "Әрқашан">
+<!ENTITY noscriptHttpsForced "Келесі сайттар үшін қорғалған байланыс (HTTPS) талап ету:">
+<!ENTITY noscriptHttpsForcedExceptions "Келесі сайттар үшін қорғалған байланыс (HTTPS) талап етпеу:">
+<!ENTITY noscriptSecureCookies "Automatic Secure Cookies Management қосу">
+<!ENTITY noscriptSecureCookiesForced "Келесі сайттардан HTTPS арқылы алынатын cookies үшін шифрлеуді талап ету:">
+<!ENTITY noscriptSecureCookiesExceptions "Келесі сайттардан HTTPS арқылы алынатын қауіпсіз емесе cookies елемеу:">
+<!ENTITY noscriptClearClickTitle "ClearClick ескертулері">
+<!ENTITY noscriptClearClickHeader "Clickjacking мүмкін/UI өзгерту талабы">
+<!ENTITY noscriptClearClickDescription "NoScript жартылай жасырын элементпен әрекетті шектеді. Айырмашылыған көру үшін суреттерге шертіңіз.">
+<!ENTITY noscriptClearClickOpt "Парақтардағы ClearClick-қорғанысы...">
+<!ENTITY noscriptOpacizeOpt "Парақтағы элементтердің мөлдірлігін өзгерту...">
+<!ENTITY noscriptTrustedPagesAdj "сенімді">
+<!ENTITY noscriptUntrustedPagesAdj "сенімсіз">
+<!ENTITY noscriptKeepLocked "Бұл элементті блокталған күйінде қалдыру (ұсынылады)">
+<!ENTITY noscriptEmbeddings "Құрамдас объекттер">
+<!ENTITY noscriptPrev "Алдыңғысы">
+<!ENTITY noscriptNext "Келесі">

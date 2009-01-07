@@ -41,7 +41,7 @@
 <!ENTITY noscriptAdditionalPermissions "Flere tillatelsesinnstillinger for pålitelige sider">
 <!ENTITY noscriptAllowClipboard "Tillat kopiering/innliming av tekst med tekststiler fra ekstern utklippstavle">
 <!ENTITY noscriptAdditionalRestrictions "Tilleggsbegrensinger for upålitelige sider">
-<!ENTITY noscriptPlugins "PlugIns">
+<!ENTITY noscriptPlugins "Programtillegg">
 <!ENTITY noscriptContentBlocker "Bruk disse restriksjonene på pålitelige sider">
 <!ENTITY noscriptForbidJava "Forby Java™">
 <!ENTITY noscriptForbidWebBugs "Forby &quot;Web Bugs&quot;">
@@ -77,15 +77,15 @@
 <!ENTITY noscriptClose "Lukk">
 <!ENTITY noscriptSiteManager "Sidemanager">
 <!ENTITY noscriptSecurityManager "Sikkerhetsmanager">
-<!ENTITY noscriptPolicies "Polisie">
-<!ENTITY noscriptDefaultPolicies "Standard Polisier">
-<!ENTITY noscriptSitePolicies "Sidespesifike Polisier">
+<!ENTITY noscriptPolicies "Regler">
+<!ENTITY noscriptDefaultPolicies "Standard Regler">
+<!ENTITY noscriptSitePolicies "Sidespesifike Regler">
 <!ENTITY noscriptNselNever "Skjul &lt;NOSCRIPT&gt;-elementer">
 <!ENTITY noscriptNselForce "Vis &lt;NOSCRIPT&gt;-element som følger et låst &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillat top-level nettsteder som standard">
+<!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillat top-nivå nettsteder som standard">
 <!ENTITY noscriptDescription "Ekstra beskyttelse for din Firefox">
 <!ENTITY noscriptOptBlockCssScanners "Blokker CSS-baserte scannere">
-<!ENTITY noscriptOptFilterXGet "Sanitize kryss-side suspicious requests">
+<!ENTITY noscriptOptFilterXGet "Rengjør mistenkelige kryss-side forespørsler">
 <!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
 <!ENTITY noscriptShowConsole "Vis konsoll">
 <!ENTITY noscriptShowConsole.accesskey "S">
@@ -93,57 +93,57 @@
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "XSS FAQ...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload "Usikker Oppdatering">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sampleeksempel:">
-<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptXssExceptions.description "Destinasjoner som passer med disse regulære uttrykkene vil IKKE bli beskyttet mot XSS">
+<!ENTITY noscriptMatchSample "Mønsterpassende eksempel:">
+<!ENTITY noscriptReset "Tilbakestill">
 <!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset til standard">
+<!ENTITY noscriptResetDef "Tilbakestill til standard">
 <!ENTITY noscriptResetDef.accesskey "S">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
 <!ENTITY noscriptJarFaq "JAR FAQ…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptForbidJarDocuments "Blokker JAR fjernresurser mot å bli lastet som dokumenter">
+<!ENTITY noscriptJarExceptions "JAR dokument blokkeringsunntak">
+<!ENTITY noscriptJarExceptions.description "JAR dokumenter som passer disse regulære uttrykkene vil IKKE bli blokkert.">
+<!ENTITY noscriptRevokeTemp "Tilbakekalle Midlertidige Tillatelser">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
-<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
-<!ENTITY noscriptBlockedObjects "Blocked Objects">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
-<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
+<!ENTITY noscriptNoUntrustedPlaceholder "Ingen plassholder for objekter som kommer fra sider som er merket som usikre">
+<!ENTITY noscriptCollapseBlockedObjects "Fold sammen Blokkerte Objekter">
+<!ENTITY noscriptExceptions "Unntak...">
+<!ENTITY noscriptBlockedObjects "Blokkerte Objekter">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokker alle objekter som kommer fra sider som er merket som usikre">
+<!ENTITY noscriptTempAllowPage "Tillat midlertidig hele denne siden">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
-<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage "Tillat hele denne siden">
 <!ENTITY noscriptAllowPage.accesskey "A">
-<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm "Gjør sidetillatelsen fast">
 <!ENTITY noscriptTempToPerm.accesskey "m">
 <!ENTITY noscriptHttps "HTTPS">
 <!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
-<!ENTITY noscriptHttps.behavior "Behavior">
-<!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
-<!ENTITY noscriptHttps.never "Never">
-<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
-<!ENTITY noscriptHttps.always "Always">
-<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
-<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
-<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
-<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warning">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
-<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
-<!ENTITY noscriptPrev "Previuous">
-<!ENTITY noscriptNext "Next">
+<!ENTITY noscriptHttps.behavior "Oppførsel">
+<!ENTITY noscriptHttps.cookies "Informasjonskapsler">
+<!ENTITY noscriptHttps.description "Nekt aktive nettsiders innhold så sant de ikke kommer fra en sikker (HTTPS) forbindelse:">
+<!ENTITY noscriptHttps.never "Aldri">
+<!ENTITY noscriptHttps.proxy "Når Proxy brukes (anbefalt med Tor)">
+<!ENTITY noscriptHttps.always "Alltid">
+<!ENTITY noscriptHttpsForced "Tving følgende sider å bruke sikker (HTTPS) tilkobling:">
+<!ENTITY noscriptHttpsForcedExceptions "Aldri tving sikker (HTTPS) tilkobling for følgende sider:">
+<!ENTITY noscriptSecureCookies "Aktiver Automatisk Sikkerhetsinformasjonskapsel Styring">
+<!ENTITY noscriptSecureCookiesForced "Tving kryptering for alle informasjonskapsler sent over HTTPS av følgende sider:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignorer usikre informasjonskapsler sent over HTTPS av følgende sider:">
+<!ENTITY noscriptClearClickTitle "ClearKlikk Advarsel">
+<!ENTITY noscriptClearClickHeader "Potensiell Clickjacking / UI Redressing Forsøk!">
+<!ENTITY noscriptClearClickDescription "NoScript avskjærte en mus, eller tastatur samspill med delvis gjemt element. Klikk på bildet ovenfor for å bytte mellom den sperrede og den rensede versjonen.">
+<!ENTITY noscriptClearClickOpt "ClearClick beskyttelse på sidene…">
+<!ENTITY noscriptOpacizeOpt "Gjemt innesluttede objekter på sidene…">
+<!ENTITY noscriptTrustedPagesAdj "pålitelige">
+<!ENTITY noscriptUntrustedPagesAdj "upålitelige">
+<!ENTITY noscriptKeepLocked "Behold dette elementet låst (anbefalt)">
+<!ENTITY noscriptEmbeddings "Innesluttede Objekter">
+<!ENTITY noscriptPrev "Forrige">
+<!ENTITY noscriptNext "Neste">
