@@ -1,7 +1,7 @@
 /***** BEGIN LICENSE BLOCK *****
 
 NoScript - a Firefox extension for whitelist driven safe JavaScript execution
-Copyright (C) 2004-2008 Giorgio Maone - g.maone@informaction.com
+Copyright (C) 2004-2009 Giorgio Maone - g.maone@informaction.com
 
 Contributors: 
   Hwasung Kim

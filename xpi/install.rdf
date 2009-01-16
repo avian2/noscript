@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.8.8.8</em:version>
+   <em:version>1.8.9</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -15,7 +15,7 @@
    <em:contributor>Alf and Liesbeth (Dutch translation)</em:contributor>
    <em:contributor>Alexander Sokolov and Sergei Smirnov (Russian translation)</em:contributor>
    <em:contributor>Batuhan Çetin and eveterinary (Turkish translation)</em:contributor>
-   <em:contributor> Baurzhan Muftakhidinov (Kazakh translation)</em:contributor>
+   <em:contributor>Baurzhan Muftakhidinov (Kazakh translation)</em:contributor>
    <em:contributor>Beerboy (Japanese translation)</em:contributor>
    <em:contributor>Carsten Winkler (Danish translation)</em:contributor>
    <em:contributor>Chiou Po-Jung (Chinese Traditional translation)</em:contributor>

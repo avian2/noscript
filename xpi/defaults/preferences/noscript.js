@@ -26,8 +26,8 @@ pref("noscript.showRevokeTemp", true);
 pref("noscript.showBlockedObjects", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
-pref("noscript.mandatory", "chrome: about: resource:");
-pref("noscript.default", "chrome: resource: about:blank about:neterror about:config about:plugins about:credits addons.mozilla.org flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
+pref("noscript.mandatory", "chrome: about: about:config about:neterror about:plugins about:privatebrowsing about:sessionrestore resource:");
+pref("noscript.default", "about:blank about:credits addons.mozilla.org flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
 pref("noscript.forbidSilverlight", true);
@@ -181,6 +181,7 @@ pref("noscript.clearClick", 3);
 pref("noscript.clearClick.plugins", true);
 pref("noscript.clearClick.prompt", true);
 pref("noscript.clearClick.debug", false);
+pref("noscript.clearClick.exceptions", "*.ebay.com");
 
 pref("noscript.emulateFrameBreak", true);
 
@@ -192,3 +193,5 @@ pref("noscript.ignorePorts", true);
 
 pref("noscript.cp.last", true);
 pref("noscript.abp.removeTabs", false);
+pref("noscript.checkHijackings", true);
+

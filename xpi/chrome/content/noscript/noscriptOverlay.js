@@ -1,7 +1,7 @@
 /***** BEGIN LICENSE BLOCK *****
 
 NoScript - a Firefox extension for whitelist driven safe JavaScript execution
-Copyright (C) 2004-2008 Giorgio Maone - g.maone@informaction.com
+Copyright (C) 2004-2009 Giorgio Maone - g.maone@informaction.com
 
 Contributors: 
   Higmmer
@@ -1736,11 +1736,6 @@ var noscriptOverlay = noscriptUtil.service ?
   
   listeners: {
     
-    onBrowserClick: function(ev) { 
-      noscriptUtil.service.processBrowserClick(ev);
-    },
-  
-    
     onTabClose: function(ev) {
       try {
         var browser = ev.target.linkedBrowser;
@@ -1855,8 +1850,6 @@ var noscriptOverlay = noscriptUtil.service ?
      
       var b = getBrowser();
         
-      b.addEventListener("click", this.onBrowserClick, true);
-     
       const nsIWebProgress = Components.interfaces.nsIWebProgress;
       b.addProgressListener(this.webProgressListener, nsIWebProgress.NOTIFY_STATE_WINDOW | nsIWebProgress.NOTIFY_LOCATION);
   
@@ -1910,12 +1903,14 @@ var noscriptOverlay = noscriptUtil.service ?
     const prevVer = ns.getPref("version", "");
     if (prevVer != ns.VERSION) {
       ns.setPref("version", ns.VERSION);
+      
       if (prevVer && prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
+      
+      ns.savePrefs();
       if (ns.getPref("firstRunRedirection", true)) {
           window.setTimeout(function() {
             const url = "http://noscript.net?ver=" + noscriptUtil.service.VERSION + "&prev=" + prevVer;
             noscriptUtil.browse(url);
-            noscriptUtil.service.savePrefs();
           }, 100);
        }
     }

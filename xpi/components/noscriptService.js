@@ -1,7 +1,7 @@
 /***** BEGIN LICENSE BLOCK *****
 
 NoScript - a Firefox extension for whitelist driven safe JavaScript execution
-Copyright (C) 2004-2008 Giorgio Maone - g.maone@informaction.com
+Copyright (C) 2004-2009 Giorgio Maone - g.maone@informaction.com
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,9 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 const CI = Components.interfaces;
 const CC = Components.classes;
-const STATE_START = CI.nsIWebProgressListener.STATE_START;
-const STATE_DOC = CI.nsIWebProgressListener.STATE_IS_DOCUMENT;
-const STATE_START_DOC = STATE_START | STATE_DOC
+const WP_STATE_START = CI.nsIWebProgressListener.STATE_START;
+const WP_STATE_STOP = CI.nsIWebProgressListener.STATE_STOP;
+const WP_STATE_DOC = CI.nsIWebProgressListener.STATE_IS_DOCUMENT;
+const WP_STATE_START_DOC = WP_STATE_START | WP_STATE_DOC;
+
 const NS_BINDING_ABORTED = 0x804B0002;
 const CP_OK = 1;
 const CP_NOP = function() { return CP_OK };
@@ -465,7 +467,11 @@ const DOMUtils = {
         } else return null; 
       }
       if (!ctx) return null;
-      ctx = this.lookupMethod(ctx, "top")();
+      try {
+        ctx = this.lookupMethod(ctx, "top")();
+      } catch(e) {
+        ctx = ctx.top;
+      }
       var bi = this.createBrowserIterator(this.getChromeWindow(ctx));
       
       for (var b; b = bi.next();) {
@@ -566,6 +572,7 @@ const DOMUtils = {
     var cur = e.className;
     return cur && cur.split(/\s+/).indexOf(c) > -1;
   }
+  
 };
 
 function BrowserIterator(initialWin) {
@@ -844,7 +851,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.8.8",
+  VERSION: "1.8.9",
   
   get wrappedJSObject() {
     return this;
@@ -1132,11 +1139,16 @@ NoscriptService.prototype = {
         if (!(this[name] = this.getPref(name, this[name])))
           HTTPS.cookiesCleanup(); 
       break;
-    
+      
+      case "clearClick.exceptions":
+        ClearClickHandler.prototype.exceptions = URIPatternList.create(this.getPref(name, ''));
+      break;
+
       case "secureCookiesExceptions":
       case "secureCookiesForced":
       case "httpsForced":
       case "httpsForcedExceptions":
+      
         this[name] = URIPatternList.create(this.getPref(name, ''));
         if ("secureCookiesForced" == name) HTTPS.cookiesCleanup();
       break;
@@ -1293,7 +1305,9 @@ NoscriptService.prototype = {
         sheet = "noscript, noscript * { background-image: none !important; list-style-image: none !important }";
         break;
       case "showPlaceholder": 
-        sheet = '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: block !important; -moz-outline-color: #fc0 !important; -moz-outline-style: solid !important; -moz-outline-width: 1px !important; -moz-outline-offset: -1px !important; cursor: pointer !important; background: #ffffe0 url("' + 
+        sheet = '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: block !important; ' +
+                'outline-color: #fc0 !important; -moz-outline-color: #fc0 !important; outline-style: solid !important; -moz-outline-style: solid !important; outline-width: 1px !important; -moz-outline-width: 1px !important; outline-offset: -1px !important; -moz-outline-offset: -1px !important;' +
+                'cursor: pointer !important; background: #ffffe0 url("' + 
                     this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; margin-top: 0px !important; margin-bottom: 0px !important;} ' +
                 '.__noscriptPlaceholder__1 > .__noscriptPlaceholder__2 { display: block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
                 'noscript .__noscriptPlaceholder__ { display: inline !important; }';
@@ -2450,9 +2464,6 @@ NoscriptService.prototype = {
              this.dump(new Error().stack);
         }
 
-        this.currentPolicyURI = aContentLocation;
-        this.currentPolicyHints = arguments;
-        
         switch (aContentType) {
           case 9: // XBL - warning, in 1.8.x could also be XMLHttpRequest...
             return this.forbidXBL && 
@@ -2510,6 +2521,8 @@ NoscriptService.prototype = {
             if (aMimeTypeGuess) // otherwise let's treat it as an iframe
               break;
             
+            
+            
           case 7:
             locationURL = aContentLocation.spec;
             originURL = aRequestOrigin && aRequestOrigin.spec;
@@ -2556,7 +2569,7 @@ NoscriptService.prototype = {
             }
             
           case 6:
-            
+    
             if (this.checkJarDocument(aContentLocation, aContext)) 
               return this.reject("JAR Document", arguments);
             
@@ -2630,7 +2643,7 @@ NoscriptService.prototype = {
               
               if (aContext instanceof CI.nsIDOMElement) {
                 // this is alternate to what we do in countObject, since we can't get there
-                  this.delayExec(this.opaqueIfNeeded, 0, aContext);
+                // this.delayExec(this.opaqueIfNeeded, 0, aContext); // TODO uncomment
               }
               
               if (logBlock)
@@ -2643,7 +2656,6 @@ NoscriptService.prototype = {
             }
             break;
           
-            
           case 12:
             // Silverlight mindless activation scheme :(
             if (!this.forbidSilverlight 
@@ -2666,6 +2678,7 @@ NoscriptService.prototype = {
           this.dump("[CP PASS 2] " + aMimeTypeGuess + "*" + locationURL);
 
         if (isJS) {
+          
           originSite = aRequestOrigin && this.getSite(aRequestOrigin.spec);
           
           // we must guess the right context here, see https://bugzilla.mozilla.org/show_bug.cgi?id=464754
@@ -2691,11 +2704,11 @@ NoscriptService.prototype = {
           if (forbid && this.ignorePorts && /:\d+$/.test(locationSite)) {
             forbid = !this.isJSEnabled(locationSite.replace(/:\d+$/, ''));
           }
-          
+              
+
           return ((untrusted || forbid) && aContentLocation.scheme != "data")
             ? this.reject("Script", arguments) : CP_OK;
         }
-        
 
         
         if (!(forbid || locationSite == "chrome:")) {
@@ -2720,7 +2733,7 @@ NoscriptService.prototype = {
               }
               
               if (forbid) {
-                 if (isSilverlight) {
+                if (isSilverlight) {
                   if (logIntercept) this.dump("Silverlight " + aContentLocation.spec + " " + typeof(aContext) + " " + aContentType + ", " + aInternalCall);
                   forbid = aContentType != 12 && (aInternalCall || !this.POLICY1_9);
                   if(forbid) {
@@ -2748,6 +2761,10 @@ NoscriptService.prototype = {
           }
         }
         
+        
+        
+        
+        
         if(forbid && !this.contentBlocker) {
           
           originURL = originURL || (aRequestOrigin && aRequestOrigin.spec);
@@ -2774,9 +2791,16 @@ NoscriptService.prototype = {
             ? "forbidIFramesParentTrustCheck" : "forbidActiveContentParentTrustCheck", true)
             ));
         }
-
         
-        this.delayExec(this.countObject, 0, aContext, locationSite);
+        // hack for bug 472495: we must avoid to do it for Flash and other scriptable plugins,
+        // not to trigger bug 453825 :(
+        if (!(isJava || isFlash || isSilverlight) && /\binnerHTML\b/.test(new Error().stack)) {
+          this.dump("Adding DOMNodeRemoved (bug 472495 work-around)");
+          aContext.ownerDocument.defaultView.addEventListener("DOMNodeRemoved", this._domNodeRemoved, true); 
+        }
+        
+        
+        this.delayExec(this.countObject, 0, aContext, locationSite); 
         
         forbid = forbid && !(/^file:\/\/\//.test(locationURL) && /^resource:/.test(originURL || (aRequestOrigin && aRequestOrigin.spec || ""))); // fire.fm work around
         
@@ -2798,10 +2822,12 @@ NoscriptService.prototype = {
             try {
               if (aContext && (aContentType == 5 || aContentType == 7 || aContentType == 12)) {
                 if (aContext instanceof CI.nsIDOMNode) {
+                 
                   this.delayExec(this.tagForReplacement, 0, aContext, {
                     url: locationURL,
                     mime: mimeKey
                   });
+                  
                 }
               }
             } catch(ex) {
@@ -2812,6 +2838,7 @@ NoscriptService.prototype = {
           }
         } else {
           
+
           if (isSilverlight) {
             this.setExpando(aContext, "silverlight", aContentType != 12);
           }
@@ -2821,6 +2848,9 @@ NoscriptService.prototype = {
         }
       } catch(e) {
         return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
+      } finally {
+        this.currentPolicyURI = aContentLocation;
+        this.currentPolicyHints = arguments;
       }
       return CP_OK;
     },
@@ -2830,6 +2860,11 @@ NoscriptService.prototype = {
     check: function() {
       return false;
     }
+  },
+  
+  _domNodeRemoved: function(ev) {
+    dump("Removing DOMNodeRemoved listener\n");
+    ev.currentTarget.removeEventListener(ev.type, arguments.callee, true);
   },
   
   forbiddenJSDataDoc: function(locationURL, originSite, aContext) {
@@ -3145,6 +3180,7 @@ NoscriptService.prototype = {
   
   
   countObject: function(embed, site) {
+
     if(!site) return;
     var doc = embed.ownerDocument;
     
@@ -3789,7 +3825,7 @@ NoscriptService.prototype = {
         
         
         if (extras) {
-          
+         
           sites.pluginCount++;
           
           if (!forcedCSS) {
@@ -3797,10 +3833,10 @@ NoscriptService.prototype = {
             forcedCSS = ";";
            
             try {
-              if (object.parentNode == document.body && !object.nextSibling) { 
-                // raw plugin content
+              extras.pluginDocument = (object.parentNode == document.body && !object.nextSibling);
+              if (pluginDocument) { 
                 collapse = false;
-                forcedCSS = ";-moz-outline-style: none !important;";
+                forcedCSS = ";outline-style: none !important;-moz-outline-style: none !important;";
               }
             } catch(e) {}
             
@@ -3830,11 +3866,11 @@ NoscriptService.prototype = {
             
             this.setPluginExtras(anchor, extras);
             this.setExpando(anchor, "removedPlugin", object);
-            
-            (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras});
+         
+            (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras });
 
             if (this.showPlaceholder) {
-              anchor.addEventListener("click", this.objectClickListener.bind(this), true);
+              anchor.addEventListener("click", this.bind(this.onPlaceholderClick), true);
               anchor.className = "__noscriptPlaceholder__";
               if (this.abpRemoveTabs) this.removeAbpTab(object);
             } else {
@@ -3850,7 +3886,7 @@ NoscriptService.prototype = {
             
             with(anchor.style) {
               padding = margin = borderWidth = "0px";
-              MozOutlineOffset = "-1px"; 
+              outlineOffset = MozOutlineOffset = "-1px"; 
               display = "inline";
             }
             
@@ -3907,40 +3943,47 @@ NoscriptService.prototype = {
   },
   
   createPlaceholders: function(replacements, pluginExtras) {
-    for each(var r in replacements) {
-      if (r.object.parentNode) {
-        r.object.parentNode.replaceChild(r.placeholder, r.object);
+    for each (var r in replacements) {
+      try {
+        if (r.extras.pluginDocument) {
+          this.setPluginExtras(r.object, null);
+          r.object.parentNode.insertBefore(r.placeholder, r.object);
+        } else {
+          r.object.parentNode.replaceChild(r.placeholder, r.object);
+        }
         r.extras.placeholder = r.placeholder;
         this._collectPluginExtras(pluginExtras, r.extras);
-        if (this.abpInstalled && !this.abpRemoveTabs) this.adjustAbpTab(r.placeholder);
+        if (this.abpInstalled && !this.abpRemoveTabs)
+          this.adjustAbpTab(r.placeholder);
+      } catch(e) {
+        this.dump(e);
       }
     }
+    
+    
   },
   
-  objectClickListener: {
-    bind: function(ns) {
-      this._clickListener.ns = ns;
-      return this._clickListener;
-    },
-    _clickListener: function(ev) {
-      if (ev.button) return;
-      
-     
-      const anchor = ev.currentTarget;
-      const ns = arguments.callee.ns;
-      const object = ns.getExpando(anchor, "removedPlugin");
-      
-      if (object) try {
-        if (ev.shiftKey) {
-          anchor.style.display = "none";
-          this.removeAbpTab(anchor);
-          return;
-        }
-        ns.checkAndEnablePlaceholder(anchor, object);
-      } finally {
-        ev.preventDefault();
-        ev.stopPropagation();
+  bind: function(f) {
+    if (f.bound) return f.bound;
+    var self = this;
+    return (function() { return f.apply(self, arguments); });
+  },
+  
+  onPlaceholderClick: function(ev) {
+    if (ev.button) return;
+    const anchor = ev.currentTarget
+    const object = this.getExpando(anchor, "removedPlugin");
+    
+    if (object) try {
+      if (ev.shiftKey) {
+        anchor.style.display = "none";
+        this.removeAbpTab(anchor);
+        return;
       }
+      this.checkAndEnablePlaceholder(anchor, object);
+    } finally {
+      ev.preventDefault();
+      ev.stopPropagation();
     }
   },
   
@@ -4355,38 +4398,54 @@ NoscriptService.prototype = {
   resetPolicyState: function() {
     this.currentPolicyURI = this.currentPolicyHints = null;
   },
+  
   // nsIWebProgressListener implementation
   onLinkIconAvailable: function(x) {}, // tabbrowser.xml bug?
-  onStateChange: function(wp, req, stateFlag, status) {
-    if (req instanceof CI.nsIHttpChannel) {
-      if (this.currentPolicyURI == req.URI) {
-        this.requestWatchdog.attachToChannel(req, "noscript.policyHints",  this.currentPolicyHints);
-        this.resetPolicyState();
-      }
-    }
-    
-    // handle docshell JS switching and other early duties
-    if ((stateFlag & STATE_START_DOC) == STATE_START_DOC && req instanceof CI.nsIChannel) {
-      
-      if (!(req.loadFlags & req.LOAD_INITIAL_DOCUMENT_URI) &&
-          req.URI.spec == "about:blank" // new tab, we shouldn't touch it otherwise we break stuff like newTabURL
-        ) 
-        return;
-      
-      var w = wp.DOMWindow;
+  onStateChange: function(wp, req, stateFlags, status) {
+    var ph;
 
-      if (w && w.frameElement) {
-        var ph = this.requestWatchdog.extractFromChannel(req, "noscript.policyHints", true);
-        if (ph && this.shouldLoad(7, req.URI, ph[2], w.frameElement, '', CP_FRAMECHECK) != CP_OK) { // late frame/iframe check
-          req.cancel(NS_BINDING_ABORTED);
-          return;
+    if (stateFlags & WP_STATE_START) {
+      if (req instanceof CI.nsIHttpChannel) {
+        if (this.currentPolicyURI == req.URI) {
+          this.requestWatchdog.attachToChannel(req, "noscript.policyHints", ph = this.currentPolicyHints);
+          this.resetPolicyState();
         }
       }
       
-      this._handleDocJS1(w, req);
-      if (HTTPS.forceHttps(req)) {
-        this._handleDocJS2(w, req);
-      }
+      // handle docshell JS switching and other early duties
+      if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC && req instanceof CI.nsIChannel) {
+        
+        if (!(req.loadFlags & req.LOAD_INITIAL_DOCUMENT_URI) &&
+            req.URI.spec == "about:blank" // new tab, we shouldn't touch it otherwise we break stuff like newTabURL
+          ) 
+          return;
+        
+        var w = wp.DOMWindow;
+  
+        if (w && w.frameElement) {
+          ph = ph || this.requestWatchdog.extractFromChannel(req, "noscript.policyHints", true);
+          if (ph && this.shouldLoad(7, req.URI, ph[2], w.frameElement, '', CP_FRAMECHECK) != CP_OK) { // late frame/iframe check
+            req.cancel(NS_BINDING_ABORTED);
+            return;
+          }
+        }
+        
+        this._handleDocJS1(w, req);
+        if (HTTPS.forceHttps(req)) {
+          this._handleDocJS2(w, req);
+        }
+      } else try {
+        ph = ph || this.requestWatchdog.extractFromChannel(req, "noscript.policyHints", true); 
+  
+        if (ph && ph[0] == 2 && (req instanceof CI.nsIHttpChannel)) {
+          var originSite = (this.requestWatchdog.extractInternalReferrer(req) || ph[2]).prePath;
+          var scriptSite = req.URI.prePath;
+          if (scriptSite != originSite && this.getPref("checkHijackings"))
+            new RequestFilter(req, new HijackChecker(this));
+        }
+      } catch(e) {}
+    } else if (stateFlags & WP_STATE_STOP) {
+      this.requestWatchdog.extractFromChannel(req, "noscript.policyHints"); // release hints
     }
   },
   
@@ -4438,6 +4497,9 @@ NoscriptService.prototype = {
     
     var docShell = null;
     
+    
+    
+    
     if (domWindow.document && (uri.schemeIs("http") || uri.schemeIs("https"))) {
       this.filterUTF7(req, domWindow, docShell = this.domUtils.getDocShellFromWindow(domWindow)); 
     }
@@ -4478,8 +4540,6 @@ NoscriptService.prototype = {
     
     
     this._handleDocJS3(uri.spec, domWindow, docShell);
-    
-    domWindow.addEventListener("DOMNodeRemoved", CP_NOP, true); // hack for bug 472495
     
     var contentType;
     try {
@@ -4633,7 +4693,13 @@ NoscriptService.prototype = {
   
   _handleDocJS3: function(url, win, docShell) {
     // called at the end of onLocationChange
-    if (docShell && !docShell.allowJavascript) return;
+    if (docShell && !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)))) {
+      if (this.getPref("fixLinks")) {
+        win.addEventListener("click", this.bind(this.onContentClick), true);
+        win.addEventListener("change", this.bind(this.onContentChange), true);
+      }
+      return;
+    }
     try {
       if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !win._noscriptJsHack) {
         try {
@@ -4642,6 +4708,7 @@ NoscriptService.prototype = {
         } catch(jsHackEx) {}
       }
     } catch(e) {}
+    
   },
   
 
@@ -4739,16 +4806,54 @@ NoscriptService.prototype = {
     }
   },
   
-  processBrowserClick: function(ev) {
-    if (this.jsEnabled || !this.getPref("fixLinks", true)) return;
+  attemptNavigation: function(doc, destURL, callback) {
+    var cs = doc.characterSet;
+    var uri = SiteUtils.ios.newURI(destURL, cs, SiteUtils.ios.newURI(doc.documentURI, cs, null));
+    var req = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
+    req.open("HEAD", uri.spec);
+    var done = false;
+    req.onreadystatechange = function() {
+      
+      if (req.readystate < 2) return;
+      try {
+        if (!done && req.status) {
+          done = true;
+          if (req.status == 200) callback(doc, uri);
+          req.abort();
+        }
+      } catch(e) {}
+    }
+    req.send(null);
+  },
+  
+  // simulate onchange on selects if options look like URLs
+  onContentChange: function(ev) {
+    var s = ev.originalTarget;
+    if (!(s instanceof CI.nsIDOMHTMLSelectElement) ||
+        s.hasAttribute("multiple") ||
+        !/open|nav|location|\bgo|load/i.test(s.getAttribute("onchange"))) return;
+    
+    var doc = s.ownerDocument;
+    var url = doc.documentURI;
+    if (this.isJSEnabled(this.getSite(url))) return;
+    
+    var opt = s.options[s.selectedIndex];
+    if (!opt) return;
+    
+    if (/[\/\.]/.test(opt.value) && opt.value.indexOf("@") < 0) {
+      this.attemptNavigation(doc, opt.value, function(doc, uri) {
+        doc.defaultView.location.href = uri.spec;
+      });
+      ev.preventDefault();
+    }
+  },
+  
+  onContentClick: function(ev) {
     
     var a = ev.originalTarget;
     var doc = a.ownerDocument;
-    if (!doc) return;
-    
     var url = doc.documentURI;
-    var site = url && this.getSite(url);
-    if (!site || this.isJSEnabled(site)) return;
+    if (this.isJSEnabled(this.getSite(url))) return;
     
     var onclick;
     
@@ -4767,16 +4872,15 @@ NoscriptService.prototype = {
       jsURL = "";
     }
     
-    onclick = onclick ||  a.getAttribute("onclick");
+    onclick = onclick || a.getAttribute("onclick");
     var fixedHref = (onclick && this.extractJSLink(onclick)) || 
                      (jsURL && this.extractJSLink(href)) || "";
     
     if (fixedHref) {
       // check if it's a JS button
-      if (/^(?:button|input)$/i.test(a.tagName) && a.type == "button") {
-        this.doFollowMetaRefresh({
-          document: a.ownerDocument,
-          uri: fixedHref
+      if (/^(?:button|input)$/i.test(a.tagName) && (a.type == "button" || (a.type == "submit" && !a.form))) {
+        this.attemptNavigation(doc, fixedHref, function(doc, uri) {
+          doc.defaultView.location.href = uri.spec;
         });
         ev.preventDefault();
       } else { // normal link
@@ -5231,7 +5335,7 @@ RequestWatchdog.prototype = {
     }
     
     const su = this.siteUtils;
-    originSite = originSite || su.getSite(origin);
+    originSite = originSite || su.getSite(origin) || '';
     
     var host = channel.URI.host;
     if (host[host.length - 1] == "." && this.ns.getPref("canonicalFQDN", true)) {
@@ -5287,7 +5391,7 @@ RequestWatchdog.prototype = {
     if (originSite == targetSite) {
       if (injectionCheck < 3) return; // same origin, fast return
     } else {
-      this.onCrossSiteRequest(channel, origin, browser = browser || this.findBrowser(channel));  
+      this.onCrossSiteRequest(channel, origin, browser = browser || this.findBrowser(channel));
     }
     
     if (this.callback && this.callback(channel, origin)) return;
@@ -5361,11 +5465,27 @@ RequestWatchdog.prototype = {
       ) {
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel, window), channel);
       
+      // here we exceptionally consider same site also http<->https (target would be blocked by
+      // certificate checks if something phishy is going on with DNS)
+      
+      if (injectionCheck < 3) {
+        if (/^https?:/.test(originSite)) {
+          var originDomain = ns.getDomain(originSite);
+          var targetDomain = ns.getDomain(url);
+          if (targetDomain == originDomain) {
+            this.dump(channel, "Same domain with HTTP(S) origin");
+            return;
+          }
+        }
+      }
+      
       // origin is trusted, check for injections
       
       injectionAttempt = injectionCheck && (injectionCheck > 1 || ns.isTemp(originSite)) &&
         (!window || ns.injectionCheckSubframes || window == window.top);
-        
+      
+      
+          
       if (injectionAttempt) {
         postInjection = ns.filterXPost && (!origin || originSite != "chrome:") && channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel);
         injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(originalSpec);
@@ -6190,7 +6310,7 @@ var InjectionChecker = {
       return true;
     
     if (opts.ent) {
-      converted = Entities.convertAll(s);
+      var converted = Entities.convertAll(s);
       if (converted != s && this.checkJS(converted, {
           ent: false,
           uni: true // we might have introduced new unicode escapes
@@ -7390,6 +7510,8 @@ ClearClickHandler.prototype = {
     for each(et in this.uiEvents) ceh.addEventListener(et, this._listener, true);
   },
   
+  exceptions: null,
+  
   get _listener() {
     var self = this;
     var l = function(ev) { self.handle(ev); };
@@ -7413,28 +7535,48 @@ ClearClickHandler.prototype = {
     return true;
   },
   
+  appliesHere: function(url) {
+    const ns = this.ns;
+    return ns.appliesHere(ns.clearClick, url) &&
+     !(this.exceptions && this.exceptions.test(url) && ns.isJSEnabled(ns.getSite(url)));
+  },
+  
   _whitelist: {},
-  get whitelistLen () { return this._whitelist.__count__; },
+  whitelistLen: 0,
   isWhitelisted: function(w) {
+    
     var l = this._whitelist[w.location.href];
     if (!l) return false;
+
     var pp = [];
     for(var p = w.parent; p != w; w = p, p = w.parent) {
       pp.push(p.location.href);
     }
     return l.indexOf(pp.join(" ")) > -1;
   },
+  
   whitelist: function(w) {
     if (this.isWhitelisted(w)) return;
     var u = w.location.href;
-    var l = this._whitelist[u] || (this._whitelist[u] = []);
+
     var pp = [];
     for(var p = w.parent; p != w; w = p, p = w.parent) {
       pp.push(p.location.href);
     }
+    
+    var l;
+    if (u in this._whitelist) l = this._whitelist[u];
+    else {
+      l = this._whitelist[u] = [];
+      this.whitelistLen++;
+    }
+    
     l.push(pp.join(" "));
   },
-  resetWhitelist: function() { this._whitelist = {}; },
+  resetWhitelist: function() {
+    this._whitelist = {};
+    this.whitelistLen = 0;
+  },
   
   isEmbed: function(o) {
     return (o instanceof CI.nsIDOMHTMLObjectElement || o instanceof CI.nsIDOMHTMLEmbedElement) && !o.contentDocument;
@@ -7446,12 +7588,30 @@ ClearClickHandler.prototype = {
     ev.preventDefault();
   },
   
-  getZoom: function(browser) {
+   // the following is apparently correct and easy, but it suffers of HUGE rounding issues
+  getZoomFromBrowser: function(browser) {
     try {
       return this._zoom = browser.markupDocumentViewer && browser.markupDocumentViewer.fullZoom || 1;
     } catch(e) {
       return this._zoom;
     }
+  },
+  
+  // this one is more complex but much more precise than getZoomForBrowser()
+  getZoomFromDocument: function(d) {
+    var root = d.documentElement;
+    var o = d.createElement("div");
+    with(o.style) {
+      top = "400000px";
+      position = "absolute";
+      display = "block";
+    }
+    root.appendChild(o);
+    var oBox = d.getBoxObjectFor(o);
+    var rootBox = d.getBoxObjectFor(root);
+    var zoom = (oBox.screenY - rootBox.screenY) / o.offsetTop;
+    root.removeChild(o);
+    return this._zoom = zoom > 0 ? zoom : this._zoom;
   },
   
   getBox: function(o, d, w) {
@@ -7604,14 +7764,15 @@ ClearClickHandler.prototype = {
     
     const top = w.top;
     const ns = this.ns;
+    var topURL;
     
     var isEmbed;
     
-    if (o.__clearClickUnlocked ||
+    if (top.__clearClickUnlocked || (top.__clearClickUnlocked = !this.appliesHere(top.location.href)) ||
+        o.__clearClickUnlocked ||
         o != ev.originalTarget ||
         o == d.documentElement || o == d.body || // key event on empty region
         this.isSemanticContainer(o) ||
-        !ns.appliesHere(ns.clearClick, top.location.href) ||
         (o.__clearClickUnlocked = !(isEmbed = this.isEmbed(o)) && // plugin embedding?
             (w == w.top || w.__clearClickUnlocked ||
               (w.__clearClickUnlocked = this.isWhitelisted(w))
@@ -7747,8 +7908,7 @@ ClearClickHandler.prototype = {
     var gfx = c.getContext("2d");
     
     var bg = this.getBG(w);
-    
-    var zoom = this.getZoom(browser);
+
 
     var bgStyle;
     var box, curtain;
@@ -7782,6 +7942,10 @@ ClearClickHandler.prototype = {
     var sd = this._NO_SCROLLBARS;
 
     try {
+          
+      var zoom = this.getZoomFromBrowser(browser);
+      if (zoom != 1) zoom = this.getZoomFromDocument(d);
+      
       try {
         docPatcher.opaque(true);
          
@@ -8253,4 +8417,143 @@ DocPatcher.prototype = {
   }
 }
 
+RequestFilter = function(req, consumer) {
+  this._init(req, consumer);
+}
 
+RequestFilter.prototype = {
+  QueryInterface: xpcom_generateQI([CI.nsIStreamListener, CI.nsISupports]),
+  
+  binaryStream: null,
+  stringStream: null,
+  buffers: null,
+  bytesCount: 0,
+  
+  _init: function(req, consumer) {
+    if (!(CI.nsITraceableChannel && (req instanceof CI.nsITraceableChannel))) return;
+    this.consumer = consumer;
+    this.originalListener = req.setNewListener(this);
+  },
+  
+  onDataAvailable: function(request, context, inputStream, offset, count) {
+    if (!this.binaryStream) {
+      this.binaryStream = CC["@mozilla.org/binaryinputstream;1"].createInstance(CI.nsIBinaryInputStream);
+      this.binaryStream.setInputStream(inputStream);
+    }   
+    this.buffers.push(this.binaryStream.readBytes(count));
+    this.bytesCount += count;
+    this._consume(request, context);
+  },
+  
+  _onDataAvailablePassthru: function(request, context, inputStream, offset, count) {
+    this.originalListener.onDataAvailable(request, context, inputStream, 0, count);
+  },
+  
+  _onDataAvailableNop: function(request, context, inputStream, offset, count) {
+    try {
+      inputStream.close();
+    } catch(e) {
+      dump(e + "\n");
+    }
+  },
+  
+  onStartRequest: function(request, context) {
+    this.bytesCount = 0;
+    if (this.consumer) {
+      this.buffers = [];
+    } else {
+      this.onDataAvailable = this._onDataAvailableNop;
+    }
+    this.originalListener.onStartRequest(request, context);
+  },
+  onStopRequest: function(request, context, statusCode) {
+    this.bis = null;
+    this.originalListener.onStopRequest(request, context, this._consume(request, context, statusCode));
+  },
+  
+  _consume: function(request, context, statusCode) {
+    if (this.buffers) {
+      var data = { buffers: this.buffers, count: this.bytesCount, statusCode: statusCode || 0, request: request };
+      if (this.consumer.consume(data, typeof(statusCode) == "number")) {
+        // filtering is done, we don't need to buffer and consume anymore
+        this.buffers = null;
+        var stream = this.stringStream || (
+            this.stringStream = CC["@mozilla.org/io/string-input-stream;1"].
+            createInstance(CI.nsIStringInputStream)
+          );
+        if (data.buffers) {
+          this.onDataAvailable = this._onDataAvailablePassthru;
+          stream.setData(data.buffers = data.buffers.join(''), data.count);
+        } else {
+          // consumer told us all data must be discarded
+          this.onDataAvailable = this._onDataAvailableNop;
+          data.count = 0;
+        }
+        this.originalListener.onDataAvailable(request, context, stream, 0, data.count);
+      } else {
+        if (data.buffers) this.buffers = data.buffers; // pointer could by changed by consumer
+      }
+      return data.statusCode;
+    }
+    return statusCode; 
+  }
+}
+
+function HijackChecker(ns) {
+  this.ns = ns;
+}
+HijackChecker.prototype = {
+  consume: function(data, eos) {
+    try {
+      var bytes = data.buffers.join('');
+      var m = bytes.match(/^[\s\0]*(\S)/);
+      data.buffers = [bytes]; // compact
+      if (!m) return data.bytesCount > 2048; // skip whitespace up to 2KB
+    
+      switch(m[1]) {
+        case '[':
+          this.consume = this._consumeMaybeJson;
+          return false;
+          
+        case '<':
+          this.consume = this._consumeMaybeXML;
+          return false;      }
+    } catch(e) {
+      if (data.request instanceof CI.nsIChannel)
+        this.ns.dump("Error checking JSON/E4X hijacking on " + data.request.URI.spec);
+      this.ns.dump(e.message);
+    }
+    return true; // flush and pass through the remainders
+  },
+  
+  _consumeMaybeJson: function(data, eos) {
+    if (eos) {
+      var bytes = data.buffers.join('');
+      try {
+        // todo: take care of data.request.contentCharset
+        this.ns.injectionChecker.json.decode(bytes);
+        return this._neutralize(data, "JSON");
+      } catch(e) {
+        data.buffers = [bytes]; // compact
+      }
+      return true;
+    }
+    return false;
+  },
+  
+  _consumeMaybeXML: function(data, eos) {
+    var bytes = data.buffers.join('');
+    if (/^[\s\0]*<!?[^-]/.test(bytes.replace(/<!--[\s\S]*?-->/g, ''))) // skip comments, see http://forums.mozillazine.org/viewtopic.php?p=5488645
+      return this._neutralize(data, "E4X");
+    data.buffers = [bytes]; // compact
+    return false;
+  },
+  
+  _neutralize: function(data, reason) {
+    if (data.request instanceof CI.nsIChannel)
+      this.ns.log("[NoScript] Potential cross-site " + reason + " hijacking detected and blocked ("
+                + data.request.URI.spec + ")");
+    data.buffers = null; // don't pass anything 
+    return true;
+  }
+}

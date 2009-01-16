@@ -146,3 +146,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "信頼していないページ">
 <!ENTITY noscriptKeepLocked "この要素をロックしたままにする(推奨)">
 <!ENTITY noscriptEmbeddings "埋め込みオブジェクト">
+<!ENTITY noscriptPrev "前">
+<!ENTITY noscriptNext "次">
