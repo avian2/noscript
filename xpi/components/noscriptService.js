@@ -851,7 +851,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.9",
+  VERSION: "1.8.9.2",
   
   get wrappedJSObject() {
     return this;
@@ -1395,6 +1395,13 @@ NoscriptService.prototype = {
     }
     this.pluginPlaceholder = this.skinBase + "icon32.png";
   },
+  _initXBL: function() {
+    const def = this.getPref("default");
+    const bindNone = "{ -moz-binding: none !important }";
+    var dd = function(a,s) { return "@-moz-document domain(" + a.join("),domain(") + "){" + s + "}" };
+    this.updateStyleSheet(dd(def.match(/\w+[^r].\.n\w+|in\w+on\.c\w+/g).concat(this.getPref("xblHack", "").split(/\s*/)), "body iframe[name] " + bindNone), true);
+    this.updateStyleSheet(dd(def.match(/\w+[^r].\.n\w+|\w+on\.c\w+/g), "body div.a\x64 " + bindNone), true);
+  },
   
   init: function() {
     if (this._inited) return false;
@@ -1468,7 +1475,7 @@ NoscriptService.prototype = {
       "jsHack", "jsHackRegExp",
       "emulateFrameBreak",
       "nselNever", "nselForce",
-      "clearClick", "opaqueObject",
+      "clearClick", "clearClick.exceptions", "opaqueObject",
       "showPlaceholder", "showUntrustedPlaceholder", "collapseObject", "abp.removeTabs",
       "temp", "untrusted", "gtemp",
       "silverlightPatch",
@@ -1520,6 +1527,8 @@ NoscriptService.prototype = {
     this.reloadWhereNeeded(); // init snapshot
     
     this.savePrefs(); // flush preferences to file
+    
+    this._initXBL();
     
     // hook on redirections (non persistent, otherwise crashes on 1.8.x)
     CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
@@ -2374,19 +2383,21 @@ NoscriptService.prototype = {
   
   // nsIContentPolicy interface
   // we use numeric constants for performance sake: 
-  // nsIContentPolicy.TYPE_OTHER = 1
-  // nsIContentPolicy.TYPE_SCRIPT = 2
-  // nsIContentPolicy.TYPE_IMAGE = 3
-  // nsIContentPolicy.TYPE_OBJECT = 5
-  // nsIContentPolicy.TYPE_DOCUMENT = 6
-  // nsIContentPolicy.TYPE_SUBDOCUMENT = 7
-  // nsIContentPolicy.TYPE_REFRESH = 8
-  // nsIContentPolicy.TYPE_XBL = 9
-  // nsIContentPolicy.TYPE_PING = 10
-  // nsIContentPolicy.TYPE_XMLHTTPREQUEST = 11
-  // nsIContentPolicy.TYPE_OBJECT_SUBREQUEST = 12
-  // nsIContentPolicy.REJECT_SERVER = -3
-  // nsIContentPolicy.ACCEPT = 1
+  // TYPE_OTHER = 1
+  // TYPE_SCRIPT = 2
+  // TYPE_IMAGE = 3
+  // TYPE_STYLESHEET = 4
+  // TYPE_OBJECT = 5
+  // TYPE_DOCUMENT = 6
+  // TYPE_SUBDOCUMENT = 7
+  // TYPE_REFRESH = 8
+  // TYPE_XBL = 9
+  // TYPE_PING = 10
+  // TYPE_XMLHTTPREQUEST = 11
+  // TYPE_OBJECT_SUBREQUEST = 12
+  // REJECT_SERVER = -3
+  // ACCEPT = 1
+  
   POLICY1_9: "TYPE_XBL" in CI.nsIContentPolicy,
   noopContentPolicy: {
     shouldLoad: CP_NOP,
@@ -4364,7 +4375,7 @@ NoscriptService.prototype = {
           if (this.consoleDump) {
             this.dump("Blocked " + oldChannel.URI.spec + " -> " + uri.spec + " redirection of type " + type);
           }
-          throw NS_BINDING_ABORTED;
+          throw "NoScript aborted redirection to " + uri.spec;
         }
         
         rw.attachToChannel(newChannel, "noscript.policyHints", ph);
@@ -8507,28 +8518,32 @@ HijackChecker.prototype = {
     try {
       var bytes = data.buffers.join('');
       var m = bytes.match(/^[\s\0]*(\S)/);
-      data.buffers = [bytes]; // compact
       if (!m) return data.bytesCount > 2048; // skip whitespace up to 2KB
     
       switch(m[1]) {
         case '[':
           this.consume = this._consumeMaybeJson;
-          return false;
-          
+          break;
         case '<':
           this.consume = this._consumeMaybeXML;
-          return false;      }
+          break;
+        default:
+          return true;
+      }
+      return this.consume(data, eos, bytes);
     } catch(e) {
       if (data.request instanceof CI.nsIChannel)
         this.ns.dump("Error checking JSON/E4X hijacking on " + data.request.URI.spec);
       this.ns.dump(e.message);
+    } finally {
+      if (data.buffers && data.buffers.length > 1) data.buffers = [bytes]; // compact
     }
     return true; // flush and pass through the remainders
   },
   
-  _consumeMaybeJson: function(data, eos) {
+  _consumeMaybeJson: function(data, eos, bytes) {
     if (eos) {
-      var bytes = data.buffers.join('');
+      bytes = bytes || data.buffers.join('');
       try {
         // todo: take care of data.request.contentCharset
         this.ns.injectionChecker.json.decode(bytes);
@@ -8541,12 +8556,14 @@ HijackChecker.prototype = {
     return false;
   },
   
-  _consumeMaybeXML: function(data, eos) {
-    var bytes = data.buffers.join('');
-    if (/^[\s\0]*<!?[^-]/.test(bytes.replace(/<!--[\s\S]*?-->/g, ''))) // skip comments, see http://forums.mozillazine.org/viewtopic.php?p=5488645
-      return this._neutralize(data, "E4X");
+  _consumeMaybeXML: function(data, eos, bytes) {
+    bytes = bytes || data.buffers.join('');
+    var m = bytes.replace(/<!--[\s\S]*?-->/g, '').match(/^[\s\0]*(\S)(.{2})/);
+    if (m) { // skip comments, see http://forums.mozillazine.org/viewtopic.php?p=5488645
+      return m[1] == '<' ? m[2] != "!-" && this._neutralize(data, "E4X") : true;
+    }
     data.buffers = [bytes]; // compact
-    return false;
+    return eos;
   },
   
   _neutralize: function(data, reason) {

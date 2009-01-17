@@ -132,6 +132,8 @@ pref("noscript.jarDoc.notify", true);
 pref("noscript.forbidXBL", 4);
 pref("noscript.forbidXHR", 1);
 
+pref("noscript.xblHack", "hackademix.net");
+
 pref("noscript.whitelistRegExp", "");
 
 pref("noscript.tempGlobal", false);
