@@ -146,8 +146,9 @@ pref("noscript.opacizeObject", 1);
 
 pref("noscript.showUntrustedPlaceholder", true);
 
-pref("noscript.jsHack", "(function(){var _0=function(){};with(window)urchinTracker=_0,pageTracker={_setDomainName:_0,_trackPageview:_0,_initData:_0},_gat={_getTracker:function(){return window.pageTracker}}})()");
+pref("noscript.jsHack", "");
 pref("noscript.jsHackRegExp", "");
+
 pref("noscript.canonicalFQDN", true);
 
 pref("noscript.allowedMimeRegExp", "");
@@ -197,3 +198,11 @@ pref("noscript.cp.last", true);
 pref("noscript.abp.removeTabs", false);
 pref("noscript.checkHijackings", true);
 
+pref("noscript.surrogate.enabled", true);
+pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,pageTracker={_setDomainName:_0,_trackPageview:_0,_initData:_0},_gat={_getTracker:function(){return window.pageTracker}}");
+pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
+pref("noscript.surrogate.ga.exceptions", "");
+
+pref("noscript.placeholderMinSize", 32);
+
+pref("noscript.compat.evernote", true);

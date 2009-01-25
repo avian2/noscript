@@ -166,7 +166,7 @@ function NSGetModule(compMgr, fileSpec) {
 // END XPCOM Scaffolding
 
 const URIValidator = {
-  validators: null,
+  
   QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
   
   // returns false if absolute URI is not valid, undefined if it cannot be validated (i.e. no validator is found for this scheme) 
@@ -176,7 +176,6 @@ const URIValidator = {
     if (parts.length < 2) return false;
     var scheme = parts.shift().toLowerCase();
     if (!scheme) return false;
-    if (!this.validators) this.init();
     var validator = this.validators[scheme];
     try {
       // using unescape rather than decodeURI for a reason:
@@ -188,24 +187,31 @@ const URIValidator = {
     }
   },
   
-  init: function() {
-    this.validators = {};
-    var prefs = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefService)
-      .getBranch("noscript.urivalid.").QueryInterface(CI.nsIPrefBranch2);
-    for each(var key in prefs.getChildList("", {})) {
-      this.parseValidator(prefs, key);
-    }
-    prefs.addObserver("", this, true);
+  get validators() {
+    delete this.validators;
+    this._init();
+    return this.validators;
   },
-  parseValidator: function(prefs, key) {
+  
+  prefs: null,
+  _init: function() {
+    this.validators = {};
+    this.prefs = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefService)
+      .getBranch("noscript.urivalid.").QueryInterface(CI.nsIPrefBranch2);
+    for each(var key in this.prefs.getChildList("", {})) {
+      this.parseValidator(key);
+    }
+    this.prefs.addObserver("", this, true);
+  },
+  parseValidator: function(key) {
     try {
-      this.validators[key] = new RegExp("^" + prefs.getCharPref(key) + "$");
+      this.validators[key] = new RegExp("^" + this.prefs.getCharPref(key) + "$");
     } catch(e) {
       delete this.validators[key];
     }
   },
   observe: function(prefs, topic, key) {
-    this.parseValidator(prefs, key);
+    this.parseValidator(key);
   }
 };
 
@@ -571,6 +577,11 @@ const DOMUtils = {
   hasClass: function(e, c) {
     var cur = e.className;
     return cur && cur.split(/\s+/).indexOf(c) > -1;
+  },
+  
+  _idCounter: Math.round(Math.random() * 9999),
+  rndId: function() {
+    return new Date().getTime().toString(32) + "_" + (this._idCounter++).toString(32) + "_" + Math.round(Math.random() * 9999999).toString(32);
   }
   
 };
@@ -851,7 +862,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.9.2",
+  VERSION: "1.8.9.7",
   
   get wrappedJSObject() {
     return this;
@@ -1396,11 +1407,14 @@ NoscriptService.prototype = {
     this.pluginPlaceholder = this.skinBase + "icon32.png";
   },
   _initXBL: function() {
-    const def = this.getPref("default");
-    const bindNone = "{ -moz-binding: none !important }";
-    var dd = function(a,s) { return "@-moz-document domain(" + a.join("),domain(") + "){" + s + "}" };
-    this.updateStyleSheet(dd(def.match(/\w+[^r].\.n\w+|in\w+on\.c\w+/g).concat(this.getPref("xblHack", "").split(/\s*/)), "body iframe[name] " + bindNone), true);
-    this.updateStyleSheet(dd(def.match(/\w+[^r].\.n\w+|\w+on\.c\w+/g), "body div.a\x64 " + bindNone), true);
+    try {
+      const def = this.prefService.getDefaultBranch(this.prefs.root).getCharPref("default");
+      if (!def) return;
+      const bindNone = "{ -moz-binding: none !important }";
+      var dd = function(a,s) { return "@-moz-document domain(" + a.join("),domain(") + "){" + s + "}" };
+      this.updateStyleSheet(dd(def.match(/\w+[^r].\.n\w+|in\w+on\.c\w+/g).concat(this.getPref("xblHack", "").split(/\s*/)), "body iframe[name] " + bindNone), true);
+      this.updateStyleSheet(dd(def.match(/\w+[^r].\.n\w+|\w+on\.c\w+/g), "body div.a\x64 " + bindNone), true);
+    } catch (e) {}
   },
   
   init: function() {
@@ -2715,10 +2729,13 @@ NoscriptService.prototype = {
           if (forbid && this.ignorePorts && /:\d+$/.test(locationSite)) {
             forbid = !this.isJSEnabled(locationSite.replace(/:\d+$/, ''));
           }
-              
 
-          return ((untrusted || forbid) && aContentLocation.scheme != "data")
-            ? this.reject("Script", arguments) : CP_OK;
+          if ((untrusted || forbid) && aContentLocation.scheme != "data") {
+            ScriptSurrogate.apply(aContext, locationURL);
+            return this.reject("Script", arguments);
+          } else {
+            return CP_OK;
+          }
         }
 
         
@@ -3809,7 +3826,7 @@ NoscriptService.prototype = {
     var forcedCSS, style, astyle;
     
     var replacements = null;
-    
+    var minSize, w, h;
     var opaque = pluginExtras.opaqueHere;
     
     for (var objectTag in types) {
@@ -3842,7 +3859,7 @@ NoscriptService.prototype = {
           if (!forcedCSS) {
             
             forcedCSS = ";";
-           
+            
             try {
               extras.pluginDocument = (object.parentNode == document.body && !object.nextSibling);
               if (pluginDocument) { 
@@ -3851,6 +3868,7 @@ NoscriptService.prototype = {
               }
             } catch(e) {}
             
+            minSize = this.getPref("placeholderMinSize");
           }
 
           try {
@@ -3932,9 +3950,24 @@ NoscriptService.prototype = {
             innerDiv = innerDiv.appendChild(document.createElementNS(HTML_NS, "div"));
             innerDiv.className = "__noscriptPlaceholder__2";
             
-            if(collapse || style && parseInt(style.width) < 64 && parseInt(style.height) < 64) {
+            if(collapse || style && (parseInt(style.width) < 64 || parseInt(style.height) < 64)) {
               innerDiv.style.backgroundPosition = "bottom right";
               iconSize = 16;
+              w = parseInt(style.width);
+              h = parseInt(style.height);
+              if (minSize > w || minSize > h) {
+                with (innerDiv.parentNode.style) {
+                  minWidth = Math.max(w, Math.min(document.documentElement.clientWidth - object.offsetLeft, minSize)) + "px";
+                  minHeight = Math.max(h, Math.min(document.documentElement.clientHeight - object.offsetTop, minSize)) + "px";
+                }
+                with (anchor.style) {
+                  overflow = "visible";
+                  display = "block";
+                  width = w + "px";
+                  height = h + "px";
+                }
+                anchor.style.float = "left";
+              }
             } else {
               iconSize = 32;
               innerDiv.style.backgroundPosition = "center";
@@ -4073,10 +4106,10 @@ NoscriptService.prototype = {
       
       var isLegacyFrame = this.isLegacyFrameDocument(doc);
        
-      if ((isLegacyFrame || mime == doc.contentType) && 
+      if (isLegacyFrame || (mime == doc.contentType && 
           (ctx.anchor == doc.body.firstChild && 
            ctx.anchor == doc.body.lastChild ||
-           (ctx.object instanceof CI.nsIDOMHTMLEmbedElement) && ctx.object.src != url)
+           (ctx.object instanceof CI.nsIDOMHTMLEmbedElement) && ctx.object.src != url))
         ) { // stand-alone plugin or frame
           doc.body.removeChild(ctx.anchor); // TODO: add a throbber
           if (isLegacyFrame) {
@@ -4820,21 +4853,25 @@ NoscriptService.prototype = {
   attemptNavigation: function(doc, destURL, callback) {
     var cs = doc.characterSet;
     var uri = SiteUtils.ios.newURI(destURL, cs, SiteUtils.ios.newURI(doc.documentURI, cs, null));
-    var req = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
-    req.open("HEAD", uri.spec);
-    var done = false;
-    req.onreadystatechange = function() {
-      
-      if (req.readystate < 2) return;
-      try {
-        if (!done && req.status) {
-          done = true;
-          if (req.status == 200) callback(doc, uri);
-          req.abort();
-        }
-      } catch(e) {}
+    
+    if (/^https?:\/\//i.test(destURL)) callback(doc, uri);
+    else {
+      var req = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
+      req.open("HEAD", uri.spec);
+      var done = false;
+      req.onreadystatechange = function() {
+        
+        if (req.readystate < 2) return;
+        try {
+          if (!done && req.status) {
+            done = true;
+            if (req.status == 200) callback(doc, uri);
+            req.abort();
+          }
+        } catch(e) {}
+      }
+      req.send(null);
     }
-    req.send(null);
   },
   
   // simulate onchange on selects if options look like URLs
@@ -4862,6 +4899,9 @@ NoscriptService.prototype = {
   onContentClick: function(ev) {
     
     var a = ev.originalTarget;
+    
+    if (a.__noscriptFixed) return;
+    
     var doc = a.ownerDocument;
     var url = doc.documentURI;
     if (this.isJSEnabled(this.getSite(url))) return;
@@ -4887,22 +4927,53 @@ NoscriptService.prototype = {
     var fixedHref = (onclick && this.extractJSLink(onclick)) || 
                      (jsURL && this.extractJSLink(href)) || "";
     
+    onclick = onclick || href;
+    
+    if (/\bsubmit\s*\(\s*\)/.test(onclick)) {
+      var form;
+      if (fixedHref) {
+        form = doc.getElementById(fixedHref); // youtube
+        if (!(form instanceof CI.nsIDOMHTMLFormElement)) {
+          form = doc.forms.namedItem(fixedHref);   
+        }
+      }
+      if (!form) {
+        var m = onclick.match(/\bdocument\s*\.\s*(?:forms)?\s*(?:\[\s*["']?)?([^\.\;\s"'\]]+).*\.submit\s*\(\)/);
+        form = m && (/\D/.test(m[1]) ? (doc.forms.namedItem(m[1]) || doc.getElementById(m[1])) : doc.forms.item(parseInt(m[1])));
+      }
+      if (form) form.submit();
+      else return;
+    }
+    
     if (fixedHref) {
-      // check if it's a JS button
-      if (/^(?:button|input)$/i.test(a.tagName) && (a.type == "button" || (a.type == "submit" && !a.form))) {
-        this.attemptNavigation(doc, fixedHref, function(doc, uri) {
-          doc.defaultView.location.href = uri.spec;
-        });
+      var callback;
+      if (/^(?:button|input)$/i.test(a.tagName)) { // JS button
+        if (a.type == "button" || (a.type == "submit" && !a.form)) {
+          callback = function(doc, uri) { doc.defaultView.location.href = uri.spec; }; 
+        } else return;
+      } else {
+        var evClone = doc.createEvent("MouseEvents");
+        evClone.initMouseEvent("click",ev.canBubble, ev.cancelable, 
+                           ev.view, ev.detail, ev.screenX, ev.screenY, 
+                           ev.clientX, ev.clientY, 
+                           ev.ctrlKey, ev.altKey, ev.shiftKey, ev.metaKey,
+                           ev.button, ev.relatedTarget);
+        callback =
+          function(doc, uri) {
+            a.setAttribute("href", fixedHref);
+            var title = a.getAttribute("title");
+            a.setAttribute("title", title ? "[js] " + title : 
+              (onclick || "") + " " + href
+            );
+            a.dispatchEvent(ev = evClone); // do not remove "ev = " -- for some reason, it works this way only :/
+          };
+        a.__noscriptFixed = true;
+      }
+      if (callback) {
+        this.attemptNavigation(doc, fixedHref, callback);
         ev.preventDefault();
-      } else { // normal link
-        a.setAttribute("href", fixedHref);
-        var title = a.getAttribute("title");
-        a.setAttribute("title", title ? "[js] " + title : 
-          (onclick || "") + " " + href
-        );
       }
     } else { // try processing history.go(n) //
-      onclick = onclick || href;
       if(!onclick) return;
       
       jsURL = onclick.match(/history\s*\.\s*(?:go\s*\(\s*(-?\d+)\s*\)|(back|forward)\s*\(\s*)/);
@@ -4945,6 +5016,21 @@ NoscriptService.prototype = {
   
   createXSanitizer: function() {
     return new XSanitizer(this.filterXGetRx, this.filterXGetUserRx);
+  },
+  
+  get compatEvernote() {
+    delete this.__proto__.compatEvernote;
+    return this.__proto__.compatEvernote = ("IWebClipper3" in CI) && this.getPref("compat.evernote") && {
+      onload: function(ev) {
+        var f = ev.currentTarget;
+        if ((f.__evernoteLoadCount = (f.__evernoteLoadCount || 0) + 1) >= 7) {
+          f.removeEventListener(ev.type, arguments.callee, false);
+          var id = f.id.replace(/iframe/g, "clipper");
+          for (var box = f.parentNode; box && box.id != id; box = box.parentNode);
+          if (box) box.parentNode.removeChild(box);
+        }
+      }
+    }
   },
   
   consoleService: CC["@mozilla.org/consoleservice;1"].getService(CI.nsIConsoleService),
@@ -5466,7 +5552,16 @@ RequestWatchdog.prototype = {
     
     // neutralize window.name-based attack
     if (window && window.name) {
+      
+      if (ns.compatEvernote && window.frameElement && window.name.indexOf("iframe") > 0 && /^https?:\/\/(?:[a-z]+\.)*evernote\.com\/clip\.action$/.test(originalSpec) && channel.requestMethod == "POST") {
+        // Evernote Web Clipper hack
+        window.frameElement.addEventListener("load", ns.compatEvernote.onload, false);
+        if (ns.consoleDump) this.dump(channel, "Evernote frame detected (noscript.compat.evernote)");
+        return;
+      }
+      
       this.checkWindowName(window);
+    
     }
    
     if (globalJS || ns.isJSEnabled(originSite) ||
@@ -8041,17 +8136,26 @@ ClearClickHandler.prototype = {
             ctx.y = ctx.y || box.y + box.height;
             box = formBox;
             var delta;
+            if (box.x < 0) {
+              box.screenX -= box.x * zoom;
+              box.x = 0;
+            }
+            if (box.y < 0) {
+              box.screenY -= box.y * zoom;
+              box.y = 0;
+            }
             if (box.x + Math.min(box.width, maxWidth) < ctx.x) {
-              delta = ctx.x + 4 - maxWidth - box.x;
+              box.width = Math.min(box.width, maxWidth);
+              delta = ctx.x + 4 - box.width - box.x;
               box.x += delta;
               box.screenX += delta * zoom;
-              box.width = Math.min(box.width, maxWidth);
+             
             }
             if (box.y + Math.min(box.height, maxHeight) < ctx.y) {
-              delta = ctx.y + 4 - maxHeight - box.y;
+              box.height = Math.min(box.height, maxHeight);
+              delta = ctx.y + 4 - box.height - box.y;
               box.y += delta;
               box.screenY += delta * zoom;
-              box.height = Math.min(box.height, maxHeight);
             }
             o = form;
           }
@@ -8196,7 +8300,7 @@ ClearClickHandler.prototype = {
           if (ctx.debug) {
             
             if (docPatcher.cleanSheet) {
-              curtain.id = "curtain_" + docPatcher.rndId();
+              curtain.id = "curtain_" + DOMUtils.rndId();
               docPatcher.cleanSheet += " #" + curtain.id + " { opacity: .4 !important }";
             }
             
@@ -8261,13 +8365,11 @@ ClassyObj.prototype = {
 function DocPatcher(ns, o) {
   this.ns = ns;
   this.o = o;
-  this.shownCS = " __noscriptShown__" + this.rndId();
+  this.shownCS = " __noscriptShown__" + DOMUtils.rndId();
 }
 
 DocPatcher.prototype = {
-  rndId: function() {
-    return Math.round(Math.random() * 9999999).toString(16) + "_" + Math.round(Math.random() * 9999999).toString(16);
-  },
+  
   
   collectAncestors: function(o) {
     var res = [];
@@ -8574,3 +8676,91 @@ HijackChecker.prototype = {
     return true;
   }
 }
+
+const ScriptSurrogate = {
+  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
+  
+  enabled: true,
+  prefs: null,
+  
+  get mappings() {
+    delete this.mappings;
+    this._init();
+    return this.mappings;
+  },
+  
+  
+  _init: function() {
+    this.prefs = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefService)
+      .getBranch("noscript.surrogate.").QueryInterface(CI.nsIPrefBranch2);
+    this._syncPrefs();
+    this.prefs.addObserver("", this, true);
+  },
+  
+  _syncPrefs: function() {
+    const prefs = this.prefs;
+    this.enabled = prefs.getBoolPref("enabled");
+    this.mappings = {};
+    for each(var key in prefs.getChildList("", {})) {
+      this._parseMapping(prefs, key);
+    }
+  },
+  
+  _parseMapping: function(prefs, key) {
+    var keyParts = key.split(".");
+    var name = keyParts[0];
+    var member = keyParts[1];
+    if (!(name && member)) return;
+    try {
+      var value = prefs.getCharPref(key);
+      if (!value) return;
+      switch(member) {
+        case "sources": case "exceptions":
+          value = new URIPatternList(value);
+        case "replacement":
+          break;
+        default:
+          return;
+      }
+      var mapping = (name in this.mappings) ? this.mappings[name] : this.mappings[name] = {};
+      mapping[member] = value; 
+    } catch(e) {}
+  },
+  
+  observe: function(prefs, topic, key) {
+    this._syncPrefs();
+  },
+  
+  getScripts: function(scriptURL, pageURL) {
+    var mapping;
+    var scripts = null;
+    for (var key in this.mappings) {
+      mapping = this.mappings[key];
+      if (mapping.sources && mapping.sources.test(scriptURL) &&
+          !(mapping.exceptions && mapping.exceptions.test(pageURL)) &&
+          mapping.replacement) {
+        (scripts = scripts || []).push(mapping.replacement);
+      }
+    }
+    return scripts;
+  },
+  
+  getScriptBlock: function(scriptURL, pageURL) {
+    var scripts = this.getScripts(scriptURL, pageURL);
+    return scripts && "try { (function() {" + scripts.join("})(); (function() {") + "})(); } catch(e) {}";
+  },
+
+  apply: function(document, url) {
+    if (!this.enabled) return;
+    var scriptBlock = this.getScriptBlock(url, document.URL);
+    if (scriptBlock) {
+      var s = document.createElement("script");
+      s.id = "__noscriptSurrogate__" + DOMUtils.rndId();
+      s.appendChild(document.createTextNode(scriptBlock +
+        "(function(){var s = document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
+      document.body.insertBefore(s, document.body.firstChild);
+    }
+  }
+  
+}
+
