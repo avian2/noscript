@@ -147,4 +147,6 @@
 <!ENTITY noscriptEmbeddings "Embedded Objects">
 <!ENTITY noscriptPrev "Previous">
 <!ENTITY noscriptNext "Next">
-
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html [
+<!ENTITY % noscript SYSTEM "chrome://noscript/locale/noscript.dtd" >
+%noscript;
+<!ENTITY % noscriptFB  SYSTEM "chrome://noscript/content/en-US/noscript.dtd" >
+%noscriptFB;
+<!ENTITY % globalDTD
+    SYSTEM "chrome://global/locale/global.dtd">
+%globalDTD;
+]
+>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>&noscriptFrameOptErr.title;</title>
+    <link rel="stylesheet" href="chrome://global/skin/netError.css" type="text/css" media="all" />
+  </head>
+  <body dir="&locale.dir;">
+    <div id="errorPageContainer">
+      <div id="errorTitle">
+        <h1 id="errorTitleText">&noscriptFrameOptErr.title;</h1>
+      </div>
+      <div id="errorLongContent">
+        <div id="errorShortDesc">
+          <p id="errorShortDescText">&noscriptFrameOptErr.desc;</p>
+        </div>
+      </div>
+      <a href="#" id="link" target="_blank">&noscriptFrameOptErr.link;</a>
+    </div>
+  </body>
+</html>

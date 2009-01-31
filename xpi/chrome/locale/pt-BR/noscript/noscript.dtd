@@ -145,5 +145,5 @@
 <!ENTITY noscriptUntrustedPagesAdj "não confiável">
 <!ENTITY noscriptKeepLocked "Manter esse elemento travado (recomendado)">
 <!ENTITY noscriptEmbeddings "Objetos Integrados">
-<!ENTITY noscriptPrev "Previuous">
-<!ENTITY noscriptNext "Next">
+<!ENTITY noscriptPrev "Anterior">
+<!ENTITY noscriptNext "Próximo">

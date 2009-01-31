@@ -862,7 +862,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.8.9.7",
+  VERSION: "1.9",
   
   get wrappedJSObject() {
     return this;
@@ -2515,7 +2515,7 @@ NoscriptService.prototype = {
             forbid = isJS = true;
             break;
           case 3: // IMAGES
-            if (this.blockNSWB && (aContext instanceof CI.nsIDOMHTMLImageElement)) {
+            if (this.blockNSWB && aContext instanceof CI.nsIDOMHTMLImageElement) {
               try {
                 for (var parent = aContext; (parent = parent.parentNode);) {
                   if (parent.nodeName.toUpperCase() == "NOSCRIPT")
@@ -2763,18 +2763,30 @@ NoscriptService.prototype = {
               if (forbid) {
                 if (isSilverlight) {
                   if (logIntercept) this.dump("Silverlight " + aContentLocation.spec + " " + typeof(aContext) + " " + aContentType + ", " + aInternalCall);
-                  forbid = aContentType != 12 && (aInternalCall || !this.POLICY1_9);
-                  if(forbid) {
-                    this.setExpando(aContext, "silverlight", true);
-                    if (!aContentLocation.schemeIs("data") && aContentLocation.spec != "data:application/x-silverlight,") {
+                 
+                  
+                  forbid = aContentType == 12 || !this.POLICY1_9;
+                  this.setExpando(aContext, "silverlight", aContentType != 12);
+                  if (!forbid) return CP_OK;
+                  /*
+                  if(aContentType == 5) {
+                    if (aContentLocation.schemeIs("data") && aContentLocation.spec != "data:application/x-silverlight,") {
                       try {
                         aContentLocation.spec = "data:application/x-silverlight,"; // normalize URL
                       } catch(normEx) {
                         if (this.consoleDump) this.dump("Couldn't normalize " + aContentLocation.spec + " to empty data URL - " + normEx);
                       }
                     }
-                    locationURL = this.resolveSilverlightURL(aRequestOrigin, aContext);
-                    locationSite = this.getSite(locationURL);
+                  }
+                  */
+                  locationURL = this.resolveSilverlightURL(aRequestOrigin, aContext);
+                  locationSite = this.getSite(locationURL);
+                  
+                  if (!this.POLICY1_9)  forbid = locationURL != (aRequestOrigin && aRequestOrigin.spec);
+                  
+                  if(!forbid || this.isAllowedObject(locationURL, mimeKey, locationSite)) {
+                    if (logIntercept && forbid) this.dump("Silverlight " + locationURL + " is whitelisted, ALLOW");
+                    return CP_OK;
                   }
                 } else if (isFlash) {
                   locationURL = this.addFlashVars(locationURL, aContext);
@@ -2946,7 +2958,7 @@ NoscriptService.prototype = {
     if(!uri) return "";
     
     
-    if (typeof(embed) == "object" && embed instanceof CI.nsIDOMElement) try {
+    if (embed instanceof CI.nsIDOMElement) try {
       
       var url = "";
       var params = embed.getElementsByTagName("param");
@@ -2979,11 +2991,11 @@ NoscriptService.prototype = {
   
   tagForReplacement: function(embed, pluginExtras) {
     try {
-      if(!embed.ownerDocument) return;
-      var win = embed.ownerDocument.defaultView.top;
-      this.getExpando(win, "pe",  []).push({embed: embed, pluginExtras: pluginExtras});
+      var doc = embed.ownerDocument;
+      if(!doc) return;
+      this.getExpando(doc, "pe",  []).push({embed: embed, pluginExtras: pluginExtras});
       try {
-        this.syncUI(embed);
+        this.syncUI(doc.defaultView.top);
       } catch(noUIex) {
         if(this.consoleDump) this.dump(noUIex);
       }
@@ -3167,7 +3179,7 @@ NoscriptService.prototype = {
     const browser = this.domUtils.findBrowserForNode(domNode);
     if (browser && (browser.docShell instanceof CI.nsIWebProgress) && !browser.docShell.isLoadingDocument) {
       var overlay = this.findOverlay(browser);
-      if(overlay) overlay.syncUI(domNode.ownerDocument.defaultView.top);
+      if(overlay) overlay.syncUI(browser.contentWindow);
     }
   },
   
@@ -3393,8 +3405,6 @@ NoscriptService.prototype = {
           }
         }
       }
-      
-     
     }
   },
   
@@ -3807,178 +3817,182 @@ NoscriptService.prototype = {
     frame: CI.nsIDOMHTMLFrameElement,
     object: CI.nsIDOMHTMLObjectElement
   },
+  
+  _preprocessObjectInfo: function(doc) {
+    var pe = this.getExpando(doc, "pe");
+    if (!pe) return null;
+    this.setExpando(doc, "pe", null);
+    var ret = [], o;
+    for (var j = pe.length; j-- > 0;) {
+      o = pe[j];
+      try {
+        if (this.getExpando(o, "silverlight")) {
+          o.embed = this._attachSilverlightExtras(o.embed, o.pluginExtras);
+          if (!o.embed) continue; // skip unconditionally to prevent in-page Silverlight placeholders
+        }
+        this.setPluginExtras(o.embed = this.findObjectAncestor(o.embed), o.pluginExtras);
+        if (o.embed.ownerDocument) ret.push(o);
+       } catch(e1) { 
+         if(this.consoleDump & LOG_CONTENT_BLOCK) 
+           this.dump("Error setting plugin extras: " + 
+             (o && o.pluginExtras && o.pluginExtras.url) + ", " + e1); 
+       }
+    }
+    return ret;
+  },
+  
   processObjectElements: function(document, sites, loaded) {
     var pluginExtras = this.findPluginExtras(document);
     sites.pluginCount += pluginExtras.length;
     sites.pluginExtras.push(pluginExtras);
-
+    
+    var objInfo = this._preprocessObjectInfo(document);
+    if (!objInfo) return;
+    var count = objInfo.length;
+    sites.pluginCount += count;
+    
+    
     var collapse = this.collapseObject;
     
     const types = this._objectTypes;
 
-    
-    
-    var objectType;
-    var count, objects, object;
+    var oi, object, objectTag;
     var anchor, innerDiv, iconSize;
     var extras;
-    var style, cssLen, cssCount, cssProp, cssDef;
-    var forcedCSS, style, astyle;
+    var cssLen, cssCount, cssProp, cssDef;
+    var style, astyle;
     
     var replacements = null;
-    var minSize, w, h;
+    var w, h;
     var opaque = pluginExtras.opaqueHere;
     
-    for (var objectTag in types) {
-      if (!loaded && !/frame/.test(objectTag)) continue;
-      
-      objects = document.getElementsByTagName(objectTag);
-      objectType = types[objectTag];
-      for (count = objects.length; count-- > 0;) {
-        try { 
-          object = objects.item(count); 
-        } catch(e) { 
-          if (this.consoleDump) this.dump(e);
-          continue; 
-        }
-        
-        if (opaque) this.opaque(object);
-        
-        if (!(object instanceof objectType) || // wrong type instantiated for this tag?!
-            this.findObjectAncestor(object) != object // skip "embed" if nested into "object"
-         ) continue;
-         
-        extras = this.getPluginExtras(object);
-        
-        
-        
-        if (extras) {
-         
-          sites.pluginCount++;
-          
-          if (!forcedCSS) {
-            
-            forcedCSS = ";";
-            
-            try {
-              extras.pluginDocument = (object.parentNode == document.body && !object.nextSibling);
-              if (pluginDocument) { 
-                collapse = false;
-                forcedCSS = ";outline-style: none !important;-moz-outline-style: none !important;";
-              }
-            } catch(e) {}
-            
-            minSize = this.getPref("placeholderMinSize");
-          }
-
-          try {
-
-            extras.site = this.getSite(extras.url);
-            
-            if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site)) {
-              this.removeAbpTab(object);
-              continue;
-            }
-            
-            extras.tag = "<" + (objectTag == "iframe" && this.isLegacyFrameDocument(document) ? "FRAME" : objectTag.toUpperCase()) + ">";
-            extras.title =  extras.tag + ", " +  
-                this.mimeEssentials(extras.mime) + "@" + extras.url;
-            
-           if ((extras.alt = object.getAttribute("alt")))
-              extras.title += ' "' + extras.alt + '"'
-            
-            
-            anchor = document.createElementNS(HTML_NS, "a");
-            anchor.id = object.id;
-            anchor.href = extras.url;
-            anchor.setAttribute("title", extras.title);
-            
-            this.setPluginExtras(anchor, extras);
-            this.setExpando(anchor, "removedPlugin", object);
-         
-            (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras });
-
-            if (this.showPlaceholder) {
-              anchor.addEventListener("click", this.bind(this.onPlaceholderClick), true);
-              anchor.className = "__noscriptPlaceholder__";
-              if (this.abpRemoveTabs) this.removeAbpTab(object);
-            } else {
-              anchor.className = "";
-              if(collapse) anchor.style.display = "none";
-              else anchor.style.visibility = "hidden";
-              this.removeAbpTab(object); 
-              continue;
-            }
-            
-            innerDiv = document.createElementNS(HTML_NS, "div");
-            innerDiv.className = "__noscriptPlaceholder__1";
-            
-            with(anchor.style) {
-              padding = margin = borderWidth = "0px";
-              outlineOffset = MozOutlineOffset = "-1px"; 
-              display = "inline";
-            }
-            
-            cssDef = "";
-            style = document.defaultView.getComputedStyle(object, null);
-            if (style) {
-              for (cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
-                cssProp = style.item(cssCount);
-                cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
-              }
-              
-              innerDiv.setAttribute("style", cssDef + forcedCSS);
-              
-              if (style.width == "100%" || style.height == "100%") {
-                anchor.style.width = style.width;
-                anchor.style.height = style.height;
-                anchor.style.display = "block";
-              }
-            }
-            
-            if(collapse) {
-              innerDiv.style.maxWidth = anchor.style.maxWidth = "32px";
-              innerDiv.style.maxHeight = anchor.style.maxHeight = "32px";
-            }
-            
-            // if (innerDiv.style.display != "none") innerDiv.style.display = "block";
-            innerDiv.style.visibility = "visible";
-
-            anchor.appendChild(innerDiv);
-            
-            // icon div
-            innerDiv = innerDiv.appendChild(document.createElementNS(HTML_NS, "div"));
-            innerDiv.className = "__noscriptPlaceholder__2";
-            
-            if(collapse || style && (parseInt(style.width) < 64 || parseInt(style.height) < 64)) {
-              innerDiv.style.backgroundPosition = "bottom right";
-              iconSize = 16;
-              w = parseInt(style.width);
-              h = parseInt(style.height);
-              if (minSize > w || minSize > h) {
-                with (innerDiv.parentNode.style) {
-                  minWidth = Math.max(w, Math.min(document.documentElement.clientWidth - object.offsetLeft, minSize)) + "px";
-                  minHeight = Math.max(h, Math.min(document.documentElement.clientHeight - object.offsetTop, minSize)) + "px";
-                }
-                with (anchor.style) {
-                  overflow = "visible";
-                  display = "block";
-                  width = w + "px";
-                  height = h + "px";
-                }
-                anchor.style.float = "left";
-              }
-            } else {
-              iconSize = 32;
-              innerDiv.style.backgroundPosition = "center";
-            }
-            innerDiv.style.backgroundImage = this.cssMimeIcon(extras.mime, iconSize);
-            
-          } catch(objectEx) {
-            dump("NoScript: " + objectEx + " processing plugin " + count + "@" + document.documentURI + "\n");
-          }
-        }
+    var minSize = this.getPref("placeholderMinSize");
+    
+    
+    var forcedCSS = ";";
+    var pluginDocument = false;       
+    try {
+      pluginDocument = count == 1 && (objInfo[0].pluginExtras.url == document.URL) && !objInfo[0].embed.nextSibling;
+      if (pluginDocument) {
+        collapse = false;
+        forcedCSS = ";outline-style: none !important;-moz-outline-style: none !important;";
       }
+    } catch(e) {}
+            
+
+    while (count--) {
+      oi = objInfo[count];
+      object = oi.embed;
+      extras = oi.pluginExtras;
+      objectTag = object.tagName;
+      
+      try {
+
+        extras.site = this.getSite(extras.url);
+        
+        if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site)) {
+          this.removeAbpTab(object);
+          continue;
+        }
+        
+        extras.tag = "<" + (objectTag == "iframe" && this.isLegacyFrameDocument(document) ? "FRAME" : objectTag.toUpperCase()) + ">";
+        extras.title =  extras.tag + ", " +  
+            this.mimeEssentials(extras.mime) + "@" + extras.url;
+        
+       if ((extras.alt = object.getAttribute("alt")))
+          extras.title += ' "' + extras.alt + '"'
+        
+        
+        anchor = document.createElementNS(HTML_NS, "a");
+        anchor.id = object.id;
+        anchor.href = extras.url;
+        anchor.setAttribute("title", extras.title);
+        
+        this.setPluginExtras(anchor, extras);
+        this.setExpando(anchor, "removedPlugin", object);
+     
+        (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras });
+
+        if (this.showPlaceholder) {
+          anchor.addEventListener("click", this.bind(this.onPlaceholderClick), true);
+          anchor.className = "__noscriptPlaceholder__";
+          if (this.abpRemoveTabs) this.removeAbpTab(object);
+        } else {
+          anchor.className = "";
+          if(collapse) anchor.style.display = "none";
+          else anchor.style.visibility = "hidden";
+          this.removeAbpTab(object); 
+          continue;
+        }
+        
+        innerDiv = document.createElementNS(HTML_NS, "div");
+        innerDiv.className = "__noscriptPlaceholder__1";
+        
+        with(anchor.style) {
+          padding = margin = borderWidth = "0px";
+          outlineOffset = MozOutlineOffset = "-1px"; 
+          display = "inline";
+        }
+        
+        cssDef = "";
+        style = document.defaultView.getComputedStyle(object, null);
+        if (style) {
+          for (cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
+            cssProp = style.item(cssCount);
+            cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
+          }
+          
+          innerDiv.setAttribute("style", cssDef + forcedCSS);
+          
+          if (style.width == "100%" || style.height == "100%") {
+            anchor.style.width = style.width;
+            anchor.style.height = style.height;
+            anchor.style.display = "block";
+          }
+        }
+        
+        if(collapse) {
+          innerDiv.style.maxWidth = anchor.style.maxWidth = "32px";
+          innerDiv.style.maxHeight = anchor.style.maxHeight = "32px";
+        }
+        
+        // if (innerDiv.style.display != "none") innerDiv.style.display = "block";
+        innerDiv.style.visibility = "visible";
+
+        anchor.appendChild(innerDiv);
+        
+        // icon div
+        innerDiv = innerDiv.appendChild(document.createElementNS(HTML_NS, "div"));
+        innerDiv.className = "__noscriptPlaceholder__2";
+        
+        if(collapse || style && (parseInt(style.width) < 64 || parseInt(style.height) < 64)) {
+          innerDiv.style.backgroundPosition = "bottom right";
+          iconSize = 16;
+          w = parseInt(style.width);
+          h = parseInt(style.height);
+          if (minSize > w || minSize > h) {
+            with (innerDiv.parentNode.style) {
+              minWidth = Math.max(w, Math.min(document.documentElement.clientWidth - object.offsetLeft, minSize)) + "px";
+              minHeight = Math.max(h, Math.min(document.documentElement.clientHeight - object.offsetTop, minSize)) + "px";
+            }
+            with (anchor.style) {
+              overflow = "visible";
+              display = "block";
+              width = w + "px";
+              height = h + "px";
+            }
+            anchor.style.float = "left";
+          }
+        } else {
+          iconSize = 32;
+          innerDiv.style.backgroundPosition = "center";
+        }
+        innerDiv.style.backgroundImage = this.cssMimeIcon(extras.mime, iconSize);
+        
+      } catch(objectEx) {
+        dump("NoScript: " + objectEx + " processing plugin " + count + "@" + document.documentURI + "\n");
+      }
+      
     }
 
     if (replacements) {
@@ -4158,29 +4172,6 @@ NoscriptService.prototype = {
     return sites;
   },
   
-  _attachPluginExtras: function(win) {
-    try {
-       var pe = this.getExpando(win, "pe");
-       if (!pe) return;
-       for (var o, j = pe.length; j-- > 0;) {
-         o = pe[j];
-         try {
-           if (this.getExpando(o, "silverlight")) {
-             o.embed = this._attachSilverlightExtras(o.embed, o.pluginExtras);
-             if (!o.embed) continue; // skip unconiditionally to prevent in-page Silverlight placeholders
-           }
-           this.setPluginExtras(this.findObjectAncestor(o.embed), o.pluginExtras);
-          } catch(e1) { 
-            if(this.consoleDump & LOG_CONTENT_BLOCK) 
-              this.dump("Error setting plugin extras: " + 
-                (o && o.pluginExtras && o.pluginExtras.url) + ", " + e1); 
-          }
-       }
-       this.setExpando(win, "pe", null);
-    } catch(e2) {
-      if(this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Error attaching plugin extras: " + e2); 
-    }
-  },
   
   _collectPluginExtras: function(pluginExtras, extras) {
     for (var e, j = pluginExtras.length; j-- > 0;) {
@@ -4202,17 +4193,13 @@ NoscriptService.prototype = {
   applySilverlightPatch: function(doc) {
     try {
       if(!this._silverlightInstalledHack) {
-        this._silverlightInstalledHack = "javascript:" + escape("(" + 
-        function() {
-          HTMLObjectElement.prototype.IsVersionSupported = function(n) { return this.type == 'application/x-silverlight'; };
-        }.toSource()
-        + ")()");
+        this._silverlightInstalledHack = "HTMLObjectElement.prototype.IsVersionSupported = function(n) { return this.type == 'application/x-silverlight'; };";
       }
-      var win = doc && doc.defaultView;
-      if (!win || this.getExpando(win, "silverlightHack")) return;
+     
+      if (this.getExpando(doc, "silverlightHack")) return;
       if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Emulating SilverlightControl.IsVersionSupported()");
-      this.setExpando(win, "silverlightHack", true);
-      win.location.href = this._silverlightInstalledHack;
+      this.setExpando(doc, "silverlightHack", true);
+      ScriptSurrogate.execute(doc, this._silverlightInstalledHack);
     } catch(e) {
        if (this.consoleDump) this.dump(e);
     }
@@ -4305,29 +4292,25 @@ NoscriptService.prototype = {
           tmpPluginCount = cache.length;
           sites.pluginSites.push.apply(sites, cache);
         }
-        this._attachPluginExtras(win);
         
         cache = this.getExpando(win, "codeSites");
         if(cache) sites.push.apply(sites, cache);
         
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
       }
-       
+      
+       // plugins
+      this.processObjectElements(document, sites);
+      
       loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
       if (!(domLoaded || loaded)) {
         sites.pluginCount += tmpPluginCount;
         loading = true;
         continue;
       }
-       
-      
-       
-       // scripts
-      this.processScriptElements(document, sites, loaded);
-       
-       // plugins
-      this.processObjectElements(document, sites, loaded);
 
+       // scripts
+      this.processScriptElements(document, sites);
     }
    
     var j;
@@ -4524,13 +4507,33 @@ NoscriptService.prototype = {
       }
       const rw = this.requestWatchdog;
       const domWindow = rw.findWindow(req);
-      if(!domWindow || domWindow == domWindow.top) return;
+      if(!domWindow || domWindow == domWindow.top) return; // for top windows we call onBeforeLoad in onLocationChange
       
+      if (ABE.checkFrameOpt(domWindow, req)) {
+        req.cancel(NS_BINDING_ABORTED);
+        this.showFrameOptError(domWindow, req.URI.spec);
+        return; // canceled by frame options
+      }
       this.onBeforeLoad(req, domWindow, req.URI);
     } catch(e) {
       if (this.consoleDump) this.dump(e);
     }
   },
+  
+  showFrameOptError: function(w, url) {
+    this.log("X-FRAME-OPTIONS: blocked " + url, true);
+    var f = w.frameElement;
+    if (!f) return;
+    const errPage = this.contentBase + "frameOptErr.xhtml";
+    f.addEventListener("load", function(ev) {
+      f.removeEventListener(ev.type, arguments.callee, false);
+      if (errPage == f.contentWindow.location.href)
+        f.contentWindow.document.getElementById("link")
+          .setAttribute("href", url);
+    }, false);
+    f.contentWindow.location.replace(errPage);
+  },
+
   
   onBeforeLoad: function(req, domWindow, location) {
     
@@ -4751,6 +4754,7 @@ NoscriptService.prototype = {
           win.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {} void(0)");
         } catch(jsHackEx) {}
       }
+      ScriptSurrogate.apply(win.document, win.document.URL);
     } catch(e) {}
     
   },
@@ -6443,6 +6447,16 @@ var InjectionChecker = {
       }
     });
   },
+  
+  reduceDashPlus: function(s) {
+    // http://forums.mozillazine.org/viewtopic.php?p=5592865#p5592865
+    return s.replace(/\-+/g, "-")
+        .replace(/\++/g, "+")
+        .replace(/\s+/g, ' ')
+        .replace(/(?: \-)+/g, ' -')
+        .replace(/(?:\+\-)+/g, '+-'); 
+  },
+  
   attributesChecker: new RegExp(
       "\\W(?:javascript|data):[\\s\\S]+[=\\(%,]|@" + 
       ("import\\W*(?:\\/\\*[\\s\\S]*)*(?:[\"']|url[\\s\\S]*\\()" + 
@@ -6450,6 +6464,7 @@ var InjectionChecker = {
         .replace(/[a-rt-z\-]/g, "\\W*$&"), 
       "i"),
   checkAttributes: function(s) {
+    s = this.reduceDashPlus(s);
     return this.attributesChecker.test(s) ||
         /\\/.test(s) && this.attributesChecker.test(this.unescapeCSS(s));
   },
@@ -6900,7 +6915,7 @@ XSanitizer.prototype = {
             try {
               nestedURI = SiteUtils.ios.newURI(pz, null, null).QueryInterface(CI.nsIURL);
               changes.qs = changes.qs || this.sanitizeURL(nestedURI).major;
-              pz = nestedURI.spec;
+              if (unescape(pz).replace(/\/+$/, '') != unescape(nestedURI.spec).replace(/\/+$/, '')) pz = nestedURI.spec;
             } catch(e) {
               nestedURI = null;
             }
@@ -6981,7 +6996,7 @@ XSanitizer.prototype = {
     }
     
     if (this.brutal) { // injection checks were positive
-      s = s.replace(/['\(\)\=\[\]]/g, " ")
+      s = InjectionChecker.reduceDashPlus(s).replace(/['\(\)\=\[\]]/g, " ")
            .replace(this._brutalReplRx, String.toUpperCase)
            .replace(/Q[\da-fA-Fa]{2}/g, "Q20"); // Ebay-style escaping
     }
@@ -7786,10 +7801,15 @@ ClearClickHandler.prototype = {
   },
   
   _constrain: function(box, axys, dim, max, vp, center, zoom) {
+    var d;
     var scr = "screen" + axys.toUpperCase();
     // trim bounds to take in account fancy overlay borders
     var l = box[dim];
     var n = box[axys];
+    
+    if (vp.frame && center && l < vp[dim]) { // expand to viewport if possible
+      l = vp[dim];
+    }
     
     if (l > 6) {
       var bStart = Math.floor(l * .1) // 20% border
@@ -7805,20 +7825,18 @@ ClearClickHandler.prototype = {
       
     }
    
-    var d;
+    
+    
+    
     if (l > max) {
       // resize
       if (center) {
         var halfMax = Math.round(max / 2);
         var nn = center - halfMax;
-        if (nn > n) {
-          if (center + halfMax > n + l) {
-            nn = (n + l) - max;
-          }
-          box[axys] = nn;
-          box[scr] += (nn - n) * zoom;
-          n = nn;
-        }
+        if (nn > n && center + halfMax > n + l) nn = (n + l) - max;        
+        box[axys] = nn;
+        box[scr] += (nn - n) * zoom;
+        n = nn;
       }
       l = box[dim] = max;
     }
@@ -7829,11 +7847,13 @@ ClearClickHandler.prototype = {
         : (n + l) > (vpn + vp[dim])
           ? (vpn + vp[dim]) - (n + l)
           : 0;
-
+    
     if (d) {
-      box[axys] += d;
+      n = (box[axys] += d);
       box[scr] += d * zoom;
     }
+    
+    
   },
   
   createCanvas: function(doc) {
@@ -8019,7 +8039,7 @@ ClearClickHandler.prototype = {
     var bgStyle;
     var box, curtain;
     
-    var frame, frameClass, objClass, viewer;
+    var frame, frameClass, frameStyle, objClass, viewer;
     
     var docPatcher = new DocPatcher(this.ns, o);
     
@@ -8105,8 +8125,7 @@ ClearClickHandler.prototype = {
             
             background = this.rndColor();
           }
-          var s = w.parent.getComputedStyle(frame, '');
-          var fbox = this.getBox(frame);
+          frameStyle = w.parent.getComputedStyle(frame, '');
         }     
         
         if (curtain && frame) {
@@ -8170,7 +8189,8 @@ ClearClickHandler.prototype = {
           x: w.scrollX, 
           y: w.scrollY, 
           width: Math.max(w.innerWidth - sd.w, 32), 
-          height: Math.max(w.innerHeight - sd.h, 32)
+          height: Math.max(w.innerHeight - sd.h, 32),
+          frame: frame
         };
 
         if (ctx.isEmbed) { // check in-page vieport
@@ -8197,6 +8217,11 @@ ClearClickHandler.prototype = {
               break;
             }
           }
+        } else if (frameStyle && /^(?:hidden|visible)$/.test(frameStyle.overflow)) { // no scrollbars
+          vp.x = 0;
+          vp.y = 0;
+          vp.width = curtain.offsetWidth;
+          vp.height = curtain.offsetHeight;
         }
         
         box.oX = box.x;
@@ -8714,15 +8739,18 @@ const ScriptSurrogate = {
     try {
       var value = prefs.getCharPref(key);
       if (!value) return;
+      var mapping = (name in this.mappings) ? this.mappings[name] : this.mappings[name] = { forPage: false };
       switch(member) {
-        case "sources": case "exceptions":
+        case "sources":
+          if ((mapping.forPage = value[0] == '@')) value = value.substring(1);
+        case "exceptions":
           value = new URIPatternList(value);
         case "replacement":
           break;
         default:
           return;
       }
-      var mapping = (name in this.mappings) ? this.mappings[name] : this.mappings[name] = {};
+      
       mapping[member] = value; 
     } catch(e) {}
   },
@@ -8734,9 +8762,10 @@ const ScriptSurrogate = {
   getScripts: function(scriptURL, pageURL) {
     var mapping;
     var scripts = null;
+    var isPage = scriptURL == pageURL;
     for (var key in this.mappings) {
       mapping = this.mappings[key];
-      if (mapping.sources && mapping.sources.test(scriptURL) &&
+      if (isPage == mapping.forPage && mapping.sources && mapping.sources.test(scriptURL) &&
           !(mapping.exceptions && mapping.exceptions.test(pageURL)) &&
           mapping.replacement) {
         (scripts = scripts || []).push(mapping.replacement);
@@ -8753,14 +8782,30 @@ const ScriptSurrogate = {
   apply: function(document, url) {
     if (!this.enabled) return;
     var scriptBlock = this.getScriptBlock(url, document.URL);
-    if (scriptBlock) {
-      var s = document.createElement("script");
-      s.id = "__noscriptSurrogate__" + DOMUtils.rndId();
-      s.appendChild(document.createTextNode(scriptBlock +
-        "(function(){var s = document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
-      document.body.insertBefore(s, document.body.firstChild);
-    }
-  }
+    if (scriptBlock) this.execute(document, scriptBlock);
+  },
   
+  execute: function(document, scriptBlock) {
+    var s = document.createElement("script");
+    s.id = "__noscriptSurrogate__" + DOMUtils.rndId();
+    s.appendChild(document.createTextNode(scriptBlock +
+      ";(function(){var s = document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
+    document.documentElement.insertBefore(s, document.documentElement.firstChild);
+  }
 }
 
+
+var ABE = {
+  
+  checkFrameOpt: function(w, chan) {
+    try {
+      switch (chan.getResponseHeader("X-FRAME-OPTIONS").toUpperCase()) {
+        case "DENY":
+          return true;
+        case "SAMEORIGIN":
+          return chan.URI.prePath != w.top.location.href.match(/^https?:\/\/[^\/]*/i)[0];
+      }
+    } catch(e) {}
+    return false;
+  }
+}

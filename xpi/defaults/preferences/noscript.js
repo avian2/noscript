@@ -184,7 +184,7 @@ pref("noscript.clearClick", 3);
 pref("noscript.clearClick.plugins", true);
 pref("noscript.clearClick.prompt", true);
 pref("noscript.clearClick.debug", false);
-pref("noscript.clearClick.exceptions", "*.ebay.com");
+pref("noscript.clearClick.exceptions", "noscript.net/getit flashgot.net/getit *.ebay.com");
 
 pref("noscript.emulateFrameBreak", true);
 
@@ -199,7 +199,7 @@ pref("noscript.abp.removeTabs", false);
 pref("noscript.checkHijackings", true);
 
 pref("noscript.surrogate.enabled", true);
-pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,pageTracker={_setDomainName:_0,_trackPageview:_0,_initData:_0},_gat={_getTracker:function(){return window.pageTracker}}");
+pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return {__noSuchMethod__:_0}}}");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.ga.exceptions", "");
 
