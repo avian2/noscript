@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.9";
+const APP_VERSION = "1.9.0.4";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
@@ -36,7 +36,7 @@ function myPerformInstall(secondTry) {
   function chromeExistsIn(folder) {
     var chrome = getFolder(folder, APP_JAR_FILE);
     var isDir = File.isDirectory(chrome);
-    if (!isDir) isDir = /\/$/.test(chrome);
+    if (!isDir) isDir = chrome && chrome.toString().slice(-1) == '/';
     if (isDir)
       File.dirRemove(chrome);  
     return !chrome || !isDir;

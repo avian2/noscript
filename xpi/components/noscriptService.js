@@ -862,7 +862,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9",
+  VERSION: "1.9.0.4",
   
   get wrappedJSObject() {
     return this;
@@ -3331,7 +3331,7 @@ NoscriptService.prototype = {
         code = sources[j];
         while ((m = findURL.exec(code))) {
           if (!container) {
-            container = document.createElement("div");
+            container = document.createElementNS(HTML_NS, "div");
             with(container.style) {
               backgroundImage = 'url("' + this.pluginPlaceholder + '")';
               backgroundRepeat = "no-repeat";
@@ -3349,7 +3349,7 @@ NoscriptService.prototype = {
             document.body.appendChild(container);
           }
           url = m[1];
-          a = document.createElement("a");
+          a = document.createElementNS(HTML_NS, "a");
           a.href = url;
           container.appendChild(a);
           if (a.href.toLowerCase().indexOf("http") != 0 || seen.indexOf(a.href) > -1) {
@@ -3358,7 +3358,7 @@ NoscriptService.prototype = {
           }
           seen.push(a.href);
           a.appendChild(document.createTextNode(a.href));
-          container.appendChild(document.createElement("br"));
+          container.appendChild(document.createElementNS(HTML_NS, "br"));
         }
         
         if (follow && seen.length == 1) {
@@ -3419,7 +3419,7 @@ NoscriptService.prototype = {
           node.setAttribute("class", "noscript-show");
           child = node.firstChild;
           if (child.nodeType != 3) return;
-          el = node.ownerDocument.createElement("span");
+          el = node.ownerDocument.createElementNS(HTML_NS, "span");
           el.className = "noscript-show";
           el.innerHTML = child.nodeValue;
           // remove noscript script children, see evite.com bug 
@@ -3523,8 +3523,8 @@ NoscriptService.prototype = {
   // if (parent.frames.length > 0){ top.location.replace(document.location); }
   // and the general concise idiom with its common reasonable permutations,
   // if (self != top) top.location = location
-  _frameBreakNoCapture: /\bif\s*\(\s*(?:(?:window\s*\.\s*)?(?:window|self|top)\s*!=\s*(?:window\s*\.\s*)?(?:window|self|top)|(?:parent|top)\.frames\.length\s*(?:!=|>)\s*0)\s*\)\s*\{?\s*(?:window\s*\.\s*)?top\s*\.\s*location\s*(?:\.replace\(|=)\s*(?:(?:document|window|self)\s*\.\s*)?location(?:\s*.\s*href)?\s*\)?\s*;?\s*\}?/,
-  _frameBreakCapture: /^\(function\s[^\{]+\{\s*if\s*\(\s*(?:(?:window\s*\.\s*)?(window|self|top)\s*!=\s*(?:window\s*\.\s*)?(window|self|top)|(?:parent|top)\.frames\.length\s*(?:!=|>)\s*0)\s*\)\s*\{?\s*(?:window\s*\.\s*)?top\s*\.\s*location\s*(?:\.replace\(|=)\s*(?:(?:document|window|self)\s*\.\s*)?location(?:\s*.\s*href)?\s*\)?\s*;?\s*\}?/,
+  _frameBreakNoCapture: /\bif\s*\(\s*(?:(?:window\s*\.\s*)?(?:window|self|top)\s*!=\s*(?:window\s*\.\s*)?(?:window|self|top)|(?:parent|top)\.frames\.length\s*(?:!=|>)\s*0)\s*\)\s*\{?\s*(?:window\s*\.\s*)?top\s*\.\s*location\s*(?:\.\s*(?:replace|assign)\s*\(|(?:\s*\.\s*href\s*)?=)\s*(?:(?:document|window|self)\s*\.\s*)?location(?:\s*.\s*href)?\s*\)?\s*;?\s*\}?/,
+  _frameBreakCapture: /^\(function\s[^\{]+\{\s*if\s*\(\s*(?:(?:window\s*\.\s*)?(window|self|top)\s*!=\s*(?:window\s*\.\s*)?(window|self|top)|(?:parent|top)\.frames\.length\s*(?:!=|>)\s*0)\s*\)\s*\{?\s*(?:window\s*\.\s*)?top\s*\.\s*location\s*(?:\.\s*(?:replace|assign)\s*\(|(?:\s*\.\s*href\s*)?=)\s*(?:(?:document|window|self)\s*\.\s*)?location(?:\s*.\s*href)?\s*\)?\s*;?\s*\}?/,
   doEmulateFrameBreak: function(w) {
     // If JS is disabled we check the top 5 script elements of the page searching for the first inline one:
     // if it starts with a frame breaker, we honor it.
@@ -4345,7 +4345,7 @@ NoscriptService.prototype = {
   onChannelRedirect: function(oldChannel, newChannel, flags) {
     const rw = this.requestWatchdog;
     const uri = newChannel.URI;
-    const ph = rw.extractFromChannel(oldChannel, "noscript.policyHints");
+    const ph = ABE.extractFromChannel(oldChannel, "noscript.policyHints");
     try {
       if (ph) {
         // 0: aContentType, 1: aContentLocation, 2: aRequestOrigin, 3: aContext, 4: aMimeTypeGuess, 5: aInternalCall
@@ -4394,7 +4394,7 @@ NoscriptService.prototype = {
           throw "NoScript aborted redirection to " + uri.spec;
         }
         
-        rw.attachToChannel(newChannel, "noscript.policyHints", ph);
+        ABE.attachToChannel(newChannel, "noscript.policyHints", ph);
       } 
     } finally {
       this.resetPolicyState();
@@ -4402,7 +4402,7 @@ NoscriptService.prototype = {
     
     // Document transitions
   
-    if ((oldChannel.loadFlags & rw.LOAD_DOCUMENT_URI) || (newChannel.loadFlags & rw.LOAD_DOCUMENT_URI) && oldChannel.URI.prePath != uri.prePath) {
+    if ((oldChannel.loadFlags & rw.DOCUMENT_LOAD_FLAGS) || (newChannel.loadFlags & rw.DOCUMENT_LOAD_FLAGS) && oldChannel.URI.prePath != uri.prePath) {
       if (newChannel instanceof CI.nsIHttpChannel)
         HTTPS.onCrossSiteRequest(newChannel, oldChannel.URI.spec,
                                browser || rw.findBrowser(oldChannel), rw);
@@ -4434,7 +4434,7 @@ NoscriptService.prototype = {
     if (stateFlags & WP_STATE_START) {
       if (req instanceof CI.nsIHttpChannel) {
         if (this.currentPolicyURI == req.URI) {
-          this.requestWatchdog.attachToChannel(req, "noscript.policyHints", ph = this.currentPolicyHints);
+          ABE.attachToChannel(req, "noscript.policyHints", ph = this.currentPolicyHints);
           this.resetPolicyState();
         }
       }
@@ -4450,7 +4450,7 @@ NoscriptService.prototype = {
         var w = wp.DOMWindow;
   
         if (w && w.frameElement) {
-          ph = ph || this.requestWatchdog.extractFromChannel(req, "noscript.policyHints", true);
+          ph = ph || ABE.extractFromChannel(req, "noscript.policyHints", true);
           if (ph && this.shouldLoad(7, req.URI, ph[2], w.frameElement, '', CP_FRAMECHECK) != CP_OK) { // late frame/iframe check
             req.cancel(NS_BINDING_ABORTED);
             return;
@@ -4462,7 +4462,7 @@ NoscriptService.prototype = {
           this._handleDocJS2(w, req);
         }
       } else try {
-        ph = ph || this.requestWatchdog.extractFromChannel(req, "noscript.policyHints", true); 
+        ph = ph || ABE.extractFromChannel(req, "noscript.policyHints", true); 
   
         if (ph && ph[0] == 2 && (req instanceof CI.nsIHttpChannel)) {
           var originSite = (this.requestWatchdog.extractInternalReferrer(req) || ph[2]).prePath;
@@ -4472,7 +4472,7 @@ NoscriptService.prototype = {
         }
       } catch(e) {}
     } else if (stateFlags & WP_STATE_STOP) {
-      this.requestWatchdog.extractFromChannel(req, "noscript.policyHints"); // release hints
+      ABE.extractFromChannel(req, "noscript.policyHints"); // release hints
     }
   },
   
@@ -4507,14 +4507,14 @@ NoscriptService.prototype = {
       }
       const rw = this.requestWatchdog;
       const domWindow = rw.findWindow(req);
-      if(!domWindow || domWindow == domWindow.top) return; // for top windows we call onBeforeLoad in onLocationChange
+      if (domWindow && domWindow == domWindow.top) return; // for top windows we call onBeforeLoad in onLocationChange
       
       if (ABE.checkFrameOpt(domWindow, req)) {
         req.cancel(NS_BINDING_ABORTED);
         this.showFrameOptError(domWindow, req.URI.spec);
         return; // canceled by frame options
       }
-      this.onBeforeLoad(req, domWindow, req.URI);
+      if (domWindow) this.onBeforeLoad(req, domWindow, req.URI);
     } catch(e) {
       if (this.consoleDump) this.dump(e);
     }
@@ -4522,7 +4522,7 @@ NoscriptService.prototype = {
   
   showFrameOptError: function(w, url) {
     this.log("X-FRAME-OPTIONS: blocked " + url, true);
-    var f = w.frameElement;
+    var f = w && w.frameElement;
     if (!f) return;
     const errPage = this.contentBase + "frameOptErr.xhtml";
     f.addEventListener("load", function(ev) {
@@ -4540,13 +4540,10 @@ NoscriptService.prototype = {
     if (!domWindow) return;
     
     const uri = location;
-    const rw = this.requestWatchdog;
     
     var docShell = null;
     
-    
-    
-    
+      
     if (domWindow.document && (uri.schemeIs("http") || uri.schemeIs("https"))) {
       this.filterUTF7(req, domWindow, docShell = this.domUtils.getDocShellFromWindow(domWindow)); 
     }
@@ -4573,9 +4570,9 @@ NoscriptService.prototype = {
       overlay = this.findOverlay(browser);
       if (overlay) {
         overlay.setMetaRefreshInfo(null, browser);
-        xssInfo = rw.extractFromChannel(req, "noscript.XSS");
+        xssInfo = ABE.extractFromChannel(req, "noscript.XSS");
         if (xssInfo) xssInfo.browser = browser;
-        rw.unsafeReload(browser, false);
+        this.requestWatchdog.unsafeReload(browser, false);
         
         if (!this.getExpando(browser, "clearClick")) {
           this.setExpando(browser, "clearClick", true);
@@ -4713,7 +4710,7 @@ NoscriptService.prototype = {
         }
       }
       
-      this.requestWatchdog.attachToChannel(req, "noscript.dsjsBlocked",
+      ABE.attachToChannel(req, "noscript.dsjsBlocked",
                 { value: // !jsEnabled && (prevBlocked || prevStatus)
                         // we're the cause of the current disablement if
                         // we're disabling and (was already blocked by us or was not blocked)
@@ -4734,7 +4731,7 @@ NoscriptService.prototype = {
     // called at the beginning of onLocationChange
     if (win)
       this.setExpando(win.document, "prevBlocked",
-        this.requestWatchdog.extractFromChannel(req, "noscript.dsjsBlocked")
+        ABE.extractFromChannel(req, "noscript.dsjsBlocked")
       );
   },
   
@@ -4819,7 +4816,7 @@ NoscriptService.prototype = {
     const containerID = "noscript-jar-feedback";
     var container = doc.getElementById(containerID);
     if (container) container.parentNode.removeChild(container);
-    container = rootNode.insertBefore(doc.createElement("div"), rootNode.firstChild || null);
+    container = rootNode.insertBefore(doc.createElementNS(HTML_NS, "div"), rootNode.firstChild || null);
     with(container.style) {
       backgroundColor = "#fffff0";
       borderBottom = "1px solid #444";
@@ -4832,7 +4829,7 @@ NoscriptService.prototype = {
       parring = "8px";
     }
     container.id = "noscript-jar-feedback";
-    var description = container.appendChild(doc.createElement("pre"));
+    var description = container.appendChild(doc.createElementNS(HTML_NS, "pre"));
     description.appendChild(doc.createTextNode(message));
     description.innerHTML = description.innerHTML
     .replace(/\b(http:\/\/noscript.net\/faq#jar)\b/g, 
@@ -5127,7 +5124,8 @@ RequestWatchdog.prototype = {
   callback: null,
   externalLoad: null,
   noscriptReload: null,
-  LOAD_DOCUMENT_URI: CI.nsIChannel.LOAD_DOCUMENT_URI,
+  DOCUMENT_LOAD_FLAGS: CI.nsIChannel.LOAD_DOCUMENT_URI
+    | CI.nsIChannel.LOAD_CALL_CONTENT_SNIFFERS, // this for OBJECT subdocs
   
   get dummyPost() {
     const v = CC["@mozilla.org/io/string-input-stream;1"].createInstance();
@@ -5274,7 +5272,7 @@ RequestWatchdog.prototype = {
     if((this.ns.consoleDump & LOG_SNIFF) && (subject instanceof CI.nsIHttpChannel)) {
       this.ns.dump(topic + ": " + subject.URI.spec + ", " + subject.loadFlags);
     }
-    if (!((subject instanceof CI.nsIHttpChannel) && (subject.loadFlags & this.LOAD_DOCUMENT_URI))) return;
+    if (!((subject instanceof CI.nsIHttpChannel) && (subject.loadFlags & this.DOCUMENT_LOAD_FLAGS))) return;
     switch(topic) {
       case "http-on-modify-request":
         try {
@@ -5698,7 +5696,16 @@ RequestWatchdog.prototype = {
       
       originalAttempt = url.spec;
       xsan.brutal = injectionAttempt;
-      changes = xsan.sanitizeURL(url);
+      try {
+        changes = xsan.sanitizeURL(url);
+      } catch(e) {
+        changes = xsan.sanitizeURL(url.clone());
+        if (changes.major) {
+          requestInfo.reason = url.spec;
+          this.abort(requestInfo);
+          return;
+        }
+      }
       if (changes.minor) {
         this.proxyHack(channel);
         this.notify(this.addXssInfo(requestInfo, {
@@ -5820,7 +5827,7 @@ RequestWatchdog.prototype = {
         var overlay = this.ns.findOverlay(requestInfo.browser);
         if(overlay) overlay.notifyXSS(requestInfo);
       }
-      this.attachToChannel(requestInfo.channel, "noscript.XSS", requestInfo);
+      ABE.attachToChannel(requestInfo.channel, "noscript.XSS", requestInfo);
     } catch(e) {
       dump(e + "\n");
     }
@@ -5835,22 +5842,7 @@ RequestWatchdog.prototype = {
      }, false);
   },
   
-  attachToChannel: function(channel, key, requestInfo) {
-    if (channel instanceof CI.nsIWritablePropertyBag2) 
-      channel.setPropertyAsInterface(key, new nsISupportWrapper(requestInfo));
-  },
-  extractFromChannel: function(channel, key, preserve) {
-    if (channel instanceof CI.nsIPropertyBag2) {
-      try {
-        var requestInfo = channel.getPropertyAsInterface(key, CI.nsISupports);
-        if (requestInfo) {
-          if(!preserve && (channel instanceof CI.nsIWritablePropertyBag)) channel.deleteProperty(key);
-          return requestInfo.wrappedJSObject;
-        }
-      } catch(e) {}
-    }
-    return null;
-  },
+  
   
   findWindow: function(channel) {
     try {
@@ -5858,9 +5850,8 @@ RequestWatchdog.prototype = {
         .QueryInterface(
           CI.nsIInterfaceRequestor).getInterface(
           CI.nsIDOMWindow);
-    } catch(e) {
-      return null;
-    }
+    } catch(e) {}
+    return null;
   },
   findBrowser: function(channel, window) {
     var w = window || this.findWindow(channel);
@@ -5898,7 +5889,7 @@ var Entities = {
             doc = null;
             // dump("*** Free Entities.htmlNode ***\n");
           }, false);
-          return as.hiddenDOMWindow.document.createElement("body");
+          return as.hiddenDOMWindow.document.createElementNS(HTML_NS, "body");
         } catch(e) {
           dump("[NoSript Entities]: Cannot grab an HTML node, falling back to XHTML... " + e + "\n");
           return CC["@mozilla.org/xul/xul-document;1"]
@@ -6470,7 +6461,7 @@ var InjectionChecker = {
   },
   
   HTMLChecker: new RegExp("<\\W*(?:[^>\\s]*:)?\\W*(?:" + // take in account quirks and namespaces
-   fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video") + 
+   fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video|audio") + 
     ")|[/'\"]\\W*(?:FSCommand|on(?:error|[a-df-z][a-z]{2,}))[\\s\\x08]*=", 
     "i"),
   checkHTML: function(s) {
@@ -6479,7 +6470,7 @@ var InjectionChecker = {
   },
   
   NoscriptChecker: new RegExp("<\\W*(?:[^>\\s]*:)?\\W*(?:" +
-    fuzzify("form|style|link|object|embed|applet|iframe|frame|meta|svg|video") + ")"
+    fuzzify("form|style|link|object|embed|applet|iframe|frame|meta|svg|video|audio") + ")"
     ),
   checkNoscript: function(s) {
     this.log(s);
@@ -7721,7 +7712,7 @@ ClearClickHandler.prototype = {
   // this one is more complex but much more precise than getZoomForBrowser()
   getZoomFromDocument: function(d) {
     var root = d.documentElement;
-    var o = d.createElement("div");
+    var o = d.createElementNS(HTML_NS, "div");
     with(o.style) {
       top = "400000px";
       position = "absolute";
@@ -7824,10 +7815,7 @@ ClearClickHandler.prototype = {
       box[scr] += bStart * zoom;
       
     }
-   
-    
-    
-    
+
     if (l > max) {
       // resize
       if (center) {
@@ -7852,8 +7840,7 @@ ClearClickHandler.prototype = {
       n = (box[axys] += d);
       box[scr] += d * zoom;
     }
-    
-    
+
   },
   
   createCanvas: function(doc) {
@@ -8098,9 +8085,9 @@ ClearClickHandler.prototype = {
             var b = d.body;
             if (b) {
               var bw = b.clientWidth;
-              if (bw < fw && (bw > dw || dw > fw)) w = bw; 
+              if (bw <= fw && (bw > dw || dw > fw)) w = bw; 
               var bh = b.clientHeight;
-              if (bh < fh && (bh > dh || dh > fh)) h = bh;
+              if (bh <= fh && (bh > dh || dh > fh)) h = bh;
             }
             
             return {w: fw - w, h: fh - h };
@@ -8194,6 +8181,7 @@ ClearClickHandler.prototype = {
         };
 
         if (ctx.isEmbed) { // check in-page vieport
+          vp.frame = null;
           for(form = o; form = form.parentNode;) {
   
             if ((form.offsetWidth < box.width || form.offsetHeight < box.height) &&
@@ -8217,11 +8205,15 @@ ClearClickHandler.prototype = {
               break;
             }
           }
-        } else if (frameStyle && /^(?:hidden|visible)$/.test(frameStyle.overflow)) { // no scrollbars
-          vp.x = 0;
-          vp.y = 0;
-          vp.width = curtain.offsetWidth;
-          vp.height = curtain.offsetHeight;
+        } else if (!(sd.w || sd.h)) { // no scrollbars
+          if (!sd.w) {
+            vp.x = 0;
+            vp.width = curtain.offsetWidth;
+          }
+          if (!sd.h) {
+            vp.y = 0;
+            vp.height = curtain.offsetHeight;
+          }
         }
         
         box.oX = box.x;
@@ -8536,7 +8528,7 @@ DocPatcher.prototype = {
     if (this.oldStyle) {
       // Gecko < 1.9, asynchronous user sheets force ugly work-around
       var d = this.o.ownerDocument;
-      sheetHandle = d.createElement("style");
+      sheetHandle = d.createElementNS(HTML_NS, "style");
       sheetHandle.innerHTML = sheet;
       d.documentElement.appendChild(sheetHandle);
     } else { // 
@@ -8685,9 +8677,9 @@ HijackChecker.prototype = {
   
   _consumeMaybeXML: function(data, eos, bytes) {
     bytes = bytes || data.buffers.join('');
-    var m = bytes.replace(/<!--[\s\S]*?-->/g, '').match(/^[\s\0]*(\S)(.{2})/);
+    var m = bytes.match(/^[\s\0]*(\S)(.{2})/);
     if (m) { // skip comments, see http://forums.mozillazine.org/viewtopic.php?p=5488645
-      return m[1] == '<' ? m[2] != "!-" && this._neutralize(data, "E4X") : true;
+      return m[1] == '<' && m[2] != "!-" ? this._neutralize(data, "E4X") : true;
     }
     data.buffers = [bytes]; // compact
     return eos;
@@ -8786,7 +8778,7 @@ const ScriptSurrogate = {
   },
   
   execute: function(document, scriptBlock) {
-    var s = document.createElement("script");
+    var s = document.createElementNS(HTML_NS, "script");
     s.id = "__noscriptSurrogate__" + DOMUtils.rndId();
     s.appendChild(document.createTextNode(scriptBlock +
       ";(function(){var s = document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
@@ -8797,8 +8789,30 @@ const ScriptSurrogate = {
 
 var ABE = {
   
+  attachToChannel: function(channel, key, requestInfo) {
+    if (channel instanceof CI.nsIWritablePropertyBag2) 
+      channel.setPropertyAsInterface(key, new nsISupportWrapper(requestInfo));
+  },
+  extractFromChannel: function(channel, key, preserve) {
+    if (channel instanceof CI.nsIPropertyBag2) {
+      try {
+        var requestInfo = channel.getPropertyAsInterface(key, CI.nsISupports);
+        if (requestInfo) {
+          if(!preserve && (channel instanceof CI.nsIWritablePropertyBag)) channel.deleteProperty(key);
+          return requestInfo.wrappedJSObject;
+        }
+      } catch(e) {}
+    }
+    return null;
+  },
+  
   checkFrameOpt: function(w, chan) {
     try {
+      if (!w) {
+        var ph = this.extractFromChannel(chan, "noscript.policyHints", true);
+        w = ph[3].self || ph[3].ownerDocument.defaultView;
+      }
+      
       switch (chan.getResponseHeader("X-FRAME-OPTIONS").toUpperCase()) {
         case "DENY":
           return true;
