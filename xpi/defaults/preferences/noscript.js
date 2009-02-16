@@ -26,7 +26,7 @@ pref("noscript.showRevokeTemp", true);
 pref("noscript.showBlockedObjects", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
-pref("noscript.mandatory", "chrome: about: about:config about:neterror about:plugins about:privatebrowsing about:sessionrestore resource:");
+pref("noscript.mandatory", "chrome: about: about:config about:neterror about:certerror about:plugins about:privatebrowsing about:sessionrestore resource:");
 pref("noscript.default", "about:blank about:credits addons.mozilla.org flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);

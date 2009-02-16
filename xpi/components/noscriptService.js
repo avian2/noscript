@@ -862,7 +862,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.0.4",
+  VERSION: "1.9.0.5",
   
   get wrappedJSObject() {
     return this;
@@ -3324,12 +3324,15 @@ NoscriptService.prototype = {
       if (!sources[0]) return 0;
       var follow = false;
       const findURL = /(?:(?:\b(?:open|replace)\s*\(|(?:\b(?:href|location|src|path|pathname|search)|(?:[Pp]ath|UR[IL]|[uU]r[il]))\s*=)\s*['"]|['"](?=https?:\/\/\w|\w*[\.\/\?]))([\?\/\.\w\-%\&][^\s'"]*)/g;
-
- 
+      const MAX_TIME = 1000;
+      const MAX_LINKS = 30;
+      const ts = new Date().getTime();
+      outerLoop:
       for (j = 0, len = sources.length; j < len; j++) {
         findURL.lastIndex = 0;
         code = sources[j];
         while ((m = findURL.exec(code))) {
+          
           if (!container) {
             container = document.createElementNS(HTML_NS, "div");
             with(container.style) {
@@ -3359,6 +3362,8 @@ NoscriptService.prototype = {
           seen.push(a.href);
           a.appendChild(document.createTextNode(a.href));
           container.appendChild(document.createElementNS(HTML_NS, "br"));
+          
+          if (seen.length >= MAX_LINKS || new Date().getTime() - ts > MAX_TIME) break outerLoop;
         }
         
         if (follow && seen.length == 1) {
@@ -3367,9 +3372,10 @@ NoscriptService.prototype = {
           this.doFollowMetaRefresh({
             uri: seen[0],
             document: document
-          });
-          
+          });  
         }
+        
+        if (new Date().getTime() - ts > MAX_TIME) break;
       }
       return seen.length;
     } catch(e) { 
@@ -4464,11 +4470,18 @@ NoscriptService.prototype = {
       } else try {
         ph = ph || ABE.extractFromChannel(req, "noscript.policyHints", true); 
   
-        if (ph && ph[0] == 2 && (req instanceof CI.nsIHttpChannel)) {
-          var originSite = (this.requestWatchdog.extractInternalReferrer(req) || ph[2]).prePath;
-          var scriptSite = req.URI.prePath;
-          if (scriptSite != originSite && this.getPref("checkHijackings"))
-            new RequestFilter(req, new HijackChecker(this));
+        if (ph) {
+          if (ph[0] == 2 && (req instanceof CI.nsIHttpChannel)) {
+            var originSite = (this.requestWatchdog.extractInternalReferrer(req) || ph[2]).prePath;
+            var scriptSite = req.URI.prePath;
+            if (scriptSite != originSite && this.getPref("checkHijackings"))
+              new RequestFilter(req, new HijackChecker(this));
+          } 
+        } else if (req instanceof CI.nsIHttpChannel && wp.DOMWindow.document instanceof CI.nsIDOMXULDocument) {
+          if (!this.isJSEnabled(req.URI.prePath)) {
+            req.cancel(NS_BINDING_ABORTED);
+            if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Aborted script " + req.URI.spec);
+          }
         }
       } catch(e) {}
     } else if (stateFlags & WP_STATE_STOP) {
@@ -8009,7 +8022,7 @@ ClearClickHandler.prototype = {
   minWidth: 160,
   minHeight: 100,
   _NO_SCROLLBARS: {w: 0, h: 0},
-  checkObstruction:  function(o, ctx) {   
+  checkObstruction: function(o, ctx) {   
     var d = o.ownerDocument;
     var dElem = d.documentElement;
     
@@ -8058,6 +8071,8 @@ ClearClickHandler.prototype = {
           
       var zoom = this.getZoomFromBrowser(browser);
       if (zoom != 1) zoom = this.getZoomFromDocument(d);
+      
+      docPatcher.linkAlertHack(true);
       
       try {
         docPatcher.opaque(true);
@@ -8346,12 +8361,12 @@ ClearClickHandler.prototype = {
       if (typeof(bgStyle) == "string") dElem.style.background = bgStyle;
      
       docPatcher.opaque(false);
+      docPatcher.linkAlertHack(false);
       
       if (objClass) objClass.reset();
       if (frameClass) frameClass.reset();
       if (viewer) viewer.enableRendering = true;
     }
-    
     
     return ret;
  
@@ -8544,6 +8559,33 @@ DocPatcher.prototype = {
         this.ns.updateStyleSheet(sheetHandle, false);
       }
     }
+  },
+  
+  _linkAlertBox: null,
+  linkAlertHack: function(toggle) {
+    try {
+      var w = this.o.ownerDocument.defaultView.top;
+      var d = w.document;
+      if (toggle) {
+        var box = d.getElementById("linkalert-box");
+        if (!box || box.style.display) return;
+        var imgs = box.getElementsByTagName("img");
+        if (imgs.length > 5) return;
+        var img;
+        for (var j = imgs.length; j-- > 0;) {
+          img = imgs[j];
+          if (!/^(?:chrome:\/\/linkalert\/skin\/|(?:moz\-icon|file):\/\/)/.test(img.src) || img.naturalWidth == 0 ||
+            img.offsetWidth > 32 || img.offsetHeight > 32) return;
+        }
+        box.style.display = "none";
+        this._linkAlertBox = box;
+      } else {
+        if (this._linkAlertBox) {
+          this._linkAlertBox.style.display = "";
+          this._linkAlertBox = null;
+        }
+      }
+    } catch (e) {}
   }
 }
 
