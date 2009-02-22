@@ -25,8 +25,10 @@ const CI = Components.interfaces;
 const CC = Components.classes;
 const WP_STATE_START = CI.nsIWebProgressListener.STATE_START;
 const WP_STATE_STOP = CI.nsIWebProgressListener.STATE_STOP;
+const WP_STATE_TRANSFERRING = CI.nsIWebProgressListener.STATE_TRANSFERRING;
 const WP_STATE_DOC = CI.nsIWebProgressListener.STATE_IS_DOCUMENT;
 const WP_STATE_START_DOC = WP_STATE_START | WP_STATE_DOC;
+const WP_STATE_TRANSFERRING_DOC = WP_STATE_TRANSFERRING | WP_STATE_DOC;
 
 const NS_BINDING_ABORTED = 0x804B0002;
 const CP_OK = 1;
@@ -862,7 +864,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.0.5",
+  VERSION: "1.9.0.6",
   
   get wrappedJSObject() {
     return this;
@@ -2412,7 +2414,8 @@ NoscriptService.prototype = {
   // REJECT_SERVER = -3
   // ACCEPT = 1
   
-  POLICY1_9: "TYPE_XBL" in CI.nsIContentPolicy,
+  POLICY_XBL: "TYPE_XBL" in CI.nsIContentPolicy,
+  POLICY_OBJSUB: "TYPE_OBJECT_SUBREQUEST" in CI.nsIContentPolicy,
   noopContentPolicy: {
     shouldLoad: CP_NOP,
     shouldProcess: CP_NOP
@@ -2448,7 +2451,7 @@ NoscriptService.prototype = {
   },
   
   get nopXBL() {
-    const v = this.POLICY1_9
+    const v = this.POLICY_XBL
       ? "chrome://global/content/bindings/general.xml#basecontrol"
       : this.contentBase + "noscript.xbl#nop";
     this.__defineGetter__("nopXBL", function() { return v; });
@@ -2470,7 +2473,7 @@ NoscriptService.prototype = {
       } else logBlock = false;
       
       try {
-        if (aContentType == 1 && !this.POLICY1_9) { // compatibility for type OTHER
+        if (aContentType == 1 && !this.POLICY_OBJSUB) { // compatibility for type OTHER
           if (aContext instanceof CI.nsIDOMHTMLDocument) {
             aContentType = arguments.callee.caller ? 11 : 9;
           } else if ((aContext instanceof CI.nsIDOMHTMLElement)) {
@@ -2765,7 +2768,7 @@ NoscriptService.prototype = {
                   if (logIntercept) this.dump("Silverlight " + aContentLocation.spec + " " + typeof(aContext) + " " + aContentType + ", " + aInternalCall);
                  
                   
-                  forbid = aContentType == 12 || !this.POLICY1_9;
+                  forbid = aContentType == 12 || !this.POLICY_OBJSUB;
                   this.setExpando(aContext, "silverlight", aContentType != 12);
                   if (!forbid) return CP_OK;
                   /*
@@ -2782,7 +2785,7 @@ NoscriptService.prototype = {
                   locationURL = this.resolveSilverlightURL(aRequestOrigin, aContext);
                   locationSite = this.getSite(locationURL);
                   
-                  if (!this.POLICY1_9)  forbid = locationURL != (aRequestOrigin && aRequestOrigin.spec);
+                  if (!this.POLICY_OBJSUB)  forbid = locationURL != (aRequestOrigin && aRequestOrigin.spec);
                   
                   if(!forbid || this.isAllowedObject(locationURL, mimeKey, locationSite)) {
                     if (logIntercept && forbid) this.dump("Silverlight " + locationURL + " is whitelisted, ALLOW");
@@ -3683,8 +3686,8 @@ NoscriptService.prototype = {
   
   
   findObjectAncestor: function(embed) {
-    if (embed instanceof CI.nsIDOMHTMLEmbedElement) {
-      const objType = CI.nsIDOMHTMLObjectElement;
+    const objType = CI.nsIDOMHTMLObjectElement;
+    if (embed instanceof CI.nsIDOMHTMLEmbedElement || embed instanceof objType) {
       for (var o = embed; (o = o.parentNode);) {
         if (o instanceof objType) return o;
       }
@@ -4435,7 +4438,7 @@ NoscriptService.prototype = {
   // nsIWebProgressListener implementation
   onLinkIconAvailable: function(x) {}, // tabbrowser.xml bug?
   onStateChange: function(wp, req, stateFlags, status) {
-    var ph;
+    var ph, w;
 
     if (stateFlags & WP_STATE_START) {
       if (req instanceof CI.nsIHttpChannel) {
@@ -4453,7 +4456,7 @@ NoscriptService.prototype = {
           ) 
           return;
         
-        var w = wp.DOMWindow;
+        w = wp.DOMWindow;
   
         if (w && w.frameElement) {
           ph = ph || ABE.extractFromChannel(req, "noscript.policyHints", true);
@@ -4477,7 +4480,8 @@ NoscriptService.prototype = {
             if (scriptSite != originSite && this.getPref("checkHijackings"))
               new RequestFilter(req, new HijackChecker(this));
           } 
-        } else if (req instanceof CI.nsIHttpChannel && wp.DOMWindow.document instanceof CI.nsIDOMXULDocument) {
+        } else if (req instanceof CI.nsIHttpChannel && wp.DOMWindow.document instanceof CI.nsIDOMXULDocument
+                   && !/^(?:chrome|resource):/i.test(wp.DOMWindow.document.documentURI)) {
           if (!this.isJSEnabled(req.URI.prePath)) {
             req.cancel(NS_BINDING_ABORTED);
             if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Aborted script " + req.URI.spec);
@@ -4486,6 +4490,11 @@ NoscriptService.prototype = {
       } catch(e) {}
     } else if (stateFlags & WP_STATE_STOP) {
       ABE.extractFromChannel(req, "noscript.policyHints"); // release hints
+    } else if ((stateFlags & WP_STATE_TRANSFERRING_DOC) == WP_STATE_TRANSFERRING_DOC) {
+      w = wp.DOMWindow;
+      if (w && w != w.top && (req instanceof CI.nsIHttpChannel)) {
+        this.onBeforeLoad(req, w, req.URI);
+      } 
     }
   },
   
@@ -4527,7 +4536,6 @@ NoscriptService.prototype = {
         this.showFrameOptError(domWindow, req.URI.spec);
         return; // canceled by frame options
       }
-      if (domWindow) this.onBeforeLoad(req, domWindow, req.URI);
     } catch(e) {
       if (this.consoleDump) this.dump(e);
     }
@@ -4658,8 +4666,6 @@ NoscriptService.prototype = {
         if (xssInfo) overlay.notifyXSSOnLoad(xssInfo);
       }
     }
-
-    
   },
   
   get clearClickHandler() {
@@ -4764,7 +4770,7 @@ NoscriptService.prototype = {
           win.location.href = encodeURI("javascript:try { " + this.jsHack + " } catch(e) {} void(0)");
         } catch(jsHackEx) {}
       }
-      ScriptSurrogate.apply(win.document, win.document.URL);
+      ScriptSurrogate.apply(win.document, url, url);
     } catch(e) {}
     
   },
@@ -8813,9 +8819,9 @@ const ScriptSurrogate = {
     return scripts && "try { (function() {" + scripts.join("})(); (function() {") + "})(); } catch(e) {}";
   },
 
-  apply: function(document, url) {
+  apply: function(document, scriptURL, pageURL) {
     if (!this.enabled) return;
-    var scriptBlock = this.getScriptBlock(url, document.URL);
+    var scriptBlock = this.getScriptBlock(scriptURL, pageURL);
     if (scriptBlock) this.execute(document, scriptBlock);
   },
   
@@ -8823,7 +8829,7 @@ const ScriptSurrogate = {
     var s = document.createElementNS(HTML_NS, "script");
     s.id = "__noscriptSurrogate__" + DOMUtils.rndId();
     s.appendChild(document.createTextNode(scriptBlock +
-      ";(function(){var s = document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
+      ";(function(){var s=document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
     document.documentElement.insertBefore(s, document.documentElement.firstChild);
   }
 }

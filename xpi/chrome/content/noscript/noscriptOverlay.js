@@ -113,9 +113,14 @@ var noscriptOverlay = noscriptUtil.service ?
     
     popup.addEventListener("popuphidden", function(ev) { noscriptOverlay.onMenuHidden(ev) }, false);
     
+    popup.style.visibility = "hidden"; // bug 4066046
+    popup.addEventListener("popupshown", noscriptOverlay.onMenuShown, false);
+                           
     this.prepareMenu(popup);
   },
-  
+  onMenuShown: function(ev) {
+    ev.currentTarget.style.visibility = "";
+  },
   
   _reloadDirty: false,
   
@@ -156,6 +161,7 @@ var noscriptOverlay = noscriptUtil.service ?
     this.updateStatusClass(menu);
     menu.setAttribute("tooltiptext", this.statusIcon.getAttribute("tooltiptext"));
   }
+  
 ,
   toggleMenuOpt: function(node) {
     var val=node.getAttribute("checked")=="true";
@@ -1847,7 +1853,7 @@ var noscriptOverlay = noscriptUtil.service ?
       if (!context) return; // not a browser window?
       
       context.addEventListener("popupshowing", this.onMainContextMenu, false);
-     
+      
       var b = getBrowser();
         
       const nsIWebProgress = Components.interfaces.nsIWebProgress;
@@ -1891,9 +1897,8 @@ var noscriptOverlay = noscriptUtil.service ?
       noscriptOverlay.prefsObserver.remove();
       noscriptOverlay.shortcutKeys.remove();
       
-      document.getElementById("contentAreaContextMenu")
-              .removeEventListener("popupshowing", this.onMainContextMenu, false);
-              
+     document.getElementById("contentAreaContextMenu").removeEventListener("popupshowing", this.onMainContextMenu, false);
+      
     }
     
   }, // END listeners
