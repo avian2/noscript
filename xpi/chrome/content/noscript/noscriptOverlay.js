@@ -113,7 +113,7 @@ var noscriptOverlay = noscriptUtil.service ?
     
     popup.addEventListener("popuphidden", function(ev) { noscriptOverlay.onMenuHidden(ev) }, false);
     
-    popup.style.visibility = "hidden"; // bug 4066046
+    popup.style.visibility = "hidden"; // work-around for bug 4066046
     popup.addEventListener("popupshown", noscriptOverlay.onMenuShown, false);
                            
     this.prepareMenu(popup);

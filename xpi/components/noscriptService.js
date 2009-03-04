@@ -864,7 +864,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.0.6",
+  VERSION: "1.9.0.8",
   
   get wrappedJSObject() {
     return this;
@@ -2834,12 +2834,12 @@ NoscriptService.prototype = {
             ? "forbidIFramesParentTrustCheck" : "forbidActiveContentParentTrustCheck", true)
             ));
         }
-        
-        // hack for bug 472495: we must avoid to do it for Flash and other scriptable plugins,
-        // not to trigger bug 453825 :(
-        if (!(isJava || isFlash || isSilverlight) && /\binnerHTML\b/.test(new Error().stack)) {
-          this.dump("Adding DOMNodeRemoved (bug 472495 work-around)");
-          aContext.ownerDocument.defaultView.addEventListener("DOMNodeRemoved", this._domNodeRemoved, true); 
+         
+        if (/\binnerHTML\b/.test(new Error().stack)) {
+          aContext.ownerDocument.location.href = 'javascript:window.__defineGetter__("top", Window.prototype.__lookupGetter__("top"))';
+          this.dump("Locked window.top (bug 453825 work-around)");
+          aContext.ownerDocument.defaultView.addEventListener("DOMNodeRemoved", this._domNodeRemoved, true);
+          this.dump("Added DOMNodeRemoved (bug 472495 work-around)");
         }
         
         
@@ -4573,8 +4573,6 @@ NoscriptService.prototype = {
       req.cancel(NS_BINDING_ABORTED);
     }
   
-   
-    
     
     const topWin = domWindow == domWindow.top;
 
