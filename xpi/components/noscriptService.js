@@ -864,7 +864,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.0.8",
+  VERSION: "1.9.1",
   
   get wrappedJSObject() {
     return this;
@@ -2837,9 +2837,9 @@ NoscriptService.prototype = {
          
         if (/\binnerHTML\b/.test(new Error().stack)) {
           aContext.ownerDocument.location.href = 'javascript:window.__defineGetter__("top", Window.prototype.__lookupGetter__("top"))';
-          this.dump("Locked window.top (bug 453825 work-around)");
+          if (this.consoleDump) this.dump("Locked window.top (bug 453825 work-around)");
           aContext.ownerDocument.defaultView.addEventListener("DOMNodeRemoved", this._domNodeRemoved, true);
-          this.dump("Added DOMNodeRemoved (bug 472495 work-around)");
+          if (this.consoleDump) this.dump("Added DOMNodeRemoved (bug 472495 work-around)");
         }
         
         
@@ -4988,6 +4988,7 @@ NoscriptService.prototype = {
         a.__noscriptFixed = true;
       }
       if (callback) {
+        if (typeof(/ /) == "function") ev.preventDefault(); // Gecko < 1.9
         this.attemptNavigation(doc, fixedHref, callback);
         ev.preventDefault();
       }
@@ -6477,7 +6478,7 @@ var InjectionChecker = {
         /\\/.test(s) && this.attributesChecker.test(this.unescapeCSS(s));
   },
   
-  HTMLChecker: new RegExp("<\\W*(?:[^>\\s]*:)?\\W*(?:" + // take in account quirks and namespaces
+  HTMLChecker: new RegExp("<[^\w<>]*(?:[^<>\"\'\\s]*:)?[^\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video|audio") + 
     ")|[/'\"]\\W*(?:FSCommand|on(?:error|[a-df-z][a-z]{2,}))[\\s\\x08]*=", 
     "i"),
@@ -6486,7 +6487,7 @@ var InjectionChecker = {
     return this.HTMLChecker.test(s);
   },
   
-  NoscriptChecker: new RegExp("<\\W*(?:[^>\\s]*:)?\\W*(?:" +
+  NoscriptChecker: new RegExp("<[^\w<>]*(?:[^<>\"\'\\s]*:)?[^\w<>]*(?:" +
     fuzzify("form|style|link|object|embed|applet|iframe|frame|meta|svg|video|audio") + ")"
     ),
   checkNoscript: function(s) {
@@ -7743,6 +7744,7 @@ ClearClickHandler.prototype = {
     return this._zoom = zoom > 0 ? zoom : this._zoom;
   },
   
+    
   getBox: function(o, d, w) {
     var zoom = this._zoom || 1;
     if (!d) d = o.ownerDocument;
@@ -7751,7 +7753,10 @@ ClearClickHandler.prototype = {
     var b = d.getBoxObjectFor(o); // TODO: invent something when boxObject is missing or failing
     var c = d.getBoxObjectFor(d.documentElement);
     var p;
-    var r = { width: b.width, height: b.height, screenX: b.screenX, screenY: b.screenY };
+    var r = {
+      width: b.width, height: b.height,
+      screenX: b.screenX, screenY: b.screenY
+    };
     
     const ns = this.ns;
     var verbose = ns.consoleDump & LOG_CLEARCLICK;
@@ -7977,8 +7982,12 @@ ClearClickHandler.prototype = {
             this.prompting = true;
             var params = {
               url: isEmbed && (o.src || o.data) || o.ownerDocument.URL,
+              pageURL: w.location.href,
+              topURL: w.top.location.href,
               img: ctx.img,
-              locked: false
+              locked: false,
+              pageX: ev.pageX,
+              pageY: ev.pageY
             };
             ns.domUtils.findBrowserForNode(w).ownerDocument.defaultView.openDialog(
               "chrome://noscript/content/clearClick.xul",
@@ -8201,6 +8210,11 @@ ClearClickHandler.prototype = {
 
         if (ctx.isEmbed) { // check in-page vieport
           vp.frame = null;
+          vp.x = Math.max(vp.x, box.x);
+          vp.y = Math.max(vp.y, box.y);
+          vp.width = Math.min(vp.width, box.width);
+          vp.height = Math.min(vp.height, box.height);
+          
           for(form = o; form = form.parentNode;) {
   
             if ((form.offsetWidth < box.width || form.offsetHeight < box.height) &&
@@ -8260,10 +8274,10 @@ ClearClickHandler.prototype = {
         docPatcher.clean(false);
       }
     
-  
-      var rootElement = top.document.documentElement;
-     
-      var rootBox = rootElement.ownerDocument.getBoxObjectFor(rootElement);
+      with(top.document) {
+        var rootElement = documentElement;
+        var rootBox = getBoxObjectFor(rootElement);
+      }
       
       var offsetX = (box.screenX - rootBox.screenX) / zoom;
       var offsetY = (box.screenY - rootBox.screenY) / zoom;

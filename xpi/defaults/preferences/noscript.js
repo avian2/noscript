@@ -202,7 +202,9 @@ pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return {__noSuchMethod__:_0}}}");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.ga.exceptions", "");
-
+pref("noscript.surrogate.yieldman.replacement", "with(window)rmAddKey=rmAddCustomKey=rmShowAd=rmShowPop=rmShowInterstitial=rmGetQueryParameters=rmGetSize=rmGetWindowUrl=rmGetPubRedirect=rmGetClickUrl=rmReplace=rmTrim=rmUrlEncode=rmCanShowPop=rmCookieExists=rmWritePopFrequencyCookie=rmWritePopExpirationCookie=flashIntalledCookieExists=writeFlashInstalledCookie=flashDetection=rmGetCookie=function(){}");
+pref("noscript.surrogate.yieldman.sources", "*.yieldmanager.com");
 pref("noscript.placeholderMinSize", 32);
 
 pref("noscript.compat.evernote", true);
+

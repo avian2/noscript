@@ -29,12 +29,18 @@
 %noscriptFB;
 ]
 >
-<dialog id="clearClick" 
+<dialog id="clearClick"
+  title="&noscriptClearClickTitle;"
   onload="ClearClick.init()"
   ondialogaccept="ClearClick.end()"
 	ondialogdisclosure="ClearClick.disclosure()"
-  title="&noscriptClearClickTitle;"
-	buttons="accept,disclosure"
+  ondialogextra1="ClearClick.report()"
+ 
+  
+	buttons="accept,extra1,disclosure"
+  buttonlabelextra1="&noscriptClearClickReport;"
+  buttonaccesskeyextra1="&noscriptClearClickReport.accesskey;"
+  
   spacerflex="1"
   persist="screenX screenY"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -71,6 +77,12 @@
       <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
       <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
     </hbox>
+    <hbox>
+      <label id="report" collapsed="true">&noscriptClearClickReportId;</label>
+      <label id="report-id" value="" />
+      <progressmeter id="progress" mode="undetermined" collapsed="true" flex="1"/>
+    </hbox>
+    
 		</vbox>
    </hbox>
 </dialog>

@@ -140,16 +140,10 @@
 <!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
 <!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image below to cycle between the obstructed and the clear version.">
 <!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptClearClickReport "Report">
-<!ENTITY noscriptClearClickReport.accesskey "R">
-<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Opaque embedded objects on pages…">
 <!ENTITY noscriptTrustedPagesAdj "trusted">
 <!ENTITY noscriptUntrustedPagesAdj "untrusted">
 <!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
 <!ENTITY noscriptEmbeddings "Embedded Objects">
-<!ENTITY noscriptPrev "Previous">
+<!ENTITY noscriptPrev "Previuous">
 <!ENTITY noscriptNext "Next">
-<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
-<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
-<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
