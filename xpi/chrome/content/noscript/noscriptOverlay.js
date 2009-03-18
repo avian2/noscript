@@ -243,6 +243,7 @@ var noscriptOverlay = noscriptUtil.service ?
     // copy status bar menus
     ["noscript-statusIcon", "noscript-statusLabel"].forEach(function(id) {
       var parent = document.getElementById(id);
+      if (!parent) return;
       if (parent.firstChild && /popup/.test(parent.firstChild.tagName)) return;
       var clone = popup.cloneNode(true);
       clone.id  = parent.id + "-popup";
@@ -1928,9 +1929,9 @@ var noscriptOverlay = noscriptUtil.service ?
     if (!this._browserReady) return null;
     delete this.currentBrowser;
     this.__defineGetter__("currentBrowser",
-      window.gBrowser
-      ? function() { return gBrowser.selectedBrowser; }
-      : function() { return Browser.currentBrowser; }
+      window.gBrowser && function() { return gBrowser.selectedBrowser; }
+      || Browser.selectedBrowser && function() { return Browser.selectedBrowser; }
+      || Browser.currentBrowser && function() { return Browser.currentBrowser; }
     );
     return this.currentBrowser;
   },

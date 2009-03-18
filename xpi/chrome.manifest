@@ -18,7 +18,7 @@ content	noscript	jar:chrome/noscript.jar!/content/noscript/ xpcnativewrappers=ye
 skin	noscript	classic/1.0	jar:chrome/noscript.jar!/skin/classic/noscript/
 style	chrome://global/content/customizeToolbar.xul	chrome://noscript/skin/browser.css
 
-locale	noscript	en-US	jar:chrome/noscript.jar!/content/noscript/en-US/cp 
+locale	noscript	en-US	jar:chrome/noscript.jar!/content/noscript/en-US/
 locale	noscript	de-DE	jar:chrome/noscript.jar!/locale/de-DE/noscript/
 locale	noscript	fr-FR	jar:chrome/noscript.jar!/locale/fr-FR/noscript/
 locale	noscript	ar	jar:chrome/noscript.jar!/locale/ar/noscript/

@@ -864,7 +864,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.1",
+  VERSION: "1.9.1.2",
   
   get wrappedJSObject() {
     return this;
@@ -2486,12 +2486,17 @@ NoscriptService.prototype = {
           arguments[0] = aContentType;
         }
         
+        scheme = aContentLocation.scheme;
+        if (this.httpsForced && !aInternalCall && aContentType != 6 && aContentType != 7 && scheme == "http")
+          HTTPS.forceHttpsPolicy(aContentLocation, aContext);
+        
         if (logIntercept && this.cpConsoleFilter.indexOf(aContentType) > -1) {
           this.cpDump("processing", aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall);
           if (this.consoleDump & LOG_CONTENT_CALL)
              this.dump(new Error().stack);
         }
 
+        
         switch (aContentType) {
           case 9: // XBL - warning, in 1.8.x could also be XMLHttpRequest...
             return this.forbidXBL && 
@@ -2601,7 +2606,7 @@ NoscriptService.prototype = {
             if (this.checkJarDocument(aContentLocation, aContext)) 
               return this.reject("JAR Document", arguments);
             
-            scheme = aContentLocation.scheme;
+           
             
             if (aRequestOrigin && aRequestOrigin != aContentLocation) {
               
@@ -4467,7 +4472,7 @@ NoscriptService.prototype = {
         }
         
         this._handleDocJS1(w, req);
-        if (HTTPS.forceHttps(req)) {
+        if (HTTPS.forceHttps(req, w)) {
           this._handleDocJS2(w, req);
         }
       } else try {
@@ -6478,7 +6483,7 @@ var InjectionChecker = {
         /\\/.test(s) && this.attributesChecker.test(this.unescapeCSS(s));
   },
   
-  HTMLChecker: new RegExp("<[^\w<>]*(?:[^<>\"\'\\s]*:)?[^\w<>]*(?:" + // take in account quirks and namespaces
+  HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video|audio") + 
     ")|[/'\"]\\W*(?:FSCommand|on(?:error|[a-df-z][a-z]{2,}))[\\s\\x08]*=", 
     "i"),
@@ -6487,7 +6492,7 @@ var InjectionChecker = {
     return this.HTMLChecker.test(s);
   },
   
-  NoscriptChecker: new RegExp("<[^\w<>]*(?:[^<>\"\'\\s]*:)?[^\w<>]*(?:" +
+  NoscriptChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" +
     fuzzify("form|style|link|object|embed|applet|iframe|frame|meta|svg|video|audio") + ")"
     ),
   checkNoscript: function(s) {
@@ -7504,7 +7509,7 @@ var HTTPS = {
     }
   },
   
-  forceHttps: function(req) {
+  forceHttps: function(req, w) {
     const ns = this.service;
     var uri;
     if (ns.httpsForced && (uri = req.URI).schemeIs("http") && ns.httpsForced.test(uri.spec) &&
@@ -7512,11 +7517,31 @@ var HTTPS = {
         uri = uri.clone();
         uri.scheme = "https";
         req.cancel(NS_BINDING_ABORTED);
-        ns.requestWatchdog.findWindow(req).location = uri.spec;
-        this.log("Forced HTTPS on " + uri.spec);
+        (w || ns.requestWatchdog.findWindow(req)).location = uri.spec;
+        this.log("Forced HTTPS document on " + uri.spec);
         return true;
       }
       return false;
+  },
+  
+  forceHttpsPolicy: function(uri, ctx) {
+    const ns = this.service;
+    if (ns.httpsForced && ns.httpsForced.test(uri.spec) && !(ns.httpsForcedExceptions && ns.httpsForcedExceptions.test(uri.spec))) {
+      httpsURI = uri.clone();
+      httpsURI.scheme = "https";
+      for each (var attr in ["src", "data", "href"]) {
+        try {
+          if (attr in ctx) {
+            ctx[attr] = httpsURI.spec;
+          }
+        } catch(e) { this.log(e.message); }
+      }
+      
+      this.log("Forcing HTTPS policy on " + uri.spec);
+      uri.spec = httpsURI.spec;
+      return true;
+    }
+    return false;
   }
   
 }
