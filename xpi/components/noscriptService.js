@@ -864,7 +864,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.1.2",
+  VERSION: "1.9.1.4",
   
   get wrappedJSObject() {
     return this;
@@ -1606,7 +1606,7 @@ NoscriptService.prototype = {
           try {
             ph.setBoolPref(key, true);
             prots.push(key.replace("expose.", ""));
-            if (ph.hasUserPref(key)) ph.clearUserPref(key);
+            if (ph.prefHasUserValue(key)) ph.clearUserPref(key);
           } catch(e1) {}
         }
         if (prots.length) this.extraCapturedProtocols = prots;
@@ -2487,8 +2487,11 @@ NoscriptService.prototype = {
         }
         
         scheme = aContentLocation.scheme;
-        if (this.httpsForced && !aInternalCall && aContentType != 6 && aContentType != 7 && scheme == "http")
-          HTTPS.forceHttpsPolicy(aContentLocation, aContext);
+        if (this.httpsForced && !aInternalCall &&
+              (aContentType != 6 && aContentType != 7
+                || !this.POLICY_OBJSUB // Gecko < 1.9, early check for documents as well
+            ) && scheme == "http")
+          HTTPS.forceHttpsPolicy(aContentLocation, aContext, aContentType);
         
         if (logIntercept && this.cpConsoleFilter.indexOf(aContentType) > -1) {
           this.cpDump("processing", aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall);
@@ -3965,7 +3968,7 @@ NoscriptService.prototype = {
           }
         }
         
-        if(collapse) {
+        if (collapse || style.display == "none" || style.visibility == "hidden") {
           innerDiv.style.maxWidth = anchor.style.maxWidth = "32px";
           innerDiv.style.maxHeight = anchor.style.maxHeight = "32px";
         }
@@ -7521,22 +7524,23 @@ var HTTPS = {
         this.log("Forced HTTPS document on " + uri.spec);
         return true;
       }
-      return false;
+    return false;
   },
   
-  forceHttpsPolicy: function(uri, ctx) {
+  forceHttpsPolicy: function(uri, ctx, type) {
     const ns = this.service;
     if (ns.httpsForced && ns.httpsForced.test(uri.spec) && !(ns.httpsForcedExceptions && ns.httpsForcedExceptions.test(uri.spec))) {
-      httpsURI = uri.clone();
+      var httpsURI = uri.clone();
       httpsURI.scheme = "https";
-      for each (var attr in ["src", "data", "href"]) {
-        try {
-          if (attr in ctx) {
-            ctx[attr] = httpsURI.spec;
-          }
-        } catch(e) { this.log(e.message); }
+      if (type != 6 && type != 7) {  
+        for each (var attr in ["src", "data", "href"]) {
+          try {
+            if (attr in ctx) {
+              ctx[attr] = httpsURI.spec;
+            }
+          } catch(e) { this.log(e.message); }
+        }
       }
-      
       this.log("Forcing HTTPS policy on " + uri.spec);
       uri.spec = httpsURI.spec;
       return true;
@@ -7590,7 +7594,7 @@ URIPatternList.prototype = {
           // glob matching
           if (hasPath) p += '$'; 
 
-          return '^' + p.replace(/^([^\/:]+:\/*)\*/, "$1[^/]*").replace(/\*/g, '.*?');
+          return '^' + p.replace(/\*/g, '.*?').replace(/^([^\/:]+:\/*)\.\*/, "$1[^/]*");
         } 
         // raw regexp!
         try {
