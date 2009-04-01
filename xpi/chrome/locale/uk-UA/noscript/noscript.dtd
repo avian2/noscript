@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Модулі">
 <!ENTITY noscriptContentBlocker "Застосовувати ці обмеження і до довірених сайтів">
 <!ENTITY noscriptForbidJava "Заборонити Java™">
+<!ENTITY noscriptForbidXSLT "Заборонити XSLT">
 <!ENTITY noscriptForbidWebBugs "Заборонити «Web Bugs»">
 <!ENTITY noscriptForbidSilverlight "Заборонити Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Заборонити &lt;IFRAME&gt;">

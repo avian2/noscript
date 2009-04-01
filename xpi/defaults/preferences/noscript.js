@@ -207,4 +207,6 @@ pref("noscript.surrogate.yieldman.sources", "*.yieldmanager.com");
 pref("noscript.placeholderMinSize", 32);
 
 pref("noscript.compat.evernote", true);
+pref("noscript.compat.gnotes", true);
 
+pref("noscript.forbidXSLT", true);

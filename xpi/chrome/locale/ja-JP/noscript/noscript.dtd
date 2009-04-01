@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "プラグイン">
 <!ENTITY noscriptContentBlocker "信頼しているサイトにもこれらの制限を適用する">
 <!ENTITY noscriptForbidJava "Java™ の禁止">
+<!ENTITY noscriptForbidXSLT "XSLT の禁止">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; の禁止">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ の禁止">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; の禁止">

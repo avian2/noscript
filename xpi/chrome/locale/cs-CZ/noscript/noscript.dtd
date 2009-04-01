@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Zásuvné moduly">
 <!ENTITY noscriptContentBlocker "Použít tato omezení i pro důvěryhodné stránky">
 <!ENTITY noscriptForbidJava "Zakázat Java™">
+<!ENTITY noscriptForbidXSLT "Zakázat XSLT">
 <!ENTITY noscriptForbidWebBugs "Zakázat &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Zakázat Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Zakázat &lt;IFRAME&gt;">

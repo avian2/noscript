@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Plugin">
 <!ENTITY noscriptContentBlocker "Laksanakan syarat ini untuk laman yang dipercayai ini juga">
 <!ENTITY noscriptForbidJava "Halang Java™">
+<!ENTITY noscriptForbidXSLT "Halang XSLT">
 <!ENTITY noscriptForbidWebBugs "Halang &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Halang Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Halang &lt;IFRAME&gt;">

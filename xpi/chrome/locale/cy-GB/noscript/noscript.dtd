@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Atodyn">
 <!ENTITY noscriptContentBlocker "Rhoi&apos;r rhwystrau hyn ar waith ar wefannau dilys hefyd">
 <!ENTITY noscriptForbidJava "Gwahardd Java™">
+<!ENTITY noscriptForbidXSLT "Gwahardd XSLT">
 <!ENTITY noscriptForbidWebBugs "Gwahardd &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Gwahardd Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Gwahardd &lt;IFRAME&gt;">

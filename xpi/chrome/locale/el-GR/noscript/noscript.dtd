@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Πρόσθετες λειτουργίες">
 <!ENTITY noscriptContentBlocker "Εφαρμογή αυτών των περιορισμών και σε έμπιστους ιστότοπους">
 <!ENTITY noscriptForbidJava "Απαγόρευση εκτέλεσης Java™">
+<!ENTITY noscriptForbidXSLT "Απαγόρευση εκτέλεσης XSLT">
 <!ENTITY noscriptForbidWebBugs "Απαγόρευση εκτέλεσης «Web Bugs»">
 <!ENTITY noscriptForbidSilverlight "Απαγόρευση εκτέλεσης Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Απαγόρευση εκτέλεσης &lt;IFRAME&gt;">

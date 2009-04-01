@@ -95,8 +95,10 @@ var ClearClick = {
       top_url: p.topURL,
       x: p.pageX,
       y: p.pageY,
+      zoom: p.zoom,
       img1: p.img.src,
-      img2: p.img.altSrc
+      img2: p.img.altSrc,
+      version: noscriptUtil.service.VERSION
     };
     var post = [];
     for(var k in data) {

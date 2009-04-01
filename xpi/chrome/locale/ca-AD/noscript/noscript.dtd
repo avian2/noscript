@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Plugins">
 <!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Prohibeix el Java™">
+<!ENTITY noscriptForbidXSLT "Prohibeix el XSLT">
 <!ENTITY noscriptForbidWebBugs "Prohibeix el &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Prohibeix el Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Prohibeix el &lt;IFRAME&gt;">

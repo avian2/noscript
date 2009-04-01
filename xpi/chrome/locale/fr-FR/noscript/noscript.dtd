@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Greffons">
 <!ENTITY noscriptContentBlocker "Appliquer ces restrictions également aux sites de confiance">
 <!ENTITY noscriptForbidJava "Interdire Java™">
+<!ENTITY noscriptForbidXSLT "Interdire XSLT">
 <!ENTITY noscriptForbidWebBugs "Interdire &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Interdire Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Interdire &lt;IFRAME&gt;">

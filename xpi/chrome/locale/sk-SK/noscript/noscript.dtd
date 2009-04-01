@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Zásuvné moduly">
 <!ENTITY noscriptContentBlocker "Použiť tieto obmedzenia aj na dôveryhodné stránky">
 <!ENTITY noscriptForbidJava "Zakázať Java™">
+<!ENTITY noscriptForbidXSLT "Zakázať XSLT">
 <!ENTITY noscriptForbidWebBugs "Zakázať &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Zakázať Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Zakázať &lt;IFRAME&gt;">

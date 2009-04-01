@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Beépülők">
 <!ENTITY noscriptContentBlocker "A korlátozások alkalmazása a megbízható webhelyekre is">
 <!ENTITY noscriptForbidJava "A Java™ tiltása">
+<!ENTITY noscriptForbidXSLT "A XSLT tiltása">
 <!ENTITY noscriptForbidWebBugs "A &quot;Web Bugs&quot; tiltása">
 <!ENTITY noscriptForbidSilverlight "A Microsoft® Silverlight™ tiltása">
 <!ENTITY noscriptForbidIFrames "Az &lt;IFRAME&gt; tiltása">

@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "外掛">
 <!ENTITY noscriptContentBlocker "一併將這些限制應用到信任的網站">
 <!ENTITY noscriptForbidJava "禁止 Java™">
+<!ENTITY noscriptForbidXSLT "禁止 XSLT">
 <!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">

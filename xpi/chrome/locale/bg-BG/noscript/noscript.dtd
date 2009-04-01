@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Приставки">
 <!ENTITY noscriptContentBlocker "Прилагане на тези ограничения и към доверените сайтове">
 <!ENTITY noscriptForbidJava "Забрани Java™">
+<!ENTITY noscriptForbidXSLT "Забрани XSLT">
 <!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">

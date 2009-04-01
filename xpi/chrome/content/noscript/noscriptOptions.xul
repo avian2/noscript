@@ -308,6 +308,7 @@
                 <checkbox id="opt-nselNever" label="&noscriptNselNever;" oncommand="nsopt.syncNsel(this)" />
                 <checkbox id="opt-blockNSWB" label="&noscriptForbidWebBugs;" />
                 <checkbox id="opt-forbidMetaRefresh" label="&noscriptForbidMetaRefresh;" />
+                <checkbox id="opt-forbidXSLT" label="&noscriptForbidXSLT;" />
                 <separator class="thin"/>
                 <checkbox id="opt-fixLinks" label="&noscriptFixLinks;" />
              <separator />

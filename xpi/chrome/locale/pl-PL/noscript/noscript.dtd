@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Wtyczki">
 <!ENTITY noscriptContentBlocker "Zastosuj te ograniczenia także do zaufanych witryn">
 <!ENTITY noscriptForbidJava "Blokuj aplety Java™">
+<!ENTITY noscriptForbidXSLT "Blokuj aplety XSLT">
 <!ENTITY noscriptForbidWebBugs "Blokuj &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Blokuj aplety Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Blokuj aplety &lt;IFRAME&gt;">

@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Pluginad">
 <!ENTITY noscriptContentBlocker "Kehtesta antud piirangud ka usaldusväärsete saitide jaoks">
 <!ENTITY noscriptForbidJava "Keela Java™">
+<!ENTITY noscriptForbidXSLT "Keela XSLT">
 <!ENTITY noscriptForbidWebBugs "Keela &quot;veebivead&quot;">
 <!ENTITY noscriptForbidSilverlight "Keela Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Keela &lt;IFRAME&gt;">

@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "플러그인">
 <!ENTITY noscriptContentBlocker "이 제한 조치를 신뢰할 수 있는 사이트에도 적용">
 <!ENTITY noscriptForbidJava "Java™ 금지">
+<!ENTITY noscriptForbidXSLT "XSLT 금지">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; 금지">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ 금지">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; 금지">

@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Pluginuri">
 <!ENTITY noscriptContentBlocker "Foloseşte aceste restricţii şi pentru paginile de încredere">
 <!ENTITY noscriptForbidJava "Blochează Java™">
+<!ENTITY noscriptForbidXSLT "Blochează XSLT">
 <!ENTITY noscriptForbidWebBugs "Blochează &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Blochează Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Blochează &lt;IFRAME&gt;">

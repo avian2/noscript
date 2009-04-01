@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Programtillegg">
 <!ENTITY noscriptContentBlocker "Bruk disse restriksjonene på pålitelige sider">
 <!ENTITY noscriptForbidJava "Forby Java™">
+<!ENTITY noscriptForbidXSLT "Forby XSLT">
 <!ENTITY noscriptForbidWebBugs "Forby &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forby Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forby &lt;IFRAME&gt;">

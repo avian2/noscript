@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Įskiepiai">
 <!ENTITY noscriptContentBlocker "Pritaikyti šiuos draudimus taip pat ir patikimoms svetainėms">
 <!ENTITY noscriptForbidJava "Uždrausti Java™">
+<!ENTITY noscriptForbidXSLT "Uždrausti XSLT">
 <!ENTITY noscriptForbidWebBugs "Uždrausti &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Uždrausti Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Uždrausti &lt;IFRAME&gt;">

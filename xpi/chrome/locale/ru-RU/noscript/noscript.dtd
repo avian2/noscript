@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Плагины">
 <!ENTITY noscriptContentBlocker "Применять эти ограничения и для доверенных сайтов">
 <!ENTITY noscriptForbidJava "Запретить отображение элементов Java™">
+<!ENTITY noscriptForbidXSLT "Запретить отображение элементов XSLT">
 <!ENTITY noscriptForbidWebBugs "Запретить отображение «Web Bugs»">
 <!ENTITY noscriptForbidSilverlight "Запретить отображение элементов Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Запретить отображение элементов &lt;IFRAME&gt;">

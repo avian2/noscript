@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Plugins">
 <!ENTITY noscriptContentBlocker "Примени ги овие ограничувања исто така и за страниците од доверба">
 <!ENTITY noscriptForbidJava "Оневозможи Јава (Java™)">
+<!ENTITY noscriptForbidXSLT "Оневозможи Јава (XSLT)">
 <!ENTITY noscriptForbidWebBugs "Оневозможи &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Оневозможи Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Оневозможи &lt;IFRAME&gt;">

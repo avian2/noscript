@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Eklentiler">
 <!ENTITY noscriptContentBlocker "Bu sınırlamaları güvenilen sitelere de uygula">
 <!ENTITY noscriptForbidJava "Java™&apos;yı engelle">
+<!ENTITY noscriptForbidXSLT "XSLT&apos;yı engelle">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot;ı engelle">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™&apos;ı engelle">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt;&apos;i engelle">

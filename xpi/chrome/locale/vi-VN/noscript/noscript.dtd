@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Plugins">
 <!ENTITY noscriptContentBlocker "Đồng thời áp dụng những hạn chế này cho các trang tin cậy">
 <!ENTITY noscriptForbidJava "Cấm Java™">
+<!ENTITY noscriptForbidXSLT "Cấm XSLT">
 <!ENTITY noscriptForbidWebBugs "Cấm &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Cấm Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Cấm &lt;IFRAME&gt;">

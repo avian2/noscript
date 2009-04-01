@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Плагиндер">
 <!ENTITY noscriptContentBlocker "Бұл шектеулерді сенімді сайттар үшін де қолдану">
 <!ENTITY noscriptForbidJava "Java™ тыйым салу">
+<!ENTITY noscriptForbidXSLT "XSLT тыйым салу">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; тыйым салу">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ тыйым салу">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; тыйым салу">
