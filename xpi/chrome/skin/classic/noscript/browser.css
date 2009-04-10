@@ -75,6 +75,11 @@
 #noscript-statusIcon.noscript-prt {
   list-style-image: url(prt16.png);
 }
+.noscript-subprt,
+#noscript-tbb.noscript-subprt,
+#noscript-statusIcon.noscript-subprt {
+  list-style-image: url(subprt16.png);
+}
 
 .noscript-yu,
 #noscript-tbb.noscript-yu,
@@ -120,7 +125,11 @@
 
 .noscript-inactive-prt,
 #noscript-tbb.noscript-inactive-prt,
-#noscript-statusIcon.noscript-inactive-prt {
+#noscript-statusIcon.noscript-inactive-prt,
+.noscript-inactive-subprt,
+#noscript-tbb.noscript-inactive-subprt,
+#noscript-statusIcon.noscript-inactive-subprt
+{
   list-style-image: url(inactive-no16.png);
 }
 

@@ -1384,6 +1384,11 @@ var noscriptOverlay = noscriptUtil.service ?
     return false;
   },
   
+  get _oldStylePartial() {
+    delete this._oldStylePartial;
+    return this._oldStylePartial = this.ns.getPref("oldStylePartial", false);
+  },
+  
   _syncUINow: function() {
     
     const ns = this.ns;
@@ -1397,6 +1402,8 @@ var noscriptOverlay = noscriptUtil.service ?
     
     const sites = this.getSites();
     
+    const oldStylePartial = this._oldStylePartial;
+    
     if (this._currentPopup && this._currentPopup.getAttribute("sticky") == "true" && this._currentPopup.state == "open") {
       this.prepareMenu(this._currentPopup, sites);
     }
@@ -1406,9 +1413,12 @@ var noscriptOverlay = noscriptUtil.service ?
     var totalAnnoyances = totalScripts + totalPlugins;
     var notificationNeeded = false;
     var allowedSites = [];
+    var activeSites = sites.pluginSites.concat(sites.docSites);
     var allowed = 0;
     var untrusted = 0;
     var isUntrusted = false;
+    var topTrusted = false;
+    
     if (global && !ns.alwaysBlockUntrustedContent) {
       lev = "glb";
     } else {
@@ -1420,31 +1430,33 @@ var noscriptOverlay = noscriptUtil.service ?
         isUntrusted = untrustedSites.matches(url);
         site = !isUntrusted && (global ? url : jsPSs.matches(url));
         
-        if (site && url == sites.topURL && !this.currentBrowser.webNavigation.allowJavascript)
-          site = null;
-          
+        if (site && url == sites.topURL) {
+          if (this.currentBrowser.webNavigation.allowJavascript) topTrusted = true;
+          else site = null;
+        }
         if (site) {
           if (ns.isPermanent(site) || allowedSites.indexOf(site) > -1) {
             total--;
           } else {
-            allowedSites.push(site);
+            if (oldStylePartial || activeSites.indexOf(url) > -1) allowedSites.push(site);
           }
         } else {
-          if(!notificationNeeded && url != "about:blank") {
-            if(isUntrusted) untrusted++;
-            else notificationNeeded = true;
+          if (isUntrusted) untrusted++;
+          else if(!notificationNeeded && url != "about:blank") {
+            notificationNeeded = true;
           }
         }
       }
       allowed = allowedSites.length;
       lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
             : allowed == 0 ? (global ? "untrusted-glb" : "no") 
-            : (untrusted > 0 && !notificationNeeded ? (global ? "yu-glb" : "yu") : "prt");
+            : (untrusted > 0 && !notificationNeeded ? (global ? "yu-glb" : "yu") 
+               : topTrusted ? "prt" : "subprt");
       notificationNeeded = notificationNeeded && totalAnnoyances > 0;
     }
     
     var message = this.getString("allowed." +
-        (lev == "yu" ? "prt" : lev == "untrusted" ? "no" : lev));
+        (lev == "yu" || lev == "subprt" ? "prt" : lev == "untrusted" ? "no" : lev));
     
     var shortMessage = message.replace(/JavaScript/g, "JS");
     

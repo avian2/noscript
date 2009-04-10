@@ -51,6 +51,7 @@
 <!ENTITY noscriptForbidFrames "Cấm &lt;FRAMES&gt;">
 <!ENTITY noscriptForbidFlash "Cấm Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Cấm các plugins khác">
+<!ENTITY noscriptForbidXSLT "Cấm XSLT">
 <!ENTITY noscriptReloadWarn "Những tùy chọn này sẽ có hiệu quả trong trang mới hay trang được tải lại">
 <!ENTITY noscriptConfirmUnblock "Hỏi xác nhận trước khi tạm thời không chặn một đối tượng">
 <!ENTITY noscriptStatusLabel "Nhãn cho thanh trạng thái">

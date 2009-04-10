@@ -1,108 +1,108 @@
-<!ENTITY noscriptOptions "Options...">
-<!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript Options">
-<!ENTITY noscriptAbout "About NoScript...">
-<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
-<!ENTITY noscriptWebAddress "Address of web site:">
-<!ENTITY noscriptAllow "Allow">
-<!ENTITY noscriptAllow.accesskey "l">
-<!ENTITY noscriptForbid "Forbid">
-<!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
-<!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
-<!ENTITY noscriptUntrust.accesskey "U">
-<!ENTITY noscriptRemoveSelected "Remove Selected Sites">
-<!ENTITY noscriptGloballyEnabled "Scripts Globally Allowed (dangerous)">
-<!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
-<!ENTITY noscriptGeneral "General">
-<!ENTITY noscriptAppearance "Appearance">
-<!ENTITY noscriptShow "Show...">
-<!ENTITY noscriptCtxMenu "Contextual menu">
-<!ENTITY noscriptStatusIcon "Status bar icon">
-<!ENTITY noscriptFullAddr "Full Addresses (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Full Domains (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
-<!ENTITY noscriptTempCmd "Temporarily allow [...]">
-<!ENTITY noscriptSound "Audio feedback when scripts are blocked">
-<!ENTITY noscriptImport "Import">
-<!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Export">
-<!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Show message about blocked scripts">
-<!ENTITY noscriptNotify.bottom "Place message at the bottom">
-<!ENTITY noscriptSound.choose "Choose">
-<!ENTITY noscriptSound.choose.accesskey "C">
-<!ENTITY noscriptSound.play "Play">
-<!ENTITY noscriptSound.play.accesskey "a">
-<!ENTITY noscriptSound.reset "Reset default">
-<!ENTITY noscriptSound.reset.accesskey "R">
-<!ENTITY noscriptAdvanced "Advanced">
-<!ENTITY noscriptAdditionalPermissions "Additional permissions for trusted sites">
-<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
-<!ENTITY noscriptAdditionalRestrictions "Additional restrictions for untrusted sites">
+<!ENTITY noscriptOptions "Подешавања...">
+<!ENTITY noscriptOptions.accesskey "П">
+<!ENTITY noscriptOptionsLong "NoScript подешавања">
+<!ENTITY noscriptAbout "О NoScript-у">
+<!ENTITY noscriptPermissionsText "Можете да наведете којим веб странама је дозвољено да извршавају скриптове. Унесите адресу или домен (нпр. &quot;http://www.site.com&quot; или &quot;site.com&quot;) стране којој желите да дате дозволу и онда кликните Дозволи.">
+<!ENTITY noscriptWebAddress "Адреса веб стране:">
+<!ENTITY noscriptAllow "Дозволи">
+<!ENTITY noscriptAllow.accesskey "Д">
+<!ENTITY noscriptForbid "Забрани">
+<!ENTITY noscriptForbid.accesskey "З">
+<!ENTITY noscriptTrust "Означи као проверено">
+<!ENTITY noscriptTrust.accesskey "в">
+<!ENTITY noscriptUntrust "Означи као непроверено">
+<!ENTITY noscriptUntrust.accesskey "н">
+<!ENTITY noscriptRemoveSelected "Уклони изабране стране">
+<!ENTITY noscriptGloballyEnabled "Скриптови су глобално дозвољени (опасно)">
+<!ENTITY noscriptAutoReload "Аутоматски поново учитај стране које су обухваћене променом дозвола">
+<!ENTITY noscriptGeneral "Опште">
+<!ENTITY noscriptAppearance "Изглед">
+<!ENTITY noscriptShow "Прикажи...">
+<!ENTITY noscriptCtxMenu "Контекстни мени">
+<!ENTITY noscriptStatusIcon "Икона на статусној линији">
+<!ENTITY noscriptFullAddr "Пуне адресе (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Пуни домени (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Базни домени другог нивоа (noscript.net)">
+<!ENTITY noscriptTempCmd "Привремено дозволи [...]">
+<!ENTITY noscriptSound "Звучно обавештење када су скриптови блокирани">
+<!ENTITY noscriptImport "Увоз">
+<!ENTITY noscriptImport.accesskey "У">
+<!ENTITY noscriptExport "Извоз">
+<!ENTITY noscriptExport.accesskey "И">
+<!ENTITY noscriptNotify "Прикажи поруку о блокираним скриптовима">
+<!ENTITY noscriptNotify.bottom "Постави поруку на дно">
+<!ENTITY noscriptSound.choose "Изаберите">
+<!ENTITY noscriptSound.choose.accesskey "з">
+<!ENTITY noscriptSound.play "Свирај">
+<!ENTITY noscriptSound.play.accesskey "С">
+<!ENTITY noscriptSound.reset "Врати на подразумевано">
+<!ENTITY noscriptSound.reset.accesskey "В">
+<!ENTITY noscriptAdvanced "Напредно">
+<!ENTITY noscriptAdditionalPermissions "Додатне дозволе за странице којима се верује">
+<!ENTITY noscriptAllowClipboard "Дозволи rich text копирање и налепљивање из ектерног клипборда">
+<!ENTITY noscriptAdditionalRestrictions "Додатне забране за странице којима се не верује">
 <!ENTITY noscriptPlugins "Plugins">
 <!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
-<!ENTITY noscriptForbidJava "Forbid Java™">
-<!ENTITY noscriptForbidXSLT "Forbid XSLT">
-<!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
-<!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
-<!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Forbid &lt;FRAME&gt;">
-<!ENTITY noscriptForbidFlash "Forbid Adobe® Flash®">
-<!ENTITY noscriptForbidPlugins "Forbid other plugins">
-<!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
-<!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">
-<!ENTITY noscriptStatusLabel "Status bar label">
-<!ENTITY noscriptForbidBookmarklets "Forbid bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
-<!ENTITY noscriptTruncateTitle "Truncate document titles">
-<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
-<!ENTITY noscriptAllowBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
-<!ENTITY noscriptAllowPing "Allow &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Allow local links">
-<!ENTITY noscriptForbidPing "Forbid &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
-<!ENTITY noscriptWhitelist "Whitelist">
-<!ENTITY noscriptPermissions "Permissions">
-<!ENTITY noscriptRefresh "Refresh">
-<!ENTITY noscriptNotifications "Notifications">
-<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
-<!ENTITY noscriptTrusted "Trusted">
-<!ENTITY noscriptUntrusted "Untrusted">
-<!ENTITY noscriptUnknown "Unknown">
-<!ENTITY noscriptAdd "Add">
-<!ENTITY noscriptAdd.accesskey "A">
-<!ENTITY noscriptClose "Close">
-<!ENTITY noscriptSiteManager "Site Manager">
-<!ENTITY noscriptSecurityManager "Security Manager">
-<!ENTITY noscriptPolicies "Policies">
-<!ENTITY noscriptDefaultPolicies "Default Policies">
-<!ENTITY noscriptSitePolicies "Site Specific Policies">
-<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
-<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
-<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
-<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
-<!ENTITY noscriptShowConsole "Show Console...">
-<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptForbidJava "Забрани Java™">
+<!ENTITY noscriptForbidXSLT "Забрани XSLT">
+<!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Забрани &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFlash "Забрани Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Забрани остале додатке">
+<!ENTITY noscriptReloadWarn "Ова подешавања ће бити примењена на нове или (ручно) поново учитане стране">
+<!ENTITY noscriptConfirmUnblock "Тражи потврду пре привременог скидања блокаде са објекта">
+<!ENTITY noscriptStatusLabel "Лабела на статусној линији">
+<!ENTITY noscriptForbidBookmarklets "Забрани bookmarklet-е">
+<!ENTITY noscriptShowPlaceholder "Прикажи икону места где стоји објекат">
+<!ENTITY noscriptTruncateTitle "Одсеци наслове докумената">
+<!ENTITY noscriptFixLinks "Покушај да поправиш JavaScript везе">
+<!ENTITY noscriptAllowBookmarks "Дозволи странице отворене преко Омиљено">
+<!ENTITY noscriptAllowViaBookmarks "Дозволи странице отворене преко Омиљено">
+<!ENTITY noscriptAllowPing "Дозволи &lt;A PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Дозволи локалне везе">
+<!ENTITY noscriptForbidPing "Забрани &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Забрани META редирекције унутар &lt;NOSCRIPT&gt; елемената">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "М">
+<!ENTITY noscriptWhitelist "Бела листа">
+<!ENTITY noscriptPermissions "Дозволе">
+<!ENTITY noscriptRefresh "Освежи">
+<!ENTITY noscriptNotifications "Обавештења">
+<!ENTITY noscriptToolbarToggle "Леви клик на NoScript дугме у линији алата укључује/искључује дозволе top-level стране">
+<!ENTITY noscriptTrusted "Којима се верује">
+<!ENTITY noscriptUntrusted "Којима се не верује">
+<!ENTITY noscriptUnknown "Непознато">
+<!ENTITY noscriptAdd "Додај">
+<!ENTITY noscriptAdd.accesskey "ј">
+<!ENTITY noscriptClose "Затвори">
+<!ENTITY noscriptSiteManager "Менаџер страна">
+<!ENTITY noscriptSecurityManager "Менаџер сигурности">
+<!ENTITY noscriptPolicies "Полисе">
+<!ENTITY noscriptDefaultPolicies "Подразумеване полисе">
+<!ENTITY noscriptSitePolicies "Полисе специфичне за стране">
+<!ENTITY noscriptNselNever "Сакриј &lt;NOSCRIPT&gt; елементе">
+<!ENTITY noscriptNselForce "Прикажи &lt;NOSCRIPT&gt; који се налази иза блокираног &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Привремено дозволи top-level стране као подразумевано">
+<!ENTITY noscriptDescription "Додатна заштита за ваш Firefox: NoScript дозвољава JavaScript, Java (и остале додатке) само доменима којима се верује по вашем избору (нпр. Ваша е-banking веб страна). Овај превентивни приступ блокирања базиран на белој листи спречава искоришћавање безбедносних пропуста (познатих и чак и непознатих!) без икаквог губитка функционалности... Експерти ће се сложити: Firefox је заиста безбеднији са NoScript-ом :-)">
+<!ENTITY noscriptOptBlockCssScanners "Блокирај CSS-базиране скенере">
+<!ENTITY noscriptOptFilterXGet "Очисти сумњиве cross-site захтеве">
+<!ENTITY noscriptOptFilterXPost "Претвори cross-site POST захтеве у GET захтеве без података">
+<!ENTITY noscriptShowConsole "Прикажи конзолу...">
+<!ENTITY noscriptShowConsole.accesskey "р">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
-<!ENTITY noscriptXssFaq.accesskey "Q">
-<!ENTITY noscriptUnsafeReload "Unsafe Reload">
-<!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
-<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS.">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
-<!ENTITY noscriptReset "Reset">
-<!ENTITY noscriptReset.accesskey "R">
-<!ENTITY noscriptResetDef "Reset to defaults">
-<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptXssFaq "XSS ЧПП...">
+<!ENTITY noscriptXssFaq.accesskey "Ч">
+<!ENTITY noscriptUnsafeReload "Небезбедно поновно учитавање">
+<!ENTITY noscriptUnsafeReload.accesskey "б">
+<!ENTITY noscriptXssExceptions "Изузеци Anti-XSS заштите">
+<!ENTITY noscriptXssExceptions.description "Одредишта која задовољавају ове регуларне изразе НЕЋЕ бити заштићена од XSS">
+<!ENTITY noscriptMatchSample "Узорак шаблона за поклапање:">
+<!ENTITY noscriptReset "Ресетуј">
+<!ENTITY noscriptReset.accesskey "Р">
+<!ENTITY noscriptResetDef "Ресетуј на подразумевано">
+<!ENTITY noscriptResetDef.accesskey "т">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
 <!ENTITY noscriptJarFaq "JAR FAQ…">

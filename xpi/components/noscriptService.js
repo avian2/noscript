@@ -864,7 +864,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.1.6",
+  VERSION: "1.9.1.8",
   
   get wrappedJSObject() {
     return this;
@@ -1154,7 +1154,8 @@ NoscriptService.prototype = {
       break;
       
       case "clearClick.exceptions":
-        ClearClickHandler.prototype.exceptions = URIPatternList.create(this.getPref(name, ''));
+      case "clearClick.subexceptions":
+        ClearClickHandler.prototype[name.split('.')[1]] = URIPatternList.create(this.getPref(name, ''));
       break;
 
       case "secureCookiesExceptions":
@@ -1491,7 +1492,7 @@ NoscriptService.prototype = {
       "jsHack", "jsHackRegExp",
       "emulateFrameBreak",
       "nselNever", "nselForce",
-      "clearClick", "clearClick.exceptions", "opaqueObject",
+      "clearClick", "clearClick.exceptions", "clearClick.subexceptions", "opaqueObject",
       "showPlaceholder", "showUntrustedPlaceholder", "collapseObject", "abp.removeTabs",
       "temp", "untrusted", "gtemp",
       "silverlightPatch",
@@ -4030,7 +4031,12 @@ NoscriptService.prototype = {
         if (r.extras.pluginDocument) {
           this.setPluginExtras(r.object, null);
         }
-        if (r.object.parentNode) r.object.parentNode.insertBefore(r.placeholder, r.object);
+        if (r.extras.pluginDocument) {
+          this.setPluginExtras(r.object, null);
+          if (r.object.parentNode) r.object.parentNode.insertBefore(r.placeholder, r.object);
+        } else {
+          if (r.object.parentNode) r.object.parentNode.replaceChild(r.placeholder, r.object);
+        }
         r.extras.placeholder = r.placeholder;
         this._collectPluginExtras(pluginExtras, r.extras);
         if (this.abpInstalled && !this.abpRemoveTabs)
@@ -4185,7 +4191,7 @@ NoscriptService.prototype = {
     sites.pluginCount = 0;
     sites.pluginExtras = [];
     sites.pluginSites = [];
-
+    sites.docSites = [];
     try {
       sites = this._enumerateSites(browser, sites);
     } catch(ex) {
@@ -4294,6 +4300,8 @@ NoscriptService.prototype = {
            sites.unshift(document.domain);
           }
         } catch(e) {}
+        
+        sites.docSites.push(url);
         sites.push(url);
 
         for each(redir in this.getRedirCache(browser, docURI)) {
@@ -7710,6 +7718,10 @@ ClearClickHandler.prototype = {
      !(this.exceptions && this.exceptions.test(url) && ns.isJSEnabled(ns.getSite(url)));
   },
   
+  checkSubexception: function(url) {
+    return this.subexceptions && this.subexceptions.test(url);
+  },
+  
   _whitelist: {},
   whitelistLen: 0,
   isWhitelisted: function(w) {
@@ -7938,7 +7950,6 @@ ClearClickHandler.prototype = {
     
     const top = w.top;
     const ns = this.ns;
-    var topURL;
     
     var isEmbed;
     
@@ -7951,7 +7962,8 @@ ClearClickHandler.prototype = {
             (w == w.top || w.__clearClickUnlocked ||
               (w.__clearClickUnlocked = this.isWhitelisted(w))
               || this.sameSiteParents(w)) || // cross-site document?
-        ns.getPluginExtras(o) // NS placeholder?
+        ns.getPluginExtras(o) || // NS placeholder?
+        this.checkSubexception(isEmbed && (o.src || o.data) || w.location.href)
         )
       ) return;
     
