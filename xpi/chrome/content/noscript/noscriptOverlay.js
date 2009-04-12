@@ -1416,8 +1416,10 @@ var noscriptOverlay = noscriptUtil.service ?
     var activeSites = sites.pluginSites.concat(sites.docSites);
     var allowed = 0;
     var untrusted = 0;
+    var active = 0;
     var isUntrusted = false;
     var topTrusted = false;
+    var topUntrusted = false;
     
     if (global && !ns.alwaysBlockUntrustedContent) {
       lev = "glb";
@@ -1432,13 +1434,18 @@ var noscriptOverlay = noscriptUtil.service ?
         
         if (site && url == sites.topURL) {
           if (this.currentBrowser.webNavigation.allowJavascript) topTrusted = true;
-          else site = null;
+          else {
+            site = null;
+            if (isUntrusted) topUntrusted = true;
+          }
         }
+        
         if (site) {
           if (ns.isPermanent(site) || allowedSites.indexOf(site) > -1) {
             total--;
           } else {
-            if (oldStylePartial || activeSites.indexOf(url) > -1) allowedSites.push(site);
+            allowedSites.push(site);
+            if (oldStylePartial || activeSites.indexOf(url) > -1) active++;
           }
         } else {
           if (isUntrusted) untrusted++;
@@ -1449,7 +1456,7 @@ var noscriptOverlay = noscriptUtil.service ?
       }
       allowed = allowedSites.length;
       lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
-            : allowed == 0 ? (global ? "untrusted-glb" : "no") 
+            : allowed == 0 || active == 0 ? (global ? "untrusted-glb" : topUntrusted ? "untrusted" : "no") 
             : (untrusted > 0 && !notificationNeeded ? (global ? "yu-glb" : "yu") 
                : topTrusted ? "prt" : "subprt");
       notificationNeeded = notificationNeeded && totalAnnoyances > 0;
@@ -1460,7 +1467,7 @@ var noscriptOverlay = noscriptUtil.service ?
     
     var shortMessage = message.replace(/JavaScript/g, "JS");
     
-    if (notificationNeeded && allowed) 
+    if (notificationNeeded && active) 
       message += ", " + allowed + "/" + total + " (" + allowedSites.join(", ") + ")";
     
     var countsMessage = " | <SCRIPT>: " + totalScripts + " | <OBJECT>: " + totalPlugins;

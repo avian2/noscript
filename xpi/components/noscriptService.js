@@ -864,7 +864,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.1.8",
+  VERSION: "1.9.1.9",
   
   get wrappedJSObject() {
     return this;
@@ -5427,7 +5427,7 @@ RequestWatchdog.prototype = {
     var origin = xorigin && xorigin.spec || 
         channel.originalURI.spec != originalSpec && channel.originalURI.spec 
         || ABE.extractInternalReferrerSpec(channel) || null;
-
+    
     var untrustedReload = false;
 
     var originSite = null;
@@ -5473,7 +5473,7 @@ RequestWatchdog.prototype = {
             (!window || window == window.top || window == unsafeRequest.window)) {
           this.setUnsafeRequest(browser, null);
         }
-      }
+      } else origin = origin.replace(/^view-source:/, '');
       if (ns.consoleDump) this.dump(channel, "ORIGIN: " + origin + ", xorigin: " + (xorigin && xorigin.spec) + ", originalURI: " + channel.originalURI.spec);
     }
     
