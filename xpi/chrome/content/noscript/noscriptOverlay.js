@@ -1441,11 +1441,11 @@ var noscriptOverlay = noscriptUtil.service ?
         }
         
         if (site) {
+          if (oldStylePartial || activeSites.indexOf(url) > -1) active++;
           if (ns.isPermanent(site) || allowedSites.indexOf(site) > -1) {
             total--;
           } else {
             allowedSites.push(site);
-            if (oldStylePartial || activeSites.indexOf(url) > -1) active++;
           }
         } else {
           if (isUntrusted) untrusted++;
