@@ -125,6 +125,11 @@ var nsopt = {
         document.getElementById(id).setAttribute("hidden", "true"); // Fx <= 1.5
       });
     
+    
+    if (!("nsINavHistoryService" in Components.interfaces)) {
+      document.getElementById("opt-placesPrefs").setAttribute("hidden", "true");
+    }
+    
     // document.getElementById("policy-tree").view = policyModel;
     window.sizeToContent();
     

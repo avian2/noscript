@@ -109,6 +109,7 @@
 
      <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
      <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
+     <checkbox id="opt-placesPrefs" label="&noscriptBookmarkSync;" />
      <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
    
   

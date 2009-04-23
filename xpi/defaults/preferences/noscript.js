@@ -212,4 +212,6 @@ pref("noscript.compat.gnotes", true);
 
 pref("noscript.forbidXSLT", true);
 
-pref("nosript.oldStylePartial", false);
+pref("noscript.oldStylePartial", false);
+pref("noscript.proxiedDNS", 0);
+pref("noscript.placesPrefs", false);
