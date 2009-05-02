@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "افزودنی ها">
 <!ENTITY noscriptContentBlocker "اعمال این محدودیت ها روی سایت های مورد اطمینان">
 <!ENTITY noscriptForbidJava "Java ممنوع کردن">
+<!ENTITY noscriptForbidXSLT "Forbid XSLT">
 <!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; ممنوع کردن">
 <!ENTITY noscriptForbidSilverlight "ممنوع کردن Microsoft® Silverlight">
 <!ENTITY noscriptForbidIFrames "ممنوع کردن &lt;IFRAME&gt;">
@@ -140,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
 <!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
 <!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
 <!ENTITY noscriptTrustedPagesAdj "trusted">
 <!ENTITY noscriptUntrustedPagesAdj "untrusted">
@@ -147,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Embedded Objects">
 <!ENTITY noscriptPrev "Previuous">
 <!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

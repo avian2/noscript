@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Mogući Clickjacking/UI Redressing napad">
 <!ENTITY noscriptClearClickDescription "NoScript je primjetio interakciju miša ili tastatura sa djelomićno sakrivenim elementom. Klikni na gornju sliku kako bi promjenio između zaklonjene i jasne verzije">
 <!ENTITY noscriptClearClickOpt "ClearClick-zaštita na stranicama...">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Zamutiti ugrađene objekte na stranicama...">
 <!ENTITY noscriptTrustedPagesAdj "pouzdane">
 <!ENTITY noscriptUntrustedPagesAdj "nepouzdane">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Ugrađeni objekti">
 <!ENTITY noscriptPrev "Prethodni">
 <!ENTITY noscriptNext "Sljedeći">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

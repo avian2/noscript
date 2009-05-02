@@ -44,6 +44,7 @@
 <!ENTITY noscriptPlugins "Vtičniki">
 <!ENTITY noscriptContentBlocker "Uporabi te omejitve tudi na zaupanja vrednih straneh">
 <!ENTITY noscriptForbidJava "Onemogoči Javo™">
+<!ENTITY noscriptForbidXSLT "Forbid XSLT">
 <!ENTITY noscriptForbidWebBugs "Onemogoči &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Onemogoči Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Onemogoči &lt;IFRAME&gt;">
@@ -140,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Morebiten poskus ugrabitve klika oz. uporabniškega vmesnika.">
 <!ENTITY noscriptClearClickDescription "NoScript je zaznal interakcijo miške oz. tipkovnice z delno prikritim elementom. Kliknite na zgornjo sliko za prikaz prikrite in prave različice.">
 <!ENTITY noscriptClearClickOpt "ClearClick zaščita na straneh...">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Opacize vstavljeni predmeti na straneh...">
 <!ENTITY noscriptTrustedPagesAdj "zaupljiv">
 <!ENTITY noscriptUntrustedPagesAdj "nezaupljiv">
@@ -147,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Vstavljeni predmeti">
 <!ENTITY noscriptPrev "Previuous">
 <!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

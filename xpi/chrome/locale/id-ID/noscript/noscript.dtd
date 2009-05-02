@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Clickjacking Potensial / Mencoba memakai ulang UI!">
 <!ENTITY noscriptClearClickDescription "NoScript menginterupsi interaksi mouse atau keyboard dengan elemen tersembunyi yang terpisah. Klik pada gambar di atas memilih antara versi terhalang dan jelas.">
 <!ENTITY noscriptClearClickOpt "Proteksi ClearClick pada halaman…">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Ubah ukuran obyek tertanam pada halaman…">
 <!ENTITY noscriptTrustedPagesAdj "terpercaya">
 <!ENTITY noscriptUntrustedPagesAdj "tidak terpercaya">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Obyek yang ditanam">
 <!ENTITY noscriptPrev "Previuous">
 <!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

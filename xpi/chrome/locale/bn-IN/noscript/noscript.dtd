@@ -44,11 +44,9 @@
 <!ENTITY noscriptPlugins "Plugins">
 <!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Forbid Java™">
-<!ENTITY noscriptForbidXSLT "Forbid XSLT">
 <!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Forbid &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Forbid Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forbid other plugins">
 <!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
@@ -117,9 +115,3 @@
 <!ENTITY noscriptExceptions "Exceptions...">
 <!ENTITY noscriptBlockedObjects "Blocked Objects">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
-<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
-<!ENTITY noscriptTempAllowPage.accesskey "p">
-<!ENTITY noscriptAllowPage "Allow all this page">
-<!ENTITY noscriptAllowPage.accesskey "A">
-<!ENTITY noscriptTempToPerm "Make page permissions permanent">
-<!ENTITY noscriptTempToPerm.accesskey "m">

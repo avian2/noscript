@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Potencjalne zagrożenie przechwytywania kliknięć/Próba przywrócenia prawidłowego interfejsu">
 <!ENTITY noscriptClearClickDescription "NoScript przechwycił interakcję myszy lub klawiatury z częściowo ukrytym elementem. Kliknij na powyższym obrazku, aby wyświetlić/schować ukrytą wersję.">
 <!ENTITY noscriptClearClickOpt "Zabezpieczenia kliknięć ukrytych obiektów na stronach internetowych">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Widoczność osadzonych obiektów na stronach internetowych">
 <!ENTITY noscriptTrustedPagesAdj "zaufana">
 <!ENTITY noscriptUntrustedPagesAdj "niezaufana">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Obiekty osadzone">
 <!ENTITY noscriptPrev "Poprzedni">
 <!ENTITY noscriptNext "Następny">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

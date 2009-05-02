@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Võimalik kliki röövimise/kasutajaliidese parandamise katse!">
 <!ENTITY noscriptClearClickDescription "NoScript pidas kinni hiire või klaviatuuri interaktsiooni osaliselt varjatud elemendiga. Hiireklõps ülaloleval pildil lülitab ümber tõkestatud ja puhastatud versiooni vahel.">
 <!ENTITY noscriptClearClickOpt "ClearClick kaitse lehtedel...">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Manusobjektid tehakse läbipaistmatuks lehtedel...">
 <!ENTITY noscriptTrustedPagesAdj "usaldatud">
 <!ENTITY noscriptUntrustedPagesAdj "mitteusaldatud">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Manusobjektid">
 <!ENTITY noscriptPrev "Eelmine">
 <!ENTITY noscriptNext "Järgmine">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

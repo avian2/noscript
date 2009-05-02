@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Potentiële poging tot &apos;Clickjacking&apos; / aanpassing gebruikersinterface!">
 <!ENTITY noscriptClearClickDescription "NoScript heeft een muis of toetsenbord interactie met een gedeeltelijk verborgen element onderschept. Door te klikken op onderstaande afbeelding wordt van de belemmerende naar de zichtbare versie omgeschakeld.">
 <!ENTITY noscriptClearClickOpt "&apos;ClearClick&apos; bescherming inschakelen op pagina&apos;s gemarkeerd als...">
+<!ENTITY noscriptClearClickReport "Rapport">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Rapport-ID:">
 <!ENTITY noscriptOpacizeOpt "Ingebouwde objecten zichtbaar maken op pagina&apos;s gemarkeerd als...">
 <!ENTITY noscriptTrustedPagesAdj "betrouwbaar">
 <!ENTITY noscriptUntrustedPagesAdj "onbetrouwbaar">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Ingebouwde objecten">
 <!ENTITY noscriptPrev "Vorige">
 <!ENTITY noscriptNext "Volgende">
+<!ENTITY noscriptFrameOptErr.title "Deze inhoud kan niet in een frame worden weergegeven">
+<!ENTITY noscriptFrameOptErr.desc "Om uw veiligheid te beschermen, staat de uitgever van deze inhoud niet toe deze in een frame weer te geven.">
+<!ENTITY noscriptFrameOptErr.link "Klik hier om deze inhoud in een nieuw venster weer te geven">
+<!ENTITY noscriptBookmarkSync "NoScript configuratie in een bladwijzer opslaan voor eenvoudige synchronisatie">

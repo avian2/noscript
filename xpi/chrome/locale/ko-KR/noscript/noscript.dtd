@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "잠재적인 클릭재킹(Clickjacking) 또는 UI 변경 시도!">
 <!ENTITY noscriptClearClickDescription "NoScript가 숨겨진 요소에서 처리하는 마우스나 키보드 작동을 가로챘습니다. 상단에 있는 이미지를 클릭하여 차단된 버전과 그렇지 않은 버전간에 전환할 수 있습니다.">
 <!ENTITY noscriptClearClickOpt "페이지에 대해서 ClearClick 보호 수행...">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "페이지에 있는 포함 객체들을 불투명 설정...">
 <!ENTITY noscriptTrustedPagesAdj "신뢰된 페이지">
 <!ENTITY noscriptUntrustedPagesAdj "신뢰되지 않은 페이지">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "포함된 객체들">
 <!ENTITY noscriptPrev "Previuous">
 <!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

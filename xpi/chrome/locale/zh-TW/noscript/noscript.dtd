@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "潛在的點選劫持/使用者介面補償企圖攻擊!">
 <!ENTITY noscriptClearClickDescription "NoScript 攔截一個滑鼠或鍵盤操作的隱藏元素. 點選圖片將會進行對上述過程之間的阻止和解除改變.">
 <!ENTITY noscriptClearClickOpt "解除頁面上的點選保護...">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "半透明化本頁嵌入的物件...">
 <!ENTITY noscriptTrustedPagesAdj "可信任">
 <!ENTITY noscriptUntrustedPagesAdj "不信任">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "嵌入的物件">
 <!ENTITY noscriptPrev "Previuous">
 <!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

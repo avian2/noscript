@@ -51,7 +51,6 @@
 <!ENTITY noscriptForbidFrames "Cấm &lt;FRAMES&gt;">
 <!ENTITY noscriptForbidFlash "Cấm Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Cấm các plugins khác">
-<!ENTITY noscriptForbidXSLT "Cấm XSLT">
 <!ENTITY noscriptReloadWarn "Những tùy chọn này sẽ có hiệu quả trong trang mới hay trang được tải lại">
 <!ENTITY noscriptConfirmUnblock "Hỏi xác nhận trước khi tạm thời không chặn một đối tượng">
 <!ENTITY noscriptStatusLabel "Nhãn cho thanh trạng thái">
@@ -142,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Tiềm Ẩn Hành Động Chuyển Hướng Giao Diện / Chiếm Quyền Nhấp Chuột!">
 <!ENTITY noscriptClearClickDescription "NoScript chặn một tương tác chuột hoặc bàn phím bởi một phần tử bị ẩn một phần. Nhấn lên hình ở trên để chuyển qua lại giữa phiên bản ban đầu và phiên bản đã chặn.">
 <!ENTITY noscriptClearClickOpt "Phòng ngừa XóaNhấn trên trang...">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Làm trong suốt các đối tượng được nhúng trên trang...">
 <!ENTITY noscriptTrustedPagesAdj "tin cậy">
 <!ENTITY noscriptUntrustedPagesAdj "không tin cậy">
@@ -149,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Các Đối Tượng Được Nhúng">
 <!ENTITY noscriptPrev "Trước">
 <!ENTITY noscriptNext "Tiếp">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

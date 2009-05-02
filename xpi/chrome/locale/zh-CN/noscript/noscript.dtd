@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "潜在的点击劫持 (Clickjacking) / UI 跳转攻击!">
 <!ENTITY noscriptClearClickDescription "NoScript 拦截了一个与隱藏元素互动的鼠标或键盘操作。 点击图片切换拦截和取消拦截。">
 <!ENTITY noscriptClearClickOpt "启用 ClearClick 保护于">
+<!ENTITY noscriptClearClickReport "报告">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "报告 ID:">
 <!ENTITY noscriptOpacizeOpt "禁用嵌入对象透明属性于">
 <!ENTITY noscriptTrustedPagesAdj "可信任页面">
 <!ENTITY noscriptUntrustedPagesAdj "不可信任页面">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "嵌入的对象">
 <!ENTITY noscriptPrev "上一个">
 <!ENTITY noscriptNext "下一个">
+<!ENTITY noscriptFrameOptErr.title "此内容不能被显示在框架帧中">
+<!ENTITY noscriptFrameOptErr.desc "为了保护你的安全, 此内容提供者不允许它被显示在框架帧中。">
+<!ENTITY noscriptFrameOptErr.link "点击这里在新窗口中打开此内容">
+<!ENTITY noscriptBookmarkSync "备份 NoScript 配置到书签以便轻松的同步">

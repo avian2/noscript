@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Potensiell Clickjacking / UI Redressing Forsøk!">
 <!ENTITY noscriptClearClickDescription "NoScript avskjærte en mus, eller tastatur samspill med delvis gjemt element. Klikk på bildet ovenfor for å bytte mellom den sperrede og den rensede versjonen.">
 <!ENTITY noscriptClearClickOpt "ClearClick beskyttelse på sidene…">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Gjemt innesluttede objekter på sidene…">
 <!ENTITY noscriptTrustedPagesAdj "pålitelige">
 <!ENTITY noscriptUntrustedPagesAdj "upålitelige">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Innesluttede Objekter">
 <!ENTITY noscriptPrev "Forrige">
 <!ENTITY noscriptNext "Neste">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

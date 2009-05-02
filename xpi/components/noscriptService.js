@@ -59,6 +59,12 @@ const ANYWHERE = 3;
 
 const ABID = "@mozilla.org/adblockplus;1";
 
+
+const INCLUDE = function(file) {
+   CC["@mozilla.org/moz/jssubscript-loader;1"].getService(CI.mozIJSSubScriptLoader)
+    .loadSubScript("chrome://noscript/content/"+ file);
+}
+
 // component defined in this file
 const EXTENSION_ID="{73a6fe31-595d-460b-a920-fcc0f8843232}";
 const SERVICE_NAME="NoScript Service";
@@ -865,7 +871,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.2",
+  VERSION: "1.9.2.6",
   
   get wrappedJSObject() {
     return this;
@@ -1535,14 +1541,22 @@ NoscriptService.prototype = {
     this.reloadWhereNeeded(); // init snapshot
     
     this.savePrefs(true); // flush preferences to file
-     
 
     // hook on redirections (non persistent, otherwise crashes on 1.8.x)
     CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
       .addCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, SERVICE_CTRID, false, true);
     
+    if (this.abpInstalled) try {
+      // remove the NoScript Development Support Filterset if it exists
+      CC[ABID].createInstance().wrappedJSObject.removeExternalSubscription("NoScript.net");
+    } catch(e) {
+      this.dump(e);
+    }
+    
     return true;
   },
+  
+  
   
   dispose: function() {
     try {
@@ -1576,7 +1590,7 @@ NoscriptService.prototype = {
     }
   },
   
-  
+ 
   reportLeaks: function() {
     // leakage detection
     this.dump("DUMPING " + this.__parent__);
@@ -1772,9 +1786,7 @@ NoscriptService.prototype = {
   get placesPrefs() {
     delete this.__proto__.placesPrefs;
     try {
-      CC["@mozilla.org/moz/jssubscript-loader;1"]
-        .getService(CI["mozIJSSubScriptLoader"])
-          .loadSubScript('chrome://noscript/content/PlacesPrefs.js');
+      INCLUDE('placesPrefs.js');
       PlacesPrefs.init(this);
     } catch(e) {
       PlacesPrefs = null;
@@ -1861,9 +1873,7 @@ NoscriptService.prototype = {
             return this._tldService = srv;
           }
         }
-        CC["@mozilla.org/moz/jssubscript-loader;1"]
-            .getService(CI["mozIJSSubScriptLoader"])
-            .loadSubScript('chrome://noscript/content/tldEmulation.js');
+        INCLUDE('tldEmulation.js');
         return this._tldService = EmulatedTLDService;
       } catch(ex) {
         this.dump(ex);
@@ -2351,11 +2361,6 @@ NoscriptService.prototype = {
     this.shouldLoad = delegate.shouldLoad;
     this.shouldProcess = delegate.shouldProcess;
     
-    if (this.mrd && this.mrd.attach()) {
-      catman.deleteCategory(cat, this.mrd.id, false);
-      delegate = null;
-    }
-    
     if (last && delegate != this.noopContentPolicy) {
       // removing and adding the category late in the game allows to be the latest policy to run,
       // and nice to AdBlock Plus
@@ -2442,6 +2447,23 @@ NoscriptService.prototype = {
   // REJECT_SERVER = -3
   // ACCEPT = 1
   
+  
+  versionComparator: CC["@mozilla.org/xpcom/version-comparator;1"].createInstance(CI.nsIVersionComparator),
+  geckoVersion: ("nsIXULAppInfo" in  Components.interfaces) ? CC["@mozilla.org/xre/app-info;1"].getService(CI.nsIXULAppInfo).platformVersion : "0.0",
+  geckoVersionCheck: function(v) {
+    return this.versionComparator.compare(this.geckoVersion, v);
+  },
+  
+  
+  _bug453825: true,
+  _bug472495: true,
+  /*
+  get _bug472495() {
+    delete this.__proto__._bug472495;
+    return this.__proto__._bug472495 = this.geckoVersionCheck("1.9.0.9") < 0;
+  },
+  */
+  
   POLICY_XBL: "TYPE_XBL" in CI.nsIContentPolicy,
   POLICY_OBJSUB: "TYPE_OBJECT_SUBREQUEST" in CI.nsIContentPolicy,
   noopContentPolicy: {
@@ -2490,7 +2512,7 @@ NoscriptService.prototype = {
     shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
       
       var originURL, locationURL, originSite, locationSite, scheme,
-          forbid, isJS, isJava, isFlash, isSilverlight,
+          forbid, isScript, isJava, isFlash, isSilverlight,
           isLegacyFrame, blockThisIFrame, contentDocument,
           logIntercept, logBlock;
       
@@ -2551,7 +2573,7 @@ NoscriptService.prototype = {
             if (this.forbidChromeScripts && this.checkForbiddenChrome(aContentLocation, aRequestOrigin)) {
               return this.reject("Chrome Access", arguments);
             }
-            forbid = isJS = true;
+            forbid = isScript = true;
             break;
           case 3: // IMAGES
             if (this.blockNSWB && aContext instanceof CI.nsIDOMHTMLImageElement) {
@@ -2569,11 +2591,13 @@ NoscriptService.prototype = {
             return CP_OK;
           
           case 4: // STYLESHEETS
-            if (/\/x/i.test(aMimeTypeGuess) && !/chrome|resource/.test(aContentLocation.scheme) && this.getPref("forbidXSLT", true)
-              && !((this.isJSEnabled(this.getSite(aContentLocation.spec)) || aContentLocation.schemeIs("data")) && this.isJSEnabled(this.getSite(aRequestOrigin.spec))))
-              return this.reject("XSLT", arguments);
+            if (/\/x/i.test(aMimeTypeGuess) && !/chrome|resource/.test(aContentLocation.scheme) &&
+                (aContext instanceof CI.nsIDOMXMLDocument) && this.getPref("forbidXSLT", true)) {
+              forbid = isScript = true; // we treat XSLT like scripts
+              break;
+            }
             return CP_OK;
-          
+            
           case 5:
             if (aContentLocation && aRequestOrigin && 
                 (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) && 
@@ -2748,27 +2772,28 @@ NoscriptService.prototype = {
         if(logBlock)
           this.dump("[CP PASS 2] " + aMimeTypeGuess + "*" + locationURL);
 
-        if (isJS) {
+        if (isScript) {
           
-          originSite = aRequestOrigin && this.getSite(aRequestOrigin.spec);
+          originSite = originSite || aRequestOrigin && this.getSite(aRequestOrigin.spec);
           
           // we must guess the right context here, see https://bugzilla.mozilla.org/show_bug.cgi?id=464754
           
-          aContext = aContext.ownerDocument || aContext; // this way we always have a document
+          aContext = aContext && aContext.ownerDocument || aContext; // this way we always have a document
           
-          // Silverlight hack
+          if (aContentType == 2) { // "real" JavaScript include
           
-          if (this.contentBlocker && this.forbidSilverlight && this.silverlightPatch &&
-                originSite && /^(?:https?|file):/.test(originSite)) {
-            this.applySilverlightPatch(aContext);
-          }
+            // Silverlight hack
+            
+            if (this.contentBlocker && this.forbidSilverlight && this.silverlightPatch &&
+                  originSite && /^(?:https?|file):/.test(originSite)) {
+              this.applySilverlightPatch(aContext);
+            }
+                    
+            if (originSite && locationSite == originSite) return CP_OK;
+          } else isScript = false;
           
-          
-          
-          
-          if (originSite && locationSite == originSite) return CP_OK;
-          
-          this.getExpando(aContext.defaultView.top, "codeSites", []).push(locationSite);
+          if (aContext) // XSLT comes with no context sometimes...
+            this.getExpando(aContext.defaultView.top, "codeSites", []).push(locationSite);
           
           
           forbid = !this.isJSEnabled(locationSite);
@@ -2777,8 +2802,8 @@ NoscriptService.prototype = {
           }
 
           if ((untrusted || forbid) && aContentLocation.scheme != "data") {
-            ScriptSurrogate.apply(aContext, locationURL);
-            return this.reject("Script", arguments);
+            if (isScript) ScriptSurrogate.apply(aContext, locationURL);
+            return this.reject(isScript ? "Script" : "XSLT", arguments);
           } else {
             return CP_OK;
           }
@@ -2879,10 +2904,14 @@ NoscriptService.prototype = {
         }
          
         if (/\binnerHTML\b/.test(new Error().stack)) {
-          aContext.ownerDocument.location.href = 'javascript:window.__defineGetter__("top", (Window.prototype || window).__lookupGetter__("top"))';
-          if (this.consoleDump) this.dump("Locked window.top (bug 453825 work-around)");
-          aContext.ownerDocument.defaultView.addEventListener("DOMNodeRemoved", this._domNodeRemoved, true);
-          if (this.consoleDump) this.dump("Added DOMNodeRemoved (bug 472495 work-around)");
+          if (this._bug453825) {
+            aContext.ownerDocument.location.href = 'javascript:window.__defineGetter__("top", (Window.prototype || window).__lookupGetter__("top"))';
+            if (this.consoleDump) this.dump("Locked window.top (bug 453825 work-around)");
+          }
+          if (this._bug472495) {
+            aContext.ownerDocument.defaultView.addEventListener("DOMNodeRemoved", this._domNodeRemoved, true);
+            if (this.consoleDump) this.dump("Added DOMNodeRemoved (bug 472495 work-around)");
+          }
         }
         
         
@@ -4588,15 +4617,6 @@ NoscriptService.prototype = {
       const rw = this.requestWatchdog;
       const domWindow = rw.findWindow(req);
       if (domWindow && domWindow == domWindow.top) {
-        if (!this.mrd && req instanceof CI.nsIHttpChannel) try {
-          if (req.getResponseHeader("X-MRD")) try {
-            CC["@mozilla.org/moz/jssubscript-loader;1"]
-              .getService(CI["mozIJSSubScriptLoader"]).loadSubScript('chrome://noscript/content/MRD.js');
-            new MRD(this);
-          } catch(mrdEx) {
-            if (this.consoleDump) this.dump(mrdEx);
-          }
-        } catch(missingHeader) {}
         return; // for top windows we call onBeforeLoad in onLocationChange
       }
       if (ABE.checkFrameOpt(domWindow, req)) {
@@ -4936,7 +4956,7 @@ NoscriptService.prototype = {
     }
   },
   
-  attemptNavigation: function(doc, destURL, callback) {
+  _attemptNavigationInternal: function(doc, destURL, callback) {
     var cs = doc.characterSet;
     var uri = SiteUtils.ios.newURI(destURL, cs, SiteUtils.ios.newURI(doc.documentURI, cs, null));
     
@@ -4958,6 +4978,10 @@ NoscriptService.prototype = {
       }
       req.send(null);
     }
+  },
+  attemptNavigation: function(doc, destURL, callback) {
+    // delay is needed on Gecko < 1.9 to detach browser context
+    this.delayExec(this._attemptNavigationInternal, 0, doc, destURL, callback);
   },
   
   // simulate onchange on selects if options look like URLs
@@ -5947,13 +5971,21 @@ RequestWatchdog.prototype = {
   
   
   
-  findWindow: function(channel) {
-    try {
-      return (channel.notificationCallbacks || channel.loadGroup.notificationCallbacks)
-        .QueryInterface(
-          CI.nsIInterfaceRequestor).getInterface(
-          CI.nsIDOMWindow);
-    } catch(e) {}
+  findWindow: function(channel) {  
+    for each(var cb in [ channel.notificationCallbacks,
+                         channel.loadGroup && channel.loadGroup.notificationCallbacks]) {
+      if (cb instanceof CI.nsIInterfaceRequestor) {
+        try {
+        // For Gecko 1.9.1
+          return cb.getInterface(CI.nsILoadContext).associatedWindow;
+        } catch(e) {}
+        
+        try {
+          // For Gecko 1.9.0
+          return cb.getInterface(CI.nsIDOMWindow);
+        } catch(e) {}
+      }
+    }
     return null;
   },
   findBrowser: function(channel, window) {

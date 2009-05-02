@@ -44,11 +44,9 @@
 <!ENTITY noscriptPlugins "Plugins">
 <!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Забрани Java™">
-<!ENTITY noscriptForbidXSLT "Забрани XSLT">
 <!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Забрани &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Забрани Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Забрани остале додатке">
 <!ENTITY noscriptReloadWarn "Ова подешавања ће бити примењена на нове или (ручно) поново учитане стране">
@@ -105,7 +103,7 @@
 <!ENTITY noscriptResetDef.accesskey "т">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
+<!ENTITY noscriptJarFaq "JAR FAQ">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
 <!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
@@ -119,32 +117,3 @@
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
 <!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
-<!ENTITY noscriptAllowPage "Allow all this page">
-<!ENTITY noscriptAllowPage.accesskey "A">
-<!ENTITY noscriptTempToPerm "Make page permissions permanent">
-<!ENTITY noscriptTempToPerm.accesskey "m">
-<!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
-<!ENTITY noscriptHttpsFaq.accesskey "Q">
-<!ENTITY noscriptHttps.behavior "Behavior">
-<!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
-<!ENTITY noscriptHttps.never "Never">
-<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
-<!ENTITY noscriptHttps.always "Always">
-<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
-<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
-<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
-<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
-<!ENTITY noscriptClearClickTitle "ClearClick Warning">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
-<!ENTITY noscriptTrustedPagesAdj "trusted">
-<!ENTITY noscriptUntrustedPagesAdj "untrusted">
-<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
-<!ENTITY noscriptPrev "Previuous">
-<!ENTITY noscriptNext "Next">

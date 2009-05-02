@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Potansiyel TiklamaHilesi/YenidenAdresleme Denemesi">
 <!ENTITY noscriptClearClickDescription "NoScript kismen gizlenmis olan bir element ile fare veya klavyenin etkilesimini engelledi. Engellenmis ve temiz versiyonu arasinda gecis yapmak icin ustteki resme tiklayin.">
 <!ENTITY noscriptClearClickOpt "TemizTik korumasi yap...">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Sayfaya gömülü nesneleri opaklastir...">
 <!ENTITY noscriptTrustedPagesAdj "guvenilenlerde">
 <!ENTITY noscriptUntrustedPagesAdj "guvensizlerde">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Gömülü Nesneler">
 <!ENTITY noscriptPrev "Previuous">
 <!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

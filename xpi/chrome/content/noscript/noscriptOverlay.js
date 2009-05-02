@@ -137,6 +137,7 @@ var noscriptOverlay = noscriptUtil.service ?
     
     if (this._reloadDirty && !this.liveReload) {
       this.ns.reloadWhereNeeded();
+      this.ns.savePrefs();
     }
     
     if (popup.id == "noscript-tbb-popup") {
@@ -645,7 +646,7 @@ var noscriptOverlay = noscriptUtil.service ?
       for (j = egroup.length; j-- > 0;) {
          e = egroup[j];
          
-         if(typeof(e) == "object" && (e.tag && !e.placeholder)) continue;
+         if(typeof(e) != "object" || (e.tag && !e.placeholder)) continue;
          node = document.createElement("menuitem");
          
          e.label = e.label || ns.mimeEssentials(e.mime) + "@" + ns.urlEssentials(e.url);
@@ -884,8 +885,7 @@ var noscriptOverlay = noscriptUtil.service ?
   getIcon: function(node) {
     if (typeof(node) != "object") node = document.getElementById(node);
     return node.ownerDocument.defaultView.getComputedStyle(node, null)
-            .getPropertyValue("list-style-image")
-            .replace(/.*url\s*\(\s*"?(.*)\"?\s*\).*/g, '$1');
+            .listStyleImage.replace(/.*url\s*\(\s*"?([^"\s\)]*).*/g, '$1');
   },
   
   getStatusClass: function(lev, inactive, currentClass) {
@@ -1426,6 +1426,7 @@ var noscriptOverlay = noscriptUtil.service ?
     } else {
       var s = sites.length;
       var total = s;
+      if (sites.pluginExtras) sites.pluginExtras.forEach(function(pe) { total += pe.filter(function(e) { return e && e.placeholder; }).length });
       var url, site;
       while (s-- > 0) {
         url = sites[s];
@@ -1925,13 +1926,12 @@ var noscriptOverlay = noscriptUtil.service ?
   
   firstRunCheck: function() {
     var ns = noscriptUtil.service;
+   
     const prevVer = ns.getPref("version", "");
     if (prevVer != ns.VERSION) {
       ns.setPref("version", ns.VERSION);
-      
       if (prevVer && prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
-      
-      ns.savePrefs();
+      ns.savePrefs(true);
       if (ns.getPref("firstRunRedirection", true)) {
           window.setTimeout(function() {
             const url = "http://noscript.net?ver=" + noscriptUtil.service.VERSION + "&prev=" + prevVer;

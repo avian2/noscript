@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Потенційна спроба кражі клацань (clickjacking) /підміни інтерфейсу!">
 <!ENTITY noscriptClearClickDescription "NoScript перехопив взаємодію мишки чи клавіатури з частково прихованим елементом. Клацніть на малюнку зверху для перемикання між заслоненою та чистою версіями.">
 <!ENTITY noscriptClearClickOpt "Захист сторінок ClearClick…">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Зробити вбудовані об’єкти непрозорими…">
 <!ENTITY noscriptTrustedPagesAdj "довірені">
 <!ENTITY noscriptUntrustedPagesAdj "недовірені">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Вбудовані об’єкти">
 <!ENTITY noscriptPrev "Попереднє">
 <!ENTITY noscriptNext "Наступне">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

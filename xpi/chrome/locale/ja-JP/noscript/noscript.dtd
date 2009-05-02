@@ -84,8 +84,7 @@
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;要素を隠す">
 <!ENTITY noscriptNselForce "ブロックした&lt;SCRIPT&gt;に引き続く&lt;NOSCRIPT&gt;を表示する">
 <!ENTITY noscriptAutoAllowTopLevel "トップレベルサイトはデフォルトで一時的に許可する">
-<!ENTITY noscriptDescription "Firefoxをさらに安全にします: NoScriptはJavaScript, Java（およびその他のプラグイン）を、（あなたが使うオンラインバンキングサイトなど）あなたが選んだ信頼できるサイトでのみ実行可能にします。このホワイトリストによる予防的ブロック手法によって、機能性を減じることなく
-セキュリティ脆弱性への攻撃（既知と未知とに関わらず！）を防ぎます。専門家は同意するでしょう： FirefoxはNoScriptを使うことで本当にさらに安全になります:-)">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality… Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "CSSベースのスキャナをブロックする">
 <!ENTITY noscriptOptFilterXGet "クロスサイトの疑いのあるリクエストをサニタイズする">
 <!ENTITY noscriptOptFilterXPost "クロスサイトのPOSTリクエストを、同じ情報を持つGETリクエストに変換する">
@@ -142,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Clickjacking / UI Redressingの可能性があります!">
 <!ENTITY noscriptClearClickDescription "NoScriptは部分的に隠された要素へのマウスやキーボードの関与を阻止しました。上部のイメージをクリックすることで、遮られている版と遮られていない版を交互に表示します。">
 <!ENTITY noscriptClearClickOpt "ClearClick保護を行う:">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "埋め込みオブジェクトをOpacizeする:">
 <!ENTITY noscriptTrustedPagesAdj "信頼しているページ">
 <!ENTITY noscriptUntrustedPagesAdj "信頼していないページ">
@@ -149,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "埋め込みオブジェクト">
 <!ENTITY noscriptPrev "前">
 <!ENTITY noscriptNext "次">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

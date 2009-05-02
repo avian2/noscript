@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "¡Posible intento de clickjacking / camuflaje de UI!">
 <!ENTITY noscriptClearClickDescription "NoScript interceptó una interacción de ratón o teclado con un elemento parcialmente oculto. Pulse en la imagen superior para comparar la versión oculta y la ya revelada.">
 <!ENTITY noscriptClearClickOpt "Usar la protección ClearClick en páginas...">
+<!ENTITY noscriptClearClickReport "Informe">
+<!ENTITY noscriptClearClickReport.accesskey "I">
+<!ENTITY noscriptClearClickReportId "ID del informe:">
 <!ENTITY noscriptOpacizeOpt "Hacer opacos los objetos incrustados en páginas...">
 <!ENTITY noscriptTrustedPagesAdj "fiables">
 <!ENTITY noscriptUntrustedPagesAdj "no fiables">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Objetos incrustados">
 <!ENTITY noscriptPrev "Anterior">
 <!ENTITY noscriptNext "Siguiente">
+<!ENTITY noscriptFrameOptErr.title "Este contenido no puede mostrarse en una frame (marco)">
+<!ENTITY noscriptFrameOptErr.desc "Para proteger su seguridad, el suministrador de ese contenido no permite que se muestre en una frame">
+<!ENTITY noscriptFrameOptErr.link "Pulse aquí para abrirlo en una nueva ventana">
+<!ENTITY noscriptBookmarkSync "Guardar una copia de la configuración de NoScript para facilitar la sincronización">

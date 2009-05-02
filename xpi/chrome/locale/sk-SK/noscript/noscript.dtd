@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Potenciálny pokus o podvodné správanie po kliknutí!">
 <!ENTITY noscriptClearClickDescription "NoScript zachytil interakciu klávesnice alebo myši s čiastočne skrytým objektom. Kliknutím na obrázok môžete prepínať medzi podozrivou a prečistenou verziou.">
 <!ENTITY noscriptClearClickOpt "Ochrana ClearClick na">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Nastaviť vložené objekty ako nepriehľadné na">
 <!ENTITY noscriptTrustedPagesAdj "dôveryhodných stránkach">
 <!ENTITY noscriptUntrustedPagesAdj "nedôveryhodných stránkach">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Vložené objekty">
 <!ENTITY noscriptPrev "Predchádzajúci">
 <!ENTITY noscriptNext "Ďalší">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

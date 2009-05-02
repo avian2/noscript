@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Потенцијален обид за Clickjacking / UI Redressing!">
 <!ENTITY noscriptClearClickDescription "NoScript пресретна интеракција на глушецот или тастатурата со делумно скриен елемент. Кликни на сликата погоре за промена помеѓу спречената и чистата верзија.">
 <!ENTITY noscriptClearClickOpt "ClearClick заштита на страниците...">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Направи ги непроѕирни вградените објекти на страниците...">
 <!ENTITY noscriptTrustedPagesAdj "со доверба">
 <!ENTITY noscriptUntrustedPagesAdj "без доверба">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Вградени Објекти">
 <!ENTITY noscriptPrev "Претходно">
 <!ENTITY noscriptNext "Следно">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

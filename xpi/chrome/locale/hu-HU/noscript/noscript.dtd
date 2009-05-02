@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Kattintás után hamisítványgyanús viselkedés lehetséges!">
 <!ENTITY noscriptClearClickDescription "A NoScript billentyűzet vagy egér kölcsönhatását észlelte egy részlegesen rejtett objektummal. A képre kattintva válthat a gyanús és a tiszta változat között.">
 <!ENTITY noscriptClearClickOpt "ClearClick védelem a">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Beágyazott objektumok beállítása nem átlátszónak a">
 <!ENTITY noscriptTrustedPagesAdj "biztonságos oldalakon">
 <!ENTITY noscriptUntrustedPagesAdj "nem biztonságos oldalakon">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Beágyazott objektumok">
 <!ENTITY noscriptPrev "Előző">
 <!ENTITY noscriptNext "Következő">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

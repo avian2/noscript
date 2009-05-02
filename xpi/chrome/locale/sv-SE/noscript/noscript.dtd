@@ -141,6 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Potentiell Clickjacking /UI redressing försök!">
 <!ENTITY noscriptClearClickDescription "NoScript fångade upp musklick eller tangentbordsklick med ett delvis dolt element. Klicka på bilden ovan för att växla mellan dold och klartext version.">
 <!ENTITY noscriptClearClickOpt "ClearClick skydd på sidor...">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Markera inbäddade objekt på sidor...">
 <!ENTITY noscriptTrustedPagesAdj "betrodd">
 <!ENTITY noscriptUntrustedPagesAdj "ej betrodd">
@@ -148,3 +151,7 @@
 <!ENTITY noscriptEmbeddings "Inbäddade objekt">
 <!ENTITY noscriptPrev "Föregående">
 <!ENTITY noscriptNext "Nästa">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">

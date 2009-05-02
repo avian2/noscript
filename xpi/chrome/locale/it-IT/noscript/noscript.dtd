@@ -139,10 +139,19 @@
 <!ENTITY noscriptSecureCookiesExceptions "Ignora i cookie non sicuri creati in HTTPS dai seguenti siti:">
 <!ENTITY noscriptClearClickTitle "Avviso di ClearClick">
 <!ENTITY noscriptClearClickHeader "Possibile tentativo di &quot;clickjacking&quot; o camuffamento">
-<!ENTITY noscriptClearClickDescription "NoScript ha intercettato un'interazione del mouse o della tastiera con un elemento parzialmente nascosto. Cliccare sull'immagine sotto per confrontare la versione ostruita con quella svelata.">
+<!ENTITY noscriptClearClickDescription "NoScript ha intercettato un&apos;interazione del mouse o della tastiera con un elemento parzialmente nascosto. Cliccare sull&apos;immagine sotto per confrontare la versione ostruita con quella svelata.">
 <!ENTITY noscriptClearClickOpt "Abilita la protezione ClearClick sulle pagine…">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
 <!ENTITY noscriptOpacizeOpt "Opacizza gli oggetti incorporati nelle pagine…">
 <!ENTITY noscriptTrustedPagesAdj "fidate">
 <!ENTITY noscriptUntrustedPagesAdj "non fidate">
 <!ENTITY noscriptKeepLocked "Mantieni bloccato questo elemento (consigliabile)">
 <!ENTITY noscriptEmbeddings "Oggetti incorporati">
+<!ENTITY noscriptPrev "Previous">
+<!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
