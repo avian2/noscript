@@ -48,7 +48,7 @@
 <!ENTITY noscriptForbidWebBugs "A &quot;Web Bugs&quot; tiltása">
 <!ENTITY noscriptForbidSilverlight "A Microsoft® Silverlight™ tiltása">
 <!ENTITY noscriptForbidIFrames "Az &lt;IFRAME&gt; tiltása">
-<!ENTITY noscriptForbidFrames "Az &lt;FRAME&gt; tiltása">
+<!ENTITY noscriptForbidFrames "A &lt;FRAME&gt; tiltása">
 <!ENTITY noscriptForbidFlash "Az Adobe® Flash® tiltása">
 <!ENTITY noscriptForbidPlugins "Egyéb beépülő modulok tiltása">
 <!ENTITY noscriptReloadWarn "Ezek a beállítások új vagy (kézzel) újratöltött oldalaknál lépnek érvénybe">
@@ -73,9 +73,9 @@
 <!ENTITY noscriptTrusted "Megbízható">
 <!ENTITY noscriptUntrusted "Megbízhatatlan">
 <!ENTITY noscriptUnknown "Ismeretlen">
-<!ENTITY noscriptAdd "Hozzáad">
+<!ENTITY noscriptAdd "Hozzáadás">
 <!ENTITY noscriptAdd.accesskey "H">
-<!ENTITY noscriptClose "Bezár">
+<!ENTITY noscriptClose "Bezárás">
 <!ENTITY noscriptSiteManager "Webhely-kezelő">
 <!ENTITY noscriptSecurityManager "Megbízhatóság-kezelő">
 <!ENTITY noscriptPolicies "Kezelés">
@@ -141,9 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Kattintás után hamisítványgyanús viselkedés lehetséges!">
 <!ENTITY noscriptClearClickDescription "A NoScript billentyűzet vagy egér kölcsönhatását észlelte egy részlegesen rejtett objektummal. A képre kattintva válthat a gyanús és a tiszta változat között.">
 <!ENTITY noscriptClearClickOpt "ClearClick védelem a">
-<!ENTITY noscriptClearClickReport "Report">
-<!ENTITY noscriptClearClickReport.accesskey "R">
-<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptClearClickReport "Jelentés">
+<!ENTITY noscriptClearClickReport.accesskey "J">
+<!ENTITY noscriptClearClickReportId "Jelentés azonosító:">
 <!ENTITY noscriptOpacizeOpt "Beágyazott objektumok beállítása nem átlátszónak a">
 <!ENTITY noscriptTrustedPagesAdj "biztonságos oldalakon">
 <!ENTITY noscriptUntrustedPagesAdj "nem biztonságos oldalakon">
@@ -151,7 +151,7 @@
 <!ENTITY noscriptEmbeddings "Beágyazott objektumok">
 <!ENTITY noscriptPrev "Előző">
 <!ENTITY noscriptNext "Következő">
-<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
-<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
-<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
-<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptFrameOptErr.title "Ez a tartalom keretben nem jeleníthető meg">
+<!ENTITY noscriptFrameOptErr.desc "A tartalom kiadója nem engedélyezte annak keretben történő megjelenítését.">
+<!ENTITY noscriptFrameOptErr.link "Kattintson ide a tartalom megjelenítéséhez új ablakban">
+<!ENTITY noscriptBookmarkSync "A NoScript konfigurációjának biztonsági mentése könyvjelzőbe (a szinkronizáció egyszerűbbé tétele)">

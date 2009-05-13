@@ -283,7 +283,9 @@
         
       </groupbox>
       <separator />
-        <checkbox id="opt-clearClick.prompt" label="&noscriptClearClickTitle;"/>
+      <checkbox id="opt-clearClick.prompt" label="&noscriptClearClickTitle;"/>
+      <separator />
+      <checkbox id="opt-firstRunRedirection" label="&noscriptShowReleaseNotes;"/>
     </vbox>
   </tabpanel><!-- END Notifications -->
   

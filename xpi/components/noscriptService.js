@@ -871,7 +871,7 @@ function NoscriptService() {
 }
 
 NoscriptService.prototype = {
-  VERSION: "1.9.2.6",
+  VERSION: "1.9.2.8",
   
   get wrappedJSObject() {
     return this;
@@ -1461,7 +1461,7 @@ NoscriptService.prototype = {
     this.mozJSPref = prefserv.getBranch("javascript.").QueryInterface(PBI);
     this.mozJSPref.addObserver("enabled", this, true);
     
-    this.permanentSites.sitesString = this.getPref("mandatory", "chrome: about: resource:");
+    this.mandatorySites.sitesString = this.getPref("mandatory", "chrome: about: resource:");
     
     this.captureExternalProtocols();
     
@@ -1584,6 +1584,8 @@ NoscriptService.prototype = {
       this.resetJSCaps();
       this.resetPolicyState();
       
+      if (this.placesPrefs) this.placesPrefs.dispose();
+      
       if(this.consoleDump & LOG_LEAKS) this.reportLeaks();
     } catch(e) {
       this.dump(e + " while disposing.");
@@ -1621,9 +1623,9 @@ NoscriptService.prototype = {
   
   extraCapturedProtocols: null,
   
-  permanentSites: new PolicySites(),
-  isPermanent: function(s) {
-    return s && this.permanentSites.matches(s);
+  mandatorySites: new PolicySites(),
+  isMandatory: function(s) {
+    return s && this.mandatorySites.matches(s);
   }
 ,
   tempSites: new PolicySites(),
@@ -1710,7 +1712,7 @@ NoscriptService.prototype = {
   },
   setJSEnabled: function(site, is, fromScratch, cascadeTrust) {
     const ps = this.jsPolicySites;
-    if (fromScratch) ps.sitesString = this.permanentSites.sitesString;
+    if (fromScratch) ps.sitesString = this.mandatorySites.sitesString;
     if (is) {
       ps.add(site);
       if (!fromScratch) {
@@ -1784,6 +1786,7 @@ NoscriptService.prototype = {
   }
 ,
   get placesPrefs() {
+    if (!this.getPref("placesPrefs", false)) return null; 
     delete this.__proto__.placesPrefs;
     try {
       INCLUDE('placesPrefs.js');
@@ -1796,7 +1799,7 @@ NoscriptService.prototype = {
 
   savePrefs: function(skipPlaces) {
     var res = this.prefService.savePrefFile(null);
-    if (this.getPref("placesPrefs", false) && this.placesPrefs && !skipPlaces) this.placesPrefs.save();
+    if (this.placesPrefs && !skipPlaces) this.placesPrefs.save();
     return res;
   },
 
@@ -2120,6 +2123,12 @@ NoscriptService.prototype = {
     webNav.reload(webNav.LOAD_FLAGS_CHARSET_CHANGE);
   },
   
+  getPermanentSites: function() {
+    var whitelist = this.jsPolicySites.clone();
+    whitelist.remove(this.tempSites.sitesList, true, true);
+    return whitelist;
+  },
+  
   eraseTemp: function() {
     // remove temporary PUNCTUALLY: 
     // keeps ancestors because the may be added as permanent after the temporary allow;
@@ -2133,10 +2142,11 @@ NoscriptService.prototype = {
     this.setPref("temp", ""); 
     this.setPref("gtemp", "");
     
-    this.setJSEnabled(this.permanentSites.sitesList, true); // add permanent
+    this.setJSEnabled(this.mandatorySites.sitesList, true); // add mandatory
     this.resetAllowedObjects();
     if (this.clearClickHandler) this.clearClickHandler.resetWhitelist();
   }
+  
 ,
   _observingPolicies: false,
   _editingPolicies: false,
@@ -2591,8 +2601,10 @@ NoscriptService.prototype = {
             return CP_OK;
           
           case 4: // STYLESHEETS
-            if (/\/x/i.test(aMimeTypeGuess) && !/chrome|resource/.test(aContentLocation.scheme) &&
-                (aContext instanceof CI.nsIDOMXMLDocument) && this.getPref("forbidXSLT", true)) {
+            if (aContext && !(aContext instanceof CI.nsIDOMHTMLLinkElement || aContext instanceof CI.nsIDOMHTMLStyleElement) &&
+                /\/x/.test(aMimeTypeGuess) &&
+                !/chrome|resource/.test(aContentLocation.scheme) &&
+                  this.getPref("forbidXSLT", true)) {
               forbid = isScript = true; // we treat XSLT like scripts
               break;
             }

@@ -45,7 +45,7 @@
 <!ENTITY noscriptContentBlocker "Zastosuj te ograniczenia także do zaufanych witryn">
 <!ENTITY noscriptForbidJava "Blokuj aplety Java™">
 <!ENTITY noscriptForbidXSLT "Blokuj aplety XSLT">
-<!ENTITY noscriptForbidWebBugs "Blokuj &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidWebBugs "Blokuj „Web Bugs”">
 <!ENTITY noscriptForbidSilverlight "Blokuj aplety Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Blokuj aplety &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Blokuj aplety &lt;FRAME&gt;">
@@ -58,8 +58,8 @@
 <!ENTITY noscriptShowPlaceholder "Wyświetlaj ikonę zamiennika">
 <!ENTITY noscriptTruncateTitle "Skracaj tytuły dokumentów">
 <!ENTITY noscriptFixLinks "Próbuj przekształcić odnośniki JavaScript w normalne odnośniki">
-<!ENTITY noscriptAllowBookmarks "Pozwalaj na wykonywanie skryptów witrynom otwieranym z folderu &quot;Zakładki&quot;">
-<!ENTITY noscriptAllowViaBookmarks "Pozwalaj na wykonywanie skryptów witrynom otwieranym z folderu &quot;Zakładki&quot;">
+<!ENTITY noscriptAllowBookmarks "Pozwalaj na wykonywanie skryptów witrynom otwieranym z folderu „Zakładki”">
+<!ENTITY noscriptAllowViaBookmarks "Pozwalaj na wykonywanie skryptów witrynom otwieranym z folderu „Zakładki”">
 <!ENTITY noscriptAllowPing "Pozwalaj na &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Pozwalaj na wykonywanie skryptów lokalnym odnośnikom">
 <!ENTITY noscriptForbidPing "Nie pozwalaj na&lt;A PING…&gt;">
@@ -69,7 +69,7 @@
 <!ENTITY noscriptPermissions "Zezwolenia">
 <!ENTITY noscriptRefresh "Odświeżanie">
 <!ENTITY noscriptNotifications "Powiadomienia">
-<!ENTITY noscriptToolbarToggle "Naciśnięcie l.p.m. przycisku &quot;NoScript&quot; zmienia zezwolenia dla aktywnej witryny">
+<!ENTITY noscriptToolbarToggle "Naciśnięcie l.p.m. przycisku „NoScript” zmienia zezwolenia dla aktywnej witryny">
 <!ENTITY noscriptTrusted "Zaufane">
 <!ENTITY noscriptUntrusted "Niezaufane">
 <!ENTITY noscriptUnknown "Nieznana">
@@ -105,7 +105,7 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR - Pytania i odpowiedzi…">
+<!ENTITY noscriptJarFaq "JAR – Pytania i odpowiedzi…">
 <!ENTITY noscriptJarFaq.accesskey "R">
 <!ENTITY noscriptForbidJarDocuments "Blokuj zdalne źródła JAR wczytywane jako dokumenty">
 <!ENTITY noscriptJarExceptions "Wyjątki blokowania dokumentów JAR">
@@ -124,7 +124,7 @@
 <!ENTITY noscriptTempToPerm "Określ jako stałe ustawienia dla tej strony">
 <!ENTITY noscriptTempToPerm.accesskey "S">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS - Pytania i odpowiedzi…">
+<!ENTITY noscriptHttpsFaq "HTTPS – Pytania i odpowiedzi…">
 <!ENTITY noscriptHttpsFaq.accesskey "H">
 <!ENTITY noscriptHttps.behavior "Zachowanie">
 <!ENTITY noscriptHttps.cookies "Ciasteczka">
@@ -141,9 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Potencjalne zagrożenie przechwytywania kliknięć/Próba przywrócenia prawidłowego interfejsu">
 <!ENTITY noscriptClearClickDescription "NoScript przechwycił interakcję myszy lub klawiatury z częściowo ukrytym elementem. Kliknij na powyższym obrazku, aby wyświetlić/schować ukrytą wersję.">
 <!ENTITY noscriptClearClickOpt "Zabezpieczenia kliknięć ukrytych obiektów na stronach internetowych">
-<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport "Raport">
 <!ENTITY noscriptClearClickReport.accesskey "R">
-<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptClearClickReportId "ID raportu:">
 <!ENTITY noscriptOpacizeOpt "Widoczność osadzonych obiektów na stronach internetowych">
 <!ENTITY noscriptTrustedPagesAdj "zaufana">
 <!ENTITY noscriptUntrustedPagesAdj "niezaufana">
@@ -151,7 +151,7 @@
 <!ENTITY noscriptEmbeddings "Obiekty osadzone">
 <!ENTITY noscriptPrev "Poprzedni">
 <!ENTITY noscriptNext "Następny">
-<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
-<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
-<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
-<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptFrameOptErr.title "Ta treść nie może zostać wyświetlona w ramce">
+<!ENTITY noscriptFrameOptErr.desc "Aby chronić twoje bezpieczeństwo, wydawca tej treści nie zezwolił na wyświetlanie jej w ramce.">
+<!ENTITY noscriptFrameOptErr.link "Kliknij tutaj, aby otworzyć tą treść w nowym oknie">
+<!ENTITY noscriptBookmarkSync "Aby łatwo synchronizować ustawienia NoScript, utwórz kopię ustawień jako zakładkę">

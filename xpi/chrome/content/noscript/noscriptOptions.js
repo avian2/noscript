@@ -303,7 +303,7 @@ var nsopt = {
         continue;
       
       item = ul.appendItem(site, site);
-      if(ns.isPermanent(site)) { 
+      if(ns.isMandatory(site)) { 
         item.setAttribute("disabled", "true");
       }
       item.style.fontStyle = (site in tempMap) ? "italic" : "normal";
@@ -332,7 +332,7 @@ var nsopt = {
     
     if(selectedItems.length == 1) {
       var site = selectedItems[0].value;
-      if(!ns.isPermanent(site)) {
+      if(!ns.isMandatory(site)) {
         ul.removeItemAt(ul.getIndexOfItem(selectedItems[0]));
         this.trustedSites.remove(site, true);
       }
@@ -341,7 +341,7 @@ var nsopt = {
     
     var removed = [];
     for(var j = selectedItems.length; j-- > 0;) {
-      if(!ns.isPermanent(site = selectedItems[j].value)) {
+      if(!ns.isMandatory(site = selectedItems[j].value)) {
         removed.push(site);
       }
     }
@@ -364,7 +364,7 @@ var nsopt = {
     this.trustedSites.remove(this.tempSites.sitesList, true, true);
     this.trustedSites.remove(this.gTempSites.sitesList, true, true);
     this.untrustedSites.add(this.gTempSites.sitesList);
-    this.trustedSites.add(ns.permanentSites.sitesList);
+    this.trustedSites.add(ns.mandatorySites.sitesList);
     this.tempSites.sitesString = "";
     this.gTempSites.sitesString = "";
     this.tempRevoked = true;

@@ -130,7 +130,7 @@
 <!ENTITY noscriptHttps.cookies "Бисквитки">
 <!ENTITY noscriptHttps.description "Забраняване на активно съдържание, освен ако не идва от защитена (HTTPS) връзка:">
 <!ENTITY noscriptHttps.never "Никога">
-<!ENTITY noscriptHttps.proxy "При използване на прокски (препоръчително Tor)">
+<!ENTITY noscriptHttps.proxy "При използване на прокски (препоръчително с Tor)">
 <!ENTITY noscriptHttps.always "Винаги">
 <!ENTITY noscriptHttpsForced "Принуждаване на следните сайтове да използват защитена (HTTPS) връзка:">
 <!ENTITY noscriptHttpsForcedExceptions "Никога да не се използва защитена връзка за следните сайтове:">
@@ -141,9 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Потенциална опасност от клик-отвличане/опит за пренасочване!">
 <!ENTITY noscriptClearClickDescription "NoScript прихвана взаимодействие между скрит елемент и мишката или клавиатурата. Натиснете върху картинката отгоре, за да превключите между подозрителната и чистата версия.">
 <!ENTITY noscriptClearClickOpt "ClearClick защита на страници...">
-<!ENTITY noscriptClearClickReport "Report">
-<!ENTITY noscriptClearClickReport.accesskey "R">
-<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptClearClickReport "Доклад">
+<!ENTITY noscriptClearClickReport.accesskey "Д">
+<!ENTITY noscriptClearClickReportId "Доклад №:">
 <!ENTITY noscriptOpacizeOpt "Избледняване на вградени обекти на страници...">
 <!ENTITY noscriptTrustedPagesAdj "доверени">
 <!ENTITY noscriptUntrustedPagesAdj "недоверени">
@@ -151,7 +151,7 @@
 <!ENTITY noscriptEmbeddings "Вградени обекти">
 <!ENTITY noscriptPrev "Предишен">
 <!ENTITY noscriptNext "Следващ">
-<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
-<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
-<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
-<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptFrameOptErr.title "Това съдържание не може да бъде показано в рамка">
+<!ENTITY noscriptFrameOptErr.desc "От съображения за сигурност, издателят на това съдържание не разрешава то да бъде показано в рамка">
+<!ENTITY noscriptFrameOptErr.link "Натиснете тук, за да отворите съдържанието в нов прозорец">
+<!ENTITY noscriptBookmarkSync "Записване на настройките за NoScript като отметка, за по-лесно синхронизиране">

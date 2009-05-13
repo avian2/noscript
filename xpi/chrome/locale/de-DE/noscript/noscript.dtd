@@ -92,7 +92,7 @@
 <!ENTITY noscriptShowConsole.accesskey "z">
 <!ENTITY noscriptXss "Cross-Site Scripting (XSS)">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "FAQ zu Cross-Site Scripting (engl.)…">
+<!ENTITY noscriptXssFaq "FAQ (engl.) zu Cross-Site Scripting…">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "Unsicheres Nachladen">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -105,7 +105,7 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "FAQ zu JAR-Dateien (engl.)…">
+<!ENTITY noscriptJarFaq "FAQ (engl.) zu JAR-Dateien…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "Entfernte JAR-Dateien davon abhalten, als Dokumente geladen zu werden">
 <!ENTITY noscriptJarExceptions "Nicht zu blockierende JAR-Dokumente">
@@ -124,7 +124,7 @@
 <!ENTITY noscriptTempToPerm "Berechtigungen dieser Seite speichern">
 <!ENTITY noscriptTempToPerm.accesskey "b">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ (engl.)…">
+<!ENTITY noscriptHttpsFaq "FAQ (engl.) zu verschlüsselten Verbindungen (HTTPS)…">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
 <!ENTITY noscriptHttps.behavior "Verhalten">
 <!ENTITY noscriptHttps.cookies "Cookies">
@@ -143,7 +143,7 @@
 <!ENTITY noscriptClearClickOpt "ClearClick-Schutz auf">
 <!ENTITY noscriptClearClickReport "Report">
 <!ENTITY noscriptClearClickReport.accesskey "R">
-<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptClearClickReportId "Report-ID:">
 <!ENTITY noscriptOpacizeOpt "Undurchsichtig eingebettete Objekte auf">
 <!ENTITY noscriptTrustedPagesAdj "vertrauenswürdigen Seiten">
 <!ENTITY noscriptUntrustedPagesAdj "nicht vertrauenswürdigen /">
@@ -151,7 +151,7 @@
 <!ENTITY noscriptEmbeddings "Eingebettete Objekte">
 <!ENTITY noscriptPrev "Zurück">
 <!ENTITY noscriptNext "Weiter">
-<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
-<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
-<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
-<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptFrameOptErr.title "Der Inhalt kann nicht in einem Frame angezeigt werden">
+<!ENTITY noscriptFrameOptErr.desc "Um Ihre Sicherheit zu gewährleisten hat der Herrausgeber des Inhaltes festgelegt, das dieser nicht in einem Frame angezeigt werden darf.">
+<!ENTITY noscriptFrameOptErr.link "Hier klicken um den Inhalt in einem neuen Fenster zu öffnen">
+<!ENTITY noscriptBookmarkSync "Datensicherung der NoScript-Konfiguration in ein Lesezeichen speichern für eine einfache Synchronisation">

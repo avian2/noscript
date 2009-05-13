@@ -85,7 +85,7 @@
 <!ENTITY noscriptNselForce "顯示被封鎖的 &lt;Script&gt; 的 &lt;NoScript&gt; 元素">
 <!ENTITY noscriptAutoAllowTopLevel "預設暫時允許第一層網域">
 <!ENTITY noscriptDescription "為您的 Firefox 提供額外保護: NoScript 只允許您選擇的信任網域 (例如您的家庭金融網站) 上的 JavaScript, Java (和其他的外掛). 這份白名單基於預先處理來防止安全弱點 (已知和未知的!) 被利用，且不損失功能… 專家們都同意: Firefox 加上 NoScript 真的是更加安全 :-)">
-<!ENTITY noscriptOptBlockCssScanners "封鎖基於 CSS 的掃描器">
+<!ENTITY noscriptOptBlockCssScanners "封鎖基於 CSS 的掃瞄器">
 <!ENTITY noscriptOptFilterXGet "消除可疑的跨站請除">
 <!ENTITY noscriptOptFilterXPost "轉換跨站 POST 請求為不含數據的 GET 請求">
 <!ENTITY noscriptShowConsole "顯示控制台…">
@@ -141,17 +141,17 @@
 <!ENTITY noscriptClearClickHeader "潛在的點選劫持/使用者介面補償企圖攻擊!">
 <!ENTITY noscriptClearClickDescription "NoScript 攔截一個滑鼠或鍵盤操作的隱藏元素. 點選圖片將會進行對上述過程之間的阻止和解除改變.">
 <!ENTITY noscriptClearClickOpt "解除頁面上的點選保護...">
-<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport "報告">
 <!ENTITY noscriptClearClickReport.accesskey "R">
-<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptClearClickReportId "報告ID：">
 <!ENTITY noscriptOpacizeOpt "半透明化本頁嵌入的物件...">
 <!ENTITY noscriptTrustedPagesAdj "可信任">
 <!ENTITY noscriptUntrustedPagesAdj "不信任">
 <!ENTITY noscriptKeepLocked "保持鎖定此元素(推薦)">
 <!ENTITY noscriptEmbeddings "嵌入的物件">
-<!ENTITY noscriptPrev "Previuous">
-<!ENTITY noscriptNext "Next">
-<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
-<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
-<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
-<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptPrev "上一個">
+<!ENTITY noscriptNext "下一個">
+<!ENTITY noscriptFrameOptErr.title "此內容無法在框架頁中顯示">
+<!ENTITY noscriptFrameOptErr.desc "為保衛您的安全性，此提供者的內容不允許於框架頁中顯示。">
+<!ENTITY noscriptFrameOptErr.link "按此於一個新視窗中開啟此內容。">
+<!ENTITY noscriptBookmarkSync "輕鬆把 NoScript 組態備份到書籤中來達到同步">

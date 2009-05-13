@@ -536,7 +536,7 @@ var noscriptOverlay = noscriptUtil.service ?
         
         
         blurred = false;
-        if (locked || (enabled ? ns.isPermanent(menuSite) : blurred = ns.isForbiddenByHttpsStatus(menuSite))) {
+        if (locked || (enabled ? ns.isMandatory(menuSite) : blurred = ns.isForbiddenByHttpsStatus(menuSite))) {
           node.setAttribute("disabled", "true");
         } else {
           cssClass += " menuitem-iconic ";
@@ -1443,7 +1443,7 @@ var noscriptOverlay = noscriptUtil.service ?
         
         if (site) {
           if (oldStylePartial || activeSites.indexOf(url) > -1) active++;
-          if (ns.isPermanent(site) || allowedSites.indexOf(site) > -1) {
+          if (ns.isMandatory(site) || allowedSites.indexOf(site) > -1) {
             total--;
           } else {
             allowedSites.push(site);

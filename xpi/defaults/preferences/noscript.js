@@ -132,8 +132,6 @@ pref("noscript.jarDoc.notify", true);
 pref("noscript.forbidXBL", 4);
 pref("noscript.forbidXHR", 1);
 
-pref("noscript.xblHack", "hackademix.net");
-
 pref("noscript.whitelistRegExp", "");
 
 pref("noscript.tempGlobal", false);
@@ -185,7 +183,7 @@ pref("noscript.clearClick.plugins", true);
 pref("noscript.clearClick.prompt", true);
 pref("noscript.clearClick.debug", false);
 pref("noscript.clearClick.exceptions", "noscript.net/getit flashgot.net/getit *.ebay.com");
-pref("noscript.clearClick.subexceptions", "http://w.sharethis.com/share3x/lightbox.html?*");
+pref("noscript.clearClick.subexceptions", "http://w.sharethis.com/share3x/lightbox.html?* http://disqus.com/embed/* http://www.feedly.com/mini");
 
 pref("noscript.emulateFrameBreak", true);
 
