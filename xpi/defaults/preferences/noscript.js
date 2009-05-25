@@ -213,3 +213,4 @@ pref("noscript.forbidXSLT", true);
 pref("noscript.oldStylePartial", false);
 pref("noscript.proxiedDNS", 0);
 pref("noscript.placesPrefs", false);
+pref("noscript.bookmarklets.import", 1);

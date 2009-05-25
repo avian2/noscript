@@ -79,9 +79,13 @@ var noscriptUtil = {
     this.browse("http://noscript.net/faq#" + which);
   },
   
+  openHelp: function(section) {
+    this.browse("http://noscript.net/help/" + section);
+  },
+  
   
   browse: function(url, features) {
-    var w = this.service.domUtils.mostRecentBrowserWindow;
+    var w = this.service.dom.mostRecentBrowserWindow;
     if(w && !w.closed && w.gBrowser) {
       w.gBrowser.selectedTab = w.gBrowser.addTab(url, null);
     } else {

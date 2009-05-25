@@ -1,3 +1,6 @@
+var $ = function(id) { return document.getElementById(id); }
+var $$ = function(tag) { return document.getElementsByTagName(tag); }
+
 function UIUtils(serv) {
   this.serv = serv;
 }
@@ -8,7 +11,7 @@ UIUtils.prototype = {
       this.serv.getPref(this.tabselPrefName, "").split(/\s*,\s*/);
     // select tabs from external param
 
-    var tabs = document.getElementsByTagName("tabs");
+    var tabs = $$("tabs");
     var tcount = Math.min(tabs.length, indexes.length);
     var listener = function(ev) { arguments.callee.binding.persistTabSelections(); }
     listener.binding = this;
@@ -22,7 +25,7 @@ UIUtils.prototype = {
   },
   
   persistTabSelections: function() {
-     var tabs = document.getElementsByTagName("tabbox");
+     var tabs = $$("tabbox");
      var ss = [];
      for(var tcount = 0; tcount < tabs.length; tcount++) {
        ss.push(tabs[tcount].selectedIndex);
@@ -33,7 +36,7 @@ UIUtils.prototype = {
   visitCheckboxes: function(callback) {
     const rxOpt=/^(inv|moz|)opt-(.*)/;
     var j, checkbox, match;
-    const opts = document.getElementsByTagName("checkbox");
+    const opts = $$("checkbox");
     for(j = opts.length; j-- > 0;) {
       checkbox = opts[j];
       if((match = checkbox.id.match(rxOpt))) {
@@ -45,7 +48,7 @@ UIUtils.prototype = {
   visitTextboxes: function(callback) {
     const rxOpt=/^opt-(.*)/;
     var j, box, match;
-    const opts = document.getElementsByTagName("textbox");
+    const opts = $$("textbox");
     for(j = opts.length; j-- > 0;) {
       box = opts[j];
       if((match = box.id.match(rxOpt))) {
@@ -68,8 +71,8 @@ UIUtils.prototype = {
 function ConditionalGroup(serv, prefName, def) {
   this.serv = serv;
   this.prefName = prefName;
-  this.cbx = document.getElementById("cbx-" + prefName);
-  this.sel = document.getElementById("sel-" + prefName);
+  this.cbx = $("cbx-" + prefName);
+  this.sel = $("sel-" + prefName);
   var value = this.serv.getPref(prefName, def);
   this.defaultIndex = typeof(def) == "number" ? def : 0;
   this.cbx.checked =  !!value;
@@ -122,10 +125,10 @@ SoundChooser.prototype = {
     }
   },
   setSample: function(url) {
-    document.getElementById(this.id).value = url || this.def;
+    $(this.id).value = url || this.def;
   },
   getSample: function() {
-    return document.getElementById(this.id).value;
+    return $(this.id).value;
   },
   play: function() {
     this.serv.playSound(this.getSample(), true);
@@ -134,8 +137,8 @@ SoundChooser.prototype = {
 
 function RegExpController(prefix, parseMethod, value) {
   this.parse = parseMethod || this.parse;
-  this.regexp = document.getElementById(prefix + "-regexp");
-  this.sample = document.getElementById(prefix + "-sample");
+  this.regexp = $(prefix + "-regexp");
+  this.sample = $(prefix + "-sample");
   var listener = function(ev) { arguments.callee.binding.feedback(); };
   listener.binding = this;
   this.regexp.addEventListener("input", listener, false);

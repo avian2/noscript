@@ -1,0 +1,244 @@
+const DOM = {
+  
+  lookupMethod: Components.utils ? Components.utils.lookupMethod : Components.lookupMethod,
+  consoleDump: false,
+  dump: function(msg) {
+    if(this.consoleDump) dump("[NoScript DOM] " + msg + "\n");
+  },
+  
+  findBrowser: function(chrome, win) {
+    
+    var overlay = chrome.noscriptOverlay;
+    if (!overlay) return null;
+    
+    var browser = overlay.currentBrowser;
+    if (browser.contentWindow == win) return browser;
+    
+    var browsers = overlay.browsers;
+    if (!browsers) return null;
+    
+    for (var j = browsers.length; j-- > 0;) {
+      browser = browsers[j];
+      if (browser.contentWindow == win) return browser;
+    }
+    
+    return null;
+  },
+  
+  findBrowserForNode: function(ctx) {
+    if (!ctx) return null;
+    var bi = null;
+    try {
+      if (!(ctx instanceof CI.nsIDOMWindow)) {
+        if (ctx instanceof CI.nsIDOMDocument) {
+          ctx = ctx.defaultView;
+        } else if(ctx instanceof CI.nsIDOMNode) {
+          ctx = ctx.ownerDocument.defaultView;
+        } else return null; 
+      }
+      if (!ctx) return null;
+      try {
+        ctx = this.lookupMethod(ctx, "top")();
+      } catch(e) {
+        ctx = ctx.top;
+      }
+      var bi = this.createBrowserIterator(this.getChromeWindow(ctx));
+      
+      for (var b; b = bi.next();) {
+        try {
+          if (b.contentWindow == ctx) return b;
+        } catch(e1) {
+          this.dump("Skipping browser iteration: " + e1);
+        }
+      }
+      this.dump("Browser not found for " + ctx);
+    } catch(e2) {
+      this.dump("Can't find browser for " + ctx + ": " + e2);
+    } finally {
+      if (bi) bi.dispose();
+      ctx = null;
+    }
+   
+    return null;
+  },
+  
+  findBrowserForChannel: function(channel, w) {
+    return (w || (w = this.findWindowForChannel(channel))) && this.findBrowserForNode(w);
+  },
+  
+  findWindowForChannel: function(channel) {  
+    for each(var cb in [channel.notificationCallbacks,
+                         channel.loadGroup && channel.loadGroup.notificationCallbacks]) {
+      if (cb instanceof CI.nsIInterfaceRequestor) {
+        try {
+        // For Gecko 1.9.1
+          return cb.getInterface(CI.nsILoadContext).associatedWindow;
+        } catch(e) {}
+        
+        try {
+          // For Gecko 1.9.0
+          return cb.getInterface(CI.nsIDOMWindow);
+        } catch(e) {}
+      }
+    }
+    return null;
+  },
+  
+  
+  getDocShellForWindow: function(window) {
+    try {
+      return window.QueryInterface(CI.nsIInterfaceRequestor)
+                   .getInterface(CI.nsIWebNavigation)
+                   .QueryInterface(CI.nsIDocShell);
+    } catch(e) {
+      return null;
+    }
+  },
+    
+  getChromeWindow: function(window) {
+    try {
+      return this.getDocShellForWindow(window)
+        .QueryInterface(CI.nsIDocShellTreeItem).rootTreeItem
+        .QueryInterface(CI.nsIInterfaceRequestor)
+        .getInterface(CI.nsIDOMWindow).window;
+    } catch(e) {
+      return null;
+    }
+  },
+  
+  get windowMediator() {
+    delete this.windowMediator;
+    return this.windowMediator = CC['@mozilla.org/appshell/window-mediator;1']
+                  .getService(CI.nsIWindowMediator);
+  },
+  
+  _winType: null,
+  perWinType: function(delegate) {
+    var wm = this.windowMediator;
+    var w = null;
+    var aa = Array.prototype.slice.call(arguments);
+    for each(var type in ['navigator:browser', 'emusic:window', 'Songbird:Main']) {
+     aa[0] = type;
+      w = delegate.apply(wm, aa);
+      if (w) {
+        this._winType = type;
+        break;
+      }
+    }
+    return w;
+  },
+  get mostRecentBrowserWindow() {
+    var res = this._winType && this.windowMediator.getMostRecentWindow(this._winType, true);
+    return res || this.perWinType(this.windowMediator.getMostRecentWindow, true);
+  },
+  
+  get windowEnumerator() {
+    var res = this._winType && this.windowMediator.getZOrderDOMWindowEnumerator(this._winType, true);
+    return res || this.perWinType(this.windowMediator.getZOrderDOMWindowEnumerator, true);
+  },
+  createBrowserIterator: function(initialWin) {
+    return new BrowserIterator(initialWin);
+  },
+  
+  addClass: function(e, c) {
+    var cur = e.className;
+    if (cur) {
+      var cc = cur.split(/\s+/);
+      if (cc.indexOf(c) > -1) return;
+      cc.push(c);
+      e.className = cc.join(" ");
+    } else e.className += " " + c;
+  },
+  removeClass: function(e, c) {
+    var cur = e.className;
+    if (cur) {
+      var cc = cur.split(/\s+/);
+      for (var pos; (pos = cc.indexOf(c)) > -1;)
+        cc.splice(pos, 1);
+      
+      e.className = cc.join(" ");
+    }
+  },
+  hasClass: function(e, c) {
+    var cur = e.className;
+    return cur && cur.split(/\s+/).indexOf(c) > -1;
+  },
+  
+  _idCounter: Math.round(Math.random() * 9999),
+  rndId: function() {
+    return new Date().getTime().toString(32) + "_" + (this._idCounter++).toString(32) + "_" + Math.round(Math.random() * 9999999).toString(32);
+  }
+  
+};
+
+function BrowserIterator(initialWin) {
+  if (!initialWin) {
+    initialWin = DOM.mostRecentBrowserWindow;
+  }
+  this.currentWin = this.initialWin = initialWin;
+  this.initPerWin();
+}
+BrowserIterator.prototype = {
+ 
+  initPerWin: function() {
+    var overlay = this.currentWin && (this.currentWin.wrappedJSObject || this.currentWin).noscriptOverlay;
+    if (overlay) {
+      this.browsers = overlay.browsers;
+      this.currentTab = overlay.currentBrowser;
+    } else  {
+      this.currentTab = this.currentWin = null;
+      this.browsers = [];
+    }
+    this.mostRecentTab = this.currentTab;
+    this.curTabIdx = 0;
+  },
+  
+  next: function() {
+    var ret = this.currentTab;
+    this.currentTab = null;
+    if(ret != null) return ret.wrappedJSObject || ret;
+    if(!this.initialWin) return null;
+    if (this.curTabIdx >= this.browsers.length) {
+      if (!this.winEnum) {
+        this.winEnum = DOM.windowEnumerator;
+      }
+      if (this.winEnum.hasMoreElements()) {
+        this.currentWin = this.winEnum.getNext();
+        if (this.currentWin != this.initialWin){
+           this.initPerWin();
+        }
+        return this.next();
+      } else {
+        this.dispose();
+        return null;
+      }
+    }
+    this.currentTab = this.browsers[this.curTabIdx++];
+    if (this.currentTab == this.mostRecentTab) this.next();
+    return this.next();
+  },
+  dispose: function() {
+    if (!this.initialWin) return; // already disposed;
+    this.initialWin = 
+      this.currentWin = 
+      this.browsers = 
+      this.currentTab = 
+      this.mostRecentTab = 
+      this.winEnum = 
+      null;
+  },
+  
+  find: function(filter) {
+    try {
+      for (var b; b = this.next();) {
+        if (filter(b)) {
+          return b;
+        }
+      }
+    } finally {
+      this.dispose();
+      filter = null;
+    }
+    return null;
+  }
+};

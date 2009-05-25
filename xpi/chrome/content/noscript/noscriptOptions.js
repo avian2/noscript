@@ -20,14 +20,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ***** END LICENSE BLOCK *****/
 
 
+var ns = noscriptUtil.service;
 
 var nsopt = {
   
-  serv: noscriptUtil.service,
+
   dom2: /^(?:http[s]?|file):\/\/([^\.\?\/#,;:\\\@]+(:?\.[^\.\?\/#,;:\\\@]+$|$))/,
   utils: null,
   init: function() {
-    const ns = this.serv; 
+
     if(ns.uninstalling) { // this should never happen! 
       window.close();
       return;
@@ -36,16 +37,16 @@ var nsopt = {
     this.utils = new UIUtils(ns);
     this.utils.resumeTabSelections();
     
-    var locked = this.serv.locked;
+    var locked = ns.locked;
     for each (widget in ["urlText","urlList", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
-      this[widget] = document.getElementById(widget);
+      this[widget] = $(widget);
       if(locked) this[widget].disabled = true;
     }
      // forbid <a ping>
-    var pingCbx = document.getElementById("mozopt-browser.send_pings");
+    var pingCbx = $("mozopt-browser.send_pings");
     if(pingCbx.getAttribute("label").indexOf("Allow ") == 0) { 
       pingCbx.setAttribute("label", noscriptUtil.getString("allowLocal", ["<a ping...>"]));
-      document.getElementById("opt-noping")
+      $("opt-noping")
               .setAttribute("label", noscriptUtil.getString("forbidLocal", ["<a ping...>"]));
     }
     
@@ -72,15 +73,15 @@ var nsopt = {
       box.value = ns.getPref(prefName);  
     });
     
-    document.getElementById("opt-showPermanent").setAttribute("label", noscriptUtil.getString("allowLocal", ["[...]"]));
-    document.getElementById("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp", ["[...]"]));
-    document.getElementById("opt-showDistrust").setAttribute("label", noscriptUtil.getString("distrust", ["[...]"]));
-    document.getElementById("opt-showGlobal").setAttribute("label", noscriptUtil.getString("allowGlobal"));
+    $("opt-showPermanent").setAttribute("label", noscriptUtil.getString("allowLocal", ["[...]"]));
+    $("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp", ["[...]"]));
+    $("opt-showDistrust").setAttribute("label", noscriptUtil.getString("distrust", ["[...]"]));
+    $("opt-showGlobal").setAttribute("label", noscriptUtil.getString("allowGlobal"));
   
     var notifyHideLabels = noscriptUtil.getString("notifyHide").split("%S");
-    document.getElementById("opt-notify.hide").setAttribute("label", notifyHideLabels[0]);
-    document.getElementById("notifyDelayLabel").setAttribute("value", notifyHideLabels[1]);
-    document.getElementById("notifyDelay").value = ns.getPref("notify.hideDelay", 5);
+    $("opt-notify.hide").setAttribute("label", notifyHideLabels[0]);
+    $("notifyDelayLabel").setAttribute("value", notifyHideLabels[1]);
+    $("notifyDelay").value = ns.getPref("notify.hideDelay", 5);
     
     this.soundChooser.setSample(ns.getPref("sound.block"));
     
@@ -88,15 +89,17 @@ var nsopt = {
     this.toggleGroup = new ConditionalGroup(ns, "toolbarToggle", 3);
     
     var val = ns.getPref("allowHttpsOnly", 0);
-    document.getElementById("sel-allowHttpsOnly").selectedIndex = (val < 0 || val > 2) ? 0 : val;
+    $("sel-allowHttpsOnly").selectedIndex = (val < 0 || val > 2) ? 0 : val;
     
     var shortcut = ns.getPref("keys.toggle");
     if(shortcut) {
       shortcut = shortcut.replace(/VK_([^\.]*).*/g, "$1").replace(/\s+/g, '+').replace(/_/g, ' ');
-      var shortcutLabel = document.getElementById("toolbarToggle-shortcut");
+      var shortcutLabel = $("toolbarToggle-shortcut");
       shortcutLabel.value = "(" + shortcut + ")";
       shortcutLabel.removeAttribute("hidden");
     }
+    
+    this.utils.syncGroup($("opt-secureCookies"));
     
     this.xssEx = new RegExpController(
         "xssEx", 
@@ -110,31 +113,68 @@ var nsopt = {
     // hide incompatible options
     if(top.opener && top.opener.noscriptOverlay && !top.opener.noscriptOverlay.getNotificationBox()) {
       // Moz/SeaMonkey, no notifications
-      document.getElementById("fx-notifications").setAttribute("hidden", "true");
+      $("fx-notifications").setAttribute("hidden", "true");
     }
     
     ["clearClick", "opacizeObject"].forEach(function(c) {
       var pref = ns.getPref(c);
-      Array.forEach(document.getElementById(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {        
+      Array.forEach($(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {        
         cbx.setAttribute("checked", !(pref & parseInt(cbx.getAttribute("value"))) ? "false" : "true");
       });
     });
     
     if (!ns.clearClickHandler.isSupported(document))
       ["clearClickOpts", "opt-clearClick.prompt"].forEach(function(id) {
-        document.getElementById(id).setAttribute("hidden", "true"); // Fx <= 1.5
+        $(id).setAttribute("hidden", "true"); // Fx <= 1.5
       });
     
     
-    if (!("nsINavHistoryService" in Components.interfaces)) {
-      document.getElementById("opt-placesPrefs").setAttribute("hidden", "true");
+    if (!ns.placesSupported) {
+      $("opt-placesPrefs").setAttribute("hidden", "true");
     }
     
-    // document.getElementById("policy-tree").view = policyModel;
+    if (ns.canSerializeConf) this.initSerializeButtons();
+    
+    // $("policy-tree").view = policyModel;
     window.sizeToContent();
     
     this.addButton.setAttribute("enabled", "false");
     this.removeButton.setAttribute("enabled", "false");
+  },
+  
+  
+  initSerializeButtons: function() {
+    var ref = document.documentElement.getButton("extra2");
+    ["import", "export"].forEach(function(s) {
+      var original = $(s + "Button");
+      var b = original.cloneNode(false);
+      original.accessKey = "";
+      
+      b.id = s + "DButton";
+      b.className = ref.className;
+      b.setAttribute("oncommand", "nsopt." + s + "Conf()");
+      ref.parentNode.insertBefore(b, ref);
+    });
+  },
+  
+  importConf: function() {
+    this.chooseFile(
+      this.buttonToTitle("importButton"),
+      "Open",
+      function(f) {
+        ns.restoreConf(ns.readFile(f)) && nsopt.reload();
+      }
+    );
+  },
+  exportConf: function() {
+    this.save();
+    this.chooseFile(
+      this.buttonToTitle("exportButton"),
+      "Save",
+      function(f) {
+        ns.writeFile(f, ns.serializeConf(true));
+      }
+    );  
   },
   
   reset: function() {
@@ -144,7 +184,11 @@ var nsopt = {
           noscriptUtil.getString("reset.warning"))
       ) return;
     
-    this.serv.resetDefaults();
+    ns.resetDefaults();
+    this.reload();
+  },
+  
+  reload: function() {
     this.utils.persistTabSelections();
     var op = top.opener;
     if(op && op.noscriptUtil) {
@@ -156,8 +200,6 @@ var nsopt = {
   },
   
   save: function() {
-    const ns = this.serv;
-    
     this.utils.visitCheckboxes(
       function(prefName, inverse, checkbox, mozilla) {
         if(checkbox.getAttribute("collapsed")!="true") {
@@ -185,14 +227,14 @@ var nsopt = {
     
     ["clearClick", "opacizeObject"].forEach(function(c) {
       var pref = 0;
-      Array.forEach(document.getElementById(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {
+      Array.forEach($(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {
         if (cbx.checked) pref = pref | parseInt(cbx.getAttribute("value"));
       });
       ns.setPref(c, pref);
     });
     
     
-    ns.setPref("notify.hideDelay", parseInt(document.getElementById("notifyDelay").value) || 
+    ns.setPref("notify.hideDelay", parseInt($("notifyDelay").value) || 
               ns.getPref("notify.hideDelay", 5));
 
     ns.setPref("sound.block", this.soundChooser.getSample());
@@ -200,7 +242,7 @@ var nsopt = {
     this.autoAllowGroup.persist();
     this.toggleGroup.persist();
     
-    ns.setPref("allowHttpsOnly", document.getElementById("sel-allowHttpsOnly").selectedIndex);
+    ns.setPref("allowHttpsOnly", $("sel-allowHttpsOnly").selectedIndex);
     
     var exVal = this.xssEx.getValue();
     if(this.xssEx.validate() || !/\S/.test(exVal)) 
@@ -219,7 +261,9 @@ var nsopt = {
     var tempSites = this.tempSites;
     var gTempSites = this.gTempSites;
     
-    ns.safeCapsOp(function() {
+    if (ns.consoleDump) ns.dump("Saving whitelist: " + trustedSites.sitesString);
+    
+    ns.safeCapsOp(function(ns) {
       if(ns.untrustedSites.sitesString != untrustedSites.sitesString
           || ns.jsPolicySites.sitesString != trustedSites.sitesString
           || ns.tempSites.sitesString != tempSites.sitesString
@@ -228,6 +272,7 @@ var nsopt = {
         ns.persistUntrusted();
         ns.setPref("temp", tempSites.sitesString);
         ns.setPref("gtemp", gTempSites.sitesString);
+        
         ns.setJSEnabled(trustedSites.sitesList, true, true);
       }
       ns.jsEnabled = global;
@@ -244,16 +289,16 @@ var nsopt = {
       }
     }  
     this.removeButton.setAttribute("disabled", removeDisabled);
-    document.getElementById("revokeButton")
+    $("revokeButton")
       .setAttribute("disabled", this.tempRevoked || 
-          !(this.tempSites.sitesString || this.gTempSites.sitesString || this.serv.objectWhitelistLen));
+          !(this.tempSites.sitesString || this.gTempSites.sitesString || ns.objectWhitelistLen));
     this.urlChanged();
   },
   
   urlChanged: function() {
     var url = this.urlText.value;
     if(url.match(/\s/)) url = this.urlText.value = url.replace(/\s/g,'');
-    var addEnabled = url.length > 0 && (url = this.serv.getSite(url)) ;
+    var addEnabled = url.length > 0 && (url = ns.getSite(url)) ;
     if(addEnabled) {
       var match = url.match(this.dom2);
       if(match) url = match[1];
@@ -270,7 +315,7 @@ var nsopt = {
       if(/\D/.test(txt.value)) txt.value = txt.value.replace(/\D/, "");
     },
     onChange: function(txt) {
-      txt.value = parseInt(txt.value) || noscriptUtil.service.getPref("notify.hideDelay", 5);
+      txt.value = parseInt(txt.value) || ns.getPref("notify.hideDelay", 5);
     }
   },
   
@@ -288,7 +333,6 @@ var nsopt = {
     const policy = this.trustedSites;
     const sites = this.trustedSites.sitesList;
     const ul = this.urlList;
-    const ns = this.serv;
     for(var j = ul.getRowCount(); j-- > 0; ul.removeItemAt(j));
     const dom2 = this.dom2;
     var site, item;
@@ -312,19 +356,18 @@ var nsopt = {
   },
   
   allow: function() {
-    const site = this.serv.getSite(this.urlText.value);
+    const site = ns.getSite(this.urlText.value);
     this.trustedSites.add(site);
     this.tempSites.remove(site, true, true); // see noscriptService#eraseTemp()
     this.gTempSites.remove(site, true, true);
     
-    this.untrustedSites.remove(site, false, !this.serv.mustCascadeTrust(site, false));
+    this.untrustedSites.remove(site, false, !ns.mustCascadeTrust(site, false));
     this.populateUrlList();
     this.ensureVisible(site);
     this.addButton.setAttribute("disabled", "true");
   },
   
   remove: function() {
-    const ns = this.serv;
     const ul = this.urlList;
     var visIdx = ul.getIndexOfFirstVisibleRow();
     var lastIdx = visIdx + ul.getNumberOfVisibleRows();
@@ -360,7 +403,6 @@ var nsopt = {
   
   tempRevoked: false,
   revokeTemp: function() {
-    const ns = this.serv;
     this.trustedSites.remove(this.tempSites.sitesList, true, true);
     this.trustedSites.remove(this.gTempSites.sitesList, true, true);
     this.untrustedSites.add(this.gTempSites.sitesList);
@@ -378,21 +420,20 @@ var nsopt = {
         new SoundChooser(
         "sampleURL", 
         this.buttonToTitle("sampleChooseButton"),
-        noscriptUtil.service,
+        ns,
         "chrome://noscript/skin/block.wav"
       ));
   },
   
   
-  importExport: function(op) {
-    const title = this.buttonToTitle(op + "Button");
+  chooseFile: function(title, mode, callback) {
     try {
       const cc = Components.classes;
       const ci = Components.interfaces;
       const IFP = ci.nsIFilePicker;
       const fp = cc["@mozilla.org/filepicker;1"].createInstance(IFP);
       
-      fp.init(window,title, op == "import" ? IFP.modeOpen : IFP.modeSave);
+      fp.init(window,title, IFP["mode" + mode]);
       fp.appendFilters(IFP.filterText);
       fp.appendFilters(IFP.filterAll);
       fp.filterIndex = 0;
@@ -400,15 +441,24 @@ var nsopt = {
       const ret = fp.show();
       if(ret == IFP.returnOK || 
           ret == IFP.returnReplace) {
-        this[op + "List"](fp.file);
+        callback.call(nsopt, fp.file);
       }
     } catch(ex) {
       noscriptUtil.prompter.alert(window, title, ex.toString());
     }
   },
   
+  
+  importExport: function(op) {
+    this.chooseFile(
+      this.buttonToTitle(op + "Button"),
+      op == "import" ? "Open" : "Save",
+      this[op + "List"]
+    );
+  },
+  
   importList: function(file) {
-    var all = this.serv.readFile(file).replace(/\s+/g, "\n");
+    var all = ns.readFile(file).replace(/\s+/g, "\n");
     var untrustedPos = all.indexOf("[UNTRUSTED]");
     if(untrustedPos < 0) {
       this.trustedSites.sitesString += "\n" + all;
@@ -422,7 +472,7 @@ var nsopt = {
   },
   
   exportList: function(file) {
-    this.serv.writeFile(file, 
+    ns.writeFile(file, 
       this.trustedSites.sitesList.join("\n") + 
       "\n[UNTRUSTED]\n" +
       this.untrustedSites.sitesList.join("\n")
@@ -431,7 +481,7 @@ var nsopt = {
   },
   
   syncNsel: function(cbx) {
-    var blockNSWB = document.getElementById("opt-blockNSWB");
+    var blockNSWB = $("opt-blockNSWB");
     if(cbx.checked) {
       blockNSWB.disabled = true;
       blockNSWB.checked = true;
@@ -441,106 +491,7 @@ var nsopt = {
   },
   
   buttonToTitle: function(btid) {
-    return "NoScript - " + document.getElementById(btid).getAttribute("label");
+    return "NoScript - " + $(btid).getAttribute("label");
   }
-  
-  
-  
+
 }
-
-/*
-function Site(url, perm, temp, disabled) {
-  this.url = url;
-  this.perm = perm;
-  this.temp = temp;
-  this.disabled = disabled;
-}
-
-Site.prototype = {
-  get status() { return this.perm ? "TRUSTED" : "UNTRUSTED" }
-}
-
-Site.sort = function(array, field, descending) {
-  array.sort(function(a,b) {
-    var res;
-    if(field in a) {
-      if(field in b) {
-        a = a[field]; b = b[field];
-        res =a < b ? -1 : a > b ? 1 : 0;
-      } else {
-        res = 1;
-      }
-    } else {
-      res=(field in b)? -1 : 0;
-    }
-    return descending ? -res : res;
-  });
-  this.currentSorting.field = field;
-  this.currentSorting.descending = descending;
-  return array;
-}
-
-Site.currentSorting = { field: 'url', descending: false };
-
-var policyModel = {
-  data: [],
-  get rowCount() { return this.data.length;  },
-  
-  _getColName: function(col) {
-    if(!col) return null;
-    const id=(col && col.id)?col.id:col;
-    var pos = id.lastIndexOf("-");
-    return id.substring(pos + 1);
-  },
-  getCellText: function(row, col) {
-    var colName = this._getColName(col);
-    if(!colName) return "";
-    return this.data[row][colName];
-  },
-  //setCellText: function(row, column, text) {},
-  setTree: function(treeBox) { this.treeBox = treeBox; },
-  isContainer: function(index) { return false; },
-  isSeparator: function(index) { return false; }, 
-  isSorted: function() {},
-  getLevel: function(index) { return 0; },
-  getImageSrc: function(row, col) {
-   return null;
-  },
-  getCellProperties: function(row, col, props) {},
-  getColumnProperties: function(column, elem, prop) {}, 
-  getRowProperties: function(row, props) { },
-
-  isContainerOpen: function(index) { },
-  isContainerEmpty: function(index) { return false; },
-  canDropOn: function(index) { return false; },
-  canDropBeforeAfter: function(index, before) { return false; },
-  drop: function(row, orientation) { return false; },
-  
-  getParentIndex: function(index) { return 0; },
-  hasNextSibling: function(index, after) { return false; },
-  getProgressMode: function(row, column) { },
-  getCellValue: function(row, column) { },
-  toggleOpenState: function(index) { },
-  cycleHeader: function(col, elem) { 
-    if(!elem) {
-      elem=col.element;
-    }
-    const colName = this._getColName(col);
-    const descending = elem.getAttribute("sortDirection") == "ascending";
-    elem.setAttribute("sortDirection", descending ? "descending" : "ascending");
-    Sitesort(this.data, colName, descending);
-    this.treeBox.invalidate();
-  },
-  selectionChanged: function() {  
-    this._messageSelected(this.data[this.selection.currentIndex]);
-  },
-  
-  cycleCell: function(row, column) { },
-  isEditable: function(row, column) { return false; },
-  performAction: function(action) { },
-  performActionOnRow: function(action, row) { },
-  performActionOnCell: function(action, row, column) { }
-};
-*/
-
-

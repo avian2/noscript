@@ -23,8 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ***** END LICENSE BLOCK *****/
 
 
-var noscriptOverlay = noscriptUtil.service ? 
-{
+var noscriptOverlay = (function() {
+
+var $ = function(id) { return document.getElementById(id) };
+
+return noscriptUtil.service ? {
+
   ns: noscriptUtil.service,
   
   getString: function(key, parms) {
@@ -143,7 +147,7 @@ var noscriptOverlay = noscriptUtil.service ?
     if (popup.id == "noscript-tbb-popup") {
       // take back our stuff
        this._currentPopup = null;
-      noscriptOverlay.prepareMenu(document.getElementById("noscript-status-popup"));
+      noscriptOverlay.prepareMenu($("noscript-status-popup"));
      
     }
     popup._lastClosed = new Date().getTime();
@@ -152,7 +156,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
 
   prepareContextMenu: function(ev) {
-    var menu = document.getElementById("noscript-context-menu");
+    var menu = $("noscript-context-menu");
     if (this.ns.getPref("ctxMenu", true)) {
       menu.removeAttribute("hidden");
     } else {
@@ -196,7 +200,7 @@ var noscriptOverlay = noscriptUtil.service ?
     this.prepareOptItems(this.populateXssMenu(popup, invert));
   },
   populateXssMenu: function(popup, invert) {
-    var ref = document.getElementById("noscript-mi-xss-unsafe-reload");
+    var ref = $("noscript-mi-xss-unsafe-reload");
     var parent = ref.parentNode;
     var inverse = parent.lastChild.id != "noscript-mi-xss-faq";
     invert = inverse && !invert;
@@ -240,10 +244,10 @@ var noscriptOverlay = noscriptUtil.service ?
   
   initPopups: function() {
     var sticky = this.stickyUI; // early init
-    var popup = document.getElementById("noscript-status-popup");
+    var popup = $("noscript-status-popup");
     // copy status bar menus
     ["noscript-statusIcon", "noscript-statusLabel"].forEach(function(id) {
-      var parent = document.getElementById(id);
+      var parent = $(id);
       if (!parent) return;
       if (parent.firstChild && /popup/.test(parent.firstChild.tagName)) return;
       var clone = popup.cloneNode(true);
@@ -307,7 +311,7 @@ var noscriptOverlay = noscriptUtil.service ?
     
     
     
-    var tempMenuItem = document.getElementById("noscript-revoke-temp-mi");
+    var tempMenuItem = $("noscript-revoke-temp-mi");
     if (node != tempMenuItem) {
       node = mainMenu.insertBefore(tempMenuItem, node);
     }
@@ -323,14 +327,14 @@ var noscriptOverlay = noscriptUtil.service ?
     }
     node = node.nextSibling;
     
-    tempMenuItem = document.getElementById("noscript-temp-allow-page-mi");
+    tempMenuItem = $("noscript-temp-allow-page-mi");
     if (node != tempMenuItem) {
       mainMenu.insertBefore(tempMenuItem, node)
     } else {
       node = node.nextSibling;
     }
     
-    var xssMenu = document.getElementById("noscript-xss-menu");
+    var xssMenu = $("noscript-xss-menu");
     
     if (xssMenu && node != xssMenu) {
       mainMenu.insertBefore(xssMenu, node);
@@ -345,8 +349,8 @@ var noscriptOverlay = noscriptUtil.service ?
     var pluginsMenu = null;
     if (seps.untrusted) {
       
-      pluginsMenu = document.getElementById("noscript-menu-blocked-objects");
-      untrustedMenu = document.getElementById("noscript-menu-untrusted");
+      pluginsMenu = $("noscript-menu-blocked-objects");
+      untrustedMenu = $("noscript-menu-untrusted");
       // cleanup untrustedCount display
       untrustedMenu.setAttribute("label", untrustedMenu.getAttribute("label").replace(/ \(\d+\)$/, ""));
       
@@ -596,7 +600,7 @@ var noscriptOverlay = noscriptUtil.service ?
 
     
     // allow all this page
-    node = document.getElementById("noscript-allow-page-mi");
+    node = $("noscript-allow-page-mi");
     if (node.nextSibling != tempMenuItem) {
       tempMenuItem.parentNode.insertBefore(node, tempMenuItem);
     }
@@ -605,7 +609,7 @@ var noscriptOverlay = noscriptUtil.service ?
     }
     
     // make permanent
-    node = document.getElementById("noscript-temp2perm-mi");
+    node = $("noscript-temp2perm-mi");
     if (tempMenuItem.nextSibling != node) {
       tempMenuItem.parentNode.insertBefore(node, tempMenuItem.nextSibling);
     }
@@ -790,11 +794,10 @@ var noscriptOverlay = noscriptUtil.service ?
   }
 ,
   revokeTemp: function() {
-    const ns = noscriptOverlay.ns;
-    ns.safeCapsOp(function() {
+    this.ns.safeCapsOp(function(ns) {
       ns.eraseTemp();
       noscriptOverlay.syncUI();
-    }, !ns.getPref("autoReload.allTabsOnPageAction", true));
+    }, this.ns.getPref("autoReload.allTabsOnPageAction", true));
   }
 ,
   menuCmd: function(menuItem) {
@@ -842,7 +845,7 @@ var noscriptOverlay = noscriptUtil.service ?
       reloadPolicy = 1 // current tab only, for multiple items
     }
     
-    function op() {
+    function op(ns) {
       if (site) {
         
         ns.setTemp(site, enabled && temp);
@@ -867,7 +870,7 @@ var noscriptOverlay = noscriptUtil.service ?
       else noscriptOverlay.syncUI();
     }
     
-    if (reloadPolicy == ns.RELOAD_NO) op()
+    if (reloadPolicy == ns.RELOAD_NO) op(ns)
     else {
       ns.setExpando(window.content, "contentLoaded", false);
       ns.safeCapsOp(op, reloadPolicy);
@@ -876,14 +879,14 @@ var noscriptOverlay = noscriptUtil.service ?
 ,
   
   get statusIcon() {
-    var statusIcon = document.getElementById("noscript-statusIcon") || document.getElementById("noscript-tbb");
+    var statusIcon = $("noscript-statusIcon") || $("noscript-tbb");
     if (!statusIcon) return null; // avoid mess with early calls
     delete this.statusIcon;
     return this.statusIcon = statusIcon;
   },
 
   getIcon: function(node) {
-    if (typeof(node) != "object") node = document.getElementById(node);
+    if (typeof(node) != "object") node = $(node);
     return node.ownerDocument.defaultView.getComputedStyle(node, null)
             .listStyleImage.replace(/.*url\s*\(\s*"?([^"\s\)]*).*/g, '$1');
   },
@@ -914,7 +917,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   syncXssWidget: function(widget) {
-    if (!widget) widget = document.getElementById("noscript-statusXss");
+    if (!widget) widget = $("noscript-statusXss");
     if (!widget) return;
     const ns = this.ns;
     var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(this.currentBrowser);
@@ -929,7 +932,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   syncRedirectWidget: function() {
-    var widget = document.getElementById("noscript-statusRedirect");
+    var widget = $("noscript-statusRedirect");
     if (!widget) return;
     var info = this.getMetaRefreshInfo();
     if (!info) {
@@ -942,7 +945,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   get stickyUI() {
-    var ui = document.getElementById("noscript-sticky-ui");
+    var ui = $("noscript-sticky-ui");
     if (ui == null) return null;
     delete this.stickyUI;
     if (!ui.openPopup) {
@@ -979,7 +982,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var useSticky = this.stickyUI && this.ns.getPref("stickyUI.onKeyboard");
 
     popup =  (useSticky && (popup = this.stickyUI)) ||
-      document.getElementById("noscript-status-popup");
+      $("noscript-status-popup");
     if (!this.isOpenOrJustClosed(popup)) {
       popup._context = !useSticky;
       popup.showPopup(null, -1, -1, "context", null, null);
@@ -1132,7 +1135,7 @@ var noscriptOverlay = noscriptUtil.service ?
      
       var buttonLabel, buttonAccesskey;
       if (gb.getNotificationBox || /\baButtonAccesskey\b/i.test(gb.showMessage.toSource())) {
-        const refWidget = document.getElementById("noscript-options-menuitem");
+        const refWidget = $("noscript-options-menuitem");
         buttonLabel = refWidget.getAttribute("label");
         buttonAccesskey = refWidget.getAttribute("accesskey");
       } else { // Fx < 1.5
@@ -1162,7 +1165,7 @@ var noscriptOverlay = noscriptUtil.service ?
      this.notifyHideTimeout = window.setTimeout(
        function() {
          if (browser == gb.selectedBrowser) {
-            if (document.getElementById(popup) == noscriptOverlay._currentPopup) {
+            if ($(popup) == noscriptOverlay._currentPopup) {
               noscriptOverlay.notifyHideTimeout = window.setTimeout(arguments.callee, 1000);
               return;
             }
@@ -1203,10 +1206,10 @@ var noscriptOverlay = noscriptUtil.service ?
     var label = this.getString("xss.notify.generic", [origin]);
     var icon = this.getIcon("noscript-statusXss");
     
-    const refWidget = document.getElementById("noscript-options-menuitem");
+    const refWidget = $("noscript-options-menuitem");
     var buttonLabel = refWidget.getAttribute("label");
     var buttonAccesskey = refWidget.getAttribute("accesskey");
-    var popup = document.getElementById("noscript-xss-popup");
+    var popup = $("noscript-xss-popup");
     if (window.Browser) popup.className = "noscript-menu";
     
     const tabBrowser = getBrowser();
@@ -1236,7 +1239,7 @@ var noscriptOverlay = noscriptUtil.service ?
     noscriptOverlay.notifyMetaRefresh(info);
   },
   notifyMetaRefresh: function(info) {
-    var browser = this.ns.domUtils.findBrowser(window, info.document.defaultView);
+    var browser = this.ns.dom.findBrowser(window, info.document.defaultView);
     if (!browser) return;
     
     const notificationValue = "noscript-metaRefresh-notification";
@@ -1290,7 +1293,7 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   notifyJarDocument: function(info) {
-    var browser = this.ns.domUtils.findBrowser(window, info.document.defaultView.top);
+    var browser = this.ns.dom.findBrowser(window, info.document.defaultView.top);
     if (!browser) return false;
     
     const notificationValue = "noscript-jarDoc-notification";
@@ -1359,7 +1362,6 @@ var noscriptOverlay = noscriptUtil.service ?
   },
   
   notificationHide: function(browser) { // Modified by Higmmer
-    // if (this.ns.consoleDump) this.ns.dump("Notification hide " + Components.stack.caller + "," + (browser || this.currentBrowser).currentURI.spec);
     var box = this.getNotificationBox(null, browser);
     var widget = this.getNsNotification(box); // Modified by Higmmer
     if (widget) {
@@ -1478,7 +1480,7 @@ var noscriptOverlay = noscriptUtil.service ?
     var icon = this.getIcon(this.statusIcon);
     var className = this.getStatusClass(lev, !totalAnnoyances);
     
-    var widget = document.getElementById("noscript-tbb");
+    var widget = $("noscript-tbb");
     if (widget) {
       widget.setAttribute("tooltiptext", shortMessage);
       this.updateStatusClass(widget, className); 
@@ -1507,13 +1509,13 @@ var noscriptOverlay = noscriptUtil.service ?
       message = shortMessage = "";
     }
     
-    widget = document.getElementById("noscript-statusLabelValue");
+    widget = $("noscript-statusLabelValue");
     if (widget) {
       widget.setAttribute("value", shortMessage);
       widget.parentNode.style.display = message ? "" : "none";
     }
     
-    widget =  document.getElementById("noscript-tbb-revoke-temp");
+    widget =  $("noscript-tbb-revoke-temp");
     if (widget) {
       if (ns.gTempSites.sitesString || ns.tempSites.sitesString || ns.objectWhitelistLen || ns.clearClickHandler && ns.clearClickHandler.whitelistLen) {
         widget.removeAttribute("disabled");
@@ -1522,7 +1524,7 @@ var noscriptOverlay = noscriptUtil.service ?
       }
     }
     
-    widget =  document.getElementById("noscript-tbb-temp-page");
+    widget =  $("noscript-tbb-temp-page");
     if (widget) {
       if (allowed < total) {
         widget.removeAttribute("disabled");
@@ -1544,7 +1546,7 @@ var noscriptOverlay = noscriptUtil.service ?
     if (!(doc.defaultView && doc.defaultView == doc.defaultView.top)) return;
     
     const ns = this.ns;
-    browser = browser || ns.domUtils.findBrowserForNode(doc);
+    browser = browser || ns.dom.findBrowserForNode(doc);
     if (browser) {
       ns.setExpando(browser, "pe", null);
     }
@@ -1565,7 +1567,7 @@ var noscriptOverlay = noscriptUtil.service ?
       switch (data) {
         case "statusIcon": case "statusLabel":
           window.setTimeout(function() {
-              var widget =document.getElementById("noscript-" + data);
+              var widget =$("noscript-" + data);
               if (widget) {
                 widget.setAttribute("hidden", !noscriptOverlay.ns.getPref(data))
               }
@@ -1870,7 +1872,7 @@ var noscriptOverlay = noscriptUtil.service ?
     
     setup: function() {
       
-      var context = document.getElementById("contentAreaContextMenu");
+      var context = $("contentAreaContextMenu");
       if (!context) return; // not a browser window?
       
       context.addEventListener("popupshowing", this.onMainContextMenu, false);
@@ -1918,7 +1920,7 @@ var noscriptOverlay = noscriptUtil.service ?
       noscriptOverlay.prefsObserver.remove();
       noscriptOverlay.shortcutKeys.remove();
       
-     document.getElementById("contentAreaContextMenu").removeEventListener("popupshowing", this.onMainContextMenu, false);
+     $("contentAreaContextMenu").removeEventListener("popupshowing", this.onMainContextMenu, false);
       
     }
     
@@ -2059,7 +2061,7 @@ var noscriptOverlay = noscriptUtil.service ?
   install: function() {
     // this.ns.dump("*** OVERLAY INSTALL ***\n");
     this.ns.setPref("badInstall", false);
-    this.ns.domUtils._winType = document.documentElement.getAttribute("windowtype");
+    this.ns.dom._winType = document.documentElement.getAttribute("windowtype");
     window.addEventListener("load", this.listeners.onLoad, false);
   },
 
@@ -2075,13 +2077,14 @@ var noscriptOverlay = noscriptUtil.service ?
     }
     // this.ns.dump("*** OVERLAY DISPOSE ***\n");
   }
-} : {
+}
+: {
   install: function() {
     window.addEventListener("load", function(ev) {
       ev.currentTarget.removeEventListener("load", arguments.callee, false); 
       var node = null;
       for each(var id in ["noscript-context-menu", "noscript-tbb", "noscript-statusIcon"]) {
-        node = document.getElementById(id);
+        node = $(id);
         if (node) node.hidden = true;
       }
       node = null;
@@ -2100,6 +2103,6 @@ var noscriptOverlay = noscriptUtil.service ?
       },10);
     }, false);
   }
-}
-noscriptOverlay.install();
+}})()
 
+noscriptOverlay.install();

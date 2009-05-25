@@ -1,4 +1,4 @@
-var EmulatedTLDService = {
+const EmulatedTLDService = {
   _idnService: Components.classes["@mozilla.org/network/idn-service;1"].
             getService(Components.interfaces.nsIIDNService),
 

@@ -3,31 +3,29 @@ var PlacesPrefs = {
   QueryInterface: xpcom_generateQI([CI.nsINavBookmarkObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
   bmsvc: CC["@mozilla.org/browser/nav-bookmarks-service;1"].getService(CI.nsINavBookmarksService),
   annsvc: CC["@mozilla.org/browser/annotation-service;1"].getService(CI.nsIAnnotationService),
-  json: CC["@mozilla.org/dom/json;1"].createInstance(CI.nsIJSON),
-  
+
   LEGACY_NAME: "* NoScript Configuration",
   NAME: "[NoScript]",
   PROP: "bookmarkProperties/description",
   
   dump: function(msg) {
-    if (this.ns.consoleDump) this.ns.dump(msg);
+    if (ns.consoleDump) ns.dump("Bookmark-Sync - " + msg);
   },
   
   get uri() {
     delete this.uri;
-    var t = '<h1>%title%</h1><p>%message%</p>';
+    var tpl = '<h1>%title%</h1><p>%message%</p>';
     for each(var l in ["title", "message"]) {
-      t = t.replace('%' + l + '%', this.ns.getString("bookmarkSync." + l).replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+      tpl = tpl.replace('%' + l + '%', ns.getString("bookmarkSync." + l).replace(/</g, '&lt;').replace(/>/g, '&gt;'));
     }
-    return this.uri = this.ns.siteUtils.ios.newURI(
-      'data:text/html;charset=UTF-8,' + encodeURIComponent(t.replace(/\b(Weave)\b/, '<a href="http://labs.mozilla.com/projects/weave/">$1</a>')
+    return this.uri = ns.siteUtils.ios.newURI(
+      'data:text/html;charset=UTF-8,' + encodeURIComponent(tpl.replace(/\b(Weave)\b/, '<a href="http://labs.mozilla.com/projects/weave/">$1</a>')
       .replace(/\b(XMarks(\s+extension)?)\b/i, '<a href="https://addons.mozilla.org/en-US/firefox/addon/2410">$1</a>'))
     , null, null);
   },
   
-  init: function(ns) {
+  init: function() {
     this.wrappedJSObject = this;
-    this.ns = ns;
     this.bmsvc.addObserver(this, false);
   },
   
@@ -57,16 +55,19 @@ var PlacesPrefs = {
   
   _trans: false,
   _doTransaction: function(callback, args) {
-    if (!this.ns.getPref("placesPrefs")) return;
+    if (!ns.getPref("placesPrefs")) return;
     
     if (this._trans) return;
-    try {
+    var t = new Date().getTime();
+    var ret = false;
+    try { 
       this._trans = true;
-      this.bmsvc.runInBatchMode({ runBatched: function(pp) { callback.apply(pp.wrappedJSObject, args); } }, this);
+      this.bmsvc.runInBatchMode({ runBatched: function(pp) { ret = callback.apply(pp.wrappedJSObject, args); } }, this);
     } catch(e) {
-      this.dump("Bookmark Sync Transaction Failed " + e);
+      this.dump("Transaction failed: " + e);
     } finally {
       this._trans = false;
+      if (ret) this.dump("Transaction done in " + (new Date().getTime() - t) + "ms");
     }
   },
   
@@ -76,15 +77,13 @@ var PlacesPrefs = {
   },
 
   _syncInternal: function(id, folderId, url) {
-    var ns = this.ns;
     var svc = this.bmsvc;
-    var t = new Date().getTime();
     try {
       var name = svc.getItemTitle(id);
-      if (name != this.NAME && name != this.LEGACY_NAME) return;
+      if (name != this.NAME && name != this.LEGACY_NAME) return false;
       if (!folderId) folderId = svc.getFolderIdForItem(id);
       name = svc.getItemTitle(folderId);
-      if (name != this.NAME && name != this.LEGACY_NAME) return;
+      if (name != this.NAME && name != this.LEGACY_NAME) return false;
       
       if (id != this._lastId) {
         if (this._lastId > -1) svc.removeItem(this._lastId);
@@ -113,13 +112,13 @@ var PlacesPrefs = {
       } else {
         var data = null;
         if (uri) {
-          var json = decodeURIComponent(uri.path).match(/\{[\s\S]*\}/);
-          if (json) data = { json: json && json[0], ts: '' };
+          var conf = decodeURIComponent(uri.path).match(/\{[\s\S]*\}/);
+          if (conf) data = { conf: conf && conf[0], ts: '' };
         }
         
         data = data || this.getData(id);
         
-        if (!(data && data.json)) return;
+        if (!(data && data.conf)) return false;
         
         if (data.ts) legacy = false;
         
@@ -131,28 +130,18 @@ var PlacesPrefs = {
       
       ns.savePrefs();
       
-      this.dump("Preferences Bookmark-Sync done in " + (new Date().getTime() - t) + "ms");
+      this.dump("Retrieve");
+      return true;
+    
     } catch(e) {
-      this.dump("Bookmark-Sync error: " + e);
+      this.dump("Retrieve error: " + e);
     }
+    return false;
   },
   
   _load: function(data) {
-    var ns = this.ns;
-    try {
-      if (data.ts) ns.setPref("placesPrefs.ts", data.ts);
-      var json = this.json.decode(data.json);
-      var prefs = json.prefs;
-      for (var key in prefs) ns.setPref(key, prefs[key]); 
-      ns.policyPB.setCharPref("sites", json.whitelist);
-      ns.setPref("temp", ""); 
-      ns.setPref("gtemp", "");
-      
-    } catch(e) {
-      this.dump("Error decoding JSON bookmark: " + e);
-      return false;
-    }
-    return true;
+    if (data.ts) ns.setPref("placesPrefs.ts", data.ts);
+    return ns.restoreConf(data.conf);
   },
   
   save: function() {
@@ -160,9 +149,7 @@ var PlacesPrefs = {
   },
 
   _saveInternal: function() {
-    var t = new Date().getTime();
     var id = -1;
-    var ns = this.ns;
     var svc = this.bmsvc;
     try {
 
@@ -198,54 +185,41 @@ var PlacesPrefs = {
           var date = new Date();
           date.setTime(oldData.ts.substring(1));
           if (CC["@mozilla.org/embedcomp/prompt-service;1"
-            ].getService(CI.nsIPromptService).confirm(DOMUtils.mostRecentBrowserWindow,
+            ].getService(CI.nsIPromptService).confirm(DOM.mostRecentBrowserWindow,
               ns.getString("bookmarkSync.title"), ns.getString("bookmarkSync.confirm", [date.toLocaleString()]))
           ) {
             this._load(oldData);
             ns.savePrefs();
-            return;
+            return false;
           }
         }
       }
       
       
-      var exclude = ["version", "temp", "placesPrefs.ts"];
-      var prefs = {};
-      for each (var key in ns.prefs.getChildList("", {})) {
-        if (exclude.indexOf(key) < 0) {
-          prefs[key] = ns.getPref(key);
-        }
-      }
-      
-      
-      var jsonText = this.json.encode({
-        prefs: prefs,
-        whitelist: ns.getPermanentSites().sitesString,
-        V: ns.VERSION
-        });
-      
-      
-
+      var conf = ns.serializeConf();
       
       var uri = this.uri;
       
       if (id > -1) {
-        if (oldData && oldData.json == jsonText) return;
+        if (oldData && oldData.conf == conf) return true;
         var oldURI = svc.getBookmarkURI(id);
         if (!uri.equals(oldURI)) svc.changeBookmarkURI(id, uri);
       } else {
         id = svc.insertBookmark(folderId, uri, 0, this.NAME);
       }
       
-      this.setData(id, { ts: '#' + t, json: jsonText });
+      this.setData(id, { ts: '#' + new Date().getTime(), conf: conf });
       
       
       this._lastId = id;
       
-      this.dump("Preferences Bookmark-Persist done in " + (new Date().getTime() - t) + "ms");
+      this.dump("Persist");
+      return true;
+    
     } catch(e) {
-      this.dump("Bookmark-Persist error: " + e);
+      this.dump("Persist error: " + e);
     }
+    return true;
   },
   
   _getRawData: function(id) {
@@ -263,12 +237,12 @@ var PlacesPrefs = {
   getData: function(id) {
     var raw = this._getRawData(id);
     var match = raw && raw.match(/^NoScript_Conf(#\d+)#(\{[\s\S]+\})/);
-    return match && { ts: match[1], json: match[2] };
+    return match && { ts: match[1], conf: match[2] };
   },
   
   setData: function(id, value) {
-    this._setRawData(id, "NoScript_Conf" + value.ts + "#" + value.json);
-    this.ns.setPref("placesPrefs.ts", value.ts);
+    this._setRawData(id, "NoScript_Conf" + value.ts + "#" + value.conf);
+    ns.setPref("placesPrefs.ts", value.ts);
   }
 
 }
