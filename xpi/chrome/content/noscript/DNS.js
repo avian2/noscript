@@ -1,0 +1,265 @@
+function DNSRecord(record) {
+  this.ts = Date.now();
+  var ttl;
+  if (record) {
+    try {
+      this.canonicalName = record.canonicalName;
+    } catch(e) {}
+    this.entries = [];
+    while (record.hasMore()) {
+      this.entries.push(record.getNextAddrAsString());
+    }
+    ttl = this.TTL;
+  } else {
+    this.valid = false;
+    ttl = Thread.canSpin ? this.INVALID_TTL_ASYNC : this.INVALID_TTL_SYNC;
+  }
+  this.expireTime = this.ts + this.TTL;
+}
+
+DNSRecord.prototype = {
+  INVALID_TTL_ASYNC: 100,
+  INVALID_TTL_SYNC: 5000,
+  TTL: 60000,
+  valid: true,
+  ts: 0,
+  entries: [],
+  canonicalName: '',
+  expireTime: 0,
+  
+  isLocal: function(all) {
+    return all
+      ? "everyLocal" in this
+        ? this.everyLocal
+        : this.everyLocal = this.entries.every(DNS.isLocalIP, DNS)
+      : "someLocal" in this
+        ? this.someLocal
+        : this.someLocal = this.entries.some(DNS.isLocalIP, DNS)
+      ;
+  },
+  get expired() {
+    return Date.now() > this.expireTime;
+  }
+}
+
+var DNS = {
+  
+  get _dns() {
+    delete this._dns;
+    return this._dns = CC["@mozilla.org/network/dns-service;1"]
+                  .getService(CI.nsIDNSService);
+  },
+  
+  _cache: {
+    CAPACITY: 400, // when we purge, we cut this to half
+    _map: {},
+    _ext: {},
+    
+    get count() {
+      return this._map.__count__;
+    },
+    get: function(key) {
+      return key in this._map && this._map[key];
+    },
+    put: function(key, entry) {
+      if (!(key in this._map)) {
+        if (this.count >= this.CAPACITY) {
+          this.purge();
+        }
+      }
+      this._map[key] = entry;
+    },
+    evict: function(host) {
+      return (host in this._map) && (delete this._map[host]);
+    },
+    
+    purge: function() {
+      var max = this.CAPACITY / 2;
+      if (this.count < max) return;
+      var l = [];
+      var map = this._map;
+      for (var key in map) {
+        l.push({ k: key, t: map[key].ts});
+      }
+      this._doPurge(map, l, max);
+    },
+    
+    _oldLast: function(a, b) {
+      return a.t > b.t ? -1 : a.t < b.t ? 1 : 0; 
+    },
+    
+    putExt: function(host) {
+      this._ext[host] = true; // Date.now();
+      // we prefer to store a few bytes indefinitely rather than fall for DNS rebinding...
+      // if (this._ext.__count__ > 800) this._purgeExtCache();
+    },
+    isExt: function(host) {
+      return host in this._ext;
+    },
+    
+    _purgeExtCache: function() {
+      var l = [];
+      var map = this._extCache;
+      for (var key in map) {
+        l.push({ k: key, t: map[key]});
+      }
+      this._doPurge(map, l, l.length / 2);
+    },
+    
+    _doPurge: function(map, l, max) {
+      l.sort(this._oldLast);
+      for (var j = l.length; j-- > max;) {
+        delete map[l[j].k];
+      }
+    }
+  },
+  
+  _resolving: {},
+  resolve: function(host, flags, callback) {
+    flags = flags || 0;
+    
+    
+    var elapsed = 0, t;
+    var cache = this._cache;
+    var async = IOUtil.asyncNetworking && Thread.canSpin;
+    
+    var dnsRecord = cache.get(host);
+    if (dnsRecord) {
+      // cache invalidation, if needed
+      if (flags && 2) {
+        dnsRecord = null;
+        cache.evict(host);
+      } else if (dnsRecord.expired) {
+        // invalidate async
+        DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
+            cache.put(host, dnsRecord = new DNSRecord(this.record));
+          }), Thread.currentQueue);
+      }
+    }
+    if (dnsRecord) {
+      if (ABE.consoleDump) ABE.log("Using cached DNS record for " + host);
+    } else if (async) {
+      var resolving = this._resolving;
+
+      if (host in resolving) {
+        ABE.log("Already resolving " + host);
+        
+        //DEADLOCK DANGER if spinning a new queue, MANGLED CONTENT risk if spinning current
+        /*
+        Thread.spinWithQueue({ get running() { return host in resolving; }, maxTime: 1000 });
+        if (host in cache) return this.resolve(host, flags);
+        */
+      }
+      
+      resolving[host] = true;
+      
+      var ctrl = {
+        running: true,
+        startTime: Date.now()
+      };
+      
+      var status = Components.results.NS_OK;
+      
+      
+      var resolve = function() {
+        DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
+          cache.put(host, dnsRecord = new DNSRecord(this.record));
+          ctrl.running = false;
+          delete resolving[host];
+          if (callback) {
+            elapsed = Date.now() - t;
+            ABE.log("Async DNS query on " + host + " done, " + elapsed + "ms");
+            callback(dnsRecord);
+          }
+        }), Thread.current);
+        if (ABE.consoleDump) ABE.log("Waiting for DNS query on " + host);
+        if (!callback) Thread.spin(ctrl);
+      }
+      
+      if (callback) {
+        t = Date.now();
+        resolve();
+        return null;
+      }
+      
+      Thread.runWithQueue(resolve);
+      
+      if (!Components.isSuccessCode(status)) throw status;
+      
+      elapsed = ctrl.elapsed || 0;
+    } else {
+      t = Date.now();
+      if (ABE.consoleDump) ABE.log("Performing DNS query on " + host);
+      cache.put(host, dnsRecord = new DNSRecord(this._dns.resolve(host, flags)));
+      elapsed = Date.now() - t;
+    }
+    if (ABE.consoleDump) ABE.log("DNS query on " + host + " done, " + elapsed + "ms");
+    
+    if (callback) {
+      callback(dnsRecord);
+    } else {
+      if (!(dnsRecord && dnsRecord.valid)) throw Components.results.NS_ERROR_UNKNOWN_HOST;
+    }
+    return dnsRecord;
+  },
+  
+  evict: function(host) {
+    ABE.log("Removing DNS cache record for " + host);
+    return this._cache.evict(host);
+  },
+  getCached: function(host) {
+    return this._cache.get(host);
+  },
+  isLocalURI: function(uri, all) {
+    var host;
+    try {
+      host = uri.host;
+    } catch(e) {
+      return false;
+    }
+    if (!host) return true; // local file:///
+    return this.isLocalHost(host, all);
+  },
+  
+  isLocalHost: function(host, all) {
+    if (host == "localhost") return true;
+    if (this.isIP(host)) {
+      return this.isLocalIP(host);
+    }
+
+    if (all && this._cache.isExt(host)) return false;
+  
+    var res = this.resolve(host, 0).isLocal(all);
+
+    if (!res) {
+      this._cache.putExt(host);
+    }
+    
+    return res;
+  },
+  
+  isLocalIP: function(addr) {
+    // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose implementation
+    return /^(?:(?:0|127|10|169\.254|172\.16|192\.168)\.|(?:(?:255\.){3}255|::1?)$|F(?:F00|E80)::)/i.test(addr);
+  },
+  
+  isIP: function(host) {
+    return /^(?:\d+\.){3}\d+$|::/.test(host);
+  }
+  
+};
+
+function DNSListener(callback) {
+  if (callback) this.callback = callback;
+};
+DNSListener.prototype = {
+  QueryInterface: xpcom_generateQI([CI.nsIDNSListener, CI.nsISupports]),
+  record: null,
+  status: 0,
+  callback: null,
+  onLookupComplete: function(req, rec, status) {
+    this.record = rec;
+    this.status = status;
+    if (this.callback) this.callback();
+  }
+};

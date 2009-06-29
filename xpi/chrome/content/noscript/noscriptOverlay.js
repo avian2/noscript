@@ -1,31 +1,9 @@
-/***** BEGIN LICENSE BLOCK *****
-
-NoScript - a Firefox extension for whitelist driven safe JavaScript execution
-Copyright (C) 2004-2009 Giorgio Maone - g.maone@informaction.com
-
-Contributors: 
-  Higmmer
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-***** END LICENSE BLOCK *****/
-
-
 var noscriptOverlay = (function() {
 
 var $ = function(id) { return document.getElementById(id) };
+const CC = Components.classes;
+const CI = Components.interfaces;
+
 
 return noscriptUtil.service ? {
 
@@ -150,7 +128,7 @@ return noscriptUtil.service ? {
       noscriptOverlay.prepareMenu($("noscript-status-popup"));
      
     }
-    popup._lastClosed = new Date().getTime();
+    popup._lastClosed = Date.now();
     this._reloadDirty = false;
     this._currentPopup = null;
   },
@@ -449,7 +427,8 @@ return noscriptUtil.service ? {
         domain = !ns.isForbiddenByHttpsStatus(site) && ns.getDomain(site);
         
         if ((dp = ns.getPublicSuffix(domain)) == domain || // exclude TLDs
-            ns.ignorePorts && /:\d+$/.test(site) && ns.isJSEnabled(domain) != enabled // exclude ancestors with different permissions
+            // ns.ignorePorts && /:\d+$/.test(site) &&
+               ns.isJSEnabled(domain) != enabled // exclude ancestors with different permissions
           ) {
           domain = null; 
         }
@@ -953,7 +932,7 @@ return noscriptUtil.service ? {
     } else {
       ui.hidden = false;
       
-      if (window.Browser) {
+      if ("Browser" in window) {
         // Fennec tweaks
         ui.className = "noscript-menu";
     
@@ -1179,7 +1158,7 @@ return noscriptUtil.service ? {
   
   getAltNotificationBox: function(browser, value, canAppend) {
     
-    const box = (window.Browser && Browser.getNotificationBox)
+    const box = (("Browser" in window) && Browser.getNotificationBox)
       ? Browser.getNotificationBox()
       : this.getNotificationBox(this.altNotificationPos, browser);
     if (canAppend || (box && 
@@ -1210,7 +1189,7 @@ return noscriptUtil.service ? {
     var buttonLabel = refWidget.getAttribute("label");
     var buttonAccesskey = refWidget.getAttribute("accesskey");
     var popup = $("noscript-xss-popup");
-    if (window.Browser) popup.className = "noscript-menu";
+    if ("Browser" in window) popup.className = "noscript-menu";
     
     const tabBrowser = getBrowser();
     if (tabBrowser.showMessage) { // Fx 1.5
@@ -1332,6 +1311,66 @@ return noscriptUtil.service ? {
     return true;
   },
   
+  get supportsNotifications() {
+    delete this.supportsNotification;
+    return this.supportsNotification = !!document.getElementsByTagName("notificationbox").length;
+  },
+  
+  notifyABE: function(info) {
+    var browser = info.browser;
+    
+    const notificationValue = "noscript-abe-notification";
+    const box = this.getAltNotificationBox(browser, notificationValue);
+    
+    var label = this.getString("ABE.notify", [info.request, info.lastRule.destinations, info.lastPredicate]);
+    
+    if (!(box && box.appendNotification)) {
+      if (!this.supportsNotifications && this.ns.getPref("ABE.legacyPrompt")) {
+        var prompter = noscriptUtil.prompter;
+        if (prompter.confirmEx(
+          window,
+          "NoScript - Application Boundary Enforcer",
+          label,
+          prompter.BUTTON_POS_0 * prompter.BUTTON_TITLE_IS_STRING |
+          prompter.BUTTON_POS_1 * prompter.BUTTON_TITLE_OK,
+          this.getString("notify.options").replace(this.getString("notify.accessKey"), "&$&"),
+          "", "", null, { value: false }
+        ) == 0) noscriptUtil.openABEOptions(info);
+      }
+      return false;
+    }
+    var notification = null;
+    
+    
+    var icon = this.getIcon("noscript-abe-opts");
+
+    notification = box.appendNotification(
+      label, 
+      notificationValue, 
+      icon, 
+      box.PRIORITY_WARNING_HIGH,
+      [{
+          label: this.getString("notify.options"),
+          accessKey: this.getString("notify.accessKey"),
+          callback: function(notification, buttonInfo) {
+            noscriptUtil.openABEOptions(info);
+          }
+       }]
+      );
+    browser.addEventListener("beforeunload", function(ev) {
+      if (ev.originalTarget == info.document || ev.originalTarget == browser) {
+        browser.removeEventListener(ev.type, arguments.callee, false);
+        if (notification && notification == box.currentNotification) {
+          box.removeCurrentNotification();
+        } 
+        info = browser = notification = null;
+      }
+    }, false);
+    
+    return true;
+  },
+  
+  
   unsafeReload: function() {
     const browser = this.currentBrowser;
     const ns = this.ns;
@@ -1419,6 +1458,7 @@ return noscriptUtil.service ? {
     var allowed = 0;
     var untrusted = 0;
     var active = 0;
+    var blockedObjects = 0;
     var isUntrusted = false;
     var topTrusted = false;
     var topUntrusted = false;
@@ -1427,8 +1467,9 @@ return noscriptUtil.service ? {
       lev = "glb";
     } else {
       var s = sites.length;
-      var total = s;
-      if (sites.pluginExtras) sites.pluginExtras.forEach(function(pe) { total += pe.filter(function(e) { return e && e.placeholder; }).length });
+      if (sites.pluginExtras) sites.pluginExtras.forEach(function(pe) { blockedObjects += pe.filter(function(e) { return e && e.placeholder; }).length });
+      var total = s + blockedObjects;
+     
       var url, site;
       while (s-- > 0) {
         url = sites[s];
@@ -1460,7 +1501,7 @@ return noscriptUtil.service ? {
       allowed = allowedSites.length;
       lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
             : allowed == 0 || active == 0 ? (global ? "untrusted-glb" : topUntrusted ? "untrusted" : "no") 
-            : (untrusted > 0 && !notificationNeeded ? (global ? "yu-glb" : "yu") 
+            : (untrusted > 0 && !(notificationNeeded || blockedObjects) ? (global ? "yu-glb" : "yu") 
                : topTrusted ? "prt" : "subprt");
       notificationNeeded = notificationNeeded && totalAnnoyances > 0;
     }
@@ -1555,9 +1596,9 @@ return noscriptUtil.service ? {
   prefsObserver: {
     ns: noscriptUtil.service,
     QueryInterface: noscriptUtil.service.generateQI([
-        Components.interfaces.nsISupports, 
-        Components.interfaces.nsIObserver, 
-        Components.interfaces.nsISupportsWeakReference])
+        CI.nsISupports, 
+        CI.nsIObserver, 
+        CI.nsISupportsWeakReference])
   ,
     observe: function(subject, topic, data) {
       if (subject == this.ns.caps) {
@@ -1779,9 +1820,8 @@ return noscriptUtil.service ? {
     },
     
     webProgressListener: {
-      QueryInterface: noscriptUtil.service.generateQI([
-        Components.interfaces.nsIWebProgressListener]),
-      STATE_STOP: Components.interfaces.nsIWebProgressListener.STATE_STOP,
+      QueryInterface: noscriptUtil.service.generateQI([CI.nsIWebProgressListener]),
+      STATE_STOP: CI.nsIWebProgressListener.STATE_STOP,
       onLocationChange: function(aWebProgress, aRequest, aLocation) {
         const domWindow = aWebProgress.DOMWindow;
         if (domWindow) {
@@ -1879,8 +1919,7 @@ return noscriptUtil.service ? {
       
       var b = getBrowser();
         
-      const nsIWebProgress = Components.interfaces.nsIWebProgress;
-      b.addProgressListener(this.webProgressListener, nsIWebProgress.NOTIFY_STATE_WINDOW | nsIWebProgress.NOTIFY_LOCATION);
+      b.addProgressListener(this.webProgressListener, CI.nsIWebProgress.NOTIFY_STATE_WINDOW | CI.nsIWebProgress.NOTIFY_LOCATION);
   
       if (b.tabContainer) {
         b.tabContainer.addEventListener("TabClose", this.onTabClose, false);
@@ -1895,7 +1934,7 @@ return noscriptUtil.service ? {
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
 
-      window.setTimeout(noscriptOverlay.firstRunCheck, 10);
+      window.setTimeout(noscriptOverlay.firstRunCheck, 500);
 
     },
     
@@ -1932,13 +1971,18 @@ return noscriptUtil.service ? {
     const prevVer = ns.getPref("version", "");
     if (prevVer != ns.VERSION) {
       ns.setPref("version", ns.VERSION);
-      if (prevVer && prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
+      if (prevVer) {
+        if(prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
+        else if (prevVer >= "1.9.3.4" && prevVer < "1.9.4") {
+          ns.setPref("ABE.legacySupport", true);
+        }
+      }
       ns.savePrefs(true);
       if (ns.getPref("firstRunRedirection", true)) {
           window.setTimeout(function() {
             const url = "http://noscript.net?ver=" + noscriptUtil.service.VERSION + "&prev=" + prevVer;
             noscriptUtil.browse(url);
-          }, 100);
+          }, 10);
        }
     }
   },
@@ -1999,7 +2043,7 @@ return noscriptUtil.service ? {
     browserDOMWindow.wrappedJSObject.openURI = noscriptOverlay.browserAccess.openURI;
     
     if(noscriptOverlay.ns.consoleDump) 
-      noscriptOverlay.ns.dump("[NoScript] browserDOMWindow wrapped for external load interception");
+      noscriptOverlay.ns.dump("browserDOMWindow wrapped for external load interception");
   },
   
   browserAccess: {
@@ -2007,7 +2051,7 @@ return noscriptUtil.service ? {
     openURI: function(aURI, aOpener, aWhere, aContext) {
       const ns = noscriptUtil.service;
 
-      var external = aContext == Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL && aURI;
+      var external = aContext == CI.nsIBrowserDOMWindow.OPEN_EXTERNAL && aURI;
       if (external) {
         if (aURI.schemeIs("http") || aURI.schemeIs("https")) {
            // remember for filter processing
@@ -2047,7 +2091,7 @@ return noscriptUtil.service ? {
     },
     
     torButton: function() {
-      if (typeof(window.torbutton_update_tags) == "function") {
+      if ("torbutton_update_tags" in window && typeof(window.torbutton_update_tags) == "function") {
         // we make TorButton aware that we could have a part in suppressing JavaScript on the browser
         noscriptOverlay.ns.log("TB: " + window.torbutton_update_tags);
         window.eval(
@@ -2088,8 +2132,8 @@ return noscriptUtil.service ? {
         if (node) node.hidden = true;
       }
       node = null;
-      var prefs = this.prefService = Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefService).getBranch("noscript.");
+      var prefs = this.prefService = CC["@mozilla.org/preferences-service;1"]
+        .getService(CI.nsIPrefService).getBranch("noscript.");
       try {
         if (prefs.getBoolPref("badInstall")) return;
       } catch(e) {}

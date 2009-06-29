@@ -7,10 +7,11 @@ function UIUtils(serv) {
 UIUtils.prototype = {
   tabselPrefName: "options.tabSelectedIndexes",
   resumeTabSelections: function() {
-    var indexes = window.arguments && window.arguments[0] && window.arguments[0].tabselIndexes ||
+    var info = window.arguments && window.arguments[0];
+    var indexes = info && info.tabselIndexes ||
       this.serv.getPref(this.tabselPrefName, "").split(/\s*,\s*/);
     // select tabs from external param
-
+    
     var tabs = $$("tabs");
     var tcount = Math.min(tabs.length, indexes.length);
     var listener = function(ev) { arguments.callee.binding.persistTabSelections(); }
@@ -22,6 +23,10 @@ UIUtils.prototype = {
       tabs[t].addEventListener("select", listener, false); 
     }
     this.persistTabSelections();
+    
+    if (info && info.callback) {
+      window.setTimeout(info.callback, 0);
+    }
   },
   
   persistTabSelections: function() {
@@ -63,8 +68,17 @@ UIUtils.prototype = {
     while((node = node.nextSibling)) {
       node.disabled = b;
     }
-  }
+  },
   
+  moveButtonsDown: function() {
+    var ref = document.documentElement.getButton("extra2");
+    Array.slice(arguments).forEach(function(s) {
+      var b = $(s);
+      b.className = ref.className;
+      ref.parentNode.insertBefore(b, ref);
+      b.hidden = false;
+    });
+  }
 };
 
 

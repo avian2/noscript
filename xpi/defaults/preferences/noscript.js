@@ -27,7 +27,7 @@ pref("noscript.showBlockedObjects", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
 pref("noscript.mandatory", "chrome: about: about:config about:neterror about:certerror about:plugins about:privatebrowsing about:sessionrestore resource:");
-pref("noscript.default", "about:blank about:credits addons.mozilla.org flashgot.net google.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
+pref("noscript.default", "about:blank about:credits addons.mozilla.org flashgot.net google.com gstatic.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
 pref("noscript.forbidSilverlight", true);
@@ -198,11 +198,13 @@ pref("noscript.abp.removeTabs", false);
 pref("noscript.checkHijackings", true);
 
 pref("noscript.surrogate.enabled", true);
-pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return {__noSuchMethod__:_0}}}");
+pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return{__noSuchMethod__:_0,_link:function(h){location.href=h}}}}");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.ga.exceptions", "");
 pref("noscript.surrogate.yieldman.replacement", "with(window)rmAddKey=rmAddCustomKey=rmShowAd=rmShowPop=rmShowInterstitial=rmGetQueryParameters=rmGetSize=rmGetWindowUrl=rmGetPubRedirect=rmGetClickUrl=rmReplace=rmTrim=rmUrlEncode=rmCanShowPop=rmCookieExists=rmWritePopFrequencyCookie=rmWritePopExpirationCookie=flashIntalledCookieExists=writeFlashInstalledCookie=flashDetection=rmGetCookie=function(){}");
 pref("noscript.surrogate.yieldman.sources", "*.yieldmanager.com");
+pref("noscript.surrogate.fap.replacement", "window.puShown getter=window.puShown setter=function(){return true}");
+pref("noscript.surrogate.fap.sources", "@*.imagefap.com *.moviefap.com imagefap.com moviefap.com");
 pref("noscript.placeholderMinSize", 32);
 
 pref("noscript.compat.evernote", true);
@@ -214,3 +216,13 @@ pref("noscript.oldStylePartial", false);
 pref("noscript.proxiedDNS", 0);
 pref("noscript.placesPrefs", false);
 pref("noscript.bookmarklets.import", 1);
+
+pref("noscript.ABE.enabled", true);
+pref("noscript.ABE.siteEnabled", false);
+pref("noscript.ABE.allowRulesetRedir", false);
+pref("noscript.ABE.legacyPrompt", false);
+pref("noscript.ABE.legacySupport", false);
+pref("noscript.ABE.disabledRulesetNames", "");
+pref("noscript.ABE.skipBrowserRequests", true);
+
+pref("noscript.asyncNetworking", true);

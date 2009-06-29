@@ -52,12 +52,17 @@ var noscriptUtil = {
         params);  
   },
   
-  
   openXssOptions: function() {
     this.openOptionsDialog({tabselIndexes: [5, 2]});
   },
   openJarOptions: function() {
     this.openOptionsDialog({tabselIndexes: [5, 3]});
+  },
+  openABEOptions: function(info) {
+    this.openOptionsDialog({
+        tabselIndexes: [5, 5],
+        callback: info ? function() { this.abeOpts.select(info.ruleset); } : null
+    });
   }
 ,
   openAboutDialog: function(params) {

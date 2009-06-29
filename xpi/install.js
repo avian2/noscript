@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.9.3.3";
+const APP_VERSION = "1.9.5";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
@@ -18,38 +18,20 @@ const APP_LOCALES = [
 
 const APP_SUCCESS_MESSAGE = APP_DISPLAY_NAME + " should now be available when you restart the browser.";
 
-const INST_TO_PROFILE = "Do you wish to install " + APP_DISPLAY_NAME + 
-  " to your profile?\nIf you are in doubt, this is the preferred option: click OK.\n(Click Cancel if you want " + 
-  APP_DISPLAY_NAME + " installing to the Mozilla directory.)";
-
-var instToProfile = true;
+var instToProfile = false;
 
 myPerformInstall(false);
 
 function myPerformInstall(secondTry) {
   
-  
-  
   var err;
   initInstall(APP_NAME, APP_PACKAGE, APP_VERSION);
-  
-  function chromeExistsIn(folder) {
-    var chrome = getFolder(folder, APP_JAR_FILE);
-    var isDir = File.isDirectory(chrome);
-    if (!isDir) isDir = chrome && chrome.toString().slice(-1) == '/';
-    if (isDir)
-      File.dirRemove(chrome);  
-    return !chrome || !isDir;
-  }
-  
+  var profChrome = getFolder("Profile", "chrome");
   if(!secondTry) {  
-    // profile installs only work since 2003-03-06
-    instToProfile = chromeExistsIn(getFolder("Profile", "chrome")) ||
-      !chromeExistsIn(getFolder("chrome")) && 
-        buildID > 2003030600 && !!confirm(INST_TO_PROFILE);
+    File.remove(getFolder(profChrome, APP_JAR_FILE));
   }
 
-  var chromef = instToProfile ? getFolder("Profile", "chrome") : getFolder("chrome");
+  var chromef = instToProfile ? profChrome : getFolder("chrome");
   err = addFile(APP_PACKAGE, APP_VERSION, "chrome/" + APP_JAR_FILE, chromef, null);
   
   if(APP_PREFS_FILE && (err == SUCCESS) ) {

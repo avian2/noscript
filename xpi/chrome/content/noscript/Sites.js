@@ -1,11 +1,7 @@
 const SiteUtils = new function() {
-  const _domainPattern = /^[\w\u0080-\uffff][\w\-\.\u0080-\uffff]*$/;
-  
-  const _ios = this.ios = CC["@mozilla.org/network/io-service;1"]
-    .getService(CI.nsIIOService);
-  
-  const _uriFixup = this.uriFixup = CC["@mozilla.org/docshell/urifixup;1"]
-    .getService(CI.nsIURIFixup);
+  const _domainPattern = this.domainPattern = /^[\w\u0080-\uffff][\w\-\.\u0080-\uffff]*$/;
+  this.ios = IOS;  
+  this.uriFixup = CC["@mozilla.org/docshell/urifixup;1"].getService(CI.nsIURIFixup);
   
   function sorter(a, b) {
     if (a == b) return 0;
@@ -52,7 +48,7 @@ const SiteUtils = new function() {
     }
     try {
       // let's unwrap JAR uris
-      var uri = _uriFixup.createExposableURI(_ios.newURI(url, null, null));
+      var uri = this.uriFixup.createExposableURI(this.ios.newURI(url, null, null)); // fix wysywyc: and zaps userpass
       if (uri instanceof CI.nsIJARURI) {
         uri = uri.JARFile;
         return uri ? this.getSite(uri.spec) : scheme;
@@ -94,7 +90,7 @@ const SiteUtils = new function() {
   };
   
   this.domainMatch = function(url) {
-     const m = url.match(_domainPattern);
+     const m = url.match(this.domainPattern);
      return m ? m[0].toLowerCase() : "";
   };
   
@@ -205,7 +201,7 @@ PolicySites.prototype = {
     sm = sm ? SiteUtils.sanitizeMap(sm) : {};
     var sl = [];
     for (var s in sm) {
-      sl[sl.length] = s;
+      sl.push(s);
     }
     
     this._sitesString = SiteUtils.set2string(SiteUtils.sort(sl));
@@ -265,7 +261,9 @@ PolicySites.prototype = {
       }
     }
     
-    if (sm[match]) return match; // host match
+    if (sm[match]
+        && (dots > 1 || sm[site]) // strict CAPS-style matching
+        ) return match; // host match
     return sm[site] ? site : ""; // full match
   }
 ,
@@ -279,6 +277,7 @@ PolicySites.prototype = {
       delete sm["http://" + site];
       delete sm["https://" + site];
       delete sm["file://" + site];
+      delete sm["ftp://" + site];
     }
   },
   remove: function(sites, keepUp, keepDown) {
@@ -339,7 +338,6 @@ PolicySites.prototype = {
         // base domain hack
         if(this._add("http://" + site)) change = true;
         if(this._add("https://" + site)) change = true;
-        if(this._add("file://" + site)) change = true;
       }
       if (this._add(site)) change = true;
     }
@@ -347,68 +345,3 @@ PolicySites.prototype = {
     return change;
   }
 };
-
-function URIPatternList(s) {
-  this.source = s;
-  this.rx = this.parse(s);
-}
-URIPatternList.create = function(s) {
-  return s && new URIPatternList(s);
-}
-
-URIPatternList.prototype = {
-  test: function(u) {
-    return this.rx && this.rx.test(u);  
-  },
-  
-  parse: function(s) {
-    try {
-      var rxSource = s.split(/\s+/).map(function(p) {
-        if (!/\w+/.test(p)) return null;
-        
-        if(!/[^\w\-/:%@;&#\?\.\*]/.test(p)) {
-         
-          // either simple or glob
-          const hasPath = /^(?:\w+:\/\/|)[^\/]+\//.test(p);
-          const hasScheme = /^[a-z]\w+:(?:\/+|[^/]*\D)/.test(p);
-
-          p = p.replace(/[\.\?\-]/g, "\\$&"); // escape special regexp chars
-
-          if (!hasScheme) { // adjust for no protocol
-            p = "[a-z]+\\w+://" + p;
-          }
-
-          
-
-          if (!hasPath) { // adjust for no path
-            p += "(?:[/\\?#]|$)";
-          }
-          
-          if (!/\*/.test(p)) {
-            // simple "starts with..." site matching
-            return '^' + p;
-          }
-          
-          // glob matching
-          if (hasPath) p += '$'; 
-
-          return '^' + p.replace(/\*/g, '.*?').replace(/^([^\/:]+:\/*)\.\*/, "$1[^/]*");
-        } 
-        // raw regexp!
-        try {
-         new RegExp(p); // check syntax
-        } catch(e) {
-          dump("[NoScript] Illegal regexp in URIPatternList: " + p + " -- " + e + "\n");
-          return null;
-        }
-        return p;
-      }).filter(function(p) { return p }).join("|");
-        
-      return new RegExp(rxSource);
-    } catch(e) {
-      dump("[NoScript] Illegal URIPatternList: " + s + " -- " + e + "\n");
-      return null;
-    }
-  }
-};
-

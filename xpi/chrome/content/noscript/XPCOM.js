@@ -2,8 +2,10 @@ const SERVICE_CID = Components.ID(SERVICE_ID);
 
 const SERVICE_FACTORY = {
   get _instance() {
+    var i = SERVICE_CONSTRUCTOR();
+    if (!i) return {};
     delete this._instance;
-    var i = new SERVICE_CONSTRUCTOR();
+    
     i.__defineGetter__("home", function() {
       var f = null;
       try {
@@ -15,14 +17,14 @@ const SERVICE_FACTORY = {
       } catch(e) {
         try {
           var prefs = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefBranch)
-          if (this.fileSpec && (this.fileSpec instanceof CI.nsILocalFile)) {
+          if (FILE && (FILE instanceof CI.nsILocalFile)) {
             prefs.setComplexValue("extensions." + EXTENSION_ID + ".home", CI.nsILocalFile,
-                    this.fileSpec.parent);
+                    FILE.parent);
           }
           f = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefBranch)
               .getComplexValue("extensions." + EXTENSION_ID + ".home", CI.nsILocalFile);
-        } catch(e2) {
-          dump(e2);
+        } catch(e) {
+          dump(e +"\n");
           f = null;
         }
       }
@@ -43,12 +45,14 @@ const SERVICE_FACTORY = {
 };
 
 function xpcom_generateQI(iids) {
-  var lines = [];
-  for (var j = iids.length; j-- > 0;) {
-    lines.push("if(CI." + iids[j].name + ".equals(iid)) return this;");
+  var checks = [];
+  for each (var iid in iids) {
+    checks.push("CI." + iid.name + ".equals(iid)");
   }
-  lines.push("throw Components.results.NS_ERROR_NO_INTERFACE;");
-  return new Function("iid", lines.join("\n"));
+  var src = checks.length
+    ? "if (" + checks.join(" || ") + ") return this;\n"
+    : "";
+  return new Function("iid", src + "throw Components.results.NS_ERROR_NO_INTERFACE;");
 }
 
 
@@ -59,6 +63,8 @@ function xpcom_checkInterfaces(iid,iids,ex) {
   throw ex;
 }
 
+var FILE = null;
+
 var Module = {
   get categoryManager() {
     delete this.categoryManager;
@@ -68,7 +74,8 @@ var Module = {
   firstTime: true,
   registerSelf: function(compMgr, fileSpec, location, type) {
     if (this.firstTime) {
-      SERVICE_CONSTRUCTOR.prototype.fileSpec = fileSpec;
+
+      FILE = fileSpec;
       compMgr.QueryInterface(CI.nsIComponentRegistrar
         ).registerFactoryLocation(SERVICE_CID,
         SERVICE_NAME,
@@ -78,6 +85,7 @@ var Module = {
         type);
       const catman = this.categoryManager;
       for (var j=0, len = SERVICE_CATS.length; j < len; j++) {
+        catman.deleteCategoryEntry(SERVICE_CATS[j], SERVICE_CTRID, true);
         catman.addCategoryEntry(SERVICE_CATS[j],
           SERVICE_CTRID, SERVICE_CTRID, true, true);
       }

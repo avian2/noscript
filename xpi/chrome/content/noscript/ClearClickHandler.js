@@ -10,7 +10,7 @@ ClearClickHandler.prototype = {
   install: function(browser) {
     var ceh = browser.docShell.chromeEventHandler;
     var l = this._listener;
-    for each(et in this.uiEvents) ceh.addEventListener(et, this._listener, true);
+    for each(var et in this.uiEvents) ceh.addEventListener(et, this._listener, true);
   },
   
   exceptions: null,
@@ -257,7 +257,7 @@ ClearClickHandler.prototype = {
                         CI.nsIDOMHTMLPreElement, CI.nsIDOMHTMLTableElement ]
   ,
   isSemanticContainer: function(o) {
-    for each (t in this._semanticContainers)
+    for each (var t in this._semanticContainers)
      if (o instanceof t) return true;
     return false;
   },
@@ -309,7 +309,7 @@ ClearClickHandler.prototype = {
       }
       if (p.unlocked) return;
     
-      ts = new Date().getTime();
+      ts = Date.now();
       ctx = /mouse/.test(etype)
                 && { x: ev.pageX, y: ev.pageY, debug: ev.ctrlKey && ev.button == 1 && ns.getPref("clearClick.debug") }
                 || {};
@@ -807,7 +807,7 @@ DocPatcher.prototype = {
   },
   
   collectPositioned: function(d) {
-    var t = new Date();
+    var t = Date.now();
     const w = d.defaultView;
     const res = [];
     var s = null, p = '', n = null;
@@ -856,7 +856,7 @@ DocPatcher.prototype = {
     
     for each(n in posn) n.__noscriptPos = false;
     
-    if(this.ns.consoleDump) this.ns.dump("DocPatcher.collectPositioned(): " + (new Date() - t));
+    if(this.ns.consoleDump) this.ns.dump("DocPatcher.collectPositioned(): " + (Date.now() - t));
     return res;
   },
   

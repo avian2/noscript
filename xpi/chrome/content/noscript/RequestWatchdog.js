@@ -1,74 +1,132 @@
 
-function XCache() {
-  this._cache = {};
-}
 
-XCache.prototype = {
-  getEntry: function(targetURI, create) {
-    const key = targetURI.spec;
-    return this._cache[key] || (create && (this._cache[key] = []) || null);
-  },
-  pickOrigin: function(targetURI, remove) {
-    var entry = this.getEntry(targetURI, false);
-    return entry && this.findOriginInEntry(targetURI, entry, remove);
-  },
-  storeOrigin: function(originURI, targetURI) {
-    var entry = this.getEntry(targetURI, true);
-    if (!this.findOriginInEntry(targetURI, entry)) {
-      entry.push({ origin: originURI, target: targetURI });
-    }
-  },
-  findOriginInEntry: function(targetURI, entry, remove) {
-    var o;
-    for (var j = entry.length; j-- > 0;) {
-      o = entry[j];
-      if (entry[j].target === targetURI) {
-        if (remove) {
-          entry.splice(j, 1);
-          if (entry.length == 0) {
-            delete this._cache[targetURI.spec];
-          }
-        }
-        return o.origin;
-      }
-    }
-    return null;
-  }
-};
-
-function RequestInfo(channel, url, origin, window) {
-  this.channel = channel;
-  this.sanitizedURI = url;
-  this.window = window;
-  this.unsafeRequest = {
-    URI: url.clone(),
-    postData: null,
-    referrer: channel.referrer && channel.referrer.clone(),
-    origin: origin,
-    loadFlags: channel.loadFlags,
-    issued: false,
-    window: null
-  }
-}
-RequestInfo.prototype = {
-  xssMaybe: false 
-}
-
-function RequestWatchdog(ns) {
-  this.ns = ns;
-  this.siteUtils = ns.siteUtils;
-  this.dns = CC["@mozilla.org/network/dns-service;1"]
-                  .getService(CI.nsIDNSService);
+function RequestWatchdog() {
+  this.init();
 }
 
 RequestWatchdog.prototype = {
-  ns: null,
-  dns: null,
+  
+  OBSERVED_TOPICS: ["http-on-modify-request", "http-on-examine-response", "http-on-examine-merged-response"],
+  
+  init: function() {
+    this.OBSERVED_TOPICS.forEach(function(topic) {
+      OS.addObserver(this, topic, true);
+    }, this);
+  },
+  dispose: function() {
+    this.OBSERVED_TOPICS.forEach(function(topic) {
+      OS.removeObserver(this, topic, true);
+    }, this);
+  },
+  
   callback: null,
   externalLoad: null,
   noscriptReload: null,
   DOCUMENT_LOAD_FLAGS: CI.nsIChannel.LOAD_DOCUMENT_URI
     | CI.nsIChannel.LOAD_CALL_CONTENT_SNIFFERS, // this for OBJECT subdocs
+  
+  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
+  
+  observe: function(channel, topic, data) {
+    
+    if (!(channel instanceof CI.nsIHttpChannel)) return;
+    
+    if(ns.consoleDump & LOG_SNIFF) {
+      ns.dump(topic + ": " + channel.URI.spec + ", " + channel.loadFlags);
+    }
+    var loadFlags = channel.loadFlags;
+    var isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
+ 
+    switch(topic) {
+      case "http-on-modify-request":
+
+          var abeReq = null;
+          try {
+            
+            abeReq = new ABERequest(channel);
+            if (this.externalLoad && this.externalLoad === abeReq.destination) {
+              abeReq.external = true;
+              this.externalLoad = null;
+            }
+            
+            if (isDoc) this.filterXSS(abeReq);
+            
+            if (isDoc && (loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI)) {
+              if (!abeReq.isSubdoc) {
+                abeReq.attach();
+                return; // defer to progress listener
+              }
+            }
+          
+            this.handleABE(abeReq, isDoc);
+            
+          } catch(e) {
+            this.die(channel, e);
+          } finally {
+            if (abeReq) abeReq.checkFlags |= CHECKED_XSS;
+          }
+      break;
+      
+      case "http-on-examine-merged-response":
+      case "http-on-examine-response":
+        if (!isDoc) return;
+        ns.onContentSniffed(channel);
+        HTTPS.handleSecureCookies(channel);
+      break;
+    }
+  },
+  
+  die: function(channel, e) {
+    this.abort({ channel: channel, reason: e + " --- " + e.stack, silent: true });
+  },
+  
+  handleABE: function(abeReq, isDoc) {
+    if (abeReq && ABE.enabled) {
+      try {
+        var self = this;
+        var deferredCallback = function() { self.handleABE(abeReq, isDoc); };
+        var res = ABE.checkRequest(abeReq, deferredCallback);
+        if (res) {
+          this.notifyABE(res, !(isDoc && res.fatal));
+          if (res.fatal) return true;
+        }
+      } catch(e) {
+        this.die(abeReq.channel, e);
+        return true;
+      }
+    }
+    return false;
+  },
+  
+  notifyABE: function(abeRes, silent) {
+    abeRes.rulesets.forEach(
+      function(rs) {
+        var lastRule = rs.lastMatch;
+        var lastPredicate = lastRule.lastMatch;
+        if (lastPredicate.permissive) return;
+        
+        var action = lastPredicate.action;
+        var req = abeRes.request;
+        ns.log("[ABE] <" + lastRule.destinations + "> " + lastPredicate + " on " + req
+          + "\n" + rs.name + " rule:\n" + lastRule);
+        
+        if (silent || rs != abeRes.lastRuleset) return;
+        
+        var w = req.window;
+        var browser = this.findBrowser(req.channel, w);
+        if (browser)
+          browser.ownerDocument.defaultView.noscriptOverlay
+            .notifyABE({
+              request: req,
+              action: action,
+              ruleset: rs,
+              lastRule: lastRule,
+              lastPredicate: lastPredicate,
+              browser: browser,
+              window: w
+            });
+      }, this);
+  },
   
   get dummyPost() {
     const v = CC["@mozilla.org/io/string-input-stream;1"].createInstance();
@@ -77,18 +135,16 @@ RequestWatchdog.prototype = {
     return v;
   },
   
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
-  
   getUnsafeRequest: function(browser) {
-    return this.ns.getExpando(browser, "unsafeRequest");
+    return ns.getExpando(browser, "unsafeRequest");
   },
   setUnsafeRequest: function(browser, request) {
-    return this.ns.setExpando(browser, "unsafeRequest", request);
+    return ns.setExpando(browser, "unsafeRequest", request);
   },
   
   
   unsafeReload: function(browser, start) {
-    this.ns.setExpando(browser, "unsafeReload", start);
+    ns.setExpando(browser, "unsafeReload", start);
     if (start) {
       const unsafeRequest = this.getUnsafeRequest(browser);
       if (unsafeRequest) {
@@ -97,9 +153,9 @@ RequestWatchdog.prototype = {
         if(unsafeRequest.window) {
           // a subframe...
           try {
-            wn = this.ns.dom.getDocShellForWindow(unsafeRequest.window).QueryInterface(CI.nsIWebNavigation);
+            wn = DOM.getDocShellForWindow(unsafeRequest.window).QueryInterface(CI.nsIWebNavigation);
           } catch(ex) {
-            this.ns.dump(ex);
+            ns.dump(ex);
           }
           unsafeRequest.window = null;
         }
@@ -117,109 +173,22 @@ RequestWatchdog.prototype = {
   },
 
   isUnsafeReload: function(browser) {
-    return this.ns.getExpando(browser, "unsafeReload");
+    return ns.getExpando(browser, "unsafeReload");
   },
   
   resetUntrustedReloadInfo: function(browser, channel) {
     if (!browser) return;
-    var window = this.findWindow(channel);
+    var window = IOUtil.findWindow(channel);
     if (browser.contentWindow == window) {
-      if (this.ns.consoleDump) this.dump(channel, "Top level document, resetting former untrusted browser info");
+      if (ns.consoleDump) this.dump(channel, "Top level document, resetting former untrusted browser info");
       this.setUntrustedReloadInfo(browser, false);
     }
   },
   setUntrustedReloadInfo: function(browser, status) {
-    return this.ns.setExpando(browser, "untrustedReload", status);
+    return ns.setExpando(browser, "untrustedReload", status);
   },
   getUntrustedReloadInfo: function(browser) {
-    return this.ns.getExpando(browser, "untrustedReload");
-  },
-  
-  
-  
-  detectBackFrame: function(prev, next, ds) {
-    if (prev.ID != next.ID) return prev.URI.spec;
-    if ((prev instanceof CI.nsISHContainer) &&
-       (next instanceof CI.nsISHContainer) &&
-       (ds instanceof CI.nsIDocShellTreeNode)
-      ) {
-      var uri;
-      for (var j = Math.min(prev.childCount, next.childCount, ds.childCount); j-- > 0;) {
-        uri = this.detectBackFrame(prev.GetChildAt(j),
-                                   next.GetChildAt(j),
-                                   ds.GetChildAt(j));
-        if (uri) return uri.spec;
-      }
-    }
-    return null;
-  },
-  
-  traceBackHistory: function(sh, window, breadCrumbs) {
-    var wantsBreadCrumbs = !breadCrumbs;
-    breadCrumbs = breadCrumbs || [window.document.documentURI];
-    
-    var he;
-    var uri = null;
-    var site = '';
-    for (var j = sh.index; j > -1; j--) {
-       he = sh.getEntryAtIndex(j, false);
-       if (he.isSubFrame && j > 0) {
-         uri = this.detectBackFrame(sh.getEntryAtIndex(j - 1), h,
-           this.ns.dom.getDocShellForWindow(window)
-         );  
-       } else {
-        // not a subframe navigation 
-        if (window == window.top) {
-          uri = he.URI.spec; // top frame, return history entry
-        } else {
-          window = window.parent;
-          uri = window.document.documentURI;
-        }
-      }
-      if (!uri) break;
-      if (breadCrumbs[0] && breadCrumbs[0] == uri) continue;
-      breadCrumbs.unshift(uri);
-      var site = this.ns.getSite(uri);
-      if (site) break;
-    }
-    return wantsBreadCrumbs ? breadCrumbs : site;
-  },
-  
-  traceBack: function(channel, breadCrumbs) {
-    try {
-      var window = this.findWindow(channel);
-      if (window instanceof CI.nsIInterfaceRequestor) {
-        var webNav = window.getInterface(CI.nsIWebNavigation);
-        const sh = webNav.sessionHistory;
-        return sh ? this.traceBackHistory(sh, window, breadCrumbs || null) 
-                  : webNav.currentURI && !webNav.currentURI.equals(channel.URI) 
-                    ? webNav.currentURI.spec
-                    : '';
-      }
-    } catch(e) {
-      if (this.ns.consoleDump) this.dump(channel, "Error tracing back origin: " + e.message);
-    }
-    return '';
-  },
-  
-  observe: function(subject, topic, data) {
-    if((this.ns.consoleDump & LOG_SNIFF) && (subject instanceof CI.nsIHttpChannel)) {
-      this.ns.dump(topic + ": " + subject.URI.spec + ", " + subject.loadFlags);
-    }
-    if (!((subject instanceof CI.nsIHttpChannel) && (subject.loadFlags & this.DOCUMENT_LOAD_FLAGS))) return;
-    switch(topic) {
-      case "http-on-modify-request":
-        try {
-          this.filterXSS(subject);
-        } catch(e) {
-          this.abort({ channel: subject, reason: e + " --- " + e.stack, silent: true });
-        }
-      break;
-      case "http-on-examine-response":
-        this.ns.onContentSniffed(subject);
-        HTTPS.handleSecureCookies(subject);
-      break;
-    }
+    return ns.getExpando(browser, "untrustedReload");
   },
   
   _listeners: [],
@@ -232,7 +201,7 @@ RequestWatchdog.prototype = {
   },
   
   onCrossSiteRequest: function(channel, origin, browser) {
-    for each (l in this._listeners) {
+    for each (var l in this._listeners) {
       l.onCrossSiteRequest(channel, origin, browser, this);
     }
   },
@@ -241,7 +210,7 @@ RequestWatchdog.prototype = {
     return url instanceof CI.nsIURL &&
       this.getHomes().some(function(urlSpec) {
         try {
-          return !url.getRelativeSpec(SiteUtils.ios.newURI(urlSpec, null, null));
+          return !url.getRelativeSpec(IOS.newURI(urlSpec, null, null));
         } catch(e) {}
         return false;
       });
@@ -249,7 +218,7 @@ RequestWatchdog.prototype = {
   getHomes: function(pref) {
     var homes;
     try {
-      homes = this.ns.prefService.getComplexValue(pref || "browser.startup.homepage",
+      homes = ns.prefService.getComplexValue(pref || "browser.startup.homepage",
                          CI.nsIPrefLocalizedString).data;
     } catch (e) {
       return pref ? [] : this.getHomes("browser.startup.homepage.override");
@@ -274,18 +243,18 @@ RequestWatchdog.prototype = {
       } catch(e) {}
     }
     if (originalAttempt != window.name) {
-      this.ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');
+      ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');
     }
   },
   
-  filterXSS: function(channel) {
+  filterXSS: function(abeReq) {
     
-    const ns = this.ns;
-    const url = channel.URI;
-    const originalSpec = url.spec;
+    const channel = abeReq.channel;
+    
+    const url = abeReq.destinationURI;
+    const originalSpec = abeReq.destination;
 
-    const xorigin = ns.xcache.pickOrigin(url, true); // picks and remove cached entry
-    
+
     if (this.noscriptReload == originalSpec) {
       // fast cache route for NoScript-triggered reloads
       this.noscriptReload = null;
@@ -310,25 +279,18 @@ RequestWatchdog.prototype = {
       }
     }
     
-   
+    var origin = abeReq.xOrigin;
+    var originSite = null;
     var browser = null;
     var window = null;
-    
-    var origin = xorigin && xorigin.spec || 
-        channel.originalURI.spec != originalSpec && channel.originalURI.spec 
-        || ChanUtil.extractInternalReferrerSpec(channel) || null;
-    
     var untrustedReload = false;
 
-    var originSite = null;
-    
     if (!origin) {
       if ((channel instanceof CI.nsIHttpChannelInternal) && channel.documentURI) {
         if (originalSpec == channel.documentURI.spec) {
-           var breadCrumbs = [originalSpec];
-           originSite = this.traceBack(channel, breadCrumbs);
+           originSite = ns.getSite(abeReq.traceBack);
            if (originSite) {
-              origin = breadCrumbs.join(">>>");
+              origin = abeReq.breadCrumbs.join(">>>");
               if (ns.consoleDump) this.dump(channel, "TRACEBACK ORIGIN: " + originSite + " FROM " + origin);
               if ((channel instanceof CI.nsIUploadChannel) && channel.uploadStream) {
                 if (ns.consoleDump) this.dump(channel, "Traceable upload with no origin, probably extension. Resetting origin!");
@@ -336,7 +298,7 @@ RequestWatchdog.prototype = {
               }
            } else {
              // check untrusted reload
-             browser = this.findBrowser(channel);
+             browser = this.findBrowser(channel, abeReq.window);
              if (!this.getUntrustedReloadInfo(browser)) {
                if (ns.consoleDump) this.dump(channel, "Trusted reload");
                return;
@@ -355,7 +317,7 @@ RequestWatchdog.prototype = {
     } else {
       if (channel.loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI && channel.originalURI.spec == channel.URI.spec) {
         // clean up after user action
-        window = window || this.findWindow(channel);
+        window = window || abeReq.window;
         browser = browser || this.findBrowser(channel, window);
         this.resetUntrustedReloadInfo(browser, channel);
         var unsafeRequest = this.getUnsafeRequest(browser);
@@ -364,44 +326,30 @@ RequestWatchdog.prototype = {
           this.setUnsafeRequest(browser, null);
         }
       } else origin = origin.replace(/^view-source:/, '');
-      if (ns.consoleDump) this.dump(channel, "ORIGIN: " + origin + ", xorigin: " + (xorigin && xorigin.spec) + ", originalURI: " + channel.originalURI.spec);
+      if (ns.consoleDump) this.dump(channel, "ORIGIN: " + origin);
     }
     
-    const su = this.siteUtils;
+    const su = SiteUtils;
     originSite = originSite || su.getSite(origin) || '';
     
     var host = channel.URI.host;
-    if (host[host.length - 1] == "." && this.ns.getPref("canonicalFQDN", true)) {
+    if (host[host.length - 1] == "." && ns.getPref("canonicalFQDN", true) &&
+        (Thread.canSpin || ABE.legacySupport)) {
       try {
-        var canDoDNS;
-        var proxyInfo = this.getProxyInfo(channel);
-        switch(ns.getPref("proxiedDNS", 0)) {
-          case 1:
-            canDoDNS = proxyInfo && (proxyInfo.flags & CI.nsIProxyInfo.TRANSPARENT_PROXY_RESOLVES_HOST);
-            break;
-          case 2:
-            canDoDNS = true;
-            break;
-          default:
-            canDoDNS = !proxyInfo || proxyInfo.type == "direct";   
-        }
-        
-        if (canDoDNS) {
-          channel.URI.host = this.dns.resolve(host, 2).canonicalName;
-          if (ns.consoleDump) ns.dump("Resolving FQDN " + host);
-        }
+        if (IOUtil.canDoDNS(channel))
+          channel.URI.host = DNS.resolve(host, 2).canonicalName;
+        if (ns.consoleDump) ns.dump("Resolving FQDN " + host);
       } catch(ex) {
         this.dump(channel, ex);
       }
     }
     
-   
     var targetSite;
     const globalJS = ns.globalJS;
     var trustedTarget = globalJS;
     if(!trustedTarget) {
       if(ns.autoAllow) {
-        window = window || this.findWindow(channel);
+        window = window || abeReq.window;
         if (window && window == window.top) {
           targetSite = ns.getQuickSite(originalSpec, ns.autoAllow);
           if(targetSite && !ns.isJSEnabled(targetSite)) {
@@ -420,7 +368,7 @@ RequestWatchdog.prototype = {
       }
     }
     
-    if (!(origin || (window = this.findWindow(channel)))) {
+    if (!(origin || (window = abeReq.window))) {
       if (ns.consoleDump) this.dump(channel, "-- This channel doesn't belong to any window/origin: internal browser or extension request, skipping. --");
       return;
     }
@@ -440,7 +388,7 @@ RequestWatchdog.prototype = {
     if (originSite == targetSite) {
       if (injectionCheck < 3) return; // same origin, fast return
     } else {
-      this.onCrossSiteRequest(channel, origin, browser = browser || this.findBrowser(channel));
+      this.onCrossSiteRequest(channel, origin, browser = browser || this.findBrowser(channel, abeReq.window));
     }
     
     if (this.callback && this.callback(channel, origin)) return;
@@ -457,10 +405,7 @@ RequestWatchdog.prototype = {
      // fast return if nothing to do here
     if (!(ns.filterXPost || ns.filterXGet)) return;   
     
-    var externalLoad = this.externalLoad && this.externalLoad == originalSpec;
-    if (externalLoad) {
-      this.externalLoad = null;
-    } else if(this.isUnsafeReload(browser = browser || this.findBrowser(channel))) {
+    if (!abeReq.external && this.isUnsafeReload(browser = browser || this.findBrowser(channel, abeReq.window))) {
       if (ns.consoleDump) this.dump(channel, "UNSAFE RELOAD of [" + originalSpec +"] from [" + origin + "], SKIP");
       return;
     }
@@ -487,12 +432,10 @@ RequestWatchdog.prototype = {
     
     if (!originSite) { // maybe data or javascript URL?
       if (/^(?:javascript|data):/i.test(origin) && ns.getPref("xss.trustData", true)) {
-        var breadCrumbs = [origin];
-        originSite = this.traceBack(channel, breadCrumbs);
+        originSite = ns.getSite(abeReq.traceBack);
         if (originSite) { 
-          origin = breadCrumbs.join(">>>");
+          origin = abeReq.breadCrumbs.join(">>>");
         }
-        delete breadCrumbs;
       }
     }
     
@@ -500,7 +443,7 @@ RequestWatchdog.prototype = {
     var injectionAttempt = false;
     var postInjection = false;
     
-    window = window || this.findWindow(channel);
+    window = window || abeReq.window;
     
     // neutralize window.name-based attack
     if (window && window.name) {
@@ -555,9 +498,9 @@ RequestWatchdog.prototype = {
       }
       
       if (!(injectionAttempt || postInjection)) {
-        if (ns.consoleDump) this.dump(channel, "externalLoad flag is " + externalLoad);
+        if (ns.consoleDump) this.dump(channel, "externalLoad flag is " + abeReq.external);
 
-        if (externalLoad) { // external origin ?
+        if (abeReq.external) { // external origin ?
           if (ns.consoleDump) this.dump(channel, "External load from " + origin);
           if (this.isHome(url)) {
             if (ns.consoleDump) this.dump(channel, "Browser home page, SKIP");
@@ -576,7 +519,7 @@ RequestWatchdog.prototype = {
           return;
         }
         if (ns.consoleDump) 
-          this.dump(channel, (externalLoad ? "External origin" : "Origin " + origin + " is TEMPORARILY allowed") + 
+          this.dump(channel, (abeReq.external ? "External origin" : "Origin " + origin + " is TEMPORARILY allowed") + 
             ", we don't really trust it");
       }
     }
@@ -693,22 +636,16 @@ RequestWatchdog.prototype = {
   isBadException: function(host) {
     // TLD check for google search
     var m = host.match(/\bgoogle\.((?:[a-z]{1,3}\.)?[a-z]+)$/i);
-    return m && this.ns.getPublicSuffix(host) != m[1];
+    return m && ns.getPublicSuffix(host) != m[1];
   },
   
-  getProxyInfo: function(channel) {
-    return CI.nsIProxiedChannel && (channel instanceof CI.nsIProxiedChannel) 
-      ? channel.proxyInfo
-      : Components.classes["@mozilla.org/network/protocol-proxy-service;1"]
-          .getService(Components.interfaces.nsIProtocolProxyService)
-          .resolve(channel.URI, 0);
-  },
+  
   
   proxyHack: function(channel) {
     // Work-around for channel.URI not being used directly here:
     // http://mxr.mozilla.org/mozilla/source/netwerk/protocol/http/src/nsHttpChannel.cpp#504
     
-    var proxyInfo = this.getProxyInfo(channel);
+    var proxyInfo = IOUtil.getProxyInfo(channel);
      if (proxyInfo && proxyInfo.type == "http") {
        if (channel.URI.userPass == "") {
          channel.URI.userPass = "xss:xss";
@@ -720,18 +657,10 @@ RequestWatchdog.prototype = {
   
   abort: function(requestInfo) {
     var channel = requestInfo.channel;
-    if (channel instanceof CI.nsIRequest) {
-      
+    
+    if (channel instanceof CI.nsIRequest)
       channel.cancel(NS_BINDING_ABORTED);
-      /*
-      if (channel instanceof CI.nsIRequestObserver) try {
-        channel.onStopRequest(channel, null, NS_BINDING_ABORTED);
-      } catch(e) {}
-      if (channel.loadGroup) try { 
-        channel.loadGroup.removeRequest(channel, null, NS_BINDING_ABORTED);
-      } catch(e) {}
-      */
-    }
+    
     this.dump(channel, "Aborted - " + requestInfo.reason);
  
     this.notify(requestInfo);
@@ -746,25 +675,25 @@ RequestWatchdog.prototype = {
   
   addXssInfo: function(requestInfo, xssInfo) {
     try {
-      requestInfo.window = requestInfo.window || this.findWindow(requestInfo.channel);
+      requestInfo.window = requestInfo.window || IOUtil.findWindow(requestInfo.channel);
       requestInfo.browser = requestInfo.browser || (requestInfo.window && 
-                            this.ns.dom.findBrowserForNode(requestInfo.window));
+                            DOM.findBrowserForNode(requestInfo.window));
     } catch(e) {}
     requestInfo.xssMaybe = true;
     return this.mergeDefaults(xssInfo, requestInfo);
   },
   
   notify: function(requestInfo) {
-    var msg = "[NoScript XSS] " + this.ns.getString("xss.reason." + requestInfo.reason, [ 
+    var msg = "[NoScript XSS] " + ns.getString("xss.reason." + requestInfo.reason, [ 
         requestInfo.originalAttempt || "N/A",
         requestInfo.unsafeRequest && requestInfo.unsafeRequest.origin || "",
         requestInfo.sanitizedURI && requestInfo.sanitizedURI.spec || ""
       ]);
     this.dump(requestInfo.channel, "Notifying " + msg + "\n\n\n");
-    this.ns.log(msg);
+    ns.log(msg);
    
     try {
-      if (requestInfo.silent || !requestInfo.window || !this.ns.getPref("xss.notify", true)) 
+      if (requestInfo.silent || !requestInfo.window || !ns.getPref("xss.notify", true)) 
         return;
       if(requestInfo.window != requestInfo.window.top) { 
         // subframe
@@ -775,13 +704,13 @@ RequestWatchdog.prototype = {
         requestInfo.unsafeRequest.window = requestInfo.window;
         this.observeSubframeXSS(requestInfo.originalAttempt, requestInfo.unsafeRequest);
         
-        if(!this.ns.getPref("xss.notify.subframes", true))
+        if(!ns.getPref("xss.notify.subframes", true))
           return;
 
-        var overlay = this.ns.findOverlay(requestInfo.browser);
+        var overlay = ns.findOverlay(requestInfo.browser);
         if(overlay) overlay.notifyXSS(requestInfo);
       }
-      ChanUtil.attachToChannel(requestInfo.channel, "noscript.XSS", requestInfo);
+      IOUtil.attachToChannel(requestInfo.channel, "noscript.XSS", requestInfo);
     } catch(e) {
       dump(e + "\n");
     }
@@ -797,16 +726,12 @@ RequestWatchdog.prototype = {
   },
   
   
-  
-  findWindow: function(channel) {
-    return this.ns.dom.findWindowForChannel(channel);
-  },
   findBrowser: function(channel, window) {
-    return this.ns.dom.findBrowserForChannel(channel, window);
+    return DOM.findBrowserForNode(window || IOUtil.findWindow(channel));
   },
   
   dump: function(channel, msg) {
-    if (!(this.ns.consoleDump & LOG_XSS_FILTER)) return;
+    if (!(ns.consoleDump & LOG_XSS_FILTER)) return;
     dump("[NoScript] ");
     dump((channel.URI && channel.URI.spec) || "null URI?" );
     if (channel.originalURI && channel.originalURI.spec != channel.URI.spec) {
@@ -922,7 +847,7 @@ var InjectionChecker = {
       msg += lines.join(", ");
     }
     else {
-      if (t) msg += " - TIME: " + (new Date().getTime() - t);
+      if (t) msg += " - TIME: " + (Date.now() - t);
       if (i) msg += " - ITER: " + i;
     }
     this.dump("[NoScript InjectionChecker] " + msg + "\n");
@@ -1146,7 +1071,7 @@ var InjectionChecker = {
     
     const MAX_TIME = 8000, MAX_LOOPS = 600;
 
-    const t = new Date().getTime();
+    const t = Date.now();
     var iterations = 0;
     
     while ((m = findInjection.exec(s))) {
@@ -1182,7 +1107,7 @@ var InjectionChecker = {
       
       for (moved = false, hunt = !!expr, lastExpr = null; hunt;) {
         
-        if (new Date().getTime() - t > MAX_TIME) {
+        if (Date.now() - t > MAX_TIME) {
           this.log("Too long execution time! Assuming DOS... " + s, t, iterations);
           return true;
         }
@@ -1421,7 +1346,7 @@ var InjectionChecker = {
   get base64Decoder() { return Base64 }, // exposed here just for debugging purposes
   checkBase64: function(url) {
     this.log(url);
-    var t = new Date().getTime();
+    var t = Date.now();
     var frags, curf, j, k, pos, ff, f;
     const MAX_TIME = 4000;
     const DOS_MSG = "Too long execution time, assuming DOS in Base64 checks";
@@ -1449,7 +1374,7 @@ var InjectionChecker = {
         }
         while (ff.length) {
           
-          if (new Date().getTime() - t > MAX_TIME) {
+          if (Date.now() - t > MAX_TIME) {
               this.log(DOS_MSG);
               return true;
           }
@@ -1467,7 +1392,7 @@ var InjectionChecker = {
     if (frags) {
       f = '';
       for (j = 0; j < frags.length; j++) {
-        if (new Date().getTime() - t > MAX_TIME) {
+        if (Date.now() - t > MAX_TIME) {
           this.log(DOS_MSG);
           return true;
         }
@@ -1604,7 +1529,7 @@ PostChecker.prototype = {
       delete this.boundary;
       delete this.isFile;
       delete this.postData;
-      var t = new Date().getTime(), t2 = t, d;
+      var t = Date.now(), t2 = t, d;
       if((available = sis.available())) do {
         size = this.postData.length;
         if (size >= MAX_FIELD_SIZE) return size + " bytes or more in one non-file field, assuming memory DOS attempt!";
@@ -1638,6 +1563,7 @@ PostChecker.prototype = {
   
   parse: function(eof) {
     var postData = this.postData;
+    var m;
     
     if (typeof(this.boundary) != "string") {
       m = postData.match(/^Content-type: multipart\/form-data;\s*boundary=(\S*)/i);
@@ -1658,7 +1584,7 @@ PostChecker.prototype = {
         // skip big file chunks
         return chunks;
       }
-      parts = postData.split(boundary);
+      var parts = postData.split(boundary);
       
       var part, last;
       for(j = 0, len = parts.length; j < len;) {
@@ -1835,15 +1761,13 @@ XSanitizer.prototype = {
           origPz = pz;
           
           // recursion for nested (partial?) URIs
-          
-          
-          
+
           nestedURI = null;
           
           if (canRecur && /^https?:\/\//i.test(pz)) {
             // try to sanitize as a nested URL
             try {
-              nestedURI = SiteUtils.ios.newURI(pz, null, null).QueryInterface(CI.nsIURL);
+              nestedURI = IOS.newURI(pz, null, null).QueryInterface(CI.nsIURL);
               changes.qs = changes.qs || this.sanitizeURL(nestedURI).major;
               if (unescape(pz).replace(/\/+$/, '') != unescape(nestedURI.spec).replace(/\/+$/, '')) pz = nestedURI.spec;
             } catch(e) {
@@ -1985,3 +1909,22 @@ const Base64 = {
 
   }
 };
+
+
+function RequestInfo(channel, url, origin, window) {
+  this.channel = channel;
+  this.sanitizedURI = url;
+  this.window = window;
+  this.unsafeRequest = {
+    URI: url.clone(),
+    postData: null,
+    referrer: channel.referrer && channel.referrer.clone(),
+    origin: origin,
+    loadFlags: channel.loadFlags,
+    issued: false,
+    window: null
+  }
+}
+RequestInfo.prototype = {
+  xssMaybe: false 
+}

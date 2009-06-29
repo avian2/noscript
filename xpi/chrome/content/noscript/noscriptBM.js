@@ -52,7 +52,7 @@ var noscriptBM = {
     var allowJS = noscriptUtil.service.getPref("allowURLBarJS", true);
     
     if (isJS && allowJS) {
-      if(noscriptUtil.service.executeJSURL(shortcut, callback)) return;
+      if (noscriptUtil.service.executeJSURL(shortcut, callback)) return;
     } else if (window.getShortcutOrURI && (shortcut.indexOf(" ") > 0  && !isJS || shortcut.indexOf(":") < 0)) {
       var url = getShortcutOrURI(shortcut, {});
       if(jsrx.test(url) && noscriptBM.handleBookmark(url, callback))
@@ -103,13 +103,13 @@ var noscriptBM = {
     if(!noscriptUtil.service) return;
     
     // patch bookmark clicks
-    if(window.BookmarksCommand && !noscriptBM.openOneBookmarkOriginal) { 
+    if("BookmarksCommand" in window && !noscriptBM.openOneBookmarkOriginal) { 
       noscriptBM.openOneBookmarkOriginal = BookmarksCommand.openOneBookmark;
       BookmarksCommand.openOneBookmark = noscriptBM.openOneBookmark;
     }
     
     // patch URLBar for keyword-triggered bookmarklets
-    if(window.handleURLBarCommand && !noscriptBM.handleURLBarCommandOriginal) { // Fx 3.0
+    if("handleURLBarCommand" in window && !noscriptBM.handleURLBarCommandOriginal) { // Fx 3.0
       noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
       window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
     } else { // Fx 3.1

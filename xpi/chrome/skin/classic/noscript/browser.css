@@ -159,10 +159,18 @@
 .noscript-https {
   list-style-image: url(https16.png);
 }
+.noscript-abe {
+  list-style-image: url(abe16.png);
+}
+
 
 .noscript-error {
   color: red !important;
   background: #ffa !important;
+}
+.noscript-error[selected="true"] {
+  background: red !important;
+  color: #ffa !important;
 }
 
 #noscript-tbb-revoke-temp,

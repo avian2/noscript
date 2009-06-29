@@ -54,6 +54,7 @@ Cookie.prototype = {
     return c.join("; ");
   },
   parse: function(s, host) {
+    var p;
     if (this.source) {
       // cleanup for recycle
       for (p in this) {
@@ -421,11 +422,11 @@ var HTTPS = {
   
   isProxied: function(u) {
     var ps = CC["@mozilla.org/network/protocol-proxy-service;1"].getService(CI.nsIProtocolProxyService);
-    var ios = SiteUtils.ios;
+   
     this.isProxied = function(u) {
       try {
         if (!(u instanceof CI.nsIURI)) {
-          u = ios.newURI(u, null, null);
+          u = IOS.newURI(u, null, null);
         }
         return ps.resolve(u, 0).type != "direct";
       } catch(e) {
@@ -435,11 +436,11 @@ var HTTPS = {
   },
   
   _getParent: function(req, w) {
-    return  w && w.frameElement || DOM.findBrowserForChannel(req, w);
+    return  w && w.frameElement || DOM.findBrowserForNode(w || IOUtil.findWindow(req));
   },
   
   isRedir: function(req, w) {
-    w = w || DOM.findWindowForChannel(req, w);
+    w = w || IOUtil.findWindow(req);
     
     var parent = this._getParent(req, w);
     if (!parent) return false;
@@ -455,10 +456,10 @@ var HTTPS = {
         uri = uri.clone();
         uri.scheme = "https"; 
 
-        w = (w || DOM.findWindowForChannel(req));
+        w = (w || IOUtil.findWindow(req));
         
         // redirect loop check
-        var redirectedFrom = ChanUtil.extractFromChannel(req, "noscript.redirectFrom");
+        var redirectedFrom = IOUtil.extractFromChannel(req, "noscript.redirectFrom");
         if (redirectedFrom && redirectedFrom.spec == uri.spec) {
           req.cancel(NS_ERROR_REDIRECT_LOOP);
           var parent = this._getParent(req, w);

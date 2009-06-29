@@ -64,6 +64,7 @@
       <tab label="&noscriptAppearance;" id="nsopt-tabAppearance"/>
       <tab label="&noscriptNotifications;" id="nsopt-tabNotifications"/>
       <tab label="&noscriptAdvanced;" id="nsopt-tabAdvanced"/>
+      
     </tabs>
     <tabpanels>
    <!-- 
@@ -109,11 +110,14 @@
     </groupbox>
     
 
-     <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
-     <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
-     <checkbox id="opt-placesPrefs" label="&noscriptBookmarkSync;" />
-     <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
-   
+    <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
+    <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
+    <checkbox id="opt-placesPrefs" label="&noscriptBookmarkSync;" />
+    <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
+    <spacer flex="1" />
+    <button id="uninstallButton" label="&noscriptUninstall;" hidden="true" oncommand="nsopt.uninstall()" />
+    <button id="importConfButton" label="&noscriptImport;" hidden="true" oncommand="nsopt.importConf()" />
+    <button id="exportConfButton" label="&noscriptExport;" hidden="true" oncommand="nsopt.exportConf()" />
   
   </vbox>
   </tabpanel><!-- END General -->
@@ -301,6 +305,7 @@
         <tab class="noscript-xss" label=" &noscriptXss; " id="nsopt-tabXss"/>
         <tab class="noscript-jar" label=" &noscriptJar; " id="nsopt-tabJar"/>
         <tab class="noscript-https" label=" &noscriptHttps; " id="nsopt-tabHttps"/>
+        <tab class="noscript-abe" label="&ABE;" id="nsopt-tabABE"/>
       </tabs>
       <tabpanels flex="1">
           <tabpanel>
@@ -422,13 +427,52 @@
             </tabbox>
           </vbox>
         </tabpanel>
-        
+        <tabpanel><!-- ABE -->
+          <vbox flex="1">
+            <hbox>
+              <vbox>
+              <checkbox id="opt-ABE.enabled" label="&ABE.enabled.label;" />
+              <checkbox id="opt-ABE.siteEnabled" label="&ABE.siteEnabled.label;" />
+              </vbox>
+              <spacer flex="1"/>
+              <label class="text-link header"
+               accesskey="?"
+               onclick="noscriptUtil.openHelp('ABE')"
+               value="?"/>
+            </hbox>
+            <separator class="thin" />
+            <label value="&ABE.rulesets.label;" />
+            <hbox flex="1">
+              <listbox id="abeRulesets-list" 
+                onselect="abeOpts.selected(this)"
+                ondblclick="abeOpts.edit(this)"
+                flex="1"
+                width="50"
+                persist="width"
+              >
+              <listitem label="SYSTEM" />
+              <listitem label="USER" />
+              </listbox>
+              <splitter style="background: transparent; margin: 0px; border-width: 0px" />
+              <textbox id="abeRuleset-text" flex="4" multiline="true" readonly="true" wrap="off"/>
+            </hbox>
+            <hbox align="center">
+              <button id="abeRefresh-button" label="&ABE.refresh.label;" accesskey="&ABE.refresh.accesskey;" oncommand="abeOpts.refresh()" />
+              <spacer flex="2"/>
+              <button id="abeEnable-button" label="&ABE.enable.label;" accesskey="&ABE.enable.accesskey;" oncommand="abeOpts.toggle(true)" />
+              <button id="abeDisable-button" label="&ABE.disable.label;" accesskey="&ABE.disable.accesskey;" oncommand="abeOpts.toggle(false)" />
+              <spacer flex="3"/>
+              <button id="abeEdit-button" label="&ABE.edit.label;" accesskey="&ABE.edit.accesskey;" oncommand="abeOpts.edit()" />
+            </hbox>
+          </vbox>
+       </tabpanel><!-- End ABE -->
       </tabpanels>
       
       
      </tabbox>
      </vbox>
      </tabpanel>
+        
   </tabpanels>
   </tabbox>
   </vbox>

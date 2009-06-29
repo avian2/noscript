@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ***** END LICENSE BLOCK *****/
 
+const CC = Components.classes;
+const CI = Components.interfaces;
 
 var ns = noscriptUtil.service;
 
@@ -34,9 +36,13 @@ var nsopt = {
       return;
     }
     
+   
+    
     this.utils = new UIUtils(ns);
     this.utils.resumeTabSelections();
     
+    abeOpts.init();
+     
     var locked = ns.locked;
     for each (widget in ["urlText","urlList", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
       this[widget] = $(widget);
@@ -135,6 +141,8 @@ var nsopt = {
     
     if (ns.canSerializeConf) this.initSerializeButtons();
     
+    if (ns.smUninstaller) this.initUninstallButton();
+    
     // $("policy-tree").view = policyModel;
     window.sizeToContent();
     
@@ -142,24 +150,23 @@ var nsopt = {
     this.removeButton.setAttribute("enabled", "false");
   },
   
+  initUninstallButton: function() {
+    this.utils.moveButtonsDown("uninstallButton");
+  },
+  
+  uninstall: function() {
+    ns.smUninstaller.appUninstall(window);
+  },
+  
   
   initSerializeButtons: function() {
-    var ref = document.documentElement.getButton("extra2");
-    ["import", "export"].forEach(function(s) {
-      var original = $(s + "Button");
-      var b = original.cloneNode(false);
-      original.accessKey = "";
-      
-      b.id = s + "DButton";
-      b.className = ref.className;
-      b.setAttribute("oncommand", "nsopt." + s + "Conf()");
-      ref.parentNode.insertBefore(b, ref);
-    });
+    this.utils.moveButtonsDown("importConfButton", "exportConfButton");
   },
+  
   
   importConf: function() {
     this.chooseFile(
-      this.buttonToTitle("importButton"),
+      this.buttonToTitle("importConfButton"),
       "Open",
       function(f) {
         ns.restoreConf(ns.readFile(f)) && nsopt.reload();
@@ -169,7 +176,7 @@ var nsopt = {
   exportConf: function() {
     this.save();
     this.chooseFile(
-      this.buttonToTitle("exportButton"),
+      this.buttonToTitle("exportConfButton"),
       "Save",
       function(f) {
         ns.writeFile(f, ns.serializeConf(true));
@@ -221,8 +228,11 @@ var nsopt = {
       }
     );
     
+    
     this.utils.visitTextboxes(function(prefName, box) {
-      ns.setPref(prefName, box.value);
+      if (box.value != ns.getPref(prefName)) {
+        ns.setPref(prefName, box.value);
+      }
     });
     
     ["clearClick", "opacizeObject"].forEach(function(c) {
@@ -260,8 +270,6 @@ var nsopt = {
     var trustedSites = this.trustedSites;
     var tempSites = this.tempSites;
     var gTempSites = this.gTempSites;
-    
-    if (ns.consoleDump) ns.dump("Saving whitelist: " + trustedSites.sitesString);
     
     ns.safeCapsOp(function(ns) {
       if(ns.untrustedSites.sitesString != untrustedSites.sitesString
@@ -428,10 +436,8 @@ var nsopt = {
   
   chooseFile: function(title, mode, callback) {
     try {
-      const cc = Components.classes;
-      const ci = Components.interfaces;
-      const IFP = ci.nsIFilePicker;
-      const fp = cc["@mozilla.org/filepicker;1"].createInstance(IFP);
+     const IFP = CI.nsIFilePicker;
+      const fp = CC["@mozilla.org/filepicker;1"].createInstance(IFP);
       
       fp.init(window,title, IFP["mode" + mode]);
       fp.appendFilters(IFP.filterText);
@@ -495,3 +501,174 @@ var nsopt = {
   }
 
 }
+
+var ABE = ns.__parent__.ABE;
+
+var abeOpts = {
+  selectedRS: null,
+  _map: {},
+  
+  init: function() {
+    
+    if (!(ABE.legacySupport || ABE.__parent__.Thread.canSpin)) {
+      var tab = $("nsopt-tabABE");
+      if (tab.selected) {
+        tab.parentNode.selectedIndex = 0;
+      }
+      tab.hidden = true;
+      return;
+    }
+    
+    this.list = $("abeRulesets-list");
+    ABE.updateRules();
+    this.populate();
+    window.addEventListener("focus", function(ev) {
+      if (ABE.updateRulesNow()) abeOpts.populate();
+    }, false);
+  },
+  
+  _populating: false,
+  populate: function() {
+    this._populating = true;
+    try {
+      this._map = {};
+      var l = this.list;
+      for(var j = l.getRowCount(); j-- > 0; l.removeItemAt(j));
+      var rulesets = ABE.rulesets;
+      var selItem = null;
+      if (rulesets) {
+        var sel = this.selectedRS && this.selectedRS.name;
+        this.selectedRS = null;
+        var i, name;
+        for each (var rs in rulesets) {
+          name = rs.name;
+          this._map[name] = rs;
+          i = l.appendItem(name, name);
+          if (rs.disabled) i.setAttribute("disabled", "true");
+          if (sel == name) selItem = i;
+          if (rs.errors) i.className = "noscript-error";
+        }
+      }
+      l.selectedItem = selItem;
+      this.sync();
+    } finally {
+      this._populating = false;
+    }
+  },
+  
+  selected: function(i) {
+    if (!this._populating) this.sync();
+  },
+  
+  select: function(rs) {
+    var name = rs && rs.name;
+    if (!name) return;
+    var l = this.list;
+    if (l.selectedItem && l.selectedItem.value == name) return;
+    
+    for(var j = l.getRowCount(), i; j-- > 0;) {
+      i = l.getItemAtIndex(j);
+      if (i.value == name) {
+        l.selectedItem = i;
+        break;
+      }
+    }
+  },
+  
+  sync: function() {
+    var selItem = this.list.selectedItem;
+   
+    var rs = null;
+    if (selItem) {
+      this.selectedRS = rs = this._map[selItem.value];
+    } else {
+      this.selectedRS = null;
+    }
+    
+    $("abeEnable-button").disabled = ! ($("abeDisable-button").disabled = !rs || rs.disabled);
+    $("abeEdit-button").disabled = !rs || rs.site;
+    $("abeRefresh-button").disabled = this.list.getRowCount() == 0;
+    
+    var text = $("abeRuleset-text");
+    text.className = selItem && selItem.className || '';
+    text.disabled = !selItem || selItem.disabled;
+    text.value = rs && (rs.errors && rs.errors.join("\n\n") || rs.source) || '';
+  },
+  
+  refresh: function() {
+    ABE.refresh();
+    this.populate();
+  },
+  
+  toggle: function(enabled) {
+    var selItem = this.list.selectedItem;
+    var rs = this.selectedRS;
+    if (!(rs && selItem && rs.name == selItem.value)) return;
+    if ((rs.disabled = !enabled)) {
+      selItem.setAttribute("disabled", "true");
+    } else {
+      selItem.removeAttribute("disabled");
+    }
+    ns.setPref("ABE.disabledRulesetNames", ABE.disabledRulesetNames);
+    this.sync();
+  },
+  
+  edit: function(i) {
+    i = i || this.list.selectedItem;
+    if (!i) return;
+    var file = ABE.getRulesetFile(i.value);
+    if (!(file instanceof CI.nsILocalFile)) return;
+   
+    try {
+      file.launch();
+      return;
+    } catch(e) {
+      // probably a *X platform...
+    }
+    
+    var ed = this.editor;
+    if (!ed) return;
+
+    var mimeInfoService = CC["@mozilla.org/uriloader/external-helper-app-service;1"]
+        .getService(CI.nsIMIMEService);
+    var mimeInfo = mimeInfoService
+      .getFromTypeAndExtension( "application/x-abe-rules", "abe" );
+    mimeInfo.preferredAction = mimeInfo.useHelperApp;
+    
+    if ("nsILocalHandlerApp" in CI) {
+      var handler =  CC["@mozilla.org/uriloader/local-handler-app;1"].createInstance(CI.nsILocalHandlerApp);
+      handler.executable = ed;
+      ed = handler;
+    }
+    mimeInfo.preferredApplicationHandler = ed;
+    mimeInfo.launchWithFile(file);      
+  
+  },
+  
+  get editor() {
+    var ed = null;
+    try {
+      ed = ns.prefs.getComplexValue("abe.editor", CI.nsILocalFile);
+      ed.followLinks = true;
+      if (ed.exists() && ed.isExecutable()) return ed;
+      ed = null;
+    } catch(e) {}
+    const IFP = CI.nsIFilePicker;
+    const fp = CC["@mozilla.org/filepicker;1"].createInstance(IFP);
+      
+    fp.init(window, ns.getString("abe.chooseEditor"), IFP.modeOpen);
+    fp.appendFilters(IFP.filterApps);
+    fp.filterIndex = 0;
+    const ret = fp.show();
+    if (ret == IFP.returnOK) {
+      ed = fp.file;
+      if (ed.exists() && ed.isExecutable()) {  
+        ns.prefs.setComplexValue("abe.editor", CI.nsILocalFile, ed);
+      } else ed = null;
+    }
+    return ed;
+  }
+  
+}
+
+

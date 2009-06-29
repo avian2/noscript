@@ -62,29 +62,6 @@ const DOM = {
     return null;
   },
   
-  findBrowserForChannel: function(channel, w) {
-    return (w || (w = this.findWindowForChannel(channel))) && this.findBrowserForNode(w);
-  },
-  
-  findWindowForChannel: function(channel) {  
-    for each(var cb in [channel.notificationCallbacks,
-                         channel.loadGroup && channel.loadGroup.notificationCallbacks]) {
-      if (cb instanceof CI.nsIInterfaceRequestor) {
-        try {
-        // For Gecko 1.9.1
-          return cb.getInterface(CI.nsILoadContext).associatedWindow;
-        } catch(e) {}
-        
-        try {
-          // For Gecko 1.9.0
-          return cb.getInterface(CI.nsIDOMWindow);
-        } catch(e) {}
-      }
-    }
-    return null;
-  },
-  
-  
   getDocShellForWindow: function(window) {
     try {
       return window.QueryInterface(CI.nsIInterfaceRequestor)
@@ -166,7 +143,7 @@ const DOM = {
   
   _idCounter: Math.round(Math.random() * 9999),
   rndId: function() {
-    return new Date().getTime().toString(32) + "_" + (this._idCounter++).toString(32) + "_" + Math.round(Math.random() * 9999999).toString(32);
+    return Date.now().toString(32) + "_" + (this._idCounter++).toString(32) + "_" + Math.round(Math.random() * 9999999).toString(32);
   }
   
 };

@@ -18,7 +18,7 @@ var PlacesPrefs = {
     for each(var l in ["title", "message"]) {
       tpl = tpl.replace('%' + l + '%', ns.getString("bookmarkSync." + l).replace(/</g, '&lt;').replace(/>/g, '&gt;'));
     }
-    return this.uri = ns.siteUtils.ios.newURI(
+    return this.uri = IOS.newURI(
       'data:text/html;charset=UTF-8,' + encodeURIComponent(tpl.replace(/\b(Weave)\b/, '<a href="http://labs.mozilla.com/projects/weave/">$1</a>')
       .replace(/\b(XMarks(\s+extension)?)\b/i, '<a href="https://addons.mozilla.org/en-US/firefox/addon/2410">$1</a>'))
     , null, null);
@@ -58,7 +58,7 @@ var PlacesPrefs = {
     if (!ns.getPref("placesPrefs")) return;
     
     if (this._trans) return;
-    var t = new Date().getTime();
+    var t = Date.now();
     var ret = false;
     try { 
       this._trans = true;
@@ -67,7 +67,7 @@ var PlacesPrefs = {
       this.dump("Transaction failed: " + e);
     } finally {
       this._trans = false;
-      if (ret) this.dump("Transaction done in " + (new Date().getTime() - t) + "ms");
+      if (ret) this.dump("Transaction done in " + (Date.now() - t) + "ms");
     }
   },
   
@@ -208,7 +208,7 @@ var PlacesPrefs = {
         id = svc.insertBookmark(folderId, uri, 0, this.NAME);
       }
       
-      this.setData(id, { ts: '#' + new Date().getTime(), conf: conf });
+      this.setData(id, { ts: '#' + Date.now(), conf: conf });
       
       
       this._lastId = id;
