@@ -93,6 +93,18 @@ var Thread = {
     }, time || 1, 0);
   },
   
+  asap: function(callback, self, args) {
+    if (this.canSpin) {
+      this.current.dispatch({
+        run: function() {
+          callback.apply(self, args || []);
+        }
+      }, CI.nsIEventTarget.DISPACTH_NORMAL);
+    } else {
+      this.delay(callback, 0, self, args);
+    }
+  },
+  
   _delayRunner: function() {
     var ctx = this.context;
     try {

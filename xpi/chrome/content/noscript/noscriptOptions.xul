@@ -268,7 +268,8 @@
         
         <separator class="thin" />
         <checkbox id="opt-forbidMetaRefresh.notify" label="&noscriptForbidMetaRefresh;"/><!-- TODO: accesskey -->
-        
+        <separator class="thin" />
+        <checkbox id="opt-ABE.notify" label="&ABE;"/><!-- TODO: accesskey -->
       </groupbox>
       <groupbox class="ia-indent">
         <caption><checkbox id="opt-sound" label="&noscriptSound;" /></caption>

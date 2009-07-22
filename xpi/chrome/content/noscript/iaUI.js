@@ -126,16 +126,16 @@ SoundChooser.prototype = {
       const ci=Components.interfaces;
       const fp = cc["@mozilla.org/filepicker;1"].createInstance(ci.nsIFilePicker);
       
-      fp.init(window,title, ci.nsIFilePicker.modeOpen);
+      fp.init(window, this.title, ci.nsIFilePicker.modeOpen);
       fp.appendFilter(this.serv.getString("audio.samples"),"*.wav");
       fp.filterIndex=0;
-      const ret=fp.show();
-      if (ret==ci.nsIFilePicker.returnOK || ret==ci.nsIFilePicker.returnReplace) {
+      const ret = fp.show();
+      if (ret == ci.nsIFilePicker.returnOK || ret==ci.nsIFilePicker.returnReplace) {
         this.setSample(fp.fileURL.spec);
         this.play();
       }
     } catch(ex) {
-      noscriptUtil.prompter.alert(window, title, ex.toString());
+      noscriptUtil.prompter.alert(window, this.title, ex.toString());
     }
   },
   setSample: function(url) {

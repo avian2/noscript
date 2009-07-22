@@ -1,0 +1,157 @@
+<!ENTITY noscriptOptions "Aukerak:">
+<!ENTITY noscriptOptions.accesskey "A">
+<!ENTITY noscriptOptionsLong "NoScript aukerak">
+<!ENTITY noscriptAbout "NoScript-eri buruz:">
+<!ENTITY noscriptPermissionsText "Zein webgunek script-ak exekuta ditzakeen zehaztu dezakezu. Idatzi script-ak erabiltzea onartzea nahi duzun domeinuaren izena (adib. &quot;http://www.gunea.org&quot; or &quot;gunea.org&quot;) eta Onartu sakatu.">
+<!ENTITY noscriptWebAddress "Webgunearen helbidea:">
+<!ENTITY noscriptAllow "Onartu">
+<!ENTITY noscriptAllow.accesskey "O">
+<!ENTITY noscriptForbid "Debekatu">
+<!ENTITY noscriptForbid.accesskey "D">
+<!ENTITY noscriptTrust "Markatu konfiantzazkoa">
+<!ENTITY noscriptTrust.accesskey "k">
+<!ENTITY noscriptUntrust "Markatu ez-konfiantzazkoa">
+<!ENTITY noscriptUntrust.accesskey "E">
+<!ENTITY noscriptRemoveSelected "Kendu hautatutako guneak">
+<!ENTITY noscriptGloballyEnabled "Script-ak orokorrean onarturik (arriskutsua)">
+<!ENTITY noscriptAutoReload "Automatikoki birkargatu dagokien orriak baimenak aldatzean">
+<!ENTITY noscriptGeneral "Orokorra">
+<!ENTITY noscriptAppearance "Itxura">
+<!ENTITY noscriptShow "Ikusi:">
+<!ENTITY noscriptCtxMenu "Kontestu menua">
+<!ENTITY noscriptStatusIcon "Egoera barra ikonoa">
+<!ENTITY noscriptFullAddr "Helbide osoa (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Domeinu osoa (http://noscript.net)">
+<!ENTITY noscriptBaseDom "Oinarrizko 2. mailako domeinuak (noscript.net)">
+<!ENTITY noscriptTempCmd "Aldirako baterako onartu:">
+<!ENTITY noscriptSound "Audio abisua script-ak blokeatzean">
+<!ENTITY noscriptImport "Inporatu">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Esportatu">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Ikusi blokeatutako script-ei buruzko mezua">
+<!ENTITY noscriptNotify.bottom "Kokatu mezua behean">
+<!ENTITY noscriptSound.choose "Hautatu">
+<!ENTITY noscriptSound.choose.accesskey "H">
+<!ENTITY noscriptSound.play "Erreproduzitu">
+<!ENTITY noscriptSound.play.accesskey "r">
+<!ENTITY noscriptSound.reset "Berrezarri lehenespena">
+<!ENTITY noscriptSound.reset.accesskey "B">
+<!ENTITY noscriptAdvanced "Aurreratua">
+<!ENTITY noscriptAdditionalPermissions "Baimen gehigarriak konfiantzazko guneentzat">
+<!ENTITY noscriptAllowClipboard "Onartu kanpo arbelatik testu aberats kopiatu eta itsastea">
+<!ENTITY noscriptAdditionalRestrictions "Murrizte gehigarriak ez-konfiantzazko guneentzat">
+<!ENTITY noscriptPlugins "Plugin-ak">
+<!ENTITY noscriptContentBlocker "Ezarri murrizte hauek konfiantzazko guneei ere">
+<!ENTITY noscriptForbidJava "Debekatu Java:">
+<!ENTITY noscriptForbidXSLT "Debekatu XSLT">
+<!ENTITY noscriptForbidWebBugs "Debekatu &quot;Web erroreak&quot;">
+<!ENTITY noscriptForbidSilverlight "DEbekatu Microsoft Silverlight">
+<!ENTITY noscriptForbidIFrames "Debekatu &lt;markoak&gt;">
+<!ENTITY noscriptForbidFrames "Debeaktu &lt;markoa&gt;">
+<!ENTITY noscriptForbidFlash "Debekatu AdobeÂ® FlashÂ®">
+<!ENTITY noscriptForbidPlugins "Debekatu beste pluginak">
+<!ENTITY noscriptReloadWarn "Aukera hauek (eskuz) birkargatutako orrialde eta berrietan eragingo dute.">
+<!ENTITY noscriptConfirmUnblock "Eskatu berrespena aldi baterako objektu bat desblokeatzean">
+<!ENTITY noscriptStatusLabel "Egoera-barra etiketa">
+<!ENTITY noscriptForbidBookmarklets "Debekatu laster-markatzaileak">
+<!ENTITY noscriptShowPlaceholder "Ikusi leku-marka ikonoa">
+<!ENTITY noscriptTruncateTitle "Moztu dokumentu tituluak">
+<!ENTITY noscriptFixLinks "Saiatu JavaScript loturak konpontzen">
+<!ENTITY noscriptAllowBookmarks "Onartu laster-marka bidez irekitako guneak">
+<!ENTITY noscriptAllowViaBookmarks "Onartu laster-marka bidez irekitako guneak">
+<!ENTITY noscriptAllowPing "Onartu &lt;A PINGâ�¦&gt;">
+<!ENTITY noscriptAllowLocalLinks "Onartu lotura lokalak">
+<!ENTITY noscriptForbidPing "Debekatu &lt;A PINGâ�¦&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Debekatu METa berbidaraketak &lt;NOSCRIPT&gt; elementuen barnean">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptWhitelist "Zerrenda-zuria">
+<!ENTITY noscriptPermissions "BAimenak">
+<!ENTITY noscriptRefresh "Freskatu">
+<!ENTITY noscriptNotifications "Berri-emateak">
+<!ENTITY noscriptToolbarToggle "NoScript tresna-barra ezkerraz klikatzean uneko maila-altuneko gune baimenak aldatuko ditu">
+<!ENTITY noscriptTrusted "Konfiantzazkoa">
+<!ENTITY noscriptUntrusted "Ez-konfiantzazkoa">
+<!ENTITY noscriptUnknown "Ezezaguna">
+<!ENTITY noscriptAdd "Gehitu">
+<!ENTITY noscriptAdd.accesskey "G">
+<!ENTITY noscriptClose "Itxi">
+<!ENTITY noscriptSiteManager "Gune kudeatzailea">
+<!ENTITY noscriptSecurityManager "Segurtasun kudeatzailea">
+<!ENTITY noscriptPolicies "Politikak">
+<!ENTITY noscriptDefaultPolicies "Lehenetsitako politikak">
+<!ENTITY noscriptSitePolicies "Gune zehatzetako politikak">
+<!ENTITY noscriptNselNever "Ezkutatu &lt;NOSCRIPT&gt; elementuak">
+<!ENTITY noscriptNselForce "Ikusi blokeaturiko &lt;SCRIPT&gt;-a jarraitzen duen &lt;NOSCRIPT&gt; elementua">
+<!ENTITY noscriptAutoAllowTopLevel "Aldi baterako onartu maila-altueneko guneak lehenespenez">
+<!ENTITY noscriptDescription "Babes gehigarria zure firefoxentzat: NoScript-ek JavaScript (eta beste pluginak= onartzen ditu bakarrik zure aukerako konfiantzako guneetan (adib zure bankuko webgunean). Zerrenda-zurian oinarritutako lehentasunezko blokeoak segurtasun zuloen (ezagun eta ezezagunen) probetxuzko esplotazioa saihesten du funtzionalitaterik galdu gabe. Adituak ados daude: Firefox seguruagoa da NoScript erabiliaz :-)">
+<!ENTITY noscriptOptBlockCssScanners "Bloekatu CSS-oinarridun eskanerrak">
+<!ENTITY noscriptOptFilterXGet "Garbitu zeharkako-gune susmagarrik eskaerak">
+<!ENTITY noscriptOptFilterXPost "Bihurtu zeharkako-gune POST eskaerak data-gabeko GET eskaerak">
+<!ENTITY noscriptShowConsole "Ikusi kontsola:">
+<!ENTITY noscriptShowConsole.accesskey "I">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS FAQâ�¦">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Segurtasun-gabeko birkargatzea">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "XSS-kontrako babeste salbuespenak">
+<!ENTITY noscriptXssExceptions.description "Espresio erregular hauek betetzen dituzten helburuak ez dira XSS aurka babestuko.">
+<!ENTITY noscriptMatchSample "Parekatze patroi sinplea:">
+<!ENTITY noscriptReset "Garbitu">
+<!ENTITY noscriptReset.accesskey "G">
+<!ENTITY noscriptResetDef "Lehenetsietara berrezarri">
+<!ENTITY noscriptResetDef.accesskey "l">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptJar "JAR">
+<!ENTITY noscriptJarFaq "JAR FAQâ�¦">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Blokeatu JAR urruneko errekurtsoak dokumentu gisa kargatzea">
+<!ENTITY noscriptJarExceptions "JAR dokumentu blokeatze salbuespenak">
+<!ENTITY noscriptJarExceptions.description "Espresio erregular hauek betetzen dituzten JAR dokumentuak EZ dira blokeatuko.">
+<!ENTITY noscriptRevokeTemp "Kendu aldi baterako baimenak">
+<!ENTITY noscriptRevokeTemp.accesskey "K">
+<!ENTITY noscriptNoUntrustedPlaceholder "Ez onartu ez-konfiantzako bezala markaturiko guneen objektuen kokalekua">
+<!ENTITY noscriptCollapseBlockedObjects "Bildu blokeaturiko objektuak">
+<!ENTITY noscriptExceptions "Salbuespenak:">
+<!ENTITY noscriptBlockedObjects "Blokeaturiko objektuak">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokeatu ez-konfiantzako bezala markatutako guneen objektu guztiak">
+<!ENTITY noscriptTempAllowPage "Aldi baterako onartu orrialde guzti hau">
+<!ENTITY noscriptTempAllowPage.accesskey "A">
+<!ENTITY noscriptAllowPage "Onartu orri hau">
+<!ENTITY noscriptAllowPage.accesskey "O">
+<!ENTITY noscriptTempToPerm "Egin orrialde baimenak iraunkorrak">
+<!ENTITY noscriptTempToPerm.accesskey "E">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQâ�¦">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Portaera">
+<!ENTITY noscriptHttps.cookies "Cookieak">
+<!ENTITY noscriptHttps.description "Debekatu web eduki aktiboak ez badira konexio seguru (HTTPS) baten bidez:">
+<!ENTITY noscriptHttps.never "Inoiz">
+<!ENTITY noscriptHttps.proxy "Proxy bat erabiltzean (Tor-ekin gomendatua)">
+<!ENTITY noscriptHttps.always "Beti">
+<!ENTITY noscriptHttpsForced "Behartu hurrengo guneak konexio seguruak (HTTPS) erabiltzea:">
+<!ENTITY noscriptHttpsForcedExceptions "Inoiz ez behartu konexio seguruak (HTTPS) hurrengo guneetan:">
+<!ENTITY noscriptSecureCookies "Gaitu cookie kudeaketa seguru automatikoa">
+<!ENTITY noscriptSecureCookiesForced "Behartu hurrengo guneek cookie guztiak HTTPS bidez ezartzea:">
+<!ENTITY noscriptSecureCookiesExceptions "Baztertu HTTPS bidezko segurtasun gabeko cookieak gune hauetan:">
+<!ENTITY noscriptClearClickTitle "ClearClick abisua">
+<!ENTITY noscriptClearClickHeader "Auekrako Clickjacking-a / UI berridazketa saiakera!">
+<!ENTITY noscriptClearClickDescription "NoScript-ek erdi-ezkutatutako elementu batekin sagu edo teklatu interakzioa gelditu du. Beheko irudian klikatu blokeaturik bertsio eta garbiaren arteko txandakatzerako.">
+<!ENTITY noscriptClearClickOpt "ClearClick babesa orrietan:">
+<!ENTITY noscriptClearClickReport "Txostena">
+<!ENTITY noscriptClearClickReport.accesskey "T">
+<!ENTITY noscriptClearClickReportId "Txosten IDa:">
+<!ENTITY noscriptOpacizeOpt "txertatutako elementu objektuak orrietan:">
+<!ENTITY noscriptTrustedPagesAdj "konfiantzazkoa">
+<!ENTITY noscriptUntrustedPagesAdj "ez-konfiantzazkoa">
+<!ENTITY noscriptKeepLocked "Mentendu elementu hau blokeaturik (gomendatua)">
+<!ENTITY noscriptEmbeddings "Txertatutako objektuak">
+<!ENTITY noscriptPrev "Aurrekoa">
+<!ENTITY noscriptNext "Hurrengoa">
+<!ENTITY noscriptFrameOptErr.title "Eduki hau ezin da marko batean bistarazi">
+<!ENTITY noscriptFrameOptErr.desc "Zure segurtasuna babesteko edukiaren argitaratzaileak ez du onartzen marko batean bistaratzea.">
+<!ENTITY noscriptFrameOptErr.link "Hemen klik egin eduki hau leiho berri batean irekitzeko.">
+<!ENTITY noscriptBookmarkSync "NoScript konfigurazioaren babes-kopia laster-marka batean egin errazago sinkronizatzeko.">

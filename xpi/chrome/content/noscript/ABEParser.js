@@ -1,4 +1,4 @@
-// $ANTLR 3.1.1 ABE.g 2009-02-04 00:43:45
+// $ANTLR 3.1.1 X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g 2009-07-12 21:45:06
 
 var ABEParser = function(input, state) {
     if (!state) {
@@ -29,7 +29,7 @@ org.antlr.lang.augmentObject(ABEParser, {
     T_METHODS: 5,
     EOF: -1,
     URI: 13,
-    WS: 22,
+    WS: 21,
     URI_PART: 20,
     A_SANDBOX: 17,
     URI_START: 19,
@@ -38,8 +38,7 @@ org.antlr.lang.augmentObject(ABEParser, {
     REGEXP: 11,
     LOCATION: 14,
     T_SITE: 10,
-    COMMENT: 23,
-    LIST_SEP: 21
+    COMMENT: 22
 });
 
 (function(){
@@ -54,7 +53,7 @@ var T_FROM= 9,
     T_METHODS= 5,
     EOF= -1,
     URI= 13,
-    WS= 22,
+    WS= 21,
     URI_PART= 20,
     A_SANDBOX= 17,
     URI_START= 19,
@@ -63,8 +62,7 @@ var T_FROM= 9,
     REGEXP= 11,
     LOCATION= 14,
     T_SITE= 10,
-    COMMENT= 23,
-    LIST_SEP= 21;
+    COMMENT= 22;
 
 // public instance methods/vars
 org.antlr.lang.extend(ABEParser, org.antlr.runtime.Parser, {
@@ -77,7 +75,7 @@ org.antlr.lang.extend(ABEParser, org.antlr.runtime.Parser, {
     },
 
     getTokenNames: function() { return ABEParser.tokenNames; },
-    getGrammarFileName: function() { return "ABE.g"; }
+    getGrammarFileName: function() { return "X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g"; }
 });
 org.antlr.lang.augmentObject(ABEParser.prototype, {
 
@@ -92,7 +90,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:13:1: ruleset : ( rule )* EOF ;
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:13:1: ruleset : ( rule )* EOF ;
     // $ANTLR start "ruleset"
     ruleset: function() {
         var retval = new ABEParser.ruleset_return();
@@ -106,11 +104,11 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var EOF2_tree=null;
 
         try {
-            // ABE.g:13:11: ( ( rule )* EOF )
-            // ABE.g:13:13: ( rule )* EOF
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:13:11: ( ( rule )* EOF )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:13:13: ( rule )* EOF
             root_0 = this.adaptor.nil();
 
-            // ABE.g:13:13: ( rule )*
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:13:13: ( rule )*
             loop1:
             do {
                 var alt1=2;
@@ -123,7 +121,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
                 switch (alt1) {
                 case 1 :
-                    // ABE.g:13:13: rule
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:13:13: rule
                     this.pushFollow(ABEParser.FOLLOW_rule_in_ruleset49);
                     rule1=this.rule();
 
@@ -177,7 +175,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:15:1: rule : subject ( predicate )+ -> subject ( predicate )+ ;
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:15:1: rule : subject ( predicate )+ -> subject ( predicate )+ ;
     // $ANTLR start "rule"
     rule: function() {
         var retval = new ABEParser.rule_return();
@@ -191,15 +189,15 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var stream_subject=new org.antlr.runtime.tree.RewriteRuleSubtreeStream(this.adaptor,"rule subject");
         var stream_predicate=new org.antlr.runtime.tree.RewriteRuleSubtreeStream(this.adaptor,"rule predicate");
         try {
-            // ABE.g:15:11: ( subject ( predicate )+ -> subject ( predicate )+ )
-            // ABE.g:15:13: subject ( predicate )+
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:15:11: ( subject ( predicate )+ -> subject ( predicate )+ )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:15:13: subject ( predicate )+
             this.pushFollow(ABEParser.FOLLOW_subject_in_rule65);
             subject3=this.subject();
 
             this.state._fsp--;
 
             stream_subject.add(subject3.getTree());
-            // ABE.g:15:21: ( predicate )+
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:15:21: ( predicate )+
             var cnt2=0;
             loop2:
             do {
@@ -213,7 +211,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
                 switch (alt2) {
                 case 1 :
-                    // ABE.g:15:21: predicate
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:15:21: predicate
                     this.pushFollow(ABEParser.FOLLOW_predicate_in_rule67);
                     predicate4=this.predicate();
 
@@ -237,7 +235,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
 
             // AST REWRITE
-            // elements: subject, predicate
+            // elements: predicate, subject
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -294,7 +292,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:17:1: predicate : action ( methods )? ( origin )? -> T_ACTION action T_METHODS ( methods )? ( origin )? ;
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:17:1: predicate : action ( methods )? ( origin )? -> T_ACTION action T_METHODS ( methods )? ( origin )? ;
     // $ANTLR start "predicate"
     predicate: function() {
         var retval = new ABEParser.predicate_return();
@@ -310,15 +308,15 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var stream_action=new org.antlr.runtime.tree.RewriteRuleSubtreeStream(this.adaptor,"rule action");
         var stream_origin=new org.antlr.runtime.tree.RewriteRuleSubtreeStream(this.adaptor,"rule origin");
         try {
-            // ABE.g:17:11: ( action ( methods )? ( origin )? -> T_ACTION action T_METHODS ( methods )? ( origin )? )
-            // ABE.g:17:13: action ( methods )? ( origin )?
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:17:11: ( action ( methods )? ( origin )? -> T_ACTION action T_METHODS ( methods )? ( origin )? )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:17:13: action ( methods )? ( origin )?
             this.pushFollow(ABEParser.FOLLOW_action_in_predicate84);
             action5=this.action();
 
             this.state._fsp--;
 
             stream_action.add(action5.getTree());
-            // ABE.g:17:20: ( methods )?
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:17:20: ( methods )?
             var alt3=2;
             var LA3_0 = this.input.LA(1);
 
@@ -327,7 +325,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
             }
             switch (alt3) {
                 case 1 :
-                    // ABE.g:17:20: methods
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:17:20: methods
                     this.pushFollow(ABEParser.FOLLOW_methods_in_predicate86);
                     methods6=this.methods();
 
@@ -340,7 +338,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
             }
 
-            // ABE.g:17:29: ( origin )?
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:17:29: ( origin )?
             var alt4=2;
             var LA4_0 = this.input.LA(1);
 
@@ -349,7 +347,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
             }
             switch (alt4) {
                 case 1 :
-                    // ABE.g:17:29: origin
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:17:29: origin
                     this.pushFollow(ABEParser.FOLLOW_origin_in_predicate89);
                     origin7=this.origin();
 
@@ -365,7 +363,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
 
             // AST REWRITE
-            // elements: methods, origin, action
+            // elements: origin, methods, action
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -379,13 +377,13 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
                 this.adaptor.addChild(root_0, this.adaptor.create(T_ACTION, "T_ACTION"));
                 this.adaptor.addChild(root_0, stream_action.nextTree());
                 this.adaptor.addChild(root_0, this.adaptor.create(T_METHODS, "T_METHODS"));
-                // ABE.g:17:66: ( methods )?
+                // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:17:66: ( methods )?
                 if ( stream_methods.hasNext() ) {
                     this.adaptor.addChild(root_0, stream_methods.nextTree());
 
                 }
                 stream_methods.reset();
-                // ABE.g:17:75: ( origin )?
+                // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:17:75: ( origin )?
                 if ( stream_origin.hasNext() ) {
                     this.adaptor.addChild(root_0, stream_origin.nextTree());
 
@@ -428,7 +426,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:19:1: methods : ( ( method )+ | ALL ) ;
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:19:1: methods : ( ( method )+ | ALL ) ;
     // $ANTLR start "methods"
     methods: function() {
         var retval = new ABEParser.methods_return();
@@ -442,11 +440,11 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var ALL9_tree=null;
 
         try {
-            // ABE.g:19:11: ( ( ( method )+ | ALL ) )
-            // ABE.g:19:13: ( ( method )+ | ALL )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:19:11: ( ( ( method )+ | ALL ) )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:19:13: ( ( method )+ | ALL )
             root_0 = this.adaptor.nil();
 
-            // ABE.g:19:13: ( ( method )+ | ALL )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:19:13: ( ( method )+ | ALL )
             var alt6=2;
             var LA6_0 = this.input.LA(1);
 
@@ -464,8 +462,8 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
             }
             switch (alt6) {
                 case 1 :
-                    // ABE.g:19:14: ( method )+
-                    // ABE.g:19:14: ( method )+
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:19:14: ( method )+
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:19:14: ( method )+
                     var cnt5=0;
                     loop5:
                     do {
@@ -479,7 +477,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
                         switch (alt5) {
                         case 1 :
-                            // ABE.g:19:14: method
+                            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:19:14: method
                             this.pushFollow(ABEParser.FOLLOW_method_in_methods115);
                             method8=this.method();
 
@@ -504,7 +502,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
                     break;
                 case 2 :
-                    // ABE.g:19:24: ALL
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:19:24: ALL
                     ALL9=this.match(this.input,ALL,ABEParser.FOLLOW_ALL_in_methods120); 
                     ALL9_tree = this.adaptor.create(ALL9);
                     this.adaptor.addChild(root_0, ALL9_tree);
@@ -549,7 +547,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:21:1: method : ( HTTPVERB | SUB ) ;
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:21:1: method : ( HTTPVERB | SUB ) ;
     // $ANTLR start "method"
     method: function() {
         var retval = new ABEParser.method_return();
@@ -562,8 +560,8 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var set10_tree=null;
 
         try {
-            // ABE.g:21:11: ( ( HTTPVERB | SUB ) )
-            // ABE.g:21:13: ( HTTPVERB | SUB )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:21:11: ( ( HTTPVERB | SUB ) )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:21:13: ( HTTPVERB | SUB )
             root_0 = this.adaptor.nil();
 
             set10=this.input.LT(1);
@@ -611,7 +609,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:23:1: origin : T_FROM resources ;
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:23:1: origin : T_FROM resources ;
     // $ANTLR start "origin"
     origin: function() {
         var retval = new ABEParser.origin_return();
@@ -625,8 +623,8 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var T_FROM11_tree=null;
 
         try {
-            // ABE.g:23:11: ( T_FROM resources )
-            // ABE.g:23:13: T_FROM resources
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:23:11: ( T_FROM resources )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:23:13: T_FROM resources
             root_0 = this.adaptor.nil();
 
             T_FROM11=this.match(this.input,T_FROM,ABEParser.FOLLOW_T_FROM_in_origin149); 
@@ -673,7 +671,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:25:1: subject : T_SITE resources ;
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:25:1: subject : T_SITE resources ;
     // $ANTLR start "subject"
     subject: function() {
         var retval = new ABEParser.subject_return();
@@ -687,8 +685,8 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var T_SITE13_tree=null;
 
         try {
-            // ABE.g:25:11: ( T_SITE resources )
-            // ABE.g:25:13: T_SITE resources
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:25:11: ( T_SITE resources )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:25:13: T_SITE resources
             root_0 = this.adaptor.nil();
 
             T_SITE13=this.match(this.input,T_SITE,ABEParser.FOLLOW_T_SITE_in_subject162); 
@@ -735,7 +733,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:27:1: resources : ( ( resource )+ | ALL ) ;
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:27:1: resources : ( ( resource )+ | ALL ) ;
     // $ANTLR start "resources"
     resources: function() {
         var retval = new ABEParser.resources_return();
@@ -749,11 +747,11 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var ALL16_tree=null;
 
         try {
-            // ABE.g:27:11: ( ( ( resource )+ | ALL ) )
-            // ABE.g:27:13: ( ( resource )+ | ALL )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:27:11: ( ( ( resource )+ | ALL ) )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:27:13: ( ( resource )+ | ALL )
             root_0 = this.adaptor.nil();
 
-            // ABE.g:27:13: ( ( resource )+ | ALL )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:27:13: ( ( resource )+ | ALL )
             var alt8=2;
             var LA8_0 = this.input.LA(1);
 
@@ -771,8 +769,8 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
             }
             switch (alt8) {
                 case 1 :
-                    // ABE.g:27:14: ( resource )+
-                    // ABE.g:27:14: ( resource )+
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:27:14: ( resource )+
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:27:14: ( resource )+
                     var cnt7=0;
                     loop7:
                     do {
@@ -786,7 +784,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
                         switch (alt7) {
                         case 1 :
-                            // ABE.g:27:14: resource
+                            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:27:14: resource
                             this.pushFollow(ABEParser.FOLLOW_resource_in_resources173);
                             resource15=this.resource();
 
@@ -811,7 +809,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
                     break;
                 case 2 :
-                    // ABE.g:27:26: ALL
+                    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:27:26: ALL
                     ALL16=this.match(this.input,ALL,ABEParser.FOLLOW_ALL_in_resources178); 
                     ALL16_tree = this.adaptor.create(ALL16);
                     this.adaptor.addChild(root_0, ALL16_tree);
@@ -856,7 +854,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:29:1: resource : ( REGEXP | GLOB | URI | LOCATION );
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:29:1: resource : ( REGEXP | GLOB | URI | LOCATION );
     // $ANTLR start "resource"
     resource: function() {
         var retval = new ABEParser.resource_return();
@@ -869,8 +867,8 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var set17_tree=null;
 
         try {
-            // ABE.g:29:11: ( REGEXP | GLOB | URI | LOCATION )
-            // ABE.g:
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:29:11: ( REGEXP | GLOB | URI | LOCATION )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:
             root_0 = this.adaptor.nil();
 
             set17=this.input.LT(1);
@@ -918,7 +916,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         return;
     })(),
 
-    // ABE.g:31:1: action : ( A_DENY | A_LOGOUT | A_SANDBOX | A_ACCEPT );
+    // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:31:1: action : ( A_DENY | A_LOGOUT | A_SANDBOX | A_ACCEPT );
     // $ANTLR start "action"
     action: function() {
         var retval = new ABEParser.action_return();
@@ -931,8 +929,8 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
         var set18_tree=null;
 
         try {
-            // ABE.g:31:11: ( A_DENY | A_LOGOUT | A_SANDBOX | A_ACCEPT )
-            // ABE.g:
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:31:11: ( A_DENY | A_LOGOUT | A_SANDBOX | A_ACCEPT )
+            // X:\\CVS\\mozilla\\noscript\\ABE\\0.6\\ABE.g:
             root_0 = this.adaptor.nil();
 
             set18=this.input.LT(1);
@@ -980,7 +978,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
 // public class variables
 org.antlr.lang.augmentObject(ABEParser, {
-    tokenNames: ["<invalid>", "<EOR>", "<DOWN>", "<UP>", "T_ACTION", "T_METHODS", "ALL", "HTTPVERB", "SUB", "T_FROM", "T_SITE", "REGEXP", "GLOB", "URI", "LOCATION", "A_DENY", "A_LOGOUT", "A_SANDBOX", "A_ACCEPT", "URI_START", "URI_PART", "LIST_SEP", "WS", "COMMENT"],
+    tokenNames: ["<invalid>", "<EOR>", "<DOWN>", "<UP>", "T_ACTION", "T_METHODS", "ALL", "HTTPVERB", "SUB", "T_FROM", "T_SITE", "REGEXP", "GLOB", "URI", "LOCATION", "A_DENY", "A_LOGOUT", "A_SANDBOX", "A_ACCEPT", "URI_START", "URI_PART", "WS", "COMMENT"],
     FOLLOW_rule_in_ruleset49: new org.antlr.runtime.BitSet([0x00000400, 0x00000000]),
     FOLLOW_EOF_in_ruleset52: new org.antlr.runtime.BitSet([0x00000002, 0x00000000]),
     FOLLOW_subject_in_rule65: new org.antlr.runtime.BitSet([0x00078000, 0x00000000]),

@@ -40,7 +40,7 @@ const ScriptSurrogate = {
         case "sources":
           if ((mapping.forPage = value[0] == '@')) value = value.substring(1);
         case "exceptions":
-          value = new URIPatternList(value);
+          value = new AddressMatcher(value);
         case "replacement":
           break;
         default:

@@ -149,9 +149,24 @@
 <!ENTITY noscriptUntrustedPagesAdj "non fidate">
 <!ENTITY noscriptKeepLocked "Mantieni bloccato questo elemento (consigliabile)">
 <!ENTITY noscriptEmbeddings "Oggetti incorporati">
-<!ENTITY noscriptPrev "Previous">
-<!ENTITY noscriptNext "Next">
-<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
-<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
-<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
-<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptPrev "Precedente">
+<!ENTITY noscriptNext "Successivo">
+<!ENTITY noscriptFrameOptErr.title "Questo contenuto non può essere caricato in un frame">
+<!ENTITY noscriptFrameOptErr.desc "Per proteggere la vostra sicurezza, l'autore di questo contenuto non permette che esso sia caricato in un frame.">
+<!ENTITY noscriptFrameOptErr.link "Cliccare qui per aprire questo contenuto in una nuova finestra.">
+<!ENTITY noscriptBookmarkSync "Copia la configurazione di NoScript in un segnalibro sincronizzabile">
+<!ENTITY noscriptShowReleaseNotes "Mostra le informazioni sulla versione dopo ogni aggiornamento">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Gruppi di regole:">
+<!ENTITY ABE.enabled.label "Abilita ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Permetti ai siti web di configurare le proprie regole">
+<!ENTITY ABE.edit.label "Modifica…">
+<!ENTITY ABE.edit.accesskey "M">
+<!ENTITY ABE.enable.label "Abilita">
+<!ENTITY ABE.enable.accesskey "A">
+<!ENTITY ABE.disable.label "Disabilita">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Aggiorna">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "Disinstalla">

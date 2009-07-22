@@ -144,6 +144,23 @@ const DOM = {
   _idCounter: Math.round(Math.random() * 9999),
   rndId: function() {
     return Date.now().toString(32) + "_" + (this._idCounter++).toString(32) + "_" + Math.round(Math.random() * 9999999).toString(32);
+  },
+  
+  elementContainsPoint: function(el, p) {
+    var rect = this.computeRect(el);
+    return p.x >= rect.left && p.x <= rect.right && p.y >= rect.top && p.y <= rect.bottom;
+  },
+  
+  computeRect: function(el) {
+    if ("getBoundingClientRect" in el) {
+      return el.getBoundingClientRect();
+    }
+    // legacy pre 1.9
+    var box = el.ownerDocument.getBoxObject(el);
+    var rect = { top: box.y, left: box.x };
+    rect.bottom = rect.top + box.height;
+    rect.right = rect.left + box.width;
+    return rect;
   }
   
 };

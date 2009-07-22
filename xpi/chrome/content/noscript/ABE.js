@@ -1,10 +1,9 @@
-INCLUDE('IOUtil', 'antlr', 'ABEParser', 'ABELexer', 'URIPatternList', 'Thread', 'Lang');
-
-const CHECKED_ABE = 0x01;
-const CHECKED_XSS = 0x10;
-const CHECKED_ASYNC = 0x20;
+INCLUDE('IOUtil', 'antlr', 'ABEParser', 'ABELexer', 'AddressMatcher', 'Thread', 'Lang');
 
 const ABE = {
+  FLAG_CALLED: 0x01,
+  FLAG_CHECKED: 0x02,
+  
   SITE_RULESET_LIFETIME: 12 * 60 * 60000, // 12 hours
   maxSiteRulesetSize: 8192,
   maxSiteRulesetTime: 16000, // 4kbit/sec :P
@@ -71,9 +70,9 @@ const ABE = {
     try {
       if (!w) {
         var ph = PolicyState.extract(chan);
-        w = ph[3].self || ph[3].ownerDocument.defaultView;
+        var ctx = ph.context;
+        w = ctx.self || ctx.ownerDocument.defaultView;
       }
-      
       switch (chan.getResponseHeader("X-FRAME-OPTIONS").toUpperCase()) {
         case "DENY":
           return true;
@@ -130,25 +129,29 @@ const ABE = {
         source: rs.source,
         name: rs.name,
         timestamp: rs.timestamp,
-        disable: rs.disabled
+        disabled: rs.disabled
       });
     }
+    return data;
   },
   
   restore: function(data) {
     if (!data.length) return;
     
     var f, change;
-    ABEStorage.clear();
-    for each(var i in data) {
-      f = ABEStorage.getRulesetFile(i.name);
-      if (f.lastModifiedTime < i.timestamp) {
-        IO.writeFile(f, i.source);
-        f.lastModifiedTime = i.timestamp;
-        change = true;
+    try {
+      ABEStorage.clear();
+      ABEStorage.reset();
+      for each(var rs in data) {
+        f = ABEStorage.getRulesetFile(rs.name);
+        if (!f.exists()) f.create(f.NORMAL_FILE_TYPE, 0600);
+        IO.writeFile(f, rs.source);
+        f.lastModifiedTime = rs.timestamp;
       }
+      ABEStorage.loadRulesNow();
+    } catch(e) {
+      ABE.log("Failed to restore configuration: " + e);
     }
-    if (change) ABEStorage.loadRulesNow();
   },
   
   resetDefaults: function() {
@@ -178,7 +181,7 @@ const ABE = {
     }
   },
   
-  checkRequest: function(req, deferredCallback) {
+  checkRequest: function(req) {
     if (!(this.enabled && (Thread.canSpin || this.legacySupport)))
       return false;
   
@@ -187,19 +190,28 @@ const ABE = {
     
     var browserReq =  req.originURI.schemeIs("chrome") && !req.external;
     
-    if (browserReq && (loadFlags & this.LOAD_BACKGROUND) && this.skipBrowserRequests) return false;
+    if (browserReq &&
+        (
+          this.skipBrowserRequests &&
+          ((loadFlags & this.LOAD_BACKGROUND) ||
+           !req.isDoc && req.origin == ABE.BROWSER_URI.spec && !req.window)
+        )
+      ) {
+      if (this.consoleDump) this.log("Skipping low-level browser request for " + req.destination);
+      return false;
+    }
     
     this.updateRules();
     
     if (this.localRulesets.length == 0 && !this.siteEnabled)
       return null;
     
-    if (req.deferredDNS && this._deferIfNeeded(req, deferredCallback))
-      return false; 
+    if (req.canDoDNS && req.deferredDNS && this._deferIfNeeded(req))
+      return false;
     
     var t;
     if (this.consoleDump) {
-      this.log("Checking " + req.destination + " from " + req.origin + " - " + loadFlags);
+      this.log("Checking #" + req.serial + ": " + req.destination + " from " + req.origin + " - " + loadFlags);
       t = Date.now();
     }
     
@@ -232,7 +244,7 @@ const ABE = {
       }
     } finally {
       if (this.consoleDump) this.log(req.destination + " Checked in " + (Date.now() - t));
-      req.checkFlags |= CHECKED_ABE;
+      req.checkFlags |= this.FLAG_CHECKED;
       req.detach();
     }
     return res.lastRuleset && res;
@@ -248,32 +260,35 @@ const ABE = {
       res.lastRuleset = rs;
       return res.fatal = (res.request.channel instanceof ABEPolicyChannel)
         ? /^Deny$/i.test(action) 
-        : ABEActions[action.toLowerCase()](res.request.channel);
+        : ABEActions[action.toLowerCase()](res.request);
     }
     return false;
   },
   
-  _deferIfNeeded: function(req, callback) {
-    var host;
-    if (req.canDoDNS && !DNS.getCached(host = req.destinationURI.host, true)) {
-      ABE.log(host + " not cached in DNS, deferring ABE checks after DNS resolution");
-      req.attach();
-      DNS.resolve(host, 0, function(dnsRecord) {
-        try {
-          if (!(dnsRecord && dnsRecord.valid)) {
-            req.channel.cancel(Components.results.NS_ERROR_UNKNOWN_HOST);
-          } else {
-            if (req.deferredDNS) // it won't be so if we've been cancelled first
-              if (callback) callback();
-              else ABE.checkRequest(req);
-          }
-        } finally {
-          req.detach();
-        }
-      });
-      return true;
+  _deferIfNeeded: function(req) {
+    var host = req.destinationURI.host;
+    if (!ChannelReplacement.supported || DNS.isIP(host) || DNS.getCached(host) || req.channel.redirectionLimit == 0)
+      return false;
+    
+    if (req.channel.status) return false;
+    
+    if (IOUtil.runWhenPending(req.channel, function() {
+      try {
+        var replacement = req.replace();
+      
+        ABE.log(host + " not cached in DNS, deferring ABE checks after DNS resolution for request " + req.serial);
+        DNS.resolve(host, 0, function(dnsRecord) {
+          replacement.open();
+        });
+        
+      } catch(e) {
+        ABE.log("Deferred ABE checks failed: " + e);
+      }
+    })) {
+      ABE.log(req.serial + " not pending yet, will check later.")
     }
-    return false;
+    
+    return true;
   },
   
   hasSiteRulesFor: function(host) {
@@ -435,7 +450,17 @@ const ABE = {
   },
   
   getRedirectChain: function(channel) {
-    return IOUtil.extractFromChannel(channel, "ABE.redirectChain", true) || [];
+    var rc = IOUtil.extractFromChannel(channel, "ABE.redirectChain", true);
+    if (!rc) {
+      var origin = ABERequest.getOrigin(channel);
+      rc = origin ? [origin] : [];
+    };
+    return rc;
+  },
+  
+  getOriginalOrigin: function(channel) {
+    var rc = this.getRedirectChain(channel);
+    return rc.length && rc[0] || null;
   },
   
   _handleDownloadRedirection: function(oldChannel, newChannel) {
@@ -479,31 +504,62 @@ ABERes.prototype = {
 }
 
 var ABEActions = {
-  accept: function(channel) {
+  accept: function(req) {
     return false;  
   },
-  deny: function(channel) {
-    channel.cancel(Components.results.NS_ERROR_ABORT);
+  deny: function(req) {
+    IOUtil.abort(req.channel);
     return true;
   },
-  logout: function(channel) {
+  anonymize: function(req, channel) {
+    channel = channel || req.channel;
+    if (channel.loadFlags & channel.LOAD_ANONYMOUS) // already anonymous
+      return false;
+    
+    var uri = req.destinationURI;
+    var cookie;
+    try {
+      cookie = channel.getRequestHeader("Cookie");
+    } catch(e) {
+      cookie = '';
+    }
+    uri = IOUtil.anonymizeURI(uri.clone(), cookie);
+    
+    if (channel.isPending()) { // channel is already opened, we must replace it
+      
+      if (ChannelReplacement.supported) {
+        try {
+          var replacement = req.replace(
+              /^(?:GET|HEAD|OPTIONS)$/i.test(channel.requestMethod) ? null : "GET",
+              uri);
+          
+          this.anonymize(req, replacement.channel);
+          replacement.open();
+          return false;
+        } catch(e) {
+          ABE.log(e);
+        }
+      }
+      ABE.log("Counldn't replace " + uri.spec + " for Anonymize, falling back to Deny.");
+      return this.deny(req);
+    }
+    
+    if (uri.spec != channel.URI.spec) channel.URI.spec = uri.spec;
     channel.setRequestHeader("Cookie", '', false);
     channel.setRequestHeader("Authorization", '', false);
     channel.loadFlags |= channel.LOAD_ANONYMOUS;
     return false;
   },
   
-  sandbox: function(channel) {
-    ABE.setSandboxed(channel);
-    if (channel.loadFlags & channel.LOAD_DOCUMENT_URI) {
-      var docShell = DOM.getDocShellForWindow(IOUtil.findWindow(channel));
+  sandbox: function(req) {
+    ABE.setSandboxed(req.channel);
+    if (req.isDoc) {
+      var docShell = DOM.getDocShellForWindow(req.window);
       if (docShell) ABE.sandbox(docShell);
     }
     return false;
   }
 }
-
-
 
 
 function ABERuleset(name, source, timestamp) {
@@ -618,7 +674,7 @@ ABERuleset.prototype = {
 
 function ABERule(destinations, predicates) {
   this.destinations = destinations.join(" ");
-  this.destination = new URIPatternList(destinations.filter(this._destinationFilter, this).join(" "));
+  this.destination = new AddressMatcher(destinations.filter(this._destinationFilter, this).join(" "));
   this.predicates = predicates.map(ABEPredicate.create);
 }
 
@@ -642,7 +698,7 @@ ABERule.prototype = {
   check: function(req) {
     if (!req.failed &&
         (this.allDestinations ||
-          this.destination && this.destination.test(req.destination) ||
+          this.destination && this.destination.test(req.destination, req.canDoDNS, false) ||
           this.local && req.localDestination)
         ) {
       for each (var p in this.predicates) {
@@ -665,7 +721,13 @@ ABERule.prototype = {
 
 function ABEPredicate(p) {
   this.action = p.actions[0];
-  this.permissive = this.action == "Accept";
+ 
+  if (this.action == 'Accept') {
+    this.permissive = true;
+  } else if (/^(Logout|Anon)$/.test(this.action)) {
+    this.action = 'Anonymize';
+  }
+  
   this.methods = p.methods.join(" ");
     if (this.methods.length) {
       this.allMethods = false;
@@ -678,12 +740,14 @@ function ABEPredicate(p) {
     if (this.permissive) { // if Accept any, accept browser URLs 
       p.origins.push("^(?:chrome|resource):");
     }
-    this.origin = new URIPatternList(p.origins.filter(this._originFilter, this).join(" "));
+    this.origin = new AddressMatcher(p.origins.filter(this._originFilter, this).join(" "));
   }
 }
 ABEPredicate.create = function(p) { return new ABEPredicate(p); };
 ABEPredicate.prototype = {
-	subdoc: false,
+  permissive: false,
+  
+  subdoc: false,
 	self: false,
 	local: false,
 	
@@ -750,8 +814,11 @@ function ABERequest(channel) {
 	this._init(channel);
 }
 
+ABERequest.serial = 0;
+
 ABERequest.fromChannel = function(channel) {
-  return IOUtil.extractFromChannel(channel, "ABE.request", true);
+  var req = IOUtil.extractFromChannel(channel, "ABE.request", true);
+  return req && req.channel == channel ? req : null;
 }
 
 ABERequest.newOrRecycle = function(channel) {
@@ -760,14 +827,14 @@ ABERequest.newOrRecycle = function(channel) {
     delete req.localDestination;
     delete req.localOrigin;
   } else req = new ABERequest(channel);
+  return req;
 }
 
-
 ABERequest.getOrigin = function(channel) {
-  IOUtil.extractFromChannel(channel, "ABE.origin", true);
+  return IOUtil.extractFromChannel(channel, "ABE.origin", true);
 },
-ABERequest.storeOrigin = function(channel, origin) {
-  IOUtil.attachToChannel(channel, "ABE.origin", true);
+ABERequest.storeOrigin = function(channel, originURI) {
+  IOUtil.attachToChannel(channel, "ABE.origin", originURI);
 },
 
 ABERequest.clear = function(channel) {
@@ -784,9 +851,10 @@ ABERequest.prototype = Lang.memoize({
   checkFlags: 0,
   deferredDNS: true,
   detached: true,
+  replaced: false,
   
   _init: function(channel) {
-   
+    this.serial = ABERequest.serial++;
     this.channel = channel;
     this.method = channel.requestMethod;
     this.destinationURI = IOUtil.unwrapURL(channel.URI);
@@ -798,6 +866,7 @@ ABERequest.prototype = Lang.memoize({
     if (ou) {
       this.xOriginURI = this.originURI = ou;
       this.xOrigin = this.origin = ou.spec;
+      this.replaced = true;
     } else {
       this.xOriginURI = this.early
         ? channel.originURI
@@ -831,20 +900,34 @@ ABERequest.prototype = Lang.memoize({
   
   
   attach: function() {
-    if (!this.early) {
+    if (this.detached && !this.early) {
       IOUtil.attachToChannel(this.channel, "ABE.request", this);
       ABERequest.count++;
       this.detached = false;
+      
+      if (!(this.checkFlags & ABE.FLAG_CALLED)) {
+        Thread.delay(this._autoDetach, 1, this);
+      }
     }
   },
-  
+  _autoDetach: function() {
+    if (!(this.checkFlags & ABE.FLAG_CALLED)) this.detach();
+  },
   detach: function() {
-    if (!this.early) {
+    if (!(this.early || this.detached)) {
       IOUtil.extractFromChannel(this.channel, "ABE.request", this);
       ABERequest.count--;
       this.detached = true;
       this.deferredDNS = false;
     }
+  },
+  
+  replace: function(newMethod, newURI) {
+    this.detach();
+    var replacement = new ChannelReplacement(this.channel, newURI, newMethod)
+      .replace(newMethod || newURI);
+    
+    return replacement;
   },
   
   isBrowserURI: function(uri) {
@@ -875,12 +958,22 @@ ABERequest.prototype = Lang.memoize({
     return originURI &&  (this.isBrowserURI(originURI) || originURI.prePath == this.destinationURI.prePath);
   },
   
-  matchAllOrigins: function(upl) {
-    return upl.test(this.origin) && this.redirectChain.every(upl.testURI, upl);
+  matchAllOrigins: function(matcher) {
+    var canDoDNS = this.canDoDNS;
+    return (canDoDNS && matcher.netMatching) 
+      ? matcher.testURI(this.originURI, canDoDNS, true) &&
+          this.redirectChain.every(function(uri) { return matcher.testURI(uri, canDoDNS, true); })
+      : matcher.test(this.origin) && this.redirectChain.every(matcher.testURI, matcher)
+      ;
   },
   
-  matchSomeOrigins: function(upl) {
-    return upl.test(this.origin) || this.redirectChain.some(upl.testURI, upl);
+  matchSomeOrigins: function(matcher) {
+    var canDoDNS = this.canDoDNS;
+    return (canDoDNS && matcher.netMatching) 
+      ? matcher.testURI(this.originURI, canDoDNS, false) ||
+          this.redirectChain.some(function(uri) { return matcher.testURI(uri, canDoDNS, false); })
+      : matcher.test(this.origin) || this.redirectChain.some(matcher.testURI, matcher)
+      ;
   },
   
   toString: function() {
@@ -1042,8 +1135,6 @@ var ABEStorage = {
       var disabledNames = ABE.disabledRulesetNames;
       ABE.clear();
       ff.forEach(this.loadRuleFile, this);
-      ABE.disableRulesetNames = disabledNames;
-      
     } catch(e) {
       ABE.log(e);
       return false;
@@ -1051,6 +1142,7 @@ var ABEStorage = {
       this._lastCheckTS = Date.now();
       ABE.log("Updates checked in " + (this._lastCheckTS - t) + "ms");
     }
+    ABE.disabledRulesetNames = disabledNames;
     return true;
   },
   

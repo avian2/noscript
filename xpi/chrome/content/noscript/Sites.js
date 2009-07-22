@@ -86,7 +86,7 @@ const SiteUtils = new function() {
   }
   
   this.splitString = function(s) {
-    return s && /[^\s,]/.test(s) && s.split(/\s*[,\s]\s*/) || [];
+    return s && /\S/.test(s) && s.split(/\s+/) || [];
   };
   
   this.domainMatch = function(url) {
@@ -115,7 +115,6 @@ const SiteUtils = new function() {
   };
   
   this.sanitizeString = function(s) {
-    // s = s.replace(/,/g,' ').replace(/\s{2,}/g,' ').replace(/(^\s+|\s+$)/g,'');
     return this.set2string(this.string2set(s)); 
   };
   
@@ -209,29 +208,33 @@ PolicySites.prototype = {
     return this._sitesMap = sm;
   }
 ,
-  fromPref: function(pref) {
-   this.sitesString = pref.getCharPref("sites")
-       .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
+  fromPref: function(pref, name) {
+    try {
+      this.sitesString = pref.getCharPref(name || "sites")
+        .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
+    } catch(e) {
+      this.siteString = "";
+    }
   }
 ,
   settingPref: false,
-  toPref: function(pref) {
-    
-    if (pref.prefIsLocked("sites")) {
+  toPref: function(pref, name) {
+    if (!name) name = "sites";
+    if (pref.prefIsLocked(name)) {
       this.fromPref(pref);
       return;
     }
     var change;
     var s = this.sitesString.replace(/[^\u0000-\u007f]+/g,function($0) { return unescape(encodeURIComponent($0)) });
     try {
-      change = s != pref.getCharPref("sites");
+      change = s != pref.getCharPref(name);
     } catch(ex) {
       change = true;
     }
     
     if (change) {
       this.settingPref = true;
-      pref.setCharPref("sites", s);
+      pref.setCharPref(name, s);
       this.settingPref = false;
     }
   }
@@ -254,7 +257,7 @@ PolicySites.prototype = {
     }
 
     var submatch;
-    for (pos = match.lastIndexOf('.'); pos > 1; dots++) {
+    for (pos = match.lastIndexOf('.'); pos > 0; dots++) {
       pos = match.lastIndexOf('.', pos - 1);
       if ((dots || pos > -1) && sm[submatch = match.substring(pos + 1)]) {
         return submatch; // domain/subdomain match

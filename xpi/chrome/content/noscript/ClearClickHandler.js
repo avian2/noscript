@@ -144,7 +144,7 @@ ClearClickHandler.prototype = {
     var dx;
     // here we do our best to improve on lousy boxObject horizontal behavior when line breaks are involved
     // (it reports the width of the whole line, but x is referred to the first text node offset)
-    if (o.getBoundingClientRect) { 
+    if ("getBoundingClientRect" in o) { 
       c = o.getBoundingClientRect(); // bounding rect, if available, does the right thing with left position
       
       if (verbose) ns.dump("Rect: " + c.left + "," + c.top + "," + c.right + "," + c.bottom);

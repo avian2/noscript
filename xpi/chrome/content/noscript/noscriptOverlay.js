@@ -66,7 +66,7 @@ return noscriptUtil.service ? {
   },
   onContextMenu: function(ev) {
     var parent = ev.currentTarget;
-    popup = parent.firstChild;
+    var popup = parent.firstChild;
     if (!(popup && popup.showPopup)) return;
     if (this.stickyUI) {
       popup._context = true;
@@ -428,7 +428,7 @@ return noscriptUtil.service ? {
         
         if ((dp = ns.getPublicSuffix(domain)) == domain || // exclude TLDs
             // ns.ignorePorts && /:\d+$/.test(site) &&
-               ns.isJSEnabled(domain) != enabled // exclude ancestors with different permissions
+            ns.isJSEnabled(domain) != enabled // exclude ancestors with different permissions
           ) {
           domain = null; 
         }
@@ -776,7 +776,7 @@ return noscriptUtil.service ? {
     this.ns.safeCapsOp(function(ns) {
       ns.eraseTemp();
       noscriptOverlay.syncUI();
-    }, this.ns.getPref("autoReload.allTabsOnPageAction", true));
+    }, this.ns.getPref("autoReload.allTabsOnPageAction", true) ? this.ns.RELOAD_ALL : this.ns.RELOAD_CURRENT);
   }
 ,
   menuCmd: function(menuItem) {
@@ -2007,7 +2007,7 @@ return noscriptUtil.service ? {
     var browsersContainer = window.gBrowser || window.Browser._canvasBrowser || window.Browser._content; 
     this.__defineGetter__("browsers", function() { return browsersContainer.browsers; });
      
-    if (window.Browser._content) { // Fennec Alpha 1
+    if ("Browser" in window && window.Browser._content) { // Fennec Alpha 1
       getBrowserForDisplay = function() { Browser._content.getBrowserForDisplay.apply(Browser._content, arguments); };
     }
     return this.browsers;

@@ -176,7 +176,7 @@ var HTTPS = {
   registered: false,
   handleSecureCookies: function(req) {
   /*
-    we check HTTPS response setting cookies and
+    we check HTTPS responses setting cookies and
     1) if host is in the noscript.secureCookiesExceptions list we let
      it pass through
     2) if host is in the noscript.secureCookiesForced list we append a
@@ -472,7 +472,7 @@ var HTTPS = {
           }
         }
 
-        req.cancel(NS_BINDING_ABORTED);
+        IOUtil.abort(req);
        
         w.location = uri.spec;
         this.log("Forced HTTPS document on " + uri.spec);

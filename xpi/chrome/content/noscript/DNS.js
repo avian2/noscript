@@ -18,14 +18,15 @@ function DNSRecord(record) {
 }
 
 DNSRecord.prototype = {
-  INVALID_TTL_ASYNC: 100,
-  INVALID_TTL_SYNC: 5000,
+  INVALID_TTL_ASYNC: 5000,
+  INVALID_TTL_SYNC: 10000,
   TTL: 60000,
   valid: true,
   ts: 0,
   entries: [],
   canonicalName: '',
   expireTime: 0,
+  refreshing: false,
   
   isLocal: function(all) {
     return all
@@ -121,16 +122,17 @@ var DNS = {
     
     var elapsed = 0, t;
     var cache = this._cache;
-    var async = IOUtil.asyncNetworking && Thread.canSpin;
+    var async = IOUtil.asyncNetworking && Thread.canSpin || !!callback;
     
     var dnsRecord = cache.get(host);
     if (dnsRecord) {
       // cache invalidation, if needed
-      if (flags && 2) {
+      if (flags & 2) {
         dnsRecord = null;
         cache.evict(host);
-      } else if (dnsRecord.expired) {
-        // invalidate async
+      } else if (dnsRecord.expired && !dnsRecord.refreshing) {
+        // refresh async
+        dnsRecord.refreshing = true;
         DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
             cache.put(host, dnsRecord = new DNSRecord(this.record));
           }), Thread.currentQueue);
@@ -144,14 +146,11 @@ var DNS = {
       if (host in resolving) {
         ABE.log("Already resolving " + host);
         
-        //DEADLOCK DANGER if spinning a new queue, MANGLED CONTENT risk if spinning current
-        /*
-        Thread.spinWithQueue({ get running() { return host in resolving; }, maxTime: 1000 });
-        if (host in cache) return this.resolve(host, flags);
-        */
-      }
-      
-      resolving[host] = true;
+        if (callback) {
+          resolving[host].push(callback);
+          return null;
+        }
+      } else resolving[host] = callback ? [callback] : [];
       
       var ctrl = {
         running: true,
@@ -165,13 +164,18 @@ var DNS = {
         DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
           cache.put(host, dnsRecord = new DNSRecord(this.record));
           ctrl.running = false;
+          var callbacks = resolving[host];
           delete resolving[host];
-          if (callback) {
+          if (ABE.consoleDump && t) {
             elapsed = Date.now() - t;
-            ABE.log("Async DNS query on " + host + " done, " + elapsed + "ms");
-            callback(dnsRecord);
+            ABE.log("Async DNS query on " + host + " done, " + elapsed + "ms, callbacks: " + (callbacks && callbacks.length));
           }
-        }), Thread.current);
+          
+          if (callbacks && callbacks.length)
+            for each(var cb in callbacks)
+              cb(dnsRecord);
+          
+        }), Thread.currentQueue);
         if (ABE.consoleDump) ABE.log("Waiting for DNS query on " + host);
         if (!callback) Thread.spin(ctrl);
       }
@@ -239,12 +243,13 @@ var DNS = {
   },
   
   isLocalIP: function(addr) {
-    // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose implementation
-    return /^(?:(?:0|127|10|169\.254|172\.16|192\.168)\.|(?:(?:255\.){3}255|::1?)$|F(?:F00|E80)::)/i.test(addr);
+    // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose but incomplete (missing IPV6 ULA) implementation
+    // Relevant RFCs linked at http://en.wikipedia.org/wiki/Private_network
+    return /^(?:(?:0|127|10|169\.254|172\.16|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i.test(addr);
   },
   
   isIP: function(host) {
-    return /^(?:\d+\.){3}\d+$|::/.test(host);
+    return /^(?:\d+\.){3}\d+$|:.*:/.test(host);
   }
   
 };

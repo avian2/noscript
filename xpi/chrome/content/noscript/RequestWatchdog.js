@@ -9,14 +9,10 @@ RequestWatchdog.prototype = {
   OBSERVED_TOPICS: ["http-on-modify-request", "http-on-examine-response", "http-on-examine-merged-response"],
   
   init: function() {
-    this.OBSERVED_TOPICS.forEach(function(topic) {
-      OS.addObserver(this, topic, true);
-    }, this);
+    for each (var topic in this.OBSERVED_TOPICS) OS.addObserver(this, topic, true);
   },
   dispose: function() {
-    this.OBSERVED_TOPICS.forEach(function(topic) {
-      OS.removeObserver(this, topic, true);
-    }, this);
+    for each (var topic in this.OBSERVED_TOPICS) OS.removeObserver(this, topic, true);
   },
   
   callback: null,
@@ -39,7 +35,14 @@ RequestWatchdog.prototype = {
  
     switch(topic) {
       case "http-on-modify-request":
-
+          if (!(loadFlags || channel.notificationCallbacks || channel.owner)) {
+            try {
+              if (channel.getRequestHeader("Content-type") == "application/ocsp-request") {
+                ns.dump("Skipping cross-site checks for OCSP request " + channel.URI.spec);
+                return;
+              }
+            } catch(e) {}
+          }
           var abeReq = null;
           try {
             
@@ -49,28 +52,41 @@ RequestWatchdog.prototype = {
               this.externalLoad = null;
             }
             
-            if (isDoc) this.filterXSS(abeReq);
-            
-            if (isDoc && (loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI)) {
-              if (!abeReq.isSubdoc) {
-                abeReq.attach();
-                return; // defer to progress listener
+            if (isDoc) {
+              var xssChecked = false;
+              try {
+                Thread.asap(function() {
+                  if (!xssChecked) this.die(channel, new Error("XSS checks couldn't complete: DOS attempt?"));
+                }, this); // guardian
+                this.filterXSS(abeReq);
+              } finally {
+                xssChecked = true;
               }
             }
-          
-            this.handleABE(abeReq, isDoc);
+            
+            if (!channel.status) {
+              if (isDoc && ChannelReplacement.supported && !(channel.loadFlags & channel.LOAD_REPLACE)) {
+                abeReq.attach();
+              } else {
+                // ns.dump("Early ABE checks on " + abeReq.destination + ", " + channel.loadFlags + " - DOC " + isDoc);
+                this.handleABE(abeReq, isDoc);
+              }
+            }
             
           } catch(e) {
             this.die(channel, e);
-          } finally {
-            if (abeReq) abeReq.checkFlags |= CHECKED_XSS;
           }
       break;
       
       case "http-on-examine-merged-response":
       case "http-on-examine-response":
-        if (!isDoc) return;
-        ns.onContentSniffed(channel);
+        if (isDoc) {
+          ns.onContentSniffed(channel);
+        } else {
+          if (!ns.checkInclusionType(channel))
+            return;
+        }
+      
         HTTPS.handleSecureCookies(channel);
       break;
     }
@@ -83,11 +99,10 @@ RequestWatchdog.prototype = {
   handleABE: function(abeReq, isDoc) {
     if (abeReq && ABE.enabled) {
       try {
-        var self = this;
-        var deferredCallback = function() { self.handleABE(abeReq, isDoc); };
-        var res = ABE.checkRequest(abeReq, deferredCallback);
+        // ns.dump("handleABE called for " + abeReq.serial + ", " + abeReq.destination + " at " + Components.stack.caller);
+        var res = ABE.checkRequest(abeReq);
         if (res) {
-          this.notifyABE(res, !(isDoc && res.fatal));
+          this.notifyABE(res, !(isDoc && res.fatal && ns.getPref("ABE.notify")));  
           if (res.fatal) return true;
         }
       } catch(e) {
@@ -99,6 +114,8 @@ RequestWatchdog.prototype = {
   },
   
   notifyABE: function(abeRes, silent) {
+    var req = abeRes.request;
+    var silentLoopback = !ns.getPref("ABE.notify.namedLoopback");
     abeRes.rulesets.forEach(
       function(rs) {
         var lastRule = rs.lastMatch;
@@ -106,11 +123,21 @@ RequestWatchdog.prototype = {
         if (lastPredicate.permissive) return;
         
         var action = lastPredicate.action;
-        var req = abeRes.request;
+        
         ns.log("[ABE] <" + lastRule.destinations + "> " + lastPredicate + " on " + req
           + "\n" + rs.name + " rule:\n" + lastRule);
         
         if (silent || rs != abeRes.lastRuleset) return;
+        
+        if (lastRule.local && silentLoopback) {
+          var host = req.destinationURI.host;
+          if (host != "localhost" && host != "127.0.0.1" && req.destinationURI.port <= 0)
+            // this should hugely reduce notifications for users of bogus hosts files, 
+            // while keeping "interesting" notifications
+            var dnsr = DNS.getCached(host);
+            if (dnsr && dnsr.entries.indexOf("127.0.0.1") > -1)
+              return;
+        }
         
         var w = req.window;
         var browser = this.findBrowser(req.channel, w);
@@ -228,7 +255,14 @@ RequestWatchdog.prototype = {
   
   checkWindowName: function(window) {
     var originalAttempt = window.name;
-      
+    
+    if (/\s*{[\s\S]+}\s*/.test(originalAttempt)) {
+      try {
+        ns.json.decode(originalAttempt); // fast track for crazy JSON in name like on NYT
+        return;
+      } catch(e) {}
+    }
+    
     if (/[%=\(\\]/.test(originalAttempt) && InjectionChecker.checkJS(originalAttempt)) {
       window.name = originalAttempt.replace(/[%=\(\\]/g, " ");
     }
@@ -394,7 +428,7 @@ RequestWatchdog.prototype = {
     if (this.callback && this.callback(channel, origin)) return;
     
     if (!trustedTarget) {
-      if (ns.injectionChecker.checkNoscript(unescape(originalSpec)) && ns.getPref("injectionCheckHTML", true)) {
+      if (InjectionChecker.checkNoscript(InjectionChecker.urlUnescape(originalSpec)) && ns.getPref("injectionCheckHTML", true)) {
         if (ns.consoleDump) this.dump(channel, "JavaScript disabled target positive to HTML injection check!");
       } else {
         if (ns.consoleDump) this.dump(channel, "Target is not Javascript-enabled, skipping XSS checks.");
@@ -553,7 +587,7 @@ RequestWatchdog.prototype = {
       // sanitize referrer
       if (channel.referrer && channel.referrer.spec) {
         originalAttempt = channel.referrer.spec;
-        xsan.brutal = /'"</.test(Entities.convertAll(unescape(originalAttempt)));
+        xsan.brutal = /'"</.test(Entities.convertAll(InjectionChecker.urlUnescape(originalAttempt)));
         try {
           if (channel.referrer instanceof CI.nsIURL) {
             changes = xsan.sanitizeURL(channel.referrer);
@@ -659,7 +693,7 @@ RequestWatchdog.prototype = {
     var channel = requestInfo.channel;
     
     if (channel instanceof CI.nsIRequest)
-      channel.cancel(NS_BINDING_ABORTED);
+      IOUtil.abort(channel);
     
     this.dump(channel, "Aborted - " + requestInfo.reason);
  
@@ -1203,9 +1237,10 @@ var InjectionChecker = {
             } else if (/left-hand/.test(errmsg)) break;
             
             if (/invalid flag after regular expression|missing ; before statement|invalid label|illegal character/.test(errmsg)) {
-              break; // unrepairable syntax error, move left cursor forward 
+              if (!(/illegal character/.test(errmsg) && /#\d*\s*$/.test(script))) // sharp vars exceptional behavior
+                break; // unrepairable syntax error, move left cursor forward 
             }
-            if((m = errmsg.match(/\bmissing ([:\]\)\}]) /))) {
+            else if((m = errmsg.match(/\bmissing ([:\]\)\}]) /))) {
               len = subj.indexOf(m[1], len);
               if (len > -1) {
                 expr = subj.substring(0, ++len);
@@ -1326,7 +1361,7 @@ var InjectionChecker = {
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video|audio") + 
-    ")|[/'\"]\\W*(?:FSCommand|on(?:error|[a-df-z][a-z]{2,}))[\\s\\x08]*=", 
+    ")|(?:<[^>]+|'[^>']+|\"[^>\"]*)\\b" + IC_EVENT_PATTERN + "[\\s\\x08]*=[\\s\\S]*(?:\\(|eval)", 
     "i"),
   checkHTML: function(s) {
     this.log(s);
@@ -1449,10 +1484,14 @@ var InjectionChecker = {
     if (--depth <= 0)
       return false;
     
+    
     if (/\+/.test(s) && this._checkRecursive(this.urlUnescape(s.replace(/\+/g, ' '), depth)))
       return true;
     
     var unescaped = this.urlUnescape(s);
+    
+    if (this._checkOverDecoding(s, unescaped))
+      return true;
     
     if (!this.isPost && this.checkBase64(s.replace(/^\/{1,3}/, ''))) return true;
     
@@ -1466,12 +1505,58 @@ var InjectionChecker = {
     return false;
   },
   
-  urlUnescape: function(url) {
+  _checkOverDecoding: function(s, unescaped) {
+    if (/%[8-9a-f]/i.test(s)) {
+      const rx = /[<'"]/g;
+      var m1 = unescape(this.utf8OverDecode(s, false)).match(rx);
+      if (m1) {
+        unescaped = unescaped || this.urlUnescape(s);
+        var m0 = unescaped.match(rx);
+        if (!m0 || m0.length < m1.length) {
+          this.log("Potential utf8_decode() exploit!");
+          return true;
+        }
+      }
+    }
+    return false;
+  },
+  
+  utf8OverDecode: function(url, strict) {
+    return url.replace(strict
+      ? /%(?:f0%80%80|e0%80|c0)%[8-b][0-f]/gi
+      : /%(?:f[a-f0-9](?:%[0-9a-f]0){2}|e0%[4-9a-f]0|c[01])%[a-f0-9]{2}/gi,
+      function(m) {
+        var hex = m.replace(/%/g, '');
+        if (strict) {
+          for (var j = 2; j < hex.length; j += 2) {
+            if ((parseInt(hex.substring(j, j + 2), 16) & 0xc0) != 0x80) return m;
+          }
+        }
+        switch (hex.length) {
+          case 8:
+            hex = hex.substring(2);
+          case 6:
+            c = (parseInt(hex.substring(0, 2), 16) & 0x3f) << 12 |
+                   (parseInt(hex.substring(2, 4), 16) & 0x3f) << 6 |
+                    parseInt(hex.substring(4, 6), 16) & 0x3f;
+            break;
+          default:
+            c = (parseInt(hex.substring(0, 2), 16) & 0x3f) << 6 |
+                    parseInt(hex.substring(2, 4), 16) & 0x3f;
+        }
+        return encodeURIComponent(String.fromCharCode(c & 0x3f));
+      }
+    );
+  },
+  
+  urlUnescape: function(url, brutal) {
+    var od = this.utf8OverDecode(url, !brutal);
     try {
-      return decodeURIComponent(url);
+      return decodeURIComponent(od);
     } catch(warn) {
+      if (url != od) url += " (" + od + ")";  
       this.log("Problem decoding " + url + ", maybe not an UTF-8 encoding? " + warn.message);
-      return unescape(url);
+      return unescape(od);
     }
   },
   
@@ -1720,7 +1805,7 @@ XSanitizer.prototype = {
     var original = query;
     query = Entities.convertAll(query);
     if (query == original) return query;
-    var unescaped = unescape(original);
+    var unescaped = InjectionChecker.urlUnescape(original, true);
     query = this.sanitize(unescaped);
     if (query == unescaped) return original;
     if(changes) changes.qs = true;
@@ -1746,7 +1831,7 @@ XSanitizer.prototype = {
       
       try {
         for (k = pieces.length; k-- > 0;) {
-          encodedPz = pieces[k];
+          encodedPz =  InjectionChecker.utf8OverDecode(pieces[k]);
           pz = null;
           if (encodedPz.indexOf("+") < 0) {
             try {

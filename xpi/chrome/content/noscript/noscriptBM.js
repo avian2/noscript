@@ -62,10 +62,18 @@ var noscriptBM = {
     callback();
   },
   
-  loadURI: function() { // Fx 3.1 command bar interception
-    return (window.gURLBar && window.gURLBar.handleCommand && window.gURLBar.handleCommand == arguments.callee.caller) 
-           ? noscriptBM.handleURLBarCommand.apply(window, arguments)
-           : noscriptBM.handleURLBarCommandOriginal.apply(window, arguments);
+  loadURI: function() { // Fx 3.5 command bar interception
+    try {
+      if ("gURLBar" in window) {
+        var handleCommand = window.gURLBar.handleCommand;
+        for(var caller, f = arguments.callee; caller = f.caller; f = caller) {
+          if (caller === handleCommand) {
+            return noscriptBM.handleURLBarCommand.apply(window, arguments);
+          }
+        }
+      }
+    } catch(e) {}
+    return noscriptBM.handleURLBarCommandOriginal.apply(window, arguments);
   },
 
   handleBookmark: function(url, openCallback) {
@@ -112,7 +120,7 @@ var noscriptBM = {
     if("handleURLBarCommand" in window && !noscriptBM.handleURLBarCommandOriginal) { // Fx 3.0
       noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
       window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
-    } else { // Fx 3.1
+    } else { // Fx 3.5
       noscriptBM.handleURLBarCommandOriginal = window.loadURI;
       window.loadURI = noscriptBM.loadURI;
     }

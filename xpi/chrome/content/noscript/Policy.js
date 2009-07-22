@@ -9,6 +9,7 @@ const PolicyState = {
   _uris: [],
   URI: null,
   hints: null,
+  
   attach: function(channel) {
     if (this.URI === channel.URI) {
       if (this._debug) this.push(this.URI);
@@ -37,7 +38,7 @@ const PolicyState = {
   save: function(uri, hints) {
     if ("_psCancelled" in hints) return false;
     this.URI = uri;
-    this.hints = hints;
+    this.hints = new PolicyHints(hints);
     return true;
   },
   
@@ -45,6 +46,22 @@ const PolicyState = {
     return this._uris.map(function(u) { return u.spec; }).join(", ");
   }
 }
+
+function PolicyHints(hints) {
+  Array.prototype.push.apply(this, Array.slice(hints, 0));
+}
+
+PolicyHints.prototype = (function() {
+  var proto = new Array();
+  ["contentType", "contentLocation", "requestOrigin", "context", "mimeType", "extra"].forEach(function(p, i) {
+    this.__defineGetter__(p, function() { return this[i] });
+    this.__defineSetter__(p, function(v) { return this[i] = v });
+   }, proto);
+   proto.toArray = function() {
+      return Array.slice(this, 0)
+   };
+   return proto;
+})();
 
 const NOPContentPolicy = {
   shouldLoad: CP_NOP,
@@ -76,7 +93,8 @@ const MainContentPolicy = {
     var originURL, locationURL, originSite, locationSite, scheme,
         forbid, isScript, isJava, isFlash, isSilverlight,
         isLegacyFrame, blockThisIFrame, contentDocument,
-        logIntercept, logBlock;
+        logIntercept, logBlock,
+        unwrappedLocation;
     
     logIntercept = this.consoleDump;
     if(logIntercept) {
@@ -98,7 +116,8 @@ const MainContentPolicy = {
         arguments[0] = aContentType;
       }
       
-      scheme = aContentLocation.scheme;
+      unwrappedLocation = IOUtil.unwrapURL(aContentLocation);
+      scheme = unwrappedLocation.scheme;
       
       var isHTTP = /^https?$/.test(scheme);
       
@@ -106,12 +125,12 @@ const MainContentPolicy = {
         if (aRequestOrigin && !aInternalCall) {
           
           if (aContentType != 3) // images are a bitch if cached!
-            XOriginCache.store(aRequestOrigin, arguments.xOriginKey = aContentLocation);
+            XOriginCache.store(aRequestOrigin, arguments.xOriginKey = unwrappedLocation);
           
           switch(aContentType) {
             // case 2: case 4: // scripts stall if blocked later
             case 1: case 12: // we may have no chance to check later for unknown and sub-plugin requests
-              if (ABE.checkPolicy(aRequestOrigin, aContentLocation))
+              if (ABE.checkPolicy(aRequestOrigin, unwrappedLocation))
                 return this.reject("ABE-denied inclusion", arguments); 
           }
         }
@@ -120,7 +139,7 @@ const MainContentPolicy = {
               (aContentType != 6 && aContentType != 7
                 || !this.POLICY_OBJSUB // Gecko < 1.9, early check for documents as well
             ) && scheme == "http"
-          && HTTPS.forceHttpsPolicy(aContentLocation, aContext, aContentType))
+          && HTTPS.forceHttpsPolicy(unwrappedLocation, aContext, aContentType))
           if (this.POLICY_OBJSUB) // if Gecko >= 1.9 we reject this request because we're gonna spawn a SSL one for images and the like
             return this.reject("Non-HTTPS", arguments); 
         
@@ -155,6 +174,9 @@ const MainContentPolicy = {
           if (this.forbidChromeScripts && this.checkForbiddenChrome(aContentLocation, aRequestOrigin)) {
             return this.reject("Chrome Access", arguments);
           }
+          if (this.forbidJarDocuments && aRequestOrigin && this.checkJarDocument(aContentLocation, aContext, aRequestOrigin)) {
+            return this.reject("Cross-site jar-embedded script", arguments);
+          }
           forbid = isScript = true;
           break;
         case 3: // IMAGES
@@ -177,13 +199,17 @@ const MainContentPolicy = {
           return CP_OK;
         
         case 4: // STYLESHEETS
-          if (aContext && !(aContext instanceof CI.nsIDOMHTMLLinkElement || aContext instanceof CI.nsIDOMHTMLStyleElement) &&
-              /\/x/.test(aMimeTypeGuess) &&
+          if (PolicyUtil.isXSL(aContext) && /\/x[ms]l/.test(aMimeTypeGuess) &&
               !/chrome|resource/.test(aContentLocation.scheme) &&
                 this.getPref("forbidXSLT", true)) {
             forbid = isScript = true; // we treat XSLT like scripts
             break;
           }
+          
+          if (this.forbidJarDocuments && aRequestOrigin && this.checkJarDocument(aContentLocation, aContext, aRequestOrigin)) {
+            return this.reject("Cross-site jar-embedded stylesheet", arguments);
+          }
+          
           return CP_OK;
           
         case 5: 
@@ -200,6 +226,19 @@ const MainContentPolicy = {
           
           if (this.checkJarDocument(aContentLocation, aContext)) 
             return this.reject("Plugin content from JAR", arguments);
+          
+          
+          if (aContentType == 15 && aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
+            // let's wire poor man's video/audio toggles if JS is disabled and therefore controls are not available
+            this.delayExec(function() {
+              aContext.addEventListener("click", function(ev) {
+                var media = ev.currentTarget;
+                if (media.paused) media.play();
+                else media.pause();
+              }, true);
+            }, 0);
+          }
+          
           
           if (aMimeTypeGuess) // otherwise let's treat it as an iframe
             break;
@@ -219,7 +258,9 @@ const MainContentPolicy = {
               this.dump("Guessed MIME '" + aMimeTypeGuess + "' for location " + locationURL);
           }
           
-          if (aContentType == 15) break; // we just need to guess the Mime for video/audio
+          if (aContentType == 15) {
+            break; // we just need to guess the Mime for video/audio
+          }
           
           isLegacyFrame = aContext instanceof CI.nsIDOMHTMLFrameElement;
      
@@ -541,7 +582,7 @@ const MainContentPolicy = {
     } catch(e) {
       return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
     } finally {
-      if (isHTTP) PolicyState.save(aContentLocation, arguments);
+      if (isHTTP) PolicyState.save(unwrappedLocation, arguments);
       else PolicyState.reset();
     }
     return CP_OK;
@@ -553,5 +594,11 @@ const MainContentPolicy = {
   },
   check: function() {
     return false;
+  }
+}
+
+var PolicyUtil = {
+  isXSL: function(ctx) {
+    return ctx && !(ctx instanceof CI.nsIDOMHTMLLinkElement || ctx instanceof CI.nsIDOMHTMLStyleElement);
   }
 }

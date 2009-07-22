@@ -12,7 +12,7 @@ const IO = {
     is.close();
     return res;
   },
-  writeFile: function(file, content) {
+  writeFile: function(file, content, charset) {
     const unicodeConverter = CC["@mozilla.org/intl/scriptableunicodeconverter"]
       .createInstance(CI.nsIScriptableUnicodeConverter);
     try {
@@ -37,7 +37,7 @@ function nsISupportWrapper(wrapped) {
 nsISupportWrapper.prototype = {
   QueryInterface: xpcom_generateQI([CI.nsISupports])
 }
-  
+
 const IOUtil = {
   asyncNetworking: true,
   proxiedDNS: 0,
@@ -94,12 +94,25 @@ const IOUtil = {
 
   },
   
+  abort: function(channel) {
+    if (!ChannelReplacement.supported) {
+      // this is for Gecko 1.1 which doesn't allow us to cancel in asyncOpen()
+      try {
+        channel.URI.host = channel.URI.host + "#";
+        ns.log(channel.URI.host);
+      } catch(e) {
+        ns.log("Error aborting " + channel.URI.spec + ": " + e);
+      }
+      channel.loadFlags |= CI.nsICachingChannel.LOAD_ONLY_FROM_CACHE; 
+    }
+    channel.cancel(Components.results.NS_ERROR_ABORT);
+  },
   
   findWindow: function(channel) {
     for each(var cb in [channel.notificationCallbacks,
                        channel.loadGroup && channel.loadGroup.notificationCallbacks]) {
       if (cb instanceof CI.nsIInterfaceRequestor) {
-        try {
+        if (CI.nsILoadContext) try {
         // For Gecko 1.9.1
           return cb.getInterface(CI.nsILoadContext).associatedWindow;
         } catch(e) {}
@@ -155,7 +168,314 @@ const IOUtil = {
       if (loadFlags & c[p]) hf.push(p + "=" + c[p]);
     }
     return hf.join("\n");
+  },
+  
+  queryNotificationCallbacks: function(chan, iid) {
+    var cb;
+    try {
+      cb = chan.notificationCallbacks.getInterface(iid);
+      if (cb) return cb;
+    } catch(e) {}
+    
+    try {
+      return chan.loadGroup && chan.loadGroup.notificationCallbacks.getInterface(iid);
+    } catch(e) {}
+    
+    return null;
+  },
+  
+ 
+  anonymizeURI: function(uri, cookie) {
+    if (uri instanceof CI.nsIURL) {
+      uri.query = this.anonymizeQS(uri.query, cookie);
+    } else return this.anonymizeURL(uri, cookie);
+    return uri;
+  },
+  anonymizeURL: function(url, cookie) {
+    var parts = url.split("?");
+    if (parts.length < 2) return url;
+    parts[1] = this.anonymizeQS(parts[1], cookie);
+    return parts.join("?");
+  },
+  anonymizeQS: function(qs, cookie) {
+    if (!qs) return qs;
+    if (!/[&=]/.test(qs)) return '';
+    
+    var cookieNames, hasCookies;
+    if ((hasCookies = !!cookie)) {
+      cookieNames = cookie.split(/\s*;\s*/).map(function(nv) {
+        return nv.split("=")[0];
+      })
+    }
+    
+    var parms = qs.split("&");
+    var nv, name;
+    for (var j = parms.length; j-- > 0;) {
+      nv = parms[j].split("=");
+      name = nv[0];
+      if (/(?:auth|s\w+(?:id|key)$)/.test(name) || cookie && cookieNames.indexOf(name) > -1)
+        parms.splice(j, 1);
+    }
+    return parms.join("&");
+  },
+  
+  runWhenPending: function(channel, callback) {
+    if (channel.isPending()) {
+      callback();
+      return false;
+    } else {
+      new LoadGroupWrapper(channel, {
+        addRequest: function(r, ctx) {
+          callback();
+        }
+      });
+      return true;
+    }
   }
   
 };
 
+function CtxCapturingListener(tracingChannel) {
+  this.originalListener = tracingChannel.setNewListener(this);
+}
+CtxCapturingListener.prototype = {
+  originalListener: null,
+  originalCtx: null,
+  
+  onDataAvailable: function(request, context, inputStream, offset, count) {
+    this.originalCtx = context;
+  },
+  onStartRequest: function(request, context) {
+    this.originalCtx = context;
+  },
+  onStopRequest: function(request, context, statusCode) {
+    this.originalCtx = context;
+  },
+  QueryInterface: function (aIID) {
+    if (aIID.equals(CI.nsIStreamListener) ||
+        aIID.equals(CI.nsISupports)) {
+        return this;
+    }
+    throw Components.results.NS_NOINTERFACE;
+  }
+}
+
+function ChannelReplacement(chan, newURI, newMethod) {
+  return this._init(chan, newURI, newMethod);
+}
+
+ChannelReplacement.supported = "nsITraceableChannel" in CI;
+
+ChannelReplacement.prototype = {
+  listener: null,
+  context: null,
+  oldChannel: null,
+  channel: null,
+  
+  get _unsupportedError() {
+    return new Error("Can't replace channels without nsITraceableChannel!");
+  },
+  
+  _init: function(chan, newURI, newMethod) {
+    if (!(ChannelReplacement.supported && chan instanceof CI.nsITraceableChannel))
+      throw this._unsupportedError;
+  
+    newURI = newURI || chan.URI.clone();
+    
+    var newChan = IOS.newChannelFromURI(newURI);
+    
+    // porting of http://mxr.mozilla.org/mozilla-central/source/netwerk/protocol/http/src/nsHttpChannel.cpp#2750
+    
+    var loadFlags = chan.loadFlags;
+    if (chan.URI.schemeIs("https"))
+      loadFlags &= ~chan.INHIBIT_PERSISTENT_CACHING;
+    
+    
+    newChan.loadGroup = chan.loadGroup;
+    newChan.notificationCallbacks = chan.notificationCallbacks;
+    newChan.loadFlags = loadFlags;
+    
+    if (!(newChan instanceof CI.nsIHttpChannel))
+      return newChan;
+    
+    if (!newMethod) {
+      if (newChan instanceof CI.nsIUploadChannel && chan instanceof CI.nsIUploadChannel && chan.uploadStream ) {
+        var stream = chan.uploadStream;
+        if (stream instanceof CI.nsISeekableStream) {
+          stream.seek(stream.NS_SEEK_SET, 0);
+        }
+        
+        try {
+          var ctype = newChan.getRequestHeader("Content-type");
+          var clen = newChan.getRequestHeader("Content-length");
+          if (ctype && clen) {
+            newChan.setUploadStream(stream, ctype, parseInt(clen));
+          }
+        } catch(e) {
+          newChan.setUploadStream(stream, '', -1);
+        }
+        
+        newChan.requestMethod = chan.requestMethod;
+      }
+    } else {
+      newChan.method = newMethod;
+    }
+    
+    if (chan.referrerURI) newChan.referrerURI = chan.referrerURI;
+    newChan.allowPipelining = chan.allowPipelining;
+    newChan.redirectionLimit = chan.redirectionLimit - 1;
+    if (chan instanceof CI.nsIHttpChannelInternal && newChan instanceof CI.nsIHttpChannelInternal) {
+      if (chan.URI == chan.documentURI) {
+        newChan.documentURI = newURI;
+      } else {
+        newChan.documentURI = chan.documentURI;
+      }
+    }
+    
+    if (chan instanceof CI.nsIEncodedChannel && newChan instanceof CI.nsIEncodedChannel) {
+      newChan.applyConversion = chan.applyConversion;
+    }
+    
+    // we can't transfer resume information because we can't access mStartPos and mEntityID :(
+    // http://mxr.mozilla.org/mozilla-central/source/netwerk/protocol/http/src/nsHttpChannel.cpp#2826
+    
+    if ("nsIApplicationCacheChannel" in CI &&
+      chan instanceof CI.nsIApplicationCacheChannel && newChan instanceof CI.nsIApplicationCacheChannel) {
+      newChan.applicationCache = chan.applicationCache;
+      newChan.inheritApplicationCache = chan.inheritApplicationCache;
+    }
+    
+    if (chan instanceof CI.nsIPropertyBag && newChan instanceof CI.nsIWritablePropertyBag) 
+      for (var properties = chan.enumerator, p; properties.hasMoreElements();)
+        if ((p = properties.getNext()) instanceof CI.nsIProperty)
+          newChan.setProperty(p.name, p.value);
+    
+    this.oldChannel = chan;
+    this.channel = newChan;
+    
+    return this;
+  },
+  
+  _onChannelRedirect: function() {
+    var oldChan = this.oldChannel;
+    var newChan = this.channel;
+    
+    if (oldChan.redirectionLimit === 0) {
+      oldChan.cancel(NS_ERROR_REDIRECT_LOOP);
+      throw NS_ERROR_REDIRECT_LOOP;
+    }
+    
+    newChan.loadFlags |= newChan.LOAD_REPLACE;
+    // nsHttpHandler::OnChannelRedirect()
+    const CES = CI.nsIChannelEventSink;
+    const flags = CES.REDIRECT_INTERNAL;
+    CC["@mozilla.org/netwerk/global-channel-event-sink;1"].getService(CES)
+      .onChannelRedirect(oldChan, newChan, flags);
+    var ces;
+    for (var cess = CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
+              .enumerateCategory("net-channel-event-sinks");
+        cess.hasMoreElements();) {
+      ces = cess.getNext();
+      if (ces instanceof CES)
+        ces.onChannelRedirect(oldChan, newChan, flags);
+    }
+    ces = IOUtil.queryNotificationCallbacks(oldChan, CES);
+    if (ces) ces.onChannelRedirect(oldChan, newChan, flags);
+    // ----------------------------------
+    
+    newChan.originalURI = oldChan.originalURI;
+  },
+  
+  replace: function(isRedir) {
+    
+    if (isRedir) {
+      this._onChannelRedirect();
+    }
+    
+    // dirty trick to grab listenerContext
+    var oldChan = this.oldChannel;
+    var ccl = new CtxCapturingListener(oldChan);
+    
+    oldChan.cancel(NS_BINDING_REDIRECTED);
+        
+    if (oldChan instanceof CI.nsIRequestObserver) {
+      oldChan.loadGroup = null; // prevent loadGroup removal and wheel stop
+      oldChan.onStartRequest(oldChan, null);
+      oldChan.onStopRequest(this.channel, null, NS_BINDING_REDIRECTED);
+    }
+
+    this.listener = ccl.originalListener;
+    this.context = ccl.originalCtx;
+    return this;
+  },
+  
+  open: function() {
+    if (this.channel.loadGroup) try {
+      this.channel.loadGroup.removeRequest(this.oldChannel, null, this.oldChannel.status);
+    } catch(e) {}
+    
+    this.channel.asyncOpen(this.listener, this.context);
+    delete this.oldChannel;
+  }
+}
+
+function LoadGroupWrapper(channel, callbacks) {
+  this._channel = channel;
+  this._inner = channel.loadGroup;
+  this._callbacks = callbacks;
+  channel.loadGroup = this;
+}
+LoadGroupWrapper.prototype = {
+  QueryInterface: xpcom_generateQI(CI.nsISupports, CI.nsILoadGroup),
+  
+  get activeCount() {
+    return this._inner ? this._inner.activeCount : 0;
+  },
+  set defaultLoadRequest(v) {
+    return this._inner ? this._inner.defaultLoadRequest = v : v;
+  },
+  get defaultLoadRequest() {
+    return this._inner ? this._inner.defaultLoadRequest : null;
+  },
+  set groupObserver(v) {
+    return this._inner ? this._inner.groupObserver = v : v;
+  },
+  get groupObserver() {
+    return this._inner ? this._inner.groupObserver : null;
+  },
+  set notificationCallbacks(v) {
+    return this._inner ? this._inner.notificationCallbacks = v : v;
+  },
+  get notificationCallbacks() {
+    return this._inner ? this._inner.notificationCallbacks : null;
+  },
+  get requests() {
+    return this._inner ? this._inner.requests : this._emptyEnum;
+  },
+  
+  addRequest: function(r, ctx) {
+    this.detach();
+    if (this._inner) this._inner.addRequest(r, ctx);
+    if (r === this._channel && ("addRequest" in this._callbacks))
+      try {
+        this._callbacks.addRequest(r, ctx);
+      } catch (e) {}
+  },
+  removeRequest: function(r, ctx, status) {
+    this.detach();
+    if (this._inner) this._inner.removeRequest(r, ctx, status);
+    if (r === this._channel && ("removeRequest" in this._callbacks))
+      try {
+        this._callbacks.removeRequest(r, ctx, status);
+      } catch (e) {}
+  },
+  
+  detach: function() {
+    if (this._channel.loadGroup) this._channel.loadGroup = this._inner;
+  },
+  _emptyEnum: {
+    QueryInterface: xpcom_generateQI(CI.nsISupports, CI.nsISimpleEnumerator),
+    getNext: function() { return null; },
+    hasMoreElements: function() { return false; }
+  }
+}

@@ -141,9 +141,9 @@
 <!ENTITY noscriptClearClickHeader "Potensiell Clickjacking / UI Redressing Forsøk!">
 <!ENTITY noscriptClearClickDescription "NoScript avskjærte en mus, eller tastatur samspill med delvis gjemt element. Klikk på bildet ovenfor for å bytte mellom den sperrede og den rensede versjonen.">
 <!ENTITY noscriptClearClickOpt "ClearClick beskyttelse på sidene…">
-<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport "Rapport">
 <!ENTITY noscriptClearClickReport.accesskey "R">
-<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptClearClickReportId "Rapport ID:">
 <!ENTITY noscriptOpacizeOpt "Gjemt innesluttede objekter på sidene…">
 <!ENTITY noscriptTrustedPagesAdj "pålitelige">
 <!ENTITY noscriptUntrustedPagesAdj "upålitelige">
