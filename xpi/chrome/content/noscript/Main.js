@@ -234,9 +234,7 @@ var ns = singleton = {
       case "sites":
         if (this.jsPolicySites.settingPref) return;
         if (this.locked) this.defaultCaps.lockPref(this.POLICY_NAME + ".sites");
-        try {
-          this.jsPolicySites.fromPref(this.policyPB);
-        } catch(ex) {
+        if (!this.jsPolicySites.fromPref(this.policyPB)) {
           this.resetDefaultSitePrefs();
         }
         break;
@@ -1189,7 +1187,9 @@ var ns = singleton = {
               }
             }
           } catch(e) {}
-          browser.webNavigation.reload(LOAD_FLAGS);
+          try {
+            browser.webNavigation.reload(LOAD_FLAGS); // can fail, e.g. because a content policy or an user interruption
+          } catch(e) {}
           break;
         }
       }

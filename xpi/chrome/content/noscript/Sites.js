@@ -214,7 +214,9 @@ PolicySites.prototype = {
         .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
     } catch(e) {
       this.siteString = "";
+      return false;
     }
+    return true;
   }
 ,
   settingPref: false,

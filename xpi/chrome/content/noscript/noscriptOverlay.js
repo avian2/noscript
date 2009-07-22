@@ -1972,9 +1972,15 @@ return noscriptUtil.service ? {
     if (prevVer != ns.VERSION) {
       ns.setPref("version", ns.VERSION);
       if (prevVer) {
-        if(prevVer < "1.1.4.070304") ns.sanitize2ndLevs();
+        if(prevVer < "1.1.4.070304") {
+          ns.sanitize2ndLevs();
+        }
         else if (prevVer >= "1.9.3.4" && prevVer < "1.9.4") {
           ns.setPref("ABE.legacySupport", true);
+        } else if (prevVer >= "1.9.6" && prevVer <= "1.9.6.8") { // early 1.9.6 broke default whitelist
+          if (!ns.isJSEnabled("about:credits") && !ns.getPref("untrusted")) {
+            ns.setJSEnabled(ns.splitList(ns.getPref("default")), true);
+          }
         }
       }
       ns.savePrefs(true);
