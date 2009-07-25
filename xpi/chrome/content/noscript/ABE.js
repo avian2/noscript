@@ -508,7 +508,7 @@ var ABEActions = {
     return false;  
   },
   deny: function(req) {
-    IOUtil.abort(req.channel);
+    IOUtil.abort(req.channel, true);
     return true;
   },
   anonymize: function(req, channel) {

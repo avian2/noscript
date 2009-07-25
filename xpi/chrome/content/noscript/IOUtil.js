@@ -94,15 +94,9 @@ const IOUtil = {
 
   },
   
-  abort: function(channel) {
-    if (!ChannelReplacement.supported) {
+  abort: function(channel, noNetwork) {
+    if (noNetwork && !ChannelReplacement.supported) {
       // this is for Gecko 1.1 which doesn't allow us to cancel in asyncOpen()
-      try {
-        channel.URI.host = channel.URI.host + "#";
-        ns.log(channel.URI.host);
-      } catch(e) {
-        ns.log("Error aborting " + channel.URI.spec + ": " + e);
-      }
       channel.loadFlags |= CI.nsICachingChannel.LOAD_ONLY_FROM_CACHE; 
     }
     channel.cancel(Components.results.NS_ERROR_ABORT);
@@ -163,7 +157,7 @@ const IOUtil = {
   },
   humanFlags: function(loadFlags) {
     var hf = [];
-    var c = this.channelFlags;
+    var c = this._channelFlags;
     for (var p in c) {
       if (loadFlags & c[p]) hf.push(p + "=" + c[p]);
     }
@@ -241,15 +235,17 @@ function CtxCapturingListener(tracingChannel) {
 CtxCapturingListener.prototype = {
   originalListener: null,
   originalCtx: null,
-  
+  notify: false,
   onDataAvailable: function(request, context, inputStream, offset, count) {
     this.originalCtx = context;
   },
   onStartRequest: function(request, context) {
     this.originalCtx = context;
+    if (this.notify) this.ori.onStartRequest(request, context);
   },
   onStopRequest: function(request, context, statusCode) {
     this.originalCtx = context;
+    if (this.notify) this.onStopRequest(request, context, statusCode);
   },
   QueryInterface: function (aIID) {
     if (aIID.equals(CI.nsIStreamListener) ||
@@ -269,6 +265,7 @@ ChannelReplacement.supported = "nsITraceableChannel" in CI;
 ChannelReplacement.prototype = {
   listener: null,
   context: null,
+  _ccListener: null,
   oldChannel: null,
   channel: null,
   
@@ -280,7 +277,7 @@ ChannelReplacement.prototype = {
     if (!(ChannelReplacement.supported && chan instanceof CI.nsITraceableChannel))
       throw this._unsupportedError;
   
-    newURI = newURI || chan.URI.clone();
+    newURI = newURI || chan.URI;
     
     var newChan = IOS.newChannelFromURI(newURI);
     
@@ -321,7 +318,7 @@ ChannelReplacement.prototype = {
       newChan.method = newMethod;
     }
     
-    if (chan.referrerURI) newChan.referrerURI = chan.referrerURI;
+    if (chan.referrer) newChan.referrer = chan.referrer;
     newChan.allowPipelining = chan.allowPipelining;
     newChan.redirectionLimit = chan.redirectionLimit - 1;
     if (chan instanceof CI.nsIHttpChannelInternal && newChan instanceof CI.nsIHttpChannelInternal) {
@@ -356,11 +353,11 @@ ChannelReplacement.prototype = {
     return this;
   },
   
-  _onChannelRedirect: function() {
+  _onChannelRedirect: function(trueRedir) {
     var oldChan = this.oldChannel;
     var newChan = this.channel;
     
-    if (oldChan.redirectionLimit === 0) {
+    if (trueRedir && oldChan.redirectionLimit === 0) {
       oldChan.cancel(NS_ERROR_REDIRECT_LOOP);
       throw NS_ERROR_REDIRECT_LOOP;
     }
@@ -388,34 +385,53 @@ ChannelReplacement.prototype = {
   
   replace: function(isRedir) {
     
-    if (isRedir) {
-      this._onChannelRedirect();
-    }
+    this._onChannelRedirect(isRedir);
     
     // dirty trick to grab listenerContext
     var oldChan = this.oldChannel;
     var ccl = new CtxCapturingListener(oldChan);
     
-    oldChan.cancel(NS_BINDING_REDIRECTED);
-        
+    oldChan.cancel(NS_BINDING_REDIRECTED); // this works because we've been called after loadGroup->addRequest(), therefore asyncOpen() always return NS_OK
+    
+    oldChan.notificationCallbacks =
+        oldChan.loadGroup = null; // prevent loadGroup removal and wheel stop
+    
     if (oldChan instanceof CI.nsIRequestObserver) {
-      oldChan.loadGroup = null; // prevent loadGroup removal and wheel stop
       oldChan.onStartRequest(oldChan, null);
-      oldChan.onStopRequest(this.channel, null, NS_BINDING_REDIRECTED);
     }
 
     this.listener = ccl.originalListener;
     this.context = ccl.originalCtx;
+    this._ccListener = ccl;
+    
     return this;
   },
   
   open: function() {
-    if (this.channel.loadGroup) try {
-      this.channel.loadGroup.removeRequest(this.oldChannel, null, this.oldChannel.status);
-    } catch(e) {}
-    
-    this.channel.asyncOpen(this.listener, this.context);
+    var oldChan = this.oldChannel;
     delete this.oldChannel;
+    try {
+      this.channel.asyncOpen(this.listener, this.context);
+    } catch (e) {
+      // redirect failed: we must notify the original channel litener, so let's restore bindings
+      oldChan.notificationCallbacks = this.channel.notificationCallbacks;
+      this._ccListener.notify = true;
+      if (oldChan instanceof CI.nsIRequestObserver)
+        try {
+        oldChan.onStartRequest(oldChan, null);
+        } catch(e) {}
+    }
+    if (oldChan instanceof CI.nsIRequestObserver)
+      try {  
+        oldChan.onStopRequest(oldChan, null, NS_BINDING_REDIRECTED);
+      } catch(e) {}
+    
+    if (this.channel.loadGroup)
+      try {
+        this.channel.loadGroup.removeRequest(oldChan, null, oldChan.status);
+      } catch(e) {}
+    oldChan.notificationCallbacks = null;
+    delete this._ccListener;
   }
 }
 

@@ -472,7 +472,7 @@ var HTTPS = {
           }
         }
 
-        IOUtil.abort(req);
+        IOUtil.abort(req, true);
        
         w.location = uri.spec;
         this.log("Forced HTTPS document on " + uri.spec);

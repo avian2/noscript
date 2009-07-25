@@ -38,7 +38,7 @@ RequestWatchdog.prototype = {
           if (!(loadFlags || channel.notificationCallbacks || channel.owner)) {
             try {
               if (channel.getRequestHeader("Content-type") == "application/ocsp-request") {
-                ns.dump("Skipping cross-site checks for OCSP request " + channel.URI.spec);
+                if (ns.consoleDump) ns.dump("Skipping cross-site checks for OCSP request " + channel.URI.spec);
                 return;
               }
             } catch(e) {}
@@ -56,7 +56,7 @@ RequestWatchdog.prototype = {
               var xssChecked = false;
               try {
                 Thread.asap(function() {
-                  if (!xssChecked) this.die(channel, new Error("XSS checks couldn't complete: DOS attempt?"));
+                  if (!xssChecked) this.die(channel, new Error("XSS checks couldn't complete: DOS attempt? " + abeReq));
                 }, this); // guardian
                 this.filterXSS(abeReq);
               } finally {

@@ -1241,6 +1241,7 @@ var ns = singleton = {
       if (!(s in snapshot)) snapshot[s] = snapshot[url];
     }
     for each (var s in sites.pluginSites) {
+      s = this.objectKey(s);
       if ((s in snapshot) && !(s in this.objectWhitelist)) {
         return true;
       }
@@ -1590,9 +1591,9 @@ var ns = singleton = {
   },
  
   
-  guessMime: function(uri) {
+  guessMime: function(uriOrExt) {
     try {
-      var ext =  (uri instanceof CI.nsIURL) && uri.fileExtension;
+      var ext = (uriOrExt instanceof CI.nsIURL) ? uriOrExt.fileExtension : uriOrExt;
       return ext && this.mimeService.getTypeFromExtension(ext) || "";
     } catch(e) {
       return "";
@@ -1983,7 +1984,7 @@ var ns = singleton = {
   ALL_TYPES: ["*"],
   objectWhitelistLen: 0,
   objectKey: function(url) {
-    return IOUtil.anonymizeURL(url.replace(/(\w+:\/\/[^\.\/\d]+)\d+(\.[^\.\/]+\.)/, '$1$2'));
+    return IOUtil.anonymizeURL(url.replace(/^((?:\w+:\/\/)?[^\.\/\d]+)\d+(\.[^\.\/]+\.)/, '$1$2'));
   },
   isAllowedObject: function(url, mime, site) {
     url = this.objectKey(url);
@@ -1991,7 +1992,7 @@ var ns = singleton = {
     if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1)) 
       return true;
     
-    if (arguments.length < 3) site = this.getSite(url);
+    if (site) site = this.objectKey((arguments.length < 3) ? site : this.getSite(url));
     
     var types = site && this.objectWhitelist[site] || null;
     return types && (types == this.ALL_TYPES || types.indexOf(mime) > -1);
@@ -2066,10 +2067,12 @@ var ns = singleton = {
   
   hasVisibleLinks: function(document) {
     var links = document.links;
-    var position;
+    var style, position;
     for (var j = 0, l; (l = links[j]); j++) {
-      if (l && l.href && /^https?/i.test(l.href) && l.firstChild) {
+      if (l && l.href && /^https?/i.test(l.href)) {
         if(l.offsetWidth && l.offsetHeight) return true;
+        style = document.defaultView.getComputedStyle(l, '');
+        if (parseInt(style.width) && parseInt(style.height)) return true;
         position = l.style.position;
         try {
           l.style.position = "absolute";
@@ -3476,52 +3479,66 @@ var ns = singleton = {
         if (ph) {
           var ctype = ph.contentType;
           var origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
-          if (origin && (ctype === 2 || ctype === 3) && origin.prePath != channel.URI.prePath) {
+          if (origin && (ctype === 2 || ctype === 3) && this.getBaseDomain(origin.host) != this.getBaseDomain(channel.URI.host)) {
 
-            var url = channel.URI;            
-            var ext = (url instanceof CI.nsIURL) ? url.fileExtension : '';
-
-            var disposition = '';
-              
-            if((url.query && (!ext || /^(?:php|aspx?|jsp|do|cgi|py|pl)$/i.test(ext))
-                && !this.getPref("inclusionTypeChecking.checkDynamic", false)) ||
-               
-                (ctype === 2 && /js(?:on)?/i.test(ext) ||
-                 ctype == 3 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
-               ) {
-              // webapp endpoint or file with correct extension? check if it's meant as an attachment
-              try {
-                disposition = channel.getResponseHeader("Content-disposition");
-                
-                if (!disposition) {
-                  // not an attachment, likely just a buggy (wrong content type) dynamic script
-                  // like http://p.www.yahoo.com/module/spirit/content.php?module=news&section=finsnews&content=story:finsnews&output=json&cd=1&callback=alert
-                  return false;
-                }
-                
-                // it's an attachment, something fishy going on
-              } catch(e) {
-                return false;
-              }
-            }
             
-            var mime;
+            
+            var disposition, mime;
+            
             try {
-              mime = channel.contentType;
-            } catch(e) {
-              mime = "UNKNOWN";
-            }
+              disposition = channel.getResponseHeader("Content-disposition");
+            } catch(e) {}
             
-            if (disposition || !(
+            if (!disposition) {
+              var url = channel.URI;            
+              var ext = (url instanceof CI.nsIURL) ? url.fileExtension : '';
+              
+              if (ext &&
+                  (ctype === 2 && /js(?:on)?/i.test(ext) ||
+                   ctype == 3 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
+                ) {
+                // extension matches and not an attachment, likely OK
+                return true; 
+              }
+              
+              // extension doesn't match, let's check the mime
+              
+             
+              try {
+                mime = channel.contentType;
+              } catch (e) {
+                mime = "UNKNOWN";
+              }
+              
+              if ((/^text\/.*ml$/i.test(mime)
+                  || mime == "text/plain" && !(ext && /^(?:asc|log|te?xt)$/.test(ext)) // see Apache's magic file, turning any unkown ext file containing JS style comments into text/plain
+                  // || !this.guessMime(ext)
+                  ) 
+                  && !this.getPref("inclusionTypeChecking.checkDynamic", false)) {
+                // text/html or xml, let's assume a misconfigured dynamically served script/css
+                if (this.consoleDump) this.dump(
+                      "Warning: mime type " + mime + " for " +
+                      (ctype == 2 ? "Javascript" : "CSS") + " served from " +
+                     url.spec);
+                return true;
+              }
+              
+              // a non-generic mime type has been given, let's check it strictly
+              if (
                  (ctype === 2 ? /\bj(?:avascript|son)\b/ : (PolicyUtil.isXSL(ph.context) ? /\bx[ms]l/ : /\bcss\b/)).test(mime) ||
-                 new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).testURI(channel.URI)
-                )) {
-              if (disposition) mime += "(" + disposition + ")";
-              this.log("[NoScript] Blocking cross site " + (ctype == 2 ? "Javascript" : "CSS") + " served from " + channel.URI.spec +
-                       " with wrong mimetype " + mime + " and included by " + origin.spec);
-              IOUtil.abort(channel);
-              return false;
-            }
+                 new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).testURI(url)
+                ) {
+                return true;
+              }
+            } else mime = disposition;
+            
+            // every check failed, this is a fishy cross-site mistyped inclusion
+            
+            this.log("[NoScript] Blocking cross site " + (ctype == 2 ? "Javascript" : "CSS") + " served from " +
+                     channel.URI.spec +
+                     " with wrong type info " + mime + " and included by " + origin.spec);
+            IOUtil.abort(channel);
+            return false;
           }
         }
       }
@@ -3886,6 +3903,7 @@ var ns = singleton = {
         if(this.consoleDump) this.dump("Neutralizing UTF-7 charset!");
         ds.documentCharsetInfo.forcedCharset = as.getAtom("UTF-8");
         ds.documentCharsetInfo.parentCharset = ds.documentCharsetInfo.forcedCharset;
+        ds.reload(ds.LOAD_FLAGS_CHARSET_CHANGE); // neded in Gecko > 1.9
       }
     } catch(e) { 
       if(this.consoleDump) this.dump("Error filtering charset: " + e) 

@@ -554,14 +554,15 @@ const MainContentPolicy = {
         } else {
           try {
             if ((aContext instanceof CI.nsIDOMNode) && (aContentType == 5 || aContentType == 7 || aContentType == 12 || aContentType == 15)) {
-              
-              if (this.consoleDump & LOG_CONTENT_BLOCK)
-                this.dump("tagForReplacement");
-                
-              this.delayExec(this.tagForReplacement, 0, aContext, {
-                url: locationURL,
-                mime: mimeKey
-              });
+              if (locationURL != "data:application/x-noscript-blocked,") {
+                if (this.consoleDump & LOG_CONTENT_BLOCK)
+                  this.dump("tagForReplacement");
+                  
+                this.delayExec(this.tagForReplacement, 0, aContext, {
+                  url: locationURL,
+                  mime: mimeKey
+                });
+              }
             } else if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Context is not a DOMNode? " + aContentType);
           } catch(ex) {
             if(this.consoleDump) this.dump(ex);

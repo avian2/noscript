@@ -66,7 +66,8 @@ var noscriptBM = {
     try {
       if ("gURLBar" in window) {
         var handleCommand = window.gURLBar.handleCommand;
-        for(var caller, f = arguments.callee; caller = f.caller; f = caller) {
+        var times = 5;
+        for(var caller, f = arguments.callee; (caller = f.caller) && times; f = caller, times--) {
           if (caller === handleCommand) {
             return noscriptBM.handleURLBarCommand.apply(window, arguments);
           }
