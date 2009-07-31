@@ -978,7 +978,7 @@ ABERequest.prototype = Lang.memoize({
   
   toString: function() {
     var s = "{" + this.method + " " + this.destination + " <<< " +
-      this.redirectChain.map(function(uri) { return uri.spec; }).concat(this.origin)
+      this.redirectChain.reverse().map(function(uri) { return uri.spec; }).concat(this.origin)
         .join(", ") + "}";
     this.toString = function() { return s; }
     return s;

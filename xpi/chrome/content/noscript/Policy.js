@@ -264,19 +264,21 @@ const MainContentPolicy = {
           
           isLegacyFrame = aContext instanceof CI.nsIDOMHTMLFrameElement;
      
-          if(isLegacyFrame
+          if (isLegacyFrame
              ? this.forbidFrames || // we shouldn't allow framesets nested inside iframes, because they're just as bad
                                     this.forbidIFrames &&
                                     (aContext.ownerDocument.defaultView.frameElement instanceof CI.nsIDOMHTMLIFrameElement) &&
                                     this.getPref("forbidMixedFrames", true)
-             : this.forbidIFrames
+             : this.forbidIFrames || // we use iframes to make placeholders for blocked legacy frames...
+                                    this.forbidFrames &&
+                                    this.isLegacyFrameReplacement(aContext)
              ) {
-            try {
-              contentDocument = aContext.contentDocument;
-            } catch(e) {}
-         
-            blockThisIFrame = aInternalCall == CP_FRAMECHECK && !(
-                    this.knownFrames.isKnown(locationURL, originSite = this.getSite(originURL)) ||
+              try {
+                contentDocument = aContext.contentDocument;
+              } catch(e) {}
+           
+              blockThisIFrame = aInternalCall == CP_FRAMECHECK && !(
+                      this.knownFrames.isKnown(locationURL, originSite = this.getSite(originURL)) ||
                     /^(?:chrome|resource|wyciwyg):/.test(locationURL) ||
                     locationURL == this._silverlightInstalledHack ||
                     locationURL == this.compatGNotes ||
@@ -364,7 +366,7 @@ const MainContentPolicy = {
                   || aMimeTypeGuess == "application/xml" 
                   || aMimeTypeGuess == "application/xhtml+xml"
                   || aMimeTypeGuess.substring(0, 6) == "image/"
-                  || !this.pluginForMime(aMimeTypeGuess)
+                  || !(this.isMediaType(aMimeTypeGuess) || this.pluginForMime(aMimeTypeGuess))
                 )
             ) {
             
@@ -376,9 +378,7 @@ const MainContentPolicy = {
             if (logBlock)
               this.dump("Document OK: " + aMimeTypeGuess + "@" + (locationURL || aContentLocation.spec) + 
                 " --- PGFM: " + this.pluginForMime(aMimeTypeGuess));
-            
-            
-            
+
             return CP_OK;
           }
           break;

@@ -229,8 +229,9 @@ const IOUtil = {
   
 };
 
-function CtxCapturingListener(tracingChannel) {
+function CtxCapturingListener(tracingChannel, notify) {
   this.originalListener = tracingChannel.setNewListener(this);
+  if (notify) this.notify = true;
 }
 CtxCapturingListener.prototype = {
   originalListener: null,
@@ -241,11 +242,11 @@ CtxCapturingListener.prototype = {
   },
   onStartRequest: function(request, context) {
     this.originalCtx = context;
-    if (this.notify) this.ori.onStartRequest(request, context);
+    if (this.notify) this.originalListener.onStartRequest(request, context);
   },
   onStopRequest: function(request, context, statusCode) {
     this.originalCtx = context;
-    if (this.notify) this.onStopRequest(request, context, statusCode);
+    if (this.notify) this.originalListener.onStopRequest(request, context, statusCode);
   },
   QueryInterface: function (aIID) {
     if (aIID.equals(CI.nsIStreamListener) ||
@@ -430,6 +431,7 @@ ChannelReplacement.prototype = {
       try {
         this.channel.loadGroup.removeRequest(oldChan, null, oldChan.status);
       } catch(e) {}
+
     oldChan.notificationCallbacks = null;
     delete this._ccListener;
   }

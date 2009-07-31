@@ -99,7 +99,7 @@ var Thread = {
         run: function() {
           callback.apply(self, args || []);
         }
-      }, CI.nsIEventTarget.DISPACTH_NORMAL);
+      }, CI.nsIEventTarget.DISPATCH_NORMAL);
     } else {
       this.delay(callback, 0, self, args);
     }

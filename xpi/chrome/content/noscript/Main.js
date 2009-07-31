@@ -304,7 +304,6 @@ var ns = singleton = {
       case "jsHack":
       case "consoleLog":
       case "silverlightPatch":
-      case "allowHttpsOnly":
       case "inclusionTypeChecking":
         this[name] = this.getPref(name, this[name]);  
       break;
@@ -1610,6 +1609,10 @@ var ns = singleton = {
     } catch(e) { return null; }
   },
   
+  isMediaType: function(mimeType) {
+    return /^(?:vide|audi)o\/|\/ogg$/i.test(mimeType);
+  },
+  
   checkForbiddenChrome: function(url, origin) {
     var f, browserChromeDir, chromeRegistry;
     try {
@@ -1816,12 +1819,12 @@ var ns = singleton = {
     
     if(sync) {
       if(verbose) dump("Legacy frame SYNC, setting to " + url + "\n");
-      frame.src = url;
+      frame.contentWindow.location = url;
     } else {
       frame.ownerDocument.defaultView.addEventListener("load", function(ev) {
           if(verbose) dump("Legacy frame ON PARENT LOAD, setting to " + url + "\n");
           ev.currentTarget.removeEventListener("load", arguments.callee, false);
-          frame.src = url;
+          frame.contentWindow.location = url;
       }, false);
     }
     return true;
@@ -2070,13 +2073,10 @@ var ns = singleton = {
     var style, position;
     for (var j = 0, l; (l = links[j]); j++) {
       if (l && l.href && /^https?/i.test(l.href)) {
-        if(l.offsetWidth && l.offsetHeight) return true;
-        style = document.defaultView.getComputedStyle(l, '');
-        if (parseInt(style.width) && parseInt(style.height)) return true;
-        position = l.style.position;
+        if(l.offsetWidth || l.offsetHeight) return true;
         try {
           l.style.position = "absolute";
-          if(l.offsetWidth && l.offsetHeight) return true;
+          if(l.offsetWidth || l.offsetHeight) return true;
         } finally {
           l.style.position = position;
         }
@@ -2392,7 +2392,7 @@ var ns = singleton = {
     },
     isKnown: function(url, parentSite) {
       var f = this._history[url];
-      return f && f.indexOf(parentSite);
+      return f && f.indexOf(parentSite) > -1;
     },
     reset: function() {
       this._history = {}
@@ -2762,7 +2762,7 @@ var ns = singleton = {
           continue;
         }
         
-        extras.tag = "<" + (objectTag == "iframe" && this.isLegacyFrameDocument(document) ? "FRAME" : objectTag.toUpperCase()) + ">";
+        extras.tag = "<" + (this.isLegacyFrameReplacement(object) ? "FRAME" : objectTag.toUpperCase()) + ">";
         extras.title =  extras.tag + ", " +  
             this.mimeEssentials(extras.mime) + "@" + extras.url;
         
@@ -3000,6 +3000,11 @@ var ns = singleton = {
   isLegacyFrameDocument: function(doc) {
     return (doc.defaultView.frameElement instanceof CI.nsIDOMHTMLFrameElement) && this.isPluginDocumentURL(doc.URL, "iframe");
   },
+  isLegacyFrameReplacement: function(obj) {
+     return (obj instanceof CI.nsIDOMHTMLIFrameElement || obj instanceof CI.nsIDOMHTMLAnchorElement) &&
+           (obj.ownerDocument.defaultView.frameElement instanceof CI.nsIDOMHTMLFrameElement) &&
+           obj.ownerDocument.URL == this.createPluginDocumentURL(obj.src || obj.href, "iframe");
+  },
   
   checkAndEnableObject: function(ctx) {
     var extras = ctx.extras;
@@ -3011,8 +3016,7 @@ var ns = singleton = {
       this.allowObject(url, mime);
       var doc = ctx.anchor.ownerDocument;
       
-      
-      var isLegacyFrame = this.isLegacyFrameDocument(doc);
+      var isLegacyFrame = this.isLegacyFrameReplacement(ctx.object);
        
       if (isLegacyFrame || (mime == doc.contentType && 
           (ctx.anchor == doc.body.firstChild && 
@@ -3022,7 +3026,8 @@ var ns = singleton = {
           doc.body.removeChild(ctx.anchor); // TODO: add a throbber
           if (isLegacyFrame) {
             this.setExpando(doc.defaultView.frameElement, "allowed", true);
-            doc.defaultView.frameElement.src = url;
+            // doc.defaultView.frameElement.src = url;
+            doc.defaultView.location.replace(url);
           } else this.quickReload(doc.defaultView, true);
       } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime)) {
         this.quickReload(doc.defaultView);
@@ -3378,23 +3383,27 @@ var ns = singleton = {
           
           if (w) {
             
-            if (abeReq && !(stateFlags & WP_STATE_RESTORING) && req.isPending()) {
-              this.requestWatchdog.handleABE(abeReq, abeReq.isDoc);
-              if (req.status != NS_OK) return;
-            }
-            
-            if (w && w != w.top && w.frameElement) {
+            if (w != w.top && w.frameElement) {
               ph = ph || PolicyState.extract(req);
               if (ph && this.shouldLoad(7, req.URI, ph.requestOrigin, w.frameElement, '', CP_FRAMECHECK) != CP_OK) { // late frame/iframe check
                 IOUtil.abort(req);
                 return;
               }
             }
-        
+            
+            
+            
+            
             this._handleDocJS1(w, req);
             if (HTTPS.forceHttps(req, w)) {
               this._handleDocJS2(w, req);
+              return;
             }
+            
+            if (abeReq && !(stateFlags & WP_STATE_RESTORING) && req.isPending()) {
+              this.requestWatchdog.handleABE(abeReq, abeReq.isDoc);
+            }
+            
           }
   
         } else try {
@@ -3481,13 +3490,28 @@ var ns = singleton = {
           var origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
           if (origin && (ctype === 2 || ctype === 3) && this.getBaseDomain(origin.host) != this.getBaseDomain(channel.URI.host)) {
 
+            var mime;
+            try {
+              mime = channel.contentType;
+            } catch (e) {
+              mime = "UNKNOWN";
+            }
             
-            
-            var disposition, mime;
-            
+            // a non-generic mime type has been given, let's check it strictly
+            if (
+               (ctype === 2
+                  ? /\bj(?:avascript|s(?:on)?)\b/
+                  : (PolicyUtil.isXSL(ph.context) ? /\bx[ms]l/ : /\bcss\b/)
+                ).test(mime)
+              ) {
+              return true;
+            }
+
+            var disposition;
             try {
               disposition = channel.getResponseHeader("Content-disposition");
             } catch(e) {}
+
             
             if (!disposition) {
               var url = channel.URI;            
@@ -3504,16 +3528,9 @@ var ns = singleton = {
               // extension doesn't match, let's check the mime
               
              
-              try {
-                mime = channel.contentType;
-              } catch (e) {
-                mime = "UNKNOWN";
-              }
-              
-              if ((/^text\/.*ml$/i.test(mime)
+              if ((/^text\/.*ml$|unknown/i.test(mime)
                   || mime == "text/plain" && !(ext && /^(?:asc|log|te?xt)$/.test(ext)) // see Apache's magic file, turning any unkown ext file containing JS style comments into text/plain
-                  // || !this.guessMime(ext)
-                  ) 
+                  )
                   && !this.getPref("inclusionTypeChecking.checkDynamic", false)) {
                 // text/html or xml, let's assume a misconfigured dynamically served script/css
                 if (this.consoleDump) this.dump(
@@ -3522,18 +3539,11 @@ var ns = singleton = {
                      url.spec);
                 return true;
               }
-              
-              // a non-generic mime type has been given, let's check it strictly
-              if (
-                 (ctype === 2 ? /\bj(?:avascript|son)\b/ : (PolicyUtil.isXSL(ph.context) ? /\bx[ms]l/ : /\bcss\b/)).test(mime) ||
-                 new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).testURI(url)
-                ) {
-                return true;
-              }
-            } else mime = disposition;
+            } else mime = mime + ", " + disposition;
             
             // every check failed, this is a fishy cross-site mistyped inclusion
-            
+            if (new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).testURI(url))
+              return true;
             this.log("[NoScript] Blocking cross site " + (ctype == 2 ? "Javascript" : "CSS") + " served from " +
                      channel.URI.spec +
                      " with wrong type info " + mime + " and included by " + origin.spec);
@@ -3547,7 +3557,7 @@ var ns = singleton = {
     }
     return true;
   },
-  
+
   onContentSniffed: function(req) {
     try {
       
@@ -3644,13 +3654,19 @@ var ns = singleton = {
     } catch(e) {
       contentType = "";
     }
+    var contentDisposition;
+    try {
+      contentDisposition = req.getResponseHeader("Content-disposition");
+    } catch(e) {
+      contentDisposition = "";
+    }
     
-    if (this.shouldLoad(7, uri, uri, domWindow, contentType, CP_SHOULDPROCESS) != CP_OK) {
+    if (!/^attachment\b/i.test(contentDisposition) && this.shouldLoad(7, uri, uri, domWindow, contentType, CP_SHOULDPROCESS) != CP_OK) {
       
       req.loadFlags |= req.INHIBIT_CACHING;
       
       if (this.consoleDump & LOG_CONTENT_INTERCEPT)
-        this.dump("Plugin document content type detected");
+        this.dump("Media document content type detected");
 
       if(!topWin) { 
         // check if this is an iframe
@@ -3661,14 +3677,27 @@ var ns = singleton = {
             return;
         
         if (this.consoleDump & LOG_CONTENT_BLOCK) 
-          this.dump("Deferring framed plugin document");
+          this.dump("Deferring framed media document");
         
-        IOUtil.abort(req);
+        
         
         browser = browser || DOM.findBrowserForNode(domWindow);
         this.getRedirCache(browser, uri.spec).push({site: this.getSite(domWindow.top.document.documentURI), type: 7});
         // defer separate embed processing for frames
-        domWindow.location.replace(this.createPluginDocumentURL(uri.spec));
+        
+        
+        var deferrer = function() {
+          IOUtil.abort(req);
+          domWindow.location.replace(ns.createPluginDocumentURL(uri.spec,
+            domWindow.document.body && domWindow.document.body.firstChild && domWindow.document.body.firstChild.tagName))
+        }
+        
+        if (!(req instanceof CI.nsITraceableChannel) || domWindow.document.body && domWindow.document.body.firstChild) {
+          deferrer();
+        } else {
+          new CtxCapturingListener(req, true);
+          Thread.asap(deferrer);
+        }
         return;
       }
       
@@ -3677,18 +3706,21 @@ var ns = singleton = {
 
       IOUtil.abort(req);
       
-      var embeds = domWindow.document.getElementsByTagName("embed");
-
-      var eType = "application/x-noscript-blocked";
-      var eURL = "data:" + eType + ",";
-      var e;
-      for (var j = embeds.length; j-- > 0;) {
-        e = embeds.item(j);
-        if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) != CP_OK) {
-          e.src = eURL;
-          e.type = eType;
+      
+      ["embed", "video", "audio"].forEach(function(tag) {
+        var embeds = domWindow.document.getElementsByTagName(tag);
+        var eType = "application/x-noscript-blocked";
+        var eURL = "data:" + eType + ",";
+        var e;
+        for (var j = embeds.length; j-- > 0;) {
+          e = embeds.item(j);
+          if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) != CP_OK) {
+            e.src = eURL;
+            e.type = eType;
+          }
         }
-      }
+      }, this);
+      
       if (xssInfo) overlay.notifyXSS(xssInfo);
       
       return;

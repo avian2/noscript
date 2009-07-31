@@ -32,50 +32,57 @@ RequestWatchdog.prototype = {
     }
     var loadFlags = channel.loadFlags;
     var isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
- 
+     
     switch(topic) {
       case "http-on-modify-request":
-          if (!(loadFlags || channel.notificationCallbacks || channel.owner)) {
-            try {
-              if (channel.getRequestHeader("Content-type") == "application/ocsp-request") {
-                if (ns.consoleDump) ns.dump("Skipping cross-site checks for OCSP request " + channel.URI.spec);
-                return;
-              }
-            } catch(e) {}
-          }
-          var abeReq = null;
+        var ncb = channel.notificationCallbacks;
+        if (!(loadFlags || ncb || channel.owner)) {
           try {
-            
-            abeReq = new ABERequest(channel);
-            if (this.externalLoad && this.externalLoad === abeReq.destination) {
-              abeReq.external = true;
-              this.externalLoad = null;
+            if (channel.getRequestHeader("Content-type") == "application/ocsp-request") {
+              if (ns.consoleDump) ns.dump("Skipping cross-site checks for OCSP request " + channel.name);
+              return;
             }
-            
-            if (isDoc) {
-              var xssChecked = false;
-              try {
-                Thread.asap(function() {
-                  if (!xssChecked) this.die(channel, new Error("XSS checks couldn't complete: DOS attempt? " + abeReq));
-                }, this); // guardian
-                this.filterXSS(abeReq);
-              } finally {
-                xssChecked = true;
-              }
-            }
-            
-            if (!channel.status) {
-              if (isDoc && ChannelReplacement.supported && !(channel.loadFlags & channel.LOAD_REPLACE)) {
-                abeReq.attach();
-              } else {
-                // ns.dump("Early ABE checks on " + abeReq.destination + ", " + channel.loadFlags + " - DOC " + isDoc);
-                this.handleABE(abeReq, isDoc);
-              }
-            }
-            
-          } catch(e) {
-            this.die(channel, e);
+          } catch(e) {}
+        }
+        
+        if (ncb instanceof CI.nsIXMLHttpRequest) {
+          if (ns.consoleDump) ns.dump("Skipping cross-site checks for chrome XMLHttpRequest " + channel.name);
+          return;
+        }
+        
+        var abeReq = null;
+        try {
+          
+          abeReq = new ABERequest(channel);
+          if (this.externalLoad && this.externalLoad === abeReq.destination) {
+            abeReq.external = true;
+            this.externalLoad = null;
           }
+          
+          if (isDoc) {
+            var xssChecked = false;
+            try {
+              Thread.asap(function() {
+                if (!xssChecked) this.die(channel, new Error("XSS checks couldn't complete: DOS attempt? " + abeReq));
+              }, this); // guardian
+              this.filterXSS(abeReq);
+            } finally {
+              xssChecked = true;
+            }
+          }
+          
+          if (!channel.status) {
+            if (isDoc && ChannelReplacement.supported && !(channel.loadFlags & channel.LOAD_REPLACE)) {
+              abeReq.attach();
+            } else {
+              // ns.dump("Early ABE checks on " + abeReq.destination + ", " + channel.loadFlags + " - DOC " + isDoc);
+              this.handleABE(abeReq, isDoc);
+            }
+          }
+          
+        } catch(e) {
+          this.die(channel, e);
+        }
       break;
       
       case "http-on-examine-merged-response":
@@ -86,7 +93,6 @@ RequestWatchdog.prototype = {
           if (!ns.checkInclusionType(channel))
             return;
         }
-      
         HTTPS.handleSecureCookies(channel);
       break;
     }
