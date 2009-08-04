@@ -269,7 +269,7 @@ ChannelReplacement.prototype = {
   _ccListener: null,
   oldChannel: null,
   channel: null,
-  
+  window: null,
   get _unsupportedError() {
     return new Error("Can't replace channels without nsITraceableChannel!");
   },
@@ -351,6 +351,10 @@ ChannelReplacement.prototype = {
     this.oldChannel = chan;
     this.channel = newChan;
     
+    if (chan.loadFlags & chan.LOAD_DOCUMENT_URI) {
+      this.window = IOUtil.findWindow(chan);
+    }
+    
     return this;
   },
   
@@ -382,6 +386,10 @@ ChannelReplacement.prototype = {
     // ----------------------------------
     
     newChan.originalURI = oldChan.originalURI;
+    
+    ces =  IOUtil.queryNotificationCallbacks(oldChan, CI.nsIHttpEventSink);
+    if (ces) ces.onRedirect(oldChan, newChan);
+    
   },
   
   replace: function(isRedir) {
@@ -390,6 +398,7 @@ ChannelReplacement.prototype = {
     
     // dirty trick to grab listenerContext
     var oldChan = this.oldChannel;
+    
     var ccl = new CtxCapturingListener(oldChan);
     
     oldChan.cancel(NS_BINDING_REDIRECTED); // this works because we've been called after loadGroup->addRequest(), therefore asyncOpen() always return NS_OK
@@ -410,30 +419,53 @@ ChannelReplacement.prototype = {
   
   open: function() {
     var oldChan = this.oldChannel;
+    var newChan = this.channel;
     delete this.oldChannel;
-    try {
-      this.channel.asyncOpen(this.listener, this.context);
-    } catch (e) {
-      // redirect failed: we must notify the original channel litener, so let's restore bindings
-      oldChan.notificationCallbacks = this.channel.notificationCallbacks;
-      this._ccListener.notify = true;
-      if (oldChan instanceof CI.nsIRequestObserver)
+    
+    var overlap;
+    
+    if (!(this.window && (overlap = ABERequest.getLoadingChannel(this.window)) !== oldChan)) {
+      try {
+        if (ABE.consoleDump) {
+          ABE.log("Opening delayed channel: " + oldChan.name + " - (current loading channel for this window " + (overlap && overlap.name) + ")");
+        }
+
+        newChan.asyncOpen(this.listener, this.context);
+        
+        // safe browsing hook
         try {
-        oldChan.onStartRequest(oldChan, null);
-        } catch(e) {}
+          CC["@mozilla.org/channelclassifier"].createInstance(CI.nsIChannelClassifier).start(newChan, true);
+        } catch (e) {
+          // may throw if host app doesn't implement url classification
+        }
+      } catch (e) {
+        // redirect failed: we must notify the original channel litener, so let's restore bindings
+        oldChan.notificationCallbacks = newChan.notificationCallbacks;
+        this._ccListener.notify = true;
+        if (oldChan instanceof CI.nsIRequestObserver)
+          try {
+          oldChan.onStartRequest(oldChan, null);
+          } catch(e) {}
+      }
+    } else {
+      if (ABE.consoleDump) {
+        ABE.log("Detected double load on the same window: " + oldChan.name + " - " + (overlap && overlap.name));
+      }
     }
+    
     if (oldChan instanceof CI.nsIRequestObserver)
       try {  
         oldChan.onStopRequest(oldChan, null, NS_BINDING_REDIRECTED);
       } catch(e) {}
     
-    if (this.channel.loadGroup)
+    if (newChan.loadGroup)
       try {
-        this.channel.loadGroup.removeRequest(oldChan, null, oldChan.status);
+        newChan.loadGroup.removeRequest(oldChan, null, oldChan.status);
       } catch(e) {}
 
     oldChan.notificationCallbacks = null;
     delete this._ccListener;
+    delete this.window;
   }
 }
 

@@ -267,7 +267,7 @@ const ABE = {
   
   _deferIfNeeded: function(req) {
     var host = req.destinationURI.host;
-    if (!ChannelReplacement.supported || DNS.isIP(host) || DNS.getCached(host) || req.channel.redirectionLimit == 0)
+    if (!ChannelReplacement.supported || DNS.isIP(host) || DNS.isCached(host) || req.channel.redirectionLimit == 0)
       return false;
     
     if (req.channel.status) return false;
@@ -598,11 +598,11 @@ ABERuleset.prototype = {
   expires: 0,
   
   _init: function(tree) {
-    var rule = null;
-    var predicate = null;
-    var accumulator = null;
-    var history  = [];
-    var rules = [];
+    var rule = null,
+        predicate = null,
+        accumulator = null,
+        history  = [],
+        rules = [];
     
     walk(tree);
     
@@ -833,15 +833,20 @@ ABERequest.newOrRecycle = function(channel) {
 ABERequest.getOrigin = function(channel) {
   return IOUtil.extractFromChannel(channel, "ABE.origin", true);
 },
+ABERequest.getLoadingChannel = function(window) {
+  return window && window.__loadingChannel__;
+},
+
 ABERequest.storeOrigin = function(channel, originURI) {
   IOUtil.attachToChannel(channel, "ABE.origin", originURI);
 },
 
-ABERequest.clear = function(channel) {
+ABERequest.clear = function(channel, window) {
   IOUtil.extractFromChannel(channel, "ABE.origin");
   var req = this.fromChannel(channel);
   if (req) req.detach();
 }
+
 ABERequest.count = 0;
 
 
@@ -861,6 +866,11 @@ ABERequest.prototype = Lang.memoize({
     this.destination = this.destinationURI.spec;
     this.early = channel instanceof ABEPolicyChannel;
     this.isDoc = !!(channel.loadFlags & channel.LOAD_DOCUMENT_URI);
+    
+    if (this.isDoc) {
+      var w = this.window;
+      if (w) w.__loadingChannel__ = channel;
+    }
     
     var ou = ABERequest.getOrigin(channel);
     if (ou) {
@@ -1254,7 +1264,7 @@ var OriginTracer = {
   traceBack: function(req, breadCrumbs) {
     var res = '';
     try {
-      ABE.log("Traceback origin for " +req.destination);
+      ABE.log("Traceback origin for " + req.destination);
       var window = req.window;
       if (window instanceof CI.nsIInterfaceRequestor) {
         var webNav = window.getInterface(CI.nsIWebNavigation);

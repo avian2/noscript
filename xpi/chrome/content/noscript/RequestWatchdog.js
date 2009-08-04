@@ -1032,7 +1032,7 @@ var InjectionChecker = {
   ),
   
   _maybeJSRx: new RegExp(
-    '[\\w$\\u0080-\\uFFFF\\]\\)]\\s*(?:\\/[\\/\\*][\\s\\S]*|\\s*)[\\(\\[\\.][\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
+    '[\\w$\\u0080-\\uFFFF\\]\\)]\\s*(?:\\/[\\/\\*][\\s\\S]*|\\s*)[\\(\\[\\.]\\D[\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
     fuzzify('eval|set(?:Timeout|Interval)|[fF]unction|Script|') + IC_WINDOW_OPENER_PATTERN +
     ')\\b[\\s\\S]*\\(|\\b(?:' +
     fuzzify('setter|location') +
@@ -1049,6 +1049,11 @@ var InjectionChecker = {
         expr.replace(/(?:^|[\/;&#])[\w\-]+\.[\w\-]+[\?;\&#]/g, '', expr) // remolve neutral dotted substrings
     ); 
   },
+  
+  checkNonTrivialJSSyntax: function(expr) {
+    return this.maybeJS(this.reduceQuotes(expr)) && this.checkJSSyntax(expr);
+  },
+  
   checkLastFunction: function() {
     var expr = this.syntax.lastFunction;
     expr = expr && this.syntax.lastFunction.toSource().match(/\{([\s\S]*)\}/);
@@ -1185,9 +1190,9 @@ var InjectionChecker = {
         if(quote) {
           script = this.syntax.unquote(quote + expr, quote);
           if(script && this.maybeJS(script) &&
-            (this.checkJSSyntax(script) ||
-              /'.+/.test(script) && this.checkJSSyntax("''" + script + "'") ||
-              /".+/.test(script) && this.checkJSSyntax('""' + script + '"')
+            (this.checkNonTrivialJSSyntax(script) ||
+              /'.+/.test(script) && this.checkNonTrivialJSSyntax("''" + script + "'") ||
+              /".+/.test(script) && this.checkNonTrivialJSSyntax('""' + script + '"')
             ) && this.checkLastFunction()
             ) {
             return true;
@@ -1203,7 +1208,7 @@ var InjectionChecker = {
            break; // unrepairable syntax error in the head move left cursor forward 
         }
         
-        if (this.maybeJS(this.reduceQuotes(expr))) {
+        if (this.maybeJS(this.reduceQuotes(script))) {
 
           if (this.checkJSSyntax(script) && this.checkLastFunction()) {
             this.log("JS Break Injection detected", t, iterations);
@@ -1354,7 +1359,7 @@ var InjectionChecker = {
   },
   
   attributesChecker: new RegExp(
-      "\\W(?:javascript|data):[\\s\\S]+[=\\(%,]|@" + 
+      "\\W(?:javascript:[\\s\\S]+(?:[=\\(]|%(?:[3a]8|[3b]d))|data:[\\w\\-]+/[\\w\\-]+[;,])|@" + 
       ("import\\W*(?:\\/\\*[\\s\\S]*)*(?:[\"']|url[\\s\\S]*\\()" + 
         "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
         .replace(/[a-rt-z\-]/g, "\\W*$&"), 

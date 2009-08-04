@@ -246,7 +246,7 @@ var ns = singleton = {
       break;
       case "untrusted":
         this.untrustedSites.fromPref(branch, name);
-        break;
+      break;
       case "default.javascript.enabled":
           if (dc.getCharPref(name) != "noAccess") {
             dc.unlockPref(name);
@@ -766,6 +766,28 @@ var ns = singleton = {
   },
   
  
+  onVersionChanged: function(prev) {
+    // upgrade hacks
+    
+    if (prev >= "1.9.3.4" && prev < "1.9.4") {
+      this.setPref("ABE.legacySupport", true);
+    } else if (prev >= "1.9.6" && prev <= "1.9.6.8") { // early 1.9.6 broke default whitelist
+      if (!this.isJSEnabled("about:credits") && !this.getPref("untrusted")) {
+        this.setJSEnabled(this.splitList(this.getPref("default")), true);
+      }
+    }
+    
+    // remove every file://host entry from the policy sites lists
+    var rx = /\bfile:\/\/\S+\s*/g;
+    if (rx.test(this.jsPolicySites.sitesString)) try {
+      this.flushCAPS(this.jsPolicySites.sitesString.replace(rx, ''));
+      this.persistUntrusted(this.untrustedSites.sitesString.replace(rx, ''));
+    } catch(e) {
+      ns.dump(e);
+    }
+    
+  },
+ 
   reportLeaks: function() {
     // leakage detection
     this.dump("DUMPING " + this.__parent__);
@@ -833,6 +855,9 @@ var ns = singleton = {
     return b;
   },
   persistUntrusted: function(snapshot) {
+    if (typeof(snaposhot) == "string") {
+      this.untrustedSites.sitesString = snapshot;
+    }
     this.untrustedSites.toPref(this.prefs, "untrusted");
   },
   
@@ -1098,7 +1123,7 @@ var ns = singleton = {
           this.reloadWhereNeeded(reloadPolicy == this.RELOAD_CURRENT);
         }
       } catch(e) {
-        this.dump("FAILED TO SAVE PERMISSIONS! " + e);
+        this.dump("FAILED TO SAVE PERMISSIONS! " + e + "," + e.stack);
       }
      }, 0);
   }
@@ -1811,14 +1836,14 @@ var ns = singleton = {
 
     var verbose = this.consoleDump & LOG_CONTENT_BLOCK;
     if(verbose) {
-      this.dump("Redirecting blocked legacy frame " + uri.spec);
+      this.dump("Redirecting blocked legacy frame " + uri.spec + ", sync=" + sync);
     }
     
     
     var url = this.createPluginDocumentURL(uri.spec, "iframe");
     
     if(sync) {
-      if(verbose) dump("Legacy frame SYNC, setting to " + url + "\n");
+      if (verbose) dump("Legacy frame SYNC, setting to " + url + "\n");
       frame.contentWindow.location = url;
     } else {
       frame.ownerDocument.defaultView.addEventListener("load", function(ev) {
@@ -2075,6 +2100,7 @@ var ns = singleton = {
       if (l && l.href && /^https?/i.test(l.href)) {
         if(l.offsetWidth || l.offsetHeight) return true;
         try {
+          position = l.style.position;
           l.style.position = "absolute";
           if(l.offsetWidth || l.offsetHeight) return true;
         } finally {
@@ -3390,10 +3416,7 @@ var ns = singleton = {
                 return;
               }
             }
-            
-            
-            
-            
+
             this._handleDocJS1(w, req);
             if (HTTPS.forceHttps(req, w)) {
               this._handleDocJS2(w, req);
@@ -3432,10 +3455,17 @@ var ns = singleton = {
         PolicyState.detach(req);
         ABERequest.clear(req); // release ABERequest, if any
       
-        if (status === NS_ERROR_CONNECTION_REFUSED || status === NS_ERROR_NOT_AVAILABLE) { // evict host from DNS cache to prevent DNS rebinding
+        if (status === NS_ERROR_CONNECTION_REFUSED || status === NS_ERROR_NOT_AVAILABLE ||
+            status === NS_ERROR_UNKNOWN_HOST) { // evict host from DNS cache to prevent DNS rebinding
           try {
             var host = req.URI.host;
-            if (host) DNS.evict(host);
+            if (host) {
+              if (status === NS_ERROR_UNKNOWN_HOST) {
+                DNS.invalidate(host);
+              } else {
+                DNS.evict(host);
+              }
+            }
           } catch(e) {}
         }
       }

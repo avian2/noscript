@@ -486,15 +486,13 @@ var HTTPS = {
       var httpsURI = uri.clone();
       httpsURI.scheme = "https";
       if (ctx && type != 6 && type != 7) {
-        ns.delayExec(function() {
-          if (ctx && type != 6 && type != 7) {  
-            for each (var attr in ["src", "data", "href"]) {
-              try {
-                if (attr in ctx) {
-                  ctx[attr] = httpsURI.spec;
-                }
-              } catch(e) { HTTPS.log("Error forcing embedded HTTPS policy: " + e.message); }
-            }
+        Thread.asap(function() {
+          for each (var attr in ["src", "data", "href"]) {
+            try {
+              if (attr in ctx) {
+                ctx[attr] = httpsURI.spec;
+              }
+            } catch(e) { HTTPS.log("Error forcing embedded HTTPS policy: " + e.message); }
           }
         });
       }

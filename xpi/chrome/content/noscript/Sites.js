@@ -209,12 +209,14 @@ PolicySites.prototype = {
   }
 ,
   fromPref: function(pref, name) {
-    try {
-      this.sitesString = pref.getCharPref(name || "sites")
-        .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
-    } catch(e) {
-      this.siteString = "";
-      return false;
+    if (!this.settingPref) {
+      try {
+        this.sitesString = pref.getCharPref(name || "sites")
+          .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
+      } catch(e) {
+        this.siteString = "";
+        return false;
+      }
     }
     return true;
   }
@@ -236,8 +238,11 @@ PolicySites.prototype = {
     
     if (change) {
       this.settingPref = true;
-      pref.setCharPref(name, s);
-      this.settingPref = false;
+      try {
+        pref.setCharPref(name, s);
+      } finally {
+        this.settingPref = false;
+      }
     }
   }
 ,

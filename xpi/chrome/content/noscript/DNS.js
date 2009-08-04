@@ -14,12 +14,12 @@ function DNSRecord(record) {
     this.valid = false;
     ttl = Thread.canSpin ? this.INVALID_TTL_ASYNC : this.INVALID_TTL_SYNC;
   }
-  this.expireTime = this.ts + this.TTL;
+  this.expireTime = this.ts + ttl;
 }
 
 DNSRecord.prototype = {
-  INVALID_TTL_ASYNC: 5000,
-  INVALID_TTL_SYNC: 10000,
+  INVALID_TTL_ASYNC: 3000,
+  INVALID_TTL_SYNC: 8000,
   TTL: 60000,
   valid: true,
   ts: 0,
@@ -43,8 +43,8 @@ DNSRecord.prototype = {
   }
 }
 
+
 var DNS = {
-  
   get _dns() {
     delete this._dns;
     return this._dns = CC["@mozilla.org/network/dns-service;1"]
@@ -127,15 +127,20 @@ var DNS = {
     var dnsRecord = cache.get(host);
     if (dnsRecord) {
       // cache invalidation, if needed
-      if (flags & 2) {
-        dnsRecord = null;
-        cache.evict(host);
-      } else if (dnsRecord.expired && !dnsRecord.refreshing) {
-        // refresh async
-        dnsRecord.refreshing = true;
-        DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
-            cache.put(host, dnsRecord = new DNSRecord(this.record));
-          }), Thread.currentQueue);
+      if (dnsRecord.expired && !dnsRecord.refreshing) {
+        if (dnsRecord.valid && !(flags & 1)) {
+          // refresh async
+          dnsRecord.refreshing = true;
+          DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
+              cache.put(host, dnsRecord = new DNSRecord(this.record));
+            }), Thread.currentQueue);
+        } else {
+          flags |= 1;
+        }
+        if (flags & 1) {  
+          dnsRecord = null;
+          cache.evict(host);
+        }
       }
     }
     if (dnsRecord) {
@@ -211,9 +216,24 @@ var DNS = {
     ABE.log("Removing DNS cache record for " + host);
     return this._cache.evict(host);
   },
+  
+  invalidate: function(host) {
+    var dnsRecord = this._cache.get(host);
+    if (!dnsRecord.valid) return false;
+    dnsRecord.valid = false;
+    dnsRecord.expireTime = 0;
+    return true;
+  },
+  
   getCached: function(host) {
     return this._cache.get(host);
   },
+  
+  isCached: function(host) {
+    var res =  this._cache.get(host);
+    return res && (res.valid || !res.expired);
+  },
+  
   isLocalURI: function(uri, all) {
     var host;
     try {

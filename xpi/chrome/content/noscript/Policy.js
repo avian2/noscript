@@ -140,7 +140,7 @@ const MainContentPolicy = {
                 || !this.POLICY_OBJSUB // Gecko < 1.9, early check for documents as well
             ) && scheme == "http"
           && HTTPS.forceHttpsPolicy(unwrappedLocation, aContext, aContentType))
-          if (this.POLICY_OBJSUB) // if Gecko >= 1.9 we reject this request because we're gonna spawn a SSL one for images and the like
+          if (false && this.POLICY_OBJSUB) // if Gecko >= 1.9 we reject this request because we're gonna spawn a SSL one for images and the like
             return this.reject("Non-HTTPS", arguments); 
         
         if (logIntercept && this.cpConsoleFilter.indexOf(aContentType) > -1) {
@@ -549,7 +549,7 @@ const MainContentPolicy = {
         }
         
         if (isLegacyFrame) { // inject an embed and defer to load
-          if (this.blockLegacyFrame(aContext, aContentLocation, aInternalCall || blockThisIFrame))
+          if (this.blockLegacyFrame(aContext, aContentLocation, true))
             return this.reject("Deferred Legacy Frame " + locationURL, arguments);
         } else {
           try {
