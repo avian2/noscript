@@ -274,9 +274,18 @@ const ABE = {
     
     if (IOUtil.runWhenPending(req.channel, function() {
       try {
+        
+        if ((req.channel instanceof CI.nsITransportEventSink) && req.isDoc && !req.subdoc ) try {
+          ABE.log("DNS notification for " + req.destination);
+          req.channel.onTransportStatus(null, 0x804b0003, 0, 0); // notify STATUS_RESOLVING
+        } catch(e) {}
+        
         var replacement = req.replace();
       
         ABE.log(host + " not cached in DNS, deferring ABE checks after DNS resolution for request " + req.serial);
+        
+        
+        
         DNS.resolve(host, 0, function(dnsRecord) {
           replacement.open();
         });
@@ -834,7 +843,7 @@ ABERequest.getOrigin = function(channel) {
   return IOUtil.extractFromChannel(channel, "ABE.origin", true);
 },
 ABERequest.getLoadingChannel = function(window) {
-  return window && window.__loadingChannel__;
+  return window && ("__loadingChannel__" in window) && window.__loadingChannel__;
 },
 
 ABERequest.storeOrigin = function(channel, originURI) {

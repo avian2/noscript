@@ -231,3 +231,5 @@ pref("noscript.asyncNetworking", true);
 pref("noscript.inclusionTypeChecking", true);
 pref("noscript.inclusionTypeChecking.exceptions", "");
 pref("noscript.inclusionTypeChecking.checkDynamic", false);
+
+pref("noscript.recentlyBlockedCount", 10);

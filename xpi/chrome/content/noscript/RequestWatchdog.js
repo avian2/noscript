@@ -874,7 +874,6 @@ const IC_EVENT_DOS_PATTERN =
       
 var InjectionChecker = {
   fuzzify: fuzzify,
-  entities: Entities,
   syntax: new SyntaxChecker(),
   _log: function(msg, t, i) {
     if (msg) msg = this._printable(msg);
@@ -925,13 +924,22 @@ var InjectionChecker = {
   },
   
   get breakStops() {
-    var def = "\\/\\?&#;"; // we don't split by newline, because it's relevant only if there's a trailing comment (see checkURL())
+    var def = "\\/\\?&#;\\s<>"; // we stop on URL, JS and HTML delimiters
     var bs = {
       nq: new RegExp("[" + def + "]")
     };
-    Array.forEach("'\"", function(c) { bs[c] = new RegExp("[" + def + c + "]"); });
+    Array.forEach("'\"", // special treatment for quotes
+      function(c) { bs[c] = new RegExp("[" + def + c + "]"); }
+    );
     delete this.breakStops;  
     return this.breakStops = bs;
+  },
+  
+  collapseChars: function(s) {
+    return s.replace(/\;+/g, ';').replace(/\/{2,}/g, '//')
+      .replace(/\s+/g, function(s) {
+      return /\n/g.test(s) ? '\n' : ' ';  
+    });
   },
   
   reduceBackSlashes: function(bs) {
@@ -1100,8 +1108,11 @@ var InjectionChecker = {
     // Direct script injection breaking JS string literals or comments
     
     // cleanup most urlencoded noise and reduce JSON/XML
-    s = this.reduceXML(this.reduceJSON(s.replace(/\%\d+[a-z\(]\w*/gi, '`')
-            .replace(/[\r\n]+/g, "\n").replace(/[\x01-\x09\x0b-\x20]+/g, ' ')));
+    s = this.reduceXML(this.reduceJSON(this.collapseChars(
+        s.replace(/\%\d+[a-z\(]\w*/gi, '`')
+          .replace(/[\r\n]+/g, "\n")
+          .replace(/[\x01-\x09\x0b-\x20]+/g, ' ')
+        )));
     
     if (!this.maybeJS(s)) return false;
     
@@ -1247,7 +1258,7 @@ var InjectionChecker = {
               }
             } else if (/left-hand/.test(errmsg)) break;
             
-            if (/invalid flag after regular expression|missing ; before statement|invalid label|illegal character/.test(errmsg)) {
+            if (/invalid .*\bflag\b|missing ; before statement|invalid label|illegal character/.test(errmsg)) {
               if (!(/illegal character/.test(errmsg) && /#\d*\s*$/.test(script))) // sharp vars exceptional behavior
                 break; // unrepairable syntax error, move left cursor forward 
             }
@@ -1371,8 +1382,8 @@ var InjectionChecker = {
   },
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
-   fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|img|svg|video|audio") + 
-    ")|(?:<[^>]+|'[^>']+|\"[^>\"]*)\\b" + IC_EVENT_PATTERN + "[\\s\\x08]*=[\\s\\S]*(?:\\(|eval)", 
+   fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|ima?g|svg|video|audio") + 
+    ")|(?:<[^>]+|'[^>']+|\"[^>\"]*)\\b" + IC_EVENT_PATTERN + "[\\s\\x08]*=[\\s\\S]*(?:\\(|&#[x\d]|eval)", 
     "i"),
   checkHTML: function(s) {
     this.log(s);

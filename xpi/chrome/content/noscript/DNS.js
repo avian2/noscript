@@ -115,11 +115,23 @@ var DNS = {
     }
   },
   
+  checkHostName: function(host) {
+    const invalidRx = /[^\w-\.]/;
+    if (invalidRx.test(host) && !this.isIP(host)) {
+      try {
+       host = CC["@mozilla.org/network/idn-service;1"].createInstance(CI.nsIIDNService).convertUTF8toACE(host);
+      } catch(e) {
+        return false;
+      }
+      return !invalidRx.test(host);
+    }
+    return true;
+  },
+  
   _resolving: {},
-  resolve: function(host, flags, callback) {
+  resolve: function(host, flags, callback) { 
     flags = flags || 0;
-    
-    
+
     var elapsed = 0, t;
     var cache = this._cache;
     var async = IOUtil.asyncNetworking && Thread.canSpin || !!callback;
@@ -145,63 +157,69 @@ var DNS = {
     }
     if (dnsRecord) {
       if (ABE.consoleDump) ABE.log("Using cached DNS record for " + host);
-    } else if (async) {
-      var resolving = this._resolving;
-
-      if (host in resolving) {
-        ABE.log("Already resolving " + host);
+    } else if (this.checkHostName(host)) {
+      
+      if (async) {
+        var resolving = this._resolving;
+  
+        if (host in resolving) {
+          ABE.log("Already resolving " + host);
+          
+          if (callback) {
+            resolving[host].push(callback);
+            return null;
+          }
+        } else resolving[host] = callback ? [callback] : [];
+        
+        var ctrl = {
+          running: true,
+          startTime: Date.now()
+        };
+        
+        var status = Components.results.NS_OK;
+        
+        
+        var resolve = function() {
+          DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
+            cache.put(host, dnsRecord = new DNSRecord(this.record));
+            ctrl.running = false;
+            var callbacks = resolving[host];
+            delete resolving[host];
+            if (ABE.consoleDump && t) {
+              elapsed = Date.now() - t;
+              ABE.log("Async DNS query on " + host + " done, " + elapsed + "ms, callbacks: " + (callbacks && callbacks.length));
+            }
+            
+            if (callbacks && callbacks.length)
+              for each(var cb in callbacks)
+                cb(dnsRecord);
+            
+          }), Thread.currentQueue);
+          if (ABE.consoleDump) ABE.log("Waiting for DNS query on " + host);
+          if (!callback) Thread.spin(ctrl);
+        }
         
         if (callback) {
-          resolving[host].push(callback);
+          t = Date.now();
+          resolve();
           return null;
         }
-      } else resolving[host] = callback ? [callback] : [];
-      
-      var ctrl = {
-        running: true,
-        startTime: Date.now()
-      };
-      
-      var status = Components.results.NS_OK;
-      
-      
-      var resolve = function() {
-        DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
-          cache.put(host, dnsRecord = new DNSRecord(this.record));
-          ctrl.running = false;
-          var callbacks = resolving[host];
-          delete resolving[host];
-          if (ABE.consoleDump && t) {
-            elapsed = Date.now() - t;
-            ABE.log("Async DNS query on " + host + " done, " + elapsed + "ms, callbacks: " + (callbacks && callbacks.length));
-          }
-          
-          if (callbacks && callbacks.length)
-            for each(var cb in callbacks)
-              cb(dnsRecord);
-          
-        }), Thread.currentQueue);
-        if (ABE.consoleDump) ABE.log("Waiting for DNS query on " + host);
-        if (!callback) Thread.spin(ctrl);
-      }
-      
-      if (callback) {
+        
+        Thread.runWithQueue(resolve);
+        
+        if (!Components.isSuccessCode(status)) throw status;
+        
+        elapsed = ctrl.elapsed || 0;
+      } else {
         t = Date.now();
-        resolve();
-        return null;
+        if (ABE.consoleDump) ABE.log("Performing DNS query on " + host);
+        cache.put(host, dnsRecord = new DNSRecord(this._dns.resolve(host, flags)));
+        elapsed = Date.now() - t;
       }
-      
-      Thread.runWithQueue(resolve);
-      
-      if (!Components.isSuccessCode(status)) throw status;
-      
-      elapsed = ctrl.elapsed || 0;
     } else {
-      t = Date.now();
-      if (ABE.consoleDump) ABE.log("Performing DNS query on " + host);
-      cache.put(host, dnsRecord = new DNSRecord(this._dns.resolve(host, flags)));
-      elapsed = Date.now() - t;
+      this._cache.put(host, dnsRecord = new DNSRecord(null)); // invalid host name
     }
+    
     if (ABE.consoleDump) ABE.log("DNS query on " + host + " done, " + elapsed + "ms");
     
     if (callback) {

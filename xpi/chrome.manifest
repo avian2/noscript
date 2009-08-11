@@ -18,6 +18,9 @@ content	noscript	jar:chrome/noscript.jar!/content/noscript/ xpcnativewrappers=ye
 skin	noscript	classic/1.0	jar:chrome/noscript.jar!/skin/classic/noscript/
 style	chrome://global/content/customizeToolbar.xul	chrome://noscript/skin/browser.css
 
+# Work around for breakages caused by the .NET Framework Assistant
+override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<lame/>
+
 locale	noscript	en-US	jar:chrome/noscript.jar!/content/noscript/en-US/
 locale	noscript	de-DE	jar:chrome/noscript.jar!/locale/de-DE/noscript/
 locale	noscript	de-AT	jar:chrome/noscript.jar!/locale/de-AT/noscript/

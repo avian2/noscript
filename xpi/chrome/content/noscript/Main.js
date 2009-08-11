@@ -427,7 +427,7 @@ var ns = singleton = {
         l = lines[j];
         if (/\S/.test(l)) {
           if(anchor && l[0] != '^') {
-            l = '^' + l + '$';
+            l = '^(?:' + l + ')$';
           }
           rxx.push(new RegExp(l, flags));
         } else {
@@ -3379,6 +3379,17 @@ var ns = singleton = {
     return redirCache[uri] || (redirCache[uri] = []);
   },
   
+  recentlyBlocked: [],
+  _recentlyBlockedMax: 40,
+  onBlocked: function(site) {
+    var l = this.recentlyBlocked;
+    var pos = l.indexOf(site);
+    if (pos > -1) l.splice(pos, 1);
+    l.push(site);
+    if (l.length > this._recentlyBlockedMax) {
+      this.recentlyBlocked = l.slice(- this._recentlyBlockedMax / 2);
+    }
+  },
   
   // nsIWebProgressListener implementation
   onLinkIconAvailable: function(x) {}, // tabbrowser.xml bug?

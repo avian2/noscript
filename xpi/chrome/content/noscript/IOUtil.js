@@ -418,15 +418,13 @@ ChannelReplacement.prototype = {
   },
   
   open: function() {
-    var oldChan = this.oldChannel;
-    var newChan = this.channel;
-    delete this.oldChannel;
-    
-    var overlap;
+    var oldChan = this.oldChannel, newChan = this.channel;
+
+    var overlap, fail = false;
     
     if (!(this.window && (overlap = ABERequest.getLoadingChannel(this.window)) !== oldChan)) {
       try {
-        if (ABE.consoleDump) {
+        if (ABE.consoleDump && this.window) {
           ABE.log("Opening delayed channel: " + oldChan.name + " - (current loading channel for this window " + (overlap && overlap.name) + ")");
         }
 
@@ -440,12 +438,7 @@ ChannelReplacement.prototype = {
         }
       } catch (e) {
         // redirect failed: we must notify the original channel litener, so let's restore bindings
-        oldChan.notificationCallbacks = newChan.notificationCallbacks;
-        this._ccListener.notify = true;
-        if (oldChan instanceof CI.nsIRequestObserver)
-          try {
-          oldChan.onStartRequest(oldChan, null);
-          } catch(e) {}
+        fail = true;
       }
     } else {
       if (ABE.consoleDump) {
@@ -453,19 +446,34 @@ ChannelReplacement.prototype = {
       }
     }
     
+    this.cancel(NS_BINDING_REDIRECTED, fail);
+  },
+  
+  cancel: function(status, fail) {
+    var oldChan = this.oldChannel, newChan = this.channel;
+    if (fail) {
+      oldChan.notificationCallbacks = newChan.notificationCallbacks;
+      this._ccListener.notify = true;
+      if (oldChan instanceof CI.nsIRequestObserver)
+        try {
+        oldChan.onStartRequest(oldChan, null);
+        } catch(e) {}
+    }
+    
     if (oldChan instanceof CI.nsIRequestObserver)
       try {  
-        oldChan.onStopRequest(oldChan, null, NS_BINDING_REDIRECTED);
+        oldChan.onStopRequest(oldChan, null, status);
       } catch(e) {}
     
     if (newChan.loadGroup)
       try {
-        newChan.loadGroup.removeRequest(oldChan, null, oldChan.status);
+        newChan.loadGroup.removeRequest(oldChan, null, status);
       } catch(e) {}
 
     oldChan.notificationCallbacks = null;
     delete this._ccListener;
     delete this.window;
+    delete this.oldChannel;
   }
 }
 

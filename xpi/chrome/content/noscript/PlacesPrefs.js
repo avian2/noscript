@@ -158,7 +158,7 @@ var PlacesPrefs = {
       if (this._lastId > -1) try {
         oldData = this.getData(this._lastId);
         if (oldData) id = this._lastId;
-      } catch(missingBookmark) {}
+      } catch (missingBookmark) {}
       
       if (id < 1) {
         var parentId = svc.bookmarksMenuFolder;
