@@ -152,6 +152,22 @@
 <!ENTITY noscriptPrev "Anterior">
 <!ENTITY noscriptNext "Siguiente">
 <!ENTITY noscriptFrameOptErr.title "Este contenido no puede mostrarse en una frame (marco)">
-<!ENTITY noscriptFrameOptErr.desc "Para proteger su seguridad, el suministrador de ese contenido no permite que se muestre en una frame">
+<!ENTITY noscriptFrameOptErr.desc "Para proteger su seguridad, el proveedor de ese contenido no permite que se muestre en una frame">
 <!ENTITY noscriptFrameOptErr.link "Pulse aquí para abrirlo en una nueva ventana">
 <!ENTITY noscriptBookmarkSync "Guardar una copia de la configuración de NoScript para facilitar la sincronización">
+<!ENTITY noscriptShowReleaseNotes "Mostrar las notas de versión cuando se actualice">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Reglas:">
+<!ENTITY ABE.enabled.label "Habilitar ABE (Guardián de límites de aplicación)">
+<!ENTITY ABE.siteEnabled.label "Permitir que los sitios apliquen sus propias reglas">
+<!ENTITY ABE.edit.label "Editar...">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Habilitar">
+<!ENTITY ABE.enable.accesskey "H">
+<!ENTITY ABE.disable.label "Deshabilitar">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Recargar">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "Desinstalar">
+<!ENTITY noscriptRecentBlocked "Últimos sitios bloqueados">

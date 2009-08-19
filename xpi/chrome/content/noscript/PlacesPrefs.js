@@ -49,6 +49,7 @@ var PlacesPrefs = {
   onEndUpdateBatch: function() {},
   onItemVisited: function() {},
   onItemMoved: function() {},
+  onBeforeItemRemoved: function() {},
   
   _lastId: -1,
   _lastFolderId: -1,

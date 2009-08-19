@@ -99,7 +99,7 @@
 <!ENTITY noscriptXssExceptions "Изузеци Anti-XSS заштите">
 <!ENTITY noscriptXssExceptions.description "Одредишта која задовољавају ове регуларне изразе НЕЋЕ бити заштићена од XSS">
 <!ENTITY noscriptMatchSample "Узорак шаблона за поклапање:">
-<!ENTITY noscriptReset "Ресетуј">
+<!ENTITY noscriptReset "Врати подразумевано">
 <!ENTITY noscriptReset.accesskey "Р">
 <!ENTITY noscriptResetDef "Ресетуј на подразумевано">
 <!ENTITY noscriptResetDef.accesskey "т">
@@ -148,10 +148,26 @@
 <!ENTITY noscriptTrustedPagesAdj "trusted">
 <!ENTITY noscriptUntrustedPagesAdj "untrusted">
 <!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptEmbeddings "Уграђени објекти">
 <!ENTITY noscriptPrev "Претходно">
 <!ENTITY noscriptNext "Даље">
 <!ENTITY noscriptFrameOptErr.title "Овај садржај не може да буде приказан у оквиру">
 <!ENTITY noscriptFrameOptErr.desc "Ради заштите ваше сигурности, објављивач ове странице не дозвољава приказивање у оквиру.">
 <!ENTITY noscriptFrameOptErr.link "Кликните овде да бисте отворили овај садржај у новом прозору">
 <!ENTITY noscriptBookmarkSync "Направите резервну копију подешавања БезСкрити у забелешку ради лаког усклађивања">
+<!ENTITY noscriptShowReleaseNotes "Након дограђивања прикажи белешку о издању">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "А">
+<!ENTITY ABE.rulesets.label "Правила:">
+<!ENTITY ABE.enabled.label "Укључи ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Дозволи страницама да објаве своја правила">
+<!ENTITY ABE.edit.label "Уреди...">
+<!ENTITY ABE.edit.accesskey "У">
+<!ENTITY ABE.enable.label "Укључи">
+<!ENTITY ABE.enable.accesskey "у">
+<!ENTITY ABE.disable.label "Исључи">
+<!ENTITY ABE.disable.accesskey "И">
+<!ENTITY ABE.refresh.label "Освежи">
+<!ENTITY ABE.refresh.accesskey "О">
+<!ENTITY noscriptUninstall "Деинсталирај">
+<!ENTITY noscriptRecentBlocked "Недавно блокиране странице">

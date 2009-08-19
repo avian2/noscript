@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>1.9.8.1</em:version>
+   <em:version>1.9.8.4</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -141,7 +141,6 @@
         <em:skin>skin/classic/noscript/</em:skin>
         <!-- LOCALECHROME START -->
         <em:locale>locale/ar/noscript/</em:locale>
-        <em:locale>locale/el/noscript/</em:locale>
         <em:locale>locale/be-BY/noscript/</em:locale>
         <em:locale>locale/bg-BG/noscript/</em:locale>
         <em:locale>locale/ca-AD/noscript/</em:locale>
@@ -179,7 +178,6 @@
         <em:locale>locale/ru-RU/noscript/</em:locale>
         <em:locale>locale/sk-SK/noscript/</em:locale> 
         <em:locale>locale/sl-SI/noscript/</em:locale>
-        <em:locale>locale/sr-YU/noscript/</em:locale>
         <em:locale>locale/sv-SE/noscript/</em:locale>
         <em:locale>locale/th-TH/noscript/</em:locale>
         <em:locale>locale/tr-TR/noscript/</em:locale>
@@ -191,6 +189,9 @@
         <em:locale>locale/sr-RS/noscript/</em:locale>
         <em:locale>locale/ms-MY/noscript/</em:locale>
         <em:locale>locale/kk-KZ/noscript/</em:locale>
+        <em:locale>locale/br-IN/noscript/</em:locale>
+        <em:locale>locale/te-IN/noscript/</em:locale>
+        <em:locale>locale/ur-PK/noscript/</em:locale>
         <!-- LOCALECHROME STOP -->
      </Description>
    </em:file>

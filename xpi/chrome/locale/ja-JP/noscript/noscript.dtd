@@ -84,8 +84,7 @@
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;要素を隠す">
 <!ENTITY noscriptNselForce "ブロックした&lt;SCRIPT&gt;に引き続く&lt;NOSCRIPT&gt;を表示する">
 <!ENTITY noscriptAutoAllowTopLevel "トップレベルサイトはデフォルトで一時的に許可する">
-<!ENTITY noscriptDescription "Firefoxをさらに安全にします: NoScriptはJavaScript, Java（およびその他のプラグイン）を、（あなたが使うオンラインバンキングサイトなど）あなたが選んだ信頼できるサイトでのみ実行可能にします。このホワイトリストによる予防的ブロック手法によって、機能性を減じることなく
-(既知のものでも未知のものでも!)セキュリティ脆弱性への攻撃を阻止します...専門家は、NoScriptによってFireFoxが本当により安全になると言うことに同意するでしょう:-)">
+<!ENTITY noscriptDescription "Firefoxをさらに安全にします: NoScriptはJavaScript, Java（およびその他のプラグイン）を、（あなたが使うオンラインバンキングサイトなど）あなたが選んだ信頼できるサイトでのみ実行可能にします。このホワイトリストによる予防的ブロック手法によって、機能性を減じることなく(既知のものでも未知のものでも!)セキュリティ脆弱性への攻撃を阻止します...専門家は、NoScriptによってFireFoxが本当により安全になると言うことに同意するでしょう:-)">
 <!ENTITY noscriptOptBlockCssScanners "CSSベースのスキャナをブロックする">
 <!ENTITY noscriptOptFilterXGet "クロスサイトの疑いのあるリクエストをサニタイズする">
 <!ENTITY noscriptOptFilterXPost "クロスサイトのPOSTリクエストを、同じ情報を持つGETリクエストに変換する">
@@ -156,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "セキュリティを保護するために、このコンテンツの発行者はコンテンツをフレーム内に表示することを禁止しています。">
 <!ENTITY noscriptFrameOptErr.link "このコンテンツを新しいウィンドウで開くには、ここをクリックします">
 <!ENTITY noscriptBookmarkSync "簡単に同期できるように、NoScriptの設定をブックマークにバックアップします">
+<!ENTITY noscriptShowReleaseNotes "アップデート時にリリースノートを表示する">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "ルールセット:">
+<!ENTITY ABE.enabled.label "ABE(Application Boundaries Enforcer)を有効にする">
+<!ENTITY ABE.siteEnabled.label "サイトが自分自身のルールセットをプッシュするのを許可する">
+<!ENTITY ABE.edit.label "編集...">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "有効">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "無効">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "更新">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "アンインストール">
+<!ENTITY noscriptRecentBlocked "最近ブロックしたサイト">

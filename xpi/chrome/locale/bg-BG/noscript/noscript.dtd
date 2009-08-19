@@ -101,7 +101,7 @@
 <!ENTITY noscriptMatchSample "Пример за съвпадане:">
 <!ENTITY noscriptReset "Нулиране">
 <!ENTITY noscriptReset.accesskey "Н">
-<!ENTITY noscriptResetDef "Нулиране до подразбиращите се">
+<!ENTITY noscriptResetDef "Възстановяване на стандартните">
 <!ENTITY noscriptResetDef.accesskey "у">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
@@ -130,7 +130,7 @@
 <!ENTITY noscriptHttps.cookies "Бисквитки">
 <!ENTITY noscriptHttps.description "Забраняване на активно съдържание, освен ако не идва от защитена (HTTPS) връзка:">
 <!ENTITY noscriptHttps.never "Никога">
-<!ENTITY noscriptHttps.proxy "При използване на прокски (препоръчително с Tor)">
+<!ENTITY noscriptHttps.proxy "При използване на прокси (препоръчително с Tor)">
 <!ENTITY noscriptHttps.always "Винаги">
 <!ENTITY noscriptHttpsForced "Принуждаване на следните сайтове да използват защитена (HTTPS) връзка:">
 <!ENTITY noscriptHttpsForcedExceptions "Никога да не се използва защитена връзка за следните сайтове:">
@@ -145,8 +145,8 @@
 <!ENTITY noscriptClearClickReport.accesskey "Д">
 <!ENTITY noscriptClearClickReportId "Доклад №:">
 <!ENTITY noscriptOpacizeOpt "Избледняване на вградени обекти на страници...">
-<!ENTITY noscriptTrustedPagesAdj "доверени">
-<!ENTITY noscriptUntrustedPagesAdj "недоверени">
+<!ENTITY noscriptTrustedPagesAdj "надеждни">
+<!ENTITY noscriptUntrustedPagesAdj "ненадеждни">
 <!ENTITY noscriptKeepLocked "Остави този елемент заключен (препоръчително)">
 <!ENTITY noscriptEmbeddings "Вградени обекти">
 <!ENTITY noscriptPrev "Предишен">
@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "От съображения за сигурност, издателят на това съдържание не разрешава то да бъде показано в рамка">
 <!ENTITY noscriptFrameOptErr.link "Натиснете тук, за да отворите съдържанието в нов прозорец">
 <!ENTITY noscriptBookmarkSync "Записване на настройките за NoScript като отметка, за по-лесно синхронизиране">
+<!ENTITY noscriptShowReleaseNotes "Показване на промените в новата версия">
+<!ENTITY ABE "АВЕ">
+<!ENTITY ABE.accesskey "А">
+<!ENTITY ABE.rulesets.label "Правила:">
+<!ENTITY ABE.enabled.label "Разрешаване на АВЕ (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Разрешаване на сайтовете да прилагат собствени правила">
+<!ENTITY ABE.edit.label "Редактиране">
+<!ENTITY ABE.edit.accesskey "Р">
+<!ENTITY ABE.enable.label "Разрешаване">
+<!ENTITY ABE.enable.accesskey "р">
+<!ENTITY ABE.disable.label "Изключване">
+<!ENTITY ABE.disable.accesskey "И">
+<!ENTITY ABE.refresh.label "Обновяване">
+<!ENTITY ABE.refresh.accesskey "О">
+<!ENTITY noscriptUninstall "Деинсталиране">
+<!ENTITY noscriptRecentBlocked "Наскоро блокирани сайтове">

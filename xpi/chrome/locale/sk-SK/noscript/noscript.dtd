@@ -3,7 +3,7 @@
 <!ENTITY noscriptOptionsLong "NoScript – Možnosti">
 <!ENTITY noscriptAbout "O rozšírení NoScript">
 <!ENTITY noscriptPermissionsText "Môžete určiť, ktoré webové stránky majú povolené spúšťať JavaScript. Zadajte adresu alebo doménu (napríklad &quot;http://www.site.com&quot; alebo &quot;site.com&quot;) stránky, ktorú chcete povoliť, a potom kliknite na tlačidlo Povoliť.">
-<!ENTITY noscriptWebAddress "Adresa webstránky:">
+<!ENTITY noscriptWebAddress "Adresa webovej stránky:">
 <!ENTITY noscriptAllow "Povoliť">
 <!ENTITY noscriptAllow.accesskey "P">
 <!ENTITY noscriptForbid "Zakázať">
@@ -155,3 +155,18 @@
 <!ENTITY noscriptFrameOptErr.desc "Na vašu ochranu autor tohto obsahu nepovolil jeho zobrazenie v rámci">
 <!ENTITY noscriptFrameOptErr.link "Kliknutím sem otvoríte tento obsah v novom okne">
 <!ENTITY noscriptBookmarkSync "Zálohujte si konfiguráciu rozšírenia NoScript ako záložku pre jednoduchú synchronizáciu">
+<!ENTITY noscriptShowReleaseNotes "Pri aktualizácii zobraziť poznámky k vydaniu">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Sady pravidiel:">
+<!ENTITY ABE.enabled.label "Povoliť ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Povoliť stránkam pridávať ich vlastné sady pravidiel">
+<!ENTITY ABE.edit.label "Upraviť...">
+<!ENTITY ABE.edit.accesskey "U">
+<!ENTITY ABE.enable.label "Povoliť">
+<!ENTITY ABE.enable.accesskey "P">
+<!ENTITY ABE.disable.label "Zakázať">
+<!ENTITY ABE.disable.accesskey "Z">
+<!ENTITY ABE.refresh.label "Obnoviť">
+<!ENTITY ABE.refresh.accesskey "O">
+<!ENTITY noscriptUninstall "Odinštalovať">

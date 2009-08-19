@@ -206,7 +206,7 @@ const ABE = {
     if (this.localRulesets.length == 0 && !this.siteEnabled)
       return null;
     
-    if (req.canDoDNS && req.deferredDNS && this._deferIfNeeded(req))
+    if (this.deferIfNeeded(req))
       return false;
     
     var t;
@@ -265,12 +265,15 @@ const ABE = {
     return false;
   },
   
-  _deferIfNeeded: function(req) {
+  deferIfNeeded: function(req) {
     var host = req.destinationURI.host;
-    if (!ChannelReplacement.supported || DNS.isIP(host) || DNS.isCached(host) || req.channel.redirectionLimit == 0)
+    if (!(req.canDoDNS && req.deferredDNS) ||
+        !ChannelReplacement.supported ||
+        DNS.isIP(host) || DNS.isCached(host) ||
+        req.channel.redirectionLimit == 0 || req.channel.status != 0)
       return false;
-    
-    if (req.channel.status) return false;
+        
+    IOUtil.attachToChannel(req.channel, "ABE.deferred", DUMMYOBJ);
     
     if (IOUtil.runWhenPending(req.channel, function() {
       try {
@@ -298,6 +301,10 @@ const ABE = {
     }
     
     return true;
+  },
+  
+  isDeferred: function(chan) {
+    return !!IOUtil.extractFromChannel(chan, "ABE.deferred", true);
   },
   
   hasSiteRulesFor: function(host) {
@@ -355,7 +362,7 @@ const ABE = {
       xhr.open("GET", uri.spec, Thread.canSpin); // async if we can spin our own event loop
       
       var channel = xhr.channel; // need to cast
-      IOUtil.attachToChannel(channel, "ABE.preflight", {});
+      IOUtil.attachToChannel(channel, "ABE.preflight", DUMMYOBJ);
       
       if (channel instanceof CI.nsIHttpChannel && !this.allowRulesetRedir)
         channel.redirectionLimit = 0;
@@ -442,7 +449,7 @@ const ABE = {
     return IOUtil.extractFromChannel(channel, ABE.SANDBOX_KEY, true);
   },
   setSandboxed: function(channel) {
-    IOUtil.attachToChannel(channel, ABE.SANDBOX_KEY, {});
+    IOUtil.attachToChannel(channel, ABE.SANDBOX_KEY, DUMMYOBJ);
   },
   sandbox: function(docShell) {
     docShell.allowJavascript = docShell.allowPlugins =
@@ -489,7 +496,7 @@ const ABE = {
       throw new Error(msg);
     }
     
-    IOUtil.attachToChannel(oldChannel, "ABE.preflight", {});
+    IOUtil.attachToChannel(oldChannel, "ABE.preflight", DUMMYOBJ);
   },
   
   

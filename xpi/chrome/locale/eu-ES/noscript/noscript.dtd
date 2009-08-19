@@ -155,3 +155,18 @@
 <!ENTITY noscriptFrameOptErr.desc "Zure segurtasuna babesteko edukiaren argitaratzaileak ez du onartzen marko batean bistaratzea.">
 <!ENTITY noscriptFrameOptErr.link "Hemen klik egin eduki hau leiho berri batean irekitzeko.">
 <!ENTITY noscriptBookmarkSync "NoScript konfigurazioaren babes-kopia laster-marka batean egin errazago sinkronizatzeko.">
+<!ENTITY noscriptShowReleaseNotes "Bistarazi bertsio oharrak eguneraketetan">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Arau-jokoak:">
+<!ENTITY ABE.enabled.label "Gaitu ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Onartu guneek beren arau-jokoak bidaltzea">
+<!ENTITY ABE.edit.label "Editatu...">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Gaitu">
+<!ENTITY ABE.enable.accesskey "G">
+<!ENTITY ABE.disable.label "Desgaitu">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Berritu">
+<!ENTITY ABE.refresh.accesskey "B">
+<!ENTITY noscriptUninstall "Desinstalatu">

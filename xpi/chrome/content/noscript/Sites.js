@@ -251,7 +251,7 @@ PolicySites.prototype = {
     if (!site) return "";
     const sm = this.sitesMap;
     var match;
-    var dots; // track "dots" for (temporary) fix to 2nd level domain policy lookup flaw 
+    var dots; // track "dots" for fix to 2nd level domain policy lookup flaw 
     var pos = site.indexOf(':') + 1;
     if (pos > 0 && (pos == site.length || site[pos] == '/')) {
       if (sm[match = site.substring(0, pos)]) return match; // scheme match

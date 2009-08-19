@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "Zaradi vaše varnosti, založnik ne dovoljuje objavo vsebine v okvirju">
 <!ENTITY noscriptFrameOptErr.link "Kliknite sem da se vsebina odpre v novem oknu">
 <!ENTITY noscriptBookmarkSync "Naredite varnostno kopijo NoScript med zaznamke za lažjo sinhronizacijo">
+<!ENTITY noscriptShowReleaseNotes "Prikaži opombe k izdaji ob posodobitvah">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Pravila:">
+<!ENTITY ABE.enabled.label "Omogoči ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Dovoli stranem vsiljevanje lastnih pravil">
+<!ENTITY ABE.edit.label "Uredi…">
+<!ENTITY ABE.edit.accesskey "U">
+<!ENTITY ABE.enable.label "Omogoči">
+<!ENTITY ABE.enable.accesskey "O">
+<!ENTITY ABE.disable.label "Onemogoči">
+<!ENTITY ABE.disable.accesskey "n">
+<!ENTITY ABE.refresh.label "Osveži">
+<!ENTITY ABE.refresh.accesskey "v">
+<!ENTITY noscriptUninstall "Odstrani">
+<!ENTITY noscriptRecentBlocked "Nedavno blokirane strani">

@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "Para aumentar sua segurança, o publicador desse conteúdo não permite que ele seja mostrado num frame.">
 <!ENTITY noscriptFrameOptErr.link "Clique aqui para abrir esse conteúdo em uma nova janela">
 <!ENTITY noscriptBookmarkSync "Fazer backup da configuração do NoScript em um favorito para fácil sincronização">
+<!ENTITY noscriptShowReleaseNotes "Mostra as notas de lançamento das atualizações">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Ajustes de regras">
+<!ENTITY ABE.enabled.label "Ativar ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Permitir que sites usem suas próprias regras">
+<!ENTITY ABE.edit.label "Editar...">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Ativar">
+<!ENTITY ABE.enable.accesskey "A">
+<!ENTITY ABE.disable.label "Desativar">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Atualizar">
+<!ENTITY ABE.refresh.accesskey "t">
+<!ENTITY noscriptUninstall "Desinstalar">
+<!ENTITY noscriptRecentBlocked "Sites bloqueados recentemente">

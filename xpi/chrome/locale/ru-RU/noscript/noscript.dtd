@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "Для защиты вашей безопасности, владелец этого содержимого не разрешил отображение во фрейме">
 <!ENTITY noscriptFrameOptErr.link "Щёлкните для открытия содержимого в новом окне">
 <!ENTITY noscriptBookmarkSync "Создать резервную копию настроек в закладках для лёгкой синхронизации">
+<!ENTITY noscriptShowReleaseNotes "Показывать примечания к релизу при обновлениях">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Наборы правил:">
+<!ENTITY ABE.enabled.label "Использовать ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Разрешить сайтам устанавливать свои наборы правил">
+<!ENTITY ABE.edit.label "Изменить...">
+<!ENTITY ABE.edit.accesskey "з">
+<!ENTITY ABE.enable.label "Использовать">
+<!ENTITY ABE.enable.accesskey "с">
+<!ENTITY ABE.disable.label "Отключить">
+<!ENTITY ABE.disable.accesskey "т">
+<!ENTITY ABE.refresh.label "Обновить">
+<!ENTITY ABE.refresh.accesskey "б">
+<!ENTITY noscriptUninstall "Удалить">
+<!ENTITY noscriptRecentBlocked "Недавно заблокированные сайты">

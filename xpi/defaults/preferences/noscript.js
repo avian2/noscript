@@ -97,9 +97,6 @@ pref("noscript.injectionCheck", 2);
 pref("noscript.injectionCheckPost", true);
 pref("noscript.injectionCheckHTML", true);
 
-pref("noscript.blockXIntranet", true);
-pref("noscript.intranetMaskRx", "^(127\\.[\\d.]+)");
-
 pref("noscript.globalwarning", true);
 
 pref("noscript.jsredirectIgnore", false);

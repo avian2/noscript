@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "A tartalom kiadója nem engedélyezte annak keretben történő megjelenítését.">
 <!ENTITY noscriptFrameOptErr.link "Kattintson ide a tartalom megjelenítéséhez új ablakban">
 <!ENTITY noscriptBookmarkSync "A NoScript konfigurációjának biztonsági mentése könyvjelzőbe (a szinkronizáció egyszerűbbé tétele)">
+<!ENTITY noscriptShowReleaseNotes "Kiadási megjegyzések megjelenítése frissítéskor">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Szabálycsomagok:">
+<!ENTITY ABE.enabled.label "ABE engedélyezése (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "A weboldalak hozzáadhatják saját szabálycsomagjaikat">
+<!ENTITY ABE.edit.label "Szerkesztés...">
+<!ENTITY ABE.edit.accesskey "S">
+<!ENTITY ABE.enable.label "Engedélyezés">
+<!ENTITY ABE.enable.accesskey "E">
+<!ENTITY ABE.disable.label "Letiltás">
+<!ENTITY ABE.disable.accesskey "L">
+<!ENTITY ABE.refresh.label "Frissítés">
+<!ENTITY ABE.refresh.accesskey "F">
+<!ENTITY noscriptUninstall "Eltávolítás">
+<!ENTITY noscriptRecentBlocked "Legutoljára blokkolt oldalak">

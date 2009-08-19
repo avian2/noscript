@@ -100,7 +100,7 @@
 <!ENTITY noscriptXssExceptions.description "符合這些規則表答式的目標將不會被保護不受 XSS (跨站腳本攻擊)">
 <!ENTITY noscriptMatchSample "樣本符合範例:">
 <!ENTITY noscriptReset "恢復">
-<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptReset.accesskey "s">
 <!ENTITY noscriptResetDef "恢復預設">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
@@ -111,18 +111,18 @@
 <!ENTITY noscriptJarExceptions "封鎖 JAR 文件的例外情況">
 <!ENTITY noscriptJarExceptions.description "符合這些規則表答式的 JAR 文件將不會被封鎖.">
 <!ENTITY noscriptRevokeTemp "取消暫時許可">
-<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptRevokeTemp.accesskey "R">
 <!ENTITY noscriptNoUntrustedPlaceholder "無物件進入位置標誌符從標記信任的網站">
 <!ENTITY noscriptCollapseBlockedObjects "撤銷已封鎖的物件">
 <!ENTITY noscriptExceptions "例外…">
 <!ENTITY noscriptBlockedObjects "已封鎖物件">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "封鎖每個來自不信任網站的物件">
 <!ENTITY noscriptTempAllowPage "暫時允許此頁面的所有物件">
-<!ENTITY noscriptTempAllowPage.accesskey "p">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
 <!ENTITY noscriptAllowPage "全面允許本頁物件">
 <!ENTITY noscriptAllowPage.accesskey "A">
 <!ENTITY noscriptTempToPerm "為本頁建立永久許可">
-<!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptTempToPerm.accesskey "M">
 <!ENTITY noscriptHttps "HTTPS">
 <!ENTITY noscriptHttpsFaq "HTTPS問與答...">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "為保衛您的安全性，此提供者的內容不允許於框架頁中顯示。">
 <!ENTITY noscriptFrameOptErr.link "按此於一個新視窗中開啟此內容。">
 <!ENTITY noscriptBookmarkSync "輕鬆把 NoScript 組態備份到書籤中來達到同步">
+<!ENTITY noscriptShowReleaseNotes "顯示更新發行公告">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "規則控制:">
+<!ENTITY ABE.enabled.label "啟用ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "允許網站使用自己的規則">
+<!ENTITY ABE.edit.label "編輯">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "啟用">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "停用">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "重新整理">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "移除">
+<!ENTITY noscriptRecentBlocked "最近封鎖的網站">

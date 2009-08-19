@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "Για να προστατεύσει την ασφάλεια σας, ο εκδότης του περιεχομένου δεν επιτρέπει την προβολή σε πλαίσιο">
 <!ENTITY noscriptFrameOptErr.link "Κάντε κλικ εδώ για να ανοίξετε το περιεχόμενο σε νέο παράθυρο">
 <!ENTITY noscriptBookmarkSync "Αντίγραφο ρυθμίσεων του NoScript σε σελιδοδείκτη για εύκολο συγχρονισμό">
+<!ENTITY noscriptShowReleaseNotes "Προβολή των σημειώσεων έκδοσης μετά από ενημέρωση">
+<!ENTITY ABE "ΑBE">
+<!ENTITY ABE.accesskey "Α">
+<!ENTITY ABE.rulesets.label "Σύνολα κανόνων:">
+<!ENTITY ABE.enabled.label "Ενεργοποίηση ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Να επιτρέπεται σε ιστότοπους να επιβάλουν τα δικά τους σύνολα κανόνων">
+<!ENTITY ABE.edit.label "Επεξεργασία...">
+<!ENTITY ABE.edit.accesskey "ε">
+<!ENTITY ABE.enable.label "Ενεργοποίηση">
+<!ENTITY ABE.enable.accesskey "ν">
+<!ENTITY ABE.disable.label "Απενεργοποίηση">
+<!ENTITY ABE.disable.accesskey "ο">
+<!ENTITY ABE.refresh.label "Ανανέωση">
+<!ENTITY ABE.refresh.accesskey "α">
+<!ENTITY noscriptUninstall "Απεγκατάσταση">
+<!ENTITY noscriptRecentBlocked "Πρόσφατα απαγορευμένοι ιστότοποι">

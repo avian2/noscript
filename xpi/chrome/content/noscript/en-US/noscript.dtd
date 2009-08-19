@@ -170,3 +170,4 @@
 <!ENTITY ABE.refresh.label "Refresh">
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "Uninstall">
+<!ENTITY noscriptRecentBlocked "Recently blocked sites">

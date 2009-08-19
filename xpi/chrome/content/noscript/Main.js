@@ -34,6 +34,8 @@ const WHERE_UNTRUSTED = 1;
 const WHERE_TRUSTED = 2;
 const ANYWHERE = 3;
 
+const DUMMYOBJ = {};
+
 const ABID = "@mozilla.org/adblockplus;1";
 
 
@@ -280,7 +282,6 @@ var ns = singleton = {
       case "emulateFrameBreak":
       case "filterXPost":
       case "filterXGet":
-      case "blockXIntranet":
       case "safeToplevel":
       case "autoAllow":
       case "contentBlocker":
@@ -1324,7 +1325,7 @@ var ns = singleton = {
   eraseTemp: function() {
     // remove temporary PUNCTUALLY: 
     // keeps ancestors because the may be added as permanent after the temporary allow;
-    // keeps descendants because they may already have been permanent before the temporary, and then shadowed
+    // keeps descendants because they may already have been made permanent before the temporary, and then shadowed
     this.jsPolicySites.remove(this.tempSites.sitesList, true, true);
     // if allowed in blacklist mode, put back temporarily allowed in blacklist
     if (this.untrustedSites.add(this.gTempSites.sitesList)) {
@@ -3400,6 +3401,13 @@ var ns = singleton = {
       if (req instanceof CI.nsIChannel) { 
         // handle docshell JS switching and other early duties
         
+        if (PolicyState.isChecking(req.URI)) {
+          // ContentPolicy couldn't complete! DOS attack?
+          PolicyState.removeCheck(req.URI);
+          DOSChecker.abort(req);
+          return;
+        }
+        
         var abeReq;
         
         if (req instanceof CI.nsIHttpChannel) {
@@ -3496,7 +3504,7 @@ var ns = singleton = {
     }
   },
   onStatusChange: function(wp, req, status, msg) {
-    if (status == 0x804b0003 && req instanceof CI.nsIChannel) { // DNS resolving, check if we need to clear the cache
+    if (status == 0x804b0003 && (req instanceof CI.nsIChannel) && !ABE.isDeferred(req)) { // DNS resolving, check if we need to clear the cache
       try {
         var host = req.URI.host;
         if (host) {
@@ -3509,7 +3517,7 @@ var ns = singleton = {
             if (ABE.enabled) {
               ABE.log("Repeating ABE checks after DNS refresh for " + req.URI.spec);
               var abeReq = ABERequest.newOrRecycle(req);
-              abeReq.deferredDNS = false;
+              // abeReq.deferredDNS = false;
               this.requestWatchdog.handleABE(abeReq, loadFlags & req.LOAD_DOCUMENT_URI);
             }
           }

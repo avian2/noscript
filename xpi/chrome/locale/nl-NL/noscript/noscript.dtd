@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "Om uw veiligheid te beschermen, staat de uitgever van deze inhoud niet toe deze in een frame weer te geven.">
 <!ENTITY noscriptFrameOptErr.link "Klik hier om deze inhoud in een nieuw venster weer te geven">
 <!ENTITY noscriptBookmarkSync "NoScript configuratie in een bladwijzer opslaan voor eenvoudige synchronisatie">
+<!ENTITY noscriptShowReleaseNotes "Release opmerkingen weergeven na bijwerken">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Regels:">
+<!ENTITY ABE.enabled.label "ABE (Application Boundaries Enforcer) inschakelen">
+<!ENTITY ABE.siteEnabled.label "Websites toestaan eigen regels door te geven">
+<!ENTITY ABE.edit.label "Wijzigen...">
+<!ENTITY ABE.edit.accesskey "W">
+<!ENTITY ABE.enable.label "Inschakelen">
+<!ENTITY ABE.enable.accesskey "I">
+<!ENTITY ABE.disable.label "Uitschakelen">
+<!ENTITY ABE.disable.accesskey "U">
+<!ENTITY ABE.refresh.label "Vernieuwen">
+<!ENTITY ABE.refresh.accesskey "V">
+<!ENTITY noscriptUninstall "Deïnstalleren">
+<!ENTITY noscriptRecentBlocked "Recentelijk geblokkeerde sites">

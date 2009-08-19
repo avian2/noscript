@@ -10,6 +10,18 @@ const PolicyState = {
   URI: null,
   hints: null,
   
+  checking: [],
+  addCheck: function(url) {
+    this.checking.push(url);
+  },
+  removeCheck: function(url) {
+    var idx = this.checking.indexOf(url);
+    if (idx > -1) this.checking.splice(idx, 1);
+  },
+  isChecking: function(url) {
+    return this.checking.indexOf(url) > -1;
+  },
+  
   attach: function(channel) {
     if (this.URI === channel.URI) {
       if (this._debug) this.push(this.URI);
@@ -89,20 +101,21 @@ const NOPContentPolicy = {
 
 const MainContentPolicy = {
   shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
-      
-    var originURL, locationURL, originSite, locationSite, scheme,
-        forbid, isScript, isJava, isFlash, isSilverlight,
-        isLegacyFrame, blockThisIFrame, contentDocument,
-        logIntercept, logBlock,
-        unwrappedLocation;
-    
-    logIntercept = this.consoleDump;
-    if(logIntercept) {
-      logBlock = logIntercept & LOG_CONTENT_BLOCK;
-      logIntercept = logIntercept & LOG_CONTENT_INTERCEPT;
-    } else logBlock = false;
-    
+    PolicyState.addCheck(aContentLocation);
     try {
+
+      var originURL, locationURL, originSite, locationSite, scheme,
+          forbid, isScript, isJava, isFlash, isSilverlight,
+          isLegacyFrame, blockThisIFrame, contentDocument,
+          logIntercept, logBlock,
+          unwrappedLocation;
+      
+      logIntercept = this.consoleDump;
+      if(logIntercept) {
+        logBlock = logIntercept & LOG_CONTENT_BLOCK;
+        logIntercept = logIntercept & LOG_CONTENT_INTERCEPT;
+      } else logBlock = false;
+    
       if (aContentType == 1 && !this.POLICY_OBJSUB) { // compatibility for type OTHER
         if (aContext instanceof CI.nsIDOMHTMLDocument) {
           aContentType = arguments.callee.caller ? 11 : 9;
@@ -583,8 +596,14 @@ const MainContentPolicy = {
     } catch(e) {
       return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
     } finally {
+      
+      PolicyState.removeCheck(aContentLocation);
+      
       if (isHTTP) PolicyState.save(unwrappedLocation, arguments);
       else PolicyState.reset();
+      
+      
+      
     }
     return CP_OK;
   },

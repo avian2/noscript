@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "Güvenliğinizi korumak için, bu içeriğin sağlayıcısı bir çerçeve içerisinde gösterilmesine izin vermiyor">
 <!ENTITY noscriptFrameOptErr.link "İçeriği yeni bir pencere içerisinde açmak için buraya tıklayın">
 <!ENTITY noscriptBookmarkSync "NoScript ayarlarımı kolay senkronizasyon için yer imlerine yedekle">
+<!ENTITY noscriptShowReleaseNotes "Güncelleme olduğunda sürüm notlarını görüntüle">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Kurallar:">
+<!ENTITY ABE.enabled.label "ABE'yi Aktive et">
+<!ENTITY ABE.siteEnabled.label "Sitelerin kendi kuralkümelerini kullanmasına izin ver">
+<!ENTITY ABE.edit.label "Düzenle...">
+<!ENTITY ABE.edit.accesskey "D">
+<!ENTITY ABE.enable.label "T">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "D">
+<!ENTITY ABE.disable.accesskey "E">
+<!ENTITY ABE.refresh.label "Yenile">
+<!ENTITY ABE.refresh.accesskey "Y">
+<!ENTITY noscriptUninstall "Kaldır">
+<!ENTITY noscriptRecentBlocked "Yakın zamanda engellenen siteler">

@@ -69,7 +69,7 @@
 <!ENTITY noscriptPermissions "Zezwolenia">
 <!ENTITY noscriptRefresh "Odświeżanie">
 <!ENTITY noscriptNotifications "Powiadomienia">
-<!ENTITY noscriptToolbarToggle "Naciśnięcie l.p.m. przycisku „NoScript” zmienia zezwolenia dla aktywnej witryny">
+<!ENTITY noscriptToolbarToggle "Naciśnięcie lp. myszy przycisku „NoScript” zmienia zezwolenia dla aktywnej witryny">
 <!ENTITY noscriptTrusted "Zaufane">
 <!ENTITY noscriptUntrusted "Niezaufane">
 <!ENTITY noscriptUnknown "Nieznana">
@@ -153,5 +153,21 @@
 <!ENTITY noscriptNext "Następny">
 <!ENTITY noscriptFrameOptErr.title "Ta treść nie może zostać wyświetlona w ramce">
 <!ENTITY noscriptFrameOptErr.desc "Aby chronić twoje bezpieczeństwo, wydawca tej treści nie zezwolił na wyświetlanie jej w ramce.">
-<!ENTITY noscriptFrameOptErr.link "Kliknij tutaj, aby otworzyć tą treść w nowym oknie">
+<!ENTITY noscriptFrameOptErr.link "Kliknij tutaj, aby otworzyć tę treść w nowym oknie">
 <!ENTITY noscriptBookmarkSync "Aby łatwo synchronizować ustawienia NoScript, utwórz kopię ustawień jako zakładkę">
+<!ENTITY noscriptShowReleaseNotes "Wyświetlaj informacje o wydaniu po wykonaniu aktualizacji">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Zestaw reguł:">
+<!ENTITY ABE.enabled.label "Włącz ABE (Ochroniarz aplikacji)">
+<!ENTITY ABE.siteEnabled.label "Zezwalaj witrynom stosować własne zestawy reguł">
+<!ENTITY ABE.edit.label "Edytuj">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Włącz">
+<!ENTITY ABE.enable.accesskey "W">
+<!ENTITY ABE.disable.label "Wyłącz">
+<!ENTITY ABE.disable.accesskey "C">
+<!ENTITY ABE.refresh.label "Odśwież">
+<!ENTITY ABE.refresh.accesskey "O">
+<!ENTITY noscriptUninstall "Odinstaluj">
+<!ENTITY noscriptRecentBlocked "Ostatnio zablokowane witryny">

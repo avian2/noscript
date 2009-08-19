@@ -43,10 +43,10 @@
 <!ENTITY noscriptAdditionalRestrictions "Сенімсіз сайттар үшін кеңейтілген баптаулар">
 <!ENTITY noscriptPlugins "Плагиндер">
 <!ENTITY noscriptContentBlocker "Бұл шектеулерді сенімді сайттар үшін де қолдану">
-<!ENTITY noscriptForbidJava "Java™ тыйым салу">
-<!ENTITY noscriptForbidXSLT "XSLT тыйым салу">
-<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; тыйым салу">
-<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ тыйым салу">
+<!ENTITY noscriptForbidJava "Java™-ға тыйым салу">
+<!ENTITY noscriptForbidXSLT "XSLT үшін тыйым салу">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; үшін тыйым салу">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™-қа тыйым салу">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; тыйым салу">
 <!ENTITY noscriptForbidFrames "&lt;FRAME&gt; тыйым салу">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® тыйым салу">
@@ -155,3 +155,18 @@
 <!ENTITY noscriptFrameOptErr.desc "Сіздің қауіпсіздігіңізді ескере отырып, құраманы жариялаушы фреймде көрсетілуді рұқсат етпейді.">
 <!ENTITY noscriptFrameOptErr.link "Бұл құраманы жаңа терезеде ашу үшін, осында шертіңіз">
 <!ENTITY noscriptBookmarkSync "NoScript баптауларын жеңіл синхронизация үшін кеңейту ішінде сақтау">
+<!ENTITY noscriptShowReleaseNotes "Жаңарту кезінде тарихын көрсету">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "А">
+<!ENTITY ABE.rulesets.label "Ережелер жинақтары:">
+<!ENTITY ABE.enabled.label "ABE іске қосу (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Сайттарға өздерінің ережелерін қолдануға рұқсат беру">
+<!ENTITY ABE.edit.label "Тузету...">
+<!ENTITY ABE.edit.accesskey "е">
+<!ENTITY ABE.enable.label "Қосу">
+<!ENTITY ABE.enable.accesskey "с">
+<!ENTITY ABE.disable.label "Сөндіру">
+<!ENTITY ABE.disable.accesskey "р">
+<!ENTITY ABE.refresh.label "Жаңарту">
+<!ENTITY ABE.refresh.accesskey "т">
+<!ENTITY noscriptUninstall "Өшіру">

@@ -152,6 +152,22 @@
 <!ENTITY noscriptPrev "Précédent">
 <!ENTITY noscriptNext "Suivant">
 <!ENTITY noscriptFrameOptErr.title "Le contenu ne peut pas être affiché dans un cadre">
-<!ENTITY noscriptFrameOptErr.desc "Pour protéger votre sécurité, l&apos;éditeur de ce contenu n&apos;autorise pas à l&apos;afficher dans un cadre.">
+<!ENTITY noscriptFrameOptErr.desc "Pour protéger votre sécurité, l'éditeur de ce contenu n'autorise pas à l'afficher dans un cadre.">
 <!ENTITY noscriptFrameOptErr.link "Cliquez ici pour ouvrir ce contenu dans une nouvelle fenêtre">
 <!ENTITY noscriptBookmarkSync "Sauvegarder la configuration de NoScript dans un marque-page pour une synchronisation facile">
+<!ENTITY noscriptShowReleaseNotes "Afficher les notes de version lors des mises à jour">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Jeux de règles :">
+<!ENTITY ABE.enabled.label "Activer ABE (Application Boundaries Enforcer, Exécuteur de frontières des applications)">
+<!ENTITY ABE.siteEnabled.label "Autoriser les sites à faire passer leurs propres jeux de règles">
+<!ENTITY ABE.edit.label "Éditer…">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Activer">
+<!ENTITY ABE.enable.accesskey "v">
+<!ENTITY ABE.disable.label "Désactiver">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Actualiser">
+<!ENTITY ABE.refresh.accesskey "r">
+<!ENTITY noscriptUninstall "Désinstaller">
+<!ENTITY noscriptRecentBlocked "Sites récemment bloqués">

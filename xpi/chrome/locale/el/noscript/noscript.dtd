@@ -1,157 +1,173 @@
-<!ENTITY noscriptOptions "Επιλογές">
-<!ENTITY noscriptOptions.accesskey "Ε">
-<!ENTITY noscriptOptionsLong "Επιλογές NoScript">
-<!ENTITY noscriptAbout "Περί NoScript">
-<!ENTITY noscriptPermissionsText "Μπορείτε να καθορίσετε για ποιους ιστότοπους θα επιτρέπεται η εκτέλεση σεναρίων εντολών. Πληκτρολογήστε τη διεύθυνση τομέα (πχ. &quot;http://www.site.com&quot; or &quot;site.com&quot;) του ιστότοπου που θέλετε και μετά κάντε κλικ στο «Να επιτρέπεται»">
-<!ENTITY noscriptWebAddress "Διεύθυνση ιστότοπου">
-<!ENTITY noscriptAllow "Να επιτρέπεται">
-<!ENTITY noscriptAllow.accesskey "Ν">
-<!ENTITY noscriptForbid "Απαγόρευση">
-<!ENTITY noscriptForbid.accesskey "Α">
-<!ENTITY noscriptTrust "Σημείωση ως έμπιστο">
-<!ENTITY noscriptTrust.accesskey "ε">
-<!ENTITY noscriptUntrust "Σημείωση ως μη έμπιστο">
-<!ENTITY noscriptUntrust.accesskey "μ">
-<!ENTITY noscriptRemoveSelected "Αφαίρεση επιλεγμένων ιστότοπων">
-<!ENTITY noscriptGloballyEnabled "Να επιτρέπονται τα σενάρια εντολών γενικά (μη ασφαλές)">
-<!ENTITY noscriptAutoReload "Αυτόματη ανανέωση των σελίδων που επηρεάζονται από την αλλαγή δικαιωμάτων">
-<!ENTITY noscriptGeneral "Γενικά">
-<!ENTITY noscriptAppearance "Εμφάνιση">
-<!ENTITY noscriptShow "Προβολή…">
-<!ENTITY noscriptCtxMenu "Μενού περιεχομένου">
-<!ENTITY noscriptStatusIcon "Εικονίδιο γραμμής κατάστασης">
-<!ENTITY noscriptFullAddr "Πλήρεις διευθύνσεις (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Πλήρεις τομείς (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Δευτερεύοντες βασικοί τομείς (noscript.net)">
-<!ENTITY noscriptTempCmd "Να επιτρέπονται προσωρινά […]">
-<!ENTITY noscriptSound "Ηχητική σήμανση όταν μπλοκάρονται σενάρια εντολών">
-<!ENTITY noscriptImport "Εισαγωγή">
-<!ENTITY noscriptImport.accesskey "Ε">
-<!ENTITY noscriptExport "Εξαγωγή">
-<!ENTITY noscriptExport.accesskey "ξ">
-<!ENTITY noscriptNotify "Προβολή μηνύματος για μπλοκαρισμένα σενάρια εντολών">
-<!ENTITY noscriptNotify.bottom "Τοποθέτηση μηνύματος στο κάτω μέρος">
-<!ENTITY noscriptSound.choose "Επιλογή">
-<!ENTITY noscriptSound.choose.accesskey "π">
-<!ENTITY noscriptSound.play "Αναπαραγωγή">
-<!ENTITY noscriptSound.play.accesskey "α">
-<!ENTITY noscriptSound.reset "Επαναφορά αρχικού">
-<!ENTITY noscriptSound.reset.accesskey "ρ">
-<!ENTITY noscriptAdvanced "Για προχωρημένους">
-<!ENTITY noscriptAdditionalPermissions "Πρόσθετες εξουσιοδοτήσεις για έμπιστους ιστότοπους">
-<!ENTITY noscriptAllowClipboard "Να επιτρέπεται αντιγραφή και επικόλληση από το πρόχειρο (εξωτερικής εφαρμογής)">
-<!ENTITY noscriptAdditionalRestrictions "Πρόσθετοι περιορισμοί για μη έμπιστους ιστότοπους">
-<!ENTITY noscriptPlugins "Πρόσθετες λειτουργίες">
-<!ENTITY noscriptContentBlocker "Εφαρμογή αυτών των περιορισμών και σε έμπιστους ιστότοπους">
-<!ENTITY noscriptForbidJava "Απαγόρευση εκτέλεσης Java™">
-<!ENTITY noscriptForbidXSLT "Απαγόρευση εκτέλεσης XSLT">
-<!ENTITY noscriptForbidWebBugs "Απαγόρευση εκτέλεσης «Web Bugs»">
-<!ENTITY noscriptForbidSilverlight "Απαγόρευση εκτέλεσης Microsoft® Silverlight™">
-<!ENTITY noscriptForbidIFrames "Απαγόρευση εκτέλεσης &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Απαγόρευση εκτέλεσης &lt;FRAME&gt;">
-<!ENTITY noscriptForbidFlash "Απαγόρευση εκτέλεσης Adobe® Flash®">
-<!ENTITY noscriptForbidPlugins "Απαγόρευση εκτέλεσης άλλων πρόσθετων λειτουργιών">
-<!ENTITY noscriptReloadWarn "Αυτές οι επιλογές θα εφαρμοστούν σε σελίδες που θα ανανεώσετε μόνοι σας ή θα φορτώσετε από &apos;δω και πέρα">
-<!ENTITY noscriptConfirmUnblock "Να γίνεται ερώτηση πριν επιτραπεί προσωρινά ένα αντικείμενο">
-<!ENTITY noscriptStatusLabel "Ετικέτα γραμμής κατάστασης">
-<!ENTITY noscriptForbidBookmarklets "Απαγόρευση εκτέλεσης bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Προβολή εικονιδίου γεμίσματος">
-<!ENTITY noscriptTruncateTitle "Σύντμηση τίτλων εγγράφων">
-<!ENTITY noscriptFixLinks "Να γίνεται προσπάθεια διόρθωσης δεσμών JavaScript">
-<!ENTITY noscriptAllowBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
-<!ENTITY noscriptAllowViaBookmarks "Να επιτρέπονται για ιστότοπους που υπάρχουν στους σελιδοδείκτες">
-<!ENTITY noscriptAllowPing "Να επιτρέπεται το &lt;A PING…&gt;">
-<!ENTITY noscriptAllowLocalLinks "Να επιτρέπονται τοπικοί δεσμοί">
-<!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;A PING…&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Να απαγορεύονται οι ανακατευθύνσεις META σε στοιχεία &lt;NOSCRIPT&gt;">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "θ">
-<!ENTITY noscriptWhitelist "Λίστα επιτρεπομένων">
-<!ENTITY noscriptPermissions "Δικαιώματα">
-<!ENTITY noscriptRefresh "Ανανέωση">
-<!ENTITY noscriptNotifications "Ειδοποιήσεις">
-<!ENTITY noscriptToolbarToggle "Εναλλαγή δικαιωμάτων για τον βασικό ιστότοπο με αριστερό κλικ στο εικονίδιο της εργαλειοθήκης">
-<!ENTITY noscriptTrusted "Έμπιστο">
-<!ENTITY noscriptUntrusted "Μη έμπιστο">
-<!ENTITY noscriptUnknown "Άγνωστο">
-<!ENTITY noscriptAdd "Προσθήκη">
-<!ENTITY noscriptAdd.accesskey "Π">
-<!ENTITY noscriptClose "Κλείσιμο">
-<!ENTITY noscriptSiteManager "Διαχειριστής ιστότοπων">
-<!ENTITY noscriptSecurityManager "Διαχειριστής ασφαλείας">
-<!ENTITY noscriptPolicies "Πολιτικές συμπεριφοράς">
-<!ENTITY noscriptDefaultPolicies "Αρχικές πολιτικές συμπεριφοράς">
-<!ENTITY noscriptSitePolicies "Πολιτικές συμπεριφοράς για συγκεκριμένους ιστότοπους">
-<!ENTITY noscriptNselNever "Απόκρυψη στοιχείων &lt;NOSCRIPT&gt;">
-<!ENTITY noscriptNselForce "Προβολή του στοιχείου &lt;NOSCRIPT&gt; που ακολουθεί μπλοκαρισμένα σενάρια εντολών">
-<!ENTITY noscriptAutoAllowTopLevel "Να επιτρέπεται προσωρινά για τον βασικό ιστότοπο (ως αρχική ρύθμιση)">
-<!ENTITY noscriptDescription "Πρόσθετη προστασία για τον Firefox. Οι ειδικοί συμφωνούν: το NoScript δίνει μεγαλύτερη ασφάλεια στον Firefox. :-)">
-<!ENTITY noscriptOptBlockCssScanners "Μπλοκάρισμα ανιχνεύσεων CSS">
-<!ENTITY noscriptOptFilterXGet "Εκκαθάριση αιτημάτων ύποπτων ως cross-site scripting">
-<!ENTITY noscriptOptFilterXPost "Μετατροπή αιτημάτων cross-site POST σε κενά περιεχομένου αιτήματα GET">
-<!ENTITY noscriptShowConsole "Προβολή κονσόλας…">
-<!ENTITY noscriptShowConsole.accesskey "κ">
+<!ENTITY noscriptOptions "Options…">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript Options">
+<!ENTITY noscriptAbout "About NoScript…">
+<!ENTITY noscriptPermissionsText "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. &quot;http://www.site.com&quot; or &quot;site.com&quot;) of the site you want to allow and then click Allow.">
+<!ENTITY noscriptWebAddress "Address of web site:">
+<!ENTITY noscriptAllow "Allow">
+<!ENTITY noscriptAllow.accesskey "l">
+<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptRemoveSelected "Remove Selected Sites">
+<!ENTITY noscriptGloballyEnabled "Scripts Globally Allowed (dangerous)">
+<!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
+<!ENTITY noscriptGeneral "General">
+<!ENTITY noscriptAppearance "Appearance">
+<!ENTITY noscriptShow "Show…">
+<!ENTITY noscriptCtxMenu "Contextual menu">
+<!ENTITY noscriptStatusIcon "Status bar icon">
+<!ENTITY noscriptFullAddr "Full Addresses (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Full Domains (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Base 2nd level Domains (noscript.net)">
+<!ENTITY noscriptTempCmd "Temporarily allow […]">
+<!ENTITY noscriptSound "Audio feedback when scripts are blocked">
+<!ENTITY noscriptImport "Import">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Export">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Show message about blocked scripts">
+<!ENTITY noscriptNotify.bottom "Place message at the bottom">
+<!ENTITY noscriptSound.choose "Choose">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "Play">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Reset default">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Advanced">
+<!ENTITY noscriptAdditionalPermissions "Additional permissions for trusted sites">
+<!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
+<!ENTITY noscriptAdditionalRestrictions "Additional restrictions for untrusted sites">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
+<!ENTITY noscriptForbidJava "Forbid Java™">
+<!ENTITY noscriptForbidXSLT "Forbid XSLT">
+<!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Forbid &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFlash "Forbid Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Forbid other plugins">
+<!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
+<!ENTITY noscriptConfirmUnblock "Ask for confirmation before temporarily unblocking an object">
+<!ENTITY noscriptStatusLabel "Status bar label">
+<!ENTITY noscriptForbidBookmarklets "Forbid bookmarklets">
+<!ENTITY noscriptShowPlaceholder "Show placeholder icon">
+<!ENTITY noscriptTruncateTitle "Truncate document titles">
+<!ENTITY noscriptFixLinks "Attempt to fix JavaScript links">
+<!ENTITY noscriptAllowBookmarks "Allow sites opened through bookmarks">
+<!ENTITY noscriptAllowViaBookmarks "Allow sites opened through bookmarks">
+<!ENTITY noscriptAllowPing "Allow &lt;A PING…&gt;">
+<!ENTITY noscriptAllowLocalLinks "Allow local links">
+<!ENTITY noscriptForbidPing "Forbid &lt;A PING…&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptWhitelist "Whitelist">
+<!ENTITY noscriptPermissions "Permissions">
+<!ENTITY noscriptRefresh "Refresh">
+<!ENTITY noscriptNotifications "Notifications">
+<!ENTITY noscriptToolbarToggle "Left clicking on NoScript toolbar button toggles permissions for current top-level site">
+<!ENTITY noscriptTrusted "Trusted">
+<!ENTITY noscriptUntrusted "Untrusted">
+<!ENTITY noscriptUnknown "Unknown">
+<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Close">
+<!ENTITY noscriptSiteManager "Site Manager">
+<!ENTITY noscriptSecurityManager "Security Manager">
+<!ENTITY noscriptPolicies "Policies">
+<!ENTITY noscriptDefaultPolicies "Default Policies">
+<!ENTITY noscriptSitePolicies "Site Specific Policies">
+<!ENTITY noscriptNselNever "Hide &lt;NOSCRIPT&gt; elements">
+<!ENTITY noscriptNselForce "Show the &lt;NOSCRIPT&gt; element which follows a blocked &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
+<!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality… Experts will agree: Firefox is really safer with NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
+<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
+<!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
+<!ENTITY noscriptShowConsole "Show Console…">
+<!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "Συχνές ερωτήσεις XSS…">
-<!ENTITY noscriptXssFaq.accesskey "χ">
-<!ENTITY noscriptUnsafeReload "Μη ασφαλής ανανέωση">
-<!ENTITY noscriptUnsafeReload.accesskey "Μ">
-<!ENTITY noscriptXssExceptions "Εξαιρέσεις από προστασία αντί-XSS">
-<!ENTITY noscriptXssExceptions.description "Δεν θα παρέχεται προστασία αντί-XSS για προορισμούς που ταιριάζουν με τις κανονικές εκφράσεις:">
-<!ENTITY noscriptMatchSample "Παράδειγμα ταιριάσματος μοτίβου:">
-<!ENTITY noscriptReset "Επαναφορά αρχικών ρυθμίσεων">
-<!ENTITY noscriptReset.accesskey "Ε">
-<!ENTITY noscriptResetDef "Επαναφορά αρχικών ρυθμίσεων">
-<!ENTITY noscriptResetDef.accesskey "σ">
+<!ENTITY noscriptXssFaq "XSS FAQ…">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsafe Reload">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS.">
+<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptReset.accesskey "s">
+<!ENTITY noscriptResetDef "Reset to defaults">
+<!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "Συχνές ερωτήσεις JAR">
-<!ENTITY noscriptJarFaq.accesskey "σ">
-<!ENTITY noscriptForbidJarDocuments "Απαγόρευση φόρτωσης απομακρυσμένων πόρων JAR ως έγγραφα">
-<!ENTITY noscriptJarExceptions "Εξαιρέσεις απαγόρευσης εγγράφων JAR">
-<!ENTITY noscriptJarExceptions.description "ΔΕΝ θα απαγορεύονται τα έγγραφα JAR που ταιριάζουν με αυτές τις κανονικές εκφράσεις.">
-<!ENTITY noscriptRevokeTemp "Αναίρεση προσωρινών αδειοδοτήσεων">
-<!ENTITY noscriptRevokeTemp.accesskey "ν">
-<!ENTITY noscriptNoUntrustedPlaceholder "Χωρίς εικονίδια γεμίσματος για αντικείμενα από μη έμπιστους ιστότοπους">
-<!ENTITY noscriptCollapseBlockedObjects "Σύμπτυξη μπλοκαρισμένων αντικειμένων">
-<!ENTITY noscriptExceptions "Εξαιρέσεις…">
-<!ENTITY noscriptBlockedObjects "Μπλοκαρισμένα αντικείμενα">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Μπλοκάρισμα κάθε αντικειμένου προερχόμενου από ιστότοπο σημειωμένο ως μη έμπιστο">
-<!ENTITY noscriptTempAllowPage "Να επιτρέπεται προσωρινά γενικά για τη σελίδα">
-<!ENTITY noscriptTempAllowPage.accesskey "σ">
-<!ENTITY noscriptAllowPage "Να επιτρέπεται γενικά για τη σελίδα">
-<!ENTITY noscriptAllowPage.accesskey "ε">
-<!ENTITY noscriptTempToPerm "Μετατροπή δικαιωμάτων σελίδας σε μόνιμα">
-<!ENTITY noscriptTempToPerm.accesskey "ν">
+<!ENTITY noscriptJarFaq "JAR FAQ…">
+<!ENTITY noscriptJarFaq.accesskey "Q">
+<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
+<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
+<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
+<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp.accesskey "R">
+<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
+<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
+<!ENTITY noscriptExceptions "Exceptions…">
+<!ENTITY noscriptBlockedObjects "Blocked Objects">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
+<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "M">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "Συχνές ερωτήσεις HTTPS">
-<!ENTITY noscriptHttpsFaq.accesskey "ε">
-<!ENTITY noscriptHttps.behavior "Συμπεριφορά">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Behavior">
 <!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Να απαγορεύεται ενεργό περιεχόμενο εκτός κι αν παρέχεται μέσω ασφαλούς (HTTPS) σύνδεσης:">
-<!ENTITY noscriptHttps.never "Ποτέ">
-<!ENTITY noscriptHttps.proxy "Όταν γίνεται χρήση διαμεσολαβητή (συνιστάται για το δίκτυο Tor)">
-<!ENTITY noscriptHttps.always "Πάντα">
-<!ENTITY noscriptHttpsForced "Εξαναγκασμός των παρακάτω ιστότοπων σε χρήση ασφαλούς (HTTPS) σύνδεσης:">
-<!ENTITY noscriptHttpsForcedExceptions "Να μην γίνεται εξαναγκασμός χρήσης ασφαλούς (HTTPS) σύνδεσης για τους παρακάτω ιστότοπους:">
-<!ENTITY noscriptSecureCookies "Ενεργοποίηση αυτόματης ασφαλούς διαχείρισης cookies">
-<!ENTITY noscriptSecureCookiesForced "Εξαναγκασμός κρυπτογράφησης σε όλα τα cookies που εγκαταστάθηκαν μέσω HTTPS από τους ακόλουθους ιστότοπους:">
-<!ENTITY noscriptSecureCookiesExceptions "Να αγνοούνται μη ασφαλή cookies που εγκαταστάθηκαν μέσω HTTPS από τους ακόλουθους ιστότοπους:">
-<!ENTITY noscriptClearClickTitle "Προειδοποίηση clearClick">
-<!ENTITY noscriptClearClickHeader "Πιθανή προσπάθεια επικάλυψης UI / Clickjacking!">
-<!ENTITY noscriptClearClickDescription "Το NoScript εντόπισε αλληλεπίδραση του ποντικιού ή του πληκτρολογίου με ένα μερικώς κρυφό στοιχείο. Κάντε κλικ στην παραπάνω εικόνα για εναλλαγή ανάμεσα στην απαγορευμένη και την επιτρεπόμενη εκδοχή.">
-<!ENTITY noscriptClearClickOpt "Προστασία clearClick σε ιστότοπους...">
-<!ENTITY noscriptClearClickReport "Αναφορά">
-<!ENTITY noscriptClearClickReport.accesskey "α">
-<!ENTITY noscriptClearClickReportId "Αναγνωριστικό αναφοράς:">
-<!ENTITY noscriptOpacizeOpt "Ανάδειξη ενσωματωμένων αντικειμένων σε ιστότοπους...">
-<!ENTITY noscriptTrustedPagesAdj "έμπιστους">
-<!ENTITY noscriptUntrustedPagesAdj "μη έμπιστους">
-<!ENTITY noscriptKeepLocked "Διατήρηση κλειδώματος στοιχείου (συνιστάται)">
-<!ENTITY noscriptEmbeddings "Ενσωματωμένα αντικείμενα">
-<!ENTITY noscriptPrev "Προηγούμενο">
-<!ENTITY noscriptNext "Επόμενο">
-<!ENTITY noscriptFrameOptErr.title "Αυτό το περιεχόμενο δεν μπορεί να παρουσιαστεί σε πλαίσιο">
-<!ENTITY noscriptFrameOptErr.desc "Για να προστατεύσει την ασφάλεια σας, ο εκδότης του περιεχομένου δεν επιτρέπει την προβολή σε πλαίσιο">
-<!ENTITY noscriptFrameOptErr.link "Κάντε κλικ εδώ για να ανοίξετε το περιεχόμενο σε νέο παράθυρο">
-<!ENTITY noscriptBookmarkSync "Αντίγραφο ρυθμίσεων του NoScript σε σελιδοδείκτη για εύκολο συγχρονισμό">
+<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
+<!ENTITY noscriptHttps.never "Never">
+<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
+<!ENTITY noscriptHttps.always "Always">
+<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
+<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
+<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
+<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptClearClickTitle "ClearClick Warning">
+<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
+<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image below to cycle between the obstructed and the clear version.">
+<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptOpacizeOpt "Opaque embedded objects on pages…">
+<!ENTITY noscriptTrustedPagesAdj "trusted">
+<!ENTITY noscriptUntrustedPagesAdj "untrusted">
+<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
+<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptPrev "Previous">
+<!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Rulesets:">
+<!ENTITY ABE.enabled.label "Enable ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Allow sites to push their own rulesets">
+<!ENTITY ABE.edit.label "Edit…">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Enable">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "Disable">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Refresh">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "Uninstall">
+<!ENTITY noscriptRecentBlocked "Recently blocked sites">

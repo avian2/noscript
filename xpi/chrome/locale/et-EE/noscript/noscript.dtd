@@ -154,4 +154,20 @@
 <!ENTITY noscriptFrameOptErr.title "Antud sisu ei saa esitada raami sees">
 <!ENTITY noscriptFrameOptErr.desc "Sinu turvalisuse huvides ei luba antud sisu avaldaja seda esitada raami sees">
 <!ENTITY noscriptFrameOptErr.link "Kliki siia, et avada antud sisu uues aknas">
-<!ENTITY noscriptBookmarkSync "Varunda NoScript&apos;i sätted järjehoidjana, et hõlbustada sünkroniseerimist">
+<!ENTITY noscriptBookmarkSync "Varunda NoScript'i sätted järjehoidjana, et hõlbustada sünkroniseerimist">
+<!ENTITY noscriptShowReleaseNotes "Näita uuenduste väljalaske märkmeid">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Reeglid">
+<!ENTITY ABE.enabled.label "Luba ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Luba saitidel kehtestada oma reegleid">
+<!ENTITY ABE.edit.label "Muuda...">
+<!ENTITY ABE.edit.accesskey "M">
+<!ENTITY ABE.enable.label "Luba">
+<!ENTITY ABE.enable.accesskey "L">
+<!ENTITY ABE.disable.label "Keela">
+<!ENTITY ABE.disable.accesskey "K">
+<!ENTITY ABE.refresh.label "Värskenda">
+<!ENTITY ABE.refresh.accesskey "V">
+<!ENTITY noscriptUninstall "Eemalda">
+<!ENTITY noscriptRecentBlocked "Viimati blokeeritud saidid">

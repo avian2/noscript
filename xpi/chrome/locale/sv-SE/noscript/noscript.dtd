@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "För att skydda dig, tillåter utgivaren att innehållet visas i en ram.">
 <!ENTITY noscriptFrameOptErr.link "Klicka här för att öppna innehållet i ett nytt fönster">
 <!ENTITY noscriptBookmarkSync "Spara NoScript konfigurationen i ett bokmärke för enkel synkronisering">
+<!ENTITY noscriptShowReleaseNotes "Visa nyheter vid uppdatering">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Regler:">
+<!ENTITY ABE.enabled.label "Aktivera ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Tillåt platser att använda sina egna regler">
+<!ENTITY ABE.edit.label "Redigera...">
+<!ENTITY ABE.edit.accesskey "W">
+<!ENTITY ABE.enable.label "Aktivera">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "Inaktivera">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Uppdatera">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "Avinstallera">
+<!ENTITY noscriptRecentBlocked "Nyligen blockerade platser">

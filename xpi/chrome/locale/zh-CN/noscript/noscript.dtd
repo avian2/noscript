@@ -155,3 +155,18 @@
 <!ENTITY noscriptFrameOptErr.desc "为了保护你的安全, 此内容提供者不允许它被显示在框架帧中。">
 <!ENTITY noscriptFrameOptErr.link "点击这里在新窗口中打开此内容">
 <!ENTITY noscriptBookmarkSync "备份 NoScript 配置到书签以便轻松的同步">
+<!ENTITY noscriptShowReleaseNotes "更新时显示发行版本注释">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "规则集:">
+<!ENTITY ABE.enabled.label "启用 ABE ()">
+<!ENTITY ABE.siteEnabled.label "允许网站输入它们自己的规则集">
+<!ENTITY ABE.edit.label "编辑...">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "启用">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "禁用">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "刷新">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "卸载">
