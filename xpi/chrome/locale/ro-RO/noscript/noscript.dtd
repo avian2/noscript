@@ -1,48 +1,48 @@
 <!ENTITY noscriptOptions "Opţiuni...">
 <!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "Particularizare NoScript">
-<!ENTITY noscriptAbout "Despre NoScript">
-<!ENTITY noscriptPermissionsText "Puteţi să specificaţi paginile web care pot să execute scripturi. Scrieţi adresa (de exemplu http://www.site.com) sau domeniul (site.com) paginii, apoi apăsaţi pe butonul Permite.">
-<!ENTITY noscriptWebAddress "Adresa paginii web:">
+<!ENTITY noscriptOptionsLong "Opţiuni NoScript">
+<!ENTITY noscriptAbout "Despre NoScript...">
+<!ENTITY noscriptPermissionsText "Puteţi să specificaţi saiturile cărora li se permite să execute scripturi. Scrieţi adresa sau domeniul paginii (ex.: &quot;http://www.sait.com&quot; sau &quot;sait.com&quot;), apoi apăsaţi pe butonul Permite.">
+<!ENTITY noscriptWebAddress "Adresă sait:">
 <!ENTITY noscriptAllow "Permite">
 <!ENTITY noscriptAllow.accesskey "P">
-<!ENTITY noscriptForbid "Blockează">
+<!ENTITY noscriptForbid "Blochează">
 <!ENTITY noscriptForbid.accesskey "B">
-<!ENTITY noscriptTrust "Marchează ca fiind de încredere">
-<!ENTITY noscriptTrust.accesskey "c">
-<!ENTITY noscriptUntrust "Marchează ca fiind de neîncredere">
+<!ENTITY noscriptTrust "Marchează ca &quot;de încredere&quot;">
+<!ENTITY noscriptTrust.accesskey "d">
+<!ENTITY noscriptUntrust "Marchează ca &quot;de neîncredere&quot;">
 <!ENTITY noscriptUntrust.accesskey "n">
-<!ENTITY noscriptRemoveSelected "Şterge din listă paginile selectate">
-<!ENTITY noscriptGloballyEnabled "JavaScript activat global (riscant)">
-<!ENTITY noscriptAutoReload "Reîncarcă automat paginile atunci când permisiunile se schimbă">
+<!ENTITY noscriptRemoveSelected "Elimină saiturile selectare">
+<!ENTITY noscriptGloballyEnabled "Scripturi permise global (riscant)">
+<!ENTITY noscriptAutoReload "Reîncarcă automat paginile atunci când se schimbă permisiunile">
 <!ENTITY noscriptGeneral "General">
-<!ENTITY noscriptAppearance "Vizualizare">
-<!ENTITY noscriptShow "Arată...">
-<!ENTITY noscriptCtxMenu "Meniu contextual">
+<!ENTITY noscriptAppearance "Aspect">
+<!ENTITY noscriptShow "Elemente afişate">
+<!ENTITY noscriptCtxMenu "În meniul contextual">
 <!ENTITY noscriptStatusIcon "Pictogramă pe bara de stare">
 <!ENTITY noscriptFullAddr "Adrese complete (http://www.noscript.net)">
-<!ENTITY noscriptFullDom "Nume domeniu complete (www.noscript.net)">
-<!ENTITY noscriptBaseDom "Nume domeniu de nivel 2 (noscript.net)">
+<!ENTITY noscriptFullDom "Domenii complete (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Domenii de nivel 2 (noscript.net)">
 <!ENTITY noscriptTempCmd "Permite temporar [...]">
 <!ENTITY noscriptSound "Atenţionează sonor când scripturile sunt blocate">
-<!ENTITY noscriptImport "Import">
+<!ENTITY noscriptImport "Importă">
 <!ENTITY noscriptImport.accesskey "I">
-<!ENTITY noscriptExport "Export">
+<!ENTITY noscriptExport "Exportă">
 <!ENTITY noscriptExport.accesskey "E">
-<!ENTITY noscriptNotify "Afişează un mesaj când scripturile sunt blocate">
+<!ENTITY noscriptNotify "Afişează un mesaj despre scripturile blocate">
 <!ENTITY noscriptNotify.bottom "Poziţionează mesajul în partea de jos a ferestrei">
 <!ENTITY noscriptSound.choose "Alege...">
 <!ENTITY noscriptSound.choose.accesskey "A">
-<!ENTITY noscriptSound.play "Redare">
+<!ENTITY noscriptSound.play "Redă">
 <!ENTITY noscriptSound.play.accesskey "R">
-<!ENTITY noscriptSound.reset "Resetează la original">
-<!ENTITY noscriptSound.reset.accesskey "o">
-<!ENTITY noscriptAdvanced "Avansat">
-<!ENTITY noscriptAdditionalPermissions "Permisiuni suplimentare pentru paginile de încredere">
-<!ENTITY noscriptAllowClipboard "Permite copiere text îmbogăţit din clipboard extern">
-<!ENTITY noscriptAdditionalRestrictions "Restricţii suplimentare pentru paginile nesigure">
-<!ENTITY noscriptPlugins "Pluginuri">
-<!ENTITY noscriptContentBlocker "Foloseşte aceste restricţii şi pentru paginile de încredere">
+<!ENTITY noscriptSound.reset "Iniţializează">
+<!ENTITY noscriptSound.reset.accesskey "I">
+<!ENTITY noscriptAdvanced "Complex">
+<!ENTITY noscriptAdditionalPermissions "Permisiuni suplimentare pentru saiturile de încredere">
+<!ENTITY noscriptAllowClipboard "Permite copierea şi lipirea textului îmbogăţit din memoria tampon a sistemului">
+<!ENTITY noscriptAdditionalRestrictions "Restricţii suplimentare pentru saiturile de neîncredere">
+<!ENTITY noscriptPlugins "Plugin-uri">
+<!ENTITY noscriptContentBlocker "Aplică aceste restricţii şi pentru saiturile de încredere">
 <!ENTITY noscriptForbidJava "Blochează Java™">
 <!ENTITY noscriptForbidXSLT "Blochează XSLT">
 <!ENTITY noscriptForbidWebBugs "Blochează &quot;Web Bugs&quot;">
@@ -50,81 +50,81 @@
 <!ENTITY noscriptForbidIFrames "Blochează &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Blochează &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFlash "Blochează Adobe® Flash®">
-<!ENTITY noscriptForbidPlugins "Blochează alte pluginuri">
-<!ENTITY noscriptReloadWarn "Aceste opţiuni vor avea efect în paginile nou deschise sau reîncărcate (manual).">
+<!ENTITY noscriptForbidPlugins "Blochează alte plugin-uri">
+<!ENTITY noscriptReloadWarn "Aceste opţiuni vor fi efective în paginile nou deschise sau în cele reîncărcate (manual)">
 <!ENTITY noscriptConfirmUnblock "Cere confirmare înainte de a debloca un obiect">
 <!ENTITY noscriptStatusLabel "Etichetă pe bara de stare">
-<!ENTITY noscriptForbidBookmarklets "Blochează bookmarklets">
-<!ENTITY noscriptShowPlaceholder "Arată pictograma (placeholder)">
-<!ENTITY noscriptTruncateTitle "Limitează titlurile documentelor">
-<!ENTITY noscriptFixLinks "Încearcă să repari legăturile JavaScript">
-<!ENTITY noscriptAllowBookmarks "Permite toate siteurile din Semne de Carte">
-<!ENTITY noscriptAllowViaBookmarks "Permite toate siteurile din Semne de Carte">
-<!ENTITY noscriptAllowPing "Permite tagul &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "Permite legături locale">
-<!ENTITY noscriptForbidPing "Blochează tagul &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Blocheazp redirectările META din elementele &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidBookmarklets "Blochează scripturile din semnele de carte">
+<!ENTITY noscriptShowPlaceholder "Afişează amplasamentul obiectului blocat">
+<!ENTITY noscriptTruncateTitle "Trunchiază titlurile documentelor">
+<!ENTITY noscriptFixLinks "Încearcă repararea legăturilor JavaScript">
+<!ENTITY noscriptAllowBookmarks "Permite saiturile din semnele de carte">
+<!ENTITY noscriptAllowViaBookmarks "Permite toate saiturile deschise prin semnele de carte">
+<!ENTITY noscriptAllowPing "Permite &lt;A PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Permite legăturile locale">
+<!ENTITY noscriptForbidPing "Blochează &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Blochează redirectările META dinăuntrul elementelor &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "r">
-<!ENTITY noscriptWhitelist "Listă sigură">
+<!ENTITY noscriptWhitelist "Listă adrese sigure">
 <!ENTITY noscriptPermissions "Permisiuni">
-<!ENTITY noscriptRefresh "Reîncărcare">
+<!ENTITY noscriptRefresh "Actualizează">
 <!ENTITY noscriptNotifications "Notificări">
-<!ENTITY noscriptToolbarToggle "Schimbă permisiunile pentru domeniul de nivel 2 cu un click pe butonul NoScript din bara de unelte">
-<!ENTITY noscriptTrusted "De încredere">
-<!ENTITY noscriptUntrusted "De neîncredere">
-<!ENTITY noscriptUnknown "Necunoscut">
+<!ENTITY noscriptToolbarToggle "Comută permisiunile pentru domeniul primar curent cu clic-stânga pe butonul din bara de unelte">
+<!ENTITY noscriptTrusted "Marchează ca &quot;De încredere&quot;">
+<!ENTITY noscriptUntrusted "Marchează ca &quot;De neîncredere&quot;">
+<!ENTITY noscriptUnknown "Marchează ca &quot;Necunoscut&quot;">
 <!ENTITY noscriptAdd "Adaugă">
 <!ENTITY noscriptAdd.accesskey "A">
 <!ENTITY noscriptClose "Închide">
-<!ENTITY noscriptSiteManager "Gestionar de Locaţii">
-<!ENTITY noscriptSecurityManager "Gestionar de Securitate">
+<!ENTITY noscriptSiteManager "Gestionar de saituri">
+<!ENTITY noscriptSecurityManager "Gestionar de securitate">
 <!ENTITY noscriptPolicies "Reguli">
 <!ENTITY noscriptDefaultPolicies "Reguli implicite">
-<!ENTITY noscriptSitePolicies "Reguli dependente de locaţie">
+<!ENTITY noscriptSitePolicies "Reguli dependente de sait">
 <!ENTITY noscriptNselNever "Ascunde elementele &lt;NOSCRIPT&gt;">
-<!ENTITY noscriptNselForce "Arată elementele &lt;NOSCRIPT&gt; care urmează unui script blocat">
-<!ENTITY noscriptAutoAllowTopLevel "Implicit, permite temporar domeniilor top-level">
-<!ENTITY noscriptDescription "Protecţie suplimentară pentru Firefox: JavaScript, Java şi alte pluginuri sunt permise numai paginilor de încredere, pentru a bloca preemptiv exploatarea vulnerabilităţilor (cunoscute sau necunoscute) care pot afecta securitatea sistemului.">
+<!ENTITY noscriptNselForce "Afişează elementele &lt;NOSCRIPT&gt; care urmează unui element &lt;SCRIPT&gt; blocat">
+<!ENTITY noscriptAutoAllowTopLevel "Permite temporar domeniile primare în mod implicit">
+<!ENTITY noscriptDescription "Ca protecţie suplimentară pentru Firefox, NoScript nu permite executarea scripturilor (JavaScript, Java, sau ale altor plugin-uri) decât pentru domeniile de încredere la alegerea Dvs. Acest sistem de blocare preventivă a scripturilor împiedică exploatarea vulnerabilităţilor  de securitate (cunoscute sau chiar necunoscute) fără pierdere de performanţă... Experţii vor fi de acord: Firefox este mult mai sigur cu NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Blochează scanerele bazate pe CSS">
-<!ENTITY noscriptOptFilterXGet "Curăţă solicitările suspecte de exploatare de tipul Cross-Site Scripting">
-<!ENTITY noscriptOptFilterXPost "Transformă solicitările POST către pagini diferite în solicitări GET">
-<!ENTITY noscriptShowConsole "Arată Consola JavaScript....">
-<!ENTITY noscriptShowConsole.accesskey "a">
+<!ENTITY noscriptOptFilterXGet "Elimină solicitările suspecte între saituri">
+<!ENTITY noscriptOptFilterXPost "Transformă solicitările POST între saituri în solicitări GET fără date">
+<!ENTITY noscriptShowConsole "Afişează consola...">
+<!ENTITY noscriptShowConsole.accesskey "c">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
-<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptXssFaq "Informaţii XSS...">
+<!ENTITY noscriptXssFaq.accesskey "f">
 <!ENTITY noscriptUnsafeReload "Reîncărcare nesigură">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
-<!ENTITY noscriptXssExceptions "Excepţii la protecţia Anti-XSS">
-<!ENTITY noscriptXssExceptions.description "Adresele care corespunde filtrelor din listă nu vor fi protejate împotriva atacurilor XSS.">
-<!ENTITY noscriptMatchSample "Mostră filtru:">
-<!ENTITY noscriptReset "Iniţializare">
-<!ENTITY noscriptReset.accesskey "r">
-<!ENTITY noscriptResetDef "Iniţializare (valori implicite)">
+<!ENTITY noscriptXssExceptions "Excepţii la protecţia anti-XSS">
+<!ENTITY noscriptXssExceptions.description "Destinaţiile concordante cu expresiile regulate din listă nu vor fi protejate împotriva atacurilor XSS.">
+<!ENTITY noscriptMatchSample "Exemplu expresie regulată:">
+<!ENTITY noscriptReset "Iniţializează">
+<!ENTITY noscriptReset.accesskey "I">
+<!ENTITY noscriptResetDef "Iniţializează la valorile implicite">
 <!ENTITY noscriptResetDef.accesskey "v">
-<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptOptionsWidth "50em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
-<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
-<!ENTITY noscriptRevokeTemp.accesskey "T">
-<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
-<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
-<!ENTITY noscriptExceptions "Exceptions...">
-<!ENTITY noscriptBlockedObjects "Blocked Objects">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
-<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
+<!ENTITY noscriptJarFaq "Informaţii JAR...">
+<!ENTITY noscriptJarFaq.accesskey "f">
+<!ENTITY noscriptForbidJarDocuments "Blochează încărcarea ca documente a resurselor la distanţă JAR">
+<!ENTITY noscriptJarExceptions "Excepţii la blocarea documentelor JAR">
+<!ENTITY noscriptJarExceptions.description "Documentele JAR concordante cu expresiile regulate din listă nu vor fi blocate.">
+<!ENTITY noscriptRevokeTemp "Revocă permisiunile temporare">
+<!ENTITY noscriptRevokeTemp.accesskey "R">
+<!ENTITY noscriptNoUntrustedPlaceholder "Nu afişa amplasamentul obiectelor care provin din saituri marcate ca de neîncredere">
+<!ENTITY noscriptCollapseBlockedObjects "Restrânge spaţiul obiectelor blocate">
+<!ENTITY noscriptExceptions "Excepţii...">
+<!ENTITY noscriptBlockedObjects "Obiecte blocate">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blochează toate obiectele provenind dintr-un sait marcat ca 'De neîncredere'">
+<!ENTITY noscriptTempAllowPage "Permite temporar această pagină">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
-<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage "Permite toată pagina">
 <!ENTITY noscriptAllowPage.accesskey "A">
 <!ENTITY noscriptTempToPerm "Make page permissions permanent">
 <!ENTITY noscriptTempToPerm.accesskey "m">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ...">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
 <!ENTITY noscriptHttps.behavior "Behavior">
 <!ENTITY noscriptHttps.cookies "Cookies">
@@ -140,11 +140,11 @@
 <!ENTITY noscriptClearClickTitle "ClearClick Warning">
 <!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
 <!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
-<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
+<!ENTITY noscriptClearClickOpt "ClearClick protection on pages...">
 <!ENTITY noscriptClearClickReport "Report">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Report ID:">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
+<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages...">
 <!ENTITY noscriptTrustedPagesAdj "trusted">
 <!ENTITY noscriptUntrustedPagesAdj "untrusted">
 <!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
 <!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
 <!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Rulesets:">
+<!ENTITY ABE.enabled.label "Enable ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Allow sites to push their own rulesets">
+<!ENTITY ABE.edit.label "Edit...">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Enable">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "Disable">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Refresh">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "Uninstall">
+<!ENTITY noscriptRecentBlocked "Recently blocked sites">

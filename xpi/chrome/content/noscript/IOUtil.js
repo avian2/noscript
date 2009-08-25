@@ -1,22 +1,37 @@
 INCLUDE("DNS");
 
 const IO = {
-  readFile: function(file) {
+  readFile: function(file, charset) {
+    var res;
+    
     const is = CC["@mozilla.org/network/file-input-stream;1"]
       .createInstance(CI.nsIFileInputStream );
     is.init(file ,0x01, 0400, null);
     const sis = CC["@mozilla.org/scriptableinputstream;1"]
-      .createInstance(CI.nsIScriptableInputStream );
+      .createInstance(CI.nsIScriptableInputStream);
     sis.init(is);
-    const res = sis.read(sis.available());
+    
+    res = sis.read(sis.available());
     is.close();
+    
+    if (charset !== null) { // use "null" if you want uncoverted data...
+      const unicodeConverter = CC["@mozilla.org/intl/scriptableunicodeconverter"]
+        .createInstance(CI.nsIScriptableUnicodeConverter);
+      try {
+        unicodeConverter.charset = charset || "UTF-8";
+      } catch(ex) {
+        unicodeConverter.charset = "UTF-8";
+      }
+      res = unicodeConverter.ConvertToUnicode(res);
+    }
+  
     return res;
   },
   writeFile: function(file, content, charset) {
     const unicodeConverter = CC["@mozilla.org/intl/scriptableunicodeconverter"]
       .createInstance(CI.nsIScriptableUnicodeConverter);
     try {
-      unicodeConverter.charset = charset ? charset : "UTF-8";
+      unicodeConverter.charset = charset || "UTF-8";
     } catch(ex) {
       unicodeConverter.charset = "UTF-8";
     }

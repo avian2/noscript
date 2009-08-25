@@ -245,7 +245,6 @@ const ABE = {
     } finally {
       if (this.consoleDump) this.log(req.destination + " Checked in " + (Date.now() - t));
       req.checkFlags |= this.FLAG_CHECKED;
-      req.detach();
     }
     return res.lastRuleset && res;
   },
@@ -277,6 +276,8 @@ const ABE = {
     
     if (IOUtil.runWhenPending(req.channel, function() {
       try {
+        
+        if (req.channel.status != 0) return;
         
         if ((req.channel instanceof CI.nsITransportEventSink) && req.isDoc && !req.subdoc ) try {
           ABE.log("DNS notification for " + req.destination);
@@ -832,20 +833,6 @@ function ABERequest(channel) {
 
 ABERequest.serial = 0;
 
-ABERequest.fromChannel = function(channel) {
-  var req = IOUtil.extractFromChannel(channel, "ABE.request", true);
-  return req && req.channel == channel ? req : null;
-}
-
-ABERequest.newOrRecycle = function(channel) {
-  var req = this.fromChannel(channel);
-  if (req) {
-    delete req.localDestination;
-    delete req.localOrigin;
-  } else req = new ABERequest(channel);
-  return req;
-}
-
 ABERequest.getOrigin = function(channel) {
   return IOUtil.extractFromChannel(channel, "ABE.origin", true);
 },
@@ -859,8 +846,6 @@ ABERequest.storeOrigin = function(channel, originURI) {
 
 ABERequest.clear = function(channel, window) {
   IOUtil.extractFromChannel(channel, "ABE.origin");
-  var req = this.fromChannel(channel);
-  if (req) req.detach();
 }
 
 ABERequest.count = 0;
@@ -871,7 +856,6 @@ ABERequest.prototype = Lang.memoize({
 	failed: false,
   checkFlags: 0,
   deferredDNS: true,
-  detached: true,
   replaced: false,
   
   _init: function(channel) {
@@ -925,31 +909,9 @@ ABERequest.prototype = Lang.memoize({
   },
   
   
-  attach: function() {
-    if (this.detached && !this.early) {
-      IOUtil.attachToChannel(this.channel, "ABE.request", this);
-      ABERequest.count++;
-      this.detached = false;
-      
-      if (!(this.checkFlags & ABE.FLAG_CALLED)) {
-        Thread.delay(this._autoDetach, 1, this);
-      }
-    }
-  },
-  _autoDetach: function() {
-    if (!(this.checkFlags & ABE.FLAG_CALLED)) this.detach();
-  },
-  detach: function() {
-    if (!(this.early || this.detached)) {
-      IOUtil.extractFromChannel(this.channel, "ABE.request", this);
-      ABERequest.count--;
-      this.detached = true;
-      this.deferredDNS = false;
-    }
-  },
+  
   
   replace: function(newMethod, newURI) {
-    this.detach();
     var replacement = new ChannelReplacement(this.channel, newURI, newMethod)
       .replace(newMethod || newURI);
     

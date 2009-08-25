@@ -377,18 +377,13 @@ var nsopt = {
   
   remove: function() {
     const ul = this.urlList;
+    const selectedItems = ul.selectedItems;
     var visIdx = ul.getIndexOfFirstVisibleRow();
     var lastIdx = visIdx + ul.getNumberOfVisibleRows();
-    const selectedItems = ul.selectedItems;
+   
     
-    if(selectedItems.length == 1) {
-      var site = selectedItems[0].value;
-      if(!ns.isMandatory(site)) {
-        ul.removeItemAt(ul.getIndexOfItem(selectedItems[0]));
-        this.trustedSites.remove(site, true);
-      }
-      return;
-    }
+    
+    
     
     var removed = [];
     for(var j = selectedItems.length; j-- > 0;) {
@@ -396,7 +391,20 @@ var nsopt = {
         removed.push(site);
       }
     }
+    if (!removed.length) return;
+    
     this.trustedSites.remove(removed, true); // keepUp
+    this.tempSites.remove(removed, true, true); // see noscriptService#eraseTemp()
+    this.gTempSites.remove(removed, true, true);
+      
+      
+    if(selectedItems.length == 1) {
+      if(removed.length == 1) {
+        ul.removeItemAt(ul.getIndexOfItem(selectedItems[0]));  
+      }
+      return;
+    }
+    
     // TODO: hide flickering
     this.populateUrlList();
     try {

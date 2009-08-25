@@ -195,6 +195,20 @@
           <menupopup />
        </menu>
        
+       <menu id="noscript-menu-recent-blocked" class="menu-iconic" 
+            onpopupshowing="event.stopPropagation()"
+            onpopuphidden="event.stopPropagation()" 
+            label="&noscriptRecentBlocked;">
+          <menupopup>
+            <menuitem id="noscript-mi-recent-blocked-reset" 
+              label="&noscriptReset;"
+              class="menuitem-iconic"
+              accesskey="&noscriptReset.accesskey;"
+              oncommand="noscriptOverlay.ns.recentlyBlocked = []"
+             />
+          </menupopup>
+       </menu>
+       
        <menu id="noscript-menu-untrusted" class="menu-iconic noscript-untrusted" 
             onpopupshowing="event.stopPropagation()" 
             onpopuphidden="event.stopPropagation()" 

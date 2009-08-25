@@ -53,12 +53,14 @@
 .noscript-yes,
 #noscript-tbb.noscript-yes,
 #noscript-statusIcon.noscript-yes,
-.noscript-allow {
+.noscript-allow,
+.noscript-allow-from {
   list-style-image: url(yes16.png);
 }
 
 #noscript-tbb-temp-page,
-.noscript-temp.noscript-allow {
+.noscript-temp.noscript-allow,
+.noscript-temp.noscript-allow-from {
   list-style-image: url(temp16.png);
 }
 
@@ -108,8 +110,8 @@
 }
 .noscript-inactive-no,
 #noscript-tbb.noscript-inactive-no,
-#noscript-statusIcon.noscript-inactive-no
-{
+#noscript-statusIcon.noscript-inactive-no,
+#noscript-menu-recent-blocked {
   list-style-image: url(inactive-no16.png);
 }
 .noscript-distrust,

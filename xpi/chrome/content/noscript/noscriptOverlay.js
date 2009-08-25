@@ -323,24 +323,32 @@ return noscriptUtil.service ? {
 
     this.prepareOptItems(popup);
       
-    var untrustedMenu = null;
-    var pluginsMenu = null;
+    var untrustedMenu = null,
+        recentMenu = null,
+        pluginsMenu = null;
+
     if (seps.untrusted) {
       
       pluginsMenu = $("noscript-menu-blocked-objects");
+      recentMenu = $("noscript-menu-recent-blocked");
       untrustedMenu = $("noscript-menu-untrusted");
       // cleanup untrustedCount display
       untrustedMenu.setAttribute("label", untrustedMenu.getAttribute("label").replace(/ \(\d+\)$/, ""));
       
       with(seps.untrusted) {
-        if (nextSibling != pluginsMenu) {   
-          parentNode.insertBefore(untrustedMenu, nextSibling);
-          parentNode.insertBefore(pluginsMenu, untrustedMenu);
+        if ((extraNode = nextSibling) != pluginsMenu) {
+          for each(node in [pluginsMenu, recentMenu, untrustedMenu]) {
+            parentNode.insertBefore(node, extraNode);
+          }
         }
       }
+      
+      extraNode = $("noscript-mi-recent-blocked-reset"); // save reset command
       // descend from menus to popups and clear children
-      for each(node in [pluginsMenu = pluginsMenu.firstChild, untrustedMenu = untrustedMenu.firstChild])
+      for each(node in [pluginsMenu = pluginsMenu.firstChild, recentMenu = recentMenu.firstChild, untrustedMenu = untrustedMenu.firstChild])
         while(node.firstChild) node.removeChild(node.firstChild);
+      
+      recentMenu.appendChild(extraNode);
     }
     
     node = seps.insert.nextSibling;
@@ -479,6 +487,58 @@ return noscriptUtil.service ? {
       refMI.setAttribute("closemenu", "none");
     }
     
+    recentMenu.parentNode.hidden = true;
+    if (recentMenu && ns.getPref("showRecentlyBlocked"))
+      (function() {
+        const level = ns.getPref("recentlyBlockedLevel") || ns.preferredSiteLevel;
+        const max = ns.getPref("recentlyBlockedCount");
+        var s, dejaVu = [], count = 0,
+            recent = ns.recentlyBlocked;
+        
+        for (var j = recent.length; j-- > 0;) {
+          
+          s = recent[j];
+          
+          if (!s || sites.indexOf(s) > -1 || ns.isJSEnabled(s) && (!ns.contentBlocker || ns.isAllowedObject("!", "*", s)))
+            continue;
+          
+          s = ns.getQuickSite(s, level);
+          if (dejaVu.indexOf(s) > -1)
+            continue;
+          
+          dejaVu.push(s);
+          
+          if (!count) {
+            recentMenu.parentNode.hidden = false;
+          }
+          recentMenu.appendChild(sep.cloneNode(false));
+          
+          var node = refMI.cloneNode(false);
+          var cssClass = "noscript-cmd menuitem-iconic noscript-allow-from";
+          
+          node.setAttribute("tooltiptext", ns.getString("allowed.no"));
+          node.setAttribute("statustext", s);
+          if (locked || ns.isForbiddenByHttpsStatus(s)) node.setAttribute("disabled", "true");
+          
+          node.setAttribute("class", cssClass);
+          node.setAttribute("label", ns.getString("allowFrom", [s]));
+          recentMenu.appendChild(node);
+          
+          node = node.cloneNode(false);
+          node.setAttribute("class", cssClass + " noscript-temp");
+          node.setAttribute("label", ns.getString("allowTempFrom", [s]));
+            recentMenu.appendChild(node);
+          
+          if (++count >= max) break;
+        }
+        
+      })();
+    
+    
+    
+    
+    
+    
     if (j > 0 && seps.stop.previousSibling.nodeName != "menuseparator")
       mainFrag.appendChild(sep.cloneNode(false));
     
@@ -613,7 +673,9 @@ return noscriptUtil.service ? {
       m.appendChild(mi);
     }
   },
-
+  
+ 
+  
   populatePluginsMenu: function(mainMenu, menu, extras) {
     if (!menu) return;
     
@@ -810,7 +872,13 @@ return noscriptUtil.service ? {
         this._reloadDirty = true;
         reloadPolicy = this.liveReload ? this.ns.RELOAD_CURRENT : this.ns.RELOAD_NO;
       }
-
+      
+      if (enabled && /\ballow-from\b/.test(cl)) {
+        reloadPolicy = this.ns.RELOAD_NONE;
+        this.ns.allowObject(site, "*");
+        if (this.ns.isJSEnabled(site)) return;
+      }
+      
     }
     this.safeAllow(site, enabled, temp, reloadPolicy);
   }
@@ -1380,7 +1448,7 @@ return noscriptUtil.service ? {
     if (!unsafeRequest) {
       unsafeRequest = {
         URI: browser.webNavigation.currentURI,
-        origin: rw.traceBackHistory(browser.webNavigation.sessionHistory, browser.contentWindow).join(">>>")
+        origin: ns.__parent__.ABE.traceBackHistory(browser.webNavigation.sessionHistory, browser.contentWindow).join(">>>")
       };
       method = "URL";
     } else {

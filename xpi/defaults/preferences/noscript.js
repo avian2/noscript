@@ -67,6 +67,7 @@ pref("noscript.nselNoMeta", true);
 pref("noscript.autoAllow", 0);
 pref("noscript.toolbarToggle", 3);
 pref("noscript.allowPageLevel", 0);
+
 pref("noscript.forbidImpliesUntrust", false);
 pref("noscript.keys.toggle", "ctrl shift VK_BACK_SLASH.|");
 pref("noscript.keys.ui", "ctrl shift S");
@@ -90,7 +91,7 @@ pref("noscript.xss.trustTemp", true);
 
 pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
-pref("noscript.filterXGetRx", "<+(?=[^<>=\\d\\. ])|[\\\\\"\\x00-\\x07\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F]");
+pref("noscript.filterXGetRx", "<+(?=[^<>=\-\\d\\. /\\(])|[\\\\\"\\x00-\\x07\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F]");
 pref("noscript.filterXGetUserRx", "");
 pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
 pref("noscript.injectionCheck", 2);
@@ -212,7 +213,6 @@ pref("noscript.forbidXSLT", true);
 pref("noscript.oldStylePartial", false);
 pref("noscript.proxiedDNS", 0);
 pref("noscript.placesPrefs", false);
-pref("noscript.bookmarklets.import", 1);
 
 pref("noscript.ABE.enabled", true);
 pref("noscript.ABE.siteEnabled", false);
@@ -230,3 +230,5 @@ pref("noscript.inclusionTypeChecking.exceptions", "");
 pref("noscript.inclusionTypeChecking.checkDynamic", false);
 
 pref("noscript.recentlyBlockedCount", 10);
+pref("noscript.showRecentlyBlocked", true);
+pref("noscript.recentlyBlockedLevel", 0);

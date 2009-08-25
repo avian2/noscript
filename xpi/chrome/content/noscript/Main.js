@@ -57,6 +57,7 @@ var ns = singleton = {
         case "xpcom-shutdown":
           this.unregister();
           break;
+        
         case "profile-before-change": 
           this.dispose();
           Thread.hostRunning = false;
@@ -69,6 +70,7 @@ var ns = singleton = {
             this.dump("Init error -- " + e.message);
           }
           break;
+        
         case "em-action-requested":
           if ((subject instanceof CI.nsIUpdateItem)
               && subject.id == EXTENSION_ID ) {
@@ -79,8 +81,20 @@ var ns = singleton = {
             }
           }
         break;
+        
         case "toplevel-window-ready":
           this.registerToplevel(subject); 
+        break;
+      
+        case "private-browsing":
+          if (data == "enter") {
+            // consider if enforcing only temporary permissions... too much a pain?
+          } if (data == "exit") {
+            this.eraseTemp();
+          }
+        // break; 
+        case "browser:purge-session-history":
+          this.recentlyBlocked = [];
         break;
       }
     }
@@ -118,7 +132,8 @@ var ns = singleton = {
     
   },
   
-  OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "profile-after-change", "toplevel-window-ready"],
+  OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "profile-after-change", "toplevel-window-ready",
+                    "browser:purge-session-history", "private-browsing"],
   register: function() {
     this.OBSERVED_TOPICS.forEach(function(topic) {
       OS.addObserver(this, topic, true);
@@ -415,36 +430,22 @@ var ns = singleton = {
   
   rxParsers: {
     simple: function(s, flags) {
-      return new RegExp(s, flags);
+      var anchor = /\^/.test(flags);
+      return new RegExp(anchor ? ns.rxParsers.anchor(s) : s,
+        anchor ? flags.replace(/\^/g, '') : flags);
+    },
+    anchor: function(s) {
+      return !/^\^|\$$/.test(s) ? s : "^" + s + "$";
     },
     multi: function(s, flags) {
       var anchor = /\^/.test(flags);
-      if(anchor) flags = flags.replace(/\^/g, '');
-       
-      var lines = s.split(/[\n\r]+/);
-      var rxx = [];
-      var l;
-      for (var j = lines.length; j-- > 0;) {
-        l = lines[j];
-        if (/\S/.test(l)) {
-          if(anchor && l[0] != '^') {
-            l = '^(?:' + l + ')$';
-          }
-          rxx.push(new RegExp(l, flags));
-        } else {
-          lines.splice(j, 1);
-        }
-      }
-      if (!rxx.length) return null;
-      
-      rxx.test = function(s) {
-        for (var j = this.length; j-- > 0;) {
-          if (this[j].test(s)) return true;
-        }
-        return false;
-      }
-      rxx.toString = function() { return lines.join("\n"); }
-      return rxx;
+      var lines = s.split(/[\n\r]+/)
+          .filter(function(l) { return /\S/.test(l) });
+      return new RegExp(
+        "(?:" +
+        (anchor ? lines.map(ns.rxParsers.anchor) : lines).join('|')
+        + ")",
+        anchor ? flags.replace(/\^/g, '') : flags);
     }
   },
   updateRxPref: function(name, def, flags, parseRx) {
@@ -454,6 +455,7 @@ var ns = singleton = {
       this[name] = null;
     } else
     {
+      
       try {
         this[name] = parseRx(this.getPref(name, def), flags);
       } catch(e) {
@@ -873,7 +875,7 @@ var ns = singleton = {
   },
   
   autoTemp: function(site) {
-    if (!(this.isUntrusted(site) || this.isManual(site))) {
+    if (!(this.isUntrusted(site) || this.isManual(site) || this.isJSEnabled(site))) {
       this.setTemp(site, true);
       this.setJSEnabled(site, true);
       return true;
@@ -1526,8 +1528,9 @@ var ns = singleton = {
       var json = this.json.decode(s.replace(/[\n\r]/g, ''));
       if (json.ABE) ABE.restore(json.ABE);
       var prefs = json.prefs;
-      for (var key in prefs) this.setPref(key, prefs[key]); 
-      this.policyPB.setCharPref("sites", json.whitelist);
+      for (var key in prefs) this.setPref(key, prefs[key]);
+
+      this.flushCAPS(json.whitelist);
       this.setPref("temp", ""); 
       this.setPref("gtemp", "");
       
@@ -1716,6 +1719,8 @@ var ns = singleton = {
     }
     
     PolicyState.cancel(args);
+    
+    this.recordBlocked(this.getSite(args[1].spec));
     
     return this.rejectCode;
   },
@@ -2021,12 +2026,20 @@ var ns = singleton = {
     if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1)) 
       return true;
     
-    if (site) site = this.objectKey((arguments.length < 3) ? site : this.getSite(url));
-    
-    var types = site && this.objectWhitelist[site] || null;
-    return types && (types == this.ALL_TYPES || types.indexOf(mime) > -1);
+    site = this.objectKey((arguments.length >= 3) ? site : this.getSite(url));
+     
+    var types, s;
+    for (;;) {
+
+      var types = site && this.objectWhitelist[site] || null;
+      if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1)) return true;
+
+      if (!/\..*\.|:\//.test(site)) break;
+      s = site.replace(/.*?(?::\/+|\.)/, '');
+      if (s == site) break;
+      site = s;
+    } 
   },
-  
   allowObject: function(url, mime) {
     url = this.objectKey(url);
     if (url in this.objectWhitelist) {
@@ -2472,24 +2485,17 @@ var ns = singleton = {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
       
       var snapshots = {
-        trusted: this.jsPolicySites.sitesString,
-        untrusted: this.untrustedSites.sitesString,
         docJS: browser.webNavigation.allowJavascript
       };
     
       var doc = window.document;
-      var nh = this._EJSU_nodeHandler;
-      var ets = ["DOMNodeInserted", "DOMAttrModified"];
+    
       try {
         browser.webNavigation.allowJavascript = true;
-        ets.forEach(function(et) { doc.addEventListener(et, nh, false) });
-        
-        this.setTemp(site, true);
-        this.setJSEnabled(site, true);
+        this.jsEnabled = true;
         
         if (Thread.canSpin) { // async evaluation, after bug 351633 landing
           try {
-            this.jsEnabled = true;
             function run(s) {
               window.location.href = "javascript:" + encodeURIComponent(s + "; void(0);");
               Thread.yieldAll();
@@ -2509,56 +2515,24 @@ var ns = singleton = {
 
           } catch(e) {
             if(this.consoleDump) this.dump("JS URL execution failed: " + e);
-          } finally {
-            this.jsEnabled = false;
           }
         } else {
           openCallback(url);
         }
         return true;
       } finally {
-        ets.forEach(function(et) { doc.removeEventListener(et, nh, false) }); 
-        this.postExecuteJSURL(browser, site, snapshots);
+        this.jsEnabled = false;
+        this.setExpando(browser, "jsSite", site);
+        if (!browser.webNavigation.isLoadingDocument && this.getSite(browser.webNavigation.currentURI.spec) == site)
+          browser.webNavigation.allowJavascript = snapshots.docJS;
+        if (this.consoleDump & LOG_JS)
+          this.dump("Restored snapshot permissions on " + site + "/" + (browser.webNavigation.isLoadingDocument ? "loading" : browser.webNavigation.currentURI.spec));
       }
     }
     
     return false;
   },
-  
-  _EJSU_nodeHandler: function(ev) {
-    var node = ev.target;
-    if (!(node instanceof CI.nsIDOMHTMLScriptElement)) return;
-    var url = node.src;
-    var site = ns.getSite(url);
-    switch(ns.getPref("bookmarklets.import")) {
-      case 0:
-        return;
-      case 1:
-        if (!ns.isJSEnabled(site)) return;
-        break;
-      default:
-        if (ns.isUntrusted(site)) return;
-    }
-    
-    var req = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
-    req.open("GET", url);
-    req.onreadystatechange = function() {
-      if (req.readyState != 4) return;
-      if (ns.consoleDump) ns.dump("Running bookmarklet import: " + url);
-      ns.executeJSURL(req.responseText);
-    };
-    req.send(null);
-  },
-  
-  postExecuteJSURL: function(browser, site, snapshots, dsJS) {
-    if (this.consoleDump & LOG_JS)
-      this.dump("Restoring snapshot permissions on " + site + "/" + (browser.webNavigation.isLoadingDocument ? "loading" : browser.webNavigation.currentURI.spec));
-    this.persistUntrusted(snapshots.untrusted); 
-    this.flushCAPS(snapshots.trusted);
-    this.setExpando(browser, "jsSite", site);
-    if (!browser.webNavigation.isLoadingDocument && this.getSite(browser.webNavigation.currentURI.spec) == site)
-      browser.webNavigation.allowJavascript = snapshots.docJS;
-  },
+ 
 
   mimeEssentials: function(mime) {
      return mime && mime.replace(/^application\/(?:x-)?/, "") || "";
@@ -3382,7 +3356,7 @@ var ns = singleton = {
   
   recentlyBlocked: [],
   _recentlyBlockedMax: 40,
-  onBlocked: function(site) {
+  recordBlocked: function(site) {
     var l = this.recentlyBlocked;
     var pos = l.indexOf(site);
     if (pos > -1) l.splice(pos, 1);
@@ -3408,11 +3382,8 @@ var ns = singleton = {
           return;
         }
         
-        var abeReq;
-        
         if (req instanceof CI.nsIHttpChannel) {
           PolicyState.attach(req);
-          abeReq = ABERequest.fromChannel(req);
         }
         
         
@@ -3440,10 +3411,6 @@ var ns = singleton = {
             if (HTTPS.forceHttps(req, w)) {
               this._handleDocJS2(w, req);
               return;
-            }
-            
-            if (abeReq && !(stateFlags & WP_STATE_RESTORING) && req.isPending()) {
-              this.requestWatchdog.handleABE(abeReq, abeReq.isDoc);
             }
             
           }
@@ -3513,13 +3480,12 @@ var ns = singleton = {
           if (!cached || cached.expired ||
               loadFlags & LF_VALIDATE_ALWAYS ||
               loadFlags & LF_LOAD_BYPASS_ALL_CACHES) {
-            DNS.evict(host);
-            if (ABE.enabled) {
-              ABE.log("Repeating ABE checks after DNS refresh for " + req.URI.spec);
-              var abeReq = ABERequest.newOrRecycle(req);
-              // abeReq.deferredDNS = false;
-              this.requestWatchdog.handleABE(abeReq, loadFlags & req.LOAD_DOCUMENT_URI);
-            }
+            if (cached) DNS.evict(host);
+            
+            ABE.log("Repeating ABE checks after DNS refresh for " + req.URI.spec);
+            var abeReq = new ABERequest(req);
+            this.requestWatchdog.handleABE(abeReq, loadFlags & req.LOAD_DOCUMENT_URI);
+            
           }
         }
       } catch (e) {}

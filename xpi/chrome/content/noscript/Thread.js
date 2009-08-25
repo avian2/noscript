@@ -3,6 +3,7 @@ var Thread = {
   hostRunning: true,
   activeQueues: 0,
   activeLoops: 0,
+  _timers: [],
   
   get canSpin() {
     delete this.canSpin;
@@ -87,7 +88,9 @@ var Thread = {
   },
   
   delay: function(callback, time, self, args) {
-    CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer).initWithCallback({
+    var timer = CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer);
+    this._timers.push(timer);
+    timer.initWithCallback({
       notify: this._delayRunner,
       context: { callback: callback, args: args || [], self: self || null }
     }, time || 1, 0);
@@ -105,12 +108,16 @@ var Thread = {
     }
   },
   
-  _delayRunner: function() {
+  _delayRunner: function(timer) {
     var ctx = this.context;
     try {
       ctx.callback.apply(ctx.self, ctx.args);
     } finally {
       this.context = null;
+      var tt = Thread._timers;
+      var pos = tt.indexOf(timer);
+      if (pos > -1) tt.splice(pos, 1);
+      timer.cancel();
     }
   }
   

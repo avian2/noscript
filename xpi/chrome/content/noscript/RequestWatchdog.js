@@ -65,12 +65,7 @@ RequestWatchdog.prototype = {
           }
           
           if (!channel.status) {
-            if (isDoc && ChannelReplacement.supported && !(channel.loadFlags & channel.LOAD_REPLACE)) {
-              abeReq.attach();
-            } else {
-              // ns.dump("Early ABE checks on " + abeReq.destination + ", " + channel.loadFlags + " - DOC " + isDoc);
-              this.handleABE(abeReq, isDoc);
-            }
+            this.handleABE(abeReq, isDoc);
           }
           
         } catch(e) {
@@ -399,6 +394,8 @@ RequestWatchdog.prototype = {
         if(!trustedTarget && ns.checkShorthands(targetSite)) {
           ns.autoTemp(targetSite);
           trustedTarget = true;
+        } else {
+          ns.recordBlocked(targetSite);
         }
       }
     }
@@ -447,19 +444,19 @@ RequestWatchdog.prototype = {
     
     if (ns.filterXExceptions) {
       try {
-        if (ns.filterXExceptions.test(decodeURI(originalSpec)) &&
+        if (ns.filterXExceptions.test(unescape(originalSpec)) &&
             !this.isBadException(host)
             ) {
           // "safe" xss target exception
           if (ns.consoleDump) this.dump(channel, "Safe target according to filterXExceptions: " + ns.filterXExceptions.toString());
           return;
         }
-        
-        if (ns.filterXExceptions.test("@" + decodeURI(origin))) {
+  
+        if (ns.filterXExceptions.test("@" + unescape(origin))) {
           if (ns.consoleDump) this.dump(channel, "Safe origin according to filterXExceptions: " + ns.filterXExceptions.toString());
           return;
         }
-        
+
       } catch(e) {}
     }
     
@@ -1774,7 +1771,7 @@ XSanitizer.prototype = {
         url.path = this.sanitizeURIComponent(url.path); // param is the URL part after filePath and a semicolon ?!
       } else if(url.filePath) { 
         url.filePath = this.sanitizeURIComponent(url.filePath); // true == lenient == allow ()=
-      }
+      }1
       // sanitize query
       if (url.query) {
         url.query = this.sanitizeQuery(url.query, changes);
@@ -1793,7 +1790,7 @@ XSanitizer.prototype = {
       }
     } else {
       // fallback for non-URL URIs, we should never get here anyway
-      if (url.path) url.path = this.sanitizeURIComponent(url.Path);
+      if (url.path) url.path = this.sanitizeURIComponent(url.path);
     }
     
     var urlSpec = url.spec;
@@ -1894,8 +1891,9 @@ XSanitizer.prototype = {
             }
             if (origPz != pz) changes.qs = true;
           }
-            
-          pieces[k] = encodeURL(pz);
+          
+          if (origPz != pz) pieces[k] = encodeURL(pz);  
+         
         }
         parms[j] = pieces.join("=");
       } catch(e) { 
@@ -1909,7 +1907,9 @@ XSanitizer.prototype = {
   
   sanitizeURIComponent: function(s) {
     try {
-      return encodeURI(this.sanitize(decodeURIComponent(s)));
+      var unescaped = InjectionChecker.urlUnescape(s, this.brutal);
+      var sanitized = this.sanitize(unescaped);
+      return sanitized == unescaped ? s : encodeURI(sanitized);
     } catch(e) {
       return "";
     }
