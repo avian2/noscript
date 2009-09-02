@@ -199,7 +199,7 @@ var nsopt = {
     this.utils.persistTabSelections();
     var op = top.opener;
     if(op && op.noscriptUtil) {
-      op.setTimeout(function() {
+      op.setTim\u0065out(function() {
           op.noscriptUtil.openOptionsDialog();
       }, 10);
     }
@@ -628,7 +628,7 @@ var abeOpts = {
     if (!(file instanceof CI.nsILocalFile)) return;
    
     try {
-      file.launch();
+      file.l\u0061unch();
       return;
     } catch(e) {
       // probably a *X platform...

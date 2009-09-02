@@ -24,7 +24,7 @@
   font-weight: bold;
 }
 
-.noscript-plugin .noscript-temp {
+.noscript-plugin .noscript-temp, .noscript-plugin.noscript-temp {
   font-style: normal;
 }
 
@@ -57,6 +57,8 @@
 .noscript-allow-from {
   list-style-image: url(yes16.png);
 }
+
+ 
 
 #noscript-tbb-temp-page,
 .noscript-temp.noscript-allow,
@@ -180,7 +182,7 @@
   list-style-image: url(revtemp16.png);
 }
 
-.noscript-plugin {
+.noscript-plugin, .noscript-allow-from.noscript-plugin {
   list-style-image: url(plugin16.png);
 }
 

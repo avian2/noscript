@@ -36,9 +36,6 @@ const ANYWHERE = 3;
 
 const DUMMYOBJ = {};
 
-const ABID = "@mozilla.org/adblockplus;1";
-
-
 INCLUDE('Sites', 'AddressMatcher', 'DOM', 'IOUtil', 'Policy', 'RequestWatchdog', 'HTTPS', 'ClearClickHandler', 'URIValidator', 'RequestFilters', 'ScriptSurrogate', 'ABE');
 
 var ns = singleton = {
@@ -595,13 +592,6 @@ var ns = singleton = {
   
   init: function() {
     if (this._inited) return false;
-    try {
-      IOS.newChannel("chrome://noscript/content/", null, null).open().close();
-    } catch(e) {
-      this.disabled = true;
-      dump("NoScript disabled on this profile\n");
-      return false;
-    }
     
     this._inited = true;
     
@@ -720,13 +710,6 @@ var ns = singleton = {
     // hook on redirections (non persistent, otherwise crashes on 1.8.x)
     CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
       .addCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, SERVICE_CTRID, false, true);
-    
-    if (this.abpInstalled) try {
-      // remove the NoScript Development Support Filterset if it exists
-      CC[ABID].createInstance().wrappedJSObject.removeExternalSubscription("NoScript.net");
-    } catch(e) {
-      this.dump(e);
-    }
     
     return true;
   },
@@ -1952,7 +1935,7 @@ var ns = singleton = {
   },
   
   isFirebugJSURL: function(url) {
-    return url == "javascript: eval(__firebugTemp__);"
+    return url == "javascript: ev\u0061l(__firebugTemp__);"
   },
   
   isExternalScheme: function(scheme) {
@@ -2481,7 +2464,6 @@ var ns = singleton = {
     
     var site = this.getSite(window.document.documentURI) || this.getExpando(browser, "jsSite");
     if (!this.jsEnabled) {
-      url = url.replace(/\b(?:window\.)?setTimeout\s*\(([^\(\)]+),\s*\d+\s*\)/g, '$1()'); // make simple timeouts synchronous
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
       
       var snapshots = {
@@ -2500,7 +2482,25 @@ var ns = singleton = {
               window.location.href = "javascript:" + encodeURIComponent(s + "; void(0);");
               Thread.yieldAll();
             }
-            run("window.setTimeout = function(f, d, a) { if (typeof(f) != 'function') f = new Function(f || ''); f(a); }");
+            run("(" +
+              function() {
+                var tt = [];
+                window.setTim\u0065out = function(f, d, a) {
+                  if (typeof(f) != 'function') f = new Function(f || '');
+                  tt.push({ f: f, d: d, a: a});
+                };
+                window.__runTimeouts = function() {
+                  var t;
+                  while (tt.length) {
+                    tt.sort(function(b, a) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); });
+                    t = tt.pop();
+                    t.f.call(window, t.a);
+                  }
+                  delete window.__runTimeouts;
+                  delete window.setTim\u0065out;
+                };
+              }.toSource()
+            + ")()");
             if (openCallback) {
               window.location.href = url;
             } else {
@@ -2511,7 +2511,7 @@ var ns = singleton = {
             
             Thread.yieldAll();
             
-            run("delete window.setTimeout");
+            run("window.__runTimeouts()");
 
           } catch(e) {
             if(this.consoleDump) this.dump("JS URL execution failed: " + e);
@@ -2616,7 +2616,7 @@ var ns = singleton = {
         
         switch(ev.type) {
           case "timeout":
-            w.setTimeout(arguments.callee, ev.timeout, ev);
+            w.setTim\u0065out(arguments.callee, ev.timeout, ev);
             break;
           case "load":
             w.__noscriptOpaquedObjects = null;
@@ -2630,7 +2630,7 @@ var ns = singleton = {
     
     scheduleFixScrollers: function(w, timeout) {
       var ev = { currentTarget: w, type: "timeout", timeout: timeout };
-      w.setTimeout(this.fixScrollers, ev.timeout, ev);
+      w.setTim\u0065out(this.fixScrollers, ev.timeout, ev);
     },
     
     getOpaquedObjects: function(w, noscroll) {
@@ -2942,7 +2942,7 @@ var ns = singleton = {
   
   get abpInstalled() {
     delete this.abpInstalled;
-    return this.abpInstalled = ABID in CC;
+    return this.abpInstalled = "@mozilla.org/adblockplus;1" in CC;
   },
   
   grabAbpTab: function(ref) {
@@ -3313,12 +3313,9 @@ var ns = singleton = {
           
         }
         
-        if ((type == 6 || type == 7) && HTTPS.forceHttps(newChannel)) throw "NoScript aborted non-HTTPS redirection to " + uri.spec;
-        
-        var scheme = uri.scheme;
-        if (this.shouldLoad.apply(this, ph.toArray()) != CP_OK
-            || scheme != uri.scheme // forced HTTPS policy
-            ) {
+        HTTPS.forceHttps(newChannel, win, true); // we're called while the channel is not open yet, so we can safely change URI's scheme 
+
+        if (this.shouldLoad.apply(this, ph.toArray()) != CP_OK) {
           if (this.consoleDump) {
             this.dump("Blocked " + oldChannel.URI.spec + " -> " + uri.spec + " redirection of type " + type);
           }
@@ -3358,8 +3355,13 @@ var ns = singleton = {
   _recentlyBlockedMax: 40,
   recordBlocked: function(site) {
     var l = this.recentlyBlocked;
-    var pos = l.indexOf(site);
-    if (pos > -1) l.splice(pos, 1);
+    var pos = l.lastIndexOf(site);
+    
+    if (pos > -1) {
+      if (pos == l.length - 1) return;
+      l.splice(pos, 1);
+    }
+    
     l.push(site);
     if (l.length > this._recentlyBlockedMax) {
       this.recentlyBlocked = l.slice(- this._recentlyBlockedMax / 2);
@@ -3953,7 +3955,7 @@ var ns = singleton = {
         ds.reload(ds.LOAD_FLAGS_CHARSET_CHANGE); // neded in Gecko > 1.9
       }
     } catch(e) { 
-      if(this.consoleDump) this.dump("Error filtering charset: " + e) 
+      if(this.consoleDump) this.dump("Error filtering charset on " + req.name + ": " + e) 
     }
   },
   
@@ -4171,7 +4173,7 @@ var ns = singleton = {
   }
 }
 
-ns.wrappedJSObject = ns;
+ns.wr\u0061ppedJSObject = ns;
 ns.register();
 
 if ("nsIChromeRegistrySea" in CI) INCLUDE("SMUninstaller");

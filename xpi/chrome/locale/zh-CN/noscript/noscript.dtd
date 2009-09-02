@@ -170,3 +170,4 @@
 <!ENTITY ABE.refresh.label "刷新">
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "卸载">
+<!ENTITY noscriptRecentBlocked "最近被阻止的站点">

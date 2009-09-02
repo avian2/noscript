@@ -499,7 +499,12 @@ return noscriptUtil.service ? {
           
           s = recent[j];
           
-          if (!s || sites.indexOf(s) > -1 || ns.isJSEnabled(s) && (!ns.contentBlocker || ns.isAllowedObject("!", "*", s)))
+        
+          if (!s || sites.indexOf(s) > -1) continue;
+          
+          var jsEnabled = ns.isJSEnabled(s);
+          
+          if (jsEnabled && (!ns.contentBlocker || ns.isAllowedObject("!", "*", s)))
             continue;
           
           s = ns.getQuickSite(s, level);
@@ -520,14 +525,18 @@ return noscriptUtil.service ? {
           node.setAttribute("statustext", s);
           if (locked || ns.isForbiddenByHttpsStatus(s)) node.setAttribute("disabled", "true");
           
-          node.setAttribute("class", cssClass);
-          node.setAttribute("label", ns.getString("allowFrom", [s]));
-          recentMenu.appendChild(node);
+          if (jsEnabled) {
+            cssClass += " noscript-plugin";
+          } else {
+            node.setAttribute("class", cssClass);
+            node.setAttribute("label", ns.getString("allowFrom", [s]));
+            recentMenu.appendChild(node);
+            node = node.cloneNode(false);
+          } 
           
-          node = node.cloneNode(false);
           node.setAttribute("class", cssClass + " noscript-temp");
           node.setAttribute("label", ns.getString("allowTempFrom", [s]));
-            recentMenu.appendChild(node);
+          recentMenu.appendChild(node);
           
           if (++count >= max) break;
         }
@@ -957,7 +966,7 @@ return noscriptUtil.service ? {
     if (this._syncTimeout) {
       window.clearTimeout(this._syncTimeout);
     }
-    this._syncTimeout = window.setTimeout(function() {
+    this._syncTimeout = window.setTim\u0065out(function() {
       if (w != window.content) return;
       noscriptOverlay._syncUINow();
     }, 400);
@@ -1209,11 +1218,11 @@ return noscriptUtil.service ? {
     const delay = this.notifyHide && this.notifyHideDelay || 0;
     if (delay) {
      if (this.notifyHideTimeout) window.clearTimeout(this.notifyHideTimeout);
-     this.notifyHideTimeout = window.setTimeout(
+     this.notifyHideTimeout = window.setTim\u0065out(
        function() {
          if (browser == gb.selectedBrowser) {
             if ($(popup) == noscriptOverlay._currentPopup) {
-              noscriptOverlay.notifyHideTimeout = window.setTimeout(arguments.callee, 1000);
+              noscriptOverlay.notifyHideTimeout = window.setTim\u0065out(arguments.callee, 1000);
               return;
             }
             noscriptOverlay.notificationHide(browser);
@@ -1479,9 +1488,9 @@ return noscriptUtil.service ? {
         }
         widget.close();
         box.style.width = "";
-        window.setTimeout(function() {
+        window.setTim\u0065out(function() {
           box.style.width = "100%"
-          window.setTimeout(function() {
+          window.setTim\u0065out(function() {
             box.style.width = "";
           }, 10);
         }, 10);
@@ -1675,7 +1684,7 @@ return noscriptUtil.service ? {
       }
       switch (data) {
         case "statusIcon": case "statusLabel":
-          window.setTimeout(function() {
+          window.setTim\u0065out(function() {
               var widget =$("noscript-" + data);
               if (widget) {
                 widget.setAttribute("hidden", !noscriptOverlay.ns.getPref(data))
@@ -1933,7 +1942,7 @@ return noscriptUtil.service ? {
     onDocumentLoad: function(ev) {
       if (ev.originalTarget instanceof HTMLDocument) {
         ev.currentTarget.removeEventListener("load", arguments.callee, false);
-        ev.currentTarget.setTimeout(function() {
+        ev.currentTarget.setTim\u0065out(function() {
           noscriptOverlay.ns.detectJSRedirects(this.document);
         }, 0);
       }
@@ -1963,7 +1972,7 @@ return noscriptUtil.service ? {
         noscriptOverlay.wrapBrowserAccess();
         var hacks = noscriptOverlay.Hacks;
         hacks.torButton();
-        window.setTimeout(hacks.pdfDownload, 0);
+        window.setTim\u0065out(hacks.pdfDownload, 0);
         noscriptOverlay.initPopups();
       } catch(e) {
         var msg = "[NoScript] Error initializing new window " + e + "\n"; 
@@ -2002,7 +2011,7 @@ return noscriptUtil.service ? {
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
 
-      window.setTimeout(noscriptOverlay.firstRunCheck, 500);
+      window.setTim\u0065out(noscriptOverlay.firstRunCheck, 500);
 
     },
     
@@ -2044,7 +2053,7 @@ return noscriptUtil.service ? {
       }
       ns.savePrefs(true);
       if (ns.getPref("firstRunRedirection", true)) {
-          window.setTimeout(function() {
+          window.setTim\u0065out(function() {
             const url = "http://noscript.net?ver=" + noscriptUtil.service.VERSION + "&prev=" + prevVer;
             noscriptUtil.browse(url);
           }, 10);
@@ -2090,22 +2099,22 @@ return noscriptUtil.service ? {
       return;
     }
   
-    if (!nsBrowserAccess.prototype.wrappedJSObject) {
-      nsBrowserAccess.prototype.__defineGetter__("wrappedJSObject", noscriptOverlay.browserAccess.self);
+    if (!nsBrowserAccess.prototype.wr\u0061ppedJSObject) {
+      nsBrowserAccess.prototype.__defineGetter__("wr\u0061ppedJSObject", noscriptOverlay.browserAccess.self);
     }
     
-    if (!(window.browserDOMWindow && browserDOMWindow.wrappedJSObject && (browserDOMWindow.wrappedJSObject instanceof nsBrowserAccess))) {
+    if (!(window.browserDOMWindow && browserDOMWindow.wr\u0061ppedJSObject && (browserDOMWindow.wr\u0061ppedJSObject instanceof nsBrowserAccess))) {
       if (!'retryCount' in arguments.callee) {
         arguments.callee.retryCount = 10;
       } else if (arguments.callee.retryCount) {
         noscriptOverlay.ns.log("[NoScript] browserDOMWindow not found or not set up, retrying " + arguments.callee.retryCount + " times");
         arguments.callee.retryCount--;
       }
-      window.setTimeout(arguments.callee, 0);
+      window.setTim\u0065out(arguments.callee, 0);
       return;
     }
     
-    browserDOMWindow.wrappedJSObject.openURI = noscriptOverlay.browserAccess.openURI;
+    browserDOMWindow.wr\u0061ppedJSObject.openURI = noscriptOverlay.browserAccess.openURI;
     
     if(noscriptOverlay.ns.consoleDump) 
       noscriptOverlay.ns.dump("browserDOMWindow wrapped for external load interception");
@@ -2159,7 +2168,7 @@ return noscriptUtil.service ? {
       if ("torbutton_update_tags" in window && typeof(window.torbutton_update_tags) == "function") {
         // we make TorButton aware that we could have a part in suppressing JavaScript on the browser
         noscriptOverlay.ns.log("TB: " + window.torbutton_update_tags);
-        window.eval(
+        window.ev\u0061l(
           window.torbutton_update_tags.toSource().replace(/\bgetBoolPref\("javascript\.enabled"\)/g,
           "$& && (!noscriptOverlay || noscriptOverlay.isBrowserEnabled(browser))"));
         noscriptOverlay.ns.log("Patched TB: " + window.torbutton_update_tags);
@@ -2204,7 +2213,7 @@ return noscriptUtil.service ? {
       } catch(e) {}
       prefs.setBoolPref("badInstall", true);
       prefs = null;
-      window.setTimeout(function() {
+      window.setTim\u0065out(function() {
         alert("NoScript is not properly installed and cannot operate correctly.\n" + 
               "Please install it again and check the Install FAQ section on http://noscript.net/faq if this problem persists.");
         noscriptUtil.browse("http://noscript.net/faq#faqsec2", null);

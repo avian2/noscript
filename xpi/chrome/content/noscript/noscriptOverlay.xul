@@ -322,13 +322,6 @@
 
 
 <statusbar id="status-bar">
-
-  <statusbarpanel id="noscript-statusIcon"
-    insertbefore="statusbar-updates"
-    class="statusbarpanel-menu-iconic noscript-no"
-    hidden="false"
-    oncontextmenu="noscriptOverlay.onContextMenu(event)"
-    />
   <statusbarpanel id="noscript-statusLabel"
     insertbefore="statusbar-updates"
     hidden="true"
@@ -338,6 +331,14 @@
       <label id="noscript-statusLabelValue"/>
     </vbox>   
   </statusbarpanel>
+  
+  <statusbarpanel id="noscript-statusIcon"
+    insertbefore="statusbar-updates"
+    class="statusbarpanel-menu-iconic noscript-no"
+    hidden="false"
+    oncontextmenu="noscriptOverlay.onContextMenu(event)"
+    />
+  
    
   <statusbarpanel id="noscript-statusXss" insertbefore="statusbar-updates"
     class="statusbarpanel-menu-iconic noscript-xss"

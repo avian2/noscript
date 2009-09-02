@@ -449,33 +449,39 @@ var HTTPS = {
     return uri && uri.equals(req.URI);
   },
   
-  forceHttps: function(req, w) {
+  forceHttps: function(req, w, isRedirection) {
     var uri;
     if (this.httpsForced && !(uri = req.URI).schemeIs("https") && this.httpsForced.test(uri.spec) &&
           !(this.httpsForcedExceptions && this.httpsForcedExceptions.test(uri.spec))) {
-        uri = uri.clone();
-        uri.scheme = "https"; 
-
-        w = (w || IOUtil.findWindow(req));
         
-        // redirect loop check
-        var redirectedFrom = IOUtil.extractFromChannel(req, "noscript.redirectFrom");
-        if (redirectedFrom && redirectedFrom.spec == uri.spec) {
-          req.cancel(NS_ERROR_REDIRECT_LOOP);
-          var parent = this._getParent(req, w);
-          if (parent) {
-            ns.setExpando(parent, "httpsRedirURI", req.URI);
-            parent.addEventListener("load", function(ev) {
-            ev.currentTarget.removeEventListener(ev.type, arguments.callee, true);
-              ns.setExpando(parent, "httpsRedirURI", null);
-            }, true);
+        if (isRedirection) {
+          uri.scheme = "https";
+          this.log("Forced HTTPS redirection on " + uri.spec);
+        } else {
+          uri = uri.clone();
+          uri.scheme = "https"; 
+  
+          w = (w || IOUtil.findWindow(req));
+          
+          // redirect loop check
+          var redirectedFrom = IOUtil.extractFromChannel(req, "noscript.redirectFrom");
+          if (redirectedFrom && redirectedFrom.spec == uri.spec) {
+            req.cancel(NS_ERROR_REDIRECT_LOOP);
+            var parent = this._getParent(req, w);
+            if (parent) {
+              ns.setExpando(parent, "httpsRedirURI", req.URI);
+              parent.addEventListener("load", function(ev) {
+              ev.currentTarget.removeEventListener(ev.type, arguments.callee, true);
+                ns.setExpando(parent, "httpsRedirURI", null);
+              }, true);
+            }
           }
+  
+          IOUtil.abort(req, true);
+         
+          w.location = uri.spec;
+          this.log("Forced HTTPS document on " + uri.spec);
         }
-
-        IOUtil.abort(req, true);
-       
-        w.location = uri.spec;
-        this.log("Forced HTTPS document on " + uri.spec);
         return true;
       }
     return false;

@@ -47,7 +47,7 @@ const IO = {
 
 
 function nsISupportWrapper(wrapped) {
-  this.wrappedJSObject = wrapped;
+  this.wr\u0061ppedJSObject = wrapped;
 }
 nsISupportWrapper.prototype = {
   QueryInterface: xpcom_generateQI([CI.nsISupports])
@@ -67,7 +67,7 @@ const IOUtil = {
         var requestInfo = channel.getPropertyAsInterface(key, CI.nsISupports);
         if (requestInfo) {
           if(!preserve && (channel instanceof CI.nsIWritablePropertyBag)) channel.deleteProperty(key);
-          return requestInfo.wrappedJSObject;
+          return requestInfo.wr\u0061ppedJSObject;
         }
       } catch(e) {}
     }

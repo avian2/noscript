@@ -25,7 +25,7 @@ var PlacesPrefs = {
   },
   
   init: function() {
-    this.wrappedJSObject = this;
+    this.wr\u0061ppedJSObject = this;
     this.bmsvc.addObserver(this, false);
   },
   
@@ -63,7 +63,7 @@ var PlacesPrefs = {
     var ret = false;
     try { 
       this._trans = true;
-      this.bmsvc.runInBatchMode({ runBatched: function(pp) { ret = callback.apply(pp.wrappedJSObject, args); } }, this);
+      this.bmsvc.runInBatchMode({ runBatched: function(pp) { ret = callback.apply(pp.wr\u0061ppedJSObject, args); } }, this);
     } catch(e) {
       this.dump("Transaction failed: " + e);
     } finally {
