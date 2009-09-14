@@ -98,7 +98,7 @@
 <!ENTITY noscriptUnsafeReload.accesskey "В">
 <!ENTITY noscriptXssExceptions "Anti-XSS Protection Exceptions">
 <!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected aginst XSS">
-<!ENTITY noscriptMatchSample "Pattern matching sample:">
+<!ENTITY noscriptMatchSample "Примерок кој одговара на шемата:">
 <!ENTITY noscriptReset "Врати ги старите вредности">
 <!ENTITY noscriptReset.accesskey "В">
 <!ENTITY noscriptResetDef "Врати ги старите вредности">
@@ -155,3 +155,19 @@
 <!ENTITY noscriptFrameOptErr.desc "За да ја заштити вашата сигурност, издавачот на оваа содржина не дозволува да биде прикажана во рамка.">
 <!ENTITY noscriptFrameOptErr.link "Кликни овде за да ја отвориш оваа содржина во нов прозорец">
 <!ENTITY noscriptBookmarkSync "Направи резервна копија на конфигурацијата на NoScript во обележувач за лесна синхронизација">
+<!ENTITY noscriptShowReleaseNotes "Прикажи ги белешките за изданието при ажурирање">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Правила:">
+<!ENTITY ABE.enabled.label "Вклучи го ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Дозволи страниците да притискаат нивни сопствени правила">
+<!ENTITY ABE.edit.label "Уреди...">
+<!ENTITY ABE.edit.accesskey "У">
+<!ENTITY ABE.enable.label "Вклучи">
+<!ENTITY ABE.enable.accesskey "к">
+<!ENTITY ABE.disable.label "Исклучи">
+<!ENTITY ABE.disable.accesskey "И">
+<!ENTITY ABE.refresh.label "Освежи">
+<!ENTITY ABE.refresh.accesskey "О">
+<!ENTITY noscriptUninstall "Одинсталирај">
+<!ENTITY noscriptRecentBlocked "Неодамна блокирани страници">

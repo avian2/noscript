@@ -228,15 +228,25 @@ const MainContentPolicy = {
         case 5: 
         case 15:
           if (aContentLocation && aRequestOrigin && 
-              (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) && 
-              (aContext instanceof CI.nsIDOMHTMLEmbedElement) &&
-              aMimeTypeGuess && 
+              (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) &&
+              aMimeTypeGuess) {
+              
+            if ((aContext instanceof CI.nsIDOMHTMLEmbedElement) &&
               this.isAllowedObject(locationURL, aMimeTypeGuess)
               ) {
-            if (logIntercept) this.dump("Plugin document " + locationURL);
-            return CP_OK; // plugin document, we'll handle it in our webprogress listener
+              if (logIntercept) this.dump("Plugin document " + locationURL);
+              return CP_OK; // plugin document, we'll handle it in our webprogress listener
+            }
+            
+            if (!(aContext.getAttribute("data") || aContext.getAttribute("codebase") || aContext.getAttribute("archive") || aContext.getAttribute("src")
+                  || aContext.firstChild) && aMimeTypeGuess == "application/x-shockwave-flash") {
+              if (logIntercept) this.dump("Early Flash object manipulation with no source set yet.");
+              if (this.anyAllowedObject(this.getSite(locationURL), aMimeTypeGuess))
+                return CP_OK;
+
+              this.setExpando(aContext, "requiresReload", true);
+            }
           }
-          
           if (this.checkJarDocument(aContentLocation, aContext)) 
             return this.reject("Plugin content from JAR", arguments);
           
@@ -427,11 +437,9 @@ const MainContentPolicy = {
         
         if (aContentType == 2) { // "real" JavaScript include
         
-          // Silverlight hack
-          
-          if (this.contentBlocker && this.forbidSilverlight && this.silverlightPatch &&
-                originSite && /^(?:https?|file):/.test(originSite)) {
-            this.applySilverlightPatch(aContext);
+          // plugin instantiation hacks
+          if (this.contentBlocker && originSite && /^(?:https?|file):/.test(originSite)) {
+            this.applyPluginPatches(aContext);
           }
                   
           if (originSite && locationSite == originSite) return CP_OK;

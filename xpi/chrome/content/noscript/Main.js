@@ -194,7 +194,9 @@ var ns = singleton = {
   
   jsHack: null,
   jsHackRegExp: null,
-  silverlightPatch: false,
+  
+  flashPatch: true,
+  silverlightPatch: true,
   
   nselNever: false,
   nselForce: true,
@@ -316,6 +318,7 @@ var ns = singleton = {
       case "jsredirectForceShow":
       case "jsHack":
       case "consoleLog":
+      case "flashPatch":
       case "silverlightPatch":
       case "inclusionTypeChecking":
         this[name] = this.getPref(name, this[name]);  
@@ -656,7 +659,7 @@ var ns = singleton = {
       "clearClick", "clearClick.exceptions", "clearClick.subexceptions", "opaqueObject",
       "showPlaceholder", "showUntrustedPlaceholder", "collapseObject", "abp.removeTabs",
       "temp", "untrusted", "gtemp",
-      "silverlightPatch",
+      "flashPatch", "silverlightPatch",
       "secureCookies", "secureCookiesExceptions", "secureCookiesForced",
       "httpsForced", "httpsForcedExceptions", "allowHttpsOnly",
       "truncateTitle", "truncateTitleLen",
@@ -2003,6 +2006,15 @@ var ns = singleton = {
   objectKey: function(url) {
     return IOUtil.anonymizeURL(url.replace(/^((?:\w+:\/\/)?[^\.\/\d]+)\d+(\.[^\.\/]+\.)/, '$1$2'));
   },
+  anyAllowedObject: function(site, mime) {
+    site = this.objectKey(site);
+    if (site in this.objectWhitelist) return true;
+    site += '/';
+    for(var s in this.objectWhitelist) {
+      if (s.indexOf(site) == 0) return true;
+    }
+    return false;
+  },
   isAllowedObject: function(url, mime, site) {
     url = this.objectKey(url);
     var types = this.objectWhitelist[url] || null;
@@ -2014,7 +2026,7 @@ var ns = singleton = {
     var types, s;
     for (;;) {
 
-      var types = site && this.objectWhitelist[site] || null;
+      types = site && this.objectWhitelist[site] || null;
       if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1)) return true;
 
       if (!/\..*\.|:\//.test(site)) break;
@@ -2490,8 +2502,8 @@ var ns = singleton = {
                   tt.push({ f: f, d: d, a: a});
                 };
                 window.__runTimeouts = function() {
-                  var t;
-                  while (tt.length) {
+                  var t, count = 0;
+                  while (tt.length && count++ < 50) { // let's prevent infinite pseudo-loops
                     tt.sort(function(b, a) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); });
                     t = tt.pop();
                     t.f.call(window, t.a);
@@ -3030,7 +3042,7 @@ var ns = singleton = {
             // doc.defaultView.frameElement.src = url;
             doc.defaultView.location.replace(url);
           } else this.quickReload(doc.defaultView, true);
-      } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime)) {
+      } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime) || this.getExpando(ctx, "requiresReload")) {
         this.quickReload(doc.defaultView);
       } else if (this.getExpando(ctx, "silverlight")) {
         this.allowObject(doc.documentURI, mime);
@@ -3100,18 +3112,70 @@ var ns = singleton = {
     pluginExtras.push(extras);
     return true;
   },
- 
-  _silverlightInstalledHack: null,
-  applySilverlightPatch: function(doc) {
-    try {
-      if(!this._silverlightInstalledHack) {
-        this._silverlightInstalledHack = "HTMLObjectElement.prototype.IsVersionSupported = function(n) { return this.type == 'application/x-silverlight'; };";
+  
+  _silverlightPatch: function() {
+    HTMLObjectElement.prototype.__defineGetter__("IsVersionSupported", function() {
+      return (this.type == 'application/x-silverlight')
+        ? function(n) { return true; } : undefined;
+    });
+  }.toSource(),
+  
+  _flashPatch: function() {
+    var type = "application/x-shockwave-flash";
+    var ver;
+    
+    HTMLObjectElement.prototype.setAttribute = function(n, v) {
+      if (n == "type" && v == type && !this.data) {
+        this._pendingType = v;
+        
+        if (!ver) {
+          this.SetVariable = function() {};
+          this.GetVariable = function(n) {
+            if (n != "$version") return;
+            
+            if (!ver) {
+              var ver = navigator.plugins["Shockwave Flash"]
+                .description.match(/(\d+)\.(\d+)(?:\s*r(\d+))?/);
+              
+              ver.shift();
+              ver.push('99');
+              ver = "WIN " + ver.join(",");
+            }
+            
+            return;
+          }
+        }
+        
+        return;
       }
-     
-      if (this.getExpando(doc, "silverlightHack")) return;
-      if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Emulating SilverlightControl.IsVersionSupported()");
-      this.setExpando(doc, "silverlightHack", true);
-      ScriptSurrogate.execute(doc, this._silverlightInstalledHack);
+      HTMLElement.prototype.setAttribute.call(this, n, v);
+      if (n == "data" && ("_pendingType" in this) && this._pendingType == type) {
+        this.setAttribute("type", type);
+        this._pendingType = null;
+      }
+    };
+
+  }.toSource(),
+  
+  applyPluginPatches: function(doc) {
+    try {
+      if (this.getExpando(doc, "pluginPatches")) return;
+      this.setExpando(doc, "pluginPatches", true);
+          
+      var patches;
+      
+      if (this.forbidFlash && this.flashPatch) {
+        (patches = patches || []).push(this._flashPatch);
+        if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Patching HTMLObject for SWFObject compatibility.");
+      }
+      if (this.forbidSilverlight && this.silverlightPatch) {
+        (patches = patches || []).push(this._silverlightPatch);
+        if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Patching HTMLObject for Silverlight compatibility.");
+      }
+      
+      if (!patches) return;
+
+      ScriptSurrogate.execute(doc, "(" + patches.join(")();(") + ")();");
     } catch(e) {
        if (this.consoleDump) this.dump(e);
     }
