@@ -85,13 +85,16 @@ var ns = singleton = {
       
         case "private-browsing":
           if (data == "enter") {
-            // consider if enforcing only temporary permissions... too much a pain?
-          } if (data == "exit") {
+            STS.enterPrivateBrowsing();
+          }
+          if (data == "exit") {
             this.eraseTemp();
+            STS.exitPrivateBrowsing();
           }
         // break; 
         case "browser:purge-session-history":
           this.recentlyBlocked = [];
+          STS.eraseDB();
         break;
       }
     }
@@ -356,7 +359,11 @@ var ns = singleton = {
       case "ABE.skipBrowserRequests":
         ABE[name.substring(4)] = this.getPref(name);
       break;
-    
+      
+      case "STS.enabled":
+        STS[name.substring(4)] = this.getPref(name);
+      break;
+      
       case "consoleDump":
         this[name] = this.getPref(name, this[name]);
         this.injectionChecker.logEnabled = this.consoleDump & LOG_INJECTION_CHECK;
@@ -664,7 +671,8 @@ var ns = singleton = {
       "httpsForced", "httpsForcedExceptions", "allowHttpsOnly",
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
-      "ABE.enabled", "ABE.legacySupport", "ABE.siteEnabled", "ABE.allowRulesetRedir", "ABE.disabledRulesetNames", "ABE.skipBrowserRequests"
+      "ABE.enabled", "ABE.legacySupport", "ABE.siteEnabled", "ABE.allowRulesetRedir", "ABE.disabledRulesetNames", "ABE.skipBrowserRequests",
+      "STS.enabled"
       ]) {
       try {
         this.syncPrefs(this.prefs, p);
@@ -713,7 +721,7 @@ var ns = singleton = {
     // hook on redirections (non persistent, otherwise crashes on 1.8.x)
     CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
       .addCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, SERVICE_CTRID, false, true);
-    
+        
     return true;
   },
   
@@ -746,6 +754,8 @@ var ns = singleton = {
       PolicyState.reset();
       
       if (this.placesPrefs) this.placesPrefs.dispose();
+      
+      STS.dispose();
       
       if(this.consoleDump & LOG_LEAKS) this.reportLeaks();
     } catch(e) {
@@ -3123,7 +3133,7 @@ var ns = singleton = {
   _flashPatch: function() {
     var type = "application/x-shockwave-flash";
     var ver;
-    
+    var setAttribute = HTMLObjectElement.prototype.setAttribute;
     HTMLObjectElement.prototype.setAttribute = function(n, v) {
       if (n == "type" && v == type && !this.data) {
         this._pendingType = v;
@@ -3134,7 +3144,7 @@ var ns = singleton = {
             if (n != "$version") return;
             
             if (!ver) {
-              var ver = navigator.plugins["Shockwave Flash"]
+              ver = navigator.plugins["Shockwave Flash"]
                 .description.match(/(\d+)\.(\d+)(?:\s*r(\d+))?/);
               
               ver.shift();
@@ -3148,7 +3158,7 @@ var ns = singleton = {
         
         return;
       }
-      HTMLElement.prototype.setAttribute.call(this, n, v);
+      setAttribute.call(this, n, v);
       if (n == "data" && ("_pendingType" in this) && this._pendingType == type) {
         this.setAttribute("type", type);
         this._pendingType = null;
@@ -3324,12 +3334,6 @@ var ns = singleton = {
     const rw = this.requestWatchdog;
     const uri = newChannel.URI;
     
-     if (HTTPS.isRedir(newChannel)) {
-      ns.log("HTTPS->HTTP redirect loop detected, aborting...");
-      oldChannel.cancel(NS_ERROR_REDIRECT_LOOP);
-      newChannel.cancel(NS_ERROR_REDIRECT_LOOP);
-      throw NS_ERROR_REDIRECT_LOOP;
-    }
 
     IOUtil.attachToChannel(newChannel, "noscript.redirectFrom", oldChannel.URI);
     
@@ -3377,8 +3381,6 @@ var ns = singleton = {
           
         }
         
-        HTTPS.forceHttps(newChannel, win, true); // we're called while the channel is not open yet, so we can safely change URI's scheme 
-
         if (this.shouldLoad.apply(this, ph.toArray()) != CP_OK) {
           if (this.consoleDump) {
             this.dump("Blocked " + oldChannel.URI.spec + " -> " + uri.spec + " redirection of type " + type);
@@ -3387,9 +3389,6 @@ var ns = singleton = {
         }
         
         PolicyState.save(uri, ph);
-      } else {
-        // no Policy Hints, likely an image loading
-        if (!uri.schemeIs("https") && HTTPS.forceHttpsPolicy(uri.clone())) throw "NoScript aborted non-HTTPS background redirection to " + uri.spec;
       }
     } finally {
       PolicyState.reset();
@@ -3474,10 +3473,6 @@ var ns = singleton = {
             }
 
             this._handleDocJS1(w, req);
-            if (HTTPS.forceHttps(req, w)) {
-              this._handleDocJS2(w, req);
-              return;
-            }
             
           }
   
@@ -3652,9 +3647,14 @@ var ns = singleton = {
       }
       
       const domWindow = IOUtil.findWindow(req);
-      if (domWindow && domWindow == domWindow.top) {
+      if (domWindow && domWindow == domWindow.top) 
         return; // for top windows we call onBeforeLoad in onLocationChange
-      }
+      
+      var status = req.responseStatus;
+      if (status >= 300 && status < 400) // redirect, wait for ultimate destination, see http://forums.informaction.com/viewtopic.php?f=7&t=2630
+        return;
+      
+      
       if (ABE.checkFrameOpt(domWindow, req)) {
         IOUtil.abort(req);
         this.showFrameOptError(domWindow, req.URI.spec);
@@ -3909,7 +3909,9 @@ var ns = singleton = {
   
   _handleDocJS3: function(url, win, docShell) {
     // called at the end of onLocationChange
-    if (docShell && !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)))) {
+    jsBlocked = docShell && !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
+    
+    if (jsBlocked) {
       if (this.getPref("fixLinks")) {
         win.addEventListener("click", this.bind(this.onContentClick), true);
         win.addEventListener("change", this.bind(this.onContentChange), true);
@@ -3925,12 +3927,23 @@ var ns = singleton = {
       }
       ScriptSurrogate.apply(win.document, url, url);
     } catch(e) {}
-    
   },
   
   beforeManualAllow: function(win) {
     // reset prevBlock info, to forcibly allow docShell JS
     this.setExpando(win.document, "prevBlock", { value: "m" });
+  },
+  
+  handleErrorPage: function(win, uri) {
+    win = win && win.contentWindow || win;
+    if (!win) return;
+    var docShell = DOM.getDocShellForWindow(win);
+    if (!docShell) return;
+    
+    docShell.allowJavascript = true;
+    
+    if (!this.getPref("STS.expertErrorUI"))
+      STS.patchErrorPage(docShell, uri);
   },
   
   checkJarDocument: function(uri, context, origin) {

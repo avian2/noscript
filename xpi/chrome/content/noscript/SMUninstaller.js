@@ -57,7 +57,7 @@ var SMUninstaller = {
         
          
         self.log("Patching the chrome registry");
-        IO.writeFile(pChrome, chromeReg);
+        IO.safeWriteFile(pChrome, chromeReg);
         
         var rx = new RegExp('<RDF:li>chrome://' + CHROME_NAME + '/[^<]+</RDF:li>', 'g');
         
@@ -71,7 +71,7 @@ var SMUninstaller = {
               var patched = content.replace(rx, '');
               if (content != patched) {
                  self.log("Writing " + patched);
-                IO.writeFile(cf, patched);
+                IO.safeWriteFile(cf, patched);
               }
             }
           } catch(e) {

@@ -6,14 +6,17 @@ function DNSRecord(record) {
       this.canonicalName = record.canonicalName;
     } catch(e) {}
     this.entries = [];
-    while (record.hasMore()) {
+    while (record.hasMore()) try {
       this.entries.push(record.getNextAddrAsString());
+    } catch(e) {
+      ABE.log("Error retrieving DNS record " + this.entries.join(", "));
     }
     ttl = this.TTL;
+    if (!this.entries.length) this.valid = false;
   } else {
     this.valid = false;
-    ttl = Thread.canSpin ? this.INVALID_TTL_ASYNC : this.INVALID_TTL_SYNC;
   }
+  if (!this.valid) ttl = Thread.canSpin ? this.INVALID_TTL_ASYNC : this.INVALID_TTL_SYNC;
   this.expireTime = this.ts + ttl;
 }
 
@@ -283,7 +286,7 @@ var DNS = {
   isLocalIP: function(addr) {
     // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose but incomplete (missing IPV6 ULA) implementation
     // Relevant RFCs linked at http://en.wikipedia.org/wiki/Private_network
-    return /^(?:(?:0|127|10|169\.254|172\.16|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i.test(addr);
+    return /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i.test(addr);
   },
   
   isIP: function(host) {

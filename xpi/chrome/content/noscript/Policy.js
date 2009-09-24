@@ -102,6 +102,7 @@ const NOPContentPolicy = {
 const MainContentPolicy = {
   shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
     PolicyState.addCheck(aContentLocation);
+   
     try {
 
       var originURL, locationURL, originSite, locationSite, scheme,
@@ -135,6 +136,9 @@ const MainContentPolicy = {
       var isHTTP = /^https?$/.test(scheme);
       
       if (isHTTP) {
+        
+        HTTPS.forceURI(unwrappedLocation);
+        
         if (aRequestOrigin && !aInternalCall) {
           
           if (aContentType != 3) // images are a bitch if cached!
@@ -147,14 +151,6 @@ const MainContentPolicy = {
                 return this.reject("ABE-denied inclusion", arguments); 
           }
         }
-        
-        if (HTTPS.httpsForced && !aInternalCall &&
-              (aContentType != 6 && aContentType != 7
-                || !this.POLICY_OBJSUB // Gecko < 1.9, early check for documents as well
-            ) && scheme == "http"
-          && HTTPS.forceHttpsPolicy(unwrappedLocation, aContext, aContentType))
-          if (false && this.POLICY_OBJSUB) // if Gecko >= 1.9 we reject this request because we're gonna spawn a SSL one for images and the like
-            return this.reject("Non-HTTPS", arguments); 
         
         if (logIntercept && this.cpConsoleFilter.indexOf(aContentType) > -1) {
           this.cpDump("processing", aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall);
@@ -401,7 +397,11 @@ const MainContentPolicy = {
             if (logBlock)
               this.dump("Document OK: " + aMimeTypeGuess + "@" + (locationURL || aContentLocation.spec) + 
                 " --- PGFM: " + this.pluginForMime(aMimeTypeGuess));
-
+            
+            if (aContentLocation.schemeIs("about") && /^about:(net|cert)error?/.test(aContentLocation.spec)) {
+              ns.handleErrorPage(aContext, aContentLocation);
+            }
+            
             return CP_OK;
           }
           break;

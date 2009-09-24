@@ -42,6 +42,15 @@ const IO = {
     os.init(file, 0x02 | 0x08 | 0x20, 0700, 0);
     os.write(content, content.length);
     os.close();
+  },
+  
+  safeWriteFile: function(file, content, charset) {
+    var tmp = file.clone();
+    var name = file.leafName;
+    tmp.leafName = name + ".tmp";
+    tmp.createUnique(CI.nsIFile.NORMAL_FILE_TYPE, file.exists() ? file.permissions : 0600);
+    this.writeFile(tmp, content, charset);
+    tmp.moveTo(file.parent, name);
   }
 };
 
@@ -137,6 +146,7 @@ const IOUtil = {
   
   readFile: IO.readFile,
   writeFile: IO.writeFile,
+  safeWriteFIle: IO.safeWriteFile,
   
   unwrapURL: function(url) {
     
@@ -528,7 +538,11 @@ LoadGroupWrapper.prototype = {
   
   addRequest: function(r, ctx) {
     this.detach();
-    if (this._inner) this._inner.addRequest(r, ctx);
+    if (this._inner) try {
+      this._inner.addRequest(r, ctx);
+    } catch(e) {
+      // addRequest may have not been implemented
+    }
     if (r === this._channel && ("addRequest" in this._callbacks))
       try {
         this._callbacks.addRequest(r, ctx);

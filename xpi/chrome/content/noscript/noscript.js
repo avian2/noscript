@@ -92,7 +92,7 @@ var noscriptUtil = {
   browse: function(url, features) {
     var w = this.service.dom.mostRecentBrowserWindow;
     if(w && !w.closed && w.gBrowser) {
-      w.gBrowser.selectedTab = w.gBrowser.addTab(url, null);
+      w.gBrowser.selectedTab = w.gBrowser.addTab(url);
     } else {
       window.open(url, "_blank", features || null)
     }

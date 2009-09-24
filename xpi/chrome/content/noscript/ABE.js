@@ -145,7 +145,7 @@ const ABE = {
       for each(var rs in data) {
         f = ABEStorage.getRulesetFile(rs.name);
         if (!f.exists()) f.create(f.NORMAL_FILE_TYPE, 0600);
-        IO.writeFile(f, rs.source);
+        IO.safeWriteFile(f, rs.source);
         f.lastModifiedTime = rs.timestamp;
       }
       ABEStorage.loadRulesNow();
@@ -1041,7 +1041,7 @@ var ABEStorage = {
         f.append(d + ".abe");
         if (!f.exists()) {
           f.create(f.NORMAL_FILE_TYPE, 0600);
-          IO.writeFile(f, this._defaults[d]);
+          IO.safeWriteFile(f, this._defaults[d]);
         }
       }
     } catch(e) {

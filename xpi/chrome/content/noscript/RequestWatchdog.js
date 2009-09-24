@@ -34,6 +34,9 @@ RequestWatchdog.prototype = {
      
     switch(topic) {
       case "http-on-modify-request":
+        
+        HTTPS.forceChannel(channel);
+        
         var ncb = channel.notificationCallbacks;
         if (!(loadFlags || ncb || channel.owner)) {
           try {
@@ -74,8 +77,11 @@ RequestWatchdog.prototype = {
         }
       break;
       
-      case "http-on-examine-merged-response":
+      
       case "http-on-examine-response":
+        STS.processRequest(channel);
+        
+      case "http-on-examine-merged-response":
         if (isDoc) {
           ns.onContentSniffed(channel);
         } else {
@@ -1063,7 +1069,7 @@ var InjectionChecker = {
   ),
   
   maybeJS: function(expr) {
-    if(/^(?:[^\(\)="']+=[^\(='"\[]+|(?:[\?a-z_0-9;,&=\/]|\.[\d\.])*)$/i.test(expr)) // commonest case, single assignment or simple chained assignments, no break
+    if(/^(?:[^\(\)="']+=[^\(='"\[]+|(?:[\?a-z_0-9;,&=\/]|\.[\d\.])*)$/i.test(expr) && !/\b=[\s\S]*_QS_\b/.test(expr)) // commonest case, single assignment or simple chained assignments, no break
       return this._singleAssignmentRx.test(expr) || this._locationRx.test(expr) && this._nameRx.test(expr);
     if (/^(?:[\w\-\.]+\/)*\(*[\w\-\s]+\([\w\-\s]+\)[\w\-\s]*\)*$/.test(expr)) // typical "call like" Wiki URL pattern + bracketed session IDs
       return this._jsSpecialFuncsRx.test(expr);
@@ -1302,11 +1308,10 @@ var InjectionChecker = {
     }
     
     // check well known and semi-obfuscated -- as in [...]() -- function calls
-    var m = s.match(/\b(?:open|show\w*Dialog|eval|Script|set(?:Timeout|Interval)|[fF]unction|with|\[[^\]]*\w[^\]]*\]|split|replace|toString|substr(?:ing)?|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/[\/\*][\s\S]*?)?\([\s\S]*\)/);
+    var m = s.match(/\b(?:open|show\w*Dialog|eval|Script|set(?:Timeout|Interval)|[fF]unction|with|split|replace|toString|substr(?:ing)?|fromCharCode|toLowerCase|unescape|decodeURI(?:Component)?|atob|btoa|\${1,2})\s*(?:\/[\/\*][\s\S]*?)?\([\s\S]*\)/);
     if (m) {
       var pos;
       var js = m[0];
-      if (js.charAt(0) == '[') js = "_xss_" + js;
       for (;;) {
         if (this.checkJSSyntax(js)) {
           return true;
@@ -1332,7 +1337,7 @@ var InjectionChecker = {
     
     // the hardcore job!
     if (this.checkAttributes(s)) return true;
-    if (/[\\=\(]/.test(s) && // quick preliminary screen
+    if (/[\\\(]|=[^=]/.test(s) && // quick preliminary screen
         (this.checkJSStunt(s) || this.checkJSBreak(s)))
       return true;
     
@@ -1386,7 +1391,7 @@ var InjectionChecker = {
   
   attributesChecker: new RegExp(
       "\\W(?:javascript:[\\s\\S]+(?:[=\\(]|%(?:[3a]8|[3b]d))|data:[\\w\\-]+/[\\w\\-]+[;,])|@" + 
-      ("import\\W*(?:\\/\\*[\\s\\S]*)*(?:[\"']|url[\\s\\S]*\\()" + 
+      ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
         "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
         .replace(/[a-rt-z\-]/g, "\\W*$&"), 
       "i"),
@@ -1398,7 +1403,7 @@ var InjectionChecker = {
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|link|object|embed|applet|iframe|frame|base|body|meta|ima?g|svg|video|audio|marquee") + 
-    ")|(?:<[^>]+|'[^>']*|\"[^>\"]*)\\b" + IC_EVENT_PATTERN + "[\\s\\x08]*=[\\s\\S]*(?:[\\(\\[\\{]|&#[x\d]|\\[ux]\d|location|setter)", 
+    ")|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\b" + IC_EVENT_PATTERN + "[\\s\\x08]*=[\\s\\S]*(?:[\\(\\[\\{]|&#[x\\d]|\\[ux]\\d|location|setter)", 
     "i"),
   checkHTML: function(s) {
     this.log(s);

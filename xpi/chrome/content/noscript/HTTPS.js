@@ -1,159 +1,39 @@
+INCLUDE('STS', 'Cookie');
 
-function Cookie(s, host) {
-  this.parse(s, host);
-}
-Cookie.computeId = function(c) {
-  return c.name + ";" + c.host + "/" + c.path;
-};
-Cookie.find = function(f) {
-  var cc = Cookie.prototype.cookieManager.enumerator;
-  var c;
-  while (cc.hasMoreElements()) {
-    if (f(c = cc.getNext())) return c;
-  }
-  return null;
-};
-
-Cookie.attributes = { host: 'domain', path: 'path', expires: 'expires', isHttpOnly: 'HttpOnly', isSecure: 'Secure' };
-Cookie.prototype = {
-  
-  name: '',
-  value: '',
-  source: '',
-  domain: '',
-  host: '',
-  rawHost: '',
-  path: '',
-  secure: false,
-  httponly: false,
-  session: true,
-  expires: 0,
-  
-  id: '',
-  
-  
-  toString: function() {
-    var c = [this['name'] + "=" + this.value];
-    var v;
-    const aa = Cookie.attributes;
-    for (var k in aa) {
-      var p = aa[k];
-      v = this[k];
-      switch(typeof(v)) {
-        case "string":
-          if (v) c.push(p + "=" + v);
-          break;
-        case "boolean":
-          if (v) c.push(p);
-          break;
-        case "number":
-          if (!this.isSession) c.push(p + "=" + new Date(v * 1000).toUTCString());
-          break;
-      }
-    }
-    return c.join("; ");
-  },
-  parse: function(s, host) {
-    var p;
-    if (this.source) {
-      // cleanup for recycle
-      for (p in this) {
-        if (typeof (p) != "function") delete this[p];
-      }
-    }
-    this.source = s;
-    this.host = host;
-    
-    var parts = s.split(/;\s*/);
-    var nv = parts.shift().split("=");
-    
-    this.name = nv.shift() || '';
-    this.value = nv.join('=') || '';
-    
-    var n, v;
-    for each (p in parts) {
-      nv = p.split("=");
-      switch (n = nv[0].toLowerCase()) {
-        case 'expires':
-          v = Math.round(Date.parse((nv[1] || '').replace(/\-/g, ' ')) / 1000);
-        break;
-        case 'domain':
-        case 'path':
-          v = nv[1] || '';
-          break;
-        case 'secure':
-        case 'httponly':
-          v = true;
-          break;
-        default:
-          n = 'unknown'
-      }
-      this[n] = v;
-    }
-    if (!this.expires) {
-      this.session = true;
-      this.expires = Math.round(new Date() / 1000) + 31536000;  
-    }
-    if (this.domain) {
-      if (!this.isDomain) this.domain = "." + this.domain;
-      this.host = this.domain;
-    }
-    this.rawHost = this.host.replace(/^\./, '');
-    
-    this.id = Cookie.computeId(this);
-  },
-  
-  
-  get cookieManager() {
-    delete Cookie.prototype.cookieManager;
-    var cman =  CC["@mozilla.org/cookiemanager;1"]
-      .getService(CI.nsICookieManager2).QueryInterface(CI.nsICookieManager);
-    return Cookie.prototype.cookieManager = cman; 
-  },
-  belongsTo: function(host, path) {
-    if (path && this.path && path.indexOf(this.path) != 0) return false;
-    if (host == this.rawHost) return true;
-    var d = this.domain;
-    return d && (host == d || this.isDomain && host.slice(-d.length) == d);
-  },
-  save: function() {
-    this.save = ("cookieExists" in this.cookieManager)
-      ? function() { this.cookieManager.add(this.host, this.path, this.name, this.value, this.secure, this.httponly, this.session, this.expires); }
-      : function() { this.cookieManager.add(this.host, this.path, this.name, this.value, this.secure,                this.session, this.expires);}
-    ;
-    return this.save();
-  },
-  exists: function() {
-    var cc = this.cookieManager.enumerator;
-    while(cc.hasMoreElements()) {
-      if (this.sameAs(cc.getNext())) return true;
-    }
-    return false;
-  },
-  
-  sameAs: function(c) {
-    (c instanceof CI.nsICookie) && (c instanceof CI.nsICookie2);
-    return Cookie.computeId(c) == this.id;
-  },
-  
-  // nsICookie2 interface extras
-  get isSecure() { return this.secure; },
-  get expiry() { return this.expires; },
-  get isSession() { return this.session; },
-  get isHttpOnly() { return this.httponly; },
-  get isDomain() { return this.domain && this.domain[0] == '.'; },
-  policy: 0,
-  status: 0,
-  QueryInterface: xpcom_generateQI([CI.nsICookie, CI.nsICookie2, CI.nsISupports])
-  
-}
-
-var HTTPS = {
+const HTTPS = {
   secureCookies: false,
   secureCookiesExceptions: null,
   secureCookiesForced: null,
   httpsForced: null,
   httpsForcedExceptions: null,
+  
+  
+  
+  forceChannel: function(channel) {
+    return this.forceURI(channel.URI);
+  },
+  
+  forceURI: function(uri) {
+    if (this.mustForce(uri)) {
+      try {
+        this.log("Forcing https on " + uri.spec);
+        uri.scheme = "https";
+        return true;
+      } catch(e) {
+        this.log("Error trying to force https on " + uri.spec + ": " + e);
+      }
+    }
+    return false;
+  },
+  
+  mustForce: function(uri) {
+    return (uri.schemeIs("http") &&
+        (this.httpsForced && this.httpsForced.test(uri.spec) ||
+         STS.isSTSURI(uri)) &&
+          !(this.httpsForcedExceptions &&
+            this.httpsForcedExceptions.test(uri.spec)
+        ));
+  },
   
   log: function(msg) {
     this.log = ns.getPref("https.showInConsole", true)
@@ -165,12 +45,10 @@ var HTTPS = {
   
   onCrossSiteRequest: function(channel, origin, browser, rw) {
     try {
-      if (!this.forceHttps(channel))
-        this.handleCrossSiteCookies(channel, origin, browser);
+      this.handleCrossSiteCookies(channel, origin, browser);
     } catch(e) {
       this.log(e + " --- " + e.stack);
     }
-
   },
   
   registered: false,
@@ -437,77 +315,8 @@ var HTTPS = {
   
   _getParent: function(req, w) {
     return  w && w.frameElement || DOM.findBrowserForNode(w || IOUtil.findWindow(req));
-  },
-  
-  isRedir: function(req, w) {
-    w = w || IOUtil.findWindow(req);
-    
-    var parent = this._getParent(req, w);
-    if (!parent) return false;
-    
-    var uri = ns.getExpando(parent, "httpsRedirURI");
-    return uri && uri.equals(req.URI);
-  },
-  
-  forceHttps: function(req, w, isRedirection) {
-    var uri;
-    if (this.httpsForced && !(uri = req.URI).schemeIs("https") && this.httpsForced.test(uri.spec) &&
-          !(this.httpsForcedExceptions && this.httpsForcedExceptions.test(uri.spec))) {
-        
-        if (isRedirection) {
-          uri.scheme = "https";
-          this.log("Forced HTTPS redirection on " + uri.spec);
-        } else {
-          uri = uri.clone();
-          uri.scheme = "https"; 
-  
-          w = (w || IOUtil.findWindow(req));
-          
-          // redirect loop check
-          var redirectedFrom = IOUtil.extractFromChannel(req, "noscript.redirectFrom");
-          if (redirectedFrom && redirectedFrom.spec == uri.spec) {
-            req.cancel(NS_ERROR_REDIRECT_LOOP);
-            var parent = this._getParent(req, w);
-            if (parent) {
-              ns.setExpando(parent, "httpsRedirURI", req.URI);
-              parent.addEventListener("load", function(ev) {
-              ev.currentTarget.removeEventListener(ev.type, arguments.callee, true);
-                ns.setExpando(parent, "httpsRedirURI", null);
-              }, true);
-            }
-          }
-  
-          IOUtil.abort(req, true);
-         
-          w.location = uri.spec;
-          this.log("Forced HTTPS document on " + uri.spec);
-        }
-        return true;
-      }
-    return false;
-  },
-  
-  forceHttpsPolicy: function(uri, ctx, type) {
-    if (this.httpsForced && this.httpsForced.test(uri.spec) && !(this.httpsForcedExceptions && this.httpsForcedExceptions.test(uri.spec))) {
-      var httpsURI = uri.clone();
-      httpsURI.scheme = "https";
-      if (ctx && type != 6 && type != 7) {
-        Thread.asap(function() {
-          for each (var attr in ["src", "data", "href"]) {
-            try {
-              if (attr in ctx) {
-                ctx[attr] = httpsURI.spec;
-              }
-            } catch(e) { HTTPS.log("Error forcing embedded HTTPS policy: " + e.message); }
-          }
-        });
-      }
-      this.log("Forcing HTTPS policy on " + uri.spec);
-      uri.spec = httpsURI.spec;
-      return true;
-    }
-    return false;
   }
+  
 };
 
 (function () {
@@ -524,3 +333,6 @@ var HTTPS = {
     });
   });
 })();
+
+
+
