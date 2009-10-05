@@ -199,7 +199,7 @@ pref("noscript.checkHijackings", true);
 
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.ga.exceptions", "");
-pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return{__noSuchMethod__:_0,_link:function(h){if(h)location.href=h}}}}");
+pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return{__noSuchMethod__:_0,_link:function(h){if(h)location.href=h;},_linkByPost:function(){return true;},_getLinkerUrl:function(u){return u;}}}}");
 pref("noscript.surrogate.qs.sources", "edge.quantserve.com");
 pref("noscript.surrogate.qs.replacement", "window.quantserve=function(){}");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
@@ -239,3 +239,6 @@ pref("noscript.recentlyBlockedLevel", 0);
 
 pref("noscript.STS.enabled", true);
 pref("noscript.STS.expertErrorUI", false);
+
+pref("noscript.frameOptions.enabled", true);
+pref("noscript.frameOptions.parentWhitelist", "https://mail.google.com/*");

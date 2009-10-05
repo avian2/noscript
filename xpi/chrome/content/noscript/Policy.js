@@ -107,7 +107,7 @@ const MainContentPolicy = {
 
       var originURL, locationURL, originSite, locationSite, scheme,
           forbid, isScript, isJava, isFlash, isSilverlight,
-          isLegacyFrame, blockThisIFrame, contentDocument,
+          isLegacyFrame, blockThisFrame, contentDocument,
           logIntercept, logBlock,
           unwrappedLocation;
       
@@ -296,7 +296,7 @@ const MainContentPolicy = {
                 contentDocument = aContext.contentDocument;
               } catch(e) {}
            
-              blockThisIFrame = aInternalCall == CP_FRAMECHECK && !(
+              blockThisFrame = (aInternalCall == CP_FRAMECHECK) && !(
                       this.knownFrames.isKnown(locationURL, originSite = this.getSite(originURL)) ||
                     /^(?:chrome|resource|wyciwyg):/.test(locationURL) ||
                     locationURL == this._silverlightInstalledHack ||
@@ -344,16 +344,8 @@ const MainContentPolicy = {
             } else if(/^(?:data|javascript)$/.test(scheme)) {
               //data: and javascript: URLs
               locationURL = locationURL || aContentLocation.spec;
-              if (!(this.isSafeJSURL(locationURL) || this.isPluginDocumentURL(locationURL, "iframe")) &&
-                ((this.forbidData && !this.isFirebugJSURL(locationURL) || locationURL == "javascript:") && 
-                  this.forbiddenJSDataDoc(locationURL, originSite = this.getSite(originURL = originURL || aRequestOrigin.spec), aContext) ||
-                  aContext && (
-                    (aContext instanceof CI.nsIDOMWindow) 
-                      ? aContext
-                      : aContext.ownerDocument.defaultView
-                  ).isNewToplevel
-                )
-               ) {
+              originSite = this.getSite(originURL = originURL || aRequestOrigin.spec);
+              if (this.forbiddenJSDataDoc(locationURL, originSite, aContext)) {
                 return this.reject("JavaScript/Data URL", arguments);
               }
             } else if(scheme != aRequestOrigin.scheme && 
@@ -379,7 +371,7 @@ const MainContentPolicy = {
           }
           
           if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) ||
-                !blockThisIFrame && (
+                !blockThisFrame && (
                   !aMimeTypeGuess 
                   || aMimeTypeGuess.substring(0, 5) == "text/"
                   || aMimeTypeGuess == "application/xml" 
@@ -425,7 +417,7 @@ const MainContentPolicy = {
       
       
       if(logBlock)
-        this.dump("[CP PASS 2] " + aMimeTypeGuess + "*" + locationURL);
+        this.dump("[CP PASS 2] " + aMimeTypeGuess + "*" + locationURL + ", " + aContentType + ", " + aInternalCall);
   
       if (isScript) {
         
@@ -466,7 +458,7 @@ const MainContentPolicy = {
       if (!(forbid || locationSite == "chrome:")) {
         var mimeKey = aMimeTypeGuess || "application/x-unknown"; 
         
-        forbid = blockThisIFrame || untrusted && this.alwaysBlockUntrustedContent;
+        forbid = blockThisFrame || untrusted && this.alwaysBlockUntrustedContent;
         if (!forbid && this.forbidSomeContent) {
           if (aMimeTypeGuess && !(this.allowedMimeRegExp && this.allowedMimeRegExp.test(aMimeTypeGuess))) {
             forbid = 
@@ -537,8 +529,9 @@ const MainContentPolicy = {
         }
         
         forbid = !(locationOK && (originOK || 
-          !this.getPref(blockThisIFrame 
-          ? "forbidIFramesParentTrustCheck" : "forbidActiveContentParentTrustCheck", true)
+          !this.getPref(blockThisFrame 
+            ? "forbidIFramesParentTrustCheck" : "forbidActiveContentParentTrustCheck",
+            true)
           ));
       }
        
@@ -570,7 +563,7 @@ const MainContentPolicy = {
         }
         
         if (isLegacyFrame) { // inject an embed and defer to load
-          if (this.blockLegacyFrame(aContext, aContentLocation, true))
+          if (blockThisFrame && this.blockLegacyFrame(aContext, aContentLocation, true))
             return this.reject("Deferred Legacy Frame " + locationURL, arguments);
         } else {
           try {

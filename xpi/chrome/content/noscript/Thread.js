@@ -108,6 +108,23 @@ var Thread = {
     }
   },
   
+  basap: function(callback, self, args) { // before as soon as possible
+    if (!this.canSpin) {
+      this.asap(callback, self, args);
+      return;
+    }
+    var thread = this.current;
+    thread instanceof CI.nsIThreadInternal;
+    this.activeQueues++;
+    thread.pushEventQueue(null);
+    this.asap(function() {
+      callback.apply(self, args || []);
+      thread.popEventQueue();
+      Thread.activeQueues--;
+    }, self, args);
+  },
+  
+  
   _delayRunner: function(timer) {
     var ctx = this.context;
     try {

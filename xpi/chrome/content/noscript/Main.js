@@ -1735,7 +1735,25 @@ var ns = singleton = {
   },
   
   forbiddenJSDataDoc: function(locationURL, originSite, aContext) {
-    return !(!originSite || /^moz-nullprincipal:/.test(originSite) || this.isJSEnabled(originSite));
+     return !this.isSafeJSURL(locationURL) &&
+        (this.forbidData && !this.isFirebugJSURL(locationURL) || locationURL == "javascript:") && 
+        (!originSite || /^moz-nullprincipal:/.test(originSite))
+          ? aContext && (
+                    (aContext instanceof CI.nsIDOMWindow) 
+                      ? aContext
+                      : aContext.ownerDocument.defaultView
+                  ).isNewToplevel
+          : !(this.isJSEnabled(originSite) ||
+              (aContext instanceof CI.nsIDOMHTMLFrameElement ||
+               aContext instanceof CI.nsIDOMHTMLIFrameElement) &&
+              (
+              /^data:[\w\/]+,$/.test(locationURL) ||
+              this.isPluginDocumentURL(locationURL, "iframe") ||
+              this.isPluginDocumentURL(locationURL, "embed") ||
+              this.isPluginDocumentURL(locationURL, "video") ||
+              this.isPluginDocumentURL(locationURL, "audio")
+              )
+            );
   },
   
   forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
@@ -1867,7 +1885,7 @@ var ns = singleton = {
   },
   
   createPluginDocumentURL: function(url, tag) {
-    if (!tag) tag = "embed";
+    tag = tag ? tag.toLowerCase() : "embed";
     return 'data:text/html;charset=utf-8,' +
         encodeURIComponent('<html><head></head><body style="padding: 0px; margin: 0px"><' +
           tag + ' src="' + url + '" width="100%" height="100%"></' +
@@ -2492,24 +2510,29 @@ var ns = singleton = {
         docJS: browser.webNavigation.allowJavascript
       };
     
-      var doc = window.document;
-    
+      
+      
       try {
+        
+        
         browser.webNavigation.allowJavascript = true;
         this.jsEnabled = true;
-        
+          
+     
         if (Thread.canSpin) { // async evaluation, after bug 351633 landing
+          var doc = window.document;
+          var nh = this._executeJSURL_nodeHandler;
+          var ets = ["DOMNodeInserted", "DOMAttrModified"];
           try {
-            function run(s) {
-              window.location.href = "javascript:" + encodeURIComponent(s + "; void(0);");
-              Thread.yieldAll();
-            }
-            run("(" +
+            ets.forEach(function(et) { doc.addEventListener(et, nh, false) });
+            
+            this._runJS(window, "(" +
               function() {
                 var tt = [];
-                window.setTim\u0065out = function(f, d, a) {
+                window.setTim\u0065out = window.s\u0065tInterval = function(f, d, a) {
                   if (typeof(f) != 'function') f = new Function(f || '');
                   tt.push({ f: f, d: d, a: a});
+                  return 0;
                 };
                 window.__runTimeouts = function() {
                   var t, count = 0;
@@ -2523,6 +2546,8 @@ var ns = singleton = {
                 };
               }.toSource()
             + ")()");
+            
+            
             if (openCallback) {
               window.location.href = url;
             } else {
@@ -2532,17 +2557,22 @@ var ns = singleton = {
             }
             
             Thread.yieldAll();
+          
+            this._runJS(window, "window.__runTimeouts()");
             
-            run("window.__runTimeouts()");
-
           } catch(e) {
             if(this.consoleDump) this.dump("JS URL execution failed: " + e);
+          } finally {
+            ets.forEach(function(et) { doc.removeEventListener(et, nh, false) });
           }
         } else {
           openCallback(url);
         }
         return true;
       } finally {
+        
+
+        
         this.jsEnabled = false;
         this.setExpando(browser, "jsSite", site);
         if (!browser.webNavigation.isLoadingDocument && this.getSite(browser.webNavigation.currentURI.spec) == site)
@@ -2554,8 +2584,60 @@ var ns = singleton = {
     
     return false;
   },
- 
-
+  _runJS: function(window, s) {
+    window.location.href = "javascript:" + encodeURIComponent(s + "; void(0);");
+    Thread.yieldAll();
+  },
+  _executeJSURL_nodeHandler:  function(ev) {
+    var node = ev.target;
+    if (!(node instanceof CI.nsIDOMHTMLScriptElement)) return;
+    var url = node.src;
+    if (!url) return;
+    
+    var site = ns.getSite(url);
+    switch(ns.getPref("bookmarklets.import")) {
+      case 0:
+        return;
+      case 1:
+        if (!ns.isJSEnabled(site)) return;
+        break;
+      default:
+        if (ns.isUntrusted(site)) return;
+    }
+    try {
+      if (ns.consoleDump) ns.dump("Importing for bookmarklet: " + url);
+      var xhr = ns.createCheckedXHR("GET", url, false);
+      xhr.send(null);
+      if (xhr.status == "200") {
+        var s = xhr.responseText;
+        if (s) {
+          var w = node.ownerDocument.defaultView;
+          node.parentNode.removeChild(node);
+        
+          ns._runJS(w, s);
+        }
+      }
+    } catch (e) {
+      ns.dump("Error running bookmarklet import: " + e);
+    }
+  },
+  
+  
+  isCheckedChannel: function(c) {
+    return IOUtil.extractFromChannel(c, "noscript.checkedChannel", true);
+  },
+  setCheckedChannel: function(c, v) {
+    IOUtil.attachToChannel(c, "noscript.checkedChannel", v ? {} : null);
+  },
+  
+  createCheckedXHR: function(method, url, async) {
+    if (typeof(async) == "undefined") async = true;
+    var xhr = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
+    xhr.open(method, url, async);
+    this.setCheckedChannel(xhr.channel, true);
+    return xhr;
+  },
+  
   mimeEssentials: function(mime) {
      return mime && mime.replace(/^application\/(?:x-)?/, "") || "";
   },
@@ -3655,7 +3737,11 @@ var ns = singleton = {
         return;
       
       
-      if (ABE.checkFrameOpt(domWindow, req)) {
+      if (ABE.checkFrameOpt(domWindow, req) &&
+          this.getPref("frameOptions.enabled") &&
+          !new AddressMatcher(this.getPref("frameOptions.parentWhitelist"))
+            .test(domWindow.parent.location.href)
+          ) {
         IOUtil.abort(req);
         this.showFrameOptError(domWindow, req.URI.spec);
         return; // canceled by frame options
@@ -3689,10 +3775,27 @@ var ns = singleton = {
     
     var docShell = null;
     
-      
-    if (domWindow.document && (uri.schemeIs("http") || uri.schemeIs("https"))) {
-      this.filterUTF7(req, domWindow, docShell = DOM.getDocShellForWindow(domWindow)); 
+     
+    var contentType;
+    try {
+      contentType = req.contentType;
+    } catch(e) {
+      contentType = "";
     }
+    
+    var contentDisposition = "";
+   
+    if (req instanceof CI.nsIHttpChannel) {
+      
+      try {
+        contentDisposition = req.getResponseHeader("Content-disposition");
+      } catch(e) {}
+      
+
+      if (domWindow.document)
+        this.filterUTF7(req, domWindow, docShell = DOM.getDocShellForWindow(domWindow)); 
+    }
+    
     
     if (this.checkJarDocument(uri, domWindow)) {
       IOUtil.abort(req);
@@ -3729,20 +3832,11 @@ var ns = singleton = {
     
     this._handleDocJS3(uri.spec, domWindow, docShell);
     
-    var contentType;
-    try {
-      contentType = req.contentType;
-    } catch(e) {
-      contentType = "";
-    }
-    var contentDisposition;
-    try {
-      contentDisposition = req.getResponseHeader("Content-disposition");
-    } catch(e) {
-      contentDisposition = "";
-    }
     
-    if (!/^attachment\b/i.test(contentDisposition) && this.shouldLoad(7, uri, uri, domWindow, contentType, CP_SHOULDPROCESS) != CP_OK) {
+    
+    if (!/^attachment\b/i.test(contentDisposition) &&
+        this.shouldLoad(7, uri, uri, domWindow.frameElement || domWindow, contentType,
+                        domWindow.frameElement ? CP_FRAMECHECK : CP_SHOULDPROCESS) != CP_OK) {
       
       req.loadFlags |= req.INHIBIT_CACHING;
       
@@ -3767,18 +3861,23 @@ var ns = singleton = {
         // defer separate embed processing for frames
         
         
-        var deferrer = function() {
+        var url = uri.spec;
+        docShell = docShell || DOM.getDocShellForWindow(domWindow);
+        docShell.loadURI("data:" + req.contentType + ",",
+                             CI.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
+                             null, null, null);
+        Thread.asap(function() {
           IOUtil.abort(req);
-          domWindow.location.replace(ns.createPluginDocumentURL(uri.spec,
-            domWindow.document.body && domWindow.document.body.firstChild && domWindow.document.body.firstChild.tagName))
-        }
+          if (docShell) {
+            var doc = docShell.document;
+            docShell.stop(0);
+            docShell.loadURI(ns.createPluginDocumentURL(url,
+              doc.body && doc.body.firstChild && doc.body.firstChild.tagName),
+                             CI.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
+                             null, null, null);
+          }
+        });
         
-        if (!(req instanceof CI.nsITraceableChannel) || domWindow.document.body && domWindow.document.body.firstChild) {
-          deferrer();
-        } else {
-          new CtxCapturingListener(req, true);
-          Thread.asap(deferrer);
-        }
         return;
       }
       
@@ -3909,7 +4008,7 @@ var ns = singleton = {
   
   _handleDocJS3: function(url, win, docShell) {
     // called at the end of onLocationChange
-    jsBlocked = docShell && !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
+    var jsBlocked = docShell && !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
     
     if (jsBlocked) {
       if (this.getPref("fixLinks")) {
@@ -4042,7 +4141,7 @@ var ns = singleton = {
     
     if (/^https?:\/\//i.test(destURL)) callback(doc, uri);
     else {
-      var req = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
+      var req = ns.createCheckedXHR("HEAD", uri.spec);
       req.open("HEAD", uri.spec);
       var done = false;
       req.onreadystatechange = function() {
@@ -4247,7 +4346,44 @@ var ns = singleton = {
     msg = "[NoScript] " + msg;
     dump(msg + "\n");
     if(this.consoleLog && !noConsole) this.log(msg);
+  },
+  
+  versionChecked: false,
+  checkVersion: function() {
+    if (this.versionChecked) return;
+    this.versionChecked = true;
+    
+    const ver =  this.VERSION;
+    const prevVer = this.getPref("version", "");
+    if (prevVer != ver) {
+      this.setPref("version", ver);
+      this.savePrefs();
+      if (this.getPref("firstRunRedirection", true)) {
+        this.delayExec(function() {
+         
+          const name = EXTENSION_NAME;
+          const domain = name.toLowerCase() + ".net";
+          var url = "http://" + domain + "/?ver=" + ver;
+          var hh = "X-IA-Post-Install: " + name + " " + ver;
+          if (prevVer) {
+            url += "&prev=" + prevVer;
+            hh += "; updatedFrom=" + prevVer;
+          }
+          hh += "\r\n";
+          
+          var hs = CC["@mozilla.org/io/string-input-stream;1"] .createInstance(CI.nsIStringInputStream);
+          hs.setData(hh, hh.length); 
+          
+          var browser = DOM.mostRecentBrowserWindow.getBrowser();
+          var b = (browser.selectedTab = browser.addTab()).linkedBrowser;
+          b.stop();
+          b.webNavigation.loadURI(url, CI.nsIWebNavigation.FLAGS_NONE, null, null, hs);
+          
+        }, 500);
+      }
+    }
   }
+  
 }
 
 ns.wr\u0061ppedJSObject = ns;

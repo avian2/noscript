@@ -307,6 +307,9 @@ ChannelReplacement.prototype = {
     
     var newChan = IOS.newChannelFromURI(newURI);
     
+    
+    
+    
     // porting of http://mxr.mozilla.org/mozilla-central/source/netwerk/protocol/http/src/nsHttpChannel.cpp#2750
     
     var loadFlags = chan.loadFlags;
@@ -321,6 +324,22 @@ ChannelReplacement.prototype = {
     if (!(newChan instanceof CI.nsIHttpChannel))
       return newChan;
     
+    // copy headers
+    chan.visitRequestHeaders({
+      visitHeader: function(key, val) {
+        try {
+          
+          // we skip authorization fields which should be automatically set
+          if (/^(?:Cookie|Authorization)$/.test(key)) return;
+          
+          newChan.setRequestHeader(key, val, false);
+        } catch (e) {
+          dump(e + "\n");
+        }
+      }
+    });
+    
+    
     if (!newMethod) {
       if (newChan instanceof CI.nsIUploadChannel && chan instanceof CI.nsIUploadChannel && chan.uploadStream ) {
         var stream = chan.uploadStream;
@@ -329,8 +348,8 @@ ChannelReplacement.prototype = {
         }
         
         try {
-          var ctype = newChan.getRequestHeader("Content-type");
-          var clen = newChan.getRequestHeader("Content-length");
+          var ctype = chan.getRequestHeader("Content-type");
+          var clen = chan.getRequestHeader("Content-length");
           if (ctype && clen) {
             newChan.setUploadStream(stream, ctype, parseInt(clen));
           }
@@ -387,10 +406,12 @@ ChannelReplacement.prototype = {
     var oldChan = this.oldChannel;
     var newChan = this.channel;
     
-    if (trueRedir && oldChan.redirectionLimit === 0) {
-      oldChan.cancel(NS_ERROR_REDIRECT_LOOP);
-      throw NS_ERROR_REDIRECT_LOOP;
-    }
+    if (trueRedir) {
+      if (oldChan.redirectionLimit === 0) {
+        oldChan.cancel(NS_ERROR_REDIRECT_LOOP);
+        throw NS_ERROR_REDIRECT_LOOP;
+      }
+    } else newChan.redirectionLimit += 1;
     
     newChan.loadFlags |= newChan.LOAD_REPLACE;
     // nsHttpHandler::OnChannelRedirect()

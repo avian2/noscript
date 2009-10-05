@@ -2,33 +2,10 @@ const SERVICE_CID = Components.ID(SERVICE_ID);
 
 const SERVICE_FACTORY = {
   get _instance() {
-    var i = SERVICE_CONSTRUCTOR();
-    if (!i) return {};
     delete this._instance;
-    
+    var i = new SERVICE_CONSTRUCTOR();
     i.__defineGetter__("home", function() {
-      var f = null;
-      try {
-        f = CC["@mozilla.org/extensions/manager;1"].
-                  getService(CI.nsIExtensionManager)
-                  .getInstallLocation(EXTENSION_ID)
-                  .getItemLocation(EXTENSION_ID);
-        f.append("components");
-      } catch(e) {
-        try {
-          var prefs = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefBranch)
-          if (FILE && (FILE instanceof CI.nsILocalFile)) {
-            prefs.setComplexValue("extensions." + EXTENSION_ID + ".home", CI.nsILocalFile,
-                    FILE.parent);
-          }
-          f = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefBranch)
-              .getComplexValue("extensions." + EXTENSION_ID + ".home", CI.nsILocalFile);
-        } catch(e) {
-          dump(e +"\n");
-          f = null;
-        }
-      }
-    
+      var f = __LOCATION__.parent;
       this.__defineGetter__("home", function() { return f; });
       return f;
     });

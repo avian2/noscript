@@ -2011,7 +2011,7 @@ return noscriptUtil.service ? {
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
 
-      window.setTim\u0065out(noscriptOverlay.firstRunCheck, 500);
+      noscriptUtil.service.checkVersion();
 
     },
     
@@ -2042,24 +2042,6 @@ return noscriptUtil.service ? {
     
   }, // END listeners
   
-  firstRunCheck: function() {
-    var ns = noscriptUtil.service;
-   
-    const prevVer = ns.getPref("version", "");
-    if (prevVer != ns.VERSION) {
-      ns.setPref("version", ns.VERSION);
-      if (prevVer) {
-        ns.onVersionChanged(prevVer);
-      }
-      ns.savePrefs(true);
-      if (ns.getPref("firstRunRedirection", true)) {
-          window.setTim\u0065out(function() {
-            const url = "http://noscript.net?ver=" + noscriptUtil.service.VERSION + "&prev=" + prevVer;
-            noscriptUtil.browse(url);
-          }, 10);
-       }
-    }
-  },
   
   get _browserReady() {
     return window.gBrowser || window.Browser && (window.Browser._canvasBrowser || window.Browser._content);

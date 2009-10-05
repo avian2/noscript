@@ -211,7 +211,7 @@ const STSPersistence = {
     try {
       if (f.exists()) db.restore(IO.readFile(f));
     } catch (e) {
-      dump("STS: Errorloading db from " + f.path + "!" + e + "\n");
+      dump("STS: Error loading db from " + f.path + "!" + e + "\n");
       return false;
     }
     return true;
