@@ -329,8 +329,8 @@ ChannelReplacement.prototype = {
       visitHeader: function(key, val) {
         try {
           
-          // we skip authorization fields which should be automatically set
-          if (/^(?:Cookie|Authorization)$/.test(key)) return;
+          // we skip authorization and cache-related fields which should be automatically set
+          if (/^(?:Host|Cookie|Authorization)$|Cache|^If-/.test(key)) return;
           
           newChan.setRequestHeader(key, val, false);
         } catch (e) {

@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "禁止 &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "禁止 @font-face">
+<!ENTITY noscriptForbidMedia "禁止 &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "禁止 Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "禁止 其他插件">
 <!ENTITY noscriptReloadWarn "下面这些选项将在新页面中或 (手动) 重新载入后生效。">

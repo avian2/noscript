@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Forby Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forby &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Forby &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Forby @font-face">
+<!ENTITY noscriptForbidMedia "Forby &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Forby Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forby andre programtillegg">
 <!ENTITY noscriptReloadWarn "Disse innstillingene vil tre i kraft for nye eller (manuelt) oppdaterte nettsider">

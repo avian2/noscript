@@ -82,6 +82,7 @@ var ClearClick = {
           progress.collapsed = true;
           reportId.value = xhr.responseText.replace(/\s*OK\s*/g, '');
           reportId.collapsed = false;
+          reportId.style.visibility = "visible";
           if (ClearClick.mustClose) ClearClick.end();
       }
     };

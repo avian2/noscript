@@ -698,21 +698,24 @@ return noscriptUtil.service ? {
     var i = 0;
     for each(egroup in extras) {
       for (j = egroup.length; j-- > 0;) {
-         e = egroup[j];
+        e = egroup[j];
          
-         if(typeof(e) != "object" || (e.tag && !e.placeholder)) continue;
-         node = document.createElement("menuitem");
+        if (ns.isAllowedObject(e.url, e.mime))
+          continue;
          
-         e.label = e.label || ns.mimeEssentials(e.mime) + "@" + ns.urlEssentials(e.url);
-         e.title = e.title || e.label.split("@")[0] + e.url;
-  
-         node.setAttribute("label", this.getString("allowTemp", [e.label]));
-         node.setAttribute("tooltiptext", e.title);
-         node.setAttribute("oncommand", "noscriptOverlay.allowObject(" + i + ")");
-         node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-temp noscript-allow");
-         node.style.listStyleImage = ns.cssMimeIcon(e.mime, 16);
-         menu.appendChild(node);
-         pluginExtras[i++] = e;
+        if(typeof(e) != "object" || (e.tag && !e.placeholder)) continue;
+        node = document.createElement("menuitem");
+        
+        e.label = e.label || ns.mimeEssentials(e.mime) + "@" + ns.urlEssentials(e.url);
+        e.title = e.title || e.label.split("@")[0] + "@" + e.url;
+ 
+        node.setAttribute("label", this.getString("allowTemp", [e.label]));
+        node.setAttribute("tooltiptext", e.title);
+        node.setAttribute("oncommand", "noscriptOverlay.allowObject(" + i + ")");
+        node.setAttribute("class", "menuitem-iconic noscript-cmd noscript-temp noscript-allow");
+        node.style.listStyleImage = ns.cssMimeIcon(e.mime, 16);
+        menu.appendChild(node);
+        pluginExtras[i++] = e;
       }
     }
     if (pluginExtras.length) {
@@ -726,7 +729,9 @@ return noscriptUtil.service ? {
       var pluginSites = {};
       i = 0;
       for each(e in pluginExtras) {
-        if(!(e.site && e.mime)) continue;
+        if(!(e.site && e.mime) || ns.isAllowedObject(e.site, e.mime, e.site))
+          continue;
+        
         if (e.site in pluginSites) {
           if (pluginSites[e.site].indexOf(e.mime) > -1) 
             continue;

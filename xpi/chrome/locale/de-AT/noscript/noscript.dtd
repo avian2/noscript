@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieten">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieten">
 <!ENTITY noscriptForbidFrames "&lt;FRAME&gt; verbieten">
+<!ENTITY noscriptForbidFonts "@font-face verbieten">
+<!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; verbieten">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">

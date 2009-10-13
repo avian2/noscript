@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieten">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieten">
 <!ENTITY noscriptForbidFrames "&lt;FRAMES&gt; verbieten">
+<!ENTITY noscriptForbidFonts "Schriftformatierung mittels @font-face verbieten">
+<!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; verbieten">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® verbieten">
 <!ENTITY noscriptForbidPlugins "Andere Plug-ins verbieten">
 <!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">
 <!ENTITY noscriptForbidMetaRefresh "META-Weiterleitungen innerhalb von &lt;NOSCRIPT&gt;-Elementen verbieten">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "W">
+<!ENTITY noscriptNotifyMeta "Meldung bei blockierten META-Weiterleitungen anzeigen">
+<!ENTITY noscriptNotifyMeta.accesskey "W">
 <!ENTITY noscriptWhitelist "Positivliste">
 <!ENTITY noscriptPermissions "Berechtigungen">
 <!ENTITY noscriptRefresh "Aktualisierung">
@@ -170,4 +174,4 @@
 <!ENTITY ABE.refresh.label "Aktualisieren">
 <!ENTITY ABE.refresh.accesskey "k">
 <!ENTITY noscriptUninstall "Deinstallieren">
-<!ENTITY noscriptRecentBlocked "Kürzlich gesperrte Sites">
+<!ENTITY noscriptRecentBlocked "Kürzlich blockierte Websites">

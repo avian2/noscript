@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "A Microsoft® Silverlight™ tiltása">
 <!ENTITY noscriptForbidIFrames "Az &lt;IFRAME&gt; tiltása">
 <!ENTITY noscriptForbidFrames "A &lt;FRAME&gt; tiltása">
+<!ENTITY noscriptForbidFonts "A @font-face letiltása">
+<!ENTITY noscriptForbidMedia "Az &lt;AUDIO&gt; / &lt;VIDEO&gt; letiltása">
 <!ENTITY noscriptForbidFlash "Az Adobe® Flash® tiltása">
 <!ENTITY noscriptForbidPlugins "Egyéb beépülő modulok tiltása">
 <!ENTITY noscriptReloadWarn "Ezek a beállítások új vagy (kézzel) újratöltött oldalaknál lépnek érvénybe">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Letiltás: &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "META átirányítások letiltása a &lt;NOSCRIPT&gt; elemekben">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "l">
+<!ENTITY noscriptNotifyMeta "Üzenet megjelenítése a blokkolt META átirányításokról">
+<!ENTITY noscriptNotifyMeta.accesskey "y">
 <!ENTITY noscriptWhitelist "Fehérlista">
 <!ENTITY noscriptPermissions "Engedélyek">
 <!ENTITY noscriptRefresh "Újratöltés">

@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Bloquear Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Bloquear &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Bloquear &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Bloquear @font-face">
+<!ENTITY noscriptForbidMedia "Bloquear &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Bloquear Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Bloquear otros plugins">
 <!ENTITY noscriptReloadWarn "Estas opciones tendrán efecto en páginas nuevas o tras recargar manualmente">
@@ -65,11 +67,13 @@
 <!ENTITY noscriptForbidPing "Bloquear &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Prohibir META redireccionamientos dentro de elementos &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "h">
+<!ENTITY noscriptNotifyMeta "Mostrar mensaje sobre META redireccionamientos bloqueados">
+<!ENTITY noscriptNotifyMeta.accesskey "M">
 <!ENTITY noscriptWhitelist "Lista blanca">
 <!ENTITY noscriptPermissions "Permisos">
 <!ENTITY noscriptRefresh "Recargar">
 <!ENTITY noscriptNotifications "Notificaciones">
-<!ENTITY noscriptToolbarToggle "Con clic izquierdo en icono de la barra de herramientas se conmutan los permisos para el sitio correspondiente a la página actual">
+<!ENTITY noscriptToolbarToggle "Con clic izquierdo en icono de la barra de herramientas se conmutan los permisos para el sitio web">
 <!ENTITY noscriptTrusted "Fiable">
 <!ENTITY noscriptUntrusted "No fiable">
 <!ENTITY noscriptUnknown "Desconocida">
@@ -103,7 +107,7 @@
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "Restaurar predeterminados">
 <!ENTITY noscriptResetDef.accesskey "d">
-<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptOptionsWidth "50em">
 <!ENTITY noscriptJar "JAR">
 <!ENTITY noscriptJarFaq "FAQ sobre JAR">
 <!ENTITY noscriptJarFaq.accesskey "Q">

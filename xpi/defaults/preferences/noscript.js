@@ -32,6 +32,8 @@ pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
 pref("noscript.forbidSilverlight", true);
 pref("noscript.forbidPlugins", true);
+pref("noscript.forbidMedia", true);
+pref("noscript.forbidFonts", true);
 pref("noscript.forbidActiveContentParentTrustCheck", true);
 pref("noscript.forbidIFrames", false);
 pref("noscript.forbidIFramesContext", 2);

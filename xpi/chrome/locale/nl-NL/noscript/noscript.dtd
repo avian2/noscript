@@ -1,6 +1,6 @@
 <!ENTITY noscriptOptions "Opties...">
 <!ENTITY noscriptOptions.accesskey "O">
-<!ENTITY noscriptOptionsLong "NoScript Opties">
+<!ENTITY noscriptOptionsLong "NoScript opties">
 <!ENTITY noscriptAbout "Over NoScript">
 <!ENTITY noscriptPermissionsText "Webadressen in deze lijst hebben toestemming om JavaScript te gebruiken. Type het adres of domein in (bijv. &quot;http://www.site.com&quot; of &quot;site.com&quot;) van de door u toegestane site; klik daarna op Toestaan.">
 <!ENTITY noscriptWebAddress "Webadres:">
@@ -38,9 +38,9 @@
 <!ENTITY noscriptSound.reset "Standaard">
 <!ENTITY noscriptSound.reset.accesskey "d">
 <!ENTITY noscriptAdvanced "Geavanceerd">
-<!ENTITY noscriptAdditionalPermissions "Aanvullende toestemming voor betrouwbare webpagina&apos;s">
+<!ENTITY noscriptAdditionalPermissions "Aanvullende toestemming voor betrouwbare webpagina's">
 <!ENTITY noscriptAllowClipboard "Kopiëren en plakken van tekst met opmaakcodes vanaf een extern klembord toestaan">
-<!ENTITY noscriptAdditionalRestrictions "Aanvullende beperking voor onbetrouwbare webpagina&apos;s">
+<!ENTITY noscriptAdditionalRestrictions "Aanvullende beperking voor onbetrouwbare webpagina's">
 <!ENTITY noscriptPlugins "Plugins">
 <!ENTITY noscriptContentBlocker "Deze beperkingen ook voor betrouwbare sites toepassen">
 <!ENTITY noscriptForbidJava "Java™ verbieden">
@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieden">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieden">
 <!ENTITY noscriptForbidFrames "&lt;FRAME&gt; verbieden">
+<!ENTITY noscriptForbidFonts "@font-face verbieden">
+<!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; verbieden">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® verbieden">
 <!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
 <!ENTITY noscriptReloadWarn "Deze opties worden actief op nieuwe of (handmatig) vernieuwde pagina&apos;s">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "&lt;A PING...&gt; verbieden">
 <!ENTITY noscriptForbidMetaRefresh "META doorverwijzingen in &lt;NOSCRIPT&gt; elementen verbieden">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "V">
+<!ENTITY noscriptNotifyMeta "Bericht over geblokkeerde META omleidingen weergeven">
+<!ENTITY noscriptNotifyMeta.accesskey "r">
 <!ENTITY noscriptWhitelist "Toestemmingenlijst">
 <!ENTITY noscriptPermissions "Toestemmingen">
 <!ENTITY noscriptRefresh "Vernieuwen">

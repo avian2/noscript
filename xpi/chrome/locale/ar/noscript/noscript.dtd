@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "امنع ميكروسوفت سِلفَرلَيت">
 <!ENTITY noscriptForbidIFrames "منع &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "منع &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "منع @font-face">
+<!ENTITY noscriptForbidMedia "منع &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "امنع ماكروميديا فلاش">
 <!ENTITY noscriptForbidPlugins "امنع الملحقات الأُخرى">
 <!ENTITY noscriptReloadWarn "سيتم تفعيل هذه الخيارات في الصفحات الجديدة أو الصفحات المعاد تحميلها (يدوياً)">
@@ -155,3 +157,19 @@
 <!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
 <!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
 <!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptShowReleaseNotes "اظهار ملاظات الاصدار في التحديثات">
+<!ENTITY ABE "أيب">
+<!ENTITY ABE.accesskey "أ">
+<!ENTITY ABE.rulesets.label "القواعد">
+<!ENTITY ABE.enabled.label "تفعيل أيب (منفّذ حدود البرامج)">
+<!ENTITY ABE.siteEnabled.label "السماح للمواقع دفع قواعدهم الخاصة">
+<!ENTITY ABE.edit.label "تحرير">
+<!ENTITY ABE.edit.accesskey "ت">
+<!ENTITY ABE.enable.label "تفعيل">
+<!ENTITY ABE.enable.accesskey "ف">
+<!ENTITY ABE.disable.label "ايقاف">
+<!ENTITY ABE.disable.accesskey "ق">
+<!ENTITY ABE.refresh.label "تجديد">
+<!ENTITY ABE.refresh.accesskey "ج">
+<!ENTITY noscriptUninstall "ازالة">
+<!ENTITY noscriptRecentBlocked "مواقع معترضة مأخراً">

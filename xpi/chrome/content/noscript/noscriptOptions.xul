@@ -60,7 +60,7 @@
       <!-- <tab label="&noscriptSiteManager;"/> -->
       <tab label="&noscriptGeneral;" id="nsopt-tabGeneral"/>
       <tab label="&noscriptWhitelist;" id="nsopt-tabWhitelist"/>
-      <tab label="&noscriptPlugins;" id="nsopt-tabPlugins"/>
+      <tab label="&noscriptEmbeddings;" id="nsopt-tabEmbeddings"/>
       <tab label="&noscriptAppearance;" id="nsopt-tabAppearance"/>
       <tab label="&noscriptNotifications;" id="nsopt-tabNotifications"/>
       <tab label="&noscriptAdvanced;" id="nsopt-tabAdvanced"/>
@@ -154,34 +154,36 @@
   </vbox>
   </tabpanel><!-- END Whitelist -->
   
-  <tabpanel><!-- Plugins -->
+  <tabpanel><!-- Embeddings -->
     <vbox flex="1">
       <label class="header" value="&noscriptAdditionalRestrictions;" />
       <hbox><description style="white-space: normal">&noscriptReloadWarn;</description></hbox>
-      <separator/>
+      <separator class="thin" />
       <hbox class="flexible-cbx">
         <vbox>
           <checkbox id="opt-forbidJava" label="&noscriptForbidJava;" />
           <checkbox id="opt-forbidFlash" label="&noscriptForbidFlash;" />
           <checkbox id="opt-forbidSilverlight" label="&noscriptForbidSilverlight;" />
-          <checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
-          <separator class="thin" />
+					<checkbox id="opt-forbidPlugins" label="&noscriptForbidPlugins;" />
+				</vbox>
+				<vbox flex="1">
+					<checkbox id="opt-forbidMedia" label="&noscriptForbidMedia;" />
           <checkbox id="opt-forbidIFrames" label="&noscriptForbidIFrames;" />
           <checkbox id="opt-forbidFrames" label="&noscriptForbidFrames;" />
+					<checkbox id="opt-forbidFonts" label="&noscriptForbidFonts;" />
         </vbox>
-        <vbox flex="1">
-          <checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
-          <separator class="thin" />
-          <checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
-          <checkbox id="invopt-showUntrustedPlaceholder" label="&noscriptNoUntrustedPlaceholder;" />
-          <checkbox id="opt-collapseObject" label="&noscriptCollapseBlockedObjects;" />
-        </vbox>
-      </hbox>
-      <separator/>
+			</hbox>
+			<separator class="thin" />
       <checkbox id="opt-contentBlocker" label="&noscriptContentBlocker;" class="header" />
-      <checkbox id="opt-alwaysBlockUntrustedContent" label="&noscriptAlwaysBlockUntrustedContent;" />
-      <separator/>
-      <hbox>
+			<checkbox id="opt-alwaysBlockUntrustedContent" label="&noscriptAlwaysBlockUntrustedContent;" />
+      <separator class="thin" />
+			<checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
+			<checkbox id="invopt-showUntrustedPlaceholder" label="&noscriptNoUntrustedPlaceholder;" />
+			<checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
+      <checkbox id="opt-collapseObject" label="&noscriptCollapseBlockedObjects;" />
+      
+			<separator/>
+			<hbox>
         <vbox>
           <hbox id="clearClickOpts"><label value="&noscriptClearClickOpt;" /><spacer flex="1" />
             <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
@@ -268,7 +270,7 @@
         </hbox>
         
         <separator class="thin" />
-        <checkbox id="opt-forbidMetaRefresh.notify" label="&noscriptForbidMetaRefresh;"/><!-- TODO: accesskey -->
+        <checkbox id="opt-forbidMetaRefresh.notify" label="&noscriptNotifyMeta;" accesskey="&noscriptNotifyMeta.accesskey;"/>
         <separator class="thin" />
         <checkbox id="opt-ABE.notify" label="&ABE;"/><!-- TODO: accesskey -->
       </groupbox>
@@ -325,8 +327,8 @@
                 <checkbox id="opt-fixLinks" label="&noscriptFixLinks;" />
              <separator />
              <label class="text-link header" 
-              onclick="document.getElementById('nsopt-tabsMain').selectedTab = document.getElementById('nsopt-tabPlugins')"
-              value="&noscriptPlugins;" />
+              onclick="document.getElementById('nsopt-tabsMain').selectedTab = document.getElementById('nsopt-tabEmbeddings')"
+              value="&noscriptEmbeddings;" />
           </vbox>
          </tabpanel><!-- END additional restrictions -->
          

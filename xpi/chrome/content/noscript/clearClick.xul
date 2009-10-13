@@ -79,7 +79,7 @@
     </hbox>
     <hbox>
       <label id="report" collapsed="true">&noscriptClearClickReportId;</label>
-      <label id="report-id" value="" />
+      <textbox readonly="true" class="plain" id="report-id" value="" style="visibility: hidden" />
       <progressmeter id="progress" mode="undetermined" collapsed="true" flex="1"/>
     </hbox>
     

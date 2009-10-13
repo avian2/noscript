@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™-қа тыйым салу">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; тыйым салу">
 <!ENTITY noscriptForbidFrames "&lt;FRAME&gt; тыйым салу">
+<!ENTITY noscriptForbidFonts "@font-face тыйым салу">
+<!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; тыйым салу">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® тыйым салу">
 <!ENTITY noscriptForbidPlugins "Басқа плагиндерге тыйым салу">
 <!ENTITY noscriptReloadWarn "Бұл баптаулар тек жаңа ашылған немесе қайта жүктелген (қолмен) парақтар үшін істейді">

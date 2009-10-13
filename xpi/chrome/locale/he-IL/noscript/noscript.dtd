@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "אסור על Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "אסור על &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "אסור על &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "אסור על @font-face">
+<!ENTITY noscriptForbidMedia "אסור על &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "אסור על פלאש">
 <!ENTITY noscriptForbidPlugins "אסור על תוספים אחרים">
 <!ENTITY noscriptReloadWarn "אפשרויות אלו ייכנסו לתוקף בדפים חדשים או דפים שנטענו מחדש ידנית">

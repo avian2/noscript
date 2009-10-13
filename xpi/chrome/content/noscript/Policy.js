@@ -109,7 +109,7 @@ const MainContentPolicy = {
           forbid, isScript, isJava, isFlash, isSilverlight,
           isLegacyFrame, blockThisFrame, contentDocument,
           logIntercept, logBlock,
-          unwrappedLocation;
+          unwrappedLocation, mimeKey;
       
       logIntercept = this.consoleDump;
       if(logIntercept) {
@@ -220,9 +220,15 @@ const MainContentPolicy = {
           }
           
           return CP_OK;
-          
-        case 5: 
-        case 15:
+        
+        case 14: // fonts
+          forbid = this.forbidFonts;
+          if (!forbid) return CP_OK;
+          mimeKey = "Font";
+          break;
+        
+        case 5: // embeds
+        case 15: // media
           if (aContentLocation && aRequestOrigin && 
               (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) &&
               aMimeTypeGuess) {
@@ -247,22 +253,27 @@ const MainContentPolicy = {
             return this.reject("Plugin content from JAR", arguments);
           
           
-          if (aContentType == 15 && aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
-            // let's wire poor man's video/audio toggles if JS is disabled and therefore controls are not available
-            this.delayExec(function() {
-              aContext.addEventListener("click", function(ev) {
-                var media = ev.currentTarget;
-                if (media.paused) media.play();
-                else media.pause();
-              }, true);
-            }, 0);
+          if (aContentType == 15) {
+              if (aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
+              // let's wire poor man's video/audio toggles if JS is disabled and therefore controls are not available
+              this.delayExec(function() {
+                aContext.addEventListener("click", function(ev) {
+                  var media = ev.currentTarget;
+                  if (media.paused) media.play();
+                  else media.pause();
+                }, true);
+              }, 0);
+            }
+            
+            
+            forbid = this.forbidMedia;
+            
           }
-          
           
           if (aMimeTypeGuess) // otherwise let's treat it as an iframe
             break;
           
-          
+         
           
         case 7:
           locationURL = aContentLocation.spec;
@@ -278,6 +289,12 @@ const MainContentPolicy = {
           }
           
           if (aContentType == 15) {
+            if (!aMimeTypeGuess) try {
+              aMimeTypeGuess = aContext.tagName.toLowerCase() + "/ogg";
+            } catch (e) {}
+            
+            if (!forbid) return CP_OK;
+            
             break; // we just need to guess the Mime for video/audio
           }
           
@@ -454,9 +471,10 @@ const MainContentPolicy = {
         }
       }
   
+      mimeKey = aMimeTypeGuess || "application/x-unknown";
       
       if (!(forbid || locationSite == "chrome:")) {
-        var mimeKey = aMimeTypeGuess || "application/x-unknown"; 
+        
         
         forbid = blockThisFrame || untrusted && this.alwaysBlockUntrustedContent;
         if (!forbid && this.forbidSomeContent) {
@@ -567,11 +585,11 @@ const MainContentPolicy = {
             return this.reject("Deferred Legacy Frame " + locationURL, arguments);
         } else {
           try {
-            if ((aContext instanceof CI.nsIDOMNode) && (aContentType == 5 || aContentType == 7 || aContentType == 12 || aContentType == 15)) {
+            if ((aContentType == 5 || aContentType == 7 || aContentType == 12 || aContentType == 14 || aContentType == 15) && (aContext instanceof CI.nsIDOMNode)) {
               if (locationURL != "data:application/x-noscript-blocked,") {
                 if (this.consoleDump & LOG_CONTENT_BLOCK)
                   this.dump("tagForReplacement");
-                  
+
                 this.delayExec(this.tagForReplacement, 0, aContext, {
                   url: locationURL,
                   mime: mimeKey

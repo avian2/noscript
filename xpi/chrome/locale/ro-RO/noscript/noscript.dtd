@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Interzice Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Interzice &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Interzice &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Interzice @font-face">
+<!ENTITY noscriptForbidMedia "Interzice &lt;AUDIO&gt;/&lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Interzice Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Interzice alte plugin-uri">
 <!ENTITY noscriptReloadWarn "Aceste opţiuni vor fi efective în paginile nou deschise sau în cele reîncărcate (manual)">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Interzice &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Interzice redirectările META dinăuntrul elementelor &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "r">
+<!ENTITY noscriptNotifyMeta "Afişează mesajul despre redirectările META interzise">
+<!ENTITY noscriptNotifyMeta.accesskey "M">
 <!ENTITY noscriptWhitelist "Listă adrese sigure">
 <!ENTITY noscriptPermissions "Permisiuni">
 <!ENTITY noscriptRefresh "Actualizează">

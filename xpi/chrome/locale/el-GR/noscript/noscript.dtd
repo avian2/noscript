@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Απαγόρευση εκτέλεσης Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Απαγόρευση εκτέλεσης &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Απαγόρευση εκτέλεσης &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Να απαγορεύεται το @font-face">
+<!ENTITY noscriptForbidMedia "Να απαγορεύονται τα &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Απαγόρευση εκτέλεσης Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Απαγόρευση εκτέλεσης άλλων πρόσθετων λειτουργιών">
 <!ENTITY noscriptReloadWarn "Αυτές οι επιλογές θα εφαρμοστούν σε σελίδες που θα ανανεώσετε μόνοι σας ή θα φορτώσετε από &apos;δω και πέρα">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Να απαγορεύεται το &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Να απαγορεύονται οι ανακατευθύνσεις META σε στοιχεία &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "θ">
+<!ENTITY noscriptNotifyMeta "Προβολή μηνύματος για μπλοκαρισμένες ανακατευθύνσεις «ΜΕΤΑ»">
+<!ENTITY noscriptNotifyMeta.accesskey "ν">
 <!ENTITY noscriptWhitelist "Λίστα επιτρεπομένων">
 <!ENTITY noscriptPermissions "Δικαιώματα">
 <!ENTITY noscriptRefresh "Ανανέωση">

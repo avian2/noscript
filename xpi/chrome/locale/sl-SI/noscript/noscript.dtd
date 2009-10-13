@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Onemogoči Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Onemogoči &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Onemogoči &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Onemogoči @font-face">
+<!ENTITY noscriptForbidMedia "Onemogoči &lt;ZVOK&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Onemogoči Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Onemogoči druge vtičnike">
 <!ENTITY noscriptReloadWarn "Te nastavitve bodo stopile v veljavo na novih oz. (ročno) osveženih straneh">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Onemogoči &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Onemogoči META preusmeritve znotraj &lt;NOSCRIPT&gt; elementov">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "P">
+<!ENTITY noscriptNotifyMeta "Prikaži obvestilo o blokiranih META preusmeritvah">
+<!ENTITY noscriptNotifyMeta.accesskey "P">
 <!ENTITY noscriptWhitelist "Seznam dovoljenih strani">
 <!ENTITY noscriptPermissions "Dovoljenja">
 <!ENTITY noscriptRefresh "Osveži">

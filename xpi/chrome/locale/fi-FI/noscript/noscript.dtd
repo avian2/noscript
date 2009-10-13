@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Estä Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Estä &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Estä &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Estä @font-face">
+<!ENTITY noscriptForbidMedia "Estä &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Estä Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Estä muut lisäkkeet">
 <!ENTITY noscriptReloadWarn "Nämä asetukset tulevat voimaan kun avaaat tai lataat sivun uudelleen">

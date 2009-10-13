@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Forbyd Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forbyd &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Forbyd &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Forbyd @font-face">
+<!ENTITY noscriptForbidMedia "Forbyd &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Forbyd Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forbyd andre plugins">
 <!ENTITY noscriptReloadWarn "Disse indstillinger træder i kraft på en ny eller en (manuelt) genindlæst side">
@@ -63,8 +65,10 @@
 <!ENTITY noscriptAllowPing "Tillad &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Tillad lokale links">
 <!ENTITY noscriptForbidPing "Forbyd &lt;A PING…&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbyd META omdirigeringer i &lt;NOSCRIPT&gt;-elementer">
+<!ENTITY noscriptForbidMetaRefresh "Forbyd META omdirigeringer &lt;NOSCRIPT&gt;i-elementer">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "F">
+<!ENTITY noscriptNotifyMeta "Vis meddelelse om blokerede META-omdirigeringer">
+<!ENTITY noscriptNotifyMeta.accesskey "m">
 <!ENTITY noscriptWhitelist "Whitelist">
 <!ENTITY noscriptPermissions "Tilladelser">
 <!ENTITY noscriptRefresh "Genindlæs">

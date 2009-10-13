@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Prohibeix el Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Prohibeix el &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Prohibeix el &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Prohibeix el @font-face">
+<!ENTITY noscriptForbidMedia "Prohibeix el &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Prohibeix el Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Prohibeix d&apos;altres connectors">
 <!ENTITY noscriptReloadWarn "Aquestes opcions prenen efecte en pàgines noves o recarregades (manualment)">
@@ -155,3 +157,19 @@
 <!ENTITY noscriptFrameOptErr.desc "Per protegir la teva seguretat, l&apos;editor d&apos;aquest contingut no té permís per mostrar-t&apos;ho en un marc.">
 <!ENTITY noscriptFrameOptErr.link "Clica aquí per obrir aquest contingut en una nova finestra">
 <!ENTITY noscriptBookmarkSync "Guarda la configuració de NoScript en una còpia de seguretat per a una major facilitat de sincronització.">
+<!ENTITY noscriptShowReleaseNotes "Mostrar les notes de llançament en les actualitzacions">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Rulesets:">
+<!ENTITY ABE.enabled.label "Activar ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Permetre que els llocs web proposin les seves normes">
+<!ENTITY ABE.edit.label "Editar...">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Activar">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "Desactivar">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Actualitzar">
+<!ENTITY ABE.refresh.accesskey "r">
+<!ENTITY noscriptUninstall "Desinatal·lar">
+<!ENTITY noscriptRecentBlocked "Llocs bloquejats recentment">

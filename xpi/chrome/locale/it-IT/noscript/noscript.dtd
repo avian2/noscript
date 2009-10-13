@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Vieta Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Vieta &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Vieta &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Vieta @font-face">
+<!ENTITY noscriptForbidMedia "Vieta &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Vieta Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Vieta altri plugin">
 <!ENTITY noscriptReloadWarn "Queste opzioni avranno effetto nelle nuove pagine e in quelle ricaricate (manualmente)">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Vieta il ping dai collegamenti">
 <!ENTITY noscriptForbidMetaRefresh "Blocca i reindirizzamenti META dall&apos;interno di elementi &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptNotifyMeta "Mostra messaggio quando un reindirizzamento META è bloccato">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptWhitelist "Lista fidata">
 <!ENTITY noscriptPermissions "Permessi">
 <!ENTITY noscriptRefresh "Aggiorna">
@@ -171,3 +175,4 @@
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "Disinstalla">
 <!ENTITY noscriptRecentBlocked "Siti bloccati di recente">
+<!ENTITY noscriptEmbeddings "Oggetti importati">

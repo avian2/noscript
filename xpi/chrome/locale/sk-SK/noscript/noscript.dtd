@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Zakázať Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Zakázať &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Zakázať &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Zakázať @font-face">
+<!ENTITY noscriptForbidMedia "Zakázať &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Zakázať Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Zakázať ostatné zásuvné moduly">
 <!ENTITY noscriptReloadWarn "Tieto možnosti sa prejavia na nových (alebo na ručne znovu načítaných) stránkach">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Zakázať &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Zakázať presmerovanie META v rámci prvkov &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptNotifyMeta "Zobraziť správu o zablokovaných META presmerovaniach">
+<!ENTITY noscriptNotifyMeta.accesskey "a">
 <!ENTITY noscriptWhitelist "Zoznam povolených">
 <!ENTITY noscriptPermissions "Povolenia">
 <!ENTITY noscriptRefresh "Obnoviť">

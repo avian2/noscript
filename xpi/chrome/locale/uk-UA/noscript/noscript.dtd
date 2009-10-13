@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Заборонити Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Заборонити &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Заборонити &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Заборонити @font-face">
+<!ENTITY noscriptForbidMedia "Заборонити &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Заборонити Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Заборонити інші модулі">
 <!ENTITY noscriptReloadWarn "Налаштування вступлять у силу на новій сторінці або після оновлення (вручну)">

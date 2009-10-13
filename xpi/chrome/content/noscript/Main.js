@@ -165,7 +165,7 @@ var ns = singleton = {
   clearClick: 3,
 
   
-  forbidSomeContent: false,
+  forbidSomeContent: true,
   contentBlocker: false,
   
   forbidChromeScripts: false,
@@ -177,7 +177,9 @@ var ns = singleton = {
   forbidJava: true,
   forbidFlash: false,
   forbidFlash: true,
-  forbidPlugins: false,
+  forbidPlugins: true,
+  forbidMedia: true,
+  forbidFonts: true,
   forbidIFrames: false, 
   forbidIFramesContext: 2, // 0 = all iframes, 1 = different site, 2 = different domain, 3 = different base domain
   forbidFrames: false,
@@ -284,12 +286,15 @@ var ns = singleton = {
       case "forbidFlash":
       case "forbidSilverlight":
       case "forbidPlugins":
+      case "forbidMedia":
+      case "forbidFonts":
       case "forbidIFrames":
       case "forbidFrames":
         this[name]=this.getPref(name, this[name]);
         this.forbidSomeContent = this.forbidJava || this.forbidFlash ||
-           this.forbidSilverlight || this.forbidPlugins ||
-            this.forbidIFrames || this.forbidFrames;
+          this.forbidSilverlight || this.forbidPlugins ||
+          this.forbidMedia || this.forbidFonts ||
+          this.forbidIFrames || this.forbidFrames;
       break;
       
       case "abp.removeTabs":
@@ -651,7 +656,7 @@ var ns = singleton = {
       "filterXExceptions",
       "forbidChromeScripts",
       "forbidJarDocuments", "forbidJarDocumentsExceptions",
-      "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", 
+      "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts",
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
       "forbidMetaRefresh",
       "forbidXBL", "forbidXHR",
@@ -1238,6 +1243,7 @@ var ns = singleton = {
     return ret;
   },
   
+  
   reloadAllowedObjects: function(browser) {
     if (this.getPref("autoReload.onMultiContent", false)) {
       this.quickReload(browser.webNavigation);
@@ -1245,12 +1251,23 @@ var ns = singleton = {
     }
     
     var sites = this.getSites(browser);
-    var egroup, e;
-    for each (egroup in sites.pluginExtras) {
-      for each (e in egroup) {
-        if (e.placeholder && this.isAllowedObject(e.url, e.mime, e.site)) {
-          e.skipConfirmation = true;
-          this.checkAndEnablePlaceholder(e.placeholder);
+    var egroup, len, j, e;
+     for each (egroup in sites.pluginExtras) {
+      for (j = 0, len = egroup.length; j < len; j++) {
+        e = egroup[j];
+        if (this.isAllowedObject(e.url, e.mime, e.site)) {
+          if (e.placeholder) {
+            e.skipConfirmation = true;
+            this.checkAndEnablePlaceholder(e.placeholder);
+          } else if (!e.embed) {
+            if (e.document) {
+              this.quickReload(DOM.getDocShellForWindow(e.document.defaultView));
+              break;
+            } else {
+              this.quickReload(browser.webNavigation);
+              return;
+            }
+          }
         }
       }
     }
@@ -1269,9 +1286,10 @@ var ns = singleton = {
         return true;
       }
     }
-    var egroup, e;
-    for each (egroup in sites.pluginExtras) {
-      for each (e in egroup) {
+    var egroup, len, j, e;
+     for each (egroup in sites.pluginExtras) {
+      for (j = 0, len = egroup.length; j < len; j++) {
+        e = egroup[j];
         if (!e.placeholder && e.url && ((url = this.objectKey(e.url)) in snapshot) && !(url in this.objectWhitelist)) {
           return true;
         }
@@ -1743,7 +1761,7 @@ var ns = singleton = {
                       ? aContext
                       : aContext.ownerDocument.defaultView
                   ).isNewToplevel
-          : !(this.isJSEnabled(originSite) ||
+          : this.forbidData && !(this.isJSEnabled(originSite) ||
               (aContext instanceof CI.nsIDOMHTMLFrameElement ||
                aContext instanceof CI.nsIDOMHTMLIFrameElement) &&
               (
@@ -1837,8 +1855,15 @@ var ns = singleton = {
   tagForReplacement: function(embed, pluginExtras) {
     try {
       var doc = embed.ownerDocument;
-      if(!doc) return;
-      this.getExpando(doc, "pe",  []).push({embed: embed, pluginExtras: pluginExtras});
+      if(!doc) {
+        if (embed instanceof CI.nsIDOMDocumentView) {
+          pluginExtras.document = (doc = embed);
+          pluginExtras.url = this.getSite(pluginExtras.url);
+          this._collectPluginExtras(this.findPluginExtras(doc), pluginExtras);
+        }
+      } else {
+        this.getExpando(doc, "pe",  []).push({embed: embed, pluginExtras: pluginExtras});
+      }
       try {
         this.syncUI(doc.defaultView.top);
       } catch(noUIex) {
@@ -2653,7 +2678,9 @@ var ns = singleton = {
       ? 'url("' + this.skinBase + "java" + size + '.png")'
       : mime == "application/x-silverlight"
         ? 'url("' + this.skinBase + "somelight" + size + '.png")'
-        : 'url("moz-icon://noscript?size=' + size + '&contentType=' + mime.replace(/[^\w-\/]/g, '') + '")';
+        : /^font\b/i.test(mime)
+          ? 'url("' + this.skinBase + 'font.png")'
+          : 'url("moz-icon://noscript?size=' + size + '&contentType=' + mime.replace(/[^\w-\/]/g, '') + '")';
   },
   
   
@@ -2881,7 +2908,7 @@ var ns = singleton = {
         anchor.setAttribute("title", extras.title);
         
         this.setPluginExtras(anchor, extras);
-        this.setExpando(anchor, "removedPlugin", object);
+        this.setExpando(anchor, "removedNode", object);
      
         (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras });
 
@@ -3003,7 +3030,7 @@ var ns = singleton = {
   onPlaceholderClick: function(ev, anchor) {
     if (ev.button) return;
     anchor = anchor || ev.currentTarget
-    const object = this.getExpando(anchor, "removedPlugin");
+    const object = this.getExpando(anchor, "removedNode");
     
     if (object) try {
       if (ev.shiftKey) {
@@ -3031,7 +3058,7 @@ var ns = singleton = {
         pe = pluginExtras[j];
         if (pe.placeholder) try {
           if (DOM.elementContainsPoint(pe.placeholder, p)) {
-            var object = this.getExpando(pe.placeholder, "removedPlugin");
+            var object = this.getExpando(pe.placeholder, "removedNode");
             if (object && !(object instanceof CI.nsIDOMHTMLAnchorElement))
               this.setExpando(object, "overlay", el);
             this.onPlaceholderClick(ev, pe.placeholder);
@@ -3075,7 +3102,7 @@ var ns = singleton = {
   },
   
   checkAndEnablePlaceholder: function(anchor, object) {
-    if (!(object || (object = this.getExpando(anchor, "removedPlugin")))) 
+    if (!(object || (object = this.getExpando(anchor, "removedNode")))) 
       return;
     
     const extras = this.getPluginExtras(anchor);
@@ -3140,7 +3167,7 @@ var ns = singleton = {
         this.allowObject(doc.documentURI, mime);
         this.quickReload(doc.defaultView);
       } else {
-        this.setExpando(ctx.anchor, "removedPlugin", null);
+        this.setExpando(ctx.anchor, "removedNode", null);
         extras.placeholder = null;
         this.delayExec(function() {
           this.removeAbpTab(ctx.anchor);
@@ -3160,11 +3187,14 @@ var ns = singleton = {
           
           ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
           this.setExpando(obj, "allowed", true);
+          /*
           var pluginExtras = this.findPluginExtras(obj.ownerDocument);
           if(pluginExtras) {
             var pos = pluginExtras.indexOf(extras);
             if(pos > -1) pluginExtras.splice(pos, 1);
           }
+          */
+         
           ctx = null;
         }, 10);
         return;

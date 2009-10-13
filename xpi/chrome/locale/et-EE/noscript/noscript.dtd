@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Keela Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Keela &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Keela &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Keela @font-face">
+<!ENTITY noscriptForbidMedia "Keela &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Keela Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Keela teised pluginad">
 <!ENTITY noscriptReloadWarn "Need valikud jõustuvad uutel või (käsitsi) uuesti laetud lehtedel">

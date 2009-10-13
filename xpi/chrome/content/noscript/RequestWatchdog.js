@@ -957,22 +957,24 @@ var InjectionChecker = {
   reduceQuotes: function(s) {
     if (s[0] == '/') {
       // reduce common leading path fragment resembling a regular expression or a comment
-      s = s.replace(/^\/[^\/\n\r]+\//, '_RegExp_').replace(/^\/\/[^\r\n]*/, '//_COMMENT_');
+      s = s.replace(/^\/[^\/\n\r]+\//, '_RX_').replace(/^\/\/[^\r\n]*/, '//_COMMENT_');
     }
     
     if (/\/\*/.test(s)) // C-style comments, would make everything really tricky
       return s;
     
-    if (/['"]/.test(s)) {
+    
+    if (/['"\/]/.test(s)) {
     
       // drop noisy backslashes
       s = s.replace(/\\{2,}/g, this.reduceBackSlashes);
       
       // drop escaped quotes
-      s = s.replace(/\\["']/g, "EQ");
+      s = s.replace(/\\["'\/]/g, "EQ");
       var expr;
       for(;;) {
-         expr = s.replace(/(^[^'"\/]*)(["']).*?\2/g, "$1_QS_");
+         expr = s.replace(/(^[^'"\/]*[;,\+\-=\(\[]\s*)\/[^\/]+\//g, "$1_RX_")
+                .replace(/(^[^'"\/]*)(["']).*?\2/g, "$1_QS_");
          if(expr == s) break;
          s = expr;
       }
@@ -1093,12 +1095,13 @@ var InjectionChecker = {
   },
   
   checkLastFunction: function() {
-    var expr = this.syntax.lastFunction;
-    expr = expr && this.syntax.lastFunction.toSource().match(/\{([\s\S]*)\}/);
-    return expr && (expr = expr[1]) && 
-      (/=[\s\S]*cookie|\b(?:setter|document|location|innerHTML|\.\W*src)[\s\S]*=|[\[\(]/.test(expr) ||
-      this.maybeJS(expr)
-      );
+    var fn = this.syntax.lastFunction;
+    if (!fn) return false;
+    var m = fn.toSource().match(/\{([\s\S]*)\}/);
+    if (!m) return false;
+    var expr = m[1];
+    return /=[\s\S]*cookie|\b(?:setter|document|location|innerHTML|\.\W*src)[\s\S]*=|[\w$\u0080-\uffff\)\]]\s*[\[\(]/.test(expr) ||
+            this.maybeJS(expr);
   },
   
   _createInvalidRanges: function() {

@@ -42,13 +42,15 @@
 <!ENTITY noscriptAllowClipboard "Allow rich text copy and paste from external clipboard">
 <!ENTITY noscriptAdditionalRestrictions "Additional restrictions for untrusted sites">
 <!ENTITY noscriptPlugins "Plugins">
-<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to whitelisted sites too">
 <!ENTITY noscriptForbidJava "Forbid Java™">
 <!ENTITY noscriptForbidXSLT "Forbid XSLT">
 <!ENTITY noscriptForbidWebBugs "Forbid &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forbid Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forbid &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Forbid &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Forbid @font-face">
+<!ENTITY noscriptForbidMedia "Forbid &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Forbid Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Forbid other plugins">
 <!ENTITY noscriptReloadWarn "These options will take effect on new or (manually) reloaded pages">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Forbid &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptWhitelist "Whitelist">
 <!ENTITY noscriptPermissions "Permissions">
 <!ENTITY noscriptRefresh "Refresh">
@@ -148,7 +152,7 @@
 <!ENTITY noscriptTrustedPagesAdj "trusted">
 <!ENTITY noscriptUntrustedPagesAdj "untrusted">
 <!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
-<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptEmbeddings "Embeddings">
 <!ENTITY noscriptPrev "Previous">
 <!ENTITY noscriptNext "Next">
 <!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
@@ -171,3 +175,4 @@
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "Uninstall">
 <!ENTITY noscriptRecentBlocked "Recently blocked sites">
+<!ENTITY noscriptEmbeddings "Embeddings">

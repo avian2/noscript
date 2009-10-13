@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Zakázat Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Zakázat &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Zakázat &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Zakázat @font-face">
+<!ENTITY noscriptForbidMedia "Zakázat &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Zakázat Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">
 <!ENTITY noscriptReloadWarn "Tato nastavení se projeví u nově otevřených nebo (manuálně) aktualizovaných stránkách">

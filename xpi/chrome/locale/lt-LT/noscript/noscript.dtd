@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Uždrausti Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Uždrausti &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Uždrausti &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Uždrausti @font-face">
+<!ENTITY noscriptForbidMedia "Uždrausti &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Uždrausti Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Uždrausti kitus įskiepius">
 <!ENTITY noscriptReloadWarn "Šios nuostatos įsigalios naujoms arba (rankiniu būdu) įkrautoms iš naujo svetainėms">
