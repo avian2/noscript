@@ -44,7 +44,7 @@
 <!ENTITY noscriptPlugins "الملحقات">
 <!ENTITY noscriptContentBlocker "طبق هذه القيود على المواقع الموثوقة كذلك">
 <!ENTITY noscriptForbidJava "امنع جافا">
-<!ENTITY noscriptForbidXSLT "Forbid XSLT">
+<!ENTITY noscriptForbidXSLT "امنع أكس أس أل تي">
 <!ENTITY noscriptForbidWebBugs "امنع  &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "امنع ميكروسوفت سِلفَرلَيت">
 <!ENTITY noscriptForbidIFrames "منع &lt;IFRAME&gt;">
@@ -67,6 +67,8 @@
 <!ENTITY noscriptForbidPing "امنع &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "امنع تحويلات META من داخل عناصر &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "ت">
+<!ENTITY noscriptNotifyMeta "اظهار الرسائل من ميتا محجوبة متغيرة الهدف">
+<!ENTITY noscriptNotifyMeta.accesskey "م">
 <!ENTITY noscriptWhitelist "القائمة البيضاء">
 <!ENTITY noscriptPermissions "الصلاحيات">
 <!ENTITY noscriptRefresh "أنعش">
@@ -98,8 +100,8 @@
 <!ENTITY noscriptXssFaq.accesskey "ع">
 <!ENTITY noscriptUnsafeReload "إعادة تحميل غير آمنة">
 <!ENTITY noscriptUnsafeReload.accesskey "د">
-<!ENTITY noscriptXssExceptions "‮استثناءات من الحماية ضد ‪XSS">
-<!ENTITY noscriptXssExceptions.description "‮المواقع المطابقة لهذه العبارات الاعتيادية لن تكون محمية ضد ‪XSS">
+<!ENTITY noscriptXssExceptions "‮استثناءات من الحماية ضد أكس أس أس">
+<!ENTITY noscriptXssExceptions.description "‮المواقع المطابقة لهذه العبارات الاعتيادية لن تكون محمية ضد ‪أكس أس أس">
 <!ENTITY noscriptMatchSample "عينة مطابقة للنمط">
 <!ENTITY noscriptReset "صفِّر">
 <!ENTITY noscriptReset.accesskey "ص">
@@ -139,13 +141,13 @@
 <!ENTITY noscriptSecureCookies "فعّل الادارة الآلية للكعكات الآمنة">
 <!ENTITY noscriptSecureCookiesForced "افرض تعمية كل الكعكات المحددة عبر اتصال آمن للمواقع التالية:">
 <!ENTITY noscriptSecureCookiesExceptions "أهمل الكعكات غير الآمنة عبر اتصال آمن للمواقع التالية:">
-<!ENTITY noscriptClearClickTitle "امسح التحذيؤ">
-<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
-<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
+<!ENTITY noscriptClearClickTitle "امسح التحذير">
+<!ENTITY noscriptClearClickHeader "محاولة قرصنة النقر أو تحويل للعنوان">
+<!ENTITY noscriptClearClickDescription "منع نوسكربت تفاعل لللوحة أو الفأرة مع عنصر مُخَبَّأ.أضغط على الضورة في الاسفل لرؤية كلا النسخ">
 <!ENTITY noscriptClearClickOpt "ارفع الحماية عن الصفحات…">
-<!ENTITY noscriptClearClickReport "Report">
-<!ENTITY noscriptClearClickReport.accesskey "R">
-<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptClearClickReport "تقرير">
+<!ENTITY noscriptClearClickReport.accesskey "ت">
+<!ENTITY noscriptClearClickReportId "رقم التقرير:">
 <!ENTITY noscriptOpacizeOpt "حسّن العناصر المُضمّنة في الصفحات…">
 <!ENTITY noscriptTrustedPagesAdj "موثوق">
 <!ENTITY noscriptUntrustedPagesAdj "غير موثوق">
@@ -153,10 +155,10 @@
 <!ENTITY noscriptEmbeddings "عناصر مغروسة">
 <!ENTITY noscriptPrev "السابق">
 <!ENTITY noscriptNext "التالي">
-<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
-<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
-<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
-<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptFrameOptErr.title "لا يمكن اظهار المحتويات في صُفَيحةframe">
+<!ENTITY noscriptFrameOptErr.desc "لامانك, ناشر المحتويات لا يسمح باظهارها في صُفَيحة  frame">
+<!ENTITY noscriptFrameOptErr.link "انقر هنا لفتح المحتويات في نافذة جديدة">
+<!ENTITY noscriptBookmarkSync "اعمل نسخة احتياطية للاعدادت مُؤَشِّر لتسهيل التزامن">
 <!ENTITY noscriptShowReleaseNotes "اظهار ملاظات الاصدار في التحديثات">
 <!ENTITY ABE "أيب">
 <!ENTITY ABE.accesskey "أ">

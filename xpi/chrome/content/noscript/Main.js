@@ -2535,11 +2535,9 @@ var ns = singleton = {
         docJS: browser.webNavigation.allowJavascript
       };
     
-      
-      
+
       try {
-        
-        
+
         browser.webNavigation.allowJavascript = true;
         this.jsEnabled = true;
           
@@ -3170,32 +3168,33 @@ var ns = singleton = {
         this.setExpando(ctx.anchor, "removedNode", null);
         extras.placeholder = null;
         this.delayExec(function() {
-          this.removeAbpTab(ctx.anchor);
-          var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
-          var obj = ctx.object.cloneNode(true);
-          var isMedia = ("nsIDOMHTMLVideoElement" in CI) && (obj instanceof CI.nsIDOMHTMLVideoElement || obj instanceof CI.nsIDOMHTMLAudioElement);
-          
-          
-          if (isMedia) {
-            if (jsEnabled && !obj.controls) {
-              // we must reload, since the author-provided UI likely had no chance to wire events
+          try {
+            this.removeAbpTab(ctx.anchor);
+            var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
+            var obj = ctx.object.cloneNode(true);
+            var isMedia = ("nsIDOMHTMLVideoElement" in CI) && (obj instanceof CI.nsIDOMHTMLVideoElement || obj instanceof CI.nsIDOMHTMLAudioElement);
+            
+            
+            if (isMedia) {
+              if (jsEnabled && !obj.controls) {
+                // we must reload, since the author-provided UI likely had no chance to wire events
+                this.quickReload(doc.defaultView);
+                return;
+              }
+              obj.autoplay = true;
+            }
+            
+            ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
+            
+            if (jsEnabled && !(obj.offsetWidth || obj.offsetHeight)) {
               this.quickReload(doc.defaultView);
               return;
             }
-            obj.autoplay = true;
+            
+            this.setExpando(obj, "allowed", true);
+          } finally {
+            ctx = null;
           }
-          
-          ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
-          this.setExpando(obj, "allowed", true);
-          /*
-          var pluginExtras = this.findPluginExtras(obj.ownerDocument);
-          if(pluginExtras) {
-            var pos = pluginExtras.indexOf(extras);
-            if(pos > -1) pluginExtras.splice(pos, 1);
-          }
-          */
-         
-          ctx = null;
         }, 10);
         return;
       }
@@ -3603,7 +3602,7 @@ var ns = singleton = {
                      && !/^(?:chrome|resource):/i.test(wp.DOMWindow.document.documentURI)) {
             if (!this.isJSEnabled(req.URI.prePath)) {
               IOUtil.abort(req);
-              if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Aborted script " + req.URI.spec);
+              if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Aborted XUL script " + req.URI.spec);
             }
           }
         } catch(e) {}
@@ -3702,7 +3701,7 @@ var ns = singleton = {
 
             
             if (!disposition) {
-              var url = channel.URI;            
+              var url = channel.URI; 
               var ext = (url instanceof CI.nsIURL) ? url.fileExtension : '';
               
               if (ext &&

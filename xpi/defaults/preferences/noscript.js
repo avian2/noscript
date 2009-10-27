@@ -26,7 +26,7 @@ pref("noscript.showRevokeTemp", true);
 pref("noscript.showBlockedObjects", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
-pref("noscript.mandatory", "chrome: about: about:config about:neterror about:certerror about:plugins about:privatebrowsing about:sessionrestore resource:");
+pref("noscript.mandatory", "chrome: about: about:config about:neterror about:certerror about:plugins about:privatebrowsing about:sessionrestore resource: about:blocked");
 pref("noscript.default", "about:blank about:credits addons.mozilla.org flashgot.net google.com gstatic.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
@@ -95,7 +95,7 @@ pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
 pref("noscript.filterXGetRx", "<+(?=[^<>=\-\\d\\. /\\(])|[\\\\\"\\x00-\\x07\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F]");
 pref("noscript.filterXGetUserRx", "");
-pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$"); 
+pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$\n^http://translate\.google\.com/translate_t[^\"'<>\?%]+$"); 
 pref("noscript.injectionCheck", 2);
 pref("noscript.injectionCheckPost", true);
 pref("noscript.injectionCheckHTML", true);
@@ -185,7 +185,7 @@ pref("noscript.clearClick.plugins", true);
 pref("noscript.clearClick.prompt", true);
 pref("noscript.clearClick.debug", false);
 pref("noscript.clearClick.exceptions", "noscript.net/getit flashgot.net/getit *.ebay.com");
-pref("noscript.clearClick.subexceptions", "http://w.sharethis.com/share3x/lightbox.html?* http://disqus.com/embed/* http://www.feedly.com/mini");
+pref("noscript.clearClick.subexceptions", "http://w.sharethis.com/share3x/lightbox.html?* http://disqus.com/embed/* http://www.feedly.com/mini abine:*");
 
 pref("noscript.emulateFrameBreak", true);
 

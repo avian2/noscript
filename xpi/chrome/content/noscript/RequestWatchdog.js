@@ -1065,9 +1065,13 @@ var InjectionChecker = {
   ),
   
   _maybeJSRx: new RegExp(
-    // identifier's tail...         optional comment...          function call or accessor... function call or assignment.    
-    '[\\w$\\u0080-\\uFFFF\\]\\)]' + IC_COMMENT_PATTERN + '(?:[\\(\\[]|\\.\\D)[\\s\\S]*(?:\\([\\s\\S]*\\)|=)|\\b(?:' +
-      IC_EVAL_PATTERN +
+    // identifier's tail...         optional comment...         
+    '[\\w$\\u0080-\\uFFFF\\]\\)]' + IC_COMMENT_PATTERN + 
+    // accessor followed by function call or assignment.    
+     '(?:(?:[\\[]|\\.\\D)[\\s\\S]*(?:\\([\\s\\S]*\\)|=)' +
+       // double function call
+       '|\\([\\s\\S]*\\([\\s\\S]*\\)' +
+     ')|\\b(?:' + IC_EVAL_PATTERN +
       ')\\b[\\s\\S]*\\(|\\b(?:' +
       fuzzify('setter|location|innerHTML') +
       ')\\b[\\s\\S]*=|' +

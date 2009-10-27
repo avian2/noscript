@@ -1946,9 +1946,11 @@ return noscriptUtil.service ? {
     },
     onDocumentLoad: function(ev) {
       if (ev.originalTarget instanceof HTMLDocument) {
-        ev.currentTarget.removeEventListener("load", arguments.callee, false);
-        ev.currentTarget.setTim\u0065out(function() {
-          noscriptOverlay.ns.detectJSRedirects(this.document);
+        var w = ev.currentTarget;
+        w.removeEventListener("load", arguments.callee, false);
+        
+        window.setTim\u0065out(function() {
+          noscriptOverlay.ns.detectJSRedirects(w.document);
         }, 0);
       }
     },

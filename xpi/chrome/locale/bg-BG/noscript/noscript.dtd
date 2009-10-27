@@ -67,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Забрани &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Забраняване на META пренасочвания в &lt;NOSCRIPT&gt; елементи">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "З">
+<!ENTITY noscriptNotifyMeta "Показване на съобщения за блокирани МЕТА пренасочвания">
+<!ENTITY noscriptNotifyMeta.accesskey "М">
 <!ENTITY noscriptWhitelist "Бял списък">
 <!ENTITY noscriptPermissions "Разрешения">
 <!ENTITY noscriptRefresh "Обновяване">

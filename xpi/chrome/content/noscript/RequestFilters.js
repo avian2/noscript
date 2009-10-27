@@ -40,7 +40,7 @@ RequestFilter.prototype = {
   
   onStartRequest: function(request, context) {
     this.bytesCount = 0;
-    if (this.consumer) {
+    if (this.consumer && !(request instanceof CI.nsIHttpChannel && request.responseStatus >= 300)) {
       this.buffers = [];
     } else {
       this.onDataAvailable = this._onDataAvailableNop;
@@ -139,7 +139,7 @@ HijackChecker.prototype = {
   _neutralize: function(data, reason) {
     if (data.request instanceof CI.nsIChannel)
       this.ns.log("[NoScript] Potential cross-site " + reason + " hijacking detected and blocked ("
-                + data.request.URI.spec + ")");
+                + data.request.URI.spec + "):\n" + data.buffers[0]);
     data.buffers = null; // don't pass anything 
     return true;
   }

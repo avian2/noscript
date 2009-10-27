@@ -67,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Interdire &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Interdire les redirections META dans des éléments &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptNotifyMeta "Afficher un message à propos des redirections META bloquées">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptWhitelist "Liste blanche">
 <!ENTITY noscriptPermissions "Permissions">
 <!ENTITY noscriptRefresh "Actualiser">
