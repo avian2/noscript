@@ -36,7 +36,7 @@ const ANYWHERE = 3;
 
 const DUMMYOBJ = {};
 
-INCLUDE('Sites', 'AddressMatcher', 'DOM', 'IOUtil', 'Policy', 'RequestWatchdog', 'HTTPS', 'ClearClickHandler', 'URIValidator', 'RequestFilters', 'ScriptSurrogate', 'ABE');
+INCLUDE('Sites', 'AddressMatcher', 'DOM', 'IOUtil', 'Policy', 'RequestWatchdog', 'HTTPS', 'ClearClickHandler', 'URIValidator', 'ScriptSurrogate', 'ABE');
 
 var ns = singleton = {
   VERSION: VERSION
@@ -3591,15 +3591,8 @@ var ns = singleton = {
 
           ph = ph || PolicyState.extract(req); 
           
-          if (ph) {
-            if (ph.contentType == 2 && (req instanceof CI.nsIHttpChannel)) {
-              var originSite = (IOUtil.extractInternalReferrer(req) || ph.requestOrigin).prePath;
-              var scriptSite = req.URI.prePath;
-              if (scriptSite != originSite && this.getPref("checkHijackings"))
-                new RequestFilter(req, new HijackChecker(this));
-            } 
-          } else if (req instanceof CI.nsIHttpChannel && wp.DOMWindow.document instanceof CI.nsIDOMXULDocument
-                     && !/^(?:chrome|resource):/i.test(wp.DOMWindow.document.documentURI)) {
+          if (!ph && req instanceof CI.nsIHttpChannel && wp.DOMWindow.document instanceof CI.nsIDOMXULDocument
+                  && !/^(?:chrome|resource):/i.test(wp.DOMWindow.document.documentURI)) {
             if (!this.isJSEnabled(req.URI.prePath)) {
               IOUtil.abort(req);
               if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Aborted XUL script " + req.URI.spec);

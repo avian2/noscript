@@ -197,7 +197,6 @@ pref("noscript.ignorePorts", true);
 
 pref("noscript.cp.last", true);
 pref("noscript.abp.removeTabs", false);
-pref("noscript.checkHijackings", true);
 
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.ga.exceptions", "");
