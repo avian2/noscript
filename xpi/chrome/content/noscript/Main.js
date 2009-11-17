@@ -1783,7 +1783,7 @@ var ns = singleton = {
            // Web Developer extension "appears" to XHR towards about:blank
            (locationURL = aContentLocation.spec) == "about:blank"
           ) return false;
-    var win = aContext.defaultView;
+    var win = aContext && aContext.defaultView;
     if(win) {
       this.getExpando(win.top, "codeSites", []).push(this.getSite(locationURL));
     }
@@ -2532,7 +2532,8 @@ var ns = singleton = {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
       
       var snapshots = {
-        docJS: browser.webNavigation.allowJavascript
+        docJS: browser.webNavigation.allowJavascript,
+        siteJS: this.isJSEnabled(site)
       };
     
 
@@ -2549,27 +2550,28 @@ var ns = singleton = {
           try {
             ets.forEach(function(et) { doc.addEventListener(et, nh, false) });
             
-            this._runJS(window, "(" +
-              function() {
-                var tt = [];
-                window.setTim\u0065out = window.s\u0065tInterval = function(f, d, a) {
-                  if (typeof(f) != 'function') f = new Function(f || '');
-                  tt.push({ f: f, d: d, a: a});
-                  return 0;
-                };
-                window.__runTimeouts = function() {
-                  var t, count = 0;
-                  while (tt.length && count++ < 50) { // let's prevent infinite pseudo-loops
-                    tt.sort(function(b, a) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); });
-                    t = tt.pop();
-                    t.f.call(window, t.a);
-                  }
-                  delete window.__runTimeouts;
-                  delete window.setTim\u0065out;
-                };
-              }.toSource()
-            + ")()");
-            
+            if (!(snapshots.siteJS && snapshots.docJS)) {
+              this._runJS(window, "(" +
+                function() {
+                  var tt = [];
+                  window.setTim\u0065out = window.s\u0065tInterval = function(f, d, a) {
+                    if (typeof(f) != 'function') f = new Function(f || '');
+                    tt.push({ f: f, d: d, a: a});
+                    return 0;
+                  };
+                  window.__runTimeouts = function() {
+                    var t, count = 0;
+                    while (tt.length && count++ < 50) { // let's prevent infinite pseudo-loops
+                      tt.sort(function(b, a) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); });
+                      t = tt.pop();
+                      t.f.call(window, t.a);
+                    }
+                    delete window.__runTimeouts;
+                    delete window.setTim\u0065out;
+                  };
+                }.toSource()
+              + ")()");
+            }
             
             if (openCallback) {
               window.location.href = url;
@@ -2579,9 +2581,12 @@ var ns = singleton = {
               doc.documentElement.appendChild(s);
             }
             
-            Thread.yieldAll();
-          
-            this._runJS(window, "window.__runTimeouts()");
+            
+            if (!(snapshots.siteJS && snapshots.docJS)) {
+              Thread.yieldAll();
+              this._runJS(window,
+                        "if (typeof window.__runTimeouts == 'function') window.__runTimeouts()");
+            }
             
           } catch(e) {
             if(this.consoleDump) this.dump("JS URL execution failed: " + e);
@@ -2593,9 +2598,7 @@ var ns = singleton = {
         }
         return true;
       } finally {
-        
 
-        
         this.jsEnabled = false;
         this.setExpando(browser, "jsSite", site);
         if (!browser.webNavigation.isLoadingDocument && this.getSite(browser.webNavigation.currentURI.spec) == site)
@@ -2628,17 +2631,15 @@ var ns = singleton = {
         if (ns.isUntrusted(site)) return;
     }
     try {
+      var w = node.ownerDocument.defaultView;
+      node.parentNode.removeChild(node);
+      
       if (ns.consoleDump) ns.dump("Importing for bookmarklet: " + url);
       var xhr = ns.createCheckedXHR("GET", url, false);
       xhr.send(null);
-      if (xhr.status == "200") {
+      if (xhr.status == 200) {
         var s = xhr.responseText;
-        if (s) {
-          var w = node.ownerDocument.defaultView;
-          node.parentNode.removeChild(node);
-        
-          ns._runJS(w, s);
-        }
+        if (s) ns._runJS(w, s);
       }
     } catch (e) {
       ns.dump("Error running bookmarklet import: " + e);
@@ -4208,6 +4209,8 @@ var ns = singleton = {
   },
   
   onContentClick: function(ev) {
+    
+    if (ev.button == 2) return;
     
     var a = ev.originalTarget;
     

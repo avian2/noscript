@@ -20,6 +20,9 @@ const STS = {
         try {
           this.db.processHeader(uri.asciiHost, chan.getResponseHeader("Strict-Transport-Security"));
         } catch (e) {
+          try {
+            this.db.processHeader(uri.asciiHost, chan.getResponseHeader("X-Strict-Transport-Security"));
+          } catch (e) {}
         }
       }
     }

@@ -10,16 +10,40 @@ const HTTPS = {
   
   
   forceChannel: function(channel) {
-    return this.forceURI(channel.URI);
+    return this.forceURI(channel.URI, function() {
+      if (!ChannelReplacement.supported) return false;
+      IOUtil.runWhenPending(channel, function() {
+        var uri = channel.URI.clone();
+        uri.scheme = "https";
+        new ChannelReplacement(channel, uri).replace(true).open();
+      });
+      return true;
+    });
   },
   
-  forceURI: function(uri) {
+  forceURI: function(uri, fallback, ctx) {
     if (this.mustForce(uri)) {
       try {
         this.log("Forcing https on " + uri.spec);
+        
+        if (ctx && ctx instanceof CI.nsIDOMElement) 
+          ["href", "src", "data"].forEach(function(attr) {
+            try {
+              if (attr in ctx && ctx[attr] == uri.spec) {
+                ctx[attr] = uri.spec.replace(/^http:/, 'https:');
+              }
+            } catch (e) {}
+          });
+        
         uri.scheme = "https";
+        
         return true;
       } catch(e) {
+        
+        
+        if (fallback && fallback())
+          return true;
+        
         this.log("Error trying to force https on " + uri.spec + ": " + e);
       }
     }

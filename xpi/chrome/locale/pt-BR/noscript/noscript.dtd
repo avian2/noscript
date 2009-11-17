@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Proibir Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Proibir &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Proibir &lt;FRAMES&gt;">
+<!ENTITY noscriptForbidFonts "Proibir @font-face">
+<!ENTITY noscriptForbidMedia "Proibir &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Proibir Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Proibir outros plugins">
 <!ENTITY noscriptReloadWarn "Estas opções terão efeito em páginas novas ou (manualmente) atualizadas.">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Proibir &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Proibir redirecionamentos META dentro de elementos &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "A">
+<!ENTITY noscriptNotifyMeta "Exibir mensagem sobre META redirecionamentos bloqueados">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptWhitelist "Lista Branca">
 <!ENTITY noscriptPermissions "Permissões">
 <!ENTITY noscriptRefresh "Atualizar">

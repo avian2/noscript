@@ -4,7 +4,10 @@ function ClearClickHandler(ns) {
 
 ClearClickHandler.prototype = {
   
-  // TODO: use MozAfterPaint (Fx 3.1) to intercept "Sudden Reveal" attacks
+  // TODO:
+  // 0. Use window.mozInnerScreenX & Y
+  // 1. try to use MozAfterPaint (Fx 3.1) to intercept "Sudden Reveal" attacks
+  // 2. try to use http://www.oxymoronical.com/experiments/apidocs/interface/nsIDOMWindowUtils:compareCanvases
   
   uiEvents: ["mousedown", "mouseup", "click", "dblclick", "keydown", "keypress", "keyup", "blur"],
   install: function(browser) {

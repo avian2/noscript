@@ -137,7 +137,7 @@ const MainContentPolicy = {
       
       if (isHTTP) {
         
-        HTTPS.forceURI(unwrappedLocation);
+        HTTPS.forceURI(unwrappedLocation, null, aContext);
         
         if (aRequestOrigin && !aInternalCall) {
           

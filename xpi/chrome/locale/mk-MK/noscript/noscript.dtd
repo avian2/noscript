@@ -67,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Оневозможи следење на вашите кликови преку атрибутот „ping“ (&lt;a ping=...&gt;)">
 <!ENTITY noscriptForbidMetaRefresh "Забрани „META“ пренасочувања во &lt;noscript&gt; елементи">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "З">
+<!ENTITY noscriptNotifyMeta "Покажи порака за блокираните „META“ пренасочувања">
+<!ENTITY noscriptNotifyMeta.accesskey "П">
 <!ENTITY noscriptWhitelist "Бела листа">
 <!ENTITY noscriptPermissions "Дозволи">
 <!ENTITY noscriptRefresh "Освежи">
