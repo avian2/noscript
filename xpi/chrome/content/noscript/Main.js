@@ -1252,7 +1252,7 @@ var ns = singleton = {
     
     var sites = this.getSites(browser);
     var egroup, len, j, e;
-     for each (egroup in sites.pluginExtras) {
+    for each (egroup in sites.pluginExtras) {
       for (j = 0, len = egroup.length; j < len; j++) {
         e = egroup[j];
         if (this.isAllowedObject(e.url, e.mime, e.site)) {
@@ -1610,7 +1610,9 @@ var ns = singleton = {
     const cat = "content-policy"; 
     if (last) catman.deleteCategoryEntry(cat, SERVICE_CTRID, false);
     
-    var delegate = this.disabled || (this.globalJS && !(this.alwaysBlockUntrustedContent || this.contentBlocker))   
+    var delegate = this.disabled ||
+        (this.globalJS &&
+          !(this.alwaysBlockUntrustedContent || this.contentBlocker || this.httpsForced))   
       ? NOPContentPolicy
       : MainContentPolicy;
       
@@ -2864,7 +2866,7 @@ var ns = singleton = {
     var opaque = pluginExtras.opaqueHere;
     
     var minSize = this.getPref("placeholderMinSize");
-    
+    var restrictedSize;
     
     var forcedCSS = ";";
     var pluginDocument = false;       
@@ -2953,7 +2955,8 @@ var ns = singleton = {
           }
         }
         
-        if (collapse || style.display == "none" || style.visibility == "hidden") {
+        restrictedSize = (collapse || style.display == "none" || style.visibility == "hidden");
+        if (restrictedSize) {
           innerDiv.style.maxWidth = anchor.style.maxWidth = "32px";
           innerDiv.style.maxHeight = anchor.style.maxHeight = "32px";
         }
@@ -2967,7 +2970,7 @@ var ns = singleton = {
         innerDiv = innerDiv.appendChild(document.createElementNS(HTML_NS, "div"));
         innerDiv.className = "__noscriptPlaceholder__2";
         
-        if(collapse || style && (parseInt(style.width) < 64 || parseInt(style.height) < 64)) {
+        if(restrictedSize || style && (parseInt(style.width) < 64 || parseInt(style.height) < 64)) {
           innerDiv.style.backgroundPosition = "bottom right";
           iconSize = 16;
           w = parseInt(style.width);
@@ -3101,8 +3104,12 @@ var ns = singleton = {
   },
   
   checkAndEnablePlaceholder: function(anchor, object) {
-    if (!(object || (object = this.getExpando(anchor, "removedNode")))) 
+    if (!(object || (object = this.getExpando(anchor, "removedNode")))) {
+      if (ns.consoleDump) ns.dump("Missing node on placeholder!");
       return;
+    }
+    
+    if (ns.consoleDump) ns.dump("Enabling node from placeholder...");
     
     const extras = this.getPluginExtras(anchor);
     const browser = DOM.findBrowserForNode(anchor);
@@ -3187,7 +3194,7 @@ var ns = singleton = {
             
             ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
             
-            if (jsEnabled && !(obj.offsetWidth || obj.offsetHeight)) {
+            if (jsEnabled && (obj.offsetWidth < 2 || obj.offsetHeight < 2)) {
               this.quickReload(doc.defaultView);
               return;
             }
@@ -3660,6 +3667,10 @@ var ns = singleton = {
   onSecurityChange: function() {}, 
   onProgressChange: function() {},
   
+  get _inclusionTypeInternalExceptions() {
+    delete this._inclusionTypeInternalExceptions;
+    return this._inclusionTypeInternalExceptions = new AddressMatcher("https://*.ebaystatic.com");
+  },
   
   checkInclusionType: function(channel) {
     try {
@@ -3723,7 +3734,8 @@ var ns = singleton = {
             } else mime = mime + ", " + disposition;
             
             // every check failed, this is a fishy cross-site mistyped inclusion
-            if (new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).testURI(url))
+            if (this._inclusionTypeInternalExceptions.testURI(url) ||
+                new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).testURI(url))
               return true;
             this.log("[NoScript] Blocking cross site " + (ctype == 2 ? "Javascript" : "CSS") + " served from " +
                      channel.URI.spec +

@@ -414,6 +414,7 @@ ChannelReplacement.prototype = {
     } else newChan.redirectionLimit += 1;
     
     newChan.loadFlags |= newChan.LOAD_REPLACE;
+    
     // nsHttpHandler::OnChannelRedirect()
     const CES = CI.nsIChannelEventSink;
     const flags = CES.REDIRECT_INTERNAL;
@@ -483,7 +484,7 @@ ChannelReplacement.prototype = {
           // may throw if host app doesn't implement url classification
         }
       } catch (e) {
-        // redirect failed: we must notify the original channel litener, so let's restore bindings
+        // redirect failed: we must notify the original channel listener, so let's restore bindings
         fail = true;
       }
     } else {

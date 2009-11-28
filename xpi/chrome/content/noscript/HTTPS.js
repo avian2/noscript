@@ -13,6 +13,19 @@ const HTTPS = {
     return this.forceURI(channel.URI, function() {
       if (!ChannelReplacement.supported) return false;
       IOUtil.runWhenPending(channel, function() {
+        // replacing a shrotcut icon causes a cache-related crash like
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=480352
+        // just abort it... 
+        try {
+         if (/\bimage\//.test(channel.getRequestHeader("Accept")) &&
+             !PolicyState.extract(channel) // favicons don't trigger content policies
+            ) {
+           HTTPS.log("Aborting shortcut icon " + channel.name + ", should be HTTPS!");
+           IOUtil.abort(channel);
+           return;
+         }
+        } catch(e) {}
+
         var uri = channel.URI.clone();
         uri.scheme = "https";
         new ChannelReplacement(channel, uri).replace(true).open();
@@ -24,25 +37,28 @@ const HTTPS = {
   forceURI: function(uri, fallback, ctx) {
     if (this.mustForce(uri)) {
       try {
-        this.log("Forcing https on " + uri.spec);
-        
-        if (ctx && ctx instanceof CI.nsIDOMElement) 
-          ["href", "src", "data"].forEach(function(attr) {
-            try {
-              if (attr in ctx && ctx[attr] == uri.spec) {
-                ctx[attr] = uri.spec.replace(/^http:/, 'https:');
-              }
-            } catch (e) {}
-          });
         
         uri.scheme = "https";
         
+        this.log("Forced URI " + uri.spec);
         return true;
+        
       } catch(e) {
         
+        if (ctx && (ctx instanceof CI.nsIDOMHTMLImageElement || ctx instanceof CI.nsIDOMHTMLInputElement)) {
+          uri = uri.clone();
+          uri.scheme = "https";
+          Thread.asap(function() { ctx.src = uri.spec; });
+          
+          var msg = "Image HTTP->HTTPS redirection to " + uri.spec;
+          this.log(msg);  
+          throw msg;
+        }
         
-        if (fallback && fallback())
-          return true;
+        if (fallback && fallback()) {
+           this.log("Channel redirection fallback on " + uri.spec);
+           return true;
+        }
         
         this.log("Error trying to force https on " + uri.spec + ": " + e);
       }

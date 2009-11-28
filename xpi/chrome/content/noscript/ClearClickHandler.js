@@ -859,7 +859,7 @@ DocPatcher.prototype = {
     
     for each(n in posn) n.__noscriptPos = false;
     
-    if(this.ns.consoleDump) this.ns.dump("DocPatcher.collectPositioned(): " + (Date.now() - t));
+    if(ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("DocPatcher.collectPositioned(): " + (Date.now() - t));
     return res;
   },
   
@@ -882,7 +882,7 @@ DocPatcher.prototype = {
     return o ? this.collectOpaqued(o, oo) : oo.res;
   },
   
-  forceVisible: function(co) {
+  forceVisible: function(co) { // TODO: I cause too much reflow, please CHECK ME!
     co.append(this.shownCS); 
   },
   
