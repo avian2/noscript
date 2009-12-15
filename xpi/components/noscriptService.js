@@ -2,11 +2,12 @@
 
 const CI = Components.interfaces;
 const CC = Components.classes;
+const CU = Components.utils;
 
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
 const EXTENSION_NAME = "NoScript";
 const CHROME_NAME = "noscript";
-const VERSION = "1.9.9.18";
+const VERSION = "1.9.9.22";
 const SERVICE_NAME = EXTENSION_NAME + " Service";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID="{31aec909-8e86-4397-9380-63a59e0c5ff5}";

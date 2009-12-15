@@ -1,6 +1,9 @@
 const DOM = {
   
-  lookupMethod: Components.utils ? Components.utils.lookupMethod : Components.lookupMethod,
+  confirm: function(s) {  // for interactive debugging purposes
+    return this.mostRecentBrowserWindow.confirm(s);
+  },
+  
   consoleDump: false,
   dump: function(msg) {
     if(this.consoleDump) dump("[NoScript DOM] " + msg + "\n");
@@ -38,7 +41,7 @@ const DOM = {
       }
       if (!ctx) return null;
       try {
-        ctx = this.lookupMethod(ctx, "top")();
+        ctx = CU.lookupMethod(ctx, "top")();
       } catch(e) {
         ctx = ctx.top;
       }

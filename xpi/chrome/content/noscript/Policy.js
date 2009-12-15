@@ -249,6 +249,7 @@ const MainContentPolicy = {
               this.setExpando(aContext, "requiresReload", true);
             }
           }
+          
           if (this.checkJarDocument(aContentLocation, aContext)) 
             return this.reject("Plugin content from JAR", arguments);
           
@@ -263,11 +264,12 @@ const MainContentPolicy = {
                   else media.pause();
                 }, true);
               }, 0);
-            }
-            
+            } 
             
             forbid = this.forbidMedia;
             
+          } else {
+            this.tagWindowlessObject(aContext);
           }
           
           if (aMimeTypeGuess) // otherwise let's treat it as an iframe
@@ -301,13 +303,13 @@ const MainContentPolicy = {
           isLegacyFrame = aContext instanceof CI.nsIDOMHTMLFrameElement;
      
           if (isLegacyFrame
-             ? this.forbidFrames || // we shouldn't allow framesets nested inside iframes, because they're just as bad
-                                    this.forbidIFrames &&
-                                    (aContext.ownerDocument.defaultView.frameElement instanceof CI.nsIDOMHTMLIFrameElement) &&
-                                    this.getPref("forbidMixedFrames", true)
-             : this.forbidIFrames || // we use iframes to make placeholders for blocked legacy frames...
-                                    this.forbidFrames &&
-                                    this.isLegacyFrameReplacement(aContext)
+              ? this.forbidFrames || // we shouldn't allow framesets nested inside iframes, because they're just as bad
+                                     this.forbidIFrames &&
+                                     (aContext.ownerDocument.defaultView.frameElement instanceof CI.nsIDOMHTMLIFrameElement) &&
+                                     this.getPref("forbidMixedFrames", true)
+              : this.forbidIFrames || // we use iframes to make placeholders for blocked legacy frames...
+                                     this.forbidFrames &&
+                                     this.isLegacyFrameReplacement(aContext)
              ) {
               try {
                 contentDocument = aContext.contentDocument;
@@ -430,8 +432,8 @@ const MainContentPolicy = {
   
       locationURL = locationURL || aContentLocation.spec;
       locationSite = locationSite || this.getSite(locationURL);
-      var untrusted = this.isUntrusted(locationSite);
       
+      var untrusted = untrusted || this.isUntrusted(locationSite);
       
       if(logBlock)
         this.dump("[CP PASS 2] " + aMimeTypeGuess + "*" + locationURL + ", " + aContentType + ", " + aInternalCall);
@@ -455,7 +457,7 @@ const MainContentPolicy = {
         } else isScript = false;
         
         if (aContext) // XSLT comes with no context sometimes...
-          this.getExpando(aContext.defaultView.top, "codeSites", []).push(locationSite);
+          this.getExpando(aContext.defaultView.top.document, "codeSites", []).push(locationSite);
         
         
         forbid = !this.isJSEnabled(locationSite);
@@ -474,7 +476,6 @@ const MainContentPolicy = {
       mimeKey = aMimeTypeGuess || "application/x-unknown";
       
       if (!(forbid || locationSite == "chrome:")) {
-        
         
         forbid = blockThisFrame || untrusted && this.alwaysBlockUntrustedContent;
         if (!forbid && this.forbidSomeContent) {
@@ -505,10 +506,11 @@ const MainContentPolicy = {
                 
                 locationURL = this.resolveSilverlightURL(aRequestOrigin, aContext);
                 locationSite = this.getSite(locationURL);
+                originURL = aRequestOrigin && aRequestOrigin.spec;
+                if (!this.POLICY_OBJSUB)  forbid = locationURL != originURL;
                 
-                if (!this.POLICY_OBJSUB)  forbid = locationURL != (aRequestOrigin && aRequestOrigin.spec);
-                
-                if(!forbid || this.isAllowedObject(locationURL, mimeKey, locationSite)) {
+                if(!forbid || this.isAllowedObject(locationURL, mimeKey, locationSite) ||
+                   this.isAllowedObjectById(aContext.id, locationURL, originURL, mimeKey, locationSite)) {
                   if (logIntercept && forbid) this.dump("Silverlight " + locationURL + " is whitelisted, ALLOW");
                   return CP_OK;
                 }
@@ -572,7 +574,9 @@ const MainContentPolicy = {
       if (forbid) {
         try {  // moved here because of http://forums.mozillazine.org/viewtopic.php?p=3173367#3173367
           if (this.getExpando(aContext, "allowed") || 
-            this.isAllowedObject(locationURL, mimeKey, locationSite)) {
+            this.isAllowedObject(locationURL, mimeKey, locationSite) ||
+            this.isAllowedObjectById(aContext.id, locationURL, originURL, mimeKey, locationSite)
+            ) {
             this.setExpando(aContext, "allowed", true);
             return CP_OK; // forceAllow
           }

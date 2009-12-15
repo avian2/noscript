@@ -1956,15 +1956,18 @@ return noscriptUtil.service ? {
     },
     
     onPageShow: function(ev) {
+      
       if (ev.persisted && (ev.target instanceof HTMLDocument)) {
-        noscriptOverlay.toggleObjectsVisibility(ev.target, true);
+        var d = ev.target;
+        var ns = noscriptOverlay.ns;
+        noscriptOverlay.toggleObjectsVisibility(d, true);
       }
       noscriptOverlay.syncUI();
     },
     onPageHide: function(ev) {
       var d = ev.target;
       if (d instanceof HTMLDocument) {
-        noscriptOverlay.cleanupDocument(d);
+        var ns = noscriptOverlay.ns;
         noscriptOverlay.toggleObjectsVisibility(d, false);
       }
     },

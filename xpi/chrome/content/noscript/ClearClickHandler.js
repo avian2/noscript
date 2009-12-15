@@ -89,7 +89,8 @@ ClearClickHandler.prototype = {
   },
   
   isEmbed: function(o) {
-    return (o instanceof CI.nsIDOMHTMLObjectElement || o instanceof CI.nsIDOMHTMLEmbedElement) && !o.contentDocument;
+    return (o instanceof CI.nsIDOMHTMLObjectElement || o instanceof CI.nsIDOMHTMLEmbedElement)
+      && !o.contentDocument && ns.isWindowlessObject(o);
   },
   
   swallowEvent: function(ev) {
@@ -109,6 +110,11 @@ ClearClickHandler.prototype = {
   
   // this one is more complex but much more precise than getZoomForBrowser()
   getZoomFromDocument: function(d) {
+    if (!("getBoxObjectFor" in d))
+      return this._zoom = d.defaultView
+        .QueryInterface(CI.nsIInterfaceRequestor)
+        .getInterface(CI.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
+    
     var root = d.documentElement;
     var o = d.createElementNS(HTML_NS, "div");
     with(o.style) {
@@ -124,12 +130,31 @@ ClearClickHandler.prototype = {
     return this._zoom = zoom > 0 ? zoom : this._zoom;
   },
   
-    
   getBox: function(o, d, w) {
+    w = w || (d || (d = o.ownerDocument)).defaultView;
+    this.__proto__.getBox = ("mozInnerScreenX" in w)
+      ? this._getBox_Gecko1_9_2
+      : this._getBox_Gecko1_9_1;
+
+    return this.getBox(o, d, w);
+  },
+  
+  _getBox_Gecko1_9_2: function(o, d, w) {
+    if (!d) d = o.ownerDocument;
+    if (!w) w = d.defaultView;
+    var c = o.getBoundingClientRect();
+    var x = c.left, y = c.top; // this is relative to the view port, just like mozInnerScreen*
+    return {
+      x: x + w.scrollX, y: y + w.scrollY, // add scroll* to make it absolute
+      width: c.width, height: c.height,
+      screenX: w.mozInnerScreenX + x, screenY: w.mozInnerScreenY + y
+    }
+  },
+  _getBox_Gecko1_9_1: function(o, d, w) {
     var zoom = this._zoom || 1;
     if (!d) d = o.ownerDocument;
     if (!w) w = d.defaultView;
-     
+      
     var b = d.getBoxObjectFor(o); // TODO: invent something when boxObject is missing or failing
     var c = d.getBoxObjectFor(d.documentElement);
     var p;
@@ -147,7 +172,7 @@ ClearClickHandler.prototype = {
     var dx;
     // here we do our best to improve on lousy boxObject horizontal behavior when line breaks are involved
     // (it reports the width of the whole line, but x is referred to the first text node offset)
-    if ("getBoundingClientRect" in o) { 
+    if ("getBoundingClientRect" in o) {
       c = o.getBoundingClientRect(); // bounding rect, if available, does the right thing with left position
       
       if (verbose) ns.dump("Rect: " + c.left + "," + c.top + "," + c.right + "," + c.bottom);
@@ -156,15 +181,7 @@ ClearClickHandler.prototype = {
       var fixed, scrollX;
       dx = Math.round(c.left) - r.x;
       var s = w.getComputedStyle(o, '');
-      dx += parseInt(s.borderLeftWidth) || 0 + parseInt(s.paddingLeft) || 0;
-      for(p = o; !(fixed = s.display == "fixed"); s = w.getComputedStyle(p, '')) {
-        p = p.offsetParent;
-        if (p && p != d.documentElement) dx += p.scrollLeft || 0;
-        else break;
-      }
-      if (!fixed) {
-        dx += d.documentElement.scrollLeft || 0;
-      }
+      dx += parseInt(s.borderLeftWidth) || 0 + parseInt(s.paddingLeft) || 0 + w.scrollX;
     
     } else {
       // ugly hack for line-breaks without boundClient API
@@ -252,7 +269,8 @@ ClearClickHandler.prototype = {
   isSupported: function(doc) {
     return "_supported" in this
       ? this._supported
-      : this._supported = typeof(this.createCanvas(doc).toDataURL) == "function" && typeof(doc.getBoxObjectFor) == "function";  
+      : this._supported = typeof(this.createCanvas(doc).toDataURL) == "function" &&
+        ("getBoxObjectFor" in doc || "mozInnerScreenX" in doc.defaultView);  
   },
   
   _semanticContainers: [CI.nsIDOMHTMLParagraphElement, CI.nsIDOMHTMLQuoteElement,
@@ -655,10 +673,9 @@ ClearClickHandler.prototype = {
         docPatcher.clean(false);
       }
     
-      with(top.document) {
-        var rootElement = documentElement;
-        var rootBox = getBoxObjectFor(rootElement);
-      }
+
+      var rootElement = top.document.documentElement;
+      var rootBox = this.getBox(rootElement, top.document, top);
       
       var offsetX = (box.screenX - rootBox.screenX) / zoom;
       var offsetY = (box.screenY - rootBox.screenY) / zoom;
@@ -809,17 +826,30 @@ DocPatcher.prototype = {
     return res;
   },
   
+  getRect: function(o, d) {
+    return (this.getRect = ("getBoundingClientRect" in o)
+     ? function(o) { return o.getBoundingClientRect() }
+     : function(o, d) {
+      var b = d.getBoxObjectFor(o);
+      var x = o.x, y = o.y;
+      return {
+        left: x, top: y,
+        right: x + o.width, left: y + o.height 
+      };
+     })(o)
+  },
+  
   collectPositioned: function(d) {
     var t = Date.now();
     const w = d.defaultView;
     const res = [];
     var s = null, p = '', n = null;
 
-    const obox = d.getBoxObjectFor(this.o);
-    const otop = obox.y;
-    const obottom = otop + obox.height;
-    const oleft = obox.x;
-    const oright = oleft + obox.width;
+    const r = this.getRect(this.o, d);
+    const top = r.top;
+    const bottom = r.bottom;
+    const left = r.left;
+    const right = r.right;
     
     var c = '', b = null;
     var hasPos = false;
@@ -827,9 +857,9 @@ DocPatcher.prototype = {
     
     const tw = d.createTreeWalker(d, CI.nsIDOMNodeFilter.SHOW_ELEMENT, null, false);
     for (var n = null; (n = tw.nextNode());) {
-      b = d.getBoxObjectFor(n);
-      if (b.y + b.height < otop || b.y > obottom ||
-          b.x + b.width < oleft || b.x > oright)
+      b = this.getRect(n, d);
+      if (b.bottom < top || b.top > bottom ||
+          b.right < left || b.left > right)
         continue;
       
       s = w.getComputedStyle(n, '');
@@ -854,7 +884,7 @@ DocPatcher.prototype = {
       if (c) {
         res.push(n = new ClassyObj(n));
         n.append(c);
-      }
+      }1
     }
     
     for each(n in posn) n.__noscriptPos = false;

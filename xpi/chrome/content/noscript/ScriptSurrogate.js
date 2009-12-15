@@ -48,7 +48,7 @@ const ScriptSurrogate = {
       }
       
       mapping[member] = value; 
-    } catch(e) {}
+    } catch (e) {}
   },
   
   observe: function(prefs, topic, key) {
@@ -75,17 +75,35 @@ const ScriptSurrogate = {
     return scripts && "try { (function() {" + scripts.join("})(); (function() {") + "})(); } catch(e) {}";
   },
 
-  apply: function(document, scriptURL, pageURL) {
+  apply: function(document, scriptURL, pageURL, useSandbox) {
     if (!this.enabled) return;
     var scriptBlock = this.getScriptBlock(scriptURL, pageURL);
-    if (scriptBlock) this.execute(document, scriptBlock);
+    if (scriptBlock) {
+      if (useSandbox) this.sandbox(document.defaultView, scriptBlock);
+      else this.execute(document, scriptBlock);
+    }
+  },
+  
+  sandbox: function(win, scriptBlock) {
+    var s = new CU.Sandbox(win.wrappedJSObject);
+    s.window = win;
+    s.__proto__ = win;
+    try {
+      CU.ev\u0061lInSandbox("with (window) {\n" + scriptBlock + "\n}", s);
+    } catch (e) {
+      if (ns.consoleDump) ns.dump(e + " for \n" + scriptBlock);
+    }
   },
   
   execute: function(document, scriptBlock) {
-    var s = document.createElementNS(HTML_NS, "script");
-    s.id = "__noscriptSurrogate__" + DOM.rndId();
-    s.appendChild(document.createTextNode(scriptBlock +
-      ";(function(){var s=document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
-    document.documentElement.insertBefore(s, document.documentElement.firstChild);
+    if (document.documentElement) {
+      var s = document.createElementNS(HTML_NS, "script");
+      s.id = "__noscriptSurrogate__" + DOM.rndId();
+      s.appendChild(document.createTextNode(scriptBlock +
+        ";(function(){var s=document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
+      document.documentElement.insertBefore(s, document.documentElement.firstChild);
+    } else {
+      document.defaultView.location.href = encodeURI("javascript:" + scriptBlock);
+    }
   }
 }

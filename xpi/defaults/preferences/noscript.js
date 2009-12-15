@@ -202,14 +202,18 @@ pref("noscript.abp.removeTabs", false);
 
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.ga.exceptions", "");
-pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return{__noSuchMethod__:_0,_link:function(h){if(h)location.href=h;},_linkByPost:function(){return true;},_getLinkerUrl:function(u){return u;}}}}");
+pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return{__noSuchMethod__:_0,_link:function(h){if(h)location.href=h;},_linkByPost:function(){return true;},_getLinkerUrl:function(u){return u;},_trackEvent:_0}}}");
 pref("noscript.surrogate.qs.sources", "edge.quantserve.com");
 pref("noscript.surrogate.qs.replacement", "window.quantserve=function(){}");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.yieldman.replacement", "with(window)rmAddKey=rmAddCustomKey=rmShowAd=rmShowPop=rmShowInterstitial=rmGetQueryParameters=rmGetSize=rmGetWindowUrl=rmGetPubRedirect=rmGetClickUrl=rmReplace=rmTrim=rmUrlEncode=rmCanShowPop=rmCookieExists=rmWritePopFrequencyCookie=rmWritePopExpirationCookie=flashIntalledCookieExists=writeFlashInstalledCookie=flashDetection=rmGetCookie=function(){}");
 pref("noscript.surrogate.yieldman.sources", "*.yieldmanager.com");
-pref("noscript.surrogate.fap.replacement", "window.puShown getter=window.puShown setter=function(){return true}");
-pref("noscript.surrogate.fap.sources", "@*.imagefap.com *.moviefap.com imagefap.com moviefap.com");
+pref("noscript.surrogate.popunder.replacement", "window.puShown getter=window.puShown setter=function(){return true}");
+pref("noscript.surrogate.popunder.sources", "@*.imagefap.com *.moviefap.com imagefap.com moviefap.com *.grayvee.com grayvee.com");
+pref("noscript.surrogate.imdb.sources", "@*.imdb.com/video/*");
+pref("noscript.surrogate.imdb.replacement", "addEventListener('DOMContentLoaded',function(ev){ad_utils.render_ad=function(w){w.location=w.location.href.replace(/.*\\bTRAILER=([^&]+).*/,'$1')}},true)");
+
+
 pref("noscript.placeholderMinSize", 32);
 
 pref("noscript.compat.evernote", true);
