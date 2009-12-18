@@ -496,7 +496,7 @@ var ns = singleton = {
   },
   
   updateCssPref: function(name) {
-    var value = this[name] = this.getPref(name, value);
+    var value = this[name] = this.getPref(name);
     var sheet;
     switch(name) {
       case "nselForce":
@@ -509,12 +509,15 @@ var ns = singleton = {
         sheet = "noscript, noscript * { background-image: none !important; list-style-image: none !important }";
         break;
       case "showPlaceholder": 
-        sheet = '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: block !important; ' +
-                'outline-color: #fc0 !important; -moz-outline-color: #fc0 !important; outline-style: solid !important; -moz-outline-style: solid !important; outline-width: 1px !important; -moz-outline-width: 1px !important; outline-offset: -1px !important; -moz-outline-offset: -1px !important;' +
+        sheet = '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: inline-block !important; ' +
+                'outline-color: #fc0 !important; outline-style: solid !important; outline-width: 1px !important; outline-offset: -1px !important;' +
                 'cursor: pointer !important; background: #ffffe0 url("' + 
                     this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; margin-top: 0px !important; margin-bottom: 0px !important;} ' +
-                '.__noscriptPlaceholder__1 > .__noscriptPlaceholder__2 { display: block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
+                '.__noscriptPlaceholder__1 > .__noscriptPlaceholder__2 { display: inline-block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
                 'noscript .__noscriptPlaceholder__ { display: inline !important; }';
+        if (this.geckoVersionCheck("1.9") < 0) {
+          sheet = sheet.replace(' outline-', ' -moz-outline-').replace(' inline-block', '-moz-inline-grid').replace(' inline-block', ' -moz-inline-block');
+        }
         break;
       case "clearClick":
       case "opaqueObject":
@@ -533,7 +536,9 @@ var ns = singleton = {
     };
     this.updateStyleSheet(sheet, value);
   },
-   
+  
+  
+  
   updateStyleSheet: function(sheet, enabled) {
     const sssClass = CC["@mozilla.org/content/style-sheet-service;1"];
     if (!sssClass) return;
@@ -913,6 +918,7 @@ var ns = singleton = {
     );
   },
   setJSEnabled: function(site, is, fromScratch, cascadeTrust) {
+        
     const ps = this.jsPolicySites;
     if (fromScratch) ps.sitesString = this.mandatorySites.sitesString;
     if (is) {
@@ -931,7 +937,9 @@ var ns = singleton = {
         this.setManual(site, true);
       }
     }
+    
     this.flushCAPS();
+    
     return is;
   },
   
@@ -1118,11 +1126,11 @@ var ns = singleton = {
   RELOAD_NO: -1,
   RELOAD_CURRENT: 1,
   RELOAD_ALL: 0,
-  safeCapsOp: function(callback, reloadPolicy) {
+  safeCapsOp: function(callback, reloadPolicy, nosave) {
     this.delayExec(function() {
       try {
         callback(this);
-        this.savePrefs();
+        if (!nosave) this.savePrefs();
         if (reloadPolicy != this.RELOAD_NO) {
           this.reloadWhereNeeded(reloadPolicy == this.RELOAD_CURRENT);
         }
@@ -1819,24 +1827,26 @@ var ns = singleton = {
     return url;
   },
   
-  tagWindowlessObject: function(embed) {
-    if (embed instanceof CI.nsIDOMElement) try {
-      const rx = /opaque|transparent/i;
-      var b = rx.test(embed.getAttribute("wmode"));
-      if (!b) {
-        var params = embed.getElementsByTagName("param");
+  tagWindowlessObject: function(o) {
+    const rx = /opaque|transparent/i;
+    var b;
+    try {
+      if (o instanceof CI.nsIDOMHTMLEmbedElement) {
+        b = rx.test(o.getAttribute("wmode"));
+      } else if (o instanceof CI.nsIDOMHTMLObjectElement) {
+        var params = o.getElementsByTagName("param");
         for(var j = params.length; j-- > 0 &&
             !(b = /wmode/i.test(params[j].name && rx.test(params[j].value)));
         );
       }
-      if (b) this.setExpando(embed, "windowless", true);
+      if (b) this.setExpando(o, "windowless", true);
     } catch (e) {
       if (this.consoleDump) this.dump("Couldn't tag object for window mode.");
     }
   },
   
-  isWindowlessObject: function(embed) {
-    return this.getExpando(embed, "windowless") || embed.settings && embed.settings.windowless;
+  isWindowlessObject: function(o) {
+    return this.getExpando(o, "windowless") || o.settings && o.settings.windowless;
   },
   
   resolveSilverlightURL: function(uri, embed) {
@@ -3405,7 +3415,7 @@ var ns = singleton = {
             if (this.getExpando(browser, "allowPageURL") == browser.docShell.currentURI.spec &&
                 this.getBaseDomain(document.domain).length >= document.domain.length &&
                 !(this.isJSEnabled(document.domain) || this.isUntrusted(document.domain))) {
-             this.setTemp(document.domain, true);
+             this.setTemp(site, true);
              this.setJSEnabled(document.domain, true);
              this.quickReload(win);
            }
@@ -3897,7 +3907,6 @@ var ns = singleton = {
         }
       }
     }
-    
     
     
     this._handleDocJS3(uri.spec, domWindow, docShell);

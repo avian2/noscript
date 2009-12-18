@@ -268,8 +268,6 @@ const MainContentPolicy = {
             
             forbid = this.forbidMedia;
             
-          } else {
-            this.tagWindowlessObject(aContext);
           }
           
           if (aMimeTypeGuess) // otherwise let's treat it as an iframe
@@ -479,7 +477,8 @@ const MainContentPolicy = {
         
         forbid = blockThisFrame || untrusted && this.alwaysBlockUntrustedContent;
         if (!forbid && this.forbidSomeContent) {
-          if (aMimeTypeGuess && !(this.allowedMimeRegExp && this.allowedMimeRegExp.test(aMimeTypeGuess))) {
+          if (aMimeTypeGuess) {
+           
             forbid = 
               (
                 (isFlash = /^application\/(?:x-shockwave-flash|futuresplash)/i.test(aMimeTypeGuess)) ||
@@ -489,11 +488,13 @@ const MainContentPolicy = {
               isFlash && this.forbidFlash || 
               isJava && this.forbidJava || 
               isSilverlight && this.forbidSilverlight;
-            
+                        
             // see http://heasman.blogspot.com/2008/03/defeating-same-origin-policy-part-i.html
             if (isJava && /(?:[^\/\w\.\$\:]|^\s*\/\/)/.test(aContext.getAttribute("code") || "")) {
               return this.reject("Illegal Java code attribute " + aContext.getAttribute("code"), arguments);
             }
+            
+            if (isFlash) this.tagWindowlessObject(aContext);
             
             if (forbid) {
               if (isSilverlight) {
@@ -517,7 +518,7 @@ const MainContentPolicy = {
               } else if (isFlash) {
                 locationURL = this.addFlashVars(locationURL, aContext);
               }
-            } else {
+            } else if (!(this.allowedMimeRegExp && this.allowedMimeRegExp.test(aMimeTypeGuess))) {
               forbid = this.forbidPlugins && !(isJava || isFlash || isSilverlight);
               if (forbid) {
                 locationURL = this.addObjectParams(locationURL, aContext);

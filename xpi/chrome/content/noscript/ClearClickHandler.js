@@ -836,7 +836,7 @@ DocPatcher.prototype = {
         left: x, top: y,
         right: x + o.width, left: y + o.height 
       };
-     })(o)
+     })(o, d)
   },
   
   collectPositioned: function(d) {

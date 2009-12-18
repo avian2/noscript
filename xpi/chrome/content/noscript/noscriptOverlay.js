@@ -905,11 +905,11 @@ return noscriptUtil.service ? {
           !ns.getPref("autoReload.allTabsOnPageAction", true)) {
       reloadPolicy = 1 // current tab only, for multiple items
     }
+    var allowTemp = enabled && temp;
     
     function op(ns) {
-      if (site) {
-        
-        ns.setTemp(site, enabled && temp);
+      if (site) {    
+        ns.setTemp(site, allowTemp);
         ns.setJSEnabled(site, enabled, false, ns.mustCascadeTrust(site, temp));
         
         if (enabled && !webNav.allowJavascript) {
@@ -927,14 +927,18 @@ return noscriptUtil.service ? {
       } else {
         ns.jsEnabled = enabled;
       }
-      if (reloadPolicy == ns.RELOAD_NO) noscriptOverlay._syncUINow();
+      if (reloadPolicy == ns.RELOAD_NO) {
+        noscriptOverlay._syncUINow();
+        if (!allowTemp) ns.savePrefs();
+      }
       else noscriptOverlay.syncUI();
     }
     
-    if (reloadPolicy == ns.RELOAD_NO) op(ns)
-    else {
+    if (reloadPolicy == ns.RELOAD_NO) {
+      op(ns);
+    } else {
       ns.setExpando(window.content, "contentLoaded", false);
-      ns.safeCapsOp(op, reloadPolicy);
+      ns.safeCapsOp(op, reloadPolicy, allowTemp);
     }
   }
 ,

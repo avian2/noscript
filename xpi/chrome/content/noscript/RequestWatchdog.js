@@ -471,9 +471,7 @@ RequestWatchdog.prototype = {
           if (ns.consoleDump) this.dump(channel, "Lycos Mail Exception");
           return;
         }
-        
-        
-        
+
       } catch(e) {}
     }
     
@@ -515,7 +513,7 @@ RequestWatchdog.prototype = {
       ) {
       
       if (origin && /^http:\/\/(?:[^\/]+.)?facebook\.com\/render_fbml\.php$/.test(originalSpec) &&
-            channel.requestMethod == "POST" && ns.getPref("filterXException.fbconnect")) {
+            channel.requestMethod == "POST" && ns.getPref("filterXExceptions.fbconnect")) {
         if (ns.consoleDump) this.dump(channel, 'Facebook connect exception');
         return;
       }
