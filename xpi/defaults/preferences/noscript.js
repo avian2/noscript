@@ -98,6 +98,7 @@ pref("noscript.filterXGetUserRx", "");
 pref("noscript.filterXExceptions", "^http://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^http://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^http://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$\n^http://translate\.google\.com/translate_t[^\"'<>\?%]+$"); 
 pref("noscript.filterXExceptions.lycosmail", true);
 pref("noscript.filterXExceptions.fbconnect", true);
+pref("noscript.filterXExceptions.livejournal", true);
 pref("noscript.injectionCheck", 2);
 pref("noscript.injectionCheckPost", true);
 pref("noscript.injectionCheckHTML", true);

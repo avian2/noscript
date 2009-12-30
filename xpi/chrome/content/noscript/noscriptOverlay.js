@@ -335,7 +335,7 @@ return noscriptUtil.service ? {
       // cleanup untrustedCount display
       untrustedMenu.setAttribute("label", untrustedMenu.getAttribute("label").replace(/ \(\d+\)$/, ""));
       
-      with(seps.untrusted) {
+      with (seps.untrusted) {
         if ((extraNode = nextSibling) != pluginsMenu) {
           for each(node in [pluginsMenu, recentMenu, untrustedMenu]) {
             parentNode.insertBefore(node, extraNode);
@@ -632,7 +632,7 @@ return noscriptUtil.service ? {
     }
     if (untrustedFrag && untrustedFrag.firstChild) {
       if (untrustedCount > 0) 
-        with(untrustedMenu.parentNode)
+        with (untrustedMenu.parentNode)
           setAttribute("label", getAttribute("label") +
             " (" + untrustedCount + ")"); // see above for cleanup
           

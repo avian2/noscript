@@ -12,7 +12,8 @@ const PolicyState = {
   
   checking: [],
   addCheck: function(url) {
-    this.checking.push(url);
+    if (this.checking.indexOf(url) === -1)
+      this.checking.push(url);
   },
   removeCheck: function(url) {
     var idx = this.checking.indexOf(url);
@@ -101,7 +102,7 @@ const NOPContentPolicy = {
 
 const MainContentPolicy = {
   shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
-    PolicyState.addCheck(aContentLocation);
+    if (!aInternalCall) PolicyState.addCheck(aContentLocation);
    
     try {
 
@@ -313,7 +314,7 @@ const MainContentPolicy = {
                 contentDocument = aContext.contentDocument;
               } catch(e) {}
            
-              blockThisFrame = (aInternalCall == CP_FRAMECHECK) && !(
+              blockThisFrame = (aInternalCall === CP_FRAMECHECK) && !(
                       this.knownFrames.isKnown(locationURL, originSite = this.getSite(originURL)) ||
                     /^(?:chrome|resource|wyciwyg):/.test(locationURL) ||
                     locationURL == this._silverlightInstalledHack ||
@@ -494,7 +495,7 @@ const MainContentPolicy = {
               return this.reject("Illegal Java code attribute " + aContext.getAttribute("code"), arguments);
             }
             
-            if (isFlash) this.tagWindowlessObject(aContext);
+            if (isFlash && aInternalCall === CP_SHOULDPROCESS) this.tagWindowlessObject(aContext);
             
             if (forbid) {
               if (isSilverlight) {
@@ -621,7 +622,7 @@ const MainContentPolicy = {
       return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
     } finally {
       
-      PolicyState.removeCheck(aContentLocation);
+      if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
       
       if (isHTTP) PolicyState.save(unwrappedLocation, arguments);
       else PolicyState.reset();

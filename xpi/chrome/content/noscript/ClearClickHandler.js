@@ -117,11 +117,11 @@ ClearClickHandler.prototype = {
     
     var root = d.documentElement;
     var o = d.createElementNS(HTML_NS, "div");
-    with(o.style) {
-      top = "400000px";
-      position = "absolute";
-      display = "block";
-    }
+    var s = o.style;
+    s.top = "400000px";
+    s.position = "absolute";
+    s.display = "block";
+  
     root.appendChild(o);
     var oBox = d.getBoxObjectFor(o);
     var rootBox = d.getBoxObjectFor(root);
@@ -453,7 +453,7 @@ ClearClickHandler.prototype = {
     
     var frame, frameClass, frameStyle, objClass, viewer;
     
-    var docPatcher = new DocPatcher(this.ns, o);
+    var docPatcher = new DocPatcher(this.ns, o, w);
     
     var sheet = null;
     
@@ -485,10 +485,13 @@ ClearClickHandler.prototype = {
       if (zoom != 1) zoom = this.getZoomFromDocument(d);
       
       docPatcher.linkAlertHack(true);
+      docPatcher.fbPresenceHack(true);
       
       try {
         docPatcher.opaque(true);
-         
+        
+        var fbPresence; // hack for Facebooks's fixed positioned widget
+        
         if (ctx.isEmbed) { // objects and embeds
           if (this.ns.getPref("clearClick.plugins", true)) {
             var ds = browser.docShell;
@@ -527,7 +530,7 @@ ClearClickHandler.prototype = {
         
         if (!ctx.isEmbed) {
           curtain = d.createElementNS(HTML_NS, "div");
-          with(curtain.style) {
+          with (curtain.style) {
             top = left = "0px";
             
             width = (clientWidth + w.scrollX) + "px";
@@ -699,7 +702,7 @@ ClearClickHandler.prototype = {
       if (ret && !curtain && ctx.isEmbed) {
         curtain = d.createElementNS(HTML_NS, "div");
         if (docPatcher) curtain.className = docPatcher.shownCS;
-        with(curtain.style) {
+        with (curtain.style) {
           // we expand by 1 pixel in order to avoid antialias effects on the edge at zoom != 1 (GMail Flash attachment)
           top = (o.offsetTop - 1) + "px";
           left = (o.offsetLeft -1) + "px";
@@ -779,6 +782,7 @@ ClearClickHandler.prototype = {
      
       docPatcher.opaque(false);
       docPatcher.linkAlertHack(false);
+      docPatcher.fbPresenceHack(false);
       
       if (objClass) objClass.reset();
       if (frameClass) frameClass.reset();
@@ -811,15 +815,16 @@ ClassyObj.prototype = {
   }
 }
 
-function DocPatcher(ns, o) {
+function DocPatcher(ns, o, w) {
   this.ns = ns;
   this.o = o;
+  this.win = w;
+  this.top = w.top;
   this.shownCS = " __noscriptShown__" + DOM.rndId();
 }
 
 DocPatcher.prototype = {
-  
-  
+
   collectAncestors: function(o) {
     var res = [];
     for(; o && o.hasAttribute; o = o.parentNode) res.push(new ClassyObj(o));
@@ -947,7 +952,7 @@ DocPatcher.prototype = {
     if (toggle) {
       this._positioned = this.collectPositioned(this.o.ownerDocument);
       this._blankSheetHandle = this.applySheet(this.blankSheet);
-    } else if (this._positioned) {
+    } else if (this._positionased) {
       this._positioned.forEach(this.resetClass);
       this.removeSheet(this._blankSheetHandle);
     }
@@ -994,7 +999,7 @@ DocPatcher.prototype = {
   _linkAlertBox: null,
   linkAlertHack: function(toggle) {
     try {
-      var w = this.o.ownerDocument.defaultView.top;
+      var w = this.top;
       var d = w.document;
       if (toggle) {
         var box = d.getElementById("linkalert-box");
@@ -1016,5 +1021,22 @@ DocPatcher.prototype = {
         }
       }
     } catch (e) {}
+  },
+  
+  _fbPresence: null,
+  fbPresenceHack: function(toggle) {
+    if (toggle) {
+      if (this.top.location.host == "apps.facebook.com") {
+        var fbPresence = this.top.document.getElementById("presence");
+        if (fbPresence) {
+          fbPresence._ccVisibility = fbPresence.style.visibility;
+          fbPresence.style.visibility = "hidden";
+          this._fbPresence = fbPresence; 
+        }
+      }
+    } else if (this._fbPresence) {
+      this._fbPresence.style.visibility = this._fbPresence._ccVisibility;
+    }
   }
+  
 }

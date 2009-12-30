@@ -23,7 +23,7 @@ RequestWatchdog.prototype = {
   QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
   
   observe: function(channel, topic, data) {
-    
+   
     if (!(channel instanceof CI.nsIHttpChannel)) return;
     
     if(ns.consoleDump & LOG_SNIFF) {
@@ -414,7 +414,7 @@ RequestWatchdog.prototype = {
       return;
     }
       
-    if(!targetSite) targetSite = su.getSite(originalSpec);
+    if (!targetSite) targetSite = su.getSite(originalSpec);
     
     // noscript.injectionCheck about:config option adds first-line 
     // detection for XSS injections in GET requests originated by 
@@ -465,25 +465,36 @@ RequestWatchdog.prototype = {
           if (ns.consoleDump) this.dump(channel, "Safe origin according to filterXExceptions: " + ns.filterXExceptions.toString());
           return;
         }
-
-        if (/^https?:\/\/mail\.lycos\.com\/lycos\/mail\/MailCompose\.lycos$/.test(origin) &&
-            /\.lycosmail\.lycos\.com$/.test(targetSite) && ns.getPref("filterXExceptions.lycosmail")) {
-          if (ns.consoleDump) this.dump(channel, "Lycos Mail Exception");
-          return;
-        }
-
       } catch(e) {}
     }
     
+    if (originSite) { // specific exceptions
     
+      if (/^https?:\/\/mail\.lycos\.com\/lycos\/mail\/MailCompose\.lycos$/.test(origin) &&
+          /\.lycosmail\.lycos\.com$/.test(targetSite) &&
+          channel.requestMethod == "POST" &&
+          ns.getPref("filterXExceptions.lycosmail")) {
+        if (ns.consoleDump) this.dump(channel, "Lycos Mail Exception");
+        return;
+      }
+      
+      if (/\.livejournal\.com$/.test(originSite) &&
+          /^https?:\/\/www\.livejournal\.com\/talkpost_do\.bml$/.test(originalSpec) &&
+          channel.requestMethod == "POST" &&
+          ns.getPref("filterXExceptions.livejournal")) {
+        if (ns.consoleDump) this.dump(channel, "Livejournal Comments Exception");
+        return;
+      }
     
-    if (!originSite) { // maybe data or javascript URL?
+    } else { // maybe data or javascript URL?
+      
       if (/^(?:javascript|data):/i.test(origin) && ns.getPref("xss.trustData", true)) {
         originSite = ns.getSite(abeReq.traceBack);
         if (originSite) { 
           origin = abeReq.breadCrumbs.join(">>>");
         }
       }
+      
     }
     
     var originalAttempt;
@@ -629,7 +640,7 @@ RequestWatchdog.prototype = {
             channel.referrer = channel.referrer.clone();
             this.notify(this.addXssInfo(requestInfo, {
               reason: "filterXGetRef",
-              originalAttempt: url.spec + " (REF: " + originalAttempt + ")",
+              originalAttempt: originalSpec + " (REF: " + originalAttempt + ")",
               silent: true,
               sanitizedURI: channel.referrer
             }));
@@ -641,7 +652,7 @@ RequestWatchdog.prototype = {
         }
       }
       
-      originalAttempt = url.spec;
+      originalAttempt = originalSpec;
       xsan.brutal = injectionAttempt;
       try {
         changes = xsan.sanitizeURL(url);

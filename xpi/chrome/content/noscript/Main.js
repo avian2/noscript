@@ -516,9 +516,9 @@ var ns = singleton = {
                 '.__noscriptPlaceholder__1 > .__noscriptPlaceholder__2 { display: inline-block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
                 'noscript .__noscriptPlaceholder__ { display: inline !important; }';
         if (this.geckoVersionCheck("1.9") < 0) {
-          sheet = sheet.replace(' outline-', ' -moz-outline-').replace(' inline-block', '-moz-inline-grid').replace(' inline-block', ' -moz-inline-block');
+          sheet = sheet.replace(/ outline-/g, ' -moz-outline-').replace(/ inline-/g, '');
         }
-        break;
+      break;
       case "clearClick":
       case "opaqueObject":
         sheet = ".__noscriptOpaqued__ { opacity: 1 !important; visibility: visible; filter: none !important } " +
@@ -2271,7 +2271,7 @@ var ns = singleton = {
           
           if (!container) {
             container = document.createElementNS(HTML_NS, "div");
-            with(container.style) {
+            with (container.style) {
               backgroundImage = 'url("' + this.pluginPlaceholder + '")';
               backgroundRepeat = "no-repeat";
               backgroundPosition = "2px 2px";
@@ -2972,7 +2972,7 @@ var ns = singleton = {
         innerDiv = document.createElementNS(HTML_NS, "div");
         innerDiv.className = "__noscriptPlaceholder__1";
         
-        with(anchor.style) {
+        with (anchor.style) {
           padding = margin = borderWidth = "0px";
           outlineOffset = MozOutlineOffset = "-1px"; 
           display = "inline";
@@ -4180,7 +4180,7 @@ var ns = singleton = {
     var container = doc.getElementById(containerID);
     if (container) container.parentNode.removeChild(container);
     container = rootNode.insertBefore(doc.createElementNS(HTML_NS, "div"), rootNode.firstChild || null);
-    with(container.style) {
+    with (container.style) {
       backgroundColor = "#fffff0";
       borderBottom = "1px solid #444";
       color = "black";
