@@ -2058,7 +2058,7 @@ return noscriptUtil.service ? {
   
   
   get _browserReady() {
-    return window.gBrowser || window.Browser && (window.Browser._canvasBrowser || window.Browser._content);
+    return window.gBrowser || window.Browser && (("browsers" in Browser) || Browser._canvasBrowser || Browser._content);
   },
   get currentBrowser() {
     if (!this._browserReady) return null;
@@ -2074,7 +2074,10 @@ return noscriptUtil.service ? {
   get browsers() {
     if (!this._browserReady) return [];
     delete this.browsers;
-    var browsersContainer = window.gBrowser || window.Browser._canvasBrowser || window.Browser._content; 
+    var browsersContainer = window.Browser // Fennec
+        ? ("browsers" in Browser) && Browser || Browser._canvasBrowser || Browser._content  
+        : window.gBrowser; // desktop Firefox
+
     this.__defineGetter__("browsers", function() { return browsersContainer.browsers; });
      
     if ("Browser" in window && window.Browser._content) { // Fennec Alpha 1

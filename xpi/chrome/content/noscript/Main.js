@@ -2623,9 +2623,8 @@ var ns = singleton = {
               doc.documentElement.appendChild(s);
             }
             
-            
+            Thread.yieldAll();
             if (!(snapshots.siteJS && snapshots.docJS)) {
-              Thread.yieldAll();
               this._runJS(window,
                         "if (typeof window.__runTimeouts == 'function') window.__runTimeouts()");
             }
@@ -3498,7 +3497,10 @@ var ns = singleton = {
     const rw = this.requestWatchdog;
     const uri = newChannel.URI;
     
-
+    if (HTTPS.forceURI(uri.clone())) {
+      HTTPS.replaceChannel(newChannel);
+    }
+    
     IOUtil.attachToChannel(newChannel, "noscript.redirectFrom", oldChannel.URI);
     
     ABE.updateRedirectChain(oldChannel, newChannel);

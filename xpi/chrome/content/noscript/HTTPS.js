@@ -10,10 +10,13 @@ const HTTPS = {
   
   
   forceChannel: function(channel) {
-    return this.forceURI(channel.URI, function() {
-      if (!ChannelReplacement.supported) return false;
+    return this.forceURI(channel.URI, function() { HTTPS.replaceChannel(channel); });
+  },
+  
+  replaceChannel: function(channel) {
+    if (ChannelReplacement.supported) {
       IOUtil.runWhenPending(channel, function() {
-        // replacing a shrotcut icon causes a cache-related crash like
+        // replacing a shortcut icon causes a cache-related crash like
         // https://bugzilla.mozilla.org/show_bug.cgi?id=480352
         // just abort it... 
         try {
@@ -25,13 +28,16 @@ const HTTPS = {
            return;
          }
         } catch(e) {}
-
         var uri = channel.URI.clone();
         uri.scheme = "https";
         new ChannelReplacement(channel, uri).replace(true).open();
       });
       return true;
-    });
+    }
+    
+    this.log("Aborting redirection " + channel.name + ", should be HTTPS!");
+    IOUtil.abort(channel);
+    return false;
   },
   
   forceURI: function(uri, fallback, ctx) {

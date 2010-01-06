@@ -485,6 +485,19 @@ RequestWatchdog.prototype = {
         if (ns.consoleDump) this.dump(channel, "Livejournal Comments Exception");
         return;
       }
+      
+      if (originSite == "https://ssl.rapidshare.com" &&
+          ns.getBaseDomain(ns.getDomain(targetSite)) == "rapidshare.com" &&
+          channel.requestMethod == "POST") {
+        if (ns.consoleDump) this.dump(channel, "Rapidshare Upload exception");
+        return;
+      }
+      
+      if (originSite == "http://wm.letitbit.net" &&
+          /^http:\/\/http\.letitbit\.net:81\/cgi-bin\/multi\/upload\.cgi\?/.test(originalSpec) &&
+          channel.requestMethod == "POST") {
+        if (ns.consoleDump) this.dump(channel, "letitbit.net Upload exception");
+      }
     
     } else { // maybe data or javascript URL?
       
@@ -524,7 +537,8 @@ RequestWatchdog.prototype = {
       ) {
       
       if (origin && /^http:\/\/(?:[^\/]+.)?facebook\.com\/render_fbml\.php$/.test(originalSpec) &&
-            channel.requestMethod == "POST" && ns.getPref("filterXExceptions.fbconnect")) {
+            channel.requestMethod == "POST" &&
+            ns.getPref("filterXExceptions.fbconnect")) {
         if (ns.consoleDump) this.dump(channel, 'Facebook connect exception');
         return;
       }
@@ -1009,7 +1023,15 @@ var InjectionChecker = {
     return s.replace(/^([^'"\\]*?)\/\/[^\r\n]*/g, "//_COMMENT_");
   },
   
- 
+  reduceURLs: function(s) {
+    // nested URLs with protocol are parsed as C++ style comments, and since
+    // they're potentially very expensive, we preemptively remove them if possible
+    while (/^[^'"]*?:\/\//.test(s)) {
+      s = s.replace(/:\/\/.*/, ':');
+    }    
+    return s.replace(/:\/\/[^'"\n]*/g, ':')
+  },
+  
   reduceJSON: function(s) {
     var m, whole, qred, prev;
     const toStringRx = /^function\s*toString\(\)\s*{\s*\[native code\]\s*\}$/;
@@ -1183,7 +1205,8 @@ var InjectionChecker = {
       /(['"#;]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|i\W*n\W*n\W*e\W*r\W*H\W*T\W*M\W*L|\W*o\W*n(?:\W*\w){3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
     
     findInjection.lastIndex = 0;
-    var m, breakSeq, subj, expr, lastExpr, quote, len, bs, bsPos, hunt, moved, script, errmsg, pos;
+    var m, breakSeq, subj, expr, lastExpr, script,
+      quote, len, bs, bsPos, hunt, moved, errmsg, pos;
     
     const MAX_TIME = 8000, MAX_LOOPS = 600;
 
@@ -1193,15 +1216,39 @@ var InjectionChecker = {
     while ((m = findInjection.exec(s))) {
       
       subj = s.substring(findInjection.lastIndex);
+      
+      // remove common C++ style comment pattern, if possible
+      
       if (!this.maybeJS(subj)) {
          this.log("Fast escape on " + subj, t, iterations);
          return false;
       }
       
+      
       breakSeq = m[1];
+      
+      script = this.reduceURLs(subj);
+      if (script.length < subj.length) {
+        if (!this.maybeJS(script)) {
+          this.log("Skipping to first nested URL in " + subj, t, iterations);
+          findInjection.lastIndex += subj.indexOf("://") + 1;
+          continue;
+        }
+        subj = script;
+        script = this.reduceURLs(m[2]);
+      } else {
+        script = m[2];
+      }
+      
       expr = subj.match(/^[\s\S]*?[=\)]/);
-      expr = expr && expr[0] || m[2];
-      if (expr.length < m[2].length) expr = m[2];
+      if (expr) {
+        expr = expr[0];
+        if (expr.length < script.length) {
+          expr = script;
+        }
+      } else {
+        expr = script;
+      }
       
       // quickly skip (mis)leading innocuous CGI patterns
       if ((m = subj.match(
@@ -1221,7 +1268,7 @@ var InjectionChecker = {
 
       len = expr.length;
       
-      for (moved = false, hunt = !!expr, lastExpr = null; hunt;) {
+      for (moved = false, hunt = !!expr, lastExpr; hunt;) {
         
         if (Date.now() - t > MAX_TIME) {
           this.log("Too long execution time! Assuming DOS... " + s, t, iterations);
@@ -1247,7 +1294,7 @@ var InjectionChecker = {
           }
         }
         
-        if(lastExpr == expr) {
+        if(lastExpr === expr) {
           lastExpr = null;
           continue;
         }
@@ -1266,12 +1313,14 @@ var InjectionChecker = {
               /".+/.test(script) && this.checkNonTrivialJSSyntax('""' + script + '"')
             ) && this.checkLastFunction()
             ) {
+            this.log("JS quote Break Injection detected", t, iterations);
             return true;
           }
           script = quote + quote + expr + quote;
         } else {
           script = expr;
         }
+        
         
         if (/^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=]))/
             .test(script.split("//")[0])) {
@@ -1318,7 +1367,7 @@ var InjectionChecker = {
               }
             } else if (/left-hand/.test(errmsg)) break;
             
-            if (/invalid .*\bflag\b|missing ; before statement|invalid label|illegal character/.test(errmsg)) {
+            if (/invalid .*\bflag\b|missing ; before statement|invalid label|illegal character|identifier starts immediately/.test(errmsg)) {
               if (!(/illegal character/.test(errmsg) && /#\d*\s*$/.test(script))) // sharp vars exceptional behavior
                 break; // unrepairable syntax error, move left cursor forward 
             }
