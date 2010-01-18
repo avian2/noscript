@@ -691,7 +691,7 @@ var ns = singleton = {
       }
     }
     
-    
+    DNS.logEnabled = this.getPref("logDNS");
     
     this.setupJSCaps();
     
@@ -961,22 +961,21 @@ var ns = singleton = {
       } else {
         // port matching, with "0" as port wildcard  and * as nth level host wildcard
         var key = site.replace(/\d+$/, "0");
-        if (map[key] || map[site]) return true;
+        if (key in map || site in map) return true;
         var keys = site.split(".");
         if (keys.length > 1) {
           var prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
           while (keys.length > 2) {
             keys.shift();
             key = prefix + keys.join(".");
-            if (map[key] || map[key.replace(/\d+$/, "0")]) return true;
-            if (map[prefix + keys.join(".")]) return true;
+            if (key in map || key.replace(/\d+$/, "0") in map) return true;
           }
         }
       }
     }
     // check IP leftmost portion up to 2nd byte (e.g. [http://]192.168 or [http://]10.0.0)
     var m = site.match(/^(https?:\/\/)((\d+\.\d+)\.\d+)\.\d+(?::\d|$)/);
-    return m && (map[m[2]] || map[m[3]] || map[m[1] + m[2]] || map[m[1] + m[3]]);
+    return m && (m[2] in map || m[3] in map || (m[1] + m[2]) in map || (m[1] + m[3]) in map);
   }
 ,
   flushCAPS: function(sitesString) {

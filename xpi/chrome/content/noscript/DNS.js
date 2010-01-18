@@ -6,10 +6,11 @@ function DNSRecord(record) {
       this.canonicalName = record.canonicalName;
     } catch(e) {}
     this.entries = [];
-    while (record.hasMore()) try {
-      this.entries.push(record.getNextAddrAsString());
+    
+    try {
+      for (;;) this.entries.push(record.getNextAddrAsString());
     } catch(e) {
-      ABE.log("Error retrieving DNS record " + this.entries.join(", "));
+      // NS_ERROR_NOT_AVAILABLE, no more records
     }
     ttl = this.TTL;
     if (!this.entries.length) this.valid = false;
@@ -44,10 +45,42 @@ DNSRecord.prototype = {
   get expired() {
     return Date.now() > this.expireTime;
   }
+  
 }
 
 
 var DNS = {
+  
+  get logFile() {
+    delete this.logFile;
+    this.logFile = CC["@mozilla.org/file/directory_service;1"]
+      .getService(CI.nsIProperties).get("ProfD", CI.nsIFile);
+    this.logFile.append("noscript_dns.log");
+    return this.logFile;
+  },
+  logEnabled: false,
+  log: function(msg) {
+    try {
+      if (!this.logStream) {
+        const logFile = this.logFile;
+        const logStream = CC["@mozilla.org/network/file-output-stream;1"]
+          .createInstance(CI.nsIFileOutputStream);
+        logStream.init(logFile, 0x02 | 0x08 | 0x10, 0600, 0 );
+        this.logStream = logStream;
+        const header="*** Log start at "+new Date().toGMTString()+"\n";
+        this.logStream.write(header,header.length);
+      }
+      
+      if (msg!=null) {
+        msg += "\n";
+        this.logStream.write(msg,msg.length);
+      }
+      this.logStream.flush();
+    } catch(ex) {
+      dump(ex.message+"\noccurred logging this message:\n"+msg);
+    }
+  },
+  
   get _dns() {
     delete this._dns;
     return this._dns = CC["@mozilla.org/network/dns-service;1"]
@@ -118,15 +151,21 @@ var DNS = {
     }
   },
   
+  get _idn() {
+    delete this._idn;
+    return this._idn =  CC["@mozilla.org/network/idn-service;1"]
+      .getService(CI.nsIIDNService);
+  },
+  
+  _invalidRx: /[^\w\-\.]/,
   checkHostName: function(host) {
-    const invalidRx = /[^\w-\.]/;
-    if (invalidRx.test(host) && !this.isIP(host)) {
+    if (this._invalidRx.test(host) && !this.isIP(host)) {
       try {
-       host = CC["@mozilla.org/network/idn-service;1"].createInstance(CI.nsIIDNService).convertUTF8toACE(host);
+        host = this._idn.convertUTF8toACE(host);
       } catch(e) {
         return false;
       }
-      return !invalidRx.test(host);
+      return !this._invalidRx.test(host);
     }
     return true;
   },
@@ -147,6 +186,7 @@ var DNS = {
           // refresh async
           dnsRecord.refreshing = true;
           DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
+              if (DNS.logEnabled) DNS.log("Async " + host);
               cache.put(host, dnsRecord = new DNSRecord(this.record));
             }), Thread.currentQueue);
         } else {
@@ -184,6 +224,7 @@ var DNS = {
         
         var resolve = function() {
           DNS._dns.asyncResolve(host, flags, new DNSListener(function() {
+            if (DNS.logEnabled) DNS.log("Async " + host);
             cache.put(host, dnsRecord = new DNSRecord(this.record));
             ctrl.running = false;
             var callbacks = resolving[host];
@@ -216,6 +257,7 @@ var DNS = {
       } else {
         t = Date.now();
         if (ABE.consoleDump) ABE.log("Performing DNS query on " + host);
+        if (DNS.logEnabled) DNS.log("Sync " + host);
         cache.put(host, dnsRecord = new DNSRecord(this._dns.resolve(host, flags)));
         elapsed = Date.now() - t;
       }

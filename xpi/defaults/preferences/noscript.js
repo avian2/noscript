@@ -210,7 +210,8 @@ pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.yieldman.replacement", "with(window)rmAddKey=rmAddCustomKey=rmShowAd=rmShowPop=rmShowInterstitial=rmGetQueryParameters=rmGetSize=rmGetWindowUrl=rmGetPubRedirect=rmGetClickUrl=rmReplace=rmTrim=rmUrlEncode=rmCanShowPop=rmCookieExists=rmWritePopFrequencyCookie=rmWritePopExpirationCookie=flashIntalledCookieExists=writeFlashInstalledCookie=flashDetection=rmGetCookie=function(){}");
 pref("noscript.surrogate.yieldman.sources", "*.yieldmanager.com");
 pref("noscript.surrogate.popunder.replacement", "var open=window.__proto__.open;window.__proto__.open=function(url, target, features){if(!(/^_(?:top|parent|self)$/i.test(target)||target in frames)){var suspSrc=false;/popunde?r|pu$/.test(target);var frame;for(var f,ev,aa=arguments;f=aa.callee.caller;){aa=f.arguments;ev=aa[0];if(!suspSrc) suspSrc=/(?:\bpopunde?r|\bfocus|\bblur|[pP]uShown)\b/.test(f.toSource());if(ev instanceof MouseEvent && ev.type=='click' && ev.currentTarget===document){if(suspSrc){frame = document.body.appendChild(document.createElement('iframe'));frame.src='data:text/html,';frame.style.display='none';window.setTimeout(function(){frame.parentNode.removeChild(frame);},1000);var w=frame.contentWindow;w.blur=function(){};return w;}}}}return open.apply(window, arguments);};");
-pref("noscript.surrogate.popunder.sources", "@*.imagefap.com *.moviefap.com imagefap.com moviefap.com *.grayvee.com grayvee.com *.empornium.us empornium.us");
+pref("noscript.surrogate.popunder.sources", "@^http:");
+pref("noscript.surrogate.popunder.exceptions", "");
 pref("noscript.surrogate.imdb.sources", "@*.imdb.com/video/*");
 pref("noscript.surrogate.imdb.replacement", "addEventListener('DOMContentLoaded',function(ev){ad_utils.render_ad=function(w){w.location=w.location.href.replace(/.*\\bTRAILER=([^&]+).*/,'$1')}},true)");
 
@@ -250,3 +251,4 @@ pref("noscript.STS.expertErrorUI", false);
 
 pref("noscript.frameOptions.enabled", true);
 pref("noscript.frameOptions.parentWhitelist", "https://mail.google.com/*");
+pref("noscript.logDNS", false);

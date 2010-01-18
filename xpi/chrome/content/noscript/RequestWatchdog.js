@@ -1719,8 +1719,8 @@ PostChecker.prototype = {
       delete this.boundary;
       delete this.isFile;
       delete this.postData;
-      var t = Date.now(), t2 = t, d;
-      if((available = sis.available())) do {
+     
+      if ((available = sis.available())) do {
         size = this.postData.length;
         if (size >= MAX_FIELD_SIZE) return size + " bytes or more in one non-file field, assuming memory DOS attempt!";
 
