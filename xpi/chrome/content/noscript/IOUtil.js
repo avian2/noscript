@@ -109,7 +109,7 @@ const IOUtil = {
     var proxyInfo = this.getProxyInfo(channel);
     switch(this.proxiedDNS) {
       case 1:
-        return proxyInfo && (proxyInfo.flags & CI.nsIProxyInfo.TRANSPARENT_PROXY_RESOLVES_HOST);
+        return !(proxyInfo && (proxyInfo.flags & CI.nsIProxyInfo.TRANSPARENT_PROXY_RESOLVES_HOST));
       case 2:
         return true;
       default:

@@ -1,4 +1,4 @@
-const ScriptSurrogate = {
+var ScriptSurrogate = {
   QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
   
   enabled: true,
@@ -75,35 +75,49 @@ const ScriptSurrogate = {
     return scripts && "try { (function() {" + scripts.join("})(); (function() {") + "})(); } catch(e) {}";
   },
 
-  apply: function(document, scriptURL, pageURL, useSandbox) {
+  apply: function(document, scriptURL, pageURL) {
     if (!this.enabled) return;
     var scriptBlock = this.getScriptBlock(scriptURL, pageURL);
     if (scriptBlock) {
-      if (useSandbox) this.sandbox(document.defaultView, scriptBlock);
-      else this.execute(document, scriptBlock);
+      this.execute(document, scriptBlock, scriptURL == pageURL);
     }
   },
   
-  sandbox: function(win, scriptBlock) {
-    var s = new CU.Sandbox(win.wrappedJSObject);
-    s.window = win;
-    s.__proto__ = win;
-    try {
-      CU.ev\u0061lInSandbox("with (window) {\n" + scriptBlock + "\n}", s);
-    } catch (e) {
-      if (ns.consoleDump) ns.dump(e + " for \n" + scriptBlock);
-    }
-  },
   
-  execute: function(document, scriptBlock) {
-    if (document.documentElement) {
+  execute: function(document, scriptBlock, isPageScript) {
+    if (this._mustUseDOM && document.documentElement) {
       var s = document.createElementNS(HTML_NS, "script");
       s.id = "__noscriptSurrogate__" + DOM.rndId();
       s.appendChild(document.createTextNode(scriptBlock +
         ";(function(){var s=document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
       document.documentElement.insertBefore(s, document.documentElement.firstChild);
+      if (this._mustResetStyles && isPageScript) this._resetStyles();
     } else {
       document.defaultView.location.href = encodeURI("javascript:" + scriptBlock);
     }
+  },
+  
+  get _mustUseDOM() {
+    delete this._mustUseDOM;
+    return this._mustUseDOM = ns.geckoVersionCheck("1.9") >= 0;
+  },
+  
+  get _mustResetStyles() {
+    delete this._mustResetStyles;
+    return this._mustResetStyles = ns.geckoVersionCheck("1.9.1") < 0;
+  },
+  
+  get _emptyStyle() {
+    delete this._emptyStyle;
+    return this._emptyStyle = IOS.newURI("data:text/css;charset=utf8,", null, null);
+  },
+  
+  _resetStyles: function() {
+    const sss = ns.sss;
+    const SHEET = sss.AGENT_SHEET;
+    sss.loadAndRegisterSheet(this._emptyStyle, SHEET);
+    sss.unregisterSheet(this._emptyStyle, SHEET)
   }
+
+  
 }

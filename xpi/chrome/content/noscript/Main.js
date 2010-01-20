@@ -537,13 +537,19 @@ var ns = singleton = {
     this.updateStyleSheet(sheet, value);
   },
   
-  
+  get sss() {
+    delete this.sss;
+    try {
+      return this.sss = CC["@mozilla.org/content/style-sheet-service;1"]
+                        .getService(CI.nsIStyleSheetService);
+    } catch(e) {
+      return this.sss = null;
+    }
+  },
   
   updateStyleSheet: function(sheet, enabled) {
-    const sssClass = CC["@mozilla.org/content/style-sheet-service;1"];
-    if (!sssClass) return;
-    
-    const sss = sssClass.getService(CI.nsIStyleSheetService);
+    const sss = this.sss;
+    if (!sss) return;
     const uri = IOS.newURI("data:text/css;charset=utf8," + sheet, null, null);
     if (sss.sheetRegistered(uri, sss.USER_SHEET)) {
       if (!enabled) sss.unregisterSheet(uri, sss.USER_SHEET);
@@ -4090,15 +4096,7 @@ var ns = singleton = {
     // called at the end of onLocationChange
     var jsBlocked = docShell && !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
     
-    try {
-      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !win._noscriptJsHack) {
-        try {
-          win._noscriptJsHack = true;
-          ScriptSurrogate.sandbox(win, this.jsHack);
-        } catch(jsHackEx) {}
-      }
-      ScriptSurrogate.apply(win.document, url, url, jsBlocked);
-    } catch(e) {}
+    
     
     if (jsBlocked) {
       if (this.getPref("fixLinks")) {
@@ -4107,6 +4105,16 @@ var ns = singleton = {
       }
       return;
     }
+    
+    ScriptSurrogate.apply(win.document, url, url);
+    try {
+      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !win._noscriptJsHack) {
+        try {
+          win._noscriptJsHack = true;
+          ScriptSurrogate.execute(win, this.jsHack);
+        } catch(jsHackEx) {}
+      }
+    } catch(e) {}
     
   },
   
