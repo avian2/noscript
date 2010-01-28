@@ -2585,25 +2585,21 @@ var ns = singleton = {
     
 
       try {
-
+        this.setJSEnabled(site, true);
         browser.webNavigation.allowJavascript = true;
-        this.jsEnabled = true;
+        this.jsEnabled = ns.getPref("allowBookmarkletImports");
           
      
         if (Thread.canSpin) { // async evaluation, after bug 351633 landing
           var doc = window.document;
-          var nh = this._executeJSURL_nodeHandler;
-          var ets = ["DOMNodeInserted", "DOMAttrModified"];
           try {
-            ets.forEach(function(et) { doc.addEventListener(et, nh, false) });
-            
             if (!(snapshots.siteJS && snapshots.docJS)) {
               this._runJS(window, "(" +
                 function() {
                   var tt = [];
                   window.setTim\u0065out = window.s\u0065tInterval = function(f, d, a) {
                     if (typeof(f) != 'function') f = new Function(f || '');
-                    tt.push({ f: f, d: d, a: a});
+                    tt.push({f: f, d: d, a: a});
                     return 0;
                   };
                   window.__runTimeouts = function() {
@@ -2636,16 +2632,14 @@ var ns = singleton = {
             
           } catch(e) {
             if(this.consoleDump) this.dump("JS URL execution failed: " + e);
-          } finally {
-            ets.forEach(function(et) { doc.removeEventListener(et, nh, false) });
           }
         } else {
           openCallback(url);
         }
         return true;
       } finally {
-
         this.jsEnabled = false;
+        this.setJSEnabled(site, snapshots.siteJS);
         this.setExpando(browser, "jsSite", site);
         if (!browser.webNavigation.isLoadingDocument && this.getSite(browser.webNavigation.currentURI.spec) == site)
           browser.webNavigation.allowJavascript = snapshots.docJS;
@@ -2660,38 +2654,6 @@ var ns = singleton = {
     window.location.href = "javascript:" + encodeURIComponent(s + "; void(0);");
     Thread.yieldAll();
   },
-  _executeJSURL_nodeHandler:  function(ev) {
-    var node = ev.target;
-    if (!(node instanceof CI.nsIDOMHTMLScriptElement)) return;
-    var url = node.src;
-    if (!url) return;
-    
-    var site = ns.getSite(url);
-    switch(ns.getPref("bookmarklets.import")) {
-      case 0:
-        return;
-      case 1:
-        if (!ns.isJSEnabled(site)) return;
-        break;
-      default:
-        if (ns.isUntrusted(site)) return;
-    }
-    try {
-      var w = node.ownerDocument.defaultView;
-      node.parentNode.removeChild(node);
-      
-      if (ns.consoleDump) ns.dump("Importing for bookmarklet: " + url);
-      var xhr = ns.createCheckedXHR("GET", url, false);
-      xhr.send(null);
-      if (xhr.status == 200) {
-        var s = xhr.responseText;
-        if (s) ns._runJS(w, s);
-      }
-    } catch (e) {
-      ns.dump("Error running bookmarklet import: " + e);
-    }
-  },
-  
   
   isCheckedChannel: function(c) {
     return IOUtil.extractFromChannel(c, "noscript.checkedChannel", true);

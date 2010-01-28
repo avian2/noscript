@@ -1,11 +1,12 @@
 function ClearClickHandler(ns) {
-  this.ns = ns; 
+  this.ns = ns;
+  if (ns.geckoVersionCheck("1.9.2") < 0)
+    INCLUDE("ClearClickHandlerLegacy");
 }
 
 ClearClickHandler.prototype = {
   
   // TODO:
-  // 0. Use window.mozInnerScreenX & Y
   // 1. try to use MozAfterPaint (Fx 3.1) to intercept "Sudden Reveal" attacks
   // 2. try to use http://www.oxymoronical.com/experiments/apidocs/interface/nsIDOMWindowUtils:compareCanvases
   
@@ -99,118 +100,29 @@ ClearClickHandler.prototype = {
     ev.preventDefault();
   },
   
-   // the following is apparently correct and easy, but it suffers of HUGE rounding issues
-  getZoomFromBrowser: function(browser) {
-    try {
-      return this._zoom = browser.markupDocumentViewer && browser.markupDocumentViewer.fullZoom || 1;
-    } catch(e) {
-      return this._zoom;
-    }
-  },
+  _zoom: 1,
   
-  // this one is more complex but much more precise than getZoomForBrowser()
-  getZoomFromDocument: function(d) {
-    if (!("getBoxObjectFor" in d))
-      return this._zoom = d.defaultView
-        .QueryInterface(CI.nsIInterfaceRequestor)
-        .getInterface(CI.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
-    
-    var root = d.documentElement;
-    var o = d.createElementNS(HTML_NS, "div");
-    var s = o.style;
-    s.top = "400000px";
-    s.position = "absolute";
-    s.display = "block";
-  
-    root.appendChild(o);
-    var oBox = d.getBoxObjectFor(o);
-    var rootBox = d.getBoxObjectFor(root);
-    var zoom = (oBox.screenY - rootBox.screenY) / o.offsetTop;
-    root.removeChild(o);
-    return this._zoom = zoom > 0 ? zoom : this._zoom;
-  },
   
   getBox: function(o, d, w) {
-    w = w || (d || (d = o.ownerDocument)).defaultView;
-    this.__proto__.getBox = ("mozInnerScreenX" in w)
-      ? this._getBox_Gecko1_9_2
-      : this._getBox_Gecko1_9_1;
-
-    return this.getBox(o, d, w);
-  },
-  
-  _getBox_Gecko1_9_2: function(o, d, w) {
     if (!d) d = o.ownerDocument;
     if (!w) w = d.defaultView;
     var c = o.getBoundingClientRect();
     var x = c.left, y = c.top; // this is relative to the view port, just like mozInnerScreen*
+    
     return {
       x: x + w.scrollX, y: y + w.scrollY, // add scroll* to make it absolute
       width: c.width, height: c.height,
       screenX: w.mozInnerScreenX + x, screenY: w.mozInnerScreenY + y
     }
   },
-  _getBox_Gecko1_9_1: function(o, d, w) {
-    var zoom = this._zoom || 1;
-    if (!d) d = o.ownerDocument;
-    if (!w) w = d.defaultView;
-      
-    var b = d.getBoxObjectFor(o); // TODO: invent something when boxObject is missing or failing
-    var c = d.getBoxObjectFor(d.documentElement);
-    var p;
-    var r = {
-      width: b.width, height: b.height,
-      screenX: b.screenX, screenY: b.screenY
-    };
-    
-    const ns = this.ns;
-    var verbose = ns.consoleDump & LOG_CLEARCLICK;
-    
-    r.x = (r.screenX - c.screenX) / zoom;
-    r.y = (r.screenY - c.screenY) / zoom;
-    
-    var dx;
-    // here we do our best to improve on lousy boxObject horizontal behavior when line breaks are involved
-    // (it reports the width of the whole line, but x is referred to the first text node offset)
-    if ("getBoundingClientRect" in o) {
-      c = o.getBoundingClientRect(); // bounding rect, if available, does the right thing with left position
-      
-      if (verbose) ns.dump("Rect: " + c.left + "," + c.top + "," + c.right + "," + c.bottom);
-      
-      // boxObject.x "knows" scrolling, but on clientRect.left we must accumulate scrollX until first fixed object or viewport (documentElement)
-      var fixed, scrollX;
-      dx = Math.round(c.left) - r.x;
-      var s = w.getComputedStyle(o, '');
-      dx += parseInt(s.borderLeftWidth) || 0 + parseInt(s.paddingLeft) || 0 + w.scrollX;
-    
-    } else {
-      // ugly hack for line-breaks without boundClient API
-      dx = 0;
-      p = b.parentBox;
-      if (p) {
-        var pb = d.getBoxObjectFor(p);
-        if (verbose) dump("Parent: " + pb.x + "," + pb.y + "," + pb.width + "," + pb.height);
-        if (b.x + r.width - pb.x - pb.width >= r.width / 2) {
-          dx = -(b.x - (pb.width - r.width));
-        }
-      }
-    }
-    
-    
-    r.screenX += dx * zoom;
-    r.x += dx;
-    
-   
-    if (verbose) ns.dump(o + r.toSource() + " -- box: " + b.x + "," + b.y);
-    return r;
-  },
+  
   
   getBG: function(w) {
     var bg = w.document.body && w.getComputedStyle(w.document.body, '').backgroundColor || "white";
     return bg == "transparent" ? w != w.parent && this.getBG(w.parent) || "white" : bg;
   },
   
-  _constrain: function(box, axys, dim, max, vp, center, zoom) {
+  _constrain: function(box, axys, dim, max, vp, center) {
     var d;
     var scr = "screen" + axys.toUpperCase();
     // trim bounds to take in account fancy overlay borders
@@ -231,7 +143,7 @@ ClearClickHandler.prototype = {
       } 
       box[dim] = (l -= (bStart + bEnd));
       box[axys] = (n += bStart);
-      box[scr] += bStart * zoom;
+      box[scr] += bStart;
       
     }
 
@@ -242,7 +154,7 @@ ClearClickHandler.prototype = {
         var nn = center - halfMax;
         if (nn > n && center + halfMax > n + l) nn = (n + l) - max;        
         box[axys] = nn;
-        box[scr] += (nn - n) * zoom;
+        box[scr] += (nn - n);
         n = nn;
       }
       l = box[dim] = max;
@@ -257,7 +169,7 @@ ClearClickHandler.prototype = {
     
     if (d) {
       n = (box[axys] += d);
-      box[scr] += d * zoom;
+      box[scr] += d;
     }
 
   },
@@ -267,10 +179,7 @@ ClearClickHandler.prototype = {
   },
   
   isSupported: function(doc) {
-    return "_supported" in this
-      ? this._supported
-      : this._supported = typeof(this.createCanvas(doc).toDataURL) == "function" &&
-        ("getBoxObjectFor" in doc || "mozInnerScreenX" in doc.defaultView);  
+    return true; 
   },
   
   _semanticContainers: [CI.nsIDOMHTMLParagraphElement, CI.nsIDOMHTMLQuoteElement,
@@ -413,16 +322,7 @@ ClearClickHandler.prototype = {
     return null;
   },
   
-  
-  zoom: function(b, z) {
-    if (z == 1) return b;
-    var r = {};
-    for (var p in b) {
-      r[p] = b[p] / z;
-    }
-    return r;
-  },
-  
+ 
   rndColor: function() {
     var c = Math.round(Math.random() * 0xffffff).toString(16);
     return "#" + ("000000".substring(c.length)) + c; 
@@ -434,6 +334,23 @@ ClearClickHandler.prototype = {
   minWidth: 160,
   minHeight: 100,
   _NO_SCROLLBARS: {w: 0, h: 0},
+  computeScrollbarSizes: function(frame, dElem, body) {
+    var fw = frame.clientWidth, fh = frame.clientHeight;
+    var dw = dElem.clientWidth, dh = dElem.clientHeight;
+
+    var w = Math.min(fw, dw), h = Math.min(fh, dh);
+    if (body) {
+      var bw = body.clientWidth;
+      var bh = body.clientHeight;
+      if (bw <= fw && (bw - dw > 24 || dw > fw)) w = bw; 
+     
+      if (bh <= fh && (bh - dh > 24 || dh > fh)) h = bh;
+
+    }
+    
+    return { w: fw - w, h: fh - h };
+  },
+  
   checkObstruction: function(o, ctx) {   
     var d = o.ownerDocument;
     var dElem = d.documentElement;
@@ -480,10 +397,7 @@ ClearClickHandler.prototype = {
     var sd = this._NO_SCROLLBARS;
 
     try {
-          
-      var zoom = this.getZoomFromBrowser(browser);
-      if (zoom != 1) zoom = this.getZoomFromDocument(d);
-      
+       
       docPatcher.linkAlertHack(true);
       docPatcher.fbPresenceHack(true);
       
@@ -508,20 +422,11 @@ ClearClickHandler.prototype = {
         if ((frame = w.frameElement)) {
           frameClass = new ClassyObj(frame);
           DOM.removeClass(frame, "__noscriptScrolling__");
-          sd = (function() {
-            var fw = frame.clientWidth, fh = frame.clientHeight;
-            var dw = dElem.clientWidth, dh = dElem.clientHeight;
-            var w = Math.min(fw, dw), h = Math.min(fh, dh);
-            var b = d.body;
-            if (b) {
-              var bw = b.clientWidth;
-              if (bw <= fw && (bw > dw || dw > fw)) w = bw; 
-              var bh = b.clientHeight;
-              if (bh <= fh && (bh > dh || dh > fh)) h = bh;
-            }
-            
-            return {w: fw - w, h: fh - h };
-          })();    
+          sd = this.computeScrollbarSizes(frame, dElem, d.body);
+          var zoom = d.defaultView.QueryInterface(CI.nsIInterfaceRequestor)
+            .getInterface(CI.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
+          sd.w *= zoom;
+          sd.h *= zoom;
         }
         
         var clientHeight = w.innerHeight - sd.h;
@@ -549,8 +454,8 @@ ClearClickHandler.prototype = {
           dElem.appendChild(curtain);
         }
         
-        var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), this.minWidth) / zoom ;
-        var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), this.minHeight) / zoom;
+        var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), this.minWidth);
+        var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), this.minHeight);
   
         box = this.getBox(o, d, w);
         
@@ -573,25 +478,25 @@ ClearClickHandler.prototype = {
             box = formBox;
             var delta;
             if (box.x < 0) {
-              box.screenX -= box.x * zoom;
+              box.screenX -= box.x;
               box.x = 0;
             }
             if (box.y < 0) {
-              box.screenY -= box.y * zoom;
+              box.screenY -= box.y;
               box.y = 0;
             }
             if (box.x + Math.min(box.width, maxWidth) < ctx.x) {
               box.width = Math.min(box.width, maxWidth);
               delta = ctx.x + 4 - box.width - box.x;
               box.x += delta;
-              box.screenX += delta * zoom;
+              box.screenX += delta;
              
             }
             if (box.y + Math.min(box.height, maxHeight) < ctx.y) {
               box.height = Math.min(box.height, maxHeight);
               delta = ctx.y + 4 - box.height - box.y;
               box.y += delta;
-              box.screenY += delta * zoom;
+              box.screenY += delta;
             }
             o = form;
           }
@@ -656,10 +561,10 @@ ClearClickHandler.prototype = {
         box.oW = box.width;
         box.oH = box.height;
         
-        // print("Fitting " + box.toSource() + " in " + vp.toSource() + " - zoom: " + zoom + " - ctx " + ctx.x + ", " + ctx.y + " - max " + maxWidth + ", " + maxHeight);
+        // print("Fitting " + box.toSource() + " in " + vp.toSource() + " - ctx " + ctx.x + ", " + ctx.y + " - max " + maxWidth + ", " + maxHeight);
   
-        this._constrain(box, "x", "width", maxWidth, vp, ctx.x, zoom);
-        this._constrain(box, "y", "height", maxHeight, vp, ctx.y, zoom);
+        this._constrain(box, "x", "width", maxWidth, vp, ctx.x);
+        this._constrain(box, "y", "height", maxHeight, vp, ctx.y);
         // print(box.toSource());     
         
         c.width = box.width;
@@ -680,8 +585,8 @@ ClearClickHandler.prototype = {
       var rootElement = top.document.documentElement;
       var rootBox = this.getBox(rootElement, top.document, top);
       
-      var offsetX = (box.screenX - rootBox.screenX) / zoom;
-      var offsetY = (box.screenY - rootBox.screenY) / zoom;
+      var offsetX = (box.screenX - rootBox.screenX);
+      var offsetY = (box.screenY - rootBox.screenY);
       var ret = true;
       var tmpImg;
       
@@ -690,7 +595,7 @@ ClearClickHandler.prototype = {
       checkImage:
       for each(var x in offs) {
         for each(var y in offs) {
-          tmpImg = snapshot(top, offsetX + x * zoom, offsetY + y * zoom);
+          tmpImg = snapshot(top, offsetX + x, offsetY + y);
           if (img1 == tmpImg) {
             ret = false;
             break checkImage;

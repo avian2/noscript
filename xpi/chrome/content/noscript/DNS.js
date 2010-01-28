@@ -53,10 +53,10 @@ var DNS = {
   
   get logFile() {
     delete this.logFile;
-    this.logFile = CC["@mozilla.org/file/directory_service;1"]
+    var logFile = CC["@mozilla.org/file/directory_service;1"]
       .getService(CI.nsIProperties).get("ProfD", CI.nsIFile);
-    this.logFile.append("noscript_dns.log");
-    return this.logFile;
+    logFile.append("noscript_dns.log");
+    return this.logFile = logFile;
   },
   logEnabled: false,
   log: function(msg) {

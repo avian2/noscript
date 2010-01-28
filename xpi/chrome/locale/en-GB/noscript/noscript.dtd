@@ -90,7 +90,7 @@
 <!ENTITY noscriptAutoAllowTopLevel "Temporarily allow top-level sites by default">
 <!ENTITY noscriptDescription "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality… Experts will agree: Firefox is really safer with NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Block CSS-based scanners">
-<!ENTITY noscriptOptFilterXGet "Sanitize cross-site suspicious requests">
+<!ENTITY noscriptOptFilterXGet "Sanitise cross-site suspicious requests">
 <!ENTITY noscriptOptFilterXPost "Turn cross-site POST requests into data-less GET requests">
 <!ENTITY noscriptShowConsole "Show Console…">
 <!ENTITY noscriptShowConsole.accesskey "S">
@@ -130,7 +130,7 @@
 <!ENTITY noscriptHttps "HTTPS">
 <!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
-<!ENTITY noscriptHttps.behavior "Behavior">
+<!ENTITY noscriptHttps.behavior "Behaviour">
 <!ENTITY noscriptHttps.cookies "Cookies">
 <!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
 <!ENTITY noscriptHttps.never "Never">
@@ -158,7 +158,7 @@
 <!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
 <!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
 <!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
-<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronisation">
 <!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
 <!ENTITY ABE "ABE">
 <!ENTITY ABE.accesskey "A">
@@ -175,4 +175,3 @@
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "Uninstall">
 <!ENTITY noscriptRecentBlocked "Recently blocked sites">
-<!ENTITY noscriptEmbeddings "Embeddings">

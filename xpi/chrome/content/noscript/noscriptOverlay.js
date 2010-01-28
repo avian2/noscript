@@ -1466,7 +1466,7 @@ return noscriptUtil.service ? {
     if (!unsafeRequest) {
       unsafeRequest = {
         URI: browser.webNavigation.currentURI,
-        origin: ns.__parent__.ABE.traceBackHistory(browser.webNavigation.sessionHistory, browser.contentWindow).join(">>>")
+        origin: ns.__parent__.OriginTracer.traceBackHistory(browser.webNavigation.sessionHistory, browser.contentWindow).join(">>>")
       };
       method = "URL";
     } else {

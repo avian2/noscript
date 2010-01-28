@@ -472,7 +472,7 @@ const MainContentPolicy = {
         }
       }
   
-      mimeKey = aMimeTypeGuess || "application/x-unknown";
+      mimeKey = mimeKey || aMimeTypeGuess || "application/x-unknown";
       
       if (!(forbid || locationSite == "chrome:")) {
         

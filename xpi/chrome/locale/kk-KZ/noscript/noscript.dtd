@@ -63,10 +63,12 @@
 <!ENTITY noscriptAllowBookmarks "Бетбелгілерден ашылған сайтқа рұқсат ету">
 <!ENTITY noscriptAllowViaBookmarks "Бетбелгілерден ашылған сайтқа рұқсат ету">
 <!ENTITY noscriptAllowPing "&lt;A PING…&gt; рұқсат ету">
-<!ENTITY noscriptAllowLocalLinks "Локалды сілтемелерді рұқсат ету">
+<!ENTITY noscriptAllowLocalLinks "Жергілікті сілтемелерді рұқсат ету">
 <!ENTITY noscriptForbidPing "&lt;A PING…&gt; тыйым салу">
 <!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt; элементінің ішінде META бағдарлауды оқшаулау">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "ш">
+<!ENTITY noscriptNotifyMeta "Блокталған META бағдарлаулар жөнінде хабарлау">
+<!ENTITY noscriptNotifyMeta.accesskey "о">
 <!ENTITY noscriptWhitelist "Рұқсат етілген тізім">
 <!ENTITY noscriptPermissions "Рұқсаттар">
 <!ENTITY noscriptRefresh "Жаңарту">
@@ -86,7 +88,7 @@
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; элементтерін жасыру">
 <!ENTITY noscriptNselForce "Блокталған &lt;SCRIPT&gt; соңынан келген &lt;NOSCRIPT&gt; элементін көрсету">
 <!ENTITY noscriptAutoAllowTopLevel "Уақытша жоғарғы деңгейлі сайттарға рұқсат беру">
-<!ENTITY noscriptDescription "Firefox үшін экстра қорғаныс: NoScript көмегімен сіз JavaScript, Java (және басқа плагиндер) орындалуын тек өзіңіз көрсеткен домендер үшін рұқсат ете аласыз (мысалы, өзіңіздің веб-сайтыңыз). Рұқсат етілген тізім, алдын-ала блоктауға негізделіп, функционалдылыққа әсер етпей-ақ осалдылықтардың алдын алуға көмектеседі (белгілі және белгісіз!)… Мамандар келіседі: NoScript қолдану Firefox жұмысын қауіпсіз етеді:-)">
+<!ENTITY noscriptDescription "Firefox үшін экстра қорғаныс: NoScript көмегімен сіз JavaScript, Java (және басқа плагиндер) орындалуын тек өзіңіз көрсеткен домендер үшін рұқсат ете аласыз (мысалы, өзіңіздің веб-сайтыңыз). Рұқсат етілген тізім, алдын-ала блоктауға негізделіп, мүмкіндіктерге әсер етпей-ақ, осалдылықтардың алдын алуға көмектеседі (белгілі және белгісіз!)… Мамандар келіседі: NoScript қолдану Firefox жұмысын қауіпсіз етеді:-)">
 <!ENTITY noscriptOptBlockCssScanners "CSS-негізделген сканерлерді оқшаулау">
 <!ENTITY noscriptOptFilterXGet "CSS сұранымдарын оқшаулау">
 <!ENTITY noscriptOptFilterXPost "Сайт аралық POST сұранымдарын мәліметі жоқ GET сұранымдарына айналдыру">
@@ -172,3 +174,4 @@
 <!ENTITY ABE.refresh.label "Жаңарту">
 <!ENTITY ABE.refresh.accesskey "т">
 <!ENTITY noscriptUninstall "Өшіру">
+<!ENTITY noscriptRecentBlocked "Соңғы блокталған сайттар">

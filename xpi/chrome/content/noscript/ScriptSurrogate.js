@@ -55,16 +55,35 @@ var ScriptSurrogate = {
     this._syncPrefs();
   },
   
+  _resolveFile: function(fileURI) {
+    const profileURI = IOS.newFileURI(
+      CC["@mozilla.org/file/directory_service;1"].getService(CI.nsIProperties)
+      .get("ProfD", CI.nsIFile));
+    return (this._resolveFile = function(fileURI) {
+      return profileURI.resolve(fileURI);
+    })(fileURI);
+  },
+  
   getScripts: function(scriptURL, pageURL) {
     var mapping;
     var scripts = null;
     var isPage = scriptURL == pageURL;
+    var code;
     for (var key in this.mappings) {
       mapping = this.mappings[key];
       if (isPage == mapping.forPage && mapping.sources && mapping.sources.test(scriptURL) &&
           !(mapping.exceptions && mapping.exceptions.test(pageURL)) &&
           mapping.replacement) {
-        (scripts = scripts || []).push(mapping.replacement);
+        if (/^(?:file:\/\/|\.\.?\/)/.test(mapping.replacement)) {
+          try {
+            code = IO.readFile(IOS.newURI(this._resolveFile(mapping.replacement), null, null)
+                               .QueryInterface(CI.nsIFileURL).file);
+          } catch(e) {
+            ns.dump("Error loading " + mapping.replacement + ": " + e);
+            continue;
+          }
+        } else code = mapping.replacement;
+        (scripts = scripts || []).push(code);
       }
     }
     return scripts;

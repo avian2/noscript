@@ -1453,7 +1453,7 @@ var InjectionChecker = {
   },
   
   attributesChecker: new RegExp(
-      "\\W(?:javascript:[\\s\\S]+(?:[=\\(]|%(?:[3a]8|[3b]d))|data:[\\w\\-]+/[\\w\\-]+[;,])|@" + 
+      "\\W(?:javascript:[\\s\\S]+(?:[=\\(]|%(?:[3a]8|[3b]d))|data:[\\w\\-/]+[;,])|@" + 
       ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
         "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
         .replace(/[a-rt-z\-]/g, "\\W*$&"), 
@@ -1597,6 +1597,12 @@ var InjectionChecker = {
     
     if (this._checkOverDecoding(s, unescaped))
       return true;
+    
+    if (/[\n\r\t]/.test(unescaped) &&
+        this._checkRecursive(unescaped.replace(/[\n\r\t]/g, ''), depth)) {
+      this.log("Trash-stripped nested URL match!"); // http://mxr.mozilla.org/mozilla-central/source/netwerk/base/src/nsURLParsers.cpp#100
+      return true;
+    }
     
     if (!this.isPost && this.checkBase64(s.replace(/^\/{1,3}/, ''))) return true;
     
@@ -2043,9 +2049,12 @@ XSanitizer.prototype = {
     }
     
     if (this.brutal) { // injection checks were positive
-      s = InjectionChecker.reduceDashPlus(s).replace(/['\(\)\=\[\]]/g, " ")
-           .replace(this._brutalReplRx, String.toUpperCase)
-           .replace(/Q[\da-fA-Fa]{2}/g, "Q20"); // Ebay-style escaping
+      s = InjectionChecker.reduceDashPlus(s)
+        .replace(/['\(\)\=\[\]]/g, " ")
+        .replace(this._brutalReplRx, String.toUpperCase)
+        .replace(/Q[\da-fA-Fa]{2}/g, "Q20")
+        .replace(/%[\n\r\t]*[0-9a-f][\n\r\t]*[0-9a-f]/gi, " ")
+        ; // Ebay-style escaping
     }
     
     return s == orig ? unsanitized : s;
