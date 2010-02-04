@@ -84,7 +84,7 @@ var noscriptBM = {
   patchPlacesMethod: function(k, m) {
     if(m in k) {
       // Dirty eval hack due to Tab Mix Plus conflict: http://tmp.garyr.net/forum/viewtopic.php?t=8052
-      k[m] = ev\u0061l(k[m].toSource()
+      k[m] = eval(k[m].toSource()
         .replace(/\b\w+\.checkURLSecurity\(/, 'noscriptBM.checkURLSecurity('))
     }
   },
@@ -128,7 +128,7 @@ var noscriptBM = {
     var pu = window.PlacesUIUtils || window.PlacesUtils || false;
     if (typeof(pu) == "object" && !noscriptBM.placesUtils) {
       noscriptBM.placesUtils = pu;
-      window.setTim\u0065out(function() {
+      window.setTimeout(function() {
         var methods = ["openNodeIn", "openSelectedNodeWithEvent"];
         for each (method in methods)
           noscriptBM.patchPlacesMethod(pu, method);

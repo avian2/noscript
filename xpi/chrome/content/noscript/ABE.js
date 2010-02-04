@@ -1242,16 +1242,25 @@ var OriginTracer = {
   
   traceBack: function(req, breadCrumbs) {
     var res = '';
-    try {
+        try {
       ABE.log("Traceback origin for " + req.destination);
       var window = req.window;
       if (window instanceof CI.nsIInterfaceRequestor) {
         var webNav = window.getInterface(CI.nsIWebNavigation);
+        var current = webNav.currentURI;
+        var isSameURI = current && current.equals(req.destinationURI);
+        if (isSameURI && (req.channel.loadFlags & req.channel.VALIDATE_ALWAYS)) 
+          return req.destination; // RELOAD
+ 
         const sh = webNav.sessionHistory;
         res = sh ? this.traceBackHistory(sh, window, breadCrumbs || null) 
-                  : webNav.currentURI && !webNav.currentURI.equals(req.destinationURI) 
-                    ? webNav.currentURI.spec
+                  : (!isSameURI && current) 
+                    ? req.destination
                     : '';
+       if (res == "about:blank") {
+         res = window.parent.location.href;
+         ns.dump(res);
+       }
       }
     } catch(e) {
       ABE.log("Error tracing back origin for " + req.destination + ": " + e.message);

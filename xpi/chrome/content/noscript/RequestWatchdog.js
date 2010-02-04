@@ -497,6 +497,7 @@ RequestWatchdog.prototype = {
           /^http:\/\/http\.letitbit\.net:81\/cgi-bin\/multi\/upload\.cgi\?/.test(originalSpec) &&
           channel.requestMethod == "POST") {
         if (ns.consoleDump) this.dump(channel, "letitbit.net Upload exception");
+        return;
       }
     
     } else { // maybe data or javascript URL?
@@ -519,7 +520,9 @@ RequestWatchdog.prototype = {
     // neutralize window.name-based attack
     if (window && window.name) {
       
-      if (ns.compatEvernote && window.frameElement && window.name.indexOf("iframe") > 0 && /^https?:\/\/(?:[a-z]+\.)*evernote\.com\/clip\.action$/.test(originalSpec) && channel.requestMethod == "POST") {
+      if (ns.compatEvernote && window.frameElement && window.name.indexOf("iframe") > 0
+          && /^https?:\/\/(?:[a-z]+\.)*evernote\.com\/clip\.action$/.test(originalSpec)
+          && channel.requestMethod == "POST") {
         // Evernote Web Clipper hack
         window.frameElement.addEventListener("load", ns.compatEvernote.onload, false);
         if (ns.consoleDump) this.dump(channel, "Evernote frame detected (noscript.compat.evernote)");
@@ -534,6 +537,8 @@ RequestWatchdog.prototype = {
         !origin // we consider null origin as "trusted" (i.e. we check for injections but 
                 // don't strip POST unconditionally) to make some extensions (e.g. Google Gears) 
                 // work. For dangerous edge cases we should have moz-null-principal: now, anyway.
+                || // some goes for Paypal buttons, which we don't require to be on trusted sites
+        /^https:\/\/www\.paypal\.com\/(?:ca\/)?cgi-bin\/webscr\b/.test(originalSpec)
       ) {
       
       if (origin && /^http:\/\/(?:[^\/]+.)?facebook\.com\/render_fbml\.php$/.test(originalSpec) &&
@@ -568,7 +573,12 @@ RequestWatchdog.prototype = {
           
       if (injectionAttempt) {
         postInjection = ns.filterXPost && (!origin || originSite != "chrome:") && channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel);
-        injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(originalSpec);
+        injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(
+          // Paypal buttons encrypted parameter causes a DOS, strip it out
+          /^https:\/\/www\.paypal\.com\/ca\/cgi-bin\/webscr\?cmd=_s-xclick&/.test(originalSpec)
+            ? originalSpec.replace(/(?:^|&)encrypted=[^&]+/, '')
+            : originalSpec
+        );
         
         if (ns.consoleDump) {
           if (injectionAttempt) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
@@ -900,7 +910,7 @@ SyntaxChecker.prototype = {
     return null;
   },
   ev: function(s) {
-    return CU.ev\u0061lInSandbox(s, this.sandbox);
+    return CU.evalInSandbox(s, this.sandbox);
   }
 };
 
@@ -1029,7 +1039,10 @@ var InjectionChecker = {
     while (/^[^'"]*?:\/\//.test(s)) {
       s = s.replace(/:\/\/.*/, ':');
     }    
-    return s.replace(/:\/\/[^'"\n]*/g, ':')
+    s = s.replace(/:\/\/[^'"\n]*/g, ':');
+    return (/\bhttps?:$/.test(s) && !/\bh\W*t\W*t\W*p\W*s?.*=/.test(s))
+      ? s.replace(/https?:$/)
+      : s;
   },
   
   reduceJSON: function(s) {
@@ -1567,7 +1580,7 @@ var InjectionChecker = {
   
   checkURL: function(url) {
     // let's assume protocol and host are safe, but keep the leading double slash to keep comments in account
-    url = url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "//"); 
+    url = url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "//");
     return this.checkRecursive(url);
   },
   
@@ -1682,28 +1695,29 @@ var InjectionChecker = {
           && channel.uploadStream && (channel.uploadStream instanceof CI.nsISeekableStream)))
       return false;
     this.log("Extracting post data...");
-    return this.checkPostStream(channel.uploadStream);
+    return this.checkPostStream(channel.URI.spec, channel.uploadStream);
   },
   
-  checkPostStream: function(stream) {
+  checkPostStream: function(url, stream) {
      var ic = this;
-     return new PostChecker(stream).check(
+     return new PostChecker(url, stream).check(
       function(chunk) {
         return chunk.length > 6 && ic.checkRecursive(chunk, 2, true) && chunk;
       }
     );
   },
   
-  testCheckPost: function(strData) {
+  testCheckPost: function(url, strData) {
     var stream = CC["@mozilla.org/io/string-input-stream;1"].
             createInstance(CI.nsIStringInputStream);
     stream.setData(strData, strData.length);
-    return this.checkPostStream(stream);
+    return this.checkPostStream(url, stream);
   }
   
 };
 
-function PostChecker(uploadStream) {
+function PostChecker(url, uploadStream) {
+  this.url = url;
   this.uploadStream = uploadStream;  
 }
 
@@ -1825,6 +1839,7 @@ PostChecker.prototype = {
       }
     } else {
       this.isFile = false;
+      
       parts = postData.split("&");
       if (!eof) this.postData = parts.pop();
       

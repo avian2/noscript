@@ -25,7 +25,7 @@ UIUtils.prototype = {
     this.persistTabSelections();
     
     if (info && info.callback) {
-      window.setTim\u0065out(info.callback, 0);
+      window.setTimeout(info.callback, 0);
     }
   },
   

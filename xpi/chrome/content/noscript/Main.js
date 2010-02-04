@@ -2028,7 +2028,7 @@ var ns = singleton = {
   },
   
   isFirebugJSURL: function(url) {
-    return url == "javascript: ev\u0061l(__firebugTemp__);"
+    return url == "javascript: eval(__firebugTemp__);"
   },
   
   isExternalScheme: function(scheme) {
@@ -2597,7 +2597,7 @@ var ns = singleton = {
               this._runJS(window, "(" +
                 function() {
                   var tt = [];
-                  window.setTim\u0065out = window.s\u0065tInterval = function(f, d, a) {
+                  window.setTimeout = window.setInterval = function(f, d, a) {
                     if (typeof(f) != 'function') f = new Function(f || '');
                     tt.push({f: f, d: d, a: a});
                     return 0;
@@ -2610,7 +2610,7 @@ var ns = singleton = {
                       t.f.call(window, t.a);
                     }
                     delete window.__runTimeouts;
-                    delete window.setTim\u0065out;
+                    delete window.setTimeout;
                   };
                 }.toSource()
               + ")()");
@@ -2754,7 +2754,7 @@ var ns = singleton = {
         
         switch(ev.type) {
           case "timeout":
-            w.setTim\u0065out(arguments.callee, ev.timeout, ev);
+            Thread.delay(arguments.callee, ev.timeout, this, [ev]);
             break;
           case "load":
             w.__noscriptOpaquedObjects = null;
@@ -2768,7 +2768,7 @@ var ns = singleton = {
     
     scheduleFixScrollers: function(w, timeout) {
       var ev = { currentTarget: w, type: "timeout", timeout: timeout };
-      w.setTim\u0065out(this.fixScrollers, ev.timeout, ev);
+      Thread.delay(this.fixScrollers, timeout, this, [ev]);
     },
     
     getOpaquedObjects: function(w, noscroll) {
@@ -3203,14 +3203,16 @@ var ns = singleton = {
               obj.autoplay = true;
             }
             
-            ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
-            
-            if (jsEnabled && (obj.offsetWidth < 2 || obj.offsetHeight < 2)) {
-              reload();
-              return;
-            }
             
             this.setExpando(obj, "allowed", true);
+            ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
+            var style = doc.defaultView.getComputedStyle(obj, '');
+            if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2))
+              Thread.delay(function() {
+                if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
+              }, 100); // warning, asap() or timeout=0 won't always work!
+            
+            
           } finally {
             ctx = null;
           }
@@ -3494,7 +3496,7 @@ var ns = singleton = {
             win = IOUtil.findWindow(newChannel) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
             browser = win && DOM.findBrowserForNode(win);
             if (browser) {
-              this.getRedirCache(browser, win.document.documentURI)
+              this.getRedirCache(browser, win.top.document.documentURI)
                   .push({ site: site, type: type });
             } else {
               if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
@@ -3683,7 +3685,7 @@ var ns = singleton = {
   
   get _inclusionTypeInternalExceptions() {
     delete this._inclusionTypeInternalExceptions;
-    return this._inclusionTypeInternalExceptions = new AddressMatcher("https://*.ebaystatic.com");
+    return this._inclusionTypeInternalExceptions = new AddressMatcher("https://*.ebaystatic.com/*");
   },
   
   checkInclusionType: function(channel) {
@@ -3902,14 +3904,14 @@ var ns = singleton = {
         if (this.consoleDump & LOG_CONTENT_BLOCK) 
           this.dump("Deferring framed media document");
         
-        
+        var url = uri.spec;
         
         browser = browser || DOM.findBrowserForNode(domWindow);
-        this.getRedirCache(browser, uri.spec).push({site: this.getSite(domWindow.top.document.documentURI), type: 7});
+        this.getRedirCache(browser, domWindow.top.document.documentURI).push({site: this.getSite(url), type: 7});
         // defer separate embed processing for frames
         
         
-        var url = uri.spec;
+       
         docShell = docShell || DOM.getDocShellForWindow(domWindow);
         docShell.loadURI("data:" + req.contentType + ",",
                              CI.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
@@ -4440,7 +4442,7 @@ var ns = singleton = {
   
 }
 
-ns.wr\u0061ppedJSObject = ns;
+ns.wrappedJSObject = ns;
 ns.register();
 
 if ("nsIChromeRegistrySea" in CI) INCLUDE("SMUninstaller");

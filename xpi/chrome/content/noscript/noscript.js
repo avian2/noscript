@@ -5,7 +5,7 @@ var noscriptUtil = {
     var ns = null;
     for(var attempt=1; attempt <= 2 ;attempt++) {
       try {
-        ns = Components.classes["@maone.net/noscript-service;1"].getService().wr\u0061ppedJSObject;
+        ns = Components.classes["@maone.net/noscript-service;1"].getService().wrappedJSObject;
         break;
       } catch(ex) {
         dump(ex.message);
