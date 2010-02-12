@@ -74,3 +74,4 @@ locale	noscript	kk-KZ jar:chrome/noscript.jar!/locale/kk-KZ/noscript/
 locale	noscript	bn-IN jar:chrome/noscript.jar!/locale/bn-IN/noscript/
 locale	noscript	te-IN jar:chrome/noscript.jar!/locale/te-IN/noscript/
 locale	noscript	ur-PK jar:chrome/noscript.jar!/locale/ur-PK/noscript/
+locale	noscript	vi    jar:chrome/noscript.jar!/locale/vi/noscript/

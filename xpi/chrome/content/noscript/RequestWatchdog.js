@@ -324,9 +324,9 @@ RequestWatchdog.prototype = {
 
     if (!origin) {
       if ((channel instanceof CI.nsIHttpChannelInternal) && channel.documentURI) {
-        if (originalSpec == channel.documentURI.spec) {
+        if (originalSpec === channel.documentURI.spec) {
            originSite = ns.getSite(abeReq.traceBack);
-           if (originSite) {
+           if (originSite && abeReq.traceBack !== originalSpec) {
               origin = abeReq.breadCrumbs.join(">>>");
               if (ns.consoleDump) this.dump(channel, "TRACEBACK ORIGIN: " + originSite + " FROM " + origin);
               if ((channel instanceof CI.nsIUploadChannel) && channel.uploadStream) {
@@ -340,7 +340,7 @@ RequestWatchdog.prototype = {
                if (ns.consoleDump) this.dump(channel, "Trusted reload");
                return;
              }
-             origin = "";
+             origin = originSite = "";
              untrustedReload = true;
              if (ns.consoleDump) this.dump(channel, "Untrusted reload");
            }
@@ -1694,6 +1694,13 @@ var InjectionChecker = {
     if (!((channel instanceof CI.nsIUploadChannel)
           && channel.uploadStream && (channel.uploadStream instanceof CI.nsISeekableStream)))
       return false;
+    
+    var clen = -1;
+    try {
+      clen = chan.getRequestHeader("Content-length");
+    } catch(e) {}
+    MaxRunTime.increase(clen < 0 || clen > 300000 ? 60 : Math.ceil(20 * clen / 100000));
+    
     this.log("Extracting post data...");
     return this.checkPostStream(channel.URI.spec, channel.uploadStream);
   },
@@ -1746,10 +1753,10 @@ PostChecker.prototype = {
 
         data = sis.readBytes(Math.min(available, BUF_SIZE));
 
-        if (size != 0) {
+        if (size !== 0) {
           this.postData += data;
         } else {
-           if (data.length == 0) return false;
+           if (data.length === 0) return false;
            this.postData = data;
         }
         available = sis.available();
@@ -2152,6 +2159,7 @@ function DOSChecker(request, canSpin) {
   this.canSpin = canSpin;
   Thread.asap(this.check, this);
 }
+
 DOSChecker.abort = function(req, info) {
   IOUtil.abort(("channel" in req) ? req.channel : req, true);
   ns.log("[NoScript DOS] Aborted potential DOS attempt: " +
@@ -2172,7 +2180,34 @@ DOSChecker.prototype = {
     }
   },
   check: function() {
+    MaxRunTime.restore();
+    
     if (!(this.done || this.canSpin && Thread.activeLoops))
       DOSChecker.abort(this.request, (this.lastClosure && this.lastClosure.toSource()));
+  }
+}
+
+var MaxRunTime = {
+  branch: CC["@mozilla.org/preferences-service;1"]
+        .getService(CI.nsIPrefService).getBranch("dom."),
+  pref: "max_script_run_time",
+  increase: function(v) {
+    var cur;
+    try {
+      cur = this.branch.getIntPref(this.pref);
+    } catch(e) {
+      cur = -1;
+    }
+    if (cur <= 0 || cur >= v) return;
+    if (typeof(this.storedValue) === "undefined") try {
+      this.storedValue = cur;
+    } catch(e) {}
+    this.branch.setIntPref(this.pref, v);
+  },
+  restore: function() {
+    if (typeof(this.storedValue) !== "undefined") {
+      this.branch.setIntPref(this.pref, this.storedValue);
+      delete this.storedValue;
+    }
   }
 }

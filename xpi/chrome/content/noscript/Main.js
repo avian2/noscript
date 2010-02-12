@@ -1145,40 +1145,50 @@ var ns = singleton = {
      }, 0);
   }
 ,
-  _lastSnapshot: null,
-  _lastGlobal: false,
-  _lastObjects: null,
+  _lastSnapshot: {
+    trusted: null,
+    untrusted: null,
+    global: false,
+    objects: null
+  },
   reloadWhereNeeded: function(currentTabOnly) {
-    var snapshot = this._lastSnapshot;
-    const ps = this.jsPolicySites;
+    const trusted = this.jsPolicySites;
+    const untrusted = this.untrustedSites;
     const global = this.jsEnabled;
-    var lastGlobal = this._lastGlobal;
-    this._lastGlobal = global;
-    this._lastSnapshot = global ? this.untrustedSites.clone() : ps.clone();
     
-
-    var lastObjects = this._lastObjects || this.objectWhitelist;
-    this._lastObjects = this.objectWhitelist;
+    var snapshot = this._lastSnapshot;
+    var lastTrusted = snapshot.trusted;
+    var lastUntrusted = snapshot.untrusted;
+    var lastGlobal = snapshot.global;
+    var lastObjects = snapshot.objects || this.objectWhitelist;
+    
+    snapshot.global = global;
+    snapshot.trusted = trusted.clone();
+    snapshot.untrusted = untrusted.clone();
+    snapshot.objects = this.objectWhitelist;
     
     this.initContentPolicy();
     
-    if (!snapshot ||
-        global == lastGlobal && lastObjects == this.objectWhitelist && 
-        ps.equals(snapshot)
-        ) 
-      return false;
-  
+    if (!lastTrusted ||
+        
+        global == lastGlobal &&
+        lastObjects == this.objectWhitelist && 
+        trusted.equals(lastTrusted) &&
+        untrusted.equals(lastUntrusted) ||
+        
+        !this.getPref("autoReload") ||
+        
+        global != lastGlobal && !this.getPref("autoReload.global")
+        
+        )
+      return;
     
-    if (!this.getPref("autoReload", true)) return false;
-    if (global != lastGlobal && !this.getPref("autoReload.global", true)) return false;
-    
-    currentTabOnly = currentTabOnly || !this.getPref("autoReload.allTabs", true) ||
-      global != lastGlobal && !this.getPref("autoReload.allTabsOnGlobal", false);
+    currentTabOnly = currentTabOnly || !this.getPref("autoReload.allTabs") ||
+      global != lastGlobal && !this.getPref("autoReload.allTabsOnGlobal");
     
     var useHistory = this.getPref("xss.reload.useHistory", false);
     var useHistoryExceptCurrent = this.getPref("xss.reload.useHistory.exceptCurrent", true);
       
-    var ret = false;
     var docSites, site;
     var prevStatus, currStatus;
     
@@ -1190,70 +1200,79 @@ var ns = singleton = {
     const untrustedReload = !this.getPref("xss.trustReloads", false);
 
     var bi = DOM.createBrowserIterator();
-    for (var browser, j; browser = bi.next();) {
-      docSites = this.getSites(browser);
+  
+    (function checkAndReload() {
+      var browser, j, k;
       
-      
-      
-      for (j = docSites.length; j-- > 0;) {
- 
-        prevStatus = lastGlobal ? !(this.alwaysBlockUntrustedContent && snapshot.matches(docSites[j])) : !!snapshot.matches(docSites[j]);
-        currStatus = this.isJSEnabled(docSites[j]) || !!this.checkShorthands(docSites[j]);
-        if (currStatus != prevStatus) {
-          ret = true;
-          if (currStatus) 
-            this.requestWatchdog.setUntrustedReloadInfo(browser, true);
-          
-          webNav = browser.webNavigation;
-          url = webNav.currentURI;
-          if (url.schemeIs("http") || url.schemeIs("https")) {
-            this.requestWatchdog.noscriptReload = url.spec;
-          }
-          try {
-            webNav = webNav.sessionHistory.QueryInterface(nsIWebNavigation);
-            if (currStatus && webNav.index && untrustedReload) {
-              try {
-                site = this.getSite(webNav.getEntryAtIndex(webNav.index - 1, false).URI.spec);
-                this.requestWatchdog.setUntrustedReloadInfo(browser, site != docSites[j] && !ps.matches(site));
-              } catch(e) {}
-            }
+      for (var k = 10; k-- > 0 && (browser = bi.next()); ) {
+        
+        docSites = this.getSites(browser);
+  
+        for (j = docSites.length; j-- > 0;) {
+          site = docSites[j];
+          prevStatus = !(lastGlobal
+            ? this.alwaysBlockUntrustedContent && lastUntrusted.matches(site)
+            : !lastTrusted.matches(site) || lastUntrusted.matches(site)
+          );
+          currStatus = this.isJSEnabled(site) || !!this.checkShorthands(site);
+  
+          if (currStatus != prevStatus) {
+            if (currStatus) 
+              this.requestWatchdog.setUntrustedReloadInfo(browser, true);
             
-            if (useHistory) {
-              if (useHistoryExceptCurrent) {
-                useHistoryExceptCurrent = false;
-              } else if(!(url instanceof nsIURL && url.ref || url.spec.substring(url.spec.length - 1) == "#")) {
-                if (useHistoryCurrentOnly) useHistory = false;
-                webNav.gotoIndex(webNav.index);
-                break;
-              }
+            webNav = browser.webNavigation;
+            url = webNav.currentURI;
+            if (url.schemeIs("http") || url.schemeIs("https")) {
+              this.requestWatchdog.noscriptReload = url.spec;
             }
-          } catch(e) {}
-          try {
-            browser.webNavigation.reload(LOAD_FLAGS); // can fail, e.g. because a content policy or an user interruption
-          } catch(e) {}
-          break;
+            try {
+              webNav = webNav.sessionHistory.QueryInterface(nsIWebNavigation);
+              if (currStatus && webNav.index && untrustedReload) {
+                try {
+                  site = this.getSite(webNav.getEntryAtIndex(webNav.index - 1, false).URI.spec);
+                  this.requestWatchdog.setUntrustedReloadInfo(browser, site != docSites[j] && !trusted.matches(site));
+                } catch(e) {}
+              }
+              
+              if (useHistory) {
+                if (useHistoryExceptCurrent) {
+                  useHistoryExceptCurrent = false;
+                } else if(!(url instanceof nsIURL && url.ref || url.spec.substring(url.spec.length - 1) == "#")) {
+                  if (useHistoryCurrentOnly) useHistory = false;
+                  webNav.gotoIndex(webNav.index);
+                  break;
+                }
+              }
+            } catch(e) {}
+            try {
+              browser.webNavigation.reload(LOAD_FLAGS); // can fail, e.g. because a content policy or an user interruption
+            } catch(e) {}
+            break;
+          }
         }
+        
+        if(j < 0) { 
+          // check plugin objects
+          if (this.consoleDump & LOG_CONTENT_BLOCK) {
+            this.dump("Checking object permission changes...");
+            try {
+              this.dump(docSites.toSource() + ", " + lastObjects.toSource());
+            } catch(e) {}
+          }
+          if (this.checkObjectPermissionsChange(docSites, lastObjects)) {
+             this.quickReload(browser.webNavigation);
+          }
+        }
+        
+        if (currentTabOnly) {
+          bi.dispose();
+          return;
+        }
+        
+        Thread.delay(checkAndReload, this, 1);
       }
-      
-      if(j < 0) { 
-        // check plugin objects
-        if (this.consoleDump & LOG_CONTENT_BLOCK) {
-          this.dump("Checking object permission changes...");
-          try {
-            this.dump(docSites.toSource() + ", " + lastObjects.toSource());
-          } catch(e) {}
-        }
-        if (this.checkObjectPermissionsChange(docSites, lastObjects)) {
-           ret = true;
-           this.quickReload(browser.webNavigation);
-        }
-      }
-      
-      if (currentTabOnly) break;
-    }
-    bi.dispose();
-    bi = null;
-    return ret;
+    }).apply(this);
+    
   },
   
   
@@ -2555,8 +2574,9 @@ var ns = singleton = {
         var site;
         if (allowBookmarklets && /^\s*(?:javascript|data):/i.test(url)) {
           var ret = this.executeJSURL(url, openCallback);
-        } else if (allowBookmarks && !this.isUntrusted(site = this.getSite(url))) {
+        } else if (allowBookmarks && !(this.isJSEnabled(site = this.getSite(url)) || this.isUntrusted(site))) {
           this.setJSEnabled(site, true);
+          this.savePrefs();
         }
         return ret;
       } catch(e) {
@@ -2865,7 +2885,7 @@ var ns = singleton = {
     var anchor, innerDiv, iconSize;
     var extras;
     var cssLen, cssCount, cssProp, cssDef;
-    var style, astyle;
+    var style;
     
     var replacements = null;
     var w, h;
@@ -2954,20 +2974,15 @@ var ns = singleton = {
           
           innerDiv.setAttribute("style", cssDef + forcedCSS);
           
-          if (style.width == "100%" || style.height == "100%") {
-            anchor.style.width = style.width;
-            anchor.style.height = style.height;
-            anchor.style.display = "block";
-          }
-        }
+          restrictedSize = (collapse || style.display === "none" || style.visibility === "hidden");
+          
+        } else restrictedSize = collapse;
         
-        restrictedSize = (collapse || style.display == "none" || style.visibility == "hidden");
         if (restrictedSize) {
           innerDiv.style.maxWidth = anchor.style.maxWidth = "32px";
           innerDiv.style.maxHeight = anchor.style.maxHeight = "32px";
         }
         
-        // if (innerDiv.style.display != "none") innerDiv.style.display = "block";
         innerDiv.style.visibility = "visible";
 
         anchor.appendChild(innerDiv);
