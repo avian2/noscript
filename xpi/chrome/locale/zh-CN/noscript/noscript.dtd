@@ -38,14 +38,14 @@
 <!ENTITY noscriptSound.reset "恢复默认设置">
 <!ENTITY noscriptSound.reset.accesskey "R">
 <!ENTITY noscriptAdvanced "高级">
-<!ENTITY noscriptAdditionalPermissions "对受信任站点的额外许可">
-<!ENTITY noscriptAllowClipboard "允许由外部剪贴板进行多信息文本的复制和粘贴">
+<!ENTITY noscriptAdditionalPermissions "对信任站点的额外许可">
+<!ENTITY noscriptAllowClipboard "允许由外部剪贴板进行富文本(rich text)的复制和粘贴">
 <!ENTITY noscriptAdditionalRestrictions "对不信任站点的额外限制">
 <!ENTITY noscriptPlugins "插件">
 <!ENTITY noscriptContentBlocker "对受信任站点仍然应用这些限制">
-<!ENTITY noscriptForbidJava "禁止 Java">
+<!ENTITY noscriptForbidJava "禁止 Java™">
 <!ENTITY noscriptForbidXSLT "禁止 XSLT">
-<!ENTITY noscriptForbidWebBugs "禁止 &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidWebBugs "禁止 &quot;网络爬虫&quot;(Web Bugs)">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "禁止 &lt;FRAME&gt;">
@@ -60,10 +60,10 @@
 <!ENTITY noscriptShowPlaceholder "显示图像占位符">
 <!ENTITY noscriptTruncateTitle "截短文档标题">
 <!ENTITY noscriptFixLinks "尝试定位 JavaScript 链接">
-<!ENTITY noscriptAllowBookmarks "允许书签中的所有网站">
-<!ENTITY noscriptAllowViaBookmarks "允许通过书签打开站点">
+<!ENTITY noscriptAllowBookmarks "允许通过书签打开的网站（脚本）">
+<!ENTITY noscriptAllowViaBookmarks "允许通过书签打开的网站（脚本）">
 <!ENTITY noscriptAllowPing "允许 &lt;A PING...&gt;">
-<!ENTITY noscriptAllowLocalLinks "允许本地链接">
+<!ENTITY noscriptAllowLocalLinks "允许本地的链接">
 <!ENTITY noscriptForbidPing "禁止 &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "禁止 &lt;NOSCRIPT&gt; 元素内的 META 重定向">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
@@ -88,7 +88,7 @@
 <!ENTITY noscriptNselNever "隐藏 &lt;NOSCRIPT&gt; 元素">
 <!ENTITY noscriptNselForce "显示已被屏蔽的 &lt;SCRIPT&gt; 标签下的 &lt;NOSCRIPT&gt; 元素">
 <!ENTITY noscriptAutoAllowTopLevel "默认临时允许顶层站点">
-<!ENTITY noscriptDescription "为您的 Firefox 提供额外保护: NoScript 只允许在您选择的信任域 (例如您的家庭银行网站) 上执行 JavaScript、Java 和其他插件。该白名单基于抢先阻止机制，在不损失任何功能的前提下，防止利用已知或未知安全漏洞的攻击。专家们同意：拥有 NoScript 的 Firefox 更安全 :-)">
+<!ENTITY noscriptDescription "为您的 Firefox 提供额外保护: NoScript 只允许在您选择的信任域 (例如您的家庭银行网站) 上执行 JavaScript、Java(和其他插件)。该白名单基于抢先阻止机制，在不损失任何功能的前提下，防止利用已知或未知安全漏洞的攻击。专家们同意：拥有 NoScript 的 Firefox 更安全 :-)">
 <!ENTITY noscriptOptBlockCssScanners "阻止基于 CSS 的扫描器">
 <!ENTITY noscriptOptFilterXGet "净化跨站点的可疑请求">
 <!ENTITY noscriptOptFilterXPost "把跨站点 POST 请求转换为最少数据的 GET 请求">
@@ -96,7 +96,7 @@
 <!ENTITY noscriptShowConsole.accesskey "S">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
-<!ENTITY noscriptXssFaq "XSS FAQ...">
+<!ENTITY noscriptXssFaq "XSS 问答...">
 <!ENTITY noscriptXssFaq.accesskey "Q">
 <!ENTITY noscriptUnsafeReload "非安全的重新载入">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
@@ -109,7 +109,7 @@
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
+<!ENTITY noscriptJarFaq "JAR 问答…">
 <!ENTITY noscriptJarFaq.accesskey "Q">
 <!ENTITY noscriptForbidJarDocuments "阻止作为文档载入 JAR 远程资源">
 <!ENTITY noscriptJarExceptions "阻止 JAR 文档的例外情况">
@@ -125,10 +125,10 @@
 <!ENTITY noscriptTempAllowPage.accesskey "T">
 <!ENTITY noscriptAllowPage "允许本页面所有对象">
 <!ENTITY noscriptAllowPage.accesskey "A">
-<!ENTITY noscriptTempToPerm "永久许可页面临时允许对象">
+<!ENTITY noscriptTempToPerm "永久允许页面内的临时许可对象">
 <!ENTITY noscriptTempToPerm.accesskey "m">
 <!ENTITY noscriptHttps "HTTPS">
-<!ENTITY noscriptHttpsFaq "HTTPS FAQ...">
+<!ENTITY noscriptHttpsFaq "HTTPS 问答...">
 <!ENTITY noscriptHttpsFaq.accesskey "Q">
 <!ENTITY noscriptHttps.behavior "特性">
 <!ENTITY noscriptHttps.cookies "Cookies">
@@ -143,12 +143,12 @@
 <!ENTITY noscriptSecureCookiesExceptions "以下站点通过 HTTPS 忽略不安全的 Cookies 设置:">
 <!ENTITY noscriptClearClickTitle "ClearClick 警告">
 <!ENTITY noscriptClearClickHeader "潜在的点击劫持 / UI 跳转攻击!">
-<!ENTITY noscriptClearClickDescription "NoScript 拦截了一个与隱藏元素互动的鼠标或键盘操作。点击图片切换拦截和取消拦截。">
-<!ENTITY noscriptClearClickOpt "启用 ClearClick 保护于">
+<!ENTITY noscriptClearClickDescription "NoScript 拦截了一个部分隐藏元素的鼠标或键盘互动。点击图片切换拦截和取消拦截。">
+<!ENTITY noscriptClearClickOpt "启用 ClearClick 保护于...">
 <!ENTITY noscriptClearClickReport "报告">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "报告 ID:">
-<!ENTITY noscriptOpacizeOpt "禁用嵌入对象透明属性于">
+<!ENTITY noscriptOpacizeOpt "禁用嵌入对象透明属性于...">
 <!ENTITY noscriptTrustedPagesAdj "可信任页面">
 <!ENTITY noscriptUntrustedPagesAdj "不可信任页面">
 <!ENTITY noscriptKeepLocked "保持锁定此元素 (推荐)">
@@ -158,8 +158,8 @@
 <!ENTITY noscriptFrameOptErr.title "此内容不能被显示在帧中">
 <!ENTITY noscriptFrameOptErr.desc "为了保护你的安全, 此内容提供者不允许它被显示在帧中。">
 <!ENTITY noscriptFrameOptErr.link "点击这里在新窗口中打开此内容">
-<!ENTITY noscriptBookmarkSync "备份 NoScript 配置到书签以便轻松的同步">
-<!ENTITY noscriptShowReleaseNotes "更新时显示发行版本注释">
+<!ENTITY noscriptBookmarkSync "备份 NoScript 配置到书签以便轻松地同步">
+<!ENTITY noscriptShowReleaseNotes "更新时显示发布注释">
 <!ENTITY ABE "ABE">
 <!ENTITY ABE.accesskey "A">
 <!ENTITY ABE.rulesets.label "规则集:">

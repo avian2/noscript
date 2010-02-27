@@ -410,7 +410,7 @@ return noscriptUtil.service ? {
     var untrustedCount = 0, unknownCount = 0, tempCount = 0;
     const untrustedSites = ns.untrustedSites;
     var docJSBlocked = false;
-    
+
     menuGroups = [];
     for (j = 0; j < sites.length; j++) {
       site = sites[j];
@@ -434,14 +434,15 @@ return noscriptUtil.service ? {
       } else {
         domain = !ns.isForbiddenByHttpsStatus(site) && ns.getDomain(site);
         
+
+        
         if ((dp = ns.getPublicSuffix(domain)) == domain || // exclude TLDs
-            // ns.ignorePorts && /:\d+$/.test(site) &&
             ns.isJSEnabled(domain) != enabled // exclude ancestors with different permissions
           ) {
           domain = null; 
         }
         
-        menuSites = (showAddress || showNothing || !domain) ? [site] : [];
+        menuSites = (showAddress || showNothing || !domain || /:\d+$/.test(site)) ? [site] : [];
         if (domain && (showDomain || showBase)) {
           baseLen = domain.length;
           if (dp) 
@@ -2196,29 +2197,29 @@ return noscriptUtil.service ? {
   }
 }
 : {
-  install: function() {
-    window.addEventListener("load", function(ev) {
-      ev.currentTarget.removeEventListener("load", arguments.callee, false); 
-      var node = null;
-      for each(var id in ["noscript-context-menu", "noscript-tbb", "noscript-statusIcon"]) {
-        node = $(id);
-        if (node) node.hidden = true;
-      }
-      node = null;
-      var prefs = this.prefService = CC["@mozilla.org/preferences-service;1"]
-        .getService(CI.nsIPrefService).getBranch("noscript.");
-      try {
-        if (prefs.getBoolPref("badInstall")) return;
-      } catch(e) {}
-      prefs.setBoolPref("badInstall", true);
-      prefs = null;
-      window.setTimeout(function() {
-        alert("NoScript is not properly installed and cannot operate correctly.\n" + 
-              "Please install it again and check the Install FAQ section on http://noscript.net/faq if this problem persists.");
-        noscriptUtil.browse("http://noscript.net/faq#faqsec2", null);
-          
-      },10);
-    }, false);
+    install: function() {
+      window.addEventListener("load", function(ev) {
+        ev.currentTarget.removeEventListener("load", arguments.callee, false); 
+        var node = null;
+        for each(var id in ["noscript-context-menu", "noscript-tbb", "noscript-statusIcon"]) {
+          node = $(id);
+          if (node) node.hidden = true;
+        }
+        node = null;
+        var prefs = this.prefService = CC["@mozilla.org/preferences-service;1"]
+          .getService(CI.nsIPrefService).getBranch("noscript.");
+        try {
+          if (prefs.getBoolPref("badInstall")) return;
+        } catch(e) {}
+        prefs.setBoolPref("badInstall", true);
+        prefs = null;
+        window.setTimeout(function() {
+          alert("NoScript is not properly installed and cannot operate correctly.\n" + 
+                "Please install it again and check the Install FAQ section on http://noscript.net/faq if this problem persists.");
+          noscriptUtil.browse("http://noscript.net/faq#faqsec2", null);
+            
+        },10);
+      }, false);
   }
 }})()
 

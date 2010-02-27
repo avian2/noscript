@@ -1269,7 +1269,7 @@ var ns = singleton = {
           return;
         }
         
-        Thread.delay(checkAndReload, this, 1);
+        Thread.delay(checkAndReload, 1, this);
       }
     }).apply(this);
     
@@ -2605,7 +2605,9 @@ var ns = singleton = {
     
 
       try {
-        this.setJSEnabled(site, true);
+        if (!snapshots.siteJS)
+          this.setJSEnabled(site, true);
+        
         browser.webNavigation.allowJavascript = true;
         this.jsEnabled = ns.getPref("allowBookmarkletImports");
           
@@ -2659,10 +2661,14 @@ var ns = singleton = {
         return true;
       } finally {
         this.jsEnabled = false;
-        this.setJSEnabled(site, snapshots.siteJS);
+        
+        if (!snapshots.siteJS)
+          this.setJSEnabled(site, false);
+        
         this.setExpando(browser, "jsSite", site);
         if (!browser.webNavigation.isLoadingDocument && this.getSite(browser.webNavigation.currentURI.spec) == site)
           browser.webNavigation.allowJavascript = snapshots.docJS;
+        
         if (this.consoleDump & LOG_JS)
           this.dump("Restored snapshot permissions on " + site + "/" + (browser.webNavigation.isLoadingDocument ? "loading" : browser.webNavigation.currentURI.spec));
       }
@@ -3225,7 +3231,7 @@ var ns = singleton = {
             if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2))
               Thread.delay(function() {
                 if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
-              }, 100); // warning, asap() or timeout=0 won't always work!
+              }, 500); // warning, asap() or timeout=0 won't always work!
             
             
           } finally {
@@ -3359,7 +3365,6 @@ var ns = singleton = {
   
   _enumerateSites: function(browser, sites) {
 
-    
     const nsIDocShell = CI.nsIDocShell;
     const nsIWebProgress = CI.nsIWebProgress;
     
@@ -3370,7 +3375,7 @@ var ns = singleton = {
     
     var loading = false, loaded = false, domLoaded = false;
     
-    var docShell, docURI, url, win;
+    var docShell, docURI, url, win, top;
 
     var cache, redir, tmpPluginCount;
     
@@ -3419,7 +3424,9 @@ var ns = singleton = {
       
       domLoaded = this.getExpando(win, "contentLoaded");
       
-      if (win == win.top) {
+      if (win === (top || (top = win.top))) {
+        sites.topURL = url;
+        
         cache = this.getExpando(document, "objectSites");
         if(cache) {
           if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource());
@@ -3460,7 +3467,7 @@ var ns = singleton = {
     }
     
     
-    sites.topURL = sites[0] || '';
+    if (!sites.topURL) sites.topURL = sites[0] || '';
     
     if (loading) try {
       browser.ownerDocument.defaultView.noscriptOverlay.syncUI();

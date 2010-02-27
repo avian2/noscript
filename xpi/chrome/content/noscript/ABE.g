@@ -48,7 +48,7 @@ LOCATION  : 'LOCAL' | 'SELF'
 ;
 URI       : URI_START URI_PART+
 ;
-GLOB      : (URI_START | '*') (URI_PART | '*')*
+GLOB      : (URI_START | '*' | '.') (URI_PART | '*')*
 ;
 REGEXP    : '^' ~'\n'+
 ;

@@ -515,7 +515,7 @@ var ABE = ns.__parent__.ABE;
 var abeOpts = {
   selectedRS: null,
   _map: {},
-  
+  errors: false,
   init: function() {
     
     if (!(ABE.legacySupport || ABE.__parent__.Thread.canSpin)) {
@@ -531,13 +531,20 @@ var abeOpts = {
     ABE.updateRules();
     this.populate();
     window.addEventListener("focus", function(ev) {
-      if (ABE.updateRulesNow()) abeOpts.populate();
+      if (ABE.updateRulesNow()) {
+        abeOpts.populate();
+        if (abeOpts.errors) {
+          abeOpts.errors = false;
+          noscriptUtil.prompter.alert(window, "ABE", ns.getString("ABE.syntaxError"));
+        }
+      }
     }, false);
   },
   
   _populating: false,
   populate: function() {
     this._populating = true;
+    this.errors = false;
     try {
       this._map = {};
       var l = this.list;
@@ -554,7 +561,10 @@ var abeOpts = {
           i = l.appendItem(name, name);
           if (rs.disabled) i.setAttribute("disabled", "true");
           if (sel == name) selItem = i;
-          if (rs.errors) i.className = "noscript-error";
+          if (rs.errors) {
+            i.className = "noscript-error";
+            this.errors = rs.errors;
+          }
         }
       }
       l.selectedItem = selItem;

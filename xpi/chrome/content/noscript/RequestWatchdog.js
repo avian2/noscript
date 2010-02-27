@@ -352,7 +352,10 @@ RequestWatchdog.prototype = {
         if (ns.consoleDump) this.dump(channel, "***** NO ORIGIN CAN BE INFERRED!!! *****");
       }
     } else {
-      if (channel.loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI && channel.originalURI.spec == channel.URI.spec) {
+      if (channel.loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI &&
+          channel.originalURI.spec == channel.URI.spec &&
+          !IOUtil.extractFromChannel(channel, "noscript.XSS", true)
+          ) {
         // clean up after user action
         window = window || abeReq.window;
         browser = browser || this.findBrowser(channel, window);
@@ -1019,18 +1022,18 @@ var InjectionChecker = {
       s = s.replace(/\\{2,}/g, this.reduceBackSlashes);
       
       // drop escaped quotes
-      s = s.replace(/\\["'\/]/g, "EQ");
+      s = s.replace(/\\["'\/]/g, " EQ ");
       var expr;
       for(;;) {
-         expr = s.replace(/(^[^'"\/]*[;,\+\-=\(\[]\s*)\/[^\/]+\//g, "$1_RX_")
-                .replace(/(^[^'"\/]*)(["']).*?\2/g, "$1_QS_");
+         expr = s.replace(/(^[^'"\/]*[;,\+\-=\(\[]\s*)\/[^\/]+\//g, "$1 _RX_ ")
+                .replace(/(^[^'"\/]*)(["']).*?\2/g, "$1 _QS_ ");
          if(expr == s) break;
          s = expr;
       }
     }
     
-                      // remove c++ style comments    
-    return s.replace(/^([^'"\\]*?)\/\/[^\r\n]*/g, "//_COMMENT_");
+    // remove c++ style comments    
+    return s.replace(/^([^'"\\]*?)\/\/[^\r\n]*/g, "$1//_COMMENT_");
   },
   
   reduceURLs: function(s) {
@@ -1215,7 +1218,7 @@ var InjectionChecker = {
     
     const invalidChars = this.invalidChars;
     const findInjection = 
-      /(['"#;]|[\/\?=&](?![\?=&])|\*\/)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|i\W*n\W*n\W*e\W*r\W*H\W*T\W*M\W*L|\W*o\W*n(?:\W*\w){3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
+      /(['"#;>]|[\/\?=&](?![\?=&])|\*\/)(?!\1)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|i\W*n\W*n\W*e\W*r\W*H\W*T\W*M\W*L|\W*o\W*n(?:\W*\w){3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
     
     findInjection.lastIndex = 0;
     var m, breakSeq, subj, expr, lastExpr, script,
@@ -1281,7 +1284,7 @@ var InjectionChecker = {
 
       len = expr.length;
       
-      for (moved = false, hunt = !!expr, lastExpr; hunt;) {
+      for (moved = false, hunt = !!expr, lastExpr = ''; hunt;) {
         
         if (Date.now() - t > MAX_TIME) {
           this.log("Too long execution time! Assuming DOS... " + s, t, iterations);
@@ -1308,9 +1311,10 @@ var InjectionChecker = {
         }
         
         if(lastExpr === expr) {
-          lastExpr = null;
+          lastExpr = '';
           continue;
         }
+        
         lastExpr = expr;
         
         if(invalidChars.test(expr)) {
@@ -1381,8 +1385,12 @@ var InjectionChecker = {
             } else if (/left-hand/.test(errmsg)) break;
             
             if (/invalid .*\bflag\b|missing ; before statement|invalid label|illegal character|identifier starts immediately/.test(errmsg)) {
-              if (!(/illegal character/.test(errmsg) && /#\d*\s*$/.test(script))) // sharp vars exceptional behavior
-                break; // unrepairable syntax error, move left cursor forward 
+              if (!(/illegal character/.test(errmsg) && /#\d*\s*$/.test(script))) { // sharp vars exceptional behavior
+                if (!quote) break;
+                // let's retry without quotes
+                quote = lastExpr = '';
+                hunt = moved = true;
+              }
             }
             else if((m = errmsg.match(/\bmissing ([:\]\)\}]) /))) {
               len = subj.indexOf(m[1], len);
@@ -1466,7 +1474,7 @@ var InjectionChecker = {
   },
   
   attributesChecker: new RegExp(
-      "\\W(?:javascript:[\\s\\S]+(?:[=\\(]|%(?:[3a]8|[3b]d))|data:[\\w\\-/]+[;,])|@" + 
+      "\\W(?:javascript:[\\s\\S]+(?:[=\\(]|%(?:[3a]8|[3b]d))|data:[^,]+,[\\w\\W]*?<[^<]*\\w[^<]*>)|@" + 
       ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
         "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
         .replace(/[a-rt-z\-]/g, "\\W*$&"), 
@@ -1611,8 +1619,8 @@ var InjectionChecker = {
     if (this._checkOverDecoding(s, unescaped))
       return true;
     
-    if (/[\n\r\t]/.test(unescaped) &&
-        this._checkRecursive(unescaped.replace(/[\n\r\t]/g, ''), depth)) {
+    if (/[\n\r\t]|&#/.test(unescaped) &&
+        this._checkRecursive(Entities.convertAll(unescaped).replace(/[\n\r\t]/g, ''), depth)) {
       this.log("Trash-stripped nested URL match!"); // http://mxr.mozilla.org/mozilla-central/source/netwerk/base/src/nsURLParsers.cpp#100
       return true;
     }
@@ -2064,7 +2072,7 @@ XSanitizer.prototype = {
     // regular duty
     s = s.replace(this.primaryBlacklist, " ");
     
-    s = s.replace(/\bjavascript:+|\bdata:+[\s\w\-\/]*,|-moz-binding|@import/ig, function(m) { return m.replace(/\W/g, " "); });
+    s = s.replace(/\bjavascript:+|\bdata:[^,]+,(?=[^<]*<)|-moz-binding|@import/ig, function(m) { return m.replace(/(.*?)(\w)/, "$1#no$2"); });
     
     if (this.extraBlacklist) { // additional user-defined blacklist for emergencies
       s = s.replace(this.extraBlacklist, " "); 
@@ -2072,7 +2080,7 @@ XSanitizer.prototype = {
     
     if (this.brutal) { // injection checks were positive
       s = InjectionChecker.reduceDashPlus(s)
-        .replace(/['\(\)\=\[\]]/g, " ")
+        .replace(/['\(\)\=\[\]<]/g, " ")
         .replace(this._brutalReplRx, String.toUpperCase)
         .replace(/Q[\da-fA-Fa]{2}/g, "Q20")
         .replace(/%[\n\r\t]*[0-9a-f][\n\r\t]*[0-9a-f]/gi, " ")

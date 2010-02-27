@@ -80,6 +80,10 @@ AddressMatcher.prototype = {
           p = p.replace(/[\.\?\-]/g, "\\$&"); // escape special regexp chars
 
           if (!hasScheme) { // adjust for no protocol
+            if (p.substring(0, 2) === '\\.') {
+              // al_9x's proposed syntactic sugar to match both *.x.y and x.y
+              p = "([^/]+\\.)?" + p.substring(2); 
+            }
             p = "[a-z]+\\w+://" + p;
           }
 
