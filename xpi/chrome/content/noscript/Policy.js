@@ -452,14 +452,14 @@ const MainContentPolicy = {
             this.applyPluginPatches(aContext);
           }
                   
-          if (originSite && locationSite == originSite) return CP_OK;
+          forbid = !(originSite && locationSite == originSite);
         } else isScript = false;
         
         if (aContext) // XSLT comes with no context sometimes...
           this.getExpando(aContext.defaultView.top.document, "codeSites", []).push(locationSite);
         
         
-        forbid = !this.isJSEnabled(locationSite);
+        if (forbid) forbid = !this.isJSEnabled(locationSite);
         if (forbid && this.ignorePorts && /:\d+$/.test(locationSite)) {
           forbid = !this.isJSEnabled(locationSite.replace(/:\d+$/, ''));
         }
@@ -468,6 +468,12 @@ const MainContentPolicy = {
           if (isScript) ScriptSurrogate.apply(aContext, locationURL);
           return this.reject(isScript ? "Script" : "XSLT", arguments);
         } else {
+          
+          if (isScript && this.getExpando(aContext.defaultView.top.document, "bookmarklet")) {
+            this.bookmarkletImport(aContext, locationURL);
+            return this.reject("Bookmarklet inclusion, already imported synchronously", arguments);
+          }
+          
           return CP_OK;
         }
       }

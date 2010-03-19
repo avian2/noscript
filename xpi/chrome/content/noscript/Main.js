@@ -369,6 +369,11 @@ var ns = singleton = {
         STS[name.substring(4)] = this.getPref(name);
       break;
       
+      case "subscription.trustedURL":
+      case "subscription.untrustedURL":
+        ns.setPref("subscription.lastCheck", 0);
+      break;
+      
       case "consoleDump":
         this[name] = this.getPref(name, this[name]);
         this.injectionChecker.logEnabled = this.consoleDump & LOG_INJECTION_CHECK;
@@ -697,6 +702,8 @@ var ns = singleton = {
       }
     }
     
+
+    
     DNS.logEnabled = this.getPref("logDNS");
     
     this.setupJSCaps();
@@ -729,6 +736,8 @@ var ns = singleton = {
       this.jsEnabled = false;
     
     this.eraseTemp();
+    
+    this.checkSubscriptions();
     
     this.reloadWhereNeeded(); // init snapshot
     
@@ -880,9 +889,26 @@ var ns = singleton = {
   isManual: function(s) {
     return !!this.manualSites.matches(s);
   },
-  setManual: function(s, b) {
-    if (b) this.manualSites.add(s);
-    else this.manualSites.remove(s, true);
+  setManual: function(ss, b) {
+    if (b) this.manualSites.add(ss);
+    else {
+      if (!ss.push) ss = [ss];
+      try {
+        this.manualSites.sitesString = this.manualSites.sitesString.replace(
+          new RegExp("(^|\\s)(?:" +
+            ss.map(function(k) {
+              k = k.replace(/[\.\-]/g, '\\$&');
+              if (k.indexOf(":") < 0) k = "(?:[a-z\\-]+:\/\/)?(?:[^\\s/]+\.)?" + k; // match protocols and subdomains
+              if (!/:\d+$/.test(k)) k += "(?::\\d+)?"; // match ports
+              return k;
+            }).join("|") +
+            ")(?=\\s|$)", "ig"),
+          "$1"
+        );
+      } catch(e) {
+        this.manualSites.remove(ss)
+      }
+    }
     return b;
   },
   
@@ -1364,9 +1390,9 @@ var ns = singleton = {
     webNav.reload(webNav.LOAD_FLAGS_CHARSET_CHANGE);
   },
   
-  getPermanentSites: function() {
-    var whitelist = this.jsPolicySites.clone();
-    whitelist.remove(this.tempSites.sitesList, true, true);
+  getPermanentSites: function(whitelist, templist) {
+    whitelist = (whitelist || this.jsPolicySites).clone();
+    whitelist.remove((templist || this.tempSites).sitesList, true, true);
     return whitelist;
   },
   
@@ -2615,6 +2641,7 @@ var ns = singleton = {
         if (Thread.canSpin) { // async evaluation, after bug 351633 landing
           var doc = window.document;
           try {
+            this.setExpando(doc, "bookmarklet", true);
             if (!(snapshots.siteJS && snapshots.docJS)) {
               this._runJS(window, "(" +
                 function() {
@@ -2654,6 +2681,8 @@ var ns = singleton = {
             
           } catch(e) {
             if(this.consoleDump) this.dump("JS URL execution failed: " + e);
+          } finally {
+            this.setExpando(doc, "bookmarklet", false);
           }
         } else {
           openCallback(url);
@@ -2679,6 +2708,12 @@ var ns = singleton = {
   _runJS: function(window, s) {
     window.location.href = "javascript:" + encodeURIComponent(s + "; void(0);");
     Thread.yieldAll();
+  },
+  bookmarkletImport: function(doc, src) {
+    var xhr = ns.createCheckedXHR("GET", src, false);
+    xhr.send(null);
+    ScriptSurrogate.execute(doc, xhr.responseText);
+    if (Thread.canSpin) Thread.yieldAll();
   },
   
   isCheckedChannel: function(c) {
@@ -2951,7 +2986,7 @@ var ns = singleton = {
             win.addEventListener("click", this.bind(this.onOverlayedPlaceholderClick), true);
           }
           anchor.addEventListener("click", this.bind(this.onPlaceholderClick), true);
-          anchor.className = "__noscriptPlaceholder__";
+          anchor.className = "__noscriptPlaceholder__ __noscriptObjectPatchMe__";
           if (this.abpRemoveTabs) this.removeAbpTab(object);
         } else {
           anchor.className = "";
@@ -2960,6 +2995,8 @@ var ns = singleton = {
           this.removeAbpTab(object); 
           continue;
         }
+        
+        object.className += " __noscriptObjectPatchMe__";
         
         innerDiv = document.createElementNS(HTML_NS, "div");
         innerDiv.className = "__noscriptPlaceholder__1";
@@ -3028,8 +3065,31 @@ var ns = singleton = {
     }
 
     if (replacements) {
+      this.patchObjects(document);
       this.delayExec(this.createPlaceholders, 0, replacements, pluginExtras, document);
     }
+  },
+  
+  get _objectPatch() {
+    delete this._objectPatch;
+    return this._objectPatch = "(" + function() {
+      var els = document.getElementsByClassName("__noscriptObjectPatchMe__");
+      var el;
+      for (var j = els.length; j-- > 0;) {
+        el = els[j];
+        el.setAttribute("class",
+          el.getAttribute("class").replace(/\b__noscriptObjectPatchMe__\b/, '').replace(/\s+/, ' ')
+        );
+        el.__noSuchMethod__ = function() {};
+      }
+    }.toSource() + ")()";
+  },
+  
+  patchObjects: function(document) {
+    delete this.patchObjects;
+    return (this.patchObjects = ("getElementsByTagName" in document)
+      ? function(document) { ScriptSurrogate.execute(document, this._objectPatch); }
+      : function () {}).call(this, document);
   },
   
   createPlaceholders: function(replacements, pluginExtras, document) {
@@ -3045,6 +3105,8 @@ var ns = singleton = {
         this._collectPluginExtras(pluginExtras, r.extras);
         if (this.abpInstalled && !this.abpRemoveTabs)
           this.adjustAbpTab(r.placeholder);
+          
+        ns.patchObjects(document);
       } catch(e) {
         this.dump(e);
       }
@@ -3291,29 +3353,26 @@ var ns = singleton = {
       if (n == "type" && v == type && !this.data) {
         this._pendingType = v;
         
-        if (!ver) {
-          this.SetVariable = function() {};
-          this.GetVariable = function(n) {
-            if (n != "$version") return;
-            
-            if (!ver) {
-              ver = navigator.plugins["Shockwave Flash"]
-                .description.match(/(\d+)\.(\d+)(?:\s*r(\d+))?/);
-              
-              ver.shift();
-              ver.push('99');
-              ver = "WIN " + ver.join(",");
-            }
-            
-            return;
+       
+        this.SetVariable = function() {};
+        this.GetVariable = function(n) {
+          if (n !== "$version") return undefined;
+          
+          if (!ver) {
+            ver = navigator.plugins["Shockwave Flash"]
+              .description.match(/(\d+)\.(\d+)(?:\s*r(\d+))?/); 
+            ver.shift();
+            ver.push('99');
+            ver = "WIN " + ver.join(",");
           }
+          
+          return ver;
         }
-        
-        return;
       }
+      
       setAttribute.call(this, n, v);
-      if (n == "data" && ("_pendingType" in this) && this._pendingType == type) {
-        this.setAttribute("type", type);
+      if (n === "data" && ("_pendingType" in this) && this._pendingType === type) {
+        setAttribute.call(this, "type", type);
         this._pendingType = null;
       }
     };
@@ -3364,6 +3423,7 @@ var ns = singleton = {
   },
   
   _enumerateSites: function(browser, sites) {
+
 
     const nsIDocShell = CI.nsIDocShell;
     const nsIWebProgress = CI.nsIWebProgress;
@@ -3422,7 +3482,7 @@ var ns = singleton = {
        
       tmpPluginCount = 0;
       
-      domLoaded = this.getExpando(win, "contentLoaded");
+      domLoaded = !!this.getExpando(document, "contentLoaded");
       
       if (win === (top || (top = win.top))) {
         sites.topURL = url;
@@ -3441,11 +3501,12 @@ var ns = singleton = {
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
       }
       
-       // plugins
-      this.processObjectElements(document, sites);
+
       
       loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
-      if (!(domLoaded || loaded)) {
+      if (domLoaded || loaded) {
+        this.processObjectElements(document, sites);
+      } else  {
         sites.pluginCount += tmpPluginCount;
         loading = true;
         continue;
@@ -3473,7 +3534,9 @@ var ns = singleton = {
       browser.ownerDocument.defaultView.noscriptOverlay.syncUI();
     } catch(e) {}
     
+     
     return this.sortedSiteSet(sites);
+    
     
   },
   
@@ -3795,15 +3858,18 @@ var ns = singleton = {
       try {
         req.contentType;
         if (this.consoleDump & LOG_SNIFF)
-          this.dump("OCS: " + req.URI.spec + ", " + req.contentType);
+          this.dump("OCS: " + req.name + ", " + req.contentType);
       } catch(e) {
-        this.dump("OCS: " + req.URI.spec + ", CONTENT TYPE UNAVAILABLE YET");
+        this.dump("OCS: " + req.name + ", CONTENT TYPE UNAVAILABLE YET");
         return;  // we'll check later in http-on-examine-merged-response
       }
       
       const domWindow = IOUtil.findWindow(req);
-      if (domWindow && domWindow == domWindow.top) 
-        return; // for top windows we call onBeforeLoad in onLocationChange
+      if (domWindow && domWindow == domWindow.top) {
+        var ph = PolicyState.extract(req);
+        if (!(ph && (ph.context instanceof CI.nsIDOMHTMLObjectElement)))
+          return; // for top windows we call onBeforeLoad in onLocationChange
+      }
       
       var status = req.responseStatus;
       if (status >= 300 && status < 400) // redirect, wait for ultimate destination, see http://forums.informaction.com/viewtopic.php?f=7&t=2630
@@ -3825,18 +3891,30 @@ var ns = singleton = {
     }
   },
   
+  loadErrorPage: function(w, errPageURL) {
+    DOM.getDocShellForWindow(w).loadURI(errPageURL,
+      ((this.geckoVersionCheck("1.9.1") < 0 ? 0x8000 : 0x0001) << 16) | 1,
+      null, null, null);
+  },
+  
   showFrameOptError: function(w, url) {
     this.log("X-FRAME-OPTIONS: blocked " + url, true);
     var f = w && w.frameElement;
     if (!f) return;
-    const errPage = this.contentBase + "frameOptErr.xhtml";
+    
+    var browser = DOM.findBrowserForNode(w);
+    if (browser)
+      this.getRedirCache(browser, w.top.document.documentURI).push({site: this.getSite(url), type: 7});
+    
+    const errPageURL = this.contentBase + "frameOptErr.xhtml";
     f.addEventListener("load", function(ev) {
       f.removeEventListener(ev.type, arguments.callee, false);
-      if (errPage == f.contentWindow.location.href)
+      if (errPageURL == f.contentWindow.location.href)
         f.contentWindow.document.getElementById("link")
           .setAttribute("href", url);
     }, false);
-    f.contentWindow.location.replace(errPage);
+    
+    this.loadErrorPage(w, errPageURL);
   },
 
   
@@ -4460,7 +4538,61 @@ var ns = singleton = {
         }, 500);
       }
     }
+  },
+  
+  checkSubscriptions: function() {
+    var lastCheck = this.getPref("subscription.last_check");
+    var checkInterval = this.getPref("subscription.checkInterval") * 60000;
+    var now = Date.now();
+    if (lastCheck + checkInterval > now) {
+      this.delayExec(arguments.callee, lastCheck + checkInterval - now + 1000);
+      return;
+    }
+    
+    function load(list, process, goOn) {
+      var url = ns.getPref("subscription." + list + "URL");
+      if (!url) {
+        goOn();
+        return;
+      }
+      var xhr = ns.createCheckedXHR("GET", url, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status == 0 || xhr.status == 200) {
+            var lists = xhr.responseText.split("[UNTRUSTED]");
+            try {
+              process(lists[0], lists[1]);
+              ns.dump(list + " list at " + url + " loaded.");
+            } catch(e) {
+              ns.dump(e);
+            }
+          }
+          goOn();
+        }
+      }
+      xhr.send(null);
+    }
+    
+    load("untrusted",
+      function(trusted, untrusted) {
+        ns.untrustedSites.sitesString += " " + untrusted;
+        ns.persistUntrusted();
+      },
+      function() {
+        load("trusted", function(trusted, untrusted) {
+          var trustedSites = new PolicySites(trusted);
+          trustedSites.remove(ns.untrustedSites.sitesList, true, false);
+          ns.flushCAPS(ns.jsPolicySites.sitesString + " " + trustedSites.sitesString);
+        }, function() {
+          ns.setPref("subscription.lastCheck", Date.now());
+          ns.savePrefs(true);
+          ns.delayExec(ns.checkSubscriptions, checkInterval);
+        });
+      }
+    );
   }
+  
+  
   
 }
 

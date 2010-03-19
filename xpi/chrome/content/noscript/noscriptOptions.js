@@ -486,8 +486,9 @@ var nsopt = {
   },
   
   exportList: function(file) {
-    ns.writeFile(file, 
-      this.trustedSites.sitesList.join("\n") + 
+    var list = ns.getPermanentSites(this.trustedSites, this.tempSites);
+    list.remove(ns.mandatorySites.sitesList, true, true);
+    ns.writeFile(file, list.sitesList.join("\n") + 
       "\n[UNTRUSTED]\n" +
       this.untrustedSites.sitesList.join("\n")
     );

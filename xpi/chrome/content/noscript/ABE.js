@@ -1005,12 +1005,12 @@ ABERequest.prototype = Lang.memoize({
     return this._checkSelf(this.originURI) && this.redirectChain.every(this._checkSelf, this);
   },
   isSubdoc: function() {
-    var channel = this.channel;
     if (this.isDoc) {
       var w = this.window;
-      return w != w.top;
+      return (w != w.top);
     }
-    return false;
+    var channel = this.channel;
+    return !!(channel.loadFlags & channel.LOAD_CALL_CONTENT_SNIFFERS);
   },
   redirectChain: function() {
     return ABE.getRedirectChain(this.channel);

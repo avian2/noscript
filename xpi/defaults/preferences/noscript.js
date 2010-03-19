@@ -27,7 +27,7 @@ pref("noscript.showBlockedObjects", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
 pref("noscript.mandatory", "chrome: about: about:config about:neterror about:certerror about:plugins about:privatebrowsing about:sessionrestore resource: about:blocked");
-pref("noscript.default", "about:blank about:credits addons.mozilla.org flashgot.net google.com gstatic.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com");
+pref("noscript.default", "about:blank about:credits addons.mozilla.org flashgot.net google.com gstatic.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com js.wlxrs.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
 pref("noscript.forbidSilverlight", true);
@@ -255,3 +255,9 @@ pref("noscript.STS.expertErrorUI", false);
 pref("noscript.frameOptions.enabled", true);
 pref("noscript.frameOptions.parentWhitelist", "https://mail.google.com/*");
 pref("noscript.logDNS", false);
+
+
+pref("noscript.subscription.lastCheck", 0);
+pref("noscript.subscription.checkInterval", 24);
+pref("noscript.subscription.trustedURL", "");
+pref("noscript.subscription.untrustedURL", "");

@@ -300,10 +300,10 @@ PolicySites.prototype = {
     const sm = this.sitesMap;
     var change = false;
     var site, match;
-    var tmp= keepDown ? null : new PolicySites();
+    var tmp = keepDown ? null : new PolicySites();
     for (var j = sites.length; j-- > 0;) {
       site = sites[j];
-      if (site[site.length-1] != ":") { // not a scheme only site
+      if (site[site.length - 1] != ":") { // not a scheme only site
         if (!keepUp) {
           while ((match = this.matches(site)) && site != match) { // remove ancestors
             this._remove(match);

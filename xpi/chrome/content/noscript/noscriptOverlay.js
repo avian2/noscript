@@ -433,16 +433,15 @@ return noscriptUtil.service ? {
         menuSites = [matchingSite];
       } else {
         domain = !ns.isForbiddenByHttpsStatus(site) && ns.getDomain(site);
-        
 
-        
         if ((dp = ns.getPublicSuffix(domain)) == domain || // exclude TLDs
-            ns.isJSEnabled(domain) != enabled // exclude ancestors with different permissions
+            ns.isJSEnabled(domain) != enabled || // exclude ancestors with different permissions
+            /:\d+$/.test(site) // or any ancestor if this is a non-standard port
           ) {
           domain = null; 
         }
         
-        menuSites = (showAddress || showNothing || !domain || /:\d+$/.test(site)) ? [site] : [];
+        menuSites = (showAddress || showNothing || !domain) ? [site] : [];
         if (domain && (showDomain || showBase)) {
           baseLen = domain.length;
           if (dp) 
@@ -644,7 +643,7 @@ return noscriptUtil.service ? {
     
     // temp allow all this page
     if (!(tempMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", true)))) {
-      tempMenuItem.setAttribute("tooltiptext", this.allowPage(false, true).join(", "));
+      tempMenuItem.setAttribute("tooltiptext", this.allowPage(false, true, sites).join(", "));
     }
 
     
@@ -654,7 +653,7 @@ return noscriptUtil.service ? {
       tempMenuItem.parentNode.insertBefore(node, tempMenuItem);
     }
     if (!(node.hidden = unknownCount == 0 || !ns.getPref("showAllowPage", true))) {
-      node.setAttribute("tooltiptext", this.allowPage(true, true).join(", "));
+      node.setAttribute("tooltiptext", this.allowPage(true, true, sites).join(", "));
     }
     
     // make permanent
@@ -663,7 +662,7 @@ return noscriptUtil.service ? {
       tempMenuItem.parentNode.insertBefore(node, tempMenuItem.nextSibling);
     }
     if (!(node.hidden = tempCount == 0 || !ns.getPref("showTempToPerm"))) {
-      node.setAttribute("tooltiptext", this.tempToPerm(true).join(", "));
+      node.setAttribute("tooltiptext", this.tempToPerm(true, sites).join(", "));
     }
     
     
@@ -766,9 +765,9 @@ return noscriptUtil.service ? {
     }
   },
   
-  allowPage: function(permanent, justTell) {
+  allowPage: function(permanent, justTell, sites) {
     const ns = this.ns;
-    const sites = this.getSites();
+    sites = sites || this.getSites();
     const unknown = [];
     const level = ns.getPref("allowPageLevel", 0) || ns.preferredSiteLevel;
     const trusted = ns.jsPolicySites;
@@ -794,8 +793,8 @@ return noscriptUtil.service ? {
     return unknown;
   },
   
-  tempToPerm: function(justTell) {
-    return this.allowPage(-1, justTell);
+  tempToPerm: function(justTell, sites) {
+    return this.allowPage(-1, justTell, sites);
   },
   
   allowObject: function(i) {
@@ -908,6 +907,7 @@ return noscriptUtil.service ? {
     }
     var allowTemp = enabled && temp;
     
+    
     function op(ns) {
       if (site) {    
         ns.setTemp(site, allowTemp);
@@ -938,7 +938,7 @@ return noscriptUtil.service ? {
     if (reloadPolicy == ns.RELOAD_NO) {
       op(ns);
     } else {
-      ns.setExpando(window.content, "contentLoaded", false);
+      ns.setExpando(window.content.document, "contentLoaded", false);
       ns.safeCapsOp(op, reloadPolicy, allowTemp);
     }
   }
@@ -1931,11 +1931,12 @@ return noscriptUtil.service ? {
     onContentLoad: function(ev) {
 
       var doc = ev.originalTarget;
+      
       if (doc instanceof HTMLDocument) {
         var w = doc.defaultView;
         if (w) {
           const ns = noscriptOverlay.ns;
-          noscriptOverlay.ns.setExpando(w, "contentLoaded", true);
+          ns.setExpando(doc, "contentLoaded", true);
           if (w == w.top) {
             ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
             if (w == window.content) {
