@@ -1,7 +1,7 @@
 const APP_DISPLAY_NAME = "NoScript";
 const APP_NAME = "noscript";
 const APP_PACKAGE = "/informaction/noscript";
-const APP_VERSION = "1.9.9.57";
+const APP_VERSION = "1.9.9.61";
 
 const APP_PREFS_FILE="defaults/preferences/noscript.js";
 const APP_XPCOM_SERVICE="components/noscriptService.js";
@@ -9,8 +9,8 @@ const APP_JAR_FILE = "noscript.jar";
 const APP_CONTENT_FOLDER = "content/noscript/";
 const APP_LOCALES = [
   "es-ES","cs-CZ","pl-PL","ja-JP","ca-AD","pt-PT","pt-BR","de-DE","nb-NO",
-  "fi-FI","fr-FR","it-IT","nl-NL","tr-TR","zh-CN","ru-RU","bg-BG","ro-RO",
-  "uk-UA", "th-TH", "fa-IR", "el-GR", "hr-HR", "he-IL", "be-BY", "vi-VN",
+  "fi-FI","fr","it-IT","nl-NL","tr-TR","zh-CN","ru-RU","bg-BG","ro",
+  "uk-UA", "th-TH", "fa-IR", "el-GR", "hr-HR", "he-IL", "be-BY", "vi",
   "sk-SK", "hu-HU", "mk-MK", "da-DK", "sv-SE", "lt-LT", "zh-TW", 
   "id-ID", "es-AR", "ar", "de-AT", "ko-KR", "et-EE", "en-GB",
   "en-US"
@@ -55,10 +55,11 @@ function myPerformInstall(secondTry) {
   
     registerChrome(CONTENT | chromeFlag, jar, APP_CONTENT_FOLDER);
     var localesCount=APP_LOCALES.length;
-    if(localesCount>0) {
-      registerChrome(LOCALE | chromeFlag, jar, "content/noscript/"+APP_LOCALES[--localesCount]+"/");
+    if(localesCount > 0) {
+      registerChrome(LOCALE | chromeFlag, jar, "content/noscript/" + APP_LOCALES[--localesCount] + "/");
+      var locale;
       while(localesCount-- >0) {
-        registerChrome(LOCALE  | chromeFlag, jar, "locale/"+APP_LOCALES[localesCount]+"/noscript/");
+        registerChrome(LOCALE  | chromeFlag, jar, "locale/"+ APP_LOCALES[localesCount] +"/noscript/");
       }
     }
     registerChrome(SKIN | chromeFlag, jar, "skin/classic/noscript/");

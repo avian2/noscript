@@ -91,7 +91,13 @@ return noscriptUtil.service ? {
         !popup._context && this.useStickyUI));
       
       popup._context =  false;
-    } else popup.removeAttribute("sticky");
+    } else {
+      popup.removeAttribute("sticky");
+    }
+    
+    if (!popup.hasAttribute("onclick")) {
+      popup.setAttribute("onclick", "noscriptOverlay.onCommandClick(event)");
+    }
     
     popup.addEventListener("popuphidden", function(ev) { noscriptOverlay.onMenuHidden(ev) }, false);
     
@@ -100,6 +106,42 @@ return noscriptUtil.service ? {
                            
     this.prepareMenu(popup);
   },
+  
+  onCommandClick: function(ev) {
+    if (!(ev.button == 1 || ev.button == 0 && ev.shiftKey)) return;
+    
+    const ns = this.ns;
+    
+    var url = ns.getPref("siteInfoProvider");
+    if (!url) return;
+  
+    var domain = ns.getSite(ev.target.getAttribute("statustext"));
+    if (!domain) return;
+    if (domain.indexOf('@') > -1) domain = domain.split('@')[1]; // Blocked objects entries
+    if (domain.indexOf(':') > -1) domain = ns.getDomain(domain) || domain;
+    if (!domain) return;
+    
+    var ace;
+    try {
+      ace = CC["@mozilla.org/network/idn-service;1"]
+              .getService(CI.nsIIDNService).convertUTF8toACE(domain);
+    } catch(e) {
+      ace = '';
+    }
+    ev.preventDefault();
+    ev.stopPropagation();
+    ev.currentTarget.hidePopup();
+    
+    url = url.replace(/%utf8%/g, encodeURI(domain))
+            .replace(/%ace%/g, encodeURI(ace));
+        
+    if (noscriptUtil.confirm(
+      noscriptUtil.getString("siteInfo.confirm", [domain, ns.getSite(url) || "?", url]),
+      "confirmSiteInfo", "NoScript"
+      ))
+      noscriptUtil.browse(url);
+  },
+  
   onMenuShown: function(ev) {
     ev.currentTarget.style.visibility = "";
   },
@@ -195,11 +237,26 @@ return noscriptUtil.service ? {
     return popup;
   },
   
-  revokeTooltip: function(tempSites) {
+  
+  
+  getSiteTooltip: function(enabled, full) {
+    const info = this.getString("siteInfo.tooltip");
+    var sep = typeof(/ /) == "object"
+      ? "\n" // fx3
+      : ' - ';
+    const no = this.getString("allowed.no");
+    const noFull = no + sep + info;
+    const yes = this.getString("allowed.yes");
+    const yesFull = yes + sep + info;
+    return (this.getSiteTooltip = function(enabled, full) {
+      return enabled ? full && yesFull || yes : full && noFull || no;
+    })(enabled, full);
+  },
+  
+  getRevokeTooltip: function(tempSites) {
     const ns = this.ns;
     const fx3 = typeof(/ /) == "object";
     var sep = fx3 ? "\n\n" : " | ";
-
      
     // remove http/https/file CAPS hack entries
     var tip = "<SCRIPT>: ";
@@ -276,7 +333,7 @@ return noscriptUtil.service ? {
     if (global || ns.getPref("showGlobal")) {
       miGlobal.hidden = seps.global.hidden = false;
       miGlobal.setAttribute("label", this.getString((global ? "forbid" : "allow") + "Global"));
-      miGlobal.setAttribute("oncommand", "noscriptOverlay.menuCmd(this)");
+      miGlobal.setAttribute("oncommand", "noscriptOverlay.menuCmd(event)");
       miGlobal.setAttribute("tooltiptext", this.statusIcon.getAttribute("tooltiptext"));
       miGlobal.setAttribute("class", "menuitem-iconic noscript-glb " + (global ? "noscript-forbid" : "noscript-allow"));
     } else {
@@ -299,7 +356,7 @@ return noscriptUtil.service ? {
 
     if ((tempSites || ns.objectWhitelistLen || ns.clearClickHandler && ns.clearClickHandler.whitelistLen) && ns.getPref("showRevokeTemp", true)) {
       node.hidden = seps.global.hidden = false;
-      node.setAttribute("tooltiptext", this.revokeTooltip(tempSites));
+      node.setAttribute("tooltiptext", this.getRevokeTooltip(tempSites));
     } else {
       node.hidden = true;
     }
@@ -410,6 +467,10 @@ return noscriptUtil.service ? {
     var untrustedCount = 0, unknownCount = 0, tempCount = 0;
     const untrustedSites = ns.untrustedSites;
     var docJSBlocked = false;
+    
+    const ignorePorts = ns.ignorePorts;
+    const portRx = /:\d+$/;
+    var hasPort;
 
     menuGroups = [];
     for (j = 0; j < sites.length; j++) {
@@ -429,19 +490,32 @@ return noscriptUtil.service ? {
       if (docJSBlocked) enabled = false;
       
       if (enabled && !global || (matchingSite = untrusted)) {
+        if (ignorePorts && portRx.test(site)) {
+          site = jsPSs.matches(site.replace(portRx, ''));
+          if (site) matchingSite = site;
+        }
         if (domainDupChecker.check(matchingSite)) continue;
         menuSites = [matchingSite];
+        
       } else {
         domain = !ns.isForbiddenByHttpsStatus(site) && ns.getDomain(site);
-
+        hasPort = portRx.test(site);
+        
         if ((dp = ns.getPublicSuffix(domain)) == domain || // exclude TLDs
             ns.isJSEnabled(domain) != enabled || // exclude ancestors with different permissions
-            /:\d+$/.test(site) // or any ancestor if this is a non-standard port
+            hasPort && !ignorePorts // or any ancestor if this is a non-standard port
           ) {
           domain = null; 
         }
         
         menuSites = (showAddress || showNothing || !domain) ? [site] : [];
+        
+        if (hasPort && menuSites.length) {
+          site = site.replace(/:\d+$/, ignorePorts ? '' : ':0'); // add port jolly
+          if (!(jsPSs.matches(site) || domainDupChecker.check(site))) // unless already enabled or listed
+            menuSites.push(site);
+        }
+        
         if (domain && (showDomain || showBase)) {
           baseLen = domain.length;
           if (dp) 
@@ -482,7 +556,7 @@ return noscriptUtil.service ? {
     j = menuGroups.length;
     
     var refMI = document.createElement("menuitem");
-    refMI.setAttribute("oncommand", "noscriptOverlay.menuCmd(this)");
+    refMI.setAttribute("oncommand", "noscriptOverlay.menuCmd(event)");
     if (sticky && (this.liveReload || j > 1 || enabled)) {
       refMI.setAttribute("closemenu", "none");
     }
@@ -494,6 +568,8 @@ return noscriptUtil.service ? {
         const max = ns.getPref("recentlyBlockedCount");
         var s, dejaVu = [], count = 0,
             recent = ns.recentlyBlocked;
+        
+        const tooltip = noscriptOverlay.getSiteTooltip(false, !!ns.getPref("siteInfoProvider"));
         
         for (var j = recent.length; j-- > 0;) {
           
@@ -521,7 +597,7 @@ return noscriptUtil.service ? {
           var node = refMI.cloneNode(false);
           var cssClass = "noscript-cmd menuitem-iconic noscript-allow-from";
           
-          node.setAttribute("tooltiptext", ns.getString("allowed.no"));
+          node.setAttribute("tooltiptext", tooltip);
           node.setAttribute("statustext", s);
           if (locked || ns.isForbiddenByHttpsStatus(s)) node.setAttribute("disabled", "true");
           
@@ -550,6 +626,8 @@ return noscriptUtil.service ? {
     
     if (j > 0 && seps.stop.previousSibling.nodeName != "menuseparator")
       mainFrag.appendChild(sep.cloneNode(false));
+    
+    var fullTip = !!ns.getPref("siteInfoProvider");
     
     while (j-- > 0) {
       
@@ -600,10 +678,8 @@ return noscriptUtil.service ? {
         
         node.setAttribute("label", this.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]));
         node.setAttribute("statustext", menuSite);
-        node.setAttribute("tooltiptext",
-          this.getString("allowed." + (enabled ? "yes" : "no")));
-
-        
+        node.setAttribute("tooltiptext", this.getSiteTooltip(enabled, fullTip));
+    
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
         
         if ((showPermanent || enabled) && !(global && enabled)) 
@@ -616,7 +692,9 @@ return noscriptUtil.service ? {
             extraNode.setAttribute("class", cssClass + " noscript-temp noscript-allow");
             parent.appendChild(extraNode);
           }
-          if (((showUntrusted && untrustedMenu || showDistrust) && !(domain in jsPSs.sitesMap) || blockUntrusted) && !untrusted) {
+          if (  ( (showUntrusted && untrustedMenu || showDistrust) && !(domain in jsPSs.sitesMap) ||
+                  blockUntrusted && (showUntrusted || showDistrust)
+                ) && !untrusted) {
             parent = (showUntrusted && !blockUntrusted ? untrustedFrag : mainFrag);
             extraNode = refMI.cloneNode(false);
             extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
@@ -694,16 +772,22 @@ return noscriptUtil.service ? {
       return;
     
     var egroup, e, node, j;
-    var pluginExtras = [];
+    var pluginExtras = [], seen = [], key;
     var i = 0;
     for each(egroup in extras) {
       for (j = egroup.length; j-- > 0;) {
         e = egroup[j];
          
-        if (ns.isAllowedObject(e.url, e.mime))
+        if (ns.isAllowedObject(e.url, e.mime) && !e.placeholder ||
+            typeof(e) != "object" || (e.tag && !e.placeholder)
+          )
           continue;
-         
-        if(typeof(e) != "object" || (e.tag && !e.placeholder)) continue;
+        
+        var key = e.mime + "@" + e.url;
+        if (seen.indexOf(key) > -1) continue;
+        
+        seen.push(key);
+        
         node = document.createElement("menuitem");
         
         e.label = e.label || ns.mimeEssentials(e.mime) + "@" + ns.urlEssentials(e.url);
@@ -800,9 +884,7 @@ return noscriptUtil.service ? {
   allowObject: function(i) {
     if(this.menuPluginExtras && this.menuPluginExtras[i]) {
       var e = this.menuPluginExtras[i];
-      if(e.placeholder) {
-        this.ns.checkAndEnablePlaceholder(e.placeholder);
-      } else if (this.ns.confirmEnableObject(window, e)) {
+      if (this.ns.confirmEnableObject(window, e)) {
         this.allowObjectURL(e.url, e.mime);
       }
     }
@@ -855,7 +937,9 @@ return noscriptUtil.service ? {
     }, this.ns.getPref("autoReload.allTabsOnPageAction", true) ? this.ns.RELOAD_ALL : this.ns.RELOAD_CURRENT);
   }
 ,
-  menuCmd: function(menuItem) {
+  menuCmd: function(event) {
+    if (event.shiftKey) return; // site info
+    menuItem = event.target;
     var site = null;
     var reloadPolicy = 0;
     var cl = menuItem.getAttribute("class") || "";
@@ -2026,8 +2110,6 @@ return noscriptUtil.service ? {
 
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
-
-      noscriptUtil.service.checkVersion();
 
     },
     

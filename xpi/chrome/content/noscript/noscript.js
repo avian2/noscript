@@ -28,8 +28,8 @@ var noscriptUtil = {
 ,
   confirm: function(msg, persistPref, title) {
     const ns = this.service; 
-    var alwaysAsk = { value: ns.getPref(persistPref, true) };
-     if((!alwaysAsk.value) || 
+    var alwaysAsk = { value: ns.getPref(persistPref) };
+     if(!alwaysAsk.value &&  ns.prefs.prefHasUserValue(persistPref) ||
         noscriptUtil.prompter.confirmCheck(window, title || "NoScript",
           msg,
           noscriptUtil.getString("alwaysAsk"), alwaysAsk)

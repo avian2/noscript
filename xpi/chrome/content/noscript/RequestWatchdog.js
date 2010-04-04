@@ -5,7 +5,7 @@ function RequestWatchdog() {
 
 RequestWatchdog.prototype = {
   
-  OBSERVED_TOPICS: ["http-on-modify-request", "http-on-examine-response", "http-on-examine-merged-response"],
+  OBSERVED_TOPICS: ["http-on-modify-request", "http-on-examine-response", "http-on-examine-merged-response", "http-on-examine-cached-response"],
   
   init: function() {
     for each (var topic in this.OBSERVED_TOPICS) OS.addObserver(this, topic, true);
@@ -82,13 +82,15 @@ RequestWatchdog.prototype = {
         STS.processRequest(channel);
         
       case "http-on-examine-merged-response":
+        HTTPS.handleSecureCookies(channel);
+
+      case "http-on-examine-cached-response":
         if (isDoc) {
           ns.onContentSniffed(channel);
         } else {
           if (!ns.checkInclusionType(channel))
             return;
         }
-        HTTPS.handleSecureCookies(channel);
       break;
     }
   },
@@ -472,35 +474,50 @@ RequestWatchdog.prototype = {
     }
     
     if (originSite) { // specific exceptions
-    
-      if (/^https?:\/\/mail\.lycos\.com\/lycos\/mail\/MailCompose\.lycos$/.test(origin) &&
-          /\.lycosmail\.lycos\.com$/.test(targetSite) &&
-          channel.requestMethod == "POST" &&
-          ns.getPref("filterXExceptions.lycosmail")) {
-        if (ns.consoleDump) this.dump(channel, "Lycos Mail Exception");
-        return;
-      }
       
-      if (/\.livejournal\.com$/.test(originSite) &&
-          /^https?:\/\/www\.livejournal\.com\/talkpost_do\.bml$/.test(originalSpec) &&
-          channel.requestMethod == "POST" &&
-          ns.getPref("filterXExceptions.livejournal")) {
-        if (ns.consoleDump) this.dump(channel, "Livejournal Comments Exception");
-        return;
-      }
+      if (channel.requestMethod == "POST") {
       
-      if (originSite == "https://ssl.rapidshare.com" &&
-          ns.getBaseDomain(ns.getDomain(targetSite)) == "rapidshare.com" &&
-          channel.requestMethod == "POST") {
-        if (ns.consoleDump) this.dump(channel, "Rapidshare Upload exception");
-        return;
-      }
-      
-      if (originSite == "http://wm.letitbit.net" &&
-          /^http:\/\/http\.letitbit\.net:81\/cgi-bin\/multi\/upload\.cgi\?/.test(originalSpec) &&
-          channel.requestMethod == "POST") {
-        if (ns.consoleDump) this.dump(channel, "letitbit.net Upload exception");
-        return;
+        if (/^https?:\/\/mail\.lycos\.com\/lycos\/mail\/MailCompose\.lycos$/.test(origin) &&
+            /\.lycosmail\.lycos\.com$/.test(targetSite) &&
+            ns.getPref("filterXExceptions.lycosmail")) {
+          if (ns.consoleDump) this.dump(channel, "Lycos Mail exception");
+          return;
+        }
+        
+        if (/\.livejournal\.com$/.test(originSite) &&
+            /^https?:\/\/www\.livejournal\.com\/talkpost_do\.bml$/.test(originalSpec) &&
+            ns.getPref("filterXExceptions.livejournal")) {
+          if (ns.consoleDump) this.dump(channel, "Livejournal comments exception");
+          return;
+        }
+        
+        if (originSite == "https://ssl.rapidshare.com" &&
+            ns.getBaseDomain(ns.getDomain(targetSite)) == "rapidshare.com") {
+          if (ns.consoleDump) this.dump(channel, "Rapidshare upload exception");
+          return;
+        }
+        
+        if (originSite == "http://wm.letitbit.net" &&
+            /^http:\/\/http\.letitbit\.net:81\/cgi-bin\/multi\/upload\.cgi\?/.test(originalSpec) &&
+            ns.getPref("filterXExceptions.letitibit")
+            ) {
+          if (ns.consoleDump) this.dump(channel, "letitbit.net upload exception");
+          return;
+        }
+        
+        if (/\.deviantart\.com$/.test(originSite) &&
+            /^http:\/\/my\.deviantart\.com\/journal\/update\b/.test(originalSpec) &&
+             ns.getPref("filterXExceptions.deviantart")
+            ) {
+          if (ns.consoleDump) this.dump(channel, "deviantart.com journal post exception");
+          return;
+        }
+        
+        if (globalJS && /^https?:\/\/www\.mendeley\.com\/import\/bookmarklet\/$/.test(originalSpec)) {
+          if (ns.consoleDump) this.dump(channel, "mendeley.com bookmarklet exception");
+            return;
+        }
+        
       }
     
     } else { // maybe data or javascript URL?
@@ -544,7 +561,8 @@ RequestWatchdog.prototype = {
         /^https:\/\/www\.paypal\.com\/(?:ca\/)?cgi-bin\/webscr\b/.test(originalSpec)
       ) {
       
-      if (origin && /^http:\/\/(?:[^\/]+.)?facebook\.com\/render_fbml\.php$/.test(originalSpec) &&
+      
+      if (origin && /^http:\/\/(?:[^\/]+.)?facebook\.com\/(?:widgets\/server|render_)fbml\.php$/.test(originalSpec) &&
             channel.requestMethod == "POST" &&
             ns.getPref("filterXExceptions.fbconnect")) {
         if (ns.consoleDump) this.dump(channel, 'Facebook connect exception');
@@ -1619,10 +1637,12 @@ var InjectionChecker = {
     if (this._checkOverDecoding(s, unescaped))
       return true;
     
-    if (/[\n\r\t]|&#/.test(unescaped) &&
-        this._checkRecursive(Entities.convertAll(unescaped).replace(/[\n\r\t]/g, ''), depth)) {
-      this.log("Trash-stripped nested URL match!"); // http://mxr.mozilla.org/mozilla-central/source/netwerk/base/src/nsURLParsers.cpp#100
-      return true;
+    if (/[\n\r\t]|&#/.test(unescaped)) {
+      var unent = Entities.convertAll(unescaped).replace(/[\n\r\t]/g, '');
+      if (unescaped != unent && this._checkRecursive(unent, depth)) {
+        this.log("Trash-stripped nested URL match!"); // http://mxr.mozilla.org/mozilla-central/source/netwerk/base/src/nsURLParsers.cpp#100
+        return true;
+      }
     }
     
     if (!this.isPost && this.checkBase64(s.replace(/^\/{1,3}/, ''))) return true;

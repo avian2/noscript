@@ -443,20 +443,20 @@ const MainContentPolicy = {
         
         // we must guess the right context here, see https://bugzilla.mozilla.org/show_bug.cgi?id=464754
         
-        aContext = aContext && aContext.ownerDocument || aContext; // this way we always have a document
+        contentDocument = aContext && aContext.ownerDocument || aContext;
         
         if (aContentType == 2) { // "real" JavaScript include
         
           // plugin instantiation hacks
           if (this.contentBlocker && originSite && /^(?:https?|file):/.test(originSite)) {
-            this.applyPluginPatches(aContext);
+            this.applyPluginPatches(contentDocument);
           }
                   
           forbid = !(originSite && locationSite == originSite);
         } else isScript = false;
         
-        if (aContext) // XSLT comes with no context sometimes...
-          this.getExpando(aContext.defaultView.top.document, "codeSites", []).push(locationSite);
+        if (contentDocument) // XSLT comes with no context sometimes...
+          this.getExpando(contentDocument.defaultView.top.document, "codeSites", []).push(locationSite);
         
         
         if (forbid) forbid = !this.isJSEnabled(locationSite);
@@ -465,11 +465,13 @@ const MainContentPolicy = {
         }
   
         if ((untrusted || forbid) && aContentLocation.scheme != "data") {
-          if (isScript) ScriptSurrogate.apply(aContext, locationURL);
+          if (isScript) ScriptSurrogate.apply(contentDocument, locationURL);
           return this.reject(isScript ? "Script" : "XSLT", arguments);
         } else {
           
-          if (isScript && this.getExpando(aContext.defaultView.top.document, "bookmarklet")) {
+          if (isScript && this.getExpando(contentDocument.defaultView.top.document, "bookmarklet") &&
+              (aContext instanceof CI.nsIDOMHTMLScriptElement) &&
+              !this.jsPolicySites.matches(this.getSite(contentDocument.defaultView.location.href))) {
             this.bookmarkletImport(aContext, locationURL);
             return this.reject("Bookmarklet inclusion, already imported synchronously", arguments);
           }

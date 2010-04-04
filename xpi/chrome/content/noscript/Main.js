@@ -36,6 +36,8 @@ const ANYWHERE = 3;
 
 const DUMMYOBJ = {};
 
+const EARLY_VERSION_CHECK = !("nsISessionStore" in CI && typeof(/ /) === "object");
+
 INCLUDE('Sites', 'AddressMatcher', 'DOM', 'IOUtil', 'Policy', 'RequestWatchdog', 'HTTPS', 'ClearClickHandler', 'URIValidator', 'ScriptSurrogate', 'ABE');
 
 var ns = singleton = {
@@ -66,6 +68,9 @@ var ns = singleton = {
           } catch(e) {
             this.dump("Init error -- " + e.message);
           }
+          break;
+        case "sessionstore-windows-restored":
+          ns.checkVersion();
           break;
         
         case "em-action-requested":
@@ -101,15 +106,19 @@ var ns = singleton = {
   },
   
   registerToplevel: function(window) {
-    
-    if ((window instanceof CI.nsIDOMChromeWindow) && !window.opener &&
-       (window instanceof CI.nsIDOMNSEventTarget)) {
-      window.isNewToplevel = true;
-      if (this.consoleDump & LOG_CHROME_WIN) {
-        this.dump("Toplevel register, true");
+    if (window instanceof CI.nsIDOMChromeWindow && window instanceof CI.nsIDOMNSEventTarget) {
+      if (!window.opener) {
+        window.isNewToplevel = true;
+        if (this.consoleDump & LOG_CHROME_WIN) {
+          this.dump("Toplevel register, true");
+        }
+        window.addEventListener("load", this.handleToplevel, false);
       }
-      this.handleToplevel.ns = this;
-      window.addEventListener("load", this.handleToplevel, false);
+      if (EARLY_VERSION_CHECK && !this.versionChecked) {
+        window.addEventListener("load", function() {
+          if (window == DOM.mostRecentBrowserWindow) ns.checkVersion();
+        }, false);
+      }
     }
   },
   handleToplevel: function(ev) {
@@ -132,8 +141,8 @@ var ns = singleton = {
     
   },
   
-  OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "profile-after-change", "toplevel-window-ready",
-                    "browser:purge-session-history", "private-browsing"],
+  OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "sessionstore-windows-restored",
+                    "toplevel-window-ready", "browser:purge-session-history", "private-browsing"],
   register: function() {
     this.OBSERVED_TOPICS.forEach(function(topic) {
       OS.addObserver(this, topic, true);
@@ -963,6 +972,11 @@ var ns = singleton = {
       }
     } else {
       ps.remove(site, false, true);
+      
+      if (typeof(site) == "string") {
+        this._removeAutoPorts(site);
+      }
+      
       if (this.forbidImpliesUntrust) {
         this.setUntrusted(site, true);
       } else {
@@ -973,6 +987,43 @@ var ns = singleton = {
     this.flushCAPS();
     
     return is;
+  },
+  
+  _removeAutoPorts: function(site) {
+    // remove temporary permissions implied by this site for non-standard ports
+
+    const portRx = /:\d+$/;
+
+    if (portRx.test(site)) {
+      if (/:0$/.test(site)) site = site.replace(portRx, '');
+      else return;
+    }
+    
+    const tempSites = this.tempSites;
+    var portSites = this.tempSites.sitesString.match(/\S+:[1-9]\d*(?:\s|$)/g);
+    if (!portSites) return;
+    
+    
+    var domain = SiteUtils.domainMatch(site);
+    var filter;
+    
+    if (domain) {
+      const dotDomain = "." + domain;
+      const dLen = dotDomain.length;
+      filter = function(d) {
+        d = this.getDomain(d);
+        return d === domain || d.length > dLen && d.slice(- dLen) === dotDomain; 
+      };
+    } else {
+      filter = function(s) { return s.replace(portRx, '') === site; };      
+    }
+    
+    var doomedSites = portSites.filter(filter, this);
+    
+    if (doomedSites.length) {
+      tempSites.remove(doomedSites);
+      this.jsPolicySites.remove(doomedSites);
+    }
   },
   
   get forbidImpliesUntrust() {
@@ -987,21 +1038,19 @@ var ns = singleton = {
     map = map || this.jsPolicySites.sitesMap;
     
     if (/:\d+$/.test(site)) {
-      if (this.ignorePorts) {
-        // default match ignoring port
-        if (this.isJSEnabled(site.replace(/:\d+$/, ''))) return true;
-      } else {
-        // port matching, with "0" as port wildcard  and * as nth level host wildcard
-        var key = site.replace(/\d+$/, "0");
-        if (key in map || site in map) return true;
-        var keys = site.split(".");
-        if (keys.length > 1) {
-          var prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
-          while (keys.length > 2) {
-            keys.shift();
-            key = prefix + keys.join(".");
-            if (key in map || key.replace(/\d+$/, "0") in map) return true;
-          }
+      if (this.ignorePorts && this.isJSEnabled(site.replace(/:\d+$/, '')))
+        return true;
+      
+      // port matching, with "0" as port wildcard  and * as nth level host wildcard
+      var key = site.replace(/\d+$/, "0");
+      if (key in map || site in map) return true;
+      var keys = site.split(".");
+      if (keys.length > 1) {
+        var prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
+        while (keys.length > 2) {
+          keys.shift();
+          key = prefix + keys.join(".");
+          if (key in map || key.replace(/\d+$/, "0") in map) return true;
         }
       }
     }
@@ -1317,7 +1366,7 @@ var ns = singleton = {
           if (e.placeholder) {
             e.skipConfirmation = true;
             this.checkAndEnablePlaceholder(e.placeholder);
-          } else if (!e.embed) {
+          } else if (!(e.allowed || e.embed)) {
             if (e.document) {
               this.quickReload(DOM.getDocShellForWindow(e.document.defaultView));
               break;
@@ -1601,7 +1650,9 @@ var ns = singleton = {
       if (json.ABE) ABE.restore(json.ABE);
       var prefs = json.prefs;
       for (var key in prefs) this.setPref(key, prefs[key]);
-
+      
+      if (prefs.global != ns.jsEnabled) ns.jsEnabled = prefs.global;
+      
       this.flushCAPS(json.whitelist);
       this.setPref("temp", ""); 
       this.setPref("gtemp", "");
@@ -1751,8 +1802,8 @@ var ns = singleton = {
   },
 
   
-  versionComparator: CC["@mozilla.org/xpcom/version-comparator;1"].createInstance(CI.nsIVersionComparator),
-  geckoVersion: ("nsIXULAppInfo" in  Components.interfaces) ? CC["@mozilla.org/xre/app-info;1"].getService(CI.nsIXULAppInfo).platformVersion : "0.0",
+  versionComparator: CC["@mozilla.org/xpcom/version-comparator;1"].getService(CI.nsIVersionComparator),
+  geckoVersion: ("nsIXULAppInfo" in  CI) ? CC["@mozilla.org/xre/app-info;1"].getService(CI.nsIXULAppInfo).platformVersion : "0.0",
   geckoVersionCheck: function(v) {
     return this.versionComparator.compare(this.geckoVersion, v);
   },
@@ -2629,17 +2680,18 @@ var ns = singleton = {
         siteJS: this.isJSEnabled(site)
       };
     
-
+      var doc = window.document;
       try {
-        if (!snapshots.siteJS)
-          this.setJSEnabled(site, true);
+       
         
         browser.webNavigation.allowJavascript = true;
-        this.jsEnabled = ns.getPref("allowBookmarkletImports");
-          
-     
+        if (!(this.jsEnabled = ns.getPref("allowBookmarkletImports"))) {
+          if (!snapshots.siteJS) 
+            this.setJSEnabled(site, true);
+        }
+        
         if (Thread.canSpin) { // async evaluation, after bug 351633 landing
-          var doc = window.document;
+          
           try {
             this.setExpando(doc, "bookmarklet", true);
             if (!(snapshots.siteJS && snapshots.docJS)) {
@@ -2689,17 +2741,21 @@ var ns = singleton = {
         }
         return true;
       } finally {
-        this.jsEnabled = false;
-        
-        if (!snapshots.siteJS)
-          this.setJSEnabled(site, false);
         
         this.setExpando(browser, "jsSite", site);
         if (!browser.webNavigation.isLoadingDocument && this.getSite(browser.webNavigation.currentURI.spec) == site)
           browser.webNavigation.allowJavascript = snapshots.docJS;
         
-        if (this.consoleDump & LOG_JS)
-          this.dump("Restored snapshot permissions on " + site + "/" + (browser.webNavigation.isLoadingDocument ? "loading" : browser.webNavigation.currentURI.spec));
+        this.delayExec(function() {
+          if (this.jsEnabled) {
+            this.jsEnabled = false;
+            if (!snapshots.siteJS)
+              this.setJSEnabled(site, false);
+          }
+
+          if (this.consoleDump & LOG_JS)
+            this.dump("Restored snapshot permissions on " + site + "/" + (browser.webNavigation.isLoadingDocument ? "loading" : browser.webNavigation.currentURI.spec));
+        }, 500);
       }
     }
     
@@ -2709,10 +2765,15 @@ var ns = singleton = {
     window.location.href = "javascript:" + encodeURIComponent(s + "; void(0);");
     Thread.yieldAll();
   },
-  bookmarkletImport: function(doc, src) {
+  
+  bookmarkletImport: function(scriptElem, src) {
     var xhr = ns.createCheckedXHR("GET", src, false);
     xhr.send(null);
-    ScriptSurrogate.execute(doc, xhr.responseText);
+    var doc = scriptElem.ownerDocument;
+    this._runJS(doc.defaultView, xhr.responseText);
+    var ev = doc.createEvent("HTMLEvents");
+    ev.initEvent("load", false, true);
+    scriptElem.dispatchEvent(ev);
     if (Thread.canSpin) Thread.yieldAll();
   },
   
@@ -3263,6 +3324,7 @@ var ns = singleton = {
         this.quickReload(doc.defaultView);
       } else {
         this.setExpando(ctx.anchor, "removedNode", null);
+        extras.allowed = true;
         extras.placeholder = null;
         this.delayExec(function() {
           try {
@@ -3331,7 +3393,8 @@ var ns = singleton = {
           pluginExtras.splice(j, 1, extras);
           return true;
         }
-        return false;
+        if (e.placeholder == extras.placeholder)
+          return false;
       }
     }
     pluginExtras.push(extras);
@@ -3399,7 +3462,7 @@ var ns = singleton = {
 
       ScriptSurrogate.execute(doc, "(" + patches.join(")();(") + ")();");
     } catch(e) {
-       if (this.consoleDump) this.dump(e);
+       if (this.consoleDump) this.dump(e + ", " + e.stack);
     }
   },
   
@@ -3427,6 +3490,7 @@ var ns = singleton = {
 
     const nsIDocShell = CI.nsIDocShell;
     const nsIWebProgress = CI.nsIWebProgress;
+    const showObjectSources = !this.contentBlocker || ns.getPref("alwaysShowObjectSources");
     
     const docShells = browser.docShell.getDocShellEnumerator(
         CI.nsIDocShellTreeItem.typeContent,
@@ -3489,15 +3553,16 @@ var ns = singleton = {
         
         cache = this.getExpando(document, "objectSites");
         if(cache) {
-          if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource());
-          sites.push.apply(sites, cache);
+          if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource() + " to " + sites.toSource());
+          if (showObjectSources) sites.push.apply(sites, cache);
           tmpPluginCount = cache.length;
-          sites.pluginSites.push.apply(sites, cache);
+          sites.push.apply(sites.pluginSites, cache);
         }
         
         cache = this.getExpando(document, "codeSites");
-        if(cache) sites.push.apply(sites, cache);
-        
+        if(cache) {
+          sites.push.apply(sites, cache);
+        }
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
       }
       
@@ -3534,10 +3599,8 @@ var ns = singleton = {
       browser.ownerDocument.defaultView.noscriptOverlay.syncUI();
     } catch(e) {}
     
-     
-    return this.sortedSiteSet(sites);
     
-    
+    return this.sortedSiteSet(sites); 
   },
   
   findOverlay: function(browser) {
@@ -3864,11 +3927,14 @@ var ns = singleton = {
         return;  // we'll check later in http-on-examine-merged-response
       }
       
+      var isObject;
+      
       const domWindow = IOUtil.findWindow(req);
       if (domWindow && domWindow == domWindow.top) {
         var ph = PolicyState.extract(req);
         if (!(ph && (ph.context instanceof CI.nsIDOMHTMLObjectElement)))
           return; // for top windows we call onBeforeLoad in onLocationChange
+        isObject = true;
       }
       
       var status = req.responseStatus;
@@ -3885,7 +3951,9 @@ var ns = singleton = {
         this.showFrameOptError(domWindow, req.URI.spec);
         return; // canceled by frame options
       }
-      this.onBeforeLoad(req, domWindow, req.URI);
+      
+      if (!isObject) this.onBeforeLoad(req, domWindow, req.URI);
+      
     } catch(e) {
       if (this.consoleDump) this.dump(e);
     }
@@ -4171,6 +4239,7 @@ var ns = singleton = {
     }
     
     ScriptSurrogate.apply(win.document, url, url);
+    
     try {
       if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !win._noscriptJsHack) {
         try {
