@@ -4431,7 +4431,7 @@ var ns = singleton = {
     // fix JavaScript links
     var jsURL;
     if (href) {
-      jsURL = /^javascript:/.test(href);
+      jsURL = /^javascript:/i.test(href);
       if (!(jsURL || href == "#")) return;
     } else {
       jsURL = "";

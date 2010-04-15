@@ -471,7 +471,16 @@ return noscriptUtil.service ? {
     const ignorePorts = ns.ignorePorts;
     const portRx = /:\d+$/;
     var hasPort;
-
+    
+    var distrustEmbeds = null;
+    if (!ns.showUntrustedPlaceholder && sites.pluginSites.length) {
+      // add untrusted plugin sites if placeholders are not shown for untrusted sources
+      distrustEmbeds = [];
+      sites.pluginSites.forEach(function(s) {
+        (untrustedSites.matches(s) ? sites : distrustEmbeds).push(s);
+      });
+    }
+    
     menuGroups = [];
     for (j = 0; j < sites.length; j++) {
       site = sites[j];
@@ -510,8 +519,8 @@ return noscriptUtil.service ? {
         
         menuSites = (showAddress || showNothing || !domain) ? [site] : [];
         
-        if (hasPort && menuSites.length) {
-          site = site.replace(/:\d+$/, ignorePorts ? '' : ':0'); // add port jolly
+        if (hasPort && ignorePorts && menuSites.length) {
+          site = site.replace(/:\d+$/, ''); // add no-port jolly
           if (!(jsPSs.matches(site) || domainDupChecker.check(site))) // unless already enabled or listed
             menuSites.push(site);
         }
@@ -696,12 +705,20 @@ return noscriptUtil.service ? {
                   blockUntrusted && (showUntrusted || showDistrust)
                 ) && !untrusted) {
             parent = (showUntrusted && !blockUntrusted ? untrustedFrag : mainFrag);
-            extraNode = refMI.cloneNode(false);
-            extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
-            extraNode.setAttribute("statustext", menuSite);
-            extraNode.setAttribute("class", cssClass + " noscript-distrust");
-            extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
-            parent.appendChild(extraNode);
+            
+            function addUntrusted(s) {
+              var n = refMI.cloneNode(false);
+              n.setAttribute("label", noscriptOverlay.getString("distrust", [s]));
+              n.setAttribute("statustext", s);
+              n.setAttribute("class", cssClass + " noscript-distrust");
+              n.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
+              parent.appendChild(n);
+            }
+            if (distrustEmbeds) {
+              distrustEmbeds.forEach(addUntrusted);
+              distrustEmbeds = null;
+            }
+            addUntrusted(menuSite);
           }
         }
       }

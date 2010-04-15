@@ -562,8 +562,13 @@ RequestWatchdog.prototype = {
       ) {
       
       
-      if (origin && /^http:\/\/(?:[^\/]+.)?facebook\.com\/(?:widgets\/server|render_)fbml\.php$/.test(originalSpec) &&
-            channel.requestMethod == "POST" &&
+      if (origin &&
+          (
+          /^http:\/\/(?:[^\/]+.)?facebook\.com\/(?:widgets\/server|render_)fbml\.php$/.test(originalSpec) &&
+            channel.requestMethod == "POST" ||
+          /^https?:\/\/api\.connect\.facebook\.com$/.test(originSite)
+            
+          ) &&
             ns.getPref("filterXExceptions.fbconnect")) {
         if (ns.consoleDump) this.dump(channel, 'Facebook connect exception');
         return;
@@ -1523,86 +1528,81 @@ var InjectionChecker = {
   base64: false,
   base64tested: [],
   get base64Decoder() { return Base64 }, // exposed here just for debugging purposes
+  
+  
   checkBase64: function(url) {
-    this.log(url);
-    var t = Date.now();
-    var frags, curf, j, k, pos, ff, f;
+    this.base64 = false;
+    
     const MAX_TIME = 4000;
     const DOS_MSG = "Too long execution time, assuming DOS in Base64 checks";
-    this.base64 = false;
-    // standard base64
-    // notice that we cut at 8192 chars because of stack overflow in JS regexp implementation
-    // (limit appears to be 65335, but cutting here seems quicker for big strings)
-    // therefore we need to rejoin continuous strings manually
-    url = url.replace(/\s+/g, ''); // base64 can be splitted across lines
-    frags = url.match(/[A-Za-z0-9\+\/]{12,8191}=*[^A-Za-z0-9\+\/=]?/g);
-    if (frags) {
-      f = '';
-      for (j = 0; j < frags.length; j++) {
-        curf = frags[j];
-        if (/[A-Za-z0-9\+\/]$/.test(curf)) {
-          f += curf;
-          if (j < frags.length - 1) continue;
-        } else {
-          f += curf.substring(0, curf.length - 1);
-        }
-        ff = f.split('/');
-        if (ff.length > 255) {
-          this.log("More than 255 base64 slash chunks, assuming DOS");
-          return true;
-        }
-        while (ff.length) {
-          
-          if (Date.now() - t > MAX_TIME) {
-              this.log(DOS_MSG);
-              return true;
-          }
-          f = ff.join('/');
-          if (f.length >= 12 && this.checkBase64Frag(f))
-            return true;
-          
-          ff.shift();
-        }
-        f = '';
-      }
+    
+    this.log(url);
+    var t = Date.now();
+    
+    var parts = url.split("#"); // check hash
+    if (parts.length > 1 && this.checkBase64FragEx(unescape(parts[1])))
+      return true;
+    
+    parts = parts[0].split(/[&;]/); // check query string
+    if (parts.some(function(p) {
+        return this.checkBase64FragEx(unescape(p.replace(/.*?=/, '')));
+      }, this))
+      return true;
+    
+    url = parts[0];
+    parts = Base64.purify(url).split("/");
+    if (parts.length > 255) {
+      this.log("More than 255 base64 slash chunks, assuming DOS");
+      return true;
     }
-    // URL base64 variant, see http://en.wikipedia.org/wiki/Base64#URL_applications
-    frags = url.match(/[A-Za-z0-9\-_]{12,8191}[^A-Za-z0-9\-_]?/g);
-    if (frags) {
-      f = '';
-      for (j = 0; j < frags.length; j++) {
+    
+    
+    if (parts.some(function(p) {
         if (Date.now() - t > MAX_TIME) {
+            this.log(DOS_MSG);
+            return true;
+        }
+        return this.checkBase64Frag(Base64.purify(Base64.alt(p)));
+      }, this))
+      return true;
+    
+    var uparts = Base64.purify(unescape(url)).split("/");
+    
+    while(parts.length) {
+      if (Date.now() - t > MAX_TIME) {
           this.log(DOS_MSG);
           return true;
-        }
-        curf = frags[j];
-        if (/[A-Za-z0-9\-_]$/.test(curf)) {
-          f += curf;
-          if (j < frags.length - 1) continue;
-        } else {
-          f += curf.substring(0, curf.length - 1);
-        }
-        f = f.replace(/-/g, '+').replace(/_/, '/');
-        if (this.checkBase64Frag(f)) return true;
-        f = '';
       }
+      if (this.checkBase64Frag(parts.join("/")) ||
+          this.checkBase64Frag(uparts.join("/")))
+        return true;
+      
+      parts.shift();
+      uparts.shift();
     }
+
     return false;
   },
+  
   
   checkBase64Frag: function(f) {
     if (this.base64tested.indexOf(f) < 0) {
       this.base64tested.push(f);
       try {
-          var s = Base64.decode(f);
-          if(s && s.replace(/[^\w\(\)]/g, '').length > 7 && (this.checkHTML(s) || this.checkJS(s))) {
-            this.log("Detected BASE64 encoded injection: " + f);
-            return this.base64 = true;
-          }
+        var s = Base64.decode(f);
+        if(s && s.replace(/[^\w\(\)]/g, '').length > 7 && (this.checkHTML(s) || this.checkJS(s))) {
+          this.log("Detected BASE64 encoded injection: " + f);
+          return this.base64 = true;
+        }
       } catch(e) {}
     }
     return false;
   },
+  
+  checkBase64FragEx: function(f) {
+    return this.checkBase64Frag(Base64.purify(f)) || this.checkBase64Frag(Base64.purify(Base64.alt(f)));
+  },
+  
   
   checkURL: function(url) {
     // let's assume protocol and host are safe, but keep the leading double slash to keep comments in account
@@ -1616,6 +1616,13 @@ var InjectionChecker = {
     this.isPost = isPost || false;
     this.base64 = false;
     this.base64tested = [];
+    
+    if (this.checkBase64(
+      this.isPost
+      ? Base64.purify(unescape(s.replace(/\+/g, ' ')))
+      : s.replace(/^\/{1,3}/, '')
+      ))
+      return true;
     return this._checkRecursive(s, depth);
   },
   
@@ -1629,7 +1636,7 @@ var InjectionChecker = {
       return false;
     
     
-    if (/\+/.test(s) && this._checkRecursive(this.urlUnescape(s.replace(/\+/g, ' '), depth)))
+    if (/\+/.test(s) && this._checkRecursive(this.formUnescape(s), depth))
       return true;
     
     var unescaped = this.urlUnescape(s);
@@ -1644,9 +1651,7 @@ var InjectionChecker = {
         return true;
       }
     }
-    
-    if (!this.isPost && this.checkBase64(s.replace(/^\/{1,3}/, ''))) return true;
-    
+
     if (unescaped != s && this._checkRecursive(unescaped, depth))
       return true;
     
@@ -1712,6 +1717,10 @@ var InjectionChecker = {
     }
   },
   
+  formUnescape: function(s, brutal) {
+    return this.urlUnescape(s.replace(/\+/g, ' '), brutal);
+  },
+  
   ebayUnescape: function(url) {
     return url.replace(/Q([\da-fA-F]{2})/g, function(s, c) {
       return String.fromCharCode(parseInt(c, 16));
@@ -1735,9 +1744,10 @@ var InjectionChecker = {
   
   checkPostStream: function(url, stream) {
      var ic = this;
-     return new PostChecker(url, stream).check(
+     var pc = new PostChecker(url, stream);
+     return pc.check(
       function(chunk) {
-        return chunk.length > 6 && ic.checkRecursive(chunk, 2, true) && chunk;
+        return chunk.length > 6 && ic.checkRecursive(chunk, 2, !pc.isFile) && chunk;
       }
     );
   },
@@ -2126,8 +2136,17 @@ XSanitizer.prototype = {
 // we need this because of https://bugzilla.mozilla.org/show_bug.cgi?id=439276
 
 const Base64 = {
-
-  decode : function (input) {
+  
+  purify: function(input) {
+    return input.replace(/[^A-Za-z0-9\+\/=]+/g, '');
+  },
+  
+  alt: function(s) {
+    // URL base64 variant, see http://en.wikipedia.org/wiki/Base64#URL_applications
+    return s.replace(/-/g, '+').replace(/_/, '/')
+  },
+  
+  decode: function (input, strict) {  
     var output = '';
     var chr1, chr2, chr3;
     var enc1, enc2, enc3, enc4;

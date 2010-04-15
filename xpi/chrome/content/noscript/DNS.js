@@ -91,10 +91,9 @@ var DNS = {
     CAPACITY: 400, // when we purge, we cut this to half
     _map: {},
     _ext: {},
+    count: 0,
     
-    get count() {
-      return this._map.__count__;
-    },
+
     get: function(key) {
       return key in this._map && this._map[key];
     },
@@ -105,6 +104,7 @@ var DNS = {
         }
       }
       this._map[key] = entry;
+      this.count++;
     },
     evict: function(host) {
       return (host in this._map) && (delete this._map[host]);
@@ -126,28 +126,19 @@ var DNS = {
     },
     
     putExt: function(host) {
-      this._ext[host] = true; // Date.now();
-      // we prefer to store a few bytes indefinitely rather than fall for DNS rebinding...
-      // if (this._ext.__count__ > 800) this._purgeExtCache();
+      this._ext[host] = true;
     },
     isExt: function(host) {
       return host in this._ext;
     },
     
-    _purgeExtCache: function() {
-      var l = [];
-      var map = this._extCache;
-      for (var key in map) {
-        l.push({ k: key, t: map[key]});
-      }
-      this._doPurge(map, l, l.length / 2);
-    },
     
     _doPurge: function(map, l, max) {
       l.sort(this._oldLast);
       for (var j = l.length; j-- > max;) {
         delete map[l[j].k];
       }
+      this.count -= (l.length - max);
     }
   },
   
