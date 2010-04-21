@@ -262,16 +262,16 @@ CtxCapturingListener.prototype = {
   originalListener: null,
   originalCtx: null,
   notify: false,
-  onDataAvailable: function(request, context, inputStream, offset, count) {
-    this.originalCtx = context;
+  onDataAvailable: function(request, ctx, inputStream, offset, count) {
+    this.originalCtx = ctx;
   },
-  onStartRequest: function(request, context) {
-    this.originalCtx = context;
-    if (this.notify) this.originalListener.onStartRequest(request, context);
+  onStartRequest: function(request, ctx) {
+    this.originalCtx = ctx;
+    if (this.notify) this.originalListener.onStartRequest(request, ctx);
   },
-  onStopRequest: function(request, context, statusCode) {
-    this.originalCtx = context;
-    if (this.notify) this.originalListener.onStopRequest(request, context, statusCode);
+  onStopRequest: function(request, ctx, statusCode) {
+    this.originalCtx = ctx;
+    if (this.notify) this.originalListener.onStopRequest(request, ctx, statusCode);
   },
   QueryInterface: function (aIID) {
     if (aIID.equals(CI.nsIStreamListener) ||

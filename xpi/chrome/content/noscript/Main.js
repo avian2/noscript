@@ -2663,6 +2663,7 @@ var ns = singleton = {
     return false;
   },
   
+  
   executeJSURL: function(url, openCallback) {
     var browserWindow = DOM.mostRecentBrowserWindow;
     var browser = browserWindow.noscriptOverlay.currentBrowser;
@@ -2691,51 +2692,30 @@ var ns = singleton = {
         }
         
         if (Thread.canSpin) { // async evaluation, after bug 351633 landing
-          
-          try {
-            this.setExpando(doc, "bookmarklet", true);
-            if (!(snapshots.siteJS && snapshots.docJS)) {
-              this._runJS(window, "(" +
-                function() {
-                  var tt = [];
-                  window.setTimeout = window.setInterval = function(f, d, a) {
-                    if (typeof(f) != 'function') f = new Function(f || '');
-                    tt.push({f: f, d: d, a: a});
-                    return 0;
-                  };
-                  window.__runTimeouts = function() {
-                    var t, count = 0;
-                    while (tt.length && count++ < 50) { // let's prevent infinite pseudo-loops
-                      tt.sort(function(b, a) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); });
-                      t = tt.pop();
-                      t.f.call(window, t.a);
-                    }
-                    delete window.__runTimeouts;
-                    delete window.setTimeout;
-                  };
-                }.toSource()
-              + ")()");
+          Thread.runWithQueue(function() {
+            try {
+              this.executingJSURL(doc, 1);
+              if (!(snapshots.siteJS && snapshots.docJS)) {
+                this._patchTimeouts(window, true);
+              }
+              
+              if (openCallback) {
+                window.location.href = url;
+              } else {
+                var s = doc.createElement("script");
+                s.appendChild(doc.createTextNode(url));
+                doc.documentElement.appendChild(s);
+              }
+              
+              Thread.yieldAll();
+              if (!(snapshots.siteJS && snapshots.docJS)) {
+                this._patchTimeouts(window, false);
+              }
+              
+            } catch(e) {
+              if(this.consoleDump) this.dump("JS URL execution failed: " + e);
             }
-            
-            if (openCallback) {
-              window.location.href = url;
-            } else {
-              var s = doc.createElement("script");
-              s.appendChild(doc.createTextNode(url));
-              doc.documentElement.appendChild(s);
-            }
-            
-            Thread.yieldAll();
-            if (!(snapshots.siteJS && snapshots.docJS)) {
-              this._runJS(window,
-                        "if (typeof window.__runTimeouts == 'function') window.__runTimeouts()");
-            }
-            
-          } catch(e) {
-            if(this.consoleDump) this.dump("JS URL execution failed: " + e);
-          } finally {
-            this.setExpando(doc, "bookmarklet", false);
-          }
+          }, this);
         } else {
           openCallback(url);
         }
@@ -2743,10 +2723,17 @@ var ns = singleton = {
       } finally {
         
         this.setExpando(browser, "jsSite", site);
-        if (!browser.webNavigation.isLoadingDocument && this.getSite(browser.webNavigation.currentURI.spec) == site)
+        if (!browser.webNavigation.isLoadingDocument &&
+            this.getSite(browser.webNavigation.currentURI.spec) == site)
           browser.webNavigation.allowJavascript = snapshots.docJS;
         
-        this.delayExec(function() {
+        Thread.asap(function() {
+          if (this.executingJSURL(doc) > 1) {
+            this.delayExec(arguments.callee, 100);
+            return;
+          }
+          
+          this.executingJSURL(doc, 0);
           if (this.jsEnabled) {
             this.jsEnabled = false;
             if (!snapshots.siteJS)
@@ -2755,26 +2742,75 @@ var ns = singleton = {
 
           if (this.consoleDump & LOG_JS)
             this.dump("Restored snapshot permissions on " + site + "/" + (browser.webNavigation.isLoadingDocument ? "loading" : browser.webNavigation.currentURI.spec));
-        }, 500);
+        }, this);
       }
     }
     
     return false;
   },
+  
+  _patchTimeouts: function(w, start) {
+     this._runJS(w, start
+      ? "if (typeof window.__runTimeouts != 'function') (" +
+        function() {
+          var tt = [];
+          window.setTimeout = window.setInterval = function(f, d, a) {
+            if (typeof(f) != 'function') f = new Function(f || '');
+            tt.push({f: f, d: d, a: a});
+            return 0;
+          };
+          window.__runTimeouts = function() {
+            var t, count = 0;
+            while (tt.length && count++ < 50) { // let's prevent infinite pseudo-loops
+              tt.sort(function(b, a) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); });
+              t = tt.pop();
+              t.f.call(window, t.a);
+            }
+            delete window.__runTimeouts;
+            delete window.setTimeout;
+          };
+        }.toSource()
+        + ")()"
+      : "if (typeof window.__runTimeouts == 'function') window.__runTimeouts()"
+    );
+  },
+  
   _runJS: function(window, s) {
     window.location.href = "javascript:" + encodeURIComponent(s + "; void(0);");
-    Thread.yieldAll();
   },
   
   bookmarkletImport: function(scriptElem, src) {
-    var xhr = ns.createCheckedXHR("GET", src, false);
-    xhr.send(null);
     var doc = scriptElem.ownerDocument;
-    this._runJS(doc.defaultView, xhr.responseText);
-    var ev = doc.createEvent("HTMLEvents");
-    ev.initEvent("load", false, true);
-    scriptElem.dispatchEvent(ev);
-    if (Thread.canSpin) Thread.yieldAll();
+    ns.executingJSURL(doc, 1);
+    var w = doc.defaultView;
+    try {
+      ns._patchTimeouts(w, true);
+      var xhr = ns.createCheckedXHR("GET", src, false);
+      xhr.send(null);
+      
+      this._runJS(doc.defaultView, xhr.responseText);
+      var ev = doc.createEvent("HTMLEvents");
+      ev.initEvent("load", false, true);
+    } catch(e) {
+      ns.dump(e);
+    } finally {
+      Thread.asap(function() {
+        try {
+          scriptElem.dispatchEvent(ev);
+          ns._patchTimeouts(w, false);
+        } catch(e) {}
+        ns.executingJSURL(doc, -1);
+      });
+    }
+  },
+  
+  executingJSURL: function(doc, n) {
+    const VAR = "JSURLExec";
+    var v = this.getExpando(doc, VAR) || 0;
+    if (typeof(n) === "number") {
+      this.setExpando(doc, VAR, n === 0 ? 0 : v += n);
+    }
+    return v;
   },
   
   isCheckedChannel: function(c) {

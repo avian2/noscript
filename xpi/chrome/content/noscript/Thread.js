@@ -10,13 +10,13 @@ var Thread = {
     return this.canSpin = this.current instanceof CI.nsIEventTarget;
   },
   
-  runWithQueue: function(callback) {
+  runWithQueue: function(callback, self) {
     var thread = this.current;
     thread instanceof CI.nsIThreadInternal;
     try {
       this.activeQueues++;
       thread.pushEventQueue(null);
-      return callback();
+      return self ? callback.apply(self) : callback();
     } finally {
       thread.popEventQueue();
       this.activeQueues--;

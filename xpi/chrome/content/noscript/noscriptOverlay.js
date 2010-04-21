@@ -470,15 +470,17 @@ return noscriptUtil.service ? {
     
     const ignorePorts = ns.ignorePorts;
     const portRx = /:\d+$/;
-    var hasPort;
+    var hasPort, showInMain;
     
-    var distrustEmbeds = null;
-    if (!ns.showUntrustedPlaceholder && sites.pluginSites.length) {
+    const hideUntrustedPlaceholder = !ns.showUntrustedPlaceholder;
+    var embedOnlySites = null;
+    if (ns.contentBlocker && !ns.getPref("alwaysShowObjectSources") &&
+        sites.pluginSites.length) {
       // add untrusted plugin sites if placeholders are not shown for untrusted sources
-      distrustEmbeds = [];
-      sites.pluginSites.forEach(function(s) {
-        (untrustedSites.matches(s) ? sites : distrustEmbeds).push(s);
+      embedOnlySites = sites.pluginSites.filter(function(s) {
+        return sites.indexOf(s) === -1;
       });
+      sites.push.apply(sites, embedOnlySites);
     }
     
     menuGroups = [];
@@ -494,7 +496,12 @@ return noscriptUtil.service ? {
       }
       
       isTop = site == sites.topURL;
+      
       enabled = !!matchingSite;
+      
+      showInMain = embedOnlySites
+        ? embedOnlySites.indexOf(site) === -1 || hideUntrustedPlaceholder && enabled : true;
+      
       docJSBlocked = enabled && isTop && !this.currentBrowser.webNavigation.allowJavascript;
       if (docJSBlocked) enabled = false;
       
@@ -551,6 +558,7 @@ return noscriptUtil.service ? {
         }  
       }
       menuSites.isTop = isTop;
+      menuSites.showInMain = showInMain;
       menuSites.enabled = enabled;
       menuGroups.push(menuSites);
     }
@@ -638,11 +646,14 @@ return noscriptUtil.service ? {
     
     var fullTip = !!ns.getPref("siteInfoProvider");
     
+    
+    
     while (j-- > 0) {
       
       menuSites = menuGroups[j];
       isTop = menuSites.isTop;
       enabled = menuSites.enabled;
+      showInMain = menuSites.showInMain;
       
       if (untrustedFrag && untrustedFrag.firstChild) {
         untrustedFrag.appendChild(sep.cloneNode(false));
@@ -656,8 +667,10 @@ return noscriptUtil.service ? {
         menuSite = menuSites[scount];
         
         untrusted = !enabled && (blockUntrusted || ns.isUntrusted(menuSite));
-        if (untrusted) 
+        if (untrusted) {
           untrustedCount++;
+          showInMain = true;
+        }
         else if (!enabled)
           unknownCount++;
         
@@ -684,6 +697,7 @@ return noscriptUtil.service ? {
             tempCount++;
           }
         }
+         
         
         node.setAttribute("label", this.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]));
         node.setAttribute("statustext", menuSite);
@@ -691,11 +705,11 @@ return noscriptUtil.service ? {
     
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
         
-        if ((showPermanent || enabled) && !(global && enabled)) 
+        if ((showPermanent || enabled) && !(global && enabled) && showInMain) 
           parent.appendChild(node);
-        
+      
         if (!locked) {
-          if (showTemp && !(enabled || blurred)) {
+          if (showTemp && !(enabled || blurred) && showInMain) {
             extraNode = node.cloneNode(false);
             extraNode.setAttribute("label", this.getString("allowTemp", [domain]));
             extraNode.setAttribute("class", cssClass + " noscript-temp noscript-allow");
@@ -706,19 +720,12 @@ return noscriptUtil.service ? {
                 ) && !untrusted) {
             parent = (showUntrusted && !blockUntrusted ? untrustedFrag : mainFrag);
             
-            function addUntrusted(s) {
-              var n = refMI.cloneNode(false);
-              n.setAttribute("label", noscriptOverlay.getString("distrust", [s]));
-              n.setAttribute("statustext", s);
-              n.setAttribute("class", cssClass + " noscript-distrust");
-              n.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
-              parent.appendChild(n);
-            }
-            if (distrustEmbeds) {
-              distrustEmbeds.forEach(addUntrusted);
-              distrustEmbeds = null;
-            }
-            addUntrusted(menuSite);
+            extraNode = refMI.cloneNode(false);
+            extraNode.setAttribute("label", noscriptOverlay.getString("distrust", [menuSite]));
+            extraNode.setAttribute("statustext", menuSite);
+            extraNode.setAttribute("class", cssClass + " noscript-distrust");
+            extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
+            parent.appendChild(extraNode);
           }
         }
       }
@@ -1019,9 +1026,9 @@ return noscriptUtil.service ? {
           if (ns.isJSEnabled(curSite)) {
             // force reload
             if (ns.jsEnabled) {
-              ns._lastSnapshot.add(curSite); 
+              ns._lastSnapshot.trusted.add(curSite); 
             } else {
-              ns._lastSnapshot.remove(curSite); 
+              ns._lastSnapshot.trusted.remove(curSite); 
             }
           }
           webNav.allowJavascript = true;

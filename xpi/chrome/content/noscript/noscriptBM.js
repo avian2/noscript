@@ -84,8 +84,9 @@ var noscriptBM = {
   patchPlacesMethod: function(k, m) {
     if(m in k) {
       // Dirty eval hack due to Tab Mix Plus conflict: http://tmp.garyr.net/forum/viewtopic.php?t=8052
-      k[m] = eval(k[m].toSource()
-        .replace(/\b\w+\.checkURLSecurity\(/, 'noscriptBM.checkURLSecurity('))
+      var src = k[m].toSource();
+      if (!/\bnoscriptBM\b/.test(src))
+        k[m] = eval(src.replace(/\b\w+\.checkURLSecurity\(/, 'noscriptBM.checkURLSecurity('));
     }
   },
   
@@ -118,21 +119,26 @@ var noscriptBM = {
     }
     
     // patch URLBar for keyword-triggered bookmarklets
-    if("handleURLBarCommand" in window && !noscriptBM.handleURLBarCommandOriginal) { // Fx 3.0
-      noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
-      window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
-    } else { // Fx 3.5
-      noscriptBM.handleURLBarCommandOriginal = window.loadURI;
-      window.loadURI = noscriptBM.loadURI;
+    if (!noscriptBM.handleURLBarCommandOriginal) {
+      if("handleURLBarCommand" in window) { // Fx 3.0
+        noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
+        window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
+      } else { // Fx 3.5
+        noscriptBM.handleURLBarCommandOriginal = window.loadURI;
+        window.loadURI = noscriptBM.loadURI;
+      }
     }
+    
     var pu = window.PlacesUIUtils || window.PlacesUtils || false;
-    if (typeof(pu) == "object" && !noscriptBM.placesUtils) {
+    if (typeof(pu) == "object" && !pu.__noScriptPatch) {
       noscriptBM.placesUtils = pu;
       window.setTimeout(function() {
+        if (pu.__noScriptPatch) return;
+        pu.__noScriptPatch = true;
         var methods = ["openNodeIn", "openSelectedNodeWithEvent"];
         for each (method in methods)
           noscriptBM.patchPlacesMethod(pu, method);
-      }, 0);
+      }, 50);
     }
   }
 };

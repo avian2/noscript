@@ -469,7 +469,7 @@ const MainContentPolicy = {
           return this.reject(isScript ? "Script" : "XSLT", arguments);
         } else {
           
-          if (isScript && this.getExpando(contentDocument.defaultView.top.document, "bookmarklet") &&
+          if (isScript && this.executingJSURL(contentDocument.defaultView.top.document) &&
               (aContext instanceof CI.nsIDOMHTMLScriptElement) &&
               !this.jsPolicySites.matches(this.getSite(contentDocument.defaultView.location.href))) {
             this.bookmarkletImport(aContext, locationURL);

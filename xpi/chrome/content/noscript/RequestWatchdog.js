@@ -83,7 +83,10 @@ RequestWatchdog.prototype = {
         
       case "http-on-examine-merged-response":
         HTTPS.handleSecureCookies(channel);
-
+    
+        if (this.externalFilters.enabled)
+          this.callExternalFilters(channel);
+        
       case "http-on-examine-cached-response":
         if (isDoc) {
           ns.onContentSniffed(channel);
@@ -97,6 +100,25 @@ RequestWatchdog.prototype = {
   
   die: function(channel, e) {
     this.abort({ channel: channel, reason: e + " --- " + e.stack, silent: true });
+  },
+  
+  get externalFilters() {
+    delete this.__proto__.externalFilters;
+    if (ns.geckoVersionCheck("1.9.1") >= 0) {
+      INCLUDE("ExternalFilters");
+      this.externalFilters = ExternalFilters;
+    } else this.externalFilters = { enabled: false };
+    return this.externalFilters;
+  },
+  
+  callExternalFilters: function(ch) {
+    var ph = PolicyState.extract(ch);
+    if (ph) {
+      switch (ph.contentType) {
+        case 5: case 12:
+        this.externalFilters.handle(ch, ph.mimeType, ph.context);
+      }
+    }
   },
   
   handleABE: function(abeReq, isDoc) {
@@ -285,6 +307,9 @@ RequestWatchdog.prototype = {
       ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');
     }
   },
+  
+  
+  PAYPAL_BUTTON_RX: /^https:\/\/www\.paypal\.com\/(?:[\w\-]+\/)?cgi-bin\/webscr\b/,
   
   filterXSS: function(abeReq) {
     
@@ -512,12 +537,6 @@ RequestWatchdog.prototype = {
           if (ns.consoleDump) this.dump(channel, "deviantart.com journal post exception");
           return;
         }
-        
-        if (globalJS && /^https?:\/\/www\.mendeley\.com\/import\/bookmarklet\/$/.test(originalSpec)) {
-          if (ns.consoleDump) this.dump(channel, "mendeley.com bookmarklet exception");
-            return;
-        }
-        
       }
     
     } else { // maybe data or javascript URL?
@@ -558,7 +577,7 @@ RequestWatchdog.prototype = {
                 // don't strip POST unconditionally) to make some extensions (e.g. Google Gears) 
                 // work. For dangerous edge cases we should have moz-null-principal: now, anyway.
                 || // some goes for Paypal buttons, which we don't require to be on trusted sites
-        /^https:\/\/www\.paypal\.com\/(?:ca\/)?cgi-bin\/webscr\b/.test(originalSpec)
+        this.PAYPAL_BUTTON_RX.test(originalSpec)
       ) {
       
       
@@ -596,15 +615,25 @@ RequestWatchdog.prototype = {
         (!window || ns.injectionCheckSubframes || window == window.top);
       
       
-          
+      var skipArr, skipRx;    
       if (injectionAttempt) {
-        postInjection = ns.filterXPost && (!origin || originSite != "chrome:") && channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel);
-        injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(
+
+        if (this.PAYPAL_BUTTON_RX.test(originalSpec)) {
           // Paypal buttons encrypted parameter causes a DOS, strip it out
-          /^https:\/\/www\.paypal\.com\/ca\/cgi-bin\/webscr\?cmd=_s-xclick&/.test(originalSpec)
-            ? originalSpec.replace(/(?:^|&)encrypted=[^&]+/, '')
-            : originalSpec
-        );
+          skipArr = ['encrypted'];
+        } else if (/^https?:\/\/www\.mendeley\.com\/import\/bookmarklet\/$/.test(originalSpec)) {
+          skipArr = ['html'];
+        }
+        
+        if (skipArr) {
+          skipRx = new RegExp("(?:^|&)(?:" + skipArr.join('|') + ")=[^&]+");
+        }
+        
+        postInjection = ns.filterXPost &&
+          (!origin || originSite != "chrome:") &&
+          channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel, skipArr);
+        injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(
+          skipRx ? originalSpec.replace(skipRx, '') : originalSpec);
         
         if (ns.consoleDump) {
           if (injectionAttempt) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
@@ -613,6 +642,9 @@ RequestWatchdog.prototype = {
       }
       
       if (!(injectionAttempt || postInjection)) {
+        
+        if (skipArr) return;
+        
         if (ns.consoleDump) this.dump(channel, "externalLoad flag is " + abeReq.external);
 
         if (abeReq.external) { // external origin ?
@@ -1195,15 +1227,15 @@ var InjectionChecker = {
   },
   
   _createInvalidRanges: function() {
-    function x(n) { return '\\x' + n.toString(16); }
+    function x(n) { return '\\u' + ("0000" + n.toString(16)).slice(-4); }
     
     var ret = "";
     var first = -1;
     var last = -1;
     var cur = 0x7e;
-    while(cur++ <= 0xff) {
+    while(cur++ <= 0xffff) {
       try {
-        ev\u0061l("var _" + String.fromCharCode(cur) + "_=1");
+        eval("var _" + String.fromCharCode(cur) + "_=1");
       } catch(e) {
         if (!/illegal char/.test(e.message)) continue;
         if (first == -1) {
@@ -1223,10 +1255,12 @@ var InjectionChecker = {
     }
     return ret;
   },
+  
   get invalidChars() {
     delete this.invalidChars;
-    return this.invalidChars = new RegExp("^[^\"'/]*[" + this._createInvalidRanges() + "][^\"'/]*$");
+    return this.invalidChars = new RegExp("^[^\"'/]*[" + this._createInvalidRanges() + "]");
   },
+  
   checkJSBreak: function(s) {
     // Direct script injection breaking JS string literals or comments
     
@@ -1239,9 +1273,9 @@ var InjectionChecker = {
     
     if (!this.maybeJS(s)) return false;
     
-    const invalidChars = this.invalidChars;
+    const invalidChars = /[\u007f-\uffff]/.test(s) && this.invalidChars;
     const findInjection = 
-      /(['"#;>]|[\/\?=&](?![\?=&])|\*\/)(?!\1)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|i\W*n\W*n\W*e\W*r\W*H\W*T\W*M\W*L|\W*o\W*n(?:\W*\w){3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
+      /(['"#;>:]|[\/\?=](?![\?&=])|&(?![\w\-\.\[\]&!]*=)|\*\/)(?!\1)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|i\W*n\W*n\W*e\W*r\W*H\W*T\W*M\W*L|\W*o\W*n(?:\W*\w){3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
     
     findInjection.lastIndex = 0;
     var m, breakSeq, subj, expr, lastExpr, script,
@@ -1340,9 +1374,9 @@ var InjectionChecker = {
         
         lastExpr = expr;
         
-        if(invalidChars.test(expr)) {
+        if(invalidChars && invalidChars.test(expr)) {
           this.log("Quick skipping invalid chars");
-          continue;
+          break;
         }
         
         if(quote) {
@@ -1533,11 +1567,11 @@ var InjectionChecker = {
   checkBase64: function(url) {
     this.base64 = false;
     
-    const MAX_TIME = 4000;
+    const MAX_TIME = 8000;
     const DOS_MSG = "Too long execution time, assuming DOS in Base64 checks";
     
     this.log(url);
-    var t = Date.now();
+   
     
     var parts = url.split("#"); // check hash
     if (parts.length > 1 && this.checkBase64FragEx(unescape(parts[1])))
@@ -1557,6 +1591,7 @@ var InjectionChecker = {
     }
     
     
+    var t = Date.now();
     if (parts.some(function(p) {
         if (Date.now() - t > MAX_TIME) {
             this.log(DOS_MSG);
@@ -1566,8 +1601,10 @@ var InjectionChecker = {
       }, this))
       return true;
     
+    
     var uparts = Base64.purify(unescape(url)).split("/");
     
+    t = Date.now();
     while(parts.length) {
       if (Date.now() - t > MAX_TIME) {
           this.log(DOS_MSG);
@@ -1590,7 +1627,11 @@ var InjectionChecker = {
       this.base64tested.push(f);
       try {
         var s = Base64.decode(f);
-        if(s && s.replace(/[^\w\(\)]/g, '').length > 7 && (this.checkHTML(s) || this.checkJS(s))) {
+        if(s && s.replace(/[^\w\(\)]/g, '').length > 7 &&
+           (this.checkHTML(s) ||
+              this.checkAttributes(s))
+           // this.checkJS(s) // -- alternate, whose usefulness is doubious but which easily leads to DOS
+           ) {
           this.log("Detected BASE64 encoded injection: " + f);
           return this.base64 = true;
         }
@@ -1617,11 +1658,10 @@ var InjectionChecker = {
     this.base64 = false;
     this.base64tested = [];
     
-    if (this.checkBase64(
-      this.isPost
-      ? Base64.purify(unescape(s.replace(/\+/g, ' ')))
-      : s.replace(/^\/{1,3}/, '')
-      ))
+    if (this.isPost
+        ? this.checkBase64Frag(Base64.purify(unescape(s.replace(/\+/g, ' '))))
+        : this.checkBase64(s.replace(/^\/{1,3}/, ''))
+      )
       return true;
     return this._checkRecursive(s, depth);
   },
@@ -1727,7 +1767,7 @@ var InjectionChecker = {
     });
   },
   
-  checkPost: function(channel) {
+  checkPost: function(channel, skip) {
     if (!((channel instanceof CI.nsIUploadChannel)
           && channel.uploadStream && (channel.uploadStream instanceof CI.nsISeekableStream)))
       return false;
@@ -1739,15 +1779,16 @@ var InjectionChecker = {
     MaxRunTime.increase(clen < 0 || clen > 300000 ? 60 : Math.ceil(20 * clen / 100000));
     
     this.log("Extracting post data...");
-    return this.checkPostStream(channel.URI.spec, channel.uploadStream);
+    return this.checkPostStream(channel.URI.spec, channel.uploadStream, skip);
   },
   
-  checkPostStream: function(url, stream) {
+  checkPostStream: function(url, stream, skip) {
      var ic = this;
-     var pc = new PostChecker(url, stream);
+     var pc = new PostChecker(url, stream, skip);
      return pc.check(
       function(chunk) {
-        return chunk.length > 6 && ic.checkRecursive(chunk, 2, !pc.isFile) && chunk;
+        return chunk.length > 6 &&
+          ic.checkRecursive(chunk, 2, !pc.isFile) && chunk;
       }
     );
   },
@@ -1761,9 +1802,10 @@ var InjectionChecker = {
   
 };
 
-function PostChecker(url, uploadStream) {
+function PostChecker(url, uploadStream, skip) {
   this.url = url;
-  this.uploadStream = uploadStream;  
+  this.uploadStream = uploadStream;
+  this.skip = skip || false;
 }
 
 PostChecker.prototype = {
@@ -1832,8 +1874,10 @@ PostChecker.prototype = {
     var boundary = this.boundary;
    
     var chunks = [];
-    var j, len;
-
+    var j, len, name;
+    
+    var skip = this.skip;
+    
     if (boundary) { // multipart/form-data, see http://www.faqs.org/ftp/rfc/rfc2388.txt  
       if(postData.indexOf(boundary) < 0) {
         // skip big file chunks
@@ -1854,7 +1898,10 @@ PostChecker.prototype = {
         
         if (m) {
           // name and filename are backslash-quoted according to RFC822
-          if (m[1]) chunks.push(m[1].replace(/\\\\/g, "\\")); // name and file name 
+          name = m[1];
+          if (name) {
+            chunks.push(name.replace(/\\\\/g, "\\")); // name and file name
+          }
           if (m[2]) {
             chunks.push(m[2].replace(/\\\\/g, "\\")); // filename
             if (m[3]) {
@@ -1868,7 +1915,8 @@ PostChecker.prototype = {
             }
           }
           if (eof || !last) {
-            chunks.push(part.substring(m[0].length)); // parameter body
+            if (!(skip && skip.indexOf(name) !== -1))
+              chunks.push(part.substring(m[0].length)); // parameter body
           } else {
             this.postData = part;
           }
@@ -1885,13 +1933,14 @@ PostChecker.prototype = {
     } else {
       this.isFile = false;
       
-      parts = postData.split("&");
+      parts = postData.replace(/^\s+/, '').split("&");
       if (!eof) this.postData = parts.pop();
-      
+
       for (j = 0, len = parts.length; j < len; j++) {
         m = parts[j].split("=");
-        chunks.push(m[0]);
-        if (m.length > 1) chunks.push(m[1]);
+        name = m[0];
+        if (skip && skip.indexOf(name) > -1) continue;
+        chunks.push(name, m[1]);
       }
     }
     return chunks;
