@@ -29,7 +29,7 @@ var noscriptUtil = {
   confirm: function(msg, persistPref, title) {
     const ns = this.service; 
     var alwaysAsk = { value: ns.getPref(persistPref) };
-     if(!alwaysAsk.value &&  ns.prefs.prefHasUserValue(persistPref) ||
+    if(!alwaysAsk.value &&  ns.prefs.prefHasUserValue(persistPref) ||
         noscriptUtil.prompter.confirmCheck(window, title || "NoScript",
           msg,
           noscriptUtil.getString("alwaysAsk"), alwaysAsk)
@@ -63,8 +63,15 @@ var noscriptUtil = {
         tabselIndexes: [5, 5],
         callback: info ? function() { this.abeOpts.select(info.ruleset); } : null
     });
+  },
+  openEFOptions: function(filterName) {
+    if (filterName) {
+      if ("getAttribute" in filterName) filterName = filterName.getAttribute("statustext");
+      this.service.externalFilters.lastFilterName = filterName;
+    }
+    this.openOptionsDialog({tabselIndexes: [5, 6]});
   }
-,
+, 
   openAboutDialog: function(params) {
     window.open(
       this.chromeBase + "about.xul", 

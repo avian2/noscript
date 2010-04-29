@@ -24,7 +24,7 @@
   font-weight: bold;
 }
 
-.noscript-plugin .noscript-temp, .noscript-plugin.noscript-temp {
+.noscript-embed .noscript-temp, .noscript-embed.noscript-temp {
   font-style: normal;
 }
 
@@ -87,6 +87,13 @@
   list-style-image: url(subprt16.png);
 }
 
+.noscript-emb,
+#noscript-tbb.noscript-emb,
+#noscript-statusIcon.noscript-emb
+{
+  list-style-image: url(emb16.png);
+}
+
 .noscript-inactive-subprt,
 #noscript-tbb.noscript-inactive-subprt,
 #noscript-statusIcon.noscript-inactive-subprt,
@@ -97,6 +104,12 @@
   list-style-image: url(inactive-prt16.png);
 }
 
+.noscript-inactive-emb,
+#noscript-tbb.noscript-inactive-emb,
+#noscript-statusIcon.noscript-inactive-emb
+{
+  list-style-image: url(inactive-emb16.png);
+}
 
 .noscript-yu,
 #noscript-tbb.noscript-yu,
@@ -148,6 +161,11 @@
   list-style-image: url(inactive-yu16.png);
 }
 
+.noscript-yu-emb, .noscript-inactive-yu-emb,
+#noscript-tbb.noscript-yu-emb, #noscript-tbb.noscript-inactive-yu-emb,
+#noscript-statusIcon.noscript-yu-emb, #noscript-statusIcon.noscript-inactive-yu-emb {
+  list-style-image: url(yu-emb16.png);
+}
 
 .noscript-yu-glb, .noscript-inactive-yu-glb,
 #noscript-tbb.noscript-yu-glb, #noscript-tbb.noscript-inactive-yu-glb,
@@ -187,34 +205,22 @@
   list-style-image: url(revtemp16.png);
 }
 
-.noscript-plugin, .noscript-allow-from.noscript-plugin {
-  list-style-image: url(plugin16.png);
+.noscript-embed {
+  list-style-image: url(embed-no16.png);
 }
 
-#noscript-statusXss.noscript-fennec {
-  background-color: #bbb;
-  -moz-border-left-colors: #fff #f8f8f8 #eee #e8e8e8 #ddd #d8d8d8 #ccc #c8c8c8;
-  -moz-border-right-colors: #888888 #888 #989898 #999 #a8a8a8 #aaa #b8b8b8 #bbb;
-  -moz-border-radius: 8px;
-  border-left-width: 8px;
-  border-right-width: 8px;
-  border-style: solid;
+.noscript-allow-from.noscript-embed {
+  list-style-image: url(embed16.png)
 }
 
-#noscript-tbb.noscript-fennec {
-  -moz-border-radius: 8px;
-  border: 2px solid #444;
-  -moz-border-bottom-colors: #aaa #888;
-  -moz-border-top-colors: #666 #444;
-  -moz-border-left-colors: #aaa #888;
-  -moz-border-right-colors: #aaa #888;
-  padding-left: 4px;
-  margin: 0px;
-  width: 40px;
-  height: 40px;
-  background-color: #eee;
-  -moz-user-focus: ignore;
+.noscript-ef {
+  list-style-image: url(ef16.png);
 }
+
+.noscript-ef.inactive {
+  list-style-image: url(ef-no16.png);
+}
+
 
 #noscript-sticky-ui {
   cursor: pointer;

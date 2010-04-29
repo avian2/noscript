@@ -65,7 +65,7 @@ var DNS = {
         const logFile = this.logFile;
         const logStream = CC["@mozilla.org/network/file-output-stream;1"]
           .createInstance(CI.nsIFileOutputStream);
-        logStream.init(logFile, 0x02 | 0x08 | 0x10, 0600, 0 );
+        logStream.init(logFile, 0x02 | 0x08 | 0x10, 384 /*0600*/, 0 );
         this.logStream = logStream;
         const header="*** Log start at "+new Date().toGMTString()+"\n";
         this.logStream.write(header,header.length);

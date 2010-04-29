@@ -400,6 +400,10 @@ return noscriptUtil.service ? {
         }
       }
       
+      if (ns.externalFilters.enabled) {
+        this.populateExternalFilters(pluginsMenu);
+      }
+      
       extraNode = $("noscript-mi-recent-blocked-reset"); // save reset command
       // descend from menus to popups and clear children
       for each(node in [pluginsMenu = pluginsMenu.firstChild, recentMenu = recentMenu.firstChild, untrustedMenu = untrustedMenu.firstChild])
@@ -619,7 +623,7 @@ return noscriptUtil.service ? {
           if (locked || ns.isForbiddenByHttpsStatus(s)) node.setAttribute("disabled", "true");
           
           if (jsEnabled) {
-            cssClass += " noscript-plugin";
+            cssClass += " noscript-embed";
           } else {
             node.setAttribute("class", cssClass);
             node.setAttribute("label", ns.getString("allowFrom", [s]));
@@ -787,12 +791,99 @@ return noscriptUtil.service ? {
   
  
   
+  populateExternalFilters: function(anchor) {
+    const ns = this.ns;
+    var parent = anchor.parentNode;
+    Array.slice.apply(parent.getElementsByClassName("noscript-ef"))
+      .forEach(function(node) { parent.removeChild(node); });
+    
+    if (!(ns.getPref("showExternalFilters"))) return;
+    
+    var menus = {};
+    var domains = [];
+    var filterNames = [];
+    var info = ns.externalFilters.getFiltersInfo(content);
+    var f, menu, domain, whitelisted, item;
+    
+    for (var url in info) {
+      domain = ns.getBaseDomain(ns.getDomain(url));
+      if (domains.indexOf(domain) !== -1) continue;
+      domains.push(domain);
+      
+      f = info[url];
+      if (f.name in menus) {
+        menu = menus[f.name];
+      } else {
+        menu = menus[f.name] = { active: false, filter: f, items: [] };
+        filterNames.push(f.name);
+      }
+      
+      item = { domain: domain };
+      
+      whitelisted = f.whitelist && f.whitelist.test("https://" + domain);
+      
+      item.disabled = whitelisted &&
+        !f.isDomainException(domain); // we cannot reliably un-whitelist custom rules
+      
+      if ((item.active = !whitelisted)) menu.active = true;
+      
+      menu.items.push(item);
+    }
+    
+    if (!domains.length) return;
+      
+    filterNames.sort();
+    
+    var df = document.createDocumentFragment();
+    var node;
+    for each(var filterName in filterNames) {
+      menu = menus[filterName];
+      menu.items.sort(function(a, b) { return a.domain > b.domain ? 1 : a.domain < b.domain ? -1 : 0; })
+      node = df.appendChild(document.createElement("menu"));
+      node.setAttribute("label", filterName);
+      node.setAttribute("class", "menu-iconic noscript-ef" + (menu.active ? '' : ' inactive'));
+      
+      parent = node.appendChild(document.createElement("menupopup"));
+      parent.__ef__ = menu.filter;
+      for each(item in menu.items) {
+        node = parent.appendChild(document.createElement("menuitem"));
+        node.setAttribute("label", ns.getString("ef.activate", [item.domain]));
+        node.setAttribute("type", "checkbox");
+        node.setAttribute("statustext", item.domain);
+        node.setAttribute("oncommand", "noscriptOverlay.onFilterSwitch(event)");
+        if (item.active)
+          node.setAttribute("checked", "true");
+         if (item.disabled)
+          node.setAttribute("disabled", "true");
+      }
+      
+      parent.appendChild(document.createElement("menuseparator"));
+      node = parent.appendChild(document.createElement("menuitem"));
+      node.setAttribute("label", ns.getString("ef.options", [filterName]));
+      node.setAttribute("statustext", filterName);
+      node.setAttribute("oncommand", "noscriptUtil.openEFOptions(this)");
+    }
+    
+    anchor.parentNode.insertBefore(df, anchor);
+  },
+  
+  onFilterSwitch: function(ev) {
+    const ns = this.ns;
+    var node = ev.target;
+    var enabled = node.getAttribute("checked") == "true";
+    var f = node.parentNode.__ef__;
+    if (!f) return;
+    var domain = node.getAttribute("statustext");
+    ns.switchExternalFilter(f.name, domain, enabled);
+  },
+  
   populatePluginsMenu: function(mainMenu, menu, extras) {
     if (!menu) return;
-    
+
     menu.parentNode.hidden = true;
     const ns = this.ns;
-    if (!(extras && ns.getPref("showBlockedObjects", true)))
+  
+    if (!(extras && ns.getPref("showBlockedObjects")))
       return;
     
     var egroup, e, node, j;
@@ -1069,8 +1160,8 @@ return noscriptUtil.service ? {
     return "noscript-" + (inactive ? "inactive-" : "") + lev;
   },
   updateStatusClass: function(node, className) {
-    if (!className) className = this.statusIcon.className.replace(/.*(\bnoscript-\S*(?:yes|no|glb|prt|yu|untrusted)).*/, "$1");
-    node.className = (node.className.replace(/\bnoscript-\S*(?:yes|no|glb|prt|yu|untrusted)\b/g, "") + " " + className).replace(/\s{2,}/g, " ");
+    if (!className) className = this.statusIcon.className.replace(/.*(\bnoscript-\S*(?:yes|no|glb|prt|emb|yu|untrusted)).*/, "$1");
+    node.className = (node.className.replace(/\bnoscript-\S*(?:yes|no|glb|prt|emb|yu|untrusted)\b/g, "") + " " + className).replace(/\s{2,}/g, " ");
   }
 ,
   _syncTimeout: null,
@@ -1127,10 +1218,7 @@ return noscriptUtil.service ? {
     } else {
       ui.hidden = false;
       
-      if ("Browser" in window) {
-        // Fennec tweaks
-        ui.className = "noscript-menu";
-    
+      if (this.fennec) {
         var p = document.getAnonymousElementByAttribute(ui, "class", "popup-internal-box");
         var d = p.ownerDocument;
         ["scrollbutton-up", "scrollbutton-down"].forEach(function(id) {
@@ -1172,6 +1260,8 @@ return noscriptUtil.service ? {
   }
 , 
   getNotificationBox: function(pos, browser) {
+    // this won't get any notification for Fennec, which is good.
+    
     var gb = getBrowser();
     browser = browser || gb.selectedBrowser;
     if (!pos) pos = this.notificationPos;
@@ -1186,6 +1276,7 @@ return noscriptUtil.service ? {
    
     return nb;
   },
+  
   patchNotificationBox: function(nb, pos) {
     if (nb._noscriptPatched) return;
     
@@ -1282,7 +1373,7 @@ return noscriptUtil.service ? {
   
   
   notificationShow: function(label, icon, canAppend) {
-    // if (this.ns.consoleDump) this.ns.dump("Notification show " + Components.stack.caller + "," + (browser || this.currentBrowser).currentURI.spec);
+    
     var box = this.getNotificationBox();
     if (box == null) return false;
     var pos = this.notificationPos;
@@ -1544,13 +1635,22 @@ return noscriptUtil.service ? {
       notificationValue, 
       icon, 
       box.PRIORITY_WARNING_HIGH,
-      [{
-          label: this.getString("notify.options"),
-          accessKey: this.getString("notify.accessKey"),
-          callback: function(notification, buttonInfo) {
-            noscriptUtil.openABEOptions(info);
+      [
+       this.fennec
+       ?  {
+            label: this.getString("disable", ["ABE"]),
+            accessKey: this.getString("disable.accessKey"),
+            callback: function(notification, buttonInfo) {
+              noscriptOverlay.ns.setPref("ABE.enabled", false);
+            }
           }
-       }]
+       :  {
+            label: this.getString("notify.options"),
+            accessKey: this.getString("notify.accessKey"),
+            callback: function(notification, buttonInfo) {
+              noscriptUtil.openABEOptions(info);
+            }
+          }]
       );
     browser.addEventListener("beforeunload", function(ev) {
       if (ev.originalTarget == info.document || ev.originalTarget == browser) {
@@ -1696,13 +1796,18 @@ return noscriptUtil.service ? {
       allowed = allowedSites.length;
       lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
             : allowed == 0 || active == 0 ? (global ? "untrusted-glb" : topUntrusted ? "untrusted" : "no") 
-            : (untrusted > 0 && !(notificationNeeded || blockedObjects) ? (global ? "yu-glb" : "yu") 
-               : topTrusted ? "prt" : "subprt");
+            : (untrusted > 0 && !notificationNeeded
+                ? (blockedObjects ? "yu-emb" : global ? "yu-glb" : "yu") 
+                : topTrusted ? ((allowed == total - blockedObjects) ? "emb" : "prt") : "subprt");
       notificationNeeded = notificationNeeded && totalAnnoyances > 0;
     }
     
-    var message = this.getString("allowed." +
-        (lev == "yu" || lev == "subprt" ? "prt" : lev == "untrusted" ? "no" : lev));
+    var message = this.getString(
+      "allowed." +
+        (lev == "yu" || lev == "subprt" || lev == "emb" || lev == "yu-emb"
+         ? "prt"
+         : lev == "untrusted" ? "no" : lev)
+      );
     
     var shortMessage = message.replace(/JavaScript/g, "JS");
     
@@ -1788,6 +1893,10 @@ return noscriptUtil.service ? {
     }
   },
   
+  presetChanged: function(menulist) {
+    this.ns.setPref("preset", menulist.selectedItem.value);
+  },
+  
   prefsObserver: {
     ns: noscriptUtil.service,
     QueryInterface: noscriptUtil.service.generateQI([
@@ -1801,6 +1910,11 @@ return noscriptUtil.service ? {
          return;
       }
       switch (data) {
+        case "preset":
+          if (data == "off") noscriptOverlay.statusIcon.setAttribute("hidden", "true");
+          else noscriptOverlay.statusIcon.removeAttribute("hidden");
+          noscriptOverlay.syncUI();
+        break;
         case "statusIcon": case "statusLabel":
           window.setTimeout(function() {
               var widget =$("noscript-" + data);
@@ -1837,7 +1951,7 @@ return noscriptUtil.service ? {
       this.ns.prefs.addObserver("", this, true);
       this.ns.caps.addObserver("", this, true);
       const initPrefs = [
-        "statusIcon", "statusLabel", 
+        "statusIcon", "statusLabel", "preset",
         "keys.ui", "keys.toggle",
         "notify", "notify.bottom",
         "notify.hide", "notify.hidePermanent", "notify.hideDelay",
@@ -2078,6 +2192,7 @@ return noscriptUtil.service ? {
       }
       noscriptOverlay.syncUI();
     },
+    
     onPageHide: function(ev) {
       var d = ev.target;
       if (d instanceof HTMLDocument) {
@@ -2091,6 +2206,7 @@ return noscriptUtil.service ? {
     onLoad: function(ev) {
       window.removeEventListener("load", arguments.callee, false);
       window.addEventListener("unload", noscriptOverlay.listeners.onUnload, false);
+    
       try {
         noscriptOverlay.listeners.setup(); 
         noscriptOverlay.wrapBrowserAccess();
@@ -2103,6 +2219,7 @@ return noscriptUtil.service ? {
         noscriptOverlay.ns.log(msg);
         noscriptOverlay.ns.dump(msg);
       }
+    
     },
     onUnload: function(ev) {
       window.removeEventListener("unload", arguments.callee, false);
@@ -2111,22 +2228,54 @@ return noscriptUtil.service ? {
       noscriptOverlay.dispose();
     },
     
+    onAddonOptionsLoad: function(ev) {
+      var presetUI = $("noscript-preset-menu");
+      if (presetUI) {
+        const ns = noscriptOverlay.ns;
+        const preset = ns.getPref("preset");
+        var mi;
+        try {
+        for (var j = presetUI.itemCount; j-- > 0;) {
+          mi = presetUI.getItemAtIndex(j);
+          if (mi && mi.getAttribute("value") == preset) {
+            presetUI.selectedIndex = j;
+            break;
+          }
+        }
+        } catch(e) { ns.log(e) }
+      }
+    },
+    
+    onActivation: function() {
+      noscriptOverlay.syncUI();
+    },
+    
     setup: function() {
       
-      var context = $("contentAreaContextMenu");
-      if (!context) return; // not a browser window?
-      
-      context.addEventListener("popupshowing", this.onMainContextMenu, false);
-      
       var b = getBrowser();
-        
-      b.addProgressListener(this.webProgressListener, CI.nsIWebProgress.NOTIFY_STATE_WINDOW | CI.nsIWebProgress.NOTIFY_LOCATION);
-  
-      if (b.tabContainer) {
-        b.tabContainer.addEventListener("TabClose", this.onTabClose, false);
+      var tabs = $("tabs") || b.tabContainer;
+      if (tabs) {
+        tabs.addEventListener("TabClose", this.onTabClose, false);
       }
       
-      window.addEventListener("DOMContentLoaded", this.onContentLoad, false);
+      var addonsList = $("addons-list");
+      if (addonsList) {
+        // Fennec
+        addonsList.addEventListener("AddonOptionsLoad", this.onAddonOptionsLoad, false);
+        $("browsers").addEventListener("load", this.onContentLoad, true);
+        tabs.addEventListener("TabSelect", this.onActivation, true);
+      } else {
+      
+        var context = $("contentAreaContextMenu");
+        if (!context) return; // not a browser window?
+      
+        context.addEventListener("popupshowing", this.onMainContextMenu, false);
+        window.addEventListener("DOMContentLoaded", this.onContentLoad, true);
+        b.addProgressListener(this.webProgressListener, CI.nsIWebProgress.NOTIFY_STATE_WINDOW | CI.nsIWebProgress.NOTIFY_LOCATION);
+        
+      }
+      
+      
       
       
       window.addEventListener("pageshow", this.onPageShow, true);
@@ -2134,7 +2283,9 @@ return noscriptUtil.service ? {
 
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
-
+      
+      
+      
     },
     
     
@@ -2177,6 +2328,12 @@ return noscriptUtil.service ? {
       || Browser.currentBrowser && function() { return Browser.currentBrowser; }
     );
     return this.currentBrowser;
+  },
+  
+  get fennec() {
+    if (!this._browserReady) return false;
+    delete this.fennec;
+    return this.fennec = "Browser" in window;
   },
   
   get browsers() {

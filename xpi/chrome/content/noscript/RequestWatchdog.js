@@ -31,7 +31,9 @@ RequestWatchdog.prototype = {
     }
     var loadFlags = channel.loadFlags;
     var isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
-     
+    
+    var cached = true;
+    
     switch(topic) {
       case "http-on-modify-request":
         
@@ -79,15 +81,19 @@ RequestWatchdog.prototype = {
       
       
       case "http-on-examine-response":
+        
         STS.processRequest(channel);
         
       case "http-on-examine-merged-response":
+        
         HTTPS.handleSecureCookies(channel);
-    
-        if (this.externalFilters.enabled)
-          this.callExternalFilters(channel);
+        cached = false;
         
       case "http-on-examine-cached-response":
+        
+        if (ns.externalFilters.enabled)
+          ns.callExternalFilters(channel, cached);
+        
         if (isDoc) {
           ns.onContentSniffed(channel);
         } else {
@@ -100,25 +106,6 @@ RequestWatchdog.prototype = {
   
   die: function(channel, e) {
     this.abort({ channel: channel, reason: e + " --- " + e.stack, silent: true });
-  },
-  
-  get externalFilters() {
-    delete this.__proto__.externalFilters;
-    if (ns.geckoVersionCheck("1.9.1") >= 0) {
-      INCLUDE("ExternalFilters");
-      this.externalFilters = ExternalFilters;
-    } else this.externalFilters = { enabled: false };
-    return this.externalFilters;
-  },
-  
-  callExternalFilters: function(ch) {
-    var ph = PolicyState.extract(ch);
-    if (ph) {
-      switch (ph.contentType) {
-        case 5: case 12:
-        this.externalFilters.handle(ch, ph.mimeType, ph.context);
-      }
-    }
   },
   
   handleABE: function(abeReq, isDoc) {
@@ -897,25 +884,11 @@ var Entities = {
   
   get htmlNode() {
     delete this.htmlNode;
-    return this.htmlNode =
-      (function() {
-        try {
-          // we need a loose HTML node, only way to get it today seems using hidden window
-          var as = CC["@mozilla.org/appshell/appShellService;1"].getService(CI.nsIAppShellService);
-          as.hiddenDOMWindow.addEventListener("unload", function(ev) {
-            ev.currentTarget.removeEventListener("unload", arguments.callee, false);
-            Entities.htmlNode = null;
-            doc = null;
-            // dump("*** Free Entities.htmlNode ***\n");
-          }, false);
-          return as.hiddenDOMWindow.document.createElementNS(HTML_NS, "body");
-        } catch(e) {
-          dump("[NoSript Entities]: Cannot grab an HTML node, falling back to XHTML... " + e + "\n");
-          return CC["@mozilla.org/xul/xul-document;1"]
-            .createInstance(CI.nsIDOMDocument)
-            .createElementNS(HTML_NS, "body")
-        }
-      })()
+    var impl = CC["@mozilla.org/xul/xul-document;1"].createInstance(CI.nsIDOMDocument).implementation;
+    return this.htmlNode = impl.createDocument(
+      HTML_NS, "html", impl.createDocumentType(
+        "html", "-//W3C//DTD HTML 4.01 Transitional//EN", "http://www.w3.org/TR/html4/loose.dtd"  
+      )).createElementNS(HTML_NS, "body");
   },
   convert: function(e) {
     try {
@@ -1531,7 +1504,7 @@ var InjectionChecker = {
   },
   
   attributesChecker: new RegExp(
-      "\\W(?:javascript:[\\s\\S]+(?:[=\\(]|%(?:[3a]8|[3b]d))|data:[^,]+,[\\w\\W]*?<[^<]*\\w[^<]*>)|@" + 
+      "\\W(?:javascript:[\\s\\S]+(?:[=\\\\\\(]|%(?:[3a]8|[3b]d))|data:[^,]+,[\\w\\W]*?<[^<]*\\w[^<]*>)|@" + 
       ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
         "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
         .replace(/[a-rt-z\-]/g, "\\W*$&"), 

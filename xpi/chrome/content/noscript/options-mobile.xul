@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE dialog [
+<!ENTITY % noscript SYSTEM "chrome://noscript/locale/noscript.dtd" >
+%noscript;
+<!ENTITY % noscriptFB  SYSTEM "chrome://noscript/content/en-US/noscript.dtd" >
+%noscriptFB;
+]
+>
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />
+    <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />
+  </stringbundleset>
+	
+	<setting title="&noscriptPreset;" type="control" id="noscript-preset-setting">
+		<menulist id="noscript-preset-menu" oncommand="noscriptOverlay.presetChanged(this)">
+			<menupopup>
+				<menuitem value="off" label="&noscriptPreset.off;" />
+				<menuitem value="low" label="&noscriptPreset.low;" />
+				<menuitem value="medium" label="&noscriptPreset.medium;" />
+				<menuitem value="high" label="&noscriptPreset.high;" />
+			</menupopup>
+		</menulist>
+	</setting>
+	
+</vbox>

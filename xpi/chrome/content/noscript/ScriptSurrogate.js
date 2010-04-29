@@ -15,15 +15,20 @@ var ScriptSurrogate = {
     this.prefs = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefService)
       .getBranch("noscript.surrogate.").QueryInterface(CI.nsIPrefBranch2);
     this._syncPrefs();
-    this.prefs.addObserver("", this, true);
+   
   },
   
+  _observingPrefs: false,
   _syncPrefs: function() {
     const prefs = this.prefs;
     this.enabled = prefs.getBoolPref("enabled");
     this.mappings = {};
     for each(var key in prefs.getChildList("", {})) {
       this._parseMapping(prefs, key);
+    }
+    if (!this._observingPrefs) {
+      prefs.addObserver("", this, true);
+      this._observingPrefs = true;
     }
   },
   
@@ -52,7 +57,9 @@ var ScriptSurrogate = {
   },
   
   observe: function(prefs, topic, key) {
-    this._syncPrefs();
+    this.prefs.removeObserver("", this, true);
+    this._observingPrefs = false;
+    Thread.asap(this._syncPrefs, this);
   },
   
   _resolveFile: function(fileURI) {

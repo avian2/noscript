@@ -24,10 +24,11 @@ pref("noscript.showGlobal", true);
 pref("noscript.showTempToPerm", true);
 pref("noscript.showRevokeTemp", true);
 pref("noscript.showBlockedObjects", true);
+pref("noscript.showExternalFilters", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
 pref("noscript.mandatory", "chrome: about: about:config about:neterror about:certerror about:plugins about:privatebrowsing about:sessionrestore resource: about:blocked");
-pref("noscript.default", "about:blank about:credits addons.mozilla.org flashgot.net google.com gstatic.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com js.wlxrs.com");
+pref("noscript.default", "about:blank about:credits addons.mozilla.org flashgot.net google.com gstatic.com googleapis.com googlesyndication.com informaction.com yahoo.com yimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com js.wlxrs.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
 pref("noscript.forbidSilverlight", true);
@@ -267,3 +268,8 @@ pref("noscript.subscription.untrustedURL", "");
 
 pref("noscript.siteInfoProvider", "http://noscript.net/about/%utf8%;%ace%");
 pref("noscript.alwaysShowObjectSources", false);
+
+pref("noscript.ef.enabled", false);
+
+pref("noscript.showBlankSources", false);
+pref("noscript.preset", "medium");

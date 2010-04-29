@@ -1,0 +1,17 @@
+#noscript-tbb.noscript-fennec, #noscript-statusXss.noscript-fennec {
+  -moz-appearance: none;
+	background: transparent !important;
+	-moz-box-orient: vertical;
+	width: 44px;
+  height: 44px;
+  -moz-user-focus: ignore;
+}
+
+.noscript-options {
+  display: none !important;
+}
+
+#mainPopupSet menuseparator, #mainPopupSet menuitem {
+  padding: .5em;
+  border-width: 0;
+}

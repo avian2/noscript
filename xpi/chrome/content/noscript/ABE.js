@@ -144,7 +144,7 @@ const ABE = {
       ABEStorage.reset();
       for each(var rs in data) {
         f = ABEStorage.getRulesetFile(rs.name);
-        if (!f.exists()) f.create(f.NORMAL_FILE_TYPE, 0600);
+        if (!f.exists()) f.create(f.NORMAL_FILE_TYPE, 384 /*0600*/);
         IO.safeWriteFile(f, rs.source);
         f.lastModifiedTime = rs.timestamp;
       }
@@ -1041,7 +1041,7 @@ var ABEStorage = {
         f = dir.clone();
         f.append(d + ".abe");
         if (!f.exists()) {
-          f.create(f.NORMAL_FILE_TYPE, 0600);
+          f.create(f.NORMAL_FILE_TYPE, 384 /*0600*/);
           IO.safeWriteFile(f, this._defaults[d]);
         }
       }
@@ -1052,7 +1052,7 @@ var ABEStorage = {
   
   _initDir: function(dir) {
     if (!dir.exists()) try {
-      dir.create(dir.DIRECTORY_TYPE, 0755);
+      dir.create(dir.DIRECTORY_TYPE, 493 /*0755*/);
       this._initDefaults(dir);
     } catch(e) {
       ABE.log(e);

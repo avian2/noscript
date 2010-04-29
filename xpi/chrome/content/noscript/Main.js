@@ -166,6 +166,7 @@ var ns = singleton = {
   truncateTitle: true,
   truncateTitleLen: 255,
   
+  showBlankSources: false,
   showPlaceholder: true,
   showUntrustedPlaceholder: true,
   collapseObject: false,
@@ -338,7 +339,12 @@ var ns = singleton = {
       case "flashPatch":
       case "silverlightPatch":
       case "inclusionTypeChecking":
+      case "showBlankSources":
         this[name] = this.getPref(name, this[name]);  
+      break;
+      
+      case "preset":
+        this.applyPreset((this[name] = this.getPref(name)));
       break;
       
       case "clearClick.exceptions":
@@ -694,7 +700,8 @@ var ns = singleton = {
       "emulateFrameBreak",
       "nselNever", "nselForce",
       "clearClick", "clearClick.exceptions", "clearClick.subexceptions", "opaqueObject",
-      "showPlaceholder", "showUntrustedPlaceholder", "collapseObject", "abp.removeTabs",
+      "showBlankSources", "showPlaceholder", "showUntrustedPlaceholder",
+      "collapseObject", "abp.removeTabs",
       "temp", "untrusted", "gtemp",
       "flashPatch", "silverlightPatch",
       "secureCookies", "secureCookiesExceptions", "secureCookiesForced",
@@ -1358,9 +1365,9 @@ var ns = singleton = {
     }
     
     var sites = this.getSites(browser);
-    var egroup, len, j, e;
+    var egroup, j, e;
     for each (egroup in sites.pluginExtras) {
-      for (j = 0, len = egroup.length; j < len; j++) {
+      for (j = egroup.length; j-- > 0;) {
         e = egroup[j];
         if (this.isAllowedObject(e.url, e.mime, e.site)) {
           if (e.placeholder) {
@@ -1379,6 +1386,8 @@ var ns = singleton = {
       }
     }
   },
+  
+  
   
   checkObjectPermissionsChange: function(sites, snapshot) {
     if(this.objectWhitelist == snapshot) return false;
@@ -1623,18 +1632,19 @@ var ns = singleton = {
   },
   
   get canSerializeConf() { return !!this.json },
+  _dontSerialize: ["version", "temp", "preset", "placesPrefs.ts"],
   serializeConf: function(beauty) {
     if (!this.json) return '';
     
-    var exclude = ["version", "temp", "placesPrefs.ts"];
-    var prefs = {};
+    const exclude = this._dontSerialize;
+    const prefs = {};
     for each (var key in this.prefs.getChildList("", {})) {
-      if (exclude.indexOf(key) < 0) {
+      if (exclude.indexOf(key) !== -1) {
         prefs[key] = this.getPref(key);
       }
     }
     
-    var conf = this.json.encode({
+    const conf = this.json.encode({
       prefs: prefs,
       whitelist: this.getPermanentSites().sitesString,
       ABE: ABE.serialize(),
@@ -1646,10 +1656,16 @@ var ns = singleton = {
   
   restoreConf: function(s) {
     try {
-      var json = this.json.decode(s.replace(/[\n\r]/g, ''));
+      const json = this.json.decode(s.replace(/[\n\r]/g, ''));
       if (json.ABE) ABE.restore(json.ABE);
-      var prefs = json.prefs;
-      for (var key in prefs) this.setPref(key, prefs[key]);
+      
+      const prefs = json.prefs;
+      const exclude = this._dontSerialize;
+      for (var key in prefs) {
+        if (exclude.indexOf(key) !== -1) {
+          this.setPref(key, prefs[key]);
+        }
+      }
       
       if (prefs.global != ns.jsEnabled) ns.jsEnabled = prefs.global;
       
@@ -1662,7 +1678,31 @@ var ns = singleton = {
       this.dump("Cannot restore configuration: " + e);
       return false;
     }
-  }  
+  }
+,
+  applyPreset: function(preset) {
+    this.resetDefaultPrefs(this.prefs, ['version', 'temp', 'untrusted', 'preset']);
+    
+    switch(preset) {
+      case "off":
+        this.setPref("ABE.enabled", false);
+        this.setPref("xss.filterXGet", false);
+        this.setPref("xss.filterXPost", false);
+        this.setPref("clearClick", 0);
+      case "low":
+        this.jsEnabled = true;
+      break;
+      case "high":
+        this.setPref("contentBlocker", true);
+      case "medium":
+        this.jsEnabled = false;
+      break;
+      default:
+        return;
+    }
+    
+    this.savePrefs();
+  }
 ,
   _sound: null,
   playSound: function(url, force) {
@@ -3215,8 +3255,16 @@ var ns = singleton = {
     return "_bound" in f ? f._bound : f._bound = (function() { return f.apply(ns, arguments); });
   },
   
+  stackIsMine: function() {
+    var s = Components.stack.caller;
+    while((s = s.caller)) {
+      if (!/^chrome:\/\/noscript\/content\//.test(s.filename)) return false;
+    }
+    return true;
+  },
+  
   onPlaceholderClick: function(ev, anchor) {
-    if (ev.button) return;
+    if (ev.button || !this.stackIsMine()) return;
     anchor = anchor || ev.currentTarget
     const object = this.getExpando(anchor, "removedNode");
     
@@ -3393,6 +3441,7 @@ var ns = singleton = {
                 if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
               }, 500); // warning, asap() or timeout=0 won't always work!
             
+            ns.syncUI(doc.defaultView);
             
           } finally {
             ctx = null;
@@ -3521,6 +3570,36 @@ var ns = singleton = {
     return embed;
   },
   
+  
+  traverseObjects: function(callback, self, browser) {
+    if (!browser) {
+      const bi = DOM.createBrowserIterator();
+      while((browser = bi.next()))
+        this.traverseObjects(callback, self, browser);
+      return;
+    }
+    const docShells = browser.docShell.getDocShellEnumerator(
+        CI.nsIDocShellTreeItem.typeContent,
+        browser.docShell.ENUMERATE_FORWARDS
+    );
+    
+    var docShell, document, domain;
+    while (docShells.hasMoreElements()) {
+       
+      docShell = docShells.getNext();
+      document = (docShell instanceof CI.nsIDocShell) &&
+                 docShell.contentViewer && docShell.contentViewer.DOMDocument;
+      if (!document) continue;
+      
+      ["object", "embed"].forEach(function(t) {
+        for each (var node in Array.slice.call(document.getElementsByTagName(t))) {
+          callback.call(self, node, browser);
+        }
+      });
+
+    }
+  },
+  
   _enumerateSites: function(browser, sites) {
 
 
@@ -3617,19 +3696,28 @@ var ns = singleton = {
       this.processScriptElements(document, sites);
     }
    
-    var j;
-    for (j = sites.length; j-- > 0;) {
+    
+    const removeBlank = !(this.showBlankSources || sites.topURL == "about:blank");
+    
+    for (var j = sites.length; j-- > 0;) {
       url = sites[j];
-      if (/:/.test(url) && !(
-          /^(?:file:\/\/|[a-z]+:\/*[^\/\s]+)/.test(url) || 
-          this.getSite(url + "x") == url // doesn't this URL type support host?
-        )) {
+      if (/:/.test(url) &&
+          (removeBlank && url == "about:blank" ||
+            !(
+              /^(?:file:\/\/|[a-z]+:\/*[^\/\s]+)/.test(url) ||
+             // doesn't this URL type support host?
+              this.getSite(url + "x") == url
+            )
+          )
+        ) {
         sites.splice(j, 1); // reject scheme-only URLs
       }
     }
     
     
     if (!sites.topURL) sites.topURL = sites[0] || '';
+    
+    
     
     if (loading) try {
       browser.ownerDocument.defaultView.noscriptOverlay.syncUI();
@@ -4573,6 +4661,55 @@ var ns = singleton = {
   
   createXSanitizer: function() {
     return new XSanitizer(this.filterXGetRx, this.filterXGetUserRx);
+  },
+  
+  get externalFilters() {
+    delete this.externalFilters;
+    if ("nsITraceableChannel" in CI && // Fx >= 3.0 
+        ("nsIProcess2" in CI || // Fx 3.5
+         "runAsync" in CC["@mozilla.org/process/util;1"].createInstance(CI.nsIProcess) // Fx >= 3.6 
+        )) {
+      INCLUDE("ExternalFilters");
+      this.externalFilters = ExternalFilters;
+      this.externalFilters.initFromPrefs("noscript.ef.");
+    } else this.externalFilters = { enabled: false, supported: false };
+    return this.externalFilters;
+  },
+  
+  callExternalFilters: function(ch, cached) {
+    var ph = PolicyState.extract(ch);
+    if (ph) {
+      switch (ph.contentType) {
+        case 5: case 12:
+        this.externalFilters.handle(ch, ph.mimeType, ph.context, cached);
+      }
+    }
+  },
+  
+  switchExternalFilter: function(filterName, domain, enabled) {
+    var f = this.externalFilters.byName(filterName);
+    if (!f) return;
+    
+    var done;
+    if (enabled) {
+      done = f.removeDomainException(domain);
+    } else {
+      done = f.addDomainException(domain);
+    }
+    if (!done) return;
+    
+    this.delayExec(this.traverseObjects, 0,
+      function(p) {
+        const info = this.externalFilters.getObjFilterInfo(p);
+        if (!info) return;
+        
+        if (this.getBaseDomain(this.getDomain(info.url)) == domain) {
+          this.externalFilters.log("Reloading object " + info.url);
+          var anchor = p.nextSibling;
+          p.parentNode.removeChild(p);
+          anchor.parentNode.insertBefore(p, anchor);
+        }
+      }, this);
   },
   
   get compatEvernote() {

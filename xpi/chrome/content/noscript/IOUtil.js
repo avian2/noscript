@@ -6,7 +6,7 @@ const IO = {
     
     const is = CC["@mozilla.org/network/file-input-stream;1"]
       .createInstance(CI.nsIFileInputStream );
-    is.init(file ,0x01, 0400, null);
+    is.init(file ,0x01, 256 /*0400*/, null);
     const sis = CC["@mozilla.org/scriptableinputstream;1"]
       .createInstance(CI.nsIScriptableInputStream);
     sis.init(is);
@@ -39,7 +39,7 @@ const IO = {
     content = unicodeConverter.ConvertFromUnicode(content);
     const os = CC["@mozilla.org/network/file-output-stream;1"]
       .createInstance(CI.nsIFileOutputStream);
-    os.init(file, 0x02 | 0x08 | 0x20, 0700, 0);
+    os.init(file, 0x02 | 0x08 | 0x20, 448 /*0700*/, 0);
     os.write(content, content.length);
     os.close();
   },
@@ -48,7 +48,7 @@ const IO = {
     var tmp = file.clone();
     var name = file.leafName;
     tmp.leafName = name + ".tmp";
-    tmp.createUnique(CI.nsIFile.NORMAL_FILE_TYPE, file.exists() ? file.permissions : 0600);
+    tmp.createUnique(CI.nsIFile.NORMAL_FILE_TYPE, file.exists() ? file.permissions : 384 /*0600*/);
     this.writeFile(tmp, content, charset);
     tmp.moveTo(file.parent, name);
   }
