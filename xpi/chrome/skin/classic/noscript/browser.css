@@ -236,15 +236,11 @@
 }
 
 menupopup[sticky="true"] {
-  border: 3px solid #444 !important;
-  -moz-border-bottom-colors: #222 #888 #222;
-  -moz-border-top-colors: #222 #888 #222;
-  -moz-border-left-colors: #222 #888 #222;
-  -moz-border-right-colors: #222 #888 #222;
+  border: 1px solid #444 !important;
 }
 
 menupopup[sticky="true"][disabled="true"] {
-  border: 3px solid #ccc;
+  border: 1px solid #ccc;
   cursor: wait;
   background-color: #ccc;
   color: #888;

@@ -333,9 +333,6 @@ const ABE = {
 
     if (Thread.canSpin && (host in downloading)) {
       ABE.log("Already fetching rulesets for " + host);
-      // Thread.yieldAll();
-      // Thread.spinWithQueue({ get running() { return host in downloading; }});
-      // return false;
     }
     
     var ts = Date.now();

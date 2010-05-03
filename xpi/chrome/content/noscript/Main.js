@@ -343,10 +343,6 @@ var ns = singleton = {
         this[name] = this.getPref(name, this[name]);  
       break;
       
-      case "preset":
-        this.applyPreset((this[name] = this.getPref(name)));
-      break;
-      
       case "clearClick.exceptions":
       case "clearClick.subexceptions":
         ClearClickHandler.prototype[name.split('.')[1]] = AddressMatcher.create(this.getPref(name, ''));
@@ -1099,7 +1095,7 @@ var ns = singleton = {
     if (this.placesPrefs && !skipPlaces) this.placesPrefs.save();
     return res;
   },
-
+  
   sortedSiteSet: function(s) { return  SiteUtils.sortedSet(s); }
 ,
   globalJS: false,
@@ -1632,14 +1628,14 @@ var ns = singleton = {
   },
   
   get canSerializeConf() { return !!this.json },
-  _dontSerialize: ["version", "temp", "preset", "placesPrefs.ts"],
+  _dontSerialize: ["version", "temp", "preset", "placesPrefs.ts", "mandatory", "default"],
   serializeConf: function(beauty) {
     if (!this.json) return '';
     
     const exclude = this._dontSerialize;
     const prefs = {};
     for each (var key in this.prefs.getChildList("", {})) {
-      if (exclude.indexOf(key) !== -1) {
+      if (exclude.indexOf(key) === -1) {
         prefs[key] = this.getPref(key);
       }
     }
@@ -1662,7 +1658,7 @@ var ns = singleton = {
       const prefs = json.prefs;
       const exclude = this._dontSerialize;
       for (var key in prefs) {
-        if (exclude.indexOf(key) !== -1) {
+        if (exclude.indexOf(key) === -1) {
           this.setPref(key, prefs[key]);
         }
       }
@@ -1681,6 +1677,7 @@ var ns = singleton = {
   }
 ,
   applyPreset: function(preset) {
+   
     this.resetDefaultPrefs(this.prefs, ['version', 'temp', 'untrusted', 'preset']);
     
     switch(preset) {
@@ -1701,6 +1698,7 @@ var ns = singleton = {
         return;
     }
     
+    this.setPref("preset", preset);
     this.savePrefs();
   }
 ,
@@ -3718,11 +3716,11 @@ var ns = singleton = {
     if (!sites.topURL) sites.topURL = sites[0] || '';
     
     
-    
+    /* [PERF]
     if (loading) try {
       browser.ownerDocument.defaultView.noscriptOverlay.syncUI();
     } catch(e) {}
-    
+    */
     
     return this.sortedSiteSet(sites); 
   },
@@ -4759,6 +4757,9 @@ var ns = singleton = {
       if (this.getPref("firstRunRedirection", true)) {
         this.delayExec(function() {
          
+          var browser = DOM.mostRecentBrowserWindow.getBrowser();
+          if (typeof(browser.addTab) != "function") return;
+         
           const name = EXTENSION_NAME;
           const domain = name.toLowerCase() + ".net";
           var url = "http://" + domain + "/?ver=" + ver;
@@ -4772,7 +4773,7 @@ var ns = singleton = {
           var hs = CC["@mozilla.org/io/string-input-stream;1"] .createInstance(CI.nsIStringInputStream);
           hs.setData(hh, hh.length); 
           
-          var browser = DOM.mostRecentBrowserWindow.getBrowser();
+          
           var b = (browser.selectedTab = browser.addTab()).linkedBrowser;
           b.stop();
           b.webNavigation.loadURI(url, CI.nsIWebNavigation.FLAGS_NONE, null, null, hs);

@@ -1913,7 +1913,7 @@ PostChecker.prototype = {
         m = parts[j].split("=");
         name = m[0];
         if (skip && skip.indexOf(name) > -1) continue;
-        chunks.push(name, m[1]);
+        chunks.push(name, m[1] || '');
       }
     }
     return chunks;

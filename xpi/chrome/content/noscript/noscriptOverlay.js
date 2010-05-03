@@ -649,7 +649,7 @@ return noscriptUtil.service ? {
       mainFrag.appendChild(sep.cloneNode(false));
     
     var fullTip = !!ns.getPref("siteInfoProvider");
-    
+    var disabled;
     
     
     while (j-- > 0) {
@@ -692,7 +692,8 @@ return noscriptUtil.service ? {
         
         
         blurred = false;
-        if (locked || (enabled ? ns.isMandatory(menuSite) : blurred = ns.isForbiddenByHttpsStatus(menuSite))) {
+        disabled = locked || (enabled ? ns.isMandatory(menuSite) : blurred = ns.isForbiddenByHttpsStatus(menuSite));
+        if (disabled) {
           node.setAttribute("disabled", "true");
         } else {
           cssClass += " menuitem-iconic ";
@@ -712,7 +713,7 @@ return noscriptUtil.service ? {
         if ((showPermanent || enabled) && !(global && enabled) && showInMain) 
           parent.appendChild(node);
       
-        if (!locked) {
+        if (!disabled) {
           if (showTemp && !(enabled || blurred) && showInMain) {
             extraNode = node.cloneNode(false);
             extraNode.setAttribute("label", this.getString("allowTemp", [domain]));
@@ -1054,6 +1055,7 @@ return noscriptUtil.service ? {
 ,
   menuCmd: function(event) {
     if (event.shiftKey) return; // site info
+    
     menuItem = event.target;
     var site = null;
     var reloadPolicy = 0;
@@ -1078,6 +1080,7 @@ return noscriptUtil.service ? {
       }
       
       if (menuItem.getAttribute("closemenu") == "none") {
+        menuItem.removeAttribute("statustext"); // prevent double-firing
         // sticky UI feedback
         if (this._currentPopup) {
           this._currentPopup.setAttribute("disabled", "true");
@@ -1127,21 +1130,38 @@ return noscriptUtil.service ? {
       } else {
         ns.jsEnabled = enabled;
       }
+      
       if (reloadPolicy == ns.RELOAD_NO) {
         noscriptOverlay._syncUINow();
         if (!allowTemp) ns.savePrefs();
       }
       else noscriptOverlay.syncUI();
+      
     }
     
     if (reloadPolicy == ns.RELOAD_NO) {
       op(ns);
     } else {
+      window.clearInterval(noscriptOverlay._savePrefsTimeout);
       ns.setExpando(window.content.document, "contentLoaded", false);
       ns.safeCapsOp(op, reloadPolicy, allowTemp);
     }
-  }
-,
+  
+  },
+  
+  _savePrefsTimeout: 0,
+  savePrefs: function(now) {
+    if (now) {
+      noscriptOverlay.ns.savePrefs();
+      return;
+    }
+    
+    if (this._savePrefsTimeout) {
+      window.clearTimeout(this._savePrefsTimeout);
+    }
+    window.setTimeout(arguments.callee, 5000, true);
+  },
+
   
   get statusIcon() {
     var statusIcon = $("noscript-statusIcon") || $("noscript-tbb");
@@ -1164,7 +1184,7 @@ return noscriptUtil.service ? {
     node.className = (node.className.replace(/\bnoscript-\S*(?:yes|no|glb|prt|emb|yu|untrusted)\b/g, "") + " " + className).replace(/\s{2,}/g, " ");
   }
 ,
-  _syncTimeout: null,
+  _syncTimeout: 0,
   syncUI: function(w) {
     if (w) {
       if (w != window.content) return;
@@ -1217,18 +1237,6 @@ return noscriptUtil.service ? {
       ui = null;
     } else {
       ui.hidden = false;
-      
-      if (this.fennec) {
-        var p = document.getAnonymousElementByAttribute(ui, "class", "popup-internal-box");
-        var d = p.ownerDocument;
-        ["scrollbutton-up", "scrollbutton-down"].forEach(function(id) {
-          var s = d.getAnonymousElementByAttribute(p, "anonid", id).style;
-          s.minHeight = "40px";
-          s.borderColor = "#888";
-          s.borderStyle = "solid";
-          s.borderWidth = "1px";
-        });
-      }
     }
     return this.stickyUI = ui;
   },
@@ -1727,6 +1735,9 @@ return noscriptUtil.service ? {
   
   _syncUINow: function() {
     
+    if (this._syncTimeout)
+      window.clearTimeout(this._syncTimeout);
+    
     const ns = this.ns;
     const global = ns.jsEnabled;
     const jsPSs = ns.jsPolicySites;
@@ -1744,6 +1755,7 @@ return noscriptUtil.service ? {
       this.prepareMenu(this._currentPopup, sites);
     }
     
+     
     var totalScripts = sites.scriptCount;
     var totalPlugins = sites.pluginCount;
     var totalAnnoyances = totalScripts + totalPlugins;
@@ -1894,7 +1906,7 @@ return noscriptUtil.service ? {
   },
   
   presetChanged: function(menulist) {
-    this.ns.setPref("preset", menulist.selectedItem.value);
+    this.ns.applyPreset(menulist.selectedItem.value);
   },
   
   prefsObserver: {
