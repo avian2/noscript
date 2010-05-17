@@ -148,7 +148,7 @@ const MainContentPolicy = {
           switch(aContentType) {
             // case 2: case 4: // scripts stall if blocked later
             case 1: case 12: // we may have no chance to check later for unknown and sub-plugin requests
-              if (ABE.checkPolicy(aRequestOrigin, unwrappedLocation))
+              if (ABE.checkPolicy(aRequestOrigin, unwrappedLocation, aContentType))
                 return this.reject("ABE-denied inclusion", arguments); 
           }
         }
@@ -205,7 +205,7 @@ const MainContentPolicy = {
             }
           }
   
-          PolicyState.cancel(arguments);
+          // PolicyState.cancel(arguments); // needed for ABE INCLUSION(IMAGE)
           return CP_OK;
         
         case 4: // STYLESHEETS

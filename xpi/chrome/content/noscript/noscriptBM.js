@@ -136,7 +136,7 @@ var noscriptBM = {
         if (pu.__noScriptPatch) return;
         pu.__noScriptPatch = true;
         var methods = ["openNodeIn", "openSelectedNodeWithEvent"];
-        for each (method in methods)
+        for each (var method in methods)
           noscriptBM.patchPlacesMethod(pu, method);
       }, 50);
     }

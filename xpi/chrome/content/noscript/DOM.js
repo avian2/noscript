@@ -96,7 +96,7 @@ const DOM = {
   perWinType: function(delegate) {
     var wm = this.windowMediator;
     var w = null;
-    var aa = Array.prototype.slice.call(arguments);
+    var aa = Array.slice(arguments, 0);
     for each(var type in ['navigator:browser', 'emusic:window', 'Songbird:Main']) {
      aa[0] = type;
       w = delegate.apply(wm, aa);

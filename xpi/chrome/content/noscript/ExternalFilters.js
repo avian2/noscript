@@ -97,7 +97,7 @@ var ExternalFilters = {
   createTempFile: function() {
     let tf = this.tmpDir.clone();
     tf.append(Math.round(Math.random() * 99999999).toString(16));
-    tf.createUnique(tf.FILE_TYPE, 0600);
+    tf.createUnique(tf.FILE_TYPE, 384);
     return tf;
   },
   

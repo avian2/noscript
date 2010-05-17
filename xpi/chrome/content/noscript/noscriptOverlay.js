@@ -478,7 +478,7 @@ return noscriptUtil.service ? {
     
     const hideUntrustedPlaceholder = !ns.showUntrustedPlaceholder;
     var embedOnlySites = null;
-    if (ns.contentBlocker && !ns.getPref("alwaysShowObjectSources") &&
+    if (ns.contentBlocker && !ns.alwaysShowObjectSources &&
         sites.pluginSites.length) {
       // add untrusted plugin sites if placeholders are not shown for untrusted sources
       embedOnlySites = sites.pluginSites.filter(function(s) {
@@ -795,7 +795,7 @@ return noscriptUtil.service ? {
   populateExternalFilters: function(anchor) {
     const ns = this.ns;
     var parent = anchor.parentNode;
-    Array.slice.apply(parent.getElementsByClassName("noscript-ef"))
+    Array.slice(parent.getElementsByClassName("noscript-ef"), 0)
       .forEach(function(node) { parent.removeChild(node); });
     
     if (!(ns.getPref("showExternalFilters"))) return;
@@ -1303,7 +1303,7 @@ return noscriptUtil.service ? {
     
     nb._dom_ = {};
     const METHODS = this.notificationBoxPatch;
-    for (m in METHODS) {
+    for (var m in METHODS) {
       nb._dom_[m] = nb[m];
       nb[m] = METHODS[m];
     }
@@ -1683,7 +1683,7 @@ return noscriptUtil.service ? {
     if (!unsafeRequest) {
       unsafeRequest = {
         URI: browser.webNavigation.currentURI,
-        origin: ns.__parent__.OriginTracer.traceBackHistory(browser.webNavigation.sessionHistory, browser.contentWindow).join(">>>")
+        origin: ns.OriginTracer.traceBackHistory(browser.webNavigation.sessionHistory, browser.contentWindow).join(">>>")
       };
       method = "URL";
     } else {
@@ -1769,6 +1769,15 @@ return noscriptUtil.service ? {
     var isUntrusted = false;
     var topTrusted = false;
     var topUntrusted = false;
+    
+    
+    if (ns.contentBlocker && !ns.alwaysShowObjectSources &&
+        sites.pluginSites.length) {
+      // add untrusted plugin sites if placeholders are not shown for untrusted sources
+      sites.push.apply(sites, sites.pluginSites.filter(function(s) {
+        return sites.indexOf(s) === -1;
+      }));
+    }
     
     if (global && !ns.alwaysBlockUntrustedContent) {
       lev = "glb";
@@ -2329,7 +2338,9 @@ return noscriptUtil.service ? {
   
   
   get _browserReady() {
-    return window.gBrowser || window.Browser && (("browsers" in Browser) || Browser._canvasBrowser || Browser._content);
+    return ("gBrowser" in window) && window.gBrowser ||
+          ("Browser" in window) && window.Browser &&
+            (("browsers" in Browser) || Browser._canvasBrowser || Browser._content);
   },
   get currentBrowser() {
     if (!this._browserReady) return null;

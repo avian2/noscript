@@ -171,9 +171,9 @@ const ABE = {
     return ABEStorage.getRulesetFile(name);
   },
   
-  checkPolicy: function(origin, destination, method) {
+  checkPolicy: function(origin, destination, type) {
     try {
-      var res = this.checkRequest(new ABERequest(new ABEPolicyChannel(origin, destination, method)));
+      var res = this.checkRequest(new ABERequest(new ABEPolicyChannel(origin, destination, type)));
       return res && res.fatal;
     } catch(e) {
       ABE.log(e);
@@ -655,10 +655,19 @@ ABERuleset.prototype = {
         case ABEParser.T_METHODS:
           accumulator = predicate.methods;
           break;
+        case ABEParser.INC:
+          if (!("inclusions" in predicate)) predicate.inclusions = [];
+        break;
+        case ABEParser.INC_TYPE:
+          if ("inclusions" in predicate) predicate.inclusions.push(node.getText());
+          break;
+        break;
         case ABEParser.T_FROM:
           accumulator = predicate.origins;
           break;
         case ABEParser.COMMENT:
+        case ABEParser.COMMA:
+        case ABEParser.LPAR: case ABEParser.RPAR:
           break;
         default:
           if (accumulator) accumulator.push(node.getText());
@@ -743,15 +752,33 @@ function ABEPredicate(p) {
     this.action = 'Anonymize';
   }
   
-  this.methods = p.methods.join(" ");
-    if (this.methods.length) {
-      this.allMethods = false;
-      var mm = p.methods.filter(this._methodFilter, this);
-      if (mm.length) this.methodRx = new RegExp("^\\b(?:" + mm.join("|") + ")\\b$", "i");
+  var methods = p.methods;
+  
+  if ("inclusions" in p) {
+    this.inclusion = true;
+    
+    // rebuild method string for cosmetic reasons
+    var incMethod = "INCLUSION";
+    if (p.inclusions.length) {
+      incMethod += "(" + p.inclusions.join(", ") + ")";
+      this.inclusionTypes = p.inclusions.map(this._parseInclusionType, this);
+    } else {
+      this.inclusionTypes = this.ANY_TYPE;
     }
-    this.origins = p.origins.join(" ");
-    if (p.origins.length) {
-            this.allOrigins = false;
+    
+    methods = p.methods.concat(incMethod);
+  }
+  
+  this.methods = methods.join(" ");
+  
+  if (this.methods.length) {
+    this.allMethods = false;
+    var mm = p.methods.filter(this._methodFilter, this);
+    if (mm.length) this.methodRx = new RegExp("^\\b(?:" + mm.join("|") + ")\\b$", "i");
+  }
+  this.origins = p.origins.join(" ");
+  if (p.origins.length) {
+    this.allOrigins = false;
     if (this.permissive) { // if Accept any, accept browser URLs 
       p.origins.push("^(?:chrome|resource):");
     }
@@ -764,6 +791,8 @@ ABEPredicate.prototype = {
   
   subdoc: false,
 	self: false,
+  sameDomain: false,
+  sameBaseDomain: false,
 	local: false,
 	
 	allMethods: true,
@@ -772,6 +801,35 @@ ABEPredicate.prototype = {
 	methodRx: null,
 	origin: null,
   
+  inclusion: false,
+  inlcusionTypes: [],
+  get ANY_TYPE() {
+    delete this.__proto__.ANY_TYPE;
+    var its = [];
+    var map = this._inclusionTypesMap;
+    for (var k in map) {
+      its.push(map[k]);
+    }
+    return this.__proto__.ANY_TYPE = its;
+  },
+  get _inclusionTypesMap() {
+    delete this.__proto__._inclusionTypesMap;
+    return this.__proto__._inclusionTypesMap = 
+    {
+      "OTHER": CI.nsIContentPolicy.TYPE_OTHER,
+      "SCRIPT": CI.nsIContentPolicy.TYPE_SCRIPT,
+      "IMAGE": CI.nsIContentPolicy.TYPE_IMAGE,
+      "CSS": CI.nsIContentPolicy.TYPE_STYLESHEET,
+      "OBJ": CI.nsIContentPolicy.TYPE_OBJECT,
+      "SUBDOC": CI.nsIContentPolicy.TYPE_SUBDOCUMENT,
+      "XBL": CI.nsIContentPolicy.TYPE_XBL,
+      "PING": CI.nsIContentPolicy.TYPE_PING,
+      "XHR": CI.nsIContentPolicy.TYPE_XMLHTTPREQUEST,
+      "OBJSUB": CI.nsIContentPolicy.TYPE_OBJECT_SUBREQUEST,
+      "DTD": CI.nsIContentPolicy.TYPE_DTD
+    };
+  },
+ 
 	_methodFilter: function(m) {
 		switch(m) {
 			case "SUB":
@@ -781,10 +839,19 @@ ABEPredicate.prototype = {
 		}
 		return true;
 	},
+  
+  _parseInclusionType: function(s) {
+    return (s in this._inclusionTypesMap) ? this._inclusionTypesMap[s] : 0; 
+  },
+  
 	_originFilter: function(s) {
 		switch(s) {
 			case "SELF":
 				return !(this.self = true);
+      case "SELF+":
+        return !(this.sameDomain = true);
+      case "SELF++":
+        return !(this.sameBaseDomain = true);
 			case "LOCAL":
 				return !(this.local = true);
 			case "ALL":
@@ -795,8 +862,10 @@ ABEPredicate.prototype = {
 	
   match: function(req) {
     return (this.allMethods || this.subdoc && req.isSubdoc ||
+            this.inclusion && req.isOfType(this.inclusionTypes) ||
 						this.methodRx && this.methodRx.test(req.method)) &&
-			(this.allOrigins || this.self && req.isSelf ||
+			(this.allOrigins ||
+        this.self && req.isSelf || this.sameDomain && req.isSameDomain || this.sameBaseDomain && req.isSameBaseDomain ||
 				(this.permissive ? req.matchAllOrigins(this.origin) : req.matchSomeOrigins(this.origin)) ||
 				this.local && req.localOrigin
 			);
@@ -811,10 +880,10 @@ ABEPredicate.prototype = {
   }
 }
 
-function ABEPolicyChannel(origin, destination, method) {
+function ABEPolicyChannel(origin, destination, type) {
   this.originURI = origin;
   this.URI = destination;
-  if (method) this.requestMethod = method;
+  this.type = type;
 }
 ABEPolicyChannel.prototype = {
   requestMethod: "GET",
@@ -862,6 +931,8 @@ ABERequest.prototype = Lang.memoize({
     this.method = channel.requestMethod;
     this.destinationURI = IOUtil.unwrapURL(channel.URI);
     this.destination = this.destinationURI.spec;
+    this.destinationDomain = this.destinationURI.host;
+    
     this.early = channel instanceof ABEPolicyChannel;
     this.isDoc = !!(channel.loadFlags & channel.LOAD_DOCUMENT_URI);
     
@@ -924,6 +995,13 @@ ABERequest.prototype = Lang.memoize({
     return DNS.isLocalURI(uri, all);
   },
   
+  isOfType: function(types) {
+    if (!types) return false;
+    return (types instanceof Number)
+      ? this.type === types
+      : types.indexOf(this.type) !== -1;
+  },
+  
   _checkLocalOrigin: function(uri) {
     try {
       return !this.failed && uri && (this.isBrowserURI(uri) || this.isLocal(uri, true)); // we cache external origins to mitigate DNS rebinding
@@ -942,6 +1020,20 @@ ABERequest.prototype = Lang.memoize({
   
   _checkSelf: function(originURI) {
     return originURI &&  (this.isBrowserURI(originURI) || originURI.prePath == this.destinationURI.prePath);
+  },
+  
+  _checkSameDomain: function(originURI) {
+    try {
+      return originURI.host == this.destinationDomain;
+    } catch(e) {}
+    return false;
+  },
+  
+  _checkSameBaseDomain: function(originURI) {
+    try {
+      return IOUtil.TLDService.getBaseDomainFromHost(originURI.host) == this.destinationBaseDomain;
+    } catch(e) {}
+    return false;
   },
   
   matchAllOrigins: function(matcher) {
@@ -965,7 +1057,7 @@ ABERequest.prototype = Lang.memoize({
   toString: function() {
     var s = "{" + this.method + " " + this.destination + " <<< " +
       this.redirectChain.reverse().map(function(uri) { return uri.spec; }).concat(this.origin)
-        .join(", ") + "}";
+        .join(", ") + " - " + this.type + "}";
     this.toString = function() { return s; }
     return s;
   }
@@ -1001,6 +1093,20 @@ ABERequest.prototype = Lang.memoize({
   isSelf: function() {
     return this._checkSelf(this.originURI) && this.redirectChain.every(this._checkSelf, this);
   },
+  isSameDomain: function() {
+    return this.isSelf || this._checkSameDomain(this.originURI) && this.redirectChain.every(this._checkSameDomain, this);
+  },
+  isSameBaseDomain: function() {
+    return this.isSameDomain || this._checkSameBaseDomain(this.originURI) && this.redirectChain.every(this._checkSameBaseDomain, this);
+  },
+  
+  destinationBaseDomain: function() {
+    try {
+      return IOUtil.TLDService.getBaseDomainFromHost(this.destinationDomain);
+    } catch(e) {}
+    return this.destinationDomain;
+  },
+  
   isSubdoc: function() {
     if (this.isDoc) {
       var w = this.window;
@@ -1018,7 +1124,17 @@ ABERequest.prototype = Lang.memoize({
   },
   window: function() {
     return IOUtil.findWindow(this.channel);
+  },
+  
+  type: function() {
+    try {
+      return this.early ? this.channel.type : PolicyState.extract(this.channel).contentType;
+    } catch(e) {
+      ABE.log("Error retrieving type of " + this.destination + ": " + e); // should happen for favicons only
+    }
+    return CI.nsIContentPolicy.TYPE_OTHER;
   }
+  
 }
 ); // end memoize
 

@@ -30,12 +30,12 @@ UIUtils.prototype = {
   },
   
   persistTabSelections: function() {
-     var tabs = $$("tabbox");
-     var ss = [];
-     for(var tcount = 0; tcount < tabs.length; tcount++) {
-       ss.push(tabs[tcount].selectedIndex);
-     }
-     this.serv.setPref(this.tabselPrefName, ss.join(","));
+    var tabs = $$("tabbox");
+    var ss = [];
+    for(var tcount = 0; tcount < tabs.length; tcount++) {
+      ss.push(tabs[tcount].selectedIndex);
+    }
+    this.serv.setPref(this.tabselPrefName, ss.join(","));
   },
   
   visitCheckboxes: function(callback) {
@@ -72,7 +72,7 @@ UIUtils.prototype = {
   
   moveButtonsDown: function() {
     var ref = document.documentElement.getButton("extra2");
-    Array.slice(arguments).forEach(function(s) {
+    Array.slice(arguments, 0).forEach(function(s) {
       var b = $(s);
       b.className = ref.className;
       ref.parentNode.insertBefore(b, ref);

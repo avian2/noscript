@@ -46,6 +46,11 @@ var ns = singleton = {
   QueryInterface: xpcom_generateQI(SERVICE_IIDS),
   generateQI: xpcom_generateQI
 ,
+  ABE: ABE,
+  OriginTracer: OriginTracer,
+  AddressMatcher: AddressMatcher,
+  Thread: Thread,
+
   // nsIObserver implementation 
   observe: function(subject, topic, data) {
 
@@ -317,6 +322,7 @@ var ns = singleton = {
       case "safeToplevel":
       case "autoAllow":
       case "contentBlocker":
+      case "alwaysShowObjectSources":
       case "docShellJSBlocking":
       case "showUntrustedPlaceholder":
       case "collapseObject":
@@ -676,7 +682,7 @@ var ns = singleton = {
       "allowClipboard", "allowLocalLinks",
       "allowedMimeRegExp", "hideOnUnloadRegExp", "requireReloadRegExp",
       "blockNSWB",
-      "consoleDump", "consoleLog", "contentBlocker",
+      "consoleDump", "consoleLog", "contentBlocker", "alwaysShowObjectSources",
       "docShellJSBlocking",
       "filterXPost", "filterXGet", 
       "filterXGetRx", "filterXGetUserRx", 
@@ -826,9 +832,10 @@ var ns = singleton = {
  
   reportLeaks: function() {
     // leakage detection
-    this.dump("DUMPING " + this.__parent__);
-    for(var v in this.__parent__) {
-      this.dump(v + " = " + this.__parent__[v] + "\n");
+    var parent = "__parent__" in this ? this.__parent__ : CU.getGlobalForObject(this);
+    this.dump("DUMPING " + parent);
+    for(var v in parent) {
+      this.dump(v + " = " + parent[v] + "\n");
     }
   },
   
@@ -1157,29 +1164,9 @@ var ns = singleton = {
   },
   
   get _tldService() {
-    var srv = null;
-    try {
-      if (CI.nsIEffectiveTLDService) {
-        var srv = CC["@mozilla.org/network/effective-tld-service;1"]
-                .getService(CI.nsIEffectiveTLDService);
-        if (typeof(srv.getBaseDomainFromHost) != "function"
-              || srv.getBaseDomainFromHost("bbc.co.uk") != "bbc.co.uk" // check, some implementations are "fake" (e.g. Songbird's)
-          ) {
-          srv = null;
-        }
-      }
-      if (!srv) {
-        INCLUDE('EmulatedTLDService');
-        srv = EmulatedTLDService;
-      }
-    } catch(ex) {
-      this.dump(ex);
-      return null;
-    }
     delete this._tldService;
-    return this._tldService = srv;
+    return this._tldService = IOUtil.TLDService;
   },
-  
 
   getBaseDomain: function(domain) {
     if (!domain || DNS.isIP(domain)) return domain; // IP
@@ -1203,7 +1190,7 @@ var ns = singleton = {
   }
 ,
   delayExec: function(callback, time) {
-    Thread.delay(callback, time, this, Array.prototype.slice.call(arguments, 2));
+    Thread.delay(callback, time, this, Array.slice(arguments, 2));
   }
 ,
   RELOAD_NO: -1,
@@ -2912,7 +2899,7 @@ var ns = singleton = {
       const cs = "__noscriptOpaqued__";
       if (w.__noscriptOpaquedObjects) return w.__noscriptOpaquedObjects;
       var doc = w.document;
-      if (doc.getElementsByClassName) return Array.slice(doc.getElementsByClassName(cs));
+      if (doc.getElementsByClassName) return Array.slice(doc.getElementsByClassName(cs), 0);
       var results = [];
       var query = doc.evaluate(
           "//*[contains(concat(' ', @class, ' '), ' " + cs + " ')]",
@@ -3590,7 +3577,7 @@ var ns = singleton = {
       if (!document) continue;
       
       ["object", "embed"].forEach(function(t) {
-        for each (var node in Array.slice.call(document.getElementsByTagName(t))) {
+        for each (var node in Array.slice(document.getElementsByTagName(t), 0)) {
           callback.call(self, node, browser);
         }
       });
@@ -3603,7 +3590,7 @@ var ns = singleton = {
 
     const nsIDocShell = CI.nsIDocShell;
     const nsIWebProgress = CI.nsIWebProgress;
-    const showObjectSources = !this.contentBlocker || ns.getPref("alwaysShowObjectSources");
+    const showObjectSources = !this.contentBlocker || this.alwaysShowObjectSources;
     
     const docShells = browser.docShell.getDocShellEnumerator(
         CI.nsIDocShellTreeItem.typeContent,
@@ -3706,7 +3693,7 @@ var ns = singleton = {
              // doesn't this URL type support host?
               this.getSite(url + "x") == url
             )
-          )
+          ) && url != "about:"
         ) {
         sites.splice(j, 1); // reject scheme-only URLs
       }
@@ -3760,7 +3747,7 @@ var ns = singleton = {
         
         var browser, win;
         var type = ph.contentType;
-        if(type != 6) { // not a document load? try to cache redirection for menus
+        if(type != 6 && type != 5) { // not a document/plugin load? try to cache redirection for menus
           try {
             var site = this.getSite(uri.spec);
             win = IOUtil.findWindow(newChannel) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
@@ -3851,11 +3838,6 @@ var ns = singleton = {
           DOSChecker.abort(req);
           return;
         }
-        
-        if (req instanceof CI.nsIHttpChannel) {
-          PolicyState.attach(req);
-        }
-        
         
         if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC) {
           if (req.URI.spec == "about:blank" && !IOUtil.extractInternalReferrer(req) ) {
@@ -3966,7 +3948,7 @@ var ns = singleton = {
         if (ph) {
           var ctype = ph.contentType;
           var origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
-          if (origin && (ctype === 2 || ctype === 3) && this.getBaseDomain(origin.host) != this.getBaseDomain(channel.URI.host)) {
+          if (origin && (ctype === 2 || ctype === 4) && this.getBaseDomain(origin.host) != this.getBaseDomain(channel.URI.host)) {
 
             var mime;
             try {
@@ -3997,7 +3979,7 @@ var ns = singleton = {
               
               if (ext &&
                   (ctype === 2 && /js(?:on)?/i.test(ext) ||
-                   ctype == 3 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
+                   ctype === 4 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
                 ) {
                 // extension matches and not an attachment, likely OK
                 return true; 
@@ -4776,7 +4758,7 @@ var ns = singleton = {
           
           var b = (browser.selectedTab = browser.addTab()).linkedBrowser;
           b.stop();
-          b.webNavigation.loadURI(url, CI.nsIWebNavigation.FLAGS_NONE, null, null, hs);
+          b.webNavigation.loadURI(url, CI.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, hs);
           
         }, 500);
       }

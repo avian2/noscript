@@ -45,7 +45,7 @@ var nsopt = {
     EF.init();
     
     var locked = ns.locked;
-    for each (widget in ["urlText","urlList", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
+    for each (var widget in ["urlText","urlList", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
       this[widget] = $(widget);
       if(locked) this[widget].disabled = true;
     }
@@ -516,7 +516,7 @@ var nsopt = {
 
 }
 
-var ABE = ns.__parent__.ABE;
+var ABE = ns.ABE;
 
 var abeOpts = {
   selectedRS: null,
@@ -524,7 +524,7 @@ var abeOpts = {
   errors: false,
   init: function() {
     
-    if (!(ABE.legacySupport || ABE.__parent__.Thread.canSpin)) {
+    if (!(ABE.legacySupport || ns.Thread.canSpin)) {
       var tab = $("nsopt-tabABE");
       if (tab.selected) {
         tab.parentNode.selectedIndex = 0;
@@ -780,7 +780,7 @@ var EF = {
   onExceptionsChange: function(ev) {
     if (this.currentFilter) {
       var node = ev.target;
-      var wl = new ns.__parent__.AddressMatcher(node.value);
+      var wl = new ns.AddressMatcher(node.value);
       if (wl.rx) {
         node.removeAttribute("class");
         this.currentFilter.whitelist = wl;
