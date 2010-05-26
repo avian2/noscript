@@ -3739,15 +3739,19 @@ var ns = singleton = {
         ph.contentLocation = uri;
         
         var ctx = ph.context;
+        var type = ph.contentType;
+           
+        if (type != 11 && !this.isJSEnabled(oldChannel.URI.spec)) 
+          ph.requestOrigin = oldChannel.URI;
         
-        if (!this.isJSEnabled(oldChannel.URI.spec)) ph.requestOrigin = oldChannel.URI;
         try {
           ph.mimeType = newChannel.contentType || oldChannel.contentType || ph.mimeType;
         } catch(e) {}
         
         var browser, win;
-        var type = ph.contentType;
-        if(type != 6 && type != 5) { // not a document/plugin load? try to cache redirection for menus
+     
+        
+        if(type == 2 || type == 9) { // script redirection? cache site for menu
           try {
             var site = this.getSite(uri.spec);
             win = IOUtil.findWindow(newChannel) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
@@ -4333,6 +4337,7 @@ var ns = singleton = {
     var jsBlocked = docShell && !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
     
     
+    ScriptSurrogate.apply(win.document, url, url, jsBlocked);
     
     if (jsBlocked) {
       if (this.getPref("fixLinks")) {
@@ -4342,7 +4347,7 @@ var ns = singleton = {
       return;
     }
     
-    ScriptSurrogate.apply(win.document, url, url);
+    
     
     try {
       if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !win._noscriptJsHack) {

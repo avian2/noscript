@@ -178,7 +178,13 @@ function BrowserIterator(initialWin) {
 BrowserIterator.prototype = {
  
   initPerWin: function() {
-    var overlay = this.currentWin && (this.currentWin.wrappedJSObject || this.currentWin).noscriptOverlay;
+    var w = this.currentWin;
+    var overlay;
+    if (w) {
+      if (w.wrappedJSObject) w = w.wrappedJSObject;
+      overlay = ("noscriptOverlay" in w) ? w.noscriptOverlay : null;
+    } else overlay = null;
+    
     if (overlay) {
       this.browsers = overlay.browsers;
       this.currentTab = overlay.currentBrowser;

@@ -142,7 +142,8 @@ RequestWatchdog.prototype = {
         ns.log("[ABE] <" + lastRule.destinations + "> " + lastPredicate + " on " + req
           + "\n" + rs.name + " rule:\n" + lastRule);
         
-        if (silent || rs != abeRes.lastRuleset) return;
+        if (silent || rs != abeRes.lastRuleset || lastPredicate.inclusion)
+          return;
         
         if (lastRule.local && silentLoopback) {
           var host = req.destinationURI.host;
@@ -565,7 +566,8 @@ RequestWatchdog.prototype = {
                 // don't strip POST unconditionally) to make some extensions (e.g. Google Gears) 
                 // work. For dangerous edge cases we should have moz-null-principal: now, anyway.
                 || // some goes for Paypal buttons, which we don't require to be on trusted sites
-        this.PAYPAL_BUTTON_RX.test(originalSpec)
+        this.PAYPAL_BUTTON_RX.test(originalSpec) ||
+        origin.substring(0, 5) == "file:"
       ) {
       
       

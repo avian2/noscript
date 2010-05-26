@@ -1771,21 +1771,16 @@ return noscriptUtil.service ? {
     var topUntrusted = false;
     
     
-    if (ns.contentBlocker && !ns.alwaysShowObjectSources &&
-        sites.pluginSites.length) {
-      // add untrusted plugin sites if placeholders are not shown for untrusted sources
-      sites.push.apply(sites, sites.pluginSites.filter(function(s) {
-        return sites.indexOf(s) === -1;
-      }));
-    }
+    
     
     if (global && !ns.alwaysBlockUntrustedContent) {
       lev = "glb";
     } else {
+      
       var s = sites.length;
-      if (sites.pluginExtras) sites.pluginExtras.forEach(function(pe) { blockedObjects += pe.filter(function(e) { return e && e.placeholder; }).length });
+      if (sites.pluginExtras) sites.pluginExtras.forEach(function(pe) { blockedObjects += pe.filter(function(e) { return e && (e.placeholder || e.document); }).length });
       var total = s + blockedObjects;
-     
+      
       var url, site;
       while (s-- > 0) {
         url = sites[s];

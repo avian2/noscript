@@ -652,6 +652,6 @@ const MainContentPolicy = {
 
 var PolicyUtil = {
   isXSL: function(ctx) {
-    return ctx && !(ctx instanceof CI.nsIDOMHTMLLinkElement || ctx instanceof CI.nsIDOMHTMLStyleElement);
+    return ctx && !(ctx instanceof CI.nsIDOMHTMLLinkElement || ctx instanceof CI.nsIDOMHTMLStyleElement || ctx instanceof CI.nsIDOMHTMLDocument);
   }
 }

@@ -40,10 +40,14 @@ var ScriptSurrogate = {
     try {
       var value = prefs.getCharPref(key);
       if (!value) return;
-      var mapping = (name in this.mappings) ? this.mappings[name] : this.mappings[name] = { forPage: false };
+      var mapping = (name in this.mappings)
+        ? this.mappings[name]
+        : this.mappings[name] = { forPage: false, noScript: false };
       switch(member) {
         case "sources":
-          if ((mapping.forPage = value[0] == '@')) value = value.substring(1);
+          if ((mapping.forPage = value[0] == '@' || 
+                (mapping.noScript = value[0] == '!')))
+            value = value.substring(1);
         case "exceptions":
           value = new AddressMatcher(value);
         case "replacement":
@@ -71,14 +75,15 @@ var ScriptSurrogate = {
     })(fileURI);
   },
   
-  getScripts: function(scriptURL, pageURL) {
+  getScripts: function(scriptURL, pageURL, noScript) {
     var mapping;
     var scripts = null;
     var isPage = scriptURL == pageURL;
     var code;
     for (var key in this.mappings) {
       mapping = this.mappings[key];
-      if (isPage == mapping.forPage && mapping.sources && mapping.sources.test(scriptURL) &&
+      if (isPage == mapping.forPage && noScript == mapping.noScript &&
+            mapping.sources && mapping.sources.test(scriptURL) &&
           !(mapping.exceptions && mapping.exceptions.test(pageURL)) &&
           mapping.replacement) {
         if (/^(?:file:\/\/|\.\.?\/)/.test(mapping.replacement)) {
@@ -96,19 +101,35 @@ var ScriptSurrogate = {
     return scripts;
   },
   
-  getScriptBlock: function(scriptURL, pageURL) {
-    var scripts = this.getScripts(scriptURL, pageURL);
+  getScriptBlock: function(scriptURL, pageURL, noScript) {
+    var scripts = this.getScripts(scriptURL, pageURL, noScript);
     return scripts && "try { (function() {" + scripts.join("})(); (function() {") + "})(); } catch(e) {}";
   },
 
-  apply: function(document, scriptURL, pageURL) {
+  apply: function(document, scriptURL, pageURL, noScript) {
     if (!this.enabled) return;
-    var scriptBlock = this.getScriptBlock(scriptURL, pageURL);
+    var scriptBlock = this.getScriptBlock(scriptURL, pageURL, noScript);
     if (scriptBlock) {
-      this.execute(document, scriptBlock, scriptURL == pageURL);
+      if (noScript) {
+        document.defaultView.addEventListener("DOMContentLoaded", function(ev) {
+          ScriptSurrogate.sandbox(ev.target, scriptBlock);
+        }, false);
+      } else {
+        this.execute(document, scriptBlock, scriptURL == pageURL);
+      }
     }
   },
   
+  sandbox: function(document, scriptBlock) {
+    var w = document.defaultView;
+    try {
+      var s = new CU.Sandbox(w);
+      s.window = w;
+      CU.evalInSandbox("with(window) {" + scriptBlock + "}", s);
+    } catch(e) {
+      ns.dump(e);
+    }
+  },
   
   execute: function(document, scriptBlock, isPageScript) {
     if (this._mustUseDOM && document.documentElement) {
