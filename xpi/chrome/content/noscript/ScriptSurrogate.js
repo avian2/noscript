@@ -108,6 +108,7 @@ var ScriptSurrogate = {
 
   apply: function(document, scriptURL, pageURL, noScript) {
     if (!this.enabled) return;
+    if (typeof(noScript) != "boolean") noScript = false;
     var scriptBlock = this.getScriptBlock(scriptURL, pageURL, noScript);
     if (scriptBlock) {
       if (noScript) {

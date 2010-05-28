@@ -489,6 +489,9 @@ RequestWatchdog.prototype = {
     
     if (originSite) { // specific exceptions
       
+      if (/^about:(?!blank)/.test(originSite))
+        return; // any about: URL except about:blank
+      
       if (channel.requestMethod == "POST") {
       
         if (/^https?:\/\/mail\.lycos\.com\/lycos\/mail\/MailCompose\.lycos$/.test(origin) &&

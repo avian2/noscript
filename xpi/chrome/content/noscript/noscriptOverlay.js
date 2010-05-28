@@ -720,13 +720,13 @@ return noscriptUtil.service ? {
             extraNode.setAttribute("class", cssClass + " noscript-temp noscript-allow");
             parent.appendChild(extraNode);
           }
-          if (  ( (showUntrusted && untrustedMenu || showDistrust) && !(domain in jsPSs.sitesMap) ||
-                  blockUntrusted && (showUntrusted || showDistrust)
+          if (((showUntrusted && untrustedMenu || showDistrust) && !(domain in jsPSs.sitesMap) ||
+                blockUntrusted && (showUntrusted || showDistrust)
                 ) && !untrusted) {
             parent = (showUntrusted && !blockUntrusted ? untrustedFrag : mainFrag);
             
             extraNode = refMI.cloneNode(false);
-            extraNode.setAttribute("label", noscriptOverlay.getString("distrust", [menuSite]));
+            extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
             extraNode.setAttribute("statustext", menuSite);
             extraNode.setAttribute("class", cssClass + " noscript-distrust");
             extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
@@ -1366,7 +1366,7 @@ return noscriptUtil.service ? {
       return this._dom_.insertBefore.apply(this, [n, ref]);
     },
     removeChild: function(n) {
-      return (n.parentNode == this) ? this._dom_.removeChild.apply(this, arguments) : n.parentNode.removeChild(n); 
+      return (n.parentNode == this) ? this._dom_.removeChild.apply(this, arguments) : n.parentNode && n.parentNode.removeChild(n); 
     }
   },
   

@@ -273,3 +273,6 @@ pref("noscript.ef.enabled", false);
 
 pref("noscript.showBlankSources", false);
 pref("noscript.preset", "medium");
+
+pref("noscript.forbidBGRefresh", 1);
+pref("noscript.forbidBGRefresh.exceptions", ".mozilla.org");

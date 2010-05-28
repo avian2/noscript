@@ -654,7 +654,8 @@ var ns = singleton = {
     OS.addObserver(this, "em-action-requested", true);
     
     const dls = CC['@mozilla.org/docloaderservice;1'].getService(CI.nsIWebProgress);
-    dls.addProgressListener(this, CI.nsIWebProgress.NOTIFY_LOCATION | CI.nsIWebProgress.NOTIFY_STATE_REQUEST | CI.nsIWebProgress.NOTIFY_STATUS);
+    dls.addProgressListener(this, CI.nsIWebProgress.NOTIFY_LOCATION | CI.nsIWebProgress.NOTIFY_STATE_REQUEST | CI.nsIWebProgress.NOTIFY_STATUS |
+                            ("NOTIFY_REFRESH" in CI.nsIWebProgress ? CI.nsIWebProgress.NOTIFY_REFRESH : 0));
 
 
     const prefserv = this.prefService = CC["@mozilla.org/preferences-service;1"]
@@ -2521,8 +2522,10 @@ var ns = singleton = {
         uri = content[1];
         if (uri) {
           if (notifyCallback && !(document.documentURI in this.metaRefreshWhitelist)) {
-            timeout = content[0];
-            uri = uri.replace (/^\s*/, "").replace (/^URL/i, "URL").split("URL=", 2)[1];
+            timeout = parseInt(content[0]) || 0;
+            uri.replace (/^\s*URL\s*=\s*/, "");
+            var isQuoted = /^['"]/.test(uri);
+            uri = isQuoted ? uri.match(/['"]([^'"]*)/)[1] : uri.replace(/\s[\s\S]*/, ''); 
             try {
               notifyCallback({ 
                 docShell: docShell,
@@ -2776,7 +2779,7 @@ var ns = singleton = {
   
   _patchTimeouts: function(w, start) {
      this._runJS(w, start
-      ? "if (typeof window.__runTimeouts != 'function') (" +
+      ? "if (!('__runTimeouts' in window)) (" +
         function() {
           var tt = [];
           window.setTimeout = window.setInterval = function(f, d, a) {
@@ -2796,7 +2799,7 @@ var ns = singleton = {
           };
         }.toSource()
         + ")()"
-      : "if (typeof window.__runTimeouts == 'function') window.__runTimeouts()"
+      : "if (('__runTimeouts' in window) && typeof(window.__runTimeouts) == 'function') window.__runTimeouts()"
     );
   },
   
@@ -3000,7 +3003,7 @@ var ns = singleton = {
   },
   
   appliesHere: function(pref, url) {
-    return pref && ((ANYWHERE & pref) == ANYWHERE||
+    return pref && ((ANYWHERE & pref) == ANYWHERE ||
        (this.isJSEnabled(this.getSite(url))
         ? (WHERE_TRUSTED & pref) : (WHERE_UNTRUSTED & pref)
        )
@@ -3938,6 +3941,65 @@ var ns = singleton = {
   },
   onSecurityChange: function() {}, 
   onProgressChange: function() {},
+  onRefreshAttempted: function(wp, uri, delay, sameURI) {
+
+    var pref = this.getPref("forbidBGRefresh");
+    try {
+      if (!pref || this.prefService.getBoolPref("accessibility.blockautorefresh"))
+        return true; // let the browser do its thing
+    } catch(e) {}
+    
+    var win = wp.DOMWindow;
+    var currentURL = win.location.href;
+    if (!this.appliesHere(pref, currentURL))
+      return true;
+
+    var browserWin = DOM.mostRecentBrowserWindow;
+    if (!(browserWin && "noscriptOverlay" in browserWin))
+      return true; // not a regular browser window
+    
+    var exceptions = new AddressMatcher(this.getPref("forbidGBRefresh.exceptions"));
+    if (exceptions && exceptions.test(currentURL))
+      return true;
+    
+    var browser = DOM.findBrowserForNode(win);
+    var currentBrowser = browserWin.noscriptOverlay.currentBrowser;
+    
+    var uiArgs = Array.slice(arguments);
+    
+    if (browser == currentBrowser) {
+      win.addEventListener("blur", function(ev) {
+        ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
+        var docShell = DOM.getDocShellForWindow(win);
+        docShell.suspendRefreshURIs();
+        showUI();
+      }, false);
+      return true; // OK, this is the foreground tab
+    }
+    
+    
+    function showUI() {
+      // let's see if we can reuse Firefox's UI
+      var ui =
+        ("TabsProgressListener" in browserWin) && uiArgs.unshift(browser) && browserWin.TabsProgressListener ||
+        ("XULBrowserWindow" in browserWin) && browserWin.XULBrowserWindow;
+      
+      if (ui && ("onRefreshAttempted" in ui)) {
+        try {
+          ns.prefService.setBoolPref("accessibility.blockautorefresh", true);
+          ui.onRefreshAttempted.apply(ui, uiArgs);
+        } catch(e) {
+          ns.dump(e);
+        } finally {
+          ns.prefService.setBoolPref("accessibility.blockautorefresh", false);
+        }
+      } else ns.log("[NoScript] Blocking refresh on unfocused tab, " + currentURL + "->" + uri.spec, true)
+    }
+    showUI();
+    return false;
+  }
+  ,
+  
   
   get _inclusionTypeInternalExceptions() {
     delete this._inclusionTypeInternalExceptions;
