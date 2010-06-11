@@ -510,7 +510,7 @@ const MainContentPolicy = {
                 if (logIntercept) this.dump("Silverlight " + aContentLocation.spec + " " + typeof(aContext) + " " + aContentType + ", " + aInternalCall);
                
                 
-                forbid = aContentType == 12 || !this.POLICY_OBJSUB;
+                // forbid = aContentType == 12 || !this.POLICY_OBJSUB;
                 this.setExpando(aContext, "silverlight", aContentType != 12);
                 if (!forbid) return CP_OK;
                 
@@ -527,7 +527,10 @@ const MainContentPolicy = {
               } else if (isFlash) {
                 locationURL = this.addFlashVars(locationURL, aContext);
               }
-            } else if (!(this.allowedMimeRegExp && this.allowedMimeRegExp.test(aMimeTypeGuess))) {
+            } else if (!(this.allowedMimeRegExp &&
+                          (this.allowedMimeRegExp.test(aMimeTypeGuess) ||
+                            this.allowedMimeRegExp.test(aMimeTypeGuess + "@" + locationSite))
+                      )) {
               forbid = this.forbidPlugins && !(isJava || isFlash || isSilverlight);
               if (forbid) {
                 locationURL = this.addObjectParams(locationURL, aContext);

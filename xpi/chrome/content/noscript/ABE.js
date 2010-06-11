@@ -270,7 +270,9 @@ const ABE = {
         !ChannelReplacement.supported ||
         DNS.isIP(host) ||
         DNS.getCached(host) || // getCached() rather than isCached(), otherwise we defer even for lazy expiration
-        req.channel.redirectionLimit == 0 || req.channel.status != 0)
+        req.channel.redirectionLimit == 0 || req.channel.status != 0 ||
+        req.channel.notificationCallbacks instanceof CI.nsIObjectLoadingContent // OBJECT elements can't be channel-replaced :(
+        ) 
       return false;
 
     IOUtil.attachToChannel(req.channel, "ABE.deferred", DUMMYOBJ);

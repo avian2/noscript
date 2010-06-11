@@ -52,14 +52,17 @@ var noscriptBM = {
     var allowJS = noscriptUtil.service.getPref("allowURLBarJS", true);
     
     if (isJS && allowJS) {
-      if (noscriptUtil.service.executeJSURL(shortcut, callback)) return;
+      window.setTimeout(function() { // if we don't defer, errors are not logged in the console...
+        if (!noscriptUtil.service.executeJSURL(shortcut, callback))
+          callback();
+      }, 0);
+      return;
     } else if (window.getShortcutOrURI && (shortcut.indexOf(" ") > 0  && !isJS || shortcut.indexOf(":") < 0)) {
       var url = getShortcutOrURI(shortcut, {});
       if(jsrx.test(url) && noscriptBM.handleBookmark(url, callback))
         return;
     }
-    
-    callback();
+    callback(); 
   },
   
   loadURI: function() { // Fx 3.5 command bar interception

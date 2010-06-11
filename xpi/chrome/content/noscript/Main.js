@@ -2516,14 +2516,30 @@ var ns = singleton = {
     try {
       var refresh, content, timeout, uri;
       var rr = document.getElementsByTagName("meta");
+      if (!rr[0]) return;
+      
+      var html5;
+      try {
+        html5 = this.prefService.getBoolPref("html5.enable");
+      } catch(e) {
+        html5 = false;
+      }
+
+      var node;
       for (var j = 0; (refresh = rr[j]); j++) {
         if (!/refresh/i.test(refresh.httpEquiv)) continue;
+        if (html5) { // older parser moves META outside the NOSCRIPT element if not in HEAD
+          for (node = refresh; (node = node.parentNode);) {
+            if (node.localName == "noscript") break;
+          }
+          if (node == null) continue;
+        }
         content = refresh.content.split(/[,;]/, 2);
         uri = content[1];
         if (uri) {
           if (notifyCallback && !(document.documentURI in this.metaRefreshWhitelist)) {
             timeout = parseInt(content[0]) || 0;
-            uri.replace (/^\s*URL\s*=\s*/, "");
+            uri = uri.replace (/^\s*URL\s*=\s*/i, "");
             var isQuoted = /^['"]/.test(uri);
             uri = isQuoted ? uri.match(/['"]([^'"]*)/)[1] : uri.replace(/\s[\s\S]*/, ''); 
             try {
@@ -2741,10 +2757,11 @@ var ns = singleton = {
               }
               
             } catch(e) {
-              if(this.consoleDump) this.dump("JS URL execution failed: " + e);
+              this.logError(e, true, "Bookmarklet or location scriptlet");
             }
           }, this);
         } else {
+          if (!openCallback) return false;
           openCallback(url);
         }
         return true;
@@ -2869,7 +2886,7 @@ var ns = singleton = {
       'url("' + this.skinBase + "flash" + size + '.png")'
     : /^application\/x-java\b/i.test(mime)
       ? 'url("' + this.skinBase + "java" + size + '.png")'
-      : mime == "application/x-silverlight"
+      : /^application\/x-silverlight\b/.test(mime)
         ? 'url("' + this.skinBase + "somelight" + size + '.png")'
         : /^font\b/i.test(mime)
           ? 'url("' + this.skinBase + 'font.png")'
@@ -3476,7 +3493,7 @@ var ns = singleton = {
   
   _silverlightPatch: function() {
     HTMLObjectElement.prototype.__defineGetter__("IsVersionSupported", function() {
-      return (this.type == 'application/x-silverlight')
+      return (/^application\/x-silverlight\b/.test(this.type))
         ? function(n) { return true; } : undefined;
     });
   }.toSource(),
@@ -3942,7 +3959,9 @@ var ns = singleton = {
   onSecurityChange: function() {}, 
   onProgressChange: function() {},
   onRefreshAttempted: function(wp, uri, delay, sameURI) {
-
+    if (delay == 0 && !sameURI)
+      return true; // poor man's redirection
+    
     var pref = this.getPref("forbidBGRefresh");
     try {
       if (!pref || this.prefService.getBoolPref("accessibility.blockautorefresh"))
@@ -3958,44 +3977,43 @@ var ns = singleton = {
     if (!(browserWin && "noscriptOverlay" in browserWin))
       return true; // not a regular browser window
     
-    var exceptions = new AddressMatcher(this.getPref("forbidGBRefresh.exceptions"));
+    var exceptions = new AddressMatcher(this.getPref("forbidBGRefresh.exceptions"));
     if (exceptions && exceptions.test(currentURL))
       return true;
     
     var browser = DOM.findBrowserForNode(win);
     var currentBrowser = browserWin.noscriptOverlay.currentBrowser;
-    
+    var docShell = DOM.getDocShellForWindow(win);
+        
     var uiArgs = Array.slice(arguments);
+    
+    var ts = Date.now();
     
     if (browser == currentBrowser) {
       win.addEventListener("blur", function(ev) {
         ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
-        var docShell = DOM.getDocShellForWindow(win);
         docShell.suspendRefreshURIs();
-        showUI();
+        hookFocus(false);
       }, false);
       return true; // OK, this is the foreground tab
     }
     
     
-    function showUI() {
-      // let's see if we can reuse Firefox's UI
-      var ui =
-        ("TabsProgressListener" in browserWin) && uiArgs.unshift(browser) && browserWin.TabsProgressListener ||
-        ("XULBrowserWindow" in browserWin) && browserWin.XULBrowserWindow;
-      
-      if (ui && ("onRefreshAttempted" in ui)) {
-        try {
-          ns.prefService.setBoolPref("accessibility.blockautorefresh", true);
-          ui.onRefreshAttempted.apply(ui, uiArgs);
-        } catch(e) {
-          ns.dump(e);
-        } finally {
-          ns.prefService.setBoolPref("accessibility.blockautorefresh", false);
+     function hookFocus(bg) {
+      ns.log("[NoScript] Blocking refresh on unfocused tab, " + currentURL + "->" + uri.spec, true);
+      win.addEventListener("focus", function(ev) {
+        ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
+        if ((docShell instanceof CI.nsIRefreshURI) &&
+            (bg || docShell.refreshPending)) {
+          var toGo = Math.round((delay - (Date.now() - ts)) / 1000);
+          if (toGo < 1) toGo = 1;
+          docShell.setupRefreshURIFromHeader(docShell.currentURI,  toGo + ";" + uri.spec);
+          docShell.resumeRefreshURIs();
         }
-      } else ns.log("[NoScript] Blocking refresh on unfocused tab, " + currentURL + "->" + uri.spec, true)
+       
+      }, false);
     }
-    showUI();
+    hookFocus(true);
     return false;
   }
   ,
@@ -4785,6 +4803,14 @@ var ns = singleton = {
   log: function(msg, dump) {
     this.consoleService.logStringMessage(msg);
     if (dump) this.dump(msg, true);
+  },
+  
+  logError: function(e, dump, cat) {
+    var se = CC["@mozilla.org/scripterror;1"].createInstance(CI.nsIScriptError);
+    se.init(e.message, e.fileName, /^javascript:/i.test(e.fileName) ? e.fileName : null,
+            e.lineNumber, 0, 0, cat || "Component JS");
+    if (dump && this.consoleDump) this.dump(e.message, true);
+    this.consoleService.logMessage(se);
   },
  
   dump: function(msg, noConsole) {

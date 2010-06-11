@@ -51,12 +51,22 @@ const HTTPS = {
         
       } catch(e) {
         
-        if (ctx && (ctx instanceof CI.nsIDOMHTMLImageElement || ctx instanceof CI.nsIDOMHTMLInputElement)) {
+        if (ctx && ctx instanceof CI.nsIDOMHTMLImageElement || ctx instanceof CI.nsIDOMHTMLInputElement ||
+            ctx instanceof CI.nsIObjectLoadingContent) {
           uri = uri.clone();
           uri.scheme = "https";
-          Thread.asap(function() { ctx.src = uri.spec; });
           
-          var msg = "Image HTTP->HTTPS redirection to " + uri.spec;
+          var type, attr;
+          if (ctx instanceof CI.nsIObjectLoadingContent) {
+            type = "Object";
+            attr = "data";
+          } else {
+            type = "Image";
+            attr = "src";
+          }
+          Thread.asap(function() { ctx.setAttribute(attr, uri.spec); });
+          
+          var msg = type + " HTTP->HTTPS redirection to " + uri.spec;
           this.log(msg);  
           throw msg;
         }

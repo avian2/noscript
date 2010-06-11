@@ -11,6 +11,8 @@ AddressMatcher.prototype = {
   networks: null,
   netMatching: false,
   
+  _universal: { test: function(s) { return true; } },
+  
   test: function(u) {
     return this.rx && this.rx.test(u);  
   },
@@ -48,11 +50,13 @@ AddressMatcher.prototype = {
   
   parse: function(s) {
     try {
-      var rxSource = s && s.split(/\s+/).map(function(p) {
-        
-        if (p == '*') return '.*';
-        
-        if (!/\S+/.test(p)) return null;
+      var universal = false;
+      var rxs = s && s.split(/\s+/).map(function(p) {      
+        if (p === '*') {
+          universal = true;
+        }
+       
+        if (universal || !/\S+/.test(p)) return null;
         
         if (Network.isNet(p)) {
           var net;
@@ -82,9 +86,9 @@ AddressMatcher.prototype = {
           if (!hasScheme) { // adjust for no protocol
             if (p.substring(0, 2) === '\\.') {
               // al_9x's proposed syntactic sugar to match both *.x.y and x.y
-              p = "([^/]+\\.)?" + p.substring(2); 
+              p = "(?:[^/]+\\.)?" + p.substring(2); 
             }
-            p = "[a-z]+\\w+://" + p;
+            p = "[a-z]\\w+://" + p;
           }
 
           if (!hasPath) { // adjust for no path
@@ -109,9 +113,13 @@ AddressMatcher.prototype = {
           return null;
         }
         return p;
-      }, this).filter(function(p) { return p; }).join("|");
-        
-      return rxSource ? new RegExp(rxSource) : null;
+      }, this).filter(function(p) { return p !== null; });
+
+      if (universal) {
+        this.test = this._universal.test;
+        return this._universal;
+      }
+      return rxs.length ? new RegExp(rxs.join("|")) : null;
     } catch(e) {
       dump("Illegal AddressMatcher: " + s + " -- " + e + "\n");
       return null;

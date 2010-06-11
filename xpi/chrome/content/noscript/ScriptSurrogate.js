@@ -108,7 +108,7 @@ var ScriptSurrogate = {
 
   apply: function(document, scriptURL, pageURL, noScript) {
     if (!this.enabled) return;
-    if (typeof(noScript) != "boolean") noScript = false;
+    if (typeof(noScript) != "boolean") noScript = !!noScript;
     var scriptBlock = this.getScriptBlock(scriptURL, pageURL, noScript);
     if (scriptBlock) {
       if (noScript) {
@@ -125,7 +125,7 @@ var ScriptSurrogate = {
     var w = document.defaultView;
     try {
       var s = new CU.Sandbox(w);
-      s.window = w;
+      s.window = w.wrappedJSObject || w;
       CU.evalInSandbox("with(window) {" + scriptBlock + "}", s);
     } catch(e) {
       ns.dump(e);
@@ -133,7 +133,9 @@ var ScriptSurrogate = {
   },
   
   execute: function(document, scriptBlock, isPageScript) {
-    if (this._mustUseDOM && document.documentElement) {
+    
+    if (this._mustUseDOM && document.documentElement &&
+        !(isPageScript && document.defaultView != document.defaultView.top)) {
       var s = document.createElementNS(HTML_NS, "script");
       s.id = "__noscriptSurrogate__" + DOM.rndId();
       s.appendChild(document.createTextNode(scriptBlock +
@@ -143,6 +145,7 @@ var ScriptSurrogate = {
     } else {
       document.defaultView.location.href = encodeURI("javascript:" + scriptBlock);
     }
+    
   },
   
   get _mustUseDOM() {

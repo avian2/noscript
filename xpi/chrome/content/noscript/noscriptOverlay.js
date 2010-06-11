@@ -1520,7 +1520,9 @@ return noscriptUtil.service ? {
     var notification = null;
     
     if (box && this.ns.getPref("forbidMetaRefresh.notify", true)) {
-      var label = this.getString("metaRefresh.notify", [info.uri, info.timeout])
+      var urlForLabel = info.uri;
+      if (urlForLabel.length > 30) urlForLabel = urlForLabel.substring(0, 30) + "...";
+      var label = this.getString("metaRefresh.notify", [urlForLabel, info.timeout])
       var icon = this.getIcon("noscript-statusRedirect");
         
       if (box.appendNotification) { // Fx 2
@@ -1778,7 +1780,11 @@ return noscriptUtil.service ? {
     } else {
       
       var s = sites.length;
-      if (sites.pluginExtras) sites.pluginExtras.forEach(function(pe) { blockedObjects += pe.filter(function(e) { return e && (e.placeholder || e.document); }).length });
+      if (sites.pluginExtras) {
+        sites.pluginExtras.forEach(function(pe) {
+          blockedObjects += pe.filter(function(e) { return e && (e.placeholder || e.document); }).length;
+        });
+      }
       var total = s + blockedObjects;
       
       var url, site;
@@ -1809,6 +1815,11 @@ return noscriptUtil.service ? {
           }
         }
       }
+      
+      if (!untrusted && sites.pluginSites.some(untrustedSites.matches, untrustedSites)) {
+        untrusted = 1;
+      }
+      
       allowed = allowedSites.length;
       lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
             : allowed == 0 || active == 0 ? (global ? "untrusted-glb" : topUntrusted ? "untrusted" : "no") 

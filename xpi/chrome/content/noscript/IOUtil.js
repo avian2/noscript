@@ -269,7 +269,7 @@ const IOUtil = {
         srv = EmulatedTLDService;
       }
     } catch(ex) {
-      this.dump(ex);
+      dump(ex + "\n");
       return null;
     }
     delete this.TLDService;
@@ -440,6 +440,7 @@ ChannelReplacement.prototype = {
     newChan.loadFlags |= newChan.LOAD_REPLACE;
     
     // nsHttpHandler::OnChannelRedirect()
+
     const CES = CI.nsIChannelEventSink;
     const flags = CES.REDIRECT_INTERNAL;
     CC["@mozilla.org/netwerk/global-channel-event-sink;1"].getService(CES)
@@ -454,6 +455,7 @@ ChannelReplacement.prototype = {
     }
     ces = IOUtil.queryNotificationCallbacks(oldChan, CES);
     if (ces) ces.onChannelRedirect(oldChan, newChan, flags);
+    
     // ----------------------------------
     
     newChan.originalURI = oldChan.originalURI;
@@ -464,12 +466,15 @@ ChannelReplacement.prototype = {
   },
   
   replace: function(isRedir) {
-    
-    this._onChannelRedirect(isRedir);
-    
-    // dirty trick to grab listenerContext
     var oldChan = this.oldChannel;
-    
+    try {
+      this._onChannelRedirect(isRedir);
+    } catch(ex) {
+      oldChan.cancel(NS_BINDING_ABORTED);
+      throw ex;
+    }
+    // dirty trick to grab listenerContext
+   
     var ccl = new CtxCapturingListener(oldChan);
     
     oldChan.cancel(NS_BINDING_REDIRECTED); // this works because we've been called after loadGroup->addRequest(), therefore asyncOpen() always return NS_OK

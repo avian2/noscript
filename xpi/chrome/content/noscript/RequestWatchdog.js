@@ -1146,15 +1146,33 @@ var InjectionChecker = {
   },
   
   reduceXML: function(s) {
-    var t;
-    while(/^[^"]*</.test(s)) {
-        t = s.replace(/^([^"]*)<\??\s*\/?[a-zA-Z][\w\:\-]+(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+]*")*[\+\s]*\/?\??>/, '$1;xml;');
-        if (t == s) break;
-        s = t;
+    var t, pos, head, tail, qnum, res;
+    
+    for (;;) {
+      pos = s.indexOf("<");
+      if (pos === -1) break;
+      
+      head = s.substring(0, pos);
+      tail = s.substring(pos);
+      for (qnum = 0, pos = -1; (pos = head.indexOf('"', ++pos)) > -1; ) {
+        if (pos === 0 || head[pos - 1] != '\\') qnum++;
+      }
+      if (qnum % 2) break; // odd quotes
+
+      t = tail.replace(/^<\??\s*\/?[a-zA-Z][\w\:\-]+(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+]*")*[\+\s]*\/?\??>/, ';xml;');
+      if (t == tail) break;
+      
+      (res || (res = [])).push(head);
+      s = t;
     }
-    if (t) { s = s.replace(/(?:\s*;xml;\s*)+/g, ';xml;') };
+    if (res) {
+      res.push(s);
+      s = res.join('').replace(/(?:\s*;xml;\s*)+/g, ';xml;');
+    }
+    
     return s;
-  },
+  }
+,
 
   _singleAssignmentRx: new RegExp(
     "(?:\\b" + fuzzify('document') + "\\b[\\s\\S]*\\.|\\s" + fuzzify('setter') + "\\b[\\s\\S]*=)|/.*/[\\s\\S]*(?:\\.(?:"
@@ -1171,7 +1189,7 @@ var InjectionChecker = {
     // identifier's tail...         optional comment...         
     '[\\w$\\u0080-\\uFFFF\\]\\)]' + IC_COMMENT_PATTERN + 
     // accessor followed by function call or assignment.    
-     '(?:(?:[\\[]|\\.\\D)[\\s\\S]*(?:\\([\\s\\S]*\\)|=)' +
+     '(?:(?:\\[[\\s\\S]*\\]|\\.\\D)[\\s\\S]*(?:\\([\\s\\S]*\\)|=)' +
        // double function call
        '|\\([\\s\\S]*\\([\\s\\S]*\\)' +
      ')|\\b(?:' + IC_EVAL_PATTERN +
@@ -1263,6 +1281,7 @@ var InjectionChecker = {
         )));
     
     if (!this.maybeJS(s)) return false;
+
     
     const invalidChars = /[\u007f-\uffff]/.test(s) && this.invalidChars;
     const findInjection = 
@@ -1272,7 +1291,7 @@ var InjectionChecker = {
     var m, breakSeq, subj, expr, lastExpr, script,
       quote, len, bs, bsPos, hunt, moved, errmsg, pos;
     
-    const MAX_TIME = 8000, MAX_LOOPS = 600;
+    const MAX_TIME = 8000, MAX_LOOPS = 1200;
 
     const t = Date.now();
     var iterations = 0;
@@ -1569,8 +1588,10 @@ var InjectionChecker = {
       return true;
     
     parts = parts[0].split(/[&;]/); // check query string
-    if (parts.some(function(p) {
-        return this.checkBase64FragEx(unescape(p.replace(/.*?=/, '')));
+    if (parts.length > 0 && parts.some(function(p) {
+        var pos = p.indexOf("=");
+        if (pos > -1) p = p.substring(pos + 1);
+        return this.checkBase64FragEx(unescape(p));
       }, this))
       return true;
     
@@ -1649,11 +1670,27 @@ var InjectionChecker = {
     this.base64 = false;
     this.base64tested = [];
     
+    if (this.isPost) {
+      s = this.formUnescape(s);
+      if (this.checkBase64Frag(Base64.purify(s))) return true;
+      
+      if (s.indexOf("<") > -1) {
+        // remove XML-embedded Base64 binary data
+        s = s.replace(/<((?:\w+:)?\w+)>[0-9a-zA-Z+\/]+=*<\/\1>/g, '');
+      }
+      
+      s = "#" + s;
+    } else {
+      if (this.checkBase64(s.replace(/^\/{1,3}/, ''))) return true;
+    }
+    
     if (this.isPost
-        ? this.checkBase64Frag(Base64.purify(unescape(s.replace(/\+/g, ' '))))
+        ? this.checkBase64Frag(Base64.purify(s))
         : this.checkBase64(s.replace(/^\/{1,3}/, ''))
       )
       return true;
+    
+    if (this.isPost) s = "#" + s; // allows the string to be JS-checked as a whole
     return this._checkRecursive(s, depth);
   },
   

@@ -121,6 +121,12 @@ var DNS = {
       this._doPurge(map, l, max);
     },
     
+    reset: function() {
+      this._map = {};
+      this._ext = {},
+      this.count = 0;
+    },
+    
     _oldLast: function(a, b) {
       return a.t > b.t ? -1 : a.t < b.t ? 1 : 0; 
     },
