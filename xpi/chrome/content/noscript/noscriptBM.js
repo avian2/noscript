@@ -1,27 +1,3 @@
-/***** BEGIN LICENSE BLOCK *****
-
-NoScript - a Firefox extension for whitelist driven safe JavaScript execution
-Copyright (C) 2004-2009 Giorgio Maone - g.maone@informaction.com
-
-Contributors: 
-  Hwasung Kim
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-***** END LICENSE BLOCK *****/
-
 var noscriptBM = {
   openOneBookmarkOriginal: null,
   openOneBookmark: function (aURI, aTargetBrowser, aDS) {
@@ -84,64 +60,47 @@ var noscriptBM = {
     return noscriptUtil.service.handleBookmark(url, openCallback);
   },
   
-  patchPlacesMethod: function(k, m) {
-    if(m in k) {
-      // Dirty eval hack due to Tab Mix Plus conflict: http://tmp.garyr.net/forum/viewtopic.php?t=8052
-      var src = k[m].toSource();
-      if (!/\bnoscriptBM\b/.test(src))
-        k[m] = eval(src.replace(/\b\w+\.checkURLSecurity\(/, 'noscriptBM.checkURLSecurity('));
-    }
-  },
-  
-  checkURLSecurity: function(node) {
-    var patch = arguments.callee;
-    if(!noscriptBM.placesUtils.checkURLSecurity(node)) return false;
-    if(patch._reentrant) return true;
-    try {
-      patch._reentrant = true;
-      const url = node.uri;
-      node = null;
-      var self = this;
-      return !noscriptBM.handleBookmark(url, function(url) {
-        patch.caller.apply(self, patch.caller.arguments);
-        self = null;
-      });
-    } finally {
-      patch._reentrant = false;
-    }
+  patchPlacesMethods: function(pu) {   
+    if ("__originalCheckURLSecurity" in pu) return; // already patched
+    pu.__originalCheckURLSecurity = pu.checkURLSecurity;
+    pu.__ns = noscriptUtil.service;
+    pu.checkURLSecurity = pu.__ns.placesCheckURLSecurity;
+    
+    for each (var method in ["openNodeIn", "openSelectedNodeWithEvent"]) 
+      if (method in pu) pu[method].__noscriptPatched = true;
   },
   
   onLoad: function(ev) {
     ev.currentTarget.removeEventListener("load", arguments.callee, false);
     if(!noscriptUtil.service) return;
     
-    // patch bookmark clicks
-    if("BookmarksCommand" in window && !noscriptBM.openOneBookmarkOriginal) { 
-      noscriptBM.openOneBookmarkOriginal = BookmarksCommand.openOneBookmark;
-      BookmarksCommand.openOneBookmark = noscriptBM.openOneBookmark;
-    }
-    
-    // patch URLBar for keyword-triggered bookmarklets
+    // patch URLBar for keyword-triggered bookmarklets:
+    // we do it early, in case user has a bookmarklet startup page
     if (!noscriptBM.handleURLBarCommandOriginal) {
       if("handleURLBarCommand" in window) { // Fx 3.0
         noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
         window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
-      } else { // Fx 3.5
+      } else { // Fx >= 3.5
         noscriptBM.handleURLBarCommandOriginal = window.loadURI;
         window.loadURI = noscriptBM.loadURI;
       }
     }
     
+    // delay bookmark stuff
+    window.setTimeout(noscriptBM.delayedInit, 50);
+  },
+  delayedInit: function() {
+    // Legacy (non-Places), patch bookmark clicks
+    if("BookmarksCommand" in window && noscriptBM.openOneBookmarkOriginal === null) { 
+      noscriptBM.openOneBookmarkOriginal = BookmarksCommand.openOneBookmark;
+      BookmarksCommand.openOneBookmark = noscriptBM.openOneBookmark;
+    }
+    
+    // Places stuff, from most recent to oldest
     var pu = window.PlacesUIUtils || window.PlacesUtils || false;
-    if (typeof(pu) == "object" && !pu.__noScriptPatch) {
-      noscriptBM.placesUtils = pu;
-      window.setTimeout(function() {
-        if (pu.__noScriptPatch) return;
-        pu.__noScriptPatch = true;
-        var methods = ["openNodeIn", "openSelectedNodeWithEvent"];
-        for each (var method in methods)
-          noscriptBM.patchPlacesMethod(pu, method);
-      }, 50);
+    if (typeof(pu) == "object") {
+      noscriptBM.placesUtils = pu; // hold a reference even if in Fx 4 it's a module
+      noscriptBM.patchPlacesMethods(pu);
     }
   }
 };

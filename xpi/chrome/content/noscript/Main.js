@@ -1671,8 +1671,8 @@ var ns = singleton = {
     switch(preset) {
       case "off":
         this.setPref("ABE.enabled", false);
-        this.setPref("xss.filterXGet", false);
-        this.setPref("xss.filterXPost", false);
+        this.setPref("filterXGet", false);
+        this.setPref("filterXPost", false);
         this.setPref("clearClick", 0);
       case "low":
         this.jsEnabled = true;
@@ -1849,7 +1849,7 @@ var ns = singleton = {
           : aContext)  + 
         ", mime: " + aMimeTypeGuess + ", " + aInternalCall);
   },
-  reject: function(what, args) {
+  reject: function(what, args /* [aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall] */) {
     
     if (args.xOriginCached)
       XOriginCache.pick(args.xOriginKey, true);
@@ -1867,6 +1867,8 @@ var ns = singleton = {
         // our take on https://bugzilla.mozilla.org/show_bug.cgi?id=387971
         args[1].spec = this.nopXBL;
         return CP_OK;
+      case 5:
+        args[3].__noscriptBlocked = true;
     }
     
     PolicyState.cancel(args);
@@ -2021,7 +2023,14 @@ var ns = singleton = {
           this._collectPluginExtras(this.findPluginExtras(doc), pluginExtras);
         }
       } else {
-        this.getExpando(doc, "pe",  []).push({embed: embed, pluginExtras: pluginExtras});
+        var node = embed;
+        while((node = node.parentNode))
+          if (node.__noScriptBlocked)
+            return;
+
+        var pe = this.getExpando(doc, "pe");
+        if (pe === null) this.setExpando(doc, "pe", pe = []);
+        pe.push({embed: embed, pluginExtras: pluginExtras});
       }
       try {
         this.syncUI(doc.defaultView.top);
@@ -2083,9 +2092,11 @@ var ns = singleton = {
     switch (this.forbidIFramesContext) {
       case 0: // all IFRAMES
         return true;
-      case 3: // different 2nd level domain
-        return this.getBaseDomain(this.getDomain(originURL, true)) != 
-          this.getBaseDomain(domain);
+      case 3: // different 2nd level domain or either untrusted parent or origin
+        if (!(this.untrustedSites.matches(this.getSite(locationURL)) ||
+            this.untrustedSites.matches(this.getSite(originURL)))) 
+          return this.getBaseDomain(this.getDomain(originURL, true)) != 
+            this.getBaseDomain(domain);
       case 2: // different domain (unless forbidden by HTTPS status)
         if (this.getDomain(originURL, true) != domain) return true;
         // if we trust only HTTPS both sites must have the same scheme
@@ -2326,10 +2337,13 @@ var ns = singleton = {
   
   hasVisibleLinks: function(document) {
     var links = document.links;
+    var w = document.defaultView;
     var style, position;
     for (var j = 0, l; (l = links[j]); j++) {
       if (l && l.href && /^https?/i.test(l.href)) {
-        if(l.offsetWidth || l.offsetHeight) return true;
+        if (l.offsetWidth || l.offsetHeight) return true;
+        style = w.getComputedStyle(l, '');
+        if (parseInt(style.width) || parseInt(style.height)) return true; 
         try {
           position = l.style.position;
           l.style.position = "absolute";
@@ -2337,8 +2351,10 @@ var ns = singleton = {
         } finally {
           l.style.position = position;
         }
+        if (/\b__noscriptPlaceholder__\b/.test(l.className)) return true;
       }
     }
+    if (document.embeds[0] || document.getElementsByTagName("object")[0]) return true;
     return false;
   },
   detectJSRedirects: function(document) {
@@ -2447,14 +2463,14 @@ var ns = singleton = {
     }
   }
 ,
-  processScriptElements: function(document, sites) {
+  processScriptElements: function(document, sites, docSite) {
     var scripts = document.getElementsByTagName("script");
     var scount = scripts.length;
     if (scount) {
       const HTMLElement = CI.nsIDOMHTMLElement;
       sites.scriptCount += scount;
       var script, scriptSrc;
-      var nselForce = this.nselForce && sites.length && this.isJSEnabled(sites[sites.length - 1]);
+      var nselForce = this.nselForce && this.isJSEnabled(docSite);
       var isHTMLScript;
       while (scount-- > 0) {
         script = scripts.item(scount);
@@ -2469,7 +2485,7 @@ var ns = singleton = {
         scriptSrc = this.getSite(scriptSrc);
         if (scriptSrc) {
           sites.push(scriptSrc);
-          if (nselForce && isHTMLScript && !this.isJSEnabled(scriptSrc)) {
+          if (nselForce && isHTMLScript && !(script.__nselForce  || this.isJSEnabled(scriptSrc))) {
             this.showNextNoscriptElement(script);
           }
         }
@@ -2477,24 +2493,53 @@ var ns = singleton = {
     }
   },
   
-  showNextNoscriptElement: function(script, doc) { 
+  _nselUnwantedTags: ["script", "meta", "object", "frame"],
+  _nselDocShellPerms: ["allowMetaRedirects", "allowPlugins", "allowSubframes"],
+  _assignCleanHTML: function(el, html) {
+   
+    var k, j, els;
+    
+    var docShell = this.dom.getDocShellForWindow(el.ownerDocument.defaultView);
+    var perms = {};
+    for each (k in this._nselDocShellPerms) {
+      perms[k] = docShell[k];
+      docShell[k] = false;
+    }
+      
+    try {
+      el.innerHTML = html;
+      
+      for each(k in this._nselUnwantedTags) {
+        var els = el.getElementsByTagName(k);
+        for(j = els.length; j-- > 0;) el.removeChild(els[j]);
+      }
+    } finally {
+      for each (k in this._nselDocShellPerms)
+        docShell[k] = perms[k];
+    }
+  },
+  showNextNoscriptElement: function(script) { 
     const HTMLElement = CI.nsIDOMHTMLElement;
-    var child, el, ss, j;
+    var child, el, j, doc;
     for (var node = script; node = node.nextSibling;) {
       try {
         if (node instanceof HTMLElement) {
-          if (node.tagName.toUpperCase() != "NOSCRIPT") return;
-          if (node.getAttribute("class") == "noscript-show") return;
-          node.setAttribute("class", "noscript-show");
+          script.__nselForce = true;
+          if (node.tagName.toUpperCase() != "NOSCRIPT")
+            return;
+          
+          doc = node.ownerDocument;
           child = node.firstChild;
           if (child.nodeType != 3) return;
-          el = node.ownerDocument.createElementNS(HTML_NS, "span");
-          el.className = "noscript-show";
-          el.innerHTML = child.nodeValue;
-          // remove noscript script children, see evite.com bug 
-          ss = el.getElementsByTagName("script");
-          for(j = ss.length; j-- > 0;) el.removeChild(ss[j]);
+          
+          this.setExpando(doc, "nselForce", true);
+          el = doc.createElementNS(HTML_NS, "span");
+          el.__nselForce = true;
+          
+          var html = child.nodeValue;
+          this._assignCleanHTML(el, html);
           node.replaceChild(el, child);
+          node.className = "noscript-show";
         }
       } catch(e) {
         this.dump(e.message + " while showing NOSCRIPT element");
@@ -2525,12 +2570,13 @@ var ns = singleton = {
         html5 = false;
       }
 
-      var node;
+      var node, nodeName;
       for (var j = 0; (refresh = rr[j]); j++) {
         if (!/refresh/i.test(refresh.httpEquiv)) continue;
         if (html5) { // older parser moves META outside the NOSCRIPT element if not in HEAD
           for (node = refresh; (node = node.parentNode);) {
-            if (node.localName == "noscript") break;
+            if (node.localName == "noscript")
+              break;
           }
           if (node == null) continue;
         }
@@ -2604,8 +2650,7 @@ var ns = singleton = {
     }
   },
   
-  
-  
+
   // These catch both Paypal's variant,
   // if (parent.frames.length > 0){ top.location.replace(document.location); }
   // and the general concise idiom with its common reasonable permutations,
@@ -2707,6 +2752,25 @@ var ns = singleton = {
     return false;
   },
   
+  // applied to Places(UI)Utils
+  placesCheckURLSecurity: function(node) {
+    if(!this.__originalCheckURLSecurity(node)) return false;
+    var method = arguments.callee;
+    if(method._reentrant) return true;
+    try {
+      method._reentrant = true;
+      const url = node.uri;
+      node = null;
+      var self = this;
+      return !this.__ns.handleBookmark(url, function(url) {
+        method.caller.apply(self, patch.caller.arguments);
+        self = null;
+      });
+    } finally {
+      method._reentrant = false;
+    }
+  },
+  
   
   executeJSURL: function(url, openCallback) {
     var browserWindow = DOM.mostRecentBrowserWindow;
@@ -2719,17 +2783,18 @@ var ns = singleton = {
     var site = this.getSite(window.document.documentURI) || this.getExpando(browser, "jsSite");
     if (!this.jsEnabled) {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
-      
+    
+      var docShell = DOM.getDocShellForWindow(window);
+    
       var snapshots = {
-        docJS: browser.webNavigation.allowJavascript,
+        docJS: docShell.allowJavascript,
         siteJS: this.isJSEnabled(site)
       };
     
       var doc = window.document;
       try {
-       
-        
-        browser.webNavigation.allowJavascript = true;
+
+        docShell.allowJavascript = true;
         if (!(this.jsEnabled = ns.getPref("allowBookmarkletImports"))) {
           if (!snapshots.siteJS) 
             this.setJSEnabled(site, true);
@@ -2743,13 +2808,7 @@ var ns = singleton = {
                 this._patchTimeouts(window, true);
               }
               
-              if (openCallback) {
-                window.location.href = url;
-              } else {
-                var s = doc.createElement("script");
-                s.appendChild(doc.createTextNode(url));
-                doc.documentElement.appendChild(s);
-              }
+              window.location.href = url;
               
               Thread.yieldAll();
               if (!(snapshots.siteJS && snapshots.docJS)) {
@@ -2768,9 +2827,9 @@ var ns = singleton = {
       } finally {
         
         this.setExpando(browser, "jsSite", site);
-        if (!browser.webNavigation.isLoadingDocument &&
-            this.getSite(browser.webNavigation.currentURI.spec) == site)
-          browser.webNavigation.allowJavascript = snapshots.docJS;
+        if (!docShell.isLoadingDocument &&
+            this.getSite(docShell.currentURI.spec) == site)
+          docShell.allowJavascript = snapshots.docJS;
         
         Thread.asap(function() {
           if (this.executingJSURL(doc) > 1) {
@@ -2786,7 +2845,7 @@ var ns = singleton = {
           }
 
           if (this.consoleDump & LOG_JS)
-            this.dump("Restored snapshot permissions on " + site + "/" + (browser.webNavigation.isLoadingDocument ? "loading" : browser.webNavigation.currentURI.spec));
+            this.dump("Restored snapshot permissions on " + site + "/" + (docShell.isLoadingDocument ? "loading" : docShell.currentURI.spec));
         }, this);
       }
     }
@@ -2894,16 +2953,6 @@ var ns = singleton = {
   },
   
   
-  findObjectAncestor: function(embed) {
-    const objType = CI.nsIDOMHTMLObjectElement;
-    if (embed instanceof CI.nsIDOMHTMLEmbedElement || embed instanceof objType) {
-      for (var o = embed; (o = o.parentNode);) {
-        if (o instanceof objType) return o;
-      }
-    }
-    return embed;
-  },
-  
   findPluginExtras: function(document) {
     var res = this.getExpando(document, "pluginExtras", []);
     if ("opaqueHere" in res) return res;
@@ -2919,7 +2968,8 @@ var ns = singleton = {
       const cs = "__noscriptOpaqued__";
       if (w.__noscriptOpaquedObjects) return w.__noscriptOpaquedObjects;
       var doc = w.document;
-      if (doc.getElementsByClassName) return Array.slice(doc.getElementsByClassName(cs), 0);
+      if ("getElementsByClassName" in doc)
+        return Array.slice(doc.getElementsByClassName(cs), 0);
       var results = [];
       var query = doc.evaluate(
           "//*[contains(concat(' ', @class, ' '), ' " + cs + " ')]",
@@ -3031,7 +3081,7 @@ var ns = singleton = {
     var pe = this.getExpando(doc, "pe");
     if (!pe) return null;
     this.setExpando(doc, "pe", null);
-    var ret = [], o;
+    var ret = [], o, node, embed;
     for (var j = pe.length; j-- > 0;) {
       o = pe[j];
       try {
@@ -3039,9 +3089,21 @@ var ns = singleton = {
           o.embed = this._attachSilverlightExtras(o.embed, o.pluginExtras);
           if (!o.embed) continue; // skip unconditionally to prevent in-page Silverlight placeholders
         }
-        o.originalEmbed = o.embed;
-        this.setPluginExtras(o.embed = this.findObjectAncestor(o.embed), o.pluginExtras);
-        if (o.embed.ownerDocument) ret.push(o);
+        
+        embed = o.embed;
+      
+        node = embed;
+        while ((node = node.parentNode) && !node.__noscriptBlocked);
+          
+        if (node !== null) {
+          pe.splice(j, 1);
+          continue;
+        }
+        
+        this.countObject(embed, o.pluginExtras.site);
+        
+        this.setPluginExtras(embed, o.pluginExtras);
+        if (embed.ownerDocument) ret.push(o);
        } catch(e1) { 
          if(this.consoleDump & LOG_CONTENT_BLOCK) 
            this.dump("Error setting plugin extras: " + 
@@ -3049,6 +3111,12 @@ var ns = singleton = {
        }
     }
     return ret;
+  },
+  
+  
+  get placeholderMinSize() {
+    delete this.placeholderMinSize;
+    return this.placeholderMinSize = this.getPref("placeholderMinSize");
   },
   
   processObjectElements: function(document, sites, loaded) {
@@ -3074,7 +3142,7 @@ var ns = singleton = {
     var w, h;
     var opaque = pluginExtras.opaqueHere;
     
-    var minSize = this.getPref("placeholderMinSize");
+    var minSize = this.placeholderMinSize;
     var restrictedSize;
     
     var forcedCSS = ";";
@@ -3150,7 +3218,7 @@ var ns = singleton = {
         }
         
         cssDef = "";
-        style = win.getComputedStyle(oi.originalEmbed, null);
+        style = win.getComputedStyle(oi.embed, null);
         if (style) {
           for (cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
             cssProp = style.item(cssCount);
@@ -3160,6 +3228,11 @@ var ns = singleton = {
           innerDiv.setAttribute("style", cssDef + forcedCSS);
           
           restrictedSize = (collapse || style.display === "none" || style.visibility === "hidden");
+          
+          if (!restrictedSize && style.height == "100%") {
+            anchor.style.display = "block";
+            anchor.style.height = "100%";
+          }
           
         } else restrictedSize = collapse;
         
@@ -3207,7 +3280,7 @@ var ns = singleton = {
     }
 
     if (replacements) {
-      this.patchObjects(document);
+      if (this.isJSEnabled(this.getSite(document.URL))) this.patchObjects(document);
       this.delayExec(this.createPlaceholders, 0, replacements, pluginExtras, document);
     }
   },
@@ -3229,7 +3302,7 @@ var ns = singleton = {
   
   patchObjects: function(document) {
     delete this.patchObjects;
-    return (this.patchObjects = ("getElementsByTagName" in document)
+    return (this.patchObjects = ("getElementsByClassName" in document)
       ? function(document) { ScriptSurrogate.execute(document, this._objectPatch); }
       : function () {}).call(this, document);
   },
@@ -3263,7 +3336,7 @@ var ns = singleton = {
   stackIsMine: function() {
     var s = Components.stack.caller;
     while((s = s.caller)) {
-      if (!/^chrome:\/\/noscript\/content\//.test(s.filename)) return false;
+      if (s.filename && !/^chrome:\/\/noscript\/content\//.test(s.filename)) return false;
     }
     return true;
   },
@@ -3536,6 +3609,9 @@ var ns = singleton = {
     try {
       if (this.getExpando(doc, "pluginPatches")) return;
       this.setExpando(doc, "pluginPatches", true);
+      
+      if (!this.isJSEnabled(this.getSite(doc.URL)))
+        return;
           
       var patches;
       
@@ -3610,8 +3686,7 @@ var ns = singleton = {
 
     const nsIDocShell = CI.nsIDocShell;
     const nsIWebProgress = CI.nsIWebProgress;
-    const showObjectSources = !this.contentBlocker || this.alwaysShowObjectSources;
-    
+ 
     const docShells = browser.docShell.getDocShellEnumerator(
         CI.nsIDocShellTreeItem.typeContent,
         browser.docShell.ENUMERATE_FORWARDS
@@ -3621,7 +3696,7 @@ var ns = singleton = {
     
     var docShell, docURI, url, win, top;
 
-    var cache, redir, tmpPluginCount;
+    var cache, redir;
     
     var document, domain;
     while (docShells.hasMoreElements()) {
@@ -3670,19 +3745,6 @@ var ns = singleton = {
       
       if (win === (top || (top = win.top))) {
         sites.topURL = url;
-        
-        cache = this.getExpando(document, "objectSites");
-        if(cache) {
-          if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource() + " to " + sites.toSource());
-          if (showObjectSources) sites.push.apply(sites, cache);
-          tmpPluginCount = cache.length;
-          sites.push.apply(sites.pluginSites, cache);
-        }
-        
-        cache = this.getExpando(document, "codeSites");
-        if(cache) {
-          sites.push.apply(sites, cache);
-        }
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
       }
       
@@ -3692,15 +3754,28 @@ var ns = singleton = {
       if (domLoaded || loaded) {
         this.processObjectElements(document, sites);
       } else  {
-        sites.pluginCount += tmpPluginCount;
         loading = true;
         continue;
       }
-
-       // scripts
-      this.processScriptElements(document, sites);
+      
+      this.processScriptElements(document, sites, url);
     }
-   
+    
+    
+    document = top.document;
+    cache = this.getExpando(document, "objectSites");
+    if(cache) {
+      if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource() + " to " + sites.toSource());
+      
+      if (!this.contentBlocker || this.alwaysShowObjectSources)
+        sites.push.apply(sites, cache);
+      
+      sites.push.apply(sites.pluginSites, cache);
+    }
+    
+    cache = this.getExpando(document, "codeSites");
+    if(cache) sites.push.apply(sites, cache);
+    
     
     const removeBlank = !(this.showBlankSources || sites.topURL == "about:blank");
     
@@ -3721,13 +3796,6 @@ var ns = singleton = {
     
     
     if (!sites.topURL) sites.topURL = sites[0] || '';
-    
-    
-    /* [PERF]
-    if (loading) try {
-      browser.ownerDocument.defaultView.noscriptOverlay.syncUI();
-    } catch(e) {}
-    */
     
     return this.sortedSiteSet(sites); 
   },
@@ -4059,10 +4127,17 @@ var ns = singleton = {
             
             if (!disposition) {
               var url = channel.URI; 
-              var ext = (url instanceof CI.nsIURL) ? url.fileExtension : '';
-              
+              var ext;
+              if (url instanceof CI.nsIURL) {
+                ext = url.fileExtension;
+                if (!ext) {
+                  var m = url.directory.match(/\.([a-z]+)\/$/);
+                  if (m) ext = m[1];
+                }
+              } else ext = '';
+
               if (ext &&
-                  (ctype === 2 && /js(?:on)?/i.test(ext) ||
+                  (ctype === 2 && /^js(?:on)?$/i.test(ext) ||
                    ctype === 4 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
                 ) {
                 // extension matches and not an attachment, likely OK
@@ -4236,10 +4311,9 @@ var ns = singleton = {
     }
     
     
-    this._handleDocJS3(uri.spec, domWindow, docShell);
-    
-    
-    
+    if (docShell)
+      this.onWindowSwitch(uri.spec, domWindow, docShell);
+
     if (!/^attachment\b/i.test(contentDisposition) &&
         this.shouldLoad(7, uri, uri, domWindow.frameElement || domWindow, contentType,
                         domWindow.frameElement ? CP_FRAMECHECK : CP_SHOULDPROCESS) != CP_OK) {
@@ -4249,7 +4323,7 @@ var ns = singleton = {
       if (this.consoleDump & LOG_CONTENT_INTERCEPT)
         this.dump("Media document content type detected");
 
-      if(!topWin) { 
+      if(!topWin) {
         // check if this is an iframe
         
         if (domWindow.frameElement && !(domWindow.frameElement instanceof CI.nsIDOMHTMLFrameElement)
@@ -4412,28 +4486,27 @@ var ns = singleton = {
       );
   },
   
-  _handleDocJS3: function(url, win, docShell) {
-    // called at the end of onLocationChange
-    var jsBlocked = docShell && !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
+  onWindowSwitch: function(url, win, docShell) { 
+    var jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
     
-    
-    ScriptSurrogate.apply(win.document, url, url, jsBlocked);
+    var doc = docShell.document;
+
+    ScriptSurrogate.apply(doc, url, url, jsBlocked);
     
     if (jsBlocked) {
       if (this.getPref("fixLinks")) {
-        win.addEventListener("click", this.bind(this.onContentClick), true);
-        win.addEventListener("change", this.bind(this.onContentChange), true);
+        var newWin = doc.defaultView;
+        newWin.addEventListener("click", this.bind(this.onContentClick), true);
+        newWin.addEventListener("change", this.bind(this.onContentChange), true);
       }
       return;
     }
     
-    
-    
     try {
-      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !win._noscriptJsHack) {
+      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !doc._noscriptJsHack) {
         try {
-          win._noscriptJsHack = true;
-          ScriptSurrogate.execute(win, this.jsHack);
+          doc._noscriptJsHack = true;
+          ScriptSurrogate.execute(doc, this.jsHack, true);
         } catch(jsHackEx) {}
       }
     } catch(e) {}

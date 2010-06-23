@@ -384,7 +384,7 @@ EFHandler.prototype = {
       this.cleanFile = ExternalFilters.createTempFile();
       var p = ExternalFilters.createProcess();
       p.init(this.filter.exe);
-      var args = [this.outFile.path, this.cleanFile.path];
+      var args = [this.outFile.path, this.cleanFile.path, IOUtil.extractInternalReferrer(this.channel)];
       p.runAsync(args, args.length, this, true);
       this._observers.push(this); // anti-gc kung-fu death grip
       
@@ -407,7 +407,7 @@ EFHandler.prototype = {
     ce.markValid();
   },
   
-  loadAndCache: function(ce) {
+  loadAndCache: function() {
      if (this.processed &&
         (!this.caching ||
           this.cacheEntry &&
@@ -517,7 +517,7 @@ EFHandler.prototype = {
       switch(topic) {
         case "process-finished":
           if (!p.exitValue) {
-            this.loadAndCache(null);
+            this.loadAndCache();
             break;
           }
         case "process-failed":

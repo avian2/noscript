@@ -506,7 +506,7 @@ return noscriptUtil.service ? {
       showInMain = embedOnlySites
         ? embedOnlySites.indexOf(site) === -1 || hideUntrustedPlaceholder && enabled : true;
       
-      docJSBlocked = enabled && isTop && !this.currentBrowser.webNavigation.allowJavascript;
+      docJSBlocked = enabled && isTop && !ns.dom.getDocShellForWindow(content).allowJavascript;
       if (docJSBlocked) enabled = false;
       
       if (enabled && !global || (matchingSite = untrusted)) {
@@ -1101,7 +1101,7 @@ return noscriptUtil.service ? {
 ,
   safeAllow: function(site, enabled, temp, reloadPolicy) {
     const ns = this.ns;
-    var webNav = this.currentBrowser.webNavigation;
+    var docShell = ns.dom.getDocShellForWindow(content);
     
     if (!reloadPolicy && (site instanceof Array) &&
           !ns.getPref("autoReload.allTabsOnPageAction", true)) {
@@ -1115,8 +1115,8 @@ return noscriptUtil.service ? {
         ns.setTemp(site, allowTemp);
         ns.setJSEnabled(site, enabled, false, ns.mustCascadeTrust(site, temp));
         
-        if (enabled && !webNav.allowJavascript) {
-          var curSite = ns.getSite(webNav.currentURI.spec);
+        if (enabled && !docShell.allowJavascript) {
+          var curSite = ns.getSite(docShell.currentURI.spec);
           if (ns.isJSEnabled(curSite)) {
             // force reload
             if (ns.jsEnabled) {
@@ -1125,7 +1125,7 @@ return noscriptUtil.service ? {
               ns._lastSnapshot.trusted.remove(curSite); 
             }
           }
-          webNav.allowJavascript = true;
+          docShell.allowJavascript = true;
         }
       } else {
         ns.jsEnabled = enabled;
@@ -1143,7 +1143,7 @@ return noscriptUtil.service ? {
       op(ns);
     } else {
       window.clearInterval(noscriptOverlay._savePrefsTimeout);
-      ns.setExpando(window.content.document, "contentLoaded", false);
+      ns.setExpando(content.document, "contentLoaded", false);
       ns.safeCapsOp(op, reloadPolicy, allowTemp);
     }
   
@@ -1187,16 +1187,16 @@ return noscriptUtil.service ? {
   _syncTimeout: 0,
   syncUI: function(w) {
     if (w) {
-      if (w != window.content) return;
+      if (w != content) return;
     } else {
-      w = window.content;
+      w = content;
     }
     
     if (this._syncTimeout) {
       window.clearTimeout(this._syncTimeout);
     }
     this._syncTimeout = window.setTimeout(function() {
-      if (w != window.content) return;
+      if (w != content) return;
       noscriptOverlay._syncUINow();
     }, 400);
   },
@@ -1794,7 +1794,7 @@ return noscriptUtil.service ? {
         site = !isUntrusted && (global ? url : jsPSs.matches(url));
         
         if (site && url == sites.topURL) {
-          if (this.currentBrowser.webNavigation.allowJavascript) topTrusted = true;
+          if (ns.dom.getDocShellForWindow(content).allowJavascript) topTrusted = true;
           else {
             site = null;
             if (isUntrusted) topUntrusted = true;
@@ -1822,16 +1822,27 @@ return noscriptUtil.service ? {
       
       allowed = allowedSites.length;
       lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
-            : allowed == 0 || active == 0 ? (global ? "untrusted-glb" : topUntrusted ? "untrusted" : "no") 
+            : allowed == 0 || active == 0 ? (global
+                                              ? "untrusted-glb" :
+                                                topUntrusted
+                                                  ? "untrusted" :
+                                                    blockedObjects ? "no-emb" : "no") 
             : (untrusted > 0 && !notificationNeeded
                 ? (blockedObjects ? "yu-emb" : global ? "yu-glb" : "yu") 
-                : topTrusted ? ((allowed == total - blockedObjects) ? "emb" : "prt") : "subprt");
+                : topTrusted
+                  ? allowed == total - blockedObjects
+                      ? "emb"
+                      : "prt"
+                  : ns.docShellJSBlocking == 2
+                      ? "no"
+                      : "subprt"
+              );
       notificationNeeded = notificationNeeded && totalAnnoyances > 0;
     }
     
     var message = this.getString(
       "allowed." +
-        (lev == "yu" || lev == "subprt" || lev == "emb" || lev == "yu-emb"
+        (lev == "yu" || lev == "subprt" || lev == "emb" || lev == "yu-emb" || lev == "no-emb"
          ? "prt"
          : lev == "untrusted" ? "no" : lev)
       );
@@ -1845,8 +1856,8 @@ return noscriptUtil.service ? {
     message += countsMessage;
     shortMessage += countsMessage;
     
-    var icon = this.getIcon(this.statusIcon);
-    var className = this.getStatusClass(lev, !totalAnnoyances);
+    var icon = this.getIcon(this.statusIcon); 
+    var className = this.getStatusClass(lev, !(totalScripts || untrusted) /* inactive */ );
     
     var widget = $("noscript-tbb");
     if (widget) {
@@ -1859,7 +1870,7 @@ return noscriptUtil.service ? {
     this.updateStatusClass(widget, className);
     
     if (notificationNeeded) { // notifications
-      const win = window.content;
+      const win = content;
       if (this.notify) {
         this.notificationShow(message,
           this.getIcon(widget), 
@@ -1869,7 +1880,7 @@ return noscriptUtil.service ? {
         this.notificationHide(); 
       }
       if (!ns.getExpando(win, "soundPlayed")) {
-        ns.soundNotify(window.content.location.href);
+        ns.soundNotify(content.location.href);
         ns.setExpando(win, "soundPlayed");
       }
     } else {
@@ -2178,7 +2189,6 @@ return noscriptUtil.service ? {
     },
     
     onContentLoad: function(ev) {
-
       var doc = ev.originalTarget;
       
       if (doc instanceof HTMLDocument) {
@@ -2188,8 +2198,10 @@ return noscriptUtil.service ? {
           ns.setExpando(doc, "contentLoaded", true);
           if (w == w.top) {
             ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
-            if (w == window.content) {
+            if (w == content) {
               noscriptOverlay._syncUINow();
+            } else {
+              ns.getSites(ns.dom.findBrowserForNode(w)); // force placeholders
             }
           } else {
             ns.frameContentLoaded(w);
@@ -2206,12 +2218,11 @@ return noscriptUtil.service ? {
         
         window.setTimeout(function() {
           noscriptOverlay.ns.detectJSRedirects(w.document);
-        }, 0);
+        }, 50);
       }
     },
     
     onPageShow: function(ev) {
-      
       if (ev.persisted && (ev.target instanceof HTMLDocument)) {
         var d = ev.target;
         var ns = noscriptOverlay.ns;
@@ -2331,7 +2342,7 @@ return noscriptUtil.service ? {
       
       window.removeEventListener("pagehide", this.onPageHide, true);
       window.removeEventListener("pageshow", this.onPageShow, true);
-      window.removeEventListener("DOMContentLoaded", this.onContentLoad, false);
+      window.removeEventListener("DOMContentLoaded", this.onContentLoad, true);
 
       noscriptOverlay.prefsObserver.remove();
       noscriptOverlay.shortcutKeys.remove();
@@ -2434,7 +2445,7 @@ return noscriptUtil.service ? {
       }
       
       if (aURI && ns.extraCapturedProtocols && ns.extraCapturedProtocols.indexOf(aURI.scheme) > -1) {
-        return aOpener || window.content;
+        return aOpener || content;
       }
       
       var w = null;

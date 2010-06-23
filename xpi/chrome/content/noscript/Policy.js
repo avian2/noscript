@@ -110,7 +110,8 @@ const MainContentPolicy = {
           forbid, isScript, isJava, isFlash, isSilverlight,
           isLegacyFrame, blockThisFrame, contentDocument,
           logIntercept, logBlock,
-          unwrappedLocation, mimeKey;
+          unwrappedLocation, mimeKey,
+          mustCountObject = false;
       
       logIntercept = this.consoleDump;
       if(logIntercept) {
@@ -193,13 +194,12 @@ const MainContentPolicy = {
           if (this.blockNSWB && 
               !(this.jsEnabled || aRequestOrigin &&
                 ((originSite = this.getSite(aRequestOrigin.spec)) == this.getSite(aContentLocation.spec)
-                    || this.isJSEnabled(originSite)))
-                && aContext instanceof CI.nsIDOMHTMLImageElement) {
+                    || this.isJSEnabled(originSite) && !(this.getExpando(aContext.ownerDocument, "nselForce"))))
+                && aContext instanceof CI.nsIDOMHTMLElement) {
             try {
-              for (var parent = aContext; (parent = parent.parentNode);) {
-                if (parent.nodeName.toUpperCase() == "NOSCRIPT")
+              for (var parent = aContext; (parent = parent.parentNode);)
+                if (parent.__nselForce || parent.nodeName.toUpperCase() == "NOSCRIPT")
                   return this.reject("Tracking Image", arguments);
-              }
             } catch(e) {
               this.dump(e)
             }
@@ -448,10 +448,11 @@ const MainContentPolicy = {
         if (aContentType == 2) { // "real" JavaScript include
         
           // plugin instantiation hacks
-          if (this.contentBlocker && originSite && /^(?:https?|file):/.test(originSite)) {
+          if (this.contentBlocker && originSite &&
+              /^(?:https?|file):/.test(originSite)) {
             this.applyPluginPatches(contentDocument);
           }
-                  
+
           forbid = !(originSite && locationSite == originSite);
         } else isScript = false;
         
@@ -465,7 +466,7 @@ const MainContentPolicy = {
         }
   
         if ((untrusted || forbid) && aContentLocation.scheme != "data") {
-          if (isScript) ScriptSurrogate.apply(contentDocument, locationURL);
+          if (isScript && contentDocument && aContext.ownerDocument) ScriptSurrogate.apply(contentDocument, locationURL);
           return this.reject(isScript ? "Script" : "XSLT", arguments);
         } else {
           
@@ -580,7 +581,7 @@ const MainContentPolicy = {
       }
       
       
-      this.delayExec(this.countObject, 0, aContext, locationSite); 
+      mustCountObject = true;
       
       forbid = forbid && !(/^file:\/\/\//.test(locationURL) && /^resource:/.test(originURL || (aRequestOrigin && aRequestOrigin.spec || ""))); // fire.fm work around
       
@@ -606,9 +607,11 @@ const MainContentPolicy = {
               if (locationURL != "data:application/x-noscript-blocked,") {
                 if (this.consoleDump & LOG_CONTENT_BLOCK)
                   this.dump("tagForReplacement");
-
+                
+                mustCountObject = false; // we do it in _preProcessObjectElements()
                 this.delayExec(this.tagForReplacement, 0, aContext, {
                   url: locationURL,
+                  site: locationSite,
                   mime: mimeKey
                 });
               }
@@ -633,12 +636,12 @@ const MainContentPolicy = {
       return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
     } finally {
       
+      if (mustCountObject) this.delayExec(this.countObject, 0, aContext, locationSite);
+      
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
       
       if (isHTTP) PolicyState.save(unwrappedLocation, arguments);
       else PolicyState.reset();
-      
-      
       
     }
     return CP_OK;

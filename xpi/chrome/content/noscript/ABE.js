@@ -1021,19 +1021,19 @@ ABERequest.prototype = Lang.memoize({
   },
   
   _checkSelf: function(originURI) {
-    return originURI &&  (this.isBrowserURI(originURI) || originURI.prePath == this.destinationURI.prePath);
+    return originURI && (this.isBrowserURI(originURI) || originURI.prePath == this.destinationURI.prePath);
   },
   
   _checkSameDomain: function(originURI) {
     try {
-      return originURI.host == this.destinationDomain;
+      return originURI && this.isBrowserURI(originURI) || originURI.host == this.destinationDomain;
     } catch(e) {}
     return false;
   },
   
   _checkSameBaseDomain: function(originURI) {
     try {
-      return IOUtil.TLDService.getBaseDomainFromHost(originURI.host) == this.destinationBaseDomain;
+      return originURI && this.isBrowserURI(originURI) || IOUtil.TLDService.getBaseDomainFromHost(originURI.host) == this.destinationBaseDomain;
     } catch(e) {}
     return false;
   },

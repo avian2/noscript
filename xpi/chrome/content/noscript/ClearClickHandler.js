@@ -45,7 +45,7 @@ ClearClickHandler.prototype = {
   appliesHere: function(url) {
     const ns = this.ns;
     return ns.appliesHere(ns.clearClick, url) &&
-     !(this.exceptions && this.exceptions.test(url) && ns.isJSEnabled(ns.getSite(url)));
+      !(this.exceptions && this.exceptions.test(url));
   },
   
   checkSubexception: function(url) {
@@ -334,8 +334,8 @@ ClearClickHandler.prototype = {
   minWidth: 160,
   minHeight: 100,
   _NO_SCROLLBARS: {w: 0, h: 0},
-  computeScrollbarSizes: function(frame, dElem, body) {
-    var fw = frame.clientWidth, fh = frame.clientHeight;
+  computeScrollbarSizes: function(window, dElem, body) {
+    var fw = window.innerWidth, fh = window.innerHeight;
     var dw = dElem.clientWidth, dh = dElem.clientHeight;
 
     var w = Math.min(fw, dw), h = Math.min(fh, dh);
@@ -422,8 +422,8 @@ ClearClickHandler.prototype = {
         if ((frame = w.frameElement)) {
           frameClass = new ClassyObj(frame);
           DOM.removeClass(frame, "__noscriptScrolling__");
-          sd = this.computeScrollbarSizes(frame, dElem, d.body);
-          var zoom = d.defaultView.QueryInterface(CI.nsIInterfaceRequestor)
+          sd = this.computeScrollbarSizes(w, dElem, d.body);
+          var zoom = w.QueryInterface(CI.nsIInterfaceRequestor)
             .getInterface(CI.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
           sd.w *= zoom;
           sd.h *= zoom;
@@ -514,7 +514,9 @@ ClearClickHandler.prototype = {
           height: Math.max(w.innerHeight - sd.h, 32),
           frame: frame
         };
-
+        
+        var rtlOffset = 0;
+        
         if (ctx.isEmbed) { // check in-page vieport
           vp.frame = null;
           vp.x = Math.max(vp.x, box.x);
@@ -545,7 +547,25 @@ ClearClickHandler.prototype = {
               break;
             }
           }
-        } else if (!(sd.w || sd.h)) { // no scrollbars
+        } else {
+          
+          // correct x offsets according to left scrollbars if needed
+          try {
+            var adaptiveScrollerSide = false;
+            switch(this.ns.prefService.getIntPref("layout.scrollbar.side")) {  
+              case 1:
+                adaptiveScrollerSide = true;
+              case 0:
+                if (!adaptiveScrollerSide && this.ns.prefService.getIntPref("bidi.direction") != 2) 
+                  break;
+              case 3:
+                vp.x += this.scrollerCorrection(w, adaptiveScrollerSide);
+                rtlOffset = this.scrollerCorrection(top, adaptiveScrollerSide);
+            }
+          } catch(e) {
+            if (ns.consoleDump & LOG_CLEARCLICK) ns.dump(e);
+          }
+          
           if (!sd.w) {
             vp.x = 0;
             vp.width = curtain.offsetWidth;
@@ -585,8 +605,10 @@ ClearClickHandler.prototype = {
       var rootElement = top.document.documentElement;
       var rootBox = this.getBox(rootElement, top.document, top);
       
-      var offsetX = (box.screenX - rootBox.screenX);
+      
       var offsetY = (box.screenY - rootBox.screenY);
+      var offsetX = (box.screenX - rootBox.screenX) + rtlOffset;
+      
       var ret = true;
       var tmpImg;
       
@@ -696,8 +718,13 @@ ClearClickHandler.prototype = {
     
     return ret;
  
-  }
+  },
   
+  scrollerCorrection: function(w, adaptive) {
+    return (adaptive && w.getComputedStyle(w.document.body || w.document.documentElement, '').direction != 'rtl')
+      ? 0
+      : w.innerWidth - w.document.documentElement.clientWidth;
+  }
 }
 
 function ClassyObj(o) {

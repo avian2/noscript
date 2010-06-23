@@ -45,9 +45,18 @@ var ScriptSurrogate = {
         : this.mappings[name] = { forPage: false, noScript: false };
       switch(member) {
         case "sources":
-          if ((mapping.forPage = value[0] == '@' || 
-                (mapping.noScript = value[0] == '!')))
-            value = value.substring(1);
+          var prefix = true;
+          do {
+            switch(value[0]) {
+              case '@': mapping.forPage = true; break;
+              case '!': mapping.noScript = true; break;
+              case ' ': break;
+              default:
+                prefix = false;
+            }
+            if (prefix) value = value.substring(1);
+          } while(prefix);
+          
         case "exceptions":
           value = new AddressMatcher(value);
         case "replacement":
@@ -82,8 +91,9 @@ var ScriptSurrogate = {
     var code;
     for (var key in this.mappings) {
       mapping = this.mappings[key];
-      if (isPage == mapping.forPage && noScript == mapping.noScript &&
-            mapping.sources && mapping.sources.test(scriptURL) &&
+      if (isPage == (mapping.forPage || mapping.noScript) &&
+          (noScript == mapping.noScript || mapping.forPage) &&
+          mapping.sources && mapping.sources.test(scriptURL) &&
           !(mapping.exceptions && mapping.exceptions.test(pageURL)) &&
           mapping.replacement) {
         if (/^(?:file:\/\/|\.\.?\/)/.test(mapping.replacement)) {
@@ -94,7 +104,12 @@ var ScriptSurrogate = {
             ns.dump("Error loading " + mapping.replacement + ": " + e);
             continue;
           }
-        } else code = mapping.replacement;
+        } else {
+          code = mapping.replacement;
+          if (!noScript && mapping.noScript)
+            code = 'document.addEventListener("DOMContentLoaded", function(event) {' +
+                    code + '}, false)';
+        }
         (scripts = scripts || []).push(code);
       }
     }
@@ -128,24 +143,26 @@ var ScriptSurrogate = {
       s.window = w.wrappedJSObject || w;
       CU.evalInSandbox("with(window) {" + scriptBlock + "}", s);
     } catch(e) {
-      ns.dump(e);
+      if (ns.consoleDump) ns.dump(e);
     }
   },
   
   execute: function(document, scriptBlock, isPageScript) {
-    
-    if (this._mustUseDOM && document.documentElement &&
-        !(isPageScript && document.defaultView != document.defaultView.top)) {
+    if (this._mustUseDOM && document.documentElement) {
       var s = document.createElementNS(HTML_NS, "script");
-      s.id = "__noscriptSurrogate__" + DOM.rndId();
-      s.appendChild(document.createTextNode(scriptBlock +
-        ";(function(){var s=document.getElementById('" + s.id + "');s.parentNode.removeChild(s);})()"));
-      document.documentElement.insertBefore(s, document.documentElement.firstChild);
+      s.appendChild(document.createTextNode(scriptBlock));
+      var parent = document.documentElement;
+      parent.insertBefore(s, parent.firstChild);
+      parent.removeChild(s);
       if (this._mustResetStyles && isPageScript) this._resetStyles();
     } else {
-      document.defaultView.location.href = encodeURI("javascript:" + scriptBlock);
+      try {
+        document.defaultView.location.href =
+          encodeURI("javascript:" + scriptBlock);
+      } catch(e) {
+        if (ns.consoleDump) ns.dump("Error running " + scriptBlock + "\non " + document.URL + ":\n" + e);
+      }
     }
-    
   },
   
   get _mustUseDOM() {

@@ -94,6 +94,13 @@
   list-style-image: url(emb16.png);
 }
 
+.noscript-no-emb,
+#noscript-tbb.noscript-no-emb,
+#noscript-statusIcon.noscript-no-emb
+{
+  list-style-image: url(no-emb16.png);
+}
+
 .noscript-inactive-subprt,
 #noscript-tbb.noscript-inactive-subprt,
 #noscript-statusIcon.noscript-inactive-subprt,
@@ -142,6 +149,14 @@
 #noscript-menu-recent-blocked {
   list-style-image: url(inactive-no16.png);
 }
+
+.noscript-inactive-no-emb,
+#noscript-tbb.noscript-inactive-no-emb,
+#noscript-statusIcon.noscript-inactive-no-emb,
+#noscript-menu-recent-blocked {
+  list-style-image: url(inactive-no-emb16.png);
+}
+
 .noscript-distrust,
 .noscript-untrusted,
 #noscript-tbb.noscript-untrusted,

@@ -98,7 +98,7 @@ RequestWatchdog.prototype = {
         if (isDoc) {
           ns.onContentSniffed(channel);
         } else {
-          if (!ns.checkInclusionType(channel))
+          if (!(ns.inclusionTypeChecking && ns.checkInclusionType(channel)))
             return;
         }
       break;
@@ -196,7 +196,7 @@ RequestWatchdog.prototype = {
         if(unsafeRequest.window) {
           // a subframe...
           try {
-            wn = DOM.getDocShellForWindow(unsafeRequest.window).QueryInterface(CI.nsIWebNavigation);
+            wn = DOM.getDocShellForWindow(unsafeRequest.window);
           } catch(ex) {
             ns.dump(ex);
           }
@@ -1159,7 +1159,7 @@ var InjectionChecker = {
       }
       if (qnum % 2) break; // odd quotes
 
-      t = tail.replace(/^<\??\s*\/?[a-zA-Z][\w\:\-]+(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+]*")*[\+\s]*\/?\??>/, ';xml;');
+      t = tail.replace(/^<\??\s*\/?[a-zA-Z][\w\:\-]*(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+\*&;]*")*[\+\s]*\/?\??>/, ';xml;');
       if (t == tail) break;
       
       (res || (res = [])).push(head);

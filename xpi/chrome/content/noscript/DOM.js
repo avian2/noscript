@@ -159,7 +159,7 @@ const DOM = {
       return el.getBoundingClientRect();
     }
     // legacy pre 1.9
-    var box = el.ownerDocument.getBoxObject(el);
+    var box = el.ownerDocument.getBoxObjectFor(el);
     var rect = { top: box.y, left: box.x };
     rect.bottom = rect.top + box.height;
     rect.right = rect.left + box.width;

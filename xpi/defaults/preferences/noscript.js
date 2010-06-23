@@ -221,7 +221,12 @@ pref("noscript.surrogate.imdb.sources", "@*.imdb.com/video/*");
 pref("noscript.surrogate.imdb.replacement", "addEventListener('DOMContentLoaded',function(ev){ad_utils.render_ad=function(w){w.location=w.location.href.replace(/.*\\bTRAILER=([^&]+).*/,'$1')}},true)");
 pref("noscript.surrogate.nscookie.sources", "@*.facebook.com");
 pref("noscript.surrogate.nscookie.replacement", "document.cookie='noscript=; domain=.facebook.com; path=/; expires=Thu, 01-Jan-1970 00:00:01 GMT;'");
-
+pref("noscript.surrogate.imagebam.replacement", "if(\"over18\" in window){var _do=doOpen;doOpen=function(){};over18();doOpen=_do}else{var e=document.getElementById(Array.slice(document.getElementsByTagName(\"script\")).filter(function(s){return !!s.innerHTML})[0].innerHTML.match(/over18[\\s\\S]*?'([^']+)/)[1]);e.style.display='none'}");
+pref("noscript.surrogate.imagebam.sources", "!@*.imagebam.com");
+pref("noscript.surrogate.imagehaven.replacement", "['agreeCont','TransparentBlack'].forEach(function(id){var o=document.getElementById(id);if(o)o.style.display='none'})");
+pref("noscript.surrogate.imagehaven.sources", "!@*.imagehaven.net");
+pref("noscript.surrogate.interstitialBox.replacement", "const interstitialBox={}");
+pref("noscript.surrogate.interstitialBox.sources", "@*.imagevenue.com");
 
 pref("noscript.placeholderMinSize", 32);
 
