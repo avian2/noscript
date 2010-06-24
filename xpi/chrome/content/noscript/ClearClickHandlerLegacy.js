@@ -219,7 +219,7 @@
           if ((frame = w.frameElement)) {
             frameClass = new ClassyObj(frame);
             DOM.removeClass(frame, "__noscriptScrolling__");
-            sd = this.computeScrollbarSizes(frame, dElem, d.body);  
+            sd = this.computeScrollbarSizes(w, dElem, d.body);  
           }
           
           var clientHeight = w.innerHeight - sd.h;

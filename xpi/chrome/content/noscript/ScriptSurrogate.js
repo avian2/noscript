@@ -21,18 +21,34 @@ var ScriptSurrogate = {
   _observingPrefs: false,
   _syncPrefs: function() {
     const prefs = this.prefs;
+    
     this.enabled = prefs.getBoolPref("enabled");
-    this.mappings = {};
-    for each(var key in prefs.getChildList("", {})) {
-      this._parseMapping(prefs, key);
+    
+    const map = {};
+    var key;
+    for each(key in prefs.getChildList("", {})) {
+      this._parseMapping(prefs, key, map);
     }
+    
+    const mappings = { forPage: [], noScript: [], inclusion: [], all: map};
+    
+    var mapping;
+    for (key in map) {
+      mapping = map[key];
+      if (mapping.forPage) mappings.forPage.push(mapping);
+      if (mapping.noScript) mappings.noScript.push(mapping);
+      else if (!mapping.forPage) mappings.inclusion.push(mapping);
+    }
+    
+    this.mappings = mappings;
+    
     if (!this._observingPrefs) {
       prefs.addObserver("", this, true);
       this._observingPrefs = true;
     }
   },
   
-  _parseMapping: function(prefs, key) {
+  _parseMapping: function(prefs, key, map) {
     var keyParts = key.split(".");
     var name = keyParts[0];
     var member = keyParts[1];
@@ -40,9 +56,9 @@ var ScriptSurrogate = {
     try {
       var value = prefs.getCharPref(key);
       if (!value) return;
-      var mapping = (name in this.mappings)
-        ? this.mappings[name]
-        : this.mappings[name] = { forPage: false, noScript: false };
+      var mapping = (name in map)
+        ? map[name]
+        : map[name] = { forPage: false, noScript: false };
       switch(member) {
         case "sources":
           var prefix = true;
@@ -89,11 +105,14 @@ var ScriptSurrogate = {
     var scripts = null;
     var isPage = scriptURL == pageURL;
     var code;
-    for (var key in this.mappings) {
-      mapping = this.mappings[key];
-      if (isPage == (mapping.forPage || mapping.noScript) &&
-          (noScript == mapping.noScript || mapping.forPage) &&
-          mapping.sources && mapping.sources.test(scriptURL) &&
+    const list = noScript
+      ? this.mappings.noScript
+      : isPage
+        ? this.mappings.forPage
+        : this.mappings.inclusion;
+    
+    for each (var mapping in list) {
+      if (mapping.sources && mapping.sources.test(scriptURL) &&
           !(mapping.exceptions && mapping.exceptions.test(pageURL)) &&
           mapping.replacement) {
         if (/^(?:file:\/\/|\.\.?\/)/.test(mapping.replacement)) {
@@ -186,6 +205,4 @@ var ScriptSurrogate = {
     sss.loadAndRegisterSheet(this._emptyStyle, SHEET);
     sss.unregisterSheet(this._emptyStyle, SHEET)
   }
-
-  
 }

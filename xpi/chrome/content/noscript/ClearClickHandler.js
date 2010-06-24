@@ -473,10 +473,15 @@ ClearClickHandler.prototype = {
           }
     
           if (formBox.width && formBox.height) {
-            ctx.x = ctx.x || box.x + box.width;
-            ctx.y = ctx.y || box.y + box.height;
-            box = formBox;
+            // form has layout, recenter to show as much as possible
+            ctx.x = ctx.x || box.x + box.width;   // use mouse coordinates or
+            ctx.y = ctx.y || box.y + box.height; // rightmost widget position 
+            
+            box = formBox; // the form is our new reference
+            
             var delta;
+            
+            // move inside the viewport if needed
             if (box.x < 0) {
               box.screenX -= box.x;
               box.x = 0;
@@ -485,7 +490,9 @@ ClearClickHandler.prototype = {
               box.screenY -= box.y;
               box.y = 0;
             }
-            if (box.x + Math.min(box.width, maxWidth) < ctx.x) {
+            
+            // is our center out of the form?
+            if (box.x + Math.min(box.width, maxWidth) < ctx.x) { 
               box.width = Math.min(box.width, maxWidth);
               delta = ctx.x + 4 - box.width - box.x;
               box.x += delta;
@@ -498,6 +505,11 @@ ClearClickHandler.prototype = {
               box.y += delta;
               box.screenY += delta;
             }
+            
+            // recenter to the form
+            ctx.x = box.x + box.width / 2;
+            ctx.y = box.y + box.height / 2;
+            
             o = form;
           }
         }
