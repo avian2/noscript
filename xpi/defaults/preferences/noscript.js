@@ -7,6 +7,7 @@ pref("noscript.autoReload.allTabsOnGlobal", false);
 pref("noscript.autoReload.onMultiContent", false);
 pref("noscript.autoReload.useHistory", false);
 pref("noscript.autoReload.useHistory.exceptCurrent", true);
+pref("noscript.autoReload.embedders", 1);
 pref("noscript.ctxMenu", true);
 pref("noscript.statusIcon", true);
 pref("noscript.sound", false);
@@ -227,9 +228,12 @@ pref("noscript.surrogate.imagehaven.replacement", "['agreeCont','TransparentBlac
 pref("noscript.surrogate.imagehaven.sources", "!@*.imagehaven.net");
 pref("noscript.surrogate.interstitialBox.replacement", "const interstitialBox={}");
 pref("noscript.surrogate.interstitialBox.sources", "@*.imagevenue.com");
+pref("noscript.surrogate.googleThumbs.replacement", "var ss=document.getElementsByTagName('script');var s,m,i; for each(var s in ss)if((m=s.firstChild&&s.firstChild.nodeValue.match(/(imgthumb\\d+).*?['\"](data:[^'\"]+)/))&&(i=document.getElementById(m[1])))i.src=eval('\"'+m[2]+'\"')");
+pref("noscript.surrogate.googleThumbs.sources", "!^https?://www\\.google\\.[a-z]+/search");
+pref("noscript.surrogate.amo.replacement", "addEventListener('click',function(e){var a=e.target.parentNode;var hash=a.getAttribute('data-hash');if(hash){var b=a.parentNode.parentNode;InstallTrigger.install({x:{URL:a.href,IconURL:b.getAttribute('data-icon'),Hash:hash,toString:function(){return a.href}}});e.preventDefault()}},false)");
+pref("noscript.surrogate.amo.sources", "!https://addons.mozilla.org/");
 
 pref("noscript.placeholderMinSize", 32);
-
 pref("noscript.compat.evernote", true);
 pref("noscript.compat.gnotes", true);
 

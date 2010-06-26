@@ -1255,10 +1255,8 @@ var ns = singleton = {
     var useHistory = this.getPref("xss.reload.useHistory", false);
     var useHistoryExceptCurrent = this.getPref("xss.reload.useHistory.exceptCurrent", true);
       
-    var docSites, site;
-    var prevStatus, currStatus;
     
-    var webNav, url;
+    
     const nsIWebNavigation = CI.nsIWebNavigation;
     const nsIURL = CI.nsIURL;
     const LOAD_FLAGS = nsIWebNavigation.LOAD_FLAGS_NONE;
@@ -1266,16 +1264,39 @@ var ns = singleton = {
     const untrustedReload = !this.getPref("xss.trustReloads", false);
 
     var bi = DOM.createBrowserIterator();
-  
+    var isCurrentTab = true;
+    
     (function checkAndReload() {
-      var browser, j, k;
+      var browser, j, k, len;
+      var sites, site, noFrames, checkTop;
+      var prevStatus, currStatus;
+      var webNav, url;
       
-      for (var k = 10; k-- > 0 && (browser = bi.next()); ) {
+      for (k = 10; k-- > 0 && (browser = bi.next()); ) {
         
-        docSites = this.getSites(browser);
-  
-        for (j = docSites.length; j-- > 0;) {
-          site = docSites[j];
+        sites = this.getSites(browser);
+        noFrames = sites.docSites.length === 1;
+        
+        for (j = 0, len = sites.length; j < len; j++) {
+          site = sites[j];
+          
+          if (j === 0 && (noFrames || !isCurrentTab)) // top level, if unchanged and forbidden we won't reload
+          {
+            checkTop = sites.topSite === site;
+            if (!checkTop) {
+              checkTop = true;
+              site = sites.topSite;
+              j = sites.indexOf(site);
+              if (j > -1) {
+                sites.splice(j, 1, sites[0]);
+                sites[j = 0] = site;
+              } else {
+                len++;
+                sites.unshift(site);
+              }
+            }
+          } else checkTop = false;
+          
           prevStatus = !(lastGlobal
             ? this.alwaysBlockUntrustedContent && lastUntrusted.matches(site)
             : !lastTrusted.matches(site) || lastUntrusted.matches(site)
@@ -1296,7 +1317,7 @@ var ns = singleton = {
               if (currStatus && webNav.index && untrustedReload) {
                 try {
                   site = this.getSite(webNav.getEntryAtIndex(webNav.index - 1, false).URI.spec);
-                  this.requestWatchdog.setUntrustedReloadInfo(browser, site != docSites[j] && !trusted.matches(site));
+                  this.requestWatchdog.setUntrustedReloadInfo(browser, site != sites[j] && !trusted.matches(site));
                 } catch(e) {}
               }
               
@@ -1314,18 +1335,22 @@ var ns = singleton = {
               browser.webNavigation.reload(LOAD_FLAGS); // can fail, e.g. because a content policy or an user interruption
             } catch(e) {}
             break;
+          } else if (checkTop && !currStatus) {
+            // top level, unchanged and forbidden: don't reload
+            j = len;
+            break;
           }
         }
         
-        if(j < 0) { 
+        if(j === len) { 
           // check plugin objects
           if (this.consoleDump & LOG_CONTENT_BLOCK) {
             this.dump("Checking object permission changes...");
             try {
-              this.dump(docSites.toSource() + ", " + lastObjects.toSource());
+              this.dump(sites.toSource() + ", " + lastObjects.toSource());
             } catch(e) {}
           }
-          if (this.checkObjectPermissionsChange(docSites, lastObjects)) {
+          if (this.checkObjectPermissionsChange(sites, lastObjects)) {
              this.quickReload(browser.webNavigation);
           }
         }
@@ -1335,8 +1360,10 @@ var ns = singleton = {
           return;
         }
         
-        Thread.delay(checkAndReload, 1, this);
+        isCurrentTab = false;
       }
+      
+      Thread.delay(checkAndReload, 1, this);
     }).apply(this);
     
   },
@@ -1347,6 +1374,8 @@ var ns = singleton = {
       this.quickReload(browser.webNavigation);
       return;
     }
+    var reloadEmbedders = this.getPref("autoReload.embedders");
+    var canReloadPage = reloadEmbedders == 1 ? this.getPref("autoReload") : !!(reloadEmbedders);
     
     var sites = this.getSites(browser);
     var egroup, j, e;
@@ -1357,7 +1386,7 @@ var ns = singleton = {
           if (e.placeholder) {
             e.skipConfirmation = true;
             this.checkAndEnablePlaceholder(e.placeholder);
-          } else if (!(e.allowed || e.embed)) {
+          } else if (!(e.allowed || e.embed) && canReloadPage) {
             if (e.document) {
               this.quickReload(DOM.getDocShellForWindow(e.document.defaultView));
               break;
@@ -3722,7 +3751,7 @@ var ns = singleton = {
             if (this.getExpando(browser, "allowPageURL") == browser.docShell.currentURI.spec &&
                 this.getBaseDomain(document.domain).length >= document.domain.length &&
                 !(this.isJSEnabled(document.domain) || this.isUntrusted(document.domain))) {
-             this.setTemp(site, true);
+             this.setTemp(document.domain, true);
              this.setJSEnabled(document.domain, true);
              this.quickReload(win);
            }
@@ -3737,14 +3766,11 @@ var ns = singleton = {
           sites.push(redir.site);
         }
       }
-       
-       
-      tmpPluginCount = 0;
-      
+
       domLoaded = !!this.getExpando(document, "contentLoaded");
       
       if (win === (top || (top = win.top))) {
-        sites.topURL = url;
+        sites.topSite = url;
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
       }
       
@@ -3777,7 +3803,7 @@ var ns = singleton = {
     if(cache) sites.push.apply(sites, cache);
     
     
-    const removeBlank = !(this.showBlankSources || sites.topURL == "about:blank");
+    const removeBlank = !(this.showBlankSources || sites.topSite == "about:blank");
     
     for (var j = sites.length; j-- > 0;) {
       url = sites[j];
@@ -3795,7 +3821,7 @@ var ns = singleton = {
     }
     
     
-    if (!sites.topURL) sites.topURL = sites[0] || '';
+    if (!sites.topSite) sites.topSite = sites[0] || '';
     
     return this.sortedSiteSet(sites); 
   },
@@ -4896,37 +4922,40 @@ var ns = singleton = {
   checkVersion: function() {
     if (this.versionChecked) return;
     this.versionChecked = true;
-    
+
     const ver =  this.VERSION;
     const prevVer = this.getPref("version", "");
     if (prevVer != ver) {
       this.setPref("version", ver);
       this.savePrefs();
-      if (this.getPref("firstRunRedirection", true)) {
-        this.delayExec(function() {
-         
-          var browser = DOM.mostRecentBrowserWindow.getBrowser();
-          if (typeof(browser.addTab) != "function") return;
-         
-          const name = EXTENSION_NAME;
-          const domain = name.toLowerCase() + ".net";
-          var url = "http://" + domain + "/?ver=" + ver;
-          var hh = "X-IA-Post-Install: " + name + " " + ver;
-          if (prevVer) {
-            url += "&prev=" + prevVer;
-            hh += "; updatedFrom=" + prevVer;
-          }
-          hh += "\r\n";
-          
-          var hs = CC["@mozilla.org/io/string-input-stream;1"] .createInstance(CI.nsIStringInputStream);
-          hs.setData(hh, hh.length); 
-          
-          
-          var b = (browser.selectedTab = browser.addTab()).linkedBrowser;
-          b.stop();
-          b.webNavigation.loadURI(url, CI.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, hs);
-          
-        }, 500);
+      const betaRx = /(?:a|alpha|b|beta|pre|rc)\d*$/; // see http://viewvc.svn.mozilla.org/vc/addons/trunk/site/app/config/constants.php?view=markup#l431
+      if (prevVer.replace(betaRx, "") != ver.replace(betaRx, "")) {
+        if (this.getPref("firstRunRedirection", true)) {
+          this.delayExec(function() {
+           
+            var browser = DOM.mostRecentBrowserWindow.getBrowser();
+            if (typeof(browser.addTab) != "function") return;
+           
+            const name = EXTENSION_NAME;
+            const domain = name.toLowerCase() + ".net";
+            var url = "http://" + domain + "/?ver=" + ver;
+            var hh = "X-IA-Post-Install: " + name + " " + ver;
+            if (prevVer) {
+              url += "&prev=" + prevVer;
+              hh += "; updatedFrom=" + prevVer;
+            }
+            hh += "\r\n";
+            
+            var hs = CC["@mozilla.org/io/string-input-stream;1"] .createInstance(CI.nsIStringInputStream);
+            hs.setData(hh, hh.length); 
+            
+            
+            var b = (browser.selectedTab = browser.addTab()).linkedBrowser;
+            b.stop();
+            b.webNavigation.loadURI(url, CI.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, hs);
+            
+          }, 500);
+        }
       }
     }
   },

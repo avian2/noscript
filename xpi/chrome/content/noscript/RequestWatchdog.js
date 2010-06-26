@@ -1644,7 +1644,7 @@ var InjectionChecker = {
               this.checkAttributes(s))
            // this.checkJS(s) // -- alternate, whose usefulness is doubious but which easily leads to DOS
            ) {
-          this.log("Detected BASE64 encoded injection: " + f);
+          this.log("Detected BASE64 encoded injection: " + f + " --- (" + s + ")");
           return this.base64 = true;
         }
       } catch(e) {}

@@ -425,12 +425,12 @@ return noscriptUtil.service ? {
     mainMenu.appendCmd = function(n) { this.insertBefore(n, seps.stop); };
 
     sites = sites || this.getSites();
-    j = sites.indexOf(sites.topURL);
+    j = sites.indexOf(sites.topSite);
     var topDown = !/-sep-stop\b/.test(mainMenu.lastChild.className); 
     if (j > -1 && j != (topDown ? sites.length - 1 : 0)) {
       sites.splice(j, 1);
-      if (topDown) sites.push(sites.topURL);
-      else sites.unshift(sites.topURL);
+      if (topDown) sites.push(sites.topSite);
+      else sites.unshift(sites.topSite);
     }
     
     
@@ -499,7 +499,7 @@ return noscriptUtil.service ? {
         matchingSite = site;
       }
       
-      isTop = site == sites.topURL;
+      isTop = site == sites.topSite;
       
       enabled = !!matchingSite;
       
@@ -893,7 +893,7 @@ return noscriptUtil.service ? {
     for each(egroup in extras) {
       for (j = egroup.length; j-- > 0;) {
         e = egroup[j];
-         
+        
         if (ns.isAllowedObject(e.url, e.mime) && !e.placeholder ||
             typeof(e) != "object" || (e.tag && !e.placeholder)
           )
@@ -1056,7 +1056,7 @@ return noscriptUtil.service ? {
   menuCmd: function(event) {
     if (event.shiftKey) return; // site info
     
-    menuItem = event.target;
+    var menuItem = event.target;
     var site = null;
     var reloadPolicy = 0;
     var cl = menuItem.getAttribute("class") || "";
@@ -1793,7 +1793,7 @@ return noscriptUtil.service ? {
         isUntrusted = untrustedSites.matches(url);
         site = !isUntrusted && (global ? url : jsPSs.matches(url));
         
-        if (site && url == sites.topURL) {
+        if (site && url == sites.topSite) {
           if (ns.dom.getDocShellForWindow(content).allowJavascript) topTrusted = true;
           else {
             site = null;
