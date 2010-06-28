@@ -226,7 +226,7 @@ pref("noscript.surrogate.imagebam.replacement", "if(\"over18\" in window){var _d
 pref("noscript.surrogate.imagebam.sources", "!@*.imagebam.com");
 pref("noscript.surrogate.imagehaven.replacement", "['agreeCont','TransparentBlack'].forEach(function(id){var o=document.getElementById(id);if(o)o.style.display='none'})");
 pref("noscript.surrogate.imagehaven.sources", "!@*.imagehaven.net");
-pref("noscript.surrogate.interstitialBox.replacement", "const interstitialBox={}");
+pref("noscript.surrogate.interstitialBox.replacement", "window.eval('const interstitialBox={}')");
 pref("noscript.surrogate.interstitialBox.sources", "@*.imagevenue.com");
 pref("noscript.surrogate.googleThumbs.replacement", "var ss=document.getElementsByTagName('script');var s,m,i; for each(var s in ss)if((m=s.firstChild&&s.firstChild.nodeValue.match(/(imgthumb\\d+).*?['\"](data:[^'\"]+)/))&&(i=document.getElementById(m[1])))i.src=eval('\"'+m[2]+'\"')");
 pref("noscript.surrogate.googleThumbs.sources", "!^https?://www\\.google\\.[a-z]+/search");
@@ -285,3 +285,5 @@ pref("noscript.preset", "medium");
 
 pref("noscript.forbidBGRefresh", 1);
 pref("noscript.forbidBGRefresh.exceptions", ".mozilla.org");
+
+pref("noscript.toStaticHTML", true);

@@ -3107,7 +3107,10 @@ var ns = singleton = {
   },
   
   _preprocessObjectInfo: function(doc) {
-    var pe = this.getExpando(doc, "pe");
+    const EMBED = CI.nsIDOMHTMLEmbedElement,
+          OBJECT = CI.nsIDOMHTMLObjectElement;
+
+    const pe = this.getExpando(doc, "pe");
     if (!pe) return null;
     this.setExpando(doc, "pe", null);
     var ret = [], o, node, embed;
@@ -3120,13 +3123,16 @@ var ns = singleton = {
         }
         
         embed = o.embed;
-      
-        node = embed;
-        while ((node = node.parentNode) && !node.__noscriptBlocked);
+        
+        if (embed instanceof OBJECT || embed instanceof EMBED) {
+          node = embed;
+          while ((node = node.parentNode) && !node.__noscriptBlocked)
+            if (node instanceof OBJECT) o.embed = embed = node;
           
-        if (node !== null) {
-          pe.splice(j, 1);
-          continue;
+          if (node !== null) {
+            pe.splice(j, 1);
+            continue;
+          }
         }
         
         this.countObject(embed, o.pluginExtras.site);
@@ -3285,8 +3291,8 @@ var ns = singleton = {
           h = parseInt(style.height);
           if (minSize > w || minSize > h) {
             with (innerDiv.parentNode.style) {
-              minWidth = Math.max(w, Math.min(document.documentElement.clientWidth - object.offsetLeft, minSize)) + "px";
-              minHeight = Math.max(h, Math.min(document.documentElement.clientHeight - object.offsetTop, minSize)) + "px";
+              w = minWidth = Math.max(w, Math.min(document.documentElement.clientWidth - object.offsetLeft, minSize)) + "px";
+              h = minHeight = Math.max(h, Math.min(document.documentElement.clientHeight - object.offsetTop, minSize)) + "px";
             }
             with (anchor.style) {
               overflow = "visible";
@@ -4526,6 +4532,11 @@ var ns = singleton = {
         newWin.addEventListener("change", this.bind(this.onContentChange), true);
       }
       return;
+    } else {
+      if (this.implementToStaticHTML && !("toStaticHTML" in doc.defaultView)) {
+        ScriptSurrogate.execute(doc, this._toStaticHTMLDef, true);
+        doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
+      }
     }
     
     try {
@@ -4537,6 +4548,47 @@ var ns = singleton = {
       }
     } catch(e) {}
     
+  },
+  
+  get unescapeHTML() {
+    delete this.unescapeHTML;
+    return this.unescapeHTML = CC["@mozilla.org/feed-unescapehtml;1"].getService(CI.nsIScriptableUnescapeHTML)
+  },
+  
+  get implementToStaticHTML() {
+    delete this.implementToStaticHTML;
+    return this.implementToStaticHTML = this.getPref("toStaticHTML");
+  },
+  
+  _toStaticHTMLHandler:  function(ev) {
+    try {
+      var t = ev.target;
+      var doc = t.ownerDocument;
+      t.parentNode.removeChild(t);
+      var s = t.getAttribute("data-source");
+      t.appendChild(ns.unescapeHTML.parseFragment(s, false, null, t));
+      // remove attributes from forms
+      var f, a;
+      for each (f in Array.slice(t.getElementsByTagName("form"))) {
+        for each(a in Array.slice(f.attributes)) {
+          f.removeAttribute(a.name);
+        }
+      }
+    } catch(e){ if (ns.consoleDump) ns.dump(e) }
+  },
+  get _toStaticHTMLDef() {
+    delete this._toStaticHTMLDef;
+    return this._toStaticHTMLDef = (
+      function toStaticHTML(s) {
+        var t = document.createElement("toStaticHTML");
+        t.setAttribute("data-source", s);
+        document.documentElement.appendChild(t);
+        var ev = document.createEvent("Events");
+        ev.initEvent("NoScript:toStaticHTML", true, false);
+        t.dispatchEvent(ev);
+        return t.innerHTML;
+      }
+    ).toString();
   },
   
   beforeManualAllow: function(win) {
