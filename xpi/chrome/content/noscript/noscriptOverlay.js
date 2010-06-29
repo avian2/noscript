@@ -1793,8 +1793,8 @@ return noscriptUtil.service ? {
         isUntrusted = untrustedSites.matches(url);
         site = !isUntrusted && (global ? url : jsPSs.matches(url));
         
-        if (site && url == sites.topSite) {
-          if (ns.dom.getDocShellForWindow(content).allowJavascript) topTrusted = true;
+        if (url == sites.topSite) {
+          if (site && ns.dom.getDocShellForWindow(content).allowJavascript) topTrusted = true;
           else {
             site = null;
             if (isUntrusted) topUntrusted = true;
@@ -1822,7 +1822,7 @@ return noscriptUtil.service ? {
       
       allowed = allowedSites.length;
       lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
-            : allowed == 0 || active == 0 ? (global
+            : (allowed == 0 || active == 0) ? (global
                                               ? "untrusted-glb" :
                                                 topUntrusted
                                                   ? "untrusted" :

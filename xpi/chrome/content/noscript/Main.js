@@ -3291,14 +3291,16 @@ var ns = singleton = {
           h = parseInt(style.height);
           if (minSize > w || minSize > h) {
             with (innerDiv.parentNode.style) {
-              w = minWidth = Math.max(w, Math.min(document.documentElement.clientWidth - object.offsetLeft, minSize)) + "px";
-              h = minHeight = Math.max(h, Math.min(document.documentElement.clientHeight - object.offsetTop, minSize)) + "px";
+              var rect = DOM.computeRect(object);
+              w = minWidth = Math.max(w, Math.min(document.documentElement.offsetWidth - rect.left, minSize)) + "px";
+              h = minHeight = Math.max(h, Math.min(document.documentElement.offsetHeight - rect.top, minSize)) + "px";
             }
+
             with (anchor.style) {
               overflow = "visible";
               display = "block";
-              width = w + "px";
-              height = h + "px";
+              minWidth = w + "px";
+              minHeight = h + "px";
             }
             anchor.style.float = "left";
           }
