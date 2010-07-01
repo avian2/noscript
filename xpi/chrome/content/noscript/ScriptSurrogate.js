@@ -23,6 +23,7 @@ var ScriptSurrogate = {
     const prefs = this.prefs;
     
     this.enabled = prefs.getBoolPref("enabled");
+    this.debug = prefs.getBoolPref("debug");
     
     const map = {};
     var key;
@@ -135,24 +136,36 @@ var ScriptSurrogate = {
     return scripts;
   },
   
-  getScriptBlock: function(scriptURL, pageURL, noScript) {
-    var scripts = this.getScripts(scriptURL, pageURL, noScript);
-    return scripts && "try { (function() {" + scripts.join("})(); (function() {") + "})(); } catch(e) {}";
-  },
 
   apply: function(document, scriptURL, pageURL, noScript) {
     if (!this.enabled) return;
     if (typeof(noScript) != "boolean") noScript = !!noScript;
-    var scriptBlock = this.getScriptBlock(scriptURL, pageURL, noScript);
-    if (scriptBlock) {
-      if (noScript) {
-        document.defaultView.addEventListener("DOMContentLoaded", function(ev) {
-          ScriptSurrogate.sandbox(ev.target, scriptBlock);
-        }, false);
-      } else {
-        this.execute(document, scriptBlock, scriptURL == pageURL);
-      }
+    
+    var scripts = this.getScripts(scriptURL, pageURL, noScript);
+    if (!scripts) return;
+    
+    var runner = noScript ? this.fallback : this.execute;
+    var isPageScript = scriptURL == pageURL;
+    if (this.debug) {
+      // we run each script separately and don't swallow exceptions
+     scripts.forEach(function(s) {
+      runner.call(this, document, s, isPageScript);
+     }, this);
+    } else {
+      runner.call(this, document,
+        "(function(){try{" +
+          scripts.join("}catch(e){}})();(function(){try{") +
+          "}catch(e){}})();",
+        isPageScript);
     }
+    if (this._mustResetStyles && isPageScript) this._resetStyles();
+  },
+  
+  
+  fallback: function(document, scriptBlock) {
+    document.defaultView.addEventListener("DOMContentLoaded", function(ev) {
+      ScriptSurrogate.sandbox(ev.target, scriptBlock);
+    }, false);
   },
   
   sandbox: function(document, scriptBlock) {
@@ -163,6 +176,7 @@ var ScriptSurrogate = {
       CU.evalInSandbox("with(window) {" + scriptBlock + "}", s);
     } catch(e) {
       if (ns.consoleDump) ns.dump(e);
+      if (this.debug) CU.reportError(e);
     }
   },
   
@@ -173,11 +187,10 @@ var ScriptSurrogate = {
       var parent = document.documentElement;
       parent.insertBefore(s, parent.firstChild);
       parent.removeChild(s);
-      if (this._mustResetStyles && isPageScript) this._resetStyles();
     } else {
       try {
         document.defaultView.location.href =
-          encodeURI("javascript:" + scriptBlock);
+          encodeURI("javascript:" + scriptBlock + ";void(0)");
       } catch(e) {
         if (ns.consoleDump) ns.dump("Error running " + scriptBlock + "\non " + document.URL + ":\n" + e);
       }

@@ -208,6 +208,7 @@ pref("noscript.cp.last", true);
 pref("noscript.abp.removeTabs", false);
 
 pref("noscript.surrogate.enabled", true);
+pref("noscript.surrogate.debug", false);
 pref("noscript.surrogate.ga.exceptions", "");
 pref("noscript.surrogate.ga.replacement", "var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return{__noSuchMethod__:_0,_link:function(h){if(h)location.href=h;},_linkByPost:function(){return true;},_getLinkerUrl:function(u){return u;},_trackEvent:_0}}}");
 pref("noscript.surrogate.qs.sources", "edge.quantserve.com");
@@ -230,7 +231,7 @@ pref("noscript.surrogate.interstitialBox.replacement", "window.eval('const inter
 pref("noscript.surrogate.interstitialBox.sources", "@*.imagevenue.com");
 pref("noscript.surrogate.googleThumbs.replacement", "var ss=document.getElementsByTagName('script');var s,m,i; for each(var s in ss)if((m=s.firstChild&&s.firstChild.nodeValue.match(/(imgthumb\\d+).*?['\"](data:[^'\"]+)/))&&(i=document.getElementById(m[1])))i.src=eval('\"'+m[2]+'\"')");
 pref("noscript.surrogate.googleThumbs.sources", "!^https?://www\\.google\\.[a-z]+/search");
-pref("noscript.surrogate.amo.replacement", "addEventListener('click',function(e){var a=e.target.parentNode;var hash=a.getAttribute('data-hash');if(hash){var b=a.parentNode.parentNode;InstallTrigger.install({x:{URL:a.href,IconURL:b.getAttribute('data-icon'),Hash:hash,toString:function(){return a.href}}});e.preventDefault()}},false)");
+pref("noscript.surrogate.amo.replacement", "addEventListener('click',function(e){if(e.button)return;var a=e.target.parentNode;var hash=a.getAttribute('data-hash');if(hash){var b=a.parentNode.parentNode;InstallTrigger.install({x:{URL:a.href,IconURL:b.getAttribute('data-icon'),Hash:hash,toString:function(){return a.href}}});e.preventDefault()}},false)");
 pref("noscript.surrogate.amo.sources", "!https://addons.mozilla.org/");
 
 pref("noscript.placeholderMinSize", 32);
