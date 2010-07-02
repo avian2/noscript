@@ -7,7 +7,7 @@ const CU = Components.utils;
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
 const EXTENSION_NAME = "NoScript";
 const CHROME_NAME = "noscript";
-const VERSION = "1.9.9.98rc4";
+const VERSION = "1.9.9.98rc6";
 const SERVICE_NAME = EXTENSION_NAME + " Service";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID="{31aec909-8e86-4397-9380-63a59e0c5ff5}";
@@ -25,7 +25,7 @@ CI.nsIChannelEventSink
 ];
 
 // categories which this component is registered in
-const SERVICE_CATS = ["app-startup", "content-policy"];
+const SERVICE_CATS = ["app-startup"];
 
 const IOS = CC["@mozilla.org/network/io-service;1"].getService(CI.nsIIOService);
 const OS = CC['@mozilla.org/observer-service;1'].getService(CI.nsIObserverService);

@@ -61,7 +61,7 @@ var Module = {
         location, 
         type);
       const catman = this.categoryManager;
-      for (var j=0, len = SERVICE_CATS.length; j < len; j++) {
+      for (var j = 0, len = SERVICE_CATS.length; j < len; j++) {
         catman.deleteCategoryEntry(SERVICE_CATS[j], SERVICE_CTRID, true);
         catman.addCategoryEntry(SERVICE_CATS[j],
           SERVICE_CTRID, SERVICE_CTRID, true, true);
@@ -102,4 +102,8 @@ var Module = {
 }
 function NSGetModule(compMgr, fileSpec) {
   return Module;
+}
+function NSGetFactory(cid) {
+  if (!SERVICE_CID.equals(cid)) throw Components.results.NS_ERROR_FACTORY_NOT_REGISTERED;
+  return SERVICE_FACTORY;
 }

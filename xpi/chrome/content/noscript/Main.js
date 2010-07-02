@@ -658,20 +658,33 @@ var ns = singleton = {
                             ("NOTIFY_REFRESH" in CI.nsIWebProgress ? CI.nsIWebProgress.NOTIFY_REFRESH : 0));
 
 
-    const prefserv = this.prefService = CC["@mozilla.org/preferences-service;1"]
+    const prefSrv = this.prefService = CC["@mozilla.org/preferences-service;1"]
       .getService(CI.nsIPrefService).QueryInterface(CI.nsIPrefBranch);
 
     const PBI = CI.nsIPrefBranch2;
-    this.caps = prefserv.getBranch("capability.policy.").QueryInterface(PBI);
-    this.defaultCaps = prefserv.getDefaultBranch(this.caps.root);
+    this.caps = prefSrv.getBranch("capability.policy.").QueryInterface(PBI);
+    this.defaultCaps = prefSrv.getDefaultBranch(this.caps.root);
 
-    this.policyPB = prefserv.getBranch("capability.policy." + this.POLICY_NAME + ".").QueryInterface(PBI);
-    this.prefs = prefserv.getBranch("noscript.").QueryInterface(PBI);
+    this.policyPB = prefSrv.getBranch("capability.policy." + this.POLICY_NAME + ".").QueryInterface(PBI);
+    this.prefs = prefSrv.getBranch("noscript.").QueryInterface(PBI);
+    
+    try {
+      prefSrv.getDefaultBranch("noscript.").getBoolPref("autoReload"); // test for default pref existance
+    } catch(e) {
+      dump("[NoScript] Bug 576492 work-around!\n");
+      var defFile = __LOCATION__.parent.parent;
+      defFile.append("defaults");
+      defFile.append("preferences");
+      defFile.append("noscript.js");
+      prefSrv.readUserPrefs(defFile);
+      prefSrv.readUserPrefs(null);
+    }
+    
     
     this.policyPB.addObserver("sites", this, true);
     
     this.prefs.addObserver("", this, true);
-    this.mozJSPref = prefserv.getBranch("javascript.").QueryInterface(PBI);
+    this.mozJSPref = prefSrv.getBranch("javascript.").QueryInterface(PBI);
     this.mozJSPref.addObserver("enabled", this, true);
     
     this.mandatorySites.sitesString = this.getPref("mandatory", "chrome: about: resource:");
@@ -779,7 +792,7 @@ var ns = singleton = {
       this.shouldLoad = this.shouldProcess = CP_NOP;
       
       CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
-        .deleteCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, SERVICE_CTRID, false);
+        .deleteCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, false);
       
       
       if (this.requestWatchdog) {
@@ -1785,7 +1798,7 @@ var ns = singleton = {
     if (last && delegate != NOPContentPolicy) {
       // removing and adding the category late in the game allows to be the latest policy to run,
       // and nice to AdBlock Plus
-      catman.addCategoryEntry(cat, SERVICE_CTRID, SERVICE_CTRID, true, true);
+      catman.addCategoryEntry(cat, SERVICE_CTRID, SERVICE_CTRID, false, true);
     }
     
     if (!this.mimeService) {
