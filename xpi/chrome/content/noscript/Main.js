@@ -5029,7 +5029,7 @@ var ns = singleton = {
   
   checkSubscriptions: function() {
     var lastCheck = this.getPref("subscription.last_check");
-    var checkInterval = this.getPref("subscription.checkInterval") * 60000;
+    var checkInterval = this.getPref("subscription.checkInterval", 24) * 60000;
     var now = Date.now();
     if (lastCheck + checkInterval > now) {
       this.delayExec(arguments.callee, lastCheck + checkInterval - now + 1000);

@@ -454,8 +454,8 @@ ClearClickHandler.prototype = {
           dElem.appendChild(curtain);
         }
         
-        var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), this.minWidth);
-        var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), this.minHeight);
+        var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), sd.w ? 0 : this.minWidth);
+        var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), sd.h ? 0 : this.minHeight);
   
         box = this.getBox(o, d, w);
         
@@ -571,22 +571,37 @@ ClearClickHandler.prototype = {
                 if (!adaptiveScrollerSide && this.ns.prefService.getIntPref("bidi.direction") != 2) 
                   break;
               case 3:
-                vp.x += this.scrollerCorrection(w, adaptiveScrollerSide);
-                rtlOffset = this.scrollerCorrection(top, adaptiveScrollerSide);
+                vp.x += this._scrollerCorrect(w, adaptiveScrollerSide);
+                rtlOffset = this._scrollerCorrect(top, adaptiveScrollerSide);
             }
           } catch(e) {
             if (ns.consoleDump & LOG_CLEARCLICK) ns.dump(e);
           }
           
-          if (!sd.w) {
-            vp.x = 0;
-            vp.width = curtain.offsetWidth;
-          }
-          if (!sd.h) {
-            vp.y = 0;
-            vp.height = curtain.offsetHeight;
-          }
+         
+          
         }
+        
+        // clip viewport intersecting with scrolling parents
+        
+        const CLIP_MIN = 64;
+        var clip = this._clip(o.parentNode, frame ? this.getBox(frame) : box);
+        if (clip.h != 0) {
+          if (vp.height + clip.h >= CLIP_MIN) vp.height += clip.h;
+          else vp.height = CLIP_MIN;
+          if (maxHeight + clip.h >= CLIP_MIN) maxHeight += clip.h;
+          else maxHeight = CLIP_MIN;
+        }
+        if (clip.w != 0) {
+          if (vp.width + clip.w >= CLIP_MIN) vp.width += clip.w;
+            else vp.width = CLIP_MIN;
+            if (maxWidth + clip.w >= CLIP_MIN) maxWidth += clip.w;
+            else maxWidth = CLIP_MIN;
+        }
+        vp.x += clip.x;
+        vp.y += clip.y;
+        
+        // Fit in viewport
         
         box.oX = box.x;
         box.oY = box.y;
@@ -732,7 +747,66 @@ ClearClickHandler.prototype = {
  
   },
   
-  scrollerCorrection: function(w, adaptive) {
+  _clip: function(parent, box) {
+    const MIN = 64;
+    
+    // backtrack all the overflow~="auto|scroll" parent elements and clip
+        
+    var pw = parent.ownerDocument.defaultView;
+
+    var current, cbox;
+    var dw = 0, dh = 0, dx = 0, dy = 0;
+
+    var bx = box.screenX;
+    var by = box.screenY;
+    var bw = box.width;
+    var bh = box.height;
+    
+    const ELEMENT = CI.nsIDOMElement;
+    
+    while(parent) {
+   
+      current = parent; 
+      switch (pw.getComputedStyle(current, '').overflow) {
+        case "auto" : case "scroll":
+        cbox = this.getBox(current);
+        
+        d = cbox.screenY - by;
+        if (d > 0) {
+          dy += d;
+          dh -= d;
+          by += d;
+          bh -= d;
+        }
+        d = cbox.screenX - bx;
+        if (d > 0) {
+          dx += d;
+          dw -= d;
+          bx += d;
+          bw -= d;
+          
+        }
+        d = by + bh - (cbox.screenY + current.clientHeight);
+        if (d > 0) {
+          dh -= d;
+          bh -= d;
+        }
+        d = bx + bw - (cbox.screenX + current.clientWidth);
+        if (d > 0) {
+          dw -= d;
+          bw -= d;
+        }
+      }
+      parent = current.parentNode;
+      if (parent instanceof ELEMENT) continue;
+      parent = pw.frameElement;
+      if (parent) pw = parent.ownerDocument.defaultView;
+    }
+    
+    return { x: dx, y: dy, w: dw, h: dh };
+  },
+  
+  _scrollerCorrect: function(w, adaptive) {
     return (adaptive && w.getComputedStyle(w.document.body || w.document.documentElement, '').direction != 'rtl')
       ? 0
       : w.innerWidth - w.document.documentElement.clientWidth;
