@@ -1376,7 +1376,7 @@ var ns = singleton = {
         isCurrentTab = false;
       }
       
-      Thread.delay(checkAndReload, 1, this);
+      if (browser) Thread.delay(checkAndReload, 1, this);
     }).apply(this);
     
   },
