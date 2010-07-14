@@ -526,6 +526,34 @@ var abeOpts = {
     }, false);
   },
   
+  reset: function() {
+    ABE.resetDefaults();
+    abeOpts.populate();
+  },
+  
+  _lastInputFile: null,
+  _lastInputSrc: '',
+  input: function(text) {
+    var i = this.list.selectedItem;
+    if (!i) return;
+    var file = ABE.getRulesetFile(i.value);
+    if ((file instanceof CI.nsILocalFile)) {
+      this._lastInputFile = file;
+      this._lastInputSrc = text.value;
+    } else this._lastInputFile = null;
+  },
+  
+  changed: function(text) {
+    var file = this._lastInputFile;
+    if (!file) return;
+    this._lastInputFile = null;
+    ns.writeFile(file, this._lastInputSrc);
+    if (ABE.updateRulesNow()) {
+      abeOpts.populate();
+      abeOpts.errors = false;
+    }
+  },
+  
   _populating: false,
   populate: function() {
     this._populating = true;
@@ -595,7 +623,17 @@ var abeOpts = {
     var text = $("abeRuleset-text");
     text.className = selItem && selItem.className || '';
     text.disabled = !selItem || selItem.disabled;
-    text.value = rs && (rs.errors && rs.errors.join("\n\n") || rs.source) || '';
+    text.value = rs && rs.source;
+    
+    text = $("abeRuleset-errors");
+    if (rs && rs.errors) {
+      text.hidden = false;
+      text.value = rs.errors.join("\n");
+    }
+    else {
+      text.hidden = true;
+      text.value = "";
+    }
   },
   
   refresh: function() {

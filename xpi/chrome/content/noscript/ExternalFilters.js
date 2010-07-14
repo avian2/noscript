@@ -114,7 +114,7 @@ var ExternalFilters = {
       if (contentType || extraType) {
         contentType = extraType || contentType;
         for each (let f in this._filters) {
-          if (f.handle(channel, contentType, cached)) {
+          if (f.handle(channel, contentType, ctx, cached)) {
             this.storeFilterInfo(ctx, f, channel.name);
             return f;
           }
@@ -324,7 +324,7 @@ ExternalFilter.prototype = {
     return true;
   },
   
-  handle: function(traceableChannel, contentType, cached) {
+  handle: function(traceableChannel, contentType, ctx, cached) {
     if (!(this.enabled && this._ctRx.test(contentType)))
       return false;
     
@@ -339,7 +339,7 @@ ExternalFilter.prototype = {
         // cache miss
       }
         
-      new EFHandler(this, traceableChannel);
+      new EFHandler(this, traceableChannel, ctx);
     }
     return true;
   }
@@ -347,9 +347,10 @@ ExternalFilter.prototype = {
 
 
 
-function EFHandler(filter, traceableChannel) {
+function EFHandler(filter, traceableChannel, object) {
   this.filter = filter;
   this.channel = traceableChannel;
+  this.object = object;
   this.originalListener = traceableChannel.setNewListener(this);
 }
 
@@ -384,7 +385,12 @@ EFHandler.prototype = {
       this.cleanFile = ExternalFilters.createTempFile();
       var p = ExternalFilters.createProcess();
       p.init(this.filter.exe);
-      var args = [this.outFile.path, this.cleanFile.path, IOUtil.extractInternalReferrer(this.channel)];
+      var origin = '';
+      try {
+        origin = this.object.ownerDocument.defaultView.location.href;
+      } catch(e) {
+      }
+      var args = [this.outFile.path, this.cleanFile.path, origin];
       p.runAsync(args, args.length, this, true);
       this._observers.push(this); // anti-gc kung-fu death grip
       

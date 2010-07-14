@@ -28,7 +28,7 @@ override chrome://noscript/content/noscriptOverlay.xul chrome://noscript/content
 # Gecko 2 component registration
 component {31aec909-8e86-4397-9380-63a59e0c5ff5} components/noscriptService.js
 contract @maone.net/noscript-service;1 {31aec909-8e86-4397-9380-63a59e0c5ff5}
-category profile-after-change NoScript-Service,@maone.net/noscript-service;1
+category profile-after-change @maone.net/noscript-service;1 @maone.net/noscript-service;1
 
 # Localization
 locale	noscript	en-US	jar:chrome/noscript.jar!/content/noscript/en-US/

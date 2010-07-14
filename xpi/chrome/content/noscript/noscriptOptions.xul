@@ -427,6 +427,7 @@
                value="?"/>
             </hbox>
             <separator class="thin" />
+						<vbox height="220">
             <label value="&ABE.rulesets.label;" />
             <hbox flex="1">
               <listbox id="abeRulesets-list" 
@@ -435,19 +436,28 @@
                 flex="1"
                 width="50"
                 persist="width"
+								style="margin-right: 0"
               >
               <listitem label="SYSTEM" />
               <listitem label="USER" />
               </listbox>
-              <splitter style="background: transparent; margin: 0px; border-width: 0px" />
-              <textbox id="abeRuleset-text" flex="4" multiline="true" readonly="true" wrap="off"/>
+              <splitter style="background: transparent; margin: 0; border-width: 0" />
+              <textbox id="abeRuleset-text" flex="4" multiline="true" wrap="off"
+											 oninput="abeOpts.input(this)" onchange="abeOpts.changed(this)"
+											 style="margin-left: 0"
+							/>
             </hbox>
+						<splitter style="background: transparent; margin: 0px; border-width: 0px" />
+						<textbox id="abeRuleset-errors" class="noscript-error" style="width: 100%"
+								readonly="true" multiline="true" rows="2" hidden="true" value="" />
+						</vbox>
             <hbox align="center">
               <button id="abeRefresh-button" label="&ABE.refresh.label;" accesskey="&ABE.refresh.accesskey;" oncommand="abeOpts.refresh()" />
               <spacer flex="2"/>
               <button id="abeEnable-button" label="&ABE.enable.label;" accesskey="&ABE.enable.accesskey;" oncommand="abeOpts.toggle(true)" />
               <button id="abeDisable-button" label="&ABE.disable.label;" accesskey="&ABE.disable.accesskey;" oncommand="abeOpts.toggle(false)" />
-              <spacer flex="3"/>
+							<spacer flex="3"/>
+							<button id="abeReset-button" label="&noscriptReset;" oncommand="abeOpts.reset()" />
               <button id="abeEdit-button" label="&ABE.edit.label;" accesskey="&ABE.edit.accesskey;" oncommand="abeOpts.edit()" />
             </hbox>
           </vbox>

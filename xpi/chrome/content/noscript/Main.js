@@ -640,7 +640,6 @@ var ns = singleton = {
   
   init: function() {
     if (this._inited) return false;
-    
     this._inited = true;
     
     if (this.smUninstaller) this.smUninstaller.check();
@@ -1355,7 +1354,7 @@ var ns = singleton = {
           }
         }
         
-        if(j === len) { 
+        if (j === len) { 
           // check plugin objects
           if (this.consoleDump & LOG_CONTENT_BLOCK) {
             this.dump("Checking object permission changes...");
@@ -1795,7 +1794,7 @@ var ns = singleton = {
       
     for (var p in delegate) this[p] = delegate[p];
     
-    if (last && delegate != NOPContentPolicy) {
+    if (delegate != NOPContentPolicy) {
       // removing and adding the category late in the game allows to be the latest policy to run,
       // and nice to AdBlock Plus
       catman.addCategoryEntry(cat, SERVICE_CTRID, SERVICE_CTRID, false, true);
