@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>2.0rc1</em:version>
+   <em:version>2.0rc2</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -66,7 +66,7 @@
    <em:targetApplication>
      <Description>
      <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-     <em:minVersion>1.5</em:minVersion>
+     <em:minVersion>3.0</em:minVersion>
      <em:maxVersion>4.0b2pre</em:maxVersion>
      </Description>
    </em:targetApplication>
@@ -84,7 +84,7 @@
    <em:targetApplication>
       <Description>
         <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
-        <em:minVersion>1.1</em:minVersion>
+        <em:minVersion>2.0</em:minVersion>
         <em:maxVersion>2.1a3</em:maxVersion>
       </Description>
    </em:targetApplication>
@@ -128,7 +128,7 @@
     <em:targetApplication> <!-- Fennec -->
       <Description>
         <em:id>{a23983c0-fd0e-11dc-95ff-0800200c9a66}</em:id>
-        <em:minVersion>0.1</em:minVersion>
+        <em:minVersion>1.0</em:minVersion>
         <em:maxVersion>2.0a1pre</em:maxVersion>
       </Description>
     </em:targetApplication>

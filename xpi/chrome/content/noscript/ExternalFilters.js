@@ -390,7 +390,7 @@ EFHandler.prototype = {
         origin = this.object.ownerDocument.defaultView.location.href;
       } catch(e) {
       }
-      var args = [this.outFile.path, this.cleanFile.path, origin];
+      var args = [this.outFile.path, this.cleanFile.path, origin, this.channel.name];
       p.runAsync(args, args.length, this, true);
       this._observers.push(this); // anti-gc kung-fu death grip
       
