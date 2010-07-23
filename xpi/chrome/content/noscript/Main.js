@@ -4250,8 +4250,10 @@ var ns = singleton = {
       if (status >= 300 && status < 400) // redirect, wait for ultimate destination, see http://forums.informaction.com/viewtopic.php?f=7&t=2630
         return;
       
-      
-      if (ABE.checkFrameOpt(domWindow, req) &&
+      // X-Frame-Options
+      if (((req.loadFlags & req.LOAD_DOCUMENT_URI) || // must be a subdocument
+            isObject && /\b(?:text|xml|html)\b/.test(req.contentType)) &&
+          ABE.checkFrameOpt(domWindow, req) &&
           this.getPref("frameOptions.enabled") &&
           !new AddressMatcher(this.getPref("frameOptions.parentWhitelist"))
             .test(domWindow.parent.location.href)

@@ -529,6 +529,15 @@ RequestWatchdog.prototype = {
           if (ns.consoleDump) this.dump(channel, "deviantart.com journal post exception");
           return;
         }
+        
+        if (originSite == "https://www.mymedicare.gov" &&
+            targetSite == "https://myporal.medicare.gov" &&
+            ns.getPref("filterXExceptions.medicare")
+            ) {
+          if (ns.consoleDump) this.dump(channel, "mymedicare.gov exception");
+          return;
+        }
+        
       }
     
     } else { // maybe data or javascript URL?

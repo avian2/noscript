@@ -187,6 +187,7 @@ var ScriptSurrogate = {
       var parent = document.documentElement;
       parent.insertBefore(s, parent.firstChild);
       parent.removeChild(s);
+      if (this._mustResetStyles && isPageScript) this._resetStyles();
     } else {
       try {
         document.defaultView.location.href =

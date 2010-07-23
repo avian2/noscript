@@ -272,6 +272,8 @@ var DNS = {
     return dnsRecord;
   },
   
+  
+  
   evict: function(host) {
     ABE.log("Removing DNS cache record for " + host);
     return this._cache.evict(host);
@@ -348,3 +350,99 @@ DNSListener.prototype = {
     if (this.callback) this.callback();
   }
 };
+
+var WANChecker = {
+  ip: null,
+  ipMatcher: null,
+  interval: 3600000,
+  checkURL: "https://secure.informaction.com/ipecho/",
+  lastCheck: 0,
+  skipIfProxied: false,
+  noResource: false,
+  enabled: true,
+  
+  get _timer() {
+    delete this._timer;
+    let t = CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer);
+    t.initWithCallback({
+      notify: this._periodic,
+      context: null
+    }, 60000, t.TYPE_REPEATING_SLACK); // every minute
+    return this._timer = t;
+  },
+  
+  _periodic: function() {
+    var t = Date.now();
+    if (t - WANChecker.lastCheck < WANChecker.interval) return;
+    WANChecker.check();
+  },
+  
+  _pingResource: function() {
+    var url = "[" + this.ip + "]";
+    var xhr = this._createAnonXHR(url);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        
+      }
+    }
+  },
+  
+  
+  _checking: false,
+  
+  _createAnonXHR: function(url, noproxy) {
+    var xhr = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
+    xhr.mozBackgroundRequest = true;
+    xhr.open("GET", this.checkURL, true);
+    const ch = xhr.channel;
+    const proxyInfo = noproxy && IOUtil.getProxyInfo(ch);
+    if (!(proxyInfo && proxyInfo == "direct")) {
+      if ((ch instanceof CI.nsIHttpChannel)) {
+        // cleanup headers
+        this._headers(ch).forEach(function(h) {
+          ch.setRequestHeader(h, '', false); // clear header
+        });
+      }
+    } else xhr = null;
+    return xhr;
+  },
+  
+  check: function() {
+    if (this._checking || IOS.offline) return;
+    this._checking = true;
+    var sent = false;
+    try {
+      var xhr = this._createAnonXHR(this.checkURL,this.skipIfProxied);
+      if (xhr) {
+        let self = this;
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState < 4) return;
+          if (xhr.status == 200) {
+            let ip = xhr.responseText;
+            if (!/^[\da-f\.:]+$/i.test(ip)) return;
+            self.ip = ip;
+            self.ipMatcher = AddressMatcher.create(ip);
+            self._pingResource();
+          }
+          self._checking = false;
+          self.lastCheck = Date.now();
+        }
+        xhr.send(null);
+        sent = true;
+      }
+    } finally {
+      this._checking = sent;
+    }
+  },
+  
+  
+  _headers: function(ch) {
+    var hh = [];
+    ch.visitRequestHeaders({
+      visitHeader: function(name, value) {
+        if (name != "Host") hh.push(name);
+      }
+    });
+    return hh;
+  }
+}
