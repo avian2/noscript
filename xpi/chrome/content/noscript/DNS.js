@@ -307,13 +307,13 @@ var DNS = {
     return this.isLocalHost(host, all);
   },
   
-  isLocalHost: function(host, all) {
+  isLocalHost: function(host, all, dontResolve) {
     if (host == "localhost") return true;
     if (this.isIP(host)) {
       return this.isLocalIP(host);
     }
 
-    if (all && this._cache.isExt(host)) return false;
+    if (all && this._cache.isExt(host) || dontResolve) return false;
   
     var res = this.resolve(host, 0).isLocal(all);
 
@@ -327,7 +327,8 @@ var DNS = {
   isLocalIP: function(addr) {
     // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose but incomplete (missing IPV6 ULA) implementation
     // Relevant RFCs linked at http://en.wikipedia.org/wiki/Private_network
-    return /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i.test(addr);
+    return /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i.test(addr)
+      || WAN.ipMatcher && WAN.ipMatcher.testIP(addr);
   },
   
   isIP: function(host) {
@@ -351,98 +352,215 @@ DNSListener.prototype = {
   }
 };
 
-var WANChecker = {
+var WAN = {
+  IP_CHANGE_TOPIC: "abe:wan-iface-ip-changed",
   ip: null,
   ipMatcher: null,
-  interval: 3600000,
+  fingerprint: '',
+  findMaxInterval: 86400000, // one day 
+  checkInterval: 300000, // 5 minutes
   checkURL: "https://secure.informaction.com/ipecho/",
+  lastFound: 0,
   lastCheck: 0,
-  skipIfProxied: false,
+  skipIfProxied: true,
   noResource: false,
-  enabled: true,
+  logging: true,
+  fingerprintLogging: false,
   
-  get _timer() {
-    delete this._timer;
-    let t = CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer);
-    t.initWithCallback({
-      notify: this._periodic,
-      context: null
-    }, 60000, t.TYPE_REPEATING_SLACK); // every minute
-    return this._timer = t;
+  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
+  
+  log: function(msg) {
+    var cs = CC["@mozilla.org/consoleservice;1"].getService(CI.nsIConsoleService);
+    return (this.log = function(msg) {
+      if (this.logging) cs.logStringMessage("[ABE WAN] " + msg);
+    })(msg);
+    
   },
   
-  _periodic: function() {
-    var t = Date.now();
-    if (t - WANChecker.lastCheck < WANChecker.interval) return;
-    WANChecker.check();
+  _enabled: false,
+  _timer: null,
+  _observing: false,
+  get enabled() {
+    return this._enabled;
   },
-  
-  _pingResource: function() {
-    var url = "[" + this.ip + "]";
-    var xhr = this._createAnonXHR(url);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4) {
-        
+  set enabled(b) {
+    if (this._timer) this._timer.cancel();
+    if (b) {
+      const t = CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer);
+      t.initWithCallback({
+        notify: function() { WAN._periodic() },
+        context: null
+      }, this.checkInterval, t.TYPE_REPEATING_SLACK);
+      this._timer = t;
+      Thread.delay(this._periodic, 1000, this, [this._enabled != b]);
+      if (!this._observing) {
+        this._observing = true;
+        const os = CC["@mozilla.org/observer-service;1"].getService(CI.nsIObserverService);
+        os.addObserver(this, "network:offline-status-changed", true);
+        os.addObserver(this, "wake_notification", true);
       }
+    } else {
+      this._timer = this.ip = this.ipMatcher = null;
+    }
+    return this._enabled = b;
+  },
+  
+  observe: function(subject, topic, data) {
+    if ((topic == "wake_notification" || data == "online") && this.enabled) {
+      this._periodic(true);
     }
   },
   
+  _periodic: function(forceFind) {
+    if (forceFind) this.lastFound = 0;
+    
+    var t = Date.now();
+    if (forceFind ||
+        t - this.lastFound > this.findMaxInterval ||
+        t - this.lastCheck > this.checkInterval * 4) {  
+      this.findIP(this._findCallback);
+    } else if (this.fingerprint) {
+      this._takeFingerprint(this.ip, this._fingerprintCallback);
+    }
+    this.lastCheck = t;
+  },
   
-  _checking: false,
+  _findCallback: function(ip) {
+    WAN._takeFingerprint(ip);
+  },
+  _fingerprintCallback: function(fingerprint, ip) {
+    if (fingerprint != WAN.fingerprint) {
+      WAN.log("Resource reacheable on WAN IP " + ip + " changed!");
+      if (ip == WAN.ip) WAN._periodic(true);
+    }
+  },
   
+  _takeFingerprint: function(ip, callback) {
+    if (!ip) {
+      self.log("Can't fingerprint a null IP");
+      return;
+    }
+    var url = "http://[" + ip + "]";
+    var xhr = this._createAnonXHR(url);
+    var self = this;
+    xhr.onreadystatechange = function() {
+
+      if (xhr.readyState == 4) {
+
+      var fingerprint = '';
+      try {
+        const ch = xhr.channel;
+
+        if (!ch.status) fingerprint =
+          xhr.status + " " + xhr.statusText + "\n" +
+          self._collectHeaders("Response", ch)
+          .map(function(h) h + ":" + ch.getResponseHeader(h))
+          .concat(['', xhr.responseText])
+          .join("\n")
+          .replace(/\d/g, '').replace(/\b[a-f]+\b/gi, ''); // remove decimal and hex noise
+        } catch(e) {
+          self.log(e);
+        }   
+
+        if (self.fingerprintLogging)
+          self.log("Fingerprint for " + url + " = " + fingerprint);
+
+        if (callback) callback(fingerprint, ip);
+        self.fingerprint = fingerprint;
+      }
+    }
+    xhr.send(null);
+
+  },
+    
   _createAnonXHR: function(url, noproxy) {
     var xhr = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
     xhr.mozBackgroundRequest = true;
-    xhr.open("GET", this.checkURL, true);
+    xhr.open("GET", url, true);
     const ch = xhr.channel;
     const proxyInfo = noproxy && IOUtil.getProxyInfo(ch);
-    if (!(proxyInfo && proxyInfo == "direct")) {
+    if (!proxyInfo || proxyInfo.type == "direct" || DNS.isLocalHost(proxyInfo.host)) {
       if ((ch instanceof CI.nsIHttpChannel)) {
         // cleanup headers
-        this._headers(ch).forEach(function(h) {
-          ch.setRequestHeader(h, '', false); // clear header
+        this._collectHeaders('Request', ch).forEach(function(h) {
+          if (h != 'Host') ch.setRequestHeader(h, '', false); // clear header
         });
       }
+      ch.loadFlags = ch.LOAD_BYPASS_CACHE;
     } else xhr = null;
     return xhr;
   },
   
-  check: function() {
-    if (this._checking || IOS.offline) return;
-    this._checking = true;
+  _callbacks: null,
+  _finding: false,
+  findIP: function(callback) {
+    if (callback) (this._callbacks = this._callbacks || []).push(callback);
+    if (IOS.offline) {
+      this._findIPDone(null, "offline");
+      return;
+    }
+    if (this._finding) return;
+    this._finding = true;
     var sent = false;
     try {
       var xhr = this._createAnonXHR(this.checkURL,this.skipIfProxied);
       if (xhr) {
         let self = this;
         xhr.onreadystatechange = function() {
-          if (xhr.readyState < 4) return;
-          if (xhr.status == 200) {
-            let ip = xhr.responseText;
-            if (!/^[\da-f\.:]+$/i.test(ip)) return;
-            self.ip = ip;
-            self.ipMatcher = AddressMatcher.create(ip);
-            self._pingResource();
+          if (xhr.readyState == 4) {
+            let ip = null;
+            if (xhr.status == 200) {
+              ip = xhr.responseText;
+              if (!/^[\da-f\.:]+$/i.test(ip)) ip = null;
+            }
+            self._findIPDone(ip, xhr.responseText);
           }
-          self._checking = false;
-          self.lastCheck = Date.now();
         }
         xhr.send(null);
+        this.log("Trying to detect WAN IP...");
         sent = true;
       }
+    } catch(e) {
+      this.log(e + " - " + e.stack)
     } finally {
-      this._checking = sent;
+      this._finding = sent;
+      if (!sent) this._findIPDone(null);
     }
   },
   
-  
-  _headers: function(ch) {
-    var hh = [];
-    ch.visitRequestHeaders({
-      visitHeader: function(name, value) {
-        if (name != "Host") hh.push(name);
+  _findIPDone: function(ip) {
+    let ipMatcher = AddressMatcher.create(ip);
+    if (!ipMatcher) ip = null;
+    if (ip) {
+      try {
+        if (this._callbacks) {
+          for each (let cb in this._callbacks) cb(ip);
+          this._callbacks = null;
+        }
+      } catch(e) {
+        this.log(e);
       }
-    });
+      
+      if (ip != this.ip) {
+        CC["@mozilla.org/observer-service;1"].getService(CI.nsIObserverService)
+          .notifyObservers(this, this.IP_CHANGE_TOPIC, ip);
+      }
+      
+      this.ip = ip;
+      this.ipMatcher = ipMatcher;
+      this.lastFound = Date.now();
+    }
+    this.log(ip ? "Detected WAN IP " + ip : "WAN IP not detected!");
+    this._finding = false;
+  },
+  
+  
+  _collectHeaders: function(type, ch) {
+    var hh = [];
+    if (ch instanceof CI.nsIHttpChannel)
+      ch["visit" + type + "Headers"]({
+        visitHeader: function(name, value) { hh.push(name); }
+      });
     return hh;
   }
 }

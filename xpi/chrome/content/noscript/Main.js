@@ -373,6 +373,14 @@ var ns = singleton = {
         IOUtil[name] = this.getPref(name, IOUtil[name]);
       break;
       
+      case "ABE.wanIpAsLocal":
+        WAN.enabled = this.getPref(name);
+      break;
+      case "ABE.wanIpCheckURL":
+        WAN.checkURL = this.getPref(name);
+      break;
+      
+      
       case "ABE.enabled":
       case "ABE.siteEnabled":
       case "ABE.allowRulesetRedir":
@@ -724,6 +732,7 @@ var ns = singleton = {
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
       "ABE.enabled", "ABE.legacySupport", "ABE.siteEnabled", "ABE.allowRulesetRedir", "ABE.disabledRulesetNames", "ABE.skipBrowserRequests",
+      "ABE.wanIpCheckURL", "ABE.wanIpAsLocal",
       "STS.enabled"
       ]) {
       try {
@@ -1774,7 +1783,7 @@ var ns = singleton = {
   lookupMethod: DOM.lookupMethod,
   dom: DOM,
   siteUtils: SiteUtils,
-
+  wan: WAN,
   mimeService: null,
  
   shouldLoad: CP_NOP,

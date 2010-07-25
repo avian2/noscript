@@ -32,19 +32,19 @@ AddressMatcher.prototype = {
       var host = uri.host
       if (!host) return false;
       if (Network.isNet(host))
-        return this._testIP(host);
+        return this.testIP(host);
       
       var dnsRecord = DNS.resolve(host);
       if (dnsRecord && dnsRecord.valid) 
-        return allIPs ? dnsRecord.entries.every(this._testIP, this)
-                      : dnsRecord.entries.some(this._testIP, this);
+        return allIPs ? dnsRecord.entries.every(this.testIP, this)
+                      : dnsRecord.entries.some(this.testIP, this);
     } catch(e) {
       dump(e + "\n");
     }
     return false;
   },
   
-  _testIP: function(ip) {
+  testIP: function(ip) {
      return this.networks.some(function(n) { return n.test(ip); });
   },
   

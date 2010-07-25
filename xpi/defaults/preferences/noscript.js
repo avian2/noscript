@@ -273,6 +273,8 @@ pref("noscript.ABE.disabledRulesetNames", "");
 pref("noscript.ABE.skipBrowserRequests", true);
 pref("noscript.ABE.notify", true);
 pref("noscript.ABE.notify.namedLoopback", false);
+pref("noscript.ABE.wanIpAsLocal", true);
+pref("noscript.ABE.wanIpCheckURL", "https://secure.informaction.com/ipecho/");
 
 pref("noscript.asyncNetworking", true);
 pref("noscript.inclusionTypeChecking", true);

@@ -501,6 +501,8 @@ var abeOpts = {
   selectedRS: null,
   _map: {},
   errors: false,
+  QueryInterface: ns.wan.QueryInterface, // dirty hack, we share the same observer ifaces
+  
   init: function() {
     
     if (!(ABE.legacySupport || ns.Thread.canSpin)) {
@@ -524,6 +526,19 @@ var abeOpts = {
         }
       }
     }, false);
+    
+    this.updateWAN(ns.wan.ip);
+    CC["@mozilla.org/observer-service;1"].getService(CI.nsIObserverService)
+      .addObserver(this, ns.wan.IP_CHANGE_TOPIC, true);
+       
+  },
+  
+  observe: function(subject, topic, data) {
+    if (topic == ns.wan.IP_CHANGE_TOPIC) this.updateWAN(data);
+  },
+  
+  updateWAN: function(ip) {
+    $("opt-ABE.wanIpAsLocal").label = ns.getString("ABE.wanIpAsLocal", [ip || "???"]);
   },
   
   reset: function() {

@@ -418,13 +418,18 @@
             <hbox>
               <vbox>
               <checkbox id="opt-ABE.enabled" label="&ABE.enabled.label;" />
+							<spacer flex="1" />
               <checkbox id="opt-ABE.siteEnabled" label="&ABE.siteEnabled.label;" />
               </vbox>
-              <spacer flex="1"/>
+							<vbox pack="end">
+              <spacer flex="1" />
               <label class="text-link header"
                accesskey="?"
                onclick="noscriptUtil.openHelp('ABE')"
                value="?"/>
+							<spacer flex="1" />
+							<checkbox id="opt-ABE.wanIpAsLocal" label="" />
+							</vbox>
             </hbox>
             <separator class="thin" />
 						<vbox height="220">
