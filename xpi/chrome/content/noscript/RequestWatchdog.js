@@ -552,7 +552,6 @@ RequestWatchdog.prototype = {
     }
     
     var originalAttempt;
-    var injectionAttempt = false;
     var postInjection = false;
     
     window = window || abeReq.window;
@@ -572,17 +571,18 @@ RequestWatchdog.prototype = {
       this.checkWindowName(window);
     
     }
-   
-    if (globalJS || ns.isJSEnabled(originSite) ||
+    
+    
+    
+    var trustedOrigin = globalJS || ns.isJSEnabled(originSite) ||
         !origin // we consider null origin as "trusted" (i.e. we check for injections but 
                 // don't strip POST unconditionally) to make some extensions (e.g. Google Gears) 
                 // work. For dangerous edge cases we should have moz-null-principal: now, anyway.
-                || // some goes for Paypal buttons, which we don't require to be on trusted sites
-        this.PAYPAL_BUTTON_RX.test(originalSpec) ||
-        origin.substring(0, 5) == "file:"
-      ) {
-      
-      
+                || 
+        origin.substring(0, 5) == "file:";
+    
+    if (trustedOrigin) {
+
       if (origin &&
           (
           /^http:\/\/(?:[^\/]+.)?facebook\.com\/(?:widgets\/server|render_)fbml\.php$/.test(originalSpec) &&
@@ -602,81 +602,51 @@ RequestWatchdog.prototype = {
       
       if (injectionCheck < 3) {
         if (/^https?:/.test(originSite)) {
-          var originDomain = ns.getDomain(originSite);
-          var targetDomain = ns.getDomain(url);
+          let originDomain = ns.getDomain(originSite), targetDomain = ns.getDomain(url);
           if (targetDomain == originDomain) {
             this.dump(channel, "Same domain with HTTP(S) origin");
             return;
           }
         }
       }
+    }
+      // check for injections
       
-      // origin is trusted, check for injections
-      
-      injectionAttempt = injectionCheck && (injectionCheck > 1 || ns.isTemp(originSite)) &&
-        (!window || ns.injectionCheckSubframes || window == window.top);
-      
-      
-      var skipArr, skipRx;    
-      if (injectionAttempt) {
+    var injectionAttempt = injectionCheck && (injectionCheck > 1 || !trustedOrigin || ns.isTemp(originSite)) &&
+      (!window || ns.injectionCheckSubframes || window == window.top);
 
-        if (this.PAYPAL_BUTTON_RX.test(originalSpec)) {
-          // Paypal buttons encrypted parameter causes a DOS, strip it out
-          skipArr = ['encrypted'];
-        } else if (/^https?:\/\/www\.mendeley\.com\/import\/bookmarklet\/$/.test(originalSpec)) {
-          skipArr = ['html'];
-        } else if (/^https?:\/\/[\w\-\.]+\/talkpost_do(?:\.bml)?$/.test(originalSpec) &&
-            ns.getBaseDomain(ns.getDomain(originalSpec)) == ns.getBaseDomain(ns.getDomain(originSite)) &&
-            ns.getPref("filterXExceptions.livejournal")) {
-          if (ns.consoleDump) this.dump(channel, "Livejournal-like comments exception");
-          skipArr = ['body'];
-        }
-        
-        if (skipArr) {
-          skipRx = new RegExp("(?:^|&)(?:" + skipArr.join('|') + ")=[^&]+");
-        }
-        
-        postInjection = ns.filterXPost &&
-          (!origin || originSite != "chrome:") &&
-          channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel, skipArr);
-        injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(
-          skipRx ? originalSpec.replace(skipRx, '') : originalSpec);
-        
-        if (ns.consoleDump) {
-          if (injectionAttempt) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
-          if (postInjection) this.dump(channel, "Detected POST injection attempt at level "  + injectionCheck);
-        }
+    if (injectionAttempt) {
+      let skipArr, skipRx;  
+      if (this.PAYPAL_BUTTON_RX.test(originalSpec)) {
+        // Paypal buttons encrypted parameter causes a DOS, strip it out
+        skipArr = ['encrypted'];
+      } else if (/^https?:\/\/www\.mendeley\.com\/import\/bookmarklet\/$/.test(originalSpec)) {
+        skipArr = ['html'];
+      } else if (/^https?:\/\/[\w\-\.]+\/talkpost_do(?:\.bml)?$/.test(originalSpec) &&
+          ns.getBaseDomain(ns.getDomain(originalSpec)) == ns.getBaseDomain(ns.getDomain(originSite)) &&
+          ns.getPref("filterXExceptions.livejournal")) {
+        if (ns.consoleDump) this.dump(channel, "Livejournal-like comments exception");
+        skipArr = ['body'];
       }
       
-      if (!(injectionAttempt || postInjection)) {
-        
-        if (skipArr) return;
-        
-        if (ns.consoleDump) this.dump(channel, "externalLoad flag is " + abeReq.external);
-
-        if (abeReq.external) { // external origin ?
-          if (ns.consoleDump) this.dump(channel, "External load from " + origin);
-          if (this.isHome(url)) {
-            if (ns.consoleDump) this.dump(channel, "Browser home page, SKIP");
-            return;
-          }
-          if (ns.getPref("xss.trustExternal", false)) {
-            if (ns.consoleDump) this.dump(channel, "noscript.xss.trustExternal is TRUE, SKIP");
-            return;
-          }
-          origin = "///EXTERNAL///";
-          originSite = "";
-        } else if(ns.getPref("xss.trustTemp", true) || !ns.isTemp(originSite)) { // temporary allowed origin?
-          if (ns.consoleDump) {
-            this.dump(channel, "Origin " + origin + " is trusted, SKIP");
-          }
-          return;
-        }
-        if (ns.consoleDump) 
-          this.dump(channel, (abeReq.external ? "External origin" : "Origin " + origin + " is TEMPORARILY allowed") + 
-            ", we don't really trust it");
+      if (skipArr) {
+        skipRx = new RegExp("(?:^|&)(?:" + skipArr.join('|') + ")=[^&]+");
+      }
+      
+      postInjection = ns.filterXPost &&
+        (!origin || originSite != "chrome:") &&
+        channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel, skipArr);
+      injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(
+        skipRx ? originalSpec.replace(skipRx, '') : originalSpec);
+      
+      if (ns.consoleDump) {
+        if (injectionAttempt) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
+        if (postInjection) this.dump(channel, "Detected POST injection attempt at level "  + injectionCheck);
       }
     }
+    
+    if (trustedOrigin && !(injectionAttempt || postInjection))
+      return;
     
     if (untrustedReload && browser) {
       this.resetUntrustedReloadInfo(browser, channel);
@@ -688,7 +658,7 @@ RequestWatchdog.prototype = {
 
     // transform upload requests into no-data GETs
     if (ns.filterXPost &&
-        (postInjection || !injectionAttempt) && // don't strip trusted to trusted uploads if they passed injection checks 
+        (postInjection || !trustedOrigin) && 
         (channel instanceof CI.nsIUploadChannel) && channel.uploadStream
       ) {
       channel.requestMethod = "GET";
@@ -700,6 +670,8 @@ RequestWatchdog.prototype = {
         silent: untrustedReload
       }));
     }
+    
+    if (!injectionAttempt) return;
     
     if (ns.filterXGet && ns.filterXGetRx) {
       var changes = null;

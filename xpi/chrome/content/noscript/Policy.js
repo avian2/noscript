@@ -466,7 +466,11 @@ const MainContentPolicy = {
         }
   
         if ((untrusted || forbid) && aContentLocation.scheme != "data") {
-          if (isScript && contentDocument && aContext.ownerDocument) ScriptSurrogate.apply(contentDocument, locationURL);
+          if (isScript && contentDocument)
+            ScriptSurrogate.apply(contentDocument, locationURL);
+          
+          this.syncUI(contentDocument);
+          
           return this.reject(isScript ? "Script" : "XSLT", arguments);
         } else {
           

@@ -1943,10 +1943,17 @@ return noscriptUtil.service ? {
         CI.nsISupportsWeakReference])
   ,
     observe: function(subject, topic, data) {
+      
+      if (topic == "noscript:sync-ui") {
+        noscriptOverlay.syncUI(subject);
+        return;
+      }
+      
       if (subject == this.ns.caps) {
          noscriptOverlay.syncUI();
          return;
       }
+      
       switch (data) {
         case "preset":
           if (data == "off") noscriptOverlay.statusIcon.setAttribute("hidden", "true");
@@ -1986,8 +1993,10 @@ return noscriptUtil.service ? {
     },
     _registered: false,
     register: function() {
-      this.ns.prefs.addObserver("", this, true);
-      this.ns.caps.addObserver("", this, true);
+      const ns = this.ns;
+      ns.os.addObserver(this, "noscript:sync-ui", true);
+      ns.prefs.addObserver("", this, true);
+      ns.caps.addObserver("", this, true);
       const initPrefs = [
         "statusIcon", "statusLabel", "preset",
         "keys.ui", "keys.toggle",
@@ -2001,8 +2010,10 @@ return noscriptUtil.service ? {
       this._registered = true;
     },
     remove: function() {
-      this.ns.prefs.removeObserver("", this);
-      this.ns.caps.removeObserver("", this);
+      const ns = this.ns;
+      ns.os.removeObserver(this, "noscript:sync-ui");
+      ns.prefs.removeObserver("", this);
+      ns.caps.removeObserver("", this);
     }
   },
   
@@ -2199,7 +2210,7 @@ return noscriptUtil.service ? {
           if (w == w.top) {
             ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
             if (w == content) {
-              noscriptOverlay._syncUINow();
+              noscriptOverlay.syncUI(w);
             } else {
               ns.getSites(ns.dom.findBrowserForNode(w)); // force placeholders
             }

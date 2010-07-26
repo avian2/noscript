@@ -395,7 +395,7 @@ var WAN = {
       Thread.delay(this._periodic, 1000, this, [this._enabled != b]);
       if (!this._observing) {
         this._observing = true;
-        const os = CC["@mozilla.org/observer-service;1"].getService(CI.nsIObserverService);
+        const os = OS;
         os.addObserver(this, "network:offline-status-changed", true);
         os.addObserver(this, "wake_notification", true);
       }
@@ -486,7 +486,7 @@ var WAN = {
           if (h != 'Host') ch.setRequestHeader(h, '', false); // clear header
         });
       }
-      ch.loadFlags = ch.LOAD_BYPASS_CACHE;
+      ch.loadFlags = ch.LOAD_BYPASS_CACHE | ch.LOAD_ANONYMOUS;;
     } else xhr = null;
     return xhr;
   },

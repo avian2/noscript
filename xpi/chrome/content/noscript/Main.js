@@ -1782,6 +1782,7 @@ var ns = singleton = {
 ,
   lookupMethod: DOM.lookupMethod,
   dom: DOM,
+  os: OS,
   siteUtils: SiteUtils,
   wan: WAN,
   mimeService: null,
@@ -2083,7 +2084,7 @@ var ns = singleton = {
         pe.push({embed: embed, pluginExtras: pluginExtras});
       }
       try {
-        this.syncUI(doc.defaultView.top);
+        this.syncUI(doc);
       } catch(noUIex) {
         if(this.consoleDump) this.dump(noUIex);
       }
@@ -2265,12 +2266,9 @@ var ns = singleton = {
     return true;
   },
   
-  syncUI: function(domNode) {
-    const browser = DOM.findBrowserForNode(domNode);
-    if (browser && (browser.docShell instanceof CI.nsIWebProgress) && !browser.docShell.isLoadingDocument) {
-      var overlay = this.findOverlay(browser);
-      if(overlay) overlay.syncUI(browser.contentWindow);
-    }
+  syncUI: function(document) {
+    if (this.getExpando(document, "contentLoaded"))
+      this.os.notifyObservers(document.defaultView.top, "noscript:sync-ui", null);
   },
   
   objectWhitelist: {},
@@ -2543,51 +2541,41 @@ var ns = singleton = {
     }
   },
   
-  _nselUnwantedTags: ["script", "meta", "object", "frame"],
-  _nselDocShellPerms: ["allowMetaRedirects", "allowPlugins", "allowSubframes"],
-  _assignCleanHTML: function(el, html) {
-   
-    var k, j, els;
-    
-    var docShell = this.dom.getDocShellForWindow(el.ownerDocument.defaultView);
-    var perms = {};
-    for each (k in this._nselDocShellPerms) {
-      perms[k] = docShell[k];
-      docShell[k] = false;
-    }
-      
-    try {
-      el.innerHTML = html;
-      
-      for each(k in this._nselUnwantedTags) {
-        var els = el.getElementsByTagName(k);
-        for(j = els.length; j-- > 0;) el.removeChild(els[j]);
-      }
-    } finally {
-      for each (k in this._nselDocShellPerms)
-        docShell[k] = perms[k];
-    }
-  },
+  
   showNextNoscriptElement: function(script) { 
     const HTMLElement = CI.nsIDOMHTMLElement;
-    var child, el, j, doc;
+    var child, el, j, doc, docShell;
     for (var node = script; node = node.nextSibling;) {
       try {
         if (node instanceof HTMLElement) {
           script.__nselForce = true;
-          if (node.tagName.toUpperCase() != "NOSCRIPT")
-            return;
           
-          doc = node.ownerDocument;
+          tag = node.tagName.toUpperCase();
+          if (tag == "SCRIPT") {
+            if (node.src && /^https?:/.test(node.src)) return;
+            script = node;
+            continue;
+          }
+          if (tag != "NOSCRIPT")
+            return;
+         
           child = node.firstChild;
           if (child.nodeType != 3) return;
           
+          if (!doc) {
+            doc = node.ownerDocument;
+            docShell = this.dom.getDocShellForWindow(doc.defaultView);
+            if (docShell.allowMetaRedirects) {
+              docShell.allowMetaRedirects = false;
+            } else {
+              docShell = null;
+            }
+          }
           this.setExpando(doc, "nselForce", true);
           el = doc.createElementNS(HTML_NS, "span");
           el.__nselForce = true;
-          
-          var html = child.nodeValue;
-          this._assignCleanHTML(el, html);
+
+          el.innerHTML = child.nodeValue;
           node.replaceChild(el, child);
           node.className = "noscript-show";
         }
@@ -2595,6 +2583,7 @@ var ns = singleton = {
         this.dump(e.message + " while showing NOSCRIPT element");
       }
     }
+    if (docShell) docShell.allowMetaRedirects = true;
   },
   
   metaRefreshWhitelist: {},
@@ -3384,7 +3373,7 @@ var ns = singleton = {
         this.dump(e);
       }
     }
-    this.syncUI(document.defaultView.top);
+    this.syncUI(document);
   },
   
   bind: function(f) {
@@ -3577,7 +3566,7 @@ var ns = singleton = {
                 if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
               }, 500); // warning, asap() or timeout=0 won't always work!
             
-            ns.syncUI(doc.defaultView);
+            ns.syncUI(doc);
             
           } finally {
             ctx = null;

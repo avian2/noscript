@@ -528,8 +528,7 @@ var abeOpts = {
     }, false);
     
     this.updateWAN(ns.wan.ip);
-    CC["@mozilla.org/observer-service;1"].getService(CI.nsIObserverService)
-      .addObserver(this, ns.wan.IP_CHANGE_TOPIC, true);
+    ns.os.addObserver(this, ns.wan.IP_CHANGE_TOPIC, true);
        
   },
   

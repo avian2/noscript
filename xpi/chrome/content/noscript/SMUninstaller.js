@@ -45,8 +45,7 @@ var SMUninstaller = {
     
     var self = this;
 
-    CC['@mozilla.org/observer-service;1'].getService(CI.nsIObserverService)
-        .notifyObservers(CC["@mozilla.org/chrome/chrome-registry;1"]
+    OS.notifyObservers(CC["@mozilla.org/chrome/chrome-registry;1"]
                        .getService(CI.nsIChromeRegistrySea),
                        "chrome-flush-caches", null);
 
