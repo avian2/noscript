@@ -230,7 +230,7 @@ pref("noscript.surrogate.imagehaven.replacement", "['agreeCont','TransparentBlac
 pref("noscript.surrogate.imagehaven.sources", "!@*.imagehaven.net");
 pref("noscript.surrogate.interstitialBox.replacement", "window.eval('const interstitialBox={}')");
 pref("noscript.surrogate.interstitialBox.sources", "@*.imagevenue.com");
-pref("noscript.surrogate.googleThumbs.replacement", "var ss=document.getElementsByTagName('script');var s,m,i; for each(var s in ss)if((m=s.firstChild&&s.firstChild.nodeValue.match(/(imgthumb\\d+).*?['\"](data:[^'\"]+)/))&&(i=document.getElementById(m[1])))i.src=eval('\"'+m[2]+'\"')");
+pref("noscript.surrogate.googleThumbs.replacement", "var ss=document.getElementsByTagName('script');var s,t,m,id,i;for(var j=ss.length;j-->0;)if(((s=ss[j])&&(t=s.firstChild&&s.firstChild.nodeValue)&&(id=t.match(/\w+thumb\d+/))&&(m=t.match(/['\"](data:[^'\"]+)/)))&&(i=document.getElementById(id)))i.src=m[1].replace(/\\(u[0-9a-f]{4}|x[0-9a-f]{2})/ig,function(a,b){return String.fromCharCode(parseInt(b.substring(1), 16))});");
 pref("noscript.surrogate.googleThumbs.sources", "!^https?://www\\.google\\.[a-z]+/search");
 pref("noscript.surrogate.amo.replacement", "addEventListener('click',function(e){if(e.button)return;var a=e.target.parentNode;var hash=a.getAttribute('data-hash');if(hash){var b=a.parentNode.parentNode;InstallTrigger.install({x:{URL:a.href,IconURL:b.getAttribute('data-icon'),Hash:hash,toString:function(){return a.href}}});e.preventDefault()}},false)");
 pref("noscript.surrogate.amo.sources", "!https://addons.mozilla.org/");

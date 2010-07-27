@@ -336,18 +336,13 @@ ClearClickHandler.prototype = {
   _NO_SCROLLBARS: {w: 0, h: 0},
   computeScrollbarSizes: function(window, dElem, body) {
     var fw = window.innerWidth, fh = window.innerHeight;
-    var dw = dElem.clientWidth, dh = dElem.clientHeight;
-
-    var w = Math.min(fw, dw), h = Math.min(fh, dh);
-    if (body) {
-      var bw = body.clientWidth;
-      var bh = body.clientHeight;
-      if (bw <= fw && (bw - dw > 24 || dw > fw)) w = bw; 
-     
-      if (bh <= fh && (bh - dh > 24 || dh > fh)) h = bh;
-
+    
+    if (body && body.ownerDocument.compatMode == "BackCompat") {
+      dElem = body;
     }
     
+    var dw = dElem.clientWidth, dh = dElem.clientHeight;
+    var w = Math.min(fw, dw), h = Math.min(fh, dh);
     return { w: fw - w, h: fh - h };
   },
   
@@ -788,11 +783,15 @@ ClearClickHandler.prototype = {
         }
         d = by + bh - (cbox.screenY + current.clientHeight);
         if (d > 0) {
+          if (cbox.height - current.clientHeight < 10) // compensate for miscalculated scrollbars bug
+            d += 20;
           dh -= d;
           bh -= d;
         }
         d = bx + bw - (cbox.screenX + current.clientWidth);
         if (d > 0) {
+          if (cbox.width - current.clientWidth < 10) // compensate for miscalculated scrollbars bug
+            d += 20;
           dw -= d;
           bw -= d;
         }
