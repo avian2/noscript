@@ -2545,8 +2545,9 @@ var ns = singleton = {
   showNextNoscriptElement: function(script) { 
     const HTMLElement = CI.nsIDOMHTMLElement;
     var child, el, j, doc, docShell;
-    for (var node = script; node = node.nextSibling;) {
-      try {
+    try {
+      for (var node = script; node = node.nextSibling;) {
+
         if (node instanceof HTMLElement) {
           script.__nselForce = true;
           
@@ -2560,7 +2561,7 @@ var ns = singleton = {
             return;
          
           child = node.firstChild;
-          if (child.nodeType != 3) return;
+          if (child.nodeType != 3) break;
           
           if (!doc) {
             doc = node.ownerDocument;
@@ -2579,11 +2580,12 @@ var ns = singleton = {
           node.replaceChild(el, child);
           node.className = "noscript-show";
         }
-      } catch(e) {
-        this.dump(e.message + " while showing NOSCRIPT element");
       }
+    } catch(e) {
+      this.dump(e.message + " while showing NOSCRIPT element");
+    } finally {
+      if (docShell) docShell.allowMetaRedirects = true;
     }
-    if (docShell) docShell.allowMetaRedirects = true;
   },
   
   metaRefreshWhitelist: {},
