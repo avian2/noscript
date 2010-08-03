@@ -2253,6 +2253,8 @@ return noscriptUtil.service ? {
     onMainContextMenu:  function(ev) { noscriptOverlay.prepareContextMenu(ev) },
     
     onLoad: function(ev) {
+      noscriptOverlay.ns.dom._winType = document.documentElement.getAttribute("windowtype");
+      
       window.removeEventListener("load", arguments.callee, false);
       window.addEventListener("unload", noscriptOverlay.listeners.onUnload, false);
     
@@ -2494,7 +2496,6 @@ return noscriptUtil.service ? {
   install: function() {
     // this.ns.dump("*** OVERLAY INSTALL ***\n");
     this.ns.setPref("badInstall", false);
-    this.ns.dom._winType = document.documentElement.getAttribute("windowtype");
     window.addEventListener("load", this.listeners.onLoad, false);
   },
 

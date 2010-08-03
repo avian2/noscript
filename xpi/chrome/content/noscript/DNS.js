@@ -358,7 +358,7 @@ var WAN = {
   ipMatcher: null,
   fingerprint: '',
   findMaxInterval: 86400000, // one day 
-  checkInterval: 300000, // 5 minutes
+  checkInterval: 1500000, // 15 minutes
   checkURL: "https://secure.informaction.com/ipecho/",
   lastFound: 0,
   lastCheck: 0,
@@ -366,7 +366,8 @@ var WAN = {
   noResource: false,
   logging: true,
   fingerprintLogging: false,
-  
+  fingerprintUA: "Mozilla/5.0 (ABE, http://noscript.net/abe/wan)",
+  fingerprintHeader: "X-ABE-Fingerprint",
   QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
   
   log: function(msg) {
@@ -437,11 +438,12 @@ var WAN = {
   
   _takeFingerprint: function(ip, callback) {
     if (!ip) {
-      self.log("Can't fingerprint a null IP");
+      this.log("Can't fingerprint a null IP");
       return;
     }
     var url = "http://[" + ip + "]";
     var xhr = this._createAnonXHR(url);
+    xhr.channel.setRequestHeader("User-Agent", this.fingerprintUA, false);
     var self = this;
     xhr.onreadystatechange = function() {
 
@@ -453,18 +455,18 @@ var WAN = {
 
         if (!ch.status) fingerprint =
           xhr.status + " " + xhr.statusText + "\n" +
-          self._collectHeaders("Response", ch)
-          .map(function(h) h + ":" + ch.getResponseHeader(h))
-          .concat(['', xhr.responseText])
-          .join("\n")
-          .replace(/\d/g, '').replace(/\b[a-f]+\b/gi, ''); // remove decimal and hex noise
+          (xhr.getAllResponseHeaders() + "\n" + xhr.responseText)
+            .replace(/\d/g, '').replace(/\b[a-f]+\b/gi, ''); // remove decimal and hex noise
         } catch(e) {
           self.log(e);
         }   
 
         if (self.fingerprintLogging)
           self.log("Fingerprint for " + url + " = " + fingerprint);
-
+        
+        if (fingerprint && /^\s*Off\s*/i.test(xhr.getResponseHeader(self.fingerprintHeader)))
+          fingerprint = '';
+        
         if (callback) callback(fingerprint, ip);
         self.fingerprint = fingerprint;
       }
@@ -482,7 +484,7 @@ var WAN = {
     if (!proxyInfo || proxyInfo.type == "direct" || DNS.isLocalHost(proxyInfo.host)) {
       if ((ch instanceof CI.nsIHttpChannel)) {
         // cleanup headers
-        this._collectHeaders('Request', ch).forEach(function(h) {
+        this._requestHeaders(ch).forEach(function(h) {
           if (h != 'Host') ch.setRequestHeader(h, '', false); // clear header
         });
       }
@@ -555,10 +557,10 @@ var WAN = {
   },
   
   
-  _collectHeaders: function(type, ch) {
+  _requestHeaders: function(ch) {
     var hh = [];
     if (ch instanceof CI.nsIHttpChannel)
-      ch["visit" + type + "Headers"]({
+      ch.visitRequestHeaders({
         visitHeader: function(name, value) { hh.push(name); }
       });
     return hh;
