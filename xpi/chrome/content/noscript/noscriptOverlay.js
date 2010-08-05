@@ -2212,7 +2212,8 @@ return noscriptUtil.service ? {
             if (w == content) {
               noscriptOverlay.syncUI(w);
             } else {
-              ns.getSites(ns.dom.findBrowserForNode(w)); // force placeholders
+              let browser = ns.dom.findBrowserForNode(w);
+              if (browser) ns.getSites(); // force placeholders
             }
           } else {
             ns.frameContentLoaded(w);

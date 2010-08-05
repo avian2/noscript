@@ -282,8 +282,10 @@ const ABE = {
         
         if (req.channel.status != 0) return;
         
-        if ((req.channel instanceof CI.nsITransportEventSink) && req.isDoc && !req.subdoc ) try {
+        if ((req.channel instanceof CI.nsITransportEventSink)
+            && req.isDoc && !(req.subdoc || req.dnsNotified)) try {
           ABE.log("DNS notification for " + req.destination);
+          req.dnsNotified = true; // unexplicable recursions have been reported... 
           req.channel.onTransportStatus(null, 0x804b0003, 0, 0); // notify STATUS_RESOLVING
         } catch(e) {}
         
@@ -926,6 +928,7 @@ ABERequest.prototype = Lang.memoize({
   checkFlags: 0,
   deferredDNS: true,
   replaced: false,
+  dnsNotified: false,
   
   _init: function(channel) {
     this.serial = ABERequest.serial++;

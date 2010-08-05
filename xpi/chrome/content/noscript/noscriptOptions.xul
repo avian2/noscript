@@ -31,9 +31,9 @@
     <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />
   </stringbundleset>
   
-  <script type="application/x-javascript" src="noscript.js" />
-  <script type="application/x-javascript" src="iaUI.js" />
-  <script type="application/x-javascript" src="noscriptOptions.js" />
+  <script type="application/x-javascript;version=1.8" src="noscript.js" />
+  <script type="application/x-javascript;version=1.8" src="iaUI.js" />
+  <script type="application/x-javascript;version=1.8" src="noscriptOptions.js" />
   
   <vbox style="width: &noscriptOptionsWidth;">
   <tabbox id="nsopt-tabsMain">

@@ -379,8 +379,9 @@ var ns = singleton = {
       case "ABE.wanIpCheckURL":
         WAN.checkURL = this.getPref(name);
       break;
-      
-      
+      case "ABE.localExtras":
+        DNS.localExtras = AddressMatcher.create(this.getPref("name"));
+      break;
       case "ABE.enabled":
       case "ABE.siteEnabled":
       case "ABE.allowRulesetRedir":
@@ -2512,16 +2513,16 @@ var ns = singleton = {
   }
 ,
   processScriptElements: function(document, sites, docSite) {
-    var scripts = document.getElementsByTagName("script");
+    const scripts = document.getElementsByTagName("script");
     var scount = scripts.length;
+    var surrogates = this.getExpando(document, "surrogates", {});
     if (scount) {
       const HTMLElement = CI.nsIDOMHTMLElement;
       sites.scriptCount += scount;
-      var script, scriptSrc;
-      var nselForce = this.nselForce && this.isJSEnabled(docSite);
-      var isHTMLScript;
+      let nselForce = this.nselForce && this.isJSEnabled(docSite);
+      let isHTMLScript;
       while (scount-- > 0) {
-        script = scripts.item(scount);
+        let script = scripts.item(scount);
         isHTMLScript = script instanceof HTMLElement;
         if (isHTMLScript) {
           scriptSrc = script.src;
@@ -2530,30 +2531,36 @@ var ns = singleton = {
           if (!/^[a-z]+:\/\//i.test(scriptSrc)) continue;
         } else continue;
         
-        scriptSrc = this.getSite(scriptSrc);
-        if (scriptSrc) {
-          sites.push(scriptSrc);
-          if (nselForce && isHTMLScript && !(script.__nselForce  || this.isJSEnabled(scriptSrc))) {
+        let scriptSite = this.getSite(scriptSrc);
+        if (scriptSite) {
+          sites.push(scriptSite);
+          if (scriptSrc in surrogates) break;
+          if (nselForce && isHTMLScript &&
+              !(script.__nselForce ||
+                this.isJSEnabled(scriptSite) ||
+                this.isUntrusted(scriptSite))) {
+            
             this.showNextNoscriptElement(script);
           }
         }
       }
     }
-  },
+  }
+,
   
   
   showNextNoscriptElement: function(script) { 
     const HTMLElement = CI.nsIDOMHTMLElement;
     var child, el, j, doc, docShell;
     try {
-      for (var node = script; node = node.nextSibling;) {
+      for (var node = script; (node = node.nextSibling);) {
 
         if (node instanceof HTMLElement) {
           script.__nselForce = true;
           
           tag = node.tagName.toUpperCase();
           if (tag == "SCRIPT") {
-            if (node.src && /^https?:/.test(node.src)) return;
+            if (node.src) return;
             script = node;
             continue;
           }
@@ -3852,20 +3859,23 @@ var ns = singleton = {
   
 
   // nsIChannelEventSink implementation
-
-  onChannelRedirect: function(oldChannel, newChannel, flags) {
+  asyncOnChannelRedirect: function(oldChan, newChan, flags, redirectCallback) {
+    this.onChannelRedirect(oldChan, newChan, flags);
+    redirectCallback.onRedirectVerifyCallback(0);
+  },
+  onChannelRedirect: function(oldChan, newChan, flags) {
     const rw = this.requestWatchdog;
-    const uri = newChannel.URI;
+    const uri = newChan.URI;
     
     if (HTTPS.forceURI(uri.clone())) {
-      HTTPS.replaceChannel(newChannel);
+      HTTPS.replaceChannel(newChan);
     }
     
-    IOUtil.attachToChannel(newChannel, "noscript.redirectFrom", oldChannel.URI);
+    IOUtil.attachToChannel(newChan, "noscript.redirectFrom", oldChan.URI);
     
-    ABE.updateRedirectChain(oldChannel, newChannel);
+    ABE.updateRedirectChain(oldChan, newChan);
     
-    const ph = PolicyState.detach(oldChannel);
+    const ph = PolicyState.detach(oldChan);
     try {
       if (ph) {
         // 0: aContentType, 1: aContentLocation, 2: aRequestOrigin, 3: aContext, 4: aMimeTypeGuess, 5: aInternalCall
@@ -3875,11 +3885,11 @@ var ns = singleton = {
         var ctx = ph.context;
         var type = ph.contentType;
            
-        if (type != 11 && !this.isJSEnabled(oldChannel.URI.spec)) 
-          ph.requestOrigin = oldChannel.URI;
+        if (type != 11 && !this.isJSEnabled(oldChan.URI.spec)) 
+          ph.requestOrigin = oldChan.URI;
         
         try {
-          ph.mimeType = newChannel.contentType || oldChannel.contentType || ph.mimeType;
+          ph.mimeType = newChan.contentType || oldChan.contentType || ph.mimeType;
         } catch(e) {}
         
         var browser, win;
@@ -3888,7 +3898,7 @@ var ns = singleton = {
         if(type == 2 || type == 9) { // script redirection? cache site for menu
           try {
             var site = this.getSite(uri.spec);
-            win = IOUtil.findWindow(newChannel) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
+            win = IOUtil.findWindow(newChan) || ctx && ((ctx instanceof CI.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
             browser = win && DOM.findBrowserForNode(win);
             if (browser) {
               this.getRedirCache(browser, win.top.document.documentURI)
@@ -3913,7 +3923,7 @@ var ns = singleton = {
         
         if (this.shouldLoad.apply(this, ph.toArray()) != CP_OK) {
           if (this.consoleDump) {
-            this.dump("Blocked " + oldChannel.URI.spec + " -> " + uri.spec + " redirection of type " + type);
+            this.dump("Blocked " + oldChan.URI.spec + " -> " + uri.spec + " redirection of type " + type);
           }
           throw "NoScript aborted redirection to " + uri.spec;
         }
@@ -3926,15 +3936,15 @@ var ns = singleton = {
     
     // Document transitions
   
-    if ((oldChannel.loadFlags & rw.DOCUMENT_LOAD_FLAGS) || (newChannel.loadFlags & rw.DOCUMENT_LOAD_FLAGS) && oldChannel.URI.prePath != uri.prePath) {
-      if (newChannel instanceof CI.nsIHttpChannel)
-        HTTPS.onCrossSiteRequest(newChannel, oldChannel.URI.spec,
-                               browser || DOM.findBrowserForNode(IOUtil.findWindow(oldChannel)), rw);
+    if ((oldChan.loadFlags & rw.DOCUMENT_LOAD_FLAGS) || (newChan.loadFlags & rw.DOCUMENT_LOAD_FLAGS) && oldChan.URI.prePath != uri.prePath) {
+      if (newChan instanceof CI.nsIHttpChannel)
+        HTTPS.onCrossSiteRequest(newChan, oldChan.URI.spec,
+                               browser || DOM.findBrowserForNode(IOUtil.findWindow(oldChan)), rw);
       
       // docshell JS state management
-      win = win || IOUtil.findWindow(oldChannel);
-      this._handleDocJS2(win, oldChannel);
-      this._handleDocJS1(win, newChannel);
+      win = win || IOUtil.findWindow(oldChan);
+      this._handleDocJS2(win, oldChan);
+      this._handleDocJS1(win, newChan);
     }
     
   },
@@ -5083,6 +5093,9 @@ var ns = singleton = {
   
   
 }
+
+
+
 
 ns.wrappedJSObject = ns;
 ns.register();

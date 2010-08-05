@@ -443,26 +443,45 @@ ChannelReplacement.prototype = {
 
     const CES = CI.nsIChannelEventSink;
     const flags = CES.REDIRECT_INTERNAL;
-    CC["@mozilla.org/netwerk/global-channel-event-sink;1"].getService(CES)
-      .onChannelRedirect(oldChan, newChan, flags);
-    var ces;
-    for (var cess = CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
+    this._callSink(
+    CC["@mozilla.org/netwerk/global-channel-event-sink;1"].getService(CES),
+      oldChan, newChan, flags);
+    var sink;
+    
+    for (let cess = CC['@mozilla.org/categorymanager;1']
+              .getService(CI.nsICategoryManager)
               .enumerateCategory("net-channel-event-sinks");
-        cess.hasMoreElements();) {
-      ces = cess.getNext();
-      if (ces instanceof CES)
-        ces.onChannelRedirect(oldChan, newChan, flags);
+          cess.hasMoreElements();
+        ) {
+      sink = cess.getNext();
+      if (sink instanceof CES)
+        this._callSink(sink, oldChan, newChan, flags);
     }
-    ces = IOUtil.queryNotificationCallbacks(oldChan, CES);
-    if (ces) ces.onChannelRedirect(oldChan, newChan, flags);
+    sink = IOUtil.queryNotificationCallbacks(oldChan, CES);
+    if (sink) this._callSink(sink, oldChan, newChan, flags);
     
     // ----------------------------------
     
     newChan.originalURI = oldChan.originalURI;
     
-    ces =  IOUtil.queryNotificationCallbacks(oldChan, CI.nsIHttpEventSink);
-    if (ces) ces.onRedirect(oldChan, newChan);
-    
+    sink = IOUtil.queryNotificationCallbacks(oldChan, CI.nsIHttpEventSink);
+    if (sink) sink.onRedirect(oldChan, newChan);
+  },
+  
+  _callSink: function(sink, oldChan, newChan, flags) {
+    return ("onChannelRedirect" in sink)
+      ? sink.onChannelRedirect(oldChan, newChan, flags)
+      : sink.asyncOnChannelRedirect(oldChan, newChan, flags, this._redirectCallback)
+      ;
+  },
+  
+  get _redirectCallback() {
+    return this._redirectCallback = ("nsIAsyncVerifyRedirectCallback" in CI)
+    ? {
+        QueryInterface: xpcom_generateQI(CI.nsISupports, CI.nsIAsyncVerifyRedirectCallback),
+        onRedirectVerifyCallback: function(result) {}
+      }
+    : null;
   },
   
   replace: function(isRedir) {

@@ -138,11 +138,12 @@ var ScriptSurrogate = {
   
 
   apply: function(document, scriptURL, pageURL, noScript) {
-    if (!this.enabled) return;
+    if (!this.enabled) return false;
+    
     if (typeof(noScript) != "boolean") noScript = !!noScript;
     
     var scripts = this.getScripts(scriptURL, pageURL, noScript);
-    if (!scripts) return;
+    if (!scripts) return false;
     
     var runner = noScript ? this.fallback : this.execute;
     var isPageScript = scriptURL == pageURL;
@@ -158,7 +159,7 @@ var ScriptSurrogate = {
           "}catch(e){}})();",
         isPageScript);
     }
-    if (this._mustResetStyles && isPageScript) this._resetStyles();
+    return true;
   },
   
   

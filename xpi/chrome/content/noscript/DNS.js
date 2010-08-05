@@ -31,6 +31,8 @@ DNSRecord.prototype = {
   canonicalName: '',
   expireTime: 0,
   refreshing: false,
+  localExtras: null, // AddressMatcher object which can be added to the LOCAL resolution
+  
   
   isLocal: function(all) {
     return all
@@ -327,8 +329,10 @@ var DNS = {
   isLocalIP: function(addr) {
     // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose but incomplete (missing IPV6 ULA) implementation
     // Relevant RFCs linked at http://en.wikipedia.org/wiki/Private_network
-    return /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i.test(addr)
-      || WAN.ipMatcher && WAN.ipMatcher.testIP(addr);
+    return /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i
+            .test(addr) ||
+            this.localExtras && this.localExtras.testIP(addr) ||
+            WAN.ipMatcher && WAN.ipMatcher.testIP(addr);
   },
   
   isIP: function(host) {
@@ -441,7 +445,7 @@ var WAN = {
       this.log("Can't fingerprint a null IP");
       return;
     }
-    var url = "http://[" + ip + "]";
+    var url = "http://" + (ip.indexOf(':') > -1 ? "[" + ip + "]" : ip);
     var xhr = this._createAnonXHR(url);
     xhr.channel.setRequestHeader("User-Agent", this.fingerprintUA, false);
     var self = this;
@@ -481,7 +485,7 @@ var WAN = {
     xhr.open("GET", url, true);
     const ch = xhr.channel;
     const proxyInfo = noproxy && IOUtil.getProxyInfo(ch);
-    if (!proxyInfo || proxyInfo.type == "direct" || DNS.isLocalHost(proxyInfo.host)) {
+    if (!proxyInfo || proxyInfo.type == "direct" || proxyInfo.host && DNS.isLocalHost(proxyInfo.host)) {
       if ((ch instanceof CI.nsIHttpChannel)) {
         // cleanup headers
         this._requestHeaders(ch).forEach(function(h) {
