@@ -470,8 +470,6 @@ const MainContentPolicy = {
             if (ScriptSurrogate.apply(contentDocument, locationURL)) {
               let surrogates = this.getExpando(contentDocument, "surrogates", {});
               surrogates[locationURL] = true;
-              ns.dump("Policy for " + locationURL + " + " + surrogates.toSource() + " - document " + contentDocument.URL);
-              // this.getExpando(contentDocument, "surrogates", {})[locationURL] = true;
             }
           }
           

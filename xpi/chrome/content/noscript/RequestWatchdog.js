@@ -1534,8 +1534,8 @@ var InjectionChecker = {
   },
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
-   fuzzify("script|form|style|link|object|embed|applet|param|iframe|frame|base|body|meta|ima?g|svg|video|audio|marquee") + 
-    ")|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\b" + IC_EVENT_PATTERN +
+   fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|iframe|frame|base|body|meta|ima?g|video|audio") + 
+    ")[^>])|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\b" + IC_EVENT_PATTERN +
      "[\\s\\x08]*=|<\\W*(?:a|map)\\b[\\s\\S]+\\bstyle\\W*=", 
     "i"),
   checkHTML: function(s) {
@@ -1544,7 +1544,8 @@ var InjectionChecker = {
   },
   
   NoscriptChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" +
-    fuzzify("form|style|link|object|embed|applet|iframe|frame|meta|svg|video|audio") + ")"
+    fuzzify("style|form|svg|(?:link|object|embed|applet|param|iframe|frame|meta|video|audio|base") +
+      ")[^>])"
     ),
   checkNoscript: function(s) {
     this.log(s);

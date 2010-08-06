@@ -2213,7 +2213,7 @@ return noscriptUtil.service ? {
               noscriptOverlay.syncUI(w);
             } else {
               let browser = ns.dom.findBrowserForNode(w);
-              if (browser) ns.getSites(); // force placeholders
+              if (browser) ns.getSites(browser); // force placeholders
             }
           } else {
             ns.frameContentLoaded(w);

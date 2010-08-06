@@ -142,23 +142,26 @@ var ScriptSurrogate = {
     
     if (typeof(noScript) != "boolean") noScript = !!noScript;
     
-    var scripts = this.getScripts(scriptURL, pageURL, noScript);
+    const scripts = this.getScripts(scriptURL, pageURL, noScript);
     if (!scripts) return false;
     
-    var runner = noScript ? this.fallback : this.execute;
-    var isPageScript = scriptURL == pageURL;
+    const runner = noScript ? this.fallback : this.execute;
+    const isPageScript = scriptURL == pageURL;
+    const delayed = isPageScript && pageURL != document.documentURI;  
+    
     if (this.debug) {
       // we run each script separately and don't swallow exceptions
      scripts.forEach(function(s) {
-      runner.call(this, document, s, isPageScript);
+      runner.call(this, document, s, isPageScript, delayed);
      }, this);
     } else {
       runner.call(this, document,
         "(function(){try{" +
           scripts.join("}catch(e){}})();(function(){try{") +
           "}catch(e){}})();",
-        isPageScript);
+        isPageScript, delayed);
     }
+    return true;
     return true;
   },
   
@@ -181,8 +184,8 @@ var ScriptSurrogate = {
     }
   },
   
-  execute: function(document, scriptBlock, isPageScript) {
-    if (this._mustUseDOM && document.documentElement) {
+  execute: function(document, scriptBlock, isPageScript, delayed) {
+    if (!delayed && this._mustUseDOM && document.documentElement) {
       var s = document.createElementNS(HTML_NS, "script");
       s.appendChild(document.createTextNode(scriptBlock));
       var parent = document.documentElement;

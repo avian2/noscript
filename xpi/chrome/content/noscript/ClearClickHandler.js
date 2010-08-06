@@ -449,8 +449,8 @@ ClearClickHandler.prototype = {
           dElem.appendChild(curtain);
         }
         
-        var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), sd.w ? 0 : this.minWidth);
-        var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), sd.h ? 0 : this.minHeight);
+        var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), sd.w ? 0 : Math.min(this.minWidth, dElem.offsetWidth));
+        var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), sd.h ? 0 : Math.min(this.minHeight, dElem.offsetHeight));
   
         box = this.getBox(o, d, w);
         

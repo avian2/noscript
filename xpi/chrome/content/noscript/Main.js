@@ -380,7 +380,7 @@ var ns = singleton = {
         WAN.checkURL = this.getPref(name);
       break;
       case "ABE.localExtras":
-        DNS.localExtras = AddressMatcher.create(this.getPref("name"));
+        DNS.localExtras = AddressMatcher.create(this.getPref(name));
       break;
       case "ABE.enabled":
       case "ABE.siteEnabled":
@@ -733,7 +733,7 @@ var ns = singleton = {
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
       "ABE.enabled", "ABE.legacySupport", "ABE.siteEnabled", "ABE.allowRulesetRedir", "ABE.disabledRulesetNames", "ABE.skipBrowserRequests",
-      "ABE.wanIpCheckURL", "ABE.wanIpAsLocal",
+      "ABE.wanIpCheckURL", "ABE.wanIpAsLocal", "ABE.localExtras",
       "STS.enabled"
       ]) {
       try {
@@ -4544,16 +4544,16 @@ var ns = singleton = {
       );
   },
   
-  onWindowSwitch: function(url, win, docShell) { 
-    var jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
+  onWindowSwitch: function(url, win, docShell) {
     
-    var doc = docShell.document;
+    const doc = docShell.document;
+    const jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
 
     ScriptSurrogate.apply(doc, url, url, jsBlocked);
     
     if (jsBlocked) {
       if (this.getPref("fixLinks")) {
-        var newWin = doc.defaultView;
+        const newWin = doc.defaultView;
         newWin.addEventListener("click", this.bind(this.onContentClick), true);
         newWin.addEventListener("change", this.bind(this.onContentChange), true);
       }

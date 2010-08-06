@@ -247,8 +247,8 @@
             dElem.appendChild(curtain);
           }
           
-          var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), this.minWidth) / zoom ;
-          var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), this.minHeight) / zoom;
+          var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth * zoom), Math.min(this.minWidth, dElem.offsetWidth)) / zoom ;
+          var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight * zoom), Math.min(this.minHeight, dElem.offsetHeight)) / zoom;
     
           box = this.getBox(o, d, w);
           
