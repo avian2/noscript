@@ -369,7 +369,7 @@ RequestWatchdog.prototype = {
       }
     } else {
       if (channel.loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI &&
-          channel.originalURI.spec == channel.URI.spec &&
+          channel.originalURI.spec == url.spec &&
           !IOUtil.extractFromChannel(channel, "noscript.XSS", true)
           ) {
         // clean up after user action
@@ -388,7 +388,7 @@ RequestWatchdog.prototype = {
     const su = SiteUtils;
     originSite = originSite || su.getSite(origin) || '';
     
-    var host = channel.URI.host;
+    var host = url.host;
     if (host[host.length - 1] == "." && ns.getPref("canonicalFQDN", true) &&
         (Thread.canSpin || ABE.legacySupport)) {
       try {
@@ -595,6 +595,7 @@ RequestWatchdog.prototype = {
         return;
       }
       
+      
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel, window), channel);
       
       // here we exceptionally consider same site also http<->https (target would be blocked by
@@ -627,6 +628,8 @@ RequestWatchdog.prototype = {
           ns.getPref("filterXExceptions.livejournal")) {
         if (ns.consoleDump) this.dump(channel, "Livejournal-like comments exception");
         skipArr = ['body'];
+      } else if (url.ref && /^https?:\/\/api\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
+        skipRx = /#[^#]+$/; // remove receiver's hash
       }
       
       if (skipArr) {
@@ -1653,6 +1656,10 @@ var InjectionChecker = {
     this.base64 = false;
     this.base64tested = [];
     
+    if (ASPIdiocy.affects(s) && this.checkRecursive(ASPIdiocy.filter(s), depth, isPost)) {
+      return true;
+    }
+
     if (this.isPost) {
       s = this.formUnescape(s);
       if (this.checkBase64Frag(Base64.purify(s))) return true;
@@ -1666,12 +1673,6 @@ var InjectionChecker = {
     } else {
       if (this.checkBase64(s.replace(/^\/{1,3}/, ''))) return true;
     }
-    
-    if (this.isPost
-        ? this.checkBase64Frag(Base64.purify(s))
-        : this.checkBase64(s.replace(/^\/{1,3}/, ''))
-      )
-      return true;
     
     if (this.isPost) s = "#" + s; // allows the string to be JS-checked as a whole
     return this._checkRecursive(s, depth);
@@ -1764,12 +1765,16 @@ var InjectionChecker = {
     } catch(warn) {
       if (url != od) url += " (" + od + ")";  
       this.log("Problem decoding " + url + ", maybe not an UTF-8 encoding? " + warn.message);
-      return unescape(od);
+      return unescape(brutal ? ASPIdiocy.filter(od) : od);
     }
   },
   
   formUnescape: function(s, brutal) {
     return this.urlUnescape(s.replace(/\+/g, ' '), brutal);
+  },
+  
+  aspUnescape: function(s) {
+    return unescape(ASPIdiocy.filter(s).replace(/\+/g, ' '));
   },
   
   ebayUnescape: function(url) {
@@ -2071,7 +2076,7 @@ XSanitizer.prototype = {
             } catch(e) {}
           }
           if (pz == null) {
-            pz = unescape(encodedPz);
+            pz = unescape(ASPIdiocy.filter(encodedPz));
             encodeURL = escape;
           }
           origPz = pz;
@@ -2316,5 +2321,22 @@ var MaxRunTime = {
       this.branch.setIntPref(this.pref, this.storedValue);
       delete this.storedValue;
     }
+  }
+}
+
+
+var ASPIdiocy = {
+  _replaceRx: /%u([0-9a-fA-F]{4})/g,
+  _affectsRx: /%u[0-9a-fA-F]{4}/,
+  affects: function(s) {
+    return this._affectsRx.test(s);
+  },
+  filter: function(s) {
+    return s.replace(this._replaceRx, this._replace);
+  },
+  _replace: function(match, hex) {
+     // lazy init
+     INCLUDE("ASPIdiocy");
+     return ASPIdiocy._replace(match, hex);
   }
 }

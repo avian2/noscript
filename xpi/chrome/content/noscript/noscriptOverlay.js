@@ -1186,17 +1186,19 @@ return noscriptUtil.service ? {
 ,
   _syncTimeout: 0,
   syncUI: function(w) {
+     if (this._syncTimeout) {
+      return;
+    }
+    
     if (w) {
       if (w != content) return;
     } else {
       w = content;
     }
+
     
-    if (this._syncTimeout) {
-      window.clearTimeout(this._syncTimeout);
-    }
     this._syncTimeout = window.setTimeout(function() {
-      if (w != content) return;
+      noscriptOverlay._syncTimeout = 0;
       noscriptOverlay._syncUINow();
     }, 400);
   },
@@ -1737,8 +1739,10 @@ return noscriptUtil.service ? {
   
   _syncUINow: function() {
     
-    if (this._syncTimeout)
+    if (this._syncTimeout) {
       window.clearTimeout(this._syncTimeout);
+      this._syncTimeout = 0;
+    }
     
     const ns = this.ns;
     const global = ns.jsEnabled;

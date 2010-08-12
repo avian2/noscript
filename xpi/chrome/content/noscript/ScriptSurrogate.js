@@ -147,21 +147,20 @@ var ScriptSurrogate = {
     
     const runner = noScript ? this.fallback : this.execute;
     const isPageScript = scriptURL == pageURL;
-    const delayed = isPageScript && pageURL != document.documentURI;  
     
     if (this.debug) {
       // we run each script separately and don't swallow exceptions
      scripts.forEach(function(s) {
-      runner.call(this, document, s, isPageScript, delayed);
+      runner.call(this, document, s, isPageScript);
      }, this);
     } else {
       runner.call(this, document,
         "(function(){try{" +
           scripts.join("}catch(e){}})();(function(){try{") +
           "}catch(e){}})();",
-        isPageScript, delayed);
+        isPageScript);
     }
-    return true;
+
     return true;
   },
   
@@ -184,11 +183,11 @@ var ScriptSurrogate = {
     }
   },
   
-  execute: function(document, scriptBlock, isPageScript, delayed) {
-    if (!delayed && this._mustUseDOM && document.documentElement) {
-      var s = document.createElementNS(HTML_NS, "script");
+  execute: function(document, scriptBlock, isPageScript) {
+    if (this._mustUseDOM && document.documentElement) {
+      let s = document.createElementNS(HTML_NS, "script");
       s.appendChild(document.createTextNode(scriptBlock));
-      var parent = document.documentElement;
+      let parent = document.documentElement;
       parent.insertBefore(s, parent.firstChild);
       parent.removeChild(s);
       if (this._mustResetStyles && isPageScript) this._resetStyles();

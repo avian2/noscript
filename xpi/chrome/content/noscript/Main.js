@@ -35,7 +35,7 @@ const WHERE_TRUSTED = 2;
 const ANYWHERE = 3;
 
 const DUMMYOBJ = {};
-
+const DUMMYFUNC = function() {}
 const EARLY_VERSION_CHECK = !("nsISessionStore" in CI && typeof(/ /) === "object");
 
 INCLUDE('Sites', 'AddressMatcher', 'DOM', 'IOUtil', 'Policy', 'RequestWatchdog', 'HTTPS', 'ClearClickHandler', 'URIValidator', 'ScriptSurrogate', 'ABE');
@@ -53,11 +53,18 @@ var ns = singleton = {
 
   // nsIObserver implementation 
   observe: function(subject, topic, data) {
-
+    
+    // check this first, since it's the most likely call
+    if ("content-document-global-created" === topic) {
+      this.onJSGlobalCreated(subject, data);
+      return;
+    }
+    
     if (subject instanceof CI.nsIPrefBranch2) {
       this.syncPrefs(subject, data);
     } else {
       switch (topic) {
+
         case "xpcom-shutdown":
           this.unregister();
           break;
@@ -106,6 +113,7 @@ var ns = singleton = {
           this.recentlyBlocked = [];
           STS.eraseDB();
         break;
+        
       }
     }
   },
@@ -147,7 +155,8 @@ var ns = singleton = {
   },
   
   OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "sessionstore-windows-restored",
-                    "toplevel-window-ready", "browser:purge-session-history", "private-browsing"],
+                    "toplevel-window-ready", "browser:purge-session-history", "private-browsing",
+                    "content-document-global-created"],
   register: function() {
     this.OBSERVED_TOPICS.forEach(function(topic) {
       OS.addObserver(this, topic, true);
@@ -2268,8 +2277,7 @@ var ns = singleton = {
   },
   
   syncUI: function(document) {
-    if (this.getExpando(document, "contentLoaded"))
-      this.os.notifyObservers(document.defaultView.top, "noscript:sync-ui", null);
+    this.os.notifyObservers(document.defaultView.top, "noscript:sync-ui", null);
   },
   
   objectWhitelist: {},
@@ -2534,7 +2542,9 @@ var ns = singleton = {
         let scriptSite = this.getSite(scriptSrc);
         if (scriptSite) {
           sites.push(scriptSite);
-          if (scriptSrc in surrogates) break;
+          
+          if (scriptSrc in surrogates) continue;
+          
           if (nselForce && isHTMLScript &&
               !(script.__nselForce ||
                 this.isJSEnabled(scriptSite) ||
@@ -3344,14 +3354,15 @@ var ns = singleton = {
   get _objectPatch() {
     delete this._objectPatch;
     return this._objectPatch = "(" + function() {
-      var els = document.getElementsByClassName("__noscriptObjectPatchMe__");
+      const els = document.getElementsByClassName("__noscriptObjectPatchMe__");
+      const DUMMYFUNC = function() {};
       var el;
       for (var j = els.length; j-- > 0;) {
         el = els[j];
         el.setAttribute("class",
           el.getAttribute("class").replace(/\b__noscriptObjectPatchMe__\b/, '').replace(/\s+/, ' ')
         );
-        el.__noSuchMethod__ = function() {};
+        el.__noSuchMethod__ = DUMMYFUNC;
       }
     }.toSource() + ")()";
   },
@@ -3360,7 +3371,7 @@ var ns = singleton = {
     delete this.patchObjects;
     return (this.patchObjects = ("getElementsByClassName" in document)
       ? function(document) { ScriptSurrogate.execute(document, this._objectPatch); }
-      : function () {}).call(this, document);
+      : DUMMYFUNC).call(this, document);
   },
   
   createPlaceholders: function(replacements, pluginExtras, document) {
@@ -3636,7 +3647,7 @@ var ns = singleton = {
         this._pendingType = v;
         
        
-        this.SetVariable = function() {};
+        this.SetVariable = function() {}; // can't use DUMMYFUNC, we're in content context
         this.GetVariable = function(n) {
           if (n !== "$version") return undefined;
           
@@ -4080,8 +4091,8 @@ var ns = singleton = {
       } catch (e) {}
     }
   },
-  onSecurityChange: function() {}, 
-  onProgressChange: function() {},
+  onSecurityChange: DUMMYFUNC, 
+  onProgressChange: DUMMYFUNC,
   onRefreshAttempted: function(wp, uri, delay, sameURI) {
     if (delay == 0 && !sameURI)
       return true; // poor man's redirection
@@ -4369,7 +4380,7 @@ var ns = singleton = {
     }
     
     
-    if (docShell)
+    if (docShell && this.onWindowSwitch)
       this.onWindowSwitch(uri.spec, domWindow, docShell);
 
     if (!/^attachment\b/i.test(contentDisposition) &&
@@ -4574,6 +4585,21 @@ var ns = singleton = {
       }
     } catch(e) {}
     
+  },
+  
+  onJSGlobalCreated: function(win, url) {
+    // replace legacy code paths
+    this.executeEarlyScripts = this.onWindowSwitch;
+    this.onWindowSwitch = null;
+    
+    this.onJSGlobalCreated = function(win, url) {
+      if (url) { // WARNING: url contains only the authority part of the current URI
+        let pageURL = win.location.href; // we need to get the full URI elsewhere
+        if (pageURL == win.document.documentURI) // can be false on frame transitions...
+          this.executeEarlyScripts(pageURL, win, this.dom.getDocShellForWindow(win));
+      }
+    }
+    this.onJSGlobalCreated(win, url);
   },
   
   get unescapeHTML() {
