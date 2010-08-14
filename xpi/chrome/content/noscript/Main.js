@@ -4630,7 +4630,9 @@ var ns = singleton = {
   },
   get _toStaticHTMLDef() {
     delete this._toStaticHTMLDef;
-    return this._toStaticHTMLDef = (
+    return this._toStaticHTMLDef =
+    "window.toStaticHTML = " +
+    (
       function toStaticHTML(s) {
         var t = document.createElement("toStaticHTML");
         t.setAttribute("data-source", s);

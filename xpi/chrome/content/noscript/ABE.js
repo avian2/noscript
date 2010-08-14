@@ -530,40 +530,47 @@ var ABEActions = {
     IOUtil.abort(req.channel, true);
     return true;
   },
-  anonymize: function(req, channel) {
+  anonymize: function(req, channel, replaced) {
     channel = channel || req.channel;
     if (channel.loadFlags & channel.LOAD_ANONYMOUS) // already anonymous
       return false;
     
-    var uri = req.destinationURI;
-    var cookie;
+
+    let cookie;
     try {
       cookie = channel.getRequestHeader("Cookie");
     } catch(e) {
       cookie = '';
     }
-    uri = IOUtil.anonymizeURI(uri.clone(), cookie);
+    
+    let uri = IOUtil.anonymizeURI(req.destinationURI.clone(), cookie);
     
     if (channel.isPending()) { // channel is already opened, we must replace it
       
-      if (ChannelReplacement.supported) {
+      if (ChannelReplacement.supported && !replaced) {
         try {
           var replacement = req.replace(
               /^(?:GET|HEAD|OPTIONS)$/i.test(channel.requestMethod) ? null : "GET",
               uri);
           
-          this.anonymize(req, replacement.channel);
+          this.anonymize(req, replacement.channel, true);
           replacement.open();
           return false;
         } catch(e) {
           ABE.log(e);
         }
       }
-      ABE.log("Counldn't replace " + uri.spec + " for Anonymize, falling back to Deny.");
+      ABE.log("Couldn't replace " + uri.spec + " for Anonymize, falling back to Deny.");
       return this.deny(req);
     }
     
-    if (uri.spec != channel.URI.spec) channel.URI.spec = uri.spec;
+    try {
+      if (uri.spec != channel.URI.spec)
+        channel.URI.spec = uri.spec;
+    } catch (e) {
+      ABE.log(uri.spec + ": " + e);
+      return this.deny(req);
+    }
     channel.setRequestHeader("Cookie", '', false);
     channel.setRequestHeader("Authorization", '', false);
     channel.loadFlags |= channel.LOAD_ANONYMOUS;

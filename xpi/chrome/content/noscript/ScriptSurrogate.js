@@ -146,19 +146,17 @@ var ScriptSurrogate = {
     if (!scripts) return false;
     
     const runner = noScript ? this.fallback : this.execute;
-    const isPageScript = scriptURL == pageURL;
     
     if (this.debug) {
       // we run each script separately and don't swallow exceptions
      scripts.forEach(function(s) {
-      runner.call(this, document, s, isPageScript);
+      runner.call(this, document, s);
      }, this);
     } else {
       runner.call(this, document,
         "(function(){try{" +
           scripts.join("}catch(e){}})();(function(){try{") +
-          "}catch(e){}})();",
-        isPageScript);
+          "}catch(e){}})();");
     }
 
     return true;
@@ -167,11 +165,11 @@ var ScriptSurrogate = {
   
   fallback: function(document, scriptBlock) {
     document.defaultView.addEventListener("DOMContentLoaded", function(ev) {
-      ScriptSurrogate.sandbox(ev.target, scriptBlock);
+      ScriptSurrogate.execute(ev.target, scriptBlock);
     }, false);
   },
   
-  sandbox: function(document, scriptBlock) {
+  execute: function(document, scriptBlock) {
     var w = document.defaultView;
     try {
       var s = new CU.Sandbox(w);
@@ -181,45 +179,5 @@ var ScriptSurrogate = {
       if (ns.consoleDump) ns.dump(e);
       if (this.debug) CU.reportError(e);
     }
-  },
-  
-  execute: function(document, scriptBlock, isPageScript) {
-    if (this._mustUseDOM && document.documentElement) {
-      let s = document.createElementNS(HTML_NS, "script");
-      s.appendChild(document.createTextNode(scriptBlock));
-      let parent = document.documentElement;
-      parent.insertBefore(s, parent.firstChild);
-      parent.removeChild(s);
-      if (this._mustResetStyles && isPageScript) this._resetStyles();
-    } else {
-      try {
-        document.defaultView.location.href =
-          encodeURI("javascript:" + scriptBlock + ";void(0)");
-      } catch(e) {
-        if (ns.consoleDump) ns.dump("Error running " + scriptBlock + "\non " + document.URL + ":\n" + e);
-      }
-    }
-  },
-  
-  get _mustUseDOM() {
-    delete this._mustUseDOM;
-    return this._mustUseDOM = ns.geckoVersionCheck("1.9") >= 0;
-  },
-  
-  get _mustResetStyles() {
-    delete this._mustResetStyles;
-    return this._mustResetStyles = ns.geckoVersionCheck("1.9.1") < 0;
-  },
-  
-  get _emptyStyle() {
-    delete this._emptyStyle;
-    return this._emptyStyle = IOS.newURI("data:text/css;charset=utf8,", null, null);
-  },
-  
-  _resetStyles: function() {
-    const sss = ns.sss;
-    const SHEET = sss.AGENT_SHEET;
-    sss.loadAndRegisterSheet(this._emptyStyle, SHEET);
-    sss.unregisterSheet(this._emptyStyle, SHEET)
   }
 }
