@@ -50,11 +50,11 @@
 				</stack>
 			</vbox>
 	  </hbox>
-		<label class="text-link" id="hiddenContentURL" onclick="ClearClick.browse()" value="" />
+		<label control="keepLocked" class="text-link" id="hiddenContentURL" onclick="ClearClick.browse()" value="" />
 		<checkbox id="keepLocked" label="&noscriptKeepLocked;" checked="true" />
     <separator/>
     <hbox id="clearClickOpts" align="center">
-      <label value="&noscriptClearClickOpt;" />
+      <label control="cc1" value="&noscriptClearClickOpt;"/>
       <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
       <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
     </hbox>

@@ -80,7 +80,7 @@
     <groupbox class="ia-indent">
       <caption orient="vertical">
       <checkbox id="cbx-toolbarToggle" label="&noscriptToolbarToggle;" oncommand="ConditionalGroup.changed(this)" />
-      <label id="toolbarToggle-shortcut" class="ia-indent" hidden="true"/>
+      <label control="sel-toolbarToggle" id="toolbarToggle-shortcut" class="ia-indent" hidden="true"/>
       </caption>
       
       <radiogroup id="sel-toolbarToggle">  
@@ -107,7 +107,7 @@
   <vbox flex="1">
   <description style="white-space: normal; width: 33em" id="permissionsText">&noscriptPermissionsText;</description>
   <separator class="thin"/>
-  <label value="&noscriptWebAddress;"/>
+  <label control="urlText" value="&noscriptWebAddress;"/>
   <hbox align="center">
     <textbox id="urlText" flex="1" oninput="nsopt.urlChanged()"/> 
     <button disabled="false" id="addButton" label="&noscriptAllow;" 
@@ -166,12 +166,12 @@
 			<separator/>
 			<hbox>
         <vbox>
-          <hbox id="clearClickOpts"><label value="&noscriptClearClickOpt;" /><spacer flex="1" />
+          <hbox id="clearClickOpts"><label control="cc1" value="&noscriptClearClickOpt;" /><spacer flex="1" />
             <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
             <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
           </hbox>
           <separator class="thin" />
-          <hbox id="opacizeObjectOpts"><label value="&noscriptOpacizeOpt;" /><spacer flex="1" />
+          <hbox id="opacizeObjectOpts"><label control="oo1" value="&noscriptOpacizeOpt;" /><spacer flex="1" />
             <checkbox id="oo1" value="1" label="&noscriptUntrustedPagesAdj;"/>
             <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
           </hbox>
@@ -184,7 +184,7 @@
   <tabpanel><!-- Appearance -->
     <vbox flex="1">
  
-      <label class="header" value="&noscriptShow;"/>
+     <label class="header" value="&noscriptShow;"/>
      <groupbox>
       <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
       <checkbox id="opt-statusLabel" label="&noscriptStatusLabel;" />
@@ -237,7 +237,7 @@
                 oninput="nsopt.notifyHideDelay.onInput(this)"
                 onchange="nsopt.notifyHideDelay.onChange(this)"
                 maxlength="2" size="2" />
-              <label id="notifyDelayLabel" value="seconds" />
+              <label control="notifyDelay" id="notifyDelayLabel" value="seconds" />
               <spacer flex="1"/>
             </hbox>
           </vbox>
@@ -338,11 +338,11 @@
             <checkbox id="opt-filterXGet" label="&noscriptOptFilterXGet;" />
             <checkbox id="opt-filterXPost" label="&noscriptOptFilterXPost;" />
             <separator class="thin" />
-            <label class="header" value="&noscriptXssExceptions;" />
+            <label control="xssEx-regexp" class="header" value="&noscriptXssExceptions;" />
             <description style="white-space: normal">&noscriptXssExceptions.description;</description>
             <textbox id="xssEx-regexp" multiline="true" flex="1" /> 
             <hbox align="center">
-              <label for="xssEx-sample" value="&noscriptMatchSample;" />
+              <label control="xssEx-sample" value="&noscriptMatchSample;" />
               <textbox id="xssEx-sample" flex="1" value="http://www.google.com/search?q=test" />
             </hbox>
           </vbox>
@@ -356,11 +356,11 @@
               value="&noscriptJarFaq;"/>
             <checkbox id="opt-forbidJarDocuments" label="&noscriptForbidJarDocuments;" />
             <separator class="thin" />
-            <label class="header" value="&noscriptJarExceptions;" />
+            <label control="jarEx-regexp" class="header" value="&noscriptJarExceptions;" />
             <description style="white-space: normal">&noscriptJarExceptions.description;</description>
             <textbox id="jarEx-regexp" multiline="true" flex="1" /> 
             <hbox align="center">
-              <label for="jarEx-sample" value="&noscriptMatchSample;" />
+              <label control="jarEx-sample" value="&noscriptMatchSample;" />
               <textbox id="jarEx-sample" flex="1" value="jar:https://samples.noscript.net/sample_apps.jar!/application1.xul" />
             </hbox>
           </vbox>
@@ -433,7 +433,7 @@
             </hbox>
             <separator class="thin" />
 						<vbox height="220">
-            <label value="&ABE.rulesets.label;" />
+            <label control="abeRulesets-list" value="&ABE.rulesets.label;" />
             <hbox flex="1">
               <listbox id="abeRulesets-list" 
                 onselect="abeOpts.selected(this)"
@@ -483,16 +483,16 @@
 							
 						</hbox>
 						
-						<label value="&noscriptEF.contentType;" />  
+						<label control="ef-type" value="&noscriptEF.contentType;" />  
 						<hbox><textbox id="ef-type" flex="1" oninput="EF.onTypeChange(event)" /></hbox>
 						
-						<label value="&noscriptEF.executable;" />  
+						<label control="ef-exe" value="&noscriptEF.executable;" />  
 						<hbox align="center">
 							<textbox id="ef-exe" readonly="true" flex="1" />
 							<button  id="ef-browse" label="&noscriptEF.browse;" oncommand="EF.locateExe()" />
 						</hbox>
 						
-						<label value="&noscriptEF.exceptions;" /> 
+						<label control="ef-exceptions" value="&noscriptEF.exceptions;" /> 
             <textbox id="ef-exceptions" multiline="true" flex="1" 
               cols="60" rows="3"  oninput="EF.onExceptionsChange(event)" />
           </vbox>
