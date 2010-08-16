@@ -391,9 +391,9 @@
                       </menupopup>
                     </menulist>
                     <separator class="thin" />  
-                    <description control="opts-httpForced" style="white-space: normal">&noscriptHttpsForced;</description>
+                    <description control="opt-httpForced" style="white-space: normal">&noscriptHttpsForced;</description>
                     <textbox id="opt-httpsForced" multiline="true" flex="1" />
-                    <description control="opts-httpsForcedExceptions" style="white-space: normal">&noscriptHttpsForcedExceptions;</description>
+                    <description control="opt-httpsForcedExceptions" style="white-space: normal">&noscriptHttpsForcedExceptions;</description>
                     <textbox id="opt-httpsForcedExceptions" multiline="true" flex="1" />
                   </vbox>
                 </tabpanel>
