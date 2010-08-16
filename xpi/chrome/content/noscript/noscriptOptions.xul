@@ -391,7 +391,7 @@
                       </menupopup>
                     </menulist>
                     <separator class="thin" />  
-                    <description control="opt-httpForced" style="white-space: normal">&noscriptHttpsForced;</description>
+                    <description control="opt-httpsForced" style="white-space: normal">&noscriptHttpsForced;</description>
                     <textbox id="opt-httpsForced" multiline="true" flex="1" />
                     <description control="opt-httpsForcedExceptions" style="white-space: normal">&noscriptHttpsForcedExceptions;</description>
                     <textbox id="opt-httpsForcedExceptions" multiline="true" flex="1" />

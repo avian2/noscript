@@ -4557,7 +4557,7 @@ var ns = singleton = {
   onWindowSwitch: function(url, win, docShell) {
     
     const doc = docShell.document;
-    const jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
+    var jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
     
     if (!((docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page
