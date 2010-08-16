@@ -22,14 +22,14 @@ sub create_re
     return $content[0];
   }
   
-	my $content =  get $HTML5_URL or die ("Couldn't fetch $HTML5_URL");
-	$content =~ s/.*"(on\w+)".*/$1 /g;
-	$content =~ s/HTML.*//g;
-	$content =~ s/\s+/ /g;
-	$content =~ s/^\s+|\s+$//g;
-	my $l  = Regexp::List->new;
-	my $re = $l->list2re(split(' ', $content));
-	$re =~ s/\(\?-xism:(.*)\)/$1/;
+   my $content =  get $HTML5_URL or die ("Couldn't fetch $HTML5_URL");
+   $content =~ s/.*"(on\w+)".*/$1 /g;
+   $content =~ s/HTML.*//g;
+   $content =~ s/\s+/ /g;
+   $content =~ s/^\s+|\s+$//g;
+   my $l  = Regexp::List->new;
+   my $re = $l->list2re(split(' ', $content));
+   $re =~ s/\(\?-xism:(.*)\)/$1/;
   open (OUT, ">$cache");
   print OUT $re;
   close OUT;

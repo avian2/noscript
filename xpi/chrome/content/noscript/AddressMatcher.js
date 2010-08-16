@@ -79,7 +79,7 @@ AddressMatcher.prototype = {
          
           // either simple or glob
           const hasPath = /^(?:\w+:\/\/|)[^\/]+\//.test(p);
-          const hasScheme = /^[a-z]\w+:(?:\/+|[^/]*\D)/.test(p);
+          const hasScheme = /^[a-z][\w\-]+:(?:\/+|[^/]*\D|$)/.test(p);
 
           p = p.replace(/[\.\?\-]/g, "\\$&"); // escape special regexp chars
 

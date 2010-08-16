@@ -4558,8 +4558,12 @@ var ns = singleton = {
     
     const doc = docShell.document;
     const jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
-
-    ScriptSurrogate.apply(doc, url, url, jsBlocked);
+    
+    if (!((docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument)) {
+      // likely a document.open() page
+      url = "wyciwyg:";// don't execute on document.open() pages with a misleading URL
+      jsBlocked = false;
+    }
     
     if (jsBlocked) {
       if (this.getPref("fixLinks")) {
@@ -4574,7 +4578,7 @@ var ns = singleton = {
         doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
       }
     }
-    
+
     try {
       if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !doc._noscriptJsHack) {
         try {
@@ -4583,6 +4587,10 @@ var ns = singleton = {
         } catch(jsHackEx) {}
       }
     } catch(e) {}
+    
+    if (!/^(?:chrome|resource|about|view-source):/.test(url)) { 
+      ScriptSurrogate.apply(doc, url, url, jsBlocked);
+    }
     
   },
   
@@ -4596,7 +4604,6 @@ var ns = singleton = {
         let pageURL = win.location.href; // we need to get the full URI elsewhere
         if (pageURL == win.document.documentURI) { // can be false on frame transitions...
           let docShell =  this.dom.getDocShellForWindow(win);
-          if ((docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument) // don't execute on document.open() pages
             this.executeEarlyScripts(pageURL, win, docShell);
         }
       }

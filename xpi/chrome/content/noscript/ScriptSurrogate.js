@@ -185,8 +185,16 @@ var ScriptSurrogate = {
     }
   },
   
-  executeDOM: function(document, scriptBlock) {
+  executeDOM: function(document, scriptBlock, noDefer) {
     var de = document.documentElement;
+    
+    if (!de) {
+      if (!noDefer) {
+        Thread.basap(this.executeDOM, this, [document, scriptBlock, true]);
+      }
+      return;
+    }
+    
     var se = document.createElement("script");
     se.appendChild(document.createTextNode(scriptBlock));
     de.appendChild(se);
