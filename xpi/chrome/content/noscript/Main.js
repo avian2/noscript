@@ -4565,6 +4565,10 @@ var ns = singleton = {
       jsBlocked = false;
     }
     
+    if (!/^(?:chrome|resource|about|view-source):/.test(url)) { 
+      ScriptSurrogate.apply(doc, url, url, jsBlocked);
+    }
+    
     if (jsBlocked) {
       if (this.getPref("fixLinks")) {
         const newWin = doc.defaultView;
@@ -4587,10 +4591,6 @@ var ns = singleton = {
         } catch(jsHackEx) {}
       }
     } catch(e) {}
-    
-    if (!/^(?:chrome|resource|about|view-source):/.test(url)) { 
-      ScriptSurrogate.apply(doc, url, url, jsBlocked);
-    }
     
   },
   
