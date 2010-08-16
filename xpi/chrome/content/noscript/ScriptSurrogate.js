@@ -127,7 +127,7 @@ var ScriptSurrogate = {
         } else {
           code = mapping.replacement;
           if (!noScript && mapping.noScript)
-            code = 'document.addEventListener("DOMContentLoaded", function(event) {' +
+            code = 'addEventListener("DOMContentLoaded", function(event) {' +
                     code + '}, false)';
         }
         (scripts = scripts || []).push(code);
@@ -145,7 +145,11 @@ var ScriptSurrogate = {
     const scripts = this.getScripts(scriptURL, pageURL, noScript);
     if (!scripts) return false;
     
-    const runner = noScript ? this.fallback : this.execute;
+    const runner = noScript
+      ? this.fallback
+      : scriptURL == pageURL
+        ? this.execute
+        : this.executeDOM;
     
     if (this.debug) {
       // we run each script separately and don't swallow exceptions
@@ -179,5 +183,14 @@ var ScriptSurrogate = {
       if (ns.consoleDump) ns.dump(e);
       if (this.debug) CU.reportError(e);
     }
+  },
+  
+  executeDOM: function(document, scriptBlock) {
+    var de = document.documentElement;
+    var se = document.createElement("script");
+    se.appendChild(document.createTextNode(scriptBlock));
+    de.appendChild(se);
+    de.removeChild(se);
   }
+  
 }

@@ -1315,17 +1315,17 @@ var XOriginCache = {
 }
 
 var OriginTracer = {
-  detectBackFrame: function(prev, next, ds) {
+  detectBackFrame: function(prev, next, docShell) {
     if (prev.ID != next.ID) return prev.URI.spec;
     if ((prev instanceof CI.nsISHContainer) &&
        (next instanceof CI.nsISHContainer) &&
-       (ds instanceof CI.nsIDocShellTreeNode)
+       (docShell instanceof CI.nsIDocShellTreeNode)
       ) {
       var uri;
-      for (var j = Math.min(prev.childCount, next.childCount, ds.childCount); j-- > 0;) {
+      for (var j = Math.min(prev.childCount, next.childCount, docShell.childCount); j-- > 0;) {
         uri = this.detectBackFrame(prev.GetChildAt(j),
                                    next.GetChildAt(j),
-                                   ds.GetChildAt(j));
+                                   docShell.GetChildAt(j));
         if (uri) return uri.spec;
       }
     }

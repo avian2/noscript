@@ -2735,15 +2735,15 @@ var ns = singleton = {
                 (!m[1] || (m[1] == "top" || m[2] == "top") && m[1] != m[2])) {
               var top = w.top;
 
-              var ds = DOM.getDocShellForWindow(top);
-              var allowJavascript = ds.allowJavascript;
-              var allowPlugins = ds.allowPlugins;
-              if (allowJS) { // temporarily disable JS & plugins on the top frame to prevent counter-busting 
-                ds.allowJavascript = ds.allowPlugins = false;
+              var docShell = DOM.getDocShellForWindow(top);
+              var allowJavascript = docShell.allowJavascript;
+              var allowPlugins = docShell.allowPlugins;
+              if (allowJavascript) { // temporarily disable JS & plugins on the top frame to prevent counter-busting 
+                docShell.allowJavascript = docShell.allowPlugins = false;
                 top.addEventListener("pagehide", function(ev) {
                   ev.currentTarget.removeEventListener(ev.type, arguments.calle, false);
-                  ds.allowJavascript = allowJavascript;
-                  ds.allowPlugins = allowPlugins;
+                  docShell.allowJavascript = allowJavascript;
+                  docShell.allowPlugins = allowPlugins;
                 }, false);
               }
               top.location.href = url;
@@ -3370,7 +3370,7 @@ var ns = singleton = {
   patchObjects: function(document) {
     delete this.patchObjects;
     return (this.patchObjects = ("getElementsByClassName" in document)
-      ? function(document) { ScriptSurrogate.execute(document, this._objectPatch); }
+      ? function(document) { ScriptSurrogate.executeDOM(document, this._objectPatch); }
       : DUMMYFUNC).call(this, document);
   },
   
@@ -3693,7 +3693,7 @@ var ns = singleton = {
       
       if (!patches) return;
 
-      ScriptSurrogate.execute(doc, "(" + patches.join(")();(") + ")();");
+      ScriptSurrogate.executeDOM(doc, "(" + patches.join(")();(") + ")();");
     } catch(e) {
        if (this.consoleDump) this.dump(e + ", " + e.stack);
     }
@@ -3813,7 +3813,6 @@ var ns = singleton = {
       }
       
 
-      
       loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
       if (domLoaded || loaded) {
         this.processObjectElements(document, sites);
@@ -4543,7 +4542,7 @@ var ns = singleton = {
       docShell.allowJavascript = jsEnabled;
     } catch(e2) {
       if (this.consoleDump & LOG_JS)
-        this.dump("Error switching DS JS: " + e2);
+        this.dump("Error switching docShell JS: " + e2);
     }
   },
   
@@ -4595,8 +4594,11 @@ var ns = singleton = {
     this.onJSGlobalCreated = function(win, url) {
       if (url) { // WARNING: url contains only the authority part of the current URI
         let pageURL = win.location.href; // we need to get the full URI elsewhere
-        if (pageURL == win.document.documentURI) // can be false on frame transitions...
-          this.executeEarlyScripts(pageURL, win, this.dom.getDocShellForWindow(win));
+        if (pageURL == win.document.documentURI) { // can be false on frame transitions...
+          let docShell =  this.dom.getDocShellForWindow(win);
+          if ((docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument) // don't execute on document.open() pages
+            this.executeEarlyScripts(pageURL, win, docShell);
+        }
       }
     }
     this.onJSGlobalCreated(win, url);
@@ -4736,16 +4738,16 @@ var ns = singleton = {
   },
   // end nsIWebProgressListener
   
-  filterUTF7: function(req, window, ds) {
+  filterUTF7: function(req, window, docShell) {
     try {
-      if (!ds) return;
+      if (!docShell) return;
       var as = CC["@mozilla.org/atom-service;1"].getService(CI.nsIAtomService);
       if(window.document.characterSet == "UTF-7" ||
-        !req.contentCharset && (ds.documentCharsetInfo.parentCharset + "") == "UTF-7") {
+        !req.contentCharset && (docShell.documentCharsetInfo.parentCharset + "") == "UTF-7") {
         if(this.consoleDump) this.dump("Neutralizing UTF-7 charset!");
-        ds.documentCharsetInfo.forcedCharset = as.getAtom("UTF-8");
-        ds.documentCharsetInfo.parentCharset = ds.documentCharsetInfo.forcedCharset;
-        ds.reload(ds.LOAD_FLAGS_CHARSET_CHANGE); // neded in Gecko > 1.9
+        docShell.documentCharsetInfo.forcedCharset = as.getAtom("UTF-8");
+        docShell.documentCharsetInfo.parentCharset = docShell.documentCharsetInfo.forcedCharset;
+        docShell.reload(docShell.LOAD_FLAGS_CHARSET_CHANGE); // neded in Gecko > 1.9
       }
     } catch(e) { 
       if(this.consoleDump) this.dump("Error filtering charset on " + req.name + ": " + e) 
@@ -4897,14 +4899,14 @@ var ns = singleton = {
       if (!jsURL) return;
       // jsURL now has our relative history index, let's navigate
 
-      var ds = DOM.getDocShellForWindow(doc.defaultView);
-      if (!ds) return;
-      var sh = ds.sessionHistory;
+      var docShell = DOM.getDocShellForWindow(doc.defaultView);
+      if (!docShell) return;
+      var sh = docShell.sessionHistory;
       if (!sh) return;
       
       var idx = sh.index + jsURL;
       if (idx < 0 || idx >= sh.count) return; // out of history bounds 
-      ds.gotoIndex(idx);
+      docShell.gotoIndex(idx);
       ev.preventDefault(); // probably not needed
     }
   },

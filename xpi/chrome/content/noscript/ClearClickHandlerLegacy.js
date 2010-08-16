@@ -205,8 +205,8 @@
           
           if (ctx.isEmbed) { // objects and embeds
             if (this.ns.getPref("clearClick.plugins", true)) {
-              var ds = browser.docShell;
-              viewer = ds.contentViewer && false;
+              var docShell = browser.docShell;
+              viewer = docShell.contentViewer && false;
               objClass = new ClassyObj(o);
               objClass.append(" __noscriptBlank__");
               docPatcher.blankPositioned(true);
