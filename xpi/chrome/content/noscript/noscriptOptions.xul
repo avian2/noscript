@@ -339,7 +339,7 @@
             <checkbox id="opt-filterXPost" label="&noscriptOptFilterXPost;" />
             <separator class="thin" />
             <label control="xssEx-regexp" class="header" value="&noscriptXssExceptions;" />
-            <description style="white-space: normal">&noscriptXssExceptions.description;</description>
+            <description control="xssEx-regexp" style="white-space: normal">&noscriptXssExceptions.description;</description>
             <textbox id="xssEx-regexp" multiline="true" flex="1" /> 
             <hbox align="center">
               <label control="xssEx-sample" value="&noscriptMatchSample;" />
@@ -357,7 +357,7 @@
             <checkbox id="opt-forbidJarDocuments" label="&noscriptForbidJarDocuments;" />
             <separator class="thin" />
             <label control="jarEx-regexp" class="header" value="&noscriptJarExceptions;" />
-            <description style="white-space: normal">&noscriptJarExceptions.description;</description>
+            <description control="jarEx-regexp" style="white-space: normal">&noscriptJarExceptions.description;</description>
             <textbox id="jarEx-regexp" multiline="true" flex="1" /> 
             <hbox align="center">
               <label control="jarEx-sample" value="&noscriptMatchSample;" />
@@ -391,9 +391,9 @@
                       </menupopup>
                     </menulist>
                     <separator class="thin" />  
-                    <description style="white-space: normal">&noscriptHttpsForced;</description>
+                    <description control="opts-httpForced" style="white-space: normal">&noscriptHttpsForced;</description>
                     <textbox id="opt-httpsForced" multiline="true" flex="1" />
-                    <description style="white-space: normal">&noscriptHttpsForcedExceptions;</description>
+                    <description control="opts-httpsForcedExceptions" style="white-space: normal">&noscriptHttpsForcedExceptions;</description>
                     <textbox id="opt-httpsForcedExceptions" multiline="true" flex="1" />
                   </vbox>
                 </tabpanel>
@@ -401,10 +401,10 @@
                   <vbox flex="1">
                     <groupbox>
                       <caption><checkbox id="opt-secureCookies" label="&noscriptSecureCookies;" oncommand="nsopt.utils.syncGroup(this)" /></caption>
-                      <description style="white-space: normal">&noscriptSecureCookiesForced;</description>
+                      <description control="opt-secureCookiesForced" style="white-space: normal">&noscriptSecureCookiesForced;</description>
                       <textbox id="opt-secureCookiesForced" multiline="true" flex="1" />
                       <separator class="thin" />
-                      <description style="white-space: normal">&noscriptSecureCookiesExceptions;</description>
+                      <description control="opt-secureCookiesExceptions" style="white-space: normal">&noscriptSecureCookiesExceptions;</description>
                       <textbox id="opt-secureCookiesExceptions" multiline="true" flex="1" />
                     </groupbox>
                   </vbox>
