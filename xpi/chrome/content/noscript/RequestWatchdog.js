@@ -763,7 +763,7 @@ RequestWatchdog.prototype = {
   },
   
   isBadException: function(host) {
-    // TLD check for google search
+    // TLD check for Google search
     var m = host.match(/\bgoogle\.((?:[a-z]{1,3}\.)?[a-z]+)$/i);
     return m && ns.getPublicSuffix(host) != m[1];
   },
@@ -1007,7 +1007,7 @@ var InjectionChecker = {
   },
   
   get breakStops() {
-    var def = "\\/\\?&#;\\s<>"; // we stop on URL, JS and HTML delimiters
+    var def = "\\/\\?&#;\\s\\x00<>"; // we stop on URL, JS and HTML delimiters
     var bs = {
       nq: new RegExp("[" + def + "]")
     };
@@ -1254,7 +1254,7 @@ var InjectionChecker = {
     return this.invalidChars = new RegExp("^[^\"'/]*[" + this._createInvalidRanges() + "]");
   },
   
-  checkJSBreak: function(s) {
+  checkJSBreak: function InjectionChecker_checkJSBreak(s) {
     // Direct script injection breaking JS string literals or comments
     
     // cleanup most urlencoded noise and reduce JSON/XML
@@ -1266,35 +1266,42 @@ var InjectionChecker = {
     
     if (!this.maybeJS(s)) return false;
 
-    
-    const invalidChars = /[\u007f-\uffff]/.test(s) && this.invalidChars;
-    const findInjection = 
-      /(['"#;>:]|[\/\?=](?![\?&=])|&(?![\w\-\.\[\]&!]*=)|\*\/)(?!\1)(?=([\s\S]*?(?:\(|\[[\s\S]*?\]|(?:s\W*e\W*t\W*t\W*e\W*r|l\W*o\W*c\W*a\W*t\W*i\W*o\W*n|i\W*n\W*n\W*e\W*r\W*H\W*T\W*M\W*L|\W*o\W*n(?:\W*\w){3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)))/g;
-    
-    findInjection.lastIndex = 0;
-    var m, breakSeq, subj, expr, lastExpr, script,
-      quote, len, bs, bsPos, hunt, moved, errmsg, pos;
-    
     const MAX_TIME = 8000, MAX_LOOPS = 1200;
 
+    const invalidChars = /[\u007f-\uffff]/.test(s) && this.invalidChars;
+    const findInjection = /(['"#;>:]|[\/\?=](?![\?&=])|&(?![\w\-\.\[\]&!]*=)|\*\/)(?!\1)/g;
+    findInjection.lastIndex = 0;    
+    
+    const dangerRx = /(?:\(|\[[^\]+\]|(?:setter|location|innerHTML|on\w{3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)/;
+     
     const t = Date.now();
     var iterations = 0;
     
-    while ((m = findInjection.exec(s))) {
+    for (let dangerPos = 0; (m = findInjection.exec(s));) {
+    
       
-      subj = s.substring(findInjection.lastIndex);
-      
+      let startPos = findInjection.lastIndex;
+      let subj = s.substring(startPos);
+      if (startPos > dangerPos) {
+        dangerRx.lastIndex = startPos;
+        dangerRx.exec(s);
+        dangerPos = dangerRx.lastIndex;
+      }
+       
       // remove common C++ style comment pattern, if possible
-      
+
       if (!this.maybeJS(subj)) {
+
          this.log("Fast escape on " + subj, t, iterations);
          return false;
       }
+
       
+      let breakSeq = m[1];
+
       
-      breakSeq = m[1];
-      
-      script = this.reduceURLs(subj);
+      let script = this.reduceURLs(subj);
+    
       if (script.length < subj.length) {
         if (!this.maybeJS(script)) {
           this.log("Skipping to first nested URL in " + subj, t, iterations);
@@ -1302,12 +1309,13 @@ var InjectionChecker = {
           continue;
         }
         subj = script;
-        script = this.reduceURLs(m[2]);
+        script = this.reduceURLs(subj.substring(0, dangerPos - startPos));
       } else {
-        script = m[2];
+        script = subj.substring(0, dangerPos - startPos);
       }
-      
-      expr = subj.match(/^[\s\S]*?[=\)]/);
+ 
+      let expr = subj.match(/^[\s\S]*?[=\)]/);
+
       if (expr) {
         expr = expr[0];
         if (expr.length < script.length) {
@@ -1316,7 +1324,7 @@ var InjectionChecker = {
       } else {
         expr = script;
       }
-      
+
       // quickly skip (mis)leading innocuous CGI patterns
       if ((m = subj.match(
         /^(?:(?:[\.\?\w\-\/&:`\[\]]+=[\w \-:\+%#,`\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/
@@ -1324,40 +1332,39 @@ var InjectionChecker = {
         ))) {
        
         this.log("Skipping CGI pattern in " + subj);
+
         findInjection.lastIndex += m[0].length - 1;
         continue;
       }
       
-     
-      
-      quote = breakSeq == '"' || breakSeq == "'" ? breakSeq : '';
-      bs = this.breakStops[quote || 'nq']  
 
-      len = expr.length;
       
-      for (moved = false, hunt = !!expr, lastExpr = ''; hunt;) {
+      let quote = breakSeq == '"' || breakSeq == "'" ? breakSeq : '';
+      let bs = this.breakStops[quote || 'nq']  
+   
+      for (let len = expr.length, moved = false, hunt = !!expr, lastExpr = ''; hunt;) {
         
         if (Date.now() - t > MAX_TIME) {
-          this.log("Too long execution time! Assuming DOS... " + s, t, iterations);
+          this.log("Too long execution time! Assuming DOS... " + (Date.now() - t), t, iterations);
           return true;
         }
-        
+     
         hunt = expr.length < subj.length;
-        
+             
         if (moved) {
           moved = false;
         } else if (hunt) {
-          bsPos = subj.substring(len).search(bs);
-          if (bsPos < 0) {
+          let pos = subj.substring(len).search(bs);
+          if (pos < 0) {
             expr = subj;
             hunt = false;
           } else {
-            len += bsPos;
+            len += pos;
             if (quote && subj[len] == quote) {
               len++;
             }
             expr = subj.substring(0, len);
-            if (bsPos == 0) len++;
+            if (pos == 0) len++;
           }
         }
         
@@ -1367,12 +1374,13 @@ var InjectionChecker = {
         }
         
         lastExpr = expr;
-        
+           
         if(invalidChars && invalidChars.test(expr)) {
           this.log("Quick skipping invalid chars");
+ 
           break;
         }
-        
+     
         if(quote) {
           script = this.syntax.unquote(quote + expr, quote);
           if(script && this.maybeJS(script) &&
@@ -1389,7 +1397,8 @@ var InjectionChecker = {
           script = expr;
         }
         
-        
+       
+
         if (/^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=]))/
             .test(script.split("//")[0])) {
            this.log("SKIP (head syntax) " + script, t, iterations);
@@ -1407,26 +1416,26 @@ var InjectionChecker = {
             return true;
           }
           if(this.syntax.lastError) { // could be null if we're here thanks to checkLastFunction()
-            errmsg = this.syntax.lastError.message;
+            let errmsg = this.syntax.lastError.message;
             this.log(errmsg + " --- " + script + " --- ", t, iterations);
             if(!quote) {
               if (/left-hand/.test(errmsg)) {
-                m = subj.match(/^([^\]\(\\'"=\?]+?)[\w$\u0080-\uffff\s]+[=\?]/);
+                let m = subj.match(/^([^\]\(\\'"=\?]+?)[\w$\u0080-\uffff\s]+[=\?]/);
                 if (m) {
                   findInjection.lastIndex += m[1].length - 1;
                 }
                 break;
               } else if (/unterminated string literal/.test(errmsg)) {
-                bsPos = subj.substring(len).search(/["']/);
-                if(bsPos > -1) {
-                  expr = subj.substring(0, len += bsPos + 1);
+                let quotePos = subj.substring(len).search(/["']/);
+                if(quotePos > -1) {
+                  expr = subj.substring(0, len += ++quotePos);
                   moved = true;
                 } else break;
               } else if (/syntax error/.test(errmsg)) {
-                bsPos = subj.indexOf("//");
-                if (bsPos > -1) {
-                  pos = subj.search(/['"\n\\\(]|\/\*/);
-                  if (pos < 0 || pos > bsPos)
+                let dblSlashPos = subj.indexOf("//");
+                if (dblSlashPos > -1) {
+                  let pos = subj.search(/['"\n\\\(]|\/\*/);
+                  if (pos < 0 || pos > dblSlashPos)
                     break;
                 }
                 if (/^([\w\[\]]*=)?\w*&[\w\[\]]*=/.test(subj)) { // CGI param concatenation

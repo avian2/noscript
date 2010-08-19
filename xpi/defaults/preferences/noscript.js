@@ -98,7 +98,7 @@ pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
 pref("noscript.filterXGetRx", "<+(?=[^<>=\-\\d\\. /\\(])|[\\\\\"\\x00-\\x07\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F]");
 pref("noscript.filterXGetUserRx", "");
-pref("noscript.filterXExceptions", "^https?://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^https?://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^https?://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$\n^https?://translate\.google\.com/translate_t[^\"'<>\?%]+$"); 
+pref("noscript.filterXExceptions", "^https?://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^https?://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^https?://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$\n^https?://translate\.google\.com/translate_t[^\"'<>\?%]+$\n^https://secure\\.wikimedia\\.org/wikipedia/[a-z]+/wiki/[^\"<>\\?%]+$"); 
 pref("noscript.filterXExceptions.lycosmail", true);
 pref("noscript.filterXExceptions.fbconnect", true);
 pref("noscript.filterXExceptions.livejournal", true);
