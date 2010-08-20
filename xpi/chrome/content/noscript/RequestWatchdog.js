@@ -1284,11 +1284,10 @@ var InjectionChecker = {
       let subj = s.substring(startPos);
       if (startPos > dangerPos) {
         dangerRx.lastIndex = startPos;
-        dangerRx.exec(s);
+        if (!dangerRx.exec(s)) return false;
         dangerPos = dangerRx.lastIndex;
       }
        
-      // remove common C++ style comment pattern, if possible
 
       if (!this.maybeJS(subj)) {
 
@@ -1299,7 +1298,6 @@ var InjectionChecker = {
       
       let breakSeq = m[1];
 
-      
       let script = this.reduceURLs(subj);
     
       if (script.length < subj.length) {
