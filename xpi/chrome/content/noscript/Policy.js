@@ -408,8 +408,8 @@ const MainContentPolicy = {
               this.dump("Document OK: " + aMimeTypeGuess + "@" + (locationURL || aContentLocation.spec) + 
                 " --- PGFM: " + this.pluginForMime(aMimeTypeGuess));
             
-            if (aContentLocation.schemeIs("about") && /^about:(net|cert)error?/.test(aContentLocation.spec)) {
-              ns.handleErrorPage(aContext, aContentLocation);
+            if (aContentLocation.schemeIs("about") && /^about:(?:net|cert)error\?/.test(aContentLocation.spec)) {
+              this.handleErrorPage(aContext, aContentLocation);
             }
             
             return CP_OK;

@@ -50,16 +50,22 @@ const STS = {
   },
   
   patchErrorPage: function(docShell, errorURI) {
-    // see #errors-in-secure-transport-establishment
+     // see #errors-in-secure-transport-establishment
     if (!this.enabled) return;
+
+    let m = errorURI.spec.match(/^about:certerror\?.*?\bu=([^&]+)/);
+    if (!m) return;
     
-    if (!(/^about:certerror?/.test(errorURI.spec) &&
-          this.isSTSURI(docShell.currentURI))
-       ) return;
-    
-    Thread.delay(function() {
-      docShell.document.getElementById("expertContent").style.display = "none";
-    }, 100);
+    let u = decodeURIComponent(m[1]);
+    m = errorURI.spec.match(/&c=([^&]+)/);
+    let charset = m ? decodeURIComponent(m[1]) : null;    
+    try {
+      let uri = IOS.newURI(u, charset, null);
+      if (STS.isSTSURI(uri))
+      Thread.delay(function() {
+        docShell.document.getElementById("expertContent").style.display = "none";
+      }, 100);
+    } catch(e) {}
   },
   
   dispose: function() {
