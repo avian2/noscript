@@ -585,7 +585,7 @@ RequestWatchdog.prototype = {
 
       if (origin &&
           (
-          /^http:\/\/(?:[^\/]+.)?facebook\.com\/(?:widgets\/server|render_)fbml\.php$/.test(originalSpec) &&
+          /^http:\/\/(?:[^\/]+.)?facebook\.com\/[\w\.\-\/]+fbml\.php$/.test(originalSpec) &&
             channel.requestMethod == "POST" ||
           /^https?:\/\/api\.connect\.facebook\.com$/.test(originSite)
             
