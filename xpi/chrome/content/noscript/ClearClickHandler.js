@@ -395,6 +395,7 @@ ClearClickHandler.prototype = {
        
       docPatcher.linkAlertHack(true);
       docPatcher.fbPresenceHack(true);
+      docPatcher.abpTabsHack(true);
       
       try {
         docPatcher.opaque(true);
@@ -730,8 +731,9 @@ ClearClickHandler.prototype = {
       if (typeof(bgStyle) == "string") dElem.style.background = bgStyle;
      
       docPatcher.opaque(false);
-      docPatcher.linkAlertHack(false);
+      docPatcher.abpTabsHack(false);
       docPatcher.fbPresenceHack(false);
+      docPatcher.linkAlertHack(false);
       
       if (objClass) objClass.reset();
       if (frameClass) frameClass.reset();
@@ -1043,17 +1045,70 @@ DocPatcher.prototype = {
   _fbPresence: null,
   fbPresenceHack: function(toggle) {
     if (toggle) {
-      if (this.top.location.host == "apps.facebook.com") {
-        var fbPresence = this.top.document.getElementById("presence");
-        if (fbPresence) {
-          fbPresence._ccVisibility = fbPresence.style.visibility;
-          fbPresence.style.visibility = "hidden";
-          this._fbPresence = fbPresence; 
+      try {
+        if (this.top.location.host == "apps.facebook.com") {
+          var fbPresence = this.top.document.getElementById("presence");
+          if (fbPresence) {
+            fbPresence._ccVisibility = fbPresence.style.visibility;
+            fbPresence.style.visibility = "hidden";
+            this._fbPresence = fbPresence; 
+          }
         }
-      }
+      } catch(e) {}
     } else if (this._fbPresence) {
       this._fbPresence.style.visibility = this._fbPresence._ccVisibility;
     }
+  },
+  
+  _abpTabs: null,
+  get _abpTabsObj() {
+    delete this.__proto__._abpTabsObj;
+    var tobj;
+    try {
+      tobj = CC["@mozilla.org/adblockplus;1"].getService().wrappedJSObject.objTabs;
+    } catch(e) {
+      tobj = null;
+    }
+    return this.__proto__._abpTabsObj = tobj;
+  },
+  
+  abpTabsHack: function(toggle) {
+    let visibleClass, hiddenClass;
+    try {
+      let tobj = this._abpTabsObj;
+      if (tobj) {
+        hiddenClass = tobj.objTabClassHidden;
+        if (!hiddenClass) return;
+        visibleClasses = [tobj.objTabClassVisibleTop, tobj.objTabClassVisibleBottom];
+      }
+    } catch(e) {
+    }
+    
+    (this.__proto__.abpTabsHack =
+      hiddenClass
+      ? function(toggle) {
+          try {
+            let document = this.top.document;
+            if (toggle) {
+              let tabs = [];
+              for each(let c in visibleClasses) {
+                
+                Array.forEach(document.getElementsByClassName(c), function(t) {
+                  let co = new ClassyObj(t);
+                  t.className = hiddenClass;
+                  tabs.push(co);
+                });
+              }
+              this._abpTabs = tabs;
+            } else {
+              for (let co in this._abpTabs) {
+                co.reset();
+              }
+            }
+          } catch(e) {}
+        }
+      : DUMMYFUNC
+     )(toggle); 
   }
   
 }

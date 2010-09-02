@@ -206,7 +206,6 @@ pref("noscript.stickyUI.onKeyboard", true);
 pref("noscript.ignorePorts", true);
 
 pref("noscript.cp.last", true);
-pref("noscript.abp.removeTabs", false);
 
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.debug", false);

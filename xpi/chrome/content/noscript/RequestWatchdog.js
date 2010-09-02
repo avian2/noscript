@@ -630,6 +630,8 @@ RequestWatchdog.prototype = {
         skipArr = ['body'];
       } else if (url.ref && /^https?:\/\/api\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
         skipRx = /#[^#]+$/; // remove receiver's hash
+      } else if (/^https?:\/\/apps\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
+        skipRx = /&invite_url=javascript[^&]+/; // Zynga stuff
       }
       
       if (skipArr) {

@@ -184,7 +184,6 @@ var ns = singleton = {
   showPlaceholder: true,
   showUntrustedPlaceholder: true,
   collapseObject: false,
-  abpRemoveTabs: false,
   opaqueObject: 1,
   clearClick: 3,
 
@@ -321,10 +320,6 @@ var ns = singleton = {
           this.forbidIFrames || this.forbidFrames;
       break;
       
-      case "abp.removeTabs":
-        this.abpRemoveTabs = this.abpInstalled && this.getPref(name);
-      break;
-    
       case "emulateFrameBreak":
       case "filterXPost":
       case "filterXGet":
@@ -734,7 +729,7 @@ var ns = singleton = {
       "nselNever", "nselForce",
       "clearClick", "clearClick.exceptions", "clearClick.subexceptions", "opaqueObject",
       "showBlankSources", "showPlaceholder", "showUntrustedPlaceholder",
-      "collapseObject", "abp.removeTabs",
+      "collapseObject",
       "temp", "untrusted", "gtemp",
       "flashPatch", "silverlightPatch",
       "secureCookies", "secureCookiesExceptions", "secureCookiesForced",
@@ -3231,11 +3226,6 @@ var ns = singleton = {
 
         extras.site = this.getSite(extras.url);
         
-        if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site)) {
-          this.removeAbpTab(object);
-          continue;
-        }
-        
         extras.tag = "<" + (this.isLegacyFrameReplacement(object) ? "FRAME" : objectTag.toUpperCase()) + ">";
         extras.title =  extras.tag + ", " +  
             this.mimeEssentials(extras.mime) + "@" + extras.url;
@@ -3261,12 +3251,10 @@ var ns = singleton = {
           }
           anchor.addEventListener("click", this.bind(this.onPlaceholderClick), true);
           anchor.className = "__noscriptPlaceholder__ __noscriptObjectPatchMe__";
-          if (this.abpRemoveTabs) this.removeAbpTab(object);
         } else {
           anchor.className = "";
           if(collapse) anchor.style.display = "none";
           else anchor.style.visibility = "hidden";
-          this.removeAbpTab(object); 
           continue;
         }
         
@@ -3385,9 +3373,7 @@ var ns = singleton = {
         }
         r.extras.placeholder = r.placeholder;
         this._collectPluginExtras(pluginExtras, r.extras);
-        if (this.abpInstalled && !this.abpRemoveTabs)
-          this.adjustAbpTab(r.placeholder);
-          
+       
         ns.patchObjects(document);
       } catch(e) {
         this.dump(e);
@@ -3417,7 +3403,6 @@ var ns = singleton = {
       if (ev.shiftKey) {
         anchor.style.display = "none";
         anchor.id = anchor.className = "";
-        this.removeAbpTab(anchor);
         return;
       }
       this.checkAndEnablePlaceholder(anchor, object);
@@ -3448,36 +3433,6 @@ var ns = singleton = {
         } catch(e) {
           if (ns.consoleDump) ns.dump(e);
         }
-      }
-    }
-  },
-  
-  get abpInstalled() {
-    delete this.abpInstalled;
-    return this.abpInstalled = "@mozilla.org/adblockplus;1" in CC;
-  },
-  
-  grabAbpTab: function(ref) {
-    if (!this.abpInstalled) return null;
-    var ot = ref.previousSibling;
-    return (ot && (ot instanceof CI.nsIDOMHTMLAnchorElement) && !ot.firstChild && /\babp-objtab-/.test(ot.className))
-      ? ot : null; 
-  },
-  
-  removeAbpTab: function(ref) {
-    var ot = this.grabAbpTab(ref);
-    if (ot) {
-      ot.parentNode.removeChild(ot);
-    }
-  },
-  
-  adjustAbpTab: function(ref) {
-    var ot = this.grabAbpTab(ref);
-    if (ot) {
-      var style = ot.style;
-      style.setProperty("left", ref.offsetWidth + "px", "important");
-      if (!/\bontop\b/.test(ot.className)) {
-        style.setProperty("top", ref.offsetHeight + "px", "important");
       }
     }
   },
@@ -3557,7 +3512,7 @@ var ns = singleton = {
         extras.placeholder = null;
         this.delayExec(function() {
           try {
-            this.removeAbpTab(ctx.anchor);
+           
             var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
             var obj = ctx.object.cloneNode(true);
             

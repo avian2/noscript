@@ -199,7 +199,7 @@ BrowserIterator.prototype = {
   next: function() {
     var ret = this.currentTab;
     this.currentTab = null;
-    if(ret != null) return ret.wrappedJSObject || ret;
+    if (ret != null) return ret.wrappedJSObject || ret;
     if(!this.initialWin) return null;
     if (this.curTabIdx >= this.browsers.length) {
       if (!this.winEnum) {
