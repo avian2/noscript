@@ -226,6 +226,9 @@ const MainContentPolicy = {
           forbid = this.forbidFonts;
           if (!forbid) return CP_OK;
           mimeKey = "Font";
+          if (aContentLocation && aRequestOrigin && aContentLocation.schemeIs("data"))
+            locationURL = this.getSite(aRequestOrigin.spec);
+          
           break;
         
         case 5: // embeds

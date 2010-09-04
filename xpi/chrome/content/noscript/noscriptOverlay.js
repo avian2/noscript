@@ -107,6 +107,55 @@ return noscriptUtil.service ? {
     this.prepareMenu(popup);
   },
   
+  onUIOver: function(ev) {
+    let parent = ev.currentTarget;
+    let popup = parent.firstChild;
+    
+    if (!(popup && popup.showPopup) ||
+        ("_hovering" in popup) && popup._hovering ||
+        !this.ns.getPref("hoverUI"))
+      return;
+   
+    if (popup.state !== "open") {
+      popup._hovering = 1;
+      popup.showPopup();
+    } else popup._hovering = 2;
+  },
+  
+  onUIOut: function(ev) {
+    let parent = ev.currentTarget;
+    let popup = parent.firstChild;
+    
+    if (!("_hovering" in popup && popup._hovering && popup._hovering !== -1))
+      return;
+    
+    let related = ev.relatedTarget;
+    if (related) {
+      for (let node = related; node; node = node.parentNode) 
+        if (node == parent) return;
+      popup.hidePopup();
+    } else if (popup._hovering !== 1) {
+       window.setTimeout(function() {
+         if (!popup._hovering) popup.hidePopup();
+       }, 0);
+    }
+
+    ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
+    popup._hovering = 0;
+  },
+  
+  onUIUp: function(ev) {
+    
+    if (ev.currentTarget !== ev.target) return;
+    let popup = ev.currentTarget.firstChild;
+    if ("_hovering" in popup && popup._hovering === 1) {
+      popup._hovering = -1;
+      if (ev.button !== 2) popup.showPopup();
+    } 
+    
+  },
+  
+  
   onCommandClick: function(ev) {
     if (!(ev.button == 1 || ev.button == 0 && ev.shiftKey)) return;
     
@@ -157,7 +206,11 @@ return noscriptUtil.service ? {
   onMenuHidden: function(ev) {
     var popup = ev.currentTarget;
     if (ev.originalTarget != popup) return;
+    
     popup.removeEventListener(ev.type, arguments.callee, false);
+    
+    if ("_hovering" in popup && popup._hovering !== 1)
+      popup._hovering = 0;
     
     if (this._reloadDirty && !this.liveReload) {
       this.ns.reloadWhereNeeded();

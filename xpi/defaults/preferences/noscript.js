@@ -202,6 +202,7 @@ pref("noscript.emulateFrameBreak", true);
 pref("noscript.stickyUI.liveReload", false);
 pref("noscript.stickyUI", true);
 pref("noscript.stickyUI.onKeyboard", true);
+pref("noscript.hoverUI", true);
 
 pref("noscript.ignorePorts", true);
 

@@ -318,6 +318,9 @@
     class="statusbarpanel-menu-iconic noscript-no"
     hidden="false"
     oncontextmenu="noscriptOverlay.onContextMenu(event)"
+    onmouseover="noscriptOverlay.onUIOver(event)"
+    onmouseout="noscriptOverlay.onUIOut(event)"
+    onmouseup="noscriptOverlay.onUIUp(event)"
     />
   
    
