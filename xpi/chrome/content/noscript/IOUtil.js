@@ -476,6 +476,7 @@ ChannelReplacement.prototype = {
   },
   
   get _redirectCallback() {
+    delete this._redirectCallback;
     return this._redirectCallback = ("nsIAsyncVerifyRedirectCallback" in CI)
     ? {
         QueryInterface: xpcom_generateQI(CI.nsISupports, CI.nsIAsyncVerifyRedirectCallback),

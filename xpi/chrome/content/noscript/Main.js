@@ -3226,6 +3226,9 @@ var ns = singleton = {
 
         extras.site = this.getSite(extras.url);
         
+        if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site))
+          continue;
+        
         extras.tag = "<" + (this.isLegacyFrameReplacement(object) ? "FRAME" : objectTag.toUpperCase()) + ">";
         extras.title =  extras.tag + ", " +  
             this.mimeEssentials(extras.mime) + "@" + extras.url;

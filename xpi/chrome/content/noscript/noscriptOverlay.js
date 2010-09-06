@@ -1899,9 +1899,9 @@ return noscriptUtil.service ? {
     
     var message = this.getString(
       "allowed." +
-        (lev == "yu" || lev == "subprt" || lev == "emb" || lev == "yu-emb" || lev == "no-emb"
+        (lev == "yu" || lev == "subprt" || lev == "emb" || lev == "yu-emb"
          ? "prt"
-         : lev == "untrusted" ? "no" : lev)
+         : (lev == "untrusted" || lev == "no-emb") ? "no" : lev)
       );
     
     var shortMessage = message.replace(/JavaScript/g, "JS");
@@ -1914,7 +1914,7 @@ return noscriptUtil.service ? {
     shortMessage += countsMessage;
     
     var icon = this.getIcon(this.statusIcon); 
-    var className = this.getStatusClass(lev, !(totalScripts || untrusted) /* inactive */ );
+    var className = this.getStatusClass(lev, !(totalScripts || topUntrusted) /* inactive */ );
     
     var widget = $("noscript-tbb");
     if (widget) {
