@@ -106,6 +106,7 @@ pref("noscript.filterXExceptions.lycosmail", true);
 pref("noscript.filterXExceptions.letitbit", true);
 pref("noscript.filterXExceptions.deviantart", true);
 pref("noscript.filterXExceptions.medicare", true);
+pref("noscript.filterXExceptions.blogspot", true);
 pref("noscript.injectionCheck", 2);
 pref("noscript.injectionCheckPost", true);
 pref("noscript.injectionCheckHTML", true);

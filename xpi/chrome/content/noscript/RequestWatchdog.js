@@ -332,11 +332,11 @@ RequestWatchdog.prototype = {
       }
     }
     
-    var origin = abeReq.xOrigin;
-    var originSite = null;
-    var browser = null;
-    var window = null;
-    var untrustedReload = false;
+    let origin = abeReq.xOrigin,
+      originSite = null,
+      browser = null,
+      window = null,
+      untrustedReload = false;
 
     if (!origin) {
       if ((channel instanceof CI.nsIHttpChannelInternal) && channel.documentURI) {
@@ -388,7 +388,7 @@ RequestWatchdog.prototype = {
     const su = SiteUtils;
     originSite = originSite || su.getSite(origin) || '';
     
-    var host = url.host;
+    let host = url.host;
     if (host[host.length - 1] == "." && ns.getPref("canonicalFQDN", true) &&
         (Thread.canSpin || ABE.legacySupport)) {
       try {
@@ -400,9 +400,9 @@ RequestWatchdog.prototype = {
       }
     }
     
-    var targetSite;
+    let targetSite;
     const globalJS = ns.globalJS;
-    var trustedTarget = globalJS;
+    let trustedTarget = globalJS;
     if(!trustedTarget) {
       if(ns.autoAllow) {
         window = window || abeReq.window;
@@ -443,7 +443,7 @@ RequestWatchdog.prototype = {
     // 2 - check every cross-site request (default)
     // 3 - check every request
     
-    var injectionCheck = ns.injectionCheck;
+    let injectionCheck = ns.injectionCheck;
     
     if (originSite == targetSite) {
       if (injectionCheck < 3) return; // same origin, fast return
@@ -538,6 +538,14 @@ RequestWatchdog.prototype = {
           return;
         }
         
+        if (/^https?:\/\/www\.blogger\.com\/template-editor\.g\?/.test(origin) &&
+            /^https?:\/\/[\w\-]+\.blogspot\.com\/b\/preview\?/.test(originalSpec) &&
+            ns.getPref("filterXExceptions.blogspot")
+            ) {
+          if (ns.consoleDump) this.dump(channel, "blogspot.com template preview exception");
+          return;
+        }
+        
       }
     
     } else { // maybe data or javascript URL?
@@ -551,8 +559,8 @@ RequestWatchdog.prototype = {
       
     }
     
-    var originalAttempt;
-    var postInjection = false;
+    let originalAttempt;
+    let postInjection = false;
     
     window = window || abeReq.window;
     
@@ -574,7 +582,7 @@ RequestWatchdog.prototype = {
     
     
     
-    var trustedOrigin = globalJS || ns.isJSEnabled(originSite) ||
+    let trustedOrigin = globalJS || ns.isJSEnabled(originSite) ||
         !origin // we consider null origin as "trusted" (i.e. we check for injections but 
                 // don't strip POST unconditionally) to make some extensions (e.g. Google Gears) 
                 // work. For dangerous edge cases we should have moz-null-principal: now, anyway.
@@ -613,7 +621,7 @@ RequestWatchdog.prototype = {
     }
       // check for injections
       
-    var injectionAttempt = injectionCheck && (injectionCheck > 1 || !trustedOrigin || ns.isTemp(originSite)) &&
+    let injectionAttempt = injectionCheck && (injectionCheck > 1 || !trustedOrigin || ns.isTemp(originSite)) &&
       (!window || ns.injectionCheckSubframes || window == window.top);
 
     if (injectionAttempt) {
@@ -650,6 +658,7 @@ RequestWatchdog.prototype = {
       }
     }
     
+    
     if (trustedOrigin && !(injectionAttempt || postInjection))
       return;
     
@@ -657,9 +666,10 @@ RequestWatchdog.prototype = {
       this.resetUntrustedReloadInfo(browser, channel);
     }
 
+
     // -- DANGER ZONE --
     
-    var requestInfo = new RequestInfo(channel, url, origin, window);
+    let requestInfo = new RequestInfo(channel, url, origin, window);
 
     // transform upload requests into no-data GETs
     if (ns.filterXPost &&
@@ -671,12 +681,12 @@ RequestWatchdog.prototype = {
       channel.setUploadStream(this.dummyUpload, "", -1);
       this.notify(this.addXssInfo(requestInfo, {
         reason: "filterXPost",
-        originalAttempt: originalSpec + (postInjection ? "§DATA§" + postInjection : ""),
+        originalAttempt: originalSpec + (postInjection ? "###DATA###" + postInjection : ""),
         silent: untrustedReload
       }));
     }
     
-    if (!injectionAttempt) return;
+    if (!(injectionAttempt || postInjection)) return;
     
     if (ns.filterXGet && ns.filterXGetRx) {
       var changes = null;
@@ -707,7 +717,7 @@ RequestWatchdog.prototype = {
             this.notify(this.addXssInfo(requestInfo, {
               reason: "filterXGetRef",
               originalAttempt: originalSpec + " (REF: " + originalAttempt + ")",
-              silent: true,
+              silent: !postInjection,
               sanitizedURI: channel.referrer
             }));
           }
@@ -719,29 +729,30 @@ RequestWatchdog.prototype = {
       }
       
       originalAttempt = originalSpec;
-      xsan.brutal = injectionAttempt;
-      try {
-        changes = xsan.sanitizeURL(url);
-      } catch(e) {
-        changes = xsan.sanitizeURL(url.clone());
-        if (changes.major) {
-          requestInfo.reason = url.spec;
-          this.abort(requestInfo);
-          return;
+      
+      if (injectionAttempt) {
+        xsan.brutal = injectionAttempt;
+        try {
+          changes = xsan.sanitizeURL(url);
+        } catch(e) {
+          changes = xsan.sanitizeURL(url.clone());
+          if (changes.major) {
+            requestInfo.reason = url.spec;
+            this.abort(requestInfo);
+            return;
+          }
         }
-      }
-      if (changes.minor) {
-        this.proxyHack(channel);
-        this.notify(this.addXssInfo(requestInfo, {
-          reason: "filterXGet",
-          originalAttempt: originalAttempt,
-          silent: !changes.major 
-        }));
+        if (changes.minor) {
+          this.proxyHack(channel);
+          this.notify(this.addXssInfo(requestInfo, {
+            reason: "filterXGet",
+            originalAttempt: originalAttempt,
+            silent: !(changes.major || postInjection) 
+          }));
+        }
       }
     }
    
-    
-
     if (requestInfo.xssMaybe) {
       // avoid surprises from history & cache
       if (channel instanceof CI.nsICachingChannel) {
@@ -766,7 +777,7 @@ RequestWatchdog.prototype = {
   
   isBadException: function(host) {
     // TLD check for Google search
-    var m = host.match(/\bgoogle\.((?:[a-z]{1,3}\.)?[a-z]+)$/i);
+    let m = host.match(/\bgoogle\.((?:[a-z]{1,3}\.)?[a-z]+)$/i);
     return m && ns.getPublicSuffix(host) != m[1];
   },
   

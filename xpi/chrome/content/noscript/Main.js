@@ -4136,7 +4136,10 @@ var ns = singleton = {
             // a non-generic mime type has been given, let's check it strictly
             if (
                (ctype === 2
-                  ? /\bj(?:avascript|s(?:on)?)\b/
+                  // many CDNs are serving JS as text/css now,
+                  // see http://forums.informaction.com/viewtopic.php?f=7&t=4999
+                  // & http://forums.informaction.com/viewtopic.php?f=7&t=4997
+                  ? /\b(?:j(?:avascript|s(?:on)?)|css)\b/ 
                   : (PolicyUtil.isXSL(ph.context) ? /\bx[ms]l/ : /\bcss\b/)
                 ).test(mime)
               ) {
