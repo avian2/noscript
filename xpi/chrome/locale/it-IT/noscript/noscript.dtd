@@ -18,7 +18,7 @@
 <!ENTITY noscriptGeneral "Generale">
 <!ENTITY noscriptAppearance "Aspetto">
 <!ENTITY noscriptShow "Mostra…">
-<!ENTITY noscriptCtxMenu "Menu contestuale">
+<!ENTITY noscriptCtxMenu "Menù contestuale">
 <!ENTITY noscriptStatusIcon "Icona sulla barra di stato">
 <!ENTITY noscriptFullAddr "Indirizzi completi">
 <!ENTITY noscriptFullDom "Dominii completi">
@@ -176,3 +176,17 @@
 <!ENTITY noscriptUninstall "Disinstalla">
 <!ENTITY noscriptRecentBlocked "Siti bloccati di recente">
 <!ENTITY noscriptEmbeddings "Oggetti importati">
+<!ENTITY noscriptExternalFilters "Filtri esterni">
+<!ENTITY noscriptEF.enable "Abilita i filtri esterni">
+<!ENTITY noscriptEF.add "Crea filtro…">
+<!ENTITY noscriptEF.executable "File eseguibile:">
+<!ENTITY noscriptEF.browse "Sfoglia…">
+<!ENTITY noscriptEF.contentType "Tipo di contenuto (MIME) da filtrare (confronto esatto o espressione regolare):">
+<!ENTITY noscriptEF.exceptions "Non filtrare gli oggetti provenienti dai seguenti siti:">
+<!ENTITY noscriptEF.remove "Rimuovi">
+<!ENTITY noscriptPreset "Livello di sicurezza">
+<!ENTITY noscriptPreset.off "Nessuno (stai scherzando?!)">
+<!ENTITY noscriptPreset.low "Spensierato (Blacklist + Sicurezza Web)">
+<!ENTITY noscriptPreset.medium "Classico (Whitelist + Sicurezza Web)">
+<!ENTITY noscriptPreset.high "Fortezza (Protezione completa)">
+<!ENTITY noscript.hoverUI "Apri il menù dei permessi quando il mouse sorvola l'icona di NoScript">
