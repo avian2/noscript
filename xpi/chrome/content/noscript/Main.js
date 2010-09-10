@@ -2388,14 +2388,18 @@ var ns = singleton = {
   },
   
   hasVisibleLinks: function(document) {
-    var links = document.links;
-    var w = document.defaultView;
-    var style, position;
-    for (var j = 0, l; (l = links[j]); j++) {
+    const links = document.links;
+    const w = document.defaultView;
+    for (let j = 0, l; (l = links[j]); j++) {
       if (l && l.href && /^https?/i.test(l.href)) {
         if (l.offsetWidth || l.offsetHeight) return true;
-        style = w.getComputedStyle(l, '');
+        
+        let style = w.getComputedStyle(l, '');
+        if (!style) return true; // this means we're inside an invisible frame, no reason to loose time here
+        
         if (parseInt(style.width) || parseInt(style.height)) return true; 
+        
+        let position;
         try {
           position = l.style.position;
           l.style.position = "absolute";

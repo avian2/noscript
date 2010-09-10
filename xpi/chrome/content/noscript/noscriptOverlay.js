@@ -137,7 +137,7 @@ return noscriptUtil.service ? {
     } else if (popup._hovering !== 1) {
        window.setTimeout(function() {
          if (!popup._hovering) popup.hidePopup();
-       }, 0);
+       }, 500);
     }
 
     ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);

@@ -9,6 +9,10 @@
   cursor: pointer;
 }
 
+#noscript-statusIcon:hover {
+  -moz-box-shadow: 0 0 8px #fff inset;
+}
+
 .noscript-cmd {
   font-weight: normal;
 }
