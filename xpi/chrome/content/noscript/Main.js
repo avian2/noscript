@@ -679,20 +679,7 @@ var ns = singleton = {
 
     this.policyPB = prefSrv.getBranch("capability.policy." + this.POLICY_NAME + ".").QueryInterface(PBI);
     this.prefs = prefSrv.getBranch("noscript.").QueryInterface(PBI);
-    
-    try {
-      prefSrv.getDefaultBranch("noscript.").getBoolPref("autoReload"); // test for default pref existance
-    } catch(e) {
-      dump("[NoScript] Bug 576492 work-around!\n");
-      var defFile = __LOCATION__.parent.parent;
-      defFile.append("defaults");
-      defFile.append("preferences");
-      defFile.append("noscript.js");
-      prefSrv.readUserPrefs(defFile);
-      prefSrv.readUserPrefs(null);
-    }
-    
-    
+     
     this.policyPB.addObserver("sites", this, true);
     
     this.prefs.addObserver("", this, true);
@@ -4273,7 +4260,7 @@ var ns = singleton = {
     const errPageURL = this.contentBase + "frameOptErr.xhtml";
     f.addEventListener("load", function(ev) {
       f.removeEventListener(ev.type, arguments.callee, false);
-      if (errPageURL == f.contentWindow.location.href)
+      if (f.contentWindow && errPageURL == f.contentWindow.location.href)
         f.contentWindow.document.getElementById("link")
           .setAttribute("href", url);
     }, false);

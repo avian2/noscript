@@ -4,11 +4,6 @@ const SERVICE_FACTORY = {
   get _instance() {
     delete this._instance;
     var i = new SERVICE_CONSTRUCTOR();
-    i.__defineGetter__("home", function() {
-      var f = __LOCATION__.parent;
-      this.__defineGetter__("home", function() { return f; });
-      return f;
-    });
     return this._instance = i;
   },
   
