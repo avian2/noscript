@@ -61,11 +61,11 @@ const PolicyState = {
 }
 
 function PolicyHints(hints) {
-  Array.prototype.push.apply(this, Array.slice(hints, 0));
+  this.push.apply(this, Array.slice(hints, 0));
 }
 
 PolicyHints.prototype = (function() {
-  var proto = new Array();
+  const proto = {};
   ["contentType", "contentLocation", "requestOrigin", "context", "mimeType", "extra"].forEach(function(p, i) {
     this.__defineGetter__(p, function() { return this[i] });
     this.__defineSetter__(p, function(v) { return this[i] = v });
@@ -73,6 +73,8 @@ PolicyHints.prototype = (function() {
    proto.toArray = function() {
       return Array.slice(this, 0)
    };
+   proto.toSource = Object.prototype.toSource;
+   proto.__proto__ = new Array();
    return proto;
 })();
 
