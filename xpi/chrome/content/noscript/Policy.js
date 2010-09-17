@@ -465,7 +465,7 @@ const MainContentPolicy = {
         
         if (forbid) forbid = !this.isJSEnabled(locationSite);
         if (forbid && this.ignorePorts && /:\d+$/.test(locationSite)) {
-          forbid = !this.isJSEnabled(locationSite.replace(/:\d+$/, ''));
+          forbid = !this.autoTemp(locationSite);
         }
   
         if ((untrusted || forbid) && aContentLocation.scheme != "data") {
@@ -552,7 +552,7 @@ const MainContentPolicy = {
         }
       }
   
-      if(forbid && !this.contentBlocker) {
+      if (forbid && !this.contentBlocker) {
         
         originURL = originURL || (aRequestOrigin && aRequestOrigin.spec);
         originSite = originSite || this.getSite(originURL);

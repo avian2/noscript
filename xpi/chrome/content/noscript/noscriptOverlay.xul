@@ -33,6 +33,9 @@
       type="menu-button"
       oncommand="if(event.target == this) if(noscriptOverlay.toggleCurrentPage()) event.preventDefault();"
       oncontextmenu="noscriptOverlay.onContextMenu(event);"
+      onmouseover="noscriptOverlay.onUIOver(event)"
+      onmouseout="noscriptOverlay.onUIOut(event)"
+      onmouseup="noscriptOverlay.onUIUp(event)"
     >
       <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
         <menuseparator class="noscript-sep-insert" hidden="true" />

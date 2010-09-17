@@ -1197,8 +1197,7 @@ var ns = singleton = {
   },
   getPublicSuffix: function(domain) {
     try {
-      if (!DNS.isIP(domain))
-        return this._tldService.getPublicSuffixFromHost(domain);
+      return this._tldService.getPublicSuffixFromHost(domain);
     } catch(e) {}
     return "";
   }

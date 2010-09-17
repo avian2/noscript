@@ -147,6 +147,14 @@ return noscriptUtil.service ? {
   onUIUp: function(ev) {
     
     if (ev.currentTarget !== ev.target) return;
+    
+    if (ev.originalTarget.tagName == "xul:toolbarbutton") {
+      // discriminate dropdown button from 
+      noscriptOverlay.toggleCurrentPage();
+      ev.preventDefault();
+      return;
+    }
+    
     let popup = ev.currentTarget.firstChild;
     if ("_hovering" in popup && popup._hovering === 1) {
       popup._hovering = -1;
@@ -492,15 +500,17 @@ return noscriptUtil.service ? {
     } catch(e) {
       if(ns.consoleDump) ns.dump("Error populating plugins menu: " + e);
     }
+    
+    const jsPSs = ns.jsPolicySites;
     var site, enabled, isTop, lev;
-    var jsPSs = ns.jsPolicySites;
+
     var matchingSite;
     var menuGroups, menuSites, menuSite, scount;
-    var domain, pos, baseLen, dp;
+    var domain, pos, baseLen;
     var untrusted;
     var cssClass;
 
-    var domainDupChecker = {
+    const domainDupChecker = {
       domains: {},
       check: function(d) {
         return this.domains[d] || !(this.domains[d] = true);
@@ -527,7 +537,6 @@ return noscriptUtil.service ? {
     
     const ignorePorts = ns.ignorePorts;
     const portRx = /:\d+$/;
-    var hasPort, showInMain;
     
     const hideUntrustedPlaceholder = !ns.showUntrustedPlaceholder;
     var embedOnlySites = null;
@@ -556,7 +565,7 @@ return noscriptUtil.service ? {
       
       enabled = !!matchingSite;
       
-      showInMain = embedOnlySites
+      let showInMain = embedOnlySites
         ? embedOnlySites.indexOf(site) === -1 || hideUntrustedPlaceholder && enabled : true;
       
       docJSBlocked = enabled && isTop && !ns.dom.getDocShellForWindow(content).allowJavascript;
@@ -572,22 +581,24 @@ return noscriptUtil.service ? {
         
       } else {
         domain = !ns.isForbiddenByHttpsStatus(site) && ns.getDomain(site);
-        hasPort = portRx.test(site);
+        let hasPort = portRx.test(site);
+        let dp = ns.getPublicSuffix(domain);
         
-        if ((dp = ns.getPublicSuffix(domain)) == domain || // exclude TLDs
+        if (dp == domain || // exclude TLDs
             ns.isJSEnabled(domain) != enabled || // exclude ancestors with different permissions
             hasPort && !ignorePorts // or any ancestor if this is a non-standard port
           ) {
           domain = null; 
         }
         
-        menuSites = (showAddress || showNothing || !domain) ? [site] : [];
         
-        if (hasPort && ignorePorts && menuSites.length) {
-          site = site.replace(/:\d+$/, ''); // add no-port jolly
-          if (!(jsPSs.matches(site) || domainDupChecker.check(site))) // unless already enabled or listed
-            menuSites.push(site);
+        if (hasPort && ignorePorts) {
+          site = site.replace(/:\d+$/, '');
+          if (jsPSs.matches(site) || domainDupChecker.check(site))
+            continue;
         }
+        
+        menuSites = (showAddress || showNothing || !domain) ? [site] : [];
         
         if (domain && (showDomain || showBase)) {
           baseLen = domain.length;
@@ -710,7 +721,7 @@ return noscriptUtil.service ? {
       menuSites = menuGroups[j];
       isTop = menuSites.isTop;
       enabled = menuSites.enabled;
-      showInMain = menuSites.showInMain;
+      let showInMain = menuSites.showInMain;
       
       if (untrustedFrag && untrustedFrag.firstChild) {
         untrustedFrag.appendChild(sep.cloneNode(false));

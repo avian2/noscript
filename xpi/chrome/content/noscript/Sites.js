@@ -47,16 +47,15 @@ const SiteUtils = new function() {
       return this.domainMatch(url);
     }
     try {
-      // let's unwrap JAR uris
-      var uri = this.uriFixup.createExposableURI(this.ios.newURI(url, null, null)); // fix wysywyc: and zaps userpass
-      if (uri instanceof CI.nsIJARURI) {
-        uri = uri.JARFile;
-        return uri ? this.getSite(uri.spec) : scheme;
-      }
+      let uri = this.uriFixup.createExposableURI( // fix wyciwyg: and zaps userpass
+                IOUtil.unwrapURL(url) // unwrap JAR and view-source uris
+      ); 
+      
       try  {
-        return scheme + "//" + uri.hostPort;
-      } catch(exNoHostPort) {
-        var host = uri.spec.substring(scheme.length);
+        return uri.prePath;
+      } catch(exNoPrePath) {
+        scheme = uri.scheme;
+        let host = uri.spec.substring(scheme.length);
         return /^\/\/[^\/]/.test(host) && (host = this.domainMatch(host.replace(/^\/\/([^\/]+).*/, "$1")))
           ? scheme + "//" + host
           : scheme;
