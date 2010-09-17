@@ -467,7 +467,7 @@ const MainContentPolicy = {
         
         if (forbid) forbid = !this.isJSEnabled(locationSite);
         if (forbid && this.ignorePorts && /:\d+$/.test(locationSite)) {
-          forbid = !this.autoTemp(locationSite);
+          forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
         }
   
         if ((untrusted || forbid) && aContentLocation.scheme != "data") {

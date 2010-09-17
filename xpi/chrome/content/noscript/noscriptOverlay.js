@@ -133,12 +133,11 @@ return noscriptUtil.service ? {
     if (related) {
       for (let node = related; node; node = node.parentNode) 
         if (node == parent) return;
-      popup.hidePopup();
-    } else if (popup._hovering !== 1) {
-       window.setTimeout(function() {
-         if (!popup._hovering) popup.hidePopup();
-       }, 500);
     }
+    
+    window.setTimeout(function() {
+      if (!popup._hovering) popup.hidePopup();
+    }, popup._hovering == 1 ? 250 : 500);
 
     ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
     popup._hovering = 0;
