@@ -509,11 +509,9 @@ return noscriptUtil.service ? {
     var untrusted;
     var cssClass;
 
-    const domainDupChecker = {
-      domains: {},
-      check: function(d) {
-        return this.domains[d] || !(this.domains[d] = true);
-      }
+    const dupeChecker = {
+      sites: {},
+      check: function(s) (s in this.sites) || (this.sites[s] = false)
     };
     
     const locked = ns.locked;
@@ -524,8 +522,6 @@ return noscriptUtil.service ? {
     const showUntrusted = ns.getPref("showUntrusted", true);
     const showDistrust = ns.getPref("showDistrust", true);
     const showNothing = !(showAddress || showDomain || showBase || showUntrusted);
-    // const forbidImpliesUntrust = ns.forbidImpliesUntrust;
-    
     const showPermanent = ns.getPref("showPermanent", true);
     const showTemp = !locked && ns.getPref("showTemp", true);
     
@@ -554,14 +550,27 @@ return noscriptUtil.service ? {
       
       matchingSite = jsPSs.matches(site);
       untrusted = untrustedSites.matches(site);
-      if (untrusted) {
-        matchingSite = null;
-      } else if (blockUntrusted && !matchingSite) {
-        matchingSite = site;
-      }
+      let hasPort = portRx.test(site);
       
       isTop = site == sites.topSite;
       
+      if (untrusted) {
+        matchingSite = null;
+      } else if (!matchingSite) {
+        
+        if (ignorePorts && hasPort) {
+          matchingSite =  jsPSs.matches(site.replace(portRx, ''));
+          if (matchingSite) {
+            site = matchingSite;
+            hasPort = false;
+          }
+        }
+        
+        if (blockUntrusted)
+          matchingSite = site;
+      }
+      
+
       enabled = !!matchingSite;
       
       let showInMain = embedOnlySites
@@ -571,16 +580,15 @@ return noscriptUtil.service ? {
       if (docJSBlocked) enabled = false;
       
       if (enabled && !global || (matchingSite = untrusted)) {
-        if (ignorePorts && portRx.test(site)) {
+        if (ignorePorts && hasPort) {
           site = jsPSs.matches(site.replace(portRx, ''));
           if (site) matchingSite = site;
         }
-        if (domainDupChecker.check(matchingSite)) continue;
+        if (dupeChecker.check(matchingSite)) continue;
         menuSites = [matchingSite];
         
       } else {
         domain = !ns.isForbiddenByHttpsStatus(site) && ns.getDomain(site);
-        let hasPort = portRx.test(site);
         let dp = ns.getPublicSuffix(domain);
         
         if (dp == domain || // exclude TLDs
@@ -592,10 +600,12 @@ return noscriptUtil.service ? {
         
         
         if (hasPort && ignorePorts) {
-          site = site.replace(/:\d+$/, '');
-          if (jsPSs.matches(site) || domainDupChecker.check(site))
+          site = site.replace(portRx, '');
+          if (jsPSs.matches(site))
             continue;
         }
+        
+        if (dupeChecker.check(site)) continue;
         
         menuSites = (showAddress || showNothing || !domain) ? [site] : [];
         
@@ -605,7 +615,7 @@ return noscriptUtil.service ? {
             baseLen -= (domain.lastIndexOf(".", baseLen - dp.length - 2) + 1); 
           if (baseLen == domain.length) {
             // IP or 2nd level domain
-            if (!domainDupChecker.check(domain)) {
+            if (!dupeChecker.check(domain)) {
               menuSites.push(domain);
             }
           } else {
@@ -616,7 +626,7 @@ return noscriptUtil.service ? {
               } else {
                 if (!showDomain) continue;
               }
-              if (!domainDupChecker.check(dp)) {
+              if (!dupeChecker.check(dp)) {
                 menuSites.push(dp);
               }
               if (baseLen == dp.length) break;

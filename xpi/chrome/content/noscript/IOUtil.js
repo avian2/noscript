@@ -72,21 +72,23 @@ const IOUtil = {
   },
   extractFromChannel: function(channel, key, preserve) {
     if (channel instanceof CI.nsIPropertyBag2) {
-      try {
-        var requestInfo = channel.getPropertyAsInterface(key, CI.nsISupports);
-        if (requestInfo) {
-          if(!preserve && (channel instanceof CI.nsIWritablePropertyBag)) channel.deleteProperty(key);
-          return requestInfo.wrappedJSObject;
-        }
-      } catch(e) {}
+      let p = channel.get(key);
+      if (p) {
+        if (!preserve && (channel instanceof CI.nsIWritablePropertyBag)) channel.deleteProperty(key);
+        return p.wrappedJSObject;
+      }
     }
     return null;
   },
 
   extractInternalReferrer: function(channel) {
-    if (channel instanceof CI.nsIPropertyBag2) try {
-      return channel.getPropertyAsInterface("docshell.internalReferrer", CI.nsIURL);
-    } catch(e) {}
+    if (channel instanceof CI.nsIPropertyBag2) {
+      const key = "docshell.internalReferrer";
+      if (channel.hasKey(key))
+        try {
+          return channel.getPropertyAsInterface(key, CI.nsIURL);
+        } catch(e) {}
+    }
     return null;
   },
   extractInternalReferrerSpec: function(channel) {

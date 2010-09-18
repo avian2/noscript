@@ -55,7 +55,9 @@ var ns = singleton = {
   observe: function(subject, topic, data) {
     
     // check this first, since it's the most likely call
-    if ("content-document-global-created" === topic) {
+    if ("document-element-inserted" === topic) {
+      this.onDocumentElementInserted(subject);
+    } else if ("content-document-global-created" === topic) {
       this.onJSGlobalCreated(subject, data);
       return;
     }
@@ -156,7 +158,7 @@ var ns = singleton = {
   
   OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "sessionstore-windows-restored",
                     "toplevel-window-ready", "browser:purge-session-history", "private-browsing",
-                    "content-document-global-created"],
+                    "content-document-global-created", "document-element-inserted"],
   register: function() {
     this.OBSERVED_TOPICS.forEach(function(topic) {
       OS.addObserver(this, topic, true);
@@ -164,7 +166,9 @@ var ns = singleton = {
   },
   unregister: function() {
     this.OBSERVED_TOPICS.forEach(function(topic) {
-      OS.removeObserver(this, topic);
+      try {
+        OS.removeObserver(this, topic);
+      } catch (e) {}
     }, this);
   }
 ,
@@ -1024,7 +1028,7 @@ var ns = singleton = {
     }
     
     const tempSites = this.tempSites;
-    var portSites = this.tempSites.sitesString.match(/\S+:[1-9]\d*(?:\s|$)/g);
+    var portSites = this.tempSites.sitesString.match(/\S+:[1-9]\d*(?=\s|$)/g);
     if (!portSites) return;
     
     
@@ -4551,15 +4555,25 @@ var ns = singleton = {
     this.onWindowSwitch = null;
     
     this.onJSGlobalCreated = function(win, url) {
-      if (url) { // WARNING: url contains only the authority part of the current URI
+      if (url && !(win instanceof CI.nsIDOMChromeWindow)) { // WARNING: url contains only the authority part of the current URI
         let pageURL = win.location.href; // we need to get the full URI elsewhere
         if (pageURL == win.document.documentURI) { // can be false on frame transitions...
           let docShell =  this.dom.getDocShellForWindow(win);
-            this.executeEarlyScripts(pageURL, win, docShell);
+          this.executeEarlyScripts(pageURL, win, docShell);
         }
       }
     }
     this.onJSGlobalCreated(win, url);
+  },
+  
+  onDocumentElementInserted: function(doc) {
+    try {
+      OS.removeObserver(this, "content-document-global-created");
+    } catch(e) {}
+    this.onDocumentElementInserted = function(doc) {
+      this.onJSGlobalCreated(doc.defaultView, doc.URL);
+    }
+    this.onDocumentElementInserted(doc);
   },
   
   get unescapeHTML() {
