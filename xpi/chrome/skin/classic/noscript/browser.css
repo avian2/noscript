@@ -7,10 +7,19 @@
 #noscript-statusRedirect,
 #noscript-statusXss {
   cursor: pointer;
+  
 }
-
+#noscript-statusIcon {
+  -moz-box-shadow: 0 0 0 #000 inset;
+  -moz-transition-property: -moz-box-shadow;
+  -moz-transition-duration: 1s;
+  background-color: transparent;
+}
 #noscript-statusIcon:hover {
   -moz-box-shadow: 0 0 8px #fff inset;
+  background-color: #444;
+  -moz-transition-property: -moz-box-shadow, background-color;
+  -moz-transition-duration: 1s;
 }
 
 .noscript-cmd {

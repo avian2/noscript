@@ -145,7 +145,7 @@
     },
     
    
-    checkObstruction: function(o, ctx) {   
+    checkObstruction: function(o, ctx) {
       var d = o.ownerDocument;
       var dElem = d.documentElement;
       
@@ -304,7 +304,7 @@
             x: w.scrollX, 
             y: w.scrollY, 
             width: Math.max(w.innerWidth - sd.w, 32), 
-            height: Math.max(w.innerHeight - sd.h, 32),
+            height: Math.max(w.innerHeight - sd.h, 24), // www.blogger.com top bar is 30 pixel high
             frame: frame
           };
   

@@ -1883,10 +1883,7 @@ var ns = singleton = {
   
   _bug453825: true,
   _bug472495: true,
-  
-  POLICY_XBL: "TYPE_XBL" in CI.nsIContentPolicy,
-  POLICY_OBJSUB: "TYPE_OBJECT_SUBREQUEST" in CI.nsIContentPolicy,
-  
+
   cpConsoleFilter: [2, 5, 6, 7, 15],
   cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
     this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
@@ -1924,13 +1921,7 @@ var ns = singleton = {
     return this.rejectCode;
   },
   
-  get nopXBL() {
-    const v = this.POLICY_XBL
-      ? "chrome://global/content/bindings/general.xml#basecontrol"
-      : this.contentBase + "noscript.xbl#nop";
-    this.__defineGetter__("nopXBL", function() { return v; });
-    return v;
-  },
+  nopXBL: "chrome://global/content/bindings/general.xml#basecontrol",
   
   _domNodeRemoved: function(ev) {
     if (ns.consoleDump) ns.dump("Removing DOMNodeRemoved listener");
@@ -5045,7 +5036,7 @@ var ns = singleton = {
     var checkInterval = this.getPref("subscription.checkInterval", 24) * 60000;
     var now = Date.now();
     if (lastCheck + checkInterval > now) {
-      this.delayExec(arguments.callee, lastCheck + checkInterval - now + 1000);
+      this.delayExec(checkSubscriptions, lastCheck + checkInterval - now + 1000);
       return;
     }
     

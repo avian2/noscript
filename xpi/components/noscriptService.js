@@ -7,7 +7,7 @@ const CU = Components.utils;
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
 const EXTENSION_NAME = "NoScript";
 const CHROME_NAME = "noscript";
-const VERSION = "2.0.3.2";
+const VERSION = "2.0.3.3rc1";
 const SERVICE_NAME = EXTENSION_NAME + " Service";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID="{31aec909-8e86-4397-9380-63a59e0c5ff5}";
@@ -34,7 +34,7 @@ const _INCLUDED = {};
 const INCLUDE = function(name) {
   if (arguments.length > 1)
     for (var j = 0, len = arguments.length; j < len; j++)
-      arguments.callee(arguments[j]);
+      INCLUDE(arguments[j]);
   else if (!_INCLUDED[name]) {
     try {
       LOADER.loadSubScript("chrome://noscript/content/"+ name + ".js");

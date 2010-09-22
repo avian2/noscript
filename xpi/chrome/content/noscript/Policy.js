@@ -65,16 +65,16 @@ function PolicyHints(hints) {
 }
 
 PolicyHints.prototype = (function() {
-  const proto = {};
+  const proto = {
+    __proto__: [],
+    toArray: function() Array.slice(this, 0),
+    toSource: Object.prototype.toSource,
+    toString:  Object.prototype.toSource
+  };
   ["contentType", "contentLocation", "requestOrigin", "context", "mimeType", "extra"].forEach(function(p, i) {
-    this.__defineGetter__(p, function() { return this[i] });
-    this.__defineSetter__(p, function(v) { return this[i] = v });
+    this.__defineGetter__(p, function() this[i]);
+    this.__defineSetter__(p, function(v) this[i] = v);
    }, proto);
-   proto.toArray = function() {
-      return Array.slice(this, 0)
-   };
-   proto.toSource = Object.prototype.toSource;
-   proto.__proto__ = new Array();
    return proto;
 })();
 
@@ -120,20 +120,7 @@ const MainContentPolicy = {
         logBlock = logIntercept & LOG_CONTENT_BLOCK;
         logIntercept = logIntercept & LOG_CONTENT_INTERCEPT;
       } else logBlock = false;
-    
-      if (aContentType == 1 && !this.POLICY_OBJSUB) { // compatibility for type OTHER
-        if (aContext instanceof CI.nsIDOMHTMLDocument) {
-          aContentType = arguments.callee.caller ? 11 : 9;
-        } else if ((aContext instanceof CI.nsIDOMHTMLElement)) {
-          if ((aContext instanceof CI.nsIDOMHTMLEmbedElement || aContext instanceof CI.nsIDOMHTMLObjectElement)) {
-            aContentType = 12;
-          } else if (aContext.getAttribute("ping")) {
-            aContentType = 10;
-          }
-        }
-        arguments[0] = aContentType;
-      }
-      
+
       unwrappedLocation = IOUtil.unwrapURL(aContentLocation);
       scheme = unwrappedLocation.scheme;
       
@@ -523,15 +510,12 @@ const MainContentPolicy = {
               if (isSilverlight) {
                 if (logIntercept) this.dump("Silverlight " + aContentLocation.spec + " " + typeof(aContext) + " " + aContentType + ", " + aInternalCall);
                
-                
-                // forbid = aContentType == 12 || !this.POLICY_OBJSUB;
                 this.setExpando(aContext, "silverlight", aContentType != 12);
                 if (!forbid) return CP_OK;
                 
                 locationURL = this.resolveSilverlightURL(aRequestOrigin, aContext);
                 locationSite = this.getSite(locationURL);
                 originURL = aRequestOrigin && aRequestOrigin.spec;
-                if (!this.POLICY_OBJSUB)  forbid = locationURL != originURL;
                 
                 if(!forbid || this.isAllowedObject(locationURL, mimeKey, locationSite) ||
                    this.isAllowedObjectById(aContext.id, locationURL, originURL, mimeKey, locationSite)) {

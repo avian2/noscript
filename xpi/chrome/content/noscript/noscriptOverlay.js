@@ -118,8 +118,17 @@ return noscriptUtil.service ? {
    
     if (popup.state !== "open") {
       popup._hovering = 1;
-      popup.showPopup();
-    } else popup._hovering = 2;
+      let delay = this.ns.getPref("hoverUI.delayEnter", 250);
+      if (delay > 0) {
+        window.setTimeout(function() {
+          if (popup._hovering) popup.showPopup()
+        }, delay);
+      } else {
+        popup.showPopup();
+      }
+    } else {
+      popup._hovering = 2;
+    }
   },
   
   onUIOut: function(ev) {
@@ -136,8 +145,14 @@ return noscriptUtil.service ? {
     }
     
     window.setTimeout(function() {
-      if (!popup._hovering) popup.hidePopup();
-    }, popup._hovering == 1 ? 250 : 500);
+        if (!popup._hovering) popup.hidePopup();
+      },
+      this.ns.getPref("hoverUI.delayExit" +
+        (popup._hovering == 1
+          ? "1"
+          : "2"
+        ), 250)
+    );
 
     ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
     popup._hovering = 0;

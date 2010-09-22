@@ -204,6 +204,9 @@ pref("noscript.stickyUI.liveReload", false);
 pref("noscript.stickyUI", true);
 pref("noscript.stickyUI.onKeyboard", true);
 pref("noscript.hoverUI", true);
+pref("noscript.hoverUI.delayEnter", 300);
+pref("noscript.hoverUI.delayExit1", 250);
+pref("noscript.hoverUI.delayExit2", 300);
 
 pref("noscript.ignorePorts", true);
 
@@ -218,7 +221,7 @@ pref("noscript.surrogate.qs.sources", "edge.quantserve.com");
 pref("noscript.surrogate.qs.replacement", "window.quantserve=function(){}");
 pref("noscript.surrogate.yieldman.sources", "*.yieldmanager.com");
 pref("noscript.surrogate.yieldman.replacement", "with(window)rmAddKey=rmAddCustomKey=rmShowAd=rmShowPop=rmShowInterstitial=rmGetQueryParameters=rmGetSize=rmGetWindowUrl=rmGetPubRedirect=rmGetClickUrl=rmReplace=rmTrim=rmUrlEncode=rmCanShowPop=rmCookieExists=rmWritePopFrequencyCookie=rmWritePopExpirationCookie=flashIntalledCookieExists=writeFlashInstalledCookie=flashDetection=rmGetCookie=function(){}");
-pref("noscript.surrogate.popunder.sources", "@http:// wyciwyg:");
+pref("noscript.surrogate.popunder.sources", "@^http:\\/\\/[\\w\\-\\.]+\.[a-z]+ wyciwyg:");
 pref("noscript.surrogate.popunder.replacement", "var cookie=document.__proto__.__lookupGetter__('cookie');document.__proto__.__defineGetter__('cookie',function() {var c='; popunder=yes; popundr=yes; setover18=1';return (cookie.apply(this).replace(c,'')+c).replace(/^; /, '')});var fid='_FID_'+(Date.now().toString(16));var open=window.__proto__.open;window.__proto__.open=function(url,target,features){try{if(!(/^_(?:top|parent|self)$/i.test(target)||target in frames)){var suspSrc,frame,ff=[];for(var f,ev,aa=arguments;aa.callee&&(f=aa.callee.caller)&&ff.indexOf(f)<0;ff.push(f)){aa=f.arguments;if(!aa)break;ev=aa[0];if(!suspSrc)suspSrc=/(?:\bpopunde?r|\bfocus\b.*\bblur|\bblur\b.*\bfocus|[pP]uShown)\b/.test(f.toSource());if(ev&&typeof ev=='object'&&('type' in ev)&&ev.type=='click'&&ev.button===0&&(ev.currentTarget===document||('tagName' in ev.currentTarget)&&'body'==ev.currentTarget.tagName.toLowerCase())&&!(('href' in ev.target)&&ev.target.href&&(ev.target.href.indexOf(url)===0||url.indexOf(ev.target.href)===0))){if(suspSrc){frame=document.getElementById(fid)||document.body.appendChild(document.createElement('iframe'));frame.id=fid;frame.src='data:text/html,';frame.style.display='none';var w=frame.contentWindow;w.blur=function(){};return w;}}}}}catch(e){}return open.apply(null, arguments);};");
 pref("noscript.surrogate.popunder.exceptions", ".meebo.com");
 pref("noscript.surrogate.imdb.sources", "@*.imdb.com/video/*");
