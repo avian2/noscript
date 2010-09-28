@@ -154,13 +154,13 @@ var ScriptSurrogate = {
     if (this.debug) {
       // we run each script separately and don't swallow exceptions
      scripts.forEach(function(s) {
-      runner.call(this, document, "(function() {" + s + "})()");
+      runner.call(this, document, s);
      }, this);
     } else {
       runner.call(this, document,
-        "(function(){try{" +
-          scripts.join("}catch(e){}})();(function(){try{") +
-          "}catch(e){}})();");
+        "try{" +
+          scripts.join("}catch(e){}\ntry{") +
+          "}catch(e){}");
     }
 
     return true;

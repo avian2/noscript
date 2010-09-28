@@ -34,6 +34,7 @@
       oncommand="if(event.target == this) if(noscriptOverlay.toggleCurrentPage()) event.preventDefault();"
       oncontextmenu="noscriptOverlay.onContextMenu(event);"
       onmouseover="noscriptOverlay.onUIOver(event)"
+      onmousemove="noscriptOverlay.onUIMove(event)"
       onmouseout="noscriptOverlay.onUIOut(event)"
       onmouseup="noscriptOverlay.onUIUp(event)"
     >
@@ -322,6 +323,7 @@
     hidden="false"
     oncontextmenu="noscriptOverlay.onContextMenu(event)"
     onmouseover="noscriptOverlay.onUIOver(event)"
+    onmousemove="noscriptOverlay.onUIMove(event)"
     onmouseout="noscriptOverlay.onUIOut(event)"
     onmouseup="noscriptOverlay.onUIUp(event)"
     />

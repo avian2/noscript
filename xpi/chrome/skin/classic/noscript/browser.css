@@ -10,16 +10,22 @@
   
 }
 #noscript-statusIcon {
+  -moz-border-radius: 0;
+  border: 0 none transparent;
   -moz-box-shadow: 0 0 0 #000 inset;
-  -moz-transition-property: -moz-box-shadow;
+  background-color: rgba(255, 255, 255, 0);
+  -moz-transition-property: background-color, -moz-box-shadow, -moz-border-radius;
   -moz-transition-duration: 1s;
-  background-color: transparent;
+
+
 }
 #noscript-statusIcon:hover {
+  -moz-border-radius: 8px;
   -moz-box-shadow: 0 0 8px #fff inset;
-  background-color: #444;
-  -moz-transition-property: -moz-box-shadow, background-color;
+  background-color: rgba(8, 8, 8, .8);
+  -moz-transition-property:  background-color, -moz-box-shadow, -moz-border-radius;
   -moz-transition-duration: 1s;
+  -moz-transition-delay: 0.2s;
 }
 
 .noscript-cmd {

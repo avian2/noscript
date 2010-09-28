@@ -118,10 +118,17 @@ return noscriptUtil.service ? {
    
     if (popup.state !== "open") {
       popup._hovering = 1;
-      let delay = this.ns.getPref("hoverUI.delayEnter", 250);
+      parent._lastMoved = 0;
+      const delayStop = this.ns.getPref("hoverUI.delayStop");
+      let delay = Math.max(this.ns.getPref("hoverUI.delayEnter"), delayStop);
       if (delay > 0) {
         window.setTimeout(function() {
-          if (popup._hovering) popup.showPopup()
+          if (!popup._hovering) return;
+          if (parent._lastMoved && (Date.now() - parent._lastMoved) > delayStop) {
+            popup.showPopup();
+          } else if (delayStop > 0) {
+            window.setTimeout(arguments.callee, delayStop);
+          }
         }, delay);
       } else {
         popup.showPopup();
@@ -131,9 +138,15 @@ return noscriptUtil.service ? {
     }
   },
   
+  onUIMove: function(ev) {
+    ev.currentTarget._lastMoved = Date.now();
+  },
+  
   onUIOut: function(ev) {
     let parent = ev.currentTarget;
     let popup = parent.firstChild;
+    
+    parent._lastMoved = 0;
     
     if (!("_hovering" in popup && popup._hovering && popup._hovering !== -1))
       return;
