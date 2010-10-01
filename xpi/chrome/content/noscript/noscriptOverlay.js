@@ -139,7 +139,13 @@ return noscriptUtil.service ? {
   },
   
   onUIMove: function(ev) {
-    ev.currentTarget._lastMoved = Date.now();
+    let parent = ev.currentTarget;
+    let rect = parent.getBoundingClientRect();
+    let x = ev.clientX, y = ev.clientY; 
+    parent._lastMoved =
+      (x > rect.left + 1 && x < rect.right - 1 &&
+       y > rect.top + 1 && y < rect.bottom - 1)
+      ? Date.now() : 0;
   },
   
   onUIOut: function(ev) {
