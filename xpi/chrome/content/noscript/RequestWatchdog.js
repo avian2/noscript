@@ -538,7 +538,7 @@ RequestWatchdog.prototype = {
           return;
         }
         
-        if (/^https?:\/\/www\.blogger\.com\/template-editor\.g\?/.test(origin) &&
+        if (/^https?:\/\/(?:draft|www)\.blogger\.com\/template-editor\.g\?/.test(origin) &&
             /^https?:\/\/[\w\-]+\.blogspot\.com\/b\/preview\?/.test(originalSpec) &&
             ns.getPref("filterXExceptions.blogspot")
             ) {

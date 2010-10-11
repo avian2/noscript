@@ -9,30 +9,10 @@
   cursor: pointer;
   
 }
-#noscript-statusIcon {
-  -moz-border-radius: 0;
-  border: 0 none transparent;
-  -moz-box-shadow: 0 0 0 #000 inset;
-  background-color: rgba(255, 255, 255, 0);
-  -moz-transition-property: background-color, -moz-box-shadow, -moz-border-radius;
-  -moz-transition-duration: 1s;
-
-
-}
-#noscript-statusIcon:hover {
-  -moz-border-radius: 8px;
-  -moz-box-shadow: 0 0 8px #fff inset;
-  background-color: rgba(8, 8, 8, .8);
-  -moz-transition-property:  background-color, -moz-box-shadow, -moz-border-radius;
-  -moz-transition-duration: 1s;
-  -moz-transition-delay: 0.2s;
-}
 
 .noscript-cmd {
   font-weight: normal;
 }
-
-
 
 .noscript-temp, .noscript-cmd.noscript-temp {
   font-style: italic;

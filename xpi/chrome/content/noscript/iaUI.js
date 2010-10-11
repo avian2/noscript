@@ -87,22 +87,24 @@ function ConditionalGroup(serv, prefName, def) {
   this.prefName = prefName;
   this.cbx = $("cbx-" + prefName);
   this.sel = $("sel-" + prefName);
-  var value = this.serv.getPref(prefName, def);
-  this.defaultIndex = typeof(def) == "number" ? def : 0;
+  var value = this.serv.getPref(prefName) || 0;
+  this.defaultIndex = typeof(def) == "number" ? def - 1 : 0;
   this.cbx.checked =  !!value;
-  this.sel.selectedIndex = value ? value - 1 : def;
-  var instance = this;
-  this.cbx.conditionalGroup = this;
-  this.cbx.setAttribute("oncommand", "this.conditionalGroup.changed()");
+  this.sel.selectedIndex = value ? value - 1: this.defaultIndex;
+  var self = this;
+  this.cbx.addEventListener("command", function(ev) { self.changed() }, false);
   this.changed();
+}
+
+ConditionalGroup.changed = function(cbx) {
+  cbx.conditionalGroup.changed();
 }
 
 ConditionalGroup.prototype = {
   changed: function() {
     this.sel.disabled = !this.cbx.checked;
-    if(this.cbx.checked && this.sel.selectedIndex < 0) {
+    if(this.cbx.checked && this.sel.selectedIndex < 0)
       this.sel.selectedIndex = this.defaultIndex;
-    }
   },
   getValue: function() {
     return this.cbx.checked && this.sel.selectedIndex + 1 || 0;

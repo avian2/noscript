@@ -69,9 +69,9 @@
   <vbox flex="1">
 
     <groupbox class="ia-indent">
-      <caption><checkbox id="cbx-autoAllow" label="&noscriptAutoAllowTopLevel;" oncommand="ConditionalGroup.changed(this)" /></caption>
+      <caption><checkbox id="cbx-autoAllow" label="&noscriptAutoAllowTopLevel;"/></caption>
       <radiogroup id="sel-autoAllow">  
-         <radio label="&noscriptFullAddr;" value="1" selected="true" />
+         <radio label="&noscriptFullAddr;" value="1" selected="true"/>
          <radio label="&noscriptFullDom;" value="2"/>
          <radio label="&noscriptBaseDom;" value="3"/>
       </radiogroup>
@@ -79,14 +79,14 @@
     
     <groupbox class="ia-indent">
       <caption orient="vertical">
-      <checkbox id="cbx-toolbarToggle" label="&noscriptToolbarToggle;" oncommand="ConditionalGroup.changed(this)" />
+      <checkbox id="cbx-toolbarToggle" label="&noscriptToolbarToggle;"/>
       <label control="sel-toolbarToggle" id="toolbarToggle-shortcut" class="ia-indent" hidden="true"/>
       </caption>
       
       <radiogroup id="sel-toolbarToggle">  
-         <radio label="&noscriptFullAddr;" value="1" />
-         <radio label="&noscriptFullDom;" value="2" />
-         <radio label="&noscriptBaseDom;" value="3" selected="true" />
+         <radio label="&noscriptFullAddr;" value="1"/>
+         <radio label="&noscriptFullDom;" value="2"/>
+         <radio label="&noscriptBaseDom;" value="3" selected="true"/>
       </radiogroup>
     </groupbox>
     

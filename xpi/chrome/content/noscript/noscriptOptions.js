@@ -71,7 +71,7 @@ var nsopt = {
     
     this.soundChooser.setSample(ns.getPref("sound.block"));
     
-    this.autoAllowGroup = new ConditionalGroup(ns, "autoAllow", 0);
+    this.autoAllowGroup = new ConditionalGroup(ns, "autoAllow", 1);
     this.toggleGroup = new ConditionalGroup(ns, "toolbarToggle", 3);
     
     var val = ns.getPref("allowHttpsOnly", 0);
@@ -108,12 +108,7 @@ var nsopt = {
         cbx.setAttribute("checked", !(pref & parseInt(cbx.getAttribute("value"))) ? "false" : "true");
       });
     });
-    
-    if (!ns.clearClickHandler.isSupported(document))
-      ["clearClickOpts", "opt-clearClick.prompt"].forEach(function(id) {
-        $(id).setAttribute("hidden", "true"); // Fx <= 1.5
-      });
-    
+       
     
     if (!ns.placesSupported) {
       $("opt-placesPrefs").setAttribute("hidden", "true");

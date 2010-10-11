@@ -150,9 +150,9 @@ var DNS = {
     }
   },
   
-  get _idn() {
-    delete this._idn;
-    return this._idn =  CC["@mozilla.org/network/idn-service;1"]
+  get idn() {
+    delete this.idn;
+    return this.idn =  CC["@mozilla.org/network/idn-service;1"]
       .getService(CI.nsIIDNService);
   },
   
@@ -160,7 +160,7 @@ var DNS = {
   checkHostName: function(host) {
     if (this._invalidRx.test(host) && !this.isIP(host)) {
       try {
-        host = this._idn.convertUTF8toACE(host);
+        host = this.idn.convertUTF8toACE(host);
       } catch(e) {
         return false;
       }

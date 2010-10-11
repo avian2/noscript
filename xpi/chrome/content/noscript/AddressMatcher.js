@@ -13,13 +13,36 @@ AddressMatcher.prototype = {
   
   _universal: { test: function(s) { return true; } },
   
-  test: function(u) {
-    return this.rx && this.rx.test(u);  
+  _specRx: /^((?:ht|f)tps?:\/*)([^\/]*)/i,
+  test:  function(u) {
+    if (!this.rx) return false;
+    
+    let spec = this._specRx(u);
+
+    if (!this.rx) {
+        return false;
+    }
+    var spec = this._specRx(u);
+    if (spec) {
+        let host = spec[2];
+        let atPos = host.indexOf("@");
+        if (atPos > -1) {
+            host = host.substring(atPos + 1);
+            u = spec[1] + host + u.substring(spec[0].length);
+        }
+        // handle IDN
+        if (host.substring(0, 4) === "xn--") {
+          try {
+            if (this.rx.test(spec[1] + DNS.idn.convertACEtoUTF8(host) + spec.input.substring(spec[0].length))) 
+              return true;
+          } catch (e) {}
+        }
+    }
+    
+    return this.rx.test(u);
   },
   
-  testURI: function(uri) {
-    return this.test(uri.spec);  
-  },
+  testURI: function(uri) this.test(uri.spec),
   
   _networkTest: function(uri, canDoDNS, allIPs) {
     var res = this.rx && this.rx.test(uri.spec || uri);
@@ -45,7 +68,7 @@ AddressMatcher.prototype = {
   },
   
   testIP: function(ip) {
-     return this.networks.some(function(n) { return n.test(ip); });
+     return this.networks.some(function(n) n.test(ip));
   },
   
   parse: function(s) {
@@ -91,8 +114,11 @@ AddressMatcher.prototype = {
             p = "[a-z]\\w+://" + p;
           }
 
-          if (!hasPath) { // adjust for no path
-            p += "(?:[/\\?#]|$)";
+          if (!hasPath &&
+              p.substring(p.length - 1) != ':' // unless scheme-only
+            ) {
+            // adjust for no path
+             p += "(?::\\d+)?(?:[/\\?#]|$)";
           }
           
           if (!/\*/.test(p)) {

@@ -3087,7 +3087,7 @@ var ns = singleton = {
       var d = o.ownerDocument;
       var w = d.defaultView;
       var oh = this.OpaqueHandlers;
-      var oo = oh.getOpaquedObjects(w, scrollNow || this.clearClickHandler.isSupported(d) && this.appliesHere(this.clearClick, w.top.location.href));
+      var oo = oh.getOpaquedObjects(w, scrollNow || this.appliesHere(this.clearClick, w.top.location.href));
       if (scrollNow) oh.scheduleFixScrollers(w, 1);
       do {
         o.__noscriptOpaqued = true;
@@ -4221,7 +4221,7 @@ var ns = singleton = {
             isObject && /\b(?:text|xml|html)\b/.test(req.contentType)) &&
           ABE.checkFrameOpt(domWindow, req) &&
           this.getPref("frameOptions.enabled") &&
-          !new AddressMatcher(this.getPref("frameOptions.parentWhitelist"))
+          !new AddressMatcher("about: chrome: resource: " + this.getPref("frameOptions.parentWhitelist"))
             .test(domWindow.parent.location.href)
           ) {
         IOUtil.abort(req);

@@ -178,10 +178,6 @@ ClearClickHandler.prototype = {
     return doc.__clearClickCanvas || (doc.__clearClickCanvas = doc.createElementNS(HTML_NS, "canvas"));
   },
   
-  isSupported: function(doc) {
-    return true; 
-  },
-  
   _semanticContainers: [CI.nsIDOMHTMLParagraphElement, CI.nsIDOMHTMLQuoteElement,
                         CI.nsIDOMHTMLUListElement, CI.nsIDOMHTMLOListElement, CI.nsIDOMHTMLDirectoryElement,
                         CI.nsIDOMHTMLPreElement, CI.nsIDOMHTMLTableElement ]
@@ -197,9 +193,10 @@ ClearClickHandler.prototype = {
   },
   
   handle: function(ev) {
+
     const o = ev.target;
     const d = o.ownerDocument;
-    if (!(d && this.isSupported(d))) return;
+    if (!d) return;
     
     const w = d.defaultView;
     if (!w) return;
@@ -207,22 +204,30 @@ ClearClickHandler.prototype = {
     const top = w.top;
     const ns = this.ns;
     
-    var isEmbed;
+    if (!("__clearClickUnlocked" in top)) 
+      top.__clearClickUnlocked = !this.appliesHere(top.location.href);
     
-    if (top.__clearClickUnlocked || (top.__clearClickUnlocked = !this.appliesHere(top.location.href)) ||
-        o.__clearClickUnlocked ||
-        o != ev.originalTarget ||
-        o == d.documentElement || o == d.body || // key event on empty region
+    if (top.__clearClickUnlocked) return;
+    
+    if (!("__clearClickUnlocked" in o)) {
+
+      o.__clearClickUnlocked = 
+        o === d.documentElement || o === d.body || // key event on empty region
         this.isSemanticContainer(o) ||
-        (o.__clearClickUnlocked = !(isEmbed = this.isEmbed(o)) && // plugin embedding?
-            (w == w.top || w.__clearClickUnlocked ||
-              (w.__clearClickUnlocked = this.isWhitelisted(w))
-              || this.sameSiteParents(w)) || // cross-site document?
-        ns.getPluginExtras(o) || // NS placeholder?
-        this.checkSubexception(isEmbed && (o.src || o.data) || w.location.href)
-        )
-      ) return;
+        !(isEmbed = this.isEmbed(o)) && // plugin embedding?
+          (w == top || 
+            ("__clearClickUnlocked" in w 
+              ? w.__clearClickUnlocked
+              : (w.__clearClickUnlocked = this.isWhitelisted(w))
+            ) ||
+            this.sameSiteParents(w) // cross-site document?
+          ) || 
+          ns.getPluginExtras(o) || // NS placeholder?
+           this.checkSubexception(isEmbed && (o.src || o.data) || w.location.href)
+    }
     
+    if (o.__clearClickUnlocked || w.__clearClickUnlocked) return;
+
     var p = ns.getExpando(o, "clearClickProps", {});
     var verbose = ns.consoleDump & LOG_CLEARCLICK;
     var etype = ev.type;
@@ -243,7 +248,7 @@ ClearClickHandler.prototype = {
       ctx = /mouse/.test(etype)
                 && { x: ev.pageX, y: ev.pageY, debug: ev.ctrlKey && ev.button == 1 && ns.getPref("clearClick.debug") }
                 || {};
-      ctx.isEmbed = isEmbed;
+      ctx.isEmbed =  typeof(isEmbed) == "boolean" ? isEmbed : this.isEmbed(o);
       
       primaryEvent = /^(?:mousedown|keydown)$/.test(etype) ||
           // submit button generates a syntethic click if any text-control receives [Enter]: we must consider this "primary"
@@ -256,7 +261,7 @@ ClearClickHandler.prototype = {
         ? p.obstructed = this.checkObstruction(o, ctx)
         : p.obstructed; // cache for non-primary events       
     } catch(e) {
-      ns.dump(e.message + ": " + e.stack);
+      ns.dump(e);
       obstructed = true;
     } finally {
       p.lastEtype = etype;
@@ -288,7 +293,7 @@ ClearClickHandler.prototype = {
           try {
             this.prompting = true;
             var params = {
-              url: isEmbed && (o.src || o.data) || o.ownerDocument.URL,
+              url: ctx.isEmbed && (o.src || o.data) || o.ownerDocument.URL,
               pageURL: w.location.href,
               topURL: w.top.location.href,
               img: ctx.img,

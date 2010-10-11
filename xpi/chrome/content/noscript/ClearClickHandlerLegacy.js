@@ -136,14 +136,6 @@
       }
   
     },
-    
-    isSupported: function(doc) {
-      return "_supported" in this
-        ? this._supported
-        : this._supported = typeof(this.createCanvas(doc).toDataURL) == "function" &&
-          ("getBoxObjectFor" in doc);  
-    },
-    
    
     checkObstruction: function(o, ctx) {
       var d = o.ownerDocument;
