@@ -1,4 +1,5 @@
 const CP_OK = 1;
+const CP_REJECT = -4;
 const CP_NOP = function() { return CP_OK };
 const CP_FRAMECHECK = 2;
 const CP_SHOULDPROCESS = 4;

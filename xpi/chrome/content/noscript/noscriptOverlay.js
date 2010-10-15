@@ -335,9 +335,7 @@ return noscriptUtil.service ? {
   
   getSiteTooltip: function(enabled, full) {
     const info = this.getString("siteInfo.tooltip");
-    var sep = typeof(/ /) == "object"
-      ? "\n" // fx3
-      : ' - ';
+    const sep = "\n";
     const no = this.getString("allowed.no");
     const noFull = no + sep + info;
     const yes = this.getString("allowed.yes");
@@ -349,16 +347,13 @@ return noscriptUtil.service ? {
   
   getRevokeTooltip: function(tempSites) {
     const ns = this.ns;
-    const fx3 = typeof(/ /) == "object";
-    var sep = fx3 ? "\n\n" : " | ";
+    const sep = "\n\n";
      
     // remove http/https/file CAPS hack entries
     var tip = "<SCRIPT>: ";
     if (tempSites) {
       tempSites = this.ns.siteUtils.sanitizeString(tempSites.replace(/\b(?:https?|file):\/\//g, "")).split(/\s+/);
-      tip += (fx3 // Fx 3, multiline tooltips
-          ? tempSites.join(", ")
-          : tempSites.length);
+      tip += tempSites.join(", ");
     } else tip += "0";
     
     var len = ns.objectWhitelistLen;
@@ -519,12 +514,15 @@ return noscriptUtil.service ? {
     mainMenu.appendCmd = function(n) { this.insertBefore(n, seps.stop); };
 
     sites = sites || this.getSites();
-    j = sites.indexOf(sites.topSite);
+    
+    const topSite = sites.topSite;
+    
+    j = sites.indexOf(topSite);
     var topDown = !/-sep-stop\b/.test(mainMenu.lastChild.className); 
     if (j > -1 && j != (topDown ? sites.length - 1 : 0)) {
       sites.splice(j, 1);
-      if (topDown) sites.push(sites.topSite);
-      else sites.unshift(sites.topSite);
+      if (topDown) sites.push(topSite);
+      else sites.unshift(topSite);
     }
     
     
@@ -586,7 +584,7 @@ return noscriptUtil.service ? {
       untrusted = untrustedSites.matches(site);
       let hasPort = portRx.test(site);
       
-      isTop = site == sites.topSite;
+      isTop = site == topSite;
       
       if (untrusted) {
         matchingSite = null;
@@ -690,62 +688,69 @@ return noscriptUtil.service ? {
     }
     
     recentMenu.parentNode.hidden = true;
-    if (recentMenu && ns.getPref("showRecentlyBlocked"))
-      (function() {
-        const level = ns.getPref("recentlyBlockedLevel") || ns.preferredSiteLevel;
-        const max = ns.getPref("recentlyBlockedCount");
-        var s, dejaVu = [], count = 0,
-            recent = ns.recentlyBlocked;
+    if (recentMenu && ns.getPref("showRecentlyBlocked")) {
+      let level = ns.getPref("recentlyBlockedLevel") || ns.preferredSiteLevel;
+      let max = ns.getPref("recentlyBlockedCount");
+      let dejaVu = [],
+          count = 0,
+          recent = ns.recentlyBlocked,
+          current = false;
+      
+      let tooltip = noscriptOverlay.getSiteTooltip(false, !!ns.getPref("siteInfoProvider"));
+      
+      for (let j = recent.length; j-- > 0;) {
         
-        const tooltip = noscriptOverlay.getSiteTooltip(false, !!ns.getPref("siteInfoProvider"));
+        let r = recent[j];
+        let s = r.site;
         
-        for (var j = recent.length; j-- > 0;) {
-          
-          s = recent[j];
-          
+        if (!s || sites.indexOf(s) > -1) continue;
         
-          if (!s || sites.indexOf(s) > -1) continue;
-          
-          var jsEnabled = ns.isJSEnabled(s);
-          
-          if (jsEnabled && (!ns.contentBlocker || ns.isAllowedObject("!", "*", s)))
-            continue;
-          
-          s = ns.getQuickSite(s, level);
-          if (dejaVu.indexOf(s) > -1)
-            continue;
-          
-          dejaVu.push(s);
-          
-          if (!count) {
-            recentMenu.parentNode.hidden = false;
-          }
-          recentMenu.appendChild(sep.cloneNode(false));
-          
-          var node = refMI.cloneNode(false);
-          var cssClass = "noscript-cmd menuitem-iconic noscript-allow-from";
-          
-          node.setAttribute("tooltiptext", tooltip);
-          node.setAttribute("statustext", s);
-          if (locked || ns.isForbiddenByHttpsStatus(s)) node.setAttribute("disabled", "true");
-          
-          if (jsEnabled) {
-            cssClass += " noscript-embed";
-          } else {
-            node.setAttribute("class", cssClass);
-            node.setAttribute("label", ns.getString("allowFrom", [s]));
-            recentMenu.appendChild(node);
-            node = node.cloneNode(false);
-          } 
-          
-          node.setAttribute("class", cssClass + " noscript-temp");
-          node.setAttribute("label", ns.getString("allowTempFrom", [s]));
-          recentMenu.appendChild(node);
-          
-          if (++count >= max) break;
+        let jsEnabled = ns.isJSEnabled(s);
+        
+        if (jsEnabled && (!ns.contentBlocker || ns.isAllowedObject("!", "*", s)))
+          continue;
+        
+        s = ns.getQuickSite(s, level);
+        if (dejaVu.indexOf(s) > -1)
+          continue;
+        
+        dejaVu.push(s);
+
+        recentMenu.appendChild(sep.cloneNode(false));
+        
+        let node = refMI.cloneNode(false);
+        let cssClass = "noscript-cmd menuitem-iconic noscript-allow-from";
+        
+        node.setAttribute("tooltiptext", tooltip);
+        node.setAttribute("statustext", s);
+        if (locked || ns.isForbiddenByHttpsStatus(s)) node.setAttribute("disabled", "true");
+        
+        if (r.origins.indexOf(topSite) > -1) {
+          cssClass += " noscript-toplevel";
+          current = true;
         }
         
-      })();
+        if (jsEnabled) {
+          cssClass += " noscript-embed";
+        } else {
+          node.setAttribute("class", cssClass);
+          node.setAttribute("label", ns.getString("allowFrom", [s]));
+          recentMenu.appendChild(node);
+          node = node.cloneNode(false);
+        } 
+        
+        node.setAttribute("class", cssClass + " noscript-temp");
+        node.setAttribute("label", ns.getString("allowTempFrom", [s]));
+        recentMenu.appendChild(node);
+        
+        if (++count >= max) break;
+      }
+      if (count) {
+        let menuItem = recentMenu.parentNode;
+        menuItem.hidden = false;
+        ns.dom.toggleClass(menuItem, "noscript-toplevel", current);
+      }
+    }
     
     
     
@@ -1382,9 +1387,8 @@ return noscriptUtil.service ? {
     var gb = getBrowser();
     browser = browser || gb.selectedBrowser;
     if (!pos) pos = this.notificationPos;
-    
-    if (gb.getMessageForBrowser) return gb.getMessageForBrowser(browser, pos); // Fx <= 1.5 
-    if (!gb.getNotificationBox) return null; // SeaMonkey
+
+    if (!gb.getNotificationBox) return null; // SeaMonkey, Fennec...
 
     var nb = gb.getNotificationBox(browser);
     
@@ -1412,7 +1416,7 @@ return noscriptUtil.service ? {
     
     nb._dom_ = {};
     const METHODS = this.notificationBoxPatch;
-    for (var m in METHODS) {
+    for (let m in METHODS) {
       nb._dom_[m] = nb[m];
       nb[m] = METHODS[m];
     }
@@ -1439,12 +1443,7 @@ return noscriptUtil.service ? {
           n.getAttribute("value") == "noscript"
           && noscriptOverlay.notificationPos == "bottom") {
         const stack = this._noscriptBottomStack_;
-        /*
-         while (stack.firstChild) 
-          stack.removeChild(stack.firstChild);
         
-        stack.appendChild(n);
-        */
         stack.insertBefore(n, null);
         var hbox = n.ownerDocument.getAnonymousElementByAttribute(
                       n, "class", "notification-inner outset");
@@ -1466,7 +1465,8 @@ return noscriptUtil.service ? {
         var priority = ref.priority;
         ref = null; 
         var notifications = this.allNotifications;
-        for (var j = notifications.length; j-- > 0;) {
+        var j = notifications.length;
+        while (j-- > 0) {
           if ((ref = notifications[j]).priority < priority && ref.parentNode == this)
             break;
         }
@@ -1490,9 +1490,9 @@ return noscriptUtil.service ? {
   
   
   notificationShow: function(label, icon, canAppend) {
-    
     var box = this.getNotificationBox();
     if (box == null) return false;
+    
     var pos = this.notificationPos;
     
     const gb = getBrowser();
@@ -1516,28 +1516,13 @@ return noscriptUtil.service ? {
       if (!canAppend) return false;
      
       var buttonLabel, buttonAccesskey;
-      if (gb.getNotificationBox || /\baButtonAccesskey\b/i.test(gb.showMessage.toSource())) {
-        const refWidget = $("noscript-options-menuitem");
-        buttonLabel = refWidget.getAttribute("label");
-        buttonAccesskey = refWidget.getAttribute("accesskey");
-      } else { // Fx < 1.5
-        buttonLabel = "";
-        buttonAccesskey = "";
-      }
       
-      if (box.appendNotification) { // >= Fx 2.0
-        // if (box._closedNotification && !box._closedNotification.parentNode) box._closedNotification = null; // work around for notification bug
-        widget =  box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_MEDIUM,
-                  [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup } ]);
-        
-      } else if (gb.showMessage) { // Fx <= 1.5.x
-        gb.showMessage(browser, icon, label, 
-              buttonLabel, null,
-              null, popup, pos, true,
-              buttonAccesskey);
-        widget = this.getNsNotification(box);
-      }
-     
+      const refWidget = $("noscript-options-menuitem");
+      buttonLabel = refWidget.getAttribute("label");
+      buttonAccesskey = refWidget.getAttribute("accesskey");
+      
+      widget = box.appendNotification(label, "noscript", icon, box.PRIORITY_WARNING_MEDIUM,
+                  [ {label: buttonLabel, accessKey: buttonAccesskey,  popup: popup} ]);
     }
     if (!widget) return false;
     
@@ -1594,27 +1579,17 @@ return noscriptUtil.service ? {
     var popup = $("noscript-xss-popup");
     if ("Browser" in window) popup.className = "noscript-menu";
     
-    const tabBrowser = getBrowser();
-    if (tabBrowser.showMessage) { // Fx 1.5
-      tabBrowser.showMessage(
-          requestInfo.browser, 
-          icon, label, 
-          buttonLabel, null,
-          null, popup.id, this.altNotificationPos, true,
-          buttonAccesskey);
-    } else { // Fx >= 2.0
-      box.appendNotification(
-        label, 
-        notificationValue, 
-        icon, 
-        box.PRIORITY_WARNING_HIGH,
-        [{
-          label: buttonLabel,
-          accessKey: buttonAccesskey,
-          popup: popup.id
-         }]
-        );
-    }
+    box.appendNotification(
+      label, 
+      notificationValue, 
+      icon, 
+      box.PRIORITY_WARNING_HIGH,
+      [{
+        label: buttonLabel,
+        accessKey: buttonAccesskey,
+        popup: popup.id
+       }]
+      );
   },
   
   notifyMetaRefreshCallback: function(info) {
@@ -1634,22 +1609,20 @@ return noscriptUtil.service ? {
       var label = this.getString("metaRefresh.notify", [urlForLabel, info.timeout])
       var icon = this.getIcon("noscript-statusRedirect");
         
-      if (box.appendNotification) { // Fx 2
+      notification = box.appendNotification(
+        label, 
+        notificationValue, 
+        icon, 
+        box.PRIORITY_INFO_HIGH,
+        [{
+            label: this.getString("metaRefresh.notify.follow"),
+            accessKey: this.getString("metaRefresh.notify.follow.accessKey"),
+            callback: function(notification, buttonInfo) {
+              noscriptOverlay.ns.doFollowMetaRefresh(info);
+            }
+         }]
+        );
       
-        notification = box.appendNotification(
-          label, 
-          notificationValue, 
-          icon, 
-          box.PRIORITY_INFO_HIGH,
-          [{
-              label: this.getString("metaRefresh.notify.follow"),
-              accessKey: this.getString("metaRefresh.notify.follow.accessKey"),
-              callback: function(notification, buttonInfo) {
-                noscriptOverlay.ns.doFollowMetaRefresh(info);
-              }
-           }]
-          );
-      }
       browser.addEventListener("beforeunload", function(ev) {
         if (ev.originalTarget == info.document || ev.originalTarget == browser) {
           browser.removeEventListener(ev.type, arguments.callee, false);

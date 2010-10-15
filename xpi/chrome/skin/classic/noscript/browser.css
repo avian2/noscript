@@ -19,7 +19,8 @@
   font-weight: normal;
 }
 
-.noscript-toplevel, .noscript-toplevel.noscript-temp.noscript-forbid {
+.noscript-toplevel, .noscript-toplevel.noscript-temp.noscript-forbid,
+#noscript-menu-recent-blocked .noscript-embed.noscript-toplevel {
   font-weight: bold;
 }
 
@@ -148,6 +149,7 @@
 #noscript-menu-recent-blocked {
   list-style-image: url(inactive-no16.png);
 }
+
 
 .noscript-inactive-no-emb,
 #noscript-tbb.noscript-inactive-no-emb,

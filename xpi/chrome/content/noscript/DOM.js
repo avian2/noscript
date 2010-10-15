@@ -28,17 +28,22 @@ const DOM = {
     return null;
   },
   
+  findWindow: function(ctx) {
+    if (!(ctx instanceof CI.nsIDOMWindow)) {
+      if (ctx instanceof CI.nsIDOMDocument) {
+        ctx = ctx.defaultView;
+      } else if(ctx instanceof CI.nsIDOMNode) {
+        ctx = ctx.ownerDocument.defaultView;
+      } else return null; 
+    }
+    return ctx;
+  },
+  
   findBrowserForNode: function(ctx) {
     if (!ctx) return null;
     var bi = null;
     try {
-      if (!(ctx instanceof CI.nsIDOMWindow)) {
-        if (ctx instanceof CI.nsIDOMDocument) {
-          ctx = ctx.defaultView;
-        } else if(ctx instanceof CI.nsIDOMNode) {
-          ctx = ctx.ownerDocument.defaultView;
-        } else return null; 
-      }
+      ctx = this.findWindow(ctx);
       if (!ctx) return null;
       try {
         ctx = CU.lookupMethod(ctx, "top")();
@@ -138,6 +143,13 @@ const DOM = {
       
       e.className = cc.join(" ");
     }
+  },
+  toggleClass: function(e, c, add) {
+    if (typeof add == "undefined")
+      add = !this.hasClass(e, c);
+    if (add) this.addClass(e, c);
+    else this.removeClass(e, c);
+    return add;
   },
   hasClass: function(e, c) {
     var cur = e.className;

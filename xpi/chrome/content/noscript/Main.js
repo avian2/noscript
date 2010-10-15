@@ -1806,8 +1806,6 @@ var ns = singleton = {
     }
     
     if (!this.mimeService) {
-      
-      this.rejectCode = typeof(/ /) == "object" ? -4 : -3;
       this.safeToplevel = this.getPref("safeToplevel", true);
       this.initSafeJSRx();
       this.mimeService = CC['@mozilla.org/uriloader/external-helper-app-service;1']
@@ -1916,9 +1914,10 @@ var ns = singleton = {
     
     PolicyState.cancel(args);
     
-    this.recordBlocked(this.getSite(args[1].spec));
+    let win = DOM.findWindow(args[3]);
+    this.recordBlocked(this.getSite(args[1].spec), this.getSite(win && win.top.location.href || args[2].spec));
     
-    return this.rejectCode;
+    return CP_REJECT;
   },
   
   nopXBL: "chrome://global/content/bindings/general.xml#basecontrol",
@@ -3909,16 +3908,21 @@ var ns = singleton = {
   
   recentlyBlocked: [],
   _recentlyBlockedMax: 40,
-  recordBlocked: function(site) {
-    var l = this.recentlyBlocked;
-    var pos = l.lastIndexOf(site);
+  recordBlocked: function(site, origin) {
+    const l = this.recentlyBlocked;
+    let pos = l.length;
+    while (pos-- > 0) if (l[pos].site === site) break;
     
+    let entry;
     if (pos > -1) {
+      entry = l[pos];
+      origins = entry.origins;
+      if (origins.indexOf(origin) == -1) origins.push(origin);
       if (pos == l.length - 1) return;
       l.splice(pos, 1);
-    }
+    } else entry = { site: site, origins: [origin] };
     
-    l.push(site);
+    l.push(entry);
     if (l.length > this._recentlyBlockedMax) {
       this.recentlyBlocked = l.slice(- this._recentlyBlockedMax / 2);
     }
@@ -4849,7 +4853,6 @@ var ns = singleton = {
         a.__noscriptFixed = true;
       }
       if (callback) {
-        if (typeof(/ /) == "function") ev.preventDefault(); // Gecko < 1.9
         this.attemptNavigation(doc, fixedHref, callback);
         ev.preventDefault();
       }

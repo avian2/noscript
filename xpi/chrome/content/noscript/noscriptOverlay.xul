@@ -289,7 +289,7 @@
         accesskey="&noscriptOptions.accesskey;"
         oncommand="noscriptUtil.openOptionsDialog()"
         tooltiptext="&noscriptOptionsLong;"
-        class="menuitem-iconi noscript-options"
+        class="menuitem-iconic noscript-options"
         />
       
       <menuseparator class="noscript-sep-global"/>
