@@ -182,8 +182,8 @@ return noscriptUtil.service ? {
     if (ev.currentTarget !== ev.target) return;
     
     if (ev.originalTarget.tagName == "xul:toolbarbutton") {
-      // discriminate dropdown button from 
-      noscriptOverlay.toggleCurrentPage();
+      // discriminate dropdown button
+      if (ev.button === 0) noscriptOverlay.toggleCurrentPage();
       ev.preventDefault();
       return;
     }
