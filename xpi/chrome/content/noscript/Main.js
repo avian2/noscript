@@ -2877,10 +2877,11 @@ var ns = singleton = {
           this.executingJSURL(doc, 0);
           if (this.jsEnabled) {
             this.jsEnabled = false;
-            if (!snapshots.siteJS)
-              this.setJSEnabled(site, false);
           }
-
+          
+          if (!snapshots.siteJS)
+              this.setJSEnabled(site, false);
+          
           if (this.consoleDump & LOG_JS)
             this.dump("Restored snapshot permissions on " + site + "/" + (docShell.isLoadingDocument ? "loading" : docShell.currentURI.spec));
         }, this);
@@ -4111,9 +4112,31 @@ var ns = singleton = {
           Math.round(channel.responseStatus / 100) != 3) {
         var ph = PolicyState.extract(channel);
         if (ph) {
-          var ctype = ph.contentType;
-          var origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
-          if (origin && (ctype === 2 || ctype === 4) && this.getBaseDomain(origin.host) != this.getBaseDomain(channel.URI.host)) {
+          let ctype = ph.contentType;
+          // 2 JS, 3 Image, 4 CSS
+          if (ctype < 2 || ctype > 4) return true;
+
+          let nosniff;
+          
+          for (let x = true, header = "X-Content-Type-Options";;) {
+            try {
+              nosniff = channel.getResponseHeader(header).toLowerCase() === "nosniff";
+              break;
+            } catch(e) {}
+            if (x) {
+              header = header.substring(2);
+              x = false;
+            } else {
+              nosniff = false;
+              break;
+            }
+          }
+          
+          if (!nosniff && ctype === 3) return true;
+          
+          let origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
+          
+          if (nosniff || origin && this.getBaseDomain(origin.host) !== this.getBaseDomain(channel.URI.host)) {
 
             var mime;
             try {
@@ -4121,68 +4144,71 @@ var ns = singleton = {
             } catch (e) {
               mime = "UNKNOWN";
             }
-            
-            // a non-generic mime type has been given, let's check it strictly
-            if (
-               (ctype === 2
-                  // many CDNs are serving JS as text/css now,
-                  // see http://forums.informaction.com/viewtopic.php?f=7&t=4999
-                  // & http://forums.informaction.com/viewtopic.php?f=7&t=4997
-                  ? /\b(?:j(?:avascript|s(?:on)?)|css)\b/ 
-                  : (PolicyUtil.isXSL(ph.context) ? /\bx[ms]l/ : /\bcss\b/)
-                ).test(mime)
-              ) {
-              return true;
-            }
 
-            var disposition;
-            try {
-              disposition = channel.getResponseHeader("Content-disposition");
-            } catch(e) {}
-
+            let okMime =
+              ctype === 3
+              ? !nosniff || /\bimage\//i.test(mime)
+              : (ctype === 2
+                ? (nosniff
+                    ? /(?:script|\bjs(?:on)?)\b/i // strictest
+                    : /(?:script|\b(?:js(?:on)?)|css)\b/i) // allow css mime on js
+                : (PolicyUtil.isXSL(ph.context) ? /\bx[ms]l/i : /\bcss\b/i)
+              ).test(mime);
             
-            if (!disposition) {
-              var url = channel.URI; 
-              var ext;
-              if (url instanceof CI.nsIURL) {
-                ext = url.fileExtension;
-                if (!ext) {
-                  var m = url.directory.match(/\.([a-z]+)\/$/);
-                  if (m) ext = m[1];
+            if (okMime) return true;
+            
+            if (!(nosniff || ctype === 3)) {
+              let disposition;
+              try {
+                disposition = channel.getResponseHeader("Content-disposition");
+              } catch(e) {}
+  
+              
+              if (!disposition) {
+                let url = channel.URI; 
+                let ext;
+                if (url instanceof CI.nsIURL) {
+                  ext = url.fileExtension;
+                  if (!ext) {
+                    var m = url.directory.match(/\.([a-z]+)\/$/);
+                    if (m) ext = m[1];
+                  }
+                } else ext = '';
+  
+                if (ext &&
+                    (ctype === 2 && /^js(?:on)?$/i.test(ext) ||
+                     ctype === 4 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
+                  ) {
+                  // extension matches and not an attachment, likely OK
+                  return true; 
                 }
-              } else ext = '';
-
-              if (ext &&
-                  (ctype === 2 && /^js(?:on)?$/i.test(ext) ||
-                   ctype === 4 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
-                ) {
-                // extension matches and not an attachment, likely OK
-                return true; 
-              }
+                
+                // extension doesn't match, let's check the mime
+                
+               
+                if ((/^text\/.*ml$|unknown/i.test(mime)
+                    || mime == "text/plain" && !(ext && /^(?:asc|log|te?xt)$/.test(ext)) // see Apache's magic file, turning any unkown ext file containing JS style comments into text/plain
+                    )
+                    && !this.getPref("inclusionTypeChecking.checkDynamic", false)) {
+                  // text/html or xml, let's assume a misconfigured dynamically served script/css
+                  if (this.consoleDump) this.dump(
+                        "Warning: mime type " + mime + " for " +
+                        (ctype == 2 ? "Javascript" : "CSS") + " served from " +
+                       url.spec);
+                  return true;
+                }
+              } else mime = mime + ", " + disposition;
               
-              // extension doesn't match, let's check the mime
-              
-             
-              if ((/^text\/.*ml$|unknown/i.test(mime)
-                  || mime == "text/plain" && !(ext && /^(?:asc|log|te?xt)$/.test(ext)) // see Apache's magic file, turning any unkown ext file containing JS style comments into text/plain
-                  )
-                  && !this.getPref("inclusionTypeChecking.checkDynamic", false)) {
-                // text/html or xml, let's assume a misconfigured dynamically served script/css
-                if (this.consoleDump) this.dump(
-                      "Warning: mime type " + mime + " for " +
-                      (ctype == 2 ? "Javascript" : "CSS") + " served from " +
-                     url.spec);
+              // every check failed, this is a fishy cross-site mistyped inclusion
+              if (this._inclusionTypeInternalExceptions.testURI(url) ||
+                  new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).testURI(url))
                 return true;
-              }
-            } else mime = mime + ", " + disposition;
-            
-            // every check failed, this is a fishy cross-site mistyped inclusion
-            if (this._inclusionTypeInternalExceptions.testURI(url) ||
-                new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).testURI(url))
-              return true;
-            this.log("[NoScript] Blocking cross site " + (ctype == 2 ? "Javascript" : "CSS") + " served from " +
+            }
+            this.log("[NoScript] Blocking cross site " +
+                     (ctype === 2 ? "Javascript" : ctype === 3 ? "image" : "CSS") +
+                     " served from " +
                      channel.URI.spec +
-                     " with wrong type info " + mime + " and included by " + origin.spec);
+                     " with wrong type info " + mime + " and included by " + (origin && origin.spec));
             IOUtil.abort(channel);
             return false;
           }
