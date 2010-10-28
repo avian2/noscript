@@ -288,6 +288,7 @@ pref("noscript.asyncNetworking", true);
 pref("noscript.inclusionTypeChecking", true);
 pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/");
 pref("noscript.inclusionTypeChecking.checkDynamic", false);
+pref("noscript.nosniff", true);
 
 pref("noscript.recentlyBlockedCount", 10);
 pref("noscript.showRecentlyBlocked", true);

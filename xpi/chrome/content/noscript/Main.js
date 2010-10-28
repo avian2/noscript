@@ -244,6 +244,7 @@ var ns = singleton = {
   ignorePorts: true,
   
   inclusionTypeChecking: true,
+  nosniff: true,
   
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
@@ -353,6 +354,7 @@ var ns = singleton = {
       case "flashPatch":
       case "silverlightPatch":
       case "inclusionTypeChecking":
+      case "nosniff":
       case "showBlankSources":
         this[name] = this.getPref(name, this[name]);  
       break;
@@ -710,7 +712,7 @@ var ns = singleton = {
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
       "forbidMetaRefresh",
       "forbidXBL", "forbidXHR",
-      "inclusionTypeChecking",
+      "inclusionTypeChecking", "nosniff",
       "alwaysBlockUntrustedContent",
       "global", "ignorePorts",
       "injectionCheck", "injectionCheckSubframes",
@@ -4118,21 +4120,24 @@ var ns = singleton = {
 
           let nosniff;
           
-          for (let x = true, header = "X-Content-Type-Options";;) {
-            try {
-              nosniff = channel.getResponseHeader(header).toLowerCase() === "nosniff";
-              break;
-            } catch(e) {}
-            if (x) {
-              header = header.substring(2);
-              x = false;
-            } else {
-              nosniff = false;
-              break;
+          if (ns.nosniff) {
+            for (let x = true, header = "X-Content-Type-Options";;) {
+              try {
+                nosniff = channel.getResponseHeader(header).toLowerCase() === "nosniff";
+                break;
+              } catch(e) {}
+              if (x) {
+                header = header.substring(2);
+                x = false;
+              } else {
+                nosniff = false;
+                break;
+              }
             }
-          }
+          } else nosniff = false;
           
-          if (!nosniff && ctype === 3) return true;
+          if (!nosniff && (ctype === 3 || !ns.inclusionTypeChecking))
+            return true;
           
           let origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
           
@@ -4157,7 +4162,10 @@ var ns = singleton = {
             
             if (okMime) return true;
             
-            if (!(nosniff || ctype === 3)) {
+            let uri = channel.URI; 
+            let url = uri.spec;
+            
+            if (!nosniff) {
               let disposition;
               try {
                 disposition = channel.getResponseHeader("Content-disposition");
@@ -4165,12 +4173,12 @@ var ns = singleton = {
   
               
               if (!disposition) {
-                let url = channel.URI; 
+               
                 let ext;
-                if (url instanceof CI.nsIURL) {
-                  ext = url.fileExtension;
+                if (uri instanceof CI.nsIURL) {
+                  ext = uri.fileExtension;
                   if (!ext) {
-                    var m = url.directory.match(/\.([a-z]+)\/$/);
+                    var m = uri.directory.match(/\.([a-z]+)\/$/);
                     if (m) ext = m[1];
                   }
                 } else ext = '';
@@ -4194,20 +4202,21 @@ var ns = singleton = {
                   if (this.consoleDump) this.dump(
                         "Warning: mime type " + mime + " for " +
                         (ctype == 2 ? "Javascript" : "CSS") + " served from " +
-                       url.spec);
+                       uri.spec);
                   return true;
                 }
               } else mime = mime + ", " + disposition;
               
-              // every check failed, this is a fishy cross-site mistyped inclusion
-              if (this._inclusionTypeInternalExceptions.testURI(url) ||
-                  new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).testURI(url))
-                return true;
+              if (this._inclusionTypeInternalExceptions.test(url) ||
+                new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).test(url))
+              return true;
             }
-            this.log("[NoScript] Blocking cross site " +
+            // every check failed, this is a fishy cross-site mistyped inclusion
+           
+            this.log("[NoScript] Blocking " + (nosniff ? "nosniff " : "cross-site ") +
                      (ctype === 2 ? "Javascript" : ctype === 3 ? "image" : "CSS") +
                      " served from " +
-                     channel.URI.spec +
+                     url +
                      " with wrong type info " + mime + " and included by " + (origin && origin.spec));
             IOUtil.abort(channel);
             return false;

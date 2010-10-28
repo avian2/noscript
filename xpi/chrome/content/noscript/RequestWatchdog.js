@@ -98,7 +98,7 @@ RequestWatchdog.prototype = {
         if (isDoc) {
           ns.onContentSniffed(channel);
         } else {
-          if (!(ns.inclusionTypeChecking && ns.checkInclusionType(channel)))
+          if (!((ns.inclusionTypeChecking || ns.nosniff) && ns.checkInclusionType(channel)))
             return;
         }
       break;
