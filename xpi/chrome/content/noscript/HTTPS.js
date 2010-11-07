@@ -6,9 +6,7 @@ const HTTPS = {
   secureCookiesForced: null,
   httpsForced: null,
   httpsForcedExceptions: null,
-  
-  
-  
+
   forceChannel: function(channel) {
     return this.forceURI(channel.URI, function() { HTTPS.replaceChannel(channel); });
   },
@@ -30,7 +28,7 @@ const HTTPS = {
         } catch(e) {}
         var uri = channel.URI.clone();
         uri.scheme = "https";
-        new ChannelReplacement(channel, uri).replace(true).open();
+        new ChannelReplacement(channel, uri).replace(true);
       });
       return true;
     }

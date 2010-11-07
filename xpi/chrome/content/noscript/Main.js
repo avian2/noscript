@@ -1952,7 +1952,7 @@ var ns = singleton = {
   },
   
   forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
-    var originURL, locationURL;
+    let originURL, locationURL;
     if (aContentLocation.schemeIs("chrome") || !aRequestOrigin || 
          // GreaseMonkey Ajax comes from resource: hidden window
          // Google Toolbar Ajax from about:blank
@@ -1960,10 +1960,15 @@ var ns = singleton = {
            // Web Developer extension "appears" to XHR towards about:blank
            (locationURL = aContentLocation.spec) == "about:blank"
           ) return false;
+    
+    let locationSite = this.getSite(locationURL);
+    if (this.ignorePorts && /:\d+$/.test(locationSite) &&
+        this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite))
+      return false;
+    
     var win = aContext && aContext.defaultView;
-    if(win) {
-      this.getExpando(win.top.document, "codeSites", []).push(this.getSite(locationURL));
-    }
+    if(win) this.getExpando(win.top.document, "codeSites", []).push(locationSite);
+    
     return forbidDelegate.call(this, originURL, locationURL);
   },
   
@@ -4115,12 +4120,12 @@ var ns = singleton = {
         var ph = PolicyState.extract(channel);
         if (ph) {
           let ctype = ph.contentType;
-          // 2 JS, 3 Image, 4 CSS
-          if (ctype < 2 || ctype > 4) return true;
+          // 2 JS, 4 CSS
+          if (!(ctype === 2 || ctype === 4)) return true;
 
-          let nosniff;
+          let nosniff = ns.nosniff && ctype === 2;
           
-          if (ns.nosniff) {
+          if (nosniff) {
             for (let x = true, header = "X-Content-Type-Options";;) {
               try {
                 nosniff = channel.getResponseHeader(header).toLowerCase() === "nosniff";
@@ -4134,9 +4139,9 @@ var ns = singleton = {
                 break;
               }
             }
-          } else nosniff = false;
+          }
           
-          if (!nosniff && (ctype === 3 || !ns.inclusionTypeChecking))
+          if (!(nosniff || ns.inclusionTypeChecking))
             return true;
           
           let origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
@@ -4165,52 +4170,54 @@ var ns = singleton = {
             let uri = channel.URI; 
             let url = uri.spec;
             
-            if (!nosniff) {
-              let disposition;
-              try {
-                disposition = channel.getResponseHeader("Content-disposition");
-              } catch(e) {}
-  
-              
-              if (!disposition) {
-               
-                let ext;
-                if (uri instanceof CI.nsIURL) {
-                  ext = uri.fileExtension;
-                  if (!ext) {
-                    var m = uri.directory.match(/\.([a-z]+)\/$/);
-                    if (m) ext = m[1];
-                  }
-                } else ext = '';
-  
-                if (ext &&
-                    (ctype === 2 && /^js(?:on)?$/i.test(ext) ||
-                     ctype === 4 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
-                  ) {
-                  // extension matches and not an attachment, likely OK
-                  return true; 
+
+            let disposition;
+            try {
+              disposition = channel.getResponseHeader("Content-disposition");
+            } catch(e) {}
+
+            
+            if (!disposition) {
+             
+              let ext;
+              if (uri instanceof CI.nsIURL) {
+                ext = uri.fileExtension;
+                if (!ext) {
+                  var m = uri.directory.match(/\.([a-z]+)\/$/);
+                  if (m) ext = m[1];
                 }
-                
-                // extension doesn't match, let's check the mime
-                
-               
-                if ((/^text\/.*ml$|unknown/i.test(mime)
-                    || mime == "text/plain" && !(ext && /^(?:asc|log|te?xt)$/.test(ext)) // see Apache's magic file, turning any unkown ext file containing JS style comments into text/plain
-                    )
-                    && !this.getPref("inclusionTypeChecking.checkDynamic", false)) {
-                  // text/html or xml, let's assume a misconfigured dynamically served script/css
-                  if (this.consoleDump) this.dump(
-                        "Warning: mime type " + mime + " for " +
-                        (ctype == 2 ? "Javascript" : "CSS") + " served from " +
-                       uri.spec);
-                  return true;
-                }
-              } else mime = mime + ", " + disposition;
+              } else ext = '';
+
+              if (ext &&
+                  (ctype === 2 && /^js(?:on)?$/i.test(ext) ||
+                   ctype === 4 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
+                ) {
+                // extension matches and not an attachment, likely OK
+                return true; 
+              }
               
-              if (this._inclusionTypeInternalExceptions.test(url) ||
-                new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).test(url))
-              return true;
-            }
+              // extension doesn't match, let's check the mime
+              
+             
+             if ((/^text\/.*ml$|unknown/i.test(mime) || 
+                    mime === "text/plain" && !(ext && /^(?:asc|log|te?xt)$/.test(ext)) // see Apache's magic file, turning any unkown ext file containing JS style comments into text/plain
+                  ) &&
+                 !(nosniff && // exception for Google bug see http://forums.informaction.com/viewtopic.php?f=7&t=5304
+                      !/\b(?:apis?|gmodules|insight\.youtube)\./.test(uri.host)) ||
+                  this.getPref("inclusionTypeChecking.checkDynamic", false)) {
+                // text/html or xml, let's assume a misconfigured dynamically served script/css
+                if (this.consoleDump) this.dump(
+                      "Warning: mime type " + mime + " for " +
+                      (ctype == 2 ? "Javascript" : "CSS") + " served from " +
+                     uri.spec);
+                return true;
+              }
+            } else mime = mime + ", " + disposition;
+            
+            if (this._inclusionTypeInternalExceptions.test(url) ||
+              new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).test(url))
+            return true;
+            
             // every check failed, this is a fishy cross-site mistyped inclusion
            
             this.log("[NoScript] Blocking " + (nosniff ? "nosniff " : "cross-site ") +

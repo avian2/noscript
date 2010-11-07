@@ -289,14 +289,12 @@ const ABE = {
           req.channel.onTransportStatus(null, 0x804b0003, 0, 0); // notify STATUS_RESOLVING
         } catch(e) {}
         
-        var replacement = req.replace();
-      
-        ABE.log(host + " not cached in DNS, deferring ABE checks after DNS resolution for request " + req.serial);
-        
-        
-        
-        DNS.resolve(host, 0, function(dnsRecord) {
-          replacement.open();
+        req.replace(false, null, function(replacement) {      
+          ABE.log(host + " not cached in DNS, deferring ABE checks after DNS resolution for request " + req.serial);
+
+          DNS.resolve(host, 0, function(dnsRecord) {
+            replacement.open();
+          });
         });
         
       } catch(e) {
@@ -535,6 +533,10 @@ var ABEActions = {
     if (channel.loadFlags & channel.LOAD_ANONYMOUS) // already anonymous
       return false;
     
+    if (!ChannelReplacement.supported) {
+      ABE.log("Couldn't replace " + req.destination + " for Anonymize, falling back to Deny.");
+      return this.deny(req);
+    }
 
     let cookie;
     try {
@@ -543,37 +545,18 @@ var ABEActions = {
       cookie = '';
     }
     
-    let uri = IOUtil.anonymizeURI(req.destinationURI.clone(), cookie);
-    
-    if (channel.isPending()) { // channel is already opened, we must replace it
-      
-      if (ChannelReplacement.supported && !replaced) {
-        try {
-          var replacement = req.replace(
-              /^(?:GET|HEAD|OPTIONS)$/i.test(channel.requestMethod) ? null : "GET",
-              uri);
-          
-          this.anonymize(req, replacement.channel, true);
-          replacement.open();
-          return false;
-        } catch(e) {
-          ABE.log(e);
-        }
+    req.replace(
+      /^(?:GET|HEAD|OPTIONS)$/i.test(channel.requestMethod) ? null : "GET",
+      IOUtil.anonymizeURI(req.destinationURI.clone(), cookie),
+      function(replacement) {
+        let channel = replacement.channel;
+        channel.setRequestHeader("Cookie", '', false);
+        channel.setRequestHeader("Authorization", '', false);
+        channel.loadFlags |= channel.LOAD_ANONYMOUS;
+        replacement.open();
       }
-      ABE.log("Couldn't replace " + uri.spec + " for Anonymize, falling back to Deny.");
-      return this.deny(req);
-    }
-    
-    try {
-      if (uri.spec != channel.URI.spec)
-        channel.URI.spec = uri.spec;
-    } catch (e) {
-      ABE.log(uri.spec + ": " + e);
-      return this.deny(req);
-    }
-    channel.setRequestHeader("Cookie", '', false);
-    channel.setRequestHeader("Authorization", '', false);
-    channel.loadFlags |= channel.LOAD_ANONYMOUS;
+    );
+
     return false;
   },
   
@@ -992,11 +975,9 @@ ABERequest.prototype = Lang.memoize({
   
   
   
-  replace: function(newMethod, newURI) {
-    var replacement = new ChannelReplacement(this.channel, newURI, newMethod)
-      .replace(newMethod || newURI);
-    
-    return replacement;
+  replace: function(newMethod, newURI, callback) {
+    new ChannelReplacement(this.channel, newURI, newMethod)
+      .replace(newMethod || newURI, callback);
   },
   
   isBrowserURI: function(uri) {

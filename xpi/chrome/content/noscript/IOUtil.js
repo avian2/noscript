@@ -321,6 +321,7 @@ ChannelReplacement.prototype = {
   oldChannel: null,
   channel: null,
   window: null,
+
   get _unsupportedError() {
     return new Error("Can't replace channels without nsITraceableChannel!");
   },
@@ -332,10 +333,7 @@ ChannelReplacement.prototype = {
     newURI = newURI || chan.URI;
     
     var newChan = IOS.newChannelFromURI(newURI);
-    
-    
-    
-    
+
     // porting of http://mxr.mozilla.org/mozilla-central/source/netwerk/protocol/http/src/nsHttpChannel.cpp#2750
     
     var loadFlags = chan.loadFlags;
@@ -391,7 +389,7 @@ ChannelReplacement.prototype = {
     
     if (chan.referrer) newChan.referrer = chan.referrer;
     newChan.allowPipelining = chan.allowPipelining;
-    newChan.redirectionLimit = chan.redirectionLimit - 1;
+    newChan.redirectionLimit -= 1;
     if (chan instanceof CI.nsIHttpChannelInternal && newChan instanceof CI.nsIHttpChannelInternal) {
       if (chan.URI == chan.documentURI) {
         newChan.documentURI = newURI;
@@ -487,19 +485,36 @@ ChannelReplacement.prototype = {
     : null;
   },
   
-  replace: function(isRedir) {
+  replace: function(isRedir, callback) {
+    let self = this;
+    let oldChan = this.oldChannel;
+    this.isRedir = !!isRedir;
+    if (typeof(callback) !== "function") {
+      callback = this._defaultCallback;
+    }
+    IOUtil.runWhenPending(oldChan, function() {
+      oldChan.cancel(NS_BINDING_REDIRECTED);
+      Thread.basap(function() {
+        self._replaceNow(isRedir);
+        callback(self);
+      });
+    });
+  },
+  
+  _defaultCallback: function(replacement) {
+    replacement.open();
+  },
+  
+  _replaceNow: function(isRedir) {
     var oldChan = this.oldChannel;
     try {
       this._onChannelRedirect(isRedir);
     } catch(ex) {
-      oldChan.cancel(NS_BINDING_ABORTED);
       throw ex;
     }
     // dirty trick to grab listenerContext
    
     var ccl = new CtxCapturingListener(oldChan);
-    
-    oldChan.cancel(NS_BINDING_REDIRECTED); // this works because we've been called after loadGroup->addRequest(), therefore asyncOpen() always return NS_OK
     
     oldChan.notificationCallbacks =
         oldChan.loadGroup = null; // prevent loadGroup removal and wheel stop
