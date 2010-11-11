@@ -442,7 +442,7 @@ ChannelReplacement.prototype = {
     const CES = CI.nsIChannelEventSink;
     const flags = CES.REDIRECT_INTERNAL;
     this._callSink(
-    CC["@mozilla.org/netwerk/global-channel-event-sink;1"].getService(CES),
+      CC["@mozilla.org/netwerk/global-channel-event-sink;1"].getService(CES),
       oldChan, newChan, flags);
     var sink;
     

@@ -7,28 +7,20 @@ const HTTPS = {
   httpsForced: null,
   httpsForcedExceptions: null,
 
-  forceChannel: function(channel) {
-    return this.forceURI(channel.URI, function() { HTTPS.replaceChannel(channel); });
+  get forceChannel() {
+    delete this.forceChannel;
+    return this.forceChannel = ChannelReplacement.supported
+      ? function(channel) this.mustForce(channel.URI) && this.replaceChannel(channel)
+      : function(channel) this.forceURI(channel.URI)
   },
   
   replaceChannel: function(channel) {
     if (ChannelReplacement.supported) {
       IOUtil.runWhenPending(channel, function() {
-        // replacing a shortcut icon causes a cache-related crash like
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=480352
-        // just abort it... 
-        try {
-         if (/\bimage\//.test(channel.getRequestHeader("Accept")) &&
-             !PolicyState.extract(channel) // favicons don't trigger content policies
-            ) {
-           HTTPS.log("Aborting shortcut icon " + channel.name + ", should be HTTPS!");
-           IOUtil.abort(channel);
-           return;
-         }
-        } catch(e) {}
         var uri = channel.URI.clone();
         uri.scheme = "https";
         new ChannelReplacement(channel, uri).replace(true);
+        HTTPS.log("Forced Channel " + uri.spec);
       });
       return true;
     }

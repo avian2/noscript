@@ -133,7 +133,7 @@ const MainContentPolicy = {
         
         if (aRequestOrigin && !aInternalCall) {
           
-          if (aContentType != 3) // images are a bitch if cached!
+          if (aContentType !== 3) // images are a bitch if cached!
             XOriginCache.store(aRequestOrigin, arguments.xOriginKey = unwrappedLocation);
           
           switch(aContentType) {

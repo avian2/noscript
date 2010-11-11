@@ -3827,9 +3827,7 @@ var ns = singleton = {
     const rw = this.requestWatchdog;
     const uri = newChan.URI;
     
-    if (HTTPS.forceURI(uri.clone())) {
-      HTTPS.replaceChannel(newChan);
-    }
+    HTTPS.forceChannel(newChan);
     
     IOUtil.attachToChannel(newChan, "noscript.redirectFrom", oldChan.URI);
     
