@@ -493,8 +493,14 @@ ChannelReplacement.prototype = {
     IOUtil.runWhenPending(oldChan, function() {
       let ccl = new CtxCapturingListener(oldChan,
         function() {
-          callback(self._replaceNow(isRedir, this));
+          try {
+            callback(self._replaceNow(isRedir, this))
+          } catch (e) {
+            self.dispose();
+          }
         });
+      self.loadGroup = oldChan.loadGroup;
+      oldChan.loadGroup = null; // prevents the wheel from stopping spinning
       // this calls asyncAbort, which calls onStartRequest on our listener
       oldChan.cancel(NS_BINDING_REDIRECTED); 
     });
@@ -505,17 +511,15 @@ ChannelReplacement.prototype = {
   },
   
   _replaceNow: function(isRedir, ccl) {
-    var oldChan = this.oldChannel;
-    try {
-      this._onChannelRedirect(isRedir);
-    } catch(ex) {
-      throw ex;
-    }
+    let oldChan = this.oldChannel;
+    oldChan.loadGroup = this.loadGroup;
+    
+    this._onChannelRedirect(isRedir);
+    
     // dirty trick to grab listenerContext
    
     this.listener = ccl.originalListener;
     this.context = ccl.originalCtx;
-    
     return this;
   },
   
@@ -536,16 +540,24 @@ ChannelReplacement.prototype = {
         if (this._mustClassify)
           CC["@mozilla.org/channelclassifier"].createInstance(CI.nsIChannelClassifier).start(newChan, true);
         
-      } catch (e) {
-      }
+      } catch (e) {}
     } else {
       if (ABE.consoleDump) {
         ABE.log("Detected double load on the same window: " + oldChan.name + " - " + (overlap && overlap.name));
       }
     }
     
-    delete this.window;
-    delete this.oldChannel;
+    this.dispose();
+  },
+  
+  dispose: function() {
+    if (this.loadGroup) {
+      try {
+        this.loadGroup.removeRequest(this.oldChannel, null, NS_BINDING_REDIRECTED);
+      } catch (e) {}
+      this.loadGroup = null;
+    }
+
   }
 }
 
