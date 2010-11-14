@@ -200,36 +200,12 @@ return noscriptUtil.service ? {
   onCommandClick: function(ev) {
     if (!(ev.button == 1 || ev.button == 0 && ev.shiftKey)) return;
     
-    const ns = this.ns;
-    
-    var url = ns.getPref("siteInfoProvider");
-    if (!url) return;
-  
-    var domain = ns.getSite(ev.target.getAttribute("statustext"));
-    if (!domain) return;
-    if (domain.indexOf('@') > -1) domain = domain.split('@')[1]; // Blocked objects entries
-    if (domain.indexOf(':') > -1) domain = ns.getDomain(domain) || domain;
-    if (!domain) return;
-    
-    var ace;
-    try {
-      ace = CC["@mozilla.org/network/idn-service;1"]
-              .getService(CI.nsIIDNService).convertUTF8toACE(domain);
-    } catch(e) {
-      ace = '';
+    if (noscriptUtil.openInfo(ev.target.getAttribute("statustext"))) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      ev.currentTarget.hidePopup();
     }
-    ev.preventDefault();
-    ev.stopPropagation();
-    ev.currentTarget.hidePopup();
-    
-    url = url.replace(/%utf8%/g, encodeURI(domain))
-            .replace(/%ace%/g, encodeURI(ace));
-        
-    if (noscriptUtil.confirm(
-      noscriptUtil.getString("siteInfo.confirm", [domain, ns.getSite(url) || "?", url]),
-      "confirmSiteInfo", "NoScript"
-      ))
-      noscriptUtil.browse(url);
+
   },
   
   onMenuShown: function(ev) {

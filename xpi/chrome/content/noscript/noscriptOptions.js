@@ -265,7 +265,7 @@ var nsopt = {
       ns.jsEnabled = global;
     });
   },
-
+  
   urlListChanged: function() {
     const selectedItems = this.urlList.selectedItems;
     var removeDisabled = true;
@@ -280,6 +280,21 @@ var nsopt = {
       .setAttribute("disabled", this.tempRevoked || 
           !(this.tempSites.sitesString || this.gTempSites.sitesString || ns.objectWhitelistLen));
     this.urlChanged();
+  },
+  
+  openInfo: function(ev) {
+    if (ev.button === 1) {
+      setTimeout(function() {
+        const selectedItems = nsopt.urlList.selectedItems;
+        const domains = [];
+        for (let j = selectedItems.length; j-- > 0;) {
+          let site = selectedItems[j].value;
+          let d = site.indexOf(":/") > 0 ? ns.getDomain(site) : site;
+          if (d && domains.indexOf(d) === -1) domains.push(d);
+        }
+        domains.forEach(noscriptUtil.openInfo, noscriptUtil);
+      }, 0); // delayed to let middle-click autoselect the underlying item
+    }
   },
   
   urlChanged: function() {

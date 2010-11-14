@@ -40,7 +40,12 @@ RequestWatchdog.prototype = {
         
         HTTPS.forceChannel(channel);
         
-        var ncb = channel.notificationCallbacks;
+        if (isDoc) {
+          let ph = PolicyState.extract(channel); 
+          if (ph && ph.context) isDoc = !(ph.context instanceof CI.nsIDOMHTMLEmbedElement);
+        }
+        
+        let ncb = channel.notificationCallbacks;
         if (!(loadFlags || ncb || channel.owner)) {
           try {
             if (channel.getRequestHeader("Content-type") == "application/ocsp-request") {
@@ -55,8 +60,8 @@ RequestWatchdog.prototype = {
                                       + channel.owner + ", " + !!PolicyState.hints);
           return;
         }
-        
-        var abeReq = null;
+      
+        let abeReq = null;
         try {
           
           abeReq = new ABERequest(channel);
@@ -641,6 +646,9 @@ RequestWatchdog.prototype = {
       } else if (/^https?:\/\/apps\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
         skipRx = /&invite_url=javascript[^&]+/; // Zynga stuff
       }
+      /*else if (/^http:\/\/www\.4shared\.com\/flash\/player\.swf\?/.test(originalSpec)) {
+        skip
+      }*/
       
       if (skipArr) {
         skipRx = new RegExp("(?:^|&)(?:" + skipArr.join('|') + ")=[^&]+");

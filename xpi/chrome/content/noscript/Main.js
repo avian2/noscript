@@ -3036,7 +3036,7 @@ var ns = singleton = {
         var de = d.documentElement;
         var db = d.body;
         var scrollers = [];
-        for each(o in oo) {
+        for each (o in oo) {
           if (o == de || o == db) continue;
           try {
             s = w.getComputedStyle(o, '');
@@ -3046,11 +3046,12 @@ var ns = singleton = {
             dump(e + ", " + e.stack + "\n");
           }
         }
-        for each(var o in scrollers) {
+        
+        for each (o in scrollers) {
           DOM.addClass(o, "__noscriptScrolling__");
         }
         
-        switch(ev.type) {
+        switch (ev.type) {
           case "timeout":
             Thread.delay(arguments.callee, ev.timeout, this, [ev]);
             break;

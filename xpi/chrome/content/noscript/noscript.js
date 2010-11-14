@@ -95,6 +95,40 @@ var noscriptUtil = {
     this.browse("http://noscript.net/help/" + section);
   },
   
+  openInfo: function(about) {
+    const ns = this.service;
+    
+    let url = ns.getPref("siteInfoProvider");
+    if (!url) return false;
+  
+    let domain = ns.getSite(about);
+    if (!domain) return false;
+    
+    if (domain.indexOf('@') > -1) domain = domain.split('@')[1]; // Blocked objects entries
+    if (domain.indexOf(':') > -1) domain = ns.getDomain(domain) || domain;
+    if (!domain) return false;
+    
+    let ace;
+    try {
+      ace = CC["@mozilla.org/network/idn-service;1"]
+              .getService(CI.nsIIDNService).convertUTF8toACE(domain);
+    } catch(e) {
+      ace = '';
+    }
+    
+    url = url.replace(/%utf8%/g, encodeURI(domain))
+            .replace(/%ace%/g, encodeURI(ace));
+        
+    if (this.confirm(
+       this.getString("siteInfo.confirm", [domain, ns.getSite(url) || "?", url]),
+        "confirmSiteInfo", "NoScript"
+      )) {
+      this.browse(url);
+      return true;
+    }
+    
+    return false;
+  },
   
   browse: function(url, features) {
     var w = this.service.dom.mostRecentBrowserWindow;

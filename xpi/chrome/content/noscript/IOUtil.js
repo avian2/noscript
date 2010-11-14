@@ -491,6 +491,8 @@ ChannelReplacement.prototype = {
       callback = this._defaultCallback;
     }
     IOUtil.runWhenPending(oldChan, function() {
+      if (channel.status) return; // channel's doom had been already defined
+      
       let ccl = new CtxCapturingListener(oldChan,
         function() {
           try {
