@@ -1143,10 +1143,10 @@ return noscriptUtil.service ? {
 ,
   menuCmd: function(event) {
     if (event.shiftKey) return; // site info
-    
-    var menuItem = event.target;
+    const ns = this.ns;
+    const menuItem = event.target;
     var site = null;
-    var reloadPolicy = 0;
+    var reloadPolicy = ns.RELOAD_ALL;
     var cl = menuItem.getAttribute("class") || "";
     var cmd = cl.match(/-(forbid|allow|distrust)\b/);
     if (!(cmd && (cmd = cmd[1]))) return;
@@ -1154,7 +1154,7 @@ return noscriptUtil.service ? {
     var temp = /-temp\b/.test(cl);
     if (/-glb\b/.test(cl)) {
       // global allow/forbid
-      if (enabled && this.ns.getPref("globalwarning", true) &&
+      if (enabled && ns.getPref("globalwarning", true) &&
           !this.prompter.confirm(window, this.getString("global.warning.title"),
                                 this.getString("global.warning.text"))
         ) return;
@@ -1164,7 +1164,7 @@ return noscriptUtil.service ? {
       if (!site) return;
       
       if (cmd == "distrust") {
-        this.ns.setUntrusted(site, true);
+        ns.setUntrusted(site, true);
       }
       
       if (menuItem.getAttribute("closemenu") == "none") {
@@ -1174,13 +1174,14 @@ return noscriptUtil.service ? {
           this._currentPopup.setAttribute("disabled", "true");
         }
         this._reloadDirty = true;
-        reloadPolicy = this.liveReload ? this.ns.RELOAD_CURRENT : this.ns.RELOAD_NO;
+        reloadPolicy = this.liveReload ? ns.RELOAD_CURRENT : ns.RELOAD_NO;
       }
       
       if (enabled && /\ballow-from\b/.test(cl)) {
-        reloadPolicy = this.ns.RELOAD_NONE;
-        this.ns.allowObject(site, "*");
-        if (this.ns.isJSEnabled(site)) return;
+        
+        ns.allowObject(site, "*");
+        if (ns.isJSEnabled(site)) return;
+        reloadPolicy = ns.RELOAD_NO;
       }
       
     }

@@ -467,10 +467,12 @@ ChannelReplacement.prototype = {
   },
   
   _callSink: function(sink, oldChan, newChan, flags) {
-    return ("onChannelRedirect" in sink)
-      ? sink.onChannelRedirect(oldChan, newChan, flags)
-      : sink.asyncOnChannelRedirect(oldChan, newChan, flags, this._redirectCallback)
-      ;
+    try { 
+      if ("onChannelRedirect" in sink) sink.onChannelRedirect(oldChan, newChan, flags);
+      else sink.asyncOnChannelRedirect(oldChan, newChan, flags, this._redirectCallback);
+    } catch(e) {
+      if (!/\(NS_ERROR_NOT_AVAILABLE\)/.test(e.message)) throw e;
+    }
   },
   
   get _redirectCallback() {
