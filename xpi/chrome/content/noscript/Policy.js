@@ -584,6 +584,13 @@ const MainContentPolicy = {
       forbid = forbid && !(/^file:\/\/\//.test(locationURL) && /^resource:/.test(originURL || (aRequestOrigin && aRequestOrigin.spec || ""))); // fire.fm work around
       
       if (forbid) {
+        
+        if (isJava && /^data:application\/x-java\b/.test(locationURL) &&
+          (originSite || (originSite = this.getSite(originURL || aRequestOrigin && aRequestOrigin.spec || "")))
+          ) {
+          locationURL = locationSite = originSite;
+        }
+        
         try {  // moved here because of http://forums.mozillazine.org/viewtopic.php?p=3173367#3173367
           if (this.getExpando(aContext, "allowed") || 
             this.isAllowedObject(locationURL, mimeKey, locationSite) ||

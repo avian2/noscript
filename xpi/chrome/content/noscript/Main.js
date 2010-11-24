@@ -356,6 +356,7 @@ var ns = singleton = {
       case "inclusionTypeChecking":
       case "nosniff":
       case "showBlankSources":
+      case "liveConnectInterception":
         this[name] = this.getPref(name, this[name]);  
       break;
       
@@ -712,6 +713,7 @@ var ns = singleton = {
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
       "forbidMetaRefresh",
       "forbidXBL", "forbidXHR",
+      "liveConnectInterception",
       "inclusionTypeChecking", "nosniff",
       "alwaysBlockUntrustedContent",
       "global", "ignorePorts",
@@ -1401,7 +1403,8 @@ var ns = singleton = {
       for (j = egroup.length; j-- > 0;) {
         e = egroup[j];
         if (this.isAllowedObject(e.url, e.mime, e.site)) {
-          if (e.placeholder) {
+          if (e.placeholder && e.placeholder.ownerDocument && // LiveConnect control trick
+              !(e.mime == "application/x-java-vm" && e.placeholder.href === e.placeholder.ownerDocument.URL)) {
             e.skipConfirmation = true;
             this.checkAndEnablePlaceholder(e.placeholder);
           } else if (!(e.allowed || e.embed) && canReloadPage) {
@@ -1417,9 +1420,7 @@ var ns = singleton = {
       }
     }
   },
-  
-  
-  
+
   checkObjectPermissionsChange: function(sites, snapshot) {
     if(this.objectWhitelist == snapshot) return false;
     var s, url;
@@ -4546,9 +4547,13 @@ var ns = singleton = {
   },
   
   onWindowSwitch: function(url, win, docShell) {
-    
     const doc = docShell.document;
-    var jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(this.getSite(url)));
+    const flag = "__noScriptEarlyScripts__" ;
+    if (flag in doc) return;
+    doc[flag] = true;
+    
+    const site = this.getSite(url);
+    var jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(site));
     
     if (!((docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page
@@ -4572,6 +4577,24 @@ var ns = singleton = {
         ScriptSurrogate.execute(doc, this._toStaticHTMLDef, true);
         doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
       }
+      
+      if (this.contentBlocker && this.liveConnectInterception && this.forbidJava &&
+          !this.isAllowedObject(site, "application/x-java-vm", site)) {
+        let phs = CC["@mozilla.org/plugin/host;1"]
+                      .getService(CI.nsIPluginHost);
+        let plugins = phs.getPluginTags({});
+        let disabled = [];
+        for (let j = plugins.length; j-- > 0;) {
+          let p = plugins[j];
+          if (!p.disabled && p.name.indexOf("Java") > -1) {
+            disabled.push(p);
+            p.disabled = true;
+          }
+        }
+        ScriptSurrogate.execute(doc, this._liveConnectInterceptionDef, true);
+        for (let j = disabled.length; j-- > 0;) disabled[j].disabled = false;
+      }
+      
     }
 
     try {
@@ -4591,7 +4614,7 @@ var ns = singleton = {
     this.onWindowSwitch = null;
     
     this.onJSGlobalCreated = function(win, url) {
-      if (url && !(win instanceof CI.nsIDOMChromeWindow)) { // WARNING: url contains only the authority part of the current URI
+      if (url && win && !(win instanceof CI.nsIDOMChromeWindow)) { // WARNING: url contains only the authority part of the current URI
         let pageURL = win.location.href; // we need to get the full URI elsewhere
         if (pageURL == win.document.documentURI) { // can be false on frame transitions...
           let docShell =  this.dom.getDocShellForWindow(win);
@@ -4653,6 +4676,28 @@ var ns = singleton = {
         return t.innerHTML;
       }
     ).toString();
+  },
+  
+  liveConnectInterception: true,
+  get _liveConnectInterceptionDef() {
+    delete this._liveConnectInterceptionDef;
+    return this._liveConnectInterceptionDef = "(" + (function() {
+      const w = window;
+      delete w.java;
+      delete w.Packages;
+      w.__defineGetter__("java", function() {
+        const d = w.document;
+        const o = d.createElement("object");
+        o.type = "application/x-java-vm";
+        o.data = "data:" + o.type + ",";
+        d.body.appendChild(o);
+        d.body.removeChild(o);
+      });
+      w.Packages = {
+        get java() { return w.java; }
+      };
+    }).toString()
+    + ")()";
   },
   
   beforeManualAllow: function(win) {
