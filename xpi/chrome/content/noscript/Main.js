@@ -1403,8 +1403,7 @@ var ns = singleton = {
       for (j = egroup.length; j-- > 0;) {
         e = egroup[j];
         if (this.isAllowedObject(e.url, e.mime, e.site)) {
-          if (e.placeholder && e.placeholder.ownerDocument && // LiveConnect control trick
-              !(e.mime == "application/x-java-vm" && e.placeholder.href === e.placeholder.ownerDocument.URL)) {
+          if (e.placeholder && e.placeholder.parentNode) {
             e.skipConfirmation = true;
             this.checkAndEnablePlaceholder(e.placeholder);
           } else if (!(e.allowed || e.embed) && canReloadPage) {
@@ -3529,16 +3528,18 @@ var ns = singleton = {
               obj.autoplay = true;
             }
             
-            
-            this.setExpando(obj, "allowed", true);
-            ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
-            var style = doc.defaultView.getComputedStyle(obj, '');
-            if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2))
-              Thread.delay(function() {
-                if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
-              }, 500); // warning, asap() or timeout=0 won't always work!
-            
-            ns.syncUI(doc);
+            if (ctx.anchor.parentNode) {
+              this.setExpando(obj, "allowed", true);
+              ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
+              var style = doc.defaultView.getComputedStyle(obj, '');
+              if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2))
+                Thread.delay(function() {
+                  if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
+                }, 500); // warning, asap() or timeout=0 won't always work!
+              ns.syncUI(doc);
+            } else {
+              reload();
+            }
             
           } finally {
             ctx = null;
@@ -4580,21 +4581,8 @@ var ns = singleton = {
       
       if (this.contentBlocker && this.liveConnectInterception && this.forbidJava &&
           !this.isAllowedObject(site, "application/x-java-vm", site)) {
-        let phs = CC["@mozilla.org/plugin/host;1"]
-                      .getService(CI.nsIPluginHost);
-        let plugins = phs.getPluginTags({});
-        let disabled = [];
-        for (let j = plugins.length; j-- > 0;) {
-          let p = plugins[j];
-          if (!p.disabled && p.name.indexOf("Java") > -1) {
-            disabled.push(p);
-            p.disabled = true;
-          }
-        }
-        ScriptSurrogate.execute(doc, this._liveConnectInterceptionDef, true);
-        for (let j = disabled.length; j-- > 0;) disabled[j].disabled = false;
+        this.interceptLiveConnect(doc);
       }
-      
     }
 
     try {
@@ -4683,21 +4671,49 @@ var ns = singleton = {
     delete this._liveConnectInterceptionDef;
     return this._liveConnectInterceptionDef = "(" + (function() {
       const w = window;
-      delete w.java;
-      delete w.Packages;
-      w.__defineGetter__("java", function() {
+      const k = function() {};
+      w.watch('java', k); // wonderful trick reducing w.java resolution by a 100 factor,
+      w.watch('Packages', k); // by skipping InitJavaProperties() and undeffing Packages and java
+      const g = function() {
         const d = w.document;
         const o = d.createElement("object");
         o.type = "application/x-java-vm";
         o.data = "data:" + o.type + ",";
         d.body.appendChild(o);
         d.body.removeChild(o);
-      });
-      w.Packages = {
-        get java() { return w.java; }
-      };
+        w.__defineGetter__("java", k);
+        w.__defineGetter__("Packages", k);
+      }
+      w.__defineGetter__("java", g);
+      w.__defineGetter__("Packages", g);
     }).toString()
     + ")()";
+  },
+  interceptLiveConnect: function(doc) {
+    const mime =  doc.defaultView.navigator.mimeTypes.namedItem("application/x-java-vm");
+    const plugin = mime ? mime.enabledPlugin : null;
+    if (plugin) {
+      const pluginName = plugin.name;
+      const phs = this.pluginHost;
+      let plugins = phs.getPluginTags({});
+      for (let j = plugins.length; j-- > 0;) {
+        let p = plugins[j];
+        if (!p.disabled && p.name === pluginName) {
+          p.disabled = true;
+          try {
+            ScriptSurrogate.execute(doc, this._liveConnectInterceptionDef, true);
+          } finally {
+            p.disabled = false;
+          }
+          break;
+        }
+      }
+    }
+  },
+  
+  get pluginHost() {
+    delete this.pluginHost;
+    return this.pluginHost = CC["@mozilla.org/plugin/host;1"].getService(CI.nsIPluginHost);
   },
   
   beforeManualAllow: function(win) {

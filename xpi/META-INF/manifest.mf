@@ -9,8 +9,8 @@ SHA1-Digest: rcg7GeeTSRscbqD9i0bNnzLlkvw=
 
 Name: chrome/noscript.jar
 Digest-Algorithms: MD5 SHA1
-MD5-Digest: Pbb1wbAz6JLBAExrrbAMTw==
-SHA1-Digest: otdugFLtfs1NiLckwulo9nVmvy8=
+MD5-Digest: zlVTqjW9zELVEefAHV7FPQ==
+SHA1-Digest: 8metw2Lvwubo3w/S1WcgDr1ikkk=
 
 Name: chrome.manifest
 Digest-Algorithms: MD5 SHA1
@@ -19,8 +19,8 @@ SHA1-Digest: 4tJe1c8hcrNS2FXxVINSCAFANvc=
 
 Name: components/noscriptService.js
 Digest-Algorithms: MD5 SHA1
-MD5-Digest: BSRHfAhn7luRDqA83BPOwQ==
-SHA1-Digest: mhju4OFbjqaAboeWvAgT8OWhVDM=
+MD5-Digest: fwKjBShJi6BkTKSnoZeSPQ==
+SHA1-Digest: +mwwk2BA/905unPGhiblM5U2zaI=
 
 Name: defaults/preferences/noscript.js
 Digest-Algorithms: MD5 SHA1
@@ -34,13 +34,13 @@ SHA1-Digest: HkktDXw+pcQm0470ZxX7bjD5mI4=
 
 Name: install.js
 Digest-Algorithms: MD5 SHA1
-MD5-Digest: X45rF5qtKCgGfJmmGA+okw==
-SHA1-Digest: eEeku1zKaacPQfl8vQWle7UIUqc=
+MD5-Digest: PEEajqqKIfA4cwa5I1by2g==
+SHA1-Digest: DN5xo4U5n5a2XJjsoSRuHoqs8pU=
 
 Name: install.rdf
 Digest-Algorithms: MD5 SHA1
-MD5-Digest: /A/1xQw9Tisq8HmIHJTiIg==
-SHA1-Digest: /HUfZPcEGhMeZw52AghAhIRMBGk=
+MD5-Digest: 4oAgGaVrKw0ury84wVhY3g==
+SHA1-Digest: XazihxlO3DW0EfnP33TXO6KSljs=
 
 Name: mozilla.cfg
 Digest-Algorithms: MD5 SHA1
