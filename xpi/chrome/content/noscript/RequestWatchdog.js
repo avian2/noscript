@@ -1580,8 +1580,10 @@ var InjectionChecker = {
     ),
   checkNoscript: function(s) {
     this.log(s);
-    return this.NoscriptChecker.test(s);
+    return this.NoscriptChecker.test(s) || this.checkSQLI(s);
   },
+  
+  checkSQLI: function(s) /union.*select.*(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}/.test(s),
   
   base64: false,
   base64tested: [],
@@ -1709,7 +1711,7 @@ var InjectionChecker = {
   _checkRecursive: function(s, depth) {
     
     
-    if (this.checkHTML(s) || this.checkJS(s))
+    if (this.checkHTML(s) || this.checkJS(s) || this.checkSQLI(s))
       return true;
     
     if (--depth <= 0)
@@ -2203,11 +2205,12 @@ XSanitizer.prototype = {
     
     if (this.brutal) { // injection checks were positive
       s = InjectionChecker.reduceDashPlus(s)
+        .replace(/(?:0x|x')[0-9a-f]{16,}|(?:0b|b')[01]{64,}/gi, " ")
         .replace(/['\(\)\=\[\]<]/g, " ")
         .replace(this._brutalReplRx, String.toUpperCase)
-        .replace(/Q[\da-fA-Fa]{2}/g, "Q20")
+        .replace(/Q[\da-fA-Fa]{2}/g, "Q20") // Ebay-style escaping
         .replace(/%[\n\r\t]*[0-9a-f][\n\r\t]*[0-9a-f]/gi, " ")
-        ; // Ebay-style escaping
+        ; 
     }
     
     return s == orig ? unsanitized : s;
