@@ -4672,8 +4672,6 @@ var ns = singleton = {
     return this._liveConnectInterceptionDef = "(" + (function() {
       const w = window;
       const k = function() {};
-      w.watch('java', k); // wonderful trick reducing w.java resolution by a 100 factor,
-      w.watch('Packages', k); // by skipping InitJavaProperties() and undeffing Packages and java
       const g = function() {
         const d = w.document;
         const o = d.createElement("object");
@@ -4690,25 +4688,16 @@ var ns = singleton = {
     + ")()";
   },
   interceptLiveConnect: function(doc) {
-    const mime =  doc.defaultView.navigator.mimeTypes.namedItem("application/x-java-vm");
-    const plugin = mime ? mime.enabledPlugin : null;
-    if (plugin) {
-      const pluginName = plugin.name;
-      const phs = this.pluginHost;
-      let plugins = phs.getPluginTags({});
-      for (let j = plugins.length; j-- > 0;) {
-        let p = plugins[j];
-        if (!p.disabled && p.name === pluginName) {
-          p.disabled = true;
-          try {
-            ScriptSurrogate.execute(doc, this._liveConnectInterceptionDef, true);
-          } finally {
-            p.disabled = false;
-          }
-          break;
-        }
-      }
+    const LOG = this.consoleDump && (this.consoleDump & LOG_CONTENT_INTERCEPT);
+    let t;
+    if (LOG) t = Date.now();
+    try {
+      Plugins.disabled = true;
+      ScriptSurrogate.execute(doc, this._liveConnectInterceptionDef, true);
+    } finally {
+      Plugins.disabled =  false;
     }
+    if (LOG) this.dump("interceptLiveConnect done in " + (Date.now() - t) + "ms");
   },
   
   get pluginHost() {
@@ -5187,15 +5176,15 @@ var ns = singleton = {
       }
     );
   }
-  
-  
-  
 }
-
-
-
 
 ns.wrappedJSObject = ns;
 ns.register();
 
 if ("nsIChromeRegistrySea" in CI) INCLUDE("SMUninstaller");
+
+__defineGetter__("Plugins", function() {
+  delete this.Plugins;
+  INCLUDE(("defineProperty" in Object) ? "Plugins" : "Plugins19");
+  return this.Plugins = Plugins;
+});

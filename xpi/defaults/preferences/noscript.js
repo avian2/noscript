@@ -258,7 +258,7 @@ pref("noscript.surrogate.ab.sources", "@http://");
 pref("noscript.surrogate.ab.replacement", "watch('ab',function(o,a,b){return a===false&&typeof(b)==='string'?false:b})");
 pref("noscript.surrogate.ab.exceptions", "");
 pref("noscript.surrogate.revsci.sources", "js.revsci.net");
-pref("noscript.surrogate.revsci.replacement", "rsinetsegs=[];");
+pref("noscript.surrogate.revsci.replacement", "rsinetsegs=[];DM_addEncToLoc=DM_tag=function(){};");
 pref("noscript.surrogate.adriver.sources", "ad.adriver.ru/cgi-bin/erle.cgi");
 pref("noscript.surrogate.adriver.replacement", "if(top!==self&&top.location.href===location.href)setTimeout('try{document.close();}catch(e){}',100)");
 
