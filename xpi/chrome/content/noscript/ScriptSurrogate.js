@@ -1,5 +1,5 @@
 var ScriptSurrogate = {
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
+  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
   
   enabled: true,
   prefs: null,

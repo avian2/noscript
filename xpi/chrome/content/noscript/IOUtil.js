@@ -59,7 +59,7 @@ function nsISupportWrapper(wrapped) {
   this.wrappedJSObject = wrapped;
 }
 nsISupportWrapper.prototype = {
-  QueryInterface: xpcom_generateQI([CI.nsISupports])
+  QueryInterface: xpcom_generateQI([])
 }
 
 const IOUtil = {
@@ -293,13 +293,7 @@ CtxCapturingListener.prototype = {
   },
   onDataAvailable: function(request, ctx, inputStream, offset, count) {},
   onStopRequest: function(request, ctx, statusCode) {},
-  QueryInterface: function (aIID) {
-    if (aIID.equals(CI.nsIStreamListener) ||
-        aIID.equals(CI.nsISupports)) {
-        return this;
-    }
-    throw Components.results.NS_NOINTERFACE;
-  }
+  QueryInterface: xpcom_generateQI([CI.nsIStreamListener])
 }
 
 function ChannelReplacement(chan, newURI, newMethod) {
@@ -479,7 +473,7 @@ ChannelReplacement.prototype = {
     delete this.__proto__._redirectCallback;
     return this.__proto__._redirectCallback = ("nsIAsyncVerifyRedirectCallback" in CI)
     ? {
-        QueryInterface: xpcom_generateQI(CI.nsISupports, CI.nsIAsyncVerifyRedirectCallback),
+        QueryInterface: xpcom_generateQI([CI.nsIAsyncVerifyRedirectCallback]),
         onRedirectVerifyCallback: function(result) {}
       }
     : null;
@@ -572,7 +566,7 @@ function LoadGroupWrapper(channel, callbacks) {
   channel.loadGroup = this;
 }
 LoadGroupWrapper.prototype = {
-  QueryInterface: xpcom_generateQI(CI.nsISupports, CI.nsILoadGroup),
+  QueryInterface: xpcom_generateQI([CI.nsILoadGroup]),
   
   get activeCount() {
     return this._inner ? this._inner.activeCount : 0;
@@ -624,7 +618,7 @@ LoadGroupWrapper.prototype = {
     if (this._channel.loadGroup) this._channel.loadGroup = this._inner;
   },
   _emptyEnum: {
-    QueryInterface: xpcom_generateQI(CI.nsISupports, CI.nsISimpleEnumerator),
+    QueryInterface: xpcom_generateQI([CI.nsISimpleEnumerator]),
     getNext: function() { return null; },
     hasMoreElements: function() { return false; }
   }

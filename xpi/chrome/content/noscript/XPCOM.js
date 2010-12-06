@@ -9,7 +9,7 @@ const SERVICE_FACTORY = {
   
   createInstance: function (outer, iid) {
     if (outer != null)
-        throw Components.results.NS_ERROR_NO_AGGREGATION;
+      throw Components.results.NS_ERROR_NO_AGGREGATION;
 
     xpcom_checkInterfaces(iid, SERVICE_IIDS, Components.results.NS_ERROR_INVALID_ARG);
     return this._instance;
@@ -17,21 +17,20 @@ const SERVICE_FACTORY = {
 };
 
 function xpcom_generateQI(iids) {
-  var checks = [];
-  for each (var iid in iids) {
-    checks.push("CI." + iid.name + ".equals(iid)");
+  iids.push(CI.nsISupports);
+  return function QueryInterface(iid) {
+    for (let i = 0, len = iids.length; i < len; i++)
+      if (iids[i].equals(iid)) return this;
+    throw Components.results.NS_ERROR_NO_INTERFACE;
   }
-  var src = checks.length
-    ? "if (" + checks.join(" || ") + ") return this;\n"
-    : "";
-  return new Function("iid", src + "throw Components.results.NS_ERROR_NO_INTERFACE;");
 }
 
-
-function xpcom_checkInterfaces(iid,iids,ex) {
-  for (var j = iids.length; j-- >0;) {
-    if (iid.equals(iids[j])) return true;
-  }
+function xpcom_checkInterfaces(iid, iids, ex) {
+  if (iid.equals(CI.nsISupports)) return;
+  
+  for (let i = iids.length; i-- > 0;)
+      if (iid.equals(iids[i])) return;
+  
   throw ex;
 }
 

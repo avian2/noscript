@@ -489,7 +489,7 @@ var ns = singleton = {
         anchor ? flags.replace(/\^/g, '') : flags);
     },
     anchor: function(s) {
-      return !/^\^|\$$/.test(s) ? s : "^" + s + "$";
+      return /^\^|\$$/.test(s) ? s : "^" + s + "$";
     },
     multi: function(s, flags) {
       var anchor = /\^/.test(flags);
@@ -2353,8 +2353,15 @@ var ns = singleton = {
   },
   setPluginExtras: function(obj, extras) {
     this.setExpando(obj, "pluginExtras", extras);
-    if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Setting plugin extras on " + obj + " -> " + (this.getPluginExtras(obj) == extras)
-      + ", " + (extras && extras.toSource())  );
+    if (this.consoleDump & LOG_CONTENT_BLOCK) {
+      try {
+        this.dump("Setting plugin extras on " + obj + " -> " + (this.getPluginExtras(obj) == extras)
+          + ", " + (extras && extras.toSource())  );
+      } catch(e) {
+        this.dump("Setting plugin extras");
+      }
+    }
+      
     return extras;
   },
   
@@ -3781,8 +3788,13 @@ var ns = singleton = {
     document = top.document;
     cache = this.getExpando(document, "objectSites");
     if(cache) {
-      if(this.consoleDump & LOG_CONTENT_INTERCEPT) this.dump("Adding plugin sites: " + cache.toSource() + " to " + sites.toSource());
-      
+      if(this.consoleDump & LOG_CONTENT_INTERCEPT) {
+        try { // calling toSource() can throw unexpected exceptions
+          this.dump("Adding plugin sites: " + cache.toSource() + " to " + sites.toSource());
+        } catch(e) {
+          this.dump("Adding " + cache.length + " cached plugin sites");
+        }
+      }
       if (!this.contentBlocker || this.alwaysShowObjectSources)
         sites.push.apply(sites, cache);
       
@@ -4671,7 +4683,6 @@ var ns = singleton = {
     delete this._liveConnectInterceptionDef;
     return this._liveConnectInterceptionDef = "(" + (function() {
       const w = window;
-      const k = function() {};
       const g = function() {
         const d = w.document;
         const o = d.createElement("object");
@@ -4679,6 +4690,7 @@ var ns = singleton = {
         o.data = "data:" + o.type + ",";
         d.body.appendChild(o);
         d.body.removeChild(o);
+        const k = function() {};
         w.__defineGetter__("java", k);
         w.__defineGetter__("Packages", k);
       }
@@ -4691,18 +4703,20 @@ var ns = singleton = {
     const LOG = this.consoleDump && (this.consoleDump & LOG_CONTENT_INTERCEPT);
     let t;
     if (LOG) t = Date.now();
+    const plugins = this.plugins;
     try {
-      Plugins.disabled = true;
+      plugins.disabled = true;
       ScriptSurrogate.execute(doc, this._liveConnectInterceptionDef, true);
     } finally {
-      Plugins.disabled =  false;
+      plugins.disabled =  false;
     }
     if (LOG) this.dump("interceptLiveConnect done in " + (Date.now() - t) + "ms");
   },
   
-  get pluginHost() {
-    delete this.pluginHost;
-    return this.pluginHost = CC["@mozilla.org/plugin/host;1"].getService(CI.nsIPluginHost);
+  get plugins() {
+    delete this.plugins;
+    INCLUDE("Plugins");
+    return this.plugins = Plugins;
   },
   
   beforeManualAllow: function(win) {
@@ -5182,9 +5196,3 @@ ns.wrappedJSObject = ns;
 ns.register();
 
 if ("nsIChromeRegistrySea" in CI) INCLUDE("SMUninstaller");
-
-__defineGetter__("Plugins", function() {
-  delete this.Plugins;
-  INCLUDE(("defineProperty" in Object) ? "Plugins" : "Plugins19");
-  return this.Plugins = Plugins;
-});

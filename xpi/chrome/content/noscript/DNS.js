@@ -329,23 +329,26 @@ var DNS = {
   isLocalIP: function(addr) {
     // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose but incomplete (missing IPV6 ULA) implementation
     // Relevant RFCs linked at http://en.wikipedia.org/wiki/Private_network
-    return /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i
-            .test(addr) ||
-            this.localExtras && this.localExtras.testIP(addr) ||
-            WAN.ipMatcher && WAN.ipMatcher.testIP(addr);
+    return (addr.indexOf("2002:") === 0
+        ? this.isLocalIP(this.ip6to4(addr))
+        : /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i
+          .test(addr)
+        ) ||
+      this.localExtras && this.localExtras.testIP(addr) ||
+      WAN.ipMatcher && WAN.ipMatcher.testIP(addr);
   },
-  
-  isIP: function(host) {
-    return /^(?:\d+\.){3}\d+$|:.*:/.test(host);
-  }
-  
+  ip6to4: function(addr) {
+    let m = addr.match(/^2002:[A-F0-9:]+:([A-F0-9]{2})([A-F0-9]{2}):([A-F0-9]{2})([A-F0-9]{2})$/i);
+    return m && m.slice(1).map(function(h) parseInt(h, 16)).join(".") || "";
+  },
+  isIP: function(host) /^(?:\d+\.){3}\d+$|:.*:/.test(host)
 };
 
 function DNSListener(callback) {
   if (callback) this.callback = callback;
 };
 DNSListener.prototype = {
-  QueryInterface: xpcom_generateQI([CI.nsIDNSListener, CI.nsISupports]),
+  QueryInterface: xpcom_generateQI([CI.nsIDNSListener]),
   record: null,
   status: 0,
   callback: null,
@@ -372,7 +375,7 @@ var WAN = {
   fingerprintLogging: false,
   fingerprintUA: "Mozilla/5.0 (ABE, http://noscript.net/abe/wan)",
   fingerprintHeader: "X-ABE-Fingerprint",
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
+  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
   
   log: function(msg) {
     var cs = CC["@mozilla.org/consoleservice;1"].getService(CI.nsIConsoleService);

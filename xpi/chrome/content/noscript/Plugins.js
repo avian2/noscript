@@ -1,34 +1,30 @@
 var Plugins = {
-  QueryInterface: xpcom_generateQI([CI.nsISupports, CI.nsIFactory]),
   _disabled: false,
   get disabled() this._disabled,
-  set disabled(b) {
-    if (b == this._disabled) return b;
+
+  _registrar: Components.manager.nsIComponentRegistrar,
+  _CTRID: "@mozilla.org/plugin/host;1",
+  get _CID() {
+    delete this._CID;
+    return this._CID = this._registrar.contractIDToCID(this._CTRID);
+  },
+  get _factory() {
+    delete this._factory;
     
-    if (!this.pluginHost) { // init
-      const registrar = Components.manager.nsIComponentRegistrar;
-      const CTRID = "@mozilla.org/plugin/host;1";
-      this.pluginHost = CC[CTRID].getService(CI.nsIPluginHost);
-      const CID = registrar.contractIDToCID("@mozilla.org/plugin/host;1");
-      registrar.unregisterFactory(CID,
-        Components.manager.getClassObject(CC[CTRID], CI.nsIFactory)
-      );
-      registrar.registerFactory(CID,
-        "NoScript PluginHost Wrapper",
-        CTRID,
-        this.QueryInterface(CI.nsIFactory)
-      );
-    }
-    return this._disabled = !!b;
+    return this._factory = Components.manager.getClassObject(CC[this._CTRID], CI.nsIFactory);
   },
 
-  _disabledError:  Components.results.NS_ERROR_NO_AGGREGATION, // this won't pollute console
-  createInstance: function(outer, iid) {
-    if (this._disabled || outer) {
-      throw this._disabledError;
+  set disabled(b) {
+    if (b == this._disabled) return b;
+    if (b) {
+      this._registrar.unregisterFactory(this._CID, this._factory);
+    } else {
+      this._registrar.registerFactory(this._CID, "PluginHost", this._CTRID, this._factory);
     }
-    
-    const ph = this.pluginHost;
-    return iid ? ph.QueryInterface(iid) : ph;
+    return this._disabled = !!b;
   }
-}
+  
+};
+// Gecko >= 2.0 seems to need the following to gets things rolling reliably
+Plugins.disabled = true;
+Plugins.disabled = false;

@@ -1999,7 +1999,6 @@ return noscriptUtil.service ? {
   prefsObserver: {
     ns: noscriptUtil.service,
     QueryInterface: noscriptUtil.service.generateQI([
-        CI.nsISupports, 
         CI.nsIObserver, 
         CI.nsISupportsWeakReference])
   ,

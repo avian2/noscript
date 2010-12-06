@@ -1,6 +1,6 @@
 var PlacesPrefs = {
   
-  QueryInterface: xpcom_generateQI([CI.nsINavBookmarkObserver, CI.nsISupportsWeakReference, CI.nsISupports]),
+  QueryInterface: xpcom_generateQI([CI.nsINavBookmarkObserver, CI.nsISupportsWeakReference]),
   bmsvc: CC["@mozilla.org/browser/nav-bookmarks-service;1"].getService(CI.nsINavBookmarksService),
   annsvc: CC["@mozilla.org/browser/annotation-service;1"].getService(CI.nsIAnnotationService),
 

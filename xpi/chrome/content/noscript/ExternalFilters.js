@@ -214,7 +214,7 @@ var ExternalFilters = {
                         );
   },
   
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports])
+  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference])
 }
 
 
@@ -536,7 +536,7 @@ EFHandler.prototype = {
   
   QueryInterface: xpcom_generateQI(
       [CI.nsITraceableChannel, CI.nsICacheListener,
-       CI.nsIObserver, CI.nsISupportsWeakReference, CI.nsISupports])
+       CI.nsIObserver, CI.nsISupportsWeakReference])
 }
 
 function EFFilePassthru(handler) {
@@ -575,7 +575,7 @@ EFFilePassthru.prototype = {
     handler.cleanup();    
   },
   
-  QueryInterface: xpcom_generateQI([CI.nsIStreamListener, CI.nsISupports])
+  QueryInterface: xpcom_generateQI([CI.nsIStreamListener])
 }
 
 
@@ -627,7 +627,7 @@ EFCacheHandler.prototype = {
     }
   },
 
-  QueryInterface: xpcom_generateQI([CI.nsICacheListener, CI.nsICacheMetaDataVisitor, CI.nsISupports])
+  QueryInterface: xpcom_generateQI([CI.nsICacheListener, CI.nsICacheMetaDataVisitor])
 }
 
 
@@ -722,5 +722,5 @@ var EFCacheSessions = {
     }
   },
   
-  QueryInterface: xpcom_generateQI([CI.nsICacheListener, CI.nsICacheVisitor, CI.nsISupports])
+  QueryInterface: xpcom_generateQI([CI.nsICacheListener, CI.nsICacheVisitor])
 }

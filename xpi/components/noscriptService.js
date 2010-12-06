@@ -7,20 +7,19 @@ const CU = Components.utils;
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
 const EXTENSION_NAME = "NoScript";
 const CHROME_NAME = "noscript";
-const VERSION = "2.0.8rc1";
+const VERSION = "2.0.8rc2";
 const SERVICE_NAME = EXTENSION_NAME + " Service";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID="{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 
 // interfaces implemented by this component
 const SERVICE_IIDS = 
-[ 
-CI.nsIObserver,
-CI.nsISupports,
-CI.nsISupportsWeakReference,
+[
 CI.nsIContentPolicy,
 CI.nsIWebProgressListener,
 CI.nsIWebProgressListener2,
+CI.nsIObserver,
+CI.nsISupportsWeakReference,
 CI.nsIChannelEventSink
 ];
 
