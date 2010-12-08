@@ -101,9 +101,9 @@ return noscriptUtil.service ? {
     
     popup.addEventListener("popuphidden", function(ev) { noscriptOverlay.onMenuHidden(ev) }, false);
     
-    popup.style.visibility = "hidden"; // work-around for bug 4066046
+    // popup.style.visibility = "hidden"; // work-around for bug 4066046
     popup.addEventListener("popupshown", noscriptOverlay.onMenuShown, false);
-                           
+
     this.prepareMenu(popup);
   },
   
@@ -148,6 +148,7 @@ return noscriptUtil.service ? {
       ? Date.now() : 0;
   },
   
+  _uiOutTimeout: 0,
   onUIOut: function(ev) {
     let parent = ev.currentTarget;
     let popup = parent.firstChild;
@@ -163,8 +164,16 @@ return noscriptUtil.service ? {
         if (node == parent) return;
     }
     
-    window.setTimeout(function() {
-        if (!popup._hovering) popup.hidePopup();
+    if (this._uiOutTimeout) window.clearTimeout(this._uiOutTimeout);
+    this._uiOutTimeout = window.setTimeout(function() {
+        if (!popup._hovering) {
+          switch(popup.state) {
+            case "open":
+            case "showing":
+              popup.hidePopup();
+              break;
+          }
+        }
       },
       this.ns.getPref("hoverUI.delayExit" +
         (popup._hovering == 1

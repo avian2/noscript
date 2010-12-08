@@ -684,7 +684,9 @@ RequestWatchdog.prototype = {
         (postInjection || !trustedOrigin) && 
         (channel instanceof CI.nsIUploadChannel) && channel.uploadStream
       ) {
-      channel.requestMethod = "GET";
+      try {
+        channel.requestMethod = "GET";
+      } catch (e) {}
       requestInfo.unsafeRequest.postData = channel.uploadStream;
       channel.setUploadStream(this.dummyUpload, "", -1);
       this.notify(this.addXssInfo(requestInfo, {
@@ -768,10 +770,9 @@ RequestWatchdog.prototype = {
         const CACHE_FLAGS = channel.LOAD_FROM_CACHE | 
                             channel.VALIDATE_NEVER | 
                             channel.LOAD_ONLY_FROM_CACHE;
-        // if(channel.loadFlags & CACHE_FLAGS) {
-          channel.loadFlags = channel.loadFlags & ~CACHE_FLAGS | channel.LOAD_BYPASS_CACHE;
-          if (this.consoleDump) this.dump(channel, "SKIPPING CACHE");
-        // }
+        
+        channel.loadFlags = channel.loadFlags & ~CACHE_FLAGS | channel.LOAD_BYPASS_CACHE;
+        if (this.consoleDump) this.dump(channel, "SKIPPING CACHE");
       }
       
       if (requestInfo.window && 

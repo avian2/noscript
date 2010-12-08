@@ -248,7 +248,7 @@ Network.prototype = {
     var parts = addr.split(".");
     var ret = 0, byt3;
     for (var j = parts.length; j-- > 0;) {
-      byt3 = parseInt(parts[j]);
+      byt3 = parseInt(parts[j], 10);
       if (byt3) {
         if (byt3 > 255) byt3 = 255;
         ret += byt3 * this._pows[j];

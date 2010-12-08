@@ -265,3 +265,8 @@ menupopup[sticky="true"][disabled="true"] {
 #noscript-tbb-revoke-temp[disabled="true"], #noscript-tbb-temp-page[disabled="true"] {
   opacity: .5;
 }
+#noscript-tbb-revoke-temp  > .toolbarbutton-icon, #noscript-tbb-temp-page  > .toolbarbutton-icon, #noscript-tbb .toolbarbutton-icon[label=NoScript] {
+  margin: 0px !important;
+  width: auto !important;
+  height: auto !important;
+}

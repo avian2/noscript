@@ -1222,9 +1222,7 @@ var ns = singleton = {
       try {
         callback(this);
         if (!nosave) this.savePrefs();
-        if (reloadPolicy != this.RELOAD_NO) {
-          this.reloadWhereNeeded(reloadPolicy == this.RELOAD_CURRENT);
-        }
+        this.reloadWhereNeeded(reloadPolicy);
       } catch(e) {
         this.dump("FAILED TO SAVE PERMISSIONS! " + e + "," + e.stack);
       }
@@ -1237,7 +1235,9 @@ var ns = singleton = {
     global: false,
     objects: null
   },
-  reloadWhereNeeded: function(currentTabOnly) {
+  reloadWhereNeeded: function(reloadPolicy) {
+    if (arguments.length === 0) reloadPolicy = this.RELOAD_ALL;
+    
     const trusted = this.jsPolicySites;
     const untrusted = this.untrustedSites;
     const global = this.jsEnabled;
@@ -1256,20 +1256,21 @@ var ns = singleton = {
     this.initContentPolicy();
     
     if (!lastTrusted ||
-        
         global == lastGlobal &&
         lastObjects == this.objectWhitelist && 
         trusted.equals(lastTrusted) &&
-        untrusted.equals(lastUntrusted) ||
-        
-        !this.getPref("autoReload") ||
-        
-        global != lastGlobal && !this.getPref("autoReload.global")
-        
-        )
+        untrusted.equals(lastUntrusted)
+       ) 
       return;
     
-    currentTabOnly = currentTabOnly || !this.getPref("autoReload.allTabs") ||
+    let mustReload = !(
+        reloadPolicy === this.RELOAD_NO ||
+        !this.getPref("autoReload") ||
+        global != lastGlobal && !this.getPref("autoReload.global")
+      );
+    
+    const currentTabOnly = reloadPolicy === this.RELOAD_CURRENT ||
+      !this.getPref("autoReload.allTabs") ||
       global != lastGlobal && !this.getPref("autoReload.allTabsOnGlobal");
     
     var useHistory = this.getPref("xss.reload.useHistory", false);
@@ -1287,18 +1288,18 @@ var ns = singleton = {
     var isCurrentTab = true;
     
     (function checkAndReload() {
-      var browser, j, k, len;
-      var sites, site, noFrames, checkTop;
-      var prevStatus, currStatus;
-      var webNav, url;
-      
-      for (k = 10; k-- > 0 && (browser = bi.next()); ) {
+
+      var browser;
+
+      for (let ts = Date.now(), elapsed = 0; elapsed < 30 && (browser = bi.next()); elapsed = Date.now() - ts) {
         
-        sites = this.getSites(browser);
-        noFrames = sites.docSites.length === 1;
+        let sites = this.getSites(browser);
+        let noFrames = sites.docSites.length === 1;
         
         for (j = 0, len = sites.length; j < len; j++) {
-          site = sites[j];
+          let site = sites[j];
+          
+          let checkTop;
           
           if (j === 0 && (noFrames || !isCurrentTab)) // top level, if unchanged and forbidden we won't reload
           {
@@ -1317,20 +1318,82 @@ var ns = singleton = {
             }
           } else checkTop = false;
           
-          prevStatus = !(lastGlobal
+          let prevStatus = !(lastGlobal
             ? this.alwaysBlockUntrustedContent && lastUntrusted.matches(site)
-            : !lastTrusted.matches(site) || lastUntrusted.matches(site)
+            : !(lastTrusted.matches(site) || this.checkShorthands(site, lastTrusted.sitesMap)) || lastUntrusted.matches(site)
           );
-          currStatus = this.isJSEnabled(site) || !!this.checkShorthands(site);
-  
+          let currStatus = this.isJSEnabled(site) || !!this.checkShorthands(site);
+          
           if (currStatus != prevStatus) {
-            if (currStatus) 
-              this.requestWatchdog.setUntrustedReloadInfo(browser, true);
+            let forceReload = mustReload;
+            const win =  browser.contentWindow;
+            const wu = win.QueryInterface(CI.nsIInterfaceRequestor)
+                     .getInterface(CI.nsIDOMWindowUtils);
+            const rw = this.requestWatchdog;
             
-            webNav = browser.webNavigation;
-            url = webNav.currentURI;
-            if (url.schemeIs("http") || url.schemeIs("https")) {
-              this.requestWatchdog.noscriptReload = url.spec;
+            
+            let canSuppressEvents = "suppressEventHandling" in wu;
+            if (canSuppressEvents) wu.suppressEventHandling(true);
+            // check XSS
+            
+            let xss = this.traverseDocShells(function(docShell) {
+              let site = this.getSite(docShell.currentURI.spec);
+         
+              // is this a newly allowed docShell?
+              if ((this.isJSEnabled(site) || this.checkShorthands(site)) &&
+                  (lastGlobal
+                    ? this.alwaysBlockUntrustedContent && lastUntrusted.matches(site)
+                    : !(lastTrusted.matches(site) || this.checkShorthands(site, lastTrusted.sitesMap)) || lastUntrusted.matches(site)
+                  )                          
+                ) {
+                
+                let channel = docShell.currentDocumentChannel;
+                if (channel instanceof CI.nsIHttpChannel) {
+                  try {
+                    ts = 0; // checking XSS may be time consuming, let's spin events
+                    const url = channel.URI.spec;
+                    const uploadStream = (channel instanceof CI.nsIUploadChannel) && channel.uploadStream;
+                    if (uploadStream && (uploadStream instanceof CI.nsISeekableStream)) {
+                      uploadStream.seek(0, 0); // rewind
+                    }
+                    const abeReq = new ABERequest(channel);
+                    rw.setUntrustedReloadInfo(browser, true);
+                    rw.filterXSS(abeReq);
+                    if (url != channel.URI.spec || uploadStream && uploadStream != channel.uploadStream) {
+                      // XSS!
+                      channel.URI.spec = url;
+                      if (uploadStream) {
+                        uploadStream.seek(0, 0);
+                        channel.setUploadStream(uploadStream, "", -1);
+                      }
+                      return true;
+                    }
+                  } catch (e) {
+                    if (this.consoleDump) this.dump("Error checkin in permission change XSS checks, " + e + " - " + e.stack);
+                    return true; // better err on the safe side
+                  }
+                }
+              }
+              return false;
+            }, this, browser);
+            
+            if (xss) {
+              forceReload = true;
+              useHistoryExceptCurrent = true;
+              if (!canSuppressEvents) { // Fx 3.0, let's erase the document
+                let de = win.document.documentElement;
+                while (de.firstChild) de.removeChild(de.firstChild);
+              }
+            } else {
+              if (canSuppressEvents) wu.suppressEventHandling(false);
+            }
+            
+            rw.setUntrustedReloadInfo(browser, true);
+            
+            let webNav = browser.webNavigation;
+            let uri = webNav.currentURI;
+            if (uri.schemeIs("http") || uri.schemeIs("https")) {
+              rw.noscriptReload = uri.spec;
             }
             try {
               webNav = webNav.sessionHistory.QueryInterface(nsIWebNavigation);
@@ -1341,10 +1404,10 @@ var ns = singleton = {
                 } catch(e) {}
               }
               
-              if (useHistory) {
+              if (useHistory && forceReload) {
                 if (useHistoryExceptCurrent) {
                   useHistoryExceptCurrent = false;
-                } else if(!(url instanceof nsIURL && url.ref || url.spec.substring(url.spec.length - 1) == "#")) {
+                } else if(!(uri instanceof nsIURL && uri.ref || uri.spec.substring(uri.spec.length - 1) == "#")) {
                   if (useHistoryCurrentOnly) useHistory = false;
                   webNav.gotoIndex(webNav.index);
                   break;
@@ -1352,7 +1415,7 @@ var ns = singleton = {
               }
             } catch(e) {}
             try {
-              browser.webNavigation.reload(LOAD_FLAGS); // can fail, e.g. because a content policy or an user interruption
+              if (forceReload) browser.webNavigation.reload(LOAD_FLAGS); // can fail, e.g. because a content policy or an user interruption
             } catch(e) {}
             break;
           } else if (checkTop && !currStatus) {
@@ -1376,8 +1439,8 @@ var ns = singleton = {
         }
         
         if (currentTabOnly) {
-          bi.dispose();
-          return;
+          mustReload = false;
+          continue;
         }
         
         isCurrentTab = false;
@@ -3680,58 +3743,63 @@ var ns = singleton = {
   
   
   traverseObjects: function(callback, self, browser) {
+    return this.traverseDocShells(function(docShell) {
+      let document = docShell.document;
+      if (document) {
+        for each (let t in ["object", "embed"]) {
+          for each (let node in Array.slice(document.getElementsByTagName(t), 0)) {
+            if (callback.call(self, node, browser))
+              return true;
+          }
+        };
+      }
+      return false;
+    }, self, browser);
+  },
+  
+  traverseDocShells: function(callback, self, browser) {
     if (!browser) {
-      const bi = DOM.createBrowserIterator();
+      const bi = DOM.createBrowserIterator(); 
       while((browser = bi.next()))
-        this.traverseObjects(callback, self, browser);
-      return;
+        if (this.traverseDocShells(callback, self, browser))
+          return true;
+      
+      return false;
     }
+    
     const docShells = browser.docShell.getDocShellEnumerator(
         CI.nsIDocShellTreeItem.typeContent,
         browser.docShell.ENUMERATE_FORWARDS
     );
     
-    var docShell, document, domain;
-    while (docShells.hasMoreElements()) {
-       
-      docShell = docShells.getNext();
-      document = (docShell instanceof CI.nsIDocShell) &&
-                 docShell.contentViewer && docShell.contentViewer.DOMDocument;
-      if (!document) continue;
-      
-      ["object", "embed"].forEach(function(t) {
-        for each (var node in Array.slice(document.getElementsByTagName(t), 0)) {
-          callback.call(self, node, browser);
-        }
-      });
+    const nsIDocShell = CI.nsIDocShell;
+    const nsIWebNavigation = CI.nsIWebNavigation;
 
+    while (docShells.hasMoreElements()) {
+      let docShell = docShells.getNext();
+      if (docShell instanceof nsIDocShell && docShell instanceof nsIWebNavigation) {
+        try {
+          if (callback.call(self, docShell))
+            return true;
+        } catch (e) {
+          if (this.consoleDump) this.dump("Error while traversing docshells: " + e + ", " + e.stack);
+        }
+      }
     }
+    return false;
   },
   
   _enumerateSites: function(browser, sites) {
 
-
     const nsIDocShell = CI.nsIDocShell;
     const nsIWebProgress = CI.nsIWebProgress;
- 
-    const docShells = browser.docShell.getDocShellEnumerator(
-        CI.nsIDocShellTreeItem.typeContent,
-        browser.docShell.ENUMERATE_FORWARDS
-    );
     
-    var loading = false, loaded = false, domLoaded = false;
+    var top;
     
-    var docShell, docURI, url, win, top;
-
-    var cache, redir;
+    this.traverseDocShells(function(docShell) {
     
-    var document, domain;
-    while (docShells.hasMoreElements()) {
-       
-      docShell = docShells.getNext();
-      document = (docShell instanceof nsIDocShell) &&
-                 docShell.contentViewer && docShell.contentViewer.DOMDocument;
-      if (!document) continue;
+      let document = docShell.document;
+      if (!document) return;
       
       // Truncate title as needed
       if (this.truncateTitle && document.title.length > this.truncateTitleLen) {
@@ -3739,54 +3807,52 @@ var ns = singleton = {
       }
       
       // Collect document / cached plugin URLs
-      win = document.defaultView;
-      url = this.getSite(docURI = document.documentURI);
+      let win = document.defaultView;
+      let docURI = docURI = document.documentURI;
+      let url = this.getSite(docURI);
       
       if (url) {
         try {
-          if (document.domain && document.domain != this.getDomain(url, true) && url != "chrome:" && url != "about:blank") {
+          let domain = document.domain
+          if (domain && domain != this.getDomain(url, true) && url != "chrome:" && url != "about:blank") {
            // temporary allow changed document.domain on allow page
             if (this.getExpando(browser, "allowPageURL") == browser.docShell.currentURI.spec &&
-                this.getBaseDomain(document.domain).length >= document.domain.length &&
-                !(this.isJSEnabled(document.domain) || this.isUntrusted(document.domain))) {
-             this.setTemp(document.domain, true);
-             this.setJSEnabled(document.domain, true);
+                this.getBaseDomain(domain).length >= domain.length &&
+                !(this.isJSEnabled(domain) || this.isUntrusted(domain))) {
+             this.setTemp(domain, true);
+             this.setJSEnabled(domain, true);
              this.quickReload(win);
            }
-           sites.unshift(document.domain);
+           sites.unshift(domain);
           }
         } catch(e) {}
         
         sites.docSites.push(url);
         sites.push(url);
 
-        for each(redir in this.getRedirCache(browser, docURI)) {
+        for each(let redir in this.getRedirCache(browser, docURI)) {
           sites.push(redir.site);
         }
       }
 
-      domLoaded = !!this.getExpando(document, "contentLoaded");
+      let domLoaded = !!this.getExpando(document, "contentLoaded");
       
       if (win === (top || (top = win.top))) {
         sites.topSite = url;
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
       }
-      
 
-      loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
-      if (domLoaded || loaded) {
-        this.processObjectElements(document, sites);
-      } else  {
-        loading = true;
-        continue;
-      }
+      let loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
+      if (!(domLoaded || loaded))
+        return;
       
+      this.processObjectElements(document, sites);
       this.processScriptElements(document, sites, url);
-    }
-    
-    
-    document = top.document;
-    cache = this.getExpando(document, "objectSites");
+      
+    }, this, browser);
+
+    let document = top.document;
+    let cache = this.getExpando(document, "objectSites");
     if(cache) {
       if(this.consoleDump & LOG_CONTENT_INTERCEPT) {
         try { // calling toSource() can throw unexpected exceptions
@@ -3803,12 +3869,11 @@ var ns = singleton = {
     
     cache = this.getExpando(document, "codeSites");
     if(cache) sites.push.apply(sites, cache);
-    
-    
+
     const removeBlank = !(this.showBlankSources || sites.topSite == "about:blank");
     
-    for (var j = sites.length; j-- > 0;) {
-      url = sites[j];
+    for (let j = sites.length; j-- > 0;) {
+      let url = sites[j];
       if (/:/.test(url) &&
           (removeBlank && url == "about:blank" ||
             !(

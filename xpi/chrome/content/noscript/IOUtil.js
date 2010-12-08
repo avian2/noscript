@@ -367,7 +367,7 @@ ChannelReplacement.prototype = {
           var ctype = chan.getRequestHeader("Content-type");
           var clen = chan.getRequestHeader("Content-length");
           if (ctype && clen) {
-            newChan.setUploadStream(stream, ctype, parseInt(clen));
+            newChan.setUploadStream(stream, ctype, parseInt(clen, 10));
           }
         } catch(e) {
           newChan.setUploadStream(stream, '', -1);
