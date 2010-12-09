@@ -569,12 +569,20 @@ const MainContentPolicy = {
        
       if (/\binnerHTML\b/.test(new Error().stack)) {
         if (this._bug453825) {
-          aContext.ownerDocument.location.href = 'javascript:window.__defineGetter__("top", (Window.prototype || window).__lookupGetter__("top"))';
-          if (this.consoleDump) this.dump("Locked window.top (bug 453825 work-around)");
+          try {
+            ScriptSurrogate.execute(aContext.ownerDocument, 'window.__defineGetter__("top", (Window.prototype || window).__lookupGetter__("top"))');
+            if (this.consoleDump) this.dump("Locked window.top (bug 453825 work-around)");
+          } catch(e) {
+            if (this.consoleDump) this.dump(e + " while locking window.top (bug 453825 work-around)");
+          }
         }
         if (this._bug472495) {
-          aContext.ownerDocument.defaultView.addEventListener("DOMNodeRemoved", this._domNodeRemoved, true);
-          if (this.consoleDump) this.dump("Added DOMNodeRemoved (bug 472495 work-around)");
+          try {
+            aContext.ownerDocument.defaultView.addEventListener("DOMNodeRemoved", this._domNodeRemoved, true);
+            if (this.consoleDump) this.dump("Added DOMNodeRemoved (bug 472495 work-around)");
+          } catch(e) {
+             if (this.consoleDump) this.dump(e + " while adding DOMNodeRemoved (bug 472495 work-around)");
+          }
         }
       }
       
