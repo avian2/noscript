@@ -314,7 +314,7 @@ const MainContentPolicy = {
                     locationURL == this.compatGNotes ||
                     (
                       originURL
-                        ? (/^chrome:/.test(originURL) ||
+                        ? ( /^(?:chrome|about|resource):/.test(originURL) && originURL !== "about:blank" || 
                            /^(?:data|javascript):/.test(locationURL) &&
                             (contentDocument && (originURL == contentDocument.URL
                                                   || /^(?:data:|javascript:|about:blank$)/.test(contentDocument.URL)

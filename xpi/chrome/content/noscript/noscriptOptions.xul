@@ -188,11 +188,10 @@
      <label class="header" value="&noscriptShow;"/>
      <groupbox>
       <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
-      <checkbox id="opt-statusLabel" label="&noscriptStatusLabel;" />
+			<checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
     </groupbox>
     
-    <groupbox class="ia-indent">
-      <caption><checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" /></caption>
+    <groupbox>
        <hbox>
          <vbox flex="1">
            <checkbox id="opt-showPermanent" label="Allow [...]" />

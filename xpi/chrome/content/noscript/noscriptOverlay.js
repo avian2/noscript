@@ -35,44 +35,19 @@ return noscriptUtil.service ? {
     return this.prompter = noscriptUtil.prompter;
   },
   
-  openPopup: function(ev) {
-    var parent = ev.currentTarget;
-    var popupId = parent.getAttribute("context");
-   
-    if (this.stickyUI) {
-      if (popupId) {
-        parent.setAttribute("popup", popupId);
-        parent.removeAttribute("context");
-        parent.click();
-      }
-      return;
-    }
-    
-    ev.preventDefault();
-    if (!popupId) {
-      var popup = document.firstChild;
-      if (popup && this.isOpenOrJustClosed(popup)) {
-        popup.hidePopup();
-        popup._lastClosed = 0;
-        this._currentPopup = null;
-        return;
-      }
-    }
-    var pb = parent.boxObject;
-    var ctxEv = document.createEvent("MouseEvents");
-    ctxEv.initMouseEvent("contextmenu", true, true, window, 0,
-        pb.screenX, pb.screenY, 0, 0, false, false, false, false, 2, null);
-    parent.dispatchEvent(ctxEv);
+  openPopup: function(popup, anchor) {
+    popup.position = anchor.parentNode.id == "addon-bar" ? "before_start" : "after_start";
+    popup.openPopup(anchor);
   },
   onContextMenu: function(ev) {
     var parent = ev.currentTarget;
     var popup = parent.firstChild;
-    if (!(popup && popup.showPopup)) return;
+    if (!(popup && popup.openPopup)) return;
     if (this.stickyUI) {
       popup._context = true;
     }
     ev.preventDefault();
-    popup.showPopup();
+    noscriptOverlay.openPopup(popup, parent);
   },
   
   onMenuShowing: function(ev, noSticky) {
@@ -84,8 +59,6 @@ return noscriptUtil.service ? {
     var stickyUI = this.stickyUI;
     
     if (stickyUI) {
-      popup._context = popup._context || popup.parentNode && popup.parentNode.getAttribute("context") == popup.id;
-      
       popup.setAttribute("sticky", !noSticky &&
        (popup == stickyUI ||
         !popup._context && this.useStickyUI));
@@ -103,7 +76,7 @@ return noscriptUtil.service ? {
     
     // popup.style.visibility = "hidden"; // work-around for bug 4066046
     popup.addEventListener("popupshown", noscriptOverlay.onMenuShown, false);
-
+    
     this.prepareMenu(popup);
   },
   
@@ -111,12 +84,13 @@ return noscriptUtil.service ? {
     let parent = ev.currentTarget;
     let popup = parent.firstChild;
     
-    if (!(popup && popup.showPopup) ||
+    if (!(popup && popup.openPopup) ||
         ("_hovering" in popup) && popup._hovering ||
-        !this.ns.getPref("hoverUI"))
+        !this.hoverUI)
       return;
    
     if (popup.state !== "open") {
+      popup._context = false;
       popup._hovering = 1;
       parent._lastMoved = 0;
       const delayStop = this.ns.getPref("hoverUI.delayStop");
@@ -125,13 +99,13 @@ return noscriptUtil.service ? {
         window.setTimeout(function() {
           if (!popup._hovering) return;
           if (parent._lastMoved && (Date.now() - parent._lastMoved) > delayStop) {
-            popup.showPopup();
+            noscriptOverlay.openPopup(popup, parent);
           } else if (delayStop > 0) {
             window.setTimeout(arguments.callee, delayStop);
           }
         }, delay);
       } else {
-        popup.showPopup();
+        this.openPopup(popup, parent);
       }
     } else {
       popup._hovering = 2;
@@ -190,7 +164,7 @@ return noscriptUtil.service ? {
     
     if (ev.currentTarget !== ev.target) return;
     
-    if (ev.originalTarget.tagName == "xul:toolbarbutton") {
+    if (this.hoverUI || ev.originalTarget.tagName == "xul:toolbarbutton") {
       // discriminate dropdown button
       if (ev.button === 0) noscriptOverlay.toggleCurrentPage();
       ev.preventDefault();
@@ -200,7 +174,7 @@ return noscriptUtil.service ? {
     let popup = ev.currentTarget.firstChild;
     if ("_hovering" in popup && popup._hovering === 1) {
       popup._hovering = -1;
-      if (ev.button !== 2) popup.showPopup();
+      if (ev.button !== 2) this.openPopup(popup, ev.currentTarget);
     } 
     
   },
@@ -243,11 +217,10 @@ return noscriptUtil.service ? {
       this.ns.savePrefs();
     }
     
-    if (popup.id == "noscript-tbb-popup") {
+    if (popup.id === "noscript-tbb-popup") {
       // take back our stuff
-       this._currentPopup = null;
+      this._currentPopup = null;
       noscriptOverlay.prepareMenu($("noscript-status-popup"));
-     
     }
     popup._lastClosed = Date.now();
     this._reloadDirty = false;
@@ -263,7 +236,6 @@ return noscriptUtil.service ? {
       return;
     }
     this.updateStatusClass(menu);
-    menu.setAttribute("tooltiptext", this.statusIcon.getAttribute("tooltiptext"));
   }
   
 ,
@@ -352,23 +324,48 @@ return noscriptUtil.service ? {
   
   
   initPopups: function() {
-    var sticky = this.stickyUI; // early init
-    var popup = $("noscript-status-popup");
+    const sticky = this.stickyUI; // early init
+    const popup = this._templatePopup;
+    
+    const tbb = $("noscript-tbb");
+    if (tbb) {
+      tbb.setAttribute("type", this.hoverUI ? "button" : "menu-button");
+    }
+    
+    const buttons = [tbb];
+    let statusIcon = $("noscript-statusIcon");
+    if ($("addon-bar")) {
+      if (statusIcon) statusIcon.parentNode.removeChild(statusIcon);
+    } else {
+      buttons.push(statusIcon);
+    }
     // copy status bar menus
-    ["noscript-statusIcon", "noscript-statusLabel"].forEach(function(id) {
-      var parent = $(id);
-      if (!parent) return;
-      if (parent.firstChild && /popup/.test(parent.firstChild.tagName)) return;
-      var clone = popup.cloneNode(true);
-      clone.id  = parent.id + "-popup";
-      parent.insertBefore(clone, parent.firstChild);
+    for each(let button in buttons) {
+      if (!button || button.firstChild && /popup/.test(button.firstChild.tagName))
+        continue;
+      
+      let clone = popup.cloneNode(true);
+      clone.id  = button.id + "-popup";
+      button.insertBefore(clone, button.firstChild);
       if (!sticky) clone._context = true;
-    });
+    }
   },
-  
+  get _templatePopup() {
+    delete this._templatePopup;
+    return this._templatePopup = $("noscript-status-popup");
+  },
   _currentPopup: null,
   
   prepareMenu: function(popup, sites) {
+    let mustReverse;
+    if (popup.id === "noscript-tbb-popup") {
+      mustReverse = popup.position === "after_start";
+      if (/\bnoscript-(?:about|options)\b/.test(popup.lastChild.className)) {
+      // already reversed: we need it straight to populate
+        this.reverse(popup);
+      }
+    } else mustReverse = false;
+
     const ns = this.ns;
     const sticky = popup.getAttribute("sticky") == "true";
     
@@ -416,10 +413,7 @@ return noscriptUtil.service ? {
     
     node = miGlobal.nextSibling;
     const mainMenu = node.parentNode;
-    
-    
-    
-    
+
     var tempMenuItem = $("noscript-revoke-temp-mi");
     if (node != tempMenuItem) {
       node = mainMenu.insertBefore(tempMenuItem, node);
@@ -737,11 +731,6 @@ return noscriptUtil.service ? {
       }
     }
     
-    
-    
-    
-    
-    
     if (j > 0 && seps.stop.previousSibling.nodeName != "menuseparator")
       mainFrag.appendChild(sep.cloneNode(false));
     
@@ -868,12 +857,11 @@ return noscriptUtil.service ? {
     if (!(node.hidden = tempCount == 0 || !ns.getPref("showTempToPerm"))) {
       node.setAttribute("tooltiptext", this.tempToPerm(true, sites).join(", "));
     }
-    
-    
-    
+
     this.normalizeMenu(untrustedMenu, true);
     this.normalizeMenu(mainMenu, false);
-
+    
+    if (mustReverse) this.reverse(popup);
   },
 
   reverse: function(m) {
@@ -1345,7 +1333,8 @@ return noscriptUtil.service ? {
     return this.ns.getPref("stickyUI");
   },
   
-    
+  hoverUI: true,
+  
   showUI: function() {
     var popup = null;
     
@@ -1929,15 +1918,16 @@ return noscriptUtil.service ? {
     var icon = this.getIcon(this.statusIcon); 
     var className = this.getStatusClass(lev, !(totalScripts || topUntrusted) /* inactive */ );
     
-    var widget = $("noscript-tbb");
-    if (widget) {
-      widget.setAttribute("tooltiptext", shortMessage);
-      this.updateStatusClass(widget, className); 
-    }
+    const hoverUI = this.hoverUI;
     
-    widget = this.statusIcon;
-    widget.setAttribute("tooltiptext", shortMessage);
-    this.updateStatusClass(widget, className);
+    for each (let widget in [$("noscript-tbb"), this.statusIcon]) {
+      if (widget) {
+        if (hoverUI) widget.setAttribute("tooltiptext", shortMessage);
+        else widget.removeAttribute("tooltiptext");
+      
+        this.updateStatusClass(widget, className);
+      }
+    }
     
     if (notificationNeeded) { // notifications
       const win = content;
@@ -1957,13 +1947,7 @@ return noscriptUtil.service ? {
       this.notificationHide();
       message = shortMessage = "";
     }
-    
-    widget = $("noscript-statusLabelValue");
-    if (widget) {
-      widget.setAttribute("value", shortMessage);
-      widget.parentNode.style.display = message ? "" : "none";
-    }
-    
+
     widget =  $("noscript-tbb-revoke-temp");
     if (widget) {
       if (ns.gTempSites.sitesString || ns.tempSites.sitesString || ns.objectWhitelistLen || ns.clearClickHandler && ns.clearClickHandler.whitelistLen) {
@@ -2029,7 +2013,7 @@ return noscriptUtil.service ? {
           else noscriptOverlay.statusIcon.removeAttribute("hidden");
           noscriptOverlay.syncUI();
         break;
-        case "statusIcon": case "statusLabel":
+        case "statusIcon":
           window.setTimeout(function() {
               var widget =$("noscript-" + data);
               if (widget) {
@@ -2041,7 +2025,7 @@ return noscriptUtil.service ? {
         case "notify":
         case "notify.bottom":
           noscriptOverlay[data.replace(/\.b/, 'B')] = this.ns.getPref(data);
-          if(this._registered) noscriptOverlay.notificationHide();
+          if (this._registered) noscriptOverlay.notificationHide();
         break;
         
         case "keys.ui":
@@ -2058,6 +2042,12 @@ return noscriptUtil.service ? {
         case "stickyUI.liveReload":
           noscriptOverlay.liveReload = this.ns.getPref(data);
         break;
+        
+        case "hoverUI":
+          noscriptOverlay[data] = this.ns.getPref(data);
+          noscriptOverlay.initPopups();
+          
+        break;
       }
     },
     _registered: false,
@@ -2067,11 +2057,12 @@ return noscriptUtil.service ? {
       ns.prefs.addObserver("", this, true);
       ns.caps.addObserver("", this, true);
       const initPrefs = [
-        "statusIcon", "statusLabel", "preset",
+        "statusIcon", "preset",
         "keys.ui", "keys.toggle",
         "notify", "notify.bottom",
         "notify.hide", "notify.hidePermanent", "notify.hideDelay",
-        "stickyUI.liveReload"
+        "stickyUI.liveReload",
+        "hoverUI"
         ];
       for (var j = 0; j < initPrefs.length; j++) {
         this.observe(null, null, initPrefs[j]);
@@ -2274,10 +2265,13 @@ return noscriptUtil.service ? {
       if (doc instanceof HTMLDocument) {
         var w = doc.defaultView;
         if (w) {
+          const jsBlocked = doc.__noScriptJSBlocked_;
           const ns = noscriptOverlay.ns;
           ns.setExpando(doc, "contentLoaded", true);
           if (w == w.top) {
-            ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
+            if (jsBlocked)
+              ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
+            
             if (w == content) {
               noscriptOverlay.syncUI(w);
             } else {
@@ -2288,7 +2282,8 @@ return noscriptUtil.service ? {
             ns.frameContentLoaded(w);
             noscriptOverlay.syncUI(w.top);
           }
-          w.addEventListener("load", noscriptOverlay.listeners.onDocumentLoad, false);
+          if (jsBlocked)
+            w.addEventListener("load", noscriptOverlay.listeners.onDocumentLoad, false);
         }
       }
     },
@@ -2296,7 +2291,6 @@ return noscriptUtil.service ? {
       if (ev.originalTarget instanceof HTMLDocument) {
         var w = ev.currentTarget;
         w.removeEventListener("load", arguments.callee, false);
-        
         window.setTimeout(function() {
           noscriptOverlay.ns.detectJSRedirects(w.document);
         }, 50);
@@ -2335,6 +2329,11 @@ return noscriptUtil.service ? {
         hacks.torButton();
         window.setTimeout(hacks.pdfDownload, 0);
         noscriptOverlay.initPopups();
+        let btcd = window.BrowserToolboxCustomizeDone;
+        if (btcd) window.BrowserToolboxCustomizeDone = function(done) {
+          btcd(done);
+          if (done) noscriptOverlay.initPopups();
+        }
       } catch(e) {
         var msg = "[NoScript] Error initializing new window " + e + "\n"; 
         noscriptOverlay.ns.log(msg);
@@ -2395,10 +2394,7 @@ return noscriptUtil.service ? {
         b.addProgressListener(this.webProgressListener, CI.nsIWebProgress.NOTIFY_STATE_WINDOW | CI.nsIWebProgress.NOTIFY_LOCATION);
         
       }
-      
-      
-      
-      
+
       window.addEventListener("pageshow", this.onPageShow, true);
       window.addEventListener("pagehide", this.onPageHide, true);
 

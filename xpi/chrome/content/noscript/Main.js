@@ -1062,15 +1062,18 @@ var ns = singleton = {
     return this.globalJS || this.autoAllow || this.getPref("forbidImpliesUntrust", false);
   }
 ,
-  checkShorthands: function(site, map) {
+  checkShorthands: function(site, policy) {
     if (this.whitelistRegExp && this.whitelistRegExp.test(site)) {
       return true;
     }
     
-    map = map || this.jsPolicySites.sitesMap;
+    if (!policy) policy = this.jsPolicySites;
+   
+    map = policy.sitesMap;
     
     if (/:\d+$/.test(site)) {
-      if (this.ignorePorts && this.isJSEnabled(site.replace(/:\d+$/, '')))
+      
+      if (this.ignorePorts && policy.matches(site.replace(/:\d+$/, '')))
         return true;
       
       // port matching, with "0" as port wildcard  and * as nth level host wildcard
@@ -1320,7 +1323,7 @@ var ns = singleton = {
           
           let prevStatus = !(lastGlobal
             ? this.alwaysBlockUntrustedContent && lastUntrusted.matches(site)
-            : !(lastTrusted.matches(site) || this.checkShorthands(site, lastTrusted.sitesMap)) || lastUntrusted.matches(site)
+            : !(lastTrusted.matches(site) || this.checkShorthands(site, lastTrusted)) || lastUntrusted.matches(site)
           );
           let currStatus = this.isJSEnabled(site) || !!this.checkShorthands(site);
           
@@ -1343,7 +1346,7 @@ var ns = singleton = {
               if ((this.isJSEnabled(site) || this.checkShorthands(site)) &&
                   (lastGlobal
                     ? this.alwaysBlockUntrustedContent && lastUntrusted.matches(site)
-                    : !(lastTrusted.matches(site) || this.checkShorthands(site, lastTrusted.sitesMap)) || lastUntrusted.matches(site)
+                    : !(lastTrusted.matches(site) || this.checkShorthands(site, lastTrusted)) || lastUntrusted.matches(site)
                   )                          
                 ) {
                 
@@ -1447,6 +1450,7 @@ var ns = singleton = {
       }
       
       if (browser) Thread.delay(checkAndReload, 1, this);
+      
     }).apply(this);
     
   },
@@ -2447,40 +2451,44 @@ var ns = singleton = {
   hasVisibleLinks: function(document) {
     const links = document.links;
     const w = document.defaultView;
+    const toBeChecked = [];
     for (let j = 0, l; (l = links[j]); j++) {
       if (l && l.href && /^https?/i.test(l.href)) {
         if (l.offsetWidth || l.offsetHeight) return true;
-        
-        let style = w.getComputedStyle(l, '');
-        if (!style) return true; // this means we're inside an invisible frame, no reason to loose time here
-        
-        if (parseInt(style.width) || parseInt(style.height)) return true; 
-        
-        let position;
-        try {
-          position = l.style.position;
-          l.style.position = "absolute";
-          if(l.offsetWidth || l.offsetHeight) return true;
-        } finally {
-          l.style.position = position;
-        }
-        if (/\b__noscriptPlaceholder__\b/.test(l.className)) return true;
+        toBeChecked.push(l);
       }
+    }
+    for (let j = toBeChecked.length; j-- > 0;) {
+      let l = toBeChecked.length;
+      let style = w.getComputedStyle(l, '');
+      if (!style) return true; // this means we're inside an invisible frame, no reason to loose time here
+      
+      if (parseInt(style.width) || parseInt(style.height)) return true; 
+      
+      let position;
+      try {
+        position = l.style.position;
+        l.style.position = "absolute";
+        if(l.offsetWidth || l.offsetHeight) return true;
+      } finally {
+        l.style.position = position;
+      }
+      if (/\b__noscriptPlaceholder__\b/.test(l.className)) return true;
     }
     if (document.embeds[0] || document.getElementsByTagName("object")[0]) return true;
     return false;
   },
   detectJSRedirects: function(document) {
-    if (this.jsredirectIgnore || this.jsEnabled) return 0;
+    if (this.jsredirectIgnore) // !document.__noScriptJSBlocked__ is checked by the caller
+      return 0;
     try {
-      if (!/^https?:/.test(document.documentURI)) return 0;
+      if (!/^https?:/.test(document.documentURI) ) return 0;
       var hasVisibleLinks = this.hasVisibleLinks(document);
-      if (!this.jsredirectForceShow && hasVisibleLinks ||
-          this.isJSEnabled(this.getSite(document.documentURI))) 
+      if (!this.jsredirectForceShow && hasVisibleLinks) 
         return 0;
-      var j, len;
+      
       var seen = [];
-      var body = document.body;
+      const body = document.body;
       var cstyle = document.defaultView.getComputedStyle(body, "");
       if (cstyle) {
         if (cstyle.visibility != "visible") {
@@ -2491,9 +2499,8 @@ var ns = singleton = {
         }
       }
       if (!hasVisibleLinks && document.links[0]) {
-        var links = document.links;
-        var l;
-        for (j = 0, len = links.length; j < len; j++) {
+        const links = document.links;
+        for (let j = 0, len = links.length, l; j < len; j++) {
           l = links[j];
           if (!(l.href && /^https?/.test(l.href))) continue;
           l = body.appendChild(l.cloneNode(true));
@@ -2503,27 +2510,30 @@ var ns = singleton = {
         }
       }
       
-      var code, m, url, a;
+      var code;
       var container = null;
       var window;
       
       code = body && body.getAttribute("onload");
       const sources = code ? [code] : [];
       var scripts = document.getElementsByTagName("script");
-      for (j = 0, len = scripts.length; j < len; j++) sources.push(scripts[j].innerHTML);
+      for (let j = 0, len = scripts.length; j < len; j++)
+        sources.push(scripts[j].innerHTML);
+      
       scripts = null;
       
       if (!sources[0]) return 0;
+      
       var follow = false;
       const findURL = /(?:(?:\b(?:open|replace)\s*\(|(?:\b(?:href|location|src|path|pathname|search)|(?:[Pp]ath|UR[IL]|[uU]r[il]))\s*=)\s*['"]|['"](?=https?:\/\/\w|\w*[\.\/\?]))([\?\/\.\w\-%\&][^\s'"]*)/g;
       const MAX_TIME = 1000;
       const MAX_LINKS = 30;
       const ts = Date.now();
       outerLoop:
-      for (j = 0, len = sources.length; j < len; j++) {
+      for (let j = 0, len = sources.length; j < len; j++) {
         findURL.lastIndex = 0;
         code = sources[j];
-        while ((m = findURL.exec(code))) {
+        for (let m; m = findURL.exec(code);) {
           
           if (!container) {
             container = document.createElementNS(HTML_NS, "div");
@@ -2543,8 +2553,8 @@ var ns = singleton = {
                 CI.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
             document.body.appendChild(container);
           }
-          url = m[1];
-          a = document.createElementNS(HTML_NS, "a");
+          let url = m[1];
+          let a = document.createElementNS(HTML_NS, "a");
           a.href = url;
           container.appendChild(a);
           if (a.href.toLowerCase().indexOf("http") != 0 || seen.indexOf(a.href) > -1) {
@@ -4626,12 +4636,14 @@ var ns = singleton = {
   
   onWindowSwitch: function(url, win, docShell) {
     const doc = docShell.document;
-    const flag = "__noScriptEarlyScripts__" ;
+    const flag = "__noScriptEarlyScripts__";
     if (flag in doc) return;
     doc[flag] = true;
     
     const site = this.getSite(url);
     var jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(site));
+    
+    doc.__noScriptJSBlocked__ = jsBlocked;
     
     if (!((docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page
@@ -5162,11 +5174,52 @@ var ns = singleton = {
     if(this.consoleLog && !noConsole) this.log(msg);
   },
   
+  ensureUIVisibility: function() {
+    const window =  DOM.mostRecentBrowserWindow;
+    try {
+      const document = window.document;
+      const addonBar = document.getElementById("addon-bar");
+      if (!addonBar) return false;
+      
+      const tbbId = "noscript-tbb";
+      let tbb = document.getElementById(tbbId);
+      if (tbb) return false;
+      
+      let bar, set;
+      if (addonBar.collapsed || !this.getPref("statusIcon", true)) {
+        // add to toolbar
+        bar = document.getElementById("nav-bar");
+        set = bar.currentSet.split(/\s*,\s*/);
+        if (set.indexOf(tbbId) > -1) return false;
+        
+        let pos = set.indexOf("urlbar-container");
+        set = set.slice(0, pos).concat(tbbId).concat(set.slice(pos));
+      } else {
+        bar = addonBar;
+        set = bar.currentSet.split(/\s*,\s*/);
+        if (set.indexOf("spring") < 0) set.push("spring");
+        set.push(tbbId);
+      }
+      bar.setAttribute("currentset", bar.currentSet = set.join(","));
+      document.persist(bar.id, "currentset");
+      try {
+        window.BrowserToolboxCustomizeDone(true);
+      } catch (e) {}
+      return true;
+    } catch(e) {
+      this.dump(e);
+      return false;
+    }
+  },
+  
   versionChecked: false,
   checkVersion: function() {
     if (this.versionChecked) return;
     this.versionChecked = true;
-
+    
+    if (!this.getPref("visibleUIChecked", false) && this.ensureUIVisibility()) {
+      this.setPref("visibleUIChecked", true);
+    }
     const ver =  this.VERSION;
     const prevVer = this.getPref("version", "");
     if (prevVer != ver) {

@@ -524,7 +524,7 @@ ClearClickHandler.prototype = {
           x: w.scrollX, 
           y: w.scrollY, 
           width: Math.max(w.innerWidth - sd.w, 32), 
-          height: Math.max(w.innerHeight - sd.h, 24), // www.blogger.com top bar is 30 pixel high
+          height: Math.max(w.innerHeight - sd.h, 16), // Facebook like buttons are 20 pixel high
           frame: frame
         };
         

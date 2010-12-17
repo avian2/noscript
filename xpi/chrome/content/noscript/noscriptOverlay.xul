@@ -31,37 +31,15 @@
       class="toolbarbutton-1 noscript-no"
       label="NoScript"
       type="menu-button"
-      oncommand="if(event.target == this) if(noscriptOverlay.toggleCurrentPage()) event.preventDefault();"
+      oncommand="if (event.target === this) if(noscriptOverlay.toggleCurrentPage()) event.preventDefault();"
       oncontextmenu="noscriptOverlay.onContextMenu(event);"
       onmouseover="noscriptOverlay.onUIOver(event)"
       onmousemove="noscriptOverlay.onUIMove(event)"
       onmouseout="noscriptOverlay.onUIOut(event)"
       onmouseup="noscriptOverlay.onUIUp(event)"
-    >
-      <menupopup id="noscript-tbb-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event)">
-        <menuseparator class="noscript-sep-insert" hidden="true" />
-        
-        <menuseparator class="noscript-sep-stop-untrusted"/>
-       
-        
-        <menuseparator class="noscript-sep-global" />
-        <menuitem class="menuitem-iconic" />
-        <menuseparator />
-        <menuitem id="noscript-options-tbb-menuitem"
-         label="&noscriptOptions;"
-         accesskey="&noscriptOptions.accesskey;"
-         oncommand="noscriptUtil.openOptionsDialog()"
-         tooltiptext="&noscriptOptionsLong;"
-         class="menuitem-iconic noscript-options"
-         />
-         <menuitem id="noscript-about-tbb-menuitem"
-           label="&noscriptAbout;"
-           tooltiptext="&noscriptAbout;"
-           oncommand="noscriptUtil.openAboutDialog()"
-         />
-      </menupopup>
+      context="noscript-tbb-popup"
+    />
     
-    </toolbarbutton>
     <toolbarbutton id="noscript-tbb-temp-page"
       tooltiptext="&noscriptTempAllowPage;"
       buttonstyle="pictures"
@@ -100,6 +78,7 @@
               label="&noscriptAbout;"
               tooltiptext="&noscriptAbout;"
               oncommand="noscriptUtil.openAboutDialog()"
+              class="menuitem-iconic noscript-about"
             />
       </menupopup>
     </menu>
@@ -282,6 +261,7 @@
           label="&noscriptAbout;"
           tooltiptext="&noscriptAbout;"
           oncommand="noscriptUtil.openAboutDialog()"
+          class="menuitem-iconic noscript-about"
         /> 
       
       <menuitem 
@@ -295,7 +275,7 @@
       <menuseparator class="noscript-sep-global"/>
       <menuitem class="menuitem-iconic" />
           
-      <menuseparator id="noscript-sep-untrusted-status" class="noscript-sep-untrusted"/>
+      <menuseparator class="noscript-sep-untrusted"/>
 
       <menuseparator class="noscript-sep-insert"/>
       <menuseparator class="noscript-sep-stop" hidden="true" />
@@ -306,17 +286,7 @@
 
 
 
-<statusbar id="status-bar">
-  <statusbarpanel id="noscript-statusLabel"
-    insertbefore="statusbar-updates"
-    hidden="true"
-    context="noscript-statusLabel-popup"
-  >
-    <vbox flex="1" align="center" pack="center">
-      <label id="noscript-statusLabelValue"/>
-    </vbox>   
-  </statusbarpanel>
-  
+<statusbar id="status-bar"> 
   <statusbarpanel id="noscript-statusIcon"
     insertbefore="statusbar-updates"
     class="statusbarpanel-menu-iconic noscript-no"

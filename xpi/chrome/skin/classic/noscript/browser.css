@@ -3,7 +3,6 @@
 }
 
 #noscript-statusIcon,
-#noscript-statusLabel,
 #noscript-statusRedirect,
 #noscript-statusXss {
   cursor: pointer;
