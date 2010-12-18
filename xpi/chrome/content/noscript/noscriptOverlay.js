@@ -36,7 +36,7 @@ return noscriptUtil.service ? {
   },
   
   openPopup: function(popup, anchor) {
-    popup.position = anchor.parentNode.id == "addon-bar" ? "before_start" : "after_start";
+    popup.position = /^(?:addon|status)-bar$/.test(anchor.parentNode.id) ? "before_start" : "after_start";
     popup.openPopup(anchor);
   },
   onContextMenu: function(ev) {
@@ -73,8 +73,6 @@ return noscriptUtil.service ? {
     }
     
     popup.addEventListener("popuphidden", function(ev) { noscriptOverlay.onMenuHidden(ev) }, false);
-    
-    // popup.style.visibility = "hidden"; // work-around for bug 4066046
     popup.addEventListener("popupshown", noscriptOverlay.onMenuShown, false);
     
     this.prepareMenu(popup);
@@ -164,8 +162,7 @@ return noscriptUtil.service ? {
     
     if (ev.currentTarget !== ev.target) return;
     
-    if (this.hoverUI || ev.originalTarget.tagName == "xul:toolbarbutton") {
-      // discriminate dropdown button
+    if (this.hoverUI && ev.target.id == "noscript-tbb") {
       if (ev.button === 0) noscriptOverlay.toggleCurrentPage();
       ev.preventDefault();
       return;
@@ -192,7 +189,12 @@ return noscriptUtil.service ? {
   },
   
   onMenuShown: function(ev) {
-    ev.currentTarget.style.visibility = "";
+    let popup = ev.currentTarget;
+    popup.removeEventListener(ev.type, arguments.callee, false);
+    if (/^before_/.test(popup.position)) {
+      let scroller = popup.ownerDocument.getAnonymousElementByAttribute(popup, "class", "popup-internal-box");
+      scroller.scrollPosition = popup.scrollHeight; // scroll to bottom
+    }
   },
   
   _reloadDirty: false,
@@ -358,6 +360,7 @@ return noscriptUtil.service ? {
   
   prepareMenu: function(popup, sites) {
     let mustReverse;
+    
     if (popup.id === "noscript-tbb-popup") {
       mustReverse = popup.position === "after_start";
       if (/\bnoscript-(?:about|options)\b/.test(popup.lastChild.className)) {

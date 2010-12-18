@@ -5197,7 +5197,7 @@ var ns = singleton = {
       } else {
         bar = addonBar;
         set = bar.currentSet.split(/\s*,\s*/);
-        if (set.indexOf("spring") < 0) set.push("spring");
+        // if (set.indexOf("spring") < 0) set.push("spring"); // needed somewhen between Fx 4.0B7 and B8
         set.push(tbbId);
       }
       bar.setAttribute("currentset", bar.currentSet = set.join(","));
