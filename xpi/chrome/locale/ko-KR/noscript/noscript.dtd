@@ -146,7 +146,6 @@
 <!ENTITY noscriptClearClickReport "Report">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Report ID:">
-<!ENTITY noscriptOpacizeOpt "페이지에 있는 포함 객체들을 불투명 설정...">
 <!ENTITY noscriptTrustedPagesAdj "신뢰된 페이지">
 <!ENTITY noscriptUntrustedPagesAdj "신뢰되지 않은 페이지">
 <!ENTITY noscriptKeepLocked "이 요소를 잠금니다(추천)">

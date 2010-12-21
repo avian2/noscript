@@ -76,8 +76,9 @@
          <radio label="&noscriptBaseDom;" value="3"/>
       </radiogroup>
     </groupbox>
-    
-    <groupbox class="ia-indent">
+    <separator />
+		<checkbox id="opt-hoverUI" label="&noscript.hoverUI;" oncommand="nsopt.toggleHoverUI()" />
+    <groupbox id="toolbarToggleGroup" class="ia-indent">
       <caption orient="vertical">
       <checkbox id="cbx-toolbarToggle" label="&noscriptToolbarToggle;"/>
       <label control="sel-toolbarToggle" id="toolbarToggle-shortcut" class="ia-indent" hidden="true"/>
@@ -167,13 +168,9 @@
 			<separator/>
 			<hbox>
         <vbox>
-          <hbox id="clearClickOpts"><label control="cc1" value="&noscriptClearClickOpt;" /><spacer flex="1" />
+					<label class="header" control="cc1" value="&noscriptClearClickOpt;" />
+          <hbox id="clearClickOpts">
             <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
-            <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
-          </hbox>
-          <separator class="thin" />
-          <hbox id="opacizeObjectOpts"><label control="oo1" value="&noscriptOpacizeOpt;" /><spacer flex="1" />
-            <checkbox id="oo1" value="1" label="&noscriptUntrustedPagesAdj;"/>
             <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
           </hbox>
         </vbox>
@@ -185,12 +182,11 @@
   <tabpanel><!-- Appearance -->
     <vbox flex="1">
  
-     <label class="header" value="&noscriptShow;"/>
-     <groupbox>
-      <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
-			<checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
-    </groupbox>
-    
+    <label class="header" value="&noscriptShow;"/>
+
+		<checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
+		<checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
+    <separator/>
     <groupbox>
        <hbox>
          <vbox flex="1">
@@ -220,8 +216,6 @@
           </vbox>
         </hbox>
      </groupbox>
-    <separator/>
-    <checkbox id="opt-hoverUI" label="&noscript.hoverUI;" />
   </vbox>
   </tabpanel><!-- END Appearance -->
   

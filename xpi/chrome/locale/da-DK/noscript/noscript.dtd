@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Rapportér">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Rapport ID:">
-<!ENTITY noscriptOpacizeOpt "Gør indlejrede objekter uigennemsigtige på sider markeret som...">
 <!ENTITY noscriptTrustedPagesAdj "betroede">
 <!ENTITY noscriptUntrustedPagesAdj "ubetroede">
 <!ENTITY noscriptKeepLocked "Bevar dette element låst (anbefalet)">

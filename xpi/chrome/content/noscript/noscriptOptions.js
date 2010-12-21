@@ -102,7 +102,7 @@ var nsopt = {
       $("fx-notifications").setAttribute("hidden", "true");
     }
     
-    ["clearClick", "opacizeObject"].forEach(function(c) {
+    ["clearClick"].forEach(function(c) {
       var pref = ns.getPref(c);
       Array.forEach($(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {        
         cbx.setAttribute("checked", !(pref & parseInt(cbx.getAttribute("value"))) ? "false" : "true");
@@ -123,6 +123,8 @@ var nsopt = {
     
     this.addButton.setAttribute("enabled", "false");
     this.removeButton.setAttribute("enabled", "false");
+    
+    this.toggleHoverUI();
   },
   
   initUninstallButton: function() {
@@ -212,7 +214,7 @@ var nsopt = {
       }
     });
     
-    ["clearClick", "opacizeObject"].forEach(function(c) {
+    ["clearClick"].forEach(function(c) {
       var pref = 0;
       Array.forEach($(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {
         if (cbx.checked) pref = pref | parseInt(cbx.getAttribute("value"));
@@ -227,7 +229,10 @@ var nsopt = {
     ns.setPref("sound.block", this.soundChooser.getSample());
     
     this.autoAllowGroup.persist();
-    this.toggleGroup.persist();
+    
+    if (!(ns.getPref("hoverUI.excludeToggling") && $("opt-hoverUI").checked)) {
+      this.toggleGroup.persist();
+    }
     
     ns.setPref("allowHttpsOnly", $("sel-allowHttpsOnly").selectedIndex);
     
@@ -501,8 +506,27 @@ var nsopt = {
   
   buttonToTitle: function(btid) {
     return "NoScript - " + $(btid).getAttribute("label");
+  },
+  
+  toggleHoverUI: function(cbx) {
+    if (ns.getPref("hoverUI.excludeToggling")) {
+      let cbx = $("cbx-toolbarToggle");
+      if ($("opt-hoverUI").checked) {
+        if (!cbx.disabled) {
+          this._savedToolbarToggleStatus = cbx.checked;
+          cbx.disabled = true;
+          cbx.checked = false;
+          this.toggleGroup.changed();
+        }
+      } else {
+        if (cbx.disabled) {
+          cbx.disabled = false;
+          cbx.checked = this._savedToolbarToggleStatus;
+        }
+      }
+    }
   }
-
+  
 }
 
 var ABE = ns.ABE;

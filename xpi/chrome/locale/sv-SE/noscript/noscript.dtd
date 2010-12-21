@@ -146,7 +146,6 @@
 <!ENTITY noscriptClearClickReport "Rapport">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Rapport ID:">
-<!ENTITY noscriptOpacizeOpt "Markera inbäddade objekt på sidor...">
 <!ENTITY noscriptTrustedPagesAdj "betrodd">
 <!ENTITY noscriptUntrustedPagesAdj "ej betrodd">
 <!ENTITY noscriptKeepLocked "Lås detta element permanent (rekommenderas)">

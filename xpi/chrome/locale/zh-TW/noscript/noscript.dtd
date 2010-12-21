@@ -146,7 +146,6 @@
 <!ENTITY noscriptClearClickReport "報告">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "報告ID：">
-<!ENTITY noscriptOpacizeOpt "半透明化本頁嵌入的物件...">
 <!ENTITY noscriptTrustedPagesAdj "可信任">
 <!ENTITY noscriptUntrustedPagesAdj "不信任">
 <!ENTITY noscriptKeepLocked "保持鎖定此元素(推薦)">

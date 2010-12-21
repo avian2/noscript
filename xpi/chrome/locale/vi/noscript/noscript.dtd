@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Báo cáo">
 <!ENTITY noscriptClearClickReport.accesskey "B">
 <!ENTITY noscriptClearClickReportId "ID Báo cáo:">
-<!ENTITY noscriptOpacizeOpt "Làm trong suốt các đối tượng được nhúng trên trang...">
 <!ENTITY noscriptTrustedPagesAdj "tin cậy">
 <!ENTITY noscriptUntrustedPagesAdj "không tin cậy">
 <!ENTITY noscriptKeepLocked "Khóa phần tử này (khuyên dùng)">

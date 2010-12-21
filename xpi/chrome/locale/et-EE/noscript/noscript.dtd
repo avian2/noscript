@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Aruanne">
 <!ENTITY noscriptClearClickReport.accesskey "A">
 <!ENTITY noscriptClearClickReportId "Aruande ID:">
-<!ENTITY noscriptOpacizeOpt "Manusobjektid tehakse läbipaistmatuks lehtedel...">
 <!ENTITY noscriptTrustedPagesAdj "usaldatavad">
 <!ENTITY noscriptUntrustedPagesAdj "mitteusaldatavad">
 <!ENTITY noscriptKeepLocked "Lukusta antud element (soovitatav)">

@@ -144,7 +144,6 @@
 <!ENTITY noscriptClearClickReport "Bildir">
 <!ENTITY noscriptClearClickReport.accesskey "B">
 <!ENTITY noscriptClearClickReportId "Bildiri NO:">
-<!ENTITY noscriptOpacizeOpt "Sayfaya gömülü nesneleri opaklastir...">
 <!ENTITY noscriptTrustedPagesAdj "guvenilenlerde">
 <!ENTITY noscriptUntrustedPagesAdj "guvensizlerde">
 <!ENTITY noscriptKeepLocked "Bu nesneyi kilitli olarak birak (tavsiye edilir)">

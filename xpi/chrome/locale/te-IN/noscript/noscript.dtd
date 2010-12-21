@@ -142,7 +142,6 @@
 <!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
 <!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image below to cycle between the obstructed and the clear version.">
 <!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
-<!ENTITY noscriptOpacizeOpt "Opaque embedded objects on pages…">
 <!ENTITY noscriptTrustedPagesAdj "trusted">
 <!ENTITY noscriptUntrustedPagesAdj "untrusted">
 <!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">

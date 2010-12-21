@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Хабарлау">
 <!ENTITY noscriptClearClickReport.accesskey "р">
 <!ENTITY noscriptClearClickReportId "Хабарлау нөмірі:">
-<!ENTITY noscriptOpacizeOpt "Парақтағы элементтердің мөлдірлігін өзгерту...">
 <!ENTITY noscriptTrustedPagesAdj "сенімді">
 <!ENTITY noscriptUntrustedPagesAdj "сенімсіз">
 <!ENTITY noscriptKeepLocked "Бұл элементті блокталған күйінде қалдыру (ұсынылады)">

@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Извештај">
 <!ENTITY noscriptClearClickReport.accesskey "И">
 <!ENTITY noscriptClearClickReportId "Ид. на Извештајот:">
-<!ENTITY noscriptOpacizeOpt "Направи ги непроѕирни вградените објекти на страниците...">
 <!ENTITY noscriptTrustedPagesAdj "со доверба">
 <!ENTITY noscriptUntrustedPagesAdj "без доверба">
 <!ENTITY noscriptKeepLocked "Задржи го овој елемент заклучен (препорачливо)">

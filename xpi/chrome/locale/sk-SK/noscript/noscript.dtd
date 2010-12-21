@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Nahlásiť">
 <!ENTITY noscriptClearClickReport.accesskey "h">
 <!ENTITY noscriptClearClickReportId "ID správy:">
-<!ENTITY noscriptOpacizeOpt "Nastaviť vložené objekty ako nepriehľadné na">
 <!ENTITY noscriptTrustedPagesAdj "dôveryhodných stránkach">
 <!ENTITY noscriptUntrustedPagesAdj "nedôveryhodných stránkach">
 <!ENTITY noscriptKeepLocked "Ponechať tento prvok blokovaný (odporúča sa)">

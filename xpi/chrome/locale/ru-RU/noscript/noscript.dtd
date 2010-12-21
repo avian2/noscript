@@ -144,7 +144,6 @@
 <!ENTITY noscriptClearClickReport "Сообщение об ошибке">
 <!ENTITY noscriptClearClickReport.accesskey "о">
 <!ENTITY noscriptClearClickReportId "ID сообщения:">
-<!ENTITY noscriptOpacizeOpt "Изменять прозрачность встроенных объектов на страницах...">
 <!ENTITY noscriptTrustedPagesAdj "доверенных">
 <!ENTITY noscriptUntrustedPagesAdj "недоверенных">
 <!ENTITY noscriptKeepLocked "Оставить этот элемент заблокированным (рекомендуется)">

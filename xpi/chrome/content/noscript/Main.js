@@ -188,7 +188,6 @@ var ns = singleton = {
   showPlaceholder: true,
   showUntrustedPlaceholder: true,
   collapseObject: false,
-  opaqueObject: 1,
   clearClick: 3,
 
   
@@ -468,7 +467,6 @@ var ns = singleton = {
       case "nselForce":
       case "nselNever":
       case "showPlaceholder":
-      case "opacizeObject":
       case "clearClick":
         this.updateCssPref(name);
         if ((name == "nselNever") && this.getPref("nselNever") && !this.blockNSWB) {
@@ -562,7 +560,6 @@ var ns = singleton = {
         }
       break;
       case "clearClick":
-      case "opaqueObject":
         sheet = ".__noscriptOpaqued__ { opacity: 1 !important; visibility: visible; filter: none !important } " +
                 "iframe.__noscriptOpaqued__ { display: block !important; } " +
                 "object.__noscriptOpaqued__, embed.__noscriptOpaqued__ { display: inline !important } " +
@@ -722,7 +719,7 @@ var ns = singleton = {
       "jsHack", "jsHackRegExp",
       "emulateFrameBreak",
       "nselNever", "nselForce",
-      "clearClick", "clearClick.exceptions", "clearClick.subexceptions", "opaqueObject",
+      "clearClick", "clearClick.exceptions", "clearClick.subexceptions",
       "showBlankSources", "showPlaceholder", "showUntrustedPlaceholder",
       "collapseObject",
       "temp", "untrusted", "gtemp",
@@ -2410,8 +2407,6 @@ var ns = singleton = {
       } else {
         this.setExpando(topDoc, "objectSites", [site]);
       }
-    
-      this.opaqueIfNeeded(embed, doc);
     }
   },
   
@@ -3079,120 +3074,7 @@ var ns = singleton = {
   
   
   findPluginExtras: function(document) {
-    var res = this.getExpando(document, "pluginExtras", []);
-    if ("opaqueHere" in res) return res;
-    var url = document.defaultView.location.href;
-    res.opaqueHere = this.appliesHere(this.opaqueObject, url) && /^(?:ht|f)tps?:/i.test(url);
-    return res;
-  },
-  
-  
-  OpaqueHandlers: {
-    
-    getOpaqued: function(w) {
-      const cs = "__noscriptOpaqued__";
-      if (w.__noscriptOpaquedObjects) return w.__noscriptOpaquedObjects;
-      var doc = w.document;
-      if ("getElementsByClassName" in doc)
-        return Array.slice(doc.getElementsByClassName(cs), 0);
-      var results = [];
-      var query = doc.evaluate(
-          "//*[contains(concat(' ', @class, ' '), ' " + cs + " ')]",
-          w.document, null, CI.nsIDOMXPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-      for (var i = 0, len = query.snapshotLength; i < len; i++) {
-         results.push(query.snapshotItem(i));
-      }
-      return results;                                                     
-    },
-    
-    get fixScrollers() {
-      var self = this;
-      var f = function(ev) {
-        var w = ev.currentTarget;
-        
-        var o, s, cs;
-        var oo = self.getOpaqued(w);
-        var d = w.document;
-        var de = d.documentElement;
-        var db = d.body;
-        var scrollers = [];
-        for each (o in oo) {
-          if (o == de || o == db) continue;
-          try {
-            s = w.getComputedStyle(o, '');
-            if (s && s.display == "block" && s.overflow == "hidden" || /^(?:i?frame|object)$/i.test(o.tagName))
-              scrollers.push(o);
-          } catch(e) {
-            dump(e + ", " + e.stack + "\n");
-          }
-        }
-        
-        for each (o in scrollers) {
-          DOM.addClass(o, "__noscriptScrolling__");
-        }
-        
-        switch (ev.type) {
-          case "timeout":
-            Thread.delay(arguments.callee, ev.timeout, this, [ev]);
-            break;
-          case "load":
-            w.__noscriptOpaquedObjects = null;
-          default:
-            w.removeEventListener(ev.type, arguments.callee, false);
-        }
-      };
-      delete this.fixScrollers;
-      return this.fixScrollers = f;
-    },
-    
-    scheduleFixScrollers: function(w, timeout) {
-      var ev = { currentTarget: w, type: "timeout", timeout: timeout };
-      Thread.delay(this.fixScrollers, timeout, this, [ev]);
-    },
-    
-    getOpaquedObjects: function(w, noscroll) {
-      var oo = w.__noscriptOpaquedObjects;
-      if (!oo) {
-        oo = [];
-        w.__noscriptOpaquedObjects = oo;
-        if (!noscroll) {
-          w.addEventListener("load", this.fixScrollers, false);
-          w.addEventListener("DOMContentLoaded", this.fixScrollers, false);
-          this.scheduleFixScrollers(w, 3000);
-        }
-      }
-      return oo;
-    }
-    
-  },
-  
-  opaque: function(o, scrollNow) {
-    if (o.__noscriptOpaqued) return;
-    try {
-      
-      if (o.contentDocument && this.clearClickHandler.sameSiteParents(o.contentDocument.defaultView)) return;
-      
-      var d = o.ownerDocument;
-      var w = d.defaultView;
-      var oh = this.OpaqueHandlers;
-      var oo = oh.getOpaquedObjects(w, scrollNow || this.appliesHere(this.clearClick, w.top.location.href));
-      if (scrollNow) oh.scheduleFixScrollers(w, 1);
-      do {
-        o.__noscriptOpaqued = true;
-        o.style.opacity = "";
-        DOM.addClass(o, "__noscriptOpaqued__");
-        oo.push(o);
-        if (this.consoleDump & LOG_CLEARCLICK) this.dump("Opacizing " + o.tagName);
-        o = o.parentNode;
-      } while(o && o.style && !o.__noscriptOpaqued);
-    } catch(e) {
-      this.dump("Error opacizing " + o.tagName + ": " + e.message + ", " + e.stack);
-    }
-  },
-  
-  opaqueIfNeeded: function(o, doc) {
-    if (this.findPluginExtras(doc || o.ownerDocument).opaqueHere)
-      this.opaque(o);
+    return this.getExpando(document, "pluginExtras", []);
   },
   
   appliesHere: function(pref, url) {
@@ -3272,8 +3154,7 @@ var ns = singleton = {
     
     var replacements = null;
     var w, h;
-    var opaque = pluginExtras.opaqueHere;
-    
+     
     var minSize = this.placeholderMinSize;
     var restrictedSize;
     

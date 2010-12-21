@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Raport">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "ID raport:">
-<!ENTITY noscriptOpacizeOpt "Obiecte opace incluse în paginile...">
 <!ENTITY noscriptTrustedPagesAdj "de încredere">
 <!ENTITY noscriptUntrustedPagesAdj "de neîncredere">
 <!ENTITY noscriptKeepLocked "Păstrează blocat acest element (recomandat)">

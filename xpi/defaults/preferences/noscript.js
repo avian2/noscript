@@ -150,9 +150,7 @@ pref("noscript.tempGlobal", false);
 
 pref("noscript.lockPrivilegedUI", false);
 
-
 pref("noscript.collapseObject", false);
-pref("noscript.opacizeObject", 1);
 
 pref("noscript.showUntrustedPlaceholder", true);
 
@@ -209,6 +207,7 @@ pref("noscript.hoverUI.delayEnter", 250);
 pref("noscript.hoverUI.delayStop", 50);
 pref("noscript.hoverUI.delayExit1", 250);
 pref("noscript.hoverUI.delayExit2", 300);
+pref("noscript.hoverUI.excludeToggling", true);
 
 pref("noscript.ignorePorts", true);
 

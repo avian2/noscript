@@ -146,7 +146,6 @@
 <!ENTITY noscriptClearClickReport "Пријави">
 <!ENTITY noscriptClearClickReport.accesskey "П">
 <!ENTITY noscriptClearClickReportId "ИД пријаве:">
-<!ENTITY noscriptOpacizeOpt "Opacize embedded objects on pages…">
 <!ENTITY noscriptTrustedPagesAdj "trusted">
 <!ENTITY noscriptUntrustedPagesAdj "untrusted">
 <!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">

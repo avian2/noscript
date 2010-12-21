@@ -144,7 +144,6 @@
 <!ENTITY noscriptClearClickReport "レポート">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "レポートID:">
-<!ENTITY noscriptOpacizeOpt "埋め込みオブジェクトをOpacizeする:">
 <!ENTITY noscriptTrustedPagesAdj "信頼しているページ">
 <!ENTITY noscriptUntrustedPagesAdj "信頼していないページ">
 <!ENTITY noscriptKeepLocked "この要素をロックしたままにする(推奨)">

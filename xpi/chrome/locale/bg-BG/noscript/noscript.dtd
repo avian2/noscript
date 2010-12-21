@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Доклад">
 <!ENTITY noscriptClearClickReport.accesskey "Д">
 <!ENTITY noscriptClearClickReportId "Доклад №:">
-<!ENTITY noscriptOpacizeOpt "Избледняване на вградени обекти на страници...">
 <!ENTITY noscriptTrustedPagesAdj "надеждни">
 <!ENTITY noscriptUntrustedPagesAdj "ненадеждни">
 <!ENTITY noscriptKeepLocked "Остави този елемент заключен (препоръчително)">

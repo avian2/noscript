@@ -144,7 +144,6 @@
 <!ENTITY noscriptClearClickReport "Report">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Report ID:">
-<!ENTITY noscriptOpacizeOpt "Ubah ukuran obyek tertanam pada halaman…">
 <!ENTITY noscriptTrustedPagesAdj "terpercaya">
 <!ENTITY noscriptUntrustedPagesAdj "tidak terpercaya">
 <!ENTITY noscriptKeepLocked "Jaga elemen ini terkunci (direkomendasikan)">

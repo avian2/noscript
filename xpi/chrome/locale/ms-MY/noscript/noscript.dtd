@@ -144,7 +144,6 @@
 <!ENTITY noscriptClearClickReport "Report">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Report ID:">
-<!ENTITY noscriptOpacizeOpt "Kesankan objek yang dimuatkan didalam laman ini...">
 <!ENTITY noscriptTrustedPagesAdj "dipercayai">
 <!ENTITY noscriptUntrustedPagesAdj "tidak dipercayai">
 <!ENTITY noscriptKeepLocked "Sentiasa kunci unsur ini (disyorkan)">

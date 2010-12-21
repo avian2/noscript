@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Rapporter">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Rapporter ID:">
-<!ENTITY noscriptOpacizeOpt "Ugjennomsiktig kapselobjekt på sidene....">
 <!ENTITY noscriptTrustedPagesAdj "trygge">
 <!ENTITY noscriptUntrustedPagesAdj "utrygge">
 <!ENTITY noscriptKeepLocked "Hold dette elementet låst (anbefalt)">

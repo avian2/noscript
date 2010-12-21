@@ -144,7 +144,6 @@
 <!ENTITY noscriptClearClickReport "Report">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Report ID:">
-<!ENTITY noscriptOpacizeOpt "Zamutiti ugrađene objekte na stranicama...">
 <!ENTITY noscriptTrustedPagesAdj "pouzdane">
 <!ENTITY noscriptUntrustedPagesAdj "nepouzdane">
 <!ENTITY noscriptKeepLocked "Držati zaključan ovaj elemenat (preporučeno)">

@@ -25,13 +25,11 @@
 
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="noscript-tbb" 
-      tooltiptext="NoScript" 
       buttonstyle="pictures"
-      
       class="toolbarbutton-1 noscript-no"
       label="NoScript"
       type="menu-button"
-      oncommand="if (event.target === this) if(noscriptOverlay.toggleCurrentPage()) event.preventDefault();"
+      oncommand="noscriptOverlay.onUICommand(event)"
       oncontextmenu="noscriptOverlay.onContextMenu(event);"
       onmouseover="noscriptOverlay.onUIOver(event)"
       onmousemove="noscriptOverlay.onUIMove(event)"

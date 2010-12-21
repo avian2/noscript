@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "تقرير">
 <!ENTITY noscriptClearClickReport.accesskey "ت">
 <!ENTITY noscriptClearClickReportId "رقم التقرير:">
-<!ENTITY noscriptOpacizeOpt "حسّن العناصر المُضمّنة في الصفحات…">
 <!ENTITY noscriptTrustedPagesAdj "موثوق">
 <!ENTITY noscriptUntrustedPagesAdj "غير موثوق">
 <!ENTITY noscriptKeepLocked "اترك هذا العنصر موصدا (مفضّل)">

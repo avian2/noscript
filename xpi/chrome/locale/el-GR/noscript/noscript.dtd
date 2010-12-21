@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Αναφορά">
 <!ENTITY noscriptClearClickReport.accesskey "α">
 <!ENTITY noscriptClearClickReportId "Αναγνωριστικό αναφοράς:">
-<!ENTITY noscriptOpacizeOpt "Ανάδειξη ενσωματωμένων αντικειμένων σε ιστότοπους...">
 <!ENTITY noscriptTrustedPagesAdj "έμπιστους">
 <!ENTITY noscriptUntrustedPagesAdj "μη έμπιστους">
 <!ENTITY noscriptKeepLocked "Διατήρηση κλειδώματος στοιχείου (συνιστάται)">

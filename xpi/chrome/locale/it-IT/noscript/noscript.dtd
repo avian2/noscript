@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Report">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Report ID:">
-<!ENTITY noscriptOpacizeOpt "Opacizza gli oggetti incorporati nelle pagine…">
 <!ENTITY noscriptTrustedPagesAdj "fidate">
 <!ENTITY noscriptUntrustedPagesAdj "non fidate">
 <!ENTITY noscriptKeepLocked "Mantieni bloccato questo elemento (consigliabile)">

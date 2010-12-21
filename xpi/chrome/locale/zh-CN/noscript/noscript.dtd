@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "报告">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "报告 ID:">
-<!ENTITY noscriptOpacizeOpt "禁用嵌入对象透明属性于...">
 <!ENTITY noscriptTrustedPagesAdj "可信任页面">
 <!ENTITY noscriptUntrustedPagesAdj "不可信任页面">
 <!ENTITY noscriptKeepLocked "保持锁定此元素 (推荐)">

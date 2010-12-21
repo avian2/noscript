@@ -146,7 +146,6 @@
 <!ENTITY noscriptClearClickReport "Report">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Report ID:">
-<!ENTITY noscriptOpacizeOpt "Зробити вбудовані об’єкти непрозорими…">
 <!ENTITY noscriptTrustedPagesAdj "довірені">
 <!ENTITY noscriptUntrustedPagesAdj "недовірені">
 <!ENTITY noscriptKeepLocked "Продовжувати блокувати цей об’єкт (рекомендовано)">

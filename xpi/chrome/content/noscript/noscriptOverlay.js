@@ -158,18 +158,34 @@ return noscriptUtil.service ? {
     popup._hovering = 0;
   },
   
+  onUICommand: function(ev) {
+    if (ev.currentTarget !== ev.target) return;
+    
+    if (!(this.hoverUI && this.ns.getPref("hoverUI.excludeToggling")) &&
+      this.toggleCurrentPage())
+      ev.preventDefault();
+  },
+  
   onUIUp: function(ev) {
     
     if (ev.currentTarget !== ev.target) return;
     
-    if (this.hoverUI && ev.target.id == "noscript-tbb") {
-      if (ev.button === 0) noscriptOverlay.toggleCurrentPage();
+    if (this.hoverUI && ev.target.id == "noscript-tbb" &&
+        ev.button === 0 && !this.ns.getPref("hoverUI.excludeToggling")) {
+      
+      this.toggleCurrentPage();
+      ev.preventDefault();
+      return;
+    }
+    
+    if (ev.button === 1) {
+      this.allowPage();
       ev.preventDefault();
       return;
     }
     
     let popup = ev.currentTarget.firstChild;
-    if ("_hovering" in popup && popup._hovering === 1) {
+    if (this.hoverUI && !this.isOpenOrJustClosed(popup)) {
       popup._hovering = -1;
       if (ev.button !== 2) this.openPopup(popup, ev.currentTarget);
     } 
@@ -1806,8 +1822,7 @@ return noscriptUtil.service ? {
     const global = ns.jsEnabled;
     const jsPSs = ns.jsPolicySites;
     const untrustedSites = ns.untrustedSites;
-    var lev;
-    
+
     this.syncXssWidget();
     this.syncRedirectWidget();
     
@@ -1819,41 +1834,42 @@ return noscriptUtil.service ? {
       this.prepareMenu(this._currentPopup, sites);
     }
     
-     
+    var lev; 
     var totalScripts = sites.scriptCount;
     var totalPlugins = sites.pluginCount;
     var totalAnnoyances = totalScripts + totalPlugins;
     var notificationNeeded = false;
+    
     var allowedSites = [];
     var activeSites = sites.pluginSites.concat(sites.docSites);
     var allowed = 0;
     var untrusted = 0;
     var active = 0;
     var blockedObjects = 0;
-    var isUntrusted = false;
+    var total = 0;
+        
     var topTrusted = false;
     var topUntrusted = false;
-    
-    
-    
+
     
     if (global && !ns.alwaysBlockUntrustedContent) {
       lev = "glb";
     } else {
       
-      var s = sites.length;
+      
       if (sites.pluginExtras) {
         sites.pluginExtras.forEach(function(pe) {
           blockedObjects += pe.filter(function(e) { return e && (e.placeholder || e.document); }).length;
         });
       }
-      var total = s + blockedObjects;
       
-      var url, site;
+      
+      let s = sites.length;
+      total = s + blockedObjects;
       while (s-- > 0) {
-        url = sites[s];
-        isUntrusted = untrustedSites.matches(url);
-        site = !isUntrusted && (global ? url : jsPSs.matches(url));
+        let url = sites[s];
+        let isUntrusted = untrustedSites.matches(url);
+        let site = !isUntrusted && (global ? url : jsPSs.matches(url));
         
         if (url == sites.topSite) {
           if (site && ns.dom.getDocShellForWindow(content).allowJavascript) topTrusted = true;
@@ -1902,38 +1918,37 @@ return noscriptUtil.service ? {
       notificationNeeded = notificationNeeded && totalAnnoyances > 0;
     }
     
-    var message = this.getString(
+    let message = this.getString(
       "allowed." +
         (lev == "yu" || lev == "subprt" || lev == "emb" || lev == "yu-emb"
          ? "prt"
          : (lev == "untrusted" || lev == "no-emb") ? "no" : lev)
       );
     
-    var shortMessage = message.replace(/JavaScript/g, "JS");
+    let shortMessage = message.replace(/JavaScript/g, "JS");
     
     if (notificationNeeded && active) 
       message += ", " + allowed + "/" + total + " (" + allowedSites.join(", ") + ")";
     
-    var countsMessage = " | <SCRIPT>: " + totalScripts + " | <OBJECT>: " + totalPlugins;
+    let countsMessage = " | <SCRIPT>: " + totalScripts + " | <OBJECT>: " + totalPlugins;
     message += countsMessage;
     shortMessage += countsMessage;
     
-    var icon = this.getIcon(this.statusIcon); 
-    var className = this.getStatusClass(lev, !(totalScripts || topUntrusted) /* inactive */ );
     
+    const className = this.getStatusClass(lev, !(totalScripts || topUntrusted) /* inactive */ );  
+    let widget = this.statusIcon;
     const hoverUI = this.hoverUI;
-    
-    for each (let widget in [$("noscript-tbb"), this.statusIcon]) {
-      if (widget) {
-        if (hoverUI) widget.setAttribute("tooltiptext", shortMessage);
-        else widget.removeAttribute("tooltiptext");
+    for (let wg = widget; wg;) {
+      if (hoverUI) wg.removeAttribute("tooltiptext");
+      else wg.setAttribute("tooltiptext", shortMessage);
+      this.updateStatusClass(wg, className);
       
-        this.updateStatusClass(widget, className);
-      }
+      if (wg.id === "noscript-tbb") break;
+      wg = $("noscript-tbb");
     }
     
     if (notificationNeeded) { // notifications
-      const win = content;
+      let win = content;
       if (this.notify) {
         this.notificationShow(message,
           this.getIcon(widget), 

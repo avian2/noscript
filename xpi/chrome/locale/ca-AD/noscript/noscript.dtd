@@ -146,7 +146,6 @@
 <!ENTITY noscriptClearClickReport "Reportar">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Report ID:">
-<!ENTITY noscriptOpacizeOpt "Opacitar objectes incrustats a les pàgines...">
 <!ENTITY noscriptTrustedPagesAdj "de confiança">
 <!ENTITY noscriptUntrustedPagesAdj "de no confiança">
 <!ENTITY noscriptKeepLocked "Mantenir aquest element bloquejat (recomanat)">

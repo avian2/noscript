@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Poročilo">
 <!ENTITY noscriptClearClickReport.accesskey "P">
 <!ENTITY noscriptClearClickReportId "ID poročila:">
-<!ENTITY noscriptOpacizeOpt "Označi vstavljene predmete na straneh...">
 <!ENTITY noscriptTrustedPagesAdj "zaupljiv">
 <!ENTITY noscriptUntrustedPagesAdj "nezaupljiv">
 <!ENTITY noscriptKeepLocked "Naj bo ta element zaklenjen (priporočeno)">

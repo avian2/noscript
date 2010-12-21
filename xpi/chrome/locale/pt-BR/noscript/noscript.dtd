@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Relatório">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "ID do Relatório:">
-<!ENTITY noscriptOpacizeOpt "Tornar opacos objetos integrados às páginas...">
 <!ENTITY noscriptTrustedPagesAdj "confiável">
 <!ENTITY noscriptUntrustedPagesAdj "não confiável">
 <!ENTITY noscriptKeepLocked "Manter esse elemento travado (recomendado)">

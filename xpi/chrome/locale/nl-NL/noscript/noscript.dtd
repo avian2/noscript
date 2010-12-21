@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Rapport">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Rapport-ID:">
-<!ENTITY noscriptOpacizeOpt "Ingebouwde objecten zichtbaar maken op pagina&apos;s gemarkeerd als...">
 <!ENTITY noscriptTrustedPagesAdj "betrouwbaar">
 <!ENTITY noscriptUntrustedPagesAdj "onbetrouwbaar">
 <!ENTITY noscriptKeepLocked "Dit element geblokkeerd houden (aanbevolen)">

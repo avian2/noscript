@@ -148,7 +148,6 @@
 <!ENTITY noscriptClearClickReport "Jelentés">
 <!ENTITY noscriptClearClickReport.accesskey "J">
 <!ENTITY noscriptClearClickReportId "Jelentés azonosító:">
-<!ENTITY noscriptOpacizeOpt "Beágyazott objektumok beállítása nem átlátszónak a">
 <!ENTITY noscriptTrustedPagesAdj "biztonságos oldalakon">
 <!ENTITY noscriptUntrustedPagesAdj "nem biztonságos oldalakon">
 <!ENTITY noscriptKeepLocked "Az elem blokkolása a továbbiakban is (ajánlott)">

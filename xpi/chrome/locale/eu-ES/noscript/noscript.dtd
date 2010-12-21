@@ -144,7 +144,6 @@
 <!ENTITY noscriptClearClickReport "Txostena">
 <!ENTITY noscriptClearClickReport.accesskey "T">
 <!ENTITY noscriptClearClickReportId "Txosten IDa:">
-<!ENTITY noscriptOpacizeOpt "txertatutako elementu objektuak orrietan:">
 <!ENTITY noscriptTrustedPagesAdj "konfiantzazkoa">
 <!ENTITY noscriptUntrustedPagesAdj "ez-konfiantzazkoa">
 <!ENTITY noscriptKeepLocked "Mentendu elementu hau blokeaturik (gomendatua)">
