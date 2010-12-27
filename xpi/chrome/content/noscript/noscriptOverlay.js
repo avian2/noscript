@@ -36,7 +36,6 @@ return noscriptUtil.service ? {
   },
   
   openPopup: function(popup, anchor) {
-    popup.position = /^(?:addon|status)-bar$/.test(anchor.parentNode.id) ? "before_start" : "after_start";
     popup.openPopup(anchor);
   },
   onContextMenu: function(ev) {
@@ -185,11 +184,11 @@ return noscriptUtil.service ? {
     }
     
     let popup = ev.currentTarget.firstChild;
-    if (this.hoverUI && !this.isOpenOrJustClosed(popup)) {
+    if ("_hovering" in popup && popup._hovering === 1 || // reopen if still hovering the icon
+        this.hoverUI && !this.isOpenOrJustClosed(popup)) {
       popup._hovering = -1;
       if (ev.button !== 2) this.openPopup(popup, ev.currentTarget);
     } 
-    
   },
   
   
@@ -367,6 +366,12 @@ return noscriptUtil.service ? {
       button.insertBefore(clone, button.firstChild);
       if (!sticky) clone._context = true;
     }
+    
+    if (tbb)
+      tbb.firstChild.position = /^(?:addon|status)-bar$/.test(tbb.parentNode.id) ? "before_start" : "after_start";
+    
+    if (statusIcon && statusIcon.firstChild)
+      statusIcon.firstChild.position = "before_start";
   },
   get _templatePopup() {
     delete this._templatePopup;
@@ -990,28 +995,28 @@ return noscriptUtil.service ? {
   
     if (!(extras && ns.getPref("showBlockedObjects")))
       return;
-    
-    var egroup, e, node, j;
-    var pluginExtras = [], seen = [], key;
+  
+    var pluginExtras = [],
+        seen = [];
     var i = 0;
-    for each(egroup in extras) {
-      for (j = egroup.length; j-- > 0;) {
-        e = egroup[j];
+    for each(let egroup in extras) {
+      for (let j = egroup.length; j-- > 0;) {
+        let e = egroup[j];
         
-        if (ns.isAllowedObject(e.url, e.mime) && !e.placeholder ||
+        if (ns.isAllowedObject(e.url, e.mime, e.originSite) && !e.placeholder ||
             typeof(e) != "object" || (e.tag && !e.placeholder)
           )
           continue;
         
-        var key = e.mime + "@" + e.url;
+        let key = e.mime + "@" + ns.objectKey(e.url, e.originSite);
         if (seen.indexOf(key) > -1) continue;
         
         seen.push(key);
         
-        node = document.createElement("menuitem");
+        let node = document.createElement("menuitem");
         
         e.label = e.label || ns.mimeEssentials(e.mime) + "@" + ns.urlEssentials(e.url);
-        e.title = e.title || e.label.split("@")[0] + "@" + e.url;
+        e.title = e.title || e.label.split("@")[0] + "@" + e.url + "\n(" + e.originSite + ")";
  
         node.setAttribute("label", this.getString("allowTemp", [e.label]));
         node.setAttribute("tooltiptext", e.title);
@@ -1022,6 +1027,7 @@ return noscriptUtil.service ? {
         pluginExtras[i++] = e;
       }
     }
+    
     if (pluginExtras.length) {
       noscriptOverlay.menuPluginExtras = pluginExtras;
       mainMenu.addEventListener("popuphidden", function(ev) {
@@ -1030,38 +1036,46 @@ return noscriptUtil.service ? {
           noscriptOverlay.menuPluginExtras = null;
           noscriptOverlay.menuPluginSites = null;
       }, false);
-      var pluginSites = {};
-      i = 0;
-      for each(e in pluginExtras) {
-        if(!(e.site && e.mime) || ns.isAllowedObject(e.site, e.mime, e.site))
+      
+      let pluginSites = {};
+      seen = [];
+      for each(let e in pluginExtras) {
+        if(!(e.site && e.mime) || ns.isAllowedObject(e.site, e.mime, e.site, e.originSite))
           continue;
+        let objectKey = ns.objectKey(e.site, e.originSite);
+        let key = e.mime + "@" + objectKey;
+        if (seen.indexOf(key) !== -1) continue;
         
-        if (e.site in pluginSites) {
-          if (pluginSites[e.site].indexOf(e.mime) > -1) 
-            continue;
-          pluginSites[e.site].push(e.mime);
-        } else {
-          pluginSites[e.site] = ["*", e.mime];
+        if (seen.indexOf(objectKey) === -1) {
+          if (!(e.site in pluginSites)) {
+            pluginSites[e.site] = [{mime: "*", site: e.site}];
+          }
+          pluginSites[e.site].push({mime: "*", site: e.site, originSite: e.originSite});
+          seen.push(objectKey);
         }
-        i++;
+        pluginSites[e.site].push(e, {mime: e.mime, site: e.site});
+        seen.push(key);
       }
-      if (i) {
+      if (seen.length) {
         noscriptOverlay.menuPluginSites = [];
         i = 0;
-        var mime;
-        for (var site in pluginSites) {
+        for (let site in pluginSites) {
           menu.appendChild(document.createElement("menuseparator"));
-          for each(mime in pluginSites[site]) {
+          for each(let e in pluginSites[site]) {
+            let where = e.site;
+            if (e.originSite) where += " (" + e.originSite + ")";
+            let mime = e.mime;
+            
             node = document.createElement("menuitem");
-            node.setAttribute("label", this.getString("allowTemp", [ns.mimeEssentials(mime) + "@" + site]));
-            node.setAttribute("tooltiptext", mime + "@" + site);
+            node.setAttribute("label", this.getString("allowTemp", [ns.mimeEssentials(mime) + "@" + where]));
+            node.setAttribute("tooltiptext", mime + "@" + where);
             node.setAttribute("oncommand", "noscriptOverlay.allowObjectSite(" + i + ")");
             node.setAttribute("class", "menuitem-iconic noscript-temp noscript-cmd noscript-allow");
             if(mime != "*")
               node.style.listStyleImage = node.style.listStyleImage = ns.cssMimeIcon(mime, 16);
 
             menu.appendChild(node);
-            noscriptOverlay.menuPluginSites[i++] = [site, mime];
+            noscriptOverlay.menuPluginSites[i++] = e;
           }
         }
       }
@@ -1105,18 +1119,18 @@ return noscriptUtil.service ? {
     if(this.menuPluginExtras && this.menuPluginExtras[i]) {
       var e = this.menuPluginExtras[i];
       if (this.ns.confirmEnableObject(window, e)) {
-        this.allowObjectURL(e.url, e.mime);
+        this.allowObjectURL(e.url, e.mime, e.originSite);
       }
     }
   },
   
   allowObjectSite: function(i) {
     if(this.menuPluginSites && this.menuPluginSites[i]) {
-      this.allowObjectURL(this.menuPluginSites[i][0], this.menuPluginSites[i][1]);
+      this.allowObjectURL(this.menuPluginSites[i].site, this.menuPluginSites[i].mime, this.menuPluginSites[i].originSite);
     }
   },
-  allowObjectURL: function(url, mime) {
-    this.ns.allowObject(url, mime);
+  allowObjectURL: function(url, mime, originSite) {
+    this.ns.allowObject(url, mime, originSite);
     this.ns.reloadAllowedObjects(this.currentBrowser);
   },
   

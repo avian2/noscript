@@ -320,3 +320,6 @@ pref("noscript.forbidBGRefresh.exceptions", ".mozilla.org");
 
 pref("noscript.toStaticHTML", true);
 pref("noscript.liveConnectInterception", true);
+
+pref("noscript.donottrack.enabled", true);
+pref("noscript.donottrack.exceptions", "");

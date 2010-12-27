@@ -97,7 +97,6 @@
     <checkbox id="opt-placesPrefs" label="&noscriptBookmarkSync;" />
     <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
     <spacer flex="1" />
-    <button id="uninstallButton" label="&noscriptUninstall;" hidden="true" oncommand="nsopt.uninstall()" />
     <button id="importConfButton" label="&noscriptImport;" hidden="true" oncommand="nsopt.importConf()" />
     <button id="exportConfButton" label="&noscriptExport;" hidden="true" oncommand="nsopt.exportConf()" />
   

@@ -593,16 +593,16 @@ const MainContentPolicy = {
       
       if (forbid) {
         
-        if (isJava && /^data:application\/x-java\b/.test(locationURL) &&
-          (originSite || (originSite = this.getSite(originURL || aRequestOrigin && aRequestOrigin.spec || "")))
-          ) {
+        if (!originSite) originSite = this.getSite(originURL || aRequestOrigin && aRequestOrigin.spec || "");
+        
+        if (isJava && originSite && /^data:application\/x-java\b/.test(locationURL)) {
           locationURL = locationSite = originSite;
         }
         
         try {  // moved here because of http://forums.mozillazine.org/viewtopic.php?p=3173367#3173367
           if (this.getExpando(aContext, "allowed") || 
-            this.isAllowedObject(locationURL, mimeKey, locationSite) ||
-            this.isAllowedObjectById(aContext.id, locationURL, originURL, mimeKey, locationSite)
+            this.isAllowedObject(locationURL, mimeKey, locationSite, originSite) ||
+            this.isAllowedObjectById(aContext.id, locationURL, originURL, mimeKey, locationSite, originSite)
             ) {
             this.setExpando(aContext, "allowed", true);
             return CP_OK; // forceAllow
@@ -625,7 +625,8 @@ const MainContentPolicy = {
                 this.delayExec(this.tagForReplacement, 0, aContext, {
                   url: locationURL,
                   site: locationSite,
-                  mime: mimeKey
+                  mime: mimeKey,
+                  originSite: originSite
                 });
               }
             } else if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Context is not a DOMNode? " + aContentType);

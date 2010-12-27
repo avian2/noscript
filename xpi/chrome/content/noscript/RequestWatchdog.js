@@ -40,6 +40,8 @@ RequestWatchdog.prototype = {
         
         HTTPS.forceChannel(channel);
         
+        if (DoNotTrack.enabled) DoNotTrack.apply(channel);
+        
         if (isDoc) {
           let ph = PolicyState.extract(channel); 
           if (ph && ph.context) isDoc = !(ph.context instanceof CI.nsIDOMHTMLEmbedElement);
@@ -1095,16 +1097,16 @@ var InjectionChecker = {
   },
   
   reduceJSON: function(s) {
-    var m, whole, qred, prev;
     const toStringRx = /^function\s*toString\(\)\s*{\s*\[native code\]\s*\}$/;
     // optimistic case first, one big JSON block
     do {
-      whole = s;
-      m = s.match(/{[\s\S]*}/);
+     
+      let m = s.match(/{[\s\S]*}/);
       if (!m) return s;
       
-      expr = m[0];
-      var json = ns.json;
+      let whole = s;
+      let expr = m[0];
+      let json = ns.json;
       if (json) {
         try {
           if (!toStringRx.test(json.decode(expr).toString))
@@ -1117,7 +1119,7 @@ var InjectionChecker = {
       
       // heavier duty, scattered JSON blocks
       while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
-        prev = s;
+        let prev = s;
   
         for each(expr in m) {
           if (json) try {
@@ -1131,7 +1133,7 @@ var InjectionChecker = {
           
           if (/\btoString\b[\s\S]*:/.test(expr)) continue;
           
-          qred = this.reduceQuotes(expr);
+          let qred = this.reduceQuotes(expr);
           if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(qred)) {
              this.log("Reducing pseudo-JSON " + expr);
              s = s.replace(expr, '"_PseudoJSON_"');
@@ -2370,5 +2372,15 @@ var ASPIdiocy = {
      // lazy init
      INCLUDE("ASPIdiocy");
      return ASPIdiocy._replace(match, hex);
+  }
+}
+
+var DoNotTrack = {
+  enabled: true,
+  exceptions: null,
+  apply: function(channel) {
+    if (this.exceptions && this.exceptions.testURI(channel.URI)) return;
+    channel.setRequestHeader("X-Behavioral-Ad-Opt-Out", "1", false);
+    channel.setRequestHeader("X-Do-Not-Track", "1", false);
   }
 }

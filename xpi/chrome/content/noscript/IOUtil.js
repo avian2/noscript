@@ -356,7 +356,7 @@ ChannelReplacement.prototype = {
     });
     
     
-    if (!newMethod) {
+    if (!newMethod || newMethod === chan.requestMethod) {
       if (newChan instanceof CI.nsIUploadChannel && chan instanceof CI.nsIUploadChannel && chan.uploadStream ) {
         var stream = chan.uploadStream;
         if (stream instanceof CI.nsISeekableStream) {
@@ -376,7 +376,7 @@ ChannelReplacement.prototype = {
         newChan.requestMethod = chan.requestMethod;
       }
     } else {
-      newChan.method = newMethod;
+      newChan.requestMethod = newMethod;
     }
     
     if (chan.referrer) newChan.referrer = chan.referrer;

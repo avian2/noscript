@@ -401,6 +401,13 @@ var ns = singleton = {
         ABE[name.substring(4)] = this.getPref(name);
       break;
       
+      case "doNotTrack.enabled":
+        DoNotTrack.enabled = this.getPref(name);
+       break;
+      case "doNotTrack.exceptions":
+        DoNotTrack.exceptions = AddressMatcher.create(this.getPref(name));
+      break;
+      
       case "STS.enabled":
         STS[name.substring(4)] = this.getPref(name);
       break;
@@ -659,8 +666,6 @@ var ns = singleton = {
     if (this._inited) return false;
     this._inited = true;
     
-    if (this.smUninstaller) this.smUninstaller.check();
-    
     this._initResources();
 
     if (!this.requestWatchdog) {
@@ -730,7 +735,8 @@ var ns = singleton = {
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
       "ABE.enabled", "ABE.legacySupport", "ABE.siteEnabled", "ABE.allowRulesetRedir", "ABE.disabledRulesetNames", "ABE.skipBrowserRequests",
       "ABE.wanIpCheckURL", "ABE.wanIpAsLocal", "ABE.localExtras",
-      "STS.enabled"
+      "STS.enabled",
+      "DoNotTrack.enabled", "DoNotTrack.exceptions"
       ]) {
       try {
         this.syncPrefs(this.prefs, p);
@@ -1425,7 +1431,7 @@ var ns = singleton = {
           }
         }
         
-        if (j === len) { 
+        if (mustReload && j === len) { 
           // check plugin objects
           if (this.consoleDump & LOG_CONTENT_BLOCK) {
             this.dump("Checking object permission changes...");
@@ -1466,7 +1472,7 @@ var ns = singleton = {
     for each (egroup in sites.pluginExtras) {
       for (j = egroup.length; j-- > 0;) {
         e = egroup[j];
-        if (this.isAllowedObject(e.url, e.mime, e.site)) {
+        if (this.isAllowedObject(e.url, e.mime, e.site, e.originSite)) {
           if (e.placeholder && e.placeholder.parentNode) {
             e.skipConfirmation = true;
             this.checkAndEnablePlaceholder(e.placeholder);
@@ -1486,21 +1492,21 @@ var ns = singleton = {
 
   checkObjectPermissionsChange: function(sites, snapshot) {
     if(this.objectWhitelist == snapshot) return false;
-    var s, url;
-    for (url in snapshot) {
-      s = this.getSite(url);
+    for (let url in snapshot) {
+      let s = this.getSite(url);
       if (!(s in snapshot)) snapshot[s] = snapshot[url];
     }
-    for each (var s in sites.pluginSites) {
+    for each (let s in sites.pluginSites) {
       s = this.objectKey(s);
       if ((s in snapshot) && !(s in this.objectWhitelist)) {
         return true;
       }
     }
-    var egroup, len, j, e;
-     for each (egroup in sites.pluginExtras) {
-      for (j = 0, len = egroup.length; j < len; j++) {
-        e = egroup[j];
+ 
+     for each (let egroup in sites.pluginExtras) {
+      for (let j = 0, len = egroup.length; j < len; j++) {
+        let e = egroup[j];
+        let url;
         if (!e.placeholder && e.url && ((url = this.objectKey(e.url)) in snapshot) && !(url in this.objectWhitelist)) {
           return true;
         }
@@ -1836,9 +1842,10 @@ var ns = singleton = {
   }
 ,
   
-  getAllowObjectMessage: function(url, mime) {
-    url = SiteUtils.crop(url);
-    return this.getString("allowTemp", [url + "\n(" + mime + ")\n"]);
+  getAllowObjectMessage: function(extras) {
+    let url = SiteUtils.crop(extras.url);
+    let details= extras.mime + " " + (extras.tag || "<OBJECT>") + " / " + extras.originSite; 
+    return this.getString("allowTemp", [url + "\n(" + details + ")\n"]);
   }
 ,
   lookupMethod: DOM.lookupMethod,
@@ -2040,6 +2047,12 @@ var ns = singleton = {
     // add flashvars to have a better URL ID
     if (embed instanceof CI.nsIDOMElement) try {
       var flashvars = embed.getAttribute("flashvars");
+      if (!flashvars) {
+        let params = embed.getElementsByTagName("param");
+        for (let j = 0, p; (p = params[j]); j++)
+          if (p.name && p.name.toLowerCase() === "flashvars")
+            flashvars = p.value;
+      }
       if (flashvars) url += "#!flashvars#" + encodeURI(flashvars); 
     } catch(e) {
       if (this.consoleDump) this.dump("Couldn't add flashvars to " + url + ":" + e);
@@ -2050,10 +2063,10 @@ var ns = singleton = {
   addObjectParams: function(url, embed) {
     if (embed instanceof CI.nsIDOMElement) try {
       var params = embed.getElementsByTagName("param");
-      if(!params.length) return url;
+      if (!params.length) return url;
       
       var pp = [];
-      for(var j = params.length; j-- > 0;) {
+      for(let j = params.length; j-- > 0;) {
         pp.push(encodeURIComponent(params[j].name) + "=" + encodeURIComponent(params[j].value));
       }
       url += "#!objparams#" + pp.join("&");
@@ -2329,61 +2342,63 @@ var ns = singleton = {
   objectWhitelist: {},
   ALL_TYPES: ["*"],
   objectWhitelistLen: 0,
-  objectKey: function(url) {
-    return IOUtil.anonymizeURL(url.replace(/^((?:\w+:\/\/)?[^\.\/\d]+)\d+(\.[^\.\/]+\.)/, '$1$2'));
+  objectKey: function(url, originSite) {
+    return (originSite || '') + ">" + IOUtil.anonymizeURL(url.replace(/^((?:\w+:\/\/)?[^\.\/\d]+)\d+(\.[^\.\/]+\.)/, '$1$2'));
   },
   anyAllowedObject: function(site, mime) {
-    site = this.objectKey(site);
-    if (site in this.objectWhitelist) return true;
-    site += '/';
-    for(var s in this.objectWhitelist) {
-      if (s.indexOf(site) == 0) return true;
+    let key = this.objectKey(site);
+    if (key in this.objectWhitelist) return true;
+    key += '/';
+    for (let s in this.objectWhitelist) {
+      if (s.indexOf(site) === 0) return true;
     }
     return false;
   },
-  isAllowedObject: function(url, mime, site) {
-    url = this.objectKey(url);
-    var types = this.objectWhitelist[url] || null;
+  isAllowedObject: function(url, mime, site, originSite) {
+    let types = this.objectWhitelist[this.objectKey(url, originSite)] || this.objectWhitelist[this.objectKey(url)];
     if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1)) 
       return true;
     
-    site = this.objectKey((arguments.length >= 3) ? site : this.getSite(url));
-     
-    var types, s;
-    for (;;) {
-
-      types = site && this.objectWhitelist[site] || null;
-      if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1)) return true;
+    
+    if (typeof(site) === "undefined") site = this.getSite(url);
+    
+    for (;site;) {
+      types = this.objectWhitelist[this.objectKey(site, originSite)] || this.objectWhitelist[this.objectKey(site)];
+      if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1))
+        return true;
 
       if (!/\..*\.|:\//.test(site)) break;
-      s = site.replace(/.*?(?::\/+|\.)/, '');
-      if (s == site) break;
+      let s = site.replace(/.*?(?::\/+|\.)/, '');
+      if (s === site) break;
       site = s;
-    } 
+    }
+        
+    return false;
   },
-  allowObject: function(url, mime) {
-    url = this.objectKey(url);
-    if (url in this.objectWhitelist) {
-      var types = this.objectWhitelist[url];
-      if(mime == "*") {
-        if(types == this.ALL_TYPES) return;
+  
+  allowObject: function(url, mime, originSite) {
+    let key = this.objectKey(url, originSite);
+    if (key in this.objectWhitelist) {
+      let types = this.objectWhitelist[key];
+      if(mime === "*") {
+        if(types === this.ALL_TYPES) return;
         types = this.ALL_TYPES;
       } else {
-        if(types.indexOf(mime) > -1) return;
+        if (types.indexOf(mime) > -1) return;
         types.push(mime);
       }
     } else {
-      this.objectWhitelist[url] = mime == "*" ? this.ALL_TYPES : [mime];
+      this.objectWhitelist[key] = mime == "*" ? this.ALL_TYPES : [mime];
     }
     this.objectWhitelistLen++;
   },
-  isAllowedObjectById: function(id, objectURL, parentURL, mime, site) {
+  isAllowedObjectById: function(id, objectURL, parentURL, mime, site, originSite) {
     var url = this.getObjectURLWithId(id, objectURL, parentURL);
-    return url && this.isAllowedObject(url, mime, site);
+    return url && this.isAllowedObject(url, mime, site, originSite || this.getSite(parentURL));
   },
-  allowObjectById: function(id, objectURL, parentURL, mime) {
+  allowObjectById: function(id, objectURL, parentURL, mime, originSite) {
     var url = this.getObjectURLWithId(id, objectURL, parentURL);
-    if (url) this.allowObject(url, mime);
+    if (url) this.allowObject(url, mime, originSite || this.getSite(parentURL));
   },
   getObjectURLWithId: function(id, objectURL, parentURL) {
     return id && objectURL.replace(/[\?#].*/, '') + "#!#" + id + "@" + encodeURIComponent(parentURL);
@@ -3420,8 +3435,7 @@ var ns = singleton = {
   
   confirmEnableObject: function(win, extras) {
     return extras.skipConfirmation || win.noscriptUtil.confirm(
-      this.getAllowObjectMessage(extras.url, 
-          (extras.tag || "<OBJECT>") + ", " + extras.mime), 
+      this.getAllowObjectMessage(extras), 
       "confirmUnblock"
     );
   },
@@ -3442,7 +3456,7 @@ var ns = singleton = {
       var mime = extras.mime;
       var url = extras.url;
       
-      this.allowObject(url, mime);
+      this.allowObject(url, mime, extras.originSite);
       var doc = ctx.anchor.ownerDocument;
       
       var isLegacyFrame = this.isLegacyFrameReplacement(ctx.object);
@@ -5193,5 +5207,3 @@ var ns = singleton = {
 
 ns.wrappedJSObject = ns;
 ns.register();
-
-if ("nsIChromeRegistrySea" in CI) INCLUDE("SMUninstaller");

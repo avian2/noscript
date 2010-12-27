@@ -116,8 +116,6 @@ var nsopt = {
     
     if (ns.canSerializeConf) this.initSerializeButtons();
     
-    if (ns.smUninstaller) this.initUninstallButton();
-    
     // $("policy-tree").view = policyModel;
     window.sizeToContent();
     
@@ -127,15 +125,7 @@ var nsopt = {
     this.toggleHoverUI();
   },
   
-  initUninstallButton: function() {
-    this.utils.moveButtonsDown("uninstallButton");
-  },
-  
-  uninstall: function() {
-    ns.smUninstaller.appUninstall(window);
-  },
-  
-  
+
   initSerializeButtons: function() {
     this.utils.moveButtonsDown("importConfButton", "exportConfButton");
   },
@@ -563,7 +553,6 @@ var abeOpts = {
     
     this.updateWAN(ns.wan.ip);
     ns.os.addObserver(this, ns.wan.IP_CHANGE_TOPIC, true);
-       
   },
   
   observe: function(subject, topic, data) {
