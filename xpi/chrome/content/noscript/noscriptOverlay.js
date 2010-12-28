@@ -2257,7 +2257,7 @@ return noscriptUtil.service ? {
       if (doc instanceof HTMLDocument) {
         var w = doc.defaultView;
         if (w) {
-          const jsBlocked = doc.__noScriptJSBlocked_;
+          const jsBlocked = doc.__noScriptJSBlocked__;
           const ns = noscriptOverlay.ns;
           ns.setExpando(doc, "contentLoaded", true);
           if (w == w.top) {
