@@ -99,7 +99,7 @@ var nsopt = {
       if (!browserWin.document.getElementById("noscript-statusIcon"))
         $("opt-statusIcon").setAttribute("hidden", "true");
     
-      if(browserWin.noscriptOverlay && !browserWin.getNotificationBox())
+      if(browserWin.noscriptOverlay && !browserWin.noscriptOverlay.getNotificationBox())
         $("fx-notifications").setAttribute("hidden", "true");
     }
     
