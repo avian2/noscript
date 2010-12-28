@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Restaurar para os padrões">
 <!ENTITY noscriptResetDef.accesskey "p">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "Perguntas e respostas do JAR">
-<!ENTITY noscriptJarFaq.accesskey "r">
-<!ENTITY noscriptForbidJarDocuments "Bloquear recursos remotos do JAR de serem carregados como documentos.">
-<!ENTITY noscriptJarExceptions "Exceções de bloqueio de documentos JAR.">
-<!ENTITY noscriptJarExceptions.description "Documentos JAR que combinarem com essas expressões NÂO serão bloqueados.">
 <!ENTITY noscriptRevokeTemp "Anular Permissões Temporárias">
 <!ENTITY noscriptRevokeTemp.accesskey "A">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nenhum placeholder para objetos provenientes de sites marcados como não confiáveis">

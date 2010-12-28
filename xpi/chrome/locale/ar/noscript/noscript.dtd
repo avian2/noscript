@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "صفِّر للمبدئية">
 <!ENTITY noscriptResetDef.accesskey "ف">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "أسئلة شائعة عن JAR">
-<!ENTITY noscriptJarFaq.accesskey "ة">
-<!ENTITY noscriptForbidJarDocuments "اعترض موارد Jar البعيدة من التحميل كوثائق">
-<!ENTITY noscriptJarExceptions "‮استثناءات من منع وثائق ‪JAR">
-<!ENTITY noscriptJarExceptions.description "وثائق JAR المطابقة لهذه العبارات الاعتيادية لن يتم اعتراضها">
 <!ENTITY noscriptRevokeTemp "ألغِ الصلاحيات المؤقتة">
 <!ENTITY noscriptRevokeTemp.accesskey "م">
 <!ENTITY noscriptNoUntrustedPlaceholder "لا توجد حوافظ مكان لعناصر قادمة من مواقع محددة كغير آمنة">

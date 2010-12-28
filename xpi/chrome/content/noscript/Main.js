@@ -196,10 +196,7 @@ var ns = singleton = {
   
   forbidChromeScripts: false,
   forbidData: true,
-  
-  forbidJarDocuments: true,
-  forbidJarDocumentsExceptions: null,
-  
+
   forbidJava: true,
   forbidFlash: false,
   forbidFlash: true,
@@ -338,7 +335,6 @@ var ns = singleton = {
       case "truncateTitleLen":
       case "forbidChromeScripts":
       case "forbidData":
-      case "forbidJarDocuments":
       case "forbidMetaRefresh":
       case "forbidIFramesContext":
       case "forbidXBL":
@@ -405,7 +401,8 @@ var ns = singleton = {
         DoNotTrack.enabled = this.getPref(name);
        break;
       case "doNotTrack.exceptions":
-        DoNotTrack.exceptions = AddressMatcher.create(this.getPref(name));
+      case "doNotTrack.forced":
+        DoNotTrack[name] = AddressMatcher.create(this.getPref(name));
       break;
       
       case "STS.enabled":
@@ -443,7 +440,6 @@ var ns = singleton = {
       break;
       
       // multiple rx
-      case "forbidJarDocumentsExceptions":
       case "filterXExceptions":
       case "jsHackRegExp":
         this.updateRxPref(name, "", "", this.rxParsers.multi);
@@ -710,7 +706,6 @@ var ns = singleton = {
       "filterXGetRx", "filterXGetUserRx", 
       "filterXExceptions",
       "forbidChromeScripts",
-      "forbidJarDocuments", "forbidJarDocumentsExceptions",
       "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts",
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
       "forbidMetaRefresh",
@@ -736,7 +731,7 @@ var ns = singleton = {
       "ABE.enabled", "ABE.legacySupport", "ABE.siteEnabled", "ABE.allowRulesetRedir", "ABE.disabledRulesetNames", "ABE.skipBrowserRequests",
       "ABE.wanIpCheckURL", "ABE.wanIpAsLocal", "ABE.localExtras",
       "STS.enabled",
-      "DoNotTrack.enabled", "DoNotTrack.exceptions"
+      "doNotTrack.enabled", "doNotTrack.exceptions", "doNotTrack.forced"
       ]) {
       try {
         this.syncPrefs(this.prefs, p);
@@ -4321,12 +4316,6 @@ var ns = singleton = {
         this.filterUTF7(req, domWindow, docShell = DOM.getDocShellForWindow(domWindow)); 
     }
     
-    
-    if (this.checkJarDocument(uri, domWindow)) {
-      IOUtil.abort(req);
-    }
-  
-    
     const topWin = domWindow == domWindow.top;
 
     var browser = null;
@@ -4708,78 +4697,6 @@ var ns = singleton = {
       STS.patchErrorPage(docShell, uri);
   },
   
-  checkJarDocument: function(uri, context, origin) {
-    if (this.forbidJarDocuments && (uri instanceof CI.nsIJARURI) &&
-      !(/^(?:file|resource|chrome)$/.test(uri.JARFile.scheme) ||
-          this.forbidJarDocumentsExceptions &&
-          this.forbidJarDocumentsExceptions.test(uri.spec)) &&
-      (origin && origin.prePath != uri.prePath)
-      ) {
-      if (context && this.getPref("jarDoc.notify", true)) {
-        var window = (context instanceof CI.nsIDOMWindow) && context || 
-          (context instanceof CI.nsIDOMDocumentView) && context.defaultView || 
-          (context instanceof CI.nsIDOMNode) && context.ownerDocument && context.ownerDocument.defaultView;
-        if (window) {
-          this.delayExec(this.displayJarFeedback, 10, {
-            context: context,
-            uri: uri.spec
-          });
-        } else {
-          this.dump("checkJarDocument -- window not found");
-        }
-      }
-      this.log("[NoScript] " + this.getString("jarDoc.notify", [uri.spec]));
-      return true;
-    }
-    return false;
-  },
-  
- 
-  
-  displayJarFeedback: function(info) {
-    var doc = (info.context instanceof CI.nsIDOMDocument) && info.context || 
-      info.context.contentDocument || info.context.document || info.context.ownerDocument;
-    if (!doc) {
-      ns.dump("displayJarFeedback -- document not found");
-      return;
-    }
-    var browser = DOM.findBrowserForNode(doc);
-    if (browser) {
-      var overlay = ns.findOverlay(browser);
-      if (overlay && overlay.notifyJarDocument({
-          uri: info.uri,
-          document: doc
-      })) return;
-    } else {
-      ns.dump("displayJarFeedback -- browser not found... falling back to content notify");
-    }
-    
-    var message = ns.getString("jarDoc.notify", [SiteUtils.crop(info.uri)]) + 
-      "\n\n" + ns.getString("jarDoc.notify.reference");
-    
-    var rootNode = doc.documentElement.body || doc.documentElement;
-    const containerID = "noscript-jar-feedback";
-    var container = doc.getElementById(containerID);
-    if (container) container.parentNode.removeChild(container);
-    container = rootNode.insertBefore(doc.createElementNS(HTML_NS, "div"), rootNode.firstChild || null);
-    with (container.style) {
-      backgroundColor = "#fffff0";
-      borderBottom = "1px solid #444";
-      color = "black";
-      backgroundImage = "url(" + ns.pluginPlaceholder + ")";
-      backgroundPosition = "left top";
-      backgroundRepeat = "no-repeat";
-      paddingLeft = "40px";
-      margin = "0px";
-      parring = "8px";
-    }
-    container.id = "noscript-jar-feedback";
-    var description = container.appendChild(doc.createElementNS(HTML_NS, "pre"));
-    description.appendChild(doc.createTextNode(message));
-    description.innerHTML = description.innerHTML
-    .replace(/\b(http:\/\/noscript\.net\/faq#jar)\b/g, 
-              '<a href="$1" title="NoScript JAR FAQ">$1</a>'); 
-  },
   // end nsIWebProgressListener
   
   filterUTF7: function(req, window, docShell) {

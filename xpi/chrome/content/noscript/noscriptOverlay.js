@@ -1657,46 +1657,6 @@ return noscriptUtil.service ? {
     this.ns.doFollowMetaRefresh(this.getMetaRefreshInfo(), event.shiftKey);
   },
   
-  notifyJarDocument: function(info) {
-    var browser = this.ns.dom.findBrowser(window, info.document.defaultView.top);
-    if (!browser) return false;
-    
-    const notificationValue = "noscript-jarDoc-notification";
-    const box = this.getAltNotificationBox(browser, notificationValue);
-  
-    if (!(box && box.appendNotification)) return false;
-    
-    var notification = null;
-    
-    var label = this.getString("jarDoc.notify", [info.uri]);
-    var icon = this.getIcon("noscript-jar-opts");
-
-    notification = box.appendNotification(
-      label, 
-      notificationValue, 
-      icon, 
-      box.PRIORITY_WARNING_HIGH,
-      [{
-          label: this.getString("notify.options"),
-          accessKey: this.getString("notify.accessKey"),
-          callback: function(notification, buttonInfo) {
-            noscriptUtil.openJarOptions();
-          }
-       }]
-      );
-    browser.addEventListener("beforeunload", function(ev) {
-      if (ev.originalTarget == info.document || ev.originalTarget == browser) {
-        browser.removeEventListener(ev.type, arguments.callee, false);
-        if (notification && notification == box.currentNotification) {
-          box.removeCurrentNotification();
-        } 
-        info = browser = notification = null;
-      }
-    }, false);
-    
-    return true;
-  },
-  
   get supportsNotifications() {
     delete this.supportsNotification;
     return this.supportsNotification = !!document.getElementsByTagName("notificationbox").length;

@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Iniţializează la valorile implicite">
 <!ENTITY noscriptResetDef.accesskey "v">
 <!ENTITY noscriptOptionsWidth "50em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "Informaţii JAR...">
-<!ENTITY noscriptJarFaq.accesskey "f">
-<!ENTITY noscriptForbidJarDocuments "Interzice încărcarea ca documente a resurselor la distanţă JAR">
-<!ENTITY noscriptJarExceptions "Excepţii la blocarea documentelor JAR">
-<!ENTITY noscriptJarExceptions.description "Documentele JAR concordante cu expresiile regulate din listă nu vor fi blocate.">
 <!ENTITY noscriptRevokeTemp "Revocă permisiunile temporare">
 <!ENTITY noscriptRevokeTemp.accesskey "R">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nu afişa amplasamentul obiectelor care provin din saituri marcate ca &quot;De neîncredere&quot;">

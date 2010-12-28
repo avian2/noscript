@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Alaphelyzetbe állít">
 <!ENTITY noscriptResetDef.accesskey "h">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR GYIK">
-<!ENTITY noscriptJarFaq.accesskey "G">
-<!ENTITY noscriptForbidJarDocuments "A távoli JAR forrás dokumentumként történő betöltésének blokkolása">
-<!ENTITY noscriptJarExceptions "JAR dokumentumok blokkolásának kivételei">
-<!ENTITY noscriptJarExceptions.description "Azok a JAR dokumentumok, amelyek megfelelnek az alábbi szabályos kifejezéseknek, NEM LESZNEK blokkolva.">
 <!ENTITY noscriptRevokeTemp "Ideiglenes hozzáférések visszavonása">
 <!ENTITY noscriptRevokeTemp.accesskey "v">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nincs helykitöltő a megbízhatatlannak megjelölt webhelyekről érkező objektumoknál">

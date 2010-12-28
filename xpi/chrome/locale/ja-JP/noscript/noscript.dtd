@@ -104,12 +104,6 @@
 <!ENTITY noscriptResetDef "デフォルトに初期化">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "JARリモートリソースがドキュメントとして読み込まれるのをブロックする">
-<!ENTITY noscriptJarExceptions "JARドキュメントブロックの例外設定">
-<!ENTITY noscriptJarExceptions.description "これらの正規表現にマッチングするJARドキュメントはブロックされません。">
 <!ENTITY noscriptRevokeTemp "一時的な許可を取り消す">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "信頼できないと記録されたサイトからのオブジェクトにはプレースホルダーを表示しない">

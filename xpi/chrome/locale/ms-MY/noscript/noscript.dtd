@@ -104,12 +104,6 @@
 <!ENTITY noscriptResetDef "Tetapkan kepada asal">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "Soalan Kerap Ditanya JAR">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Halang sumber pemandu JAR dari dimuat sebagai dokumen">
-<!ENTITY noscriptJarExceptions "Pengecualian halang dokumen JAR">
-<!ENTITY noscriptJarExceptions.description "Dokumen JAR padanan ekspresi TIDAK akan dihalang.">
 <!ENTITY noscriptRevokeTemp "Kembalikan semula Kebenaran Sementara">
 <!ENTITY noscriptRevokeTemp.accesskey "R">
 <!ENTITY noscriptNoUntrustedPlaceholder "Tiada tempaat letak untuk objek yang datang dari laman ditanda sebagai Tidak Dipercayai">

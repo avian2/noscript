@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Przywróć domyślne">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR – Pytania i odpowiedzi…">
-<!ENTITY noscriptJarFaq.accesskey "R">
-<!ENTITY noscriptForbidJarDocuments "Blokuj zdalne źródła JAR wczytywane jako dokumenty">
-<!ENTITY noscriptJarExceptions "Wyjątki blokowania dokumentów JAR">
-<!ENTITY noscriptJarExceptions.description "Dokumenty JAR spełniające poniższe wyrażenia regularne nie będą blokowane">
 <!ENTITY noscriptRevokeTemp "Unieważnij tymczasowe zezwolenia">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nie wyświetlaj ikon zamienników dla obiektów pochodzących z witryn oznaczonych jako niezaufane">

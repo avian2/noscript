@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Nulstil til standard">
 <!ENTITY noscriptResetDef.accesskey "s">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR OSS">
-<!ENTITY noscriptJarFaq.accesskey "J">
-<!ENTITY noscriptForbidJarDocuments "Bloker indlæsning af af fremmede JAR-ressourcer som dokumenter">
-<!ENTITY noscriptJarExceptions "JAR dokument blokeringsundtagelser">
-<!ENTITY noscriptJarExceptions.description "JAR dokumenter der matcher disse regulære udtryk bliver IKKE blokeret.">
 <!ENTITY noscriptRevokeTemp "Tilbagekald midlertidige tilladelser">
 <!ENTITY noscriptRevokeTemp.accesskey "m">
 <!ENTITY noscriptNoUntrustedPlaceholder "Ingen pladsholdere til objekter fra websteder der er markeret som ubetroede">

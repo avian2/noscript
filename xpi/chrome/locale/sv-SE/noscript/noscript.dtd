@@ -106,12 +106,6 @@
 <!ENTITY noscriptResetDef "Återställ till standard">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Blockera JAR fjärresurser som laddas som dokument">
-<!ENTITY noscriptJarExceptions "Undantag för JAR dokumentblockering">
-<!ENTITY noscriptJarExceptions.description "JAR dokument som matchar dessa reguljära uttryck kommer INTE att blockeras.">
 <!ENTITY noscriptRevokeTemp "Återkalla temporära tillstånd">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Visa inte platshållare för objekt från ej betrodda platser">

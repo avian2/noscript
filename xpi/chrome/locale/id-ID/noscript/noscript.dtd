@@ -104,12 +104,6 @@
 <!ENTITY noscriptResetDef "Reset ke awal">
 <!ENTITY noscriptResetDef.accesskey "r">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Blok sumber jauh JAR yang diambil sebagai dokumen">
-<!ENTITY noscriptJarExceptions "Pengecualian pengeblokan dokumen JAR">
-<!ENTITY noscriptJarExceptions.description "Dokumen JAR yang mencocokkan regular expressions ini TIDAK akan diblok.">
 <!ENTITY noscriptRevokeTemp "Mencabut Izin Sementara">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Tidak ada tempat tetap untuk obyek yang datang dari situs yang tidak dipercaya">

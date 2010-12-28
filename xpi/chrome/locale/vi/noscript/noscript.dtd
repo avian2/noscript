@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Hoàn lại về mặc định">
 <!ENTITY noscriptResetDef.accesskey "v">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR Câu Hỏi Thường Gặp…">
-<!ENTITY noscriptJarFaq.accesskey "C">
-<!ENTITY noscriptForbidJarDocuments "Chặn các tài nguyên từ xa dạng JAR được tải dưới dạng tài liệu">
-<!ENTITY noscriptJarExceptions "Các ngoại lệ cho ngăn chặn tài liệu dạng JAR">
-<!ENTITY noscriptJarExceptions.description "Các tài liệu dạng JAR phù hợp với các biểu thức quy tắc sau sẽ KHÔNG bị chặn.">
 <!ENTITY noscriptRevokeTemp "Hủy Bỏ Quyền Hạn Tạm Thời">
 <!ENTITY noscriptRevokeTemp.accesskey "Q">
 <!ENTITY noscriptNoUntrustedPlaceholder "Không có phần giữ chỗ nào cho các đối tượng đến từ các trang bị đánh dấu không tin cậy.">

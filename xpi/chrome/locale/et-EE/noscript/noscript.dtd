@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Taasta algsätted">
 <!ENTITY noscriptResetDef.accesskey "a">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "Java arhiivifailide KKK">
-<!ENTITY noscriptJarFaq.accesskey "K">
-<!ENTITY noscriptForbidJarDocuments "Keela JAR kaugressursside laadimine dokumentidena">
-<!ENTITY noscriptJarExceptions "JAR dokumendi blokeerimise erandid">
-<!ENTITY noscriptJarExceptions.description "Ei blokeerita JAR dokumente, mis sobivad järgnevate regulaaravaldistega">
 <!ENTITY noscriptRevokeTemp "Tühista ajutised õigused">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Kohatäitjaid ei näidata objektidel, mis tulevad ebausaldusväärsetelt veebilehtedelt">

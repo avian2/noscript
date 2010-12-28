@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Ripristina i valori originali">
 <!ENTITY noscriptResetDef.accesskey "R">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Impedisci alle risorse JAR remote di essere caricate come documenti">
-<!ENTITY noscriptJarExceptions "Eccezioni al blocco dei documenti JAR">
-<!ENTITY noscriptJarExceptions.description "I documenti JAR che corrispondono a queste espressioni regolari NON saranno bloccati.">
 <!ENTITY noscriptRevokeTemp "Revoca i permessi temporanei">
 <!ENTITY noscriptRevokeTemp.accesskey "t">
 <!ENTITY noscriptNoUntrustedPlaceholder "Non mostrare icona sostitutiva per elementi segnalati come non fidati">

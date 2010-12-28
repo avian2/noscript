@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Бастапқы түріне келтіру">
 <!ENTITY noscriptResetDef.accesskey "н">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR жиі қойылатын сұрақтары...">
-<!ENTITY noscriptJarFaq.accesskey "й">
-<!ENTITY noscriptForbidJarDocuments "Құжат ретінде жүктелетін JAR ресурстарын оқшаулау">
-<!ENTITY noscriptJarExceptions "JAR құжаттарын">
-<!ENTITY noscriptJarExceptions.description "Бұл маскаларға сәйкес келетін JAR-құжаттар ОҚШАУЛАНБАЙДЫ.">
 <!ENTITY noscriptRevokeTemp "Уақытша рұқсаттарды қайта шақыру">
 <!ENTITY noscriptRevokeTemp.accesskey "р">
 <!ENTITY noscriptNoUntrustedPlaceholder "Сенімсіз деп белгіленген сайттан келген объектілер үшін қоршау жоқ">

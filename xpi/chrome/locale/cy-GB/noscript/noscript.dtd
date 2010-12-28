@@ -106,12 +106,6 @@
 <!ENTITY noscriptResetDef "Ailosod y diffygwerthoedd">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Rhwystro adnoddau hirbell JAR rhag cael eu llwytho fel dogfennau">
-<!ENTITY noscriptJarExceptions "Eithriada rhwystro dogfennau JAR">
-<!ENTITY noscriptJarExceptions.description "NI rywstrir y dogfennau JAR sy&apos;n cyfateb i&apos;r mynegiadau rheolaidd hyn.">
 <!ENTITY noscriptRevokeTemp "Dirymu Hawliau Dros Dro">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "Dim lle i&apos;w gadw ar gyfer gwrthychau a ddaw o wefannau wedi&apos;u marcio&apos;n annilys">

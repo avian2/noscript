@@ -106,12 +106,6 @@
 <!ENTITY noscriptResetDef "אתחל חזרה לברירת מחדל">
 <!ENTITY noscriptResetDef.accesskey "ל">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "שאלות ותשובות על JAR">
-<!ENTITY noscriptJarFaq.accesskey "ש">
-<!ENTITY noscriptForbidJarDocuments "חסום פריטי JAR מרוחקים מלהיטען כמסמכים">
-<!ENTITY noscriptJarExceptions "יוצאים מן הכלל בחסימות JAR">
-<!ENTITY noscriptJarExceptions.description "פריטי JAR שעונים לביטויים רגולריים אלו *לא* ייחסמו">
 <!ENTITY noscriptRevokeTemp "בטל הרשאה זמנית">
 <!ENTITY noscriptRevokeTemp.accesskey "ט">
 <!ENTITY noscriptNoUntrustedPlaceholder "אל תציב ממלאי-מקום במקום פריטים מאתרים אסורים">

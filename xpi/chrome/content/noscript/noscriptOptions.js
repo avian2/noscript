@@ -91,15 +91,16 @@ var nsopt = {
         "xssEx", 
         ns.rxParsers.multi,
         ns.getPref("filterXExceptions"));
-    this.jarEx = new  RegExpController(
-        "jarEx", 
-        ns.rxParsers.multi,
-        ns.getPref("forbidJarDocumentsExceptions"));
     
     // hide incompatible options
-    if(top.opener && top.opener.noscriptOverlay && !top.opener.noscriptOverlay.getNotificationBox()) {
-      // Moz/SeaMonkey, no notifications
-      $("fx-notifications").setAttribute("hidden", "true");
+    let browserWin = ns.dom.mostRecentBrowserWindow;
+    
+    if (browserWin) {
+      if (!browserWin.document.getElementById("noscript-statusIcon"))
+        $("opt-statusIcon").setAttribute("hidden", "true");
+    
+      if(browserWin.noscriptOverlay && !browserWin.getNotificationBox())
+        $("fx-notifications").setAttribute("hidden", "true");
     }
     
     ["clearClick"].forEach(function(c) {
@@ -110,19 +111,19 @@ var nsopt = {
     });
        
     
-    if (!ns.placesSupported) {
+    if (!ns.placesSupported)
       $("opt-placesPrefs").setAttribute("hidden", "true");
-    }
     
     if (ns.canSerializeConf) this.initSerializeButtons();
-    
-    // $("policy-tree").view = policyModel;
-    window.sizeToContent();
     
     this.addButton.setAttribute("enabled", "false");
     this.removeButton.setAttribute("enabled", "false");
     
     this.toggleHoverUI();
+    
+    
+
+    window.sizeToContent();
   },
   
 
@@ -229,9 +230,6 @@ var nsopt = {
     var exVal = this.xssEx.getValue();
     if(this.xssEx.validate() || !/\S/.test(exVal)) 
       ns.setPref("filterXExceptions", exVal);
-    var exVal = this.jarEx.getValue();
-    if(this.jarEx.validate() || !/\S/.test(exVal)) 
-      ns.setPref("forbidJarDocumentsExceptions", exVal);
     
     if (this.tempRevoked) {
       ns.resetAllowedObjects();

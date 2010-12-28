@@ -106,12 +106,6 @@
 <!ENTITY noscriptResetDef "Výchozí nastavení">
 <!ENTITY noscriptResetDef.accesskey "z">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Block JAR remote resources being loaded as documents">
-<!ENTITY noscriptJarExceptions "JAR document blocking exceptions">
-<!ENTITY noscriptJarExceptions.description "JAR documents matching these regular expressions will NOT be blocked.">
 <!ENTITY noscriptRevokeTemp "Zrušit dočasná povolení">
 <!ENTITY noscriptRevokeTemp.accesskey "č">
 <!ENTITY noscriptNoUntrustedPlaceholder "Nezobrazovat zástupnou ikonu pro objekty pocházející z nedůvěryhodných stránek">

@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Възстановяване на стандартните">
 <!ENTITY noscriptResetDef.accesskey "у">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR ЧЗВ">
-<!ENTITY noscriptJarFaq.accesskey "Ч">
-<!ENTITY noscriptForbidJarDocuments "Блокиране на отдалечени JAR-източници, от зареждане като документи">
-<!ENTITY noscriptJarExceptions "Изключения от блокиране на JAR">
-<!ENTITY noscriptJarExceptions.description "JAR-документите съвпадащи с тези обичайни изрази НЯМА да бъдат блокирани.">
 <!ENTITY noscriptRevokeTemp "Отменяне на временните разрешения">
 <!ENTITY noscriptRevokeTemp.accesskey "в">
 <!ENTITY noscriptNoUntrustedPlaceholder "Не показвай обекти идващи от сайтове маркирани като ненадеждни">

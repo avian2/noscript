@@ -175,9 +175,6 @@ const MainContentPolicy = {
           if (this.forbidChromeScripts && this.checkForbiddenChrome(aContentLocation, aRequestOrigin)) {
             return this.reject("Chrome Access", arguments);
           }
-          if (this.forbidJarDocuments && aRequestOrigin && this.checkJarDocument(aContentLocation, aContext, aRequestOrigin)) {
-            return this.reject("Cross-site jar-embedded script", arguments);
-          }
           forbid = isScript = true;
           break;
         case 3: // IMAGES
@@ -205,11 +202,6 @@ const MainContentPolicy = {
             forbid = isScript = true; // we treat XSLT like scripts
             break;
           }
-          
-          if (this.forbidJarDocuments && aRequestOrigin && this.checkJarDocument(aContentLocation, aContext, aRequestOrigin)) {
-            return this.reject("Cross-site jar-embedded stylesheet", arguments);
-          }
-          
           return CP_OK;
         
         case 14: // fonts
@@ -243,10 +235,6 @@ const MainContentPolicy = {
               this.setExpando(aContext, "requiresReload", true);
             }
           }
-          
-          if (this.checkJarDocument(aContentLocation, aContext)) 
-            return this.reject("Plugin content from JAR", arguments);
-          
           
           if (aContentType == 15) {
               if (aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
@@ -328,11 +316,6 @@ const MainContentPolicy = {
           }
           
         case 6:
-  
-          if (this.checkJarDocument(aContentLocation, aContext)) 
-            return this.reject("JAR Document", arguments);
-          
-         
           
           if (aRequestOrigin && aRequestOrigin != aContentLocation) {
             

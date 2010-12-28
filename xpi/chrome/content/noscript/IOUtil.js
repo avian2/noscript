@@ -255,27 +255,8 @@ const IOUtil = {
   },
   
   get TLDService() {
-    var srv = null;
-    try {
-      if ("nsIEffectiveTLDService" in CI) {
-        var srv = CC["@mozilla.org/network/effective-tld-service;1"]
-                .getService(CI.nsIEffectiveTLDService);
-        if (typeof(srv.getBaseDomainFromHost) != "function"
-              || srv.getBaseDomainFromHost("bbc.co.uk") != "bbc.co.uk" // check, some implementations are "fake" (e.g. Songbird's)
-          ) {
-          srv = null;
-        }
-      }
-      if (!srv) {
-        INCLUDE('EmulatedTLDService');
-        srv = EmulatedTLDService;
-      }
-    } catch(ex) {
-      dump(ex + "\n");
-      return null;
-    }
     delete this.TLDService;
-    return this.TLDService = srv;
+    return this.TLDService = CC["@mozilla.org/network/effective-tld-service;1"].getService(CI.nsIEffectiveTLDService);
   }
   
 };

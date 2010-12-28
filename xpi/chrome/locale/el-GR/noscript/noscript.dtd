@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Επαναφορά αρχικών ρυθμίσεων">
 <!ENTITY noscriptResetDef.accesskey "σ">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "Συχνές ερωτήσεις JAR">
-<!ENTITY noscriptJarFaq.accesskey "σ">
-<!ENTITY noscriptForbidJarDocuments "Απαγόρευση φόρτωσης απομακρυσμένων πόρων JAR ως έγγραφα">
-<!ENTITY noscriptJarExceptions "Εξαιρέσεις απαγόρευσης εγγράφων JAR">
-<!ENTITY noscriptJarExceptions.description "ΔΕΝ θα απαγορεύονται τα έγγραφα JAR που ταιριάζουν με αυτές τις κανονικές εκφράσεις.">
 <!ENTITY noscriptRevokeTemp "Αναίρεση προσωρινών αδειοδοτήσεων">
 <!ENTITY noscriptRevokeTemp.accesskey "ν">
 <!ENTITY noscriptNoUntrustedPlaceholder "Χωρίς εικονίδια γεμίσματος για αντικείμενα από μη έμπιστους ιστότοπους">

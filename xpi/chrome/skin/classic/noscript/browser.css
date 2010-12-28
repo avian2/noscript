@@ -194,10 +194,6 @@
   list-style-image: url(untrusted-glb16.png);
 }
 
-
-.noscript-jar {
-  list-style-image: url(jar16.png);
-}
 .noscript-https {
   list-style-image: url(https16.png);
 }

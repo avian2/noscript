@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "Ponastavi na privzete vrednosti">
 <!ENTITY noscriptResetDef.accesskey "n">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Prepreči odpiranje oddaljenih JAR virov kot dokumentov">
-<!ENTITY noscriptJarExceptions "Izjeme pri preprečevanju JAR dokumentov">
-<!ENTITY noscriptJarExceptions.description "JAR dokumenti, ki ustrezajo spodaj predpisanim vzorcem NE BODO blokirani.">
 <!ENTITY noscriptRevokeTemp "Prekliči začasne pravice">
 <!ENTITY noscriptRevokeTemp.accesskey "Z">
 <!ENTITY noscriptNoUntrustedPlaceholder "Ne prikaži okvirja predmetov, ki izvirajo iz zaupanja nevrednih strani">

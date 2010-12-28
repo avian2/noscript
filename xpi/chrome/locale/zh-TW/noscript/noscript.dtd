@@ -106,12 +106,6 @@
 <!ENTITY noscriptResetDef "恢復預設">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR 問與答">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "防止 JAR 遠端資源被當成文件讀取">
-<!ENTITY noscriptJarExceptions "封鎖 JAR 文件的例外情況">
-<!ENTITY noscriptJarExceptions.description "符合這些規則表答式的 JAR 文件將不會被封鎖.">
 <!ENTITY noscriptRevokeTemp "取消暫時許可">
 <!ENTITY noscriptRevokeTemp.accesskey "R">
 <!ENTITY noscriptNoUntrustedPlaceholder "無物件進入位置標誌符從標記信任的網站">

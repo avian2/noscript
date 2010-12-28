@@ -108,12 +108,6 @@
 <!ENTITY noscriptResetDef "重置为默认值">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR 问答…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "阻止作为文档载入 JAR 远程资源">
-<!ENTITY noscriptJarExceptions "阻止 JAR 文档的例外情况">
-<!ENTITY noscriptJarExceptions.description "不阻止匹配以下正则表达式的 JAR 文档。">
 <!ENTITY noscriptRevokeTemp "撤销临时允许">
 <!ENTITY noscriptRevokeTemp.accesskey "R">
 <!ENTITY noscriptNoUntrustedPlaceholder "对于已标记为不可信站点的对象不显示占位符">

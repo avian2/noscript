@@ -104,12 +104,6 @@
 <!ENTITY noscriptResetDef "Lehenetsietara berrezarri">
 <!ENTITY noscriptResetDef.accesskey "l">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQâ�¦">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Blokeatu JAR urruneko errekurtsoak dokumentu gisa kargatzea">
-<!ENTITY noscriptJarExceptions "JAR dokumentu blokeatze salbuespenak">
-<!ENTITY noscriptJarExceptions.description "Espresio erregular hauek betetzen dituzten JAR dokumentuak EZ dira blokeatuko.">
 <!ENTITY noscriptRevokeTemp "Kendu aldi baterako baimenak">
 <!ENTITY noscriptRevokeTemp.accesskey "K">
 <!ENTITY noscriptNoUntrustedPlaceholder "Ez onartu ez-konfiantzako bezala markaturiko guneen objektuen kokalekua">

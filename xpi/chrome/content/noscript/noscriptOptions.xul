@@ -282,7 +282,6 @@
         <tab class="noscript-no" label=" &noscriptUntrusted; " id="nsopt-tabUntrusted" tooltiptext="&noscriptAdditionalRestrictions;"/>
         <tab class="noscript-yes" label=" &noscriptTrusted; " id="nsopt-tabTrusted" tooltiptext="&noscriptAdditionalPermissions;"/>
         <tab class="noscript-xss" label=" &noscriptXss; " id="nsopt-tabXss"/>
-        <tab class="noscript-jar" label=" &noscriptJar; " id="nsopt-tabJar"/>
         <tab class="noscript-https" label=" &noscriptHttps; " id="nsopt-tabHttps"/>
         <tab class="noscript-abe" label="&ABE;" id="nsopt-tabABE"/>
 				<tab class="noscript-ef" label="&noscriptExternalFilters;" id="nsopt-tabEF"/>
@@ -338,24 +337,6 @@
             <hbox align="center">
               <label control="xssEx-sample" value="&noscriptMatchSample;" />
               <textbox id="xssEx-sample" flex="1" value="http://www.google.com/search?q=test" />
-            </hbox>
-          </vbox>
-        </tabpanel>
-        
-        <tabpanel><!-- JAR -->
-         <vbox flex="1">
-            <label class="text-link header" 
-              accesskey="&noscriptJarFaq.accesskey;"
-              onclick="noscriptUtil.openFaq('jar')"
-              value="&noscriptJarFaq;"/>
-            <checkbox id="opt-forbidJarDocuments" label="&noscriptForbidJarDocuments;" />
-            <separator class="thin" />
-            <label control="jarEx-regexp" class="header" value="&noscriptJarExceptions;" />
-            <description control="jarEx-regexp" style="white-space: normal">&noscriptJarExceptions.description;</description>
-            <textbox id="jarEx-regexp" multiline="true" flex="1" /> 
-            <hbox align="center">
-              <label control="jarEx-sample" value="&noscriptMatchSample;" />
-              <textbox id="jarEx-sample" flex="1" value="jar:https://samples.noscript.net/sample_apps.jar!/application1.xul" />
             </hbox>
           </vbox>
         </tabpanel>

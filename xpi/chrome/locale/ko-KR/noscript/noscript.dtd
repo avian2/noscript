@@ -106,12 +106,6 @@
 <!ENTITY noscriptResetDef "기본 설정으로 복원">
 <!ENTITY noscriptResetDef.accesskey "d">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "문서로 로드되는 JAR 원격 리소스 차단">
-<!ENTITY noscriptJarExceptions "예외를 차단하는 JAR 문서">
-<!ENTITY noscriptJarExceptions.description "이 정규 표현식과 일치하는 JAR 문서는 차단하지 않습니다.">
 <!ENTITY noscriptRevokeTemp "일시적인 허용 취소">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "신뢰할 수 없는 사이트로 등록된 사이트의 개체에 대해서는 플레이스홀더 표시하지 않음">

@@ -220,8 +220,6 @@
           accesskey="&noscriptXssFaq.accesskey;"
           oncommand="noscriptUtil.openFaq('xss')"
         />
-        <menuitem id="noscript-jar-opts" class="menuitem-iconic noscript-jar"
-          style="display: none !important" />
         <menuitem id="noscript-abe-opts" class="menuitem-iconic noscript-abe"
           style="display: none !important" />
      </menupopup>

@@ -106,12 +106,6 @@
 <!ENTITY noscriptResetDef "بازگردانی به تنظیمات اولیه">
 <!ENTITY noscriptResetDef.accesskey "د">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "پرسش و پاسخ JAR">
-<!ENTITY noscriptJarFaq.accesskey "پ">
-<!ENTITY noscriptForbidJarDocuments "بستن منابع JAR بارگذاری شده به صورت پرونده">
-<!ENTITY noscriptJarExceptions "استثناهای ممنوع کردن پرونده JAR">
-<!ENTITY noscriptJarExceptions.description "پرونده های JAR مستثنی شده بسته نمی شوند.">
 <!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
 <!ENTITY noscriptRevokeTemp.accesskey "T">
 <!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">

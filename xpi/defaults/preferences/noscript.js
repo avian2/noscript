@@ -137,10 +137,6 @@ pref("noscript.forbidExtProtSubdocs", true);
 
 pref("noscript.forbidChromeScripts", false);
 
-pref("noscript.forbidJarDocuments", true);
-pref("noscript.forbidJarDocumentsExceptions", "^jar:https://samples\\.noscript\\.net/sample_apps.jar!.*\\.xul$\n");
-pref("noscript.jarDoc.notify", true);
-
 pref("noscript.forbidXBL", 4);
 pref("noscript.forbidXHR", 1);
 
@@ -321,5 +317,6 @@ pref("noscript.forbidBGRefresh.exceptions", ".mozilla.org");
 pref("noscript.toStaticHTML", true);
 pref("noscript.liveConnectInterception", true);
 
-pref("noscript.donottrack.enabled", true);
-pref("noscript.donottrack.exceptions", "");
+pref("noscript.doNotTrack.enabled", true);
+pref("noscript.doNotTrack.exceptions", "");
+pref("noscript.doNotTrack.forced", "");

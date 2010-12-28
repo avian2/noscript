@@ -106,12 +106,6 @@
 <!ENTITY noscriptResetDef "Відновити до початкових налаштувань">
 <!ENTITY noscriptResetDef.accesskey "н">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR FAQ…">
-<!ENTITY noscriptJarFaq.accesskey "Q">
-<!ENTITY noscriptForbidJarDocuments "Блокувати віддалені ресурси JAR що завантажуються як документи">
-<!ENTITY noscriptJarExceptions "Винятки у блокуванні документів JAR">
-<!ENTITY noscriptJarExceptions.description "Документи JAR що підходять під ці регулярні вирази НЕ будуть заблоковані.">
 <!ENTITY noscriptRevokeTemp "Відкликати тимчасові дозволи">
 <!ENTITY noscriptRevokeTemp.accesskey "т">
 <!ENTITY noscriptNoUntrustedPlaceholder "Не показувати замінник для тих об’єктів що походять з недовірених сайтів.">

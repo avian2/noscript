@@ -104,12 +104,6 @@
 <!ENTITY noscriptResetDef "Varsayılana Sıfırla">
 <!ENTITY noscriptResetDef.accesskey "v">
 <!ENTITY noscriptOptionsWidth "40em">
-<!ENTITY noscriptJar "JAR">
-<!ENTITY noscriptJarFaq "JAR SSS">
-<!ENTITY noscriptJarFaq.accesskey "S">
-<!ENTITY noscriptForbidJarDocuments "Uzak JAR kaynaklarının belge olarak yüklenmelerini engelle">
-<!ENTITY noscriptJarExceptions "JAR belgesi engelleme ayrıcalıklıları">
-<!ENTITY noscriptJarExceptions.description "Bu tanıma uyan JAR belgeleri ENGELLENMEYECEKTİR.">
 <!ENTITY noscriptRevokeTemp "Geçici İzinleri Kaldır">
 <!ENTITY noscriptRevokeTemp.accesskey "K">
 <!ENTITY noscriptNoUntrustedPlaceholder "Güvensiz işaretlenen sitelerden gelen nesnelerde yertutucuları gösterme">
