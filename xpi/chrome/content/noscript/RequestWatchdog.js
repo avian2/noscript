@@ -1099,7 +1099,7 @@ var InjectionChecker = {
   reduceJSON: function(s) {
     const toStringRx = /^function\s*toString\(\)\s*{\s*\[native code\]\s*\}$/;
     // optimistic case first, one big JSON block
-    do {
+    for (;;) {
      
       let m = s.match(/{[\s\S]*}/);
       if (!m) return s;
@@ -1148,7 +1148,8 @@ var InjectionChecker = {
         if (s == prev) break;
       }
       
-    } while (s != whole);
+      if (s == whole) break;
+    }
 
     return s;
   },
