@@ -1,11 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE overlay [
-<!ENTITY % noscript SYSTEM "chrome://noscript/locale/noscript.dtd" >
-%noscript;
-<!ENTITY % noscriptFB  SYSTEM "chrome://noscript/content/en-US/noscript.dtd" >
-%noscriptFB;
-]
->
+<!DOCTYPE overlay SYSTEM "chrome://noscript/locale/noscript.dtd">
 <?xml-stylesheet href="chrome://noscript/skin/browser.css" type="text/css"?>
 
 <overlay id="noscriptOverlay" 
@@ -18,7 +12,6 @@
     
   <stringbundleset id="stringbundleset">
     <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />
-    <stringbundle id="noscript-stringsFB" src="chrome://noscript/content/en-US/noscript.properties" />
   </stringbundleset>
 
   
@@ -26,7 +19,7 @@
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="noscript-tbb" 
       buttonstyle="pictures"
-      class="toolbarbutton-1 noscript-no"
+      class="noscript-no"
       label="NoScript"
       type="menu-button"
       oncommand="noscriptOverlay.onUICommand(event)"
@@ -41,14 +34,14 @@
     <toolbarbutton id="noscript-tbb-temp-page"
       tooltiptext="&noscriptTempAllowPage;"
       buttonstyle="pictures"
-      class="toolbarbutton-1 noscript-temp noscript-allow"
+      class="noscript-temp noscript-allow"
       label="&noscriptTempAllowPage;"
       oncommand="noscriptOverlay.allowPage()"
     />
     <toolbarbutton id="noscript-tbb-revoke-temp"
       tooltiptext="&noscriptRevokeTemp;"
       buttonstyle="pictures"
-      class="toolbarbutton-1 noscript-revoke-temp"
+      class="noscript-revoke-temp"
       label="&noscriptRevokeTemp;"
       oncommand="noscriptOverlay.revokeTemp()"
     />

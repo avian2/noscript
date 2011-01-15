@@ -57,6 +57,6 @@ Strings.prototype = {
 ,
   getString: function(name, parms) {
     var s = this._stringFrom(this.getBundle("locale"), name, parms);
-    return s || this._stringFrom(this.getBundle("content/en-US"), name, parms) || name;
+    return s || name;
   }
 }

@@ -166,17 +166,20 @@ return noscriptUtil.service ? {
   },
   
   onUIUp: function(ev) {
-    
-    if (ev.currentTarget !== ev.target) return;
-    
-    if (this.hoverUI && ev.target.id == "noscript-tbb" &&
-        ev.button === 0 && !this.ns.getPref("hoverUI.excludeToggling")) {
-      
-      this.toggleCurrentPage();
+    let tb = ev.currentTarget;
+    if (tb !== ev.target) return;
+   
+    if (tb.id === "noscript-tbb" &&
+        (tb.type !== "menu-button" || ev.originalTarget.tagName == "xul:toolbarbutton") && 
+        ev.button === 0 &&
+        !(this.hoverUI && this.ns.getPref("hoverUI.excludeToggling")) &&
+         this.toggleCurrentPage()
+        ) {
+      // discriminate dropdown button from main click area
       ev.preventDefault();
       return;
     }
-    
+   
     if (ev.button === 1) {
       this.allowPage();
       ev.preventDefault();
@@ -187,7 +190,7 @@ return noscriptUtil.service ? {
     if ("_hovering" in popup && popup._hovering === 1 || // reopen if still hovering the icon
         this.hoverUI && !this.isOpenOrJustClosed(popup)) {
       popup._hovering = -1;
-      if (ev.button !== 2) this.openPopup(popup, ev.currentTarget);
+      if (ev.button !== 2) this.openPopup(popup, tb);
     } 
   },
   
@@ -346,7 +349,7 @@ return noscriptUtil.service ? {
     
     const tbb = $("noscript-tbb");
     if (tbb) {
-      tbb.setAttribute("type", this.hoverUI ? "button" : "menu-button");
+      tbb.setAttribute("type", this.hoverUI ? "button" : this.ns.getPref("toolbarToggle") ? "menu-button" : "menu");
     }
     
     const buttons = [tbb];

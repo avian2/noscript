@@ -39,9 +39,7 @@ RequestWatchdog.prototype = {
         PolicyState.attach(channel);
         
         HTTPS.forceChannel(channel);
-        
-        if (DoNotTrack.enabled) DoNotTrack.apply(channel);
-        
+
         if (isDoc) {
           let ph = PolicyState.extract(channel); 
           if (ph && ph.context) isDoc = !(ph.context instanceof CI.nsIDOMHTMLEmbedElement);
@@ -2376,16 +2374,3 @@ var ASPIdiocy = {
   }
 }
 
-var DoNotTrack = {
-  enabled: true,
-  exceptions: null,
-  forced: null,
-  apply: function(channel) {
-    if (this.exceptions) {
-      let url = channel.URI.spec;
-      if (this.exceptions.test(url) && !(this.forced && this.forced.test(url))) return;
-    }
-    channel.setRequestHeader("X-Behavioral-Ad-Opt-Out", "1", false);
-    channel.setRequestHeader("X-Do-Not-Track", "1", false);
-  }
-}

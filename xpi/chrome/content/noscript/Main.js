@@ -402,7 +402,7 @@ var ns = singleton = {
        break;
       case "doNotTrack.exceptions":
       case "doNotTrack.forced":
-        DoNotTrack[name] = AddressMatcher.create(this.getPref(name));
+        DoNotTrack[name.split(".")[1]] = AddressMatcher.create(this.getPref(name));
       break;
       
       case "STS.enabled":
@@ -2464,7 +2464,7 @@ var ns = singleton = {
       }
     }
     for (let j = toBeChecked.length; j-- > 0;) {
-      let l = toBeChecked.length;
+      let l = toBeChecked[j];
       let style = w.getComputedStyle(l, '');
       if (!style) return true; // this means we're inside an invisible frame, no reason to loose time here
       
@@ -4179,11 +4179,8 @@ var ns = singleton = {
              
              if ((/^text\/.*ml$|unknown/i.test(mime) || 
                     mime === "text/plain" && !(ext && /^(?:asc|log|te?xt)$/.test(ext)) // see Apache's magic file, turning any unkown ext file containing JS style comments into text/plain
-                  ) &&
-                 !(nosniff && // exception for Google bug see http://forums.informaction.com/viewtopic.php?f=7&t=5304
-                      !/\b(?:apis?|gmodules|insight\.youtube)\./.test(uri.host)) ||
-                  this.getPref("inclusionTypeChecking.checkDynamic", false)) {
-                // text/html or xml, let's assume a misconfigured dynamically served script/css
+                  ) && !this.getPref("inclusionTypeChecking.checkDynamic", false)) {
+                // text/html or xml or text/plain with non-text ext, let's assume a misconfigured dynamically served script/css
                 if (this.consoleDump) this.dump(
                       "Warning: mime type " + mime + " for " +
                       (ctype == 2 ? "Javascript" : "CSS") + " served from " +

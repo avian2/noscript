@@ -5,7 +5,7 @@
  
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>2.0.9.3</em:version>
+   <em:version>2.0.9.4rc3</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    
@@ -133,71 +133,6 @@
       </Description>
     </em:targetApplication>
     
-    
-   <em:file>
-     <Description about="urn:mozilla:extension:file:noscript.jar">
-        <em:package>content/noscript/</em:package>
-        <em:locale>content/noscript/en-US/</em:locale>
-        <em:skin>skin/classic/noscript/</em:skin>
-        <!-- LOCALECHROME START -->
-        <em:locale>locale/ar/noscript/</em:locale>
-        <em:locale>locale/be-BY/noscript/</em:locale>
-        <em:locale>locale/bg-BG/noscript/</em:locale>
-        <em:locale>locale/ca-AD/noscript/</em:locale>
-        <em:locale>locale/cs-CZ/noscript/</em:locale>
-        <em:locale>locale/da-DK/noscript/</em:locale>
-        <em:locale>locale/de-AT/noscript/</em:locale>
-        <em:locale>locale/de-DE/noscript/</em:locale>
-        <em:locale>locale/el-GR/noscript/</em:locale>
-        <em:locale>locale/en-GB/noscript/</em:locale>
-        <em:locale>locale/es-AR/noscript/</em:locale>
-        <em:locale>locale/es-CL/noscript/</em:locale>
-        <em:locale>locale/eu-ES/noscript/</em:locale>
-        <em:locale>locale/es-ES/noscript/</em:locale>
-        <em:locale>locale/et-EE/noscript/</em:locale>
-        <em:locale>locale/fa-IR/noscript/</em:locale>
-        <em:locale>locale/fi-FI/noscript/</em:locale>
-        <em:locale>locale/fr/noscript/</em:locale>
-        <em:locale>locale/gl-ES/noscript/</em:locale>
-        <em:locale>locale/he-IL/noscript/</em:locale>
-        <em:locale>locale/hr-HR/noscript/</em:locale>
-        <em:locale>locale/hu-HU/noscript/</em:locale>
-        <em:locale>locale/ko-KR/noscript/</em:locale>
-        <em:locale>locale/id-ID/noscript/</em:locale>
-        <em:locale>locale/it-IT/noscript/</em:locale>
-        <em:locale>locale/ja-JP/noscript/</em:locale>
-        <em:locale>locale/km-KH/noscript/</em:locale>
-        <em:locale>locale/lt-LT/noscript/</em:locale>
-        <em:locale>locale/mk-MK/noscript/</em:locale>
-        <em:locale>locale/nb-NO/noscript/</em:locale>
-        <em:locale>locale/nl-NL/noscript/</em:locale>
-        <em:locale>locale/pl-PL/noscript/</em:locale>
-        <em:locale>locale/pt-BR/noscript/</em:locale>
-        <em:locale>locale/pt-PT/noscript/</em:locale>
-        <em:locale>locale/ro/noscript/</em:locale>
-        <em:locale>locale/ru-RU/noscript/</em:locale>
-        <em:locale>locale/sk-SK/noscript/</em:locale> 
-        <em:locale>locale/sl-SI/noscript/</em:locale>
-        <em:locale>locale/sv-SE/noscript/</em:locale>
-        <em:locale>locale/th-TH/noscript/</em:locale>
-        <em:locale>locale/tr-TR/noscript/</em:locale>
-        <em:locale>locale/uk-UA/noscript/</em:locale>
-        <em:locale>locale/zh-CN/noscript/</em:locale>
-        <em:locale>locale/zh-TW/noscript/</em:locale>
-        <em:locale>locale/cy-GB/noscript/</em:locale>
-        <em:locale>locale/sr-RS/noscript/</em:locale>
-        <em:locale>locale/ms-MY/noscript/</em:locale>
-        <em:locale>locale/kk-KZ/noscript/</em:locale>
-        <em:locale>locale/br-IN/noscript/</em:locale>
-        <em:locale>locale/te-IN/noscript/</em:locale>
-        <em:locale>locale/ur-PK/noscript/</em:locale>
-        <em:locale>locale/vi/noscript/</em:locale>
-        <!-- LOCALECHROME STOP -->
-     </Description>
-   </em:file>
-   
-   <!-- LOCALIZED START -->
-   <!-- LOCALIZED STOP -->
  </Description>
 
 </RDF>

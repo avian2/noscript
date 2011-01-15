@@ -209,6 +209,8 @@ const ABE = {
     if (this.deferIfNeeded(req))
       return false;
     
+    if (DoNotTrack.enabled) DoNotTrack.apply(req);
+    
     var t;
     if (this.consoleDump) {
       this.log("Checking #" + req.serial + ": " + req.destination + " from " + req.origin + " - " + loadFlags);
@@ -1077,7 +1079,7 @@ ABERequest.prototype = Lang.memoize({
     try {
       return !this.failed && this.canDoDNS && this.isLocal(this.destinationURI, false);
     } catch(e) {
-      ABE.log("Local destination DNS check failed for " + this.destination +" from "+ this.origin + ": " + e);
+      ABE.log("Local destination DNS check failed for " + this.destination + " from "+ this.origin + ": " + e);
       this.channel.cancel(NS_ERROR_UNKNOWN_HOST);
       this.failed = true;
       return false;
@@ -1373,5 +1375,39 @@ var OriginTracer = {
     }
     ABE.log("Traced back " + req.destination + " to " + res);
     return res;
+  }
+}
+
+
+
+var DoNotTrack = {
+  enabled: true,
+  exceptions: null,
+  forced: null,
+  get authManager() {
+    delete this.authManager;
+    return this.authManager = CC["@mozilla.org/network/http-auth-manager;1"].getService(CI.nsIHttpAuthManager);
+  },
+  apply: function(/* ABEReq */ req) {
+    if (this.exceptions) {
+      let url = req.destination;
+      if (this.exceptions.test(url) && !(this.forced && this.forced.test(url))) return;
+    }
+    
+    if (req.localDestination) return; // home routers don't like DNT
+    
+    if (req.isDoc) {
+      if (req.method === "POST" && req.originURI.host === req.destinationURI.host)
+        return;
+      // TODO: find a way to check whether this request is gonna be WWW-authenticated
+    }
+    
+    let channel = req.channel;
+    channel.setRequestHeader("X-Do-Not-Track", "1", false);
+    try { // Connection header last, see http://forums.informaction.com/viewtopic.php?f=7&t=5626 
+      let conn = channel.getRequestHeader("Connection");
+      channel.setRequestHeader("Connection", "", false);
+      channel.setRequestHeader("Connection", conn, false);
+    } catch(e) {}
   }
 }
