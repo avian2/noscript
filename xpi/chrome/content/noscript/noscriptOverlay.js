@@ -847,8 +847,6 @@ return noscriptUtil.service ? {
           }
         }
       }
-      
-      
     }
     if (untrustedFrag && untrustedFrag.firstChild) {
       if (untrustedCount > 0) 

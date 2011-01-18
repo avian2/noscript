@@ -8,9 +8,9 @@
   onload="nsopt.init()"
   ondialogaccept="nsopt.save()"
   title="&noscriptOptionsLong;"
-	buttons="accept,extra2,cancel"
+	buttons="extra2,accept,cancel"
   
-  buttonlabelextra2="&noscriptReset;"
+	buttonlabelextra2="&noscriptReset;"
   buttonaccesskeyextra2="&noscriptReset.accesskey;" 
   ondialogextra2="nsopt.reset()"
   
@@ -77,7 +77,7 @@
     <spacer flex="1" />
     <button id="importConfButton" label="&noscriptImport;" hidden="true" oncommand="nsopt.importConf()" />
     <button id="exportConfButton" label="&noscriptExport;" hidden="true" oncommand="nsopt.exportConf()" />
-  
+    <button id="donateButton" label="&noscriptDonate;" accesskey="&noscriptDonate.accesskey;"  hidden="true" oncommand="nsopt.donate();" />
   </vbox>
   </tabpanel><!-- END General -->
   

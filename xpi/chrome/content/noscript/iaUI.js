@@ -73,8 +73,14 @@ UIUtils.prototype = {
   moveButtonsDown: function() {
     var ref = document.documentElement.getButton("extra2");
     Array.slice(arguments, 0).forEach(function(s) {
-      var b = $(s);
-      b.className = ref.className;
+      var b;
+      if (s) {
+        b = $(s);
+        b.className = ref.className;
+      } else {
+        b = document.createElement("spacer");
+        b.setAttribute("flex", "1");
+      }
       ref.parentNode.insertBefore(b, ref);
       b.hidden = false;
     });

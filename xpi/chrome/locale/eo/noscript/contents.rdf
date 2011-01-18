@@ -4,7 +4,7 @@
     <RDF:Seq about="urn:mozilla:locale:root">
         <RDF:li resource="urn:mozilla:locale:eo"/>
     </RDF:Seq>
-    <RDF:Description about="urn:mozilla:locale:eo" chrome:name="en-US" >
+    <RDF:Description about="urn:mozilla:locale:eo" chrome:name="eo" >
         <chrome:packages>
             <RDF:Seq about="urn:mozilla:locale:eo:packages">
                 <RDF:li resource="urn:mozilla:locale:eo:noscript"/>

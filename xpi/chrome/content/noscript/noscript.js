@@ -92,6 +92,10 @@ var noscriptUtil = {
     this.browse("http://noscript.net/help/" + section);
   },
   
+  openDonate: function(src) {
+    this.browse("https://secure.informaction.com/donate/?id=noscript&src=" + src);
+  },
+  
   openInfo: function(about) {
     const ns = this.service;
     
@@ -132,8 +136,9 @@ var noscriptUtil = {
     if(w && !w.closed && w.gBrowser) {
       w.gBrowser.selectedTab = w.gBrowser.addTab(url);
     } else {
-      window.open(url, "_blank", features || null)
+      w = window.open(url, "_blank", features || null);
     }
+    w.focus();
   }
   
 };

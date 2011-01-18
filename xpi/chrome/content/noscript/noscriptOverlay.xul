@@ -19,7 +19,7 @@
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="noscript-tbb" 
       buttonstyle="pictures"
-      class="noscript-no"
+      class="toolbarbutton-1 noscript-no"
       label="NoScript"
       type="menu-button"
       oncommand="noscriptOverlay.onUICommand(event)"
@@ -34,14 +34,14 @@
     <toolbarbutton id="noscript-tbb-temp-page"
       tooltiptext="&noscriptTempAllowPage;"
       buttonstyle="pictures"
-      class="noscript-temp noscript-allow"
+      class="toolbarbutton-1 noscript-temp noscript-allow"
       label="&noscriptTempAllowPage;"
       oncommand="noscriptOverlay.allowPage()"
     />
     <toolbarbutton id="noscript-tbb-revoke-temp"
       tooltiptext="&noscriptRevokeTemp;"
       buttonstyle="pictures"
-      class="noscript-revoke-temp"
+      class="toolbarbutton-1 noscript-revoke-temp"
       label="&noscriptRevokeTemp;"
       oncommand="noscriptOverlay.revokeTemp()"
     />

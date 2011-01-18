@@ -183,3 +183,5 @@
 <!ENTITY noscriptPreset.medium "Classico (Whitelist + Sicurezza Web)">
 <!ENTITY noscriptPreset.high "Fortezza (Protezione completa)">
 <!ENTITY noscript.hoverUI "Apri il menù dei permessi quando il mouse sorvola l'icona di NoScript">
+<!ENTITY noscriptDonate "Donazione">
+<!ENTITY noscriptDonate.accesskey "o">

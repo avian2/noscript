@@ -1403,8 +1403,8 @@ var DoNotTrack = {
     }
     
     let channel = req.channel;
-    channel.setRequestHeader("X-Do-Not-Track", "1", false);
-    try { // Connection header last, see http://forums.informaction.com/viewtopic.php?f=7&t=5626 
+    try { // Connection header last, see http://forums.informaction.com/viewtopic.php?f=7&t=5626
+      channel.setRequestHeader("X-Do-Not-Track", "1", false);
       let conn = channel.getRequestHeader("Connection");
       channel.setRequestHeader("Connection", "", false);
       channel.setRequestHeader("Connection", conn, false);

@@ -114,7 +114,7 @@ var nsopt = {
     if (!ns.placesSupported)
       $("opt-placesPrefs").setAttribute("hidden", "true");
     
-    if (ns.canSerializeConf) this.initSerializeButtons();
+    if (ns.canSerializeConf) this.initExtraButtons();
     
     this.addButton.setAttribute("enabled", "false");
     this.removeButton.setAttribute("enabled", "false");
@@ -127,10 +127,14 @@ var nsopt = {
   },
   
 
-  initSerializeButtons: function() {
-    this.utils.moveButtonsDown("importConfButton", "exportConfButton");
+  initExtraButtons: function() {
+    this.utils.moveButtonsDown("donateButton", "", "importConfButton", "exportConfButton");
   },
   
+  
+  donate: function() {
+    noscriptUtil.openDonate("options");
+  },
   
   importConf: function() {
     this.chooseFile(
