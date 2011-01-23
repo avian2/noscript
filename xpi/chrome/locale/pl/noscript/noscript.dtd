@@ -64,7 +64,7 @@
 <!ENTITY noscriptAllowViaBookmarks "Pozwalaj na wykonywanie skryptów witrynom otwieranym z folderu Zakładki">
 <!ENTITY noscriptAllowPing "Pozwalaj na &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Pozwalaj na wykonywanie skryptów lokalnym odnośnikom">
-<!ENTITY noscriptForbidPing "Nie pozwalaj na&lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "Nie pozwalaj na &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Nie pozwalaj na przekierowania META znajdujące się wewnątrz elementu HTML &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
 <!ENTITY noscriptNotifyMeta "Wyświetlaj informacje o zablokowanych przekierowaniach META">
@@ -145,7 +145,7 @@
 <!ENTITY noscriptTrustedPagesAdj "zaufana">
 <!ENTITY noscriptUntrustedPagesAdj "niezaufana">
 <!ENTITY noscriptKeepLocked "Pozostaw ten element zablokowany (zalecane)">
-<!ENTITY noscriptEmbeddings "Osadzenia">
+<!ENTITY noscriptEmbeddings "Obiekty osadzone">
 <!ENTITY noscriptPrev "Poprzedni">
 <!ENTITY noscriptNext "Następny">
 <!ENTITY noscriptFrameOptErr.title "Ta treść nie może zostać wyświetlona w ramce">
@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "O">
 <!ENTITY noscriptUninstall "Odinstaluj">
 <!ENTITY noscriptRecentBlocked "Ostatnio zablokowane witryny">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptExternalFilters "Filtry zewnętrzne">
+<!ENTITY noscriptEF.enable "Włącz filtry zewnętrzne">
+<!ENTITY noscriptEF.add "Nowy filtr…">
+<!ENTITY noscriptEF.executable "Plik wykonywalny:">
+<!ENTITY noscriptEF.browse "Przeglądaj…">
+<!ENTITY noscriptEF.contentType "Zawartość typu (MIME) będzie filtrowana (dokładne dopasowanie lub wyrażenie regularne):">
+<!ENTITY noscriptEF.exceptions "Nie filtruj obiektów przychodzących z następujących witryn:">
+<!ENTITY noscriptEF.remove "Usuń">
+<!ENTITY noscriptPreset "Poziom zabezpieczeń">
+<!ENTITY noscriptPreset.off "Wyłączone (naprawdę?!)">
+<!ENTITY noscriptPreset.low "Niski (lista zabronionych + zabezpieczenia sieciowe)">
+<!ENTITY noscriptPreset.medium "Średni (lista dozwolonych + zabezpieczenia sieciowe))">
+<!ENTITY noscriptPreset.high "Wysoki (pełne blokowanie)">
+<!ENTITY noscript.hoverUI "Otwórz menu ustawień po umieszczeniu wskaźnika myszy nad ikoną NoScript">
+<!ENTITY noscriptDonate "Dotacje">
 <!ENTITY noscriptDonate.accesskey "o">

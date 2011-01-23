@@ -88,12 +88,12 @@
 <!ENTITY noscriptNselNever "أخفِ محتويات عناصر &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptNselForce "أظهر محتويات عنصر &lt;NOSCRIPT&gt; الذي يلي &lt;SCRIPT&gt; معترض">
 <!ENTITY noscriptAutoAllowTopLevel "مبدئيا اسمح مؤقتا لمواقع المستوى الأعلى">
-<!ENTITY noscriptDescription "حماية إضافية لفيرفكس: نوسكربت يسمح لجافاسكربت و جافا (و ملحقات أخرى) للعمل فقط من المواقع الموثوقة التي تختارها (مثلا:موقع مصرفك). هذه المقاربة التحفظية المبنية على القوائم البيضاء تمنع استغلال الثغرات الأمنية (حتى غير المعلومة منها) دون تقليل الكفاءة…سيؤكد المحترفون أن فيرفكس آمن مع نوسكربت.:-)">
+<!ENTITY noscriptDescription "حماية إضافية لفيرفوكس: نوسكربت يسمح لجافاسكربت و جافا (و ملحقات أخرى) للعمل فقط من المواقع الموثوقة التي تختارها (مثلا:موقع مصرفك). هذه المقاربة التحفظية المبنية على القوائم البيضاء تمنع استغلال الثغرات الأمنية (حتى غير المعلومة منها) دون تقليل الكفاءة…سيؤكد المحترفون أن فيرفوكس أكثر أمناً مع نوسكربت.:-)">
 <!ENTITY noscriptOptBlockCssScanners "اعترض الماسحات المبنية على تقنية XSS">
 <!ENTITY noscriptOptFilterXGet "طهِّر الطلبات المشبوهة عابرة المواقع">
 <!ENTITY noscriptOptFilterXPost "حوِّل الطلبات العابرة للمواقع من النوع POST إلى طلبات من GET خالية من البيانات">
-<!ENTITY noscriptShowConsole "أظهر المرقاب">
-<!ENTITY noscriptShowConsole.accesskey "ر">
+<!ENTITY noscriptShowConsole "أظهر وحدة التحكم">
+<!ENTITY noscriptShowConsole.accesskey "ك">
 <!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "‮أسئلة شائعة عن ‪XSS">
@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "ج">
 <!ENTITY noscriptUninstall "ازالة">
 <!ENTITY noscriptRecentBlocked "مواقع معترضة مأخراً">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
-<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptExternalFilters "فلاتر خارجية">
+<!ENTITY noscriptEF.enable "تفعيل الفلاتر خارجية">
+<!ENTITY noscriptEF.add "فلتر جديد…">
+<!ENTITY noscriptEF.executable "ملف تشغيل:">
+<!ENTITY noscriptEF.browse "التصفح…">
+<!ENTITY noscriptEF.contentType "نوع المحتوى(مايم) الذي سيتم فلترته (تطابق">
+<!ENTITY noscriptEF.exceptions "لا تصفّي كائنات قادمة من هذه المواقع :">
+<!ENTITY noscriptEF.remove "ازالة">
+<!ENTITY noscriptPreset "مستوى الأمن">
+<!ENTITY noscriptPreset.off "إيقاف (هل أنت متأكد؟!)">
+<!ENTITY noscriptPreset.low "الوضع السهل (القائمة السوداء + أمن الويب)">
+<!ENTITY noscriptPreset.medium "كلاسيكي (القائمة البيضاء+أمن الويب)">
+<!ENTITY noscriptPreset.high "القلعة (أمن تام)">
+<!ENTITY noscript.hoverUI "فتح قائمة الإذِن عندما يحوم المؤشّر فوق رمز نوسكريبت">
+<!ENTITY noscriptDonate "التبرع">
+<!ENTITY noscriptDonate.accesskey "ت">

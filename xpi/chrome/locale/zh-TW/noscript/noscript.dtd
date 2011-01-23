@@ -67,6 +67,8 @@
 <!ENTITY noscriptForbidPing "禁止 &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "禁止 &lt;NoScript&gt; 元素中的 META 重新導向">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptNotifyMeta "顯示關於被封鎖的 META 重導向">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptWhitelist "白名單">
 <!ENTITY noscriptPermissions "許可">
 <!ENTITY noscriptRefresh "重新整理">
@@ -166,21 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "移除">
 <!ENTITY noscriptRecentBlocked "最近封鎖的網站">
-<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
-<!ENTITY noscriptNotifyMeta.accesskey "R">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptExternalFilters "外部篩選器">
+<!ENTITY noscriptEF.enable "啟用外部篩選器">
+<!ENTITY noscriptEF.add "新增篩選器…">
+<!ENTITY noscriptEF.executable "可執行檔：">
+<!ENTITY noscriptEF.browse "瀏覽…">
+<!ENTITY noscriptEF.contentType "欲篩選的內容類型(MIME)(完全符合正規表達式)">
+<!ENTITY noscriptEF.exceptions "當進入這些網站時不篩選物件：">
+<!ENTITY noscriptEF.remove "移除">
+<!ENTITY noscriptPreset "安全層級">
+<!ENTITY noscriptPreset.off "關閉(您是認真的嗎？)">
+<!ENTITY noscriptPreset.low "輕鬆達成(黑名單+網頁安全)">
+<!ENTITY noscriptPreset.medium "傳統(白名單+網頁安全)">
+<!ENTITY noscriptPreset.high "堡壘(完全鎖定)">
+<!ENTITY noscript.hoverUI "當滑鼠移至 NoScript's 圖示時開啟權限選單">
+<!ENTITY noscriptDonate "贊助">
 <!ENTITY noscriptDonate.accesskey "o">

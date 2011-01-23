@@ -48,7 +48,9 @@
 <!ENTITY noscriptForbidWebBugs "Halang &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Halang Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Halang &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Halang &lt;FRAMES&gt;">
+<!ENTITY noscriptForbidFrames "Halang &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Halang @font-face">
+<!ENTITY noscriptForbidMedia "Halang &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Halang Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Halang plugin lain">
 <!ENTITY noscriptReloadWarn "Tetapan ini akan kesan apabila muka laman yang dimuat turun semula.">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Halang &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Halang META pengarah di dalam unsur &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptNotifyMeta "Papar mesej tentang META alih arah terhalang">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptWhitelist "Senarai putih">
 <!ENTITY noscriptPermissions "Kebenaran">
 <!ENTITY noscriptRefresh "Pulihkan">
@@ -148,10 +152,6 @@
 <!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
 <!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
 <!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
-<!ENTITY noscriptForbidFonts "Forbid @font-face">
-<!ENTITY noscriptForbidMedia "Forbid &lt;AUDIO&gt; / &lt;VIDEO&gt;">
-<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
-<!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
 <!ENTITY ABE "ABE">
 <!ENTITY ABE.accesskey "A">

@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "V">
 <!ENTITY noscriptUninstall "Deïnstalleren">
 <!ENTITY noscriptRecentBlocked "Recentelijk geblokkeerde sites">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
-<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptExternalFilters "Externe filters">
+<!ENTITY noscriptEF.enable "Externe filters inschakelen">
+<!ENTITY noscriptEF.add "Nieuw Filter…">
+<!ENTITY noscriptEF.executable "Uitvoerbaar bestand:">
+<!ENTITY noscriptEF.browse "Bladeren…">
+<!ENTITY noscriptEF.contentType "Te filteren inhoudstype (MIME) (exacte overeenkomst of reguliere expressie):">
+<!ENTITY noscriptEF.exceptions "Objecten niet filteren indien afkomstig van deze sites:">
+<!ENTITY noscriptEF.remove "Verwijderen">
+<!ENTITY noscriptPreset "Beveiligingsniveau">
+<!ENTITY noscriptPreset.off "Uit (sterk afgeraden!)">
+<!ENTITY noscriptPreset.low "Eenvoudig (Bloklijst en webbeveiliging)">
+<!ENTITY noscriptPreset.medium "Klassiek (Toestemmingenlijst + webbeveiliging)">
+<!ENTITY noscriptPreset.high "Zwaar (volledige afsluiting)">
+<!ENTITY noscript.hoverUI "Toestemmingen menu openen als muis over NoScript pictogram wordt geplaatst">
+<!ENTITY noscriptDonate "Doneren">
+<!ENTITY noscriptDonate.accesskey "D">

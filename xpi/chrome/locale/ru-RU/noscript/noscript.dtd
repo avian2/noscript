@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Запретить отображение элементов Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Запретить отображение элементов &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Запретить отображение элементов &lt;FRAMES&gt;">
+<!ENTITY noscriptForbidFonts "Запретить @font-face">
+<!ENTITY noscriptForbidMedia "Запретить &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Запретить отображение элементов Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Запретить отображение элементов других плагинов">
 <!ENTITY noscriptReloadWarn "Примечание: изменённые настройки вступают в силу либо на новой странице, либо после обновления текущей страницы (вручную)">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Запретить веб-сайту использовать параметр  &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Запретить META перенаправления внутри элементов &lt;noscript&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "а">
+<!ENTITY noscriptNotifyMeta "Показывать сообщения о заблокированных META перенаправлениях">
+<!ENTITY noscriptNotifyMeta.accesskey "ы">
 <!ENTITY noscriptWhitelist "Белый список">
 <!ENTITY noscriptPermissions "Разрешения">
 <!ENTITY noscriptRefresh "Обновить">
@@ -90,7 +94,7 @@
 <!ENTITY noscriptOptFilterXPost "Заменять XSS POST-запросы на GET-запросы без данных">
 <!ENTITY noscriptShowConsole "Открыть консоль…">
 <!ENTITY noscriptShowConsole.accesskey "о">
-<!ENTITY noscriptXss "XSS (межсайтовый скриптинг)">
+<!ENTITY noscriptXss "XSS">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "Справка по XSS (межсайтовому скриптингу)">
 <!ENTITY noscriptXssFaq.accesskey "а">
@@ -164,23 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "б">
 <!ENTITY noscriptUninstall "Удалить">
 <!ENTITY noscriptRecentBlocked "Недавно заблокированные сайты">
-<!ENTITY noscriptForbidFonts "Forbid @font-face">
-<!ENTITY noscriptForbidMedia "Forbid &lt;AUDIO&gt; / &lt;VIDEO&gt;">
-<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
-<!ENTITY noscriptNotifyMeta.accesskey "R">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
-<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptExternalFilters "Внешние фильтры">
+<!ENTITY noscriptEF.enable "Использовать внешние фильтры">
+<!ENTITY noscriptEF.add "Новый фильтр…">
+<!ENTITY noscriptEF.executable "Исполняемый файл:">
+<!ENTITY noscriptEF.browse "Обзор…">
+<!ENTITY noscriptEF.contentType "Content type (MIME) подлежащий фильтрации (точное совпадение или регулярное выражение):">
+<!ENTITY noscriptEF.exceptions "Не фильтровать объекты с этих сайтов:">
+<!ENTITY noscriptEF.remove "Удалить">
+<!ENTITY noscriptPreset "Уровень защиты">
+<!ENTITY noscriptPreset.off "Никакой (вы серьёзно?)">
+<!ENTITY noscriptPreset.low "Легкое начало (чёрный список + веб-защита)">
+<!ENTITY noscriptPreset.medium "Стандартный (белый список + веб-защита)">
+<!ENTITY noscriptPreset.high "Осадный (на полную катушку)">
+<!ENTITY noscript.hoverUI "Открывать меню разрешению при наведении мыши на значок">
+<!ENTITY noscriptDonate "Пожертвовать">
+<!ENTITY noscriptDonate.accesskey "в">

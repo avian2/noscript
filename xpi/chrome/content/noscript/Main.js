@@ -1941,7 +1941,7 @@ var ns = singleton = {
 
   
   versionComparator: CC["@mozilla.org/xpcom/version-comparator;1"].getService(CI.nsIVersionComparator),
-  geckoVersion: ("nsIXULAppInfo" in  CI) ? CC["@mozilla.org/xre/app-info;1"].getService(CI.nsIXULAppInfo).platformVersion : "0.0",
+  geckoVersion: ("@mozilla.org/xre/app-info;1" in  CC) ? CC["@mozilla.org/xre/app-info;1"].getService(CI.nsIXULAppInfo).platformVersion : "0.0",
   geckoVersionCheck: function(v) {
     return this.versionComparator.compare(this.geckoVersion, v);
   },

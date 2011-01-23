@@ -65,7 +65,7 @@
 <!ENTITY noscriptAllowPing "Tillad &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Tillad lokale links">
 <!ENTITY noscriptForbidPing "Forbyd &lt;A PING…&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Forbyd META omdirigeringer &lt;NOSCRIPT&gt;i-elementer">
+<!ENTITY noscriptForbidMetaRefresh "Forbyd META omdirigeringer i &lt;NOSCRIPT&gt;-elementer">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "F">
 <!ENTITY noscriptNotifyMeta "Vis meddelelse om blokerede META-omdirigeringer">
 <!ENTITY noscriptNotifyMeta.accesskey "m">
@@ -85,7 +85,7 @@
 <!ENTITY noscriptPolicies "Retningslinjer">
 <!ENTITY noscriptDefaultPolicies "Standard retningslinjer">
 <!ENTITY noscriptSitePolicies "Specifikke retningslinjer">
-<!ENTITY noscriptNselNever "Gem &lt;NOSCRIPT&gt;-elementer">
+<!ENTITY noscriptNselNever "Skjul &lt;NOSCRIPT&gt;-elementer">
 <!ENTITY noscriptNselForce "Vis &lt;NOSCRIPT&gt;-elementet som følger et blokeret &lt;SCRIPT&gt;">
 <!ENTITY noscriptAutoAllowTopLevel "Midlertidig tillad topniveau-websteder som standard">
 <!ENTITY noscriptDescription "Ekstra beskyttelse af din Firefox: NoScript tillader kun JavaScript, Java (og andre plugins) fra betroede domæner valgt af dig (f.eks. din netbanks hjemmeside). Denne whitelist-baserede forebyggende metode forhindrer udnyttelse af sikkerhedshuller (såvel kendte som ukendte!) uden tab af funktionalitet… Eksperter er enige: Firefox er mere sikker med NoScript :-)">
@@ -158,7 +158,7 @@
 <!ENTITY ABE.rulesets.label "Regelsæt:">
 <!ENTITY ABE.enabled.label "Aktiver ABE (Application Boundaries Enforcer)">
 <!ENTITY ABE.siteEnabled.label "Tillad websteder at håndhæve egne regelsæt">
-<!ENTITY ABE.edit.label "Rediger...">
+<!ENTITY ABE.edit.label "Rediger…">
 <!ENTITY ABE.edit.accesskey "R">
 <!ENTITY ABE.enable.label "Aktiver">
 <!ENTITY ABE.enable.accesskey "A">
@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "O">
 <!ENTITY noscriptUninstall "Afinstaller">
 <!ENTITY noscriptRecentBlocked "Websteder blokeret for nyligt">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptExternalFilters "Eksterne filtre">
+<!ENTITY noscriptEF.enable "Aktiver eksterne filtre">
+<!ENTITY noscriptEF.add "Nyt filter…">
+<!ENTITY noscriptEF.executable "Kørbar fil:">
+<!ENTITY noscriptEF.browse "Gennemse…">
+<!ENTITY noscriptEF.contentType "Indholdstype (MIME) som skal filtreres (eksakt match eller regulært udtryk):">
+<!ENTITY noscriptEF.exceptions "Filtrer ikke objekter der kommer fra disse websteder:">
+<!ENTITY noscriptEF.remove "Fjern">
+<!ENTITY noscriptPreset "Sikkerhedsniveau">
+<!ENTITY noscriptPreset.off "Fra (mener du det?!)">
+<!ENTITY noscriptPreset.low "Medgørlig (Blacklist + Web Security)">
+<!ENTITY noscriptPreset.medium "Klassisk (Whitelist + Web Security)">
+<!ENTITY noscriptPreset.high "Fæstning (Fuldstændig isolation)">
+<!ENTITY noscript.hoverUI "Åbn tilladelsesmenuen når musen holdes over NoScript-ikonet">
+<!ENTITY noscriptDonate "Donér">
 <!ENTITY noscriptDonate.accesskey "o">

@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "r">
 <!ENTITY noscriptUninstall "Désinstaller">
 <!ENTITY noscriptRecentBlocked "Sites récemment bloqués">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptExternalFilters "Filtres externes">
+<!ENTITY noscriptEF.enable "Activer les filtres externes">
+<!ENTITY noscriptEF.add "Nouveau filtre…">
+<!ENTITY noscriptEF.executable "Fichier exécutable :">
+<!ENTITY noscriptEF.browse "Parcourir…">
+<!ENTITY noscriptEF.contentType "Type de contenu (MIME) à filtrer (correspondance exacte ou expression rationnelle) :">
+<!ENTITY noscriptEF.exceptions "Ne pas filtrer les objets provenant de ces sites :">
+<!ENTITY noscriptEF.remove "Supprimer">
+<!ENTITY noscriptPreset "Niveau de sécurité">
+<!ENTITY noscriptPreset.off "Off (vous êtes sérieux ?!)">
+<!ENTITY noscriptPreset.low "Passage facile (liste noire + sécurité web)">
+<!ENTITY noscriptPreset.medium "Classique (liste blanche + sécurité web)">
+<!ENTITY noscriptPreset.high "Forteresse (blocus complet)">
+<!ENTITY noscript.hoverUI "Ouvrir le menu des permissions lorsque la souris survole l'icône de NoScript.">
+<!ENTITY noscriptDonate "Donner">
 <!ENTITY noscriptDonate.accesskey "o">

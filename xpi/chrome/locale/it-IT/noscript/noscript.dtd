@@ -145,7 +145,7 @@
 <!ENTITY noscriptTrustedPagesAdj "fidate">
 <!ENTITY noscriptUntrustedPagesAdj "non fidate">
 <!ENTITY noscriptKeepLocked "Mantieni bloccato questo elemento (consigliabile)">
-<!ENTITY noscriptEmbeddings "Oggetti incorporati">
+<!ENTITY noscriptEmbeddings "Oggetti importati">
 <!ENTITY noscriptPrev "Precedente">
 <!ENTITY noscriptNext "Successivo">
 <!ENTITY noscriptFrameOptErr.title "Questo contenuto non può essere caricato in un frame">
@@ -168,7 +168,6 @@
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "Disinstalla">
 <!ENTITY noscriptRecentBlocked "Siti bloccati di recente">
-<!ENTITY noscriptEmbeddings "Oggetti importati">
 <!ENTITY noscriptExternalFilters "Filtri esterni">
 <!ENTITY noscriptEF.enable "Abilita i filtri esterni">
 <!ENTITY noscriptEF.add "Crea filtro…">

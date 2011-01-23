@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "F">
 <!ENTITY noscriptUninstall "Eltávolítás">
 <!ENTITY noscriptRecentBlocked "Legutoljára blokkolt oldalak">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptExternalFilters "Külső szűrők">
+<!ENTITY noscriptEF.enable "Külső szűrők engedélyezése">
+<!ENTITY noscriptEF.add "Új szűrő…">
+<!ENTITY noscriptEF.executable "Futtatható fájl:">
+<!ENTITY noscriptEF.browse "Tallózás…">
+<!ENTITY noscriptEF.contentType "MIME tartalom, amelyet szűrni (teljes egyezés vagy reguláris kifejezés) kíván:">
+<!ENTITY noscriptEF.exceptions "Ne szűrje az alábbi oldalakról érkező objektumokat:">
+<!ENTITY noscriptEF.remove "Eltávolítás">
+<!ENTITY noscriptPreset "Biztonsági szint">
+<!ENTITY noscriptPreset.off "Kikapcsolás (valóban?!)">
+<!ENTITY noscriptPreset.low "Gyenge (feketelista + web biztonság)">
+<!ENTITY noscriptPreset.medium "Klasszikus (fehérlista + web biztonság)">
+<!ENTITY noscriptPreset.high "Erős (teljes szűrés)">
+<!ENTITY noscript.hoverUI "Hozzáférések menü megnyitása, ha az egér kurzora a NoScript ikon felett van">
+<!ENTITY noscriptDonate "Hozzájárulás">
 <!ENTITY noscriptDonate.accesskey "o">

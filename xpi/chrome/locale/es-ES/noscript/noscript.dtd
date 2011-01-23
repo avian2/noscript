@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Configuración de NoScript">
 <!ENTITY noscriptAbout "Acerca de NoScript">
-<!ENTITY noscriptPermissionsText "Aquí puede especificar las páginas web a las que va a permitir ejecutar código JavaScript. Escriba la dirección de la web que quiera incluir (ej. &apos;http://www.paginaweb.com&apos; o &apos;paginaweb.com&apos;) y después pulse &apos;Permitir&apos;.">
+<!ENTITY noscriptPermissionsText "Aquí puede especificar las páginas web a las que va a permitir ejecutar código JavaScript. Escriba la dirección de la web que quiera incluir (ej. &quot;http://www.paginaweb.com&quot; o &quot;paginaweb.com&quot;) y después pulse &quot;Permitir&quot;.">
 <!ENTITY noscriptWebAddress "Dirección de la página web:">
 <!ENTITY noscriptAllow "Permitir">
 <!ENTITY noscriptAllow.accesskey "P">
@@ -43,20 +43,20 @@
 <!ENTITY noscriptAdditionalRestrictions "Restricciones adicionales para sitios no fiables">
 <!ENTITY noscriptPlugins "Plugins">
 <!ENTITY noscriptContentBlocker "Aplicar estas restricciones también a los sitios fiables">
-<!ENTITY noscriptForbidJava "Bloquear Java™">
-<!ENTITY noscriptForbidXSLT "Bloquear XSLT">
-<!ENTITY noscriptForbidWebBugs "Bloquear &quot;Web Bugs&quot;">
-<!ENTITY noscriptForbidSilverlight "Bloquear Microsoft® Silverlight™">
-<!ENTITY noscriptForbidIFrames "Bloquear &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Bloquear &lt;FRAME&gt;">
-<!ENTITY noscriptForbidFonts "Bloquear @font-face">
-<!ENTITY noscriptForbidMedia "Bloquear &lt;AUDIO&gt; / &lt;VIDEO&gt;">
-<!ENTITY noscriptForbidFlash "Bloquear Adobe® Flash®">
-<!ENTITY noscriptForbidPlugins "Bloquear otros plugins">
+<!ENTITY noscriptForbidJava "Prohibir Java™">
+<!ENTITY noscriptForbidXSLT "Prohibir XSLT">
+<!ENTITY noscriptForbidWebBugs "Prohibir &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "Prohibir Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Prohibir &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Prohibir &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Prohibir @font-face">
+<!ENTITY noscriptForbidMedia "Prohibir &lt;AUDIO&gt; / &lt;VIDEO&gt;">
+<!ENTITY noscriptForbidFlash "Prohibir Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Prohibir otros plugins">
 <!ENTITY noscriptReloadWarn "Estas opciones tendrán efecto en páginas nuevas o tras recargar manualmente">
 <!ENTITY noscriptConfirmUnblock "Pedir confirmación antes de desbloquear temporalmente un objeto">
 <!ENTITY noscriptStatusLabel "Etiqueta informativa en la barra de estado">
-<!ENTITY noscriptForbidBookmarklets "Bloquear Bookmarklets">
+<!ENTITY noscriptForbidBookmarklets "Prohibir Bookmarklets">
 <!ENTITY noscriptShowPlaceholder "Mostrar indicador de objeto bloqueado (placeholder)">
 <!ENTITY noscriptTruncateTitle "Truncar títulos de documentos">
 <!ENTITY noscriptFixLinks "Intentar corregir enlaces JavaScript">
@@ -64,7 +64,7 @@
 <!ENTITY noscriptAllowViaBookmarks "Permitir sitios abiertos desde marcadores">
 <!ENTITY noscriptAllowPing "Permitir &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Permitir enlaces locales">
-<!ENTITY noscriptForbidPing "Bloquear &lt;A PING…&gt;">
+<!ENTITY noscriptForbidPing "Prohibir &lt;A PING…&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Prohibir META redireccionamientos dentro de elementos &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "h">
 <!ENTITY noscriptNotifyMeta "Mostrar mensaje sobre META redireccionamientos bloqueados">
@@ -89,7 +89,7 @@
 <!ENTITY noscriptNselForce "Mostrar el elemento &lt;NOSCRIPT&gt; que sigue a un &lt;SCRIPT&gt; bloqueado">
 <!ENTITY noscriptAutoAllowTopLevel "Permitir por defecto de forma temporal los dominios de máximo nivel">
 <!ENTITY noscriptDescription "Protección extra para su Firefox: NoScript sólo permite JavaScript, Java y otros plugins en los sitios web de confianza que Ud. elija (como la web de su banco). Este planteamiento preventivo basado en una lista blanca evita que se puedan explotar vulnerabilidades (conocidas o incluso desconocidas) sin pérdida de funcionalidad… Los expertos lo confirmarán: Firefox es realmente más seguro con NoScript :-)">
-<!ENTITY noscriptOptBlockCssScanners "Bloquear scanners basados en CSS">
+<!ENTITY noscriptOptBlockCssScanners "Bloquear escáners basados en CSS">
 <!ENTITY noscriptOptFilterXGet "Depurar peticiones cross-site sospechosas">
 <!ENTITY noscriptOptFilterXPost "Convertir peticiones POST cross-site en peticiones GET sin datos">
 <!ENTITY noscriptShowConsole "Mostrar Consola de error…">
@@ -128,17 +128,17 @@
 <!ENTITY noscriptHttps.cookies "Cookies">
 <!ENTITY noscriptHttps.description "Prohibir contenidos web activos salvo que provengan de una conexión segura (HTTPS)">
 <!ENTITY noscriptHttps.never "Nunca">
-<!ENTITY noscriptHttps.proxy "Cuando se use un proxy (recomendado con Tor)">
+<!ENTITY noscriptHttps.proxy "Al usar un proxy (recomendado con Tor)">
 <!ENTITY noscriptHttps.always "Siempre">
 <!ENTITY noscriptHttpsForced "Obligar a usar conexiones seguras (HTTPS) a los siguientes sitios:">
 <!ENTITY noscriptHttpsForcedExceptions "No obligar nunca a usar conexiones seguras (HTTPS) a los siguientes sitios:">
 <!ENTITY noscriptSecureCookies "Activar la gestión automática segura de cookies">
-<!ENTITY noscriptSecureCookiesForced "Obligar a encriptar todas las cookies recibidas por HTTPS en los siguientes sitios:">
+<!ENTITY noscriptSecureCookiesForced "Obligar a cifrar todas las cookies recibidas por HTTPS en los siguientes sitios:">
 <!ENTITY noscriptSecureCookiesExceptions "Ignorar cookies no seguras recibidas por HTTPS de los siguientes sitios:">
 <!ENTITY noscriptClearClickTitle "Aviso de ClearClick">
 <!ENTITY noscriptClearClickHeader "¡Posible intento de clickjacking / camuflaje de UI!">
 <!ENTITY noscriptClearClickDescription "NoScript interceptó una interacción de ratón o teclado con un elemento parcialmente oculto. Pulse en la imagen superior para comparar la versión oculta y la ya revelada.">
-<!ENTITY noscriptClearClickOpt "Usar la protección ClearClick en páginas...">
+<!ENTITY noscriptClearClickOpt "Usar la protección ClearClick en páginas…">
 <!ENTITY noscriptClearClickReport "Informe">
 <!ENTITY noscriptClearClickReport.accesskey "I">
 <!ENTITY noscriptClearClickReportId "ID del informe:">
@@ -148,8 +148,8 @@
 <!ENTITY noscriptEmbeddings "Objetos incrustados">
 <!ENTITY noscriptPrev "Anterior">
 <!ENTITY noscriptNext "Siguiente">
-<!ENTITY noscriptFrameOptErr.title "Este contenido no puede mostrarse en una frame (marco)">
-<!ENTITY noscriptFrameOptErr.desc "Para proteger su seguridad, el proveedor de ese contenido no permite que se muestre en una frame">
+<!ENTITY noscriptFrameOptErr.title "Este contenido no puede mostrarse en un frame (marco)">
+<!ENTITY noscriptFrameOptErr.desc "Para proteger su seguridad, el proveedor de ese contenido no permite que se muestre en un frame.">
 <!ENTITY noscriptFrameOptErr.link "Pulse aquí para abrirlo en una nueva ventana">
 <!ENTITY noscriptBookmarkSync "Guardar una copia de la configuración de NoScript para facilitar la sincronización">
 <!ENTITY noscriptShowReleaseNotes "Mostrar las notas de versión cuando se actualice">
@@ -158,7 +158,7 @@
 <!ENTITY ABE.rulesets.label "Reglas:">
 <!ENTITY ABE.enabled.label "Habilitar ABE (Guardián de límites de aplicación)">
 <!ENTITY ABE.siteEnabled.label "Permitir que los sitios apliquen sus propias reglas">
-<!ENTITY ABE.edit.label "Editar...">
+<!ENTITY ABE.edit.label "Editar…">
 <!ENTITY ABE.edit.accesskey "E">
 <!ENTITY ABE.enable.label "Habilitar">
 <!ENTITY ABE.enable.accesskey "H">
@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "Desinstalar">
 <!ENTITY noscriptRecentBlocked "Últimos sitios bloqueados">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptExternalFilters "Filtros externos">
+<!ENTITY noscriptEF.enable "Activar filtros externos">
+<!ENTITY noscriptEF.add "Nuevo filtro…">
+<!ENTITY noscriptEF.executable "Archivo ejecutable:">
+<!ENTITY noscriptEF.browse "Examinar…">
+<!ENTITY noscriptEF.contentType "Tipo de contenido (MIME) a filtrar (coincidencia exacta o expresión regular):">
+<!ENTITY noscriptEF.exceptions "No filtrar objetos provenientes de estos sitios:">
+<!ENTITY noscriptEF.remove "Eliminar">
+<!ENTITY noscriptPreset "Nivel de seguridad">
+<!ENTITY noscriptPreset.off "Desactivado (¿lo dice en serio?)">
+<!ENTITY noscriptPreset.low "Relajado (Lista negra + Seguridad web)">
+<!ENTITY noscriptPreset.medium "Clásico (Lista blanca + Seguridad web)">
+<!ENTITY noscriptPreset.high "Fuerte (Bloqueo completo)">
+<!ENTITY noscript.hoverUI "Abrir menú de permisos cuando el ratón se sitúa sobre el icono de NosScript">
+<!ENTITY noscriptDonate "Donar">
 <!ENTITY noscriptDonate.accesskey "o">

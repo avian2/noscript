@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "卸载">
 <!ENTITY noscriptRecentBlocked "最近被屏蔽的站点">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptExternalFilters "外部过滤器">
+<!ENTITY noscriptEF.enable "启用外部过滤器">
+<!ENTITY noscriptEF.add "新建过滤器…">
+<!ENTITY noscriptEF.executable "可执行文件:">
+<!ENTITY noscriptEF.browse "浏览…">
+<!ENTITY noscriptEF.contentType "被过滤的内容类型(MIME)（精确匹配或使用正则表达式）">
+<!ENTITY noscriptEF.exceptions "不过滤来自这些网站的对象:">
+<!ENTITY noscriptEF.remove "移除">
+<!ENTITY noscriptPreset "安全级别">
+<!ENTITY noscriptPreset.off "关闭（你确定吗？）">
+<!ENTITY noscriptPreset.low "温和（黑名单+网络安全）">
+<!ENTITY noscriptPreset.medium "典型（白名单+网络安全）">
+<!ENTITY noscriptPreset.high "严密（全部锁定）">
+<!ENTITY noscript.hoverUI "当鼠标划过 NoScript 图标时打开许可菜单">
+<!ENTITY noscriptDonate "捐助">
 <!ENTITY noscriptDonate.accesskey "o">

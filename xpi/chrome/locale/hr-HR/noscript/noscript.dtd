@@ -49,6 +49,8 @@
 <!ENTITY noscriptForbidSilverlight "Zabrani Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Zabrani &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Zabrani &lt;FRAMES&gt;">
+<!ENTITY noscriptForbidFonts "Zabraniti @font-face">
+<!ENTITY noscriptForbidMedia "Zabraniti &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Zabrani Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Zabrani druge dodatke">
 <!ENTITY noscriptReloadWarn "Ove postavke će imati učinka na novim ili (ručno) ponovno učitanim stranicama">
@@ -65,6 +67,8 @@
 <!ENTITY noscriptForbidPing "Zabrani &lt;A PING...&gt;">
 <!ENTITY noscriptForbidMetaRefresh "Forbid META redirections inside &lt;NOSCRIPT&gt; elements">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptNotifyMeta "Pokazati poruku u vezi s blokiranim META-redirections">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptWhitelist "Popis dopuštenih">
 <!ENTITY noscriptPermissions "Dopuštenja">
 <!ENTITY noscriptRefresh "Osvježi">
@@ -148,39 +152,35 @@
 <!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
 <!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
 <!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
-<!ENTITY noscriptForbidFonts "Forbid @font-face">
-<!ENTITY noscriptForbidMedia "Forbid &lt;AUDIO&gt; / &lt;VIDEO&gt;">
-<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
-<!ENTITY noscriptNotifyMeta.accesskey "R">
-<!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
+<!ENTITY noscriptShowReleaseNotes "Pokazati informacije vezane za novo izdanje u slucaju azuriranja">
 <!ENTITY ABE "ABE">
 <!ENTITY ABE.accesskey "A">
-<!ENTITY ABE.rulesets.label "Rulesets:">
-<!ENTITY ABE.enabled.label "Enable ABE (Application Boundaries Enforcer)">
-<!ENTITY ABE.siteEnabled.label "Allow sites to push their own rulesets">
-<!ENTITY ABE.edit.label "Edit…">
-<!ENTITY ABE.edit.accesskey "E">
-<!ENTITY ABE.enable.label "Enable">
-<!ENTITY ABE.enable.accesskey "n">
-<!ENTITY ABE.disable.label "Disable">
-<!ENTITY ABE.disable.accesskey "D">
-<!ENTITY ABE.refresh.label "Refresh">
-<!ENTITY ABE.refresh.accesskey "R">
-<!ENTITY noscriptUninstall "Uninstall">
-<!ENTITY noscriptRecentBlocked "Recently blocked sites">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
-<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY ABE.rulesets.label "Skupovi pravila (rulesets):">
+<!ENTITY ABE.enabled.label "Ukljuciti ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Dozvoljiti sajtovima koristenje njihovih rulesets-a (skupovi pravila)">
+<!ENTITY ABE.edit.label "Modificirati...">
+<!ENTITY ABE.edit.accesskey "M">
+<!ENTITY ABE.enable.label "Ukljuciti">
+<!ENTITY ABE.enable.accesskey "u">
+<!ENTITY ABE.disable.label "Izkljuciti">
+<!ENTITY ABE.disable.accesskey "I">
+<!ENTITY ABE.refresh.label "Osvjeziti">
+<!ENTITY ABE.refresh.accesskey "O">
+<!ENTITY noscriptUninstall "Dezinstalirati">
+<!ENTITY noscriptRecentBlocked "Nedavno blokirane web stranice">
+<!ENTITY noscriptExternalFilters "Vanjski filteri">
+<!ENTITY noscriptEF.enable "Ukljuciti vanjski filteri">
+<!ENTITY noscriptEF.add "Novi Filter...">
+<!ENTITY noscriptEF.executable "Izvršni fajl...">
+<!ENTITY noscriptEF.browse "Pregledati...">
+<!ENTITY noscriptEF.contentType "Tocni MIME-tip sadrzaja ili regexp za filtriranje sadrzaja">
+<!ENTITY noscriptEF.exceptions "Ne filtrirati elemente iz sljedecih web stranica:">
+<!ENTITY noscriptEF.remove "Ukiniti">
+<!ENTITY noscriptPreset "Razina sigurnosti">
+<!ENTITY noscriptPreset.off "Izkljuciti (ozbiljno???)">
+<!ENTITY noscriptPreset.low "Easy going (Crna lista + web sigurnost)">
+<!ENTITY noscriptPreset.medium "Classic (Bijela lista + web sigurnost)">
+<!ENTITY noscriptPreset.high "Tvrðava (Kompletno blokiranje)">
+<!ENTITY noscript.hoverUI "Otvoriti meni dopustenja u slucaju mouseover-a nad NoScript ikonom">
+<!ENTITY noscriptDonate "Donacija">
+<!ENTITY noscriptDonate.accesskey "d">
