@@ -1395,15 +1395,14 @@ var DoNotTrack = {
     }
     
     if (req.localDestination) return; // home routers don't like DNT
-    
-    if (req.isDoc) {
-      if (req.method === "POST" && req.originURI.host === req.destinationURI.host)
-        return;
-      // TODO: find a way to check whether this request is gonna be WWW-authenticated
-    }
-    
-    let channel = req.channel;
-    try { // Connection header last, see http://forums.informaction.com/viewtopic.php?f=7&t=5626
+    try {
+      if (req.isDoc) {
+        if (req.method === "POST" && req.originURI.host === req.destinationURI.host)
+          return;
+        // TODO: find a way to check whether this request is gonna be WWW-authenticated
+      }
+      let channel = req.channel;
+     // Connection header last, see http://forums.informaction.com/viewtopic.php?f=7&t=5626
       channel.setRequestHeader("X-Do-Not-Track", "1", false);
       let conn = channel.getRequestHeader("Connection");
       channel.setRequestHeader("Connection", "", false);

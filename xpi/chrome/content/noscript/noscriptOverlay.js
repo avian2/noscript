@@ -2037,6 +2037,7 @@ return noscriptUtil.service ? {
         break;
         
         case "hoverUI":
+        case "toolbarToggle":
           noscriptOverlay[data] = this.ns.getPref(data);
           noscriptOverlay.initPopups();
           
@@ -2258,12 +2259,16 @@ return noscriptUtil.service ? {
       if (doc instanceof HTMLDocument) {
         var w = doc.defaultView;
         if (w) {
-          const jsBlocked = doc.__noScriptJSBlocked__;
           const ns = noscriptOverlay.ns;
+          let url = doc.URL;
+          const jsBlocked = !ns.jsEnabled && /^https?:/.test(url) && !ns.isJSEnabled(ns.getSite(url));
+          
           ns.setExpando(doc, "contentLoaded", true);
           if (w == w.top) {
-            if (jsBlocked)
+            if (jsBlocked) {
               ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
+              w.addEventListener("load", noscriptOverlay.listeners.onDocumentLoad, false);
+            }
             
             if (w == content) {
               noscriptOverlay.syncUI(w);
@@ -2274,9 +2279,7 @@ return noscriptUtil.service ? {
           } else {
             ns.frameContentLoaded(w);
             noscriptOverlay.syncUI(w.top);
-          }
-          if (jsBlocked)
-            w.addEventListener("load", noscriptOverlay.listeners.onDocumentLoad, false);
+          } 
         }
       }
     },

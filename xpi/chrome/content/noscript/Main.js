@@ -2484,8 +2484,8 @@ var ns = singleton = {
     return false;
   },
   detectJSRedirects: function(document) {
-    if (this.jsredirectIgnore) // !document.__noScriptJSBlocked__ is checked by the caller
-      return 0;
+    if (this.jsredirectIgnore) return 0;
+    
     try {
       if (!/^https?:/.test(document.documentURI) ) return 0;
       var hasVisibleLinks = this.hasVisibleLinks(document);
@@ -2910,7 +2910,7 @@ var ns = singleton = {
     if(!window) return false;
     
     var site = this.getSite(window.document.documentURI) || this.getExpando(browser, "jsSite");
-    if (!this.jsEnabled) {
+    if (this.mozJSEnabled && !this.jsEnabled) {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
     
       var docShell = DOM.getDocShellForWindow(window);
@@ -4518,13 +4518,11 @@ var ns = singleton = {
   onWindowSwitch: function(url, win, docShell) {
     const doc = docShell.document;
     const flag = "__noScriptEarlyScripts__";
-    if (flag in doc) return;
-    doc[flag] = true;
+    if (flag in doc && doc[flag] == url) return;
+    doc[flag] = url;
     
     const site = this.getSite(url);
     var jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(site));
-    
-    doc.__noScriptJSBlocked__ = jsBlocked;
     
     if (!((docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page

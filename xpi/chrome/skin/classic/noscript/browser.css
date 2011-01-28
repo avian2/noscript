@@ -1,6 +1,12 @@
 #palette-box #noscript-tbb {
   list-style-image: url("icon24.png");
 }
+#noscript-tbb[type="menu"] {
+  -moz-box-orient: horizontal !important;
+}
+toolbar[mode="full"] #noscript-tbb[type="menu"] {
+  -moz-binding: url("chrome://global/content/bindings/toolbarbutton.xml#menu-vertical");
+}
 
 #noscript-statusIcon,
 #noscript-statusRedirect,
@@ -261,7 +267,11 @@ menupopup[sticky="true"][disabled="true"] {
   opacity: .5;
 }
 #noscript-tbb-revoke-temp  > .toolbarbutton-icon, #noscript-tbb-temp-page  > .toolbarbutton-icon, #noscript-tbb .toolbarbutton-icon[label=NoScript] {
-  margin: 0px !important;
+  /* margin: 0px !important; */
   width: auto !important;
   height: auto !important;
+}
+
+notification {
+  word-wrap: break-word !important;
 }
