@@ -837,7 +837,7 @@ var EF = {
     if (this.currentFilter) {
       var node = ev.target;
       var wl = new ns.AddressMatcher(node.value);
-      if (wl.rx) {
+      if (wl.rx || !node.value) {
         node.removeAttribute("class");
         this.currentFilter.whitelist = wl;
         this._dirty = true;

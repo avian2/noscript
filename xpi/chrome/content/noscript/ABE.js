@@ -1389,24 +1389,22 @@ var DoNotTrack = {
     return this.authManager = CC["@mozilla.org/network/http-auth-manager;1"].getService(CI.nsIHttpAuthManager);
   },
   apply: function(/* ABEReq */ req) {
-    if (this.exceptions) {
-      let url = req.destination;
-      if (this.exceptions.test(url) && !(this.forced && this.forced.test(url))) return;
-    }
-    
-    if (req.localDestination) return; // home routers don't like DNT
+    let url = req.destination;
+      
     try {
-      if (req.isDoc) {
-        if (req.method === "POST" && req.originURI.host === req.destinationURI.host)
-          return;
-        // TODO: find a way to check whether this request is gonna be WWW-authenticated
-      }
+      if (
+          (this.exceptions && this.exceptions.test(url) ||
+            req.localDestination ||
+            req.isDoc && req.method === "POST" && req.originURI.host === req.destinationURI.host
+          ) &&
+          !(this.forced && this.forced.test(url))
+           // TODO: find a way to check whether this request is gonna be WWW-authenticated
+        )
+        return;
+       
       let channel = req.channel;
-     // Connection header last, see http://forums.informaction.com/viewtopic.php?f=7&t=5626
-      channel.setRequestHeader("X-Do-Not-Track", "1", false);
-      let conn = channel.getRequestHeader("Connection");
-      channel.setRequestHeader("Connection", "", false);
-      channel.setRequestHeader("Connection", conn, false);
+      channel.setRequestHeader("DNT", "1", false);
+      
     } catch(e) {}
   }
 }

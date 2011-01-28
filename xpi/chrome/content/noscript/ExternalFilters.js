@@ -24,7 +24,7 @@ var ExternalFilters = {
   },
   
   save: function(filters) {
-    if (filters) this._filters = filters.filter(function(f) f.valid);
+    if (filters) this._filters = filters; // filters.filter(function(f) f.valid);
     
     const prefs = this.prefs;
     for each(let key in prefs.getChildList("", {})) {
@@ -39,7 +39,7 @@ var ExternalFilters = {
     this._filters.forEach(function(f) {
       for each(let p in props) {   
         prefs.setCharPref(f.name + "." + p,
-          p == "exe" ? f[p].path :
+          p == "exe" ? f[p] && f[p].path || '' :
             p == "whitelist" ? f[p] && f[p].source || '' :
               f[p]                                 
         );
