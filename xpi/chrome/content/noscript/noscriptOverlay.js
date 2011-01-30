@@ -361,20 +361,18 @@ return noscriptUtil.service ? {
     }
     // copy status bar menus
     for each(let button in buttons) {
-      if (!button || button.firstChild && /popup/.test(button.firstChild.tagName))
-        continue;
-      
-      let clone = popup.cloneNode(true);
-      clone.id  = button.id + "-popup";
-      button.insertBefore(clone, button.firstChild);
-      if (!sticky) clone._context = true;
+      if (!button) continue;
+      let localPopup = button.firstChild;
+      if (!(localPopup && /popup/.test(localPopup.tagName))) {
+        localPopup = popup.cloneNode(true);
+        localPopup.id  = button.id + "-popup";
+        button.insertBefore(localPopup, button.firstChild);
+        if (!sticky) localPopup._context = true;
+      }
+      localPopup.position = /^(?:addon|status)-bar$/.test(button.parentNode.id)
+        ? "before_start"
+        : "after_start";
     }
-    
-    if (tbb)
-      tbb.firstChild.position = /^(?:addon|status)-bar$/.test(tbb.parentNode.id) ? "before_start" : "after_start";
-    
-    if (statusIcon && statusIcon.firstChild)
-      statusIcon.firstChild.position = "before_start";
   },
   get _templatePopup() {
     delete this._templatePopup;
