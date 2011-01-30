@@ -150,37 +150,37 @@
 <!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
 <!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
 <!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
-<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
-<!ENTITY noscriptNotifyMeta.accesskey "R">
-<!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
+<!ENTITY noscriptNotifyMeta "Näytä viesti estetyistä META uudelleenohjauksista">
+<!ENTITY noscriptNotifyMeta.accesskey "U">
+<!ENTITY noscriptShowReleaseNotes "Näytä julkaisutiedot päivityksen yhteydessä">
 <!ENTITY ABE "ABE">
 <!ENTITY ABE.accesskey "A">
-<!ENTITY ABE.rulesets.label "Rulesets:">
-<!ENTITY ABE.enabled.label "Enable ABE (Application Boundaries Enforcer)">
-<!ENTITY ABE.siteEnabled.label "Allow sites to push their own rulesets">
-<!ENTITY ABE.edit.label "Edit…">
-<!ENTITY ABE.edit.accesskey "E">
-<!ENTITY ABE.enable.label "Enable">
-<!ENTITY ABE.enable.accesskey "n">
-<!ENTITY ABE.disable.label "Disable">
-<!ENTITY ABE.disable.accesskey "D">
-<!ENTITY ABE.refresh.label "Refresh">
-<!ENTITY ABE.refresh.accesskey "R">
-<!ENTITY noscriptUninstall "Uninstall">
-<!ENTITY noscriptRecentBlocked "Recently blocked sites">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY ABE.rulesets.label "Säännöt:">
+<!ENTITY ABE.enabled.label "Käytä ABE:tä (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Sivustot voivat tarjota omia sääntöjään">
+<!ENTITY ABE.edit.label "Muokkaa…">
+<!ENTITY ABE.edit.accesskey "M">
+<!ENTITY ABE.enable.label "Käytä">
+<!ENTITY ABE.enable.accesskey "K">
+<!ENTITY ABE.disable.label "Poista käytöstä">
+<!ENTITY ABE.disable.accesskey "P">
+<!ENTITY ABE.refresh.label "Päivitä">
+<!ENTITY ABE.refresh.accesskey "P">
+<!ENTITY noscriptUninstall "Poista asennus">
+<!ENTITY noscriptRecentBlocked "Viimeksi estetyt sivustot">
+<!ENTITY noscriptExternalFilters "Ulkoiset suodattimet">
+<!ENTITY noscriptEF.enable "Käytä ulkoisia suodattimia">
+<!ENTITY noscriptEF.add "Uusi suodatin…">
+<!ENTITY noscriptEF.executable "Suoritettava tiedosto:">
+<!ENTITY noscriptEF.browse "Selaa…">
+<!ENTITY noscriptEF.contentType "Sisällön tyyppi (MIME) suodatettavaksi (täsmällinen tai &quot;regular expression&quot; lauseke):">
+<!ENTITY noscriptEF.exceptions "Älä suodata kohteita näiltä sivuilta:">
+<!ENTITY noscriptEF.remove "Poista">
+<!ENTITY noscriptPreset "Suojaustaso">
+<!ENTITY noscriptPreset.off "Pois (oletko tosissasi?!)">
+<!ENTITY noscriptPreset.low "Kevyt (estolista + Web Security)">
+<!ENTITY noscriptPreset.medium "Klassinen (sallittujen lista + Web Security)">
+<!ENTITY noscriptPreset.high "Linnake (täysi lukitus)">
+<!ENTITY noscript.hoverUI "Avaa oikeudet valikko kun hiiri osoittaa NoScript kuvaketta">
+<!ENTITY noscriptDonate "Lahjoita">
 <!ENTITY noscriptDonate.accesskey "o">

@@ -160,10 +160,11 @@
     <vbox flex="1">
  
     <label class="header" value="&noscriptShow;"/>
-
-		<checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
+		<separator/>
+    <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
+    <checkbox id="opt-statusLabel" label="&noscriptStatusLabel;" />
 		<checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
-    <separator/>
+   
     <groupbox>
        <hbox>
          <vbox flex="1">

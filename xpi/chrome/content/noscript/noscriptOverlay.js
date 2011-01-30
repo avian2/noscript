@@ -352,7 +352,7 @@ return noscriptUtil.service ? {
       tbb.setAttribute("type", this.hoverUI ? "button" : this.ns.getPref("toolbarToggle") ? "menu-button" : "menu");
     }
     
-    const buttons = [tbb];
+    const buttons = [tbb, $("noscript-statusLabel")];
     let statusIcon = $("noscript-statusIcon");
     if ($("addon-bar")) {
       if (statusIcon) statusIcon.parentNode.removeChild(statusIcon);
@@ -495,9 +495,7 @@ return noscriptUtil.service ? {
         }
       }
       
-      if (ns.externalFilters.enabled) {
-        this.populateExternalFilters(pluginsMenu);
-      }
+      this.populateExternalFilters(pluginsMenu);
       
       extraNode = $("noscript-mi-recent-blocked-reset"); // save reset command
       // descend from menus to popups and clear children
@@ -904,16 +902,18 @@ return noscriptUtil.service ? {
   
   populateExternalFilters: function(anchor) {
     const ns = this.ns;
+    const externalFilters = ns.externalFilters;
+    
     var parent = anchor.parentNode;
     Array.slice(parent.getElementsByClassName("noscript-ef"), 0)
       .forEach(function(node) { parent.removeChild(node); });
     
-    if (!(ns.getPref("showExternalFilters"))) return;
+    if (!(externalFilters.enabled && ns.getPref("showExternalFilters"))) return;
     
     var menus = {};
     var domains = [];
     var filterNames = [];
-    var info = ns.externalFilters.getFiltersInfo(content);
+    var info = externalFilters.getFiltersInfo(content);
     var f, menu, domain, whitelisted, item;
     
     for (var url in info) {
@@ -1016,7 +1016,7 @@ return noscriptUtil.service ? {
         
         let node = document.createElement("menuitem");
         
-        e.label = e.label || ns.mimeEssentials(e.mime) + "@" + ns.urlEssentials(e.url);
+        e.label = e.label || ((/<I?FRAME>/.test(e.tag) ? e.tag : ns.mimeEssentials(e.mime)) + "@" + ns.urlEssentials(e.url));
         e.title = e.title || e.label.split("@")[0] + "@" + e.url + "\n(" + e.originSite + ")";
  
         node.setAttribute("label", this.getString("allowTemp", [e.label]));
@@ -1940,7 +1940,13 @@ return noscriptUtil.service ? {
       this.notificationHide();
       message = shortMessage = "";
     }
-
+    
+    widget = $("noscript-statusLabelValue");
+    if (widget) {
+      widget.setAttribute("value", shortMessage);
+      widget.parentNode.style.display = message ? "" : "none";
+    }
+    
     widget =  $("noscript-tbb-revoke-temp");
     if (widget) {
       if (ns.gTempSites.sitesString || ns.tempSites.sitesString || ns.objectWhitelistLen || ns.clearClickHandler && ns.clearClickHandler.whitelistLen) {
@@ -2006,7 +2012,7 @@ return noscriptUtil.service ? {
           else noscriptOverlay.statusIcon.removeAttribute("hidden");
           noscriptOverlay.syncUI();
         break;
-        case "statusIcon":
+        case "statusIcon": case "statusLabel" :
           window.setTimeout(function() {
               var widget =$("noscript-" + data);
               if (widget) {
@@ -2051,7 +2057,7 @@ return noscriptUtil.service ? {
       ns.prefs.addObserver("", this, true);
       ns.caps.addObserver("", this, true);
       const initPrefs = [
-        "statusIcon", "preset",
+        "statusIcon", "statusLabel", "preset",
         "keys.ui", "keys.toggle",
         "notify", "notify.bottom",
         "notify.hide", "notify.hidePermanent", "notify.hideDelay",

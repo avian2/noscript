@@ -275,16 +275,28 @@
 
 
 
-<statusbar id="status-bar"> 
+<statusbar id="status-bar">
+  <statusbarpanel id="noscript-statusLabel"
+    insertbefore="statusbar-updates"
+    hidden="true"
+    oncontextmenu="noscriptOverlay.onContextMenu(event)"
+    onclick="noscriptOverlay.openPopup(this.firstChild, this)"
+  >
+    <vbox flex="1" align="center" pack="center">
+      <label id="noscript-statusLabelValue"/>
+    </vbox>   
+  </statusbarpanel>
+  
+  
   <statusbarpanel id="noscript-statusIcon"
     insertbefore="statusbar-updates"
     class="statusbarpanel-menu-iconic noscript-no"
     hidden="false"
     oncontextmenu="noscriptOverlay.onContextMenu(event)"
+    onmouseup="noscriptOverlay.onUIUp(event)"
     onmouseover="noscriptOverlay.onUIOver(event)"
     onmousemove="noscriptOverlay.onUIMove(event)"
     onmouseout="noscriptOverlay.onUIOut(event)"
-    onmouseup="noscriptOverlay.onUIUp(event)"
     />
   
    
