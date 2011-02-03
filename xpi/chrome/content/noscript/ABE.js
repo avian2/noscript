@@ -1405,6 +1405,10 @@ var DoNotTrack = {
       let channel = req.channel;
       channel.setRequestHeader("DNT", "1", false);
       
+      // reorder headers to mirror Firefox 4's behavior
+      let conn = channel.getRequestHeader("Connection");
+      channel.setRequestHeader("Connection", "", false);
+      channel.setRequestHeader("Connection", conn, false);
     } catch(e) {}
   }
 }

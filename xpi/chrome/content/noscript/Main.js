@@ -4992,21 +4992,17 @@ var ns = singleton = {
       let tbb = document.getElementById(tbbId);
       if (tbb) return false;
       
-      let bar, set;
-      if (addonBar.collapsed || !this.getPref("statusIcon", true)) {
-        // add to toolbar
-        bar = document.getElementById("nav-bar");
-        set = bar.currentSet.split(/\s*,\s*/);
-        if (set.indexOf(tbbId) > -1) return false;
-        
-        let pos = set.indexOf("urlbar-container");
-        set = set.slice(0, pos).concat(tbbId).concat(set.slice(pos));
-      } else {
-        bar = addonBar;
-        set = bar.currentSet.split(/\s*,\s*/);
-        // if (set.indexOf("spring") < 0) set.push("spring"); // needed somewhen between Fx 4.0B7 and B8
-        set.push(tbbId);
-      }
+      
+      let [bar, refId] =
+        addonBar.collapsed || !this.getPref("statusIcon", true)
+        ? [document.getElementById("nav-bar"), "urlbar-container"]
+        : [addonBar, "status-bar"];
+      
+      set = bar.currentSet.split(/\s*,\s*/);
+      if (set.indexOf(tbbId) > -1) return false;
+      
+      set.splice(set.indexOf(refId), 0, tbbId);
+      
       bar.setAttribute("currentset", bar.currentSet = set.join(","));
       document.persist(bar.id, "currentset");
       try {

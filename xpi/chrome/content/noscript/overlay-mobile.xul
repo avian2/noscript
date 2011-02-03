@@ -9,16 +9,11 @@
   <script type="application/x-javascript" src="noscriptOverlay.js"/>
   <script type="application/x-javascript" src="noscriptBM.js"/>
     
-  <stringbundleset id="stringbundleset">
-    <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />
-  </stringbundleset>
-  
+
   <window id="main-window">
-    <popupset id="mainPopupSet"></popupset><!-- SeaMonkey compatibility -->
-  </window>
-  
-  <popupset id="mainPopupSet">
-    <menupopup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event, true)">
+  <popupset id="noscriptPopupSet">
+     
+     <menupopup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event, true)">
       <menuseparator />
        <menuitem
         id="noscript-options-menuitem"
@@ -159,7 +154,6 @@
      <menupopup id="noscript-sticky-ui"
       onpopupshowing="noscriptOverlay.onMenuShowing(event)"
       position="after_end"
-      class="noscript-menu"
       >
       
       <menuseparator class="noscript-sep-insert" hidden="true" />
@@ -169,7 +163,7 @@
       
       <menuseparator class="noscript-sep-global" />
       <menuitem class="menuitem-iconic" />
-      <menuseparator class="noscript-options" />
+      <menuseparator />
       <menuitem id="noscript-options-fn-tbb-menuitem"
        label="&noscriptOptions;"
        accesskey="&noscriptOptions.accesskey;"
@@ -179,12 +173,36 @@
        />
       
     </menupopup>
+    
+   
      
   </popupset>
+  </window>
 
 
-
-  <hbox id="urlbar-editarea">
+  <hbox id="urlbar-container"> <!-- Firefox Mobile -->
+    <hbox id="noscript-urlbar-widget" align="middle" insertafter="urlbar-edit">
+      <toolbarbutton
+        id="noscript-tbb"
+        class="noscript-no noscript-fennec button-image"
+        tooltiptext="NoScript" 
+        popup="noscript-sticky-ui"
+      />
+     
+      <toolbarbutton
+        id="noscript-statusXss"
+        tooltiptext="NoScript XSS" 
+        class="noscript-xss noscript-fennec button-image"
+        hidden="true"
+        type="menu"
+      >
+        <menupopup id="noscript-status-xss-popup" class="noscript-menu" onpopupshowing="noscriptOverlay.prepareXssMenu(this, true)" />
+      </toolbarbutton>
+     
+    </hbox>
+  </hbox>
+    
+  <hbox id="urlbar-editarea"> <!-- Fennec 2.x -->
     <hbox id="noscript-urlbar-widget" align="middle">
       <toolbarbutton
         id="noscript-tbb"
@@ -205,6 +223,7 @@
       </toolbarbutton>
      
    </hbox>
+  
  </hbox>
 
 

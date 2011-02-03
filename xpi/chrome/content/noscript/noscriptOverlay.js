@@ -347,6 +347,8 @@ return noscriptUtil.service ? {
     const sticky = this.stickyUI; // early init
     const popup = this._templatePopup;
     
+    if (!popup) return; // Fennec?
+    
     const tbb = $("noscript-tbb");
     if (tbb) {
       tbb.setAttribute("type", this.hoverUI ? "button" : this.ns.getPref("toolbarToggle") ? "menu-button" : "menu");
@@ -1367,7 +1369,7 @@ return noscriptUtil.service ? {
   
   hoverUI: true,
   
-  showUI: function() {
+  showUI: function(toggle) {
     var popup = null;
     
     var useSticky = this.stickyUI && this.ns.getPref("stickyUI.onKeyboard");
@@ -1377,6 +1379,8 @@ return noscriptUtil.service ? {
     if (!this.isOpenOrJustClosed(popup)) {
       popup._context = !useSticky;
       popup.showPopup(null, -1, -1, "context", null, null);
+    } else if (toggle) {
+      popup.hidePopup();
     }
   }
   
@@ -2087,7 +2091,7 @@ return noscriptUtil.service ? {
           noscriptOverlay.toggleCurrentPage(noscriptOverlay.ns.preferredSiteLevel);
         break;
         case 'ui':
-          noscriptOverlay.showUI()
+          noscriptOverlay.showUI(true);
         break;
       }
     },
