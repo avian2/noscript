@@ -189,7 +189,14 @@ RequestWatchdog.prototype = {
   setUnsafeRequest: function(browser, request) {
     return ns.setExpando(browser, "unsafeRequest", request);
   },
-  
+  attachUnsafeRequest: function(requestInfo) {
+    if (requestInfo.window && 
+        (requestInfo.window == requestInfo.window.top || 
+        requestInfo.window == requestInfo.unsafeRequest.window)
+      ) {
+      this.setUnsafeRequest(requestInfo.browser, requestInfo.unsafeRequest);
+    }
+  },
   
   unsafeReload: function(browser, start) {
     ns.setExpando(browser, "unsafeReload", start);
@@ -624,14 +631,20 @@ RequestWatchdog.prototype = {
         }
       }
     }
-      // check for injections
+    
+    let stripPost = !trustedOrigin && ns.filterXPost; 
+    
+    // check for injections
       
     let injectionAttempt = injectionCheck && (injectionCheck > 1 || !trustedOrigin || ns.isTemp(originSite)) &&
       (!window || ns.injectionCheckSubframes || window == window.top);
 
     if (injectionAttempt) {
-      let skipArr, skipRx;  
-      if (this.PAYPAL_BUTTON_RX.test(originalSpec)) {
+      let skipArr, skipRx;
+      let isPaypal = this.PAYPAL_BUTTON_RX.test(originalSpec);
+      
+      if (isPaypal) {
+        stripPost = false;
         // Paypal buttons encrypted parameter causes a DOS, strip it out
         skipArr = ['encrypted'];
       } else if (/^https?:\/\/www\.mendeley\.com\/import\/bookmarklet\/$/.test(originalSpec)) {
@@ -646,17 +659,17 @@ RequestWatchdog.prototype = {
       } else if (/^https?:\/\/apps\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
         skipRx = /&invite_url=javascript[^&]+/; // Zynga stuff
       }
-      /*else if (/^http:\/\/www\.4shared\.com\/flash\/player\.swf\?/.test(originalSpec)) {
-        skip
-      }*/
       
       if (skipArr) {
         skipRx = new RegExp("(?:^|&)(?:" + skipArr.join('|') + ")=[^&]+");
       }
       
-      postInjection = ns.filterXPost &&
-        (!origin || originSite != "chrome:") &&
-        channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel, skipArr);
+      if (!stripPost)
+        stripPost = postInjection =
+          ns.filterXPost &&
+          (!origin || originSite != "chrome:") &&
+          channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel, skipArr);
+      
       injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(
         skipRx ? originalSpec.replace(skipRx, '') : originalSpec);
       
@@ -667,7 +680,7 @@ RequestWatchdog.prototype = {
     }
     
     
-    if (trustedOrigin && !(injectionAttempt || postInjection))
+    if (trustedOrigin && !(injectionAttempt || stripPost))
       return;
     
     if (untrustedReload && browser) {
@@ -680,8 +693,7 @@ RequestWatchdog.prototype = {
     let requestInfo = new RequestInfo(channel, url, origin, window);
 
     // transform upload requests into no-data GETs
-    if (ns.filterXPost &&
-        (postInjection || !trustedOrigin) && 
+    if (ns.filterXPost && stripPost && 
         (channel instanceof CI.nsIUploadChannel) && channel.uploadStream
       ) {
       try {
@@ -694,6 +706,8 @@ RequestWatchdog.prototype = {
         originalAttempt: originalSpec + (postInjection ? "###DATA###" + postInjection : ""),
         silent: untrustedReload
       }));
+      
+      this.attachUnsafeRequest(requestInfo);
     }
     
     if (!(injectionAttempt || postInjection)) return;
@@ -775,12 +789,7 @@ RequestWatchdog.prototype = {
         if (this.consoleDump) this.dump(channel, "SKIPPING CACHE");
       }
       
-      if (requestInfo.window && 
-          (requestInfo.window == requestInfo.window.top || 
-          requestInfo.window == requestInfo.unsafeRequest.window)
-        ) {
-        this.setUnsafeRequest(requestInfo.browser, requestInfo.unsafeRequest);
-      }
+      this.attachUnsafeRequest(requestInfo);
     }
   },
   

@@ -326,13 +326,13 @@ var DNS = {
     return res;
   },
   
+  _localIPRx: /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|f(?:[cd]|e(?:[c-f]|80:0*:0*:0*:))[0-9a-f]*:)/i,
   isLocalIP: function(addr) {
     // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose but incomplete (missing IPV6 ULA) implementation
     // Relevant RFCs linked at http://en.wikipedia.org/wiki/Private_network
     return (addr.indexOf("2002:") === 0
         ? this.isLocalIP(this.ip6to4(addr))
-        : /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|F(?:[CDF][0-9A-F]|E[89AB])[0-9A-F:]+::)/i
-          .test(addr)
+        : this._localIPRx.test(addr)
         ) ||
       this.localExtras && this.localExtras.testIP(addr) ||
       WAN.ipMatcher && WAN.ipMatcher.testIP(addr);
