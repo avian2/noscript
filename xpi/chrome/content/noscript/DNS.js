@@ -364,8 +364,8 @@ var WAN = {
   ip: null,
   ipMatcher: null,
   fingerprint: '',
-  findMaxInterval: 86400000, // one day 
-  checkInterval: 1500000, // 15 minutes
+  findMaxInterval: 86400000, // 1 day 
+  checkInterval: 3600000, // 1 hour
   checkURL: "https://secure.informaction.com/ipecho/",
   lastFound: 0,
   lastCheck: 0,

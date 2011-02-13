@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "O">
 <!ENTITY noscriptUninstall "Odinštalovať">
 <!ENTITY noscriptRecentBlocked "Naposledy zablokované stránky">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
-<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptExternalFilters "Externé filtre">
+<!ENTITY noscriptEF.enable "Povoliť externé filtre">
+<!ENTITY noscriptEF.add "Nový filter…">
+<!ENTITY noscriptEF.executable "Spustiteľný súbor:">
+<!ENTITY noscriptEF.browse "Prehľadávať…">
+<!ENTITY noscriptEF.contentType "Typ obsahu (MIME), ktorý má byť filtrovaný (presná zhoda alebo regulárny výraz):">
+<!ENTITY noscriptEF.exceptions "Nefiltrovať objekty z týchto stránok:">
+<!ENTITY noscriptEF.remove "Odstrániť">
+<!ENTITY noscriptPreset "Úroveň zabezpečenia">
+<!ENTITY noscriptPreset.off "Vypnuté (vážne to chcete?)">
+<!ENTITY noscriptPreset.low "Jednoduché (čierna listina + webová bezpečnosť)">
+<!ENTITY noscriptPreset.medium "Klasické (biela listina + webová bezpečnosť)">
+<!ENTITY noscriptPreset.high "Pevnosť (úplné uzamknutie)">
+<!ENTITY noscript.hoverUI "Otvoriť ponuku povolení po presunutí myši nad ikonu rozšírenia NoScript">
+<!ENTITY noscriptDonate "Prispieť">
+<!ENTITY noscriptDonate.accesskey "P">

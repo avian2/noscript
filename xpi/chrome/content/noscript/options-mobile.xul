@@ -2,10 +2,6 @@
 <!DOCTYPE dialog SYSTEM "chrome://noscript/locale/noscript.dtd">
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	
-  <stringbundleset id="stringbundleset">
-    <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />
-  </stringbundleset>
-	
 	<setting title="&noscriptPreset;" type="control" id="noscript-preset-setting">
 		<menulist id="noscript-preset-menu" oncommand="noscriptOverlay.presetChanged(this)">
 			<menupopup>

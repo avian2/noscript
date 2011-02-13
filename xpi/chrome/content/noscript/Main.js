@@ -552,7 +552,8 @@ var ns = singleton = {
         sheet = "noscript, noscript * { background-image: none !important; list-style-image: none !important }";
         break;
       case "showPlaceholder": 
-        sheet = '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: inline-block !important; ' +
+        sheet = '.__noscriptPlaceholder__ { direction: ltr !important } ' +
+                '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: inline-block !important; ' +
                 'outline-color: #fc0 !important; outline-style: solid !important; outline-width: 1px !important; outline-offset: -1px !important;' +
                 'cursor: pointer !important; background: #ffffe0 url("' + 
                     this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; margin-top: 0px !important; margin-bottom: 0px !important;} ' +
@@ -3195,7 +3196,7 @@ var ns = singleton = {
         
         extras.tag = "<" + (this.isLegacyFrameReplacement(object) ? "FRAME" : objectTag.toUpperCase()) + ">";
         extras.title =  extras.tag + ", " +  
-            this.mimeEssentials(extras.mime) + "@" + extras.url;
+            this.mimeEssentials(extras.mime) + "@" + extras.url.replace(/[#\?].*/, '');
         
        if ((extras.alt = object.getAttribute("alt")))
           extras.title += ' "' + extras.alt + '"'

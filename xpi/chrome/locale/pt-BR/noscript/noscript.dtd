@@ -168,19 +168,19 @@
 <!ENTITY ABE.refresh.accesskey "t">
 <!ENTITY noscriptUninstall "Desinstalar">
 <!ENTITY noscriptRecentBlocked "Sites bloqueados recentemente">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptExternalFilters "Filtros externos">
+<!ENTITY noscriptEF.enable "Habilitar filtros externos">
+<!ENTITY noscriptEF.add "Novo filtro…">
+<!ENTITY noscriptEF.executable "Arquivo executável:">
+<!ENTITY noscriptEF.browse "Procurar…">
+<!ENTITY noscriptEF.contentType "Tipo de conteúdo (MIME) a ser filtrado (valor exato ou expressão regular):">
+<!ENTITY noscriptEF.exceptions "Não filtrar objetos provenientes desses sites:">
+<!ENTITY noscriptEF.remove "Remover">
+<!ENTITY noscriptPreset "Nível de segurança">
+<!ENTITY noscriptPreset.off "Nenhum (está falando sério?!)">
+<!ENTITY noscriptPreset.low "Tranquilo (Blacklist + Web Security)">
+<!ENTITY noscriptPreset.medium "Clássico (Whitelist + Web Security)">
+<!ENTITY noscriptPreset.high "Fortaleza (bloqueio completo)">
+<!ENTITY noscript.hoverUI "Abrir o menu de permissões quando o mouse passar sobre o ícone do NoScript">
+<!ENTITY noscriptDonate "Doar">
 <!ENTITY noscriptDonate.accesskey "o">

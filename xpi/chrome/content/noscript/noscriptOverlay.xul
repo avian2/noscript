@@ -9,13 +9,6 @@
   <script type="application/x-javascript;version=1.8" src="noscriptOverlay.js"/>
   <script type="application/x-javascript;version=1.8" src="noscriptBM.js"/>
   
-    
-  <stringbundleset id="stringbundleset">
-    <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />
-  </stringbundleset>
-
-  
-
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="noscript-tbb" 
       buttonstyle="pictures"

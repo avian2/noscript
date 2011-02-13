@@ -19,11 +19,7 @@
   spacerflex="1"
   persist="screenX screenY"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  
-  <stringbundleset id="stringbundleset">
-    <stringbundle id="noscript-strings" src="chrome://noscript/locale/noscript.properties" />
-  </stringbundleset>
-  
+    
   <script type="application/x-javascript" src="noscript.js" />
   <script type="application/x-javascript" src="clearClick.js" />
 	<hbox style="width: 400px">
