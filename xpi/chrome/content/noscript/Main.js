@@ -54,10 +54,7 @@ var ns = singleton = {
   // nsIObserver implementation 
   observe: function(subject, topic, data) {
     
-    // check this first, since it's the most likely call
-    if ("document-element-inserted" === topic) {
-      this.onDocumentElementInserted(subject);
-    } else if ("content-document-global-created" === topic) {
+    if ("content-document-global-created" === topic) {
       this.onJSGlobalCreated(subject, data);
       return;
     }
@@ -3137,40 +3134,28 @@ var ns = singleton = {
     }
     return ret;
   },
-  
-  
-  get placeholderMinSize() {
-    delete this.placeholderMinSize;
-    return this.placeholderMinSize = this.getPref("placeholderMinSize");
-  },
-  
+    
   processObjectElements: function(document, sites, loaded) {
-    var pluginExtras = this.findPluginExtras(document);
+    const pluginExtras = this.findPluginExtras(document);
     sites.pluginCount += pluginExtras.length;
     sites.pluginExtras.push(pluginExtras);
     
-    var objInfo = this._preprocessObjectInfo(document);
+    const objInfo = this._preprocessObjectInfo(document);
     if (!objInfo) return;
+    
     var count = objInfo.length;
+    if (count === 0) return;
+    
     sites.pluginCount += count;
     
+    const minSize = this.getPref("placeholderMinSize"),
+          longTip = this.getPref("placeholderLongTip");
     
-    var collapse = this.collapseObject;
-
-    var oi, object, objectTag;
-    var anchor, innerDiv, iconSize;
-    var extras;
-    var cssLen, cssCount, cssProp, cssDef;
-    var style;
+    var replacements = null,
+        collapse = this.collapseObject,
+        forcedCSS = ";",
+        pluginDocument = false;
     
-    var replacements = null;
-    var w, h;
-     
-    var minSize = this.placeholderMinSize;
-    var restrictedSize;
-    
-    var forcedCSS = ";";
-    var pluginDocument = false;       
     try {
       pluginDocument = count == 1 && (objInfo[0].pluginExtras.url == document.URL) && !objInfo[0].embed.nextSibling;
       if (pluginDocument) {
@@ -3179,16 +3164,15 @@ var ns = singleton = {
       }
     } catch(e) {}
     
-    var win = document.defaultView;      
+    var win = document.defaultView;
 
     while (count--) {
-      oi = objInfo[count];
-      object = oi.embed;
-      extras = oi.pluginExtras;
-      objectTag = object.tagName;
+      let oi = objInfo[count];
+      let object = oi.embed;
+      let extras = oi.pluginExtras;
+      let objectTag = object.tagName;
       
       try {
-
         extras.site = this.getSite(extras.url);
         
         if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site))
@@ -3196,13 +3180,14 @@ var ns = singleton = {
         
         extras.tag = "<" + (this.isLegacyFrameReplacement(object) ? "FRAME" : objectTag.toUpperCase()) + ">";
         extras.title =  extras.tag + ", " +  
-            this.mimeEssentials(extras.mime) + "@" + extras.url.replace(/[#\?].*/, '');
+            this.mimeEssentials(extras.mime) + "@" +
+            (longTip ? extras.url : extras.url.replace(/[#\?].*/, ''));
         
-       if ((extras.alt = object.getAttribute("alt")))
+        if ((extras.alt = object.getAttribute("alt")))
           extras.title += ' "' + extras.alt + '"'
         
         
-        anchor = document.createElementNS(HTML_NS, "a");
+        let anchor = document.createElementNS(HTML_NS, "a");
         anchor.id = object.id;
         anchor.href = extras.url;
         anchor.setAttribute("title", extras.title);
@@ -3228,7 +3213,7 @@ var ns = singleton = {
         
         object.className += " __noscriptObjectPatchMe__";
         
-        innerDiv = document.createElementNS(HTML_NS, "div");
+        let innerDiv = document.createElementNS(HTML_NS, "div");
         innerDiv.className = "__noscriptPlaceholder__1";
         
         with (anchor.style) {
@@ -3237,11 +3222,13 @@ var ns = singleton = {
           display = "inline";
         }
         
-        cssDef = "";
-        style = win.getComputedStyle(oi.embed, null);
+        let cssDef = "",
+            restrictedSize,
+            style = win.getComputedStyle(oi.embed, null);
+        
         if (style) {
-          for (cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
-            cssProp = style.item(cssCount);
+          for (let cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
+            let cssProp = style.item(cssCount);
             cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
           }
           
@@ -3269,11 +3256,12 @@ var ns = singleton = {
         innerDiv = innerDiv.appendChild(document.createElementNS(HTML_NS, "div"));
         innerDiv.className = "__noscriptPlaceholder__2";
         
+        let iconSize;
         if(restrictedSize || style && (parseInt(style.width) < 64 || parseInt(style.height) < 64)) {
           innerDiv.style.backgroundPosition = "bottom right";
           iconSize = 16;
-          w = parseInt(style.width);
-          h = parseInt(style.height);
+          let w = parseInt(style.width),
+              h = parseInt(style.height);
           if (minSize > w || minSize > h) {
             with (innerDiv.parentNode.style) {
               var rect = DOM.computeRect(object);
@@ -4092,6 +4080,21 @@ var ns = singleton = {
     return this._inclusionTypeInternalExceptions = new AddressMatcher("https://*.ebaystatic.com/*");
   },
   
+  hasNoSniffHeader: function(channel) {
+    for (let x = true, header = "X-Content-Type-Options";;) {
+      try {
+        return channel.getResponseHeader(header).toLowerCase() === "nosniff";
+        break;
+      } catch(e) {}
+      if (x) {
+        header = header.substring(2);
+        x = false;
+      } else {
+        return false;
+      }
+    }
+  },
+  
   checkInclusionType: function(channel) {
     try {
       if (channel instanceof CI.nsIHttpChannel &&
@@ -4099,26 +4102,13 @@ var ns = singleton = {
         var ph = PolicyState.extract(channel);
         if (ph) {
           let ctype = ph.contentType;
+
           // 2 JS, 4 CSS
           if (!(ctype === 2 || ctype === 4)) return true;
 
           let nosniff = ns.nosniff && ctype === 2;
           
-          if (nosniff) {
-            for (let x = true, header = "X-Content-Type-Options";;) {
-              try {
-                nosniff = channel.getResponseHeader(header).toLowerCase() === "nosniff";
-                break;
-              } catch(e) {}
-              if (x) {
-                header = header.substring(2);
-                x = false;
-              } else {
-                nosniff = false;
-                break;
-              }
-            }
-          }
+          if (nosniff) nosniff = this.hasNoSniffHeader(channel);
           
           if (!(nosniff || ns.inclusionTypeChecking))
             return true;
@@ -4214,14 +4204,25 @@ var ns = singleton = {
 
   onContentSniffed: function(req) {
     try {
-      
+      let nosniff = this.nosniff && this.hasNoSniffHeader(req);
       try {
-        req.contentType;
+        if (!req.contentType || req.contentType === "application/x-unknown-content-type") {
+          if (nosniff) nosniff = !req.getResponseHeader("Content-type");
+        } else nosniff = false;
+
         if (this.consoleDump & LOG_SNIFF)
           this.dump("OCS: " + req.name + ", " + req.contentType);
       } catch(e) {
         this.dump("OCS: " + req.name + ", CONTENT TYPE UNAVAILABLE YET");
-        return;  // we'll check later in http-on-examine-merged-response
+        if (!nosniff) return;  // we'll check later in http-on-examine-merged-response
+      }
+      if (nosniff) {
+        try {
+          req.contentType = "text/plain";
+          ns.log("[NoScript] Force text/plain for missing content-type on " + req.name);
+        } catch(e) {
+          ns.dump(e);
+        }
       }
       
       var isObject;
@@ -4582,16 +4583,6 @@ var ns = singleton = {
     this.onJSGlobalCreated(win, url);
   },
   
-  onDocumentElementInserted: function(doc) {
-    try {
-      OS.removeObserver(this, "content-document-global-created");
-    } catch(e) {}
-    this.onDocumentElementInserted = function(doc) {
-      this.onJSGlobalCreated(doc.defaultView, doc.URL);
-    }
-    this.onDocumentElementInserted(doc);
-  },
-  
   get unescapeHTML() {
     delete this.unescapeHTML;
     return this.unescapeHTML = CC["@mozilla.org/feed-unescapehtml;1"].getService(CI.nsIScriptableUnescapeHTML)
@@ -4718,7 +4709,6 @@ var ns = singleton = {
     if (/^https?:\/\//i.test(destURL)) callback(doc, uri);
     else {
       var req = ns.createCheckedXHR("HEAD", uri.spec);
-      req.open("HEAD", uri.spec);
       var done = false;
       req.onreadystatechange = function() {
         

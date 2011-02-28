@@ -71,11 +71,31 @@ RequestWatchdog.prototype = {
           }
           
           if (isDoc) {
+            
+            let url = abeReq.destination;
+            if (url.indexOf("#!") > 0 &&
+              (url.indexOf("?") === -1 || url.indexOf("?_escaped_fragment_=") > 0) &&
+              ns.getPref("ajaxFallback.enabled")) {
+              let qs = '?_escaped_fragment_=' + url.match(/#!(.*)/)[1].replace(/[\s&=]/g, encodeURIComponent);
+              
+              let newURL = "", isReload = false;
+              if (ns.isJSEnabled(ns.getSite(url))) {
+                if (url.indexOf(qs) > 0 && (isReload = this.noscriptReload === url)) {
+                  newURL = url.replace(qs, "").replace(/([^#&]+)&/, '$1?');
+                }   
+              } else if (url.indexOf(qs) === -1) {
+                newURL = url.replace(/(?:\?_escaped_fragment_=[^&#]*)|(?=#!)/, qs);
+              }
+              if (newURL && newURL != url && abeReq.redirectChain.map(function(u) u.spec).indexOf(newURL) === -1) {
+                channel.URI.spec = abeReq.destination = newURL;
+                if (isReload) this.noscriptReload = newURL;
+              }
+            }
+            
             new DOSChecker(abeReq).run(function() {
               return this.filterXSS(abeReq);
             }, this);  
           }
-          
           if (!channel.status) {
             this.handleABE(abeReq, isDoc);
           }
@@ -911,10 +931,13 @@ var Entities = {
   get htmlNode() {
     delete this.htmlNode;
     var impl = CC["@mozilla.org/xul/xul-document;1"].createInstance(CI.nsIDOMDocument).implementation;
-    return this.htmlNode = impl.createDocument(
-      HTML_NS, "html", impl.createDocumentType(
-        "html", "-//W3C//DTD HTML 4.01 Transitional//EN", "http://www.w3.org/TR/html4/loose.dtd"  
-      )).createElementNS(HTML_NS, "body");
+    return this.htmlNode = (("createHTMLDocument" in impl)
+      ? impl.createHTMLDocument("")
+      : impl.createDocument(
+        HTML_NS, "html", impl.createDocumentType(
+          "html", "-//W3C//DTD HTML 4.01 Transitional//EN", "http://www.w3.org/TR/html4/loose.dtd"  
+        ))
+      ).createElementNS(HTML_NS, "body");
   },
   convert: function(e) {
     try {
@@ -1577,8 +1600,8 @@ var InjectionChecker = {
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|iframe|frame|base|body|meta|ima?g|video|audio|bindings") + 
-    ")[^>])|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\b" + IC_EVENT_PATTERN +
-     "[\\s\\x08]*=|<\\W*(?:a|map)\\b[\\s\\S]+\\bstyle\\W*=", 
+    ")[^>])|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\b(?:formaction|" + IC_EVENT_PATTERN +
+     ")[\\s\\x08]*=|<\\W*(?:a|map)\\b[\\s\\S]+\\bstyle\\W*=", 
     "i"),
   checkHTML: function(s) {
     this.log(s);
@@ -1587,7 +1610,8 @@ var InjectionChecker = {
   
   NoscriptChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" +
     fuzzify("style|form|svg|(?:link|object|embed|applet|param|iframe|frame|meta|video|audio|base") +
-      ")[^>])"
+      ")[^>])|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\bformaction[\\s\\x08]*=",
+    "i"
     ),
   checkNoscript: function(s) {
     this.log(s);

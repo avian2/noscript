@@ -176,8 +176,9 @@ var ScriptSurrogate = {
   execute: function(document, scriptBlock) {
     var w = document.defaultView;
     try {
-      var s = new CU.Sandbox(w);
-      s.window = (typeof w.wrappedJSObject == "object") ? w.wrappedJSObject : w;
+      if (typeof w.wrappedJSObject === "object") w = w.wrappedJSObject;
+      var s = new CU.Sandbox(w, { wantXrays: false });
+      s.window = w;
       CU.evalInSandbox("with(window) {" + scriptBlock + "}", s);
     } catch(e) {
       if (ns.consoleDump) ns.dump(e);

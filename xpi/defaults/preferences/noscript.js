@@ -258,6 +258,8 @@ pref("noscript.surrogate.adriver.sources", "ad.adriver.ru/cgi-bin/erle.cgi");
 pref("noscript.surrogate.adriver.replacement", "if(top!==self&&top.location.href===location.href)setTimeout('try{document.close();}catch(e){}',100)");
 
 pref("noscript.placeholderMinSize", 32);
+pref("noscript.placeholderLongTip", true);
+
 pref("noscript.compat.evernote", true);
 pref("noscript.compat.gnotes", true);
 
@@ -320,3 +322,5 @@ pref("noscript.liveConnectInterception", true);
 pref("noscript.doNotTrack.enabled", true);
 pref("noscript.doNotTrack.exceptions", "");
 pref("noscript.doNotTrack.forced", "");
+
+pref("noscript.ajaxFallback.enabled", true);
