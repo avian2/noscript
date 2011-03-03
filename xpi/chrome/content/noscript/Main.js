@@ -857,6 +857,12 @@ var ns = singleton = {
     }
   },
   
+  get profiler() {
+    delete this.profiler;
+    INCLUDE("Profiler");
+    return this.profiler = Profiler;
+  },
+  
   captureExternalProtocols: function() {
     try {
       const pb = this.prefService.getDefaultBranch("network.protocol-handler.");
@@ -2367,6 +2373,11 @@ var ns = singleton = {
     }
         
     return false;
+  },
+  
+  // Fire.fm compatibility shim :(
+  setAllowedObject: function(url, mime) {
+    this.allowObject(url, mime);
   },
   
   allowObject: function(url, mime, originSite) {
@@ -4524,7 +4535,7 @@ var ns = singleton = {
     doc[flag] = url;
     
     const site = this.getSite(url);
-    var jsBlocked = !docShell.allowJavascript || !(this.jsEnabled || this.isJSEnabled(site));
+    var jsBlocked = !(docShell.allowJavascript && (this.jsEnabled || this.isJSEnabled(site)));
     
     if (!((docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page
@@ -4542,6 +4553,7 @@ var ns = singleton = {
         newWin.addEventListener("click", this.bind(this.onContentClick), true);
         newWin.addEventListener("change", this.bind(this.onContentChange), true);
       }
+     
       return;
     } else {
       if (this.implementToStaticHTML && !("toStaticHTML" in doc.defaultView)) {

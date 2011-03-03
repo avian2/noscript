@@ -365,7 +365,8 @@ var WAN = {
   ipMatcher: null,
   fingerprint: '',
   findMaxInterval: 86400000, // 1 day 
-  checkInterval: 3600000, // 1 hour
+  checkInterval: 14400000, // 4 hours
+  fingerInterval: 900000, // 1/4 hour
   checkURL: "https://secure.informaction.com/ipecho/",
   lastFound: 0,
   lastCheck: 0,
@@ -412,11 +413,27 @@ var WAN = {
     }
     return this._enabled = b;
   },
+  _observingHTTP: false,
   
   observe: function(subject, topic, data) {
-    if ((topic == "wake_notification" || data == "online") && this.enabled) {
-      this._periodic(true);
+    if (!this.enabled) return;
+    
+    switch(topic) {
+      case "wake_notification":
+        if (!this._observingHTTP) OS.addObserver(this, "http-on-examine-response", true);
+        return;
+      case "http-on-examine-response":
+        OS.removeObserver(this, "http-on-examine-response");
+        this._observingHTTP = false;
+        break;
+      case "network:offline-status-changed":
+        if (data === "online")
+          break;
+      default:
+        return;
     }
+
+    this._periodic(true);
   },
   
   _periodic: function(forceFind) {
@@ -425,7 +442,7 @@ var WAN = {
     var t = Date.now();
     if (forceFind ||
         t - this.lastFound > this.findMaxInterval ||
-        t - this.lastCheck > this.checkInterval * 4) {  
+        t - this.lastCheck > this.checkInterval) {  
       this.findIP(this._findCallback);
     } else if (this.fingerprint) {
       this._takeFingerprint(this.ip, this._fingerprintCallback);
@@ -519,7 +536,7 @@ var WAN = {
           if (xhr.readyState == 4) {
             let ip = null;
             if (xhr.status == 200) {
-              ip = xhr.responseText;
+              ip = xhr.responseText.replace(/\s+/g, '');
               if (!/^[\da-f\.:]+$/i.test(ip)) ip = null;
             }
             self._findIPDone(ip, xhr.responseText);
@@ -558,8 +575,14 @@ var WAN = {
       this.ip = ip;
       this.ipMatcher = ipMatcher;
       this.lastFound = Date.now();
+      
+       this.log("Detected WAN IP " + ip);
+    } else {
+      this.lastFound = 0;
+      this.fingerprint = '';
+      this.log("WAN IP not detected!");
     }
-    this.log(ip ? "Detected WAN IP " + ip : "WAN IP not detected!");
+   
     this._finding = false;
   },
   

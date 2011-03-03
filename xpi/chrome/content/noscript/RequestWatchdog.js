@@ -11,7 +11,7 @@ RequestWatchdog.prototype = {
     for each (var topic in this.OBSERVED_TOPICS) OS.addObserver(this, topic, true);
   },
   dispose: function() {
-    for each (var topic in this.OBSERVED_TOPICS) OS.removeObserver(this, topic, true);
+    for each (var topic in this.OBSERVED_TOPICS) OS.removeObserver(this, topic);
   },
   
   callback: null,
@@ -575,6 +575,12 @@ RequestWatchdog.prototype = {
             ns.getPref("filterXExceptions.blogspot")
             ) {
           if (ns.consoleDump) this.dump(channel, "blogspot.com template preview exception");
+          return;
+        }
+        
+        if (originalSpec === "https://www.readability.com/articles/queue" &&
+            ns.getPref("filterXExceptions.readability")) {
+          if (ns.consoleDump) this.dump(channel, "Readability exception");
           return;
         }
         
