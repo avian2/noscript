@@ -51,6 +51,12 @@ Profiler = {
       dump(l.call + ": " + l.data.toSource() + "\n");
       if (count-- <= 0) break;
     }
+  },
+  
+  gc: function() {
+    DOM.mostRecentBrowserWindow.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+      .getInterface(Components.interfaces.nsIDOMWindowUtils)
+      .garbageCollect();
   }
 }
 
