@@ -127,7 +127,7 @@ var ScriptSurrogate = {
         } else {
           code = mapping.replacement;
           if (!noScript && mapping.noScript)
-            code = 'addEventListener("DOMContentLoaded", function(event) {' +
+            code = 'document.addEventListener("DOMContentLoaded", function(event) {' +
                     code + '}, false)';
         }
         if (!scripts) scripts = [code];
@@ -143,12 +143,12 @@ var ScriptSurrogate = {
     
     if (typeof(noScript) !== "boolean") noScript = !!noScript;
     
-    this.getScripts(scriptURL, pageURL, noScript, scripts);
+    scripts = this.getScripts(scriptURL, pageURL, noScript, scripts);
     if (!scripts) return false;
     
     const runner = noScript
       ? this.fallback
-      : scriptURL == pageURL
+      : scriptURL === pageURL
         ? this.execute
         : this.executeDOM;
     
@@ -171,16 +171,16 @@ var ScriptSurrogate = {
   
   
   fallback: function(document, scriptBlock) {
-    document.defaultView.addEventListener("DOMContentLoaded", function(ev) {
-      ScriptSurrogate.executeSandbox(ev.target, scriptBlock);
+    document.addEventListener("DOMContentLoaded", function(ev) {
+      ScriptSurrogate.executeSandbox(ev.currentTarget, scriptBlock);
     }, false);
   },
   
   execute: function(document, scriptBlock) {
-    (this.execute = ns.geckoVersionCheck("1.9.1") < 0
+    this.execute = ns.geckoVersionCheck("1.9.1") < 0
       ? this.executeSandbox
-      : this.executeDOM
-    )(document, scriptBlock);
+      : this.executeDOM;
+    this.execute(document, scriptBlock);
   },
   
   executeSandbox: function(document, scriptBlock) {

@@ -249,7 +249,7 @@ pref("noscript.surrogate.ab_mirago.replacement", "HLSysBannerUrl=''");
 pref("noscript.surrogate.ab_mirando.sources", "^http://get\\.mirando\\.");
 pref("noscript.surrogate.ab_mirando.replacement", "Mirando={}");
 pref("noscript.surrogate.ab.sources", "@http://");
-pref("noscript.surrogate.ab.replacement", "watch('ab',function(o,a,b){return a===false&&typeof(b)==='string'?false:b})");
+pref("noscript.surrogate.ab.replacement", "window.watch('ab',function(o,a,b){return a===false&&typeof(b)==='string'?false:b})");
 pref("noscript.surrogate.ab.exceptions", "");
 pref("noscript.surrogate.revsci.sources", "js.revsci.net");
 pref("noscript.surrogate.revsci.replacement", "rsinetsegs=[];DM_addEncToLoc=DM_tag=function(){};");

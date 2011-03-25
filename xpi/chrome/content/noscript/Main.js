@@ -1743,6 +1743,7 @@ var ns = singleton = {
           case "mandatory":
           case "default":
           case "ABE.wanIpAsLocal":
+          case "ABE.migration":
           case "sync.enabled":
             break;
           default:
@@ -4348,10 +4349,12 @@ var ns = singleton = {
       }
     }
     
-    
     if (this.onWindowSwitch && docShell &&
         (topWin || !this.executeEarlyScripts))
       this.onWindowSwitch(uri.spec, domWindow, docShell);
+      
+    
+    
 
     if (!/^attachment\b/i.test(contentDisposition) &&
         this.shouldLoad(7, uri, uri, domWindow.frameElement || domWindow, contentType,
@@ -4642,10 +4645,9 @@ var ns = singleton = {
   get _liveConnectInterceptionDef() {
     delete this._liveConnectInterceptionDef;
     return this._liveConnectInterceptionDef = "(" + (function() {
+      const w = window;
       var dp = w.disablePlugins;
       delete w.disablePlugins;
-      
-      const w = window;
       const g = function() {
         const d = document;
         const o = d.createElement("object");
