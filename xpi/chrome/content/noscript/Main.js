@@ -54,8 +54,11 @@ var ns = singleton = {
   // nsIObserver implementation 
   observe: function(subject, topic, data) {
     
-    if ("content-document-global-created" === topic) {
-      this.onJSGlobalCreated(subject, data);
+    switch (topic) {
+      case "content-document-global-created":
+        if (subject == subject.top) return;
+      case "document-element-inserted":
+        this.beforeScripting(subject, data);
       return;
     }
     
@@ -77,7 +80,7 @@ var ns = singleton = {
           try {
             this.init();
           } catch(e) {
-            this.dump("Init error -- " + e.message);
+            this.dump("Init error -- " + e);
           }
           break;
         case "sessionstore-windows-restored":
@@ -190,8 +193,7 @@ var ns = singleton = {
   
   forbidSomeContent: true,
   contentBlocker: false,
-  
-  forbidChromeScripts: false,
+
   forbidData: true,
 
   forbidJava: true,
@@ -241,13 +243,15 @@ var ns = singleton = {
   
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
-    var children = prefs.getChildList("", {});
-    for (var j = children.length; j-- > 0;) {
-      if (exclude.indexOf(children[j]) < 0) {
-        if (prefs.prefHasUserValue(children[j])) {
-          dump("Resetting noscript." + children[j] + "\n");
+    const root = prefs.root;
+    const keys = prefs.getChildList("", {});
+    for (let j = keys.length; j-- > 0;) {
+      let k = keys[j];
+      if (exclude.indexOf(k) === -1) {
+        if (prefs.prefHasUserValue(k)) {
+          dump("Resetting " + root + k + "\n");
           try {
-            prefs.clearUserPref(children[j]);
+            prefs.clearUserPref(k);
           } catch(e) { dump(e + "\n") }
         }
       }
@@ -268,7 +272,6 @@ var ns = singleton = {
     this.resetDefaultGeneralPrefs();
     this.jsEnabled = false;
     this.resetDefaultSitePrefs();
-    ABE.resetDefaults();
   },
   
   syncPrefs: function(branch, name) {
@@ -330,7 +333,6 @@ var ns = singleton = {
       case "collapseObject":
       case "truncateTitle":
       case "truncateTitleLen":
-      case "forbidChromeScripts":
       case "forbidData":
       case "forbidMetaRefresh":
       case "forbidIFramesContext":
@@ -375,25 +377,7 @@ var ns = singleton = {
       case "asyncNetworking":
         IOUtil[name] = this.getPref(name, IOUtil[name]);
       break;
-      
-      case "ABE.wanIpAsLocal":
-        WAN.enabled = this.getPref(name);
-      break;
-      case "ABE.wanIpCheckURL":
-        WAN.checkURL = this.getPref(name);
-      break;
-      case "ABE.localExtras":
-        DNS.localExtras = AddressMatcher.create(this.getPref(name));
-      break;
-      case "ABE.enabled":
-      case "ABE.siteEnabled":
-      case "ABE.allowRulesetRedir":
-      case "ABE.disabledRulesetNames":
-      case "ABE.legacySupport":
-      case "ABE.skipBrowserRequests":
-        ABE[name.substring(4)] = this.getPref(name);
-      break;
-      
+
       case "doNotTrack.enabled":
         DoNotTrack.enabled = this.getPref(name);
        break;
@@ -403,7 +387,7 @@ var ns = singleton = {
       break;
       
       case "STS.enabled":
-        STS[name.substring(4)] = this.getPref(name);
+        STS.enabled = this.getPref(name);
       break;
       
       case "subscription.trustedURL":
@@ -661,7 +645,7 @@ var ns = singleton = {
     this._inited = true;
     
     this._initResources();
-
+    
     if (!this.requestWatchdog) {
       this.requestWatchdog = new RequestWatchdog()
     }
@@ -703,7 +687,6 @@ var ns = singleton = {
       "filterXPost", "filterXGet", 
       "filterXGetRx", "filterXGetUserRx", 
       "filterXExceptions",
-      "forbidChromeScripts",
       "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts",
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
       "forbidMetaRefresh",
@@ -726,8 +709,6 @@ var ns = singleton = {
       "httpsForced", "httpsForcedExceptions", "allowHttpsOnly",
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
-      "ABE.enabled", "ABE.legacySupport", "ABE.siteEnabled", "ABE.allowRulesetRedir", "ABE.disabledRulesetNames", "ABE.skipBrowserRequests",
-      "ABE.wanIpCheckURL", "ABE.wanIpAsLocal", "ABE.localExtras",
       "STS.enabled",
       "doNotTrack.enabled", "doNotTrack.exceptions", "doNotTrack.forced"
       ]) {
@@ -777,8 +758,12 @@ var ns = singleton = {
     
     this.reloadWhereNeeded(); // init snapshot
     
-    this.savePrefs(true); // flush preferences to file
-
+    // this.savePrefs(true); // flush preferences to file [TODO: check if it's really needed]
+    
+    if (this.builtInSync) this._initSync();
+    
+    ABE.init("noscript.ABE.");
+    
     // hook on redirections (non persistent, otherwise crashes on 1.8.x)
     CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
       .addCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, SERVICE_CTRID, false, true);
@@ -1049,7 +1034,7 @@ var ns = singleton = {
         return d === domain || d.length > dLen && d.slice(- dLen) === dotDomain; 
       };
     } else {
-      filter = function(s) { return s.replace(portRx, '') === site; };      
+      filter = function(s) { return s.replace(portRx, '') === site; };
     }
     
     var doomedSites = portSites.filter(filter, this);
@@ -1064,6 +1049,8 @@ var ns = singleton = {
     return this.globalJS || this.autoAllow || this.getPref("forbidImpliesUntrust", false);
   }
 ,
+  portRx: /:\d+$/,
+  _ipShorthandRx: /^(https?:\/\/)((\d+\.\d+)\.\d+)\.\d+(?::\d|$)/,
   checkShorthands: function(site, policy) {
     if (this.whitelistRegExp && this.whitelistRegExp.test(site)) {
       return true;
@@ -1071,28 +1058,28 @@ var ns = singleton = {
     
     if (!policy) policy = this.jsPolicySites;
    
-    map = policy.sitesMap;
+    let map = policy.sitesMap;
     
-    if (/:\d+$/.test(site)) {
-      
+    if (this.portRx.test(site)) {
+      let portRx = this.portRx;
       if (this.ignorePorts && policy.matches(site.replace(/:\d+$/, '')))
         return true;
       
       // port matching, with "0" as port wildcard  and * as nth level host wildcard
-      var key = site.replace(/\d+$/, "0");
+      let key = site.replace(portRx, ":0");
       if (key in map || site in map) return true;
       var keys = site.split(".");
       if (keys.length > 1) {
-        var prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
+        let prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
         while (keys.length > 2) {
           keys.shift();
           key = prefix + keys.join(".");
-          if (key in map || key.replace(/\d+$/, "0") in map) return true;
+          if (key in map || key.replace(portRx, ":0") in map) return true;
         }
       }
     }
     // check IP leftmost portion up to 2nd byte (e.g. [http://]192.168 or [http://]10.0.0)
-    var m = site.match(/^(https?:\/\/)((\d+\.\d+)\.\d+)\.\d+(?::\d|$)/);
+    let m = site.match(this._ipShorthandRx);
     return m && (m[2] in map || m[3] in map || (m[1] + m[2]) in map || (m[1] + m[3]) in map);
   }
 ,
@@ -1109,7 +1096,7 @@ var ns = singleton = {
   }
 ,
   splitList: function(s) {
-    return s?/^[,\s]*$/.test(s)?[]:s.split(/\s*[,\s]\s*/):[];
+    return s ?/^[,\s]*$/.test(s) ? [] : s.split(/\s*[,\s]\s*/) : [];
   }
 ,
   get placesPrefs() {
@@ -1728,7 +1715,46 @@ var ns = singleton = {
   },
   
   get placesSupported() {
-    return "nsINavBookmarksService" in Components.interfaces;
+    return !this.builtInSync && ("nsINavBookmarksService" in Components.interfaces);
+  },
+  
+  get builtInSync() {
+    var ret = this.getPref("sync.enabled");
+    if (ret) {
+      try {
+        ret = this.prefService.getDefaultBranch("services.sync.prefs.sync.javascript.").getBoolPref("enabled");
+      } catch (e) {
+        ret = false;
+      }
+    }
+    delete this.builtInSync;
+    return this.builtInSync = ret;
+  },
+  
+  _initSync: function() {
+    let t = Date.now();
+    try {
+      let branch = this.prefService.getDefaultBranch("services.sync.prefs.sync.noscript.");
+      for each (let key in this.prefs.getChildList("", {})) {
+        switch (key) {
+          case "version":
+          case "preset":
+          case "placesPrefs.ts":
+          case "mandatory":
+          case "default":
+          case "ABE.wanIpAsLocal":
+          case "sync.enabled":
+            break;
+          default:
+            branch.setBoolPref(key, true);
+        }
+      }
+      this.prefService.getDefaultBranch("services.sync.prefs.sync.")
+        .setBoolPref(this.policyPB.root + "sites", true);
+    } catch(e) {
+      this.dump(e);
+    }
+    if (this.consoleDump) this.dump("Sync prefs inited in " + (Date.now() - t));
   },
   
   get canSerializeConf() { return !!this.json },
@@ -1738,7 +1764,7 @@ var ns = singleton = {
     
     const exclude = this._dontSerialize;
     const prefs = {};
-    for each (var key in this.prefs.getChildList("", {})) {
+    for each (let key in this.prefs.getChildList("", {})) {
       if (exclude.indexOf(key) === -1) {
         prefs[key] = this.getPref(key);
       }
@@ -1747,7 +1773,6 @@ var ns = singleton = {
     const conf = this.json.encode({
       prefs: prefs,
       whitelist: this.getPermanentSites().sitesString,
-      ABE: ABE.serialize(),
       V: this.VERSION
     });
     
@@ -1757,11 +1782,11 @@ var ns = singleton = {
   restoreConf: function(s) {
     try {
       const json = this.json.decode(s.replace(/[\n\r]/g, ''));
-      if (json.ABE) ABE.restore(json.ABE);
+      if (json.ABE) ABE.restoreJSONRules(json.ABE);
       
       const prefs = json.prefs;
       const exclude = this._dontSerialize;
-      for (var key in prefs) {
+      for (let key in prefs) {
         if (exclude.indexOf(key) === -1) {
           this.setPref(key, prefs[key]);
         }
@@ -1905,44 +1930,10 @@ var ns = singleton = {
     } catch(e) { return null; }
   },
   
+  _mediaTypeRx: /^(?:vide|audi)o\/|\/ogg$/i,
   isMediaType: function(mimeType) {
-    return /^(?:vide|audi)o\/|\/ogg$/i.test(mimeType);
+    return this._mediaTypeRx.test(mimeType);
   },
-  
-  checkForbiddenChrome: function(url, origin) {
-    var f, browserChromeDir, chromeRegistry;
-    try {
-      browserChromeDir = CC["@mozilla.org/file/directory_service;1"].getService(CI.nsIProperties)
-                       .get("AChrom", CI.nsIFile);
-      chromeRegistry = CC["@mozilla.org/chrome/chrome-registry;1"].getService(CI.nsIChromeRegistry);
-      
-      f = function(url, origin) {
-        if(origin && !/^(?:chrome|resource|about)$/.test(origin.scheme)) {
-          switch(url.scheme) {
-            case "chrome":
-              var packageName = url.host;
-              if (packageName == "browser") return false; // fast path for commonest case
-              exception = this.getPref("forbidChromeExceptions." + packageName, false);
-              if (exception) return false;
-              var chromeURL = chromeRegistry.convertChromeURL(url);
-              if (chromeURL instanceof CI.nsIJARURI) 
-                chromeURL = chromeURL.JARFile;
-                    
-              return chromeURL instanceof CI.nsIFileURL && !browserChromeDir.contains(chromeURL.file, true);
-             
-            case "resource":
-              if(/\.\./.test(unescape(url.spec))) return true;
-          }
-        }
-        return false;
-      }
-    } catch(e) {
-      f = function() { return false; }
-    }
-    this.checkForbiddenChrome = f;
-    return this.checkForbiddenChrome(url, origin);
-  },
-
   
   versionComparator: CC["@mozilla.org/xpcom/version-comparator;1"].getService(CI.nsIVersionComparator),
   geckoVersion: ("@mozilla.org/xre/app-info;1" in  CC) ? CC["@mozilla.org/xre/app-info;1"].getService(CI.nsIXULAppInfo).platformVersion : "0.0",
@@ -1963,9 +1954,6 @@ var ns = singleton = {
         ", mime: " + aMimeTypeGuess + ", " + aInternalCall);
   },
   reject: function(what, args /* [aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall] */) {
-    
-    if (args.xOriginCached)
-      XOriginCache.pick(args.xOriginKey, true);
     
     if (this.consoleDump) {
       if(this.consoleDump & LOG_CONTENT_BLOCK && args.length == 6) {
@@ -1999,10 +1987,11 @@ var ns = singleton = {
     ev.currentTarget.removeEventListener(ev.type, arguments.callee, true);
   },
   
+  _emptyDataDoc: /^data:[\w\/]+,$/,
   forbiddenJSDataDoc: function(locationURL, originSite, aContext) {
      return !this.isSafeJSURL(locationURL) &&
         (this.forbidData && !this.isFirebugJSURL(locationURL) || locationURL == "javascript:") && 
-        (!originSite || /^moz-nullprincipal:/.test(originSite))
+        (!originSite || originSite.indexOf("moz-nullprincipal:") === 0)
           ? aContext && (
                     (aContext instanceof CI.nsIDOMWindow) 
                       ? aContext
@@ -2012,7 +2001,7 @@ var ns = singleton = {
               (aContext instanceof CI.nsIDOMHTMLFrameElement ||
                aContext instanceof CI.nsIDOMHTMLIFrameElement) &&
               (
-              /^data:[\w\/]+,$/.test(locationURL) ||
+              this._emptyDataDoc.test(locationURL) ||
               this.isPluginDocumentURL(locationURL, "iframe") ||
               this.isPluginDocumentURL(locationURL, "embed") ||
               this.isPluginDocumentURL(locationURL, "video") ||
@@ -2026,14 +2015,15 @@ var ns = singleton = {
     if (aContentLocation.schemeIs("chrome") || !aRequestOrigin || 
          // GreaseMonkey Ajax comes from resource: hidden window
          // Google Toolbar Ajax from about:blank
-           /^(?:chrome:|resource:|about:blank)/.test(originURL = aRequestOrigin.spec) ||
+           aRequestOrigin.schemeIs("chrome") || aRequestOrigin.schemeIs("resource") ||
+           aRequestOrigin.schemeIs("about") ||
            // Web Developer extension "appears" to XHR towards about:blank
            (locationURL = aContentLocation.spec) == "about:blank"
           ) return false;
     
     let locationSite = this.getSite(locationURL);
-    if (this.ignorePorts && /:\d+$/.test(locationSite) &&
-        this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite))
+    if (this.ignorePorts && this.portRx.test(locationSite) &&
+        this.isJSEnabled(locationSite.replace(this.portRx, '')) && this.autoTemp(locationSite))
       return false;
     
     var win = aContext && aContext.defaultView;
@@ -2083,8 +2073,9 @@ var ns = singleton = {
         b = rx.test(o.getAttribute("wmode"));
       } else if (o instanceof CI.nsIDOMHTMLObjectElement) {
         var params = o.getElementsByTagName("param");
+        const wmodeRx = /wmode/i;
         for(var j = params.length; j-- > 0 &&
-            !(b = /wmode/i.test(params[j].name && rx.test(params[j].value)));
+            !(b = wmodeRx.test(params[j].name && rx.test(params[j].value)));
         );
       }
       if (b) this.setExpando(o, "windowless", true);
@@ -2239,7 +2230,7 @@ var ns = singleton = {
         if (!locationSite) return true;
       case 2: // allow trusted and data: (Fx 3) XBL on trusted sites
         if (!(this.isJSEnabled(originSite) ||
-              /^file:/.test(locationURL) // we trust local files to allow Linux theming
+            locationSite.indexOf("file:") === 0 // we trust local files to allow Linux theming
              )) return true;
       case 1: // allow trusted and data: (Fx 3) XBL on any site
         if (!(this.isJSEnabled(locationSite) || /^(?:data|file|resource):/.test(locationURL))) return true;
@@ -2341,8 +2332,9 @@ var ns = singleton = {
   objectWhitelist: {},
   ALL_TYPES: ["*"],
   objectWhitelistLen: 0,
+  _objectKeyRx: /^((?:\w+:\/\/)?[^\.\/\d]+)\d+(\.[^\.\/]+\.)/,
   objectKey: function(url, originSite) {
-    return (originSite || '') + ">" + IOUtil.anonymizeURL(url.replace(/^((?:\w+:\/\/)?[^\.\/\d]+)\d+(\.[^\.\/]+\.)/, '$1$2'));
+    return (originSite || '') + ">" + IOUtil.anonymizeURL(url.replace(this._objectKeyRx, '$1$2'));
   },
   anyAllowedObject: function(site, mime) {
     let key = this.objectKey(site);
@@ -2366,14 +2358,16 @@ var ns = singleton = {
       if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1))
         return true;
 
-      if (!/\..*\.|:\//.test(site)) break;
-      let s = site.replace(/.*?(?::\/+|\.)/, '');
+      if (!this._moreURLPartsRx.test(site)) break;
+      let s = site.replace(this._chopURLPartRx, '');
       if (s === site) break;
       site = s;
     }
         
     return false;
   },
+  _moreURLPartsRx: /\..*\.|:\//,
+  _chopURLPartRx: /.*?(?::\/+|\.)/,
   
   // Fire.fm compatibility shim :(
   setAllowedObject: function(url, mime) {
@@ -2467,7 +2461,7 @@ var ns = singleton = {
     const w = document.defaultView;
     const toBeChecked = [];
     for (let j = 0, l; (l = links[j]); j++) {
-      if (l && l.href && /^https?/i.test(l.href)) {
+      if (l && l.href && l.href.indexOf("http") === 0) {
         if (l.offsetWidth || l.offsetHeight) return true;
         toBeChecked.push(l);
       }
@@ -2496,7 +2490,7 @@ var ns = singleton = {
     if (this.jsredirectIgnore) return 0;
     
     try {
-      if (!/^https?:/.test(document.documentURI) ) return 0;
+      if (document.documentURI.indexOf("http") !== 0) return 0;
       var hasVisibleLinks = this.hasVisibleLinks(document);
       if (!this.jsredirectForceShow && hasVisibleLinks) 
         return 0;
@@ -2516,7 +2510,7 @@ var ns = singleton = {
         const links = document.links;
         for (let j = 0, len = links.length, l; j < len; j++) {
           l = links[j];
-          if (!(l.href && /^https?/.test(l.href))) continue;
+          if (!(l.href && l.href.indexOf("http") === 0)) continue;
           l = body.appendChild(l.cloneNode(true));
           l.style.visibility = "visible";
           l.style.display = "block";
@@ -2709,8 +2703,9 @@ var ns = singleton = {
       }
 
       var node, nodeName;
+      const refreshRx = /refresh/i; 
       for (var j = 0; (refresh = rr[j]); j++) {
-        if (!/refresh/i.test(refresh.httpEquiv)) continue;
+        if (!refreshRx.test(refresh.httpEquiv)) continue;
         if (html5) { // older parser moves META outside the NOSCRIPT element if not in HEAD
           for (node = refresh; (node = node.parentNode);) {
             if (node.localName == "noscript")
@@ -2800,7 +2795,7 @@ var ns = singleton = {
     // if it starts with a frame breaker, we honor it.
     var d = w.document;
     var url = d.URL;
-    if (!/^https?:/.test(url) || this.isJSEnabled(this.getSite(url))) return false;
+    if (url.indexOf("http") !== 0 || this.isJSEnabled(this.getSite(url))) return false;
     var ss = d.getElementsByTagName("script");
     var sc, m, code;
     for (var j = 0, len = 5, s; j < len && (s = ss[j]); j++) {
@@ -3125,7 +3120,8 @@ var ns = singleton = {
         if (embed instanceof OBJECT || embed instanceof EMBED) {
           node = embed;
           while ((node = node.parentNode) && !node.__noscriptBlocked)
-            if (node instanceof OBJECT) o.embed = embed = node;
+            //  if (node instanceof OBJECT) o.embed = embed = node
+            ;
           
           if (node !== null) {
             pe.splice(j, 1);
@@ -4353,7 +4349,8 @@ var ns = singleton = {
     }
     
     
-    if (docShell && this.onWindowSwitch)
+    if (this.onWindowSwitch && docShell &&
+        (topWin || !this.executeEarlyScripts))
       this.onWindowSwitch(uri.spec, domWindow, docShell);
 
     if (!/^attachment\b/i.test(contentDisposition) &&
@@ -4528,10 +4525,11 @@ var ns = singleton = {
       );
   },
   
+  _pageModMaskRx: /^(?:chrome|resource|view-source):/,
   onWindowSwitch: function(url, win, docShell) {
     const doc = docShell.document;
     const flag = "__noScriptEarlyScripts__";
-    if (flag in doc && doc[flag] == url) return;
+    if (flag in doc && doc[flag] === url) return;
     doc[flag] = url;
     
     const site = this.getSite(url);
@@ -4543,9 +4541,9 @@ var ns = singleton = {
       jsBlocked = false;
     }
     
-    if (!/^(?:chrome|resource|about|view-source):/.test(url)) { 
-      ScriptSurrogate.apply(doc, url, url, jsBlocked);
-    }
+    if (this._pageModMaskRx.test(url)) return; 
+    
+    var scripts;
     
     if (jsBlocked) {
       if (this.getPref("fixLinks")) {
@@ -4553,47 +4551,49 @@ var ns = singleton = {
         newWin.addEventListener("click", this.bind(this.onContentClick), true);
         newWin.addEventListener("change", this.bind(this.onContentChange), true);
       }
-     
-      return;
     } else {
+    
       if (this.implementToStaticHTML && !("toStaticHTML" in doc.defaultView)) {
-        ScriptSurrogate.execute(doc, this._toStaticHTMLDef, true);
+        scripts = [this._toStaticHTMLDef];
         doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
       }
       
       if (this.contentBlocker && this.liveConnectInterception && this.forbidJava &&
           !this.isAllowedObject(site, "application/x-java-vm", site)) {
-        this.interceptLiveConnect(doc);
+        (doc.defaultView.wrappedJSObject || doc.defaultView).disablePlugins = this._disablePlugins;
+        if (!scripts) scripts = [this._liveConnectInterceptionDef];
+        else scripts.push(this._liveConnectInterceptionDef);
       }
+      
+      try {
+        if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url)) {
+          if (!scripts) scripts = [this.jsHack];
+          else scripts.push(this.jsHack);
+        }
+      } catch(e) {}
+    
     }
-
-    try {
-      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url) && !doc._noscriptJsHack) {
-        try {
-          doc._noscriptJsHack = true;
-          ScriptSurrogate.execute(doc, this.jsHack, true);
-        } catch(jsHackEx) {}
-      }
-    } catch(e) {}
+    
+    ScriptSurrogate.apply(doc, url, url, jsBlocked, scripts);
     
   },
   
-  onJSGlobalCreated: function(win, url) {
-    // replace legacy code paths
+  beforeScripting: function(subj, url) {
     this.executeEarlyScripts = this.onWindowSwitch;
-    this.onWindowSwitch = null;
-    
-    this.onJSGlobalCreated = function(win, url) {
-      if (url && win && !(win instanceof CI.nsIDOMChromeWindow)) { // WARNING: url contains only the authority part of the current URI
-        let pageURL = win.location.href; // we need to get the full URI elsewhere
-        if (pageURL == win.document.documentURI) { // can be false on frame transitions...
-          let docShell =  this.dom.getDocShellForWindow(win);
-          this.executeEarlyScripts(pageURL, win, docShell);
-        }
-      }
-    }
-    this.onJSGlobalCreated(win, url);
+    // replace legacy code paths
+    if (subj.defaultView) { // we got document element inserted
+      OS.removeObserver(this, "content-document-global-created");
+      this.onWindowSwitch = null;
+    } 
+    this.beforeScripting = this._beforeScriptingReal;
+    this.beforeScripting(subj, url);
   },
+  _beforeScriptingReal: function(subj, url) {
+    const win = subj.defaultView || subj;
+    const docShell = this.dom.getDocShellForWindow(win);
+    if (docShell) this.executeEarlyScripts(docShell.document.documentURI, win, docShell);
+  },
+  
   
   get unescapeHTML() {
     delete this.unescapeHTML;
@@ -4642,9 +4642,12 @@ var ns = singleton = {
   get _liveConnectInterceptionDef() {
     delete this._liveConnectInterceptionDef;
     return this._liveConnectInterceptionDef = "(" + (function() {
+      var dp = w.disablePlugins;
+      delete w.disablePlugins;
+      
       const w = window;
       const g = function() {
-        const d = w.document;
+        const d = document;
         const o = d.createElement("object");
         o.type = "application/x-java-vm";
         o.data = "data:" + o.type + ",";
@@ -4654,23 +4657,20 @@ var ns = singleton = {
         w.__defineGetter__("java", k);
         w.__defineGetter__("Packages", k);
       }
-      w.__defineGetter__("java", g);
-      w.__defineGetter__("Packages", g);
+      
+      try {
+        dp(true);
+        w.__defineGetter__("java", g);
+        w.__defineGetter__("Packages", g);
+      } finally {
+        dp(false);
+      }
     }).toString()
     + ")()";
   },
-  interceptLiveConnect: function(doc) {
-    const LOG = this.consoleDump && (this.consoleDump & LOG_CONTENT_INTERCEPT);
-    let t;
-    if (LOG) t = Date.now();
-    const plugins = this.plugins;
-    try {
-      plugins.disabled = true;
-      ScriptSurrogate.execute(doc, this._liveConnectInterceptionDef, true);
-    } finally {
-      plugins.disabled =  false;
-    }
-    if (LOG) this.dump("interceptLiveConnect done in " + (Date.now() - t) + "ms");
+  
+  _disablePlugins: function(b) {
+    ns.plugins.disabled = b;
   },
   
   get plugins() {
@@ -4995,10 +4995,11 @@ var ns = singleton = {
       let tbb = document.getElementById(tbbId);
       if (tbb) return false;
       
+      let navBar = document.getElementById("nav-bar");
       
       let [bar, refId] =
-        addonBar.collapsed || !this.getPref("statusIcon", true)
-        ? [document.getElementById("nav-bar"), "urlbar-container"]
+        addonBar.collapsed && navBar && !navBar.collapsed || !this.getPref("statusIcon", true)
+        ? [navBar, "urlbar-container"]
         : [addonBar, "status-bar"];
       
       set = bar.currentSet.split(/\s*,\s*/);

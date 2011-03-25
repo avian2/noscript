@@ -180,8 +180,9 @@ function Network(s) {
   this.addr = this.ipv4 ? this._parseIPV4(addr) : this._parseIPV6(addr) ;
 }
 
+Network._netRx = /^(?:(?:\d+\.){1,3}\d*|[0-9af:]*:[0-9af:]*:[0-9af:]*)(:?\/\d{1,3})?$/i;
 Network.isNet = function(s) {
-  return /^(?:(?:\d+\.){1,3}\d*|[0-9af:]*:[0-9af:]*:[0-9af:]*)(:?\/\d{1,3})?$/i.test(s);
+  return this._netRx.test(s);
 }
 
 Network.prototype = {

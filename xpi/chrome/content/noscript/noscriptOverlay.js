@@ -343,10 +343,10 @@ return noscriptUtil.service ? {
   },
   
   
-  initPopups: function() {
+  initPopups: function(install) {
     const sticky = this.stickyUI; // early init
-    const popup = this._templatePopup;
     
+    const popup = $("noscript-status-popup");
     if (!popup) return; // Fennec?
     
     const tbb = $("noscript-tbb");
@@ -357,8 +357,24 @@ return noscriptUtil.service ? {
     const buttons = [tbb, $("noscript-statusLabel")];
     let statusIcon = $("noscript-statusIcon");
     if ($("addon-bar")) {
+      // Fx 4 or above
+      if (install) {  
+        window.addEventListener("aftercustomization", function(ev) {
+          noscriptOverlay.initPopups();
+        }, false);
+      }
+      
       if (statusIcon) statusIcon.parentNode.removeChild(statusIcon);
     } else {
+      // Fx 3.6.x or below
+      if (install) {  
+        let btcd = window.BrowserToolboxCustomizeDone;
+        if (btcd) window.BrowserToolboxCustomizeDone = function(done) {
+          btcd(done);
+          if (done) noscriptOverlay.initPopups();
+        }
+      }
+      
       buttons.push(statusIcon);
     }
     // copy status bar menus
@@ -376,10 +392,9 @@ return noscriptUtil.service ? {
         : "after_start";
     }
   },
-  get _templatePopup() {
-    delete this._templatePopup;
-    return this._templatePopup = $("noscript-status-popup");
-  },
+  
+  
+ 
   _currentPopup: null,
   
   prepareMenu: function(popup, sites) {
@@ -1833,14 +1848,17 @@ return noscriptUtil.service ? {
       lev = "glb";
     } else {
       
-      
-      if (sites.pluginExtras) {
-        sites.pluginExtras.forEach(function(pe) {
-          blockedObjects += pe.filter(function(e) { return e && (e.placeholder || e.document); }).length;
-        });
+      let pes = sites.pluginExtras;
+      if (pes) {
+        for (let j = pes.length; j-- > 0;) {
+          let pe = pes[j];
+          for (let k = pe.length; k-- > 0;) {
+            let e = pe[k];
+            if (e && (e.placeholder || e.document)) blockedObjects++;
+          }
+        }
       }
-      
-      
+
       let s = sites.length;
       total = s + blockedObjects;
       while (s-- > 0) {
@@ -1902,7 +1920,7 @@ return noscriptUtil.service ? {
          : (lev == "untrusted" || lev == "no-emb") ? "no" : lev)
       );
     
-    let shortMessage = message.replace(/JavaScript/g, "JS");
+    let shortMessage = message.replace("JavaScript", "JS");
     
     if (notificationNeeded && active) 
       message += ", " + allowed + "/" + total + " (" + allowedSites.join(", ") + ")";
@@ -2332,12 +2350,8 @@ return noscriptUtil.service ? {
         var hacks = noscriptOverlay.Hacks;
         hacks.torButton();
         window.setTimeout(hacks.pdfDownload, 0);
-        noscriptOverlay.initPopups();
-        let btcd = window.BrowserToolboxCustomizeDone;
-        if (btcd) window.BrowserToolboxCustomizeDone = function(done) {
-          btcd(done);
-          if (done) noscriptOverlay.initPopups();
-        }
+        noscriptOverlay.initPopups(true);
+        
       } catch(e) {
         var msg = "[NoScript] Error initializing new window " + e + "\n"; 
         noscriptOverlay.ns.log(msg);
@@ -2395,7 +2409,7 @@ return noscriptUtil.service ? {
       
         context.addEventListener("popupshowing", this.onMainContextMenu, false);
         window.addEventListener("DOMContentLoaded", this.onContentLoad, true);
-        b.addProgressListener(this.webProgressListener, CI.nsIWebProgress.NOTIFY_STATE_WINDOW | CI.nsIWebProgress.NOTIFY_LOCATION);
+        b.addProgressListener(this.webProgressListener);
         
       }
 

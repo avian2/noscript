@@ -1,12 +1,13 @@
 INCLUDE('IOUtil', 'antlr', 'ABEParser', 'ABELexer', 'AddressMatcher', 'Thread', 'Lang');
 
 const ABE = {
+  RULES_CHANGED_TOPIC: "abe:rules-changed",
   FLAG_CALLED: 0x01,
   FLAG_CHECKED: 0x02,
   
   SITE_RULESET_LIFETIME: 12 * 60 * 60000, // 12 hours
   maxSiteRulesetSize: 8192,
-  maxSiteRulesetTime: 16000, // 4kbit/sec :P
+  maxSiteRulesetTime: 16000,
   enabled: false,
   siteEnabled: false,
   legacySupport: false,
@@ -19,9 +20,13 @@ const ABE = {
   SANDBOX_KEY: "abe.sandbox",
   localRulesets: [],
   _localMap: null,
-  
   _siteRulesets: null,
-  siteMap: {},
+  
+  init: function(rootPref) {
+    ABEStorage.init(rootPref);
+  },
+  
+  siteMap: {__proto__: null},
   
   get disabledRulesetNames() {
     return this.rulesets.filter(function(rs) { return rs.disabled; })
@@ -29,7 +34,6 @@ const ABE = {
   },
   set disabledRulesetNames(names) {
     var rs;
-    this.updateRules();
     for each (rs in this.rulesets) rs.disabled = false;
     if (names) try {
       for each (var name in names.split(/\s+/)) {
@@ -43,7 +47,7 @@ const ABE = {
   
   get localMap() {
     if (this._localMap) return this._localMap;
-    this._localMap = {};
+    this._localMap = {__proto__: null};
     for each (var rs in this.localRulesets) {
       this._localMap[rs.name] = rs;
     }
@@ -85,21 +89,19 @@ const ABE = {
   
   clear: function() {
     this.localRulesets = [];
-    this.siteMap = {};
+    this.siteMap = {__proto__: null};
     this._siteRulesets = null;
-    ABEStorage.reset();
   },
   
   refresh: function() {
     var disabled = this.disabledRulesetNames;
     this.clear();
-    this.updateRulesNow();
     this.disabledRulesetNames = disabled;
   },
   
   parse: function(name, source, timestamp) {
     try {
-      var rs =  new ABERuleset(name, source, timestamp);
+      var rs =  new ABERuleset(name, source, timestamp || Date.now());
       if (rs.site) {
         this.putSiteRuleset(rs);
       } else {
@@ -112,6 +114,14 @@ const ABE = {
     return false;
   },
   
+  storeRuleset: function(name, source) {
+    if (this.localMap[name] === source) return false;
+    ABEStorage.saveRuleset(name, source);
+    ABEStorage.persist();
+    ABEStorage.loadRules();
+    return true;
+  },
+  
   addLocalRuleset: function(rs) {
      this.localRulesets.push(rs);
      this._localMap = null;
@@ -122,33 +132,13 @@ const ABE = {
     this._siteRulesets = null;
   },
 
-  serialize: function() {
-    var data = [];
-    for each (var rs in this.localRulesets) {
-      data.push({
-        source: rs.source,
-        name: rs.name,
-        timestamp: rs.timestamp,
-        disabled: rs.disabled
-      });
-    }
-    return data;
-  },
-  
-  restore: function(data) {
+  restoreJSONRules: function(data) {
     if (!data.length) return;
     
     var f, change;
     try {
       ABEStorage.clear();
-      ABEStorage.reset();
-      for each(var rs in data) {
-        f = ABEStorage.getRulesetFile(rs.name);
-        if (!f.exists()) f.create(f.NORMAL_FILE_TYPE, 384 /*0600*/);
-        IO.safeWriteFile(f, rs.source);
-        f.lastModifiedTime = rs.timestamp;
-      }
-      ABEStorage.loadRulesNow();
+      for each(var rs in data) ABEStorage.saveRuleset(rs.name, rs.source);
     } catch(e) {
       ABE.log("Failed to restore configuration: " + e);
     }
@@ -157,24 +147,12 @@ const ABE = {
   resetDefaults: function() {
     ABEStorage.clear();
     this.clear();
-    this.updateRulesNow();
   },
   
-  updateRules: function() {
-    return ABEStorage.loadRules();
-  },
-  updateRulesNow: function(reset) {
-    if (reset) ABEStorage.reset();
-    return ABEStorage.loadRulesNow();
-  },
-  getRulesetFile: function(name) {
-    return ABEStorage.getRulesetFile(name);
-  },
   
   checkPolicy: function(origin, destination, type) {
     try {
-      var res = this.checkRequest(new ABERequest(new ABEPolicyChannel(origin, destination, type)));
-      return res && res.fatal;
+      return this.checkRequest(new ABERequest(new ABEPolicyChannel(origin, destination, type)));
     } catch(e) {
       ABE.log(e);
       return false;
@@ -200,9 +178,7 @@ const ABE = {
       if (this.consoleDump) this.log("Skipping low-level browser request for " + req.destination);
       return false;
     }
-    
-    this.updateRules();
-    
+  
     if (this.localRulesets.length == 0 && !this.siteEnabled)
       return null;
     
@@ -259,9 +235,10 @@ const ABE = {
       this.log(res.request + ' matches "' + r.lastMatch + '"');
       (res.rulesets || (res.rulesets = [])).push(rs);
       res.lastRuleset = rs;
+      action = action.toLowerCase();
       return res.fatal = (res.request.channel instanceof ABEPolicyChannel)
-        ? /^Deny$/i.test(action) 
-        : ABEActions[action.toLowerCase()](res.request);
+        ? action === "deny" 
+        : ABEActions[action](res.request);
     }
     return false;
   },
@@ -330,6 +307,7 @@ const ABE = {
   },
   
   _downloading: {},
+  _abeContentTypeRx: /^application\/|\babe\b|^text\/plain$/i,
   downloadRuleset: function(name, uri, sameQueue) {
     var host = uri.host;
   
@@ -425,7 +403,7 @@ const ABE = {
       if (xhr.status != 200)
         throw new Error("Status: " + xhr.status);
       
-      if (!/^application\/|\babe\b|^text\/plain$/i.test(xhr.channel.contentType))
+      if (!this._abeContentTypeRx.test(xhr.channel.contentType))
         throw new Error("Content-type: " + xhr.channel.contentType);
       
       var source = xhr.responseText || '';
@@ -530,6 +508,8 @@ var ABEActions = {
     IOUtil.abort(req.channel, true);
     return true;
   },
+  
+  _idempotentMethodsRx: /^(?:GET|HEAD|OPTIONS)$/i,
   anonymize: function(req, channel, replaced) {
     channel = channel || req.channel;
     if (channel.loadFlags & channel.LOAD_ANONYMOUS) // already anonymous
@@ -548,7 +528,7 @@ var ABEActions = {
     }
     
     req.replace(
-      /^(?:GET|HEAD|OPTIONS)$/i.test(channel.requestMethod) ? null : "GET",
+      this._idempotentMethodsRx.test(channel.requestMethod) ? null : "GET",
       IOUtil.anonymizeURI(req.destinationURI.clone(), cookie),
       function(replacement) {
         let channel = replacement.channel;
@@ -575,7 +555,7 @@ var ABEActions = {
 
 function ABERuleset(name, source, timestamp) {
   this.name = name;
-  this.site = /\./.test(name);
+  this.site = name.indexOf(".") !== -1;
   this.source = source;
   this.empty = !source;
   this.timestamp = timestamp || Date.now();
@@ -586,7 +566,7 @@ function ABERuleset(name, source, timestamp) {
       org.antlr.runtime.BaseRecognizer.prototype.emitErrorMessage = function(msg) {
         // we abort immediately to prevent infinite loops
         var m = msg.match(/^line (\d+)/i, msg);
-        if (m) throw new Error(msg, parseInt(m[1]), ABE.getRulesetFile(self.name)); // TODO: error console reporting w/ line num
+        if (m) throw new Error(msg, parseInt(m[1]), self.name); // TODO: error console reporting w/ line num
         throw new Error(msg)
       };
       
@@ -742,10 +722,13 @@ ABERule.prototype = {
 function ABEPredicate(p) {
   this.action = p.actions[0];
  
-  if (this.action == 'Accept') {
-    this.permissive = true;
-  } else if (/^(Logout|Anon)$/.test(this.action)) {
-    this.action = 'Anonymize';
+  switch(this.action) {
+    case "Acccept":
+      this.permissive = true;
+      break;
+    case "Logout": case "Anon":
+      this.action = 'Anonymize';
+      break;
   }
   
   var methods = p.methods;
@@ -754,10 +737,22 @@ function ABEPredicate(p) {
     this.inclusion = true;
     
     // rebuild method string for cosmetic reasons
-    var incMethod = "INCLUSION";
-    if (p.inclusions.length) {
-      incMethod += "(" + p.inclusions.join(", ") + ")";
-      this.inclusionTypes = p.inclusions.map(this._parseInclusionType, this);
+    let incMethod = "INCLUSION";
+    let ii = p.inclusions;
+    let j = ii.length;
+    if (j) {
+      incMethod += "(" + ii.join(", ") + ")";
+      let its = [];
+      let map = this._inclusionTypesMap;
+      while (j-- > 0) {
+        let i = ii[j];
+        if (i in map) {
+          let t = map[i];
+          if (typeof t === "number") its.push(t);
+          else its.push.apply(its, t);
+        } else its.push(0);
+      }
+      this.inclusionTypes = its;
     } else {
       this.inclusionTypes = this.ANY_TYPE;
     }
@@ -804,19 +799,24 @@ ABEPredicate.prototype = {
     var its = [];
     var map = this._inclusionTypesMap;
     for (var k in map) {
-      its.push(map[k]);
+      let v = map[k];
+      if (typeof v === "number") its.push(v);
+      else its.push.apply(its, v);
     }
     return this.__proto__.ANY_TYPE = its;
   },
   get _inclusionTypesMap() {
     delete this.__proto__._inclusionTypesMap;
+    const CP = CI.nsIContentPolicy;
     return this.__proto__._inclusionTypesMap = 
     {
-      "OTHER": CI.nsIContentPolicy.TYPE_OTHER,
-      "SCRIPT": CI.nsIContentPolicy.TYPE_SCRIPT,
-      "IMAGE": CI.nsIContentPolicy.TYPE_IMAGE,
-      "CSS": CI.nsIContentPolicy.TYPE_STYLESHEET,
-      "OBJ": CI.nsIContentPolicy.TYPE_OBJECT,
+      "OTHER": CP.TYPE_OTHER,
+      "FONT": CP.TYPE_FONT,
+      "SCRIPT": CP.TYPE_SCRIPT,
+      "IMAGE": CP.TYPE_IMAGE,
+      "CSS": CP.TYPE_STYLESHEET,
+      "OBJ": [CP.TYPE_OBJECT, CP.TYPE_OBJECT_SUBREQUEST],
+      "MEDIA": CP.TYPE_MEDIA,
       "SUBDOC": CI.nsIContentPolicy.TYPE_SUBDOCUMENT,
       "XBL": CI.nsIContentPolicy.TYPE_XBL,
       "PING": CI.nsIContentPolicy.TYPE_PING,
@@ -835,10 +835,6 @@ ABEPredicate.prototype = {
 		}
 		return true;
 	},
-  
-  _parseInclusionType: function(s) {
-    return (s in this._inclusionTypesMap) ? this._inclusionTypesMap[s] : 0; 
-  },
   
 	_originFilter: function(s) {
 		switch(s) {
@@ -940,50 +936,47 @@ ABERequest.prototype = Lang.memoize({
     
     var ou = ABERequest.getOrigin(channel);
     if (ou) {
-      this.xOriginURI = this.originURI = ou;
-      this.xOrigin = this.origin = ou.spec;
+      this.originURI = ou;
+      this.origin = ou.spec;
       this.replaced = true;
     } else {
-      this.xOriginURI = this.early
-        ? channel.originURI
-        : XOriginCache.pick(this.destinationURI, true) || // picks and remove cached entry
+      if (this.early) ou = channel.originURI;
+      else {
+        let ps = PolicyState.extract(channel);
+        ou = ps && ps.requestOrigin ||
             ((channel.originalURI.spec != this.destination) 
               ? channel.originalURI 
               : IOUtil.extractInternalReferrer(channel)
             ) || null;
+      }
       
-      this.xOrigin = this.xOriginURI && this.xOriginURI.spec || '';
-      
-      var ou = this.xOrigin && this.xOriginURI;
       if (!ou) {
         if (channel instanceof CI.nsIHttpChannelInternal) {
           ou = channel.documentURI;
-          if (!ou || ou.spec == this.destination) ou = null;
+          if (!ou || ou.spec === this.destination) ou = null;
         }
       }
-      if (this.isDoc && (!ou || /^(?:javascript|data)$/i.test(ou.scheme))) {
+      
+      if (this.isDoc && (!ou || ou.schemeIs("javascript") || ou.schemeIs("data"))) {
         ou = this.traceBack;
         if (ou) ou = IOS.newURI(ou, null, null);
       }
       
-      this.originURI = ou && IOUtil.unwrapURL(ou) || ABE.BROWSER_URI;
+      ou = ou ? IOUtil.unwrapURL(ou) : ABE.BROWSER_URI;
       
-      this.origin = this.originURI && this.originURI.spec || '';
+      this.origin = ou ? ou.spec : '';
     
-      ABERequest.storeOrigin(channel, this.originURI);
+      ABERequest.storeOrigin(channel, this.originURI = ou);
     }
   },
-  
-  
-  
-  
+   
   replace: function(newMethod, newURI, callback) {
     new ChannelReplacement(this.channel, newURI, newMethod)
       .replace(newMethod || newURI, callback);
   },
   
   isBrowserURI: function(uri) {
-    return /^(?:chrome|resource)$/i.test(uri.scheme);
+    return uri.schemeIs("chrome") || uri.schemeIs("resource");
   },
   
   isLocal: function(uri, all) {
@@ -1135,167 +1128,136 @@ ABERequest.prototype = Lang.memoize({
 
 
 var ABEStorage = {
-  _lastCheckTS: 0,
-  _delay: 360000, // wait 1 hour to check and fetch
-  _defaults: {
-    SYSTEM: "# Prevent Internet sites from requesting LAN resources.\r\nSite LOCAL\r\nAccept from LOCAL\r\nDeny",
-    USER: "# User-defined rules. Feel free to experiment here.\r\n\r\n"
+  _updating: true,
+  _dirty: true,
+  init: function(prefRoot) {
+    const ps = this.prefService = CC["@mozilla.org/preferences-service;1"]
+      .getService(CI.nsIPrefService).QueryInterface(CI.nsIPrefBranch);
+    const prefs = this.prefs = ps.getBranch(prefRoot).QueryInterface(CI.nsIPrefBranch2);
+    if (!prefs.getIntPref("migration")) {
+      prefs.setIntPref("migration", 1);
+      this._migrateLegacyFiles();
+    }
+    
+    for each (let k in prefs.getChildList("", {})) {
+      this.observe(prefs, null, k);
+    }
+    this.loadRules();
+    prefs.addObserver("", this, true);
   },
-  
-  _initDefaults: function(dir) {
-    try {
-      var f, content;
-      for (var d in this._defaults) {
-        f = dir.clone();
-        f.append(d + ".abe");
-        if (!f.exists()) {
-          f.create(f.NORMAL_FILE_TYPE, 384 /*0600*/);
-          IO.safeWriteFile(f, this._defaults[d]);
+  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
+  observe: function(prefs, topic, name) {
+    switch(name) {
+      case "wanIpAsLocal":
+        WAN.enabled = prefs.getBoolPref(name);
+      break;
+      case "wanIpCheckURL":
+        WAN.checkURL = prefs.getCharPref(name);
+      break;
+      case "localExtras":
+        DNS.localExtras = AddressMatcher.create(prefs.getCharPref(name));
+      break;
+      case "enabled":
+      case "siteEnabled":
+      case "allowRulesetRedir":
+      case "legacySupport":
+      case "skipBrowserRequests":
+        ABE[name] = prefs.getBoolPref(name);
+      break;
+      case "disabledRulesetNames":
+        ABE[name] = prefs.getCharPref(name);
+      break;
+      default:
+        if (!this._updating && name.indexOf("rulesets.") === 0) {
+          this._updating = this._dirty = true;
+          Thread.asap(this.loadRules, this);
+        }
+    }
+  },
+    
+  get _rulesetPrefs() this.prefs.getChildList("rulesets", {}),
+  clear: function() {
+    const prefs = this.prefs;
+    const keys = this._rulesetPrefs;
+    for (let j = keys.length; j-- > 0;) {
+      let k = keys[j];
+      if (exclude.indexOf(k) === -1) {
+        if (prefs.prefHasUserValue(k)) {
+          dump("Resetting ABE ruleset " + k + "\n");
+          try {
+            prefs.clearUserPref(k);
+          } catch(e) { dump(e + "\n") }
         }
       }
-    } catch(e) {
-      ABE.log(e);
     }
-  },
-  
-  _initDir: function(dir) {
-    if (!dir.exists()) try {
-      dir.create(dir.DIRECTORY_TYPE, 493 /*0755*/);
-      this._initDefaults(dir);
-    } catch(e) {
-      ABE.log(e);
-    }
-  },
-  
-  get dir() {
-    var dir = CC["@mozilla.org/file/directory_service;1"].getService(
-        CI.nsIProperties).get("ProfD", CI.nsIFile);
-    dir.append("ABE");
-    dir.append("rules");
-    this._initDir(dir);
-    
-    delete this.dir;
-    return this.dir = dir;
-  },
-  
-  
-  
-  clear: function() {
-    this.dir.remove(true);
-    this._initDir(this.dir);
-  },
-  
-  reset: function() {
-    this._lastCheckTS = 0;
-  },
-  
-  getRulesetFile: function(name) {
-    var f = this.dir.clone();
-    f.append(name + ".abe");
-    return f;
   },
   
   loadRules: function() {
-    return !(this._lastCheckTS &&
-              Date.now() - this._lastCheckTS < this._delay) &&
-          this.loadRulesNow();
+    this._updating = false;
+    if (!this._dirty) return;
+    this._dirty = false;
+        
+    const keys = this._rulesetPrefs;
+    keys.sort();
+    const prefs = this.prefs;
+    const disabled = ABE.disabledRulesetNames;
+    ABE.clear();
+    for (let j = 0, len = keys.length; j < len; j++) {
+      let k = keys[j];
+      ABE.parse(k.replace("rulesets.", ""), prefs.getComplexValue(k, CI.nsISupportsString).data);
+    }
+    ABE.disabledRulesetNames = disabled;
+    OS.notifyObservers(ABE, ABE.RULES_CHANGED_TOPIC, null);
   },
   
-  loadRulesNow: function() {
-    ABE.log("Checking for updated rules...");
-    var t = Date.now();
+  saveRuleset: function(name, source) {
+    var str = CC["@mozilla.org/supports-string;1"]
+      .createInstance(CI.nsISupportsString);
+    str.data = source;
+    this.prefs.setComplexValue("rulesets." + name, CI.nsISupportsString, str);
+  },
+  
+  persist: function() {
+    this.prefService.savePrefFile(null);
+  },
+   
+  _migrateLegacyFiles: function() {
+    var ret = 0;
     try {
-      var dir = this.dir;
-      try {
+      var dir = CC["@mozilla.org/file/directory_service;1"]
+        .getService(CI.nsIProperties).get("ProfD", CI.nsIFile);
+      dir.append("ABE");
+      dir.append("rules");
+      
+      if (dir.exists()) {
+      
+        dump("Migrating legacy ABE ruleset files... ")
+        
         var entries = dir.directoryEntries;
-      } catch(e) {
-        this._initDir(dir);
-        entries =  dir.directoryEntries;
-      }
-      var ff = [];
-      var mustUpdate = dir.lastModifiedTime > this._lastCheckTS;
-      var f;
-      while(entries.hasMoreElements()) {
-        f = entries.getNext();
-        if (f instanceof CI.nsIFile && /^[^\.\s]*\.abe$/i.test(f.leafName)) {
-          ff.push(f);
-          if (!mustUpdate && f.lastModifiedTime > this._lastCheckTS) mustUpdate = true;
+        while(entries.hasMoreElements()) {
+          let f = entries.getNext();
+          if (f instanceof CI.nsIFile) {
+            let fname = f.leafName;
+            if (/^[^\.\s]*\.abe$/i.test(fname)) {
+              try {
+                this.saveRuleset(fname.replace(/\.abe$/i, ''), IO.readFile(f));
+                ret++;
+              } catch(e) {
+                dump(e + "\n");
+              }
+            }
+          }
         }
+        this.persist();
       }
-      
-      if (!mustUpdate) return false;
-      
-      ABE.log("Rules changed, reloading!")
-      
-      ff.sort(function(a, b) { return a.leafName > b.leafName; });
-      
-      var disabledNames = ABE.disabledRulesetNames;
-      ABE.clear();
-      ff.forEach(this.loadRuleFile, this);
+      dump(ret + " migrated.\n")
     } catch(e) {
-      ABE.log(e);
-      return false;
-    } finally {
-      this._lastCheckTS = Date.now();
-      ABE.log("Updates checked in " + (this._lastCheckTS - t) + "ms");
+      dump("Error migrating legacy ABE ruleset files: " + e + "\n");
     }
-    ABE.disabledRulesetNames = disabledNames;
-    return true;
-  },
-  
-  loadRuleFile: function(f) {
-    try {
-      ABE.parse(f.leafName.replace(/\.abe$/i, ''), IO.readFile(f), f.lastModifiedTime);
-    } catch(e) {
-      ABE.log(e);
-    }
-  }
-  
-}
-
-
-var XOriginCache = {
-  LIFE: 180000, // 3 mins, more than enough for most DNS timeout confs
-  PURGE_INTERVAL: 60000,
-  MAX_ENTRIES: 100,
-  _entries: [],
-  _lastPurge: Date.now(),
-  _lastDestination: null,
-  
-  store: function(origin, destination) {
-    if (destination === this._lastDestination)
-      return; // we can afford it because we deal with nsIURI pointers and origins are invariants
-    
-    this._lastDestination = destination;
-    
-    var ts = Date.now();
-    this._entries.push({ o: origin, d: destination, ts: ts });
-    
-    if (this._entries.length > this.MAX_ENTRIES)
-      this._entries.shift();
-      
-    if (ts - this._lastPurge > this.PURGE_INTERVAL) this.purge(ts);
-  },
-  pick: function(destination, remove) {
-    var ee = this._entries;
-    for (var j = ee.length, e;  j--> 0;) {
-      if ((e = ee[j]).d === destination) {
-        if (remove) ee.splice(j, 1);
-        return e.o;
-      }
-    }
-    return null;
-  },
-  purge: function(ts) {
-    ts = ts || Date.now();
-    var ee = this._entries;
-    var j = 0, len = ee.length;
-    for(; j < len && ee[j].ts + this.LIFE < ts; j++);
-    if (j > 0) ee.splice(0, j);
-    this._lastPurge = ts;
-    this._lastDestination = null;
+    return ret;
   }
 }
+
 
 var OriginTracer = {
   detectBackFrame: function(prev, next, docShell) {
@@ -1340,7 +1302,7 @@ var OriginTracer = {
       if (!uri) break;
       if (breadCrumbs[0] && breadCrumbs[0] == uri) continue;
       breadCrumbs.unshift(uri);
-      if (!/^(?:javascript|data)$/i.test(uri.scheme)) {
+      if (!(uri.schemeIs("javascript") || uri.schemeIs("data"))) {
         site = uri;
         break;
       }

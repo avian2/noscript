@@ -332,14 +332,15 @@ const HTTPS = {
       : this._globalUnsafeCookies = value;
   },
   
+  _unsafeSchemeRx: /^(?:ht|f)tp:\/\//,
   shouldForbid: function(site) {
     switch(this.allowHttpsOnly) {
       case 0:
         return false;
       case 1:
-        return /^(?:ht|f)tp:\/\//.test(site) && this.isProxied(site);
+        return this._unsafeSchemeRx.test(site) && this.isProxied(site);
       case 2:
-        return /^(?:ht|f)tp:\/\//.test(site);
+        return this._unsafeSchemeRx.test(site);
     }
     return false;
   },

@@ -25,7 +25,7 @@ var ScriptSurrogate = {
     this.enabled = prefs.getBoolPref("enabled");
     this.debug = prefs.getBoolPref("debug");
     
-    const map = {};
+    const map = {__proto__: null};
     var key;
     for each(key in prefs.getChildList("", {})) {
       this._parseMapping(prefs, key, map);
@@ -101,9 +101,8 @@ var ScriptSurrogate = {
     })(fileURI);
   },
   
-  getScripts: function(scriptURL, pageURL, noScript) {
-    var mapping;
-    var scripts = null;
+  getScripts: function(scriptURL, pageURL, noScript, scripts) {
+
     var isPage = scriptURL == pageURL;
     var code;
     const list = noScript
@@ -112,7 +111,8 @@ var ScriptSurrogate = {
         ? this.mappings.forPage
         : this.mappings.inclusion;
     
-    for each (var mapping in list) {
+    for (let j = list.length; j-- > 0;) {
+      let mapping = list[j];
       if (mapping.sources && mapping.sources.test(scriptURL) &&
           !(mapping.exceptions && mapping.exceptions.test(pageURL)) &&
           mapping.replacement) {
@@ -130,19 +130,20 @@ var ScriptSurrogate = {
             code = 'addEventListener("DOMContentLoaded", function(event) {' +
                     code + '}, false)';
         }
-        (scripts = scripts || []).push(code);
+        if (!scripts) scripts = [code];
+        else scripts.push(code);
       }
     }
     return scripts;
   },
   
 
-  apply: function(document, scriptURL, pageURL, noScript) {
+  apply: function(document, scriptURL, pageURL, noScript, scripts) {
     if (!this.enabled) return false;
     
-    if (typeof(noScript) != "boolean") noScript = !!noScript;
+    if (typeof(noScript) !== "boolean") noScript = !!noScript;
     
-    const scripts = this.getScripts(scriptURL, pageURL, noScript);
+    this.getScripts(scriptURL, pageURL, noScript, scripts);
     if (!scripts) return false;
     
     const runner = noScript
@@ -151,11 +152,13 @@ var ScriptSurrogate = {
         ? this.execute
         : this.executeDOM;
     
+    
+    
     if (this.debug) {
       // we run each script separately and don't swallow exceptions
-     scripts.forEach(function(s) {
-      runner.call(this, document, s);
-     }, this);
+      scripts.forEach(function(s) {
+       runner.call(this, document, s);
+      }, this);
     } else {
       runner.call(this, document,
         "try{" +
@@ -169,11 +172,18 @@ var ScriptSurrogate = {
   
   fallback: function(document, scriptBlock) {
     document.defaultView.addEventListener("DOMContentLoaded", function(ev) {
-      ScriptSurrogate.execute(ev.target, scriptBlock);
+      ScriptSurrogate.executeSandbox(ev.target, scriptBlock);
     }, false);
   },
   
   execute: function(document, scriptBlock) {
+    (this.execute = ns.geckoVersionCheck("1.9.1") < 0
+      ? this.executeSandbox
+      : this.executeDOM
+    )(document, scriptBlock);
+  },
+  
+  executeSandbox: function(document, scriptBlock) {
     var w = document.defaultView;
     try {
       if (typeof w.wrappedJSObject === "object") w = w.wrappedJSObject;
@@ -186,13 +196,11 @@ var ScriptSurrogate = {
     }
   },
   
-  executeDOM: function(document, scriptBlock, noDefer) {
+  executeDOM: function(document, scriptBlock) {
     var de = document.documentElement;
     
     if (!de) {
-      if (!noDefer) {
-        Thread.basap(this.executeDOM, this, [document, scriptBlock, true]);
-      }
+      document.defaultView.location.href = "javascript:" + encodeURIComponent(scriptBlock) + "; void(0)";
       return;
     }
     

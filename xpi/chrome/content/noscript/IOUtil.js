@@ -174,10 +174,11 @@ const IOUtil = {
   
   get _channelFlags() {
     delete this._channelFlags;
-    var ff = {};
+    const constRx = /^[A-Z_]+$/;
+    const ff = {};
     [CI.nsIHttpChannel, CI.nsICachingChannel].forEach(function(c) {
       for (var p in c) {
-        if (/^[A-Z_]+$/.test(p)) ff[p] = c[p];
+        if (constRx.test(p)) ff[p] = c[p];
       }
     });
     return this._channelFlags = ff;
@@ -218,23 +219,22 @@ const IOUtil = {
     parts[1] = this.anonymizeQS(parts[1], cookie);
     return parts.join("?");
   },
+  
+  _splitName: function(nv) nv.split("=")[0],
+  _qsRx: /[&=]/,
+  _anonRx: /(?:auth|s\w+(?:id|key)$)/,
   anonymizeQS: function(qs, cookie) {
     if (!qs) return qs;
-    if (!/[&=]/.test(qs)) return '';
+    if (!this._qsRx.test(qs)) return '';
     
     var cookieNames, hasCookies;
-    if ((hasCookies = !!cookie)) {
-      cookieNames = cookie.split(/\s*;\s*/).map(function(nv) {
-        return nv.split("=")[0];
-      })
-    }
+    if ((hasCookies = !!cookie)) cookieNames = cookie.split(/\s*;\s*/).map(this._splitName)
     
-    var parms = qs.split("&");
-    var nv, name;
-    for (var j = parms.length; j-- > 0;) {
-      nv = parms[j].split("=");
-      name = nv[0];
-      if (/(?:auth|s\w+(?:id|key)$)/.test(name) || cookie && cookieNames.indexOf(name) > -1)
+    let parms = qs.split("&");
+    for (j = parms.length; j-- > 0;) {
+      let nv = parms[j].split("=");
+      let name = nv[0];
+      if (this._anonRx.test(name) || cookie && cookieNames.indexOf(name) > -1)
         parms.splice(j, 1);
     }
     return parms.join("&");
@@ -245,11 +245,7 @@ const IOUtil = {
       callback();
       return false;
     } else {
-      new LoadGroupWrapper(channel, {
-        addRequest: function(r, ctx) {
-          callback();
-        }
-      });
+      new LoadGroupWrapper(channel, callback);
       return true;
     }
   },
@@ -289,7 +285,8 @@ ChannelReplacement.prototype = {
   oldChannel: null,
   channel: null,
   window: null,
-
+  
+  
   get _unsupportedError() {
     return new Error("Can't replace channels without nsITraceableChannel!");
   },
@@ -299,6 +296,16 @@ ChannelReplacement.prototype = {
     return this.__proto__._mustClassify = !("LOAD_CLASSIFIER_URI" in CI.nsIChannel);
   },
   
+  _autoHeadersRx: /^(?:Host|Cookie|Authorization)$|Cache|^If-/,
+  visitHeader: function(key, val) {
+    try {
+      // we skip authorization and cache-related fields which should be automatically set
+      if (!this._autoHeadersRx.test(key)) this.channel.setRequestHeader(key, val, false);
+    } catch (e) {
+      dump(e + "\n");
+    }
+  },
+  
   _init: function(chan, newURI, newMethod) {
     if (!(ChannelReplacement.supported && chan instanceof CI.nsITraceableChannel))
       throw this._unsupportedError;
@@ -306,7 +313,10 @@ ChannelReplacement.prototype = {
     newURI = newURI || chan.URI;
     
     var newChan = IOS.newChannelFromURI(newURI);
-
+    
+    this.oldChannel = chan;
+    this.channel = newChan;
+    
     // porting of http://mxr.mozilla.org/mozilla-central/source/netwerk/protocol/http/src/nsHttpChannel.cpp#2750
     
     var loadFlags = chan.loadFlags;
@@ -319,24 +329,11 @@ ChannelReplacement.prototype = {
     newChan.loadFlags = loadFlags;
     
     if (!(newChan instanceof CI.nsIHttpChannel))
-      return newChan;
+      return this;
     
     // copy headers
-    chan.visitRequestHeaders({
-      visitHeader: function(key, val) {
-        try {
-          
-          // we skip authorization and cache-related fields which should be automatically set
-          if (/^(?:Host|Cookie|Authorization)$|Cache|^If-/.test(key)) return;
-          
-          newChan.setRequestHeader(key, val, false);
-        } catch (e) {
-          dump(e + "\n");
-        }
-      }
-    });
-    
-    
+    chan.visitRequestHeaders(this);
+
     if (!newMethod || newMethod === chan.requestMethod) {
       if (newChan instanceof CI.nsIUploadChannel && chan instanceof CI.nsIUploadChannel && chan.uploadStream ) {
         var stream = chan.uploadStream;
@@ -345,8 +342,8 @@ ChannelReplacement.prototype = {
         }
         
         try {
-          var ctype = chan.getRequestHeader("Content-type");
-          var clen = chan.getRequestHeader("Content-length");
+          let ctype = chan.getRequestHeader("Content-type");
+          let clen = chan.getRequestHeader("Content-length");
           if (ctype && clen) {
             newChan.setUploadStream(stream, ctype, parseInt(clen, 10));
           }
@@ -388,10 +385,7 @@ ChannelReplacement.prototype = {
       for (var properties = chan.enumerator, p; properties.hasMoreElements();)
         if ((p = properties.getNext()) instanceof CI.nsIProperty)
           newChan.setProperty(p.name, p.value);
-    
-    this.oldChannel = chan;
-    this.channel = newChan;
-    
+
     if (chan.loadFlags & chan.LOAD_DOCUMENT_URI) {
       this.window = IOUtil.findWindow(chan);
     }
@@ -446,7 +440,7 @@ ChannelReplacement.prototype = {
       if ("onChannelRedirect" in sink) sink.onChannelRedirect(oldChan, newChan, flags);
       else sink.asyncOnChannelRedirect(oldChan, newChan, flags, this._redirectCallback);
     } catch(e) {
-      if (!/\(NS_ERROR_NOT_AVAILABLE\)/.test(e.message)) throw e;
+      if (e.message.indexOf("(NS_ERROR_NOT_AVAILABLE)") === -1) throw e;
     }
   },
   
@@ -515,10 +509,14 @@ ChannelReplacement.prototype = {
 
         newChan.asyncOpen(this.listener, this.context);
         
-        // safe browsing hook
-        if (this._mustClassify)
-          CC["@mozilla.org/channelclassifier"].createInstance(CI.nsIChannelClassifier).start(newChan, true);
-        
+        if (this.window && this.window != IOUtil.findWindow(newChan)) { 
+          // late diverted load, unwanted artifact, abort
+          IOUtil.abort(newChan);
+        } else {
+          // safe browsing hook
+          if (this._mustClassify)
+            CC["@mozilla.org/channelclassifier"].createInstance(CI.nsIChannelClassifier).start(newChan, true);
+        }
       } catch (e) {}
     } else {
       if (ABE.consoleDump) {
@@ -540,10 +538,10 @@ ChannelReplacement.prototype = {
   }
 }
 
-function LoadGroupWrapper(channel, callbacks) {
+function LoadGroupWrapper(channel, callback) {
   this._channel = channel;
   this._inner = channel.loadGroup;
-  this._callbacks = callbacks;
+  this._callback = callback;
   channel.loadGroup = this;
 }
 LoadGroupWrapper.prototype = {
@@ -581,18 +579,14 @@ LoadGroupWrapper.prototype = {
     } catch(e) {
       // addRequest may have not been implemented
     }
-    if (r === this._channel && ("addRequest" in this._callbacks))
+    if (r === this._channel)
       try {
-        this._callbacks.addRequest(r, ctx);
+        this._callback(r, ctx);
       } catch (e) {}
   },
   removeRequest: function(r, ctx, status) {
     this.detach();
     if (this._inner) this._inner.removeRequest(r, ctx, status);
-    if (r === this._channel && ("removeRequest" in this._callbacks))
-      try {
-        this._callbacks.removeRequest(r, ctx, status);
-      } catch (e) {}
   },
   
   detach: function() {

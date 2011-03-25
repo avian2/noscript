@@ -43,7 +43,7 @@ REGEXP    : '^' ~'\n'+ ;
 ALL       : 'ALL' ;
 SUB       : 'SUB' ;
 INC       : 'INC' 'LUSION'? ;
-INC_TYPE   : 'OTHER' | 'SCRIPT' | 'IMAGE' | 'CSS' | 'OBJ' | 'SUBDOC' | 'XBL' | 'PING' | 'XHR' | 'OBJSUB' | 'DTD' ;
+INC_TYPE   : 'OTHER' | 'SCRIPT' | 'IMAGE' | 'CSS' | 'OBJ' | 'SUBDOC' | 'XBL' | 'PING' | 'XHR' | 'OBJSUB' | 'DTD' | 'FONT' | 'MEDIA' ;
 HTTPVERB  : 'A'..'Z' 'A'..'Z'+ ;
 
 COMMA     : ',' ;

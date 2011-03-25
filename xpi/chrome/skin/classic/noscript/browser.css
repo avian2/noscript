@@ -272,6 +272,10 @@ menupopup[sticky="true"][disabled="true"] {
   height: auto !important;
 }
 
+#noscript-tbb-revoke-temp, #noscript-tbb-temp-page, #noscript-tbb {
+  max-width: 48px;
+}
+
 notification {
   word-wrap: break-word !important;
 }

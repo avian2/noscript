@@ -364,7 +364,7 @@ RequestWatchdog.prototype = {
       }
     }
     
-    let origin = abeReq.xOrigin,
+    let origin = abeReq.origin,
       originSite = null,
       browser = null,
       window = null,
@@ -1310,9 +1310,9 @@ var InjectionChecker = {
     return ret;
   },
   
-  get invalidChars() {
-    delete this.invalidChars;
-    return this.invalidChars = new RegExp("^[^\"'/]*[" + this._createInvalidRanges() + "]");
+  get invalidCharsRx() {
+    delete this.invalidCharsRx;
+    return this.invalidCharsRx = new RegExp("^[^\"'/]*[" + this._createInvalidRanges() + "]");
   },
   
   checkJSBreak: function InjectionChecker_checkJSBreak(s) {
@@ -1329,19 +1329,25 @@ var InjectionChecker = {
 
     const MAX_TIME = 8000, MAX_LOOPS = 1200;
 
-    const invalidChars = /[\u007f-\uffff]/.test(s) && this.invalidChars;
-    const findInjection = /(['"#;>:]|[\/\?=](?![\?&=])|&(?![\w\-\.\[\]&!]*=)|\*\/)(?!\1)/g;
-    findInjection.lastIndex = 0;    
+    const
+      invalidCharsRx = /[\u007f-\uffff]/.test(s) && this.invalidCharsRx,
+      dangerRx = /(?:\(|\[[^\]+\]|(?:setter|location|innerHTML|on\w{3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)/,
+      exprMatchRx = /^[\s\S]*?[=\)]/,
+      safeCgiRx = /^(?:(?:[\.\?\w\-\/&:`\[\]]+=[\w \-:\+%#,`\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/,
+        // r2l, chained query string parameters, protocol://domain, ...
+      headRx = /^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=]))/
+    ;
     
-    const dangerRx = /(?:\(|\[[^\]+\]|(?:setter|location|innerHTML|on\w{3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)/;
-     
+    const injectionFinderRx = /(['"#;>:]|[\/\?=](?![\?&=])|&(?![\w\-\.\[\]&!]*=)|\*\/)(?!\1)/g;
+    injectionFinderRx.lastIndex = 0;    
+    
     const t = Date.now();
     var iterations = 0;
     
-    for (let dangerPos = 0; (m = findInjection.exec(s));) {
+    for (let dangerPos = 0; (m = injectionFinderRx.exec(s));) {
     
       
-      let startPos = findInjection.lastIndex;
+      let startPos = injectionFinderRx.lastIndex;
       let subj = s.substring(startPos);
       if (startPos > dangerPos) {
         dangerRx.lastIndex = startPos;
@@ -1351,7 +1357,6 @@ var InjectionChecker = {
        
 
       if (!this.maybeJS(subj)) {
-
          this.log("Fast escape on " + subj, t, iterations);
          return false;
       }
@@ -1364,7 +1369,7 @@ var InjectionChecker = {
       if (script.length < subj.length) {
         if (!this.maybeJS(script)) {
           this.log("Skipping to first nested URL in " + subj, t, iterations);
-          findInjection.lastIndex += subj.indexOf("://") + 1;
+          injectionFinderRx.lastIndex += subj.indexOf("://") + 1;
           continue;
         }
         subj = script;
@@ -1373,7 +1378,7 @@ var InjectionChecker = {
         script = subj.substring(0, dangerPos - startPos);
       }
  
-      let expr = subj.match(/^[\s\S]*?[=\)]/);
+      let expr = subj.match(exprMatchRx);
 
       if (expr) {
         expr = expr[0];
@@ -1385,14 +1390,11 @@ var InjectionChecker = {
       }
 
       // quickly skip (mis)leading innocuous CGI patterns
-      if ((m = subj.match(
-        /^(?:(?:[\.\?\w\-\/&:`\[\]]+=[\w \-:\+%#,`\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/
-        // r2l, chained query string parameters, protocol://domain, ...
-        ))) {
+      if ((m = subj.match(safeCgiRx))) {
        
         this.log("Skipping CGI pattern in " + subj);
 
-        findInjection.lastIndex += m[0].length - 1;
+        injectionFinderRx.lastIndex += m[0].length - 1;
         continue;
       }
       
@@ -1434,7 +1436,7 @@ var InjectionChecker = {
         
         lastExpr = expr;
            
-        if(invalidChars && invalidChars.test(expr)) {
+        if(invalidCharsRx && invalidCharsRx.test(expr)) {
           this.log("Quick skipping invalid chars");
  
           break;
@@ -1444,8 +1446,8 @@ var InjectionChecker = {
           script = this.syntax.unquote(quote + expr, quote);
           if(script && this.maybeJS(script) &&
             (this.checkNonTrivialJSSyntax(script) ||
-              /'.+/.test(script) && this.checkNonTrivialJSSyntax("''" + script + "'") ||
-              /".+/.test(script) && this.checkNonTrivialJSSyntax('""' + script + '"')
+              /'./.test(script) && this.checkNonTrivialJSSyntax("''" + script + "'") ||
+              /"./.test(script) && this.checkNonTrivialJSSyntax('""' + script + '"')
             ) && this.checkLastFunction()
             ) {
             this.log("JS quote Break Injection detected", t, iterations);
@@ -1456,10 +1458,7 @@ var InjectionChecker = {
           script = expr;
         }
         
-       
-
-        if (/^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=]))/
-            .test(script.split("//")[0])) {
+        if (headRx.test(script.split("//")[0])) {
            this.log("SKIP (head syntax) " + script, t, iterations);
            break; // unrepairable syntax error in the head move left cursor forward 
         }
@@ -1478,19 +1477,19 @@ var InjectionChecker = {
             let errmsg = this.syntax.lastError.message;
             this.log(errmsg + " --- " + script + " --- ", t, iterations);
             if(!quote) {
-              if (/left-hand/.test(errmsg)) {
+              if (errmsg.indexOf("left-hand") !== -1) {
                 let m = subj.match(/^([^\]\(\\'"=\?]+?)[\w$\u0080-\uffff\s]+[=\?]/);
                 if (m) {
-                  findInjection.lastIndex += m[1].length - 1;
+                  injectionFinderRx.lastIndex += m[1].length - 1;
                 }
                 break;
-              } else if (/unterminated string literal/.test(errmsg)) {
+              } else if (errmsg.indexOf("unterminated string literal") !== -1) {
                 let quotePos = subj.substring(len).search(/["']/);
                 if(quotePos > -1) {
                   expr = subj.substring(0, len += ++quotePos);
                   moved = true;
                 } else break;
-              } else if (/syntax error/.test(errmsg)) {
+              } else if (errmsg.indexOf("syntax error") !== -1) {
                 let dblSlashPos = subj.indexOf("//");
                 if (dblSlashPos > -1) {
                   let pos = subj.search(/['"\n\\\(]|\/\*/);
@@ -1501,10 +1500,10 @@ var InjectionChecker = {
                   break;
                 }
               }
-            } else if (/left-hand/.test(errmsg)) break;
+            } else if (errmsg.indexOf("left-hand") !== -1) break;
             
             if (/invalid .*\bflag\b|missing ; before statement|invalid label|illegal character|identifier starts immediately/.test(errmsg)) {
-              if (!(/illegal character/.test(errmsg) && /#\d*\s*$/.test(script))) { // sharp vars exceptional behavior
+              if (errmsg.indexOf("illegal character") === -1 && /#\d*\s*$/.test(script)) { // sharp vars exceptional behavior
                 if (!quote) break;
                 // let's retry without quotes
                 quote = lastExpr = '';

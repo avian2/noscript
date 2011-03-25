@@ -398,7 +398,7 @@
               </listbox>
               <splitter style="background: transparent; margin: 0; border-width: 0" />
               <textbox id="abeRuleset-text" flex="4" multiline="true" wrap="off"
-											 oninput="abeOpts.input(this)" onchange="abeOpts.changed(this)"
+											 onchange="abeOpts.changed(this)"
 											 style="margin-left: 0"
 							/>
             </hbox>
@@ -413,7 +413,6 @@
               <button id="abeDisable-button" label="&ABE.disable.label;" accesskey="&ABE.disable.accesskey;" oncommand="abeOpts.toggle(false)" />
 							<spacer flex="3"/>
 							<button id="abeReset-button" label="&noscriptReset;" oncommand="abeOpts.reset()" />
-              <button id="abeEdit-button" label="&ABE.edit.label;" accesskey="&ABE.edit.accesskey;" oncommand="abeOpts.edit()" />
             </hbox>
           </vbox>
        </tabpanel><!-- End ABE -->

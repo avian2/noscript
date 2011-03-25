@@ -525,7 +525,7 @@ var ABE = ns.ABE;
 
 var abeOpts = {
   selectedRS: null,
-  _map: {},
+  _map: {__proto__: null},
   errors: false,
   QueryInterface: ns.wan.QueryInterface, // dirty hack, we share the same observer ifaces
   
@@ -541,24 +541,19 @@ var abeOpts = {
     }
     
     this.list = $("abeRulesets-list");
-    ABE.updateRules();
     this.populate();
-    window.addEventListener("focus", function(ev) {
-      if (ABE.updateRulesNow()) {
-        abeOpts.populate();
-        if (abeOpts.errors) {
-          abeOpts.errors = false;
-          noscriptUtil.prompter.alert(window, "ABE", ns.getString("ABE.syntaxError"));
-        }
-      }
-    }, false);
-    
     this.updateWAN(ns.wan.ip);
-    ns.os.addObserver(this, ns.wan.IP_CHANGE_TOPIC, true);
+    const OS = ns.os;
+    OS.addObserver(this, ns.wan.IP_CHANGE_TOPIC, true);
+    OS.addObserver(this, ABE.RULES_CHANGED_TOPIC, true);
   },
   
   observe: function(subject, topic, data) {
-    if (topic == ns.wan.IP_CHANGE_TOPIC) this.updateWAN(data);
+    if (topic === ns.wan.IP_CHANGE_TOPIC) this.updateWAN(data);
+    else if (topic === ABE.RULES_CHANGED_TOPIC) {
+      this.populate();
+      this.errors = false;
+    }
   },
   
   updateWAN: function(ip) {
@@ -567,30 +562,11 @@ var abeOpts = {
   
   reset: function() {
     ABE.resetDefaults();
-    abeOpts.populate();
-  },
-  
-  _lastInputFile: null,
-  _lastInputSrc: '',
-  input: function(text) {
-    var i = this.list.selectedItem;
-    if (!i) return;
-    var file = ABE.getRulesetFile(i.value);
-    if ((file instanceof CI.nsILocalFile)) {
-      this._lastInputFile = file;
-      this._lastInputSrc = text.value;
-    } else this._lastInputFile = null;
   },
   
   changed: function(text) {
-    var file = this._lastInputFile;
-    if (!file) return;
-    this._lastInputFile = null;
-    ns.writeFile(file, this._lastInputSrc);
-    if (ABE.updateRulesNow()) {
-      abeOpts.populate();
-      abeOpts.errors = false;
-    }
+    var i = this.list.selectedItem;
+    if (i) ABE.storeRuleset(i.value, text.value);
   },
   
   _populating: false,
@@ -598,7 +574,7 @@ var abeOpts = {
     this._populating = true;
     this.errors = false;
     try {
-      this._map = {};
+      const map = {__proto__: null};
       var l = this.list;
       for(var j = l.getRowCount(); j-- > 0; l.removeItemAt(j));
       var rulesets = ABE.rulesets;
@@ -609,7 +585,7 @@ var abeOpts = {
         var i, name;
         for each (var rs in rulesets) {
           name = rs.name;
-          this._map[name] = rs;
+          map[name] = rs;
           i = l.appendItem(name, name);
           if (rs.disabled) i.setAttribute("disabled", "true");
           if (sel == name) selItem = i;
@@ -619,6 +595,7 @@ var abeOpts = {
           }
         }
       }
+      this._map = map; 
       l.selectedItem = selItem;
       this.sync();
     } finally {
@@ -656,7 +633,6 @@ var abeOpts = {
     }
     
     $("abeEnable-button").disabled = ! ($("abeDisable-button").disabled = !rs || rs.disabled);
-    $("abeEdit-button").disabled = !rs || rs.site;
     $("abeRefresh-button").disabled = this.list.getRowCount() == 0;
     
     var text = $("abeRuleset-text");
@@ -677,7 +653,6 @@ var abeOpts = {
   
   refresh: function() {
     ABE.refresh();
-    this.populate();
   },
   
   toggle: function(enabled) {
@@ -691,62 +666,6 @@ var abeOpts = {
     }
     ns.setPref("ABE.disabledRulesetNames", ABE.disabledRulesetNames);
     this.sync();
-  },
-  
-  edit: function(i) {
-    i = i || this.list.selectedItem;
-    if (!i) return;
-    var file = ABE.getRulesetFile(i.value);
-    if (!(file instanceof CI.nsILocalFile)) return;
-   
-    try {
-      file.launch();
-      return;
-    } catch(e) {
-      // probably a *X platform...
-    }
-    
-    var ed = this.editor;
-    if (!ed) return;
-
-    var mimeInfoService = CC["@mozilla.org/uriloader/external-helper-app-service;1"]
-        .getService(CI.nsIMIMEService);
-    var mimeInfo = mimeInfoService
-      .getFromTypeAndExtension( "application/x-abe-rules", "abe" );
-    mimeInfo.preferredAction = mimeInfo.useHelperApp;
-    
-    if ("nsILocalHandlerApp" in CI) {
-      var handler =  CC["@mozilla.org/uriloader/local-handler-app;1"].createInstance(CI.nsILocalHandlerApp);
-      handler.executable = ed;
-      ed = handler;
-    }
-    mimeInfo.preferredApplicationHandler = ed;
-    mimeInfo.launchWithFile(file);      
-  
-  },
-  
-  get editor() {
-    var ed = null;
-    try {
-      ed = ns.prefs.getComplexValue("abe.editor", CI.nsILocalFile);
-      ed.followLinks = true;
-      if (ed.exists() && ed.isExecutable()) return ed;
-      ed = null;
-    } catch(e) {}
-    const IFP = CI.nsIFilePicker;
-    const fp = CC["@mozilla.org/filepicker;1"].createInstance(IFP);
-      
-    fp.init(window, ns.getString("abe.chooseEditor"), IFP.modeOpen);
-    fp.appendFilters(IFP.filterApps);
-    fp.filterIndex = 0;
-    const ret = fp.show();
-    if (ret == IFP.returnOK) {
-      ed = fp.file;
-      if (ed.exists() && ed.isExecutable()) {  
-        ns.prefs.setComplexValue("abe.editor", CI.nsILocalFile, ed);
-      } else ed = null;
-    }
-    return ed;
   }
   
 }

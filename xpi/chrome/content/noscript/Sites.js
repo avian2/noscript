@@ -184,7 +184,7 @@ PolicySites.prototype = {
   _sitesMap: null,
   get sitesMap() {
     if (!this._sitesMap) {
-      const sm = {};
+      const sm = {__proto__: null};
       const sl = SiteUtils.splitString(this.sitesString);
       if (sl) {
         for (var j = sl.length; j-- > 0;) {
@@ -196,7 +196,7 @@ PolicySites.prototype = {
     return this._sitesMap;
   },
   set sitesMap(sm) {
-    sm = sm ? SiteUtils.sanitizeMap(sm) : {};
+    sm = sm ? SiteUtils.sanitizeMap(sm) : {__proto__: null};
     var sl = [];
     for (var s in sm) {
       sl.push(s);

@@ -136,8 +136,6 @@ pref("noscript.urivalid.mailto", "[^\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]*");
 
 pref("noscript.forbidExtProtSubdocs", true);
 
-pref("noscript.forbidChromeScripts", false);
-
 pref("noscript.forbidXBL", 4);
 pref("noscript.forbidXHR", 1);
 
@@ -325,3 +323,8 @@ pref("noscript.doNotTrack.exceptions", "");
 pref("noscript.doNotTrack.forced", "");
 
 pref("noscript.ajaxFallback.enabled", true);
+pref("noscript.sync.enabled", true);
+
+pref("noscript.ABE.rulesets.SYSTEM", "# Prevent Internet sites from requesting LAN resources.\r\nSite LOCAL\r\nAccept from LOCAL\r\nDeny");
+pref("noscript.ABE.rulesets.USER", "# User-defined rules. Feel free to experiment here.\r\n");
+pref("noscript.ABE.migration", 0);

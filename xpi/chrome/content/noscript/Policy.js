@@ -125,7 +125,7 @@ const MainContentPolicy = {
       unwrappedLocation = IOUtil.unwrapURL(aContentLocation);
       scheme = unwrappedLocation.scheme;
       
-      var isHTTP = /^https?$/.test(scheme);
+      var isHTTP = scheme === "http" || scheme === "https";
       
       if (isHTTP) {
         
@@ -133,14 +133,18 @@ const MainContentPolicy = {
         
         if (aRequestOrigin && !aInternalCall) {
           
-          if (aContentType !== 3) // images are a bitch if cached!
-            XOriginCache.store(aRequestOrigin, arguments.xOriginKey = unwrappedLocation);
-          
           switch(aContentType) {
-            // case 2: case 4: // scripts stall if blocked later
+            case 5:
+              // early ABE check for any plugin content except Flash, Silverlight and PDF
+              // (Java, for instance, is known to bypass HTTP observers!)
+              if (/^application\/(?:x-(?:shockwave-flash|silverlight)$|futuresplash|pdf$)/i.test(aMimeTypeGuess))
+                break;
             case 1: case 12: // we may have no chance to check later for unknown and sub-plugin requests
-              if (ABE.checkPolicy(aRequestOrigin, unwrappedLocation, aContentType))
+              let res = ABE.checkPolicy(aRequestOrigin, unwrappedLocation, aContentType);
+              if (res && res.fatal) {
+                this.requestWatchdog.notifyABE(res, true);
                 return this.reject("ABE-denied inclusion", arguments); 
+              }
           }
         }
         
@@ -172,9 +176,6 @@ const MainContentPolicy = {
           return this.reject("Ping", arguments);
             
         case 2:
-          if (this.forbidChromeScripts && this.checkForbiddenChrome(aContentLocation, aRequestOrigin)) {
-            return this.reject("Chrome Access", arguments);
-          }
           forbid = isScript = true;
           break;
         case 3: // IMAGES
@@ -335,18 +336,17 @@ const MainContentPolicy = {
                 this.requestWatchdog.externalLoad = aContentLocation.spec;
               }
               
-            } else if(/^(?:data|javascript)$/.test(scheme)) {
-              //data: and javascript: URLs
+            } else if(scheme === "data" || scheme === "javascript") {
               locationURL = locationURL || aContentLocation.spec;
               originSite = this.getSite(originURL = originURL || aRequestOrigin.spec);
               if (this.forbiddenJSDataDoc(locationURL, originSite, aContext)) {
                 return this.reject("JavaScript/Data URL", arguments);
               }
-            } else if(scheme != aRequestOrigin.scheme && 
-                scheme != "chrome" && // faster path for common case
+            } else if(scheme !== aRequestOrigin.scheme && 
+                scheme !== "chrome" && // faster path for common case
                 this.isExternalScheme(scheme)) {
               // work-around for bugs 389106 & 389580, escape external protocols
-              if (aContentType != 6 && !aInternalCall && 
+              if (aContentType !== 6 && !aInternalCall && 
                   this.getPref("forbidExtProtSubdocs", true) && 
                   !this.isJSEnabled(originSite = this.getSite(originURL = originURL || aRequestOrigin.spec)) &&
                   (!aContext.contentDocument || aContext.contentDocument.URL != originURL)
@@ -356,7 +356,7 @@ const MainContentPolicy = {
               if (!this.normalizeExternalURI(aContentLocation)) {
                 return this.reject("Invalid External URL", arguments);
               }
-            } else if(aContentType == 6 && scheme == "chrome" &&
+            } else if(aContentType === 6 && scheme === "chrome" &&
               this.getPref("lockPrivilegedUI", false) && // block DOMI && Error Console
               /^(?:javascript:|chrome:\/\/(?:global\/content\/console|inspector\/content\/inspector|venkman\/content\/venkman)\.xul)$/
                 .test(locationURL)) {
@@ -424,8 +424,11 @@ const MainContentPolicy = {
         if (aContentType == 2) { // "real" JavaScript include
         
           // plugin instantiation hacks
-          if (this.contentBlocker && originSite &&
-              /^(?:https?|file):/.test(originSite)) {
+          if (this.contentBlocker && aRequestOrigin &&
+                ( aRequestOrigin.schemeIs("http") ||
+                  aRequestOrigin.schemeIs("https") ||
+                  aRequestOrigin.schemeIs("file"))
+              ) {
             this.applyPluginPatches(contentDocument);
           }
 
@@ -441,7 +444,7 @@ const MainContentPolicy = {
           forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
         }
   
-        if ((untrusted || forbid) && aContentLocation.scheme != "data") {
+        if ((untrusted || forbid) && scheme !== "data") {
           if (isScript && contentDocument) {
             if (ScriptSurrogate.apply(contentDocument, locationURL)) {
               let surrogates = this.getExpando(contentDocument, "surrogates", {});
@@ -537,8 +540,8 @@ const MainContentPolicy = {
                 /^(?:javascript|data):/.test(locationURL) && originOK
         ;
         
-        if (!locationOK && locationSite && this.ignorePorts && /:\d+$/.test(locationSite)) {
-          if (this.isJSEnabled(locationSite.replace(/:\d+$/, ''))) {
+        if (!locationOK && locationSite && this.ignorePorts && this.portRx.test(locationSite)) {
+          if (this.isJSEnabled(locationSite.replace(this.portRx, ''))) {
             locationOK = this.autoTemp(locationSite);
           }
         }
@@ -550,10 +553,10 @@ const MainContentPolicy = {
           ));
       }
        
-      if (/\binnerHTML\b/.test(new Error().stack)) {
+      if (aContentType === 5 && /\binnerHTML\b/.test(new Error().stack)) {
         if (this._bug453825) {
           try {
-            ScriptSurrogate.execute(aContext.ownerDocument, 'window.__defineGetter__("top", (Window.prototype || window).__lookupGetter__("top"))');
+            ScriptSurrogate.executeDOM(aContext.ownerDocument, 'window.__defineGetter__("top", (Window.prototype || window).__lookupGetter__("top"))');
             if (this.consoleDump) this.dump("Locked window.top (bug 453825 work-around)");
           } catch(e) {
             if (this.consoleDump) this.dump(e + " while locking window.top (bug 453825 work-around)");
@@ -572,7 +575,7 @@ const MainContentPolicy = {
       
       mustCountObject = true;
       
-      forbid = forbid && !(/^file:\/\/\//.test(locationURL) && /^resource:/.test(originURL || (aRequestOrigin && aRequestOrigin.spec || ""))); // fire.fm work around
+      if (forbid) forbid = !(aContentLocation.schemeIs("file") && aRequestOrigin && aRequestOrigin.schemeIs("resource")); // fire.fm work around
       
       if (forbid) {
         

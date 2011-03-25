@@ -91,8 +91,8 @@ var DNS = {
   
   _cache: {
     CAPACITY: 400, // when we purge, we cut this to half
-    _map: {},
-    _ext: {},
+    _map: {__proto__: null},
+    _ext: {__proto__: null},
     count: 0,
     
 
@@ -124,8 +124,8 @@ var DNS = {
     },
     
     reset: function() {
-      this._map = {};
-      this._ext = {},
+      this._map = {__proto__: null};
+      this._ext = {__proto__: null},
       this.count = 0;
     },
     
@@ -337,11 +337,13 @@ var DNS = {
       this.localExtras && this.localExtras.testIP(addr) ||
       WAN.ipMatcher && WAN.ipMatcher.testIP(addr);
   },
+  _ip6to4Rx: /^2002:[A-F0-9:]+:([A-F0-9]{2})([A-F0-9]{2}):([A-F0-9]{2})([A-F0-9]{2})$/i,
   ip6to4: function(addr) {
-    let m = addr.match(/^2002:[A-F0-9:]+:([A-F0-9]{2})([A-F0-9]{2}):([A-F0-9]{2})([A-F0-9]{2})$/i);
+    let m = addr.match(this._ip6to4Rx);
     return m && m.slice(1).map(function(h) parseInt(h, 16)).join(".") || "";
   },
-  isIP: function(host) /^(?:\d+\.){3}\d+$|:.*:/.test(host)
+  _ipRx: /^(?:\d+\.){3}\d+$|:.*:/,
+  isIP: function(host) this._ipRx.test(host)
 };
 
 function DNSListener(callback) {
@@ -568,8 +570,7 @@ var WAN = {
       }
       
       if (ip != this.ip) {
-        CC["@mozilla.org/observer-service;1"].getService(CI.nsIObserverService)
-          .notifyObservers(this, this.IP_CHANGE_TOPIC, ip);
+        OS.notifyObservers(this, this.IP_CHANGE_TOPIC, ip);
       }
       
       this.ip = ip;
