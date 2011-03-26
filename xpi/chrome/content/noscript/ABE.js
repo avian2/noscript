@@ -723,7 +723,7 @@ function ABEPredicate(p) {
   this.action = p.actions[0];
  
   switch(this.action) {
-    case "Acccept":
+    case "Accept":
       this.permissive = true;
       break;
     case "Logout": case "Anon":
@@ -1200,7 +1200,7 @@ var ABEStorage = {
     const keys = this._rulesetPrefs;
     keys.sort();
     const prefs = this.prefs;
-    const disabled = ABE.disabledRulesetNames;
+    var disabled = ABE.disabledRulesetNames;
     ABE.clear();
     for (let j = 0, len = keys.length; j < len; j++) {
       let k = keys[j];

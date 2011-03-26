@@ -166,21 +166,21 @@
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "Avinstallera">
 <!ENTITY noscriptRecentBlocked "Nyligen blockerade platser">
-<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
+<!ENTITY noscriptNotifyMeta "Visa meddelande om blockerade META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
+<!ENTITY noscriptExternalFilters "Externa filter">
+<!ENTITY noscriptEF.enable "Aktivera externa filter">
+<!ENTITY noscriptEF.add "Nytt filter ...">
+<!ENTITY noscriptEF.executable "Körbar fil:">
+<!ENTITY noscriptEF.browse "Bläddra ...">
+<!ENTITY noscriptEF.contentType "Innehållstyp (MIME) som skall filtreras (exakt eller reguljärt uttryck):">
+<!ENTITY noscriptEF.exceptions "Filtrera inte objekt som kommer från dessa platser:">
+<!ENTITY noscriptEF.remove "Ta bort">
+<!ENTITY noscriptPreset "Skyddsnivå">
+<!ENTITY noscriptPreset.off "Av (är du seriös?!)">
+<!ENTITY noscriptPreset.low "Lättsam (Blacklist + Web Security)">
+<!ENTITY noscriptPreset.medium "Klassisk (Whitelist + Web Security)">
 <!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
-<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscript.hoverUI "Öppna behörighetsmenyn när muspekaren är över NoScript ikon">
+<!ENTITY noscriptDonate "Donera">
+<!ENTITY noscriptDonate.accesskey "O">

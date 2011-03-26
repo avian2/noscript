@@ -152,35 +152,35 @@
 <!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
 <!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
 <!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
-<!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
+<!ENTITY noscriptShowReleaseNotes "Pamerkan nota">
 <!ENTITY ABE "ABE">
 <!ENTITY ABE.accesskey "A">
-<!ENTITY ABE.rulesets.label "Rulesets:">
-<!ENTITY ABE.enabled.label "Enable ABE (Application Boundaries Enforcer)">
-<!ENTITY ABE.siteEnabled.label "Allow sites to push their own rulesets">
-<!ENTITY ABE.edit.label "Edit…">
+<!ENTITY ABE.rulesets.label "Set aturan:">
+<!ENTITY ABE.enabled.label "Aktifkan ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Benarkan laman mengolah aturan sendiri">
+<!ENTITY ABE.edit.label "Sunting…">
 <!ENTITY ABE.edit.accesskey "E">
-<!ENTITY ABE.enable.label "Enable">
+<!ENTITY ABE.enable.label "Aktifkan">
 <!ENTITY ABE.enable.accesskey "n">
-<!ENTITY ABE.disable.label "Disable">
-<!ENTITY ABE.disable.accesskey "D">
-<!ENTITY ABE.refresh.label "Refresh">
-<!ENTITY ABE.refresh.accesskey "R">
-<!ENTITY noscriptUninstall "Uninstall">
-<!ENTITY noscriptRecentBlocked "Recently blocked sites">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
-<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY ABE.disable.label "Matikan">
+<!ENTITY ABE.disable.accesskey "M">
+<!ENTITY ABE.refresh.label "Muat Semua">
+<!ENTITY ABE.refresh.accesskey "u">
+<!ENTITY noscriptUninstall "Buang">
+<!ENTITY noscriptRecentBlocked "Laman telah diblok">
+<!ENTITY noscriptExternalFilters "Penapis luar">
+<!ENTITY noscriptEF.enable "Aktifkan penapis luar">
+<!ENTITY noscriptEF.add "Penapis Baru…">
+<!ENTITY noscriptEF.executable "Fail boleh laksana:">
+<!ENTITY noscriptEF.browse "Cari…">
+<!ENTITY noscriptEF.contentType "Jenis butiran (MIME) akan ditapis (pilihan mutlak atau ekspresi biasa)">
+<!ENTITY noscriptEF.exceptions "Jangan tapis objek datang dari halaman ini:">
+<!ENTITY noscriptEF.remove "Buang">
+<!ENTITY noscriptPreset "Taraf keselamatan">
+<!ENTITY noscriptPreset.off "Matikan (anda serius?!)">
+<!ENTITY noscriptPreset.low "Mudah (Senarai hitam + Keselamatan Web)">
+<!ENTITY noscriptPreset.medium "Klasik (Senarai putih + Keselamatan Web)">
+<!ENTITY noscriptPreset.high "Kubu (Kunci penuh)">
+<!ENTITY noscript.hoverUI "Buka menu keizinan apabila tetikus hover pada ikon NoScript">
+<!ENTITY noscriptDonate "Derma">
+<!ENTITY noscriptDonate.accesskey "D">

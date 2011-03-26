@@ -1,0 +1,186 @@
+<!ENTITY noscriptOptions "Поставке…">
+<!ENTITY noscriptOptions.accesskey "П">
+<!ENTITY noscriptOptionsLong "Поставке">
+<!ENTITY noscriptAbout "О додатку…">
+<!ENTITY noscriptPermissionsText "Можете изабрати којим сајтовима је дозвољено извршавање скриптова. Унесите адресу или домен сајта и кликните на „Дозволи“.">
+<!ENTITY noscriptWebAddress "Адреса сајта:">
+<!ENTITY noscriptAllow "Дозволи">
+<!ENTITY noscriptAllow.accesskey "Д">
+<!ENTITY noscriptForbid "Забрани">
+<!ENTITY noscriptForbid.accesskey "З">
+<!ENTITY noscriptTrust "Означи као поверљиво">
+<!ENTITY noscriptTrust.accesskey "п">
+<!ENTITY noscriptUntrust "Означи као неповерљиво">
+<!ENTITY noscriptUntrust.accesskey "з">
+<!ENTITY noscriptRemoveSelected "Уклони изабране сајтове">
+<!ENTITY noscriptGloballyEnabled "Скриптови су глобално дозвољени">
+<!ENTITY noscriptAutoReload "Самостално учитај странице при измени дозвола">
+<!ENTITY noscriptGeneral "Опште">
+<!ENTITY noscriptAppearance "Изглед">
+<!ENTITY noscriptShow "Прикажи…">
+<!ENTITY noscriptCtxMenu "Приручни мени">
+<!ENTITY noscriptStatusIcon "Иконица на линији стања">
+<!ENTITY noscriptFullAddr "Целе адресе (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Цели домени (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Домени другог нивоа (noscript.net)">
+<!ENTITY noscriptTempCmd "Привремено дозволи […]">
+<!ENTITY noscriptSound "Обавести ме звуком када се скриптови забране">
+<!ENTITY noscriptImport "Увези">
+<!ENTITY noscriptImport.accesskey "У">
+<!ENTITY noscriptExport "Извези">
+<!ENTITY noscriptExport.accesskey "И">
+<!ENTITY noscriptNotify "Прикажи поруку о забрањеним скриптовима">
+<!ENTITY noscriptNotify.bottom "Постави поруку на дно">
+<!ENTITY noscriptSound.choose "Изабери">
+<!ENTITY noscriptSound.choose.accesskey "з">
+<!ENTITY noscriptSound.play "Репродукуј">
+<!ENTITY noscriptSound.play.accesskey "Р">
+<!ENTITY noscriptSound.reset "Постави на подразумевано">
+<!ENTITY noscriptSound.reset.accesskey "п">
+<!ENTITY noscriptAdvanced "Напредно">
+<!ENTITY noscriptAdditionalPermissions "Додатне дозволе за поверљиве сајтове">
+<!ENTITY noscriptAllowClipboard "Дозволи умножавање и убацивање текста из спољне оставе">
+<!ENTITY noscriptAdditionalRestrictions "Додатна ограничења за неповерљиве сајтове">
+<!ENTITY noscriptPlugins "Прикључци">
+<!ENTITY noscriptContentBlocker "Примени ова ограничења и на сајтове у белој листи">
+<!ENTITY noscriptForbidJava "Забрани јаву">
+<!ENTITY noscriptForbidXSLT "Забрани XSLT">
+<!ENTITY noscriptForbidWebBugs "Забрани „веб бубе“">
+<!ENTITY noscriptForbidSilverlight "Забрани Мајкрософт силверлајт">
+<!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Забрани &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Забрани @font-face">
+<!ENTITY noscriptForbidMedia "Забрани &lt;AUDIO&gt;/&lt;VIDEO&gt;">
+<!ENTITY noscriptForbidFlash "Забрани адоуб флеш">
+<!ENTITY noscriptForbidPlugins "Забрани остале прикључке">
+<!ENTITY noscriptReloadWarn "Ове поставке утицаће на нове или поновно отворене странице">
+<!ENTITY noscriptConfirmUnblock "Питај ме за потврду пре привременог деблокирања објекта">
+<!ENTITY noscriptStatusLabel "Ознака линије стања">
+<!ENTITY noscriptForbidBookmarklets "Забрани маркерчиће">
+<!ENTITY noscriptShowPlaceholder "Прикажи иконицу местодржача">
+<!ENTITY noscriptTruncateTitle "Одсеци наслове докумената">
+<!ENTITY noscriptFixLinks "Поправи везе јаваскрипте">
+<!ENTITY noscriptAllowBookmarks "Дозволи сајтове отворене преко забелешки">
+<!ENTITY noscriptAllowViaBookmarks "Дозволи сајтове отворене преко забелешки">
+<!ENTITY noscriptAllowPing "Дозволи &lt;A PING…&gt;">
+<!ENTITY noscriptAllowLocalLinks "Дозволи локалне везе">
+<!ENTITY noscriptForbidPing "Забрани &lt;A PING…&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Забрани мета преусмерења унутар елемента &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "м">
+<!ENTITY noscriptNotifyMeta "Прикажи поруку о забрањеним мета преусмерењима">
+<!ENTITY noscriptNotifyMeta.accesskey "р">
+<!ENTITY noscriptWhitelist "Бела листа">
+<!ENTITY noscriptPermissions "Дозволе">
+<!ENTITY noscriptRefresh "Освежи">
+<!ENTITY noscriptNotifications "Обавештења">
+<!ENTITY noscriptToolbarToggle "Левим кликом на алатницу носкрипт мења дозволе за текући домен првог нивоа">
+<!ENTITY noscriptTrusted "Поверљиво">
+<!ENTITY noscriptUntrusted "Неповерљиво">
+<!ENTITY noscriptUnknown "Непознато">
+<!ENTITY noscriptAdd "Додај">
+<!ENTITY noscriptAdd.accesskey "Д">
+<!ENTITY noscriptClose "Затвори">
+<!ENTITY noscriptSiteManager "Управљач сајтовима">
+<!ENTITY noscriptSecurityManager "Управљач сигурности">
+<!ENTITY noscriptPolicies "Полисе">
+<!ENTITY noscriptDefaultPolicies "Подразумеване полисе">
+<!ENTITY noscriptSitePolicies "Полисе одређених сајтова">
+<!ENTITY noscriptNselNever "Сакриј елементе &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Прикажи елемент &lt;NOSCRIPT&gt; који прати забрањен &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Привремено дозволи домене првог нивоа">
+<!ENTITY noscriptDescription "Додатна заштита за фајерфокс. Носкрипт омогућава јаваскрипт, јаву и друге прикључке само за поверљиве сајтове. Ова бела листа заснована је на превентивном забрањивању приступа ради спречавања искоришћавања сигурносних рањивости без губљења функционалности. Стручњаци ће се сложити — фајерфокс је безбеднији уз носкрипт.">
+<!ENTITY noscriptOptBlockCssScanners "Забрани скенере засноване на  CSS-у">
+<!ENTITY noscriptOptFilterXGet "Уклони сумњиве захтеве међусајтовне скрипте">
+<!ENTITY noscriptOptFilterXPost "Пребаци међусајтовне POST захтеве у безподатковне GET захтеве">
+<!ENTITY noscriptShowConsole "Прикажи конзолу…">
+<!ENTITY noscriptShowConsole.accesskey "к">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS ЧПП…">
+<!ENTITY noscriptXssFaq.accesskey "Ч">
+<!ENTITY noscriptUnsafeReload "Небезбедно поновно учитавање">
+<!ENTITY noscriptUnsafeReload.accesskey "б">
+<!ENTITY noscriptXssExceptions "Анти-XSS изузеци заштите">
+<!ENTITY noscriptXssExceptions.description "Одредишта која се поклапају с регуларним изразима неће бити заштићена против XSS-а.">
+<!ENTITY noscriptMatchSample "Обрасци:">
+<!ENTITY noscriptReset "Поништи">
+<!ENTITY noscriptReset.accesskey "П">
+<!ENTITY noscriptResetDef "Постави на подразумевано">
+<!ENTITY noscriptResetDef.accesskey "с">
+<!ENTITY noscriptOptionsWidth "40 em">
+<!ENTITY noscriptRevokeTemp "Опозови привремене дозволе">
+<!ENTITY noscriptRevokeTemp.accesskey "з">
+<!ENTITY noscriptNoUntrustedPlaceholder "Ниједан местодржач за објекте не долази из неповерљивих сајтова">
+<!ENTITY noscriptCollapseBlockedObjects "Скупи забрањене објекте">
+<!ENTITY noscriptExceptions "Изузеци…">
+<!ENTITY noscriptBlockedObjects "Забрањени објекти">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Забрани сваки објекат који долази из неповерљивог сајта">
+<!ENTITY noscriptTempAllowPage "Привремено дозволи све на овој страници">
+<!ENTITY noscriptTempAllowPage.accesskey "р">
+<!ENTITY noscriptAllowPage "Дозволи све на овој страници">
+<!ENTITY noscriptAllowPage.accesskey "Д">
+<!ENTITY noscriptTempToPerm "Начини дозволе на страници као трајне">
+<!ENTITY noscriptTempToPerm.accesskey "Н">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS ЧПП…">
+<!ENTITY noscriptHttpsFaq.accesskey "Ч">
+<!ENTITY noscriptHttps.behavior "Понашање">
+<!ENTITY noscriptHttps.cookies "Колачићи">
+<!ENTITY noscriptHttps.description "Забрани активни садржај осим ако долази из безбедне (HTTPS) везе:">
+<!ENTITY noscriptHttps.never "Никада">
+<!ENTITY noscriptHttps.proxy "При коришћењу посредника (препоручује се тор)">
+<!ENTITY noscriptHttps.always "Увек">
+<!ENTITY noscriptHttpsForced "Приморај следеће сајтове да користе безбедну (HTTPS) везу:">
+<!ENTITY noscriptHttpsForcedExceptions "Не приморавај коришћење безбедне (HTTPS) везе за следеће сајтове:">
+<!ENTITY noscriptSecureCookies "Омогући Безбедно управљање колачићима">
+<!ENTITY noscriptSecureCookiesForced "Приморај шифровање за све колачиће HTTPS-а за следеће сајтове:">
+<!ENTITY noscriptSecureCookiesExceptions "Занемари небезбедне колачиће HTTPS-а за следеће сајтове:">
+<!ENTITY noscriptClearClickTitle "Клирклик ворнинг">
+<!ENTITY noscriptClearClickHeader "Покушај кликџекинга / UI реадресирања!">
+<!ENTITY noscriptClearClickDescription "Носкрипт је пресретнуо интеракцију миша или тастатуре с делимично сакривеним елементом. Кликните на слику испод да промените између започетог и чистог издања.">
+<!ENTITY noscriptClearClickOpt "Клирклик заштита на страницама…">
+<!ENTITY noscriptClearClickReport "Пријави">
+<!ENTITY noscriptClearClickReport.accesskey "П">
+<!ENTITY noscriptClearClickReportId "ID пријаве:">
+<!ENTITY noscriptTrustedPagesAdj "поверљиво">
+<!ENTITY noscriptUntrustedPagesAdj "неповерљиво">
+<!ENTITY noscriptKeepLocked "Задржи овај елемент закључаним (препоручено)">
+<!ENTITY noscriptEmbeddings "Уграђивања">
+<!ENTITY noscriptPrev "Претходно">
+<!ENTITY noscriptNext "Следеће">
+<!ENTITY noscriptFrameOptErr.title "Овај садржај не може бити приказан у оквиру">
+<!ENTITY noscriptFrameOptErr.desc "Да би вас задржао/ла безбедним, издавач овог садржаја не дозвољава његово приказивање у оквиру.">
+<!ENTITY noscriptFrameOptErr.link "Кликните овде да отворите садржај у новом прозору">
+<!ENTITY noscriptBookmarkSync "Направи резервни примерак подешавања у забелешци ради лакшег усклађивања">
+<!ENTITY noscriptShowReleaseNotes "Прикажи белешке издавача при доградњи">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Скупови правила:">
+<!ENTITY ABE.enabled.label "Омогући ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Дозволи сајтовима да поставе свој скуп правила">
+<!ENTITY ABE.edit.label "Уреди…">
+<!ENTITY ABE.edit.accesskey "У">
+<!ENTITY ABE.enable.label "Омогући">
+<!ENTITY ABE.enable.accesskey "м">
+<!ENTITY ABE.disable.label "Онемогући">
+<!ENTITY ABE.disable.accesskey "н">
+<!ENTITY ABE.refresh.label "Освежи">
+<!ENTITY ABE.refresh.accesskey "О">
+<!ENTITY noscriptUninstall "Уклони">
+<!ENTITY noscriptRecentBlocked "Забрањени сајтови">
+<!ENTITY noscriptExternalFilters "Спољни филтери">
+<!ENTITY noscriptEF.enable "Омогући спољне филтере">
+<!ENTITY noscriptEF.add "Нови филтер…">
+<!ENTITY noscriptEF.executable "Извршна датотека:">
+<!ENTITY noscriptEF.browse "Потражи…">
+<!ENTITY noscriptEF.contentType "Врста садржаја (MIME) за филтрирање (подударање или регуларни израз):">
+<!ENTITY noscriptEF.exceptions "Не филтрирај објекте који долази с ових сајтова:">
+<!ENTITY noscriptEF.remove "Уклони">
+<!ENTITY noscriptPreset "Ниво безбедности">
+<!ENTITY noscriptPreset.off "Искључено">
+<!ENTITY noscriptPreset.low "Једноставно (црна листа и веб безбедност)">
+<!ENTITY noscriptPreset.medium "Класично (бела листа и веб безбедност)">
+<!ENTITY noscriptPreset.high "Тврђава (пуно закључавање)">
+<!ENTITY noscript.hoverUI "Отвори мени за дозволе при преласку мишем преко иконице носкрипта">
+<!ENTITY noscriptDonate "Донирај">
+<!ENTITY noscriptDonate.accesskey "Д">

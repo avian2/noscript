@@ -274,7 +274,7 @@ const HTTPS = {
     }
 
     if (cs) {
-      Array.prototype.push.apply(
+      dcookies.push.apply(
         dcookies, cs.split(/\s*;\s*/).map(function(cs) { var nv = cs.split("="); return { name: nv.shift(), value: nv.join("=") } })
          .filter(function(c) { return dcookies.every(function(x) { return x.name != c.name }) })
       );

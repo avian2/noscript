@@ -175,11 +175,11 @@
 <!ENTITY noscriptEF.remove "Отстрани">
 <!ENTITY noscriptDonate "Донирај">
 <!ENTITY noscriptDonate.accesskey "о">
-<!ENTITY noscriptEF.executable "Executable file:">
+<!ENTITY noscriptEF.executable "Извршна датотека:">
+<!ENTITY noscriptPreset "Ниво на Безбедност">
+<!ENTITY noscriptPreset.off "Исклучи (дали сте сериозни?!)">
 <!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
 <!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
 <!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
 <!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
 <!ENTITY noscriptPreset.high "Fortress (Full lockdown)">

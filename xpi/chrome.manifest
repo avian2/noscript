@@ -71,7 +71,7 @@ locale noscript ro    jar:chrome/noscript.jar!/locale/ro/noscript/
 locale noscript ru-RU jar:chrome/noscript.jar!/locale/ru-RU/noscript/
 locale noscript sk-SK jar:chrome/noscript.jar!/locale/sk-SK/noscript/
 locale noscript sl-SI jar:chrome/noscript.jar!/locale/sl-SI/noscript/
-locale noscript sr-RS jar:chrome/noscript.jar!/locale/sr-RS/noscript/
+locale noscript sr    jar:chrome/noscript.jar!/locale/sr/noscript/
 locale noscript sv-SE jar:chrome/noscript.jar!/locale/sv-SE/noscript/
 locale noscript te-IN jar:chrome/noscript.jar!/locale/te-IN/noscript/
 locale noscript th-TH jar:chrome/noscript.jar!/locale/th-TH/noscript/

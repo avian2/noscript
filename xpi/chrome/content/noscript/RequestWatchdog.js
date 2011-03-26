@@ -525,7 +525,12 @@ RequestWatchdog.prototype = {
         return; // any about: URL except about:blank
       
       if (channel.requestMethod == "POST") {
-      
+        
+        if (originSite === "https://cap.securecode.com" && ns.getPref("filterXException.visa")) {
+          if (ns.consoleDump) this.dump(channel, "Verified by Visa (cap.securecode.com) exception");
+          return;
+        }
+        
         if (/^https?:\/\/mail\.lycos\.com\/lycos\/mail\/MailCompose\.lycos$/.test(origin) &&
             /\.lycosmail\.lycos\.com$/.test(targetSite) &&
             ns.getPref("filterXExceptions.lycosmail")) {
@@ -2129,16 +2134,16 @@ XSanitizer.prototype = {
       sep = query.indexOf("&") > -1 ? "&" : ";" 
     }
     const parms = query.split(sep);
-    var j, pieces, k, pz, origPz, encodedPz, nestedURI, qpos, apos, encodeURL;
     
-    for (j = parms.length; j-- > 0;) {
-      pieces = parms[j].split("=");
-      
-      
+    for (let j = parms.length; j-- > 0;) {
+      let pieces = parms[j].split("=");
+
       try {
-        for (k = pieces.length; k-- > 0;) {
-          encodedPz =  InjectionChecker.utf8OverDecode(pieces[k]);
-          pz = null;
+        for (let k = pieces.length; k-- > 0;) {
+          
+          let encodedPz =  InjectionChecker.utf8OverDecode(pieces[k]);
+          
+          let pz = null, encodeURL = null;
           if (encodedPz.indexOf("+") < 0) {
             try {
               pz = decodeURIComponent(encodedPz);
@@ -2149,11 +2154,12 @@ XSanitizer.prototype = {
             pz = unescape(ASPIdiocy.filter(encodedPz));
             encodeURL = escape;
           }
-          origPz = pz;
+          
+          let origPz = pz;
           
           // recursion for nested (partial?) URIs
 
-          nestedURI = null;
+          let nestedURI = null;
           
           if (canRecur && /^https?:\/\//i.test(pz)) {
             // try to sanitize as a nested URL
@@ -2167,6 +2173,7 @@ XSanitizer.prototype = {
           }
           
           if (!nestedURI) {
+            let qpos;
             if (canRecur &&
                  (qpos = pz.indexOf("?")) > - 1 &&
                  (spos = pz.search(/[&;]/) > qpos)) { 
