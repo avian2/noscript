@@ -89,14 +89,12 @@ const ABE = {
   
   clear: function() {
     this.localRulesets = [];
-    this.siteMap = {__proto__: null};
-    this._siteRulesets = null;
+    this.refresh();
   },
   
   refresh: function() {
-    var disabled = this.disabledRulesetNames;
-    this.clear();
-    this.disabledRulesetNames = disabled;
+    this.siteMap = {__proto__: null};
+    this._siteRulesets = null;
   },
   
   parse: function(name, source, timestamp) {
@@ -1181,13 +1179,11 @@ var ABEStorage = {
     const keys = this._rulesetPrefs;
     for (let j = keys.length; j-- > 0;) {
       let k = keys[j];
-      if (exclude.indexOf(k) === -1) {
-        if (prefs.prefHasUserValue(k)) {
-          dump("Resetting ABE ruleset " + k + "\n");
-          try {
-            prefs.clearUserPref(k);
-          } catch(e) { dump(e + "\n") }
-        }
+      if (prefs.prefHasUserValue(k)) {
+        dump("Resetting ABE ruleset " + k + "\n");
+        try {
+          prefs.clearUserPref(k);
+        } catch(e) { dump(e + "\n") }
       }
     }
   },

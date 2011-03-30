@@ -17,12 +17,8 @@ AddressMatcher.prototype = {
   test:  function(u) {
     if (!this.rx) return false;
     
-    let spec = this._specRx(u);
+    let spec = this._specRx.exec(u);
 
-    if (!this.rx) {
-        return false;
-    }
-    var spec = this._specRx(u);
     if (spec) {
         let host = spec[2];
         let atPos = host.indexOf("@");
