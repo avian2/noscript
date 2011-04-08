@@ -1,5 +1,7 @@
+ABE; // kickstart
 
-function RequestWatchdog() {
+function RequestWatchdog() {  
+  this.injectionChecker = InjectionChecker;
   this.init();
 }
 
@@ -94,7 +96,7 @@ RequestWatchdog.prototype = {
             
             new DOSChecker(abeReq).run(function() {
               return this.filterXSS(abeReq);
-            }, this);  
+            }, this);
           }
           if (!channel.status) {
             this.handleABE(abeReq, isDoc);
@@ -2400,7 +2402,7 @@ var MaxRunTime = {
       delete this.storedValue;
     }
   }
-}
+};
 
 
 var ASPIdiocy = {

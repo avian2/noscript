@@ -3,12 +3,7 @@ const DOM = {
   confirm: function(s) {  // for interactive debugging purposes
     return this.mostRecentBrowserWindow.confirm(s);
   },
-  
-  consoleDump: false,
-  dump: function(msg) {
-    if(this.consoleDump) dump("[NoScript DOM] " + msg + "\n");
-  },
-  
+   
   findBrowser: function(chrome, win) {
     
     var overlay = chrome.noscriptOverlay;
@@ -55,13 +50,9 @@ const DOM = {
       for (var b; b = bi.next();) {
         try {
           if (b.contentWindow == ctx) return b;
-        } catch(e1) {
-          this.dump("Skipping browser iteration: " + e1);
-        }
+        } catch(e) {}
       }
-      this.dump("Browser not found for " + ctx);
-    } catch(e2) {
-      this.dump("Can't find browser for " + ctx + ": " + e2);
+    } catch(e) {
     } finally {
       if (bi) bi.dispose();
       ctx = null;

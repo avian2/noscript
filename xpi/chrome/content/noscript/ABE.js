@@ -22,8 +22,11 @@ const ABE = {
   _localMap: null,
   _siteRulesets: null,
   
-  init: function(rootPref) {
-    ABEStorage.init(rootPref);
+  init: function(prefParent) {
+    const ps = this.prefService = CC["@mozilla.org/preferences-service;1"]
+      .getService(CI.nsIPrefService).QueryInterface(CI.nsIPrefBranch);
+    ABEStorage.init(ps.getBranch(prefParent+ "ABE.").QueryInterface(CI.nsIPrefBranch2));
+    DoNotTrack.init(ps.getBranch(prefParent+ "doNotTrack.").QueryInterface(CI.nsIPrefBranch2));
   },
   
   siteMap: {__proto__: null},
@@ -1128,10 +1131,8 @@ ABERequest.prototype = Lang.memoize({
 var ABEStorage = {
   _updating: true,
   _dirty: true,
-  init: function(prefRoot) {
-    const ps = this.prefService = CC["@mozilla.org/preferences-service;1"]
-      .getService(CI.nsIPrefService).QueryInterface(CI.nsIPrefBranch);
-    const prefs = this.prefs = ps.getBranch(prefRoot).QueryInterface(CI.nsIPrefBranch2);
+  init: function(prefs) {
+    this.prefs = prefs;
     if (!prefs.getIntPref("migration")) {
       prefs.setIntPref("migration", 1);
       this._migrateLegacyFiles();
@@ -1342,10 +1343,27 @@ var DoNotTrack = {
   enabled: true,
   exceptions: null,
   forced: null,
-  get authManager() {
-    delete this.authManager;
-    return this.authManager = CC["@mozilla.org/network/http-auth-manager;1"].getService(CI.nsIHttpAuthManager);
+
+  init: function(prefs) {
+    this.prefs = prefs;
+    for each (let k in prefs.getChildList("", {})) {
+      this.observe(prefs, null, k);
+    }
+    prefs.addObserver("", this, true);
   },
+  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
+  observe: function(prefs, topic, name) {
+    switch(name) {
+      case "enabled":
+        DoNotTrack.enabled = prefs.getBoolPref(name);
+       break;
+      case "exceptions":
+      case "forced":
+        DoNotTrack[name] = AddressMatcher.create(prefs.getComplexValue(name, CI.nsISupportsString).data);
+      break;
+    }
+  },
+
   apply: function(/* ABEReq */ req) {
     let url = req.destination;
       

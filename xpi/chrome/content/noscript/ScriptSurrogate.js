@@ -190,7 +190,7 @@ var ScriptSurrogate = {
       var s = new CU.Sandbox(w, { wantXrays: false });
       s.window = w;
       CU.evalInSandbox("with(window) {" + scriptBlock + "}", s);
-    } catch(e) {
+    } catch (e) {
       if (ns.consoleDump) ns.dump(e);
       if (this.debug) CU.reportError(e);
     }
@@ -198,16 +198,20 @@ var ScriptSurrogate = {
   
   executeDOM: function(document, scriptBlock) {
     var de = document.documentElement;
-    
-    if (!de) {
-      document.defaultView.location.href = "javascript:" + encodeURIComponent(scriptBlock) + "; void(0)";
-      return;
+    try {
+      if (!de) {
+        document.defaultView.location.href = "javascript:" + encodeURIComponent(scriptBlock) + "; void(0)";
+        return;
+      }
+      
+      var se = document.createElement("script");
+      se.appendChild(document.createTextNode(scriptBlock));
+      de.appendChild(se);
+      de.removeChild(se);
+    } catch (e) {
+      if (ns.consoleDump) ns.dump(e);
+      if (this.debug) CU.reportError(e);
     }
-    
-    var se = document.createElement("script");
-    se.appendChild(document.createTextNode(scriptBlock));
-    de.appendChild(se);
-    de.removeChild(se);
   }
   
 }

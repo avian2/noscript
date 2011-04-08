@@ -331,55 +331,34 @@ const HTTPS = {
       ? browser && ns.setExpando(browser, "unsafeCookies", value)
       : this._globalUnsafeCookies = value;
   },
-  
-  _unsafeSchemeRx: /^(?:ht|f)tp:\/\//,
-  shouldForbid: function(site) {
-    switch(this.allowHttpsOnly) {
-      case 0:
-        return false;
-      case 1:
-        return this._unsafeSchemeRx.test(site) && this.isProxied(site);
-      case 2:
-        return this._unsafeSchemeRx.test(site);
-    }
-    return false;
-  },
-  
-  isProxied: function(u) {
-    var ps = CC["@mozilla.org/network/protocol-proxy-service;1"].getService(CI.nsIProtocolProxyService);
-   
-    this.isProxied = function(u) {
-      try {
-        if (!(u instanceof CI.nsIURI)) {
-          u = IOS.newURI(u, null, null);
-        }
-        return ps.resolve(u, 0).type != "direct";
-      } catch(e) {
-        return false;
-      }
-    }
-  },
-  
+
   _getParent: function(req, w) {
     return  w && w.frameElement || DOM.findBrowserForNode(w || IOUtil.findWindow(req));
   }
   
 };
 
-(function () {
-  ["secureCookies", "secureCookiesExceptions", "secureCookiesForced"].forEach(function(p) {
-    var v = HTTPS[p];
-    delete HTTPS[p];
-    HTTPS.__defineGetter__(p, function() {
-      return v;
-    });
-    HTTPS.__defineSetter__(p, function(n) {
-      v = n;
-      HTTPS.cookiesCleanup();
-      return v;
-    });
-  });
-})();
 
+["secureCookies", "secureCookiesExceptions", "secureCookiesForced"].forEach(function(p) {
+  var v = HTTPS[p];
+  delete HTTPS[p];
+  HTTPS.__defineGetter__(p, function() {
+    return v;
+  });
+  HTTPS.__defineSetter__(p, function(n) {
+    v = n;
+    HTTPS.cookiesCleanup();
+    return v;
+  });
+});
+
+["secureCookies", "secureCookiesExceptions", "secureCookiesForced",
+  "httpsForced", "httpsForcedExceptions", "STS.enabled"].forEach(function(p) {
+  try {
+    ns.syncPrefs(ns.prefs, p);
+  } catch(e) {
+    ns.dump(e.message + ":" + e.stack + " setting " + p + "\n");
+  }
+});
 
 

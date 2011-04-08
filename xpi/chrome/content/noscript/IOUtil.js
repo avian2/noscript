@@ -1,4 +1,4 @@
-INCLUDE("DNS");
+LAZY_INCLUDE("DNS");
 
 const IO = {
   readFile: function(file, charset) {

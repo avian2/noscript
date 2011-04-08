@@ -1341,16 +1341,18 @@ return noscriptUtil.service ? {
   syncXssWidget: function(widget) {
     if (!widget) widget = $("noscript-statusXss");
     if (!widget) return;
-    const ns = this.ns;
-    var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(this.currentBrowser);
-    if (unsafeRequest && !unsafeRequest.issued) {
-      widget.removeAttribute("hidden");
-      widget.setAttribute("tooltiptext", "XSS [" +
-                  ns.getSite(unsafeRequest.origin) + "]->[" + 
-                  ns.getSite(unsafeRequest.URI.spec) + "]");
-    } else {
-      widget.setAttribute("hidden", "true");
+    if (content.location.protocol.indexOf("http") === 0) {
+      const ns = this.ns;
+      var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(this.currentBrowser);
+      if (unsafeRequest && !unsafeRequest.issued) {
+        widget.removeAttribute("hidden");
+        widget.setAttribute("tooltiptext", "XSS [" +
+                    ns.getSite(unsafeRequest.origin) + "]->[" + 
+                    ns.getSite(unsafeRequest.URI.spec) + "]");
+      return;
+      }
     }
+    widget.setAttribute("hidden", "true");
   },
   
   syncRedirectWidget: function() {

@@ -1115,5 +1115,13 @@ DocPatcher.prototype = {
       : DUMMYFUNC
      )(toggle); 
   }
-  
-}
+};
+
+
+["clearClick", "clearClick.exceptions", "clearClick.subexceptions"].forEach(function(p) {
+  try {
+    ns.syncPrefs(ns.prefs, p);
+  } catch(e) {
+    ns.dump(e.message + ":" + e.stack + " setting " + p + "\n");
+  }
+});

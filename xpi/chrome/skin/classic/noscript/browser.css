@@ -267,7 +267,6 @@ menupopup[sticky="true"][disabled="true"] {
   opacity: .5;
 }
 #noscript-tbb-revoke-temp  > .toolbarbutton-icon, #noscript-tbb-temp-page  > .toolbarbutton-icon, #noscript-tbb .toolbarbutton-icon[label=NoScript] {
-  /* margin: 0px !important; */
   width: auto !important;
   height: auto !important;
 }
@@ -275,6 +274,13 @@ menupopup[sticky="true"][disabled="true"] {
 #noscript-tbb-revoke-temp, #noscript-tbb-temp-page, #noscript-tbb {
   max-width: 48px;
 }
+
+#addon-bar > #noscript-tbb > .toolbarbutton-text,
+#addon-bar > #noscript-tbb-page > .toolbarbutton-text,
+#addon-bar > #noscript-tbb-revoke-temp > .toolbarbutton-text
+{ display: none !important }
+#addon-bar > #noscript-tbb, #addon-bar > #noscript-tbb-page, #addon-bar > #noscript-tbb-revoke-temp
+{ min-width: 16px !important }
 
 notification {
   word-wrap: break-word !important;

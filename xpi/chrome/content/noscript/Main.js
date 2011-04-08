@@ -21,7 +21,7 @@ const LOG_CONTENT_INTERCEPT = 4;
 const LOG_CHROME_WIN = 8;
 const LOG_XSS_FILTER = 16;
 const LOG_INJECTION_CHECK = 32;
-const LOG_DOM = 64;
+const LOG_DOM = 64; // obsolete, reuse me
 const LOG_JS = 128;
 const LOG_LEAKS = 1024;
 const LOG_SNIFF = 2048;
@@ -38,7 +38,17 @@ const DUMMYOBJ = {};
 const DUMMYFUNC = function() {}
 const EARLY_VERSION_CHECK = !("nsISessionStore" in CI && typeof(/ /) === "object");
 
-INCLUDE('Sites', 'AddressMatcher', 'DOM', 'IOUtil', 'Policy', 'RequestWatchdog', 'HTTPS', 'ClearClickHandler', 'URIValidator', 'ScriptSurrogate', 'ABE');
+INCLUDE("Sites", "AddressMatcher", "IOUtil", "Policy", "Thread", "Lang");
+
+LAZY_INCLUDE("ScriptSurrogate", "DOM", "ClearClickHandler", "URIValidator", "HTTPS");
+
+__defineGetter__("ABE", function() {
+  delete this.ABE;
+  INCLUDE("ABE");
+  ABE.init("noscript.");
+  return ABE;
+});
+
 
 var ns = singleton = {
   VERSION: VERSION
@@ -46,8 +56,9 @@ var ns = singleton = {
   QueryInterface: xpcom_generateQI(SERVICE_IIDS),
   generateQI: xpcom_generateQI
 ,
-  ABE: ABE,
-  OriginTracer: OriginTracer,
+  get ABE() ABE,
+  get OriginTracer() OriginTracer,
+  
   AddressMatcher: AddressMatcher,
   Thread: Thread,
 
@@ -116,6 +127,10 @@ var ns = singleton = {
           STS.eraseDB();
         break;
         
+        case "http-on-modify-request": // kickstart requestWatchdog and stop observing
+          OS.removeObserver(this, topic);
+          this.requestWatchdog.observe(subject, topic, data);
+        break;
       }
     }
   },
@@ -158,7 +173,8 @@ var ns = singleton = {
   
   OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "sessionstore-windows-restored",
                     "toplevel-window-ready", "browser:purge-session-history", "private-browsing",
-                    "content-document-global-created", "document-element-inserted"],
+                    "content-document-global-created", "document-element-inserted",
+                    "http-on-modify-request"],
   register: function() {
     this.OBSERVED_TOPICS.forEach(function(topic) {
       OS.addObserver(this, topic, true);
@@ -351,26 +367,13 @@ var ns = singleton = {
       case "nosniff":
       case "showBlankSources":
       case "liveConnectInterception":
+      case "allowHttpsOnly":
         this[name] = this.getPref(name, this[name]);  
       break;
       
-      case "clearClick.exceptions":
-      case "clearClick.subexceptions":
-        ClearClickHandler.prototype[name.split('.')[1]] = AddressMatcher.create(this.getPref(name, ''));
-      break;
-      
-      case "secureCookies":
-      case "allowHttpsOnly":
-        HTTPS[name] = this.getPref(name, HTTPS[name]);  
-      break;
-      
-    
-    
-      case "secureCookiesExceptions":
-      case "secureCookiesForced":
-      case "httpsForced":
-      case "httpsForcedExceptions":
-        HTTPS[name] = AddressMatcher.create(this.getPref(name, ''));
+      case "subscription.trustedURL":
+      case "subscription.untrustedURL":
+        this.setPref("subscription.lastCheck", 0);
       break;
       
       case "proxiedDNS":
@@ -378,28 +381,10 @@ var ns = singleton = {
         IOUtil[name] = this.getPref(name, IOUtil[name]);
       break;
 
-      case "doNotTrack.enabled":
-        DoNotTrack.enabled = this.getPref(name);
-       break;
-      case "doNotTrack.exceptions":
-      case "doNotTrack.forced":
-        DoNotTrack[name.split(".")[1]] = AddressMatcher.create(this.getPref(name));
-      break;
-      
-      case "STS.enabled":
-        STS.enabled = this.getPref(name);
-      break;
-      
-      case "subscription.trustedURL":
-      case "subscription.untrustedURL":
-        ns.setPref("subscription.lastCheck", 0);
-      break;
-      
       case "consoleDump":
         this[name] = this.getPref(name, this[name]);
-        this.injectionChecker.logEnabled = this.consoleDump & LOG_INJECTION_CHECK;
-        DOM.consoleDump = this.consoleDump & LOG_DOM;
-        ABE.consoleDump = this.consoleDump & LOG_ABE;
+        if (this.consoleDump & LOG_INJECTION_CHECK) this.injectionChecker.logEnabled = true;
+        if (this.consoleDump & LOG_ABE) ABE.consoleDump = true;
       break;
       case "global":
         this.globalJS = this.getPref(name, false);
@@ -461,6 +446,26 @@ var ns = singleton = {
       case "policynames":
         this.setupJSCaps();
       break;
+    
+      case "clearClick.exceptions":
+      case "clearClick.subexceptions":
+        ClearClickHandler.prototype[name.split('.')[1]] = AddressMatcher.create(this.getPref(name, ''));
+      break;
+      
+      case "secureCookies":
+        HTTPS[name] = this.getPref(name, HTTPS[name]);  
+      break;
+      case "secureCookiesExceptions":
+      case "secureCookiesForced":
+      case "httpsForced":
+      case "httpsForcedExceptions":
+        HTTPS[name] = AddressMatcher.create(this.getPref(name, ''));
+      break;
+
+      case "STS.enabled":
+        STS.enabled = this.getPref(name);
+      break;
+    
     }
   },
   
@@ -642,13 +647,12 @@ var ns = singleton = {
   
   init: function() {
     if (this._inited) return false;
+    
+    let t = Date.now();
+    
     this._inited = true;
     
     this._initResources();
-    
-    if (!this.requestWatchdog) {
-      this.requestWatchdog = new RequestWatchdog()
-    }
     
     OS.addObserver(this, "em-action-requested", true);
     
@@ -700,17 +704,13 @@ var ns = singleton = {
       "jsHack", "jsHackRegExp",
       "emulateFrameBreak",
       "nselNever", "nselForce",
-      "clearClick", "clearClick.exceptions", "clearClick.subexceptions",
       "showBlankSources", "showPlaceholder", "showUntrustedPlaceholder",
       "collapseObject",
       "temp", "untrusted", "gtemp",
       "flashPatch", "silverlightPatch",
-      "secureCookies", "secureCookiesExceptions", "secureCookiesForced",
-      "httpsForced", "httpsForcedExceptions", "allowHttpsOnly",
+      "allowHttpsOnly",
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
-      "STS.enabled",
-      "doNotTrack.enabled", "doNotTrack.exceptions", "doNotTrack.forced"
       ]) {
       try {
         this.syncPrefs(this.prefs, p);
@@ -754,20 +754,20 @@ var ns = singleton = {
     
     this.eraseTemp();
     
-    this.checkSubscriptions();
+    Thread.delay(this.checkSubscriptions, 10000, this);
     
     this.reloadWhereNeeded(); // init snapshot
     
     // this.savePrefs(true); // flush preferences to file [TODO: check if it's really needed]
     
     if (this.builtInSync) this._initSync();
-    
-    ABE.init("noscript.ABE.");
-    
+
     // hook on redirections (non persistent, otherwise crashes on 1.8.x)
     CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
       .addCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, SERVICE_CTRID, false, true);
-        
+    
+    
+    if (this.consoleDump) ns.dump("Init done in " + (Date.now() - t));  
     return true;
   },
   
@@ -784,10 +784,7 @@ var ns = singleton = {
         .deleteCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, false);
       
       
-      if (this.requestWatchdog) {
-        this.requestWatchdog.dispose();
-        this.requestWatchdog = null;
-      }
+      this.requestWatchdog.dispose();
       
       OS.removeObserver(this, "em-action-requested");
             
@@ -846,6 +843,12 @@ var ns = singleton = {
     delete this.profiler;
     INCLUDE("Profiler");
     return this.profiler = Profiler;
+  },
+  
+  get requestWatchdog() {
+    delete this.requestWatchdog;
+    INCLUDE("RequestWatchdog");
+    return this.requestWatchdog = new RequestWatchdog();
   },
   
   captureExternalProtocols: function() {
@@ -965,10 +968,33 @@ var ns = singleton = {
       || (untrustedGranularity & 4) && single && this.isUntrusted(site);
   }
 ,
-  isForbiddenByHttpsStatus: function(s) {
-    return HTTPS.allowHttpsOnly && HTTPS.shouldForbid(s);
-  }
-,
+  _unsafeSchemeRx: /^(?:ht|f)tp:\/\//,
+  isForbiddenByHttpsStatus: function(site) {
+    switch(this.allowHttpsOnly) {
+      case 0:
+        return false;
+      case 1:
+        return this._unsafeSchemeRx.test(site) && this.isProxied(site);
+      case 2:
+        return this._unsafeSchemeRx.test(site);
+    }
+    return false;
+  },
+  isProxied: function(u) {
+    var ps = CC["@mozilla.org/network/protocol-proxy-service;1"].getService(CI.nsIProtocolProxyService);
+   
+    this.isProxied = function(u) {
+      try {
+        if (!(u instanceof CI.nsIURI)) {
+          u = IOS.newURI(u, null, null);
+        }
+        return ps.resolve(u, 0).type != "direct";
+      } catch(e) {
+        return false;
+      }
+    }
+  },
+
   jsPolicySites: new PolicySites(),
   isJSEnabled: function(s) {
     return !(this.globalJS
@@ -1091,9 +1117,7 @@ var ns = singleton = {
     ps.toPref(this.policyPB);
   }
 ,
-  get injectionChecker() {
-    return InjectionChecker;
-  }
+  get injectionChecker() this.requestWatchdog.injectionChecker
 ,
   splitList: function(s) {
     return s ?/^[,\s]*$/.test(s) ? [] : s.split(/\s*[,\s]\s*/) : [];
@@ -1170,7 +1194,7 @@ var ns = singleton = {
     try {
       const url = (site instanceof CI.nsIURL) ? site : IOS.newURI(site, null, null);
       const host = url.host;
-      return force || (this.ignorePorts || url.port == -1) && host[host.length - 1] != "." && 
+      return force || (this.ignorePorts || url.port === -1) && host[host.length - 1] != "." && 
             (host.lastIndexOf(".") > 0 || host == "localhost") ? host : '';
     } catch(e) {
       return '';
@@ -1556,7 +1580,7 @@ var ns = singleton = {
     
     this.setJSEnabled(this.mandatorySites.sitesList, true); // add mandatory
     this.resetAllowedObjects();
-    if (this.clearClickHandler) this.clearClickHandler.resetWhitelist();
+    if (this.hasClearClickHandler) this.clearClickHandler.resetWhitelist();
   }
   
 ,
@@ -1683,7 +1707,7 @@ var ns = singleton = {
           prefs.setIntPref(name,value);
           break;
         default:
-          throw new Error("Unsupported type " + typeof(value) + " for preference "+name);
+          throw new Error("Unsupported type " + typeof(value) + " for preference " + name);
       }
     } catch(e) {
       const IPC = CI.nsIPrefBranch;
@@ -1874,10 +1898,18 @@ var ns = singleton = {
   }
 ,
   lookupMethod: DOM.lookupMethod,
-  dom: DOM,
+  get dom() {
+    delete this.dom;
+    return this.dom = DOM;
+  },
+  get wan() {
+    delete this.wan;
+    ABE; // kickstart
+    return this.wan = WAN;
+  },
+  
   os: OS,
   siteUtils: SiteUtils,
-  wan: WAN,
   mimeService: null,
  
   shouldLoad: CP_NOP,
@@ -3923,7 +3955,8 @@ var ns = singleton = {
         if (PolicyState.isChecking(req.URI)) {
           // ContentPolicy couldn't complete! DOS attack?
           PolicyState.removeCheck(req.URI);
-          DOSChecker.abort(req);
+          IOUtil.abort(req);
+          ns.log("Aborted " + req.name + " on start, possible DOS attack against content policy.");
           return;
         }
         
@@ -4311,8 +4344,10 @@ var ns = singleton = {
     }
     
     var contentDisposition = "";
-   
-    if (req instanceof CI.nsIHttpChannel) {
+    
+    var isHTTP = req instanceof CI.nsIHttpChannel
+    
+    if (isHTTP) {
       
       try {
         contentDisposition = req.getResponseHeader("Content-disposition");
@@ -4338,13 +4373,14 @@ var ns = singleton = {
       overlay = this.findOverlay(browser);
       if (overlay) {
         overlay.setMetaRefreshInfo(null, browser);
-        xssInfo = IOUtil.extractFromChannel(req, "noscript.XSS");
-        if (xssInfo) xssInfo.browser = browser;
-        this.requestWatchdog.unsafeReload(browser, false);
-        
-        if (!this.getExpando(browser, "clearClick")) {
-          this.setExpando(browser, "clearClick", true);
-          this.clearClickHandler.install(browser);
+        if (isHTTP) {
+          xssInfo = IOUtil.extractFromChannel(req, "noscript.XSS");
+          if (xssInfo) xssInfo.browser = browser;
+          this.requestWatchdog.unsafeReload(browser, false);
+          if (!this.getExpando(browser, "clearClick")) {
+            this.setExpando(browser, "clearClick", true);
+            this.clearClickHandler.install(browser);
+          }
         }
       }
     }
@@ -4434,15 +4470,16 @@ var ns = singleton = {
     }
   },
   
+  hasClearClickHandler: false,
   get clearClickHandler() {
-      const cch = new ClearClickHandler(this);
-      this.__defineGetter__("clearClickHandler", function() { return cch; })
-      return cch;
+      delete this.clearClickHandler;
+      this.hasClearClickHandler = true;
+      return this.clearClickHandler = new ClearClickHandler(this);
   },
   
   _handleDocJS1: function(win, req) {
     
-    const abeSandboxed = ABE.isSandboxed(req);
+    if (req instanceof CI.nsIHttpChannel) const abeSandboxed = ABE.isSandboxed(req);
     const docShellJSBlocking = this.docShellJSBlocking || abeSandboxed;
     
     
