@@ -1355,11 +1355,11 @@ var DoNotTrack = {
   observe: function(prefs, topic, name) {
     switch(name) {
       case "enabled":
-        DoNotTrack.enabled = prefs.getBoolPref(name);
+        this.enabled = prefs.getBoolPref(name);
        break;
       case "exceptions":
       case "forced":
-        DoNotTrack[name] = AddressMatcher.create(prefs.getComplexValue(name, CI.nsISupportsString).data);
+        this[name] = AddressMatcher.create(prefs.getComplexValue(name, CI.nsISupportsString).data);
       break;
     }
   },

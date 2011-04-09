@@ -1198,21 +1198,22 @@ var InjectionChecker = {
   },
   
   reduceXML: function(s) {
-    var t, pos, head, tail, qnum, res;
+    var res;
     
     for (;;) {
-      pos = s.indexOf("<");
+      let pos = s.indexOf("<");
       if (pos === -1) break;
       
-      head = s.substring(0, pos);
-      tail = s.substring(pos);
-      for (qnum = 0, pos = -1; (pos = head.indexOf('"', ++pos)) > -1; ) {
+      let head = s.substring(0, pos);
+      let tail = s.substring(pos);
+      let qnum = 0;
+      for (pos = -1; (pos = head.indexOf('"', ++pos)) > -1; ) {
         if (pos === 0 || head[pos - 1] != '\\') qnum++;
       }
       if (qnum % 2) break; // odd quotes
 
-      t = tail.replace(/^<\??\s*\/?[a-zA-Z][\w\:\-]*(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+\*&;]*")*[\+\s]*\/?\??>/, ';xml;');
-      if (t == tail) break;
+      let t = tail.replace(/^<\??\s*\/?[a-zA-Z][\w\:\-]*(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+\*\?&;=`]*")*[\+\s]*\/?\??>/, ';xml;');
+      if (t === tail) break;
       
       (res || (res = [])).push(head);
       s = t;
@@ -1515,7 +1516,7 @@ var InjectionChecker = {
                 // let's retry without quotes
                 quote = lastExpr = '';
                 hunt = moved = true;
-              }
+              } else break;
             }
             else if((m = errmsg.match(/\bmissing ([:\]\)\}]) /))) {
               len = subj.indexOf(m[1], len);
