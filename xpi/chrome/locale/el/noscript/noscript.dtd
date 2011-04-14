@@ -100,7 +100,7 @@
 <!ENTITY noscriptXssFaq.accesskey "χ">
 <!ENTITY noscriptUnsafeReload "Μη ασφαλής ανανέωση">
 <!ENTITY noscriptUnsafeReload.accesskey "Μ">
-<!ENTITY noscriptXssExceptions "Εξαιρέσεις από προστασία αντί-XSS">
+<!ENTITY noscriptXssExceptions "Εξαιρέσεις από προστασία αντι-XSS">
 <!ENTITY noscriptXssExceptions.description "Δεν θα παρέχεται προστασία αντί-XSS για προορισμούς που ταιριάζουν με τις κανονικές εκφράσεις:">
 <!ENTITY noscriptMatchSample "Παράδειγμα ταιριάσματος μοτίβου:">
 <!ENTITY noscriptReset "Επαναφορά αρχικών ρυθμίσεων">
