@@ -214,6 +214,8 @@ pref("noscript.surrogate.debug", false);
 pref("noscript.surrogate.ga.exceptions", "");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.ga.replacement", "(function(){var _0=function(){};with(window)urchinTracker=_0,_gat={_getTracker:function(){return{__noSuchMethod__:_0,_link:function(h){if(h)location.href=h;},_linkByPost:function(){return true;},_getLinkerUrl:function(u){return u;},_trackEvent:_0}}}})()");
+pref("noscript.surrogate.glinks.replacement", "(function(){x(\"focus\");x(\"mouseover\");function x(et){document.addEventListener(et, function(ev) { if (/\\bl\\b/.test(ev.target.className)) ev.target.removeAttribute(\"onmousedown\") }, true)}})()");
+pref("noscript.surrogate.glinks.sources", "@^https?://[^/]+google\\..*/search");
 pref("noscript.surrogate.qs.sources", "edge.quantserve.com");
 pref("noscript.surrogate.qs.replacement", "window.quantserve=function(){}");
 pref("noscript.surrogate.yieldman.sources", "*.yieldmanager.com");

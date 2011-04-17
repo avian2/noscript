@@ -39,13 +39,13 @@ const DUMMYFUNC = function() {}
 const EARLY_VERSION_CHECK = !("nsISessionStore" in CI && typeof(/ /) === "object");
 
 INCLUDE("Sites", "AddressMatcher", "IOUtil", "Policy", "Thread", "Lang");
-
-LAZY_INCLUDE("ScriptSurrogate", "DOM", "ClearClickHandler", "URIValidator", "HTTPS");
+LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler");
 
 __defineGetter__("ABE", function() {
   delete this.ABE;
   INCLUDE("ABE");
   ABE.init("noscript.");
+  DNS.logEnabled = ns.getPref("logDNS");
   return ABE;
 });
 
@@ -91,7 +91,7 @@ var ns = singleton = {
           try {
             this.init();
           } catch(e) {
-            this.dump("Init error -- " + e);
+            this.dump("Init error -- " + e + "\n" + e.stack);
           }
           break;
         case "sessionstore-windows-restored":
@@ -128,8 +128,12 @@ var ns = singleton = {
         break;
         
         case "http-on-modify-request": // kickstart requestWatchdog and stop observing
-          OS.removeObserver(this, topic);
-          this.requestWatchdog.observe(subject, topic, data);
+          if (subject instanceof CI.nsIHttpChannel &&
+              !(subject.notificationCallbacks instanceof CI.nsIXMLHttpRequest) || ns.isCheckedChannel(subject)) {
+            if (ns.consoleDump) ns.dump(subject.name + " kickstarting RW " + subject.notificationCallbacks);
+            OS.removeObserver(this, topic);
+            this.requestWatchdog.observe(subject, topic, data);
+          }
         break;
       }
     }
@@ -721,7 +725,7 @@ var ns = singleton = {
     
 
     
-    DNS.logEnabled = this.getPref("logDNS");
+    
     
     this.setupJSCaps();
     
@@ -765,7 +769,6 @@ var ns = singleton = {
     // hook on redirections (non persistent, otherwise crashes on 1.8.x)
     CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
       .addCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, SERVICE_CTRID, false, true);
-    
     
     if (this.consoleDump) ns.dump("Init done in " + (Date.now() - t));  
     return true;
@@ -847,6 +850,7 @@ var ns = singleton = {
   
   get requestWatchdog() {
     delete this.requestWatchdog;
+    if (ns.consoleDump) ns.dump("RW kickstart at " + new Error().stack);
     INCLUDE("RequestWatchdog");
     return this.requestWatchdog = new RequestWatchdog();
   },
@@ -1897,7 +1901,6 @@ var ns = singleton = {
     return this.getString("allowTemp", [url + "\n(" + details + ")\n"]);
   }
 ,
-  lookupMethod: DOM.lookupMethod,
   get dom() {
     delete this.dom;
     return this.dom = DOM;
@@ -2490,8 +2493,10 @@ var ns = singleton = {
   },
   
   hasVisibleLinks: function(document) {
-    const links = document.links;
     const w = document.defaultView;
+    if (!w) return false;
+    
+    const links = document.links;
     const toBeChecked = [];
     for (let j = 0, l; (l = links[j]); j++) {
       if (l && l.href && l.href.indexOf("http") === 0) {
@@ -4479,13 +4484,11 @@ var ns = singleton = {
   
   _handleDocJS1: function(win, req) {
     
-    if (req instanceof CI.nsIHttpChannel) const abeSandboxed = ABE.isSandboxed(req);
+    const abeSandboxed = (req instanceof CI.nsIHttpChannel) && ABE.isSandboxed(req);
     const docShellJSBlocking = this.docShellJSBlocking || abeSandboxed;
-    
-    
+        
     if (!docShellJSBlocking || (win instanceof CI.nsIDOMChromeWindow)) return;
-    
-    
+
     try {
       
       var docShell = DOM.getDocShellForWindow(win) ||
@@ -5074,30 +5077,35 @@ var ns = singleton = {
       const betaRx = /(?:a|alpha|b|beta|pre|rc)\d*$/; // see http://viewvc.svn.mozilla.org/vc/addons/trunk/site/app/config/constants.php?view=markup#l431
       if (prevVer.replace(betaRx, "") != ver.replace(betaRx, "")) {
         if (this.getPref("firstRunRedirection", true)) {
-          this.delayExec(function() {
-           
-            var browser = DOM.mostRecentBrowserWindow.getBrowser();
-            if (typeof(browser.addTab) != "function") return;
-           
-            const name = EXTENSION_NAME;
-            const domain = name.toLowerCase() + ".net";
-            var url = "http://" + domain + "/?ver=" + ver;
-            var hh = "X-IA-Post-Install: " + name + " " + ver;
-            if (prevVer) {
-              url += "&prev=" + prevVer;
-              hh += "; updatedFrom=" + prevVer;
-            }
-            hh += "\r\n";
-            
-            var hs = CC["@mozilla.org/io/string-input-stream;1"] .createInstance(CI.nsIStringInputStream);
-            hs.setData(hh, hh.length); 
-            
-            
-            var b = (browser.selectedTab = browser.addTab()).linkedBrowser;
-            b.stop();
-            b.webNavigation.loadURI(url, CI.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, hs);
-            
-          }, 500);
+          const name = EXTENSION_NAME;
+          const domain = name.toLowerCase() + ".net";
+
+          IOS.newChannel("http://" + domain + "/-", null, null).asyncOpen({ // DNS prefetch
+            onStartRequest: function() {},
+            onStopRequest: function() {
+              var browser = DOM.mostRecentBrowserWindow.getBrowser();
+              if (typeof(browser.addTab) != "function") return;
+             
+              
+              var url = "http://" + domain + "/?ver=" + ver;
+              var hh = "X-IA-Post-Install: " + name + " " + ver;
+              if (prevVer) {
+                url += "&prev=" + prevVer;
+                hh += "; updatedFrom=" + prevVer;
+              }
+              hh += "\r\n";
+              
+              var hs = CC["@mozilla.org/io/string-input-stream;1"] .createInstance(CI.nsIStringInputStream);
+              hs.setData(hh, hh.length); 
+              
+              
+              var b = (browser.selectedTab = browser.addTab()).linkedBrowser;
+              b.stop();
+              b.webNavigation.loadURI(url, CI.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, hs);
+              
+            },
+            onDataAvailable: function() {}
+          }, {});
         }
       }
     }

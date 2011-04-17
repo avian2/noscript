@@ -1320,11 +1320,20 @@ return noscriptUtil.service ? {
   }
 ,
   _syncTimeout: 0,
-  syncUI: function(w) {
-     if (this._syncTimeout) {
+  syncUI: function() {
+    window.addEventListener("DOMContentLoaded", function(ev) {
+      if (ev.originalTarget instanceof HTMLDocument) {
+        window.removeEventListener(ev.type, arguments.callee, true);
+        noscriptOverlay.syncUI = noscriptOverlay._syncUIReal;
+        noscriptOverlay.syncUI();
+      }
+    }, true);
+    this.sincUI = function() {};
+  }, // we entirely skip on startup
+  _syncUIReal: function(w) {
+    if (this._syncTimeout) {
       return;
     }
-    
     if (w) {
       if (w != content) return;
     } else {
@@ -1338,19 +1347,19 @@ return noscriptUtil.service ? {
     }, 400);
   },
   
+
   syncXssWidget: function(widget) {
     if (!widget) widget = $("noscript-statusXss");
     if (!widget) return;
-    if (content.location.protocol.indexOf("http") === 0) {
-      const ns = this.ns;
-      var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(this.currentBrowser);
-      if (unsafeRequest && !unsafeRequest.issued) {
-        widget.removeAttribute("hidden");
-        widget.setAttribute("tooltiptext", "XSS [" +
-                    ns.getSite(unsafeRequest.origin) + "]->[" + 
-                    ns.getSite(unsafeRequest.URI.spec) + "]");
-      return;
-      }
+
+    const ns = this.ns;
+    var unsafeRequest = ns.requestWatchdog.getUnsafeRequest(this.currentBrowser);
+    if (unsafeRequest && !unsafeRequest.issued) {
+      widget.removeAttribute("hidden");
+      widget.setAttribute("tooltiptext", "XSS [" +
+                  ns.getSite(unsafeRequest.origin) + "]->[" + 
+                  ns.getSite(unsafeRequest.URI.spec) + "]");
+    return;
     }
     widget.setAttribute("hidden", "true");
   },
@@ -1817,7 +1826,7 @@ return noscriptUtil.service ? {
     const jsPSs = ns.jsPolicySites;
     const untrustedSites = ns.untrustedSites;
 
-    this.syncXssWidget();
+    
     this.syncRedirectWidget();
     
     const sites = this.getSites();
@@ -2315,7 +2324,7 @@ return noscriptUtil.service ? {
       if (ev.originalTarget instanceof HTMLDocument) {
         var w = ev.currentTarget;
         w.removeEventListener("load", arguments.callee, false);
-        window.setTimeout(function() {
+          window.setTimeout(function() {
           noscriptOverlay.ns.detectJSRedirects(w.document);
         }, 50);
       }

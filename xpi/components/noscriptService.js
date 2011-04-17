@@ -8,7 +8,7 @@ const CU = Components.utils;
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
 const EXTENSION_NAME = "NoScript";
 const CHROME_NAME = "noscript";
-const VERSION = "2.1.0.2";
+const VERSION = "2.1.0.3rc2";
 const SERVICE_NAME = EXTENSION_NAME + " Service";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID="{31aec909-8e86-4397-9380-63a59e0c5ff5}";
@@ -43,11 +43,11 @@ function INCLUDE(name) {
   else if (!(name in _INCLUDED)) {
     try {
       _INCLUDED[name] = true;
-      // let t = Date.now();
+      let t = Date.now();
       LOADER.loadSubScript("chrome://noscript/content/"+ name + ".js");
       // dump((t - TIME0) + " - loaded " + name + " in " + (Date.now() - t) + "\n")
     } catch(e) {
-      dump("INCLUDE " + name + ": " + e + "\n" + e.stack);
+      // dump("INCLUDE " + name + ": " + e + "\n" + e.stack);
     }
   }
 }
@@ -56,7 +56,7 @@ function LAZY_INCLUDE(name) {
   if (arguments.length > 1)
     for (var j = 0, len = arguments.length; j < len; j++)
       arguments.callee(arguments[j]);
-  else {
+  else if (!(name in this)) {
     __defineGetter__(name, function() {
       delete this[name];
       INCLUDE(name);

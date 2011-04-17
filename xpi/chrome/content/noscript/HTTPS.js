@@ -1,6 +1,8 @@
-INCLUDE('STS', 'Cookie');
+LAZY_INCLUDE('STS', 'Cookie');
 
 const HTTPS = {
+  ready: false,
+  
   secureCookies: false,
   secureCookiesExceptions: null,
   secureCookiesForced: null,
@@ -347,7 +349,7 @@ const HTTPS = {
   });
   HTTPS.__defineSetter__(p, function(n) {
     v = n;
-    HTTPS.cookiesCleanup();
+    if (HTTPS.ready) HTTPS.cookiesCleanup();
     return v;
   });
 });
@@ -362,3 +364,4 @@ const HTTPS = {
 });
 
 
+HTTPS.ready = true;

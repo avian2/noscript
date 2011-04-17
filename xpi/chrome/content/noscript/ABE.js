@@ -1215,7 +1215,7 @@ var ABEStorage = {
   },
   
   persist: function() {
-    this.prefService.savePrefFile(null);
+    ABE.prefService.savePrefFile(null);
   },
    
   _migrateLegacyFiles: function() {
