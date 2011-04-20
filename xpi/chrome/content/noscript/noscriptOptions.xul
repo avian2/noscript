@@ -6,7 +6,7 @@
 <!DOCTYPE dialog SYSTEM "chrome://noscript/locale/noscript.dtd">
 <dialog id="noscriptOptions" 
   onload="nsopt.init()"
-  ondialogaccept="nsopt.save()"
+  ondialogaccept="return nsopt.save()"
   title="&noscriptOptionsLong;"
 	buttons="extra2,accept,cancel"
   

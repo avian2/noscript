@@ -286,6 +286,7 @@ notification {
   word-wrap: break-word !important;
 }
 
+.menu-iconic[id*="noscript-"] > .menu-iconic-left,
 .menu-iconic[class*="noscript-"] > .menu-iconic-left,
 .menuitem-iconic[class*="noscript-"] > .menu-iconic-left {
   visibility: visible !important;

@@ -8,7 +8,7 @@ const CU = Components.utils;
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
 const EXTENSION_NAME = "NoScript";
 const CHROME_NAME = "noscript";
-const VERSION = "2.1.0.3rc2";
+const VERSION = "2.1.0.3rc4";
 const SERVICE_NAME = EXTENSION_NAME + " Service";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID="{31aec909-8e86-4397-9380-63a59e0c5ff5}";
@@ -47,7 +47,9 @@ function INCLUDE(name) {
       LOADER.loadSubScript("chrome://noscript/content/"+ name + ".js");
       // dump((t - TIME0) + " - loaded " + name + " in " + (Date.now() - t) + "\n")
     } catch(e) {
-      // dump("INCLUDE " + name + ": " + e + "\n" + e.stack);
+      let msg = "INCLUDE " + name + ": " + e + "\n" + e.stack;
+      CU.reportError(msg);
+      dump(msg + "\n");
     }
   }
 }

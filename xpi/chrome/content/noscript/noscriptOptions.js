@@ -179,7 +179,19 @@ var nsopt = {
   },
   
   save: function() {
-  
+    
+    if (!$("abeRuleset-errors").hidden) {
+      let p = noscriptUtil.prompter;
+      if (p.confirmEx(window,
+          noscriptUtil.getString("ABE.syntaxError"),
+          $("abeRuleset-errors").value,
+          p.BUTTON_TITLE_SAVE * p.BUTTON_POS_0 +
+            p.BUTTON_TITLE_DONT_SAVE * p.BUTTON_POS_1 +
+            p.BUTTON_POS_1_DEFAULT,
+          null, null, null, null, {}) === 1
+        ) 
+      return false;
+    }
     
     this.utils.visitCheckboxes(
       function(prefName, inverse, checkbox, mozilla) {
@@ -261,6 +273,7 @@ var nsopt = {
       }
       ns.jsEnabled = global;
     });
+    return true;
   },
   
   urlListChanged: function() {

@@ -38,7 +38,7 @@ const DUMMYOBJ = {};
 const DUMMYFUNC = function() {}
 const EARLY_VERSION_CHECK = !("nsISessionStore" in CI && typeof(/ /) === "object");
 
-INCLUDE("Sites", "AddressMatcher", "IOUtil", "Policy", "Thread", "Lang");
+INCLUDE("Sites", "AddressMatcher", "IOUtil", "Policy", "Thread");
 LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler");
 
 __defineGetter__("ABE", function() {
@@ -116,10 +116,13 @@ var ns = singleton = {
         case "private-browsing":
           if (data == "enter") {
             STS.enterPrivateBrowsing();
+            if (!("_realDump_" in this)) this._realDump_ = this.dump;
+            this.dump = DUMMYFUNC;
           }
           if (data == "exit") {
             this.eraseTemp();
             STS.exitPrivateBrowsing();
+            this.dump = this._realDump_ || DUMMYFUNC;
           }
         // break; 
         case "browser:purge-session-history":
@@ -849,9 +852,9 @@ var ns = singleton = {
   },
   
   get requestWatchdog() {
-    delete this.requestWatchdog;
     if (ns.consoleDump) ns.dump("RW kickstart at " + new Error().stack);
     INCLUDE("RequestWatchdog");
+    delete this.requestWatchdog;
     return this.requestWatchdog = new RequestWatchdog();
   },
   
