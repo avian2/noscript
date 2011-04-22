@@ -1,4 +1,4 @@
-LAZY_INCLUDE('STS', 'Cookie');
+LAZY_INCLUDE('Cookie');
 
 const HTTPS = {
   ready: false,

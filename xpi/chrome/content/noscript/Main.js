@@ -39,7 +39,7 @@ const DUMMYFUNC = function() {}
 const EARLY_VERSION_CHECK = !("nsISessionStore" in CI && typeof(/ /) === "object");
 
 INCLUDE("Sites", "AddressMatcher", "IOUtil", "Policy", "Thread");
-LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler");
+LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler", "STS");
 
 __defineGetter__("ABE", function() {
   delete this.ABE;
@@ -376,6 +376,10 @@ var ns = singleton = {
       case "liveConnectInterception":
       case "allowHttpsOnly":
         this[name] = this.getPref(name, this[name]);  
+      break;
+      
+      case "sync.enabled":
+        this._updateSync();
       break;
       
       case "subscription.trustedURL":
@@ -767,8 +771,8 @@ var ns = singleton = {
     
     // this.savePrefs(true); // flush preferences to file [TODO: check if it's really needed]
     
-    if (this.builtInSync) this._initSync();
-
+    this._updateSync();
+    
     // hook on redirections (non persistent, otherwise crashes on 1.8.x)
     CC['@mozilla.org/categorymanager;1'].getService(CI.nsICategoryManager)
       .addCategoryEntry("net-channel-event-sinks", SERVICE_CTRID, SERVICE_CTRID, false, true);
@@ -1746,24 +1750,29 @@ var ns = singleton = {
   },
   
   get placesSupported() {
-    return !this.builtInSync && ("nsINavBookmarksService" in Components.interfaces);
+    return !(this.builtInSync && this.getPref("sync.enabled")) && ("nsINavBookmarksService" in Components.interfaces);
   },
   
+
   get builtInSync() {
-    var ret = this.getPref("sync.enabled");
-    if (ret) {
-      try {
-        ret = this.prefService.getDefaultBranch("services.sync.prefs.sync.javascript.").getBoolPref("enabled");
-      } catch (e) {
-        ret = false;
-      }
-    }
+    var ret = false
+    
+    try {
+      ret = this.prefService.getDefaultBranch("services.sync.prefs.sync.javascript.").getBoolPref("enabled");
+    } catch (e) {}
+    
     delete this.builtInSync;
     return this.builtInSync = ret;
   },
   
-  _initSync: function() {
+  _updateSync: function() {
     let t = Date.now();
+    this._clearSync();
+    if (this.builtInSync && this.getPref("sync.enabled")) this._initSync();
+    if (this.consoleDump) this.dump("Sync prefs inited in " + (Date.now() - t));
+  },
+  _initSync: function() {
+    
     try {
       let branch = this.prefService.getDefaultBranch("services.sync.prefs.sync.noscript.");
       for each (let key in this.prefs.getChildList("", {})) {
@@ -1786,8 +1795,17 @@ var ns = singleton = {
     } catch(e) {
       this.dump(e);
     }
-    if (this.consoleDump) this.dump("Sync prefs inited in " + (Date.now() - t));
+    
   },
+  _clearSync: function() {
+    try {
+      this.prefService.getDefaultBranch("services.sync.prefs.sync.noscript.").deleteBranch("");
+      this.prefService.getDefaultBranch("services.sync.prefs.sync." + this.policyPB.root).deleteBranch("");
+    } catch(e) {
+      this.dump(e);
+    }
+  },
+  
   
   get canSerializeConf() { return !!this.json },
   _dontSerialize: ["version", "temp", "preset", "placesPrefs.ts", "mandatory", "default"],

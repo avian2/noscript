@@ -2291,6 +2291,7 @@ return noscriptUtil.service ? {
     },
     
     onContentLoad: function(ev) {
+    
       var doc = ev.originalTarget;
       
       if (doc instanceof HTMLDocument) {

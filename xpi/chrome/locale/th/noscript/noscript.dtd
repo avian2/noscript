@@ -1,0 +1,186 @@
+<!ENTITY noscriptOptions "ตัวเลือก...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "ตัวเลือก NoScript">
+<!ENTITY noscriptAbout "เกี่ยวกับ NoScript">
+<!ENTITY noscriptPermissionsText "คุณสามารถกำหนดเว็บไซต์ที่จะอนุญาตดำเนินการสคริปต์ พิมพ์ที่อยู่หรือโดเมน (เช่น &quot;http://www.site.com&quot; หรือ &quot;site.com&quot;) ของไซต์ที่คุณต้องการอนุญาตและคลิกอนุญาต">
+<!ENTITY noscriptWebAddress "ที่อยู่เว็บไซต์:">
+<!ENTITY noscriptAllow "อนุญาต">
+<!ENTITY noscriptAllow.accesskey "A">
+<!ENTITY noscriptForbid "ห้าม">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "ทำเครื่องหมายเชื่อถือได้">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "ทำเครื่องหมายเชื่อถือไม่ได้">
+<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptRemoveSelected "ลบไซต์ที่เลือก">
+<!ENTITY noscriptGloballyEnabled "อนุญาตสคริปต์ทั่วไป (อันตราย)">
+<!ENTITY noscriptAutoReload "เรียกใหม่หน้าที่ส่งผลอัตโนมัติเมื่อเปลี่ยนการอนุญาต">
+<!ENTITY noscriptGeneral "ทั่วไป">
+<!ENTITY noscriptAppearance "การปรากฏ">
+<!ENTITY noscriptShow "แสดง...">
+<!ENTITY noscriptCtxMenu "เมนูบริบท">
+<!ENTITY noscriptStatusIcon "แสดงสัญรูปแถบสถานะ">
+<!ENTITY noscriptFullAddr "ที่อยู่เต็ม (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "โดเมนเต็ม (www.noscript.net)">
+<!ENTITY noscriptBaseDom "โดเมนบนฐานที่สอง (noscript.net)">
+<!ENTITY noscriptTempCmd "อนุญาตชั่วคราว [...]">
+<!ENTITY noscriptSound "เสียงผลป้อนกลับเมื่อสคริปต์ถูกบล็อก">
+<!ENTITY noscriptImport "นำเข้า">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "ส่งออก">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "แสดงข้อความเกี่ยวกับสคริปต์ที่บล็อก">
+<!ENTITY noscriptNotify.bottom "วางข้อความที่ล่างสุด">
+<!ENTITY noscriptSound.choose "เลือก">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "เล่น">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "กลับไปยังค่าเริ่มต้น">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "ขั้นสูง">
+<!ENTITY noscriptAdditionalPermissions "การอนุญาตที่เพิ่มขึ้นสำหรับไซต์ที่เขื่อถือ">
+<!ENTITY noscriptAllowClipboard "อนุญาตให้ริชเท็กซ์คัดลอกและวางจากคลิปบอร์ดภายนอก">
+<!ENTITY noscriptAdditionalRestrictions "การควบคุมที่เพิ่มขึ้นสำหรับไซต์ที่ไม่เชื่อถือ">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
+<!ENTITY noscriptForbidJava "ไม่อนุญาตจาวาâ™">
+<!ENTITY noscriptForbidXSLT "Forbid XSLT">
+<!ENTITY noscriptForbidWebBugs "ไม่อนุญาต &quot;Web Bugs&quot;">
+<!ENTITY noscriptForbidSilverlight "ไม่อนุญาต Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "ไม่อนุญาต &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "ไม่อนุญาต &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "ไม่อนุญาต @font-face">
+<!ENTITY noscriptForbidMedia "ไม่อนุญาต &lt;AUDIO&gt; / &lt;VIDEO&gt;">
+<!ENTITY noscriptForbidFlash "ไม่อนุญาต Macromedia® Flash®">
+<!ENTITY noscriptForbidPlugins "ไม่อนุญาตตัวเสริมอื่น">
+<!ENTITY noscriptReloadWarn "ตัวเลือกเหล่านี้จะส่งผลกระทบในหน้าใหม่หรือหน้าที่เรียกใหม่ (ด้วยตัวเอง)">
+<!ENTITY noscriptConfirmUnblock "ถามเรื่องการยืนยันก่อนถอนการบล็อกวัตถุชั่วคราว">
+<!ENTITY noscriptStatusLabel "ป้ายแถบสถานะ">
+<!ENTITY noscriptForbidBookmarklets "ไม่อนุญาต bookmarklet">
+<!ENTITY noscriptShowPlaceholder "แสดงสัญรูปตัวยึดตำแหน่ง">
+<!ENTITY noscriptTruncateTitle "ตัดปลายหัวเรื่องเอกสาร">
+<!ENTITY noscriptFixLinks "พยายามซ่อมแซมลิงก์ JavaScript">
+<!ENTITY noscriptAllowBookmarks "อนุญาตไซต์ให้เปิดผ่านที่คั่นหน้า">
+<!ENTITY noscriptAllowViaBookmarks "อนุญาตไซต์ให้เปิดผ่านที่คั่นหน้า">
+<!ENTITY noscriptAllowPing "อนุญาต &lt;ปิง...&gt;">
+<!ENTITY noscriptAllowLocalLinks "อนุญาตลิงก์ภายใน">
+<!ENTITY noscriptForbidPing "ไม่อนุญาต &lt;ปิง...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "ห้าม META เปลี่ยนทางภายในส่วนประกอบ &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptWhitelist "บัญชีขาว">
+<!ENTITY noscriptPermissions "การอนุญาต">
+<!ENTITY noscriptRefresh "เรียกหน้าใหม่">
+<!ENTITY noscriptNotifications "การเตือน">
+<!ENTITY noscriptToolbarToggle "คลิกซ้ายบนปุ่มแถมเครื่องมือ NoScript จะสลับการอนุญาตให้ไซต์ระดับสูงสุดปัจจุบัน">
+<!ENTITY noscriptTrusted "เชื่อถือได้">
+<!ENTITY noscriptUntrusted "เชื่อถือไม่ได้">
+<!ENTITY noscriptUnknown "ไม่ระบุ">
+<!ENTITY noscriptAdd "เพิ่ม">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "ปิด">
+<!ENTITY noscriptSiteManager "ตัวจัดการไซต์">
+<!ENTITY noscriptSecurityManager "ตัวจัดการด้านความปลอดภัย">
+<!ENTITY noscriptPolicies "กฎ">
+<!ENTITY noscriptDefaultPolicies "กฎเดิม">
+<!ENTITY noscriptSitePolicies "กฎไซต์ที่ปรากฏ">
+<!ENTITY noscriptNselNever "ซ่อนส่วนประกอบ &lt;noscript&gt;">
+<!ENTITY noscriptNselForce "แสดงส่วนประกอบ &lt;noscript&gt; ที่ตาม &lt;SCRIPT&gt; ที่บล็อก">
+<!ENTITY noscriptAutoAllowTopLevel "อนุญาตไซต์ระดับสูงสุดโดยชั่วคราวด้วยค่าเริ่มต้น">
+<!ENTITY noscriptDescription "การป้องกันพิเศษสำหรับไฟร์ฟอกซ์ของคุณ: NoScript อนุญาตจาวาสคริปต์ จาวา(และตัวเสริมอื่นๆ)เฉพาะสำหรับโดเมนที่เชื่อถือได้ของตัวเลือกของคุณ(เช่นเว็บไซต์โฮมว่างของคุณ) บัญชีขาวนี้มีพื้นฐานอยู่บนการบล็อกพรี-เอมป์ทีฟคล้ายการป้องกันการหาประโยชน์อย่างไม่ถูกต้องของความอ่อนแอของความปลอดภัย(รู้แล้วและแม้แต่ไม่รู้!)ด้วยการใช้ให้เป็นประโยชน์อย่างไม่ผิดพลาด...ผู้เชี่ยวชาญจะยอมรับ: ไฟร์ฟอกซ์ปลอดภัยกว่าอย่างแท้จริงด้วย NoScript:-)">
+<!ENTITY noscriptOptBlockCssScanners "บล็อกเครื่องกราดตรวจที่มีซีเอสเอสเป็นรากฐาน">
+<!ENTITY noscriptOptFilterXGet "ไซต์ผสมปราศจากเชื้อโรคมีความต้องการน่าสงสัย">
+<!ENTITY noscriptOptFilterXPost "เปลี่ยนความต้องการไซต์ผสม POST ไปยังความต้องการไม่มีข้อมูล GET">
+<!ENTITY noscriptShowConsole "แสดงส่วนเฝ้าคุม...">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "เอกซ์เอสเอส">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "คำถามพบบ่อยเอกซ์เอสเอส...">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "โหลดใหม่ไม่ปลอดภัย">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "ข้อยกเว้นการปกป้องแอนทิ-เอกซ์เอสเอส">
+<!ENTITY noscriptXssExceptions.description "เป้าหมายการจับคู่การแสดงออกทั่วไปเหล่านี้จะไม่ถูกปกป้องกับเอกซ์เอสเอส">
+<!ENTITY noscriptMatchSample "ตัวอย่างการจับคู่พื้นผิว:">
+<!ENTITY noscriptReset "รีเซ็ต">
+<!ENTITY noscriptReset.accesskey "R">
+<!ENTITY noscriptResetDef "คืนค่าเป็นค่าดั้งเดิม">
+<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptRevokeTemp "Revoke Temporary Permissions">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "No placeholder for objects coming from sites marked as untrusted">
+<!ENTITY noscriptCollapseBlockedObjects "Collapse blocked objects">
+<!ENTITY noscriptExceptions "Exceptions...">
+<!ENTITY noscriptBlockedObjects "Blocked Objects">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Block every object coming from a site marked as untrusted">
+<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
+<!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptAllowPage "Allow all this page">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Make page permissions permanent">
+<!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Behavior">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
+<!ENTITY noscriptHttps.never "Never">
+<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
+<!ENTITY noscriptHttps.always "Always">
+<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
+<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
+<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
+<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptClearClickTitle "ClearClick Warning">
+<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
+<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
+<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptTrustedPagesAdj "trusted">
+<!ENTITY noscriptUntrustedPagesAdj "untrusted">
+<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
+<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
+<!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Rulesets:">
+<!ENTITY ABE.enabled.label "Enable ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Allow sites to push their own rulesets">
+<!ENTITY ABE.edit.label "Edit…">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Enable">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "Disable">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Refresh">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "Uninstall">
+<!ENTITY noscriptRecentBlocked "Recently blocked sites">
+<!ENTITY noscriptExternalFilters "External Filters">
+<!ENTITY noscriptEF.enable "Enable external filters">
+<!ENTITY noscriptEF.add "New Filter…">
+<!ENTITY noscriptEF.executable "Executable file:">
+<!ENTITY noscriptEF.browse "Browse…">
+<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
+<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
+<!ENTITY noscriptEF.remove "Remove">
+<!ENTITY noscriptPreset "Security Level">
+<!ENTITY noscriptPreset.off "Off (are you serious?!)">
+<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
+<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
+<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
+<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
+<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptDonate.accesskey "o">

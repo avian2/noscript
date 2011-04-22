@@ -1,0 +1,186 @@
+<!ENTITY noscriptOptions "Opcije…">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "Opcije NoScript">
+<!ENTITY noscriptAbout "Wo NoScript…">
+<!ENTITY noscriptPermissionsText "Móžeće podać, kotre websydła smědźa skripty wuwjesć. Zapisajće adresu abo domenu  (na př. &quot;http://www.site.com&quot; abo &quot;site.com&quot;) websydła, kotremuž chceće to dowolić a klikńće potom na &quot;Dowolić&quot;.">
+<!ENTITY noscriptWebAddress "Adresa websydła:">
+<!ENTITY noscriptAllow "Dowolić">
+<!ENTITY noscriptAllow.accesskey "w">
+<!ENTITY noscriptForbid "Zakazać">
+<!ENTITY noscriptForbid.accesskey "Z">
+<!ENTITY noscriptTrust "Jako dowěry hódny markěrować">
+<!ENTITY noscriptTrust.accesskey "J">
+<!ENTITY noscriptUntrust "Jako dowěry njehódny markěrować">
+<!ENTITY noscriptUntrust.accesskey "N">
+<!ENTITY noscriptRemoveSelected "Wubrane sydła wotstronić">
+<!ENTITY noscriptGloballyEnabled "Skripty globalnje dowolene (riskantny)">
+<!ENTITY noscriptAutoReload "Potrjechene strony awtomatisce znowa začitać, hdyž so prawa měnjeja">
+<!ENTITY noscriptGeneral "Powšitkowny">
+<!ENTITY noscriptAppearance "Napohlad">
+<!ENTITY noscriptShow "Pokazać…">
+<!ENTITY noscriptCtxMenu "Kontekstowy meni">
+<!ENTITY noscriptStatusIcon "Wobrazk w statusowej lajsće">
+<!ENTITY noscriptFullAddr "Dospołne adresy (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Dospołne domeny (http://www.noscript.net)">
+<!ENTITY noscriptBaseDom "Domeny druheje runiny (noscript.net)">
+<!ENTITY noscriptTempCmd "[…]  nachwilu dowolić">
+<!ENTITY noscriptSound "Zynk wothrać, hdyž so skripty blokuja">
+<!ENTITY noscriptImport "Importować">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Eksportować">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Zdźělenku wo zablokowanych skriptach pokazać">
+<!ENTITY noscriptNotify.bottom "Zdźělenku deleka zaměstnić">
+<!ENTITY noscriptSound.choose "Wubrać">
+<!ENTITY noscriptSound.choose.accesskey "W">
+<!ENTITY noscriptSound.play "Wothrać">
+<!ENTITY noscriptSound.play.accesskey "h">
+<!ENTITY noscriptSound.reset "Standard wobnowić">
+<!ENTITY noscriptSound.reset.accesskey "S">
+<!ENTITY noscriptAdvanced "Rozšěrjene">
+<!ENTITY noscriptAdditionalPermissions "Přidatne prawa za dowěry hódne sydła">
+<!ENTITY noscriptAllowClipboard "Zasunjenje RTF z eksterneho mjezyskłada dowolić">
+<!ENTITY noscriptAdditionalRestrictions "Přidatne wobmjezowanja za dowěry njehódne sydła">
+<!ENTITY noscriptPlugins "Tykače">
+<!ENTITY noscriptContentBlocker "Tute wobmjezowanja tež na sydła w běłej lisćinje nałožić">
+<!ENTITY noscriptForbidJava "Java™ zakazać">
+<!ENTITY noscriptForbidXSLT "XSLT zakazać">
+<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; zakazać">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ zakazać">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; zakazać">
+<!ENTITY noscriptForbidFrames "&lt;FRAME&gt; zakazać">
+<!ENTITY noscriptForbidFonts "@font-face zakazać">
+<!ENTITY noscriptForbidMedia "&lt;AUDIO&gt;/&lt;VIDEO&gt; zakazać">
+<!ENTITY noscriptForbidFlash "Adobe® Flash® zakazać">
+<!ENTITY noscriptForbidPlugins "Druhe tykače zakazać">
+<!ENTITY noscriptReloadWarn "Tute opcije budu so hakle pola nowych abo znowa začitanych stronow wuskutkować">
+<!ENTITY noscriptConfirmUnblock "Wo wobkrućenje prosyć, prjedy hač so objekt nachwilu dowoli">
+<!ENTITY noscriptStatusLabel "Popis w statusowej lajsće">
+<!ENTITY noscriptForbidBookmarklets "Bookmarklety zakazać">
+<!ENTITY noscriptShowPlaceholder "Zastupniski wobrazk pokazać">
+<!ENTITY noscriptTruncateTitle "Titule dokumentow wobrězać">
+<!ENTITY noscriptFixLinks "Z JavaScriptom wutworjene wotkazy porjedźić spytać">
+<!ENTITY noscriptAllowBookmarks "Sydła wočinjene přez zapołožki dowolić">
+<!ENTITY noscriptAllowViaBookmarks "Sydła wočinjene přez zapołožki dowolić">
+<!ENTITY noscriptAllowPing "&lt;A PING...&gt; dowolić">
+<!ENTITY noscriptAllowLocalLinks "Lokalne wotkazy dowolić">
+<!ENTITY noscriptForbidPing "&lt;A PING...&gt; zakazać">
+<!ENTITY noscriptForbidMetaRefresh "Dalesposrědkowanja META znutřka elementach &lt;NOSCRIPT&gt; zakazać">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "T">
+<!ENTITY noscriptNotifyMeta "Zdźělenku wo zablokowanych META-dalesposrědkowanjach pokazać">
+<!ENTITY noscriptNotifyMeta.accesskey "T">
+<!ENTITY noscriptWhitelist "Běła lisćina">
+<!ENTITY noscriptPermissions "Prawa">
+<!ENTITY noscriptRefresh "Aktualizować">
+<!ENTITY noscriptNotifications "Zdźělenki">
+<!ENTITY noscriptToolbarToggle "Kliknjenje z lěwej tastu na tłóčatko NoScript w gratowej lajsće přepina prawa za aktualne sydło najwyšeje runiny">
+<!ENTITY noscriptTrusted "Dowěry hódne">
+<!ENTITY noscriptUntrusted "Dowěry njehódne">
+<!ENTITY noscriptUnknown "Njeznaty">
+<!ENTITY noscriptAdd "Přidać">
+<!ENTITY noscriptAdd.accesskey "P">
+<!ENTITY noscriptClose "Začinić">
+<!ENTITY noscriptSiteManager "Zrjadowak sydłow">
+<!ENTITY noscriptSecurityManager "Wěstotny zrjadowak">
+<!ENTITY noscriptPolicies "Prawidła">
+<!ENTITY noscriptDefaultPolicies "Standardne prawidła">
+<!ENTITY noscriptSitePolicies "Prawidła za specifiske sydła">
+<!ENTITY noscriptNselNever "Elementy &lt;NOSCRIPT&gt; schować">
+<!ENTITY noscriptNselForce "Element &lt;NOSCRIPT&gt; pokazać, kotryž zablokowanemu &lt;SCRIPT&gt; slěduje">
+<!ENTITY noscriptAutoAllowTopLevel "Po standardźe sydła najwyšeje runiny nachwilu dowolić">
+<!ENTITY noscriptDescription "Wosebity škit za waš Firefox: NoScript dowola JavaScript, Java (a druhe tykače) jenož za dowěry hódne domeny wašeje wólby (na př. waše websydło za domjacne bankowanje). Tuta běła lisćina, kotraž na prewentiwnym přistupje k blokowanju bazěruje, zadźěwa znjewužiwanju wěstotnych dźěrow (znatych a samo njeznatych!) bjez zhubjenja funkcionalnosće… Eksperća přizwola: Firefox je woprawdźe wěsćiši z NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Skanery na zakładźe CSS blokować">
+<!ENTITY noscriptOptFilterXGet "Podhladne XSS-požadanja porjedźić">
+<!ENTITY noscriptOptFilterXPost "XSS-požadanja POST do požadanjow GET wobsahowacych mjenje datow přetworić">
+<!ENTITY noscriptShowConsole "Konsolu pokazać…">
+<!ENTITY noscriptShowConsole.accesskey "K">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "Huste prašenja XSS…">
+<!ENTITY noscriptXssFaq.accesskey "H">
+<!ENTITY noscriptUnsafeReload "Njewěste znowazačitanje">
+<!ENTITY noscriptUnsafeReload.accesskey "N">
+<!ENTITY noscriptXssExceptions "Wuwzaća škita přećiwo XSS">
+<!ENTITY noscriptXssExceptions.description "Cile, kotrež tutym regularnym wurazam wotpowěduja, NJEbudu so přećiwo XSS škitać.">
+<!ENTITY noscriptMatchSample "Přikład za wotpowědnik mustra:">
+<!ENTITY noscriptReset "Wróćo stajić">
+<!ENTITY noscriptReset.accesskey "s">
+<!ENTITY noscriptResetDef "Na standard wróćo stajić">
+<!ENTITY noscriptResetDef.accesskey "t">
+<!ENTITY noscriptOptionsWidth "60em">
+<!ENTITY noscriptRevokeTemp "Nachwilne prawa wotwołać">
+<!ENTITY noscriptRevokeTemp.accesskey "N">
+<!ENTITY noscriptNoUntrustedPlaceholder "Žadyn zastupniski wobrazk za objekty, kotrež ze sydłow pochadźeja, kotrež su jako dowěry njehódne markěrowane">
+<!ENTITY noscriptCollapseBlockedObjects "Zablokowane objekty fałdować">
+<!ENTITY noscriptExceptions "Wuwzaća…">
+<!ENTITY noscriptBlockedObjects "Zablokowane objekty">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Kóždy objekt blokować, kotryž ze sydła pochadźa, kotrež je jako dowěry njehódne markěrowane">
+<!ENTITY noscriptTempAllowPage "Tutu cyłu stronu nachwilu dowolić">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
+<!ENTITY noscriptAllowPage "Wšitko na tutej stronje dowolić">
+<!ENTITY noscriptAllowPage.accesskey "W">
+<!ENTITY noscriptTempToPerm "Prawa strony na přeco připokazać">
+<!ENTITY noscriptTempToPerm.accesskey "P">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS huste prašenja…">
+<!ENTITY noscriptHttpsFaq.accesskey "H">
+<!ENTITY noscriptHttps.behavior "Zadźerženje">
+<!ENTITY noscriptHttps.cookies "Placki">
+<!ENTITY noscriptHttps.description "Aktiwny webwobsah zakazać, chibazo pochadźa z wěsteho zwiska (HTTPS):">
+<!ENTITY noscriptHttps.never "Ženje">
+<!ENTITY noscriptHttps.proxy "Při wužiwanju proksy (z Torom doporučeny)">
+<!ENTITY noscriptHttps.always "Přeco">
+<!ENTITY noscriptHttpsForced "Slědowace sydła nućić wěste zwiski (HTTPS) wužiwać:">
+<!ENTITY noscriptHttpsForcedExceptions "Slědowace sydła ženje njenućić wěste zwiski (HTTPS) wužiwać:">
+<!ENTITY noscriptSecureCookies "Awtomatiske wěste zarjadowanje plackow zmóžnić">
+<!ENTITY noscriptSecureCookiesForced "Zaklučowanje za wšě placki wunućić, kotrež su so přez HTTPS za slědowace sydła nastajili:">
+<!ENTITY noscriptSecureCookiesExceptions "Njewěste placki, kotrež buchu přez HTTPS za slědowace sydła nastajene, ignorować:">
+<!ENTITY noscriptClearClickTitle "Warnowanje přez ClearClick">
+<!ENTITY noscriptClearClickHeader "Potencielny pospyt Clickjacking / přeadresowanja!">
+<!ENTITY noscriptClearClickDescription "NoScript je interakciju myše abo tastatury z dźělnje schowanym elementom wotpopadnył. Klikńće na slědowacy wobraz, zo by mjez zablokowanej a widźomnej wersiju přeměnił.">
+<!ENTITY noscriptClearClickOpt "Škit přez ClearClick na stronach…">
+<!ENTITY noscriptClearClickReport "Rozprawa">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "ID rozprawy:">
+<!ENTITY noscriptTrustedPagesAdj "dowěry hódny">
+<!ENTITY noscriptUntrustedPagesAdj "dowěry njehódny">
+<!ENTITY noscriptKeepLocked "Tutón element zawrjeny wostajić (doporučeny)">
+<!ENTITY noscriptEmbeddings "Zasadźenja">
+<!ENTITY noscriptPrev "Předchadny">
+<!ENTITY noscriptNext "Přichodny">
+<!ENTITY noscriptFrameOptErr.title "Tutón wobsah njeda so we wobłuku zwobraznić">
+<!ENTITY noscriptFrameOptErr.desc "Zo by swoju wěstotu zarućił, wudawaćel tutoho wobsaha njedowoluje, zo by so tutón wobsah we wobłuku zwobraznił.">
+<!ENTITY noscriptFrameOptErr.link "Klikńće tu, zo byšće tutón wobsah w nowym woknje wočinił">
+<!ENTITY noscriptBookmarkSync "Konfiguraciju NoScript w zapołožce za lochku synchronizaciju zawěsćić">
+<!ENTITY noscriptShowReleaseNotes "Wersije informacije  při aktualizacijach zwobraznić">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Sadźby prawidłow:">
+<!ENTITY ABE.enabled.label "ABE (Application Boundaries Enforcer) zmóžnić">
+<!ENTITY ABE.siteEnabled.label "Sydłam dowolić, zo bychu swójske sadźby prawidłow wužiwali">
+<!ENTITY ABE.edit.label "Wobdźěłać…">
+<!ENTITY ABE.edit.accesskey "W">
+<!ENTITY ABE.enable.label "Zmóžnić">
+<!ENTITY ABE.enable.accesskey "m">
+<!ENTITY ABE.disable.label "Znjemóžnić">
+<!ENTITY ABE.disable.accesskey "Z">
+<!ENTITY ABE.refresh.label "Aktualizować">
+<!ENTITY ABE.refresh.accesskey "A">
+<!ENTITY noscriptUninstall "Wotinstalować">
+<!ENTITY noscriptRecentBlocked "Njedawno zablokowane sydła">
+<!ENTITY noscriptExternalFilters "Eksterne filtry">
+<!ENTITY noscriptEF.enable "Eksterne filtry zmóžnić">
+<!ENTITY noscriptEF.add "Nowy filter…">
+<!ENTITY noscriptEF.executable "Wuwjedujomna dataja:">
+<!ENTITY noscriptEF.browse "Přepytać…">
+<!ENTITY noscriptEF.contentType "Wobsahowy typ (MIME), kotryž ma so wufiltrować (eksaktne zapřijeće abo regularny wuraz):">
+<!ENTITY noscriptEF.exceptions "Objekty njefiltrować, kotrež ze slědowacych sydłow pochadźeja:">
+<!ENTITY noscriptEF.remove "Wotstronić">
+<!ENTITY noscriptPreset "Wěstotny schodźenk">
+<!ENTITY noscriptPreset.off "Wupinjeny (sy ty seriozny?!)">
+<!ENTITY noscriptPreset.low "Słaba wěstota (Čorna lisćina + webwěstota)">
+<!ENTITY noscriptPreset.medium "Klasiska wěstota (Běła lisćina + webwěstota)">
+<!ENTITY noscriptPreset.high "Twjerdźizna (dospołnje zawrjeny)">
+<!ENTITY noscript.hoverUI "Meni prawow wočinić, hdyž pokazowak myše je nad NoScriptowym wobrazom">
+<!ENTITY noscriptDonate "Darić">
+<!ENTITY noscriptDonate.accesskey "a">

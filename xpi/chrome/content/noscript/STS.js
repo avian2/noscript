@@ -2,7 +2,7 @@
 
 const STS = {
   
-  enabled: true,
+  enabled: false,
   
   get db() {
     delete this.db;
