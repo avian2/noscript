@@ -275,12 +275,20 @@ menupopup[sticky="true"][disabled="true"] {
   max-width: 48px;
 }
 
-#addon-bar > #noscript-tbb > .toolbarbutton-text,
-#addon-bar > #noscript-tbb-page > .toolbarbutton-text,
-#addon-bar > #noscript-tbb-revoke-temp > .toolbarbutton-text
+#addon-bar > #noscript-tbb .toolbarbutton-text,
+#addon-bar > #noscript-tbb-page  .toolbarbutton-text,
+#addon-bar > #noscript-tbb-revoke-temp .toolbarbutton-text
 { display: none !important }
+#addon-bar > #noscript-tbb .toolbarbutton-icon,
+#addon-bar > #noscript-tbb-page  .toolbarbutton-icon,
+#addon-bar > #noscript-tbb-revoke-temp .toolbarbutton-icon,
+#addon-bar[mode="full"] > #noscript-tbb .toolbarbutton-menubutton-button,
+#addon-bar[mode="full"] > #noscript-tbb-page .toolbarbutton-menubutton-button,
+#addon-bar[mode="full"] > #noscript-tbb-revoke-temp .toolbarbutton-menubutton-button
+{ min-width: 16px; }
 #addon-bar > #noscript-tbb, #addon-bar > #noscript-tbb-page, #addon-bar > #noscript-tbb-revoke-temp
 { min-width: 16px !important }
+
 
 notification {
   word-wrap: break-word !important;

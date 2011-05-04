@@ -1007,8 +1007,9 @@ SyntaxChecker.prototype = {
   }
 };
 
+const wordCharRx = /\w/g;
 function fuzzify(s) {
-  return s.replace(/\w/g, '\\W*$&');
+  return s.replace(wordCharRx, '\\W*$&');
 }
 
 const IC_COMMENT_PATTERN = '\\s*(?:\\/[\\/\\*][\\s\\S]+)?';
@@ -1612,8 +1613,8 @@ var InjectionChecker = {
   },
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
-   fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|iframe|frame|base|body|meta|ima?g|video|audio|bindings") + 
-    ")[^>])|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\b(?:formaction|" + IC_EVENT_PATTERN +
+   fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|iframe|frame|base|body|meta|ima?ge?|video|audio|bindings") + 
+    ")[^>\\w])|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\b(?:formaction|" + IC_EVENT_PATTERN +
      ")[\\s\\x08]*=|<\\W*(?:a|map)\\b[\\s\\S]+\\bstyle\\W*=", 
     "i"),
   checkHTML: function(s) {
@@ -2289,7 +2290,7 @@ const Base64 = {
   
   alt: function(s) {
     // URL base64 variant, see http://en.wikipedia.org/wiki/Base64#URL_applications
-    return s.replace(/-/g, '+').replace(/_/, '/')
+    return s.replace(/-/g, '+').replace(/_/g, '/')
   },
   
   decode: function (input, strict) {  

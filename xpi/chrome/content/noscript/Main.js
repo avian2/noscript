@@ -2536,13 +2536,15 @@ var ns = singleton = {
       try {
         position = l.style.position;
         l.style.position = "absolute";
-        if(l.offsetWidth || l.offsetHeight) return true;
+        if(l.offsetHeight) return true;
       } finally {
         l.style.position = position;
       }
       if (/\b__noscriptPlaceholder__\b/.test(l.className)) return true;
     }
     if (document.embeds[0] || document.getElementsByTagName("object")[0]) return true;
+    let form = document.forms[0];
+    if (form && form.offsetHeight) return true;
     return false;
   },
   detectJSRedirects: function(document) {
@@ -2565,15 +2567,32 @@ var ns = singleton = {
           body.style.display = "block";
         }
       }
-      if (!hasVisibleLinks && document.links[0]) {
-        const links = document.links;
-        for (let j = 0, len = links.length, l; j < len; j++) {
-          l = links[j];
+      if (!hasVisibleLinks && (document.links[0] || document.forms[0])) {
+        let links = document.links;
+        for (let j = 0, len = links.length; j < len; j++) {
+          let l = links[j];
           if (!(l.href && l.href.indexOf("http") === 0)) continue;
           l = body.appendChild(l.cloneNode(true));
           l.style.visibility = "visible";
           l.style.display = "block";
           seen.push(l.href);
+        }
+        
+
+        for (let forms = document.forms, j = 0, f; f = forms[j]; j++) {
+          if (f.action) {
+            let e;
+            for (let els = f.elements, k = 0; e = els[k]; k++) {
+              if (e.type === "submit") break;
+            }
+            if (!e) {
+              e = document.createElement("input");
+              e.type = "submit";
+              e.value = f.action.substring(0, 47);
+              if (f.action.length > 48) e.value += "...";
+              f.appendChild(e);
+            }
+          }
         }
       }
       
@@ -3323,16 +3342,17 @@ var ns = singleton = {
         innerDiv.className = "__noscriptPlaceholder__2";
         
         let iconSize;
-        if(restrictedSize || style && (parseInt(style.width) < 64 || parseInt(style.height) < 64)) {
+        if(restrictedSize || object.offsetWidth < 64 || object.offsetHeight < 64) {
           innerDiv.style.backgroundPosition = "bottom right";
           iconSize = 16;
-          let w = parseInt(style.width),
-              h = parseInt(style.height);
+          let w = object.offsetWidth,
+              h = object.offsetWidth;
           if (minSize > w || minSize > h) {
+            var rect = DOM.computeRect(object);
             with (innerDiv.parentNode.style) {
-              var rect = DOM.computeRect(object);
-              w = minWidth = Math.max(w, Math.min(document.documentElement.offsetWidth - rect.left, minSize)) + "px";
-              h = minHeight = Math.max(h, Math.min(document.documentElement.offsetHeight - rect.top, minSize)) + "px";
+              let isTop = !win.frameElement;
+              w = minWidth = Math.max(w, isTop ? minSize : Math.min(document.documentElement.offsetWidth - rect.left, minSize)) + "px";
+              h = minHeight = Math.max(h, isTop ? minSize : Math.min(document.documentElement.offsetHeight - rect.top, minSize)) + "px";
             }
 
             with (anchor.style) {
@@ -3970,7 +3990,7 @@ var ns = singleton = {
   },
   
   // nsIWebProgressListener implementation
-  onLinkIconAvailable: function(x) {}, // tabbrowser.xml bug?
+  onLinkIconAvailable: DUMMYFUNC, // tabbrowser.xml bug?
   onStateChange: function(wp, req, stateFlags, status) {
     var ph;
     
