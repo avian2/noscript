@@ -285,7 +285,7 @@ menupopup[sticky="true"][disabled="true"] {
 #addon-bar[mode="full"] > #noscript-tbb .toolbarbutton-menubutton-button,
 #addon-bar[mode="full"] > #noscript-tbb-page .toolbarbutton-menubutton-button,
 #addon-bar[mode="full"] > #noscript-tbb-revoke-temp .toolbarbutton-menubutton-button
-{ min-width: 16px; }
+{ min-width: 16px; display: -moz-box }
 #addon-bar > #noscript-tbb, #addon-bar > #noscript-tbb-page, #addon-bar > #noscript-tbb-revoke-temp
 { min-width: 16px !important }
 

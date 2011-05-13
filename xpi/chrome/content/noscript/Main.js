@@ -3342,11 +3342,12 @@ var ns = singleton = {
         innerDiv.className = "__noscriptPlaceholder__2";
         
         let iconSize;
-        if(restrictedSize || object.offsetWidth < 64 || object.offsetHeight < 64) {
+        
+        if(restrictedSize || style && (64 > (parseInt(style.width) || 0) || 64 > (parseInt(style.height) || 0))) {
           innerDiv.style.backgroundPosition = "bottom right";
           iconSize = 16;
-          let w = object.offsetWidth,
-              h = object.offsetWidth;
+          let w = parseInt(style.width) || 0,
+              h = parseInt(style.height) || 0;
           if (minSize > w || minSize > h) {
             var rect = DOM.computeRect(object);
             with (innerDiv.parentNode.style) {
@@ -4143,7 +4144,7 @@ var ns = singleton = {
     
     
      function hookFocus(bg) {
-      ns.log("[NoScript] Blocking refresh on unfocused tab, " + currentURL + "->" + uri.spec, true);
+      ns.log("[NoScript] Blocking refresh on unfocused tab, " + currentURL + "->" + uri.spec, false);
       win.addEventListener("focus", function(ev) {
         ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
         if ((docShell instanceof CI.nsIRefreshURI) &&
