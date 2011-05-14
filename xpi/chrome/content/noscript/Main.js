@@ -2983,7 +2983,7 @@ var ns = singleton = {
   },
   
   
-  executeJSURL: function(url, openCallback) {
+  executeJSURL: function(url, openCallback, fromURLBar) {
     var browserWindow = DOM.mostRecentBrowserWindow;
     var browser = browserWindow.noscriptOverlay.currentBrowser;
     if(!browser) return false;
@@ -3003,12 +3003,22 @@ var ns = singleton = {
       };
     
       var doc = window.document;
+      
+      let blurListener = null, focusListener = null;
+      
       try {
 
         docShell.allowJavascript = true;
-        if (!(this.jsEnabled = ns.getPref("allowBookmarkletImports"))) {
+        if (!(this.jsEnabled = ns.getPref(fromURLBar ? "allowURLBarImports" : "allowBookmarkletImports"))) {
           if (!snapshots.siteJS) 
             this.setJSEnabled(site, true);
+        } else {
+          window.addEventListener("blur", blurListener = function() {
+            ns.jsEnabled = false;
+            if (!focusListener) window.addEventListener("focus", focusListener = function() {
+              ns.jsEnabled = true;
+            }, true);
+          }, true);
         }
         
         if (Thread.canSpin) { // async evaluation, after bug 351633 landing
@@ -3038,20 +3048,22 @@ var ns = singleton = {
       } finally {
         
         this.setExpando(browser, "jsSite", site);
-        if (!docShell.isLoadingDocument &&
+        if (!docShell.isLoadingDocument && docShell.currentURI &&  
             this.getSite(docShell.currentURI.spec) == site)
           docShell.allowJavascript = snapshots.docJS;
         
         Thread.asap(function() {
-          if (this.executingJSURL(doc) > 1) {
+          if (doc.defaultView && this.executingJSURL(doc) > 1) {
             this.delayExec(arguments.callee, 100);
             return;
           }
           
           this.executingJSURL(doc, 0);
+          if (focusListener) window.removeEventListener("focus", focusListener, true);
           if (this.jsEnabled) {
             this.jsEnabled = false;
           }
+          if (blurListener) window.removeEventListener("blur", blurListener, true);
           
           if (!snapshots.siteJS)
               this.setJSEnabled(site, false);

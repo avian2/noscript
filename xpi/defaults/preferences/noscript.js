@@ -164,7 +164,8 @@ pref("noscript.flashPatch", true);
 pref("noscript.silverlightPatch", true);
 
 
-pref("noscript.allowURLBarJS", true);
+pref("noscript.allowURLBarJS", false);
+pref("noscript.allowURLBarImports", false);
 
 pref("noscript.docShellJSBlocking", 1);
 
@@ -286,7 +287,7 @@ pref("noscript.ABE.localExtras", "");
 
 pref("noscript.asyncNetworking", true);
 pref("noscript.inclusionTypeChecking", true);
-pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ .sony-europe.com");
+pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com");
 pref("noscript.inclusionTypeChecking.checkDynamic", false);
 pref("noscript.nosniff", true);
 

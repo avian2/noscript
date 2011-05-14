@@ -139,20 +139,20 @@ var ScriptSurrogate = {
   
 
   apply: function(document, scriptURL, pageURL, noScript, scripts) {
-    if (!this.enabled) return false;
-    
     if (typeof(noScript) !== "boolean") noScript = !!noScript;
     
-    scripts = this.getScripts(scriptURL, pageURL, noScript, scripts);
+    if (this.enabled) 
+      scripts = this.getScripts(scriptURL, pageURL, 
+        typeof(noScript) === "boolean" ? noScript : !!noScript, 
+        scripts);
+
     if (!scripts) return false;
     
     const runner = noScript
       ? this.fallback
       : scriptURL === pageURL
-        ? this.execute
+        ? let (win = document.defaultView) win != win.top ? this.executeSandbox : this.execute
         : this.executeDOM;
-    
-    
     
     if (this.debug) {
       // we run each script separately and don't swallow exceptions

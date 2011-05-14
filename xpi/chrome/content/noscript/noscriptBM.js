@@ -25,16 +25,22 @@ var noscriptBM = {
     var shortcut = gURLBar.value;
     var jsrx = /^\s*(?:data|javascript):/i;
     var isJS = jsrx.test(shortcut);
-    var allowJS = noscriptUtil.service.getPref("allowURLBarJS", true);
+    var ns = noscriptUtil.service;
+    var allowJS = ns.getPref("allowURLBarJS", true);
     
-    if (isJS && allowJS) {
-      window.setTimeout(function() { // if we don't defer, errors are not logged in the console...
-        if (!noscriptUtil.service.executeJSURL(shortcut, callback))
-          callback();
-      }, 0);
+    if (isJS) {
+      if (allowJS) {
+        window.setTimeout(function() { // if we don't defer, errors are not logged in the console...
+          if (!ns.executeJSURL(shortcut, callback, true))
+            callback();
+        }, 0);
+      } else {
+        noscriptUtil.prompter.alert(window, "NoScript",
+            "javascript: and data: URLs typed in the address bar are disabled to prevent social engineering attacks.\nPower users can enable them by toggling the \"noscript.allowURLBarJS\" preference.");
+      }
       return;
-    } else if (window.getShortcutOrURI && (shortcut.indexOf(" ") > 0  && !isJS || shortcut.indexOf(":") < 0)) {
-      var url = getShortcutOrURI(shortcut, {});
+    } else if (("getShortcutOrURI" in window) && (shortcut.indexOf(" ") > 0  && !isJS || shortcut.indexOf(":") < 0)) {
+      let url = getShortcutOrURI(shortcut, {});
       if(jsrx.test(url) && noscriptBM.handleBookmark(url, callback))
         return;
     }

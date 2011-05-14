@@ -79,7 +79,7 @@ return noscriptUtil.service ? {
   
   onUIOver: function(ev) {
     let parent = ev.currentTarget;
-    let popup = parent.firstChild;
+    let popup = parent.firstChild || !this.installPopups() && parent.firstChild;
     
     if (!(popup && popup.openPopup) ||
         ("_hovering" in popup) && popup._hovering ||
@@ -186,7 +186,7 @@ return noscriptUtil.service ? {
       return;
     }
     
-    let popup = ev.currentTarget.firstChild;
+    let popup = tb.firstChild || !this.installPopups() && tb.firstChild;
     if ("_hovering" in popup && popup._hovering === 1 || // reopen if still hovering the icon
         this.hoverUI && !this.isOpenOrJustClosed(popup)) {
       popup._hovering = -1;
@@ -2291,7 +2291,7 @@ return noscriptUtil.service ? {
     },
     
     onContentLoad: function(ev) {
-    
+
       var doc = ev.originalTarget;
       
       if (doc instanceof HTMLDocument) {
@@ -2320,6 +2320,7 @@ return noscriptUtil.service ? {
           } 
         }
       }
+      
     },
     onDocumentLoad: function(ev) {
       if (ev.originalTarget instanceof HTMLDocument) {
@@ -2420,7 +2421,7 @@ return noscriptUtil.service ? {
         if (!context) return; // not a browser window?
       
         context.addEventListener("popupshowing", this.onMainContextMenu, false);
-        window.addEventListener("DOMContentLoaded", this.onContentLoad, true);
+        window.addEventListener("DOMContentLoaded", this.onContentLoad, false);
         b.addProgressListener(this.webProgressListener);
         
       }
@@ -2451,7 +2452,7 @@ return noscriptUtil.service ? {
       
       window.removeEventListener("pagehide", this.onPageHide, true);
       window.removeEventListener("pageshow", this.onPageShow, true);
-      window.removeEventListener("DOMContentLoaded", this.onContentLoad, true);
+      window.removeEventListener("DOMContentLoaded", this.onContentLoad, false);
 
       noscriptOverlay.prefsObserver.remove();
       noscriptOverlay.shortcutKeys.remove();
