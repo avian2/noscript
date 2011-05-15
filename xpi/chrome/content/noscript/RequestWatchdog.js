@@ -7,7 +7,7 @@ function RequestWatchdog() {
 
 RequestWatchdog.prototype = {
   
-  OBSERVED_TOPICS: [/* "http-on-modify-request", */ "noscript-http-on-start-request", "http-on-examine-response", "http-on-examine-merged-response", "http-on-examine-cached-response"],
+  OBSERVED_TOPICS: ["http-on-examine-response", "http-on-examine-merged-response", "http-on-examine-cached-response"],
   
   init: function() {
     for each (var topic in this.OBSERVED_TOPICS) OS.addObserver(this, topic, true);
@@ -31,85 +31,10 @@ RequestWatchdog.prototype = {
     if(ns.consoleDump & LOG_SNIFF) {
       ns.dump(topic + ": " + channel.URI.spec + ", " + channel.loadFlags);
     }
-    var loadFlags = channel.loadFlags;
-    var isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
-    
-    var cached = true;
+
     
     switch(topic) {
-      case "http-on-modify-request":
-      break;
-      case "noscript-http-on-start-request":
-        PolicyState.attach(channel);
-        
-        HTTPS.forceChannel(channel);
 
-        if (isDoc) {
-          let ph = PolicyState.extract(channel); 
-          if (ph && ph.context) isDoc = !(ph.context instanceof CI.nsIDOMHTMLEmbedElement);
-        }
-        
-        let ncb = channel.notificationCallbacks;
-        if (!(loadFlags || ncb || channel.owner)) {
-          try {
-            if (channel.getRequestHeader("Content-type") == "application/ocsp-request") {
-              if (ns.consoleDump) ns.dump("Skipping cross-site checks for OCSP request " + channel.name);
-              return;
-            }
-          } catch(e) {}
-        }
-        
-        if (ncb instanceof CI.nsIXMLHttpRequest && !ns.isCheckedChannel(channel)) {
-          if (ns.consoleDump) ns.dump("Skipping cross-site checks for chrome XMLHttpRequest " + channel.name + ", " + loadFlags + ", "
-                                      + channel.owner + ", " + !!PolicyState.hints);
-          return;
-        }
-      
-        let abeReq = null;
-        try {
-          
-          abeReq = new ABERequest(channel);
-          if (this.externalLoad && this.externalLoad === abeReq.destination) {
-            abeReq.external = true;
-            this.externalLoad = null;
-          }
-          
-          if (isDoc) {
-            
-            let url = abeReq.destination;
-            if (url.indexOf("#!") > 0 &&
-              (url.indexOf("?") === -1 || url.indexOf("?_escaped_fragment_=") > 0) &&
-              ns.getPref("ajaxFallback.enabled")) {
-              let qs = '?_escaped_fragment_=' + url.match(/#!(.*)/)[1].replace(/[\s&=]/g, encodeURIComponent);
-              
-              let newURL = "", isReload = false;
-              if (ns.isJSEnabled(ns.getSite(url))) {
-                if (url.indexOf(qs) > 0 && (isReload = this.noscriptReload === url)) {
-                  newURL = url.replace(qs, "").replace(/([^#&]+)&/, '$1?');
-                }   
-              } else if (url.indexOf(qs) === -1) {
-                newURL = url.replace(/(?:\?_escaped_fragment_=[^&#]*)|(?=#!)/, qs);
-              }
-              if (newURL && newURL != url && abeReq.redirectChain.map(function(u) u.spec).indexOf(newURL) === -1) {
-                channel.URI.spec = abeReq.destination = newURL;
-                if (isReload) this.noscriptReload = newURL;
-              }
-            }
-            
-            new DOSChecker(abeReq).run(function() {
-              return this.filterXSS(abeReq);
-            }, this);
-          }
-          if (!channel.status) {
-            this.handleABE(abeReq, isDoc);
-          }
-          
-        } catch(e) {
-          this.die(channel, e);
-        }
-      break;
-      
-      
       case "http-on-examine-response":
         
         STS.processRequest(channel);
@@ -124,13 +49,71 @@ RequestWatchdog.prototype = {
         if (ns.externalFilters.enabled)
           ns.callExternalFilters(channel, cached);
         
-        if (isDoc) {
+        if (channel.loadFlags & this.DOCUMENT_LOAD_FLAGS) {
           ns.onContentSniffed(channel);
         } else {
           if (!((ns.inclusionTypeChecking || ns.nosniff) && ns.checkInclusionType(channel)))
             return;
         }
       break;
+    }
+  },
+  
+  onHttpStart: function(channel) {
+    const loadFlags = channel.loadFlags;
+    let isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
+
+    PolicyState.attach(channel);
+    
+    HTTPS.forceChannel(channel);
+
+    if (isDoc) {
+      let ph = PolicyState.extract(channel); 
+      if (ph && ph.context) isDoc = !(ph.context instanceof CI.nsIDOMHTMLEmbedElement);
+    }
+    
+    
+  
+    try {
+      
+      let abeReq = new ABERequest(channel);
+      if (this.externalLoad && this.externalLoad === abeReq.destination) {
+        abeReq.external = true;
+        this.externalLoad = null;
+      }
+      
+      if (isDoc) {
+        
+        let url = abeReq.destination;
+        if (url.indexOf("#!") > 0 &&
+          (url.indexOf("?") === -1 || url.indexOf("?_escaped_fragment_=") > 0) &&
+          ns.getPref("ajaxFallback.enabled")) {
+          let qs = '?_escaped_fragment_=' + url.match(/#!(.*)/)[1].replace(/[\s&=]/g, encodeURIComponent);
+          
+          let newURL = "", isReload = false;
+          if (ns.isJSEnabled(ns.getSite(url))) {
+            if (url.indexOf(qs) > 0 && (isReload = this.noscriptReload === url)) {
+              newURL = url.replace(qs, "").replace(/([^#&]+)&/, '$1?');
+            }   
+          } else if (url.indexOf(qs) === -1) {
+            newURL = url.replace(/(?:\?_escaped_fragment_=[^&#]*)|(?=#!)/, qs);
+          }
+          if (newURL && newURL != url && abeReq.redirectChain.map(function(u) u.spec).indexOf(newURL) === -1) {
+            channel.URI.spec = abeReq.destination = newURL;
+            if (isReload) this.noscriptReload = newURL;
+          }
+        }
+        
+        new DOSChecker(abeReq).run(function() {
+          return this.filterXSS(abeReq);
+        }, this);
+      }
+      if (!channel.status) {
+        this.handleABE(abeReq, isDoc);
+      }
+      
+    } catch(e) {
+      this.die(channel, e);
     }
   },
   
@@ -905,6 +888,7 @@ RequestWatchdog.prototype = {
         var overlay = ns.findOverlay(requestInfo.browser);
         if(overlay) overlay.notifyXSS(requestInfo);
       }
+      requestInfo.wrappedJSObject = requestInfo;
       IOUtil.attachToChannel(requestInfo.channel, "noscript.XSS", requestInfo);
     } catch(e) {
       dump(e + "\n");

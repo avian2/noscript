@@ -66,14 +66,16 @@ const IOUtil = {
 
   attachToChannel: function(channel, key, requestInfo) {
     if (channel instanceof CI.nsIWritablePropertyBag2) 
-      channel.setPropertyAsInterface(key, "wrappedJSObject" in requestInfo ? requestInfo : new nsISupportsWrapper(requestInfo));
+      channel.setPropertyAsInterface(key, requestInfo);
   },
   extractFromChannel: function(channel, key, preserve) {
     if (channel instanceof CI.nsIPropertyBag2) {
       let p = channel.get(key);
       if (p) {
         if (!preserve && (channel instanceof CI.nsIWritablePropertyBag)) channel.deleteProperty(key);
-        return p.wrappedJSObject;
+        if (p.wrappedJSObject) return p.wrappedJSObject;
+        p instanceof CI.nsIURL || p instanceof CI.nsIURL;
+        return p;
       }
     }
     return null;

@@ -164,23 +164,23 @@
 <!ENTITY ABE.refresh.accesskey "R">
 <!ENTITY noscriptUninstall "アンインストール">
 <!ENTITY noscriptRecentBlocked "最近ブロックしたサイト">
-<!ENTITY noscriptForbidFonts "Forbid @font-face">
-<!ENTITY noscriptForbidMedia "Forbid &lt;AUDIO&gt; / &lt;VIDEO&gt;">
-<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
+<!ENTITY noscriptForbidFonts "@font-face　の禁止">
+<!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; の禁止">
+<!ENTITY noscriptNotifyMeta "ブロックしたメタリダイレクトについてメッセージを表示する">
 <!ENTITY noscriptNotifyMeta.accesskey "R">
-<!ENTITY noscriptExternalFilters "External Filters">
-<!ENTITY noscriptEF.enable "Enable external filters">
-<!ENTITY noscriptEF.add "New Filter…">
-<!ENTITY noscriptEF.executable "Executable file:">
-<!ENTITY noscriptEF.browse "Browse…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
-<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
-<!ENTITY noscriptEF.remove "Remove">
-<!ENTITY noscriptPreset "Security Level">
-<!ENTITY noscriptPreset.off "Off (are you serious?!)">
-<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
-<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
-<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
-<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptExternalFilters "外部フィルタ">
+<!ENTITY noscriptEF.enable "外部フィルタを有効にする">
+<!ENTITY noscriptEF.add "新しいフィルタ...">
+<!ENTITY noscriptEF.executable "実行可​​能ファイル：">
+<!ENTITY noscriptEF.browse "参照...">
+<!ENTITY noscriptEF.contentType "コンテンツタイプ（MIME）によるフィルタリング（完全一致または正規表現）：">
+<!ENTITY noscriptEF.exceptions "これらのサイトからのフィルタオブジェクトはしない：">
+<!ENTITY noscriptEF.remove "削除">
+<!ENTITY noscriptPreset "セキュリティレベル">
+<!ENTITY noscriptPreset.off "オフ（本気?!）">
+<!ENTITY noscriptPreset.low "簡単に（ブラックリスト+Webセキュリティ）">
+<!ENTITY noscriptPreset.medium "クラシック（ホワイトリスト+Webセキュリティ）">
+<!ENTITY noscriptPreset.high "要塞（全て禁止）">
+<!ENTITY noscript.hoverUI "NoScriptアイコンの上にマウスを移動した時にアクセス許可メニューを開く">
+<!ENTITY noscriptDonate "寄付">
 <!ENTITY noscriptDonate.accesskey "o">

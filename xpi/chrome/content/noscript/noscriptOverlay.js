@@ -2358,15 +2358,16 @@ return noscriptUtil.service ? {
       window.addEventListener("unload", noscriptOverlay.listeners.onUnload, false);
     
       try {
-        noscriptOverlay.listeners.setup(); 
+        noscriptOverlay.listeners.setup();
+        noscriptOverlay.initPopups(true);
         noscriptOverlay.wrapBrowserAccess();
-        var hacks = noscriptOverlay.Hacks;
+        let hacks = noscriptOverlay.Hacks;
         hacks.torButton();
         window.setTimeout(hacks.pdfDownload, 0);
-        noscriptOverlay.initPopups(true);
+        
         
       } catch(e) {
-        var msg = "[NoScript] Error initializing new window " + e + "\n"; 
+        let msg = "[NoScript] Error initializing new window " + e + "\n" + e.stack; 
         noscriptOverlay.ns.log(msg);
         noscriptOverlay.ns.dump(msg);
       }

@@ -132,14 +132,7 @@ var ns = singleton = {
           STS.eraseDB();
         break;
         
-        case "http-on-modify-request": // kickstart requestWatchdog and stop observing
-          if (subject instanceof CI.nsIHttpChannel &&
-              !(subject.notificationCallbacks instanceof CI.nsIXMLHttpRequest) || ns.isCheckedChannel(subject)) {
-            if (ns.consoleDump) ns.dump(subject.name + " kickstarting RW " + subject.notificationCallbacks);
-            OS.removeObserver(this, topic);
-            this.requestWatchdog.observe(subject, topic, data);
-          }
-        break;
+        
       }
     }
   },
@@ -182,8 +175,7 @@ var ns = singleton = {
   
   OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "sessionstore-windows-restored",
                     "toplevel-window-ready", "browser:purge-session-history", "private-browsing",
-                    "content-document-global-created", "document-element-inserted",
-                    "http-on-modify-request"],
+                    "content-document-global-created", "document-element-inserted"],
   register: function() {
     this.OBSERVED_TOPICS.forEach(function(topic) {
       OS.addObserver(this, topic, true);
@@ -3147,7 +3139,7 @@ var ns = singleton = {
     return IOUtil.extractFromChannel(c, "noscript.checkedChannel", true);
   },
   setCheckedChannel: function(c, v) {
-    IOUtil.attachToChannel(c, "noscript.checkedChannel", v ? {} : null);
+    IOUtil.attachToChannel(c, "noscript.checkedChannel", v ? DUMMYOBJ : null);
   },
   
   createCheckedXHR: function(method, url, async) {
@@ -4024,9 +4016,27 @@ var ns = singleton = {
         }
         
         if (req instanceof CI.nsIHttpChannel) {
-          OS.notifyObservers(req, "noscript-http-on-start-request", null);
+          
+          let ncb = req.notificationCallbacks;
+          let loadFlags = req.loadFlags;
+          if (!(loadFlags || ncb || req.owner)) {
+            try {
+              if (req.getRequestHeader("Content-type") == "application/ocsp-request") {
+                if (ns.consoleDump) ns.dump("Skipping cross-site checks for OCSP request " + req.name);
+                return;
+              }
+            } catch(e) {}
+          }
+    
+          if (ncb instanceof CI.nsIXMLHttpRequest && !ns.isCheckedChannel(req)) {
+            if (ns.consoleDump) ns.dump("Skipping cross-site checks for chrome XMLHttpRequest " + req.name + ", " + loadFlags + ", "
+                                        + req.owner + ", " + !!PolicyState.hints);
+            return;
+          }
+          
+          this.requestWatchdog.onHttpStart(req);
         }
-        
+
         if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC) {
           if (req.URI.spec == "about:blank" && !IOUtil.extractInternalReferrer(req) ) {
            // new tab, we shouldn't touch its window otherwise we break stuff like newTabURL
@@ -4604,16 +4614,16 @@ var ns = singleton = {
             this.dump("Error purging body attributes: " + e2);
         }
       }
-      
-      IOUtil.attachToChannel(req, "noscript.dsjsBlocked",
-                { value: // !jsEnabled && (prevBlocked || prevStatus)
+      let dsjsBlocked = { value: // !jsEnabled && (prevBlocked || prevStatus)
                         // we're the cause of the current disablement if
                         // we're disabling and (was already blocked by us or was not blocked)
                         !(jsEnabled || !(prevBlocked || prevStatus)) // De Morgan for the above, i.e.
                         // we're the cause of the current disablement unless
                         // we're enabling or (was already blocked by someone else = was not (blocked by us or enabled))
                         // we prefer the latter because it coerces to boolean
-                });
+                };
+      dsjsBlocked.wrappedJSObject = dsjsBlocked;
+      IOUtil.attachToChannel(req, "noscript.dsjsBlocked", dsjsBlocked);
       
       docShell.allowJavascript = jsEnabled;
     } catch(e2) {

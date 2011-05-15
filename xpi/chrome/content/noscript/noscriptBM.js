@@ -36,7 +36,7 @@ var noscriptBM = {
         }, 0);
       } else {
         noscriptUtil.prompter.alert(window, "NoScript",
-            "javascript: and data: URLs typed in the address bar are disabled to prevent social engineering attacks.\nPower users can enable them by toggling the \"noscript.allowURLBarJS\" preference.");
+            "javascript: and data: URIs typed or pasted in the address bar are disabled to prevent social engineering attacks.\nDevelopers can enable them for testing purposes by toggling the \"noscript.allowURLBarJS\" preference.");
       }
       return;
     } else if (("getShortcutOrURI" in window) && (shortcut.indexOf(" ") > 0  && !isJS || shortcut.indexOf(":") < 0)) {

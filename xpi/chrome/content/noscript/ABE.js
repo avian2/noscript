@@ -452,6 +452,7 @@ const ABE = {
     if (!rc) {
       var origin = ABERequest.getOrigin(channel);
       rc = origin ? [origin] : [];
+      rc.wrappedJSObject = rc;
     };
     return rc;
   },
@@ -894,7 +895,8 @@ function ABERequest(channel) {
 ABERequest.serial = 0;
 
 ABERequest.getOrigin = function(channel) {
-  return IOUtil.extractFromChannel(channel, "ABE.origin", true);
+  let u = IOUtil.extractFromChannel(channel, "ABE.origin", true);
+  return (u instanceof CI.nsIURI) ? u : null;
 },
 ABERequest.getLoadingChannel = function(window) {
   return window && ("__loadingChannel__" in window) && window.__loadingChannel__;
@@ -1028,24 +1030,22 @@ ABERequest.prototype = Lang.memoize({
   matchAllOrigins: function(matcher) {
     var canDoDNS = this.canDoDNS;
     return (canDoDNS && matcher.netMatching) 
-      ? matcher.testURI(this.originURI, canDoDNS, true) &&
-          this.redirectChain.every(function(uri) { return matcher.testURI(uri, canDoDNS, true); })
-      : matcher.test(this.origin) && this.redirectChain.every(matcher.testURI, matcher)
+      ? this.redirectChain.every(function(uri) matcher.testURI(uri, canDoDNS, true))
+      : this.redirectChain.every(matcher.testURI, matcher)
       ;
   },
   
   matchSomeOrigins: function(matcher) {
     var canDoDNS = this.canDoDNS;
     return (canDoDNS && matcher.netMatching) 
-      ? matcher.testURI(this.originURI, canDoDNS, false) ||
-          this.redirectChain.some(function(uri) { return matcher.testURI(uri, canDoDNS, false); })
-      : matcher.test(this.origin) || this.redirectChain.some(matcher.testURI, matcher)
+      ? this.redirectChain.some(function(uri) matcher.testURI(uri, canDoDNS, false))
+      : this.redirectChain.some(matcher.testURI, matcher)
       ;
   },
   
   toString: function() {
     var s = "{" + this.method + " " + this.destination + " <<< " +
-      this.redirectChain.reverse().map(function(uri) { return uri.spec; }).concat(this.origin)
+      this.redirectChain.reverse().map(function(uri) { return uri.spec; })
         .join(", ") + " - " + this.type + "}";
     this.toString = function() { return s; }
     return s;
@@ -1066,8 +1066,7 @@ ABERequest.prototype = Lang.memoize({
       IOUtil.canDoDNS(this.channel);
   },
   localOrigin: function() {
-    return this.canDoDNS &&  this._checkLocalOrigin(this.originURI) &&
-        this.redirectChain.every(this._checkLocalOrigin, this);
+    return this.canDoDNS && this.redirectChain.every(this._checkLocalOrigin, this);
   },
   localDestination: function() {
     try {
@@ -1083,10 +1082,10 @@ ABERequest.prototype = Lang.memoize({
     return this._checkSelf(this.originURI) && this.redirectChain.every(this._checkSelf, this);
   },
   isSameDomain: function() {
-    return this.isSelf || this._checkSameDomain(this.originURI) && this.redirectChain.every(this._checkSameDomain, this);
+    return this.isSelf || this.redirectChain.every(this._checkSameDomain, this);
   },
   isSameBaseDomain: function() {
-    return this.isSameDomain || this._checkSameBaseDomain(this.originURI) && this.redirectChain.every(this._checkSameBaseDomain, this);
+    return this.isSameDomain || this.redirectChain.every(this._checkSameBaseDomain, this);
   },
   
   destinationBaseDomain: function() {
