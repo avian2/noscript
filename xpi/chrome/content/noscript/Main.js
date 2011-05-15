@@ -35,6 +35,8 @@ const WHERE_TRUSTED = 2;
 const ANYWHERE = 3;
 
 const DUMMYOBJ = {};
+DUMMYOBJ.wrappedJSObject = DUMMYOBJ;
+
 const DUMMYFUNC = function() {}
 const EARLY_VERSION_CHECK = !("nsISessionStore" in CI && typeof(/ /) === "object");
 
@@ -4011,12 +4013,18 @@ var ns = singleton = {
       if (req instanceof CI.nsIChannel) { 
         // handle docshell JS switching and other early duties
         
+        
+        
         if (PolicyState.isChecking(req.URI)) {
           // ContentPolicy couldn't complete! DOS attack?
           PolicyState.removeCheck(req.URI);
           IOUtil.abort(req);
           ns.log("Aborted " + req.name + " on start, possible DOS attack against content policy.");
           return;
+        }
+        
+        if (req instanceof CI.nsIHttpChannel) {
+          OS.notifyObservers(req, "noscript-http-on-start-request", null);
         }
         
         if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC) {

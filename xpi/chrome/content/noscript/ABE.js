@@ -943,8 +943,8 @@ ABERequest.prototype = Lang.memoize({
     } else {
       if (this.early) ou = channel.originURI;
       else {
-        let ps = PolicyState.extract(channel);
-        ou = ps && ps.requestOrigin ||
+        let ph = PolicyState.extract(channel);
+        ou = ph && ph.requestOrigin ||
             ((channel.originalURI.spec != this.destination) 
               ? channel.originalURI 
               : IOUtil.extractInternalReferrer(channel)

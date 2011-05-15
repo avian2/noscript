@@ -26,7 +26,7 @@ const PolicyState = {
   
   attach: function(channel) {
     if (this.URI === channel.URI) {
-      if (this._debug) this.push(this.URI);
+      if (this._debug) this._uris.push(this.URI);
       IOUtil.attachToChannel(channel, "noscript.policyHints", this.hints);
       this.reset();
     }
@@ -34,7 +34,7 @@ const PolicyState = {
   extract: function(channel, detach) {
     var res = IOUtil.extractFromChannel(channel, "noscript.policyHints", !detach);
     if (detach && res !== null && this._debug) {
-      var idx = this._uris.indexOf(this.URI);
+      var idx = this._uris.indexOf(channel.URI);
       if (idx > -1) this._uris.splice(idx, 1);
     }
     return res;
@@ -63,6 +63,7 @@ const PolicyState = {
 
 function PolicyHints(hints) {
   this.push.apply(this, Array.slice(hints, 0));
+  this.wrappedJSObject = this;
 }
 
 PolicyHints.prototype = (function() {

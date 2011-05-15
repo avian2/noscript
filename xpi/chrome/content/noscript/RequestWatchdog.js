@@ -7,7 +7,7 @@ function RequestWatchdog() {
 
 RequestWatchdog.prototype = {
   
-  OBSERVED_TOPICS: ["http-on-modify-request", "http-on-examine-response", "http-on-examine-merged-response", "http-on-examine-cached-response"],
+  OBSERVED_TOPICS: [/* "http-on-modify-request", */ "noscript-http-on-start-request", "http-on-examine-response", "http-on-examine-merged-response", "http-on-examine-cached-response"],
   
   init: function() {
     for each (var topic in this.OBSERVED_TOPICS) OS.addObserver(this, topic, true);
@@ -38,6 +38,8 @@ RequestWatchdog.prototype = {
     
     switch(topic) {
       case "http-on-modify-request":
+      break;
+      case "noscript-http-on-start-request":
         PolicyState.attach(channel);
         
         HTTPS.forceChannel(channel);
