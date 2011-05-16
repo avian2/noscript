@@ -173,10 +173,36 @@ var ns = singleton = {
     
   },
   
+  httpObserver: {
+    observe: function(channel, topic, data) {
+      if (channel instanceof CI.nsIHttpChannel) {
+        let ncb = channel.notificationCallbacks;
+        let loadFlags = channel.loadFlags;
+        if (!(loadFlags || ncb || channel.owner)) {
+          try {
+            if (channel.getRequestHeader("Content-type") == "application/ocsp-request") {
+              if (ns.consoleDump) ns.dump("Skipping cross-site checks for OCSP request " + channel.name);
+              return;
+            }
+          } catch(e) {}
+        }
+  
+        if (ncb instanceof CI.nsIXMLHttpRequest && !ns.isCheckedChannel(channel)) {
+          if (ns.consoleDump) ns.dump("Skipping cross-site checks for chrome XMLHttpRequest " + channel.name + ", " + loadFlags + ", "
+                                      + channel.owner + ", " + !!PolicyState.hints);
+          return;
+        }
+        
+        ns.requestWatchdog.onHttpStart(channel);
+      }
+    }
+  },
+  
   OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "sessionstore-windows-restored",
                     "toplevel-window-ready", "browser:purge-session-history", "private-browsing",
                     "content-document-global-created", "document-element-inserted"],
   register: function() {
+    OS.addObserver(this.httpObserver, "http-on-modify-request", false);
     this.OBSERVED_TOPICS.forEach(function(topic) {
       OS.addObserver(this, topic, true);
     }, this);
@@ -187,6 +213,7 @@ var ns = singleton = {
         OS.removeObserver(this, topic);
       } catch (e) {}
     }, this);
+    OS.removeObserver(this.httpObserver, "http-on-modify-request");
   }
 ,
   
@@ -4004,9 +4031,7 @@ var ns = singleton = {
     if (stateFlags & WP_STATE_START) {
       if (req instanceof CI.nsIChannel) { 
         // handle docshell JS switching and other early duties
-        
-        
-        
+
         if (PolicyState.isChecking(req.URI)) {
           // ContentPolicy couldn't complete! DOS attack?
           PolicyState.removeCheck(req.URI);
@@ -4015,28 +4040,7 @@ var ns = singleton = {
           return;
         }
         
-        if (req instanceof CI.nsIHttpChannel) {
-          
-          let ncb = req.notificationCallbacks;
-          let loadFlags = req.loadFlags;
-          if (!(loadFlags || ncb || req.owner)) {
-            try {
-              if (req.getRequestHeader("Content-type") == "application/ocsp-request") {
-                if (ns.consoleDump) ns.dump("Skipping cross-site checks for OCSP request " + req.name);
-                return;
-              }
-            } catch(e) {}
-          }
-    
-          if (ncb instanceof CI.nsIXMLHttpRequest && !ns.isCheckedChannel(req)) {
-            if (ns.consoleDump) ns.dump("Skipping cross-site checks for chrome XMLHttpRequest " + req.name + ", " + loadFlags + ", "
-                                        + req.owner + ", " + !!PolicyState.hints);
-            return;
-          }
-          
-          this.requestWatchdog.onHttpStart(req);
-        }
-
+        
         if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC) {
           if (req.URI.spec == "about:blank" && !IOUtil.extractInternalReferrer(req) ) {
            // new tab, we shouldn't touch its window otherwise we break stuff like newTabURL
@@ -4077,8 +4081,7 @@ var ns = singleton = {
     } else if ((stateFlags & WP_STATE_STOP))  {
       // STOP REQUEST
       if (req instanceof CI.nsIHttpChannel) {
-        PolicyState.detach(req);
-        ABERequest.clear(req); // release ABERequest, if any
+        this.cleanupRequest(req);
       
         if (status === NS_ERROR_CONNECTION_REFUSED || status === NS_ERROR_NOT_AVAILABLE ||
             status === NS_ERROR_UNKNOWN_HOST) { // evict host from DNS cache to prevent DNS rebinding
@@ -4096,6 +4099,7 @@ var ns = singleton = {
       }
     }
   },
+  
   onLocationChange: function(wp, req, location) {
     if (req && (req instanceof CI.nsIChannel)) try {        
       this._handleDocJS2(wp.DOMWindow, req);
@@ -4192,6 +4196,7 @@ var ns = singleton = {
   }
   ,
   
+  cleanupRequest: DUMMYFUNC,
   
   get _inclusionTypeInternalExceptions() {
     delete this._inclusionTypeInternalExceptions;

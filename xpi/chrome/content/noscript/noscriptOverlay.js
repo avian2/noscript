@@ -2405,6 +2405,10 @@ return noscriptUtil.service ? {
     setup: function() {
       
       var b = getBrowser();
+      if (!b) {
+        setTimeout(function() noscriptOverlay.listeners.setup(), 100);
+        return;
+      }
       var tabs = $("tabs") || b.tabContainer;
       if (tabs) {
         tabs.addEventListener("TabClose", this.onTabClose, false);

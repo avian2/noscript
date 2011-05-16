@@ -2,8 +2,36 @@ ABE; // kickstart
 
 function RequestWatchdog() {  
   this.injectionChecker = InjectionChecker;
+  this.pendingChannels = [];
   this.init();
 }
+RequestWatchdog.pendingChannels = [];
+RequestWatchdog.timer = (function () {
+    var timer = CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer);
+    timer.initWithCallback({
+      notify: function() {
+        try {
+        let channels = RequestWatchdog.pendingChannels;
+        for (let j = channels.length; j-- > 0;) {
+          let c = channels[j];
+          if (c.status || !c.isPending()) {
+            ns.cleanupRequest(c);
+            channels.splice(j, 1);
+          }
+        }
+        } catch(e) {
+          ns.dump(e);
+        }
+      }
+    }, 1000, CI.nsITimer.TYPE_REPEATING_SLACK);
+    return timer;
+  })();
+
+ns.cleanupRequest = function(channel) {
+  PolicyState.detach(channel);
+  ABERequest.clear(channel);
+};
+  
 
 RequestWatchdog.prototype = {
   
@@ -64,6 +92,7 @@ RequestWatchdog.prototype = {
     let isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
 
     PolicyState.attach(channel);
+    RequestWatchdog.pendingChannels.push(channel);
     
     HTTPS.forceChannel(channel);
 
@@ -114,7 +143,7 @@ RequestWatchdog.prototype = {
       
     } catch(e) {
       this.die(channel, e);
-    }
+    } 
   },
   
   die: function(channel, e) {
