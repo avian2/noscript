@@ -256,10 +256,9 @@ const MainContentPolicy = {
           
           if (aMimeTypeGuess) // otherwise let's treat it as an iframe
             break;
-          
-         
-          
+                    
         case 7:
+          
           locationURL = aContentLocation.spec;
           originURL = aRequestOrigin && aRequestOrigin.spec;
           if (locationURL == "about:blank" || /^chrome:/.test(locationURL)
@@ -282,41 +281,43 @@ const MainContentPolicy = {
             break; // we just need to guess the Mime for video/audio
           }
           
-          isLegacyFrame = aContext instanceof CI.nsIDOMHTMLFrameElement;
-     
-          if (isLegacyFrame
-              ? this.forbidFrames || // we shouldn't allow framesets nested inside iframes, because they're just as bad
-                                     this.forbidIFrames &&
-                                     (aContext.ownerDocument.defaultView.frameElement instanceof CI.nsIDOMHTMLIFrameElement) &&
-                                     this.getPref("forbidMixedFrames", true)
-              : this.forbidIFrames || // we use iframes to make placeholders for blocked legacy frames...
-                                     this.forbidFrames &&
-                                     this.isLegacyFrameReplacement(aContext)
-             ) {
-              try {
-                contentDocument = aContext.contentDocument;
-              } catch(e) {}
-           
-              blockThisFrame = (aInternalCall === CP_FRAMECHECK) && !(
-                      this.knownFrames.isKnown(locationURL, originSite = this.getSite(originURL)) ||
-                    /^(?:chrome|resource|wyciwyg):/.test(locationURL) ||
-                    locationURL == this._silverlightInstalledHack ||
-                    locationURL == this.compatGNotes ||
-                    (
-                      originURL
-                        ? ( /^(?:chrome|about|resource):/.test(originURL) && originURL !== "about:blank" || 
-                           /^(?:data|javascript):/.test(locationURL) &&
-                            (contentDocument && (originURL == contentDocument.URL
-                                                  || /^(?:data:|javascript:|about:blank$)/.test(contentDocument.URL)
-                            ) || this.isFirebugJSURL(locationURL)
-                           )
-                          )
-                        : contentDocument && 
-                          this.getSite(contentDocument.URL) == (locationSite = this.getSite(locationURL))
-                     )
-                ) && this.forbiddenIFrameContext(originURL || (originURL = aContext.ownerDocument.URL), locationURL);
-          }
-          
+          if (!(aContext instanceof CI.nsIDOMXULElement)) {
+        
+            isLegacyFrame = aContext instanceof CI.nsIDOMHTMLFrameElement;
+       
+            if (isLegacyFrame
+                ? this.forbidFrames || // we shouldn't allow framesets nested inside iframes, because they're just as bad
+                                       this.forbidIFrames &&
+                                       (aContext.ownerDocument.defaultView.frameElement instanceof CI.nsIDOMHTMLIFrameElement) &&
+                                       this.getPref("forbidMixedFrames", true)
+                : this.forbidIFrames || // we use iframes to make placeholders for blocked legacy frames...
+                                       this.forbidFrames &&
+                                       this.isLegacyFrameReplacement(aContext)
+               ) {
+                try {
+                  contentDocument = aContext.contentDocument;
+                } catch(e) {}
+             
+                blockThisFrame = (aInternalCall === CP_FRAMECHECK) && !(
+                        this.knownFrames.isKnown(locationURL, originSite = this.getSite(originURL)) ||
+                      /^(?:chrome|resource|wyciwyg):/.test(locationURL) ||
+                      locationURL == this._silverlightInstalledHack ||
+                      locationURL == this.compatGNotes ||
+                      (
+                        originURL
+                          ? ( /^(?:chrome|about|resource):/.test(originURL) && originURL !== "about:blank" || 
+                             /^(?:data|javascript):/.test(locationURL) &&
+                              (contentDocument && (originURL == contentDocument.URL
+                                                    || /^(?:data:|javascript:|about:blank$)/.test(contentDocument.URL)
+                              ) || this.isFirebugJSURL(locationURL)
+                             )
+                            )
+                          : contentDocument && 
+                            this.getSite(contentDocument.URL) == (locationSite = this.getSite(locationURL))
+                       )
+                  ) && this.forbiddenIFrameContext(originURL || (originURL = aContext.ownerDocument.URL), locationURL);
+            }
+          } 
         case 6:
           
           if (aRequestOrigin && aRequestOrigin != aContentLocation) {
@@ -367,6 +368,7 @@ const MainContentPolicy = {
           
           if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) ||
                 !blockThisFrame && (
+                  aContext instanceof CI.nsIDOMXULElement ||
                   !aMimeTypeGuess 
                   || aMimeTypeGuess.substring(0, 5) == "text/"
                   || aMimeTypeGuess == "application/xml" 

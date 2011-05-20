@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Запретить отображение элементов &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Запретить отображение элементов &lt;FRAMES&gt;">
 <!ENTITY noscriptForbidFonts "Запретить @font-face">
+<!ENTITY noscriptForbidWebGL "Запретить WebGL">
 <!ENTITY noscriptForbidMedia "Запретить &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Запретить отображение элементов Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Запретить отображение элементов других плагинов">

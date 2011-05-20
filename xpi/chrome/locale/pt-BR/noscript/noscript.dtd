@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Proibir &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Proibir &lt;FRAMES&gt;">
 <!ENTITY noscriptForbidFonts "Proibir @font-face">
+<!ENTITY noscriptForbidWebGL "Proibir WebGL">
 <!ENTITY noscriptForbidMedia "Proibir &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Proibir Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Proibir outros plugins">

@@ -132,6 +132,9 @@
 			<separator class="thin" />
       <checkbox id="opt-contentBlocker" label="&noscriptContentBlocker;" class="header" />
 			<checkbox id="opt-alwaysBlockUntrustedContent" label="&noscriptAlwaysBlockUntrustedContent;" />
+			
+			<separator class="thin" />
+			<checkbox id="opt-forbidWebGL" label="&noscriptForbidWebGL;" />
       <separator class="thin" />
 			<checkbox id="opt-showPlaceholder" label="&noscriptShowPlaceholder;" />
 			<checkbox id="invopt-showUntrustedPlaceholder" label="&noscriptNoUntrustedPlaceholder;" />

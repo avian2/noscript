@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "ไม่อนุญาต &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "ไม่อนุญาต &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "ไม่อนุญาต @font-face">
+<!ENTITY noscriptForbidWebGL "ไม่อนุญาต WebGL">
 <!ENTITY noscriptForbidMedia "ไม่อนุญาต &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "ไม่อนุญาต Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "ไม่อนุญาตตัวเสริมอื่น">

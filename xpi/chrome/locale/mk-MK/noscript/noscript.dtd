@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Оневозможи &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Оневозможи &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Оневозможи @font-face">
+<!ENTITY noscriptForbidWebGL "Оневозможи WebGL">
 <!ENTITY noscriptForbidMedia "Оневозможи &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Оневозможи Макромедија Флеш (Macromedia® Flash®)">
 <!ENTITY noscriptForbidPlugins "Оневозможи ги другите додатоци">

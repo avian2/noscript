@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Malpermesi 〈IFRAME〉">
 <!ENTITY noscriptForbidFrames "Malpermesi 〈FRAME〉">
 <!ENTITY noscriptForbidFonts "Malpermesi @font-face">
+<!ENTITY noscriptForbidWebGL "Malpermesi WebGL">
 <!ENTITY noscriptForbidMedia "Malpermesi 〈AUDIO〉 / 〈VIDEO〉">
 <!ENTITY noscriptForbidFlash "Malpermesi Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Malpermesi aliajn kromaĵojn">

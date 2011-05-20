@@ -301,7 +301,7 @@ RequestWatchdog.prototype = {
     return url instanceof CI.nsIURL &&
       this.getHomes().some(function(urlSpec) {
         try {
-          return !url.getRelativeSpec(IOS.newURI(urlSpec, null, null));
+          return !url.getRelativeSpec(IOUtil.newURI(urlSpec));
         } catch(e) {}
         return false;
       });
@@ -1628,20 +1628,19 @@ var InjectionChecker = {
   },
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
-   fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|iframe|frame|base|body|meta|ima?ge?|video|audio|bindings") + 
-    ")[^>\\w])|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\b(?:formaction|" + IC_EVENT_PATTERN +
-     ")[\\s\\x08]*=|<\\W*(?:a|map)\\b[\\s\\S]+\\bstyle\\W*=", 
+   fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings") + 
+    ")[^>\\w])|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\b(?:formaction|style|background|href|src|lowsrc|ping|" + IC_EVENT_PATTERN +
+     ")[\\s\\x08]*=", 
     "i"),
   checkHTML: function(s) {
     this.log(s);
     return this.HTMLChecker.test(s);
   },
   
-  NoscriptChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" +
-    fuzzify("style|form|svg|(?:link|object|embed|applet|param|iframe|frame|meta|video|audio|base") +
-      ")[^>])|(?:<[^>]+|'[^>']*|\"[^>\"]*|\\s+)\\bformaction[\\s\\x08]*=",
-    "i"
-    ),
+  get NoscriptChecker() {
+    delete this.NoscriptChecker;
+    return this.NoscriptChecker = new RegExp(this.HTMLChecker.source.replace('|' + IC_EVENT_PATTERN, ''), 'i')
+  },
   checkNoscript: function(s) {
     this.log(s);
     return this.NoscriptChecker.test(s) || this.checkSQLI(s);
@@ -2183,7 +2182,7 @@ XSanitizer.prototype = {
           if (canRecur && /^https?:\/\//i.test(pz)) {
             // try to sanitize as a nested URL
             try {
-              nestedURI = IOS.newURI(pz, null, null).QueryInterface(CI.nsIURL);
+              nestedURI = IOUtil.newURI(pz).QueryInterface(CI.nsIURL);
               changes.qs = changes.qs || this.sanitizeURL(nestedURI).major;
               if (unescape(pz).replace(/\/+$/, '') != unescape(nestedURI.spec).replace(/\/+$/, '')) pz = nestedURI.spec;
             } catch(e) {

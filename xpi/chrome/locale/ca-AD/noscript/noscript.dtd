@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Prohibeix el &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Prohibeix el &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Prohibeix el @font-face">
+<!ENTITY noscriptForbidWebGL "Prohibeix el WebGL">
 <!ENTITY noscriptForbidMedia "Prohibeix el &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Prohibeix el Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Prohibeix d&apos;altres connectors">

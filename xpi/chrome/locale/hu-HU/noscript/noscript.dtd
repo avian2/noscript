@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Az &lt;IFRAME&gt; tiltása">
 <!ENTITY noscriptForbidFrames "A &lt;FRAME&gt; tiltása">
 <!ENTITY noscriptForbidFonts "A @font-face letiltása">
+<!ENTITY noscriptForbidWebGL "A WebGL letiltása">
 <!ENTITY noscriptForbidMedia "Az &lt;AUDIO&gt; / &lt;VIDEO&gt; letiltása">
 <!ENTITY noscriptForbidFlash "Az Adobe® Flash® tiltása">
 <!ENTITY noscriptForbidPlugins "Egyéb beépülő modulok tiltása">

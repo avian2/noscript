@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Cấm &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Cấm &lt;FRAMES&gt;">
 <!ENTITY noscriptForbidFonts "Cấm @font-face">
+<!ENTITY noscriptForbidWebGL "Cấm WebGL">
 <!ENTITY noscriptForbidMedia "Cấm &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Cấm Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Cấm các plugins khác">

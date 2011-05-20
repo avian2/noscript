@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Halang &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Halang &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Halang @font-face">
+<!ENTITY noscriptForbidWebGL "Halang WebGL">
 <!ENTITY noscriptForbidMedia "Halang &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Halang Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Halang plugin lain">

@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Забрани &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Забрани @font-face">
+<!ENTITY noscriptForbidWebGL "Забрани WebGL">
 <!ENTITY noscriptForbidMedia "Забрани &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Забрани Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Забрани остале додатке">

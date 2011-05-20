@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Zakázat &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Zakázat &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Zakázat @font-face">
+<!ENTITY noscriptForbidWebGL "Zakázat WebGL">
 <!ENTITY noscriptForbidMedia "Zakázat &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Zakázat Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">

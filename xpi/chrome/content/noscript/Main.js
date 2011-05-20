@@ -246,6 +246,7 @@ var ns = singleton = {
   forbidPlugins: true,
   forbidMedia: true,
   forbidFonts: true,
+  forbidWebGL: false,
   forbidIFrames: false, 
   forbidIFramesContext: 2, // 0 = all iframes, 1 = different site, 2 = different domain, 3 = different base domain
   forbidFrames: false,
@@ -356,6 +357,7 @@ var ns = singleton = {
       case "forbidPlugins":
       case "forbidMedia":
       case "forbidFonts":
+      case "forbidWebGL":
       case "forbidIFrames":
       case "forbidFrames":
         this[name]=this.getPref(name, this[name]);
@@ -723,7 +725,7 @@ var ns = singleton = {
       "filterXPost", "filterXGet", 
       "filterXGetRx", "filterXGetUserRx", 
       "filterXExceptions",
-      "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts",
+      "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts", "forbidWebGL",
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
       "forbidMetaRefresh",
       "forbidXBL", "forbidXHR",
@@ -1224,7 +1226,7 @@ var ns = singleton = {
   
   getDomain: function(site, force) {
     try {
-      const url = (site instanceof CI.nsIURL) ? site : IOS.newURI(site, null, null);
+      const url = (site instanceof CI.nsIURL) ? site : IOUtil.newURI(site);
       const host = url.host;
       return force || (this.ignorePorts || url.port === -1) && host[host.length - 1] != "." && 
             (host.lastIndexOf(".") > 0 || host == "localhost") ? host : '';
@@ -1501,7 +1503,20 @@ var ns = singleton = {
   },
   
   
-  reloadAllowedObjects: function(browser) {
+  reloadAllowedObjects: function(browser, mime) {
+    if (mime === "WebGL") {
+      let curURL = browser.currentURI.spec;
+      let site = this.getSite(curURL);
+      if (site in this._webGLSites) {
+        let url = this._webGLSites[site];
+        delete this._webGLSites[site];
+        if (url !== curURL) {
+          browser.webNavigation.loadURI(url, CI.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
+          return;
+        }
+      }
+    }
+    
     if (this.getPref("autoReload.onMultiContent", false)) {
       this.quickReload(browser.webNavigation);
       return;
@@ -1939,7 +1954,7 @@ var ns = singleton = {
   
   getAllowObjectMessage: function(extras) {
     let url = SiteUtils.crop(extras.url);
-    let details= extras.mime + " " + (extras.tag || "<OBJECT>") + " / " + extras.originSite; 
+    let details = extras.mime + " " + (extras.tag || (extras.mime === "WebGL" ? "<CANVAS>" : "<OBJECT>")) + " / " + extras.originSite; 
     return this.getString("allowTemp", [url + "\n(" + details + ")\n"]);
   }
 ,
@@ -2205,7 +2220,7 @@ var ns = singleton = {
     try {
       var doc = embed.ownerDocument;
       if(!doc) {
-        if (embed instanceof CI.nsIDOMDocumentView) {
+        if (embed instanceof CI.nsIDOMDocument) {
           pluginExtras.document = (doc = embed);
           pluginExtras.url = this.getSite(pluginExtras.url);
           this._collectPluginExtras(this.findPluginExtras(doc), pluginExtras);
@@ -3194,7 +3209,9 @@ var ns = singleton = {
         ? 'url("' + this.skinBase + "somelight" + size + '.png")'
         : /^font\b/i.test(mime)
           ? 'url("' + this.skinBase + 'font.png")'
-          : 'url("moz-icon://noscript?size=' + size + '&contentType=' + mime.replace(/[^\w-\/]/g, '') + '")';
+          : mime === 'WebGL'
+            ? 'url("' + this.skinBase + "webgl" + size + '.png")'
+            : 'url("moz-icon://noscript?size=' + size + '&contentType=' + mime.replace(/[^\w-\/]/g, '') + '")';
   },
   
   
@@ -3555,79 +3572,81 @@ var ns = singleton = {
   
   checkAndEnableObject: function(ctx) {
     var extras = ctx.extras;
-    if (this.confirmEnableObject(ctx.window, extras)) {
+    if (!this.confirmEnableObject(ctx.window, extras)) return;
+    
 
-      var mime = extras.mime;
-      var url = extras.url;
-      
-      this.allowObject(url, mime, extras.originSite);
-      var doc = ctx.anchor.ownerDocument;
-      
-      var isLegacyFrame = this.isLegacyFrameReplacement(ctx.object);
-       
-      if (isLegacyFrame || (mime == doc.contentType && 
-          (ctx.anchor == doc.body.firstChild && 
-           ctx.anchor == doc.body.lastChild ||
-           (ctx.object instanceof CI.nsIDOMHTMLEmbedElement) && ctx.object.src != url))
-        ) { // stand-alone plugin or frame
-          doc.body.removeChild(ctx.anchor); // TODO: add a throbber
-          if (isLegacyFrame) {
-            this.setExpando(doc.defaultView.frameElement, "allowed", true);
-            // doc.defaultView.frameElement.src = url;
-            doc.defaultView.location.replace(url);
-          } else this.quickReload(doc.defaultView, true);
-      } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime) || this.getExpando(ctx, "requiresReload")) {
-        this.quickReload(doc.defaultView);
-      } else if (this.getExpando(ctx, "silverlight")) {
-        this.allowObject(doc.documentURI, mime);
-        this.quickReload(doc.defaultView);
-      } else {
-        this.setExpando(ctx.anchor, "removedNode", null);
-        extras.allowed = true;
-        extras.placeholder = null;
-        this.delayExec(function() {
-          try {
-           
-            var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
-            var obj = ctx.object.cloneNode(true);
-            
-            function reload() {
-              ns.allowObjectById(obj.id, url, doc.documentURI, mime);
-              ns.quickReload(doc.defaultView);
-            }
-            
-            var isMedia = ("nsIDOMHTMLVideoElement" in CI) && (obj instanceof CI.nsIDOMHTMLVideoElement || obj instanceof CI.nsIDOMHTMLAudioElement);
-            
-            if (isMedia) {
-              if (jsEnabled && !obj.controls) {
-                // we must reload, since the author-provided UI likely had no chance to wire events
-                reload();
-                return;
-              }
-              obj.autoplay = true;
-            }
-            
-            if (ctx.anchor.parentNode) {
-              this.setExpando(obj, "allowed", true);
-              ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
-              var style = doc.defaultView.getComputedStyle(obj, '');
-              if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2))
-                Thread.delay(function() {
-                  if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
-                }, 500); // warning, asap() or timeout=0 won't always work!
-              ns.syncUI(doc);
-            } else {
-              reload();
-            }
-            
-          } finally {
-            ctx = null;
-          }
-        }, 10);
-        return;
-      }
+    var mime = extras.mime;
+    var url = extras.url;
+    
+    this.allowObject(url, mime, extras.originSite);
+    var doc = ctx.anchor.ownerDocument;
+    
+    var isLegacyFrame = this.isLegacyFrameReplacement(ctx.object);
+     
+    if (isLegacyFrame || (mime == doc.contentType && 
+        (ctx.anchor == doc.body.firstChild && 
+         ctx.anchor == doc.body.lastChild ||
+         (ctx.object instanceof CI.nsIDOMHTMLEmbedElement) && ctx.object.src != url))
+      ) { // stand-alone plugin or frame
+        doc.body.removeChild(ctx.anchor); // TODO: add a throbber
+        if (isLegacyFrame) {
+          this.setExpando(doc.defaultView.frameElement, "allowed", true);
+          // doc.defaultView.frameElement.src = url;
+          doc.defaultView.location.replace(url);
+        } else this.quickReload(doc.defaultView, true);
+    } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime) || this.getExpando(ctx, "requiresReload")) {
+      this.quickReload(doc.defaultView);
+    } else if (mime === "WebGL" || this.getExpando(ctx, "silverlight")) {
+      this.allowObject(doc.documentURI, mime);
+      if (mime === "WebGL") delete this._webGLSites[this.getSite(doc.documentURI)];
+      this.quickReload(doc.defaultView);
+      return;
     }
-    ctx = null;
+    
+    this.setExpando(ctx.anchor, "removedNode", null);
+    extras.allowed = true;
+    extras.placeholder = null;
+    this.delayExec(function() {
+      try {
+       
+        var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
+        var obj = ctx.object.cloneNode(true);
+        
+        function reload() {
+          ns.allowObjectById(obj.id, url, doc.documentURI, mime);
+          ns.quickReload(doc.defaultView);
+        }
+        
+        var isMedia = ("nsIDOMHTMLVideoElement" in CI) && (obj instanceof CI.nsIDOMHTMLVideoElement || obj instanceof CI.nsIDOMHTMLAudioElement);
+        
+        if (isMedia) {
+          if (jsEnabled && !obj.controls) {
+            // we must reload, since the author-provided UI likely had no chance to wire events
+            reload();
+            return;
+          }
+          obj.autoplay = true;
+        }
+        
+        if (ctx.anchor.parentNode) {
+          this.setExpando(obj, "allowed", true);
+          ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
+          var style = doc.defaultView.getComputedStyle(obj, '');
+          if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2))
+            Thread.delay(function() {
+              if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
+            }, 500); // warning, asap() or timeout=0 won't always work!
+          ns.syncUI(doc);
+        } else {
+          reload();
+        }
+        
+      } finally {
+        ctx = null;
+      }
+    }, 10);
+    return;
+    
   },
 
   getSites: function(browser) {
@@ -4667,7 +4686,7 @@ var ns = singleton = {
     
     if (jsBlocked) {
       if (this.getPref("fixLinks")) {
-        const newWin = doc.defaultView;
+        let newWin = doc.defaultView;
         newWin.addEventListener("click", this.bind(this.onContentClick), true);
         newWin.addEventListener("change", this.bind(this.onContentChange), true);
       }
@@ -4677,12 +4696,25 @@ var ns = singleton = {
         scripts = [this._toStaticHTMLDef];
         doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
       }
-      
-      if (this.contentBlocker && this.liveConnectInterception && this.forbidJava &&
-          !this.isAllowedObject(site, "application/x-java-vm", site)) {
-        (doc.defaultView.wrappedJSObject || doc.defaultView).disablePlugins = this._disablePlugins;
-        if (!scripts) scripts = [this._liveConnectInterceptionDef];
-        else scripts.push(this._liveConnectInterceptionDef);
+
+      if (this.forbidWebGL && !this.isAllowedObject(site, "WebGL", site, site)) {
+        (scripts || (scripts = [])).push(this._webGLInterceptionDef);
+        doc.addEventListener("NoScript:WebGL", this._webGLHandler, false, true);
+        let sites = this._webGLSites;
+        if (site in sites) {
+          this._webGLRecord(doc, site);/*
+          doc.defaultView.addEventListener("pagehide", function(ev) {
+            delete sites[site];
+          }, false);*/
+        }
+      }
+        
+      if (this.contentBlocker) {
+        if (this.liveConnectInterception && this.forbidJava &&
+            !this.isAllowedObject(site, "application/x-java-vm", site, site)) {
+          (doc.defaultView.wrappedJSObject || doc.defaultView).disablePlugins = this._disablePlugins;
+          (scripts || (scripts = [])).push(this._liveConnectInterceptionDef);
+        }  
       }
       
       try {
@@ -4758,6 +4790,48 @@ var ns = singleton = {
     ).toString();
   },
   
+  _webGLSites: {},
+  _webGLHandler: function(ev) {
+    ns._webGLRecord(ev.target, ns.getSite(ev.target.documentURI || ev.target.ownerDocument.documentURI), true);
+  },
+  _webGLRecord: function(ctx, site, fromDOM) {
+    this.tagForReplacement(ctx, {
+      url: site,
+      site: site,
+      originSite: site,
+      mime: "WebGL"            
+    });
+    if (fromDOM) {
+      let doc = ctx.ownerDocument || ctx;
+      let ds = DOM.getDocShellForWindow(doc.defaultView);
+      if (ds.isLoadingDocument) { // prevent fallback redirection from hiding us
+        let sites = this._webGLSites;
+        sites[site] = doc.documentURI;
+        doc.defaultView.addEventListener("load", function(ev) delete sites[site], false);
+      }
+    }
+    this.recordBlocked(site, site);
+  },
+  get _webGLInterceptionDef() {
+    delete this._webGLInterceptionDef;
+    return this._webGLInterceptionDef = "(" + (function() {
+      var proto = HTMLCanvasElement.prototype;
+      var getContext = proto.getContext;
+      proto.getContext = function(type) {
+        
+        if (type && type.toString().indexOf("webgl") !== -1) {
+          var ev = this.ownerDocument.createEvent("Events");
+          ev.initEvent("NoScript:WebGL", true, false);
+          (this.parentNode ? this : this.ownerDocument)
+            .dispatchEvent(ev);
+          return null;
+        }
+        return getContext.call(this, "2d");
+      }
+    }).toString()
+    + ")()";
+  },
+  
   liveConnectInterception: true,
   get _liveConnectInterceptionDef() {
     delete this._liveConnectInterceptionDef;
@@ -4787,7 +4861,7 @@ var ns = singleton = {
     }).toString()
     + ")()";
   },
-  
+
   _disablePlugins: function(b) {
     ns.plugins.disabled = b;
   },

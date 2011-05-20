@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Gwahardd &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Gwahardd &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Gwahardd @font-face">
+<!ENTITY noscriptForbidWebGL "Gwahardd WebGL">
 <!ENTITY noscriptForbidMedia "Gwahardd &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Gwahardd Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Gwahardd atodynnau eraill">

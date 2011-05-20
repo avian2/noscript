@@ -165,6 +165,7 @@
 <!ENTITY noscriptUninstall "アンインストール">
 <!ENTITY noscriptRecentBlocked "最近ブロックしたサイト">
 <!ENTITY noscriptForbidFonts "@font-face　の禁止">
+<!ENTITY noscriptForbidWebGL "WebGL　の禁止">
 <!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; の禁止">
 <!ENTITY noscriptNotifyMeta "ブロックしたメタリダイレクトについてメッセージを表示する">
 <!ENTITY noscriptNotifyMeta.accesskey "R">

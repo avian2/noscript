@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Tüm &lt;IFRAME&gt;'leri engelle">
 <!ENTITY noscriptForbidFrames "Tüm &lt;FRAME&gt;'leri engelle">
 <!ENTITY noscriptForbidFonts "Yazıtipi @font-face tanımını engelle">
+<!ENTITY noscriptForbidWebGL "Yazıtipi WebGL tanımını engelle">
 <!ENTITY noscriptForbidMedia "Engelle &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Adobe® Flash®'ı engelle">
 <!ENTITY noscriptForbidPlugins "Diğer eklentileri yasakla">

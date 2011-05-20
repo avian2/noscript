@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Забараніць адлюстраванне элементаў &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Забараніць адлюстраванне элементаў &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Забараніць адлюстраванне элементаў @font-face">
+<!ENTITY noscriptForbidWebGL "Забараніць адлюстраванне элементаў WebGL">
 <!ENTITY noscriptForbidMedia "Забараніць адлюстраванне элементаў &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Забараніць адлюстраванне элементаў Macromedia® Flash®">
 <!ENTITY noscriptForbidPlugins "Забараніць адлюстраванне элементаў іншых убудоваў">

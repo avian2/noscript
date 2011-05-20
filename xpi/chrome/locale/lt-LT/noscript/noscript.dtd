@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Uždrausti &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Uždrausti &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Uždrausti @font-face">
+<!ENTITY noscriptForbidWebGL "Uždrausti WebGL">
 <!ENTITY noscriptForbidMedia "Uždrausti &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Uždrausti Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Uždrausti kitus įskiepius">

@@ -1147,7 +1147,7 @@ return noscriptUtil.service ? {
   },
   allowObjectURL: function(url, mime, originSite) {
     this.ns.allowObject(url, mime, originSite);
-    this.ns.reloadAllowedObjects(this.currentBrowser);
+    this.ns.reloadAllowedObjects(this.currentBrowser, mime);
   },
   
   normalizeMenu: function(menu, hideParentIfEmpty) {

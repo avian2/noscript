@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Απαγόρευση εκτέλεσης &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Απαγόρευση εκτέλεσης &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Να απαγορεύεται το @font-face">
+<!ENTITY noscriptForbidWebGL "Να απαγορεύεται το WebGL">
 <!ENTITY noscriptForbidMedia "Να απαγορεύονται τα &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Απαγόρευση εκτέλεσης Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Απαγόρευση εκτέλεσης άλλων πρόσθετων λειτουργιών">

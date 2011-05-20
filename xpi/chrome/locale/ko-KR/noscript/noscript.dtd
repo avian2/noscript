@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; 금지">
 <!ENTITY noscriptForbidFrames "&lt;FRAME&gt; 금지">
 <!ENTITY noscriptForbidFonts "@font-face 금지">
+<!ENTITY noscriptForbidWebGL "WebGL 금지">
 <!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; 금지">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® 금지">
 <!ENTITY noscriptForbidPlugins "다른 플러그인 금지">

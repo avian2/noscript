@@ -164,6 +164,7 @@
 <!ENTITY ABE.refresh.accesskey "B">
 <!ENTITY noscriptUninstall "Desinstalatu">
 <!ENTITY noscriptForbidFonts "Forbid @font-face">
+<!ENTITY noscriptForbidWebGL "Forbid WebGL">
 <!ENTITY noscriptForbidMedia "Forbid &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">

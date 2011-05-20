@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Zakázať &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Zakázať &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Zakázať @font-face">
+<!ENTITY noscriptForbidWebGL "Zakázať WebGL">
 <!ENTITY noscriptForbidMedia "Zakázať &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Zakázať Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Zakázať ostatné zásuvné moduly">

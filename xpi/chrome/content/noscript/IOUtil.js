@@ -150,11 +150,24 @@ const IOUtil = {
   writeFile: IO.writeFile,
   safeWriteFIle: IO.safeWriteFile,
   
-  unwrapURL: function(url) {
-    
+  _protocols: {}, // caching them we gain a 33% speed boost in URI creation :)
+  newURI: function(url) {
+    try {
+      let scheme =  url.substring(0, url.indexOf(':'));
+      return (this._protocols[scheme] || 
+        (this._protocols[scheme] =
+          CC["@mozilla.org/network/protocol;1?name=" + scheme]
+          .getService(CI.nsIProtocolHandler)))
+        .newURI(url, null, null);
+    } catch(e) {
+      return IOS.newURI(url, null, null);
+    }
+  },
+  
+  unwrapURL: function(url) {  
     try {
       if (!(url instanceof CI.nsIURI))
-        url = IOS.newURI(url, null, null);
+        url = this.newURI(url, null, null);
       
       switch (url.scheme) {
         case "view-source":

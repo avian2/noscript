@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Onemogoči &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Onemogoči &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Onemogoči @font-face">
+<!ENTITY noscriptForbidWebGL "Onemogoči WebGL">
 <!ENTITY noscriptForbidMedia "Onemogoči &lt;ZVOK&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Onemogoči Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Onemogoči druge vtičnike">

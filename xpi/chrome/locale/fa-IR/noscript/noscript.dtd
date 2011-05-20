@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "ممنوع کردن &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "ممنوع کردن &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "ممنوع کردن @font-face">
+<!ENTITY noscriptForbidWebGL "ممنوع کردن WebGL">
 <!ENTITY noscriptForbidMedia "ممنوع کردن &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "ممنوع کردن Adobe Flash">
 <!ENTITY noscriptForbidPlugins "ممنوع کردن سایر پلاگین ها">

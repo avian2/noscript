@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; тыйым салу">
 <!ENTITY noscriptForbidFrames "&lt;FRAME&gt; тыйым салу">
 <!ENTITY noscriptForbidFonts "@font-face тыйым салу">
+<!ENTITY noscriptForbidWebGL "WebGL тыйым салу">
 <!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; тыйым салу">
 <!ENTITY noscriptForbidFlash "Adobe® Flash® тыйым салу">
 <!ENTITY noscriptForbidPlugins "Басқа плагиндерге тыйым салу">

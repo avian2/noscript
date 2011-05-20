@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Blokuj aplety &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Blokuj aplety &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Blokuj aplety @font-face">
+<!ENTITY noscriptForbidWebGL "Blokuj aplety WebGL">
 <!ENTITY noscriptForbidMedia "Blokuj aplety &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Blokuj animacje Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Blokuj inne wtyczki">
