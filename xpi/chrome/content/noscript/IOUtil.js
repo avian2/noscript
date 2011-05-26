@@ -467,7 +467,7 @@ ChannelReplacement.prototype = {
     : null;
   },
   
-  replace: function(isRedir, callback) {
+  replace: function(isRedir, callback, forceAbort) {
     let self = this;
     let oldChan = this.oldChannel;
     this.isRedir = !!isRedir;
@@ -488,7 +488,7 @@ ChannelReplacement.prototype = {
       self.loadGroup = oldChan.loadGroup;
       oldChan.loadGroup = null; // prevents the wheel from stopping spinning
       // this calls asyncAbort, which calls onStartRequest on our listener
-      oldChan.cancel(NS_BINDING_REDIRECTED); 
+      oldChan.cancel(NS_BINDING_ABORTED); 
     });
   },
   
