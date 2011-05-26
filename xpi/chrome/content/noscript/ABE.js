@@ -255,7 +255,7 @@ const ABE = {
         ) 
       return false;
 
-    IOUtil.attachToChannel(req.channel, "ABE.deferred", DUMMYOBJ);
+    IOUtil.attachToChannel(req.channel, "ABE.deferred", DUMMY_OBJ);
     
     if (IOUtil.runWhenPending(req.channel, function() {
       try {
@@ -344,7 +344,7 @@ const ABE = {
       xhr.open("GET", uri.spec, Thread.canSpin); // async if we can spin our own event loop
       
       var channel = xhr.channel; // need to cast
-      IOUtil.attachToChannel(channel, "ABE.preflight", DUMMYOBJ);
+      IOUtil.attachToChannel(channel, "ABE.preflight", DUMMY_OBJ);
       
       if (channel instanceof CI.nsIHttpChannel && !this.allowRulesetRedir)
         channel.redirectionLimit = 0;
@@ -431,7 +431,7 @@ const ABE = {
     return IOUtil.extractFromChannel(channel, ABE.SANDBOX_KEY, true);
   },
   setSandboxed: function(channel) {
-    IOUtil.attachToChannel(channel, ABE.SANDBOX_KEY, DUMMYOBJ);
+    IOUtil.attachToChannel(channel, ABE.SANDBOX_KEY, DUMMY_OBJ);
   },
   sandbox: function(docShell) {
     docShell.allowJavascript = docShell.allowPlugins =
@@ -479,7 +479,7 @@ const ABE = {
       throw new Error(msg);
     }
     
-    IOUtil.attachToChannel(oldChannel, "ABE.preflight", DUMMYOBJ);
+    IOUtil.attachToChannel(oldChannel, "ABE.preflight", DUMMY_OBJ);
   },
   
   

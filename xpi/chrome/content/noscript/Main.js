@@ -34,11 +34,14 @@ const WHERE_UNTRUSTED = 1;
 const WHERE_TRUSTED = 2;
 const ANYWHERE = 3;
 
-const DUMMYOBJ = {};
-DUMMYOBJ.wrappedJSObject = DUMMYOBJ;
+const DUMMY_OBJ = {};
+DUMMY_OBJ.wrappedJSObject = DUMMY_OBJ;
 
-const DUMMYFUNC = function() {}
+const DUMMY_FUNC = function() {}
 const EARLY_VERSION_CHECK = !("nsISessionStore" in CI && typeof(/ /) === "object");
+
+const DUMMY_ARRAY = [];
+
 
 INCLUDE("Sites", "AddressMatcher", "IOUtil", "Policy", "Thread");
 LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler", "STS");
@@ -119,12 +122,12 @@ var ns = singleton = {
           if (data == "enter") {
             STS.enterPrivateBrowsing();
             if (!("_realDump_" in this)) this._realDump_ = this.dump;
-            this.dump = DUMMYFUNC;
+            this.dump = DUMMY_FUNC;
           }
           if (data == "exit") {
             this.eraseTemp();
             STS.exitPrivateBrowsing();
-            this.dump = this._realDump_ || DUMMYFUNC;
+            this.dump = this._realDump_ || DUMMY_FUNC;
           }
         // break; 
         case "browser:purge-session-history":
@@ -3031,30 +3034,29 @@ var ns = singleton = {
     if (this.mozJSEnabled && !this.jsEnabled) {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
     
-      var docShell = DOM.getDocShellForWindow(window);
+      let docShell = DOM.getDocShellForWindow(window);
     
-      var snapshots = {
+      let snapshots = {
         docJS: docShell.allowJavascript,
         siteJS: this.isJSEnabled(site)
       };
     
-      var doc = window.document;
+      let doc = window.document;
       
-      let blurListener = null, focusListener = null;
+      let focusListener = null;
       
       try {
 
         docShell.allowJavascript = true;
-        if (!(this.jsEnabled = ns.getPref(fromURLBar ? "allowURLBarImports" : "allowBookmarkletImports"))) {
+        if (!(this.jsEnabled = doc.documentURI === "about:blank" || ns.getPref(fromURLBar ? "allowURLBarImports" : "allowBookmarkletImports"))) {
           if (!snapshots.siteJS) 
             this.setJSEnabled(site, true);
         } else {
-          window.addEventListener("blur", blurListener = function() {
-            ns.jsEnabled = false;
-            if (!focusListener) window.addEventListener("focus", focusListener = function() {
-              ns.jsEnabled = true;
-            }, true);
-          }, true);
+          focusListener = function(ev) {
+            ns.jsEnabled = DOM.mostRecentBrowserWindow.content == window;
+          };
+          for each(let et in ["focus", "blur"])
+            browserWindow.addEventListener(et, focusListener, true);
         }
         
         if (Thread.canSpin) { // async evaluation, after bug 351633 landing
@@ -3095,11 +3097,15 @@ var ns = singleton = {
           }
           
           this.executingJSURL(doc, 0);
-          if (focusListener) window.removeEventListener("focus", focusListener, true);
+          
+          if (focusListener)
+            for each(let et in ["focus", "blur"])
+              browserWindow.removeEventListener(et, focusListener, true);
+          
           if (this.jsEnabled) {
             this.jsEnabled = false;
           }
-          if (blurListener) window.removeEventListener("blur", blurListener, true);
+          if (blurListener) browserWindow.removeEventListener("blur", blurListener, true);
           
           if (!snapshots.siteJS)
               this.setJSEnabled(site, false);
@@ -3181,7 +3187,7 @@ var ns = singleton = {
     return IOUtil.extractFromChannel(c, "noscript.checkedChannel", true);
   },
   setCheckedChannel: function(c, v) {
-    IOUtil.attachToChannel(c, "noscript.checkedChannel", v ? DUMMYOBJ : null);
+    IOUtil.attachToChannel(c, "noscript.checkedChannel", v ? DUMMY_OBJ : null);
   },
   
   createCheckedXHR: function(method, url, async) {
@@ -3436,14 +3442,14 @@ var ns = singleton = {
     delete this._objectPatch;
     return this._objectPatch = "(" + function() {
       const els = document.getElementsByClassName("__noscriptObjectPatchMe__");
-      const DUMMYFUNC = function() {};
+      const DUMMY_FUNC = function() {};
       var el;
       for (var j = els.length; j-- > 0;) {
         el = els[j];
         el.setAttribute("class",
           el.getAttribute("class").replace(/\b__noscriptObjectPatchMe__\b/, '').replace(/\s+/, ' ')
         );
-        el.__noSuchMethod__ = DUMMYFUNC;
+        el.__noSuchMethod__ = DUMMY_FUNC;
       }
     }.toSource() + ")()";
   },
@@ -3452,7 +3458,7 @@ var ns = singleton = {
     delete this.patchObjects;
     return (this.patchObjects = ("getElementsByClassName" in document)
       ? function(document) { ScriptSurrogate.executeDOM(document, this._objectPatch); }
-      : DUMMYFUNC).call(this, document);
+      : DUMMY_FUNC).call(this, document);
   },
   
   createPlaceholders: function(replacements, pluginExtras, document) {
@@ -3698,7 +3704,7 @@ var ns = singleton = {
         this._pendingType = v;
         
        
-        this.SetVariable = function() {}; // can't use DUMMYFUNC, we're in content context
+        this.SetVariable = function() {}; // can't use DUMMY_FUNC, we're in content context
         this.GetVariable = function(n) {
           if (n !== "$version") return undefined;
           
@@ -4043,7 +4049,7 @@ var ns = singleton = {
   },
   
   // nsIWebProgressListener implementation
-  onLinkIconAvailable: DUMMYFUNC, // tabbrowser.xml bug?
+  onLinkIconAvailable: DUMMY_FUNC, // tabbrowser.xml bug?
   onStateChange: function(wp, req, stateFlags, status) {
     var ph;
     
@@ -4153,8 +4159,8 @@ var ns = singleton = {
       } catch (e) {}
     }
   },
-  onSecurityChange: DUMMYFUNC, 
-  onProgressChange: DUMMYFUNC,
+  onSecurityChange: DUMMY_FUNC, 
+  onProgressChange: DUMMY_FUNC,
   onRefreshAttempted: function(wp, uri, delay, sameURI) {
     if (delay == 0 && !sameURI)
       return true; // poor man's redirection
@@ -4215,7 +4221,7 @@ var ns = singleton = {
   }
   ,
   
-  cleanupRequest: DUMMYFUNC,
+  cleanupRequest: DUMMY_FUNC,
   
   get _inclusionTypeInternalExceptions() {
     delete this._inclusionTypeInternalExceptions;

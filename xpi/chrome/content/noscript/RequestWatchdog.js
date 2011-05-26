@@ -1629,7 +1629,7 @@ var InjectionChecker = {
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings") + 
-    ")[^>\\w])|[<'\"\\s](?:.*/)?(?:formaction|style|background|href|src|lowsrc|ping|" + IC_EVENT_PATTERN +
+    ")[^>\\w])|[<'\"][\\s\\S]*(?:formaction|style|background|href|src|lowsrc|ping|" + IC_EVENT_PATTERN +
      ")[\\s\\x08]*=", 
     "i"),
   checkHTML: function(s) {
@@ -1749,9 +1749,11 @@ var InjectionChecker = {
     this.base64 = false;
     this.base64tested = [];
     
-    if (ASPIdiocy.affects(s) && this.checkRecursive(ASPIdiocy.filter(s), depth, isPost)) {
+    if (ASPIdiocy.affects(s)) {
+      if (this.checkRecursive(ASPIdiocy.filter(s), depth, isPost))
+        return true;
+    } else if (ASPIdiocy.hasBadPercents(s) && this.checkRecursive(ASPIdiocy.removeBadPercents(s), depth, isPost))
       return true;
-    }
 
     if (this.isPost) {
       s = this.formUnescape(s);
@@ -2424,12 +2426,13 @@ var MaxRunTime = {
 var ASPIdiocy = {
   _replaceRx: /%u([0-9a-fA-F]{4})/g,
   _affectsRx: /%u[0-9a-fA-F]{4}/,
-  affects: function(s) {
-    return this._affectsRx.test(s);
-  },
-  filter: function(s) {
-    return s.replace(this._replaceRx, this._replace);
-  },
+  _badPercentRx: /%(?!u[0-9a-fA-F]{4}|[0-9a-fA-F]{2})|%(?:00|u0000)[^&=]*/g,
+  
+  hasBadPercents: function(s) this._badPercentRx.test(s),
+  removeBadPercents: function(s) s.replace(this._badPercentRx, ''),
+  affects: function(s) this._affectsRx.test(s),
+  filter: function(s) this.removeBadPercents(s).replace(this._replaceRx, this._replace),
+  
   _replace: function(match, hex) {
      // lazy init
      INCLUDE("ASPIdiocy");

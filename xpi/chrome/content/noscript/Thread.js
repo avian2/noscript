@@ -92,7 +92,7 @@ var Thread = {
     this._timers.push(timer);
     timer.initWithCallback({
       notify: this._delayRunner,
-      context: { callback: callback, args: args || [], self: self || null }
+      context: { callback: callback, args: args || DUMMY_ARRAY, self: self || null }
     }, time || 1, 0);
   },
   
@@ -100,7 +100,7 @@ var Thread = {
     if (this.canSpin) {
       this.current.dispatch({
         run: function() {
-          callback.apply(self, args || []);
+          callback.apply(self, args || DUMMY_ARRAY);
         }
       }, CI.nsIEventTarget.DISPATCH_NORMAL);
     } else {
@@ -118,7 +118,7 @@ var Thread = {
     this.activeQueues++;
     thread.pushEventQueue(null);
     this.asap(function() {
-      callback.apply(self, args || []);
+      callback.apply(self, args || DUMMY_ARRAY);
       thread.popEventQueue();
       Thread.activeQueues--;
     }, self, args);

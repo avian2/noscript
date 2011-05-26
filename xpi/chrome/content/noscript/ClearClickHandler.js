@@ -14,16 +14,10 @@ ClearClickHandler.prototype = {
   install: function(browser) {
     var ceh = browser.docShell.chromeEventHandler;
     var l = this._listener;
-    for each(var et in this.uiEvents) ceh.addEventListener(et, this._listener, true);
+    for each(var et in this.uiEvents) ceh.addEventListener(et, this, true);
   },
   
   exceptions: null,
-  
-  get _listener() {
-    var self = this;
-    var l = function(ev) { self.handle(ev); };
-    this.__defineGetter__("_listener", function() { return l; });
-  },
   
   sameSiteParents: function(w) {
     const ns = this.ns;
@@ -192,7 +186,7 @@ ClearClickHandler.prototype = {
     return o.tagName + "/" + (o.tabIndex || 0);
   },
   
-  handle: function(ev) {
+  handleEvent: function(ev) {
 
     const o = ev.target;
     const d = o.ownerDocument;
@@ -451,10 +445,6 @@ ClearClickHandler.prototype = {
           frameStyle = w.parent.getComputedStyle(frame, '');
         }     
         
-        if (curtain && frame) {
-          dElem.appendChild(curtain);
-        }
-        
         var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), sd.w ? 0 : Math.min(this.minWidth, dElem.offsetWidth), 8);
         var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), sd.h ? 0 : Math.min(this.minHeight, dElem.offsetHeight, 8));
   
@@ -615,14 +605,18 @@ ClearClickHandler.prototype = {
         this._constrain(box, "y", "height", maxHeight, vp, ctx.y);
         // print(box.toSource());     
         
+        
+         
         c.width = box.width;
         c.height = box.height;
-        
+         
         
         if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
-        
-        
-        
+          
+        if (curtain && frame) {
+          dElem.appendChild(curtain);
+        }
+
         img1 = snapshot(w, box.x, box.y);
       
       } finally {
@@ -1112,7 +1106,7 @@ DocPatcher.prototype = {
             }
           } catch(e) {}
         }
-      : DUMMYFUNC
+      : DUMMY_FUNC
      )(toggle); 
   }
 };

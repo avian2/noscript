@@ -26,12 +26,14 @@ var noscriptBM = {
     var jsrx = /^\s*(?:data|javascript):/i;
     var isJS = jsrx.test(shortcut);
     var ns = noscriptUtil.service;
-    var allowJS = ns.getPref("allowURLBarJS", true);
+    
     
     if (isJS) {
-      if (allowJS) {
+      let allowJS = ns.getPref("allowURLBarJS", true);
+      let isShortcut = ("originalShortcut" in gURLBar) && gURLBar.originalShortcut !== shortcut;
+      if (allowJS || isShortcut) {
         window.setTimeout(function() { // if we don't defer, errors are not logged in the console...
-          if (!ns.executeJSURL(shortcut, callback, true))
+          if (!ns.executeJSURL(shortcut, callback, !isShortcut))
             callback();
         }, 0);
       } else {
@@ -89,6 +91,13 @@ var noscriptBM = {
       } else { // Fx >= 3.5
         noscriptBM.handleURLBarCommandOriginal = window.loadURI;
         window.loadURI = noscriptBM.loadURI;
+        let getShortcutOrURIOriginal = getShortcutOrURI;
+        getShortcutOrURI = function(aURL, aPostDataRef) {
+          if ("gURLBar" in window && window.gURLBar) {
+            window.gURLBar.originalShortcut = aURL;
+          }
+          return getShortcutOrURIOriginal(aURL, aPostDataRef);
+        }
       }
     }
     
