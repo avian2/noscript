@@ -616,7 +616,7 @@ var ns = singleton = {
   updateStyleSheet: function(sheet, enabled) {
     const sss = this.sss;
     if (!sss) return;
-    const uri = IOS.newURI("data:text/css;charset=utf8," + sheet, null, null);
+    const uri = IOS.newURI("data:text/css;charset=utf8," + encodeURIComponent(sheet), null, null);
     if (sss.sheetRegistered(uri, sss.USER_SHEET)) {
       if (!enabled) sss.unregisterSheet(uri, sss.USER_SHEET);
     } else {
@@ -3102,10 +3102,8 @@ var ns = singleton = {
             for each(let et in ["focus", "blur"])
               browserWindow.removeEventListener(et, focusListener, true);
           
-          if (this.jsEnabled) {
+          if (this.jsEnabled)
             this.jsEnabled = false;
-          }
-          if (blurListener) browserWindow.removeEventListener("blur", blurListener, true);
           
           if (!snapshots.siteJS)
               this.setJSEnabled(site, false);
@@ -4771,12 +4769,19 @@ var ns = singleton = {
       var s = t.getAttribute("data-source");
       t.appendChild(ns.unescapeHTML.parseFragment(s, false, null, t));
       // remove attributes from forms
-      var f, a;
-      for each (f in Array.slice(t.getElementsByTagName("form"))) {
-        for each(a in Array.slice(f.attributes)) {
+      for each (let f in Array.slice(t.getElementsByTagName("form"))) {
+        for each(let a in Array.slice(f.attributes)) {
           f.removeAttribute(a.name);
         }
       }
+      
+      let res = doc.evaluate('//@href', t, null, CI.nsIDOMXPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+      for (let j = res.snapshotLength; j-- > 0;) {
+        let attr = res.snapshotItem(j);
+        if (InjectionChecker.checkURL(attr.nodeValue))
+          attr.nodeValue = "#";
+      }
+      
     } catch(e){ if (ns.consoleDump) ns.dump(e) }
   },
   get _toStaticHTMLDef() {
@@ -5211,6 +5216,9 @@ var ns = singleton = {
       try {
         window.BrowserToolboxCustomizeDone(true);
       } catch (e) {}
+      try {
+        window.noscriptOverlay.initPopups();
+      } catch(e) {}
       return true;
     } catch(e) {
       this.dump(e);

@@ -79,7 +79,7 @@ return noscriptUtil.service ? {
   
   onUIOver: function(ev) {
     let parent = ev.currentTarget;
-    let popup = parent.firstChild || !this.installPopups() && parent.firstChild;
+    let popup = parent.firstChild || !this.initPopups() && parent.firstChild;
     
     if (!(popup && popup.openPopup) ||
         ("_hovering" in popup) && popup._hovering ||
@@ -186,7 +186,7 @@ return noscriptUtil.service ? {
       return;
     }
     
-    let popup = tb.firstChild || !this.installPopups() && tb.firstChild;
+    let popup = tb.firstChild || !this.initPopups() && tb.firstChild;
     if ("_hovering" in popup && popup._hovering === 1 || // reopen if still hovering the icon
         this.hoverUI && !this.isOpenOrJustClosed(popup)) {
       popup._hovering = -1;
@@ -342,12 +342,15 @@ return noscriptUtil.service ? {
     return tip;
   },
   
-  
-  initPopups: function(install) {
+  _popupsInitialized: false,
+  initPopups: function() {
     const sticky = this.stickyUI; // early init
-    
+
     const popup = $("noscript-status-popup");
     if (!popup) return; // Fennec?
+    
+    const install = !this._popupsInitialized;
+    this._popupsInitialized = true;
     
     const tbb = $("noscript-tbb");
     if (tbb) {
@@ -1082,7 +1085,7 @@ return noscriptUtil.service ? {
             if (e.originSite) where += " (" + e.originSite + ")";
             let mime = e.mime;
             
-            node = document.createElement("menuitem");
+            let node = document.createElement("menuitem");
             node.setAttribute("label", this.getString("allowTemp", [ns.mimeEssentials(mime) + "@" + where]));
             node.setAttribute("tooltiptext", mime + "@" + where);
             node.setAttribute("oncommand", "noscriptOverlay.allowObjectSite(" + i + ")");
@@ -2359,7 +2362,7 @@ return noscriptUtil.service ? {
     
       try {
         noscriptOverlay.listeners.setup();
-        noscriptOverlay.initPopups(true);
+        noscriptOverlay.initPopups();
         noscriptOverlay.wrapBrowserAccess();
         let hacks = noscriptOverlay.Hacks;
         hacks.torButton();
