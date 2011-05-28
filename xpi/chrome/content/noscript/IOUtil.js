@@ -167,7 +167,7 @@ const IOUtil = {
   unwrapURL: function(url) {  
     try {
       if (!(url instanceof CI.nsIURI))
-        url = this.newURI(url, null, null);
+        url = this.newURI(url);
       
       switch (url.scheme) {
         case "view-source":
@@ -467,7 +467,7 @@ ChannelReplacement.prototype = {
     : null;
   },
   
-  replace: function(isRedir, callback, forceAbort) {
+  replace: function(isRedir, callback) {
     let self = this;
     let oldChan = this.oldChannel;
     this.isRedir = !!isRedir;
@@ -488,7 +488,7 @@ ChannelReplacement.prototype = {
       self.loadGroup = oldChan.loadGroup;
       oldChan.loadGroup = null; // prevents the wheel from stopping spinning
       // this calls asyncAbort, which calls onStartRequest on our listener
-      oldChan.cancel(NS_BINDING_ABORTED); 
+      oldChan.cancel(NS_BINDING_REDIRECTED); 
     });
   },
   

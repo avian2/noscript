@@ -4143,15 +4143,10 @@ var ns = singleton = {
         if (host) {
           var loadFlags = req.loadFlags;
           var cached = DNS.getCached(host);
-          if (!cached || cached.expired ||
+          if (cached.expired ||
               loadFlags & LF_VALIDATE_ALWAYS ||
               loadFlags & LF_LOAD_BYPASS_ALL_CACHES) {
-            if (cached) DNS.evict(host);
-            
-            ABE.log("Repeating ABE checks after DNS refresh for " + req.URI.spec);
-            var abeReq = new ABERequest(req);
-            this.requestWatchdog.handleABE(abeReq, loadFlags & req.LOAD_DOCUMENT_URI);
-            
+            DNS.evict(host);
           }
         }
       } catch (e) {}

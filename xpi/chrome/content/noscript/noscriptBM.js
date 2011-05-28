@@ -91,13 +91,6 @@ var noscriptBM = {
       } else { // Fx >= 3.5
         noscriptBM.handleURLBarCommandOriginal = window.loadURI;
         window.loadURI = noscriptBM.loadURI;
-        let getShortcutOrURIOriginal = getShortcutOrURI;
-        getShortcutOrURI = function(aURL, aPostDataRef) {
-          if ("gURLBar" in window && window.gURLBar) {
-            window.gURLBar.originalShortcut = aURL;
-          }
-          return getShortcutOrURIOriginal(aURL, aPostDataRef);
-        }
       }
     }
     
@@ -105,6 +98,16 @@ var noscriptBM = {
     window.setTimeout(noscriptBM.delayedInit, 50);
   },
   delayedInit: function() {
+    if ("getShortcutOrURI" in window) {
+      let getShortcutOrURIOriginal = getShortcutOrURI;
+      getShortcutOrURI = function(aURL, aPostDataRef) {
+        if ("gURLBar" in window && window.gURLBar) {
+          window.gURLBar.originalShortcut = aURL;
+        }
+        return getShortcutOrURIOriginal(aURL, aPostDataRef);
+      }
+    }
+    
     // Legacy (non-Places), patch bookmark clicks
     if("BookmarksCommand" in window && noscriptBM.openOneBookmarkOriginal === null) { 
       noscriptBM.openOneBookmarkOriginal = BookmarksCommand.openOneBookmark;
