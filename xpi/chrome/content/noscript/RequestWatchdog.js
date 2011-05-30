@@ -1,31 +1,42 @@
 ABE; // kickstart
 
-function RequestWatchdog() {  
-  this.injectionChecker = InjectionChecker;
-  this.pendingChannels = [];
-  this.init();
-}
-RequestWatchdog.pendingChannels = [];
-RequestWatchdog.timer = (function () {
-    var timer = CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer);
-    timer.initWithCallback({
-      notify: function() {
-        try {
-        let channels = RequestWatchdog.pendingChannels;
-        for (let j = channels.length; j-- > 0;) {
-          let c = channels[j];
-          if (c.status || !c.isPending()) {
-            ns.cleanupRequest(c);
-            channels.splice(j, 1);
-          }
-        }
-        } catch(e) {
-          ns.dump(e);
+var RequestGC = {
+  INTERVAL: 5000,
+  _timer: CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer),
+  _pending: [],
+  _running: false,
+  notify: function(t) {
+    try {
+      let reqs = this._pending;
+      for (let j = reqs.length; j-- > 0;) {
+        let r = reqs[j];
+        if (r.status || !r.isPending()) {
+          ns.cleanupRequest(r);
+          reqs.splice(j, 1);
         }
       }
-    }, 1000, CI.nsITimer.TYPE_REPEATING_SLACK);
-    return timer;
-  })();
+      if (reqs.length === 0) {
+        t.cancel();
+        this._running = false;
+      }
+    } catch(e) {
+      ns.dump(e);
+    }
+  },
+  add: function(req) {
+    this._pending.push(req);
+    if (!this._running) {
+      this._running = true;
+      this._timer.initWithCallback(this, this.INTERVAL, CI.nsITimer.TYPE_REPEATING_SLACK);
+    }
+  }
+}
+
+
+function RequestWatchdog() {  
+  this.injectionChecker = InjectionChecker;
+  this.init();
+}
 
 ns.cleanupRequest = function(channel) {
   PolicyState.detach(channel);
@@ -87,12 +98,13 @@ RequestWatchdog.prototype = {
     }
   },
   
+
   onHttpStart: function(channel) {
     const loadFlags = channel.loadFlags;
     let isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
 
     PolicyState.attach(channel);
-    RequestWatchdog.pendingChannels.push(channel);
+    RequestGC.add(channel);
     
     HTTPS.forceChannel(channel);
 
