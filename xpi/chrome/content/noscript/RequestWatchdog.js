@@ -1641,7 +1641,7 @@ var InjectionChecker = {
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings") + 
-    ")[^>\\w])|(?:<\\w[\\s\\S]*\\s|['\"](?:[\\s\\S]*[\\s/])?)(?:formaction|style|background|href|src|lowsrc|ping|" + IC_EVENT_PATTERN +
+    ")[^>\\w])|(?:<\\w[\\s\\S]*\\s|['\"](?:[\\s\\S]*[\\s/])?)(?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
      ")[\\s\\x08]*=", "i"),
   
   checkHTML: function(s) {

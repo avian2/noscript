@@ -582,9 +582,6 @@ var ns = singleton = {
                     this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; margin-top: 0px !important; margin-bottom: 0px !important;} ' +
                 '.__noscriptPlaceholder__1 > .__noscriptPlaceholder__2 { display: inline-block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
                 'noscript .__noscriptPlaceholder__ { display: inline !important; }';
-        if (this.geckoVersionCheck("1.9") < 0) {
-          sheet = sheet.replace(/ outline-/g, ' -moz-outline-').replace(/ inline-/g, '');
-        }
       break;
       case "clearClick":
         sheet = ".__noscriptOpaqued__ { opacity: 1 !important; visibility: visible; filter: none !important } " +
@@ -1838,8 +1835,12 @@ var ns = singleton = {
   },
   _clearSync: function() {
     try {
-      this.prefService.getDefaultBranch("services.sync.prefs.sync.noscript.").deleteBranch("");
-      this.prefService.getDefaultBranch("services.sync.prefs.sync." + this.policyPB.root).deleteBranch("");
+      this.prefService.getBranch("services.sync.prefs.sync.noscript.").deleteBranch("");
+    } catch(e) {
+      this.dump(e);
+    }
+    try{
+      this.prefService.getBranch("services.sync.prefs.sync." + this.policyPB.root).deleteBranch("");
     } catch(e) {
       this.dump(e);
     }
@@ -3354,13 +3355,7 @@ var ns = singleton = {
         
         let innerDiv = document.createElementNS(HTML_NS, "div");
         innerDiv.className = "__noscriptPlaceholder__1";
-        
-        with (anchor.style) {
-          padding = margin = borderWidth = "0px";
-          outlineOffset = MozOutlineOffset = "-1px"; 
-          display = "inline";
-        }
-        
+       
         let cssDef = "",
             restrictedSize,
             style = win.getComputedStyle(oi.embed, null);
@@ -3403,20 +3398,16 @@ var ns = singleton = {
           let w = parseInt(style.width) || 0,
               h = parseInt(style.height) || 0;
           if (minSize > w || minSize > h) {
-            var rect = DOM.computeRect(object);
-            with (innerDiv.parentNode.style) {
-              let isTop = !win.frameElement;
-              w = minWidth = Math.max(w, isTop ? minSize : Math.min(document.documentElement.offsetWidth - rect.left, minSize)) + "px";
-              h = minHeight = Math.max(h, isTop ? minSize : Math.min(document.documentElement.offsetHeight - rect.top, minSize)) + "px";
-            }
+            var rect = object.getBoundingClientRect();
+            let aStyle = anchor.style, iStyle = innerDiv.parentNode.style;
+            aStyle.overflow = "visible";
+            aStyle.display = "block";
+            aStyle.float = "left";
+            
+            let isTop = !win.frameElement;
+            aStyle.minWidth = iStyle.minWidth = Math.max(w, isTop ? minSize : Math.min(document.documentElement.offsetWidth - rect.left, minSize)) + "px";
+            aStyle.minHeight = iStyle.minHeight = Math.max(h, isTop ? minSize : Math.min(document.documentElement.offsetHeight - rect.top, minSize)) + "px";
 
-            with (anchor.style) {
-              overflow = "visible";
-              display = "block";
-              minWidth = w + "px";
-              minHeight = h + "px";
-            }
-            anchor.style.float = "left";
           }
         } else {
           iconSize = 32;
@@ -3634,12 +3625,20 @@ var ns = singleton = {
         
         if (ctx.anchor.parentNode) {
           this.setExpando(obj, "allowed", true);
+          
+          ScriptSurrogate.executeSandbox(doc,
+            "env.a.__noSuchMethod__ = env.o.__noSuchMethod__ = function(m, a) { env.n[m].apply(env.n, a) }",
+            { a: ctx.anchor, o: ctx.object, n: obj }
+          );
+          
           ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
           var style = doc.defaultView.getComputedStyle(obj, '');
+          
           if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2))
             Thread.delay(function() {
               if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
             }, 500); // warning, asap() or timeout=0 won't always work!
+          
           ns.syncUI(doc);
         } else {
           reload();

@@ -153,22 +153,9 @@ const DOM = {
   },
   
   elementContainsPoint: function(el, p) {
-    var rect = this.computeRect(el);
+    var rect = el.getBoundingClientRect();
     return p.x >= rect.left && p.x <= rect.right && p.y >= rect.top && p.y <= rect.bottom;
-  },
-  
-  computeRect: function(el) {
-    if ("getBoundingClientRect" in el) {
-      return el.getBoundingClientRect();
-    }
-    // legacy pre 1.9
-    var box = el.ownerDocument.getBoxObjectFor(el);
-    var rect = { top: box.y, left: box.x };
-    rect.bottom = rect.top + box.height;
-    rect.right = rect.left + box.width;
-    return rect;
   }
-  
 };
 
 function BrowserIterator(initialWin) {
