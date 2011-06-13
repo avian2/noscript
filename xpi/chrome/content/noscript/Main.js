@@ -3626,10 +3626,12 @@ var ns = singleton = {
         if (ctx.anchor.parentNode) {
           this.setExpando(obj, "allowed", true);
           
-          ScriptSurrogate.executeSandbox(doc,
-            "env.a.__noSuchMethod__ = env.o.__noSuchMethod__ = function(m, a) { env.n[m].apply(env.n, a) }",
-            { a: ctx.anchor, o: ctx.object, n: obj }
-          );
+          if (jsEnabled) {
+            ScriptSurrogate.executeSandbox(doc,
+              "env.a.__noSuchMethod__ = env.o.__noSuchMethod__ = function(m, a) { env.n[m].apply(env.n, a) }",
+              { a: ctx.anchor, o: ctx.object, n: obj }
+            );
+          }
           
           ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
           var style = doc.defaultView.getComputedStyle(obj, '');
@@ -4123,7 +4125,7 @@ var ns = singleton = {
   },
   
   onLocationChange: function(wp, req, location) {
-    if (req && (req instanceof CI.nsIChannel)) try {        
+    if (req && (req instanceof CI.nsIChannel)) try {       
       this._handleDocJS2(wp.DOMWindow, req);
       
       if (this.consoleDump & LOG_JS)
@@ -4135,6 +4137,10 @@ var ns = singleton = {
       if (this.consoleDump) this.dump(e);
     }
   },
+  onLocationChange2: function(wp, req, location, flags) {
+    this.onLocationChange(wp, req, location);
+  },
+  
   onStatusChange: function(wp, req, status, msg) {
     if (status == 0x804b0003 && (req instanceof CI.nsIChannel) && !ABE.isDeferred(req)) { // DNS resolving, check if we need to clear the cache
       try {
