@@ -559,6 +559,13 @@ RequestWatchdog.prototype = {
           return;
         }
         
+        if (/\.verizon\.com$/.test(originSite) && 
+            /^https:\/\/signin\.verizon\.com\/sso\/authsso\/forumLogin\.jsp$/.test(originalSpec) &&
+            ns.getPref("filterXExceptions.verizon")) {
+          if (ns.consoleDump) this.dump(channel, "Verizon login exception");
+          return;
+        }
+        
         if (/^https?:\/\/mail\.lycos\.com\/lycos\/mail\/MailCompose\.lycos$/.test(origin) &&
             /\.lycosmail\.lycos\.com$/.test(targetSite) &&
             ns.getPref("filterXExceptions.lycosmail")) {

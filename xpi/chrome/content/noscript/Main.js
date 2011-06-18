@@ -420,8 +420,8 @@ var ns = singleton = {
 
       case "consoleDump":
         this[name] = this.getPref(name, this[name]);
-        if (this.consoleDump & LOG_INJECTION_CHECK) this.injectionChecker.logEnabled = true;
-        if (this.consoleDump & LOG_ABE) ABE.consoleDump = true;
+        this.injectionChecker.logEnabled = !!(this.consoleDump & LOG_INJECTION_CHECK);
+        ABE.consoleDump = !!(this.consoleDump & LOG_ABE);
       break;
       case "global":
         this.globalJS = this.getPref(name, false);
@@ -842,25 +842,22 @@ var ns = singleton = {
   
  
   onVersionChanged: function(prev) {
-    // upgrade hacks
-    
-    if (prev >= "1.9.3.4" && prev < "1.9.4") {
-      this.setPref("ABE.legacySupport", true);
-    } else if (prev >= "1.9.6" && prev <= "1.9.6.8") { // early 1.9.6 broke default whitelist
-      if (!this.isJSEnabled("about:credits") && !this.getPref("untrusted")) {
-        this.setJSEnabled(this.splitList(this.getPref("default")), true);
+    // update hacks
+    if (this.versionComparator.compare(prev, '2.1.1.2rc4') < 0) {
+      // this is a one-time merge of the default whitelist with the live whitelist
+      // when sites originally included in the default list *and still in the live whitelist* 
+      // (i.e. not explicitly removed by the user) depend, to work properly, on resources
+      // which have been added more recently and otherwise would be whitelisted for
+      // new users only (leaving upgraders to guess what breaks previously working websites)
+      const cascading = {
+        "hotmail.com": ["msc.wlxrs.com"], // required by Hotmail/Live webmail
+        "google.com": ["googleapis.com", "gstatic.com"], // required by most Google services and also manby external resources
+        "addons.mozilla.org": ["paypal.com", "paypalobjects.com"] // required for the "Contribute" AMO feature not to break badly with no warn
+      };
+      for (let site in cascading) {
+        if (this.isJSEnabled(site)) this.setJSEnabled(cascading[site], true);
       }
     }
-    
-    // remove every file://host entry from the policy sites lists
-    var rx = /\bfile:\/\/\S+\s*/g;
-    if (rx.test(this.jsPolicySites.sitesString)) try {
-      this.flushCAPS(this.jsPolicySites.sitesString.replace(rx, ''));
-      this.persistUntrusted(this.untrustedSites.sitesString.replace(rx, ''));
-    } catch(e) {
-      ns.dump(e);
-    }
-    
   },
  
   reportLeaks: function() {
@@ -3589,8 +3586,10 @@ var ns = singleton = {
           // doc.defaultView.frameElement.src = url;
           doc.defaultView.location.replace(url);
         } else this.quickReload(doc.defaultView, true);
+        return;
     } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime) || this.getExpando(ctx, "requiresReload")) {
       this.quickReload(doc.defaultView);
+      return;
     } else if (mime === "WebGL" || this.getExpando(ctx, "silverlight")) {
       this.allowObject(doc.documentURI, mime);
       if (mime === "WebGL") delete this._webGLSites[this.getSite(doc.documentURI)];
@@ -5226,17 +5225,20 @@ var ns = singleton = {
     }
   },
   
+  firstRun: false,
   versionChecked: false,
   checkVersion: function() {
     if (this.versionChecked) return;
     this.versionChecked = true;
     
-    if (!this.getPref("visibleUIChecked", false) && this.ensureUIVisibility()) {
+    if (!this.getPref("visibleUIChecked", false) && this.ensureUIVisibility())
       this.setPref("visibleUIChecked", true);
-    }
+
     const ver =  this.VERSION;
     const prevVer = this.getPref("version", "");
-    if (prevVer != ver) {
+    
+    if ((this.firstRun = prevVer != ver)) {
+      this.onVersionChanged(prevVer);
       this.setPref("version", ver);
       this.savePrefs();
       const betaRx = /(?:a|alpha|b|beta|pre|rc)\d*$/; // see http://viewvc.svn.mozilla.org/vc/addons/trunk/site/app/config/constants.php?view=markup#l431

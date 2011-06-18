@@ -29,7 +29,7 @@ pref("noscript.showExternalFilters", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
 pref("noscript.mandatory", "chrome: about: about:addons about:blocked about:crashes about:home about:config about:neterror about:certerror about:plugins about:privatebrowsing about:sessionrestore resource:");
-pref("noscript.default", "about:blank about:credits addons.mozilla.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com informaction.com yahoo.com yimg.com yahooapis.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com js.wlxrs.com");
+pref("noscript.default", "about:blank about:credits addons.mozilla.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com informaction.com yahoo.com yimg.com yahooapis.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com js.wlxrs.com msc.wlxrs.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
 pref("noscript.forbidSilverlight", true);
@@ -110,6 +110,7 @@ pref("noscript.filterXExceptions.lycosmail", true);
 pref("noscript.filterXExceptions.medicare", true);
 pref("noscript.filterXExceptions.readability", true);
 pref("noscript.filterXExceptions.visa", true);
+pref("noscript.filterXExceptions.verizon", true);
 pref("noscript.filterXExceptions.zendesk", true);
 pref("noscript.injectionCheck", 2);
 pref("noscript.injectionCheckPost", true);
@@ -288,7 +289,7 @@ pref("noscript.ABE.localExtras", "");
 
 pref("noscript.asyncNetworking", true);
 pref("noscript.inclusionTypeChecking", true);
-pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com");
+pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com .amazonaws.com");
 pref("noscript.inclusionTypeChecking.checkDynamic", false);
 pref("noscript.nosniff", true);
 

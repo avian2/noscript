@@ -9,13 +9,13 @@ UIUtils.prototype = {
   resumeTabSelections: function() {
     var info = window.arguments && window.arguments[0];
     var indexes = info && info.tabselIndexes ||
-      this.serv.getPref(this.tabselPrefName, "").split(/\s*,\s*/);
+                  this.serv.getPref(this.tabselPrefName, "").split(/\s*,\s*/);
     // select tabs from external param
     
     var tabs = $$("tabs");
     var tcount = Math.min(tabs.length, indexes.length);
-    var listener = function(ev) { arguments.callee.binding.persistTabSelections(); }
-    listener.binding = this;
+    var self = this;
+    var listener = function(ev) { self.persistTabSelections(); }
     for(var t = tabs.length; t-- > 0;) {
       try {
         tabs[t].selectedIndex = parseInt(indexes[t]) || 0;
