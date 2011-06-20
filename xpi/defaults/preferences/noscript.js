@@ -48,6 +48,7 @@ pref("noscript.forbidData", true);
 pref("noscript.sound.block", "chrome://noscript/skin/block.wav");
 pref("noscript.allowClipboard", false);
 pref("noscript.allowLocalLinks", false);
+pref("noscript.allowCachingObjects", true);
 
 pref("noscript.showPlaceholder", true);
 pref("noscript.global", false);

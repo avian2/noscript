@@ -3216,6 +3216,8 @@ var ns = singleton = {
             : 'url("moz-icon://noscript?size=' + size + '&contentType=' + mime.replace(/[^\w-\/]/g, '') + '")';
   },
   
+  _cachedObjectMimeRx: /^(?:text\/(?:javascript|css|x-c)|application\/(?:x-)?javascript)$/,
+  isCachedObjectMime: function(mime) this._cachedObjectMimeRx.test(mime),
   
   findPluginExtras: function(document) {
     return this.getExpando(document, "pluginExtras", []);
@@ -3334,7 +3336,7 @@ var ns = singleton = {
      
         (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras });
 
-        if (this.showPlaceholder) {
+        if (this.showPlaceholder && (object.offsetWidth || object.offsetHeight || !this.isCachedObjectMime(extras.mime))) {
           if (!pluginExtras.overlayListener) {
             pluginExtras.overlayListener = true;
             win.addEventListener("click", this.bind(this.onOverlayedPlaceholderClick), true);
@@ -3635,11 +3637,15 @@ var ns = singleton = {
           ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
           var style = doc.defaultView.getComputedStyle(obj, '');
           
-          if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2))
-            Thread.delay(function() {
-              if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
-            }, 500); // warning, asap() or timeout=0 won't always work!
-          
+          if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2)
+              && !/frame/i.test(extras.tag)) {
+            let ds = DOM.getDocShellForWindow(doc.defaultView);
+            let ch = ds.currentDocumentChannel;
+            if (!(ch instanceof CI.nsIHttpChannel && ch.requestMethod === "POST"))
+              Thread.delay(function() {
+                if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
+              }, 500); // warning, asap() or timeout=0 won't always work!
+          }
           ns.syncUI(doc);
         } else {
           reload();
@@ -4078,7 +4084,7 @@ var ns = singleton = {
             
             if (w != w.top && w.frameElement) {
               ph = ph || PolicyState.extract(req);
-              if (ph && this.shouldLoad(7, req.URI, ph.requestOrigin, w.frameElement, '', CP_FRAMECHECK) != CP_OK) { // late frame/iframe check
+              if (ph && this.shouldLoad(7, req.URI, ph.requestOrigin, w.frameElement, ph.mimeType, CP_FRAMECHECK) != CP_OK) { // late frame/iframe check
                 IOUtil.abort(req);
                 return;
               }

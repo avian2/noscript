@@ -552,6 +552,7 @@ return noscriptUtil.service ? {
       this.populatePluginsMenu(mainMenu, pluginsMenu, sites.pluginExtras);
     } catch(e) {
       if(ns.consoleDump) ns.dump("Error populating plugins menu: " + e);
+      if (e) Components.utils.reportError(e);
     }
     
     const jsPSs = ns.jsPolicySites;
@@ -1061,17 +1062,20 @@ return noscriptUtil.service ? {
       for each(let e in pluginExtras) {
         if(!(e.site && e.mime) || ns.isAllowedObject(e.site, e.mime, e.site, e.originSite))
           continue;
+        
         let objectKey = ns.objectKey(e.site, e.originSite);
         let key = e.mime + "@" + objectKey;
         if (seen.indexOf(key) !== -1) continue;
         
+        if (!(e.site in pluginSites)) {
+          pluginSites[e.site] = [{mime: "*", site: e.site}];
+        }
+        
         if (seen.indexOf(objectKey) === -1) {
-          if (!(e.site in pluginSites)) {
-            pluginSites[e.site] = [{mime: "*", site: e.site}];
-          }
           pluginSites[e.site].push({mime: "*", site: e.site, originSite: e.originSite});
           seen.push(objectKey);
         }
+        
         pluginSites[e.site].push(e, {mime: e.mime, site: e.site});
         seen.push(key);
       }

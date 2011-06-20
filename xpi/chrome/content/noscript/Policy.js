@@ -132,7 +132,7 @@ const MainContentPolicy = {
         
         HTTPS.forceURI(unwrappedLocation, null, aContext);
         
-        if (aRequestOrigin && !aInternalCall) {
+        if (aRequestOrigin) {
           
           switch(aContentType) {
             case 5:
@@ -140,6 +140,26 @@ const MainContentPolicy = {
               // (Java, for instance, is known to bypass HTTP observers!)
               if (/^application\/(?:x-(?:shockwave-flash|silverlight)$|futuresplash|pdf$)/i.test(aMimeTypeGuess))
                 break;
+            
+            case 7:
+            
+              ns.dump(aContentLocation.spec + ", " + (aInternalCall === CP_FRAMECHECK || aContext instanceof CI.nsIDOMHTMLObjectElement) + ", " +
+                  this.isCachedObjectMime(aMimeTypeGuess) + "(" + aMimeTypeGuess + "), " +
+                  this.getPref("allowCachingObjects") + ", " +
+                  (aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec))) + ", " +
+                  !this.pluginForMime(aMimeTypeGuess));
+              
+              if ((aInternalCall === CP_FRAMECHECK || aContext instanceof CI.nsIDOMHTMLObjectElement) &&
+                  this.isCachedObjectMime(aMimeTypeGuess) &&
+                  this.getPref("allowCachingObjects") &&
+                  aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec)) &&
+                  !this.pluginForMime(aMimeTypeGuess)
+                 )
+                aContentType = aMimeTypeGuess.indexOf("css") > 0 ? 4 : 2;
+              else if (aContentType === 7) break;
+              ns.dump(aContentType);
+              if (aInternalCall) break;
+              
             case 1: case 12: // we may have no chance to check later for unknown and sub-plugin requests
               let res = ABE.checkPolicy(aRequestOrigin, unwrappedLocation, aContentType);
               if (res && res.fatal) {
