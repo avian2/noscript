@@ -400,6 +400,7 @@ var ns = singleton = {
       case "nosniff":
       case "showBlankSources":
       case "liveConnectInterception":
+      case "audioApiInterception":
       case "allowHttpsOnly":
         this[name] = this.getPref(name, this[name]);  
       break;
@@ -729,7 +730,7 @@ var ns = singleton = {
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
       "forbidMetaRefresh",
       "forbidXBL", "forbidXHR",
-      "liveConnectInterception",
+      "liveConnectInterception", "audioApiInterception",
       "inclusionTypeChecking", "nosniff",
       "alwaysBlockUntrustedContent",
       "global", "ignorePorts",
@@ -843,19 +844,23 @@ var ns = singleton = {
  
   onVersionChanged: function(prev) {
     // update hacks
-    if (this.versionComparator.compare(prev, '2.1.1.2rc4') < 0) {
+    if (this.versionComparator.compare(prev, '2.1.1.2rc6') < 0) {
       // this is a one-time merge of the default whitelist with the live whitelist
       // when sites originally included in the default list *and still in the live whitelist* 
       // (i.e. not explicitly removed by the user) depend, to work properly, on resources
       // which have been added more recently and otherwise would be whitelisted for
       // new users only (leaving upgraders to guess what breaks previously working websites)
       const cascading = {
-        "hotmail.com": ["msc.wlxrs.com"], // required by Hotmail/Live webmail
+        "hotmail.com": ["wlxrs.com"], // required by Hotmail/Live webmail
         "google.com": ["googleapis.com", "gstatic.com"], // required by most Google services and also manby external resources
         "addons.mozilla.org": ["paypal.com", "paypalobjects.com"] // required for the "Contribute" AMO feature not to break badly with no warn
       };
       for (let site in cascading) {
-        if (this.isJSEnabled(site)) this.setJSEnabled(cascading[site], true);
+        if (this.isJSEnabled(site)) {
+          let newSite = cascading[site];
+          this.jsPolicySites.remove(newSite, true, false);
+          this.setJSEnabled(newSite, true);
+        }
       }
     }
   },
@@ -4723,7 +4728,11 @@ var ns = singleton = {
             !this.isAllowedObject(site, "application/x-java-vm", site, site)) {
           (doc.defaultView.wrappedJSObject || doc.defaultView).disablePlugins = this._disablePlugins;
           (scripts || (scripts = [])).push(this._liveConnectInterceptionDef);
-        }  
+        }
+        if (this.audioApiInterception && this.forbidMedia &&
+            !this.isAllowedObject(site, "audio/ogg", site, site)) {
+          (scripts || (scripts = [])).push(this._audioApiInterceptionDef);
+        }
       }
       
       try {
@@ -4877,6 +4886,9 @@ var ns = singleton = {
     }).toString()
     + ")()";
   },
+
+  audioApiInterception: true,
+  _audioApiInterceptionDef: 'Object.defineProperty(HTMLAudioElement.prototype, "mozWriteAudio", {value: function() {new Audio("data:,")}});',
 
   _disablePlugins: function(b) {
     ns.plugins.disabled = b;

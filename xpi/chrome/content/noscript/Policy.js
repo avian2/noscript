@@ -143,22 +143,18 @@ const MainContentPolicy = {
             
             case 7:
             
-              ns.dump(aContentLocation.spec + ", " + (aInternalCall === CP_FRAMECHECK || aContext instanceof CI.nsIDOMHTMLObjectElement) + ", " +
-                  this.isCachedObjectMime(aMimeTypeGuess) + "(" + aMimeTypeGuess + "), " +
-                  this.getPref("allowCachingObjects") + ", " +
-                  (aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec))) + ", " +
-                  !this.pluginForMime(aMimeTypeGuess));
-              
-              if ((aInternalCall === CP_FRAMECHECK || aContext instanceof CI.nsIDOMHTMLObjectElement) &&
+              if ((aContext instanceof CI.nsIDOMHTMLObjectElement) &&
                   this.isCachedObjectMime(aMimeTypeGuess) &&
+                  !(aContext.offsetWidth && aContext.offsetHeight) &&
                   this.getPref("allowCachingObjects") &&
                   aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec)) &&
-                  !this.pluginForMime(aMimeTypeGuess)
-                 )
-                aContentType = aMimeTypeGuess.indexOf("css") > 0 ? 4 : 2;
-              else if (aContentType === 7) break;
-              ns.dump(aContentType);
-              if (aInternalCall) break;
+                  !this.pluginForMime(aMimeTypeGuess) &&
+                  (aMimeTypeGuess.indexOf("css") > 0 || this.isJSEnabled(this.getSite(aContentLocation.spec)))
+                 ) {
+                return CP_OK;
+              }
+              
+              if (aContentType === 7 || aInternalCall) break;
               
             case 1: case 12: // we may have no chance to check later for unknown and sub-plugin requests
               let res = ABE.checkPolicy(aRequestOrigin, unwrappedLocation, aContentType);
@@ -604,7 +600,8 @@ const MainContentPolicy = {
         
         if (!originSite) originSite = this.getSite(originURL || aRequestOrigin && aRequestOrigin.spec || "");
         
-        if (isJava && originSite && /^data:application\/x-java\b/.test(locationURL)) {
+        if (isJava && originSite && /^data:application\/x-java\b/.test(locationURL) ||
+            aContentType === 15 && locationURL === "data:,") {
           locationURL = locationSite = originSite;
         }
         

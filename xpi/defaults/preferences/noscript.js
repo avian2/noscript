@@ -324,6 +324,7 @@ pref("noscript.forbidBGRefresh.exceptions", ".mozilla.org");
 
 pref("noscript.toStaticHTML", true);
 pref("noscript.liveConnectInterception", true);
+pref("noscript.audioApiInterception", true);
 
 pref("noscript.doNotTrack.enabled", true);
 pref("noscript.doNotTrack.exceptions", "");
