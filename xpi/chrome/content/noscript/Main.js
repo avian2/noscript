@@ -1788,7 +1788,9 @@ var ns = singleton = {
   },
   
   get placesSupported() {
-    return !(this.builtInSync && this.getPref("sync.enabled")) && ("nsINavBookmarksService" in Components.interfaces);
+    return !(this.builtInSync && this.getPref("sync.enabled")) &&
+      ("nsINavBookmarksService" in Components.interfaces) &&
+      this.geckoVersionCheck("2.0") < 0;
   },
   
 

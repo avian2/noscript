@@ -55,6 +55,7 @@ var noscriptBM = {
         var handleCommand = window.gURLBar.handleCommand;
         var times = 5;
         for(var caller, f = arguments.callee; (caller = f.caller) && times; f = caller, times--) {
+          if (caller.name.substring(0, 2) === "on") break; // work around for 
           if (caller === handleCommand) {
             return noscriptBM.handleURLBarCommand.apply(window, arguments);
           }
