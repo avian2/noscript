@@ -452,9 +452,6 @@ var nsopt = {
       const fp = CC["@mozilla.org/filepicker;1"].createInstance(IFP);
       
       fp.init(window,title, IFP["mode" + mode]);
-      fp.appendFilters(IFP.filterText);
-      fp.appendFilters(IFP.filterAll);
-      fp.filterIndex = 0;
       fp.defaultExtension = ".txt";
       const ret = fp.show();
       if(ret == IFP.returnOK || 
