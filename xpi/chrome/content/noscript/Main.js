@@ -4753,15 +4753,16 @@ var ns = singleton = {
   beforeScripting: function(subj, url) {
     this.executeEarlyScripts = this.onWindowSwitch;
     // replace legacy code paths
-    if (subj.defaultView) { // we got document element inserted
+    if (subj.documentElement) { // we got document element inserted
       OS.removeObserver(this, "content-document-global-created");
       this.onWindowSwitch = null;
-    } 
+    }
     this.beforeScripting = this._beforeScriptingReal;
     this.beforeScripting(subj, url);
   },
   _beforeScriptingReal: function(subj, url) {
     const win = subj.defaultView || subj;
+    if (win instanceof CI.nsIDOMChromeWindow) return;
     const docShell = this.dom.getDocShellForWindow(win);
     if (docShell) this.executeEarlyScripts(docShell.document.documentURI, win, docShell);
   },

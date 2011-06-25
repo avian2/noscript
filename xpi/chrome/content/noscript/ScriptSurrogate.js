@@ -201,7 +201,7 @@ var ScriptSurrogate = {
     var de = document.documentElement;
     try {
       if (!de) {
-        document.defaultView.location.href = "javascript:" + encodeURIComponent(scriptBlock) + "; void(0)";
+        this.executeSandbox(document, scriptBlock);
         return;
       }
       
