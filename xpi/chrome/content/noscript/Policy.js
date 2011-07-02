@@ -444,7 +444,8 @@ const MainContentPolicy = {
           this.getExpando(contentDocument.defaultView.top.document, "codeSites", []).push(locationSite);
         
         if (aContentType == 2) { // "real" JavaScript include
-          if (originSite && !this.isJSEnabled(originSite)) {
+          if (originSite && originSite.indexOf("tp:") > 0 && locationSite.indexOf("tp:") > 0 && !this.isJSEnabled(originSite)) {
+            // JavaScript-disabled http(s)/ftp page with http(s)/ftp script inclusion
             this.syncUI(contentDocument);
             return this.reject("Script inclusion on forbidden page", arguments);
           }

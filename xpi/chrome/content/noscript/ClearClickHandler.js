@@ -339,7 +339,7 @@ ClearClickHandler.prototype = {
     var dw = dElem.clientWidth, dh = dElem.clientHeight;
     var w = Math.min(fw, dw), h = Math.min(fh, dh);
     
-    var zoom = w.QueryInterface(CI.nsIInterfaceRequestor)
+    var zoom = window.QueryInterface(CI.nsIInterfaceRequestor)
             .getInterface(CI.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
 
     return { w: (fw - w) * zoom, h: (fh - h) * zoom };
