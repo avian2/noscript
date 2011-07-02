@@ -440,8 +440,15 @@ const MainContentPolicy = {
         
         contentDocument = aContext && aContext.ownerDocument || aContext;
         
-        if (aContentType == 2) { // "real" JavaScript include
+        if (contentDocument) // XSLT comes with no context sometimes...
+          this.getExpando(contentDocument.defaultView.top.document, "codeSites", []).push(locationSite);
         
+        if (aContentType == 2) { // "real" JavaScript include
+          if (originSite && !this.isJSEnabled(originSite)) {
+            this.syncUI(contentDocument);
+            return this.reject("Script inclusion on forbidden page", arguments);
+          }
+          
           // plugin instantiation hacks
           if (this.contentBlocker && aRequestOrigin &&
                 ( aRequestOrigin.schemeIs("http") ||
@@ -454,8 +461,7 @@ const MainContentPolicy = {
           forbid = !(originSite && locationSite == originSite);
         } else isScript = false;
         
-        if (contentDocument) // XSLT comes with no context sometimes...
-          this.getExpando(contentDocument.defaultView.top.document, "codeSites", []).push(locationSite);
+       
         
         
         if (forbid) forbid = !this.isJSEnabled(locationSite);

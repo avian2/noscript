@@ -338,7 +338,11 @@ ClearClickHandler.prototype = {
     
     var dw = dElem.clientWidth, dh = dElem.clientHeight;
     var w = Math.min(fw, dw), h = Math.min(fh, dh);
-    return { w: fw - w, h: fh - h };
+    
+    var zoom = w.QueryInterface(CI.nsIInterfaceRequestor)
+            .getInterface(CI.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
+
+    return { w: (fw - w) * zoom, h: (fh - h) * zoom };
   },
   
   checkObstruction: function(o, ctx) {
@@ -358,7 +362,7 @@ ClearClickHandler.prototype = {
     var bgStyle;
     var box, curtain;
     
-    var frame, frameClass, frameStyle, objClass;
+    var frame, frameClass, objClass;
     
     var docPatcher = new DocPatcher(this.ns, o, w);
     
@@ -412,14 +416,11 @@ ClearClickHandler.prototype = {
           frameClass = new ClassyObj(frame);
           DOM.removeClass(frame, "__noscriptScrolling__");
           sd = this.computeScrollbarSizes(w, dElem, d.body);
-          var zoom = w.QueryInterface(CI.nsIInterfaceRequestor)
-            .getInterface(CI.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
-          sd.w *= zoom;
-          sd.h *= zoom;
+          
         }
         
-        var clientHeight = w.innerHeight - sd.h;
-        var clientWidth =  w.innerWidth - sd.w;
+        let clientHeight = w.innerHeight - sd.h;
+        let clientWidth =  w.innerWidth - sd.w;
         // print(dElem.clientWidth + "," +  dElem.clientHeight + " - "  + w.innerWidth + "," + w.innerHeight);
         
         if (!ctx.isEmbed) {
@@ -436,20 +437,18 @@ ClearClickHandler.prototype = {
             
             background = this.rndColor();
           }
-          frameStyle = w.parent.getComputedStyle(frame, '');
         }     
         
-        var maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), sd.w ? 0 : Math.min(this.minWidth, dElem.offsetWidth), 8);
-        var maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), sd.h ? 0 : Math.min(this.minHeight, dElem.offsetHeight, 8));
+        let maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), sd.w ? 0 : Math.min(this.minWidth, dElem.offsetWidth), 8);
+        let maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), sd.h ? 0 : Math.min(this.minHeight, dElem.offsetHeight, 8));
   
         box = this.getBox(o, d, w);
         
         // expand to parent form if needed
         var form = o.form;
-        var formBox = null;
         if (frame && !ctx.isEmbed && (form || (form = this.findParentForm(o)))) {
   
-          formBox = this.getBox(form, d, w);
+          let formBox = this.getBox(form, d, w);
           if (!(formBox.width && formBox.height)) { // some idiots put <form> as first child of <table> :(
             formBox = this.getBox(form.offsetParent || form.parentNode, d, w);
             if (!(formBox.width && formBox.height)) {
@@ -521,25 +520,25 @@ ClearClickHandler.prototype = {
           vp.width = Math.min(vp.width, box.width);
           vp.height = Math.min(vp.height, box.height);
           
-          for(form = o; form = form.parentNode;) {
+          for(let ancestor = o; ancestor = ancestor.parentNode;) {
   
-            if ((form.offsetWidth < box.width || form.offsetHeight < box.height) &&
-                w.getComputedStyle(form, '').overflow != "visible") {
+            if ((ancestor.offsetWidth < box.width || ancestor.offsetHeight < box.height) &&
+                w.getComputedStyle(ancestor, '').overflow != "visible") {
               
               // check if we're being fooled by some super-zoomed applet
-              if (box.width / 4 <= form.offsetWidth && box.height / 4 <= form.offsetHeight) {
-                formBox = this.getBox(form, d, w);
+              if (box.width / 4 <= ancestor.offsetWidth && box.height / 4 <= ancestor.offsetHeight) {
+                let ancestorBox = this.getBox(ancestor, d, w);
                 
-                if (box.x < formBox.x) {
-                  box.x = formBox.x;
-                  box.screenX = formBox.screenX;
+                if (box.x < ancestorBox.x) {
+                  box.x = ancestorBox.x;
+                  box.screenX = ancestorBox.screenX;
                 }
-                if (box.y < formBox.y) { 
-                  box.y = formBox.y;
-                  box.screenY = formBox.screenY;
+                if (box.y < ancestorBox.y) { 
+                  box.y = ancestorBox.y;
+                  box.screenY = ancestorBox.screenY;
                 }
-                if (box.width + box.x > formBox.width + formBox.x) box.width = Math.max(this.minWidth, form.clientWidth - (box.x - formBox.x));
-                if (box.height + box.y > formBox.height + formBox.y) box.height = Math.max(this.minHeight, form.offsetHeight - (box.y - formBox.y));
+                if (box.width + box.x > ancestorBox.width + ancestorBox.x) box.width = Math.max(this.minWidth, ancestor.clientWidth - (box.x - ancestorBox.x));
+                if (box.height + box.y > ancestorBox.height + ancestorBox.y) box.height = Math.max(this.minHeight, ancestor.offsetHeight - (box.y - ancestorBox.y));
               }
               break;
             }

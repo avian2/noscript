@@ -141,7 +141,7 @@ var ns = singleton = {
   },
   
   registerToplevel: function(window) {
-    if (window instanceof CI.nsIDOMChromeWindow && window instanceof CI.nsIDOMNSEventTarget) {
+    if (window instanceof CI.nsIDOMChromeWindow && window instanceof CI.nsIDOMEventTarget) {
       if (!window.opener) {
         window.isNewToplevel = true;
         if (this.consoleDump & LOG_CHROME_WIN) {
@@ -4248,6 +4248,11 @@ var ns = singleton = {
     }
   },
   
+  get noBuiltInFrameOpt() {
+    delete this.noBuiltInFrameOpt;
+    return this.noBuiltInFrameOpt = this.geckoVersionCheck('1.9.2.10') < 0;
+  },
+  
   checkInclusionType: function(channel) {
     try {
       if (channel instanceof CI.nsIHttpChannel &&
@@ -4393,7 +4398,8 @@ var ns = singleton = {
         return;
       
       // X-Frame-Options
-      if (((req.loadFlags & req.LOAD_DOCUMENT_URI) || // must be a subdocument
+      if (this.noBuiltInFrameOpt &&
+          ((req.loadFlags & req.LOAD_DOCUMENT_URI) || // must be a subdocument
             isObject && /\b(?:text|xml|html)\b/.test(req.contentType)) &&
           ABE.checkFrameOpt(domWindow, req) &&
           this.getPref("frameOptions.enabled") &&
