@@ -2083,11 +2083,6 @@ var ns = singleton = {
   
   nopXBL: "chrome://global/content/bindings/general.xml#basecontrol",
   
-  _domNodeRemoved: function(ev) {
-    if (ns.consoleDump) ns.dump("Removing DOMNodeRemoved listener");
-    ev.currentTarget.removeEventListener(ev.type, arguments.callee, true);
-  },
-  
   _emptyDataDoc: /^data:[\w\/]+,$/,
   forbiddenJSDataDoc: function(locationURL, originSite, aContext) {
      return !this.isSafeJSURL(locationURL) &&

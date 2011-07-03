@@ -358,7 +358,7 @@ ClearClickHandler.prototype = {
     var bgStyle;
     var box, curtain;
     
-    var frame, frameClass, frameStyle, objClass, viewer;
+    var frame, frameClass, frameStyle, objClass;
     
     var docPatcher = new DocPatcher(this.ns, o, w);
     
@@ -399,8 +399,6 @@ ClearClickHandler.prototype = {
         
         if (ctx.isEmbed) { // objects and embeds
           if (this.ns.getPref("clearClick.plugins", true)) {
-            var docShell = browser.docShell;
-            viewer = docShell.contentViewer && false;
             objClass = new ClassyObj(o);
             objClass.append(" __noscriptBlank__");
             docPatcher.blankPositioned(true);
@@ -732,7 +730,6 @@ ClearClickHandler.prototype = {
       
       if (objClass) objClass.reset();
       if (frameClass) frameClass.reset();
-      if (viewer) viewer.enableRendering = true;
     }
     
     return ret;

@@ -572,26 +572,6 @@ const MainContentPolicy = {
           ));
       }
        
-      if (aContentType === 5 && /\binnerHTML\b/.test(new Error().stack)) {
-        if (this._bug453825) {
-          try {
-            ScriptSurrogate.executeDOM(aContext.ownerDocument, 'window.__defineGetter__("top", (Window.prototype || window).__lookupGetter__("top"))');
-            if (this.consoleDump) this.dump("Locked window.top (bug 453825 work-around)");
-          } catch(e) {
-            if (this.consoleDump) this.dump(e + " while locking window.top (bug 453825 work-around)");
-          }
-        }
-        if (this._bug472495) {
-          try {
-            aContext.ownerDocument.defaultView.addEventListener("DOMNodeRemoved", this._domNodeRemoved, true);
-            if (this.consoleDump) this.dump("Added DOMNodeRemoved (bug 472495 work-around)");
-          } catch(e) {
-             if (this.consoleDump) this.dump(e + " while adding DOMNodeRemoved (bug 472495 work-around)");
-          }
-        }
-      }
-      
-      
       mustCountObject = true;
       
       if (forbid) forbid = !(aContentLocation.schemeIs("file") && aRequestOrigin && aRequestOrigin.schemeIs("resource")); // fire.fm work around
