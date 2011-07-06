@@ -2340,12 +2340,13 @@ return noscriptUtil.service ? {
     },
     
     onPageShow: function(ev) {
-      if (ev.persisted && (ev.target instanceof HTMLDocument)) {
-        var d = ev.target;
-        var ns = noscriptOverlay.ns;
-        noscriptOverlay.toggleObjectsVisibility(d, true);
-      }
-      noscriptOverlay.syncUI();
+      try {
+        if (ev.persisted && (ev.target instanceof HTMLDocument)) {
+          var d = ev.target;
+          noscriptOverlay.toggleObjectsVisibility(d, true);
+        }
+      } catch(e) {}
+      noscriptOverlay._syncUIReal();
     },
     
     onPageHide: function(ev) {
@@ -2409,11 +2410,16 @@ return noscriptUtil.service ? {
       noscriptOverlay.syncUI();
     },
     
-    setup: function() {
+    setup: function(delayed) {
+      
+      if (!delayed) {
+        window.addEventListener("pageshow", this.onPageShow, true);
+        window.addEventListener("pagehide", this.onPageHide, true);
+      }
       
       var b = getBrowser();
       if (!b) {
-        setTimeout(function() noscriptOverlay.listeners.setup(), 100);
+        setTimeout(function() noscriptOverlay.listeners.setup(true), 100);
         return;
       }
       var tabs = $("tabs") || b.tabContainer;
@@ -2438,9 +2444,7 @@ return noscriptUtil.service ? {
         
       }
 
-      window.addEventListener("pageshow", this.onPageShow, true);
-      window.addEventListener("pagehide", this.onPageHide, true);
-
+     
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
       

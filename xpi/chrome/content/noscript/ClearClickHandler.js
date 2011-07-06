@@ -173,8 +173,11 @@ ClearClickHandler.prototype = {
                         CI.nsIDOMHTMLPreElement, CI.nsIDOMHTMLTableElement ]
   ,
   isSemanticContainer: function(o) {
-    for each (var t in this._semanticContainers)
-     if (o instanceof t) return true;
+    let scc = this._semanticContainers;
+    for (let j = scc.length; j-- > 0;)
+     if (o instanceof scc[j]) 
+       return o.ownerDocument.URL.indexOf("view-source") !== 0;
+  
     return false;
   },
   

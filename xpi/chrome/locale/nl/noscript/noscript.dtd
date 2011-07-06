@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opties...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript opties">
-<!ENTITY noscriptAbout "Over NoScript">
+<!ENTITY noscriptAbout "Over NoScript 2.1.2rc4">
 <!ENTITY noscriptPermissionsText "Webadressen in deze lijst hebben toestemming om JavaScript te gebruiken. Type het adres of domein in (bijv. &quot;http://www.site.com&quot; of &quot;site.com&quot;) van de door u toegestane site; klik daarna op Toestaan.">
 <!ENTITY noscriptWebAddress "Webadres:">
 <!ENTITY noscriptAllow "Toestaan">
