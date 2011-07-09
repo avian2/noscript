@@ -304,9 +304,9 @@ ChannelReplacement.prototype = {
     return new Error("Can't replace channels without nsITraceableChannel!");
   },
   
-  get _mustClassify() {
-    delete this.__proto__._mustClassify;
-    return this.__proto__._mustClassify = !("LOAD_CLASSIFIER_URI" in CI.nsIChannel);
+  get _classifierClass() {
+    delete this.__proto__._classifierClass;
+    return this.__proto__._classifierClass = CC["@mozilla.org/channelclassifier"];
   },
   
   _autoHeadersRx: /^(?:Host|Cookie|Authorization)$|Cache|^If-/,
@@ -339,7 +339,7 @@ ChannelReplacement.prototype = {
     
     newChan.loadGroup = chan.loadGroup;
     newChan.notificationCallbacks = chan.notificationCallbacks;
-    newChan.loadFlags = loadFlags;
+    newChan.loadFlags = loadFlags | newChan.LOAD_REPLACE;
     
     if (!(newChan instanceof CI.nsIHttpChannel))
       return this;
@@ -417,7 +417,7 @@ ChannelReplacement.prototype = {
       }
     } else newChan.redirectionLimit += 1;
     
-    newChan.loadFlags |= newChan.LOAD_REPLACE;
+    
     
     // nsHttpHandler::OnChannelRedirect()
 
@@ -527,8 +527,8 @@ ChannelReplacement.prototype = {
           IOUtil.abort(newChan);
         } else {
           // safe browsing hook
-          if (this._mustClassify)
-            CC["@mozilla.org/channelclassifier"].createInstance(CI.nsIChannelClassifier).start(newChan, true);
+          if (this._classifierClass)
+            this._classifierClass.createInstance(CI.nsIChannelClassifier).start(newChan, true);
         }
       } catch (e) {}
     } else {

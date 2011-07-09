@@ -7,6 +7,13 @@ function ClearClickHandler(ns) {
 ClearClickHandler.prototype = {
   
   uiEvents: ["mousedown", "mouseup", "click", "dblclick", "keydown", "keypress", "keyup", "blur"],
+  
+  lastGlobalEvent: {
+    quarantine: 1000,
+    topSite: null,
+    ts: 0
+  },
+  
   install: function(browser) {
     var ceh = browser.docShell.chromeEventHandler;
     var l = this._listener;
@@ -194,11 +201,29 @@ ClearClickHandler.prototype = {
     const w = d.defaultView;
     if (!w) return;
     
-    const top = w.top;
     const ns = this.ns;
     
+    const top = w.top;
+    const topURI = top.document.documentURIObject;
+    const topSite = topURI.prePath;
+    
+    const lastGlobal = this.lastGlobalEvent;
+    var ts = Date.now();
+    
+    if (topSite != lastGlobal.topSite && ts - lastGlobal.ts < lastGlobal.quarantine) {
+      this.swallowEvent(ev);
+      lastGlobal.ts = ts - lastGlobal.quarantine / 2;
+      ns.log("[NoScript ClearClick] Swallowed event " + ev.type + " on " + topURI.spec + " (rapid fire from " + lastGlobal.topSite + ")", true);
+      return;
+    }
+    
+    lastGlobal.topSite = topSite;
+    lastGlobal.ts = ts;
+    
+   
+    
     if (!("__clearClickUnlocked" in top)) 
-      top.__clearClickUnlocked = !this.appliesHere(top.location.href);
+      top.__clearClickUnlocked = !this.appliesHere(topURI.spec);
     
     if (top.__clearClickUnlocked) return;
     
@@ -226,7 +251,7 @@ ClearClickHandler.prototype = {
     var etype = ev.type;
     if (verbose) ns.dump(o.tagName + ", " + etype + ", " + p.toSource());
     
-    var ts = 0, obstructed, ctx, primaryEvent;
+    var obstructed, ctx, primaryEvent;
     try {
       if (etype == "blur") {
         if(/click|key/.test(p.lastEtype)) {
@@ -237,7 +262,6 @@ ClearClickHandler.prototype = {
       }
       if (p.unlocked) return;
     
-      ts = Date.now();
       ctx = /mouse/.test(etype)
                 && { x: ev.pageX, y: ev.pageY, debug: ev.ctrlKey && ev.button == 1 && ns.getPref("clearClick.debug") }
                 || {};
@@ -266,7 +290,7 @@ ClearClickHandler.prototype = {
     
     if (verbose) ns.dump("ClearClick: " + ev.target.tagName + " " + etype +
        "(s:{" + ev.screenX + "," + ev.screenY + "}, p:{" + ev.pageX + "," + ev.pageY + "}, c:{" + ev.clientX + "," + ev.clientY + 
-       ", w:" + ev.which + "}) - obstructed: " + obstructed + ", check time: " + (new Date() - ts) + ", quarantine: " + quarantine +
+       ", w:" + ev.which + "}) - obstructed: " + obstructed + ", check time: " + (Date.now() - ts) + ", quarantine: " + quarantine +
        ", primary: " + primaryEvent + ", ccp:" + (top.__clearClickProps && top.__clearClickProps.toSource()));
     
     var unlocked = !obstructed && primaryEvent && quarantine > 3000;
@@ -288,7 +312,7 @@ ClearClickHandler.prototype = {
             var params = {
               url: ctx.isEmbed && (o.src || o.data) || o.ownerDocument.URL,
               pageURL: w.location.href,
-              topURL: w.top.location.href,
+              topURL: topURI.spec,
               img: ctx.img,
               locked: false,
               pageX: ev.pageX,

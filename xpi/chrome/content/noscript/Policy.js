@@ -550,20 +550,21 @@ const MainContentPolicy = {
           }
         }
       }
-  
+
       if (forbid && !this.contentBlocker) {
         
         originURL = originURL || (aRequestOrigin && aRequestOrigin.spec);
         originSite = originSite || this.getSite(originURL);
-      
-        var originOK = originSite 
-          ? this.isJSEnabled(originSite) 
-          : /^(?:javascript|data):/.test(originURL); // if we've got such an origin, parent should be trusted
         
-        var locationOK = locationSite 
+        let jsRx = /^(?:javascript|data):/;
+        
+        let originOK = originSite 
+          ? this.isJSEnabled(originSite) 
+          : jsRx.test(originURL); // if we've got such an origin, parent should be trusted
+        
+        let locationOK = locationSite 
               ? this.isJSEnabled(locationSite) 
-              : // use origin for javascript: or data:
-                /^(?:javascript|data):/.test(locationURL) && originOK
+              : jsRx.test(locationURL) && originOK // use origin for javascript: or data:
         ;
         
         if (!locationOK && locationSite && this.ignorePorts && this.portRx.test(locationSite)) {

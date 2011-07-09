@@ -54,7 +54,6 @@ __defineGetter__("ABE", function() {
   return ABE;
 });
 
-
 var ns = singleton = {
   VERSION: VERSION
 ,
@@ -190,7 +189,7 @@ var ns = singleton = {
           } catch(e) {}
         }
   
-        if (ncb instanceof CI.nsIXMLHttpRequest && !ns.isCheckedChannel(channel)) {
+        if ((ncb instanceof CI.nsIXMLHttpRequest) && !ns.isCheckedChannel(channel)) {
           if (ns.consoleDump) ns.dump("Skipping cross-site checks for chrome XMLHttpRequest " + channel.name + ", " + loadFlags + ", "
                                       + channel.owner + ", " + !!PolicyState.hints);
           return;

@@ -19,11 +19,7 @@ const STS = {
       if (uri.schemeIs("https")) {
         try {
           this.db.processHeader(uri.asciiHost, chan.getResponseHeader("Strict-Transport-Security"));
-        } catch (e) {
-          try {
-            this.db.processHeader(uri.asciiHost, chan.getResponseHeader("X-Strict-Transport-Security"));
-          } catch (e) {}
-        }
+        } catch (e) {}
       }
     }
   },
