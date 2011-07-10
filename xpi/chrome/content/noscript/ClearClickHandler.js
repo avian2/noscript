@@ -210,7 +210,8 @@ ClearClickHandler.prototype = {
     const lastGlobal = this.lastGlobalEvent;
     var ts = Date.now();
     
-    if (topSite != lastGlobal.topSite && ts - lastGlobal.ts < lastGlobal.quarantine) {
+    if (topSite != lastGlobal.topSite && ts - lastGlobal.ts < lastGlobal.quarantine &&
+        ((ev instanceof CI.nsIDOMMouseEvent) || !(ev.ctrlKey || ev.metaKey || ev.altKey))) {
       this.swallowEvent(ev);
       lastGlobal.ts = ts - lastGlobal.quarantine / 2;
       ns.log("[NoScript ClearClick] Swallowed event " + ev.type + " on " + topURI.spec + " (rapid fire from " + lastGlobal.topSite + ")", true);
