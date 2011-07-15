@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "選項…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 選項">
-<!ENTITY noscriptAbout "關於 NoScript 2.1.2.3">
+<!ENTITY noscriptAbout "關於 NoScript 2.1.2.4rc1">
 <!ENTITY noscriptPermissionsText "您可以指定允許執行 JavaScript 的網站。輸入您要允許的網址或網域（例如 &quot;http://www.site.com&quot; 或 &quot;site.com&quot;），然後按下允許.">
 <!ENTITY noscriptWebAddress "網址：">
 <!ENTITY noscriptAllow "允許">
