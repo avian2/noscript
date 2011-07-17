@@ -49,7 +49,7 @@ var noscriptBM = {
     callback(); 
   },
   
-  loadURI: function() { // Fx 3.5 command bar interception
+  loadURIWithFlags: function() { // Fx 3.5 and above command bar interception
     try {
       if ("gURLBar" in window) {
         var handleCommand = window.gURLBar.handleCommand;
@@ -62,7 +62,7 @@ var noscriptBM = {
         }
       }
     } catch(e) {}
-    return noscriptBM.handleURLBarCommandOriginal.apply(window, arguments);
+    return noscriptBM.handleURLBarCommandOriginal.apply(gBrowser, arguments);
   },
 
   handleBookmark: function(url, openCallback) {
@@ -90,8 +90,8 @@ var noscriptBM = {
         noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
         window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
       } else { // Fx >= 3.5
-        noscriptBM.handleURLBarCommandOriginal = window.loadURI;
-        window.loadURI = noscriptBM.loadURI;
+        noscriptBM.handleURLBarCommandOriginal = gBrowser.loadURIWithFlags;
+        gBrowser.loadURIWithFlags = noscriptBM.loadURIWithFlags;
       }
     }
     

@@ -196,6 +196,7 @@ pref("noscript.clearClick.prompt", true);
 pref("noscript.clearClick.debug", false);
 pref("noscript.clearClick.exceptions", ".mail.yahoo.com *.ebay.com *.photobucket.com");
 pref("noscript.clearClick.subexceptions", "^http://bit(?:ly\\.com|\\.ly)/a/sidebar\\?u= http://*.uservoice.com/*/popin.html?* http://w.sharethis.com/share3x/lightbox.html?* http://disqus.com/embed/* *.disqus.com/*/reply.html?* http://www.feedly.com/mini abine:*");
+pref("noscript.clearClick.rapidFireCheck", true);
 
 pref("noscript.emulateFrameBreak", true);
 

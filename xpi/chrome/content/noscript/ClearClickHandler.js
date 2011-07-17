@@ -36,7 +36,7 @@ ClearClickHandler.prototype = {
             (ts - this.ts) < this.quarantine &&
             (!mouse || Math.sqrt(Math.pow(ev.screenX - this.screenX, 2) + Math.pow(ev.screenY - this.screenY, 2)) < 16)) {
           this.ts = ts - this.quarantine / 2;
-          return true;
+          return ns.getPref("clearClick.rapidFireCheck");
         }
       } else this.mouse = mouse;
       
