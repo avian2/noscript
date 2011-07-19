@@ -851,8 +851,8 @@ var ns = singleton = {
       // new users only (leaving upgraders to guess what breaks previously working websites)
       const cascading = {
         "hotmail.com": ["wlxrs.com"], // required by Hotmail/Live webmail
-        "google.com": ["googleapis.com", "gstatic.com"], // required by most Google services and also manby external resources
-        "addons.mozilla.org": ["paypal.com", "paypalobjects.com"] // required for the "Contribute" AMO feature not to break badly with no warn
+        "google.com": ["googleapis.com", "gstatic.com"], // required by most Google services and also by external resources
+        "addons.mozilla.org": ["paypal.com", "paypalobjects.com"] // required for the "Contribute" AMO feature not to break badly with no warning
       };
       for (let site in cascading) {
         if (this.isJSEnabled(site)) {
@@ -1777,13 +1777,18 @@ var ns = singleton = {
   
   get json() {
     delete this.json;
-    var json;
     try {
-      json = CC["@mozilla.org/dom/json;1"].createInstance(CI.nsIJSON);
+      let json = CC["@mozilla.org/dom/json;1"].createInstance(CI.nsIJSON);
+      return this.json = {
+        decode: (json.decodeLegacy && function(s) json.decodeLegacy(s)) || (json.decode && function(s) json.decode(s)) || function(s) JSON.parse(s),
+        encode: (json.encode && function(s) json.encode(s)) || function(s) JSON.stringify(s)
+      }
     } catch(e) {
-      json = null;
+      return this.json = {
+        decode: function(s) JSON.parse(s),
+        encode: function(s) JSON.stringify(s)
+      }
     }
-    return this.json = json;
   },
   
   get placesSupported() {
@@ -1849,12 +1854,10 @@ var ns = singleton = {
     }
   },
   
-  
-  get canSerializeConf() { return !!this.json },
   _dontSerialize: ["version", "temp", "preset", "placesPrefs.ts", "mandatory", "default"],
   serializeConf: function(beauty) {
     if (!this.json) return '';
-    
+
     const exclude = this._dontSerialize;
     const prefs = {};
     for each (let key in this.prefs.getChildList("", {})) {

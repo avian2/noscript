@@ -114,7 +114,7 @@ var nsopt = {
     if (!ns.placesSupported)
       $("opt-placesPrefs").setAttribute("hidden", "true");
     
-    if (ns.canSerializeConf) this.initExtraButtons();
+    this.initExtraButtons();
     
     this.addButton.setAttribute("enabled", "false");
     this.removeButton.setAttribute("enabled", "false");

@@ -1,24 +1,71 @@
 function ClearClickHandler(ns) {
   this.ns = ns;
-  if (ns.geckoVersionCheck("1.9.2") < 0)
+  if (ns.geckoVersionCheck("1.9.2") < 0) {
     INCLUDE("ClearClickHandlerLegacy");
+  }
 }
 
 ClearClickHandler.prototype = {
   
   uiEvents: ["mousedown", "mouseup", "click", "dblclick", "keydown", "keypress", "keyup", "blur"],
   
-  lastGlobalEvent: {
-    quarantine: 1000,
+  rapidFire: {
+    quarantine: 800,
     topSite: null,
-    ts: 0
+    ts: 0,
+    mouse: false,
+    screenX: -16,
+    screenY: -16,
+    
+    check: function(ev, topSite, ts) {
+      const typeChar = ev.type[0];
+      
+      let mouse = false;
+      switch(typeChar) {
+        case 'c': case 'm':
+          mouse = true;
+        case 'k':
+        break;
+      
+        default:
+          return false;
+      }
+      
+      if (this.mouse === mouse) {
+        if (topSite !== this.topSite &&
+            (ts - this.ts) < this.quarantine &&
+            (!mouse || Math.sqrt(Math.pow(ev.screenX - this.screenX, 2) + Math.pow(ev.screenY - this.screenY, 2)) < 16)) {
+          this.ts = ts - this.quarantine / 2;
+          return true;
+        }
+      } else this.mouse = mouse;
+      
+      if (mouse) {
+        this.screenX = ev.screenX;
+        this.screenY = ev.screenY;
+      }
+      
+      this.topSite = topSite;
+      this.ts = ts;
+      
+      return false;
+  
+    }
   },
   
   install: function(browser) {
+    
+    var doc = browser.ownerDocument;
+    if (!("__ClearClick__" in doc)) {
+      doc.__ClearClick__ = true;
+      for each(let et in ["keydown", "mousedown"]) doc.addEventListener(et, this, true);
+    }
+    
     var ceh = browser.docShell.chromeEventHandler;
     var l = this._listener;
     for each(var et in this.uiEvents) ceh.addEventListener(et, this, true);
   },
+ 
   
   exceptions: null,
   
@@ -193,10 +240,17 @@ ClearClickHandler.prototype = {
   },
   
   handleEvent: function(ev) {
-
+    
     const o = ev.target;
     const d = o.ownerDocument;
     if (!d) return;
+    
+    if (d === ev.currentTarget || ev.button || ev.ctrlKey || ev.metaKey || ev.altKey) {
+      this.rapidFire.ts = 0;
+      // this.ns.log("Reset global event tracking");
+      return;
+    }
+    
     
     const w = d.defaultView;
     if (!w) return;
@@ -207,21 +261,13 @@ ClearClickHandler.prototype = {
     const topURI = top.document.documentURIObject;
     const topSite = topURI.prePath;
     
-    const lastGlobal = this.lastGlobalEvent;
     var ts = Date.now();
     
-    if (topSite != lastGlobal.topSite && ts - lastGlobal.ts < lastGlobal.quarantine &&
-        ((ev instanceof CI.nsIDOMMouseEvent) || !(ev.ctrlKey || ev.metaKey || ev.altKey))) {
+    if (this.rapidFire.check(ev, topSite, ts)) {
       this.swallowEvent(ev);
-      lastGlobal.ts = ts - lastGlobal.quarantine / 2;
-      ns.log("[NoScript ClearClick] Swallowed event " + ev.type + " on " + topURI.spec + " (rapid fire from " + lastGlobal.topSite + ")", true);
+      ns.log("[NoScript ClearClick] Swallowed event " + ev.type + " on " + topURI.spec + " (rapid fire from " + this.rapidFire.topSite + " in "  + (ts - this.rapidFire.ts) + "ms)", true);
       return;
     }
-    
-    lastGlobal.topSite = topSite;
-    lastGlobal.ts = ts;
-    
-   
     
     if (!("__clearClickUnlocked" in top)) 
       top.__clearClickUnlocked = !this.appliesHere(topURI.spec);

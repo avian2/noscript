@@ -28,7 +28,20 @@
       root.removeChild(o);
       return this._zoom = zoom > 0 ? zoom : this._zoom;
     },
-  
+    
+    computeScrollbarSizes: function(window, dElem, body) {
+      var fw = window.innerWidth, fh = window.innerHeight;
+      
+      if (body && body.ownerDocument.compatMode == "BackCompat") {
+        dElem = body;
+      }
+      
+      var dw = dElem.clientWidth, dh = dElem.clientHeight;
+      var w = Math.min(fw, dw), h = Math.min(fh, dh);
+      
+      return { w: fw - w, h: fh - h };
+    },
+    
     getBox: function(o, d, w) {
       var zoom = this._zoom || 1;
       if (!d) d = o.ownerDocument;
