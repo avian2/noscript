@@ -16,6 +16,8 @@ content noscript jar:chrome/noscript.jar!/content/noscript/
 skin    noscript classic/1.0 jar:chrome/noscript.jar!/skin/classic/noscript/
 style chrome://global/content/customizeToolbar.xul chrome://noscript/skin/browser.css
 
+# resource noscript-mod modules/
+
 # Work around for breakages caused by the .NET Framework Assistant
 override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<lame/>
 

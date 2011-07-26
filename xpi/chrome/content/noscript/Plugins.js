@@ -11,7 +11,7 @@ var Plugins = {
   get _factory() {
     delete this._factory;
     
-    return this._factory = Components.manager.getClassObject(CC[this._CTRID], CI.nsIFactory);
+    return this._factory = Components.manager.getClassObject(Cc[this._CTRID], Ci.nsIFactory);
   },
 
   set disabled(b) {

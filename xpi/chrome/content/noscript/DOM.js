@@ -24,10 +24,10 @@ const DOM = {
   },
   
   findWindow: function(ctx) {
-    if (!(ctx instanceof CI.nsIDOMWindow)) {
-      if (ctx instanceof CI.nsIDOMDocument) {
+    if (!(ctx instanceof Ci.nsIDOMWindow)) {
+      if (ctx instanceof Ci.nsIDOMDocument) {
         ctx = ctx.defaultView;
-      } else if(ctx instanceof CI.nsIDOMNode) {
+      } else if(ctx instanceof Ci.nsIDOMNode) {
         ctx = ctx.ownerDocument.defaultView;
       } else return null; 
     }
@@ -41,7 +41,7 @@ const DOM = {
       ctx = this.findWindow(ctx);
       if (!ctx) return null;
       try {
-        ctx = CU.lookupMethod(ctx, "top")();
+        ctx = Cu.lookupMethod(ctx, "top")();
       } catch(e) {
         ctx = ctx.top;
       }
@@ -63,9 +63,9 @@ const DOM = {
   
   getDocShellForWindow: function(window) {
     try {
-      return window.QueryInterface(CI.nsIInterfaceRequestor)
-                   .getInterface(CI.nsIWebNavigation)
-                   .QueryInterface(CI.nsIDocShell);
+      return window.QueryInterface(Ci.nsIInterfaceRequestor)
+                   .getInterface(Ci.nsIWebNavigation)
+                   .QueryInterface(Ci.nsIDocShell);
     } catch(e) {
       return null;
     }
@@ -74,9 +74,9 @@ const DOM = {
   getChromeWindow: function(window) {
     try {
       return this.getDocShellForWindow(window)
-        .QueryInterface(CI.nsIDocShellTreeItem).rootTreeItem
-        .QueryInterface(CI.nsIInterfaceRequestor)
-        .getInterface(CI.nsIDOMWindow).window;
+        .QueryInterface(Ci.nsIDocShellTreeItem).rootTreeItem
+        .QueryInterface(Ci.nsIInterfaceRequestor)
+        .getInterface(Ci.nsIDOMWindow).window;
     } catch(e) {
       return null;
     }
@@ -84,37 +84,32 @@ const DOM = {
   
   get windowMediator() {
     delete this.windowMediator;
-    return this.windowMediator = CC['@mozilla.org/appshell/window-mediator;1']
-                  .getService(CI.nsIWindowMediator);
+    return this.windowMediator = Cc['@mozilla.org/appshell/window-mediator;1']
+                  .getService(Ci.nsIWindowMediator);
   },
   
-  _winType: null,
+  browserWinType: 'navigator:browser',
   perWinType: function(delegate) {
     var wm = this.windowMediator;
     var w = null;
     var aa = Array.slice(arguments, 0);
     for each(var type in ['navigator:browser', 'emusic:window', 'Songbird:Main']) {
-     aa[0] = type;
+      aa[0] = type;
       w = delegate.apply(wm, aa);
       if (w) {
-        this._winType = type;
+        this.browserWinType = type;
         break;
       }
     }
     return w;
   },
-  get mostRecentBrowserWindow() {
-    var res = this._winType && this.windowMediator.getMostRecentWindow(this._winType, true);
-    return res || this.perWinType(this.windowMediator.getMostRecentWindow, true);
-  },
   
-  get windowEnumerator() {
-    var res = this._winType && this.windowMediator.getZOrderDOMWindowEnumerator(this._winType, true);
-    return res || this.perWinType(this.windowMediator.getZOrderDOMWindowEnumerator, true);
-  },
-  createBrowserIterator: function(initialWin) {
-    return new BrowserIterator(initialWin);
-  },
+  get mostRecentBrowserWindow() this.windowMediator.getMostRecentWindow(this.browserWinType, true) ||
+      this.perWinType(this.windowMediator.getMostRecentWindow, true),
+  get windowEnumerator()  this.windowMediator.getZOrderDOMWindowEnumerator(this.browserWinType, true) ||
+    this.perWinType(this.windowMediator.getZOrderDOMWindowEnumerator, true),
+    
+  createBrowserIterator: function(initialWin) new BrowserIterator(initialWin),
   
   addClass: function(e, c) {
     var cur = e.className;

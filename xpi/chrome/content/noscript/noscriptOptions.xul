@@ -401,7 +401,8 @@
               </listbox>
               <splitter style="background: transparent; margin: 0; border-width: 0" />
               <textbox id="abeRuleset-text" flex="4" multiline="true" wrap="off"
-											 onchange="abeOpts.changed(this)"
+											 onchange="abeOpts.changed()"
+											 oninput="abeOpts.dirty = abeOpts.list.selectedItem"
 											 style="margin-left: 0"
 							/>
             </hbox>

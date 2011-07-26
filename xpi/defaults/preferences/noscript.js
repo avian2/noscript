@@ -123,7 +123,6 @@ pref("noscript.jsredirectIgnore", false);
 pref("noscript.jsredirectFollow", false);
 pref("noscript.jsredirectForceShow", false);
 
-pref("noscript.safeToplevel", true);
 pref("noscript.utf7filter", true);
 
 pref("noscript.safeJSRx", "(?:window\\.)?close\\s*\\(\\)");
@@ -238,7 +237,7 @@ pref("noscript.surrogate.imagehaven.replacement", "['agreeCont','TransparentBlac
 pref("noscript.surrogate.imagehaven.sources", "!@*.imagehaven.net");
 pref("noscript.surrogate.interstitialBox.replacement", "__defineSetter__('interstitialBox',function(){});__defineGetter__('interstitialBox',function(){return{}})");
 pref("noscript.surrogate.interstitialBox.sources", "@*.imagevenue.com");
-pref("noscript.surrogate.googleThumbs.replacement", "(function(){var ss=document.getElementsByTagName('script');var s,t,m,id,i;for(var j=ss.length;j-->0;)if(((s=ss[j])&&(t=s.firstChild&&s.firstChild.nodeValue)&&(id=t.match(/\w+thumb\d+/))&&(m=t.match(/['\"](data:[^'\"]+)/)))&&(i=document.getElementById(id)))i.src=m[1].replace(/\\(u[0-9a-f]{4}|x[0-9a-f]{2})/ig,function(a,b){return String.fromCharCode(parseInt(b.substring(1), 16))})})()");
+pref("noscript.surrogate.googleThumbs.replacement", "(function(){var ss=document.getElementsByTagName('script');var s,t,m,id,i;for(var j=ss.length;j-->0;)if(((s=ss[j])&&(t=s.firstChild&&s.firstChild.nodeValue)&&(id=t.match(/\w+thumb\d+/))&&(m=t.match(/['\"](data:[^'\"]+)/)))&&(i=document.getElementById(id)))i.src=m[1].replace(/\\\\(u[0-9a-f]{4}|x[0-9a-f]{2})/ig,function(a,b){return String.fromCharCode(parseInt(b.substring(1), 16))})})()");
 pref("noscript.surrogate.googleThumbs.sources", "!^https?://www\\.google\\.[a-z]+/search");
 pref("noscript.surrogate.amo.replacement", "addEventListener('click',function(e){if(e.button)return;var a=e.target.parentNode;var hash=a.getAttribute('data-hash');if(hash){var b=a.parentNode.parentNode;InstallTrigger.install({x:{URL:a.href,IconURL:b.getAttribute('data-icon'),Hash:hash,toString:function(){return a.href}}});e.preventDefault()}},false)");
 pref("noscript.surrogate.amo.sources", "!https://addons.mozilla.org/");
@@ -263,7 +262,8 @@ pref("noscript.surrogate.revsci.sources", "js.revsci.net");
 pref("noscript.surrogate.revsci.replacement", "rsinetsegs=[];DM_addEncToLoc=DM_tag=function(){};");
 pref("noscript.surrogate.adriver.sources", "ad.adriver.ru/cgi-bin/erle.cgi");
 pref("noscript.surrogate.adriver.replacement", "if(top!==self&&top.location.href===location.href)setTimeout('try{document.close();}catch(e){}',100)");
-
+pref("noscript.surrogate.twitter.sources", "platform.twitter.com");
+pref("noscript.surrogate.twitter.replacement", "twttr=function(){if(typeof Proxy==='undefined'){twttr.events=twttr.anywhere={__noSuchMethod__:twttr};return twttr};var p=Proxy.createFunction({get:function(proxy, name){return name in Object.prototype?Object.prototype[name]:p;}},function(){return p;});return p;}();");
 pref("noscript.placeholderMinSize", 32);
 pref("noscript.placeholderLongTip", true);
 

@@ -1,8 +1,8 @@
 var PlacesPrefs = {
   
-  QueryInterface: xpcom_generateQI([CI.nsINavBookmarkObserver, CI.nsISupportsWeakReference]),
-  bmsvc: CC["@mozilla.org/browser/nav-bookmarks-service;1"].getService(CI.nsINavBookmarksService),
-  annsvc: CC["@mozilla.org/browser/annotation-service;1"].getService(CI.nsIAnnotationService),
+  QueryInterface: xpcom_generateQI([Ci.nsINavBookmarkObserver, Ci.nsISupportsWeakReference]),
+  bmsvc: Cc["@mozilla.org/browser/nav-bookmarks-service;1"].getService(Ci.nsINavBookmarksService),
+  annsvc: Cc["@mozilla.org/browser/annotation-service;1"].getService(Ci.nsIAnnotationService),
 
   LEGACY_NAME: "* NoScript Configuration",
   NAME: "[NoScript]",
@@ -99,7 +99,7 @@ var PlacesPrefs = {
       legacy = true;
       
       var uri = (url || folderId) && svc.getBookmarkURI(id) || null;
-      if (uri && (uri instanceof CI.nsIURL) && uri.host == 'void.noscript.net') {
+      if (uri && (uri instanceof Ci.nsIURL) && uri.host == 'void.noscript.net') {
         // legacy querystring + hash parsing, see 1.9.2
         var qs = uri.query.replace(/^\?/, '').split("&");
         var couple;
@@ -185,8 +185,8 @@ var PlacesPrefs = {
         if (oldData && oldData.ts != ns.getPref("placesPrefs.ts")) {
           var date = new Date();
           date.setTime(oldData.ts.substring(1));
-          if (CC["@mozilla.org/embedcomp/prompt-service;1"
-            ].getService(CI.nsIPromptService).confirm(DOM.mostRecentBrowserWindow,
+          if (Cc["@mozilla.org/embedcomp/prompt-service;1"
+            ].getService(Ci.nsIPromptService).confirm(DOM.mostRecentBrowserWindow,
               ns.getString("bookmarkSync.title"), ns.getString("bookmarkSync.confirm", [date.toLocaleString()]))
           ) {
             this._load(oldData);

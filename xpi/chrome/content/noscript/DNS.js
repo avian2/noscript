@@ -55,8 +55,8 @@ var DNS = {
   
   get logFile() {
     delete this.logFile;
-    var logFile = CC["@mozilla.org/file/directory_service;1"]
-      .getService(CI.nsIProperties).get("ProfD", CI.nsIFile);
+    var logFile = Cc["@mozilla.org/file/directory_service;1"]
+      .getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
     logFile.append("noscript_dns.log");
     return this.logFile = logFile;
   },
@@ -65,8 +65,8 @@ var DNS = {
     try {
       if (!this.logStream) {
         const logFile = this.logFile;
-        const logStream = CC["@mozilla.org/network/file-output-stream;1"]
-          .createInstance(CI.nsIFileOutputStream);
+        const logStream = Cc["@mozilla.org/network/file-output-stream;1"]
+          .createInstance(Ci.nsIFileOutputStream);
         logStream.init(logFile, 0x02 | 0x08 | 0x10, 384 /*0600*/, 0 );
         this.logStream = logStream;
         const header="*** Log start at "+new Date().toGMTString()+"\n";
@@ -85,8 +85,8 @@ var DNS = {
   
   get _dns() {
     delete this._dns;
-    return this._dns = CC["@mozilla.org/network/dns-service;1"]
-                  .getService(CI.nsIDNSService);
+    return this._dns = Cc["@mozilla.org/network/dns-service;1"]
+                  .getService(Ci.nsIDNSService);
   },
   
   _cache: {
@@ -152,8 +152,8 @@ var DNS = {
   
   get idn() {
     delete this.idn;
-    return this.idn =  CC["@mozilla.org/network/idn-service;1"]
-      .getService(CI.nsIIDNService);
+    return this.idn =  Cc["@mozilla.org/network/idn-service;1"]
+      .getService(Ci.nsIIDNService);
   },
   
   _invalidRx: /[^\w\-\.]/,
@@ -218,7 +218,7 @@ var DNS = {
           startTime: Date.now()
         };
         
-        var status = Components.results.NS_OK;
+        var status = Cr.NS_OK;
         
         
         var resolve = function() {
@@ -269,7 +269,7 @@ var DNS = {
     if (callback) {
       callback(dnsRecord);
     } else {
-      if (!(dnsRecord && dnsRecord.valid)) throw Components.results.NS_ERROR_UNKNOWN_HOST;
+      if (!(dnsRecord && dnsRecord.valid)) throw Cr.NS_ERROR_UNKNOWN_HOST;
     }
     return dnsRecord;
   },
@@ -350,7 +350,7 @@ function DNSListener(callback) {
   if (callback) this.callback = callback;
 };
 DNSListener.prototype = {
-  QueryInterface: xpcom_generateQI([CI.nsIDNSListener]),
+  QueryInterface: xpcom_generateQI([Ci.nsIDNSListener]),
   record: null,
   status: 0,
   callback: null,

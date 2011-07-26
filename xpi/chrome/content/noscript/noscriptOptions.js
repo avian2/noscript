@@ -1,5 +1,5 @@
-const CC = Components.classes;
-const CI = Components.interfaces;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
 var ns = noscriptUtil.service;
 
@@ -408,8 +408,7 @@ var nsopt = {
       }
       return;
     }
-    
-    // TODO: hide flickering
+
     this.populateUrlList();
     try {
       var rowCount = ul.getRowCount();
@@ -448,8 +447,8 @@ var nsopt = {
   
   chooseFile: function(title, mode, callback) {
     try {
-      const IFP = CI.nsIFilePicker;
-      const fp = CC["@mozilla.org/filepicker;1"].createInstance(IFP);
+      const IFP = Ci.nsIFilePicker;
+      const fp = Cc["@mozilla.org/filepicker;1"].createInstance(IFP);
       
       fp.init(window,title, IFP["mode" + mode]);
       fp.defaultExtension = ".txt";
@@ -540,16 +539,6 @@ var abeOpts = {
   QueryInterface: ns.wan.QueryInterface, // dirty hack, we share the same observer ifaces
   
   init: function() {
-    
-    if (!(ABE.legacySupport || ns.Thread.canSpin)) {
-      var tab = $("nsopt-tabABE");
-      if (tab.selected) {
-        tab.parentNode.selectedIndex = 0;
-      }
-      tab.hidden = true;
-      return;
-    }
-    
     this.list = $("abeRulesets-list");
     this.populate();
     this.updateWAN(ns.wan.ip);
@@ -574,15 +563,18 @@ var abeOpts = {
     ABE.resetDefaults();
   },
   
-  changed: function(text) {
-    var i = this.list.selectedItem;
-    if (i) ABE.storeRuleset(i.value, text.value);
+  changed: function(i) {
+    i = i || this.list.selectedItem;
+    this.dirty = null;
+    if (i) ABE.storeRuleset(i.value, $("abeRuleset-text").value);
   },
   
   _populating: false,
   populate: function() {
+    if (this._populating) return;
     this._populating = true;
     this.errors = false;
+    this.dirty = null;
     try {
       const map = {__proto__: null};
       var l = this.list;
@@ -614,6 +606,11 @@ var abeOpts = {
   },
   
   selected: function(i) {
+    if (this.dirty) {
+      let selIndex = this.list.selectedIndex;
+      this.changed(this.dirty);
+      this.list.selectedIndex = selIndex;
+    }
     if (!this._populating) this.sync();
   },
   
@@ -780,8 +777,8 @@ var EF = {
     f = f || this.currentFilter;
     if (!f) return;
     
-    const IFP = CI.nsIFilePicker;
-    const fp = CC["@mozilla.org/filepicker;1"].createInstance(IFP);
+    const IFP = Ci.nsIFilePicker;
+    const fp = Cc["@mozilla.org/filepicker;1"].createInstance(IFP);
       
     fp.init(window, ns.getString("ef.locateExe", [f.name]), IFP.modeOpen);
     fp.appendFilters(IFP.filterApps);

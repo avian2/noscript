@@ -7,7 +7,6 @@
 
   <script type="application/x-javascript;version=1.8" src="noscript.js" />
   <script type="application/x-javascript;version=1.8" src="noscriptOverlay.js"/>
-  <script type="application/x-javascript;version=1.8" src="noscriptBM.js"/>
   
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton id="noscript-tbb" 

@@ -43,13 +43,13 @@ const HTTPS = {
         
       } catch(e) {
         
-        if (ctx && ctx instanceof CI.nsIDOMHTMLImageElement || ctx instanceof CI.nsIDOMHTMLInputElement ||
-            ctx instanceof CI.nsIObjectLoadingContent) {
+        if (ctx && ctx instanceof Ci.nsIDOMHTMLImageElement || ctx instanceof Ci.nsIDOMHTMLInputElement ||
+            ctx instanceof Ci.nsIObjectLoadingContent) {
           uri = uri.clone();
           uri.scheme = "https";
           
           var type, attr;
-          if (ctx instanceof CI.nsIObjectLoadingContent) {
+          if (ctx instanceof Ci.nsIObjectLoadingContent) {
             type = "Object";
             attr = "data";
           } else {
@@ -121,7 +121,7 @@ const HTTPS = {
     
     if (uri.schemeIs("https") &&
         !(this.secureCookiesExceptions && this.secureCookiesExceptions.test(uri.spec)) &&
-        (req instanceof CI.nsIHttpChannel)) {
+        (req instanceof Ci.nsIHttpChannel)) {
       try {
         var host = uri.host;
         try {
@@ -159,7 +159,7 @@ const HTTPS = {
           if (unsafe && !(forced || secureFound)) {
             // this page did not set any secure cookie, let's check if we already have one
             secureFound = Cookie.find(function(c) {
-              return (c instanceof CI.nsICookie) && (c instanceof CI.nsICookie2)
+              return (c instanceof Ci.nsICookie) && (c instanceof Ci.nsICookie2)
                 && c.secure && !unsafe.find(function(x) { return x.sameAs(c); })
             });
             if (secureFound) {
@@ -267,7 +267,7 @@ const HTTPS = {
       this.log(uri.prePath + " cannot support secure cookies because it does not use HTTPS. Consider forcing HTTPS for " + uri.host + " in NoScript's Advanced HTTPS options panel.")
     }
     
-    var cs = CC['@mozilla.org/cookieService;1'].getService(CI.nsICookieService).getCookieString(uri, req);
+    var cs = Cc['@mozilla.org/cookieService;1'].getService(Ci.nsICookieService).getCookieString(uri, req);
       
     for each (c in dcookies) {
       c.secure = dsecure;

@@ -1,9 +1,8 @@
 var noscriptOverlay = (function() {
 
 var $ = function(id) { return document.getElementById(id) };
-const CC = Components.classes;
-const CI = Components.interfaces;
-
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
 return noscriptUtil.service ? {
 
@@ -1885,7 +1884,7 @@ return noscriptUtil.service ? {
         let site = !isUntrusted && (global ? url : jsPSs.matches(url));
         
         if (url == sites.topSite) {
-          if (site && ns.dom.getDocShellForWindow(content).allowJavascript) topTrusted = true;
+          if (site && (!ns.httpStarted || ns.dom.getDocShellForWindow(content).allowJavascript)) topTrusted = true;
           else {
             site = null;
             if (isUntrusted) topUntrusted = true;
@@ -2029,8 +2028,8 @@ return noscriptUtil.service ? {
   prefsObserver: {
     ns: noscriptUtil.service,
     QueryInterface: noscriptUtil.service.generateQI([
-        CI.nsIObserver, 
-        CI.nsISupportsWeakReference])
+        Ci.nsIObserver, 
+        Ci.nsISupportsWeakReference])
   ,
     observe: function(subject, topic, data) {
       
@@ -2276,8 +2275,8 @@ return noscriptUtil.service ? {
     },
     
     webProgressListener: {
-      QueryInterface: noscriptUtil.service.generateQI([CI.nsIWebProgressListener]),
-      STATE_STOP: CI.nsIWebProgressListener.STATE_STOP,
+      QueryInterface: noscriptUtil.service.generateQI([Ci.nsIWebProgressListener]),
+      STATE_STOP: Ci.nsIWebProgressListener.STATE_STOP,
       onLocationChange: function(aWebProgress, aRequest, aLocation) {
         const domWindow = aWebProgress.DOMWindow;
         if (domWindow) {
@@ -2360,7 +2359,9 @@ return noscriptUtil.service ? {
     onMainContextMenu:  function(ev) { noscriptOverlay.prepareContextMenu(ev) },
     
     onLoad: function(ev) {
-      noscriptOverlay.ns.dom._winType = document.documentElement.getAttribute("windowtype");
+      
+      let winType = document.documentElement.getAttribute("windowtype");
+      if (winType !== "navigator:browser") noscriptOverlay.ns.dom.browserWinType = winType;
       
       window.removeEventListener("load", arguments.callee, false);
       window.addEventListener("unload", noscriptOverlay.listeners.onUnload, false);
@@ -2371,8 +2372,13 @@ return noscriptUtil.service ? {
         noscriptOverlay.wrapBrowserAccess();
         let hacks = noscriptOverlay.Hacks;
         hacks.torButton();
-        window.setTimeout(hacks.pdfDownload, 0);
-        
+
+        window.setTimeout(function() {
+          hacks.pdfDownload();
+          Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader)
+            .loadSubScript("chrome://noscript/content/noscriptBM.js");
+          noscriptBM.init();
+        }, 1500);
         
       } catch(e) {
         let msg = "[NoScript] Error initializing new window " + e + "\n" + e.stack; 
@@ -2555,7 +2561,7 @@ return noscriptUtil.service ? {
     openURI: function(aURI, aOpener, aWhere, aContext) {
       const ns = noscriptUtil.service;
 
-      var external = aContext == CI.nsIBrowserDOMWindow.OPEN_EXTERNAL && aURI;
+      var external = aContext == Ci.nsIBrowserDOMWindow.OPEN_EXTERNAL && aURI;
       if (external) {
         if (aURI.schemeIs("http") || aURI.schemeIs("https")) {
            // remember for filter processing
@@ -2635,8 +2641,8 @@ return noscriptUtil.service ? {
           if (node) node.hidden = true;
         }
         node = null;
-        var prefs = this.prefService = CC["@mozilla.org/preferences-service;1"]
-          .getService(CI.nsIPrefService).getBranch("noscript.");
+        var prefs = this.prefService = Cc["@mozilla.org/preferences-service;1"]
+          .getService(Ci.nsIPrefService).getBranch("noscript.");
         try {
           if (prefs.getBoolPref("badInstall")) return;
         } catch(e) {}

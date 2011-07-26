@@ -37,8 +37,8 @@ Strings.prototype = {
     if (path in this.bundles) return this.bundles[path];
     try {
       return this.bundles[path] = 
-        CC["@mozilla.org/intl/stringbundle;1"]
-                  .getService(CI.nsIStringBundleService)
+        Cc["@mozilla.org/intl/stringbundle;1"]
+                  .getService(Ci.nsIStringBundleService)
                   .createBundle("chrome://" + this.chromeName +  "/" + path +
                                 "/" + this.chromeName + ".properties");
     } catch(ex) {

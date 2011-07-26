@@ -1,6 +1,6 @@
 const URIValidator = {
   
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
+  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   
   // returns false if absolute URI is not valid, undefined if it cannot be validated (i.e. no validator is found for this scheme) 
   validate: function(uriSpec) {
@@ -29,8 +29,8 @@ const URIValidator = {
   prefs: null,
   _init: function() {
     this.validators = {};
-    this.prefs = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefService)
-      .getBranch("noscript.urivalid.").QueryInterface(CI.nsIPrefBranch2);
+    this.prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
+      .getBranch("noscript.urivalid.").QueryInterface(Ci.nsIPrefBranch2);
     for each(var key in this.prefs.getChildList("", {})) {
       this.parseValidator(key);
     }

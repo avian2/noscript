@@ -2,7 +2,7 @@ ABE; // kickstart
 
 var RequestGC = {
   INTERVAL: 5000,
-  _timer: CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer),
+  _timer: Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer),
   _pending: [],
   _running: false,
   notify: function(t) {
@@ -27,7 +27,7 @@ var RequestGC = {
     this._pending.push(req);
     if (!this._running) {
       this._running = true;
-      this._timer.initWithCallback(this, this.INTERVAL, CI.nsITimer.TYPE_REPEATING_SLACK);
+      this._timer.initWithCallback(this, this.INTERVAL, Ci.nsITimer.TYPE_REPEATING_SLACK);
     }
   }
 }
@@ -35,6 +35,7 @@ var RequestGC = {
 
 function RequestWatchdog() {  
   this.injectionChecker = InjectionChecker;
+  this.injectionChecker.logEnabled = !!(ns.consoleDump & LOG_INJECTION_CHECK);
   this.init();
 }
 
@@ -58,14 +59,14 @@ RequestWatchdog.prototype = {
   callback: null,
   externalLoad: null,
   noscriptReload: null,
-  DOCUMENT_LOAD_FLAGS: CI.nsIChannel.LOAD_DOCUMENT_URI
-    | CI.nsIChannel.LOAD_CALL_CONTENT_SNIFFERS, // this for OBJECT subdocs
+  DOCUMENT_LOAD_FLAGS: Ci.nsIChannel.LOAD_DOCUMENT_URI
+    | Ci.nsIChannel.LOAD_CALL_CONTENT_SNIFFERS, // this for OBJECT subdocs
   
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
+  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   
   observe: function(channel, topic, data) {
    
-    if (!(channel instanceof CI.nsIHttpChannel)) return;
+    if (!(channel instanceof Ci.nsIHttpChannel)) return;
     
     if(ns.consoleDump & LOG_SNIFF) {
       ns.dump(topic + ": " + channel.URI.spec + ", " + channel.loadFlags);
@@ -110,7 +111,7 @@ RequestWatchdog.prototype = {
 
     if (isDoc) {
       let ph = PolicyState.extract(channel); 
-      if (ph && ph.context) isDoc = !(ph.context instanceof CI.nsIDOMHTMLEmbedElement);
+      if (ph && ph.context) isDoc = !(ph.context instanceof Ci.nsIDOMHTMLEmbedElement);
     }
     
     
@@ -225,7 +226,7 @@ RequestWatchdog.prototype = {
   },
   
   get dummyPost() {
-    const v = CC["@mozilla.org/io/string-input-stream;1"].createInstance();
+    const v = Cc["@mozilla.org/io/string-input-stream;1"].createInstance();
     v.setData("", 0);
     this.__defineGetter__("dummyPost", function() { return v; });
     return v;
@@ -310,7 +311,7 @@ RequestWatchdog.prototype = {
   },
   
   isHome: function(url) {
-    return url instanceof CI.nsIURL &&
+    return url instanceof Ci.nsIURL &&
       this.getHomes().some(function(urlSpec) {
         try {
           return !url.getRelativeSpec(IOUtil.newURI(urlSpec));
@@ -322,7 +323,7 @@ RequestWatchdog.prototype = {
     var homes;
     try {
       homes = ns.prefService.getComplexValue(pref || "browser.startup.homepage",
-                         CI.nsIPrefLocalizedString).data;
+                         Ci.nsIPrefLocalizedString).data;
     } catch (e) {
       return pref ? [] : this.getHomes("browser.startup.homepage.override");
     }
@@ -376,11 +377,11 @@ RequestWatchdog.prototype = {
           this.dump(channel, "Fast reload, original flags: " + 
             channel.loadFlags + ", " + (channel.loadGroup && channel.loadGroup.loadFlags));
         }
-        channel.loadFlags = (channel.loadFlags & ~CI.nsIChannel.VALIDATE_ALWAYS) | 
-                    CI.nsIChannel.LOAD_FROM_CACHE | CI.nsIChannel.VALIDATE_NEVER;
+        channel.loadFlags = (channel.loadFlags & ~Ci.nsIChannel.VALIDATE_ALWAYS) | 
+                    Ci.nsIChannel.LOAD_FROM_CACHE | Ci.nsIChannel.VALIDATE_NEVER;
         if (channel.loadGroup) {
-          channel.loadGroup.loadFlags = (channel.loadGroup.loadFlags & ~CI.nsIChannel.VALIDATE_ALWAYS) | 
-                  CI.nsIChannel.LOAD_FROM_CACHE | CI.nsIChannel.VALIDATE_NEVER;
+          channel.loadGroup.loadFlags = (channel.loadGroup.loadFlags & ~Ci.nsIChannel.VALIDATE_ALWAYS) | 
+                  Ci.nsIChannel.LOAD_FROM_CACHE | Ci.nsIChannel.VALIDATE_NEVER;
         }
         if (ns.consoleDump) {
           this.dump(channel, "Fast reload, new flags: " + 
@@ -399,13 +400,13 @@ RequestWatchdog.prototype = {
       untrustedReload = false;
 
     if (!origin) {
-      if ((channel instanceof CI.nsIHttpChannelInternal) && channel.documentURI) {
+      if ((channel instanceof Ci.nsIHttpChannelInternal) && channel.documentURI) {
         if (originalSpec === channel.documentURI.spec) {
            originSite = ns.getSite(abeReq.traceBack);
            if (originSite && abeReq.traceBack !== originalSpec) {
               origin = abeReq.breadCrumbs.join(">>>");
               if (ns.consoleDump) this.dump(channel, "TRACEBACK ORIGIN: " + originSite + " FROM " + origin);
-              if ((channel instanceof CI.nsIUploadChannel) && channel.uploadStream) {
+              if ((channel instanceof Ci.nsIUploadChannel) && channel.uploadStream) {
                 if (ns.consoleDump) this.dump(channel, "Traceable upload with no origin, probably extension. Resetting origin!");
                 origin = originSite = "";
               }
@@ -618,7 +619,7 @@ RequestWatchdog.prototype = {
           return;
         }
         
-        if (originalSpec === "https://www.readability.com/articles/queue" &&
+        if (/^https?:\/\/www\.readability\.com\/articles\/queue$/.test(originalSpec) &&
             ns.getPref("filterXExceptions.readability")) {
           if (ns.consoleDump) this.dump(channel, "Readability exception");
           return;
@@ -760,7 +761,7 @@ RequestWatchdog.prototype = {
 
     // transform upload requests into no-data GETs
     if (ns.filterXPost && stripPost && 
-        (channel instanceof CI.nsIUploadChannel) && channel.uploadStream
+        (channel instanceof Ci.nsIUploadChannel) && channel.uploadStream
       ) {
       try {
         channel.requestMethod = "GET";
@@ -786,7 +787,7 @@ RequestWatchdog.prototype = {
         originalAttempt = channel.referrer.spec;
         xsan.brutal = /'"</.test(Entities.convertAll(InjectionChecker.urlUnescape(originalAttempt)));
         try {
-          if (channel.referrer instanceof CI.nsIURL) {
+          if (channel.referrer instanceof Ci.nsIURL) {
             changes = xsan.sanitizeURL(channel.referrer);
           } else {
             channel.referrer.spec =  xsan.sanitizeURIComponent(originalAttempt);
@@ -845,7 +846,7 @@ RequestWatchdog.prototype = {
    
     if (requestInfo.xssMaybe) {
       // avoid surprises from history & cache
-      if (channel instanceof CI.nsICachingChannel) {
+      if (channel instanceof Ci.nsICachingChannel) {
         
         const CACHE_FLAGS = channel.LOAD_FROM_CACHE | 
                             channel.VALIDATE_NEVER | 
@@ -884,7 +885,7 @@ RequestWatchdog.prototype = {
   abort: function(requestInfo) {
     var channel = requestInfo.channel;
     
-    if (channel instanceof CI.nsIRequest)
+    if (channel instanceof Ci.nsIRequest)
       IOUtil.abort(channel);
     
     this.dump(channel, "Aborted - " + requestInfo.reason);
@@ -977,7 +978,7 @@ var Entities = {
   
   get htmlNode() {
     delete this.htmlNode;
-    var impl = CC["@mozilla.org/xul/xul-document;1"].createInstance(CI.nsIDOMDocument).implementation;
+    var impl = Cc["@mozilla.org/xul/xul-document;1"].createInstance(Ci.nsIDOMDocument).implementation;
     return this.htmlNode = (("createHTMLDocument" in impl)
       ? impl.createHTMLDocument("")
       : impl.createDocument(
@@ -1012,7 +1013,7 @@ var Entities = {
 };
 
 function SyntaxChecker() {
-  this.sandbox = new CU.Sandbox("about:");
+  this.sandbox = new Cu.Sandbox("about:");
 }
 
 SyntaxChecker.prototype = {
@@ -1037,7 +1038,7 @@ SyntaxChecker.prototype = {
     return null;
   },
   ev: function(s) {
-    return CU.evalInSandbox(s, this.sandbox);
+    return Cu.evalInSandbox(s, this.sandbox);
   }
 };
 
@@ -1898,8 +1899,8 @@ var InjectionChecker = {
   },
   
   checkPost: function(channel, skip) {
-    if (!((channel instanceof CI.nsIUploadChannel)
-          && channel.uploadStream && (channel.uploadStream instanceof CI.nsISeekableStream)))
+    if (!((channel instanceof Ci.nsIUploadChannel)
+          && channel.uploadStream && (channel.uploadStream instanceof Ci.nsISeekableStream)))
       return false;
     
     var clen = -1;
@@ -1924,8 +1925,8 @@ var InjectionChecker = {
   },
   
   testCheckPost: function(url, strData) {
-    var stream = CC["@mozilla.org/io/string-input-stream;1"].
-            createInstance(CI.nsIStringInputStream);
+    var stream = Cc["@mozilla.org/io/string-input-stream;1"].
+            createInstance(Ci.nsIStringInputStream);
     stream.setData(strData, strData.length);
     return this.checkPostStream(url, stream);
   }
@@ -1949,7 +1950,7 @@ PostChecker.prototype = {
     try {
       var us = this.uploadStream;
       us.seek(0, 0);
-      const sis = CC['@mozilla.org/binaryinputstream;1'].createInstance(CI.nsIBinaryInputStream);
+      const sis = Cc['@mozilla.org/binaryinputstream;1'].createInstance(Ci.nsIBinaryInputStream);
       sis.setInputStream(us);
       
       // reset status
@@ -2098,7 +2099,7 @@ XSanitizer.prototype = {
     if (url.password) url.password = this.sanitizeEnc(url.password);
     url.host = this.sanitizeEnc(url.host);
     
-    if (url instanceof CI.nsIURL) {
+    if (url instanceof Ci.nsIURL) {
       // sanitize path
      
       if (url.param) {
@@ -2203,7 +2204,7 @@ XSanitizer.prototype = {
           if (canRecur && /^https?:\/\//i.test(pz)) {
             // try to sanitize as a nested URL
             try {
-              nestedURI = IOUtil.newURI(pz).QueryInterface(CI.nsIURL);
+              nestedURI = IOUtil.newURI(pz).QueryInterface(Ci.nsIURL);
               changes.qs = changes.qs || this.sanitizeURL(nestedURI).major;
               if (unescape(pz).replace(/\/+$/, '') != unescape(nestedURI.spec).replace(/\/+$/, '')) pz = nestedURI.spec;
             } catch(e) {
@@ -2417,8 +2418,8 @@ DOSChecker.prototype = {
 }
 
 var MaxRunTime = {
-  branch: CC["@mozilla.org/preferences-service;1"]
-        .getService(CI.nsIPrefService).getBranch("dom."),
+  branch: Cc["@mozilla.org/preferences-service;1"]
+        .getService(Ci.nsIPrefService).getBranch("dom."),
   pref: "max_script_run_time",
   increase: function(v) {
     var cur;

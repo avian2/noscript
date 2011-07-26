@@ -1,5 +1,5 @@
 var ScriptSurrogate = {
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
+  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   
   enabled: true,
   prefs: null,
@@ -12,8 +12,8 @@ var ScriptSurrogate = {
   
   
   _init: function() {
-    this.prefs = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefService)
-      .getBranch("noscript.surrogate.").QueryInterface(CI.nsIPrefBranch2);
+    this.prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
+      .getBranch("noscript.surrogate.").QueryInterface(Ci.nsIPrefBranch2);
     this._syncPrefs();
    
   },
@@ -94,8 +94,8 @@ var ScriptSurrogate = {
   
   _resolveFile: function(fileURI) {
     const profileURI = IOS.newFileURI(
-      CC["@mozilla.org/file/directory_service;1"].getService(CI.nsIProperties)
-      .get("ProfD", CI.nsIFile));
+      Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties)
+      .get("ProfD", Ci.nsIFile));
     return (this._resolveFile = function(fileURI) {
       return profileURI.resolve(fileURI);
     })(fileURI);
@@ -119,7 +119,7 @@ var ScriptSurrogate = {
         if (/^(?:file:\/\/|\.\.?\/)/.test(mapping.replacement)) {
           try {
             code = IO.readFile(IOS.newURI(this._resolveFile(mapping.replacement), null, null)
-                               .QueryInterface(CI.nsIFileURL).file);
+                               .QueryInterface(Ci.nsIFileURL).file);
           } catch(e) {
             ns.dump("Error loading " + mapping.replacement + ": " + e);
             continue;
@@ -187,13 +187,16 @@ var ScriptSurrogate = {
     var w = document.defaultView;
     try {
       if (typeof w.wrappedJSObject === "object") w = w.wrappedJSObject;
-      var s = new CU.Sandbox(w, { wantXrays: false });
+      var s = new Cu.Sandbox(w, { wantXrays: false });
       s.window = w;
       if (env) s.env = env;
-      CU.evalInSandbox("with(window) {" + scriptBlock + "}", s);
+      Cu.evalInSandbox("with(window) {" + scriptBlock + "}", s);
     } catch (e) {
-      if (ns.consoleDump) ns.dump(e);
-      if (this.debug) CU.reportError(e);
+      if (ns.consoleDump) {
+        ns.dump(e);
+        ns.dump(scriptBlock);
+      }
+      if (this.debug) Cu.reportError(e);
     }
   },
   
@@ -211,7 +214,7 @@ var ScriptSurrogate = {
       de.removeChild(se);
     } catch (e) {
       if (ns.consoleDump) ns.dump(e);
-      if (this.debug) CU.reportError(e);
+      if (this.debug) Cu.reportError(e);
     }
   }
   

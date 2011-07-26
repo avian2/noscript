@@ -15,18 +15,18 @@ const ABE = {
   skipBrowserRequests: true,
   
   BROWSER_URI: IOS.newURI("chrome://browser/content/", null, null),
-  LOAD_BACKGROUND: CI.nsIChannel.LOAD_BACKGROUND,
-  LOAD_INITIAL_DOCUMENT_URI: CI.nsIChannel.LOAD_INITIAL_DOCUMENT_URI,
+  LOAD_BACKGROUND: Ci.nsIChannel.LOAD_BACKGROUND,
+  LOAD_INITIAL_DOCUMENT_URI: Ci.nsIChannel.LOAD_INITIAL_DOCUMENT_URI,
   SANDBOX_KEY: "abe.sandbox",
   localRulesets: [],
   _localMap: null,
   _siteRulesets: null,
   
   init: function(prefParent) {
-    const ps = this.prefService = CC["@mozilla.org/preferences-service;1"]
-      .getService(CI.nsIPrefService).QueryInterface(CI.nsIPrefBranch);
-    ABEStorage.init(ps.getBranch(prefParent+ "ABE.").QueryInterface(CI.nsIPrefBranch2));
-    DoNotTrack.init(ps.getBranch(prefParent+ "doNotTrack.").QueryInterface(CI.nsIPrefBranch2));
+    const ps = this.prefService = Cc["@mozilla.org/preferences-service;1"]
+      .getService(Ci.nsIPrefService).QueryInterface(Ci.nsIPrefBranch);
+    ABEStorage.init(ps.getBranch(prefParent+ "ABE.").QueryInterface(Ci.nsIPrefBranch2));
+    DoNotTrack.init(ps.getBranch(prefParent+ "doNotTrack.").QueryInterface(Ci.nsIPrefBranch2));
   },
   
   siteMap: {__proto__: null},
@@ -202,7 +202,7 @@ const ABE = {
       }
       
       if (!(browserReq || res.fatal) &&
-          this.siteEnabled && channel instanceof CI.nsIHttpChannel &&
+          this.siteEnabled && channel instanceof Ci.nsIHttpChannel &&
           !IOUtil.extractFromChannel(channel, "ABE.preflight", true) &&
           req.destinationURI.schemeIs("https") &&
           req.destinationURI.prePath != req.originURI.prePath &&
@@ -251,7 +251,7 @@ const ABE = {
         DNS.isIP(host) ||
         DNS.getCached(host) || // getCached() rather than isCached(), otherwise we defer even for lazy expiration
         req.channel.redirectionLimit == 0 || req.channel.status != 0 ||
-        req.channel.notificationCallbacks instanceof CI.nsIObjectLoadingContent // OBJECT elements can't be channel-replaced :(
+        req.channel.notificationCallbacks instanceof Ci.nsIObjectLoadingContent // OBJECT elements can't be channel-replaced :(
         ) 
       return false;
 
@@ -262,7 +262,7 @@ const ABE = {
         
         if (req.channel.status != 0) return;
         
-        if ((req.channel instanceof CI.nsITransportEventSink)
+        if ((req.channel instanceof Ci.nsITransportEventSink)
             && req.isDoc && !(req.subdoc || req.dnsNotified)) try {
           ABE.log("DNS notification for " + req.destination);
           req.dnsNotified = true; // unexplicable recursions have been reported... 
@@ -339,17 +339,17 @@ const ABE = {
       uri.scheme = "https";
       uri.path = "/rules.abe";
         
-      var xhr = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
+      var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
       xhr.mozBackgroundRequest = true;
       xhr.open("GET", uri.spec, Thread.canSpin); // async if we can spin our own event loop
       
       var channel = xhr.channel; // need to cast
       IOUtil.attachToChannel(channel, "ABE.preflight", DUMMY_OBJ);
       
-      if (channel instanceof CI.nsIHttpChannel && !this.allowRulesetRedir)
+      if (channel instanceof Ci.nsIHttpChannel && !this.allowRulesetRedir)
         channel.redirectionLimit = 0;
       
-      if (channel instanceof CI.nsICachingChannel)
+      if (channel instanceof Ci.nsICachingChannel)
         channel.loadFlags |= channel.LOAD_BYPASS_LOCAL_CACHE_IF_BUSY; // see bug 309424
       
       
@@ -508,6 +508,9 @@ var ABEActions = {
   },
   deny: function(req) {
     IOUtil.abort(req.channel, true);
+    if (req.isOfType(Ci.nsIContentPolicy.TYPE_SCRIPT)) try {
+      ScriptSurrogate.apply(req.window.document, req.destination);
+    } catch (e) {}
     return true;
   },
   
@@ -809,7 +812,7 @@ ABEPredicate.prototype = {
   },
   get _inclusionTypesMap() {
     delete this.__proto__._inclusionTypesMap;
-    const CP = CI.nsIContentPolicy;
+    const CP = Ci.nsIContentPolicy;
     return this.__proto__._inclusionTypesMap = 
     {
       "OTHER": CP.TYPE_OTHER,
@@ -819,12 +822,12 @@ ABEPredicate.prototype = {
       "CSS": CP.TYPE_STYLESHEET,
       "OBJ": [CP.TYPE_OBJECT, CP.TYPE_OBJECT_SUBREQUEST],
       "MEDIA": CP.TYPE_MEDIA,
-      "SUBDOC": CI.nsIContentPolicy.TYPE_SUBDOCUMENT,
-      "XBL": CI.nsIContentPolicy.TYPE_XBL,
-      "PING": CI.nsIContentPolicy.TYPE_PING,
-      "XHR": CI.nsIContentPolicy.TYPE_XMLHTTPREQUEST,
-      "OBJSUB": CI.nsIContentPolicy.TYPE_OBJECT_SUBREQUEST,
-      "DTD": CI.nsIContentPolicy.TYPE_DTD
+      "SUBDOC": CP.TYPE_SUBDOCUMENT,
+      "XBL": CP.TYPE_XBL,
+      "PING": CP.TYPE_PING,
+      "XHR": CP.TYPE_XMLHTTPREQUEST,
+      "OBJSUB": CP.TYPE_OBJECT_SUBREQUEST,
+      "DTD": CP.TYPE_DTD
     };
   },
  
@@ -896,7 +899,7 @@ ABERequest.serial = 0;
 
 ABERequest.getOrigin = function(channel) {
   let u = IOUtil.extractFromChannel(channel, "ABE.origin", true);
-  return (u instanceof CI.nsIURI) ? u : null;
+  return (u instanceof Ci.nsIURI) ? u : null;
 },
 ABERequest.getLoadingChannel = function(window) {
   return window && ("__loadingChannel__" in window) && window.__loadingChannel__;
@@ -954,7 +957,7 @@ ABERequest.prototype = Lang.memoize({
       }
       
       if (!ou) {
-        if (channel instanceof CI.nsIHttpChannelInternal) {
+        if (channel instanceof Ci.nsIHttpChannelInternal) {
           ou = channel.documentURI;
           if (!ou || ou.spec === this.destination) ou = null;
         }
@@ -988,7 +991,7 @@ ABERequest.prototype = Lang.memoize({
   
   isOfType: function(types) {
     if (!types) return false;
-    return (types instanceof Number)
+    return (typeof types === "number")
       ? this.type === types
       : types.indexOf(this.type) !== -1;
   },
@@ -1062,7 +1065,7 @@ ABERequest.prototype = Lang.memoize({
     return tbu && IOS.newURI(tbu, null, null);
   },
   canDoDNS: function() {
-    return (this.channel instanceof CI.nsIChannel) && // we want to prevent sync DNS resolution for resources we didn't already looked up
+    return (this.channel instanceof Ci.nsIChannel) && // we want to prevent sync DNS resolution for resources we didn't already looked up
       IOUtil.canDoDNS(this.channel);
   },
   localOrigin: function() {
@@ -1120,7 +1123,7 @@ ABERequest.prototype = Lang.memoize({
     } catch(e) {
       ABE.log("Error retrieving type of " + this.destination + ": " + e); // should happen for favicons only
     }
-    return CI.nsIContentPolicy.TYPE_OTHER;
+    return Ci.nsIContentPolicy.TYPE_OTHER;
   }
   
 }
@@ -1143,7 +1146,7 @@ var ABEStorage = {
     this.loadRules();
     prefs.addObserver("", this, true);
   },
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
+  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   observe: function(prefs, topic, name) {
     switch(name) {
       case "wanIpAsLocal":
@@ -1200,17 +1203,17 @@ var ABEStorage = {
     ABE.clear();
     for (let j = 0, len = keys.length; j < len; j++) {
       let k = keys[j];
-      ABE.parse(k.replace("rulesets.", ""), prefs.getComplexValue(k, CI.nsISupportsString).data);
+      ABE.parse(k.replace("rulesets.", ""), prefs.getComplexValue(k, Ci.nsISupportsString).data);
     }
     ABE.disabledRulesetNames = disabled;
     OS.notifyObservers(ABE, ABE.RULES_CHANGED_TOPIC, null);
   },
   
   saveRuleset: function(name, source) {
-    var str = CC["@mozilla.org/supports-string;1"]
-      .createInstance(CI.nsISupportsString);
+    var str = Cc["@mozilla.org/supports-string;1"]
+      .createInstance(Ci.nsISupportsString);
     str.data = source;
-    this.prefs.setComplexValue("rulesets." + name, CI.nsISupportsString, str);
+    this.prefs.setComplexValue("rulesets." + name, Ci.nsISupportsString, str);
   },
   
   persist: function() {
@@ -1220,8 +1223,8 @@ var ABEStorage = {
   _migrateLegacyFiles: function() {
     var ret = 0;
     try {
-      var dir = CC["@mozilla.org/file/directory_service;1"]
-        .getService(CI.nsIProperties).get("ProfD", CI.nsIFile);
+      var dir = Cc["@mozilla.org/file/directory_service;1"]
+        .getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
       dir.append("ABE");
       dir.append("rules");
       
@@ -1232,7 +1235,7 @@ var ABEStorage = {
         var entries = dir.directoryEntries;
         while(entries.hasMoreElements()) {
           let f = entries.getNext();
-          if (f instanceof CI.nsIFile) {
+          if (f instanceof Ci.nsIFile) {
             let fname = f.leafName;
             if (/^[^\.\s]*\.abe$/i.test(fname)) {
               try {
@@ -1258,9 +1261,9 @@ var ABEStorage = {
 var OriginTracer = {
   detectBackFrame: function(prev, next, docShell) {
     if (prev.ID != next.ID) return prev.URI.spec;
-    if ((prev instanceof CI.nsISHContainer) &&
-       (next instanceof CI.nsISHContainer) &&
-       (docShell instanceof CI.nsIDocShellTreeNode)
+    if ((prev instanceof Ci.nsISHContainer) &&
+       (next instanceof Ci.nsISHContainer) &&
+       (docShell instanceof Ci.nsIDocShellTreeNode)
       ) {
       var uri;
       for (var j = Math.min(prev.childCount, next.childCount, docShell.childCount); j-- > 0;) {
@@ -1311,8 +1314,8 @@ var OriginTracer = {
         try {
       ABE.log("Traceback origin for " + req.destination);
       var window = req.window;
-      if (window instanceof CI.nsIInterfaceRequestor) {
-        var webNav = window.getInterface(CI.nsIWebNavigation);
+      if (window instanceof Ci.nsIInterfaceRequestor) {
+        var webNav = window.getInterface(Ci.nsIWebNavigation);
         var current = webNav.currentURI;
         var isSameURI = current && current.equals(req.destinationURI);
         if (isSameURI && (req.channel.loadFlags & req.channel.VALIDATE_ALWAYS)) 
@@ -1350,7 +1353,7 @@ var DoNotTrack = {
     }
     prefs.addObserver("", this, true);
   },
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
+  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   observe: function(prefs, topic, name) {
     switch(name) {
       case "enabled":
@@ -1358,7 +1361,7 @@ var DoNotTrack = {
        break;
       case "exceptions":
       case "forced":
-        this[name] = AddressMatcher.create(prefs.getComplexValue(name, CI.nsISupportsString).data);
+        this[name] = AddressMatcher.create(prefs.getComplexValue(name, Ci.nsISupportsString).data);
       break;
     }
   },
@@ -1405,10 +1408,10 @@ const WAN = {
   fingerprintLogging: false,
   fingerprintUA: "Mozilla/5.0 (ABE, http://noscript.net/abe/wan)",
   fingerprintHeader: "X-ABE-Fingerprint",
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference]),
+  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   
   log: function(msg) {
-    var cs = CC["@mozilla.org/consoleservice;1"].getService(CI.nsIConsoleService);
+    var cs = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
     return (this.log = function(msg) {
       if (this.logging) cs.logStringMessage("[ABE WAN] " + msg);
     })(msg);
@@ -1424,7 +1427,7 @@ const WAN = {
   set enabled(b) {
     if (this._timer) this._timer.cancel();
     if (b) {
-      const t = CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer);
+      const t = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
       t.initWithCallback({
         notify: function() { WAN._periodic() },
         context: null
@@ -1529,13 +1532,13 @@ const WAN = {
   },
     
   _createAnonXHR: function(url, noproxy) {
-    var xhr = CC["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(CI.nsIXMLHttpRequest);
+    var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
     xhr.mozBackgroundRequest = true;
     xhr.open("GET", url, true);
     const ch = xhr.channel;
     const proxyInfo = noproxy && IOUtil.getProxyInfo(ch);
     if (!proxyInfo || proxyInfo.type == "direct" || proxyInfo.host && DNS.isLocalHost(proxyInfo.host)) {
-      if ((ch instanceof CI.nsIHttpChannel)) {
+      if ((ch instanceof Ci.nsIHttpChannel)) {
         // cleanup headers
         this._requestHeaders(ch).forEach(function(h) {
           if (h != 'Host') ch.setRequestHeader(h, '', false); // clear header
@@ -1617,7 +1620,7 @@ const WAN = {
   
   _requestHeaders: function(ch) {
     var hh = [];
-    if (ch instanceof CI.nsIHttpChannel)
+    if (ch instanceof Ci.nsIHttpChannel)
       ch.visitRequestHeaders({
         visitHeader: function(name, value) { hh.push(name); }
       });

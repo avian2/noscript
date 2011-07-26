@@ -134,7 +134,7 @@ ClearClickHandler.prototype = {
   },
   
   isEmbed: function(o) {
-    return (o instanceof CI.nsIDOMHTMLObjectElement || o instanceof CI.nsIDOMHTMLEmbedElement)
+    return (o instanceof Ci.nsIDOMHTMLObjectElement || o instanceof Ci.nsIDOMHTMLEmbedElement)
       && !o.contentDocument && ns.isWindowlessObject(o);
   },
   
@@ -222,9 +222,9 @@ ClearClickHandler.prototype = {
     return doc.__clearClickCanvas || (doc.__clearClickCanvas = doc.createElementNS(HTML_NS, "canvas"));
   },
   
-  _semanticContainers: [CI.nsIDOMHTMLParagraphElement, CI.nsIDOMHTMLQuoteElement,
-                        CI.nsIDOMHTMLUListElement, CI.nsIDOMHTMLOListElement, CI.nsIDOMHTMLDirectoryElement,
-                        CI.nsIDOMHTMLPreElement, CI.nsIDOMHTMLTableElement ]
+  _semanticContainers: [Ci.nsIDOMHTMLParagraphElement, Ci.nsIDOMHTMLQuoteElement,
+                        Ci.nsIDOMHTMLUListElement, Ci.nsIDOMHTMLOListElement, Ci.nsIDOMHTMLDirectoryElement,
+                        Ci.nsIDOMHTMLPreElement, Ci.nsIDOMHTMLTableElement ]
   ,
   isSemanticContainer: function(o) {
     let scc = this._semanticContainers;
@@ -350,7 +350,7 @@ ClearClickHandler.prototype = {
       this.swallowEvent(ev);
       ns.log("[NoScript ClearClick] Swallowed event " + etype + " on " + this.forLog(o) + " at " + w.location.href, true);
       var docShell = DOM.getDocShellForWindow(w);
-      var loading = docShell && (docShell instanceof CI.nsIWebProgress) && docShell.isLoadingDocument;
+      var loading = docShell && (docShell instanceof Ci.nsIWebProgress) && docShell.isLoadingDocument;
       if (!loading) {
         p.ts = ts;
         if (primaryEvent && ctx.img && ns.getPref("clearClick.prompt") && !this.prompting) {
@@ -384,7 +384,7 @@ ClearClickHandler.prototype = {
   },
   
   findParentForm: function(o) {
-    var ftype = CI.nsIDOMHTMLFormElement;
+    var ftype = Ci.nsIDOMHTMLFormElement;
     while((o = o.parentNode)) {
       if (o instanceof ftype) return o;
     }
@@ -413,8 +413,8 @@ ClearClickHandler.prototype = {
     var dw = dElem.clientWidth, dh = dElem.clientHeight;
     var w = Math.min(fw, dw), h = Math.min(fh, dh);
     
-    var zoom = window.QueryInterface(CI.nsIInterfaceRequestor)
-            .getInterface(CI.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
+    var zoom = window.QueryInterface(Ci.nsIInterfaceRequestor)
+            .getInterface(Ci.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
 
     return { w: (fw - w) * zoom, h: (fh - h) * zoom };
   },
@@ -824,7 +824,7 @@ ClearClickHandler.prototype = {
     var bw = box.width;
     var bh = box.height;
     
-    const ELEMENT = CI.nsIDOMElement;
+    const ELEMENT = Ci.nsIDOMElement;
     
     while(parent) {
    
@@ -944,7 +944,7 @@ DocPatcher.prototype = {
     var hasPos = false;
     const posn = [];
     
-    const tw = d.createTreeWalker(d, CI.nsIDOMNodeFilter.SHOW_ELEMENT, null, false);
+    const tw = d.createTreeWalker(d, Ci.nsIDOMNodeFilter.SHOW_ELEMENT, null, false);
     for (var n = null; (n = tw.nextNode());) {
       b = this.getRect(n, d);
       if (b.bottom < top || b.top > bottom ||
@@ -1052,32 +1052,13 @@ DocPatcher.prototype = {
     }
   },
   
-  get oldStyle() {
-    delete this.__proto__.oldStyle;
-    return this.__proto__.oldStyle = Components.ID('{41d979dc-ea03-4235-86ff-1e3c090c5630}')
-                 .equals(CI.nsIStyleSheetService);
-  },
-  applySheet: function(sheet) {
-    var sheetHandle = null;
-    if (this.oldStyle) {
-      // Gecko < 1.9, asynchronous user sheets force ugly work-around
-      var d = this.o.ownerDocument;
-      sheetHandle = d.createElementNS(HTML_NS, "style");
-      sheetHandle.innerHTML = sheet;
-      d.documentElement.appendChild(sheetHandle);
-    } else { // 
-      this.ns.updateStyleSheet(sheetHandle = sheet, true);
-    }
+
+  applySheet: function(sheetHandle) {
+    this.ns.updateStyleSheet(sheetHandle, true);
     return sheetHandle;
   },
   removeSheet: function(sheetHandle) {
-    if (sheetHandle) {
-      if (this.oldStyle) {
-        this.o.ownerDocument.documentElement.removeChild(sheetHandle);
-      } else {
-        this.ns.updateStyleSheet(sheetHandle, false);
-      }
-    }
+    this.ns.updateStyleSheet(sheetHandle, false);
   },
   
   _linkAlertBox: null,
@@ -1130,7 +1111,7 @@ DocPatcher.prototype = {
     delete this.__proto__._abpTabsObj;
     var tobj;
     try {
-      tobj = CC["@mozilla.org/adblockplus;1"].getService().wrappedJSObject.objTabs;
+      tobj = Cc["@mozilla.org/adblockplus;1"].getService().wrappedJSObject.objTabs;
     } catch(e) {
       tobj = null;
     }

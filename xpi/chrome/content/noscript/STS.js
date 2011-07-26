@@ -172,8 +172,8 @@ STSDB.prototype = {
   saveDeferred: function() {
     if (this._dirty || !this._persistence) return;
     this._dirty = true;
-    if (!this._timer) this._timer = CC["@mozilla.org/timer;1"].createInstance(CI.nsITimer);
-    this._timer.initWithCallback(this, 10000, CI.nsITimer.TYPE_ONE_SHOT);
+    if (!this._timer) this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
+    this._timer.initWithCallback(this, 10000, Ci.nsITimer.TYPE_ONE_SHOT);
   },
   notify: function(timer) {
     this.save();
@@ -206,8 +206,8 @@ STSEntry.prototype = {
 const STSPersistence = {
   get _file() {
     delete this._file;
-    var f =  CC["@mozilla.org/file/directory_service;1"].getService(
-        CI.nsIProperties).get("ProfD", CI.nsIFile);
+    var f =  Cc["@mozilla.org/file/directory_service;1"].getService(
+        Ci.nsIProperties).get("ProfD", Ci.nsIFile);
     f.append("NoScriptSTS.db");
     return this._file = f;
   },

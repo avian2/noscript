@@ -76,20 +76,20 @@ var ExternalFilters = {
   
   get ioUtil() {
     delete this.ioUtil;
-    return this.ioUtil = CC["@mozilla.org/io-util;1"].getService(CI.nsIIOUtil);
+    return this.ioUtil = Cc["@mozilla.org/io-util;1"].getService(Ci.nsIIOUtil);
   },
   
   get tmpDir() {
     delete this.tmpDir;
-    return this.tmpDir = CC["@mozilla.org/file/directory_service;1"]
-        .getService(CI.nsIProperties)
-        .get("TmpD", CI.nsILocalFile);
+    return this.tmpDir = Cc["@mozilla.org/file/directory_service;1"]
+        .getService(Ci.nsIProperties)
+        .get("TmpD", Ci.nsILocalFile);
   },
   
   
   createProcess: function() {
-    const clazz = CC["@mozilla.org/process/util;1"];
-    const iface = "nsIProcess2" in CI ? CI.nsIProcess2 : CI.nsIProcess;
+    const clazz = Cc["@mozilla.org/process/util;1"];
+    const iface = "nsIProcess2" in Ci ? Ci.nsIProcess2 : Ci.nsIProcess;
     delete this.createProcess;
     return (this.createProcess = function() clazz.createInstance(iface))()
   },
@@ -102,7 +102,7 @@ var ExternalFilters = {
   },
   
   handle: function(channel, extraType, ctx, cached) {
-    if (channel instanceof CI.nsITraceableChannel) {
+    if (channel instanceof Ci.nsITraceableChannel) {
     
       let contentType;
       try {
@@ -154,8 +154,8 @@ var ExternalFilters = {
   },
   
   initFromPrefs: function(prefRoot) {
-    this.prefs = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefService)
-      .getBranch(prefRoot).QueryInterface(CI.nsIPrefBranch2);
+    this.prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
+      .getBranch(prefRoot).QueryInterface(Ci.nsIPrefBranch2);
     this._syncPrefs();
     
   },
@@ -214,7 +214,7 @@ var ExternalFilters = {
                         );
   },
   
-  QueryInterface: xpcom_generateQI([CI.nsIObserver, CI.nsISupportsWeakReference])
+  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference])
 }
 
 
@@ -234,10 +234,10 @@ function ExternalFilter(name, exe, contentType, whitelist) {
         : whitelist
       );
       
-    if (exe instanceof CI.nsIFile) {
+    if (exe instanceof Ci.nsIFile) {
       this.exe = exe;
     } else if (exe) {
-      this.exe = CC["@mozilla.org/file/local;1"].createInstance(CI.nsILocalFile);
+      this.exe = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
       this.exe.initWithPath(exe);
     }
     
@@ -330,8 +330,8 @@ ExternalFilter.prototype = {
     
     if (!(this.whitelist && this.whitelist.test(traceableChannel.name))) {
       try {
-        if (cached && traceableChannel instanceof CI.nsICachingChannel &&
-            traceableChannel.cacheToken instanceof CI.nsICacheEntryDescriptor &&
+        if (cached && traceableChannel instanceof Ci.nsICachingChannel &&
+            traceableChannel.cacheToken instanceof Ci.nsICacheEntryDescriptor &&
             EFCacheSessions.isFiltered(traceableChannel.cacheToken, this.name)) {
           return true;
         }
@@ -401,7 +401,7 @@ EFHandler.prototype = {
   
   abort: function(e) {
     ExternalFilters.log("Aborting " + this.channel.name + ": " + e);
-    this.channel.cancel(Components.results.NS_ERROR_ABORT);
+    this.channel.cancel(Cr.NS_ERROR_ABORT);
     this.overwriteCache(null);
     this.cleanup();
   },
@@ -426,14 +426,14 @@ EFHandler.prototype = {
 
   overwriteCache: function(writerCallback) {
     var ch = this.channel;
-    if (!(ch instanceof CI.nsICachingChannel)) return false;
+    if (!(ch instanceof Ci.nsICachingChannel)) return false;
     
     this.onCacheWrite = writerCallback || this.nukeCache;
     
     try {
 
       let ce = ch.cacheToken;
-      if (!(ce instanceof CI.nsICacheEntryDescriptor && ce.isStreamBased()))
+      if (!(ce instanceof Ci.nsICacheEntryDescriptor && ce.isStreamBased()))
         return false;
       
       try {
@@ -492,11 +492,11 @@ EFHandler.prototype = {
   
   onStartRequest: function(request, ctx) {
     var outFile = ExternalFilters.createTempFile();
-    var os = CC["@mozilla.org/network/file-output-stream;1"]
-      .createInstance(CI.nsIFileOutputStream);
+    var os = Cc["@mozilla.org/network/file-output-stream;1"]
+      .createInstance(Ci.nsIFileOutputStream);
     os.init(outFile, 0x02 | 0x08 | 0x22 /* write, create, truncate */, 384 /*0600*/, 0);
-    var bos = CC["@mozilla.org/network/buffered-output-stream;1"]
-      .createInstance(CI.nsIBufferedOutputStream);
+    var bos = Cc["@mozilla.org/network/buffered-output-stream;1"]
+      .createInstance(Ci.nsIBufferedOutputStream);
     bos.init(os, this.bufSize);
     this.outStream = bos;
     this.outFile = outFile;
@@ -518,7 +518,7 @@ EFHandler.prototype = {
     
     this._observers.splice(this._observers.lastIndexOf(this), 1);
     var p = subject;
-    if (p instanceof CI.nsIProcess) {
+    if (p instanceof Ci.nsIProcess) {
       this.processed = true;
       switch(topic) {
         case "process-finished":
@@ -535,8 +535,8 @@ EFHandler.prototype = {
   },
   
   QueryInterface: xpcom_generateQI(
-      [CI.nsITraceableChannel, CI.nsICacheListener,
-       CI.nsIObserver, CI.nsISupportsWeakReference])
+      [Ci.nsITraceableChannel, Ci.nsICacheListener,
+       Ci.nsIObserver, Ci.nsISupportsWeakReference])
 }
 
 function EFFilePassthru(handler) {
@@ -546,8 +546,8 @@ function EFFilePassthru(handler) {
     
     for each(let ce in [handler.cacheEntry, handler.offlineCacheEntry]) {
       if (ce) {
-        let tee = CC["@mozilla.org/network/stream-listener-tee;1"].
-          createInstance(CI.nsIStreamListenerTee);
+        let tee = Cc["@mozilla.org/network/stream-listener-tee;1"].
+          createInstance(Ci.nsIStreamListenerTee);
         tee.init(this.originalListener, ce.openOutputStream(0));
         this.originalListener = tee;
       }
@@ -575,7 +575,7 @@ EFFilePassthru.prototype = {
     handler.cleanup();    
   },
   
-  QueryInterface: xpcom_generateQI([CI.nsIStreamListener])
+  QueryInterface: xpcom_generateQI([Ci.nsIStreamListener])
 }
 
 
@@ -627,22 +627,22 @@ EFCacheHandler.prototype = {
     }
   },
 
-  QueryInterface: xpcom_generateQI([CI.nsICacheListener, CI.nsICacheMetaDataVisitor])
+  QueryInterface: xpcom_generateQI([Ci.nsICacheListener, Ci.nsICacheMetaDataVisitor])
 }
 
 
 var EFCacheSessions = {
   FILTER_MD_KEY: "noscript-external-filter",
-  WRITE_ACCESS: CI.nsICache.ACCESS_WRITE,
-  READ_ACCESS: CI.nsICache.ACCESS_READ,
-  OFFLINE_POLICY: CI.nsICache.STORE_OFFLINE,
+  WRITE_ACCESS: Ci.nsICache.ACCESS_WRITE,
+  READ_ACCESS: Ci.nsICache.ACCESS_READ,
+  OFFLINE_POLICY: Ci.nsICache.STORE_OFFLINE,
   
-  nsICacheEntryDescriptor: CI.nsICacheEntryDescriptor,
+  nsICacheEntryDescriptor: Ci.nsICacheEntryDescriptor,
   
   get cacheService() {
     delete this.cacheService;
-    return this.cacheService = CC["@mozilla.org/network/cache-service;1"]
-        .getService(CI.nsICacheService)
+    return this.cacheService = Cc["@mozilla.org/network/cache-service;1"]
+        .getService(Ci.nsICacheService)
   },
   
   _sessions: {},
@@ -722,5 +722,5 @@ var EFCacheSessions = {
     }
   },
   
-  QueryInterface: xpcom_generateQI([CI.nsICacheListener, CI.nsICacheVisitor])
+  QueryInterface: xpcom_generateQI([Ci.nsICacheListener, Ci.nsICacheVisitor])
 }

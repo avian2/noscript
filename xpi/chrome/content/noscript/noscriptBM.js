@@ -83,7 +83,10 @@ var noscriptBM = {
     ev.currentTarget.removeEventListener("load", arguments.callee, false);
     if(!noscriptUtil.service) return;
     
-    // patch URLBar for keyword-triggered bookmarklets:
+    this.init();
+  },
+  init: function() {
+        // patch URLBar for keyword-triggered bookmarklets:
     // we do it early, in case user has a bookmarklet startup page
     if (!noscriptBM.handleURLBarCommandOriginal) {
       if("handleURLBarCommand" in window) { // Fx 3.0

@@ -1,10 +1,3 @@
-const CP_OK = 1;
-const CP_REJECT = -4;
-const CP_NOP = function() { return CP_OK };
-const CP_FRAMECHECK = 2;
-const CP_SHOULDPROCESS = 4;
-const CP_EXTERNAL = 0;
-
 const PolicyState = {
   _debug: false,
   _uris: [],
@@ -143,7 +136,7 @@ const MainContentPolicy = {
             
             case 7:
             
-              if ((aContext instanceof CI.nsIDOMHTMLObjectElement) &&
+              if ((aContext instanceof Ci.nsIDOMHTMLObjectElement) &&
                   this.isCachedObjectMime(aMimeTypeGuess) &&
                   !(aContext.offsetWidth && aContext.offsetHeight) &&
                   this.getPref("allowCachingObjects") &&
@@ -200,7 +193,7 @@ const MainContentPolicy = {
               !(this.jsEnabled || aRequestOrigin &&
                 ((originSite = this.getSite(aRequestOrigin.spec)) == this.getSite(aContentLocation.spec)
                     || this.isJSEnabled(originSite) && !(this.getExpando(aContext.ownerDocument, "nselForce"))))
-                && aContext instanceof CI.nsIDOMHTMLElement) {
+                && aContext instanceof Ci.nsIDOMHTMLElement) {
             try {
               for (var parent = aContext; (parent = parent.parentNode);)
                 if (parent.__nselForce || parent.nodeName.toUpperCase() == "NOSCRIPT")
@@ -237,7 +230,7 @@ const MainContentPolicy = {
               (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) &&
               aMimeTypeGuess) {
               
-            if ((aContext instanceof CI.nsIDOMHTMLEmbedElement) &&
+            if ((aContext instanceof Ci.nsIDOMHTMLEmbedElement) &&
               this.isAllowedObject(locationURL, aMimeTypeGuess)
               ) {
               if (logIntercept) this.dump("Plugin document " + locationURL);
@@ -278,7 +271,7 @@ const MainContentPolicy = {
           locationURL = aContentLocation.spec;
           originURL = aRequestOrigin && aRequestOrigin.spec;
           if (locationURL == "about:blank" || /^chrome:/.test(locationURL)
-            || !originURL && (aContext instanceof CI.nsIDOMXULElement)  // custom browser like in Stumbleupon discovery window
+            || !originURL && (aContext instanceof Ci.nsIDOMXULElement)  // custom browser like in Stumbleupon discovery window
           ) return CP_OK;
           
           if (!aMimeTypeGuess) {
@@ -297,14 +290,14 @@ const MainContentPolicy = {
             break; // we just need to guess the Mime for video/audio
           }
           
-          if (!(aContext instanceof CI.nsIDOMXULElement)) {
+          if (!(aContext instanceof Ci.nsIDOMXULElement)) {
         
-            isLegacyFrame = aContext instanceof CI.nsIDOMHTMLFrameElement;
+            isLegacyFrame = aContext instanceof Ci.nsIDOMHTMLFrameElement;
        
             if (isLegacyFrame
                 ? this.forbidFrames || // we shouldn't allow framesets nested inside iframes, because they're just as bad
                                        this.forbidIFrames &&
-                                       (aContext.ownerDocument.defaultView.frameElement instanceof CI.nsIDOMHTMLIFrameElement) &&
+                                       (aContext.ownerDocument.defaultView.frameElement instanceof Ci.nsIDOMHTMLIFrameElement) &&
                                        this.getPref("forbidMixedFrames", true)
                 : this.forbidIFrames || // we use iframes to make placeholders for blocked legacy frames...
                                        this.forbidFrames &&
@@ -338,14 +331,6 @@ const MainContentPolicy = {
           
           if (aRequestOrigin && aRequestOrigin != aContentLocation) {
             
-            if (this.safeToplevel && (aContext instanceof CI.nsIDOMChromeWindow) &&
-                aContext.isNewToplevel &&
-                !(/^(?:chrome|resource|file)$/.test(scheme) ||
-                  this.isSafeJSURL(aContentLocation.spec))
-                  ) {
-              return this.reject("Top Level Window Loading", arguments);
-            }
-         
             if (isHTTP) {
               
               // external?
@@ -355,11 +340,7 @@ const MainContentPolicy = {
               }
               
             } else if(scheme === "data" || scheme === "javascript") {
-              locationURL = locationURL || aContentLocation.spec;
-              originSite = this.getSite(originURL = originURL || aRequestOrigin.spec);
-              if (this.forbiddenJSDataDoc(locationURL, originSite, aContext)) {
-                return this.reject("JavaScript/Data URL", arguments);
-              }
+              return CP_OK; // JavaScript execution policies will take care of this
             } else if(scheme !== aRequestOrigin.scheme && 
                 scheme !== "chrome" && // faster path for common case
                 this.isExternalScheme(scheme)) {
@@ -384,7 +365,7 @@ const MainContentPolicy = {
           
           if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) ||
                 !blockThisFrame && (
-                  aContext instanceof CI.nsIDOMXULElement ||
+                  aContext instanceof Ci.nsIDOMXULElement ||
                   !aMimeTypeGuess 
                   || aMimeTypeGuess.substring(0, 5) == "text/"
                   || aMimeTypeGuess == "application/xml" 
@@ -394,7 +375,7 @@ const MainContentPolicy = {
                 )
             ) {
             
-            if (aContext instanceof CI.nsIDOMElement) {
+            if (aContext instanceof Ci.nsIDOMElement) {
               // this is alternate to what we do in countObject, since we can't get there
               // this.delayExec(this.opaqueIfNeeded, 0, aContext); // TODO uncomment
             }
@@ -484,7 +465,7 @@ const MainContentPolicy = {
         } else {
           
           if (isScript && this.executingJSURL(contentDocument.defaultView.top.document) &&
-              (aContext instanceof CI.nsIDOMHTMLScriptElement) &&
+              (aContext instanceof Ci.nsIDOMHTMLScriptElement) &&
               !this.jsPolicySites.matches(this.getSite(contentDocument.defaultView.location.href))) {
             this.bookmarkletImport(aContext, locationURL);
             return this.reject("Bookmarklet inclusion, already imported synchronously", arguments);
@@ -610,7 +591,7 @@ const MainContentPolicy = {
             return this.reject("Deferred Legacy Frame " + locationURL, arguments);
         } else {
           try {
-            if ((aContentType == 5 || aContentType == 7 || aContentType == 12 || aContentType == 14 || aContentType == 15) && (aContext instanceof CI.nsIDOMNode)) {
+            if ((aContentType == 5 || aContentType == 7 || aContentType == 12 || aContentType == 14 || aContentType == 15) && (aContext instanceof Ci.nsIDOMNode)) {
               if (locationURL != "data:application/x-noscript-blocked,") {
                 if (this.consoleDump & LOG_CONTENT_BLOCK)
                   this.dump("tagForReplacement");
@@ -666,6 +647,6 @@ const MainContentPolicy = {
 
 var PolicyUtil = {
   isXSL: function(ctx) {
-    return ctx && !(ctx instanceof CI.nsIDOMHTMLLinkElement || ctx instanceof CI.nsIDOMHTMLStyleElement || ctx instanceof CI.nsIDOMHTMLDocument);
+    return ctx && !(ctx instanceof Ci.nsIDOMHTMLLinkElement || ctx instanceof Ci.nsIDOMHTMLStyleElement || ctx instanceof Ci.nsIDOMHTMLDocument);
   }
 };

@@ -111,8 +111,8 @@ var noscriptUtil = {
     
     let ace;
     try {
-      ace = CC["@mozilla.org/network/idn-service;1"]
-              .getService(CI.nsIIDNService).convertUTF8toACE(domain);
+      ace = Cc["@mozilla.org/network/idn-service;1"]
+              .getService(Ci.nsIIDNService).convertUTF8toACE(domain);
     } catch(e) {
       ace = '';
     }
