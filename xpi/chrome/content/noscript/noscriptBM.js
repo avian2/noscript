@@ -83,7 +83,7 @@ var noscriptBM = {
     ev.currentTarget.removeEventListener("load", arguments.callee, false);
     if(!noscriptUtil.service) return;
     
-    this.init();
+    noscriptBM.init();
   },
   init: function() {
         // patch URLBar for keyword-triggered bookmarklets:
@@ -127,5 +127,4 @@ var noscriptBM = {
   }
 };
 
-window.addEventListener("load", noscriptBM.onLoad, false);
 

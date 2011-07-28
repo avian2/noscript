@@ -263,7 +263,7 @@ pref("noscript.surrogate.revsci.replacement", "rsinetsegs=[];DM_addEncToLoc=DM_t
 pref("noscript.surrogate.adriver.sources", "ad.adriver.ru/cgi-bin/erle.cgi");
 pref("noscript.surrogate.adriver.replacement", "if(top!==self&&top.location.href===location.href)setTimeout('try{document.close();}catch(e){}',100)");
 pref("noscript.surrogate.twitter.sources", "platform.twitter.com");
-pref("noscript.surrogate.twitter.replacement", "twttr=function(){if(typeof Proxy==='undefined'){twttr.events=twttr.anywhere={__noSuchMethod__:twttr};return twttr};var p=Proxy.createFunction({get:function(proxy, name){return name in Object.prototype?Object.prototype[name]:p;}},function(){return p;});return p;}();");
+pref("noscript.surrogate.twitter.replacement", "twttr=function(){if(typeof Proxy==='undefined'){var f=arguments.callee;return f.__noSuchMethod__=f.events=f.anywhere=f};var p=Proxy.createFunction({get:function(proxy, name){return name in Object.prototype?Object.prototype[name]:p;}},function(){return p;});return p;}();");
 pref("noscript.placeholderMinSize", 32);
 pref("noscript.placeholderLongTip", true);
 
