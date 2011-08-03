@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opcioj…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcioj de NoScript">
-<!ENTITY noscriptAbout "Pri NoScript 2.1.2.5rc1…">
+<!ENTITY noscriptAbout "Pri NoScript 2.1.2.5…">
 <!ENTITY noscriptPermissionsText "Vi povas specifi, kiuj ttt-ejoj rajtu plenumigi skriptojn. Entajpu la adreson aŭ la domajnonomon (ekz. “http://www.retejo.org” aŭ “retejo.org”) de la ttt-ejo, kiun vi volas rajtigi, kaj poste alklaku “Rajtigi”.">
 <!ENTITY noscriptWebAddress "Adreso de retpaĝaro:">
 <!ENTITY noscriptAllow "Rajtigi">

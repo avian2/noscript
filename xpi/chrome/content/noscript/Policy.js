@@ -593,9 +593,6 @@ const MainContentPolicy = {
           try {
             if ((aContentType == 5 || aContentType == 7 || aContentType == 12 || aContentType == 14 || aContentType == 15) && (aContext instanceof Ci.nsIDOMNode)) {
               if (locationURL != "data:application/x-noscript-blocked,") {
-                if (this.consoleDump & LOG_CONTENT_BLOCK)
-                  this.dump("tagForReplacement");
-                
                 mustCountObject = false; // we do it in _preProcessObjectElements()
                 this.delayExec(this.tagForReplacement, 0, aContext, {
                   url: locationURL,
