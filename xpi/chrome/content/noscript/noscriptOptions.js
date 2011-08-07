@@ -541,6 +541,7 @@ var abeOpts = {
   init: function() {
     this.list = $("abeRulesets-list");
     this.populate();
+    
     this.updateWAN(ns.wan.ip);
     const OS = ns.os;
     OS.addObserver(this, ns.wan.IP_CHANGE_TOPIC, true);
@@ -582,7 +583,7 @@ var abeOpts = {
       var rulesets = ABE.rulesets;
       var selItem = null;
       if (rulesets) {
-        var sel = this.selectedRS && this.selectedRS.name;
+        var sel = this.selectedRS && this.selectedRS.name || "USER";
         this.selectedRS = null;
         var i, name;
         for each (var rs in rulesets) {
@@ -615,7 +616,7 @@ var abeOpts = {
   },
   
   select: function(rs) {
-    var name = rs && rs.name;
+    var name = rs && rs.name || rs;
     if (!name) return;
     var l = this.list;
     if (l.selectedItem && l.selectedItem.value == name) return;

@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Pilihan...">
 <!ENTITY noscriptOptions.accesskey "P">
 <!ENTITY noscriptOptionsLong "Pilihan NoScript">
-<!ENTITY noscriptAbout "Tentang NoScript 2.1.2.5...">
+<!ENTITY noscriptAbout "Tentang NoScript 2.1.2.6rc7...">
 <!ENTITY noscriptPermissionsText "Anda dapat menentukan situs web mana yang diijinkan menjalankan naskah. Masukkan alamat atau domain (contoh: &quot;http://www.site.com&quot; atau &quot;site.com&quot;) yang akan diberi ijin kemudian klik Ijinkan.">
 <!ENTITY noscriptWebAddress "Alamat situs web:">
 <!ENTITY noscriptAllow "Ijinkan">

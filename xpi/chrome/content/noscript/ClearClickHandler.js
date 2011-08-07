@@ -245,10 +245,14 @@ ClearClickHandler.prototype = {
     const d = o.ownerDocument;
     if (!d) return;
     
-    if (d === ev.currentTarget || ev.button || ev.ctrlKey || ev.metaKey || ev.altKey) {
+    if (d === ev.currentTarget || // chrome source, see rapid fire installation
+        ev.button || // right or middle click
+        ev.keyCode && // special keys, e.g. for UI navigation
+        (ev.ctrlKey || ev.metaKey || ev.altKey || ev.keyCode < 48 && ev.keyCode !== 13 && ev.keyCode !== 32)
+      ) {
       this.rapidFire.ts = 0;
       // this.ns.log("Reset global event tracking");
-      return;
+      if (d === ev.currentTarget || ev.keyCode) return;
     }
     
     
@@ -1113,7 +1117,14 @@ DocPatcher.prototype = {
     try {
       tobj = Cc["@mozilla.org/adblockplus;1"].getService().wrappedJSObject.objTabs;
     } catch(e) {
-      tobj = null;
+      try {
+        let baseURL = Cc["@adblockplus.org/abp/private;1"].getService(Ci.nsIURI);
+        let x = {};
+        Cu.import(baseURL.spec + "ObjectTabs.jsm", x);
+        tobj = Cu.getGlobalForObject(x.objectMouseEventHander).objTabs;
+      } catch (e) {
+        tobj = null;
+      }
     }
     return this.__proto__._abpTabsObj = tobj;
   },

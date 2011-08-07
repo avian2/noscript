@@ -225,6 +225,48 @@ const MainContentPolicy = {
           break;
         
         case 5: // embeds
+          // here we account for sloppy handling of the archive and code attributes on applets
+          if (!aInternalCall) {
+              
+            let archive = aContext.getAttribute("archive");
+            let code = '';
+            if (aContext instanceof Ci.nsIDOMHTMLEmbedElement) {
+              code = aContext.getAttribute("code"); 
+              if (code && /\bjava\b/.test(aMimeTypeGuess)) {
+                archive = archive ? code + " " + archive : code;
+              } else code = '';
+            }
+            if (archive) {
+              let prePaths;
+              let base = aContentLocation;       
+              let jars = archive.split(/[\s,]+/)
+              for (let j = jars.length; j-- > 0;) {
+                try {
+                  let jar = jars[j];
+                  let u = IOUtil.newURI(base.resolve(jar));
+                  let prePath = u.prePath;
+                  if (prePath !== base.prePath) {
+                    if (prePaths) {
+                      if (prePaths.indexOf(prePath) !== -1) continue;
+                      prePaths.push(prePath);
+                    } else prePaths = [prePath];
+                  } else {
+                    if (j === 0 && code === jar) aContentLocation = u;
+                    continue;
+                  }
+                  this.setExpando(aContext, "allowed", null);
+                  let res = this.shouldLoad(aContentType, u, aRequestOrigin, aContext, aMimeTypeGuess, CP_OBJECTARC);
+                  if (res !== CP_OK) return res;
+                } catch (e) {
+                  this.dump(e)
+                }
+              }
+              this.setExpando(aContext, "allowed", null);
+            }
+          }
+  
+          
+          
         case 15: // media
           if (aContentLocation && aRequestOrigin && 
               (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) &&
@@ -425,15 +467,17 @@ const MainContentPolicy = {
           this.getExpando(contentDocument.defaultView.top.document, "codeSites", []).push(locationSite);
         
         if (aContentType == 2) { // "real" JavaScript include
-          if (originSite && originSite.indexOf("tp:") > 0 && locationSite.indexOf("tp:") > 0 && !this.isJSEnabled(originSite)) {
-            // JavaScript-disabled http(s)/ftp page with http(s)/ftp script inclusion
+          if (originSite && !this.isJSEnabled(originSite) &&
+              (aRequestOrigin.schemeIs("http") || aRequestOrigin.schemeIs("https")) &&
+              (aContentLocation.schemeIs("http") || aContentLocation.schemeIs("https"))) {
+            // JavaScript-disabled page with script inclusion
             this.syncUI(contentDocument);
             return this.reject("Script inclusion on forbidden page", arguments);
           }
           
           // plugin instantiation hacks
           if (this.contentBlocker && aRequestOrigin &&
-                ( aRequestOrigin.schemeIs("http") ||
+                (aRequestOrigin.schemeIs("http") ||
                   aRequestOrigin.schemeIs("https") ||
                   aRequestOrigin.schemeIs("file"))
               ) {

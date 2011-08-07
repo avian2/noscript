@@ -99,7 +99,8 @@ RequestWatchdog.prototype = {
     }
   },
   
-
+  _bug677050: ns.geckoVersionCheck("6.0") >= 0,
+  
   onHttpStart: function(channel) {
     const loadFlags = channel.loadFlags;
     let isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
@@ -107,15 +108,21 @@ RequestWatchdog.prototype = {
     PolicyState.attach(channel);
     RequestGC.add(channel);
     
-    HTTPS.forceChannel(channel);
+    if (HTTPS.forceChannel(channel)) return;
 
     if (isDoc) {
-      let ph = PolicyState.extract(channel); 
-      if (ph && ph.context) isDoc = !(ph.context instanceof Ci.nsIDOMHTMLEmbedElement);
+      let ph = PolicyState.extract(channel);
+      let context = ph && ph.context;
+      if (context) {
+        isDoc = !(context instanceof Ci.nsIDOMHTMLEmbedElement);
+        if (isDoc && this._bug677050 && !(loadFlags & channel.LOAD_REPLACE) && (context instanceof Ci.nsIDOMHTMLObjectElement)) {
+          // work-around for bug 677050
+          (new ChannelReplacement(channel)).replace();
+          return;
+        }
+      }
     }
-    
-    
-  
+
     try {
       
       let abeReq = new ABERequest(channel);

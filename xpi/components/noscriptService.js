@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.1.2.5";
+const VERSION = "2.1.2.6rc7";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -157,6 +157,7 @@ const CP_REJECT = -4;
 const CP_NOP = function() CP_OK;
 const CP_FRAMECHECK = 2;
 const CP_SHOULDPROCESS = 4;
+const CP_OBJECTARC = 8;
 const CP_EXTERNAL = 0;
 
 const nsIWebProgress = Ci.nsIWebProgress;
@@ -3721,30 +3722,34 @@ var ns = {
     if (!w) return false;
     
     const links = document.links;
-    const toBeChecked = [];
+    let toBeChecked = null;
     for (let j = 0, l; (l = links[j]); j++) {
       if (l && l.href && l.href.indexOf("http") === 0) {
-        if (l.offsetWidth || l.offsetHeight) return true;
+        if (l.offsetWidth) return true;
+        if (!toBeChecked) toBeChecked = [];
         toBeChecked.push(l);
       }
     }
+    if (!toBeChecked) return false;
+    
+    let hiddenAncestors = [];
     for (let j = toBeChecked.length; j-- > 0;) {
-      let l = toBeChecked[j];
-      let style = w.getComputedStyle(l, '');
-      if (!style) return true; // this means we're inside an invisible frame, no reason to loose time here
-      
-      if (parseInt(style.width) || parseInt(style.height)) return true; 
-      
-      let position;
-      try {
-        position = l.style.position;
-        l.style.position = "absolute";
-        if(l.offsetHeight) return true;
-      } finally {
-        l.style.position = position;
+      let n = toBeChecked[j];
+      if (n.firstChild) {
+        let ancestors = [];
+        for (;;) {
+          if (hiddenAncestors.indexOf(n) !== -1) break;
+          ancestors.push(n);
+          let s = w.getComputedStyle(n, '');
+          if (s.display === "none" || s.visibility === "hidden") {
+            hiddenAncestors.push.apply(hiddenAncestors, ancestors);
+            break;
+          }
+          if (!(n = n.parentNode())) return true;
+        }
       }
-      if (/\b__noscriptPlaceholder__\b/.test(l.className)) return true;
     }
+
     if (document.embeds[0] || document.getElementsByTagName("object")[0]) return true;
     let form = document.forms[0];
     if (form && form.offsetHeight) return true;
