@@ -255,7 +255,7 @@ pref("noscript.surrogate.ab_mirago.sources", "^http://intext\\.mirago\\.");
 pref("noscript.surrogate.ab_mirago.replacement", "HLSysBannerUrl=''");
 pref("noscript.surrogate.ab_mirando.sources", "^http://get\\.mirando\\.");
 pref("noscript.surrogate.ab_mirando.replacement", "Mirando={}");
-pref("noscript.surrogate.ab.sources", "@http://");
+pref("noscript.surrogate.ab.sources", "");
 pref("noscript.surrogate.ab.replacement", "window.watch('ab',function(o,a,b){return a===false&&typeof(b)==='string'?false:b})");
 pref("noscript.surrogate.ab.exceptions", "");
 pref("noscript.surrogate.revsci.sources", "js.revsci.net");
