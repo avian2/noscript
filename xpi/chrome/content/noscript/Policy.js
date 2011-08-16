@@ -312,6 +312,10 @@ const MainContentPolicy = {
           
           locationURL = aContentLocation.spec;
           originURL = aRequestOrigin && aRequestOrigin.spec;
+          
+          if (locationURL.indexOf("view-source:") === 0 && /^(?:https?|ftp):/.test(originURL))
+            return this.reject("Embedded view-source:", arguments);
+          
           if (locationURL == "about:blank" || /^chrome:/.test(locationURL)
             || !originURL && (aContext instanceof Ci.nsIDOMXULElement)  // custom browser like in Stumbleupon discovery window
           ) return CP_OK;

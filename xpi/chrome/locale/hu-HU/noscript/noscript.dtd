@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Beállítások…">
 <!ENTITY noscriptOptions.accesskey "B">
 <!ENTITY noscriptOptionsLong "A NoScript beállításai">
-<!ENTITY noscriptAbout "A NoScript 2.1.2.6 névjegye">
+<!ENTITY noscriptAbout "A NoScript 2.1.2.7rc1 névjegye">
 <!ENTITY noscriptPermissionsText "Megadhatja, hogy mely webhelyek számára engedélyezi a parancsfájlok futtatását. Írja be az engedélyezni kívánt webhely címét vagy tartomány nevét (pl. &quot;http://www.webhely.hu&quot; vagy &quot;webhely.hu&quot;), majd kattintson az Engedélyezés gombra.">
 <!ENTITY noscriptWebAddress "A webhely címe:">
 <!ENTITY noscriptAllow "Engedélyezés">

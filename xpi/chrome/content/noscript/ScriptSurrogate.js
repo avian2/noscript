@@ -142,9 +142,7 @@ var ScriptSurrogate = {
     if (typeof(noScript) !== "boolean") noScript = !!noScript;
     
     if (this.enabled) 
-      scripts = this.getScripts(scriptURL, pageURL, 
-        typeof(noScript) === "boolean" ? noScript : !!noScript, 
-        scripts);
+      scripts = this.getScripts(scriptURL, pageURL, noScript, scripts);
 
     if (!scripts) return false;
     
