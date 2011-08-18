@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opcions...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcions de NoScript">
-<!ENTITY noscriptAbout "Quant a NoScript 2.1.2.7rc1">
+<!ENTITY noscriptAbout "Quant a NoScript 2.1.2.7rc2">
 <!ENTITY noscriptPermissionsText "Podeu especificar quins llocs web poden executar seqüències. El tipus d&apos;adreça o el domini (p.ex. &quot;http://www.site.com&quot; o &quot;site.com&quot;) del lloc al qual voleu donar permissos i feu clic a Permet.">
 <!ENTITY noscriptWebAddress "Adreça del lloc web:">
 <!ENTITY noscriptAllow "Permet">

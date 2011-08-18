@@ -61,6 +61,7 @@ ChannelReplacement.prototype = {
     // porting of http://mxr.mozilla.org/mozilla-central/source/netwerk/protocol/http/src/nsHttpChannel.cpp#2750
     
     var loadFlags = chan.loadFlags;
+    
     if (chan.URI.schemeIs("https"))
       loadFlags &= ~chan.INHIBIT_PERSISTENT_CACHING;
     

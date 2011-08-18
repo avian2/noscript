@@ -106,6 +106,7 @@ RequestWatchdog.prototype = {
     let isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
 
     PolicyState.attach(channel);
+    let abeReq = new ABERequest(channel);
     RequestGC.add(channel);
     
     if (HTTPS.forceChannel(channel)) return;
@@ -124,8 +125,7 @@ RequestWatchdog.prototype = {
     }
 
     try {
-      
-      let abeReq = new ABERequest(channel);
+
       if (this.externalLoad && this.externalLoad === abeReq.destination) {
         abeReq.external = true;
         this.externalLoad = null;
