@@ -2620,7 +2620,7 @@ return noscriptUtil.service ? {
 
   dispose: function() {
 
-    for (var bb = this.browsers, j = bb.length; j-- > 0;) {
+    for (var bb = this.browsers, j = bb.length; j-- > 0;) if (bb[j]) {
       try {
         this.cleanupDocument(bb[j].contentWindow.document, bb);
       } catch(e) {

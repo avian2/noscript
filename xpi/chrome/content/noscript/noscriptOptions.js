@@ -179,7 +179,7 @@ var nsopt = {
   },
   
   save: function() {
-    
+    /*
     if (!$("abeRuleset-errors").hidden) {
       let p = noscriptUtil.prompter;
       if (p.confirmEx(window,
@@ -192,7 +192,7 @@ var nsopt = {
         ) 
       return false;
     }
-    
+    */
     this.utils.visitCheckboxes(
       function(prefName, inverse, checkbox, mozilla) {
         if(checkbox.getAttribute("collapsed")!="true") {
@@ -563,11 +563,35 @@ var abeOpts = {
   reset: function() {
     ABE.resetDefaults();
   },
-  
+  input: function() {
+    abeOpts.dirty = abeOpts.list.selectedItem;
+  },
   changed: function(i) {
-    i = i || this.list.selectedItem;
-    this.dirty = null;
-    if (i) ABE.storeRuleset(i.value, $("abeRuleset-text").value);
+    let current = i || this.list.selectedItem;
+   
+    if (current && this.dirty) {
+      
+      let name = current.value;
+      let source = $("abeRuleset-text").value;
+      let ruleset = ABE.createRuleset(name, source);
+      if (ruleset.errors && this.dirty) {
+        this.dirty = null;
+        let p = noscriptUtil.prompter;
+        if (p.confirmEx(window,
+            noscriptUtil.getString("ABE.syntaxError"),
+            ruleset.errors.join("\n"),
+            p.BUTTON_TITLE_SAVE * p.BUTTON_POS_0 +
+              p.BUTTON_TITLE_DONT_SAVE * p.BUTTON_POS_1 +
+              p.BUTTON_POS_1_DEFAULT,
+            null, null, null, null, {}) === 1
+          ) {
+          this.sync();
+          return;
+        }
+      }
+      this.dirty = null;
+      ABE.storeRuleset(name, source);
+    }
   },
   
   _populating: false,
@@ -613,6 +637,7 @@ var abeOpts = {
       this.list.selectedIndex = selIndex;
     }
     if (!this._populating) this.sync();
+    this.dirty = null;
   },
   
   select: function(rs) {

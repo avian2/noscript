@@ -1,13 +1,15 @@
-function CtxCapturingListener(tracingChannel, onCapture) {
+function CtxCapturingListener(tracingChannel, captureObserver) {
   this.originalListener = tracingChannel.setNewListener(this);
-  this.onCapture = onCapture;
+  this.captureObserver = captureObserver;
 }
 CtxCapturingListener.prototype = {
   originalListener: null,
   originalCtx: null,
   onStartRequest: function(request, ctx) {
     this.originalCtx = ctx;
-    if (this.onCapture) this.onCapture(request, ctx);
+    if (this.captureObserver) {
+      this.captureObserver.observeCapture(request, this);
+    }
   },
   onDataAvailable: function(request, ctx, inputStream, offset, count) {},
   onStopRequest: function(request, ctx, statusCode) {},
@@ -20,13 +22,24 @@ function ChannelReplacement(chan, newURI, newMethod) {
 
 ChannelReplacement.supported = "nsITraceableChannel" in Ci;
 
+ChannelReplacement.runWhenPending = function(channel, callback) {
+  if (channel.isPending()) {
+    callback();
+    return false;
+  } else {
+    new LoadGroupWrapper(channel, callback);
+    return true;
+  }
+};
+
+
 ChannelReplacement.prototype = {
   listener: null,
   context: null,
   oldChannel: null,
   channel: null,
   window: null,
-  
+  suspended: false,
   
   get _unsupportedError() {
     return new Error("Can't replace channels without nsITraceableChannel!");
@@ -135,11 +148,11 @@ ChannelReplacement.prototype = {
     return this;
   },
   
-  _onChannelRedirect: function(trueRedir) {
+  _onChannelRedirect: function() {
     var oldChan = this.oldChannel;
     var newChan = this.channel;
     
-    if (trueRedir) {
+    if (this.realRedirect) {
       if (oldChan.redirectionLimit === 0) {
         oldChan.cancel(NS_ERROR_REDIRECT_LOOP);
         throw NS_ERROR_REDIRECT_LOOP;
@@ -184,70 +197,74 @@ ChannelReplacement.prototype = {
     }
   },
   
-  get _redirectCallback() {
-    delete this.__proto__._redirectCallback;
-    return this.__proto__._redirectCallback = ("nsIAsyncVerifyRedirectCallback" in Ci)
+  _redirectCallback: ("nsIAsyncVerifyRedirectCallback" in Ci)
     ? {
         QueryInterface: xpcom_generateQI([Ci.nsIAsyncVerifyRedirectCallback]),
         onRedirectVerifyCallback: function(result) {}
       }
-    : null;
-  },
+    : null
+  ,
   
-  replace: function(isRedir, callback) {
+  replace: function(realRedirect, callback) {
     let self = this;
     let oldChan = this.oldChannel;
-    this.isRedir = !!isRedir;
+    this.realRedirect = !!realRedirect;
     if (typeof(callback) !== "function") {
       callback = this._defaultCallback;
     }
-    IOUtil.runWhenPending(oldChan, function() {
+    ChannelReplacement.runWhenPending(oldChan, function() {
       if (oldChan.status) return; // channel's doom had been already defined
-      
-      let ccl = new CtxCapturingListener(oldChan,
-        function() {
-          try {
-            callback(self._replaceNow(isRedir, this))
-          } catch (e) {
-            self.dispose();
-          }
-        });
+     
+      let ccl = new CtxCapturingListener(oldChan, self);
       self.loadGroup = oldChan.loadGroup;
+     
       oldChan.loadGroup = null; // prevents the wheel from stopping spinning
-      // this calls asyncAbort, which calls onStartRequest on our listener
-      oldChan.cancel(NS_BINDING_REDIRECTED); 
+      
+    
+      if (self._redirectCallback) { // Gecko >= 2
+        // this calls asyncAbort, which calls onStartRequest on our listener
+        oldChan.cancel(NS_BINDING_REDIRECTED); 
+        self.suspend(); // believe it or not, this will defer asyncAbort() notifications until resume()
+        callback(self);
+      } else {
+        // legacy (Gecko < 2)
+        self.observeCapture = function(req, ccl) {
+          self.open = function() { self._redirect(ccl) }
+          callback(self);
+        }
+        oldChan.cancel(NS_BINDING_REDIRECTED); 
+      }
+      
+
     });
+  },
+  
+  observeCapture: function(req, ccl) {
+    this._redirect(ccl);
   },
   
   _defaultCallback: function(replacement) {
     replacement.open();
   },
-  
-  _replaceNow: function(isRedir, ccl) {
-    let oldChan = this.oldChannel;
-    oldChan.loadGroup = this.loadGroup;
-    
-    this._onChannelRedirect(isRedir);
-    
-    // dirty trick to grab listenerContext
-   
-    this.listener = ccl.originalListener;
-    this.context = ccl.originalCtx;
-    return this;
-  },
-  
+
   open: function() {
+    this.resume(); // this triggers asyncAbort and the listeners in cascade
+  },
+  _redirect: function(ccl) {
     let oldChan = this.oldChannel,
       newChan = this.channel,
       overlap;
-    
+
     if (!(this.window && (overlap = ABERequest.getLoadingChannel(this.window)) !== oldChan)) {
       try {
         if (ABE.consoleDump && this.window) {
           ABE.log("Opening delayed channel: " + oldChan.name + " - (current loading channel for this window " + (overlap && overlap.name) + ")");
         }
-
-        newChan.asyncOpen(this.listener, this.context);
+        
+         oldChan.loadGroup = this.loadGroup;
+    
+        this._onChannelRedirect();
+        newChan.asyncOpen(ccl.originalListener, ccl.originalCtx);
         
         if (this.window && this.window != IOUtil.findWindow(newChan)) { 
           // late diverted load, unwanted artifact, abort
@@ -257,7 +274,9 @@ ChannelReplacement.prototype = {
           if (this._classifierClass)
             this._classifierClass.createInstance(Ci.nsIChannelClassifier).start(newChan, true);
         }
-      } catch (e) {}
+      } catch (e) {
+        ABE.log(e);
+      }
     } else {
       if (ABE.consoleDump) {
         ABE.log("Detected double load on the same window: " + oldChan.name + " - " + (overlap && overlap.name));
@@ -267,7 +286,23 @@ ChannelReplacement.prototype = {
     this.dispose();
   },
   
+  suspend: function() {
+    if (!this.suspended) {
+      this.oldChannel.suspend();
+      this.suspended = true;
+    }
+  },
+  resume: function() {
+    if (this.suspended) {
+      this.suspended = false;
+      try {
+        this.oldChannel.resume();
+      } catch (e) {}
+    }
+  },
+  
   dispose: function() {
+    this.resume();
     if (this.loadGroup) {
       try {
         this.loadGroup.removeRequest(this.oldChannel, null, NS_BINDING_REDIRECTED);
@@ -276,7 +311,7 @@ ChannelReplacement.prototype = {
     }
 
   }
-}
+};
 
 function LoadGroupWrapper(channel, callback) {
   this._channel = channel;

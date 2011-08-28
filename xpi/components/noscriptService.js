@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.1.2.7rc2";
+const VERSION = "2.1.2.7rc4";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -1102,17 +1102,7 @@ const IOUtil = {
     }
     return parms.join("&");
   },
-  
-  runWhenPending: function(channel, callback) {
-    if (channel.isPending()) {
-      callback();
-      return false;
-    } else {
-      new LoadGroupWrapper(channel, callback);
-      return true;
-    }
-  },
-  
+
   get TLDService() {
     delete this.TLDService;
     return this.TLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Ci.nsIEffectiveTLDService);

@@ -18,7 +18,7 @@ const HTTPS = {
   
   replaceChannel: function(channel) {
     if (ChannelReplacement.supported) {
-      IOUtil.runWhenPending(channel, function() {
+      ChannelReplacement.runWhenPending(channel, function() {
         var uri = channel.URI.clone();
         uri.scheme = "https";
         new ChannelReplacement(channel, uri).replace(true);

@@ -100,9 +100,11 @@ const ABE = {
     this._siteRulesets = null;
   },
   
+  createRuleset: function(name, source, timestamp) new ABERuleset(name, source, timestamp || Date.now()),
+  
   parse: function(name, source, timestamp) {
     try {
-      var rs =  new ABERuleset(name, source, timestamp || Date.now());
+      var rs = typeof name === "string" ? this.createRuleset(name, source, timestamp) : name;
       if (rs.site) {
         this.putSiteRuleset(rs);
       } else {
@@ -257,7 +259,7 @@ const ABE = {
 
     IOUtil.attachToChannel(req.channel, "ABE.deferred", DUMMY_OBJ);
     
-    if (IOUtil.runWhenPending(req.channel, function() {
+    if (ChannelReplacement.runWhenPending(req.channel, function() {
       try {
         
         if (req.channel.status != 0) return;

@@ -72,13 +72,14 @@ RequestWatchdog.prototype = {
       ns.dump(topic + ": " + channel.URI.spec + ", " + channel.loadFlags);
     }
 
+    let cached = true;
     
     switch(topic) {
 
       case "http-on-examine-response":
         
         STS.processRequest(channel);
-        
+
       case "http-on-examine-merged-response":
         
         HTTPS.handleSecureCookies(channel);
