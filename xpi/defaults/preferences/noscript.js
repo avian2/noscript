@@ -262,10 +262,10 @@ pref("noscript.surrogate.revsci.sources", "js.revsci.net");
 pref("noscript.surrogate.revsci.replacement", "rsinetsegs=[];DM_addEncToLoc=DM_tag=function(){};");
 pref("noscript.surrogate.adriver.sources", "ad.adriver.ru/cgi-bin/erle.cgi");
 pref("noscript.surrogate.adriver.replacement", "if(top!==self&&top.location.href===location.href)setTimeout('try{document.close();}catch(e){}',100)");
-pref("noscript.surrogate.t_co.sources", "!@t.co");
-pref("noscript.surrogate.t_co.replacement", "try{location.replace(document.getElementsByTagName('script')[0].textContent.match(/\\blocation\\.replace\\(\"([^\"]+)/)[1].replace(/\\\\/g,''))}catch(e){}");
 pref("noscript.surrogate.twitter.sources", "platform.twitter.com");
 pref("noscript.surrogate.twitter.replacement", "twttr=function(){if(typeof Proxy==='undefined'){var f=arguments.callee;return f.__noSuchMethod__=f.events=f.anywhere=f};var p=Proxy.createFunction({get:function(proxy, name){return name in Object.prototype?Object.prototype[name]:p;}},function(){return p;});return p;}();");
+pref("noscript.surrogate.plusone.sources", "apis.google.com/js/plusone.js");
+pref("noscript.surrogate.plusone.replacement", "gapi=function(){if(typeof Proxy==='undefined'){var f=arguments.callee;return f.__noSuchMethod__=f.plusone=f;}var p=Proxy.createFunction({get:function(proxy, name){return name in Object.prototype?Object.prototype[name]:p;}},function(){return p;});return p;}();");
 pref("noscript.placeholderMinSize", 32);
 pref("noscript.placeholderLongTip", true);
 
