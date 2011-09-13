@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Баптаулары">
 <!ENTITY noscriptOptions.accesskey "Б">
 <!ENTITY noscriptOptionsLong "NoScript баптаулары">
-<!ENTITY noscriptAbout "NoScript 2.1.2.8 туралы...">
+<!ENTITY noscriptAbout "NoScript 2.1.2.9rc1 туралы...">
 <!ENTITY noscriptPermissionsText "Қай сайттарға JavaScript орындауға рұқсат екенін көрсете аласыз. Рұқсат етілетін сайттың домен адресін енгізіңіз (мысалы, &quot;http://www.site.com&quot; немесе &quot;site.com&quot;), содан кейін Рұқсат ету басыңыз.">
 <!ENTITY noscriptWebAddress "Веб-сайт адресі:">
 <!ENTITY noscriptAllow "Рұқсат ету">
