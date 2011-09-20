@@ -450,8 +450,11 @@ var nsopt = {
       const IFP = Ci.nsIFilePicker;
       const fp = Cc["@mozilla.org/filepicker;1"].createInstance(IFP);
       
-      fp.init(window,title, IFP["mode" + mode]);
-      fp.defaultExtension = ".txt";
+      fp.init(window, title, IFP["mode" + mode]);
+      fp.displayDirectory = Cc["@mozilla.org/file/directory_service;1"]
+                              .getService(Ci.nsIDirectoryServiceProvider)
+                              .getFile("Home",{});
+      fp.defaultExtension = "txt";
       const ret = fp.show();
       if(ret == IFP.returnOK || 
           ret == IFP.returnReplace) {

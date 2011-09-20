@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.1.2.9rc1";
+const VERSION = "2.1.3rc1";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -4785,9 +4785,13 @@ var ns = {
         var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
         var obj = ctx.object.cloneNode(true);
         
-        function reload() {
+        function reload(useHistory) {
           ns.allowObjectById(obj.id, url, doc.documentURI, mime);
-          ns.quickReload(doc.defaultView);
+          if (useHistory) {
+            doc.defaultView.history.go(0);
+          } else {
+            ns.quickReload(doc.defaultView);
+          }
         }
         
         var isMedia = ("nsIDOMHTMLVideoElement" in Ci) && (obj instanceof Ci.nsIDOMHTMLVideoElement || obj instanceof Ci.nsIDOMHTMLAudioElement);
@@ -4795,7 +4799,7 @@ var ns = {
         if (isMedia) {
           if (jsEnabled && !obj.controls) {
             // we must reload, since the author-provided UI likely had no chance to wire events
-            reload();
+            DOM.getDocShellForWindow(doc.defaultView).reload(0); // normal reload because of http://forums.informaction.com/viewtopic.php?f=10&t=7195
             return;
           }
           obj.autoplay = true;
