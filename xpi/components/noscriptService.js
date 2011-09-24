@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.1.3rc2";
+const VERSION = "2.1.3rc4";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -3189,7 +3189,7 @@ var ns = {
     if (delegate != NOPContentPolicy && (last || this.mimeService)) {
       // removing and adding the category late in the game allows to be the latest policy to run,
       // and nice to AdBlock Plus
-      this.dump("Adding category");
+      // this.dump("Adding category");
       catMan.addCategoryEntry(cat, this.CTRID, this.CTRID, false, true);
     } else this.dump("No category?!" + (delegate == NOPContentPolicy) + ", " + last + ", " + this.mimeService);
     
@@ -3652,16 +3652,34 @@ var ns = {
     }
     this.objectWhitelistLen++;
   },
-  isAllowedObjectById: function(id, objectURL, parentURL, mime, site, originSite) {
-    var url = this.getObjectURLWithId(id, objectURL, parentURL);
+  isAllowedObjectByDOM: function(obj, objectURL, parentURL, mime, site, originSite) {
+    var url = this.getObjectURLWithDOM(obj, objectURL, parentURL);
     return url && this.isAllowedObject(url, mime, site, originSite || this.getSite(parentURL));
   },
-  allowObjectById: function(id, objectURL, parentURL, mime, originSite) {
-    var url = this.getObjectURLWithId(id, objectURL, parentURL);
+  allowObjectByDOM: function(obj, objectURL, parentURL, mime, originSite) {
+    var url = this.getObjectURLWithDOM(obj, objectURL, parentURL);
     if (url) this.allowObject(url, mime, originSite || this.getSite(parentURL));
   },
-  getObjectURLWithId: function(id, objectURL, parentURL) {
-    return id && objectURL.replace(/[\?#].*/, '') + "#!#" + id + "@" + encodeURIComponent(parentURL);
+  getObjectURLWithDOM: function(obj, objectURL, parentURL) {
+    var id = obj.id;
+    if (!id) {
+      try {
+        let parents = [], ss = [];
+        for (; obj;) {
+          let t = obj.tagName;
+          if (t) ss.push(t);
+          let node = obj.previousSibling;
+          if (!node) {
+            parents.push(ss.join("-"));
+            ss.length = 0;
+            node = obj.parentNode;
+          }
+          obj = node;
+        }
+        id = parents.join(".");
+      } catch (e) {}
+    }
+    return objectURL.replace(/[\?#].*/, '') + "#!#" + id + "@" + encodeURIComponent(parentURL);
   },
   resetAllowedObjects: function() {
     this.objectWhitelist = {};
@@ -4410,19 +4428,22 @@ var ns = {
     const pe = this.getExpando(doc, "pe");
     if (!pe) return null;
     this.setExpando(doc, "pe", null);
-    var ret = [], o, node, embed;
+    
+    var ret = [];
     for (var j = pe.length; j-- > 0;) {
-      o = pe[j];
+      let o = pe[j];
       try {
-        if (this.getExpando(o, "silverlight")) {
+        if (this.getExpando(o.embed, "silverlight")) {
           o.embed = this._attachSilverlightExtras(o.embed, o.pluginExtras);
           if (!o.embed) continue; // skip unconditionally to prevent in-page Silverlight placeholders
         }
         
-        embed = o.embed;
+        let embed = o.embed;
+        if (this.getExpando(embed, "processed")) continue;
+        this.setExpando(embed, "processed", true);
         
         if (embed instanceof OBJECT || embed instanceof EMBED) {
-          node = embed;
+          let node = embed;
           while ((node = node.parentNode) && !node.__noscriptBlocked)
             //  if (node instanceof OBJECT) o.embed = embed = node
             ;
@@ -4785,10 +4806,10 @@ var ns = {
         var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
         var obj = ctx.object.cloneNode(true);
         
-        function reload(useHistory) {
-          ns.allowObjectById(obj.id, url, doc.documentURI, mime);
-          if (useHistory) {
-            doc.defaultView.history.go(0);
+        function reload(slow) {
+          ns.allowObjectByDOM(ctx.anchor, url, doc.documentURI, mime);
+          if (slow) {
+            DOM.getDocShellForWindow(doc.defaultView).reload(0);
           } else {
             ns.quickReload(doc.defaultView);
           }
@@ -4799,7 +4820,7 @@ var ns = {
         if (isMedia) {
           if (jsEnabled && !obj.controls) {
             // we must reload, since the author-provided UI likely had no chance to wire events
-            DOM.getDocShellForWindow(doc.defaultView).reload(0); // normal reload because of http://forums.informaction.com/viewtopic.php?f=10&t=7195
+            reload(true); // normal reload because of http://forums.informaction.com/viewtopic.php?f=10&t=7195
             return;
           }
           obj.autoplay = true;

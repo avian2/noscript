@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Tetapan...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Tetapan NoScript">
-<!ENTITY noscriptAbout "Tentang NoScript 2.1.3rc2">
+<!ENTITY noscriptAbout "Tentang NoScript 2.1.3rc4">
 <!ENTITY noscriptPermissionsText "Anda boleh menentukan laman web yang anda benarkan skripnya diproses. Taipkan alamat atau domain(contoh:&quot;http://www.tapak.com&quot; atau &quot;tapak.com&quot;) laman web yang diingini dan klik Benarkan">
 <!ENTITY noscriptWebAddress "Alamat laman web:">
 <!ENTITY noscriptAllow "Benarkan">

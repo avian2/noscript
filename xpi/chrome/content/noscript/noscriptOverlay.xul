@@ -109,12 +109,12 @@
           />
          <menuitem id="noscript-allow-page-mi"
          class="menuitem-iconic noscript-allow" 
-         label="&noscriptAllowPage;" accesskey="&noscriptAllowPage.accesskey;"
+         label="&noscriptAllowPage;" noaccesskey="&noscriptAllowPage.accesskey;"
          oncommand="noscriptOverlay.allowPage(true)"
          />
         <menuitem id="noscript-temp-allow-page-mi"
          class="menuitem-iconic noscript-temp noscript-allow" 
-         label="&noscriptTempAllowPage;" accesskey="&noscriptTempAllowPage.accesskey;"
+         label="&noscriptTempAllowPage;" noaccesskey="&noscriptTempAllowPage.accesskey;"
          oncommand="noscriptOverlay.allowPage()"
          />
          <menuitem id="noscript-temp2perm-mi"

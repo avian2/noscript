@@ -560,7 +560,7 @@ const MainContentPolicy = {
                 originURL = aRequestOrigin && aRequestOrigin.spec;
                 
                 if(!forbid || this.isAllowedObject(locationURL, mimeKey, locationSite) ||
-                   this.isAllowedObjectById(aContext.id, locationURL, originURL, mimeKey, locationSite)) {
+                   this.isAllowedObjectByDOM(aContext, locationURL, originURL, mimeKey, locationSite)) {
                   if (logIntercept && forbid) this.dump("Silverlight " + locationURL + " is whitelisted, ALLOW");
                   return CP_OK;
                 }
@@ -625,7 +625,7 @@ const MainContentPolicy = {
         try {  // moved here because of http://forums.mozillazine.org/viewtopic.php?p=3173367#3173367
           if (this.getExpando(aContext, "allowed") || 
             this.isAllowedObject(locationURL, mimeKey, locationSite, originSite) ||
-            this.isAllowedObjectById(aContext.id, locationURL, originURL, mimeKey, locationSite, originSite)
+            this.isAllowedObjectByDOM(aContext, locationURL, originURL, mimeKey, locationSite, originSite)
             ) {
             this.setExpando(aContext, "allowed", true);
             return CP_OK; // forceAllow
