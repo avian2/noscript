@@ -31,14 +31,20 @@ var ScriptSurrogate = {
       this._parseMapping(prefs, key, map);
     }
     
-    const mappings = { forPage: [], noScript: [], inclusion: [], all: map};
+    const mappings = {forPage: [], noScript: [], inclusion: [], before: [], after: [], all: map};
     
     var mapping;
     for (key in map) {
       mapping = map[key];
       if (mapping.forPage) mappings.forPage.push(mapping);
       if (mapping.noScript) mappings.noScript.push(mapping);
-      else if (!mapping.forPage) mappings.inclusion.push(mapping);
+      else if (!mapping.forPage) {
+        if (!(mapping.before || mapping.after)) mappings.inclusion.push(mapping);
+        else {
+          if (mapping.before) mappings.before.push(mapping);
+          if (mapping.after) mappings.after.push(mapping);
+        }
+      }
     }
     
     this.mappings = mappings;
@@ -59,7 +65,7 @@ var ScriptSurrogate = {
       if (!value) return;
       var mapping = (name in map)
         ? map[name]
-        : map[name] = { forPage: false, noScript: false };
+        : map[name] = new SurrogateMapping();
       switch(member) {
         case "sources":
           var prefix = true;
@@ -67,6 +73,8 @@ var ScriptSurrogate = {
             switch(value[0]) {
               case '@': mapping.forPage = true; break;
               case '!': mapping.noScript = true; break;
+              case '<': mapping.before = true; break;
+              case '>': mapping.after = true; break;
               case ' ': break;
               default:
                 prefix = false;
@@ -103,13 +111,17 @@ var ScriptSurrogate = {
   
   getScripts: function(scriptURL, pageURL, noScript, scripts) {
 
-    var isPage = scriptURL == pageURL;
+    var isPage = scriptURL === pageURL;
     var code;
     const list = noScript
       ? this.mappings.noScript
       : isPage
         ? this.mappings.forPage
-        : this.mappings.inclusion;
+        : pageURL === '<'
+          ? this.mappings.before
+          : pageURL === '>'
+            ? this.mappings.after
+            : this.mappings.inclusion;
     
     for (let j = list.length; j-- > 0;) {
       let mapping = list[j];
@@ -137,12 +149,23 @@ var ScriptSurrogate = {
     return scripts;
   },
   
-
+  _afterHandler: function(ev) {
+    let s = ev.target;
+    if (s instanceof Ci.nsIDOMHTMLScriptElement && s.src)
+      ScriptSurrogate.apply(s.ownerDocument, s.src, ">", false);
+    
+  },
+  
   apply: function(document, scriptURL, pageURL, noScript, scripts) {
     if (typeof(noScript) !== "boolean") noScript = !!noScript;
     
-    if (this.enabled) 
+    if (this.enabled) {
       scripts = this.getScripts(scriptURL, pageURL, noScript, scripts);
+      if (!noScript && this.mappings.after.length && !document._noscriptAfterSurrogates) {
+        document._noscriptAfterSurrogates = true;
+        document.addEventListener("load", this._afterHandler, true);
+      }
+    }
 
     if (!scripts) return false;
     
@@ -151,6 +174,7 @@ var ScriptSurrogate = {
       : scriptURL === pageURL
         ? let (win = document.defaultView) win != win.top ? this.executeSandbox : this.execute
         : this.executeDOM;
+    
     
     if (this.debug) {
       // we run each script separately and don't swallow exceptions
@@ -163,10 +187,10 @@ var ScriptSurrogate = {
           scripts.join("}catch(e){}\ntry{") +
           "}catch(e){}");
     }
-
     return true;
   },
   
+
   
   fallback: function(document, scriptBlock) {
     document.addEventListener("DOMContentLoaded", function(ev) {
@@ -215,5 +239,16 @@ var ScriptSurrogate = {
       if (this.debug) Cu.reportError(e);
     }
   }
-  
 }
+
+function SurrogateMapping() {}
+SurrogateMapping.prototype = {
+  sources: null,
+  replacement: null,
+  exceptions: null,
+  
+  forPage: false,
+  noScript: false,
+  before: false,
+  after: false
+};

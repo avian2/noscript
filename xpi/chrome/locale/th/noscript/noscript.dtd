@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "ตัวเลือก...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "ตัวเลือก NoScript">
-<!ENTITY noscriptAbout "เกี่ยวกับ NoScript 2.1.3rc4">
+<!ENTITY noscriptAbout "เกี่ยวกับ NoScript 2.1.3rc6">
 <!ENTITY noscriptPermissionsText "คุณสามารถกำหนดเว็บไซต์ที่จะอนุญาตดำเนินการสคริปต์ พิมพ์ที่อยู่หรือโดเมน (เช่น &quot;http://www.site.com&quot; หรือ &quot;site.com&quot;) ของไซต์ที่คุณต้องการอนุญาตและคลิกอนุญาต">
 <!ENTITY noscriptWebAddress "ที่อยู่เว็บไซต์:">
 <!ENTITY noscriptAllow "อนุญาต">

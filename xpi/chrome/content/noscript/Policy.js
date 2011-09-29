@@ -512,11 +512,16 @@ const MainContentPolicy = {
           return this.reject(isScript ? "Script" : "XSLT", arguments);
         } else {
           
-          if (isScript && this.executingJSURL(contentDocument.defaultView.top.document) &&
-              (aContext instanceof Ci.nsIDOMHTMLScriptElement) &&
-              !this.jsPolicySites.matches(this.getSite(contentDocument.defaultView.location.href))) {
-            this.bookmarkletImport(aContext, locationURL);
-            return this.reject("Bookmarklet inclusion, already imported synchronously", arguments);
+          if (isScript && aContext instanceof Ci.nsIDOMHTMLScriptElement) {
+            
+            ScriptSurrogate.apply(contentDocument, locationURL, "<");
+            
+            if (this.executingJSURL(contentDocument.defaultView.top.document) &&
+                !this.jsPolicySites.matches(this.getSite(contentDocument.defaultView.location.href))) {
+              this.bookmarkletImport(aContext, locationURL);
+              return this.reject("Bookmarklet inclusion, already imported synchronously", arguments);
+            }
+            
           }
           
           return CP_OK;
