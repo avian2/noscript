@@ -122,9 +122,6 @@ const MainContentPolicy = {
       var isHTTP = scheme === "http" || scheme === "https";
       
       if (isHTTP) {
-        
-        HTTPS.forceURI(unwrappedLocation, null, aContext);
-        
         if (aRequestOrigin) {
           
           switch(aContentType) {
@@ -150,6 +147,7 @@ const MainContentPolicy = {
               if (aContentType === 7 || aInternalCall) break;
               
             case 1: case 12: // we may have no chance to check later for unknown and sub-plugin requests
+              HTTPS.forceURI(unwrappedLocation, null, aContext);
               let res = ABE.checkPolicy(aRequestOrigin, unwrappedLocation, aContentType);
               if (res && res.fatal) {
                 this.requestWatchdog.notifyABE(res, true);
@@ -470,7 +468,8 @@ const MainContentPolicy = {
         if (contentDocument) // XSLT comes with no context sometimes...
           this.getExpando(contentDocument.defaultView.top.document, "codeSites", []).push(locationSite);
         
-        if (aContentType == 2) { // "real" JavaScript include
+        let scriptElement;
+        if (aContentType === 2) { // "real" JavaScript include
           if (originSite && !this.isJSEnabled(originSite) &&
               (aRequestOrigin.schemeIs("http") || aRequestOrigin.schemeIs("https")) &&
               (aContentLocation.schemeIs("http") || aContentLocation.schemeIs("https"))) {
@@ -489,18 +488,16 @@ const MainContentPolicy = {
           }
 
           forbid = !(originSite && locationSite == originSite);
-        } else isScript = false;
-        
-       
-        
-        
+          
+          scriptElement = aContext instanceof Ci.nsIDOMHTMLScriptElement;
+        } else isScript = scriptElement = false;
+
         if (forbid) forbid = !this.isJSEnabled(locationSite);
-        if (forbid && this.ignorePorts && /:\d+$/.test(locationSite)) {
+        if (forbid && this.ignorePorts && /:\d+$/.test(locationSite))
           forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
-        }
-  
+
         if ((untrusted || forbid) && scheme !== "data") {
-          if (isScript && contentDocument) {
+          if (scriptElement) {
             if (ScriptSurrogate.apply(contentDocument, locationURL)) {
               let surrogates = this.getExpando(contentDocument, "surrogates", {});
               surrogates[locationURL] = true;
@@ -512,7 +509,7 @@ const MainContentPolicy = {
           return this.reject(isScript ? "Script" : "XSLT", arguments);
         } else {
           
-          if (isScript && aContext instanceof Ci.nsIDOMHTMLScriptElement) {
+          if (scriptElement) {
             
             ScriptSurrogate.apply(contentDocument, locationURL, "<");
             

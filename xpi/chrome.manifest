@@ -34,6 +34,7 @@ category profile-after-change @maone.net/noscript-service;1 @maone.net/noscript-
 locale noscript ar    jar:chrome/noscript.jar!/locale/ar/noscript/
 locale noscript be-BY jar:chrome/noscript.jar!/locale/be-BY/noscript/
 locale noscript bg-BG jar:chrome/noscript.jar!/locale/bg-BG/noscript/
+locale noscript bn-IN jar:chrome/noscript.jar!/locale/bn-IN/noscript/
 locale noscript ca-AD jar:chrome/noscript.jar!/locale/ca-AD/noscript/
 locale noscript cs-CZ jar:chrome/noscript.jar!/locale/cs-CZ/noscript/
 locale noscript cy-GB jar:chrome/noscript.jar!/locale/cy-GB/noscript/
