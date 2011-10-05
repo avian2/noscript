@@ -173,7 +173,7 @@ var ScriptSurrogate = {
       ? this.fallback
       : scriptURL === pageURL
         ? let (win = document.defaultView) win != win.top ? this.executeSandbox : this.execute
-        : this.executeDOM;
+        : this.executeSandbox;
     
     
     if (this.debug) {

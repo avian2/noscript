@@ -67,7 +67,7 @@ var ClearClick = {
     var progress = document.getElementById("progress");
     
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
+    xhr.addEventListener("readystatechange", function() {
       switch(xhr.readyState) {
         case 1:
         case 2:
@@ -85,7 +85,7 @@ var ClearClick = {
           reportId.style.visibility = "visible";
           if (ClearClick.mustClose) ClearClick.end();
       }
-    };
+    }, false);
     
     xhr.open("POST", "http://noscript.net/ws/clearclick/", true);
     

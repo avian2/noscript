@@ -355,7 +355,7 @@ const ABE = {
         channel.loadFlags |= channel.LOAD_BYPASS_LOCAL_CACHE_IF_BUSY; // see bug 309424
       
       
-      xhr.onreadystatechange = function() {
+      xhr.addEventListener("readystatechange", function() {
         switch(xhr.readyState) {
           case 2:
             if (xhr.status >= 400) {
@@ -379,7 +379,7 @@ const ABE = {
         }
         xhr.abort();
         ctrl.running = false;
-      }
+      }, false);
       
       if (Thread.canSpin) {
         var send = function() {
@@ -1503,7 +1503,7 @@ const WAN = {
     var xhr = this._createAnonXHR(url);
     xhr.channel.setRequestHeader("User-Agent", this.fingerprintUA, false);
     var self = this;
-    xhr.onreadystatechange = function() {
+    xhr.addEventListener("readystatechange", function() {
 
       if (xhr.readyState == 4) {
 
@@ -1528,7 +1528,7 @@ const WAN = {
         if (callback) callback(fingerprint, ip);
         self.fingerprint = fingerprint;
       }
-    }
+    }, false);
     xhr.send(null);
 
   },
@@ -1566,7 +1566,7 @@ const WAN = {
       var xhr = this._createAnonXHR(this.checkURL,this.skipIfProxied);
       if (xhr) {
         let self = this;
-        xhr.onreadystatechange = function() {
+        xhr.addEventListener("readystatechange", function() {
           if (xhr.readyState == 4) {
             let ip = null;
             if (xhr.status == 200) {
@@ -1575,7 +1575,7 @@ const WAN = {
             }
             self._findIPDone(ip, xhr.responseText);
           }
-        }
+        }, false);
         xhr.send(null);
         this.log("Trying to detect WAN IP...");
         sent = true;

@@ -478,15 +478,6 @@ const MainContentPolicy = {
             return this.reject("Script inclusion on forbidden page", arguments);
           }
           
-          // plugin instantiation hacks
-          if (this.contentBlocker && aRequestOrigin &&
-                (aRequestOrigin.schemeIs("http") ||
-                  aRequestOrigin.schemeIs("https") ||
-                  aRequestOrigin.schemeIs("file"))
-              ) {
-            this.applyPluginPatches(contentDocument);
-          }
-
           forbid = !(originSite && locationSite == originSite);
           
           scriptElement = aContext instanceof Ci.nsIDOMHTMLScriptElement;
