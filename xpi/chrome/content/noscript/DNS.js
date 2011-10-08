@@ -17,7 +17,7 @@ function DNSRecord(record) {
   } else {
     this.valid = false;
   }
-  if (!this.valid) ttl = Thread.canSpin ? this.INVALID_TTL_ASYNC : this.INVALID_TTL_SYNC;
+  if (!this.valid) ttl = this.INVALID_TTL_ASYNC;
   this.expireTime = this.ts + ttl;
 }
 
@@ -175,7 +175,7 @@ var DNS = {
 
     var elapsed = 0, t;
     var cache = this._cache;
-    var async = IOUtil.asyncNetworking && Thread.canSpin || !!callback;
+    var async = IOUtil.asyncNetworking || !!callback;
     
     var dnsRecord = cache.get(host);
     if (dnsRecord) {

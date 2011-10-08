@@ -122,9 +122,14 @@ const MainContentPolicy = {
       var isHTTP = scheme === "http" || scheme === "https";
       
       if (isHTTP) {
-        if (aRequestOrigin) {
+        if (aRequestOrigin &&
+            aContentType !== 4 // Bug 677643
+            ) {
+          
+          HTTPS.forceURI(unwrappedLocation, null, aContext);
           
           switch(aContentType) {
+             
             case 5:
               // early ABE check for any plugin content except Flash, Silverlight and PDF
               // (Java, for instance, is known to bypass HTTP observers!)
@@ -147,7 +152,7 @@ const MainContentPolicy = {
               if (aContentType === 7 || aInternalCall) break;
               
             case 1: case 12: // we may have no chance to check later for unknown and sub-plugin requests
-              HTTPS.forceURI(unwrappedLocation, null, aContext);
+             
               let res = ABE.checkPolicy(aRequestOrigin, unwrappedLocation, aContentType);
               if (res && res.fatal) {
                 this.requestWatchdog.notifyABE(res, true);

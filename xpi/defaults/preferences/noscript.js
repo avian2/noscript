@@ -283,7 +283,6 @@ pref("noscript.ABE.enabled", true);
 pref("noscript.ABE.siteEnabled", false);
 pref("noscript.ABE.allowRulesetRedir", false);
 pref("noscript.ABE.legacyPrompt", false);
-pref("noscript.ABE.legacySupport", false);
 pref("noscript.ABE.disabledRulesetNames", "");
 pref("noscript.ABE.skipBrowserRequests", true);
 pref("noscript.ABE.notify", true);

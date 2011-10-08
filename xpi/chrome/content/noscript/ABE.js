@@ -10,7 +10,6 @@ const ABE = {
   maxSiteRulesetTime: 16000,
   enabled: false,
   siteEnabled: false,
-  legacySupport: false,
   allowRulesetRedir: false,
   skipBrowserRequests: true,
   
@@ -163,7 +162,7 @@ const ABE = {
   },
   
   checkRequest: function(req) {
-    if (!(this.enabled && (Thread.canSpin || this.legacySupport)))
+    if (!this.enabled)
       return false;
   
     const channel = req.channel;
@@ -316,7 +315,7 @@ const ABE = {
   
     var downloading = this._downloading;
 
-    if (Thread.canSpin && (host in downloading)) {
+    if (host in downloading) {
       ABE.log("Already fetching rulesets for " + host);
     }
     
@@ -343,7 +342,7 @@ const ABE = {
         
       var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
       xhr.mozBackgroundRequest = true;
-      xhr.open("GET", uri.spec, Thread.canSpin); // async if we can spin our own event loop
+      xhr.open("GET", uri.spec, true); // async if we can spin our own event loop
       
       var channel = xhr.channel; // need to cast
       IOUtil.attachToChannel(channel, "ABE.preflight", DUMMY_OBJ);
@@ -381,25 +380,22 @@ const ABE = {
         ctrl.running = false;
       }, false);
       
-      if (Thread.canSpin) {
-        var send = function() {
-          xhr.send(null);
-          return Thread.spin(ctrl);
-        };
-        
-        if (sameQueue ? send() : Thread.runWithQueue(send)) {
-          var size = 0;
-          try {
-            size = xhr.responseText.length;
-          } catch(e) {}
-          ABE.log("Ruleset at " + uri.spec + " timeout: " + size + " chars received in " + ctrl.elapsed + "ms");
-          xhr.abort();
-          return false;
-        }
-      } else {
+  
+      var send = function() {
         xhr.send(null);
-      }
+        return Thread.spin(ctrl);
+      };
       
+      if (sameQueue ? send() : Thread.runWithQueue(send)) {
+        var size = 0;
+        try {
+          size = xhr.responseText.length;
+        } catch(e) {}
+        ABE.log("Ruleset at " + uri.spec + " timeout: " + size + " chars received in " + ctrl.elapsed + "ms");
+        xhr.abort();
+        return false;
+      }
+ 
       if (xhr.channel != channel && xhr.channel) // shouldn't happen, see updateRedirectChain()...
         this._handleDownloadRedirection(channel, xhr.channel); 
 
@@ -1163,7 +1159,6 @@ var ABEStorage = {
       case "enabled":
       case "siteEnabled":
       case "allowRulesetRedir":
-      case "legacySupport":
       case "skipBrowserRequests":
         ABE[name] = prefs.getBoolPref(name);
       break;

@@ -458,8 +458,7 @@ RequestWatchdog.prototype = {
     originSite = originSite || su.getSite(origin) || '';
     
     let host = url.host;
-    if (host[host.length - 1] == "." && ns.getPref("canonicalFQDN", true) &&
-        (Thread.canSpin || ABE.legacySupport)) {
+    if (host[host.length - 1] == "." && ns.getPref("canonicalFQDN", true)) {
       try {
         if (IOUtil.canDoDNS(channel))
           channel.URI.host = DNS.resolve(host, 2).canonicalName;

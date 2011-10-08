@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.1.5rc1";
+const VERSION = "2.1.5rc2";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -1118,11 +1118,6 @@ var Thread = {
   activeLoops: 0,
   _timers: [],
   
-  get canSpin() {
-    delete this.canSpin;
-    return this.canSpin = this.current instanceof Ci.nsIEventTarget;
-  },
-  
   runWithQueue: function(callback, self) {
     var thread = this.current;
     thread instanceof Ci.nsIThreadInternal;
@@ -1141,8 +1136,6 @@ var Thread = {
   },
   
   spin: function(ctrl) { 
-    if (!this.canSpin) throw new Error("Thread: can't spin!");
-
     ctrl.startTime = ctrl.startTime || Date.now();
     ctrl.timeout = false;
     this.activeLoops++;
@@ -1210,22 +1203,14 @@ var Thread = {
   },
   
   asap: function(callback, self, args) {
-    if (this.canSpin) {
-      this.current.dispatch({
-        run: function() {
-          callback.apply(self, args || DUMMY_ARRAY);
-        }
-      }, Ci.nsIEventTarget.DISPATCH_NORMAL);
-    } else {
-      this.delay(callback, 0, self, args);
-    }
+    this.current.dispatch({
+      run: function() {
+        callback.apply(self, args || DUMMY_ARRAY);
+      }
+    }, Ci.nsIEventTarget.DISPATCH_NORMAL);
   },
   
   basap: function(callback, self, args) { // before as soon as possible
-    if (!this.canSpin) {
-      this.asap(callback, self, args);
-      return;
-    }
     var thread = this.current;
     thread instanceof Ci.nsIThreadInternal;
     this.activeQueues++;
@@ -4247,29 +4232,25 @@ var ns = {
             browserWindow.addEventListener(et, focusListener, true);
         }
         
-        if (Thread.canSpin) { // async evaluation, after bug 351633 landing
-          Thread.runWithQueue(function() {
-            try {
-              this.executingJSURL(doc, 1);
-              if (!(snapshots.siteJS && snapshots.docJS)) {
-                this._patchTimeouts(window, true);
-              }
-              
-              window.location.href = url;
-              
-              Thread.yieldAll();
-              if (!(snapshots.siteJS && snapshots.docJS)) {
-                this._patchTimeouts(window, false);
-              }
-              
-            } catch(e) {
-              this.logError(e, true, "Bookmarklet or location scriptlet");
+        Thread.runWithQueue(function() {
+          try {
+            this.executingJSURL(doc, 1);
+            if (!(snapshots.siteJS && snapshots.docJS)) {
+              this._patchTimeouts(window, true);
             }
-          }, this);
-        } else {
-          if (!openCallback) return false;
-          openCallback(url);
-        }
+            
+            window.location.href = url;
+            
+            Thread.yieldAll();
+            if (!(snapshots.siteJS && snapshots.docJS)) {
+              this._patchTimeouts(window, false);
+            }
+            
+          } catch(e) {
+            this.logError(e, true, "Bookmarklet or location scriptlet");
+          }
+        }, this);
+        
         return true;
       } finally {
         
