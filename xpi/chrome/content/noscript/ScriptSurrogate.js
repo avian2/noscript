@@ -3,6 +3,7 @@ var ScriptSurrogate = {
   
   enabled: true,
   prefs: null,
+  sandbox: true,
   
   get mappings() {
     delete this.mappings;
@@ -22,8 +23,7 @@ var ScriptSurrogate = {
   _syncPrefs: function() {
     const prefs = this.prefs;
     
-    this.enabled = prefs.getBoolPref("enabled");
-    this.debug = prefs.getBoolPref("debug");
+    for each(let p in ["enabled", "debug", "sandbox"]) this[p] = prefs.getBoolPref(p);
     
     const map = {__proto__: null};
     var key;
@@ -173,8 +173,7 @@ var ScriptSurrogate = {
       ? this.fallback
       : scriptURL === pageURL
         ? let (win = document.defaultView) win != win.top ? this.executeSandbox : this.execute
-        : this.executeSandbox;
-    
+        : this.sandbox ? this.executeSandbox : this.executeDOM;
     
     if (this.debug) {
       // we run each script separately and don't swallow exceptions

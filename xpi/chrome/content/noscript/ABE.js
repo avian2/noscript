@@ -961,7 +961,7 @@ ABERequest.prototype = Lang.memoize({
         }
       }
       
-      if (this.isDoc && (!ou || ou.schemeIs("javascript") || ou.schemeIs("data"))) {
+      if (this.isDoc && ou && (ou.schemeIs("javascript") || ou.schemeIs("data"))) {
         ou = this.traceBack;
         if (ou) ou = IOS.newURI(ou, null, null);
       }
@@ -1280,6 +1280,7 @@ var OriginTracer = {
     var he;
     var uri = null;
     var site = '';
+    const jsOrDataRx = /^(?:javascript|data):/;
     for (var j = sh.index; j > -1; j--) {
        he = sh.getEntryAtIndex(j, false);
        if (he.isSubFrame && j > 0) {
@@ -1298,7 +1299,7 @@ var OriginTracer = {
       if (!uri) break;
       if (breadCrumbs[0] && breadCrumbs[0] == uri) continue;
       breadCrumbs.unshift(uri);
-      if (!(uri.schemeIs("javascript") || uri.schemeIs("data"))) {
+      if (!jsOrDataRx.test(uri)) {
         site = uri;
         break;
       }

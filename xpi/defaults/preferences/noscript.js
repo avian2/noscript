@@ -215,6 +215,7 @@ pref("noscript.cp.last", true);
 
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.debug", false);
+pref("noscript.surrogate.sandbox", true);
 pref("noscript.surrogate.ga.exceptions", "");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.ga.replacement", "(function(){var _0=function(){return _0;};_0.__noSuchMethod__=_0;with(window)urchinTracker=_0,_gaq={__noSuchMethod__:_0,push:_0,_link:function(h){if(h)location.href=h},_linkByPost:function(){return true},_getLinkerUrl:function(u){return u},_trackEvent:_0},_gat={__noSuchMethod__:function(){return _gaq}}})()");

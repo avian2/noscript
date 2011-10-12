@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.1.5rc2";
+const VERSION = "2.1.5rc4";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -4811,7 +4811,7 @@ var ns = {
         
         if (jsEnabled) {
           ScriptSurrogate.executeSandbox(doc,
-            "env.a.__noSuchMethod__ = env.o.__noSuchMethod__ = function(m, a) { env.n[m].apply(env.n, a) }",
+            "env.a.__noSuchMethod__ = env.o.__noSuchMethod__ = function(m, a) { return env.n[m].apply(env.n, a) }",
             { a: ctx.anchor, o: ctx.object, n: obj }
           );
         }

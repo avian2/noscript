@@ -175,7 +175,7 @@ RequestWatchdog.prototype = {
     if (abeReq && ABE.enabled) {
       try {
         // ns.dump("handleABE called for " + abeReq.serial + ", " + abeReq.destination + " at " + Components.stack.caller);
-        var res = new DOSChecker(abeReq, true).run(function() {
+        let res = new DOSChecker(abeReq, true).run(function() {
           return ABE.checkRequest(abeReq);
         });
         if (res) {
