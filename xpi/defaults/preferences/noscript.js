@@ -216,7 +216,6 @@ pref("noscript.cp.last", true);
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.debug", false);
 pref("noscript.surrogate.sandbox", true);
-pref("noscript.surrogate.ga.exceptions", "");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.ga.replacement", "(function(){var _0=function(){return _0;};_0.__noSuchMethod__=_0;with(window)urchinTracker=_0,_gaq={__noSuchMethod__:_0,push:_0,_link:function(h){if(h)location.href=h},_linkByPost:function(){return true},_getLinkerUrl:function(u){return u},_trackEvent:_0},_gat={__noSuchMethod__:function(){return _gaq}}})()");
 pref("noscript.surrogate.glinks.replacement", "(function(){x(\"focus\");x(\"mouseover\");function x(et){document.addEventListener(et, function(ev) { if (/\\bl\\b/.test(ev.target.className)) ev.target.removeAttribute(\"onmousedown\") }, true)}})()");
@@ -268,6 +267,7 @@ pref("noscript.surrogate.plusone.sources", "apis.google.com/js/plusone.js");
 pref("noscript.surrogate.plusone.replacement", "gapi=function(){if(typeof Proxy==='undefined'){var f=arguments.callee;return f.__noSuchMethod__=f.plusone=f;}var p=Proxy.createFunction({get:function(proxy, name){return name in Object.prototype?Object.prototype[name]:p;}},function(){return p;});return p;}();");
 pref("noscript.surrogate.disqus-theme.sources", ">.disqus.com/*/build/themes/t_c4ca4238a0b923820dcc509a6f75849b.js*");
 pref("noscript.surrogate.disqus-theme.replacement", "DISQUS.dtpl.actions.register('comments.reply.new.onLoadingStart', function() { DISQUS.dtpl.actions.remove('comments.reply.new.onLoadingStart'); DISQUS.dtpl.actions.remove('comments.reply.new.onLoadingEnd');});");
+
 pref("noscript.placeholderMinSize", 32);
 pref("noscript.placeholderLongTip", true);
 
