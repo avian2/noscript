@@ -232,15 +232,18 @@ const ABE = {
   _check: function(rs, res) {
     var action = rs.check(res.request);
     if (action) {
-      var r = rs.lastMatch;
-      this.log(r);
-      this.log(res.request + ' matches "' + r.lastMatch + '"');
-      (res.rulesets || (res.rulesets = [])).push(rs);
-      res.lastRuleset = rs;
       action = action.toLowerCase();
-      return res.fatal = (res.request.channel instanceof ABEPolicyChannel)
-        ? action === "deny" 
+      let outcome = (res.request.channel instanceof ABEPolicyChannel)
+        ? (action === "deny" ? ABERes.FATAL : ABERes.SKIPPED)
         : ABEActions[action](res.request);
+      if (outcome !== ABERes.SKIPPED) {
+        let r = rs.lastMatch;
+        this.log(r);
+        this.log(res.request + ' matches "' + r.lastMatch + '"');
+        (res.rulesets || (res.rulesets = [])).push(rs);
+        res.lastRuleset = rs;
+        return res.fatal = outcome === ABERes.FATAL;
+      }
     }
     return false;
   },
@@ -493,6 +496,9 @@ const ABE = {
 function ABERes(req) {
   this.request = req;
 }
+ABERes.SKIPPED = 0;
+ABERes.DONE = 1;
+ABERes.FATAL = 2;
 
 ABERes.prototype = {
   rulesets: null,
@@ -502,21 +508,21 @@ ABERes.prototype = {
 
 var ABEActions = {
   accept: function(req) {
-    return false;  
+    return ABERes.DONE;  
   },
   deny: function(req) {
     IOUtil.abort(req.channel, true);
     if (req.isOfType(Ci.nsIContentPolicy.TYPE_SCRIPT)) try {
       ScriptSurrogate.apply(req.window.document, req.destination);
     } catch (e) {}
-    return true;
+    return ABERes.FATAL;
   },
   
   _idempotentMethodsRx: /^(?:GET|HEAD|OPTIONS)$/i,
-  anonymize: function(req, channel, replaced) {
-    channel = channel || req.channel;
+  anonymize: function(req) {
+    var channel = req.channel;
     if (channel.loadFlags & channel.LOAD_ANONYMOUS) // already anonymous
-      return false;
+      return ABERes.SKIPPED;
     
     if (!ChannelReplacement.supported) {
       ABE.log("Couldn't replace " + req.destination + " for Anonymize, falling back to Deny.");
@@ -542,7 +548,7 @@ var ABEActions = {
       }
     );
 
-    return false;
+    return ABERes.DONE;
   },
   
   sandbox: function(req) {
@@ -551,7 +557,7 @@ var ABEActions = {
       var docShell = DOM.getDocShellForWindow(req.window);
       if (docShell) ABE.sandbox(docShell);
     }
-    return false;
+    return ABERes.DONE;
   }
 }
 

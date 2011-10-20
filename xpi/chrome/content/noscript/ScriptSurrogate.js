@@ -25,6 +25,9 @@ var ScriptSurrogate = {
     
     for each(let p in ["enabled", "debug", "sandbox"]) this[p] = prefs.getBoolPref(p);
     
+    // inclusions don't work with sandbox on Gecko < 2, but may crash without on Gecko > 2
+    if (ns.geckoVersionCheck("2") < 0) this.sandbox = false; 
+    
     const map = {__proto__: null};
     var key;
     for each(key in prefs.getChildList("", {})) {
@@ -210,9 +213,8 @@ var ScriptSurrogate = {
       if (typeof w.wrappedJSObject === "object") w = w.wrappedJSObject;
       var s = new Cu.Sandbox(w, { wantXrays: false });
       s.window = w;
-      s.script = scriptBlock;
       if (env) s.env = env;
-      Cu.evalInSandbox("window.eval(script)", s);
+      this._sandboxRun(s, scriptBlock);
     } catch (e) {
       if (ns.consoleDump) {
         ns.dump(e);
@@ -220,6 +222,21 @@ var ScriptSurrogate = {
       }
       if (this.debug) Cu.reportError(e);
     }
+  },
+  
+  get _sandboxRun() {
+    delete this._sandboxRun;
+    return this._sandboxRun =
+      ns.geckoVersionCheck("2") < 0
+        ? this._sandboxRunLegacy
+        : this._sandboxRunGecko2;
+  },
+  _sandboxRunGecko2: function(s, scriptBlock) {
+    s.script = scriptBlock;
+    Cu.evalInSandbox("window.eval(script)", s);
+  },
+  _sandboxRunLegacy: function(s, scriptBlock) {
+    Cu.evalInSandbox("with(window){" + scriptBlock + "}", s);
   },
   
   executeDOM: function(document, scriptBlock) {

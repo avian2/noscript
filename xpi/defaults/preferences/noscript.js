@@ -79,6 +79,10 @@ pref("noscript.allowPageLevel", 0);
 pref("noscript.forbidImpliesUntrust", false);
 pref("noscript.keys.toggle", "ctrl shift VK_BACK_SLASH.|");
 pref("noscript.keys.ui", "ctrl shift S");
+pref("noscript.keys.tempAllowPage", "");
+pref("noscript.keys.revokeTemp", "");
+
+pref("noscript.menuAccelerators", false);
 
 pref("noscript.forbidMetaRefresh", false);
 pref("noscript.forbidMetaRefresh.remember", false);

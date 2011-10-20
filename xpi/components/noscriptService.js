@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.1.6rc1";
+const VERSION = "2.1.6rc2";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -1200,6 +1200,10 @@ var Thread = {
       notify: this._delayRunner,
       context: { callback: callback, args: args || DUMMY_ARRAY, self: self || null }
     }, time || 1, 0);
+  },
+  
+  dispatch: function(runnable) {
+    this.current.dispatch(runnable, Ci.nsIEventTarget.DISPATCH_NORMAL);
   },
   
   asap: function(callback, self, args) {
@@ -3896,6 +3900,7 @@ var ns = {
       while (scount-- > 0) {
         let script = scripts.item(scount);
         isHTMLScript = script instanceof HTMLElement;
+        let scriptSrc;
         if (isHTMLScript) {
           scriptSrc = script.src;
         } else if(script) {
@@ -5102,63 +5107,59 @@ var ns = {
     ABE.updateRedirectChain(oldChan, newChan);
     
     const ph = PolicyState.detach(oldChan);
-    try {
-      if (ph) {
-        // 0: aContentType, 1: aContentLocation, 2: aRequestOrigin, 3: aContext, 4: aMimeTypeGuess, 5: aInternalCall
-        
-        ph.contentLocation = uri;
-        
-        var ctx = ph.context;
-        var type = ph.contentType;
-           
-        if (type != 11 && !this.isJSEnabled(oldChan.URI.spec)) 
-          ph.requestOrigin = oldChan.URI;
-        
+
+    if (ph) {
+      // 0: aContentType, 1: aContentLocation, 2: aRequestOrigin, 3: aContext, 4: aMimeTypeGuess, 5: aInternalCall
+      
+      ph.contentLocation = uri;
+      
+      var ctx = ph.context;
+      var type = ph.contentType;
+         
+      if (type != 11 && !this.isJSEnabled(oldChan.URI.spec)) 
+        ph.requestOrigin = oldChan.URI;
+      
+      try {
+        ph.mimeType = newChan.contentType || oldChan.contentType || ph.mimeType;
+      } catch(e) {}
+      
+      var browser, win;
+   
+      
+      if(type == 2 || type == 9) { // script redirection? cache site for menu
         try {
-          ph.mimeType = newChan.contentType || oldChan.contentType || ph.mimeType;
-        } catch(e) {}
-        
-        var browser, win;
-     
-        
-        if(type == 2 || type == 9) { // script redirection? cache site for menu
-          try {
-            var site = this.getSite(uri.spec);
-            win = IOUtil.findWindow(newChan) || ctx && ((ctx instanceof Ci.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
-            browser = win && DOM.findBrowserForNode(win);
-            if (browser) {
-              this.getRedirCache(browser, win.top.document.documentURI)
-                  .push({ site: site, type: type });
-            } else {
-              if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
-            }
-          } catch(e) {
-            if (this.consoleDump) this.dump(e);
+          var site = this.getSite(uri.spec);
+          win = IOUtil.findWindow(newChan) || ctx && ((ctx instanceof Ci.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
+          browser = win && DOM.findBrowserForNode(win);
+          if (browser) {
+            this.getRedirCache(browser, win.top.document.documentURI)
+                .push({ site: site, type: type });
+          } else {
+            if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
           }
-          
-          if (type == 7) {
-            ph.extra = CP_FRAMECHECK;
-            if (win && win.frameElement && ph.context != win.frameElement) {
-              // this shouldn't happen
-              if (this.consoleDump) this.dump("Redirected frame change for destination " + uri.spec);
-              ph.context = win.frameElement;
-            }
-          }
-          
+        } catch(e) {
+          if (this.consoleDump) this.dump(e);
         }
         
-        if (this.shouldLoad.apply(this, ph.toArray()) != CP_OK) {
-          if (this.consoleDump) {
-            this.dump("Blocked " + oldChan.URI.spec + " -> " + uri.spec + " redirection of type " + type);
+        if (type == 7) {
+          ph.extra = CP_FRAMECHECK;
+          if (win && win.frameElement && ph.context != win.frameElement) {
+            // this shouldn't happen
+            if (this.consoleDump) this.dump("Redirected frame change for destination " + uri.spec);
+            ph.context = win.frameElement;
           }
-          throw "NoScript aborted redirection to " + uri.spec;
         }
         
-        PolicyState.save(uri, ph);
       }
-    } finally {
-      PolicyState.reset();
+      
+      if (this.shouldLoad.apply(this, ph.toArray()) != CP_OK) {
+        if (this.consoleDump) {
+          this.dump("Blocked " + oldChan.URI.spec + " -> " + uri.spec + " redirection of type " + type);
+        }
+        throw "NoScript aborted redirection to " + uri.spec;
+      }
     }
+  
     
     // Document transitions
   
@@ -5190,7 +5191,7 @@ var ns = {
     let entry;
     if (pos > -1) {
       entry = l[pos];
-      origins = entry.origins;
+      let origins = entry.origins;
       if (origins.indexOf(origin) == -1) origins.push(origin);
       if (pos == l.length - 1) return;
       l.splice(pos, 1);
@@ -5877,8 +5878,10 @@ var ns = {
   },
 
   audioApiInterception: true,
-  _audioApiInterceptionDef: 'Object.defineProperty(HTMLAudioElement.prototype, "mozWriteAudio", {value: function() {new Audio("data:,")}});',
-
+  _audioApiInterceptionDef:
+    ("defineProperty" in Object)
+      ? 'Object.defineProperty(HTMLAudioElement.prototype, "mozWriteAudio", {value: function() {new Audio("data:,")}});'
+      : "",
   _disablePlugins: function(b) {
     ns.plugins.disabled = b;
   },

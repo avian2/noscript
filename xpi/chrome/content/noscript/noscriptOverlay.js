@@ -70,7 +70,7 @@ return noscriptUtil.service ? {
       popup.setAttribute("onclick", "noscriptOverlay.onCommandClick(event)");
     }
     
-    popup.addEventListener("popuphidden", function(ev) { noscriptOverlay.onMenuHidden(ev) }, false);
+    popup.addEventListener("popuphidden", noscriptOverlay.onMenuHidden, false);
     popup.addEventListener("popupshown", noscriptOverlay.onMenuShown, false);
     
     this.prepareMenu(popup);
@@ -227,23 +227,26 @@ return noscriptUtil.service ? {
     if (ev.originalTarget != popup) return;
     
     popup.removeEventListener(ev.type, arguments.callee, false);
-    
+
     if ("_hovering" in popup && popup._hovering !== 1)
       popup._hovering = 0;
     
-    if (this._reloadDirty && !this.liveReload) {
-      this.ns.reloadWhereNeeded();
-      this.ns.savePrefs();
+    if (noscriptOverlay._reloadDirty && !noscriptOverlay.liveReload) {
+      noscriptOverlay.ns.reloadWhereNeeded();
+      noscriptOverlay.ns.savePrefs();
     }
+    
     
     if (popup.id === "noscript-tbb-popup") {
       // take back our stuff
-      this._currentPopup = null;
-      noscriptOverlay.prepareMenu($("noscript-status-popup"));
+      noscriptOverlay._currentPopup = null;
+      let sites = this.getSites();
+      sites.pluginExtras = sites.pluginSites = [];
+      noscriptOverlay.prepareMenu($("noscript-status-popup"), sites);
     }
     popup._lastClosed = Date.now();
-    this._reloadDirty = false;
-    this._currentPopup = null;
+    noscriptOverlay._reloadDirty = false;
+    noscriptOverlay._currentPopup = null;
   },
 
   prepareContextMenu: function(ev) {
@@ -531,8 +534,6 @@ return noscriptUtil.service ? {
       if (remNode != untrustedMenu && remNode != xssMenu)
         mainMenu.removeChild(remNode);
     }
-
-    mainMenu.appendCmd = function(n) { this.insertBefore(n, seps.stop); };
 
     sites = sites || this.getSites();
     
@@ -873,7 +874,7 @@ return noscriptUtil.service ? {
       untrustedMenu.appendChild(untrustedFrag);
     }
 
-    mainMenu.appendCmd(mainFrag);
+    mainMenu.insertBefore(mainFrag, seps.stop);
     
     // temp allow all this page
     if (!(tempMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", true)))) {
@@ -890,6 +891,16 @@ return noscriptUtil.service ? {
       node.setAttribute("tooltiptext", this.allowPage(true, true, sites).join(", "));
     }
     
+    // "allow page" accelerators
+    {
+      let accel = ns.getPref("menuAccelerators");
+      for each(let el in [node, tempMenuItem]) 
+        if (accel)
+          el.setAttribute("accesskey", el.getAttribute("noaccesskey"));
+        else
+          el.removeAttribute("acesskey");
+    }
+    
     // make permanent
     node = $("noscript-temp2perm-mi");
     if (tempMenuItem.nextSibling != node) {
@@ -903,6 +914,7 @@ return noscriptUtil.service ? {
     this.normalizeMenu(mainMenu, false);
     
     if (mustReverse) this.reverse(popup);
+    sites.pluginExtras = sites.pluginSites = null;
   },
 
   reverse: function(m) {
@@ -1006,9 +1018,15 @@ return noscriptUtil.service ? {
     ns.switchExternalFilter(f.name, domain, enabled);
   },
   
+  onMenuHiddenWithPlugins: function(ev) {
+    if (ev.currentTarget != ev.target) return;
+    ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
+    noscriptOverlay.menuPluginExtras = 
+      noscriptOverlay.menuPluginSites = null;
+  },
   populatePluginsMenu: function(mainMenu, menu, extras) {
     if (!menu) return;
-
+    
     menu.parentNode.hidden = true;
     const ns = this.ns;
   
@@ -1048,14 +1066,8 @@ return noscriptUtil.service ? {
     }
     
     if (pluginExtras.length) {
+      mainMenu.addEventListener("popuphidden", this.onMenuHiddenWithPlugins, false);
       noscriptOverlay.menuPluginExtras = pluginExtras;
-      mainMenu.addEventListener("popuphidden", function(ev) {
-          if (ev.currentTarget != ev.target) return;
-          ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
-          noscriptOverlay.menuPluginExtras = null;
-          noscriptOverlay.menuPluginSites = null;
-      }, false);
-      
       let pluginSites = {};
       seen = [];
       for each(let e in pluginExtras) {
@@ -1454,9 +1466,7 @@ return noscriptUtil.service ? {
     nb.__defineSetter__("_closedNotification", function(cn) {
       this.__ns__closedNotification = cn;
     });
-    
-    if (pos != "bottom") return;
-    
+
     nb._dom_ = {};
     const METHODS = this.notificationBoxPatch;
     for (let m in METHODS) {
@@ -2066,6 +2076,8 @@ return noscriptUtil.service ? {
         
         case "keys.ui":
         case "keys.toggle":
+        case "keys.tempAllowPage":
+        case "keys.revokeTemp":
           noscriptOverlay.shortcutKeys.setup(data.replace(/^keys\./, ""), this.ns.getPref(data, ""));
         break;
         
@@ -2095,7 +2107,7 @@ return noscriptUtil.service ? {
       ns.caps.addObserver("", this, true);
       const initPrefs = [
         "statusIcon", "statusLabel", "preset",
-        "keys.ui", "keys.toggle",
+        "keys.ui", "keys.toggle", "keys.tempAllowPage",
         "notify", "notify.bottom",
         "notify.hide", "notify.hidePermanent", "notify.hideDelay",
         "stickyUI.liveReload",
@@ -2124,6 +2136,12 @@ return noscriptUtil.service ? {
       switch (cmd) {
         case 'toggle':
           noscriptOverlay.toggleCurrentPage(noscriptOverlay.ns.preferredSiteLevel);
+        break;
+        case 'tempAllowPage':
+          noscriptOverlay.allowPage();
+        break;
+        case 'revokeTemp':
+          noscriptOverlay.revokeTemp();
         break;
         case 'ui':
           noscriptOverlay.showUI(true);

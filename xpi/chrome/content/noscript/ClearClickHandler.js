@@ -302,7 +302,7 @@ ClearClickHandler.prototype = {
     var etype = ev.type;
     if (verbose) ns.dump(o.tagName + ", " + etype + ", " + p.toSource());
     
-    var obstructed, ctx, primaryEvent;
+    var obstructed, ctx, primaryEvent, isEmbed;
     try {
       if (etype == "blur") {
         if(/click|key/.test(p.lastEtype)) {

@@ -42,10 +42,14 @@ const PolicyState = {
     this.reset();
     hints._psCancelled = true;
   },
+  _resetEvent: {
+    run: function() { PolicyState.reset(); }
+  },
   save: function(uri, hints) {
     if ("_psCancelled" in hints) return false;
     this.URI = uri;
     this.hints = new PolicyHints(hints);
+    // Thread.dispatch(this._resetEvent); // we shouldn't need this, as we use weak refs
     return true;
   },
   
@@ -55,20 +59,28 @@ const PolicyState = {
 }
 
 function PolicyHints(hints) {
-  this.push.apply(this, Array.slice(hints, 0));
-  this.wrappedJSObject = this;
+  this.args = hints;
+  this.context = hints[3]; // turns it into a weak reference
 }
 
 PolicyHints.prototype = (function() {
+  const props = ["contentType", "contentLocation", "requestOrigin", "context", "mimeType", "extra"];
   const proto = {
-    __proto__: [],
-    toArray: function() Array.slice(this, 0),
+    get wrappedJSObject() this,
+    toArray: function() props.map(function(p) this[p], this),
     toSource: Object.prototype.toSource,
     toString:  Object.prototype.toSource
   };
-  ["contentType", "contentLocation", "requestOrigin", "context", "mimeType", "extra"].forEach(function(p, i) {
-    this.__defineGetter__(p, function() this[i]);
-    this.__defineSetter__(p, function(v) this[i] = v);
+  props.forEach(function(p, i) {
+    switch(p) {
+      case "context":
+        this.__defineGetter__(p, function() this.args[i].get());
+        this.__defineSetter__(p, function(v) this.args[i] = Cu.getWeakReference(v));
+        break;
+      default:
+        this.__defineGetter__(p, function() this.args[i]);
+        this.__defineSetter__(p, function(v) this.args[i] = v);
+    }
    }, proto);
    return proto;
 })();

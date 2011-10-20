@@ -222,7 +222,7 @@ const STSPersistence = {
     return true;
   },
   save: function(db) {
-    f = this._file;
+    var f = this._file;
     try {
       IO.safeWriteFile(f, db.serialize());
     } catch(e) {
