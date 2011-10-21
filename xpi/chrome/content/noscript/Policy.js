@@ -42,14 +42,11 @@ const PolicyState = {
     this.reset();
     hints._psCancelled = true;
   },
-  _resetEvent: {
-    run: function() { PolicyState.reset(); }
-  },
+ 
   save: function(uri, hints) {
     if ("_psCancelled" in hints) return false;
     this.URI = uri;
     this.hints = new PolicyHints(hints);
-    // Thread.dispatch(this._resetEvent); // we shouldn't need this, as we use weak refs
     return true;
   },
   

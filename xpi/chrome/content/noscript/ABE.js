@@ -521,28 +521,42 @@ var ABEActions = {
   _idempotentMethodsRx: /^(?:GET|HEAD|OPTIONS)$/i,
   anonymize: function(req) {
     var channel = req.channel;
-    if (channel.loadFlags & channel.LOAD_ANONYMOUS) // already anonymous
-      return ABERes.SKIPPED;
+    const ANON_KEY = "abe.anonymized";
     
-    if (!ChannelReplacement.supported) {
-      ABE.log("Couldn't replace " + req.destination + " for Anonymize, falling back to Deny.");
-      return this.deny(req);
-    }
-
     let cookie;
     try {
       cookie = channel.getRequestHeader("Cookie");
     } catch(e) {
       cookie = '';
     }
+    let auth;
+    try {
+      auth = channel.getRequestHeader("Authorization");
+    } catch(e) {
+      auth = '';
+    }
+    let anonURI = IOUtil.anonymizeURI(req.destinationURI.clone(), cookie);
+    let idempotent = this._idempotentMethodsRx.test(channel.requestMethod);
+
+    if (idempotent && (channel.loadFlags & channel.LOAD_ANONYMOUS) &&
+        !(auth || cookie || anonURI.spec != req.destinationURI.spec)
+        && IOUtil.extractFromChannel(channel, ANON_KEY, true)) {// already anonymous
+      return ABERes.SKIPPED;
+    }
     
+    if (!ChannelReplacement.supported) {
+      ABE.log("Couldn't replace " + req.destination + " for Anonymize, falling back to Deny.");
+      return this.deny(req);
+    }
+
     req.replace(
-      this._idempotentMethodsRx.test(channel.requestMethod) ? null : "GET",
-      IOUtil.anonymizeURI(req.destinationURI.clone(), cookie),
+      idempotent ? null : "GET",
+      anonURI,
       function(replacement) {
         let channel = replacement.channel;
         channel.setRequestHeader("Cookie", '', false);
         channel.setRequestHeader("Authorization", '', false);
+        IOUtil.attachToChannel(channel, ANON_KEY, DUMMY_OBJ);
         channel.loadFlags |= channel.LOAD_ANONYMOUS;
         replacement.open();
       }

@@ -240,7 +240,7 @@ return noscriptUtil.service ? {
     if (popup.id === "noscript-tbb-popup") {
       // take back our stuff
       noscriptOverlay._currentPopup = null;
-      let sites = this.getSites();
+      let sites = noscriptOverlay.getSites();
       sites.pluginExtras = sites.pluginSites = [];
       noscriptOverlay.prepareMenu($("noscript-status-popup"), sites);
     }
@@ -1860,7 +1860,7 @@ return noscriptUtil.service ? {
     var notificationNeeded = false;
     
     var allowedSites = [];
-    var activeSites = sites.pluginSites.concat(sites.docSites);
+    var activeSites = (sites.pluginSites || []).concat(sites.docSites);
     var allowed = 0;
     var untrusted = 0;
     var active = 0;
