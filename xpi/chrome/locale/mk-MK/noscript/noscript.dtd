@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Опции...">
 <!ENTITY noscriptOptions.accesskey "О">
 <!ENTITY noscriptOptionsLong "NoScript Опции">
-<!ENTITY noscriptAbout "За NoScript 2.1.7rc2...">
+<!ENTITY noscriptAbout "За NoScript 2.1.7...">
 <!ENTITY noscriptPermissionsText "Можете да ги назначите страните, на кои што скриптите ќе бидат дозволени. Напишете ја дозволената адреса (на пример http://www.site.com или site.com) и кликнете „Дозволи“">
 <!ENTITY noscriptWebAddress "Адреса на дозволената веб страна:">
 <!ENTITY noscriptAllow "Дозволи">
