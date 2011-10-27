@@ -323,7 +323,7 @@ const MainContentPolicy = {
         case 7:
           
           locationURL = aContentLocation.spec;
-          originURL = aRequestOrigin && aRequestOrigin.spec;
+          originURL = aRequestOrigin && aRequestOrigin.spec || "";
           
           if (locationURL.indexOf("view-source:") === 0 && /^(?:https?|ftp):/.test(originURL))
             return this.reject("Embedded view-source:", arguments);
@@ -473,7 +473,9 @@ const MainContentPolicy = {
   
       if (isScript) {
         
-        originSite = originSite || aRequestOrigin && this.getSite(aRequestOrigin.spec);
+        originURL = aRequestOrigin && aRequestOrigin.spec || "";
+        originSite = originSite ||  originURL && this.getSite(originURL) || "";
+        let httpOrigin = originSite.indexOf("http") === 0;
         
         // we must guess the right context here, see https://bugzilla.mozilla.org/show_bug.cgi?id=464754
         
@@ -485,26 +487,34 @@ const MainContentPolicy = {
         let scriptElement;
         if (aContentType === 2) { // "real" JavaScript include
           if (originSite && !this.isJSEnabled(originSite) &&
-              (aRequestOrigin.schemeIs("http") || aRequestOrigin.schemeIs("https")) &&
-              (aContentLocation.schemeIs("http") || aContentLocation.schemeIs("https"))) {
+              isHTTP && httpOrigin) {
             // JavaScript-disabled page with script inclusion
             this.syncUI(contentDocument);
             return this.reject("Script inclusion on forbidden page", arguments);
           }
           
           forbid = !(originSite && locationSite == originSite);
-          
-          if (forbid) {
-            let decodedOrigin = decodeURIComponent(aRequestOrigin.spec);
-            if (decodedOrigin.indexOf(locationURL) !== -1 ||
-                Entities.convertAll(decodedOrigin).indexOf(locationURL) !== -1) {
+          scriptElement = aContext instanceof Ci.nsIDOMHTMLScriptElement;
+
+          if (forbid && httpOrigin && this.requestWatchdog /* lazy init */) {
+            // XSSI protection
+            let scriptURL = locationURL;
+            if (scriptURL.lastIndexOf('/') === scriptURL.length - 1)
+              scriptURL = scriptURL.slice(0, -1); // right trim slash
+            let decodedOrigin = InjectionChecker.urlUnescape(aRequestOrigin.spec);
+
+
+            if ((decodedOrigin.indexOf(scriptURL) !== -1 ||
+                Entities.convertAll(decodedOrigin).indexOf(scriptURL) !== -1) &&
+                this.getPref("xss.checkInclusions") &&
+                !new AddressMatcher(this.getPref("xss.checkInclusions.exceptions", "")).test(locationURL)
+              ) {
               let msg = "Blocking reflected script inclusion origin XSS";
-              ns.log(msg + ": " + locationURL + " from " + decodedOrigin);
+              if (scriptElement) this.log(msg + ": " + locationURL + " from " + decodedOrigin);
               return this.reject(msg, arguments);
             }
           }
           
-          scriptElement = aContext instanceof Ci.nsIDOMHTMLScriptElement;
         } else isScript = scriptElement = false;
 
         if (forbid) forbid = !this.isJSEnabled(locationSite);
@@ -632,7 +642,7 @@ const MainContentPolicy = {
       
       if (forbid) {
         
-        if (!originSite) originSite = this.getSite(originURL || aRequestOrigin && aRequestOrigin.spec || "");
+        if (!originSite) originSite = this.getSite(originURL || (originURL = aRequestOrigin && aRequestOrigin.spec || ""));
         
         if (isJava && originSite && /^data:application\/x-java\b/.test(locationURL) ||
             aContentType === 15 && locationURL === "data:,") {

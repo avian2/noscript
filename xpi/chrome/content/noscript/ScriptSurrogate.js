@@ -213,7 +213,7 @@ var ScriptSurrogate = {
       if (typeof w.wrappedJSObject === "object") w = w.wrappedJSObject;
       var s = new Cu.Sandbox(w, { wantXrays: false });
       s.window = w;
-      if (env) s.env = env;
+      if (typeof env !== "undefined") s.env = env;
       this._sandboxRun(s, scriptBlock);
     } catch (e) {
       if (ns.consoleDump) {

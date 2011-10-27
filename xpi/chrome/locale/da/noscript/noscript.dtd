@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Indstillinger…">
 <!ENTITY noscriptOptions.accesskey "I">
 <!ENTITY noscriptOptionsLong "NoScript Indstillinger">
-<!ENTITY noscriptAbout "Om NoScript 2.1.8rc1">
+<!ENTITY noscriptAbout "Om NoScript 2.1.8rc2">
 <!ENTITY noscriptPermissionsText "Du kan angive hvilke websteder der må udføre scripts. Indtast adresse eller domæne (f.eks. &quot;http://www.site.com&quot; eller &quot;site.com&quot;) på det websted du ønsker at tillade og klik på Tillad.">
 <!ENTITY noscriptWebAddress "Webstedets adresse:">
 <!ENTITY noscriptAllow "Tillad">

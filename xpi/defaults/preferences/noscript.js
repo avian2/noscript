@@ -95,11 +95,12 @@ pref("noscript.firstRunRedirection", true);
 
 pref("noscript.xss.notify", true);
 pref("noscript.xss.notify.subframes", true);
-
 pref("noscript.xss.trustReloads", false);
 pref("noscript.xss.trustData", true);
 pref("noscript.xss.trustExternal", true);
 pref("noscript.xss.trustTemp", true);
+pref("noscript.xss.checkInclusions", true);
+pref("noscript.xss.checkInclusions.exceptions", "");
 
 pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
