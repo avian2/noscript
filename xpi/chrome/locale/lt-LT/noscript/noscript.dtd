@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Nuostatos...">
 <!ENTITY noscriptOptions.accesskey "N">
 <!ENTITY noscriptOptionsLong "NoScript nuostatos">
-<!ENTITY noscriptAbout "Apie NoScript 2.1.8rc2">
+<!ENTITY noscriptAbout "Apie NoScript 2.1.8rc3">
 <!ENTITY noscriptPermissionsText "Jūs galite nurodyti, kurioms interneto svetainėms suteikiamas leidimas leisti programinius kodus. Įveskite adresą arba domeną (pvz., &quot;http://www.svetaine.lt&quot; arba &quot;svetaine.lt&quot;) svetainės, kuriai norite suteikti leidimą ir spauskite Leisti.">
 <!ENTITY noscriptWebAddress "Interneto svetainės adresas:">
 <!ENTITY noscriptAllow "Leisti">
