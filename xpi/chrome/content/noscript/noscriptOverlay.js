@@ -914,7 +914,7 @@ return noscriptUtil.service ? {
     this.normalizeMenu(mainMenu, false);
     
     if (mustReverse) this.reverse(popup);
-    sites.pluginExtras = sites.pluginSites = null;
+    window.setTimeout(function() site = sites.pluginExtras = sites.pluginSites = null, 0);
   },
 
   reverse: function(m) {
@@ -1860,7 +1860,7 @@ return noscriptUtil.service ? {
     var notificationNeeded = false;
     
     var allowedSites = [];
-    var activeSites = (sites.pluginSites || []).concat(sites.docSites);
+    var activeSites = sites.pluginSites.concat(sites.docSites);
     var allowed = 0;
     var untrusted = 0;
     var active = 0;

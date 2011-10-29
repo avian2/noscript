@@ -494,6 +494,16 @@ const MainContentPolicy = {
           
           forbid = !(originSite && locationSite == originSite);
           
+          if (forbid) {
+            let decodedOrigin = decodeURIComponent(aRequestOrigin.spec);
+            if (decodedOrigin.indexOf(locationURL) !== -1 ||
+                Entities.convertAll(decodedOrigin).indexOf(locationURL) !== -1) {
+              let msg = "Blocking reflected script inclusion origin XSS";
+              ns.log(msg + ": " + locationURL + " from " + decodedOrigin);
+              return this.reject(msg, arguments);
+            }
+          }
+          
           scriptElement = aContext instanceof Ci.nsIDOMHTMLScriptElement;
         } else isScript = scriptElement = false;
 
