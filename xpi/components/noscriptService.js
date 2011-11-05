@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.1.8";
+const VERSION = "2.1.9rc1";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -3992,7 +3992,7 @@ var ns = {
       
       var html5;
       try {
-        html5 = this.prefService.getBoolPref("html5.enable");
+        html5 = this.prefService.getBoolPref("html5.parser.enable");
       } catch(e) {
         html5 = false;
       }
@@ -4010,7 +4010,7 @@ var ns = {
         }
         content = refresh.content.split(/[,;]/, 2);
         uri = content[1];
-        if (uri) {
+        if (uri && !new AddressMatcher(this.getPref("forbidMetaRefresh.exceptions")).test(document.documentURI)) {
           if (notifyCallback && !(document.documentURI in this.metaRefreshWhitelist)) {
             timeout = parseInt(content[0]) || 0;
             uri = uri.replace (/^\s*URL\s*=\s*/i, "");

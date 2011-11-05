@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Sätted…">
 <!ENTITY noscriptOptions.accesskey "S">
 <!ENTITY noscriptOptionsLong "NoScripti sätted">
-<!ENTITY noscriptAbout "Täpsemalt lisast NoScript 2.1.8…">
+<!ENTITY noscriptAbout "Täpsemalt lisast NoScript 2.1.9rc1…">
 <!ENTITY noscriptPermissionsText "Sa saad määrata, millistel veebilehtedel lubatakse skripte käivitada. Kirjuta veebilehe aadress või domeeni, mida soovid lubada (nt &quot;http://www.site.com&quot; või &quot;site.com&quot;) ja klõpsa Luba nuppu">
 <!ENTITY noscriptWebAddress "Veebilehe aadress:">
 <!ENTITY noscriptAllow "Luba">

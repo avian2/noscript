@@ -87,6 +87,7 @@ pref("noscript.menuAccelerators", false);
 pref("noscript.forbidMetaRefresh", false);
 pref("noscript.forbidMetaRefresh.remember", false);
 pref("noscript.forbidMetaRefresh.notify", true);
+pref("noscript.forbidMetaRefresh.exceptions", "^https?://www\\.google\\.(?:[a-z]{2,3}|[a-z]{2}\\.[a-z]{2,3})/search\\?q=");
 
 pref("noscript.contentBlocker", false);
 
