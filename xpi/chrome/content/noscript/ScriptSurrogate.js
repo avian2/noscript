@@ -1,6 +1,6 @@
 var ScriptSurrogate = {
   QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
-  JS_VERSION: "1.8.1",
+  JS_VERSION: "1.8",
   enabled: true,
   prefs: null,
   sandbox: true,
