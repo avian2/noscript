@@ -472,18 +472,21 @@ const MainContentPolicy = {
         this.dump("[CP PASS 2] " + aMimeTypeGuess + "*" + locationURL + ", " + aContentType + ", " + aInternalCall);
   
       if (isScript) {
-        
-        originURL = aRequestOrigin && aRequestOrigin.spec || "";
-        originSite = originSite ||  originURL && this.getSite(originURL) || "";
-        let httpOrigin = originSite.indexOf("http") === 0;
-        
         // we must guess the right context here, see https://bugzilla.mozilla.org/show_bug.cgi?id=464754
-        
         contentDocument = aContext && aContext.ownerDocument || aContext;
         
-        if (contentDocument) // XSLT comes with no context sometimes...
+        // we get the embedding document URL explicitly,
+        // otherwise on redirection we would get the previous redirected URL
+        if (contentDocument) { // XSLT comes with no context sometimes...
           this.getExpando(contentDocument.defaultView.top.document, "codeSites", []).push(locationSite);
-        
+          originURL = contentDocument.URL;
+        } else {
+          originURL = aRequestOrigin && aRequestOrigin.spec;
+        }
+        originSite = originURL && this.getSite(originURL) || "";
+        let httpOrigin = originSite.indexOf("http") === 0;
+      
+       
         let scriptElement;
         if (aContentType === 2) { // "real" JavaScript include
           if (originSite && !this.isJSEnabled(originSite) &&
@@ -502,19 +505,22 @@ const MainContentPolicy = {
             if (scriptURL.lastIndexOf('/') === scriptURL.length - 1)
               scriptURL = scriptURL.slice(0, -1); // right trim slash
             let decodedOrigin = InjectionChecker.urlUnescape(aRequestOrigin.spec);
-
-
             if ((decodedOrigin.indexOf(scriptURL) !== -1 ||
                 Entities.convertAll(decodedOrigin).indexOf(scriptURL) !== -1) &&
                 this.getPref("xss.checkInclusions") &&
                 !new AddressMatcher(this.getPref("xss.checkInclusions.exceptions", "")).test(locationURL)
               ) {
-              let msg = "Blocking reflected script inclusion origin XSS";
-              if (scriptElement) this.log(msg + ": " + locationURL + " from " + decodedOrigin);
-              return this.reject(msg, arguments);
+              let ds = DOM.getDocShellForWindow(contentDocument.defaultView);
+              let ch = ds.currentDocumentChannel;
+              let referrerURI = IOUtil.extractInternalReferrer(ch);
+              if (referrerURI && referrerURI.scheme.indexOf("http") === 0 &&
+                  this.getBaseDomain(referrerURI.host) !== this.getBaseDomain(this.getDomain(originURL))) {
+                let msg = "Blocking reflected script inclusion origin XSS from " + referrerURI.spec;
+                if (scriptElement) this.log(msg + ": " + locationURL + "\nembedded by\n" + decodedOrigin);
+                return this.reject(msg, arguments);
+              }
             }
           }
-          
         } else isScript = scriptElement = false;
 
         if (forbid) forbid = !this.isJSEnabled(locationSite);

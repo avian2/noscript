@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.1.9rc2";
+const VERSION = "2.1.9rc3";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -3753,7 +3753,7 @@ var ns = {
             hiddenAncestors.push.apply(hiddenAncestors, ancestors);
             break;
           }
-          if (!(n = n.parentNode())) return true;
+          if (!(n = n.parentNode)) return true;
         }
       }
     }
@@ -3768,6 +3768,10 @@ var ns = {
     
     try {
       if (document.documentURI.indexOf("http") !== 0) return 0;
+      
+      var window = document.defaultView;
+      if (!window) return 0;
+      
       var hasVisibleLinks = this.hasVisibleLinks(document);
       if (!this.jsredirectForceShow && hasVisibleLinks) 
         return 0;
@@ -3814,7 +3818,6 @@ var ns = {
       
       var code;
       var container = null;
-      var window;
       
       code = body && body.getAttribute("onload");
       const sources = code ? [code] : [];
@@ -3848,7 +3851,6 @@ var ns = {
               minHeight = "32px";
               textAlign = "left";
             }
-            window = document.defaultView;
             follow = this.jsredirectFollow && window == window.top &&  
               !window.frames[0] &&
               !document.evaluate('//body[normalize-space()!=""]', document, null, 
@@ -3947,7 +3949,7 @@ var ns = {
             return;
          
           child = node.firstChild;
-          if (child.nodeType != 3) break;
+          if (!(child && child.nodeType === 3)) break;
           
           if (!doc) {
             doc = node.ownerDocument;

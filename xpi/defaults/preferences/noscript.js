@@ -87,7 +87,7 @@ pref("noscript.menuAccelerators", false);
 pref("noscript.forbidMetaRefresh", false);
 pref("noscript.forbidMetaRefresh.remember", false);
 pref("noscript.forbidMetaRefresh.notify", true);
-pref("noscript.forbidMetaRefresh.exceptions", "^https?://www\\.google\\.(?:[a-z]{2,3}|[a-z]{2}\\.[a-z]{2,3})/search\\?q=");
+pref("noscript.forbidMetaRefresh.exceptions", "^https?://(?:www|encrypted)\\.google\\.(?:[a-z]{2,3}|[a-z]{2}\\.[a-z]{2,3})/ t.co");
 
 pref("noscript.contentBlocker", false);
 
@@ -101,7 +101,7 @@ pref("noscript.xss.trustData", true);
 pref("noscript.xss.trustExternal", true);
 pref("noscript.xss.trustTemp", true);
 pref("noscript.xss.checkInclusions", true);
-pref("noscript.xss.checkInclusions.exceptions", ".yimg.com");
+pref("noscript.xss.checkInclusions.exceptions", "");
 
 pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);

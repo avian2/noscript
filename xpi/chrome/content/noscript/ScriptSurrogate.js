@@ -1,6 +1,6 @@
 var ScriptSurrogate = {
   QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
-  
+  JS_VERSION: "1.8.1",
   enabled: true,
   prefs: null,
   sandbox: true,
@@ -215,7 +215,7 @@ var ScriptSurrogate = {
       s.window = w;
       if (typeof env !== "undefined") {
         s.env = env;
-        Cu.evalInSandbox("with(window){" + scriptBlock + "}", s);
+        Cu.evalInSandbox("with(window){" + scriptBlock + "}", s, ScriptSurrogate.JS_VERSION);
       } else {
         this._sandboxRun(s, scriptBlock);
       }
@@ -237,10 +237,10 @@ var ScriptSurrogate = {
   },
   _sandboxRunGecko2: function(s, scriptBlock) {
     s.script = scriptBlock;
-    Cu.evalInSandbox("window.eval(script)", s);
+    Cu.evalInSandbox("window.eval(script)", s, ScriptSurrogate.JS_VERSION);
   },
   _sandboxRunLegacy: function(s, scriptBlock) {
-    Cu.evalInSandbox("with(window){" + scriptBlock + "}", s);
+    Cu.evalInSandbox("with(window){" + scriptBlock + "}", s, ScriptSurrogate.JS_VERSION);
   },
   
   executeDOM: function(document, scriptBlock) {
@@ -252,6 +252,7 @@ var ScriptSurrogate = {
       }
       
       var se = document.createElement("script");
+      se.type = "application/javascript;version=" + ScriptSurrogate.JS_VERSION;
       se.appendChild(document.createTextNode(scriptBlock));
       de.appendChild(se);
       de.removeChild(se);
