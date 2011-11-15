@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "تنظیمات...">
 <!ENTITY noscriptOptions.accesskey "ت">
 <!ENTITY noscriptOptionsLong "تنظیمات NoScript">
-<!ENTITY noscriptAbout "درباره NoScript 2.1.9">
+<!ENTITY noscriptAbout "درباره NoScript 2.2rc1">
 <!ENTITY noscriptPermissionsText "شما می توانید سایت هایی را که اجازه اجرای اسکریپت دارند را مشخص کنید.آدرس سایت یا نام دامنه را وارد کنید.(به عنوان مثال &quot;http://www.site.com&quot; یا &quot;site.com&quot;)">
 <!ENTITY noscriptWebAddress "آدرس وب سایت :">
 <!ENTITY noscriptAllow "اجازه دادن">

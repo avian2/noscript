@@ -133,10 +133,8 @@ ClearClickHandler.prototype = {
     this.whitelistLen = 0;
   },
   
-  isEmbed: function(o) {
-    return (o instanceof Ci.nsIDOMHTMLObjectElement || o instanceof Ci.nsIDOMHTMLEmbedElement)
-      && !o.contentDocument && ns.isWindowlessObject(o);
-  },
+  isEmbed: function(o) (o instanceof Ci.nsIDOMHTMLObjectElement || o instanceof Ci.nsIDOMHTMLEmbedElement)
+                        && !o.contentDocument,
   
   swallowEvent: function(ev) {
     ev.cancelBubble = true;
@@ -265,8 +263,9 @@ ClearClickHandler.prototype = {
     const topURI = top.document.documentURIObject;
     const topSite = topURI.prePath;
     
+    var isEmbed;
     var ts = Date.now();
-    
+
     if (this.rapidFire.check(ev, topSite, ts)) {
       this.swallowEvent(ev);
       ns.log("[NoScript ClearClick] Swallowed event " + ev.type + " on " + topURI.spec + " (rapid fire from " + this.rapidFire.topSite + " in "  + (ts - this.rapidFire.ts) + "ms)", true);
@@ -291,7 +290,7 @@ ClearClickHandler.prototype = {
             ) ||
             this.sameSiteParents(w) // cross-site document?
           ) || 
-          ns.getPluginExtras(o) || // NS placeholder?
+          ns.getPluginExtras(o) && ns.getPref("confirmUnblock") || // Just enabled from NS placeholder after prompt?
            this.checkSubexception(isEmbed && (o.src || o.data) || w.location.href)
     }
     
@@ -302,7 +301,7 @@ ClearClickHandler.prototype = {
     var etype = ev.type;
     if (verbose) ns.dump(o.tagName + ", " + etype + ", " + p.toSource());
     
-    var obstructed, ctx, primaryEvent, isEmbed;
+    var obstructed, ctx, primaryEvent;
     try {
       if (etype == "blur") {
         if(/click|key/.test(p.lastEtype)) {
@@ -316,8 +315,9 @@ ClearClickHandler.prototype = {
       ctx = /mouse/.test(etype)
                 && { x: ev.pageX, y: ev.pageY, debug: ev.ctrlKey && ev.button == 1 && ns.getPref("clearClick.debug") }
                 || {};
-      ctx.isEmbed =  typeof(isEmbed) == "boolean" ? isEmbed : this.isEmbed(o);
-      
+      isEmbed =  (typeof(isEmbed) === "boolean" ? isEmbed : this.isEmbed(o)) && ns.isWindowlessObject(o);
+      if (!(isEmbed || w.frameElement)) return;
+      ctx.isEmbed = isEmbed;
       primaryEvent = /^(?:mousedown|keydown)$/.test(etype) ||
           // submit button generates a syntethic click if any text-control receives [Enter]: we must consider this "primary"
              etype == "click" && ev.screenX == 0 && ev.screenY == 0 && ev.pageX == 0 && ev.pageY == 0 && ev.clientX == 0 && ev.clientY == 0 && ev.target.form &&
