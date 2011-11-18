@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Настройки…">
 <!ENTITY noscriptOptions.accesskey "Н">
 <!ENTITY noscriptOptionsLong "Настройки на NoScript">
-<!ENTITY noscriptAbout "За NoScript 2.2rc1">
+<!ENTITY noscriptAbout "За NoScript 2.2">
 <!ENTITY noscriptPermissionsText "Можете да зададете в кои уеб-сайтове е позволено да се използват скриптовете. Напишете адреса или домейна (например &quot;http://www.site.com&quot; или &quot;site.com&quot;) на сайта, който искате да разрешите и натиснете Разреши.">
 <!ENTITY noscriptWebAddress "Адрес на уеб-сайта:">
 <!ENTITY noscriptAllow "Разреши">

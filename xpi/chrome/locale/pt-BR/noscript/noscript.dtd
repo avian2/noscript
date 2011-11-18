@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opções">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opções do NoScript">
-<!ENTITY noscriptAbout "Sobre o NoScript 2.2rc1…">
+<!ENTITY noscriptAbout "Sobre o NoScript 2.2…">
 <!ENTITY noscriptPermissionsText "Você pode especificar os sites que podem executar JavaScripts. Escreva o endereço ou o domínio (ex &quot;http://www.site.com&quot; ou &quot;site.com&quot;) do site que deseja permitir e depois clique em Permitir.">
 <!ENTITY noscriptWebAddress "Endereço:">
 <!ENTITY noscriptAllow "Permitir">
