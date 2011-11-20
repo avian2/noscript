@@ -1007,7 +1007,7 @@ var Entities = {
     return s.replace(/[\\&][^<>]+/g, function(e) { return Entities.convert(e) });
   },
   convertDeep: function(s) {
-    for (var prev = null; (s = this.convertAll(s)) != prev; prev = s);
+    for (var prev = null; (s = this.convertAll(s)) !== prev || (s = unescape(s)) !== prev; prev = s);
     return s;
   },
   neutralize: function(e, whitelist) {
@@ -2156,7 +2156,7 @@ XSanitizer.prototype = {
     // replace every character matching noscript.filterXGetRx with a single ASCII space (0x20)
     changes = changes || {};
     if (!sep) {
-      sep = query.indexOf("&") > -1 ? "&" : ";" 
+      sep = query.indexOf("&") > -1 || this.brutal ? "&" : ";" 
     }
     const parms = query.split(sep);
     
@@ -2244,10 +2244,9 @@ XSanitizer.prototype = {
     }
   },
   sanitize: function(unsanitized) {
-    // deeply convert entities
     var s, orig;
     orig = s = Entities.convertDeep(unsanitized);
-    
+
     if (s.indexOf('"') > -1 && !this.brutal) {
       // try to play nice on search engine queries with grouped quoted elements
       // by allowing double quotes but stripping even more aggressively other chars
@@ -2282,7 +2281,7 @@ XSanitizer.prototype = {
         .replace(this._brutalReplRx, String.toUpperCase)
         .replace(/Q[\da-fA-Fa]{2}/g, "Q20") // Ebay-style escaping
         .replace(/%[\n\r\t]*[0-9a-f][\n\r\t]*[0-9a-f]/gi, " ")
-        .replace(/percnt/, 'percent')
+        // .replace(/percnt/, 'percent')
         ; 
     }
     

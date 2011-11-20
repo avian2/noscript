@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Možnosti...">
 <!ENTITY noscriptOptions.accesskey "M">
 <!ENTITY noscriptOptionsLong "NoScript Možnosti">
-<!ENTITY noscriptAbout "O NoScript 2.2.1rc1 programu...">
+<!ENTITY noscriptAbout "O NoScript 2.2.1rc2 programu...">
 <!ENTITY noscriptPermissionsText "Določite lahko na katerih straneh bo izvajanje skript dovoljeno. Vnesite naslov ali domeno (pr. &quot;http://www.domena.com&quot; or &quot;domena.com&quot;) strani, na kateri želite omogočiti izvajanje skript in kliknite Dovoli.">
 <!ENTITY noscriptWebAddress "Naslov strani:">
 <!ENTITY noscriptAllow "Dovoli">
