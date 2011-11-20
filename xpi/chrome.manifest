@@ -48,9 +48,9 @@ locale noscript es-AR jar:chrome/noscript.jar!/locale/es-AR/noscript/
 locale noscript es-CL jar:chrome/noscript.jar!/locale/es-CL/noscript/
 locale noscript es-ES jar:chrome/noscript.jar!/locale/es-ES/noscript/
 locale noscript et-EE jar:chrome/noscript.jar!/locale/et-EE/noscript/
-locale noscript eu-ES jar:chrome/noscript.jar!/locale/eu-ES/noscript/
+locale noscript eu    jar:chrome/noscript.jar!/locale/eu/noscript/
 locale noscript fa-IR jar:chrome/noscript.jar!/locale/fa-IR/noscript/
-locale noscript fi-FI jar:chrome/noscript.jar!/locale/fi-FI/noscript/
+locale noscript fi    jar:chrome/noscript.jar!/locale/fi/noscript/
 locale noscript fr    jar:chrome/noscript.jar!/locale/fr/noscript/
 locale noscript gl-ES jar:chrome/noscript.jar!/locale/gl-ES/noscript/
 locale noscript he-IL jar:chrome/noscript.jar!/locale/he-IL/noscript/
@@ -58,7 +58,7 @@ locale noscript hr-HR jar:chrome/noscript.jar!/locale/hr-HR/noscript/
 locale noscript hsb-DE jar:chrome/noscript.jar!/locale/hsb-DE/noscript/
 locale noscript hu-HU jar:chrome/noscript.jar!/locale/hu-HU/noscript/
 locale noscript id-ID jar:chrome/noscript.jar!/locale/id-ID/noscript/
-locale noscript it-IT jar:chrome/noscript.jar!/locale/it-IT/noscript/
+locale noscript it    jar:chrome/noscript.jar!/locale/it/noscript/
 locale noscript ja-JP jar:chrome/noscript.jar!/locale/ja-JP/noscript/
 locale noscript kk-KZ jar:chrome/noscript.jar!/locale/kk-KZ/noscript/
 locale noscript km-KH jar:chrome/noscript.jar!/locale/km-KH/noscript/
@@ -79,8 +79,8 @@ locale noscript sr    jar:chrome/noscript.jar!/locale/sr/noscript/
 locale noscript sv-SE jar:chrome/noscript.jar!/locale/sv-SE/noscript/
 locale noscript te-IN jar:chrome/noscript.jar!/locale/te-IN/noscript/
 locale noscript th    jar:chrome/noscript.jar!/locale/th/noscript/
-locale noscript tr-TR jar:chrome/noscript.jar!/locale/tr-TR/noscript/
-locale noscript uk-UA jar:chrome/noscript.jar!/locale/uk-UA/noscript/
+locale noscript tr    jar:chrome/noscript.jar!/locale/tr/noscript/
+locale noscript uk    jar:chrome/noscript.jar!/locale/uk/noscript/
 locale noscript vi    jar:chrome/noscript.jar!/locale/vi/noscript/
 locale noscript zh-CN jar:chrome/noscript.jar!/locale/zh-CN/noscript/
 locale noscript zh-TW jar:chrome/noscript.jar!/locale/zh-TW/noscript/

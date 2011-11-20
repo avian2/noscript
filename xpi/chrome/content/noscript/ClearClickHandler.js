@@ -431,6 +431,8 @@ ClearClickHandler.prototype = {
     var top = w.top;
     var browser = DOM.findBrowserForNode(top);
     
+    if (!browser) return false; // some extensions, e.g. FoxTab, cause this
+    
     var c = this.createCanvas(browser.ownerDocument);
     var gfx = c.getContext("2d");
     
