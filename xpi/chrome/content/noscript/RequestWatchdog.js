@@ -1577,43 +1577,18 @@ var InjectionChecker = {
   },
   
   
-  checkJS: function(s, opts) {
+  checkJS: function(s, unescapedUni) {
     this.log(s);
-    // recursive escaping options
-    if (!opts) opts = { uni: true, ent: true };
     
-    var hasUnicodeEscapes = opts.uni && /\\u[0-9a-f]{4}/.test(s);
+    var hasUnicodeEscapes = !unescapedUni && /\\u[0-9a-f]{4}/.test(s);
     if (hasUnicodeEscapes && /\\u00(?:22|27|2f)/i.test(s)) {
       this.log("Unicode-escaped lower ASCII, why would you?");
       return true;
     }
     
-    // the hardcore job!
-    if (this.checkAttributes(s)) return true;
-    if (/[\\\(]|=[^=]/.test(s) && // quick preliminary screen
-        this.checkJSBreak(s))
-      return true;
-    
-    
-    // recursive cross-unescaping
-    
-    if (hasUnicodeEscapes &&
-        this.checkJS(this.unescapeJS(s), {
-          ent: false, // even if we introduce new entities, they're unrelevant because happen post-spidermonkey
-          uni: false
-        })) 
-      return true;
-    
-    if (opts.ent) {
-      var converted = Entities.convertAll(s);
-      if (converted != s && this.checkJS(converted, {
-          ent: false,
-          uni: true // we might have introduced new unicode escapes
-        }))
-        return true;
-    }
-    
-    return false;
+    return this.checkAttributes(s) ||
+      /[\\\(]|=[^=]/.test(s) &&  this.checkJSBreak(s) || // MAIN
+      hasUnicodeEscapes && this.checkJS(this.unescapeJS(s), true); // optional unescaped recursion 
   },
   
   unescapeJS: function(s) {
@@ -1801,16 +1776,19 @@ var InjectionChecker = {
   },
   
   _checkRecursive: function(s, depth) {
-    
-    
+
     if (this.checkHTML(s) || this.checkJS(s) || this.checkSQLI(s))
       return true;
+    
+    if (s.indexOf("&") !== -1) {
+      let unent = Entities.convertAll(s);
+      if (unent !== s && this._checkRecursive(unent, depth)) return true;
+    }
     
     if (--depth <= 0)
       return false;
     
-    
-    if (/\+/.test(s) && this._checkRecursive(this.formUnescape(s), depth))
+    if (s.indexOf('+') !== -1 && this._checkRecursive(this.formUnescape(s), depth))
       return true;
     
     var unescaped = this.urlUnescape(s);
@@ -1819,13 +1797,13 @@ var InjectionChecker = {
       return true;
     
     if (/[\n\r\t]|&#/.test(unescaped)) {
-      var unent = Entities.convertAll(unescaped).replace(/[\n\r\t]/g, '');
+      let unent = Entities.convertAll(unescaped).replace(/[\n\r\t]/g, '');
       if (unescaped != unent && this._checkRecursive(unent, depth)) {
         this.log("Trash-stripped nested URL match!"); // http://mxr.mozilla.org/mozilla-central/source/netwerk/base/src/nsURLParsers.cpp#100
         return true;
       }
     }
-
+    
     if (unescaped != s && this._checkRecursive(unescaped, depth))
       return true;
     
@@ -2162,10 +2140,10 @@ XSanitizer.prototype = {
   sanitizeWholeQuery: function(query, changes) {
     var original = query;
     query = Entities.convertAll(query);
-    if (query == original) return query;
+    if (query === original) return query;
     var unescaped = InjectionChecker.urlUnescape(original, true);
     query = this.sanitize(unescaped);
-    if (query == unescaped) return original;
+    if (query === unescaped) return original;
     if(changes) changes.qs = true;
     return escape(query);
   },
@@ -2289,10 +2267,10 @@ XSanitizer.prototype = {
       return s;
     }
     // regular duty
-    s = s.replace(this.primaryBlacklist, " ");
-    
-    s = s.replace(/\bjavascript:+|\bdata:[^,]+,(?=[^<]*<)|-moz-binding|@import/ig, function(m) { return m.replace(/(.*?)(\w)/, "$1#no$2"); });
-    
+    s = s.replace(this.primaryBlacklist, " ")
+      .replace(/\bjavascript:+|\bdata:[^,]+,(?=[^<]*<)|-moz-binding|@import/ig,
+                function(m) { return m.replace(/(.*?)(\w)/, "$1#no$2"); });
+
     if (this.extraBlacklist) { // additional user-defined blacklist for emergencies
       s = s.replace(this.extraBlacklist, " "); 
     }
@@ -2304,6 +2282,7 @@ XSanitizer.prototype = {
         .replace(this._brutalReplRx, String.toUpperCase)
         .replace(/Q[\da-fA-Fa]{2}/g, "Q20") // Ebay-style escaping
         .replace(/%[\n\r\t]*[0-9a-f][\n\r\t]*[0-9a-f]/gi, " ")
+        .replace(/percnt/, 'percent')
         ; 
     }
     
