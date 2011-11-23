@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.2.1";
+const VERSION = "2.2.2rc1";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -1561,6 +1561,7 @@ var ns = {
       case "liveConnectInterception":
       case "audioApiInterception":
       case "allowHttpsOnly":
+      case "removeSMILKeySniffer":
         this[name] = this.getPref(name, this[name]);  
       break;
       
@@ -1902,6 +1903,7 @@ var ns = {
       "allowHttpsOnly",
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
+      "removeSMILKeySniffer",
       ]) {
       try {
         this.syncPrefs(this.prefs, p);
@@ -3763,6 +3765,22 @@ var ns = {
     if (form && form.offsetHeight) return true;
     return false;
   },
+  
+  _SMILElements: ["set", "animation"],
+  doRemoveSMILKeySniffers: function(document) {
+    if (!this.removeSMILKeySniffer) return;
+    const tags = this._SMILElements;
+    for (let j = tags.length; j-- > 0;) {
+      let nodes = document.getElementsByTagName(tags[j]);
+      for (let k = nodes.length; k-- > 0;) {
+        let node = nodes[k];
+        let begin = node.getAttribute("begin");
+        if (begin && begin.indexOf("accessKey(") > -1)
+          node.removeAttribute("begin");
+      }
+    }
+  },
+  
   detectJSRedirects: function(document) {
     if (this.jsredirectIgnore) return 0;
     

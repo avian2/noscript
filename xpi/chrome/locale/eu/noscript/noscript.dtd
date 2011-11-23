@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Aukerak:">
 <!ENTITY noscriptOptions.accesskey "A">
 <!ENTITY noscriptOptionsLong "NoScript aukerak">
-<!ENTITY noscriptAbout "NoScript 2.2.1 2.2.1rc3-eri buruz:">
+<!ENTITY noscriptAbout "NoScript 2.2.2rc1 2.2.1rc3-eri buruz:">
 <!ENTITY noscriptPermissionsText "Zein webgunek script-ak exekuta ditzakeen zehaztu dezakezu. Idatzi script-ak erabiltzea onartzea nahi duzun domeinuaren izena (adib. &quot;http://www.gunea.org&quot; or &quot;gunea.org&quot;) eta Onartu sakatu.">
 <!ENTITY noscriptWebAddress "Webgunearen helbidea:">
 <!ENTITY noscriptAllow "Onartu">

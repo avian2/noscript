@@ -129,6 +129,8 @@ pref("noscript.jsredirectIgnore", false);
 pref("noscript.jsredirectFollow", false);
 pref("noscript.jsredirectForceShow", false);
 
+pref("noscript.removeSMILKeySniffer", true);
+
 pref("noscript.utf7filter", true);
 
 pref("noscript.safeJSRx", "(?:window\\.)?close\\s*\\(\\)");

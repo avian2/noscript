@@ -2328,6 +2328,7 @@ return noscriptUtil.service ? {
           ns.setExpando(doc, "contentLoaded", true);
           if (w == w.top) {
             if (jsBlocked) {
+              ns.doRemoveSMILKeySniffers(doc);
               ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
               w.addEventListener("load", noscriptOverlay.listeners.onDocumentLoad, false);
             }
@@ -2348,9 +2349,9 @@ return noscriptUtil.service ? {
     },
     onDocumentLoad: function(ev) {
       if (ev.originalTarget instanceof HTMLDocument) {
-        var w = ev.currentTarget;
+        let w = ev.currentTarget;
         w.removeEventListener("load", arguments.callee, false);
-          window.setTimeout(function() {
+        window.setTimeout(function() {
           noscriptOverlay.ns.detectJSRedirects(w.document);
         }, 50);
       }
