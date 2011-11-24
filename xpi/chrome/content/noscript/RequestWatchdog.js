@@ -132,7 +132,7 @@ RequestWatchdog.prototype = {
         this.externalLoad = null;
       }
       
-      if (isDoc) {
+      if (isDoc && ChannelReplacement.supported) {
         
         let url = abeReq.destination;
         if (url.indexOf("#!") > 0 &&
@@ -149,9 +149,13 @@ RequestWatchdog.prototype = {
             newURL = url.replace(/(?:\?_escaped_fragment_=[^&#]*)|(?=#!)/, qs);
           }
           if (newURL && newURL != url && abeReq.redirectChain.map(function(u) u.spec).indexOf(newURL) === -1) {
-            channel.URI.spec = abeReq.destination = newURL;
-            if (isReload) this.noscriptReload = newURL;
-          }
+            let requestWatchdog = this;
+            abeReq.replace(null, IOUtil.newURI(newURL), function(replacement) {
+              if (isReload) requestWatchdog.noscriptReload = newURL;
+              replacement.open();
+            });
+            return;
+          }          
         }
         
         new DOSChecker(abeReq).run(function() {
@@ -828,25 +832,23 @@ RequestWatchdog.prototype = {
       
       originalAttempt = originalSpec;
       
+      let newURI = url.clone();
+      
       if (injectionAttempt) {
         xsan.brutal = injectionAttempt;
-        try {
-          changes = xsan.sanitizeURL(url);
-        } catch(e) {
-          changes = xsan.sanitizeURL(url.clone());
-          if (changes.major) {
-            requestInfo.reason = url.spec;
-            this.abort(requestInfo);
-            return;
-          }
-        }
+        changes = xsan.sanitizeURL(newURI);
         if (changes.minor) {
-          this.proxyHack(channel);
           this.notify(this.addXssInfo(requestInfo, {
             reason: "filterXGet",
             originalAttempt: originalAttempt,
             silent: !(changes.major || postInjection) 
           }));
+        }
+        if (newURI.spec != url.spec) {
+          if (!abeReq.replace(null, newURI)) {
+            this.proxyHack(channel);
+            url.spec = newURI.spec;
+          }
         }
       }
     }
@@ -862,9 +864,10 @@ RequestWatchdog.prototype = {
         channel.loadFlags = channel.loadFlags & ~CACHE_FLAGS | channel.LOAD_BYPASS_CACHE;
         if (this.consoleDump) this.dump(channel, "SKIPPING CACHE");
       }
-      
       this.attachUnsafeRequest(requestInfo);
     }
+    
+    
   },
   
   isBadException: function(host) {

@@ -995,8 +995,12 @@ ABERequest.prototype = Lang.memoize({
   },
    
   replace: function(newMethod, newURI, callback) {
-    new ChannelReplacement(this.channel, newURI, newMethod)
-      .replace(newMethod || newURI, callback);
+    if (ChannelReplacement.supported) {
+      new ChannelReplacement(this.channel, newURI, newMethod)
+        .replace(newMethod || newURI, callback);
+      return true;
+    }
+    return false; 
   },
   
   isBrowserURI: function(uri) {
