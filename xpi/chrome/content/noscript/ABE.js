@@ -1161,11 +1161,8 @@ var ABEStorage = {
       prefs.setIntPref("migration", 1);
       this._migrateLegacyFiles();
     }
-    
-    for each (let k in prefs.getChildList("", {})) {
-      this.observe(prefs, null, k);
-    }
     this.loadRules();
+    for each (let k in prefs.getChildList("", {})) this.observe(prefs, null, k);
     prefs.addObserver("", this, true);
   },
   QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),

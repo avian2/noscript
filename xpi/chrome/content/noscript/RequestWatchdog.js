@@ -566,7 +566,8 @@ RequestWatchdog.prototype = {
       
       if (channel.requestMethod == "POST") {
         
-        if (originSite === "https://cap.securecode.com" && ns.getPref("filterXException.visa")) {
+        if (/^https:\/\/(?:cap\.securecode\.com|(?:.*?\.)?firstdata\.(?:l[tv]|com))$/.test(originSite) &&
+            ns.getPref("filterXException.visa")) {
           if (ns.consoleDump) this.dump(channel, "Verified by Visa (cap.securecode.com) exception");
           return;
         }
