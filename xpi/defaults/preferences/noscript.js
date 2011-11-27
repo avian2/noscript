@@ -170,6 +170,7 @@ pref("noscript.alwaysBlockUntrustedContent", true);
 
 pref("noscript.consoleLog", false);
 
+pref("noscript.dropXssProtection", true);
 pref("noscript.flashPatch", true);
 pref("noscript.silverlightPatch", true);
 

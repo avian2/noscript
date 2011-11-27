@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.2.2rc3";
+const VERSION = "2.2.2rc4";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -1430,6 +1430,7 @@ var ns = {
   jsHack: null,
   jsHackRegExp: null,
   
+  dropXssProtection: true,
   flashPatch: true,
   silverlightPatch: true,
   
@@ -1553,6 +1554,7 @@ var ns = {
       case "jsredirectForceShow":
       case "jsHack":
       case "consoleLog":
+      case "dropXssProtection":
       case "flashPatch":
       case "silverlightPatch":
       case "inclusionTypeChecking":
@@ -1899,6 +1901,7 @@ var ns = {
       "showBlankSources", "showPlaceholder", "showUntrustedPlaceholder",
       "collapseObject",
       "temp", "untrusted", "gtemp",
+      "dropXssProtection",
       "flashPatch", "silverlightPatch",
       "allowHttpsOnly",
       "truncateTitle", "truncateTitleLen",
@@ -5705,7 +5708,10 @@ var ns = {
         newWin.addEventListener("change", this.bind(this.onContentChange), true);
       }
     } else {
-    
+      
+      if (this.dropXssProtection && win != win.top)
+        win.addEventListener("drop", this._dropXssHandler, true); 
+      
       if (this.implementToStaticHTML && !("toStaticHTML" in doc.defaultView)) {
         scripts = [this._toStaticHTMLDef];
         doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
@@ -5777,16 +5783,32 @@ var ns = {
   },
   
   
+  _dropXssHandler: function(e) {
+    let dt = e.dataTransfer;
+    let block = false;
+    for each (let t in dt.types) {
+      try {
+        let data = dt.getData(t);
+        if (/^(?:javascript|data):/i.test(data)) {
+          block = true;
+          ns.log('NoScript prevented "' + data + '" from being loaded on drop.');
+        }
+      } catch (ex) {}
+    }
+    if (block) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  },
+  
   get unescapeHTML() {
     delete this.unescapeHTML;
     return this.unescapeHTML = Cc["@mozilla.org/feed-unescapehtml;1"].getService(Ci.nsIScriptableUnescapeHTML)
   },
-  
   get implementToStaticHTML() {
     delete this.implementToStaticHTML;
     return this.implementToStaticHTML = this.getPref("toStaticHTML");
   },
-  
   _toStaticHTMLHandler:  function(ev) {
     try {
       var t = ev.target;
