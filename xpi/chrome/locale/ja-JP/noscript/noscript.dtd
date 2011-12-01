@@ -1,16 +1,16 @@
 <!ENTITY noscriptOptions "オプション...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript オプション">
-<!ENTITY noscriptAbout "NoScriptについて...">
+<!ENTITY noscriptAbout "NoScript 2.2.2rc5について...">
 <!ENTITY noscriptPermissionsText "JavaScriptを許可するサイトを指定する事ができます。許可したいサイトのアドレスかドメインを入力して、ボタンを押してください。(例: &quot;http://www.site.com&quot; または &quot;site.com&quot;)">
 <!ENTITY noscriptWebAddress "ウェブサイトのアドレス:">
 <!ENTITY noscriptAllow "許可する">
 <!ENTITY noscriptAllow.accesskey "A">
-<!ENTITY noscriptForbid "Forbid">
+<!ENTITY noscriptForbid "禁止する">
 <!ENTITY noscriptForbid.accesskey "F">
-<!ENTITY noscriptTrust "Mark as Trusted">
+<!ENTITY noscriptTrust "信頼済みサイトにする">
 <!ENTITY noscriptTrust.accesskey "T">
-<!ENTITY noscriptUntrust "Mark as Untrusted">
+<!ENTITY noscriptUntrust "信頼していないサイトにする">
 <!ENTITY noscriptUntrust.accesskey "U">
 <!ENTITY noscriptRemoveSelected "選択中のサイトを削除">
 <!ENTITY noscriptGloballyEnabled "すべてのサイトのJavaScriptを許可する (危険)">
@@ -65,22 +65,22 @@
 <!ENTITY noscriptForbidPing "&lt;A PING...&gt;を禁止する">
 <!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt;要素内でのMETAリダイレクションを禁止する">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "R">
-<!ENTITY noscriptWhitelist "Whitelist">
-<!ENTITY noscriptPermissions "Permissions">
-<!ENTITY noscriptRefresh "Refresh">
+<!ENTITY noscriptWhitelist "ホワイトリスト">
+<!ENTITY noscriptPermissions "アクセス許可">
+<!ENTITY noscriptRefresh "更新">
 <!ENTITY noscriptNotifications "通知">
 <!ENTITY noscriptToolbarToggle "NoScriptツールバーボタンの左クリックで現在のトップレベルサイトの許可設定をトグルする">
-<!ENTITY noscriptTrusted "Trusted">
-<!ENTITY noscriptUntrusted "Untrusted">
-<!ENTITY noscriptUnknown "Unknown">
-<!ENTITY noscriptAdd "Add">
+<!ENTITY noscriptTrusted "信頼済み">
+<!ENTITY noscriptUntrusted "信頼していない">
+<!ENTITY noscriptUnknown "不明">
+<!ENTITY noscriptAdd "追加">
 <!ENTITY noscriptAdd.accesskey "A">
-<!ENTITY noscriptClose "Close">
-<!ENTITY noscriptSiteManager "Site Manager">
-<!ENTITY noscriptSecurityManager "Security Manager">
-<!ENTITY noscriptPolicies "Policies">
-<!ENTITY noscriptDefaultPolicies "Default Policies">
-<!ENTITY noscriptSitePolicies "Site Specific Policies">
+<!ENTITY noscriptClose "閉じる">
+<!ENTITY noscriptSiteManager "サイト管理者">
+<!ENTITY noscriptSecurityManager "セキュリティ管理者">
+<!ENTITY noscriptPolicies "ポリシー">
+<!ENTITY noscriptDefaultPolicies "デフォルトポリシー">
+<!ENTITY noscriptSitePolicies "サイト固有のポリシー">
 <!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;要素を隠す">
 <!ENTITY noscriptNselForce "ブロックした&lt;SCRIPT&gt;に引き続く&lt;NOSCRIPT&gt;を表示する">
 <!ENTITY noscriptAutoAllowTopLevel "トップレベルサイトはデフォルトで一時的に許可する">
@@ -99,7 +99,7 @@
 <!ENTITY noscriptXssExceptions "対XSS保護の例外設定">
 <!ENTITY noscriptXssExceptions.description "これらの正規表現にマッチングする送り先はXSSから保護されません">
 <!ENTITY noscriptMatchSample "パターンマッチングの例:">
-<!ENTITY noscriptReset "Reset">
+<!ENTITY noscriptReset "リセット">
 <!ENTITY noscriptReset.accesskey "R">
 <!ENTITY noscriptResetDef "デフォルトに初期化">
 <!ENTITY noscriptResetDef.accesskey "d">

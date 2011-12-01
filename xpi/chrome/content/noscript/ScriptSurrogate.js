@@ -4,6 +4,7 @@ var ScriptSurrogate = {
   enabled: true,
   prefs: null,
   sandbox: true,
+  syntaxChecker: new SyntaxChecker(),
   
   get mappings() {
     delete this.mappings;
@@ -39,13 +40,15 @@ var ScriptSurrogate = {
     var mapping;
     for (key in map) {
       mapping = map[key];
-      if (mapping.forPage) mappings.forPage.push(mapping);
-      if (mapping.noScript) mappings.noScript.push(mapping);
-      else if (!mapping.forPage) {
-        if (!(mapping.before || mapping.after)) mappings.inclusion.push(mapping);
-        else {
-          if (mapping.before) mappings.before.push(mapping);
-          if (mapping.after) mappings.after.push(mapping);
+      if (!mapping.error) {
+        if (mapping.forPage) mappings.forPage.push(mapping);
+        if (mapping.noScript) mappings.noScript.push(mapping);
+        else if (!mapping.forPage) {
+          if (!(mapping.before || mapping.after)) mappings.inclusion.push(mapping);
+          else {
+            if (mapping.before) mappings.before.push(mapping);
+            if (mapping.after) mappings.after.push(mapping);
+          }
         }
       }
     }
@@ -64,14 +67,14 @@ var ScriptSurrogate = {
     var member = keyParts[1];
     if (!(name && member)) return;
     try {
-      var value = prefs.getCharPref(key);
+      let value = prefs.getCharPref(key);
       if (!value) return;
-      var mapping = (name in map)
+      let mapping = (name in map)
         ? map[name]
         : map[name] = new SurrogateMapping();
       switch(member) {
         case "sources":
-          var prefix = true;
+          let prefix = true;
           do {
             switch(value[0]) {
               case '@': mapping.forPage = true; break;
@@ -87,14 +90,22 @@ var ScriptSurrogate = {
           
         case "exceptions":
           value = new AddressMatcher(value);
-        case "replacement":
           break;
+        
+        case "replacement":
+          if (!this.syntaxChecker.check(value)) {
+            Cu.reportError(mapping.error = this.syntaxChecker.lastError);
+          }
+          break;
+        
         default:
           return;
       }
       
       mapping[member] = value; 
-    } catch (e) {}
+    } catch (e) {
+      Cu.reportError(e);
+    }
   },
   
   observe: function(prefs, topic, key) {
@@ -181,7 +192,7 @@ var ScriptSurrogate = {
     if (this.debug) {
       // we run each script separately and don't swallow exceptions
       scripts.forEach(function(s) {
-       runner.call(this, document, s);
+       runner.call(this, document, "{" + s + "}");
       }, this);
     } else {
       runner.call(this, document,
@@ -268,6 +279,7 @@ SurrogateMapping.prototype = {
   sources: null,
   replacement: null,
   exceptions: null,
+  error: null,
   
   forPage: false,
   noScript: false,

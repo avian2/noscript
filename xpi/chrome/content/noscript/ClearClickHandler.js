@@ -1123,7 +1123,7 @@ DocPatcher.prototype = {
         let baseURL = Cc["@adblockplus.org/abp/private;1"].getService(Ci.nsIURI);
         let x = {};
         Cu.import(baseURL.spec + "ObjectTabs.jsm", x);
-        tobj = Cu.getGlobalForObject(x.objectMouseEventHander).objTabs;
+        tobj = (x.objectMouseEventHander.__parent__ || Cu.getGlobalForObject(x.objectMouseEventHander)).objTabs;
       } catch (e) {
         tobj = null;
       }
@@ -1164,7 +1164,9 @@ DocPatcher.prototype = {
                 co.reset();
               }
             }
-          } catch(e) {}
+          } catch(e) {
+            Cu.reportError(e);
+          }
         }
       : DUMMY_FUNC
      )(toggle); 

@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opzioni…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opzioni NoScript">
-<!ENTITY noscriptAbout "Informazioni su NoScript 2.2.2rc4 2.2.1rc3…">
+<!ENTITY noscriptAbout "Informazioni su NoScript 2.2.2rc5…">
 <!ENTITY noscriptPermissionsText "Qui si possono indicare i siti per i quali l&apos;esecuzione degli script è consentita. Digitare l&apos;indirizzo o il dominio (es. &quot;http://www.sito.com&quot; oppure &quot;sito.com&quot;)  e fare clic su Permetti.">
 <!ENTITY noscriptWebAddress "Indirizzo del sito:">
 <!ENTITY noscriptAllow "Permetti">
@@ -50,6 +50,7 @@
 <!ENTITY noscriptForbidIFrames "Vieta &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Vieta &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Vieta @font-face">
+<!ENTITY noscriptForbidWebGL "Vieta WebGL">
 <!ENTITY noscriptForbidMedia "Vieta &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Vieta Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Vieta altri plugin">
@@ -184,4 +185,3 @@
 <!ENTITY noscript.hoverUI "Apri il menù dei permessi quando il mouse sorvola l'icona di NoScript">
 <!ENTITY noscriptDonate "Donazione">
 <!ENTITY noscriptDonate.accesskey "o">
-<!ENTITY noscriptForbidWebGL "Forbid WebGL">

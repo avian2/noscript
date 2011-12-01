@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Alternativ...">
 <!ENTITY noscriptOptions.accesskey "A">
 <!ENTITY noscriptOptionsLong "NoScript-alternativ">
-<!ENTITY noscriptAbout "Om NoScript 2.2.2rc4">
+<!ENTITY noscriptAbout "Om NoScript 2.2.2rc5">
 <!ENTITY noscriptPermissionsText "Ange vilka webbplatser som får köra skript. Skriv webbadressen eller domänen (t ex. &quot;http://www.webbplats.se&quot; eller &quot;webbplats.se&quot;) för den webbplats där skript ska tillåtas. Klicka sedan på &quot;Tillåt&quot;.">
 <!ENTITY noscriptWebAddress "Sidans adress:">
 <!ENTITY noscriptAllow "Tillåt">

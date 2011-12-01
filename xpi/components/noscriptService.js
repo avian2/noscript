@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.2.2rc4";
+const VERSION = "2.2.2rc5";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -583,7 +583,6 @@ PolicySites.prototype = {
 };
 
 
-
 function AddressMatcher(s) {
   this.source = s;
   this.rx = this.parse(s);
@@ -848,6 +847,37 @@ Network.prototype = {
   
   toString: function() {
     return this.src;
+  }
+};
+
+
+function SyntaxChecker() {
+  this.sandbox = new Cu.Sandbox("about:");
+}
+
+SyntaxChecker.prototype = {
+  lastError: null,
+  lastFunction: null,
+  check: function(script) {
+    this.sandbox.script = script;
+     try {
+       return !!(this.lastFunction = this.ev("new Function(script)"));
+     } catch(e) {
+       this.lastError = e;
+     }
+     return false;
+  },
+  unquote: function(s, q) {
+    if (!(s[0] == q && s[s.length - 1] == q &&
+        !s.replace(/\\./g, '').replace(/^(['"])[^\n\r]*?\1/, "")
+      )) return null;
+    try {
+      return this.ev(s);
+    } catch(e) {}
+    return null;
+  },
+  ev: function(s) {
+    return Cu.evalInSandbox(s, this.sandbox);
   }
 };
 
@@ -5789,7 +5819,7 @@ var ns = {
     for each (let t in dt.types) {
       try {
         let data = dt.getData(t);
-        if (/^(?:javascript|data):/i.test(data)) {
+        if (/(?:^|[\s>;])(?:javascript|data):/i.test(data)) {
           block = true;
           ns.log('NoScript prevented "' + data + '" from being loaded on drop.');
         }
@@ -5797,7 +5827,6 @@ var ns = {
     }
     if (block) {
       e.preventDefault();
-      e.stopPropagation();
     }
   },
   

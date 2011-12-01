@@ -541,10 +541,12 @@ RequestWatchdog.prototype = {
       if (ns.consoleDump) this.dump(channel, "UNSAFE RELOAD of [" + originalSpec +"] from [" + origin + "], SKIP");
       return;
     }
+  
+    let unescapedSpec = unescape(originalSpec);    
     
     if (ns.filterXExceptions) {
       try {
-        if (ns.filterXExceptions.test(unescape(originalSpec)) &&
+        if (ns.filterXExceptions.test(unescapedSpec) &&
             !this.isBadException(host)
             ) {
           // "safe" xss target exception
@@ -557,6 +559,10 @@ RequestWatchdog.prototype = {
           return;
         }
       } catch(e) {}
+    }
+    
+    if (abeReq.external && /^https?:\/\/msdn\.microsoft\.com\/query\/[^<]+$/.test(unescapedSpec)) {
+      return; // MSDN from Visual Studio   
     }
     
     if (originSite) { // specific exceptions
@@ -649,6 +655,8 @@ RequestWatchdog.prototype = {
       }
       
     }
+    
+   
     
     let originalAttempt;
     let postInjection = false;
@@ -1020,36 +1028,6 @@ var Entities = {
   },
   neutralizeAll: function(s, whitelist) {
     return s.replace(/&[\w#-]*?;/g, function(e) { return Entities.neutralize(e, whitelist || null); });
-  }
-};
-
-function SyntaxChecker() {
-  this.sandbox = new Cu.Sandbox("about:");
-}
-
-SyntaxChecker.prototype = {
-  lastError: null,
-  lastFunction: null,
-  check: function(script) {
-    this.sandbox.script = script;
-     try {
-       return !!(this.lastFunction = this.ev("new Function(script)"));
-     } catch(e) {
-       this.lastError = e;
-     }
-     return false;
-  },
-  unquote: function(s, q) {
-    if (!(s[0] == q && s[s.length - 1] == q &&
-        !s.replace(/\\./g, '').replace(/^(['"])[^\n\r]*?\1/, "")
-      )) return null;
-    try {
-      return this.ev(s);
-    } catch(e) {}
-    return null;
-  },
-  ev: function(s) {
-    return Cu.evalInSandbox(s, this.sandbox);
   }
 };
 

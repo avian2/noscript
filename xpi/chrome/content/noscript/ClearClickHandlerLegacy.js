@@ -202,7 +202,8 @@
         
         docPatcher.linkAlertHack(true);
         docPatcher.fbPresenceHack(true);
-        
+        docPatcher.abpTabsHack(true);
+              
         try {
           docPatcher.opaque(true);
           
@@ -483,9 +484,11 @@
         if (typeof(bgStyle) == "string") dElem.style.background = bgStyle;
        
         docPatcher.opaque(false);
-        docPatcher.linkAlertHack(false);
-        docPatcher.fbPresenceHack(false);
         
+        docPatcher.abpTabsHack(false);
+        docPatcher.fbPresenceHack(false);
+        docPatcher.linkAlertHack(false);
+   
         if (objClass) objClass.reset();
         if (frameClass) frameClass.reset();
         if (viewer) viewer.enableRendering = true;
