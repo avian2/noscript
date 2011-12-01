@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opcije…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcije NoScript">
-<!ENTITY noscriptAbout "Wo NoScript 2.2.3rc1…">
+<!ENTITY noscriptAbout "Wo NoScript 2.2.3rc2…">
 <!ENTITY noscriptPermissionsText "Móžeće podać, kotre websydła smědźa skripty wuwjesć. Zapisajće adresu abo domenu  (na př. &quot;http://www.site.com&quot; abo &quot;site.com&quot;) websydła, kotremuž chceće to dowolić a klikńće potom na &quot;Dowolić&quot;.">
 <!ENTITY noscriptWebAddress "Adresa websydła:">
 <!ENTITY noscriptAllow "Dowolić">
