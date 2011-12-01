@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Nuostatos...">
 <!ENTITY noscriptOptions.accesskey "N">
 <!ENTITY noscriptOptionsLong "NoScript nuostatos">
-<!ENTITY noscriptAbout "Apie NoScript 2.2.2rc5">
+<!ENTITY noscriptAbout "Apie NoScript 2.2.3rc1">
 <!ENTITY noscriptPermissionsText "Jūs galite nurodyti, kurioms interneto svetainėms suteikiamas leidimas vykdyti programinius kodus. Įveskite adresą arba domeną (pvz., &quot;http://www.svetaine.lt&quot; arba &quot;svetaine.lt&quot;) svetainės, kuriai norite suteikti leidimą ir spauskite Leisti.">
 <!ENTITY noscriptWebAddress "Interneto svetainės adresas:">
 <!ENTITY noscriptAllow "Leisti">
@@ -43,7 +43,7 @@
 <!ENTITY noscriptAdditionalRestrictions "Papildomi draudimai nepatikimoms svetainėms">
 <!ENTITY noscriptPlugins "Įskiepiai">
 <!ENTITY noscriptContentBlocker "Pritaikyti šiuos draudimus taip pat ir patikimoms svetainėms">
-<!ENTITY noscriptForbidJava "Uždrausti Java™">
+<!ENTITY noscriptForbidJava "Uždrausti WebGL">
 <!ENTITY noscriptForbidXSLT "Uždrausti XSLT">
 <!ENTITY noscriptForbidWebBugs "Uždrausti &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Uždrausti Microsoft® Silverlight™">

@@ -46,6 +46,7 @@
 <!ENTITY noscriptForbidJava "Заборонити Java™">
 <!ENTITY noscriptForbidXSLT "Заборонити XSLT">
 <!ENTITY noscriptForbidWebBugs "Заборонити «Web Bugs»">
+<!ENTITY noscriptForbidWebGL "Заборонити WebGL">
 <!ENTITY noscriptForbidSilverlight "Заборонити Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Заборонити &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Заборонити &lt;FRAME&gt;">
@@ -150,7 +151,6 @@
 <!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
 <!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
 <!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
-<!ENTITY noscriptForbidWebGL "Forbid WebGL">
 <!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">

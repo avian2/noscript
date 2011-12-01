@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Aukerak:">
 <!ENTITY noscriptOptions.accesskey "A">
 <!ENTITY noscriptOptionsLong "NoScript aukerak">
-<!ENTITY noscriptAbout "NoScript 2.2.2rc5-eri buruz:">
+<!ENTITY noscriptAbout "NoScript 2.2.3rc1-eri buruz:">
 <!ENTITY noscriptPermissionsText "Zein webgunek script-ak exekuta ditzakeen zehaztu dezakezu. Idatzi script-ak erabiltzea onartzea nahi duzun domeinuaren izena (adib. &quot;http://www.gunea.org&quot; or &quot;gunea.org&quot;) eta Onartu sakatu.">
 <!ENTITY noscriptWebAddress "Webgunearen helbidea:">
 <!ENTITY noscriptAllow "Onartu">
@@ -51,6 +51,7 @@
 <!ENTITY noscriptForbidFrames "Debeaktu &lt;markoa&gt;">
 <!ENTITY noscriptForbidFlash "Debekatu AdobeÂ® FlashÂ®">
 <!ENTITY noscriptForbidPlugins "Debekatu beste pluginak">
+<!ENTITY noscriptForbidWebGL "Debekatu WebGL">
 <!ENTITY noscriptReloadWarn "Aukera hauek (eskuz) birkargatutako orrialde eta berrietan eragingo dute.">
 <!ENTITY noscriptConfirmUnblock "Eskatu berrespena aldi baterako objektu bat desblokeatzean">
 <!ENTITY noscriptStatusLabel "Egoera-barra etiketa">
@@ -164,7 +165,6 @@
 <!ENTITY ABE.refresh.accesskey "B">
 <!ENTITY noscriptUninstall "Desinstalatu">
 <!ENTITY noscriptForbidFonts "Forbid @font-face">
-<!ENTITY noscriptForbidWebGL "Forbid WebGL">
 <!ENTITY noscriptForbidMedia "Forbid &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">

@@ -152,10 +152,11 @@ var ScriptSurrogate = {
           }
         } else {
           code = mapping.replacement;
-          if (!noScript && mapping.noScript)
-            code = 'document.addEventListener("DOMContentLoaded", function(event) {' +
-                    code + '}, false)';
         }
+        if (!noScript && mapping.noScript)
+          code = 'document.addEventListener("DOMContentLoaded", function(event) {' +
+                    code + '}, true)';
+
         if (!scripts) scripts = [code];
         else scripts.push(code);
       }

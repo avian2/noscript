@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Seçenekler">
 <!ENTITY noscriptOptions.accesskey "S">
 <!ENTITY noscriptOptionsLong "NoScript Seçenekleri">
-<!ENTITY noscriptAbout "NoScript 2.2.2rc5 Hakkında">
+<!ENTITY noscriptAbout "NoScript 2.2.3rc1 Hakkında">
 <!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript'e izni vereceğinizi kolayca seçebilirsiniz. Lütfen adresi tam olarak girin ve 'İzin ver' düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
 <!ENTITY noscriptWebAddress "Site adresi:">
 <!ENTITY noscriptAllow "İzin ver">
@@ -53,6 +53,7 @@
 <!ENTITY noscriptForbidMedia "Engelle &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Adobe® Flash®'ı engelle">
 <!ENTITY noscriptForbidPlugins "Diğer eklentileri yasakla">
+<!ENTITY noscriptForbidWebGL "Yazıtipi WebGL tanımını engelle">
 <!ENTITY noscriptReloadWarn "Bu ayarlar sadece yeni veya kendinizin yüklediği sayfalar için geçerlidir.">
 <!ENTITY noscriptConfirmUnblock "Bir nesneyi geçici olarak engellerken onay iste">
 <!ENTITY noscriptStatusLabel "Durum cubuğu etiketi">
@@ -184,4 +185,3 @@
 <!ENTITY noscript.hoverUI "Fare ile NoScript ikonu üzerine gidince izinler listesini aç">
 <!ENTITY noscriptDonate "Bağış Yap">
 <!ENTITY noscriptDonate.accesskey "B">
-<!ENTITY noscriptForbidWebGL "Forbid WebGL">

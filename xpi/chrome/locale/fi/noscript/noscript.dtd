@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Asetukset…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript asetukset">
-<!ENTITY noscriptAbout "Tietoja NoScript 2.2.2rc5istä…">
+<!ENTITY noscriptAbout "Tietoja NoScript 2.2.3rc1istä…">
 <!ENTITY noscriptPermissionsText "Voit määrittää verkkosivut joiden sallitaan suorittaa scriptejä. Kirjoita verkko-osoite tai verkkonimi (esim. &quot;http://www.site.com&quot; tai &quot;site.com&quot;) jonka haluat sallia ja paina Salli.">
 <!ENTITY noscriptWebAddress "Verkkosivun osoite:">
 <!ENTITY noscriptAllow "Salli">
@@ -53,6 +53,7 @@
 <!ENTITY noscriptForbidMedia "Estä &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptForbidFlash "Estä Adobe® Flash®">
 <!ENTITY noscriptForbidPlugins "Estä muut lisäkkeet">
+<!ENTITY noscriptForbidWebGL "Estä WebGL">
 <!ENTITY noscriptReloadWarn "Nämä asetukset tulevat voimaan uusilla tai uudelleen ladatuilla sivuilla">
 <!ENTITY noscriptConfirmUnblock "Kysy hyväksyntä ennen tilapäistä kohteen vapauttamista">
 <!ENTITY noscriptStatusLabel "Tilarivin huomautukset">
@@ -184,4 +185,3 @@
 <!ENTITY noscript.hoverUI "Avaa oikeudet valikko kun hiiri osoittaa NoScript kuvaketta">
 <!ENTITY noscriptDonate "Lahjoita">
 <!ENTITY noscriptDonate.accesskey "o">
-<!ENTITY noscriptForbidWebGL "Forbid WebGL">
