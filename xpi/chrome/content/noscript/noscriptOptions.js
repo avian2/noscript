@@ -451,15 +451,23 @@ var nsopt = {
       const fp = Cc["@mozilla.org/filepicker;1"].createInstance(IFP);
       
       fp.init(window, title, IFP["mode" + mode]);
-      fp.displayDirectory = Cc["@mozilla.org/file/directory_service;1"]
+      
+      try {      
+        fp.displayDirectory = ns.prefs.getComplexValue("exportDir", Ci.nsILocalFile);
+      } catch (e) {
+        fp.displayDirectory = Cc["@mozilla.org/file/directory_service;1"]
                               .getService(Ci.nsIDirectoryServiceProvider)
-                              .getFile("Home",{});
+                              .getFile("Home", {});
+      }
       fp.defaultExtension = "txt";
       const ret = fp.show();
       if(ret == IFP.returnOK || 
           ret == IFP.returnReplace) {
         callback.call(nsopt, fp.file);
       }
+      try {
+        ns.prefs.setComplexValue("exportDir", Ci.nsILocalFile, fp.displayDirectory);
+      } catch (e) {}
     } catch(ex) {
       noscriptUtil.prompter.alert(window, title, ex.toString());
     }
