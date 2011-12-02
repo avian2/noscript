@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.2.3rc2";
+const VERSION = "2.2.3rc3";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -1052,6 +1052,10 @@ const IOUtil = {
       switch (url.scheme) {
         case "view-source":
           return this.unwrapURL(url.path);
+        case "feed":
+          let u = url.spec.substring(5);
+          if (u.substring(0, 2) == '//') u = "http:" + u;
+          return this.unwrapURL(u);
         case "wyciwyg":
           return this.unwrapURL(url.path.replace(/^\/\/\d+\//, ""));
         case "jar":
@@ -1434,7 +1438,6 @@ var ns = {
   forbidData: true,
 
   forbidJava: true,
-  forbidFlash: false,
   forbidFlash: true,
   forbidPlugins: true,
   forbidMedia: true,
@@ -5739,9 +5742,6 @@ var ns = {
       }
     } else {
       
-      if (this.dropXssProtection && win != win.top)
-        win.addEventListener("drop", this._dropXssHandler, true); 
-      
       if (this.implementToStaticHTML && !("toStaticHTML" in doc.defaultView)) {
         scripts = [this._toStaticHTMLDef];
         doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
@@ -5810,24 +5810,6 @@ var ns = {
     if (win instanceof Ci.nsIDOMChromeWindow) return;
     const docShell = this.dom.getDocShellForWindow(win);
     if (docShell) this.executeEarlyScripts(docShell.document.documentURI, win, docShell);
-  },
-  
-  
-  _dropXssHandler: function(e) {
-    let dt = e.dataTransfer;
-    let block = false;
-    for each (let t in dt.types) {
-      try {
-        let data = dt.getData(t);
-        if (/(?:^|[\s>;])(?:javascript|data):/i.test(data)) {
-          block = true;
-          ns.log('NoScript prevented "' + data + '" from being loaded on drop.');
-        }
-      } catch (ex) {}
-    }
-    if (block) {
-      e.preventDefault();
-    }
   },
   
   get unescapeHTML() {

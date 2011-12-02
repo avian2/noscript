@@ -1600,7 +1600,7 @@ var InjectionChecker = {
   },
   
   attributesChecker: new RegExp(
-      "\\W(?:javascript:[\\s\\S]+(?:[=\\\\\\(<]|%(?:[3a]8|[3b]d))|data:[^,]+,[\\w\\W]*?<[^<]*\\w[^<]*>)|@" + 
+      "\\W(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|\\bname\\b)|data:[^,]+,[\\w\\W]*?<[^<]*\\w[^<]*>)|@" + 
       ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
         "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
         .replace(/[a-rt-z\-]/g, "\\W*$&"), 
@@ -2073,7 +2073,7 @@ XSanitizer.prototype = {
         url.path = this.sanitizeURIComponent(url.path); // param is the URL part after filePath and a semicolon ?!
       } else if(url.filePath) { 
         url.filePath = this.sanitizeURIComponent(url.filePath); // true == lenient == allow ()=
-      }1
+      }
       // sanitize query
       if (url.query) {
         url.query = this.sanitizeQuery(url.query, changes);

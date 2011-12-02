@@ -398,6 +398,15 @@ const MainContentPolicy = {
               }
               
             } else if(scheme === "data" || scheme === "javascript") {
+              if (this.dropXssProtection && aContext instanceof Ci.nsIDOMXULElement &&
+                  aRequestOrigin.spec === "chrome://browser/content/browser.xul") {
+                let stack = new Error().stack.split("\n");
+                for (let j = stack.length; j-- > 0;)
+                if (stack[j].indexOf("onxbldrop([object DragEvent])@chrome://global/content/bindings/browser.xml") === 0) {
+                  ns.log('NoScript prevented "' + aContentLocation.spec + '" from being loaded on drop.');
+                  return this.reject("Drop XSS", arguments);
+                }            
+              }
               return CP_OK; // JavaScript execution policies will take care of this
             } else if(scheme !== aRequestOrigin.scheme && 
                 scheme !== "chrome" && // faster path for common case
