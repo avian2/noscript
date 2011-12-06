@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opsiynau">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opsiynau NoScript">
-<!ENTITY noscriptAbout "Yngylch NoScript 2.2.3rc4">
+<!ENTITY noscriptAbout "Yngylch NoScript 2.2.3">
 <!ENTITY noscriptPermissionsText "Cewch enwi pa wefannau sy&apos;n cael rhedeg sgriptiau. Teipiwch gyfeiriad neu barth (e.e. &quot;http://www.site.com&quot; neu &quot;site.com&quot;) y safle rydych eisiau ei ganiatau ac wedyn cliciwch Caniatau.">
 <!ENTITY noscriptWebAddress "Cyfeiriad wefan">
 <!ENTITY noscriptAllow "Caniatau">

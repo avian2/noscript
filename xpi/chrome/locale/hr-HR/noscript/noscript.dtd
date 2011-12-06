@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opcije...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript Opcije">
-<!ENTITY noscriptAbout "O NoScript 2.2.3rc4">
+<!ENTITY noscriptAbout "O NoScript 2.2.3">
 <!ENTITY noscriptPermissionsText "Možete odrediti koje web stranice imaju dopuštenje za izvođenje skripti. Upišite adresu ili domenu (npr. &quot;http://www.stranica.hr&quot; ili &quot;stranica.hr&quot;) stranice kojoj želite dopustiti i kliknite na Dopusti.">
 <!ENTITY noscriptWebAddress "Adresa web stranice:">
 <!ENTITY noscriptAllow "Dopusti">
