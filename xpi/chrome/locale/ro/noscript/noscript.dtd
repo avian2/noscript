@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opțiuni...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opțiuni NoScript">
-<!ENTITY noscriptAbout "Despre NoScript 2.2.3">
+<!ENTITY noscriptAbout "Despre NoScript 2.2.4rc1">
 <!ENTITY noscriptPermissionsText "Puteți specifica saiturile cărora li se permite să execute scripturi. Scrieți adresa sau domeniul paginii (exemplu: „http://www.sait.ro“ sau „sait.ro“), apoi apăsați pe butonul „Permite“.">
 <!ENTITY noscriptWebAddress "Adresă sait:">
 <!ENTITY noscriptAllow "Permite">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Aplică aceste restricții și pentru saiturile de încredere">
 <!ENTITY noscriptForbidJava "Interzice Java™">
 <!ENTITY noscriptForbidXSLT "Interzice XSLT (Extensible Stylesheet Language Transformations)">
-<!ENTITY noscriptForbidWebBugs "Interzice „Web Bugs“">
 <!ENTITY noscriptForbidSilverlight "Interzice Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Interzice &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Interzice &lt;FRAME&gt;">

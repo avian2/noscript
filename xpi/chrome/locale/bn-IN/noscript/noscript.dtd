@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "বিশ্বাসযোগ্য সাইটেও এই সীমাবদ্ধতা প্রয়োগ">
 <!ENTITY noscriptForbidJava "নিষেধ Java™">
 <!ENTITY noscriptForbidXSLT "নিষেধ">
-<!ENTITY noscriptForbidWebBugs "নিষেধ &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "নিষেধ Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "নিষেধ &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "নিষেধ &lt;FRAME&gt;">

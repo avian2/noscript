@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Подешавања...">
 <!ENTITY noscriptOptions.accesskey "П">
 <!ENTITY noscriptOptionsLong "NoScript подешавања">
-<!ENTITY noscriptAbout "О NoScript 2.2.3-у">
+<!ENTITY noscriptAbout "О NoScript 2.2.4rc1-у">
 <!ENTITY noscriptPermissionsText "Можете да наведете којим веб странама је дозвољено да извршавају скриптове. Унесите адресу или домен (нпр. &quot;http://www.site.com&quot; или &quot;site.com&quot;) стране којој желите да дате дозволу и онда кликните Дозволи.">
 <!ENTITY noscriptWebAddress "Адреса веб стране:">
 <!ENTITY noscriptAllow "Дозволи">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Apply these restrictions to trusted sites too">
 <!ENTITY noscriptForbidJava "Забрани Java™">
 <!ENTITY noscriptForbidXSLT "Забрани XSLT">
-<!ENTITY noscriptForbidWebBugs "Забрани &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Забрани Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Забрани &lt;FRAME&gt;">

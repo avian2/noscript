@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opcije…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcije NoScript">
-<!ENTITY noscriptAbout "Wo NoScript 2.2.3…">
+<!ENTITY noscriptAbout "Wo NoScript 2.2.4rc1…">
 <!ENTITY noscriptPermissionsText "Móžeće podać, kotre websydła smědźa skripty wuwjesć. Zapisajće adresu abo domenu  (na př. &quot;http://www.site.com&quot; abo &quot;site.com&quot;) websydła, kotremuž chceće to dowolić a klikńće potom na &quot;Dowolić&quot;.">
 <!ENTITY noscriptWebAddress "Adresa websydła:">
 <!ENTITY noscriptAllow "Dowolić">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Tute wobmjezowanja tež na sydła w běłej lisćinje nałožić">
 <!ENTITY noscriptForbidJava "Java™ zakazać">
 <!ENTITY noscriptForbidXSLT "XSLT zakazać">
-<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; zakazać">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ zakazać">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; zakazać">
 <!ENTITY noscriptForbidFrames "&lt;FRAME&gt; zakazać">

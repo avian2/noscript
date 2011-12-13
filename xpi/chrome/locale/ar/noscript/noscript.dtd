@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "طبق هذه القيود على المواقع الموثوقة كذلك">
 <!ENTITY noscriptForbidJava "امنع جافا">
 <!ENTITY noscriptForbidXSLT "امنع أكس أس أل تي">
-<!ENTITY noscriptForbidWebBugs "امنع  &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "امنع ميكروسوفت سِلفَرلَيت">
 <!ENTITY noscriptForbidIFrames "منع &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "منع &lt;FRAME&gt;">

@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "تنظیمات...">
 <!ENTITY noscriptOptions.accesskey "ت">
 <!ENTITY noscriptOptionsLong "تنظیمات NoScript">
-<!ENTITY noscriptAbout "درباره NoScript 2.2.3">
+<!ENTITY noscriptAbout "درباره NoScript 2.2.4rc1">
 <!ENTITY noscriptPermissionsText "شما می توانید سایت هایی را که اجازه اجرای اسکریپت دارند را مشخص کنید.آدرس سایت یا نام دامنه را وارد کنید.(به عنوان مثال &quot;http://www.site.com&quot; یا &quot;site.com&quot;)">
 <!ENTITY noscriptWebAddress "آدرس وب سایت :">
 <!ENTITY noscriptAllow "اجازه دادن">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "اعمال این محدودیت ها روی سایت های مورد اطمینان">
 <!ENTITY noscriptForbidJava "Java ممنوع کردن">
 <!ENTITY noscriptForbidXSLT "Forbid XSLT">
-<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; ممنوع کردن">
 <!ENTITY noscriptForbidSilverlight "ممنوع کردن Microsoft® Silverlight">
 <!ENTITY noscriptForbidIFrames "ممنوع کردن &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "ممنوع کردن &lt;FRAME&gt;">

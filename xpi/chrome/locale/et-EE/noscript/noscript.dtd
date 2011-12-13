@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Sätted…">
 <!ENTITY noscriptOptions.accesskey "S">
 <!ENTITY noscriptOptionsLong "NoScripti sätted">
-<!ENTITY noscriptAbout "Täpsemalt lisast NoScript 2.2.3…">
+<!ENTITY noscriptAbout "Täpsemalt lisast NoScript 2.2.4rc1…">
 <!ENTITY noscriptPermissionsText "Sa saad määrata, millistel veebilehtedel lubatakse skripte käivitada. Kirjuta veebilehe aadress või domeeni, mida soovid lubada (nt &quot;http://www.site.com&quot; või &quot;site.com&quot;) ja klõpsa Luba nuppu">
 <!ENTITY noscriptWebAddress "Veebilehe aadress:">
 <!ENTITY noscriptAllow "Luba">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Kehtesta antud piirangud ka usaldusväärsete veebilehtede jaoks">
 <!ENTITY noscriptForbidJava "Keela Java™">
 <!ENTITY noscriptForbidXSLT "Keela XSLT">
-<!ENTITY noscriptForbidWebBugs "Keela &quot;veebivead&quot;">
 <!ENTITY noscriptForbidSilverlight "Keela Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Keela &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Keela &lt;FRAME&gt;">

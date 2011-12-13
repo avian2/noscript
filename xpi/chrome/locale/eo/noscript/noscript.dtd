@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opcioj…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcioj de NoScript">
-<!ENTITY noscriptAbout "Pri NoScript 2.2.3…">
+<!ENTITY noscriptAbout "Pri NoScript 2.2.4rc1…">
 <!ENTITY noscriptPermissionsText "Vi povas specifi, kiuj ttt-ejoj rajtu plenumigi skriptojn. Entajpu la adreson aŭ la domajnonomon (ekz. “http://www.retejo.org” aŭ “retejo.org”) de la ttt-ejo, kiun vi volas rajtigi, kaj poste alklaku “Rajtigi”.">
 <!ENTITY noscriptWebAddress "Adreso de retpaĝaro:">
 <!ENTITY noscriptAllow "Rajtigi">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Apliki ĉi tiujn limigojn ankaŭ al fidataj retejoj">
 <!ENTITY noscriptForbidJava "Malpermesi Ĝavon (Java™)">
 <!ENTITY noscriptForbidXSLT "Malpermesi XSLT-on">
-<!ENTITY noscriptForbidWebBugs "Malpermesi “Web Bugs” (kaŝobservilojn)">
 <!ENTITY noscriptForbidSilverlight "Malpermesi Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Malpermesi 〈IFRAME〉">
 <!ENTITY noscriptForbidFrames "Malpermesi 〈FRAME〉">

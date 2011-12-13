@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Примени ова ограничења и на сајтове у белој листи">
 <!ENTITY noscriptForbidJava "Забрани јаву">
 <!ENTITY noscriptForbidXSLT "Забрани XSLT">
-<!ENTITY noscriptForbidWebBugs "Забрани „веб бубе“">
 <!ENTITY noscriptForbidSilverlight "Забрани Мајкрософт силверлајт">
 <!ENTITY noscriptForbidIFrames "Забрани &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Забрани &lt;FRAME&gt;">

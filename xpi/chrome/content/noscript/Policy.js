@@ -200,23 +200,6 @@ const MainContentPolicy = {
         case 2:
           forbid = isScript = true;
           break;
-        case 3: // IMAGES
-          if (this.blockNSWB && 
-              !(this.jsEnabled || aRequestOrigin &&
-                ((originSite = this.getSite(aRequestOrigin.spec)) == this.getSite(aContentLocation.spec)
-                    || this.isJSEnabled(originSite) && !(this.getExpando(aContext.ownerDocument, "nselForce"))))
-                && aContext instanceof Ci.nsIDOMHTMLElement) {
-            try {
-              for (var parent = aContext; (parent = parent.parentNode);)
-                if (parent.__nselForce || parent.nodeName.toUpperCase() == "NOSCRIPT")
-                  return this.reject("Tracking Image", arguments);
-            } catch(e) {
-              this.dump(e)
-            }
-          }
-  
-          // PolicyState.cancel(arguments); // needed for ABE INCLUSION(IMAGE)
-          return CP_OK;
         
         case 4: // STYLESHEETS
           if (PolicyUtil.isXSL(aContext) && /\/x[ms]l/.test(aMimeTypeGuess) &&
@@ -514,7 +497,7 @@ const MainContentPolicy = {
             if (scriptURL.lastIndexOf('/') === scriptURL.length - 1)
               scriptURL = scriptURL.slice(0, -1); // right trim slash
             let decodedOrigin = InjectionChecker.urlUnescape(aRequestOrigin.spec);
-            if ((decodedOrigin.indexOf(scriptURL) !== -1 ||
+            if ((decodedOrigin.indexOf(scriptURL) > 0 || // don't use < 0 b/c on redirections origin == scriptURL
                 Entities.convertAll(decodedOrigin).indexOf(scriptURL) !== -1) &&
                 this.getPref("xss.checkInclusions") &&
                 !new AddressMatcher(this.getPref("xss.checkInclusions.exceptions", "")).test(locationURL)

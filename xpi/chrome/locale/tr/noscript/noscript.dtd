@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Seçenekler">
 <!ENTITY noscriptOptions.accesskey "S">
 <!ENTITY noscriptOptionsLong "NoScript Seçenekleri">
-<!ENTITY noscriptAbout "NoScript 2.2.3 Hakkında">
+<!ENTITY noscriptAbout "NoScript 2.2.4rc1 Hakkında">
 <!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript'e izni vereceğinizi kolayca seçebilirsiniz. Lütfen adresi tam olarak girin ve 'İzin ver' düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
 <!ENTITY noscriptWebAddress "Site adresi:">
 <!ENTITY noscriptAllow "İzin ver">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Bu sınırlamaları güvenilen sitelere de uygula">
 <!ENTITY noscriptForbidJava "Java™'yı engelle">
 <!ENTITY noscriptForbidXSLT "XSLT'yı engelle">
-<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot;ı engelle">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™'ı engelle">
 <!ENTITY noscriptForbidIFrames "Tüm &lt;IFRAME&gt;'leri engelle">
 <!ENTITY noscriptForbidFrames "Tüm &lt;FRAME&gt;'leri engelle">

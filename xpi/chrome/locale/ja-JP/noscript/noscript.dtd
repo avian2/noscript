@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "オプション...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript オプション">
-<!ENTITY noscriptAbout "NoScript 2.2.3について...">
+<!ENTITY noscriptAbout "NoScript 2.2.4rc1について...">
 <!ENTITY noscriptPermissionsText "JavaScriptを許可するサイトを指定する事ができます。許可したいサイトのアドレスかドメインを入力して、ボタンを押してください。(例: &quot;http://www.site.com&quot; または &quot;site.com&quot;)">
 <!ENTITY noscriptWebAddress "ウェブサイトのアドレス:">
 <!ENTITY noscriptAllow "許可する">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "信頼しているサイトにもこれらの制限を適用する">
 <!ENTITY noscriptForbidJava "Java™ の禁止">
 <!ENTITY noscriptForbidXSLT "XSLT の禁止">
-<!ENTITY noscriptForbidWebBugs "&quot;Web Bugs&quot; の禁止">
 <!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ の禁止">
 <!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; の禁止">
 <!ENTITY noscriptForbidFrames "&lt;FRAMES&gt; の禁止">

@@ -506,16 +506,6 @@ var nsopt = {
     return null;
   },
   
-  syncNsel: function(cbx) {
-    var blockNSWB = $("opt-blockNSWB");
-    if(cbx.checked) {
-      blockNSWB.disabled = true;
-      blockNSWB.checked = true;
-    } else {
-      blockNSWB.disabled = false;
-    }
-  },
-  
   buttonToTitle: function(btid) {
     return "NoScript - " + $(btid).getAttribute("label");
   },

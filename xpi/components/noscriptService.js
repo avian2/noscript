@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.2.3";
+const VERSION = "2.2.4rc1";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -440,7 +440,7 @@ PolicySites.prototype = {
         this.sitesString = pref.getCharPref(name || "sites")
           .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
       } catch(e) {
-        this.siteString = "";
+        this.sitesString = "";
         return false;
       }
     }
@@ -1417,8 +1417,6 @@ var ns = {
   // Preference driven properties
   autoAllow: false,
 
-  blockNSWB: false,
-  
   consoleDump: 0,
   consoleLog: false,
   
@@ -1667,15 +1665,11 @@ var ns = {
         this.updateExtraPerm(name, "checkloaduri", ["enabled"]);
       break;
       
-      case "blockNSWB":
       case "nselForce":
       case "nselNever":
       case "showPlaceholder":
       case "clearClick":
         this.updateCssPref(name);
-        if ((name == "nselNever") && this.getPref("nselNever") && !this.blockNSWB) {
-          this.setPref("blockNSWB", true);
-        }
       break;
       
       case "policynames":
@@ -1768,9 +1762,6 @@ var ns = {
         break;
       case "nselNever":
         sheet = "noscript, noscript * { display: none !important }";
-        break;
-      case "blockNSWB": 
-        sheet = "noscript, noscript * { background-image: none !important; list-style-image: none !important }";
         break;
       case "showPlaceholder": 
         sheet = '.__noscriptPlaceholder__ { direction: ltr !important; display: inline-block !important; } ' +
@@ -1912,7 +1903,6 @@ var ns = {
       "autoAllow",
       "allowClipboard", "allowLocalLinks",
       "allowedMimeRegExp", "hideOnUnloadRegExp", "requireReloadRegExp",
-      "blockNSWB",
       "consoleDump", "consoleLog", "contentBlocker", "alwaysShowObjectSources",
       "docShellJSBlocking",
       "filterXPost", "filterXGet", 
@@ -3286,7 +3276,7 @@ var ns = {
         args[1].spec = this.nopXBL;
         return CP_OK;
       case 5:
-        args[3].__noscriptBlocked = true;
+        if (args[3]) args[3].__noscriptBlocked = true;
     }
     
     PolicyState.cancel(args);

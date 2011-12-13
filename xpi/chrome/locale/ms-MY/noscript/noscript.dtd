@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Tetapan...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Tetapan NoScript">
-<!ENTITY noscriptAbout "Tentang NoScript 2.2.3">
+<!ENTITY noscriptAbout "Tentang NoScript 2.2.4rc1">
 <!ENTITY noscriptPermissionsText "Anda boleh menentukan laman web yang anda benarkan skripnya diproses. Taipkan alamat atau domain(contoh:&quot;http://www.tapak.com&quot; atau &quot;tapak.com&quot;) laman web yang diingini dan klik Benarkan">
 <!ENTITY noscriptWebAddress "Alamat laman web:">
 <!ENTITY noscriptAllow "Benarkan">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Laksanakan syarat ini untuk laman yang dipercayai ini juga">
 <!ENTITY noscriptForbidJava "Halang Java™">
 <!ENTITY noscriptForbidXSLT "Halang XSLT">
-<!ENTITY noscriptForbidWebBugs "Halang &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Halang Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Halang &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Halang &lt;FRAME&gt;">

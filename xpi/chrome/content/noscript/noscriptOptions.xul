@@ -273,8 +273,7 @@
                 <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
                 <checkbox id="opt-noping" label="&noscriptForbidPing;" />
                 <separator class="thin"/>
-                <checkbox id="opt-nselNever" label="&noscriptNselNever;" oncommand="nsopt.syncNsel(this)" />
-                <checkbox id="opt-blockNSWB" label="&noscriptForbidWebBugs;" />
+                <checkbox id="opt-nselNever" label="&noscriptNselNever;" />
                 <checkbox id="opt-forbidMetaRefresh" label="&noscriptForbidMetaRefresh;" />
                 <checkbox id="opt-forbidXSLT" label="&noscriptForbidXSLT;" />
                 <separator class="thin"/>

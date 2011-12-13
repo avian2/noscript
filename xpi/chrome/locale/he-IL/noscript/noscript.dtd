@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "הגדרות...">
 <!ENTITY noscriptOptions.accesskey "ג">
 <!ENTITY noscriptOptionsLong "NoScript הגדרות של">
-<!ENTITY noscriptAbout "אודות NoScript 2.2.3">
+<!ENTITY noscriptAbout "אודות NoScript 2.2.4rc1">
 <!ENTITY noscriptPermissionsText "אתה יכול לציין איזה אתרי אינטרנט מותרים להפעיל סקריפטים. הקלד את הכתובת או התחום (למשל, &quot;http://www.site.com&quot; או &quot;site.com&quot;) של האתר שברצונך לאפשר ולאחר מכן לחץ על התר.">
 <!ENTITY noscriptWebAddress "כתובת אתר האינטרנט:">
 <!ENTITY noscriptAllow "התר">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "החל הגבלות אלו גם על אתרים מהימנים">
 <!ENTITY noscriptForbidJava "מנע Java ™">
 <!ENTITY noscriptForbidXSLT "מנע XSLT">
-<!ENTITY noscriptForbidWebBugs "מנע &quot;באגים של רשת&quot;">
 <!ENTITY noscriptForbidSilverlight "מנע Microsoft ® Silverlight ™">
 <!ENTITY noscriptForbidIFrames "מנע &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "מנע &lt;FRAME&gt;">

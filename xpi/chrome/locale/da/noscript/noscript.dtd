@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Indstillinger…">
 <!ENTITY noscriptOptions.accesskey "I">
 <!ENTITY noscriptOptionsLong "NoScript Indstillinger">
-<!ENTITY noscriptAbout "Om NoScript 2.2.3">
+<!ENTITY noscriptAbout "Om NoScript 2.2.4rc1">
 <!ENTITY noscriptPermissionsText "Du kan angive hvilke websteder der må udføre scripts. Indtast adresse eller domæne (f.eks. &quot;http://www.site.com&quot; eller &quot;site.com&quot;) på det websted du ønsker at tillade og klik på Tillad.">
 <!ENTITY noscriptWebAddress "Webstedets adresse:">
 <!ENTITY noscriptAllow "Tillad">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Anvend også disse begrænsninger til betroede websteder">
 <!ENTITY noscriptForbidJava "Forbyd Java™">
 <!ENTITY noscriptForbidXSLT "Forbyd XSLT">
-<!ENTITY noscriptForbidWebBugs "Forbyd &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Forbyd Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Forbyd &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Forbyd &lt;FRAME&gt;">

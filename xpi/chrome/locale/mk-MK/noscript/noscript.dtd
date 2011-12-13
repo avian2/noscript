@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Опции...">
 <!ENTITY noscriptOptions.accesskey "О">
 <!ENTITY noscriptOptionsLong "NoScript Опции">
-<!ENTITY noscriptAbout "За NoScript 2.2.3">
+<!ENTITY noscriptAbout "За NoScript 2.2.4rc1">
 <!ENTITY noscriptPermissionsText "Можете да ги назначите страните, на кои што скриптите ќе бидат дозволени. Напишете ја дозволената адреса (на пример http://www.site.com или site.com) и кликнете „Дозволи“">
 <!ENTITY noscriptWebAddress "Адреса на дозволената веб страна:">
 <!ENTITY noscriptAllow "Дозволи">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Примени ги овие ограничувања исто така и за страниците од доверба">
 <!ENTITY noscriptForbidJava "Оневозможи Јава (Java™)">
 <!ENTITY noscriptForbidXSLT "Оневозможи Јава (XSLT)">
-<!ENTITY noscriptForbidWebBugs "Оневозможи &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Оневозможи Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Оневозможи &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Оневозможи &lt;FRAME&gt;">

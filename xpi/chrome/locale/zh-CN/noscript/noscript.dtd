@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "选项...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 选项">
-<!ENTITY noscriptAbout "关于 NoScript 2.2.3">
+<!ENTITY noscriptAbout "关于 NoScript 2.2.4rc1">
 <!ENTITY noscriptPermissionsText "您可以指定允许执行脚本的网站。请输入您想要允许的网站地址或域名(例如: “http://www.site.com”或者“site.com”)然后单击“允许”。">
 <!ENTITY noscriptWebAddress "网站地址:">
 <!ENTITY noscriptAllow "允许">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "对受信任站点仍然应用这些限制">
 <!ENTITY noscriptForbidJava "禁止 Java™">
 <!ENTITY noscriptForbidXSLT "禁止 XSLT">
-<!ENTITY noscriptForbidWebBugs "禁止 &quot;网络爬虫&quot;(Web Bugs)">
 <!ENTITY noscriptForbidSilverlight "禁止 Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "禁止 &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "禁止 &lt;FRAME&gt;">

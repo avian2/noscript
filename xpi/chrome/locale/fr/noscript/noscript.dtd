@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Options">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Options de NoScript">
-<!ENTITY noscriptAbout "À propos de NoScript 2.2.3">
+<!ENTITY noscriptAbout "À propos de NoScript 2.2.4rc1">
 <!ENTITY noscriptPermissionsText "Il est possible de spécifier quels sites Web sont autorisés à exécuter des scripts. Saisissez l&apos;adresse exacte du site que vous désirez autoriser puis cliquez sur Autoriser.">
 <!ENTITY noscriptWebAddress "Adresse du site Web :">
 <!ENTITY noscriptAllow "Autoriser">
@@ -45,7 +45,6 @@
 <!ENTITY noscriptContentBlocker "Appliquer ces restrictions également aux sites de confiance">
 <!ENTITY noscriptForbidJava "Interdire Java™">
 <!ENTITY noscriptForbidXSLT "Interdire XSLT">
-<!ENTITY noscriptForbidWebBugs "Interdire &quot;Web Bugs&quot;">
 <!ENTITY noscriptForbidSilverlight "Interdire Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Interdire &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Interdire &lt;FRAME&gt;">
