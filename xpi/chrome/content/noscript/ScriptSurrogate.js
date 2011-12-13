@@ -1,12 +1,12 @@
 var ScriptSurrogate = {
   QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
-  JS_VERSION: "ECMAv5",
+  JS_VERSION: "1.8",
   enabled: true,
   prefs: null,
   sandbox: true,
   get syntaxChecker() {
     delete this.syntaxChecker   
-    return this.syntaxChecker = new SyntaxChecker(JS_VERSION);
+    return this.syntaxChecker = new SyntaxChecker(this.JS_VERSION);
   },  
   get mappings() {
     delete this.mappings;
@@ -96,7 +96,7 @@ var ScriptSurrogate = {
         
         case "replacement":
           if (!this.syntaxChecker.check(value)) {
-            Cu.reportError(mapping.error = this.syntaxChecker.lastError);
+            Cu.reportError("Error parsing " + name  + " surrogate " + (mapping.error = this.syntaxChecker.lastError));
           }
           break;
         
