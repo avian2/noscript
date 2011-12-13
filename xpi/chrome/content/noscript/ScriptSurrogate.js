@@ -1,11 +1,13 @@
 var ScriptSurrogate = {
   QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
-  JS_VERSION: "1.8",
+  JS_VERSION: "ECMAv5",
   enabled: true,
   prefs: null,
   sandbox: true,
-  syntaxChecker: new SyntaxChecker(),
-  
+  get syntaxChecker() {
+    delete this.syntaxChecker   
+    return this.syntaxChecker = new SyntaxChecker(JS_VERSION);
+  },  
   get mappings() {
     delete this.mappings;
     this._init();

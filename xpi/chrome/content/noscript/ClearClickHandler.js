@@ -11,13 +11,11 @@ ClearClickHandler.prototype = {
   
   rapidFire: {
     quarantine: 800,
-    topSite: null,
+    site: null,
     ts: 0,
     mouse: false,
-    screenX: -16,
-    screenY: -16,
-    
-    check: function(ev, topSite, ts) {
+   
+    check: function(ev, site, ts) {
       const typeChar = ev.type[0];
       
       let mouse = false;
@@ -32,24 +30,17 @@ ClearClickHandler.prototype = {
       }
       
       if (this.mouse === mouse) {
-        if (topSite !== this.topSite &&
-            (ts - this.ts) < this.quarantine &&
-            (!mouse || Math.sqrt(Math.pow(ev.screenX - this.screenX, 2) + Math.pow(ev.screenY - this.screenY, 2)) < 16)) {
+        if (site !== this.site &&
+            (ts - this.ts) < this.quarantine) {
           this.ts = ts - this.quarantine / 2;
           return ns.getPref("clearClick.rapidFireCheck");
         }
       } else this.mouse = mouse;
       
-      if (mouse) {
-        this.screenX = ev.screenX;
-        this.screenY = ev.screenY;
-      }
-      
-      this.topSite = topSite;
+      this.site = site;
       this.ts = ts;
       
       return false;
-  
     }
   },
   
@@ -260,20 +251,21 @@ ClearClickHandler.prototype = {
     const ns = this.ns;
     
     const top = w.top;
-    const topURI = top.document.documentURIObject;
-    const topSite = topURI.prePath;
-    
+    const topURL = top.document.documentURI;
+   
     var isEmbed;
     var ts = Date.now();
 
-    if (this.rapidFire.check(ev, topSite, ts)) {
+    if (this.rapidFire.check(ev, d.documentURIObject.prePath, ts)) {
       this.swallowEvent(ev);
-      ns.log("[NoScript ClearClick] Swallowed event " + ev.type + " on " + topURI.spec + " (rapid fire from " + this.rapidFire.topSite + " in "  + (ts - this.rapidFire.ts) + "ms)", true);
+      ns.log("[NoScript ClearClick] Swallowed event " + ev.type + " on " +
+             d.documentURI + " (rapid fire from " + this.rapidFire.site +
+             " in "  + (ts - this.rapidFire.ts) + "ms)", true);
       return;
     }
     
     if (!("__clearClickUnlocked" in top)) 
-      top.__clearClickUnlocked = !this.appliesHere(topURI.spec);
+      top.__clearClickUnlocked = !this.appliesHere(topURL);
     
     if (top.__clearClickUnlocked) return;
     
@@ -363,7 +355,7 @@ ClearClickHandler.prototype = {
             var params = {
               url: ctx.isEmbed && (o.src || o.data) || o.ownerDocument.URL,
               pageURL: w.location.href,
-              topURL: topURI.spec,
+              topURL: topURL,
               img: ctx.img,
               locked: false,
               pageX: ev.pageX,
