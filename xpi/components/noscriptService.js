@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.2.4rc3";
+const VERSION = "2.2.4rc4";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -6238,7 +6238,7 @@ var ns = {
         var m = onclick.match(/(?:(?:\$|document\.getElementById)\s*\(\s*["']#?([\w\-]+)[^;]+|\bdocument\s*\.\s*(?:forms)?\s*(?:\[\s*["']|\.)?([^\.\;\s"'\]]+).*)\.submit\s*\(\)/);
         form = m && (/\D/.test(m[1]) ? (doc.forms.namedItem(m[1]) || doc.getElementById(m[1])) : doc.forms.item(parseInt(m[1])));
         if (!(form && (form instanceof Ci.nsIDOMHTMLFormElement))) {
-          while (form = a.parentNode && form != doc && !form instanceof Ci.nsIDOMHTMLFormElement);
+          while ((form = a.parentNode) && form != doc && !form instanceof Ci.nsIDOMHTMLFormElement);
         }
       }
       if (form && (form instanceof Ci.nsIDOMHTMLFormElement)) {
