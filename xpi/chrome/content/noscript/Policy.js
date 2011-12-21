@@ -71,8 +71,15 @@ PolicyHints.prototype = (function() {
   props.forEach(function(p, i) {
     switch(p) {
       case "context":
-        this.__defineGetter__(p, function() this.args[i].get());
-        this.__defineSetter__(p, function(v) this.args[i] = Cu.getWeakReference(v));
+        this.__defineGetter__(p, function() this.args[i] && this.args[i].get());
+        this.__defineSetter__(p, function(v) {
+          try {
+            v = v ? Cu.getWeakReference(v) : null;
+          } catch (e) {
+            v = null;
+          }
+          return this.args[i] = v;
+        });
         break;
       default:
         this.__defineGetter__(p, function() this.args[i]);
