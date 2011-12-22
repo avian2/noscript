@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.2.5rc1";
+const VERSION = "2.2.5rc2";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -4781,6 +4781,12 @@ var ns = {
   },
   
   confirmEnableObject: function(win, extras) {
+    // work around for Linux tooltip obstructing the confirmation dialog
+    Thread.delay(function() {
+      win.QueryInterface(Ci.nsIInterfaceRequestor)
+        .getInterface(Ci.nsIDOMWindowUtils)
+        .sendMouseEvent("mousemove", win.document.body, 0, 0, 0, 0, 0);    
+    }, 100);
     return extras.skipConfirmation || win.noscriptUtil.confirm(
       this.getAllowObjectMessage(extras), 
       "confirmUnblock"
