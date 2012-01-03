@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Επιλογές">
 <!ENTITY noscriptOptions.accesskey "Ε">
 <!ENTITY noscriptOptionsLong "Επιλογές NoScript">
-<!ENTITY noscriptAbout "Περί NoScript 2.2.5rc4">
+<!ENTITY noscriptAbout "Περί NoScript 2.2.5">
 <!ENTITY noscriptPermissionsText "Μπορείτε να καθορίσετε για ποιους ιστότοπους θα επιτρέπεται η εκτέλεση σεναρίων εντολών. Πληκτρολογήστε τη διεύθυνση τομέα (πχ. &quot;http://www.site.com&quot; or &quot;site.com&quot;) του ιστότοπου που θέλετε και μετά κάντε κλικ στο «Να επιτρέπεται»">
 <!ENTITY noscriptWebAddress "Διεύθυνση ιστότοπου">
 <!ENTITY noscriptAllow "Να επιτρέπεται">
