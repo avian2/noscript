@@ -221,11 +221,15 @@ var ScriptSurrogate = {
     this.execute(document, scriptBlock);
   },
   
+  _sandboxParams: {
+    wantXrays: false,
+    sandboxName: "NoScript::ScriptSurrogate.executeSandbox"
+  },
   executeSandbox: function(document, scriptBlock, env) {
     var w = document.defaultView;
     try {
       if (typeof w.wrappedJSObject === "object") w = w.wrappedJSObject;
-      var s = new Cu.Sandbox(w, { wantXrays: false });
+      var s = new Cu.Sandbox(document.nodePrincipal, this._sandboxParams);
       s.window = w;
       if (typeof env !== "undefined") {
         s.env = env;
