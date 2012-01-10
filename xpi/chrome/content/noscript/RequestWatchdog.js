@@ -850,6 +850,7 @@ RequestWatchdog.prototype = {
           this.notify(this.addXssInfo(requestInfo, {
             reason: "filterXGet",
             originalAttempt: originalAttempt,
+            sanitizedURI: newURI,
             silent: !(changes.major || postInjection) 
           }));
         }
@@ -1625,12 +1626,16 @@ var InjectionChecker = {
     delete this.NoscriptChecker;
     return this.NoscriptChecker = new RegExp(this.HTMLChecker.source.replace('|' + IC_EVENT_PATTERN, ''), 'i')
   },
+  
   checkNoscript: function(s) {
     this.log(s);
-    return this.NoscriptChecker.test(s) || this.checkSQLI(s);
+    return this.NoscriptChecker.test(s) || this.checkSQLI(s) || this.checkHeaders(s);
   },
   
-  checkSQLI: function(s) /\bunion\b[\w\W]+\bselect\b[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/.test(s),
+  HeadersChecker: /[\r\n]\s*(?:content-(?:type|encoding))\s*:/i,
+  checkHeaders: function(s) this.HeadersChecker.test(s),
+  SQLIChecker:  /\bunion\b[\w\W]+\bselect\b[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/i,
+  checkSQLI: function(s) this.SQLIChecker.test(s),
   
   base64: false,
   base64tested: [],
@@ -1759,7 +1764,7 @@ var InjectionChecker = {
   
   _checkRecursive: function(s, depth) {
 
-    if (this.checkHTML(s) || this.checkJS(s) || this.checkSQLI(s))
+    if (this.checkHTML(s) || this.checkJS(s) || this.checkSQLI(s) || this.checkHeaders(s))
       return true;
     
     if (s.indexOf("&") !== -1) {
@@ -2258,7 +2263,7 @@ XSanitizer.prototype = {
     
     if (this.brutal) { // injection checks were positive
       s = InjectionChecker.reduceDashPlus(s)
-        .replace(/['\(\)\=\[\]<]/g, " ")
+        .replace(/['\(\)\=\[\]<\r\n]/g, " ")
         .replace(/0x[0-9a-f]{16,}|0b[01]{64,}/gi, " ")
         .replace(this._brutalReplRx, String.toUpperCase)
         .replace(/Q[\da-fA-Fa]{2}/g, "Q20") // Ebay-style escaping
