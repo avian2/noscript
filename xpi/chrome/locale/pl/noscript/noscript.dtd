@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Ustawienia">
 <!ENTITY noscriptOptions.accesskey "U">
 <!ENTITY noscriptOptionsLong "NoScript – ustawienia">
-<!ENTITY noscriptAbout "NoScript 2.2.6rc2 – informacje">
+<!ENTITY noscriptAbout "NoScript 2.2.6 – informacje">
 <!ENTITY noscriptPermissionsText "Tutaj można określić witryny internetowe, które będą mogły uruchamiać skrypty. Proszę wprowadzić adres lub domenę witryny (np: „http://www.witryna.pl” lub „witryna.pl”) i nacisnąć przycisk Pozwól.">
 <!ENTITY noscriptWebAddress "Adres witryny:">
 <!ENTITY noscriptAllow "Pozwól">
