@@ -7,7 +7,7 @@ function ClearClickHandler(ns) {
 
 ClearClickHandler.prototype = {
   
-  uiEvents: ["mousedown", "mouseup", "click", "dblclick", "keydown", "keypress", "keyup", "blur"],
+  uiEvents: ["mousedown", "mouseup", "click", "dblclick", "drop", "keydown", "keypress", "keyup", "blur"],
   
   rapidFire: {
     quarantine: 800,
@@ -304,13 +304,13 @@ ClearClickHandler.prototype = {
       }
       if (p.unlocked) return;
     
-      ctx = /mouse/.test(etype)
+      ctx = /mouse|drop/.test(etype)
                 && { x: ev.pageX, y: ev.pageY, debug: ev.ctrlKey && ev.button == 1 && ns.getPref("clearClick.debug") }
                 || {};
       isEmbed =  (typeof(isEmbed) === "boolean" ? isEmbed : this.isEmbed(o)) && ns.isWindowlessObject(o);
       if (!(isEmbed || w.frameElement)) return;
       ctx.isEmbed = isEmbed;
-      primaryEvent = /^(?:mousedown|keydown)$/.test(etype) ||
+      primaryEvent = /^(?:(?:mouse|key)down|drop)$/.test(etype) ||
           // submit button generates a syntethic click if any text-control receives [Enter]: we must consider this "primary"
              etype == "click" && ev.screenX == 0 && ev.screenY == 0 && ev.pageX == 0 && ev.pageY == 0 && ev.clientX == 0 && ev.clientY == 0 && ev.target.form &&
             ((ctx.box = this.getBox(ev.target, d, w)).screenX * ctx.box.screenY != 0) ||
