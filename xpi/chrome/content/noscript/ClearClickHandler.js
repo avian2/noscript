@@ -754,7 +754,7 @@ ClearClickHandler.prototype = {
         }
       }
       
-      if (ctx.debug) {
+      if (ctx.debug || this.checkCursor(ctx.isEmbed ? o : frame)) {
         ret = true;
         img2 = tmpImg;
       }
@@ -806,6 +806,15 @@ ClearClickHandler.prototype = {
     return ret;
  
   },
+  
+  checkCursor: function(o) {
+    let w = o.ownerDocument.defaultView;
+    for(; o; o = o.parentNode) {
+      let cursor = w.getComputedStyle(o, ':hover').cursor;
+      if (cursor === "none" || cursor.indexOf("url(") !== -1) return true; 
+    }
+    return w.frameElement && this.checkCursor(w.frameElement); 
+  },  
   
   _clip: function(parent, box) {
     const MIN = 64;
