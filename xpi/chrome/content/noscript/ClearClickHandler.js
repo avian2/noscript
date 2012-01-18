@@ -809,9 +809,11 @@ ClearClickHandler.prototype = {
   
   checkCursor: function(o) {
     let w = o.ownerDocument.defaultView;
-    for(; o; o = o.parentNode) {
-      let cursor = w.getComputedStyle(o, ':hover').cursor;
-      if (cursor === "none" || cursor.indexOf("url(") !== -1) return true; 
+    for(; o && o instanceof Ci.nsIDOMHTMLElement; o = o.parentNode) {
+      try {
+        let cursor = w.getComputedStyle(o, ':hover').cursor;
+        if (cursor === "none" || cursor.indexOf("url(") !== -1) return true;
+      } catch (e) {}
     }
     return w.frameElement && this.checkCursor(w.frameElement); 
   },  
