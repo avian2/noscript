@@ -920,8 +920,10 @@ DocPatcher.prototype = {
       var b = d.getBoxObjectFor(o);
       var x = o.x, y = o.y;
       return {
-        left: x, top: y,
-        right: x + o.width, left: y + o.height 
+        left: x,
+        top: y,
+        right: x + o.width,
+        bottom: y + o.height 
       };
      })(o, d)
   },
