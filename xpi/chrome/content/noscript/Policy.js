@@ -267,9 +267,7 @@ const MainContentPolicy = {
             }
           }
   
-          
-          
-        case 15: // media
+
           if (aContentLocation && aRequestOrigin && 
               (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) &&
               aMimeTypeGuess) {
@@ -291,6 +289,7 @@ const MainContentPolicy = {
             }
           }
           
+          case 15: // media
           if (aContentType == 15) {
               if (aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
               // let's wire poor man's video/audio toggles if JS is disabled and therefore controls are not available

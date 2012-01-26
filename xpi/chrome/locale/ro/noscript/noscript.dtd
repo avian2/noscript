@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opțiuni...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opțiuni NoScript">
-<!ENTITY noscriptAbout "Despre NoScript 2.2.8">
+<!ENTITY noscriptAbout "Despre NoScript 2.2.9rc1">
 <!ENTITY noscriptPermissionsText "Puteți specifica saiturile cărora li se permite să execute scripturi. Scrieți adresa sau domeniul paginii (exemplu: „http://www.sait.ro“ sau „sait.ro“), apoi apăsați pe butonul „Permite“.">
 <!ENTITY noscriptWebAddress "Adresă sait:">
 <!ENTITY noscriptAllow "Permite">

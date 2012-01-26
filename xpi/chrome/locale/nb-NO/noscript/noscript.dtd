@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Innstillinger">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript Innstillinger">
-<!ENTITY noscriptAbout "Om NoScript 2.2.8">
+<!ENTITY noscriptAbout "Om NoScript 2.2.9rc1">
 <!ENTITY noscriptPermissionsText "Du kan spesifisere hvilke websider som har tillatelse til å kjøre scritper. Skriv inn adresse, eller domene (F.eks: &quot;http://www.side.no&quot;, eller &amp;quotside.no&quot;) du ønsker å gi tillatelse til, og klikk Tillat.">
 <!ENTITY noscriptWebAddress "Webadresse:">
 <!ENTITY noscriptAllow "Tillat">
