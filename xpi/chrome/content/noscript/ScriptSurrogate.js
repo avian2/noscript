@@ -189,7 +189,9 @@ var ScriptSurrogate = {
     const runner = noScript
       ? this.fallback
       : scriptURL === pageURL
-        ? let (win = document.defaultView) win != win.top ? this.executeSandbox : this.execute
+        ? let (win = document.defaultView) win != win.top
+            ? this.executeSandbox
+            : (this.sandbox ? this.execute : this.executeDOM)
         : this.sandbox ? this.executeSandbox : this.executeDOM;
     
     if (this.debug) {
@@ -215,7 +217,7 @@ var ScriptSurrogate = {
   },
   
   execute: function(document, scriptBlock) {
-    this.execute = ns.geckoVersionCheck("1.9.1") < 0
+    this.execute = ns.geckoVersionCheck("1.9.1") < 0 || ns.geckoVersionCheck("2") >= 0
       ? this.executeSandbox
       : this.executeDOM;
     this.execute(document, scriptBlock);
@@ -233,10 +235,8 @@ var ScriptSurrogate = {
       s.window = w;
       if (typeof env !== "undefined") {
         s.env = env;
-        Cu.evalInSandbox("with(window){" + scriptBlock + "}", s, ScriptSurrogate.JS_VERSION);
-      } else {
-        this._sandboxRun(s, scriptBlock);
       }
+      Cu.evalInSandbox("with(window){" + scriptBlock + "}", s, this.JS_VERSION);
     } catch (e) {
       if (ns.consoleDump) {
         ns.dump(e);
@@ -244,21 +244,6 @@ var ScriptSurrogate = {
       }
       if (this.debug) Cu.reportError(e);
     }
-  },
-  
-  get _sandboxRun() {
-    delete this._sandboxRun;
-    return this._sandboxRun =
-      ns.geckoVersionCheck("2") < 0
-        ? this._sandboxRunLegacy
-        : this._sandboxRunGecko2;
-  },
-  _sandboxRunGecko2: function(s, scriptBlock) {
-    s.script = scriptBlock;
-    Cu.evalInSandbox("window.eval(script)", s, ScriptSurrogate.JS_VERSION);
-  },
-  _sandboxRunLegacy: function(s, scriptBlock) {
-    Cu.evalInSandbox("with(window){" + scriptBlock + "}", s, ScriptSurrogate.JS_VERSION);
   },
   
   executeDOM: function(document, scriptBlock) {

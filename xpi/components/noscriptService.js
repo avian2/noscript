@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.2.9rc1";
+const VERSION = "2.2.9rc2";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -2021,22 +2021,27 @@ var ns = {
  
   onVersionChanged: function(prev) {
     // update hacks
-    if (this.versionComparator.compare(prev, '2.1.1.2rc6') < 0) {
-      // this is a one-time merge of the default whitelist with the live whitelist
-      // when sites originally included in the default list *and still in the live whitelist* 
-      // (i.e. not explicitly removed by the user) depend, to work properly, on resources
-      // which have been added more recently and otherwise would be whitelisted for
-      // new users only (leaving upgraders to guess what breaks previously working websites)
-      const cascading = {
+    var versions = {
+      "2.1.1.2rc6": {
         "hotmail.com": ["wlxrs.com"], // required by Hotmail/Live webmail
         "google.com": ["googleapis.com", "gstatic.com"], // required by most Google services and also by external resources
         "addons.mozilla.org": ["paypal.com", "paypalobjects.com"] // required for the "Contribute" AMO feature not to break badly with no warning
-      };
-      for (let site in cascading) {
-        if (this.isJSEnabled(site)) {
-          let newSite = cascading[site];
-          this.jsPolicySites.remove(newSite, true, false);
-          this.setJSEnabled(newSite, true);
+      },
+      
+      "2.2.9rc2": {
+        "addons.mozilla.org": ["browserid.org"]
+      }
+    };
+    
+    for (let v in versions) {
+      if (this.versionComparator.compare(prev, v) < 0) {
+        let cascading = versions[v];
+        for (let site in cascading) {
+          if (this.isJSEnabled(site)) {
+            let newSite = cascading[site];
+            this.jsPolicySites.remove(newSite, true, false);
+            this.setJSEnabled(newSite, true);
+          }
         }
       }
     }
@@ -5150,8 +5155,13 @@ var ns = {
     redirectCallback.onRedirectVerifyCallback(0);
   },
   onChannelRedirect: function(oldChan, newChan, flags) {
-    const rw = this.requestWatchdog;
+    
     const uri = newChan.URI;
+    
+    if (flags === Ci.nsIChannelEventSink.REDIRECT_INTERNAL && oldChan.URI.spec === uri.spec)
+      return;    
+  
+    const rw = this.requestWatchdog;    
     
     HTTPS.forceChannel(newChan);
     
@@ -6469,7 +6479,7 @@ var ns = {
     const prevVer = this.getPref("version", "");
     
     if ((this.firstRun = prevVer != ver)) {
-      this.onVersionChanged(prevVer);
+      if (prevVer) this.onVersionChanged(prevVer);
       this.setPref("version", ver);
       this.savePrefs();
       const betaRx = /(?:a|alpha|b|beta|pre|rc)\d*$/; // see http://viewvc.svn.mozilla.org/vc/addons/trunk/site/app/config/constants.php?view=markup#l431
@@ -6480,7 +6490,13 @@ var ns = {
 
           IOS.newChannel("http://" + domain + "/-", null, null).asyncOpen({ // DNS prefetch
             onStartRequest: function() {},
-            onStopRequest: function() {
+            onStopRequest: function(req, ctx) {
+              if (req.status && req.status !== NS_BINDING_REDIRECTED) {
+                ns.setPref("version", '');
+                ns.savePrefs();
+                return;
+              }
+              
               var browser = DOM.mostRecentBrowserWindow.getBrowser();
               if (typeof(browser.addTab) != "function") return;
              

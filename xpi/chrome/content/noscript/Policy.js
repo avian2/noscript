@@ -69,20 +69,23 @@ PolicyHints.prototype = (function() {
     toString:  Object.prototype.toSource
   };
   props.forEach(function(p, i) {
+    this.__defineGetter__(p, function() this.args[i]);
     switch(p) {
       case "context":
-        this.__defineGetter__(p, function() this.args[i] && this.args[i].get());
         this.__defineSetter__(p, function(v) {
           try {
-            v = v ? Cu.getWeakReference(v) : null;
+            v =  v ? Cu.getWeakReference(v) : null;
           } catch (e) {
             v = null;
           }
-          return this.args[i] = v;
+          if (v) {
+            this.__defineGetter__(i, function() v.get());
+          } else {
+            this.args[i] = v;
+          }
         });
         break;
       default:
-        this.__defineGetter__(p, function() this.args[i]);
         this.__defineSetter__(p, function(v) this.args[i] = v);
     }
    }, proto);
@@ -115,25 +118,30 @@ const NOPContentPolicy = {
 
 const MainContentPolicy = {
   shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
-    if (!aInternalCall) PolicyState.addCheck(aContentLocation);
-   
+    var logIntercept = this.consoleDump, logBlock;
+    if(logIntercept) {
+      logBlock = logIntercept & LOG_CONTENT_BLOCK;
+      logIntercept = logIntercept & LOG_CONTENT_INTERCEPT;
+    } else logBlock = false;
+
+    if (!aInternalCall) {
+      aContext._noScriptProcessed = aContentLocation.spec;
+      PolicyState.addCheck(aContentLocation);
+    }        
+ 
     try {
 
       var originURL, locationURL, originSite, locationSite, scheme,
           forbid, isScript, isJava, isFlash, isSilverlight,
           isLegacyFrame, blockThisFrame, contentDocument,
-          logIntercept, logBlock,
           unwrappedLocation, mimeKey,
           mustCountObject = false;
       
-      logIntercept = this.consoleDump;
-      if(logIntercept) {
-        logBlock = logIntercept & LOG_CONTENT_BLOCK;
-        logIntercept = logIntercept & LOG_CONTENT_INTERCEPT;
-      } else logBlock = false;
-
+      
       unwrappedLocation = IOUtil.unwrapURL(aContentLocation);
       scheme = unwrappedLocation.scheme;
+      
+    
       
       var isHTTP = scheme === "http" || scheme === "https";
       
@@ -147,6 +155,8 @@ const MainContentPolicy = {
           switch(aContentType) {
              
             case 5:
+              
+              
               // early ABE check for any plugin content except Flash, Silverlight and PDF
               // (Java, for instance, is known to bypass HTTP observers!)
               if (/^application\/(?:x-(?:shockwave-flash|silverlight)$|futuresplash|pdf$)/i.test(aMimeTypeGuess))

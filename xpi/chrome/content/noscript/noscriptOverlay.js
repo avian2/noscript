@@ -195,7 +195,14 @@ return noscriptUtil.service ? {
   
   
   onCommandClick: function(ev) {
-    if (!(ev.button == 1 || ev.button == 0 && ev.shiftKey)) return;
+    if (ev.button === 2) {
+      noscriptOverlay.copy(ev.target);
+      ev.preventDefault();
+      ev.stopPropagation();
+      return;
+    }
+    
+    if (!(ev.button === 1 || ev.button === 0 && ev.shiftKey)) return;
     
     if (noscriptUtil.openInfo(ev.target.getAttribute("statustext"))) {
       ev.preventDefault();
@@ -398,7 +405,37 @@ return noscriptUtil.service ? {
     }
   },
   
-  
+  copy: function(node) {
+    node = node || document.popupNode;
+    var txt = "";
+    const classRx = /\bnoscript-(allow|forbid)\b/; 
+    if (!(classRx.test(node.className) && (txt = node.getAttribute("statustext")))) {
+      let parent = node.parentNode;      
+      let nodes = parent.childNodes;
+      let untrusted = $("noscript-menu-untrusted");
+      if (untrusted.parentNode === parent) {
+         nodes = Array.slice(nodes).concat(Array.slice(untrusted.getElementsByClassName("noscript-allow")));
+      }
+      let sites = [];
+      for (let j = 0, len = nodes.length; j < len; j++) {
+        if (classRx.test(nodes[j].className)) {
+          let site = nodes[j].getAttribute("statustext");
+          if (site && sites.indexOf(site) === -1) {
+            sites.push(site);
+          }
+        }
+      }
+      const ns = noscriptOverlay.ns;
+      txt = sites.map(
+        function(s) (ns.isJSEnabled(s) ? "+" : ns.isUntrusted(s) ? "!" : "-") + s
+      ).join("\n");
+    }
+    if (txt) {
+      Cc["@mozilla.org/widget/clipboardhelper;1"]  
+        .getService(Ci.nsIClipboardHelper)
+        .copyString(txt);
+    }
+  },
  
   _currentPopup: null,
   
@@ -417,6 +454,10 @@ return noscriptUtil.service ? {
     const sticky = popup.getAttribute("sticky") == "true";
     
     popup.removeAttribute("disabled");
+    
+    if (!popup.hasAttribute("context")) {
+      popup.setAttribute("context", "noscript-menuContext");
+    }
     
     if (this._currentPopup && this._currentPopup != popup) {
       this._currentPopup.hidePopup();
@@ -1172,10 +1213,10 @@ return noscriptUtil.service ? {
     if (!menu) return;
     var prev = null;
     var wasSep = true;
-    var isSep, haveMenu = false;
+    var haveMenu = false;
     for (var i = menu.firstChild; i; i = i.nextSibling) {
       if (!i.hidden) {
-        isSep = i.nodeName == "menuseparator";
+        let isSep = i.nodeName == "menuseparator";
         if (isSep && wasSep) {
           i.hidden = true;
         } else {

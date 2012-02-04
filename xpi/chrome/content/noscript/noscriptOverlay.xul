@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE overlay SYSTEM "chrome://noscript/locale/noscript.dtd">
+
 <?xml-stylesheet href="chrome://noscript/skin/browser.css" type="text/css"?>
 
 <overlay id="noscriptOverlay" 
@@ -70,7 +71,9 @@
   <window id="main-window">
     <popupset id="mainPopupSet"></popupset><!-- SeaMonkey compatibility -->
   </window>
-
+  
+ 
+  
   <popupset id="mainPopupSet">
     <menupopup id="noscript-notify-popup" onpopupshowing="noscriptOverlay.onMenuShowing(event, true)">
       <menuseparator />

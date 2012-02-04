@@ -116,9 +116,8 @@ RequestWatchdog.prototype = {
       let ph = PolicyState.extract(channel);
       let context = ph && ph.context;
       if (context) {
-        isDoc = !(context instanceof Ci.nsIDOMHTMLEmbedElement);
+        isDoc = !(context instanceof Ci.nsIDOMHTMLEmbedElement || /^application\/x-/i.test(ph.mimeType));
         if (isDoc && this._bug677050 && !(loadFlags & channel.LOAD_REPLACE) && (context instanceof Ci.nsIDOMHTMLObjectElement)) {
-          // work-around for bug 677050
           (new ChannelReplacement(channel)).replace();
           return;
         }

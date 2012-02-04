@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Asetukset…">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript asetukset">
-<!ENTITY noscriptAbout "Tietoja NoScript 2.2.9rc1istä…">
+<!ENTITY noscriptAbout "Tietoja NoScript 2.2.9rc2istä…">
 <!ENTITY noscriptPermissionsText "Voit määrittää verkkosivut joiden sallitaan suorittaa scriptejä. Kirjoita verkko-osoite tai verkkonimi (esim. &quot;http://www.site.com&quot; tai &quot;site.com&quot;) jonka haluat sallia ja paina Salli.">
 <!ENTITY noscriptWebAddress "Verkkosivun osoite:">
 <!ENTITY noscriptAllow "Salli">
