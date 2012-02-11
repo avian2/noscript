@@ -125,7 +125,6 @@ const MainContentPolicy = {
     } else logBlock = false;
 
     if (!aInternalCall) {
-      aContext._noScriptProcessed = aContentLocation.spec;
       PolicyState.addCheck(aContentLocation);
     }        
  

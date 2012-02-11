@@ -28,7 +28,7 @@ pref("noscript.showBlockedObjects", true);
 pref("noscript.showExternalFilters", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
-pref("noscript.mandatory", "chrome: about: about:addons about:blocked about:crashes about:home about:config about:neterror about:certerror about:plugins about:privatebrowsing about:sessionrestore resource:");
+pref("noscript.mandatory", "chrome: blob: about: about:addons about:blocked about:crashes about:home about:config about:neterror about:certerror about:memory about:plugins about:privatebrowsing about:sessionrestore about:support resource:");
 pref("noscript.default", "about:blank about:credits addons.mozilla.org browserid.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv informaction.com yahoo.com yimg.com yahooapis.com youtube.com ytimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com wlxrs.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
@@ -101,7 +101,7 @@ pref("noscript.xss.trustData", true);
 pref("noscript.xss.trustExternal", true);
 pref("noscript.xss.trustTemp", true);
 pref("noscript.xss.checkInclusions", true);
-pref("noscript.xss.checkInclusions.exceptions", "");
+pref("noscript.xss.checkInclusions.exceptions", "intensedebate.com/idc/js/");
 
 pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);

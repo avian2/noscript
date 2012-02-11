@@ -4,6 +4,8 @@ var ScriptSurrogate = {
   enabled: true,
   prefs: null,
   sandbox: true,
+  sandboxInclusions: true,
+  
   get syntaxChecker() {
     delete this.syntaxChecker   
     return this.syntaxChecker = new SyntaxChecker(this.JS_VERSION);
@@ -29,7 +31,7 @@ var ScriptSurrogate = {
     for each(let p in ["enabled", "debug", "sandbox"]) this[p] = prefs.getBoolPref(p);
     
     // inclusions don't work with sandbox on Gecko < 2, but may crash without on Gecko > 2
-    if (ns.geckoVersionCheck("2") < 0) this.sandbox = false; 
+    this.sandboxInclusions = this.sandbox && (ns.geckoVersionCheck("2") >= 0);
     
     const map = {__proto__: null};
     var key;
@@ -192,7 +194,7 @@ var ScriptSurrogate = {
         ? let (win = document.defaultView) win != win.top
             ? this.executeSandbox
             : (this.sandbox ? this.execute : this.executeDOM)
-        : this.sandbox ? this.executeSandbox : this.executeDOM;
+        : this.sandboxInclusions ? this.executeSandbox : this.executeDOM;
     
     if (this.debug) {
       // we run each script separately and don't swallow exceptions

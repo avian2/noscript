@@ -1004,7 +1004,7 @@ ABERequest.prototype = Lang.memoize({
   },
   
   isBrowserURI: function(uri) {
-    return uri.schemeIs("chrome") || uri.schemeIs("resource");
+    return uri.schemeIs("chrome") || uri.schemeIs("resource") || uri.spec === "about:newtab";
   },
   
   isLocal: function(uri, all) {
