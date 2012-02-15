@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "オプション...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript オプション">
-<!ENTITY noscriptAbout "NoScript 2.3について...">
+<!ENTITY noscriptAbout "NoScript 2.3.1rc1について...">
 <!ENTITY noscriptPermissionsText "JavaScriptを許可するサイトを指定する事ができます。許可したいサイトのアドレスかドメインを入力して、ボタンを押してください。(例: &quot;http://www.site.com&quot; または &quot;site.com&quot;)">
 <!ENTITY noscriptWebAddress "ウェブサイトのアドレス:">
 <!ENTITY noscriptAllow "許可する">
