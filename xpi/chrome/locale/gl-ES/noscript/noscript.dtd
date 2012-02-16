@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Opcións...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Opcións de NoScript">
-<!ENTITY noscriptAbout "Acerca de NoScript 2.3.1rc1">
+<!ENTITY noscriptAbout "Acerca de NoScript 2.3.1rc2">
 <!ENTITY noscriptPermissionsText "Podes especificar que páxinas web poden executar scripts. Teclea o enderezo ou o dominio (por exemplo &quot;http://www.paxina.com&quot; ou &quot;paxina.com&quot;) do sitio que queres autorizar e despois preme en &quot;Permitir&quot;.">
 <!ENTITY noscriptWebAddress "Enderezo web:">
 <!ENTITY noscriptAllow "Permitir">
