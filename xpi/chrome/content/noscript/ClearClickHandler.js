@@ -577,9 +577,9 @@ ClearClickHandler.prototype = {
         
         var vp = { 
           x: w.scrollX, 
-          y: w.scrollY, 
+          y: w.scrollY + 3, // 3 pixels grace for box shadows cast from above a frame, like in the FB header 
           width: Math.max(w.innerWidth - sd.w, 32), 
-          height: Math.max(w.innerHeight - sd.h, 16), // Facebook like buttons are 20 pixel high
+          height: Math.max(w.innerHeight - sd.h - 3, 16), // Facebook like buttons are 20 pixel high
           frame: frame
         };
         
@@ -984,7 +984,7 @@ DocPatcher.prototype = {
       if (c) {
         res.push(n = new ClassyObj(n));
         n.append(c);
-      }1
+      }
     }
     
     for each(n in posn) n.__noscriptPos = false;
