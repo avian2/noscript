@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Tùy chọn">
 <!ENTITY noscriptOptions.accesskey "y">
 <!ENTITY noscriptOptionsLong "Tùy chọn cho NoScript">
-<!ENTITY noscriptAbout "Thông tin về NoScript 2.3.1">
+<!ENTITY noscriptAbout "Thông tin về NoScript 2.3.2">
 <!ENTITY noscriptPermissionsText "Bạn có thể chỉ định trang web nào được phép chạy script. Gõ địa chỉ hay tên miền (v.d. &quot;http://www.nhaccodien.com&quot; hay &quot;nhaccodien.com&quot;) của trang mà bạn muốn cho phép, rồi nhấn Cho phép.">
 <!ENTITY noscriptWebAddress "Địa chỉ của trang web:">
 <!ENTITY noscriptAllow "Cho phép">

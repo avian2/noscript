@@ -229,7 +229,7 @@ pref("noscript.surrogate.digg.sources", "!@digg.com/newsbar/*");
 pref("noscript.surrogate.digg.replacement", "window.location.href=document.querySelector('link[rel=canonical]').href");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.ga.replacement", "(function(){var _0=function(){return _0;};_0.__noSuchMethod__=_0;with(window)urchinTracker=_0,_gaq={__noSuchMethod__:_0,push:_0,_link:function(h){if(h)location.href=h},_linkByPost:function(){return true},_getLinkerUrl:function(u){return u},_trackEvent:_0},_gat={__noSuchMethod__:function(){return _gaq}}})()");
-pref("noscript.surrogate.glinks.replacement", "for each(let et in ['focus','mouseover','mousedown','click'])addEventListener(et,function(e){var a=e.target;if(a.href&&!a._href){a._href=a.href=a.href.replace(/.*\/url.*[\?|&]url=(http[^&]+).*/,function(a,b)decodeURIComponent(b));if(/\\brwt\\(/.test(a.getAttribute('onmousedown')))a.removeAttribute('onmousedown')}},true)");
+pref("noscript.surrogate.glinks.replacement", "for each(let et in ['focus','mouseover','mousedown','click'])addEventListener(et,function(e){var a=e.target;do{if(a.href&&!a._href){a._href=a.href=a.href.replace(/.*\\/url.*[?&](?:url|q)=(http[^&]+).*/,function(a,b)decodeURIComponent(b));if(/\\brwt\\(/.test(a.getAttribute('onmousedown')))a.removeAttribute('onmousedown')}}while(a=a.parentNode)},true)");
 pref("noscript.surrogate.glinks.sources", "!@^https?://[^/]+google\\..*/search");
 pref("noscript.surrogate.qs.sources", "edge.quantserve.com");
 pref("noscript.surrogate.qs.replacement", "window.quantserve=function(){}");

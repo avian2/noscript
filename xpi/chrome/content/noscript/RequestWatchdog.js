@@ -1364,7 +1364,7 @@ var InjectionChecker = {
 
     const
       invalidCharsRx = /[\u007f-\uffff]/.test(s) && this.invalidCharsRx,
-      dangerRx = /(?:\(|\[[^\]+\]|(?:setter|location|innerHTML|on\w{3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+)/,
+      dangerRx = /\(|\[[^\]]+\]|(?:setter|location|innerHTML|on\w{3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+/,
       exprMatchRx = /^[\s\S]*?[=\)]/,
       safeCgiRx = /^(?:(?:[\.\?\w\-\/&:`\[\]]+=[\w \-:\+%#,`\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/,
         // r2l, chained query string parameters, protocol://domain, ...
@@ -1475,7 +1475,11 @@ var InjectionChecker = {
           break;
         }
      
-        if(quote) {
+        if (quote) {
+          if (this.checkNonTrivialJSSyntax(expr)) {
+            this.log("Non-trivial JS inside quoted string detected", t, iterations);
+            return true;
+          }
           script = this.syntax.unquote(quote + expr, quote);
           if(script && this.maybeJS(script) &&
             (this.checkNonTrivialJSSyntax(script) ||
@@ -1613,7 +1617,7 @@ var InjectionChecker = {
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings|set|animate") + 
-    ")[^>\\w])|(?:<\\w[\\s\\S]*\\s|['\"](?:[\\s\\S]*[\\s/])?)(?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
+    ")[^>\\w])|(?:<\\w[\\s\\S]*[\\s/]|['\"](?:[\\s\\S]*)?)(?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
      ")[\\s\\x08]*=", "i"),
   
   checkHTML: function(s) {
@@ -1621,14 +1625,11 @@ var InjectionChecker = {
     return this.HTMLChecker.test(s);
   },
   
-  get NoscriptChecker() {
-    delete this.NoscriptChecker;
-    return this.NoscriptChecker = new RegExp(this.HTMLChecker.source.replace('|' + IC_EVENT_PATTERN, ''), 'i')
-  },
-  
   checkNoscript: function(s) {
     this.log(s);
-    return this.NoscriptChecker.test(s) || this.checkSQLI(s) || this.checkHeaders(s);
+    return s.indexOf("\x1b(J") !== -1 && this.checkNoscript(s.replace(/\x1b\(J/g, '')) || // ignored in iso-2022-jp
+     s.indexOf("\x7e\x0a") !== -1 && this.checkNoscript(s.replace(/\x7e\x0a/g, '')) || // ignored in hz-gb-2312
+      this.HTMLChecker.test(s) || this.checkSQLI(s) || this.checkHeaders(s);
   },
   
   HeadersChecker: /[\r\n]\s*(?:content-(?:type|encoding))\s*:/i,
@@ -1742,7 +1743,7 @@ var InjectionChecker = {
         return true;
     } else if (ASPIdiocy.hasBadPercents(s) && this.checkRecursive(ASPIdiocy.removeBadPercents(s), depth, isPost))
       return true;
-
+    
     if (this.isPost) {
       s = this.formUnescape(s);
       if (this.checkBase64Frag(Base64.purify(s))) return true;
@@ -1762,7 +1763,7 @@ var InjectionChecker = {
   },
   
   _checkRecursive: function(s, depth) {
-
+    
     if (this.checkHTML(s) || this.checkJS(s) || this.checkSQLI(s) || this.checkHeaders(s))
       return true;
     
@@ -1793,6 +1794,11 @@ var InjectionChecker = {
     if (unescaped != s && this._checkRecursive(unescaped, depth))
       return true;
     
+    if (unescaped.indexOf("\x1b(J") !== -1 && this._checkRecursive(unescaped.replace(/\x1b\(J/g, ''), depth) || // ignored in iso-2022-jp
+        unescaped.indexOf("\x7e\x0a") !== -1 && this._checkRecursive(unescaped.replace(/\x7e\x0a/g, '')) // ignored in hz-gb-2312       
+      )
+      return true;
+
     s = this.ebayUnescape(unescaped);
     if (s != unescaped && this._checkRecursive(s, depth))
       return true;
@@ -2250,6 +2256,10 @@ XSanitizer.prototype = {
         );
       if (s.replace(/[^"]/g, "").length % 2) s += '"'; // close unpaired quotes
       return s;
+    }
+    
+    if (this.brutal) {
+      s = s.replace(/\x1bJ\(/g, '').replace(/\x7e\x0a/g, ''); // ignored in some encodings
     }
     // regular duty
     s = s.replace(this.primaryBlacklist, " ")
