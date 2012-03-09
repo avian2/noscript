@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.3.2";
+const VERSION = "2.3.4";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -3351,14 +3351,14 @@ var ns = {
   },
   
   tagWindowlessObject: function(o) {
-    const rx = /opaque|transparent/i;
+    const rx = /^(?:opaque|transparent)$/i;
     var b;
     try {
       if (o instanceof Ci.nsIDOMHTMLEmbedElement) {
         b = rx.test(o.getAttribute("wmode"));
       } else if (o instanceof Ci.nsIDOMHTMLObjectElement) {
         var params = o.getElementsByTagName("param");
-        const wmodeRx = /wmode/i;
+        const wmodeRx = /^wmode$/i;
         for(var j = params.length; j-- > 0 &&
             !(b = wmodeRx.test(params[j].name && rx.test(params[j].value)));
         );

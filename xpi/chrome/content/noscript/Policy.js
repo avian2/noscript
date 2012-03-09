@@ -586,7 +586,7 @@ const MainContentPolicy = {
               return this.reject("Illegal Java code attribute " + aContext.getAttribute("code"), arguments);
             }
             
-            if (isFlash && aInternalCall === CP_SHOULDPROCESS) this.tagWindowlessObject(aContext);
+            if (isFlash) this.tagWindowlessObject(aContext);
             
             if (forbid) {
               if (isSilverlight) {

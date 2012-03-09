@@ -1075,6 +1075,10 @@ var InjectionChecker = {
   get logEnabled() { return this.log == this._log; },
   set logEnabled(v) { this.log = v ? this._log : function() {}; },
   
+  escalate: function(msg) {
+    this.log(msg);
+    ns.log("[NoScript InjectionChecker] " + msg);
+  },
   
   bb: function(brac, s, kets) {
     for(var j = 3; j-- > 0;) {
@@ -1283,12 +1287,12 @@ var InjectionChecker = {
   ),
   
   _dotRx: /\./g,
-  _removeDots: function(p) { return p.replace(InjectionChecker._dotRx, '_'); },
+  _removeDots: function(p) p.replace(InjectionChecker._dotRx, '|'),
   
   maybeJS: function(expr) {
     expr = // dotted URL components can lead to false positives, let's remove them
-      expr.replace(/(?:[\/\?&#]|^)[\w\.\-]+(?=[\/\?&#]|$)/g, this._removeDots);
-    
+      expr.replace(/(?:(?:[\/\?&#]|^)[\w\.-]+(?=[\/\?&#]|$)|(?:[A-Z]|\d)[\w-]*\.[\w\.-]*|=[\w.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&]|$))/g, this._removeDots);
+
     if(/^(?:[^\(\)="']+=[^\(='"\[]+|(?:[\?a-z_0-9;,&=\/]|\.[\d\.])*)$/i.test(expr) && !/\b=[\s\S]*_QS_\b/.test(expr)) // commonest case, single assignment or simple chained assignments, no break
       return this._singleAssignmentRx.test(expr) || this._riskyAssignmentRx.test(expr) && this._nameRx.test(expr);
     if (/^(?:[\w\-\.]+\/)*\(*[\w\-\s]+\([\w\-\s]+\)[\w\-\s]*\)*$/.test(expr)) // typical "call like" Wiki URL pattern + bracketed session IDs
@@ -1367,7 +1371,7 @@ var InjectionChecker = {
       dangerRx = /\(|\[[^\]]+\]|(?:setter|location|innerHTML|on\w{3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+/,
       exprMatchRx = /^[\s\S]*?[=\)]/,
       safeCgiRx = /^(?:(?:[\.\?\w\-\/&:`\[\]]+=[\w \-:\+%#,`\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/,
-        // r2l, chained query string parameters, protocol://domain, ...
+        // r2l, chained query string parameters, protocol://domain
       headRx = /^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=]))/
     ;
     
@@ -1568,13 +1572,21 @@ var InjectionChecker = {
     
     var hasUnicodeEscapes = !unescapedUni && /\\u[0-9a-f]{4}/.test(s);
     if (hasUnicodeEscapes && /\\u00(?:22|27|2f)/i.test(s)) {
-      this.log("Unicode-escaped lower ASCII, why would you?");
+      this.escalate("Unicode-escaped lower ASCII");
       return true;
     }
-    
-    return this.checkAttributes(s) ||
+    this.syntax.lastFunction = null;
+    let ret = this.checkAttributes(s) ||
       /[\\\(]|=[^=]/.test(s) &&  this.checkJSBreak(s) || // MAIN
-      hasUnicodeEscapes && this.checkJS(this.unescapeJS(s), true); // optional unescaped recursion 
+      hasUnicodeEscapes && this.checkJS(this.unescapeJS(s), true); // optional unescaped recursion
+    if (ret) {
+      let msg = "JavaScript Injection in " + s;
+      if (this.syntax.lastFunction) {
+        msg += "\n" + this.syntax.lastFunction.toSource();
+      }
+      this.escalate(msg);
+    }
+    return ret;
   },
   
   unescapeJS: function(s) {
@@ -1603,7 +1615,17 @@ var InjectionChecker = {
         .replace(/(?:\+\-)+/g, '+-'); 
   },
   
-  attributesChecker: new RegExp(
+  _rxCheck: function(checker, s) {
+    var rx = this[checker + "Checker"];
+    var ret = rx.exec(s);
+    if (ret) {
+      this.escalate(checker + " injection:\n" + ret + "\nmatches " + rx.source);
+      return true;
+    }
+    return false;
+  },
+  
+  AttributesChecker: new RegExp(
       "\\W(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|\\bname\\b)|data:[^,]+,[\\w\\W]*?<[^<]*\\w[^<]*>)|@" + 
       ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
         "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
@@ -1611,31 +1633,30 @@ var InjectionChecker = {
       "i"),
   checkAttributes: function(s) {
     s = this.reduceDashPlus(s);
-    return this.attributesChecker.test(s) ||
-        /\\/.test(s) && this.attributesChecker.test(this.unescapeCSS(s));
+    return this._rxCheck("Attributes", s) ||
+        /\\/.test(s) && this._rxCheck("Attributes", this.unescapeCSS(s));
   },
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings|set|animate") + 
-    ")[^>\\w])|(?:<\\w[\\s\\S]*[\\s/]|['\"](?:[\\s\\S]*)?)(?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
+    ")[^>\\w])|(?:<\\w[\\s\\S]*[\\s/]|['\"](?:[\\s\\S]*[\\s/])?)(?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
      ")[\\s\\x08]*=", "i"),
   
   checkHTML: function(s) {
-    this.log(s);
-    return this.HTMLChecker.test(s);
+    return  this._rxCheck("HTML", s);
   },
   
   checkNoscript: function(s) {
     this.log(s);
     return s.indexOf("\x1b(J") !== -1 && this.checkNoscript(s.replace(/\x1b\(J/g, '')) || // ignored in iso-2022-jp
      s.indexOf("\x7e\x0a") !== -1 && this.checkNoscript(s.replace(/\x7e\x0a/g, '')) || // ignored in hz-gb-2312
-      this.HTMLChecker.test(s) || this.checkSQLI(s) || this.checkHeaders(s);
+      this.checkHTML(s) || this.checkSQLI(s) || this.checkHeaders(s);
   },
   
   HeadersChecker: /[\r\n]\s*(?:content-(?:type|encoding))\s*:/i,
-  checkHeaders: function(s) this.HeadersChecker.test(s),
+  checkHeaders: function(s) this._rxCheck("Headers", s),
   SQLIChecker:  /\bunion\b[\w\W]+\bselect\b[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/i,
-  checkSQLI: function(s) this.SQLIChecker.test(s),
+  checkSQLI: function(s) this._rxCheck("SQLI", s),
   
   base64: false,
   base64tested: [],

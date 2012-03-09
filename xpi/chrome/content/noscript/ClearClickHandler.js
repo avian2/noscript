@@ -151,8 +151,8 @@ ClearClickHandler.prototype = {
   
   
   getBG: function(w) {
-    var bg = w.document.body && w.getComputedStyle(w.document.body, '').backgroundColor || "white";
-    return bg == "transparent" ? w != w.parent && this.getBG(w.parent) || "white" : bg;
+    var bg = w.document.body && w.getComputedStyle(w.document.body, '').backgroundColor || "#fff";
+    return bg == "transparent" ? w != w.parent && this.getBG(w.parent) || "#fff" : bg;
   },
   
   _constrain: function(box, axys, dim, max, vp, center) {
@@ -307,7 +307,7 @@ ClearClickHandler.prototype = {
       ctx = /mouse|drop/.test(etype)
                 && { x: ev.pageX, y: ev.pageY, debug: ev.ctrlKey && ev.button == 1 && ns.getPref("clearClick.debug") }
                 || {};
-      isEmbed =  (typeof(isEmbed) === "boolean" ? isEmbed : this.isEmbed(o)) && ns.isWindowlessObject(o);
+      isEmbed =  (typeof(isEmbed) === "boolean" ? isEmbed : this.isEmbed(o)) // && ns.isWindowlessObject(o);
       if (!(isEmbed || w.frameElement)) return;
       ctx.isEmbed = isEmbed;
       primaryEvent = /^(?:(?:mouse|key)down|drop)$/.test(etype) ||
@@ -430,9 +430,8 @@ ClearClickHandler.prototype = {
     
     var bg = this.getBG(w);
 
-
     var bgStyle;
-    var box, curtain;
+    var box, rootBox, curtain, woi;
     
     var frame, frameClass, objClass;
     
@@ -444,6 +443,11 @@ ClearClickHandler.prototype = {
     
     function snapshot(w, x, y) {
       gfx.drawWindow(w, Math.round(x), Math.round(y), c.width, c.height, bg);
+      if (woi && w == top && rootBox) {
+        gfx.fillStyle = bg;
+        for each (let b in woi)
+          gfx.fillRect(b.screenX - rootBox.screenX - x, b.screenY - rootBox.screenY - y, b.width, b.height);
+      }
       return c.toDataURL();
     }
     
@@ -674,7 +678,8 @@ ClearClickHandler.prototype = {
          
         c.width = box.width;
         c.height = box.height;
-         
+        
+        woi = this.findWindowedRects(o, box);
         
         if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
           
@@ -690,7 +695,7 @@ ClearClickHandler.prototype = {
     
 
       var rootElement = top.document.documentElement;
-      var rootBox = this.getBox(rootElement, top.document, top);
+      rootBox = this.getBox(rootElement, top.document, top);
       
       
       var offsetY = (box.screenY - rootBox.screenY);
@@ -885,6 +890,51 @@ ClearClickHandler.prototype = {
     return (adaptive && w.getComputedStyle(w.document.body || w.document.documentElement, '').direction != 'rtl')
       ? 0
       : w.innerWidth - w.document.documentElement.clientWidth;
+  },
+  
+  _offsetParents: function(p) {
+    let pp = [];
+    for (; p; p = p.offsetParent) pp.push(p);
+    return pp;
+  },
+  
+  findWindowedRects: function(el, box) {
+    const tags = ["object", "embed"];
+    let woi = null;
+    while(el) {
+      let d = el.ownerDocument;
+      let w = d.defaultView;
+      let elPP = this._offsetParents(el);
+      try {
+        for each (let t in tags) {
+          let oo = d.getElementsByTagName(t);
+          for (let i = oo.length; j-- > 0;) {
+            let o = oo[i];
+            if (o != el && !ns.isWindowlessObject(o)) {
+              let oPP = this._offsetParents(o);
+              for (let j = elPP.length, k = oPP.length; j-- > 0 && k-- > 0;) {
+                let p1 = elPP[j], p2 = oPP[k];
+                if (p1 != p2) {
+                  let s1 = w.getComputedStyle(p1, '');
+                  let s2 = w.getComputedStyle(p2, '');
+                  
+                  if (s2.display != 'none' && s2.visibility != 'hidden'  && s2.position != 'static' &&
+                     (s1.position == 'static'  || 
+                        (parseInt(s1.zIndex, 10) || 0) <= (parseInt(s2.zIndex, 10) || 0)
+                    )) {
+                    (woi || (woi = [])).push(this.getBox(o, d, w));
+                  }
+                }
+              }
+            }
+          }
+        }
+      } catch (e) {
+        ns.log(e);
+      }
+      el = w.frameElement;
+    }
+    return woi;
   }
 }
 
@@ -1047,7 +1097,7 @@ DocPatcher.prototype = {
     if (toggle) {
       this._positioned = this.collectPositioned(this.o.ownerDocument);
       this._blankSheetHandle = this.applySheet(this.blankSheet);
-    } else if (this._positionased) {
+    } else if (this._positioned) {
       this._positioned.forEach(this.resetClass);
       this.removeSheet(this._blankSheetHandle);
     }
@@ -1148,7 +1198,7 @@ DocPatcher.prototype = {
     } catch(e) {
     }
     
-    (this.__proto__.abpTabsHack =
+    this.__proto__.abpTabsHack =
       hiddenClass
       ? function(toggle) {
           try {
@@ -1165,7 +1215,7 @@ DocPatcher.prototype = {
               }
               this._abpTabs = tabs;
             } else {
-              for (let co in this._abpTabs) {
+              for each(let co in this._abpTabs) {
                 co.reset();
               }
             }
@@ -1173,8 +1223,8 @@ DocPatcher.prototype = {
             Cu.reportError(e);
           }
         }
-      : DUMMY_FUNC
-     )(toggle); 
+      : DUMMY_FUNC;
+    this.abpTabsHack(toggle); 
   }
 };
 
