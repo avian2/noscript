@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "选项...">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "NoScript 选项">
-<!ENTITY noscriptAbout "关于 NoScript 2.3.4">
+<!ENTITY noscriptAbout "关于 NoScript 2.3.5">
 <!ENTITY noscriptPermissionsText "您可以指定允许执行脚本的网站。请输入您想要允许的网站地址或域名(例如: “http://www.site.com”或者“site.com”)然后单击“允许”。">
 <!ENTITY noscriptWebAddress "网站地址:">
 <!ENTITY noscriptAllow "允许">

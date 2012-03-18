@@ -351,9 +351,11 @@ RequestWatchdog.prototype = {
       } catch(e) {}
     }
     
-    if (/[%=\(\\]/.test(originalAttempt) && InjectionChecker.checkJS(originalAttempt)) {
-      window.name = originalAttempt.replace(/[%=\(\\]/g, " ");
+    if (/[%=\(\\<]/.test(originalAttempt) && (
+      InjectionChecker.checkJS(originalAttempt ||  InjectionChecker.checkHTML(originalAttempt)))) {
+      window.name = originalAttempt.replace(/[%=\(\\<]/g, " ");
     }
+
     if (originalAttempt.length > 11) {
       try {
         if ((originalAttempt.length % 4 == 0)) { 
@@ -674,8 +676,7 @@ RequestWatchdog.prototype = {
         return;
       }
       
-      this.checkWindowName(window);
-    
+      IOUtil.attachToChannel(channel, "noscript.checkWindowName", DUMMY_OBJ);
     }
     
     
@@ -1626,7 +1627,7 @@ var InjectionChecker = {
   },
   
   AttributesChecker: new RegExp(
-      "\\W(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|\\bname\\b)|data:[^,]+,[\\w\\W]*?<[^<]*\\w[^<]*>)|@" + 
+      "\\W(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|[\\s\\S]*(?:\\bname\\b|\\\\[ux]\\d))|data:[^,]+,[\\w\\W]*?<[^<]*\\w[^<]*>)|@" + 
       ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
         "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
         .replace(/[a-rt-z\-]/g, "\\W*$&"), 

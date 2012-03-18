@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.3.4";
+const VERSION = "2.3.5";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -3711,19 +3711,20 @@ var ns = {
   
   
   countObject: function(embed, site) {
-
     if(!site) return;
-    var doc = embed.ownerDocument;
-    
-    if (doc) {
-      var topDoc = doc.defaultView.top.document;
-      var os = this.getExpando(topDoc, "objectSites");
-      if(os) {
-        if(os.indexOf(site) < 0) os.push(site);
-      } else {
-        this.setExpando(topDoc, "objectSites", [site]);
+    try {
+      var doc = embed.ownerDocument;
+      
+      if (doc) {
+        var topDoc = doc.defaultView.top.document;
+        var os = this.getExpando(topDoc, "objectSites");
+        if(os) {
+          if(os.indexOf(site) < 0) os.push(site);
+        } else {
+          this.setExpando(topDoc, "objectSites", [site]);
+        }
       }
-    }
+    } catch (ex) {}
   },
   
   getPluginExtras: function(obj) {
@@ -5543,6 +5544,10 @@ var ns = {
       }
     }
     
+    if (IOUtil.extractFromChannel(req, "noscript.checkWindowName")) {
+      this.requestWatchdog.checkWindowName(domWindow);
+    }
+    
     if (this.onWindowSwitch && docShell &&
         (topWin || !this.executeEarlyScripts))
       this.onWindowSwitch(uri.spec, domWindow, docShell);
@@ -5656,7 +5661,7 @@ var ns = {
       }
       
       if (abeSandboxed) {
-        ABE.sandbox(docShell);
+        ABE.sandbox(docShell, true);
         return;
       }
       
@@ -5706,6 +5711,8 @@ var ns = {
       dsjsBlocked.wrappedJSObject = dsjsBlocked;
       IOUtil.attachToChannel(req, "noscript.dsjsBlocked", dsjsBlocked);
       
+      
+      ABE.sandbox(docShell, false);
       docShell.allowJavascript = jsEnabled;
     } catch(e2) {
       if (this.consoleDump & LOG_JS)

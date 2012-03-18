@@ -587,7 +587,7 @@ const MainContentPolicy = {
             }
             
             if (isFlash) this.tagWindowlessObject(aContext);
-            
+
             if (forbid) {
               if (isSilverlight) {
                 if (logIntercept) this.dump("Silverlight " + aContentLocation.spec + " " + typeof(aContext) + " " + aContentType + ", " + aInternalCall);
@@ -710,7 +710,9 @@ const MainContentPolicy = {
       return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
     } finally {
       
-      if (mustCountObject) this.delayExec(this.countObject, 0, aContext, locationSite);
+      if (aContentType === 5) this.setExpando(aContext, "site", locationSite);
+      
+      if (mustCountObject) this.countObject(aContext, locationSite);
       
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
       

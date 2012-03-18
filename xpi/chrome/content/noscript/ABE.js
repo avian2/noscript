@@ -434,9 +434,9 @@ const ABE = {
   setSandboxed: function(channel) {
     IOUtil.attachToChannel(channel, ABE.SANDBOX_KEY, DUMMY_OBJ);
   },
-  sandbox: function(docShell) {
+  sandbox: function(docShell, sandboxed) {
     docShell.allowJavascript = docShell.allowPlugins =
-        docShell.allowMetaRedirects= docShell.allowSubframes = false;
+        docShell.allowMetaRedirects= docShell.allowSubframes = !sandboxed;
   },
   
   

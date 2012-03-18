@@ -125,7 +125,7 @@ ClearClickHandler.prototype = {
   },
   
   isEmbed: function(o) (o instanceof Ci.nsIDOMHTMLObjectElement || o instanceof Ci.nsIDOMHTMLEmbedElement)
-                        && !o.contentDocument,
+                        && !o.contentDocument && ns.getExpando(o, "site") != ns.getSite(o.ownerDocument.documentURI),
   
   swallowEvent: function(ev) {
     ev.cancelBubble = true;

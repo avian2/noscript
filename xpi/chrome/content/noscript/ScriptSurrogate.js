@@ -75,7 +75,7 @@ var ScriptSurrogate = {
       if (!value) return;
       let mapping = (name in map)
         ? map[name]
-        : map[name] = new SurrogateMapping();
+        : map[name] = new SurrogateMapping(name);
       switch(member) {
         case "sources":
           let prefix = true;
@@ -234,18 +234,21 @@ var ScriptSurrogate = {
     try {
       if (typeof w.wrappedJSObject === "object") w = w.wrappedJSObject;
       this._sandboxParams.sandboxName = "NoScript::ScriptSurrogate@" + document.URL;
-      var s = new Cu.Sandbox(document.nodePrincipal, this._sandboxParams);
-      s.window = w;
+      this._sandboxParams.sandboxPrototype = w;
+      let s = new Cu.Sandbox(w, this._sandboxParams);
+      s.__proto__ = w;
       if (typeof env !== "undefined") {
         s.env = env;
       }
-      Cu.evalInSandbox("with(window){" + scriptBlock + "}", s, this.JS_VERSION);
+      Cu.evalInSandbox("with(window){" + scriptBlock + "}delete this.env;for each(let p in Object.keys(this))window[p]=this[p]", s, this.JS_VERSION);
     } catch (e) {
       if (ns.consoleDump) {
         ns.dump(e);
         ns.dump(scriptBlock);
       }
       if (this.debug) Cu.reportError(e);
+    } finally {
+      delete this._sandboxParams.sandboxPrototype;
     }
   },
   
@@ -269,7 +272,9 @@ var ScriptSurrogate = {
   }
 }
 
-function SurrogateMapping() {}
+function SurrogateMapping(name) {
+  this.name = name;
+}
 SurrogateMapping.prototype = {
   sources: null,
   replacement: null,
