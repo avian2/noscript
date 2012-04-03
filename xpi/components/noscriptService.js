@@ -5,7 +5,7 @@ const Cc = Components.classes;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const VERSION = "2.3.5";
+const VERSION = "2.3.6";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
 const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
@@ -708,7 +708,8 @@ AddressMatcher.prototype = {
           }
           
           // glob matching
-          if (hasPath) p += '$'; 
+          if (p.slice(-1) == '*') p = p.slice(0, -1); // optimize trailing *
+          else if (hasPath) p += '$'; 
 
           return '^' + p.replace(/\*/g, '.*?').replace(/^([^\/:]+:\/*)\.\*/, "$1[^/]*");
         } 
@@ -1149,26 +1150,8 @@ const IOUtil = {
 var Thread = {
   
   hostRunning: true,
-  activeQueues: 0,
   activeLoops: 0,
   _timers: [],
-  
-  runWithQueue: function(callback, self) {
-    var thread = this.current;
-    thread instanceof Ci.nsIThreadInternal;
-    try {
-      this.activeQueues++;
-      thread.pushEventQueue(null);
-      return self ? callback.apply(self) : callback();
-    } finally {
-      thread.popEventQueue();
-      this.activeQueues--;
-    }
-  },
-  
-  spinWithQueue: function(ctrl) {
-    return this.runWithQueue(function() { return Thread.spin(ctrl); });
-  },
   
   spin: function(ctrl) { 
     ctrl.startTime = ctrl.startTime || Date.now();
@@ -1248,20 +1231,7 @@ var Thread = {
       }
     }, Ci.nsIEventTarget.DISPATCH_NORMAL);
   },
-  
-  basap: function(callback, self, args) { // before as soon as possible
-    var thread = this.current;
-    thread instanceof Ci.nsIThreadInternal;
-    this.activeQueues++;
-    thread.pushEventQueue(null);
-    this.asap(function() {
-      callback.apply(self, args || DUMMY_ARRAY);
-      thread.popEventQueue();
-      Thread.activeQueues--;
-    }, self, args);
-  },
-  
-  
+
   _delayRunner: function(timer) {
     var ctx = this.context;
     try {
@@ -4290,25 +4260,23 @@ var ns = {
             browserWindow.addEventListener(et, focusListener, true);
         }
         
-        Thread.runWithQueue(function() {
-          try {
-            this.executingJSURL(doc, 1);
-            if (!(snapshots.siteJS && snapshots.docJS)) {
-              this._patchTimeouts(window, true);
-            }
-            
-            window.location.href = url;
-            
-            Thread.yieldAll();
-            if (!(snapshots.siteJS && snapshots.docJS)) {
-              this._patchTimeouts(window, false);
-            }
-            
-          } catch(e) {
-            this.logError(e, true, "Bookmarklet or location scriptlet");
+        try {
+          this.executingJSURL(doc, 1);
+          if (!(snapshots.siteJS && snapshots.docJS)) {
+            this._patchTimeouts(window, true);
           }
-        }, this);
-        
+          
+          window.location.href = url;
+          
+          Thread.yieldAll();
+          if (!(snapshots.siteJS && snapshots.docJS)) {
+            this._patchTimeouts(window, false);
+          }
+          
+        } catch(e) {
+          this.logError(e, true, "Bookmarklet or location scriptlet");
+        }
+
         return true;
       } finally {
         

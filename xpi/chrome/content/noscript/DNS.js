@@ -248,7 +248,7 @@ var DNS = {
           return null;
         }
         
-        Thread.runWithQueue(resolve);
+        resolve();
         
         if (!Components.isSuccessCode(status)) throw status;
         

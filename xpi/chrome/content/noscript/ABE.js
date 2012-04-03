@@ -213,12 +213,12 @@ const ABE = {
         var name = this._host2name(req.destinationURI.host);
         if (!(name in this.siteMap)) {
           ABE.log("Preflight for " + req.origin + ", " + req.destination + ", " + loadFlags);
-          this.downloadRuleset(name, req.destinationURI, req.sameQueue);
+          this.downloadRuleset(name, req.destinationURI);
         }
         
         rs = this.siteMap[name];
         if (rs && Date.now() - rs.timestamp > this.SITE_RULESET_LIFETIME)
-          rs = this.downloadRuleset(name, req.destinationURI, req.sameQueue);
+          rs = this.downloadRuleset(name, req.destinationURI);
         
         if (rs) this._check(rs, res);
       }
@@ -313,7 +313,7 @@ const ABE = {
   
   _downloading: {},
   _abeContentTypeRx: /^application\/|\babe\b|^text\/plain$/i,
-  downloadRuleset: function(name, uri, sameQueue) {
+  downloadRuleset: function(name, uri) {
     var host = uri.host;
   
     var downloading = this._downloading;
@@ -337,7 +337,7 @@ const ABE = {
     try {
       downloading[host] = true;
       
-      this.log("Trying to fetch rules for " + host + ", sameQueue=" + sameQueue);
+      this.log("Trying to fetch rules for " + host);
       
       uri = uri.clone();
       uri.scheme = "https";
@@ -389,7 +389,7 @@ const ABE = {
         return Thread.spin(ctrl);
       };
       
-      if (sameQueue ? send() : Thread.runWithQueue(send)) {
+      if (send()) {
         var size = 0;
         try {
           size = xhr.responseText.length;
@@ -968,7 +968,7 @@ ABERequest.prototype = Lang.memoize({
       else {
         let ph = PolicyState.extract(channel);
         ou = ph && ph.requestOrigin ||
-            ((channel.originalURI.spec != this.destination) 
+            ((IOUtil.unwrapURL(channel.originalURI).spec != this.destination) 
               ? channel.originalURI 
               : IOUtil.extractInternalReferrer(channel)
             ) || null;
@@ -977,7 +977,7 @@ ABERequest.prototype = Lang.memoize({
       if (!ou) {
         if (channel instanceof Ci.nsIHttpChannelInternal) {
           ou = channel.documentURI;
-          if (!ou || ou.spec === this.destination) ou = null;
+          if (!ou || IOUtil.unwrapURL(ou).spec === this.destination) ou = null;
         }
       }
       
@@ -988,7 +988,7 @@ ABERequest.prototype = Lang.memoize({
       
       ou = ou ? IOUtil.unwrapURL(ou) : ABE.BROWSER_URI;
       
-      this.origin = ou ? ou.spec : '';
+      this.origin = ou.spec;
     
       ABERequest.storeOrigin(channel, this.originURI = ou);
     }
@@ -1131,10 +1131,7 @@ ABERequest.prototype = Lang.memoize({
   redirectChain: function() {
     return ABE.getRedirectChain(this.channel);
   },
-  sameQueue: function() {
-    return this.isDoc || !!(this.channel.loadFlags & this.channel.LOAD_BACKGROUND) || !this.window
-      ;
-  },
+  
   window: function() {
     return IOUtil.findWindow(this.channel);
   },

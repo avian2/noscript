@@ -874,6 +874,7 @@ RequestWatchdog.prototype = {
         channel.loadFlags = channel.loadFlags & ~CACHE_FLAGS | channel.LOAD_BYPASS_CACHE;
         if (this.consoleDump) this.dump(channel, "SKIPPING CACHE");
       }
+      
       this.attachUnsafeRequest(requestInfo);
     }
     
@@ -1292,7 +1293,9 @@ var InjectionChecker = {
   
   maybeJS: function(expr) {
     expr = // dotted URL components can lead to false positives, let's remove them
-      expr.replace(/(?:(?:[\/\?&#]|^)[\w\.-]+(?=[\/\?&#]|$)|(?:[A-Z]|\d)[\w-]*\.[\w\.-]*|=[\w.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&]|$))/g, this._removeDots);
+      expr.replace(/(?:(?:[\/\?&#]|^)[\w\.-]+(?=[\/\?&#]|$)|(?:[A-Z]|\d)[\w-]*\.[\w\.-]*|=[\w.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&]|$))/g,
+                   this._removeDots)
+        .replace(/\s*\[\d+\]/g, '_ARRAY_ACCESS_');
 
     if(/^(?:[^\(\)="']+=[^\(='"\[]+|(?:[\?a-z_0-9;,&=\/]|\.[\d\.])*)$/i.test(expr) && !/\b=[\s\S]*_QS_\b/.test(expr)) // commonest case, single assignment or simple chained assignments, no break
       return this._singleAssignmentRx.test(expr) || this._riskyAssignmentRx.test(expr) && this._nameRx.test(expr);
