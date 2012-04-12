@@ -37,12 +37,15 @@ else
 fi
 
 # The name/version of the XPI we're building comes from src/install.rdf
-XPI_NAME="$APP_NAME-`grep em:version xpi/install.rdf | sed -e 's/[<>]/	/g' | cut -f3`"
+VERSION=`grep em:version xpi/install.rdf | sed -e 's/[<>]/	/g' | cut -f3`
+XPI_NAME="$APP_NAME-$VERSION"
 if [ "$1" ]; then
 	XPI_NAME="$XPI_NAME.xpi"
 else
 	XPI_NAME="$XPI_NAME~pre.xpi"
 fi
+
+../version.sh --add "$VERSION" xpi
 
 # Build the XPI!
 rm -f "../$XPI_NAME"
