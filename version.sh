@@ -16,7 +16,7 @@ PLACEHOLDER="@VERSION@"
 if [ "$CMD" = "--add" ]; then
 	SED_SCRIPT="s/$PLACEHOLDER/$VERSION/g"
 elif [ "$CMD" = "--strip" ]; then
-	SED_SCRIPT="s/$VERSION/$PLACEHOLDER/g"
+	SED_SCRIPT="s/${VERSION//./\\.}/$PLACEHOLDER/g"
 	if find "$TARGET" -regex "$REGEX" -print0 | xargs -0 grep "$PLACEHOLDER"; then
 		echo "Placeholder $PLACEHOLDER already present in source when stripping version!"
 		exit 1
