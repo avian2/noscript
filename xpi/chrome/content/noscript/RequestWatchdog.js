@@ -1293,7 +1293,7 @@ var InjectionChecker = {
   
   maybeJS: function(expr) {
     expr = // dotted URL components can lead to false positives, let's remove them
-      expr.replace(/(?:(?:[\/\?&#]|^)[\w\.-]+(?=[\/\?&#]|$)|(?:[A-Z]|\d)[\w-]*\.[\w\.-]*|=[\w.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&]|$))/g,
+      expr.replace(/(?:[\/\?&#]|^)[\w\.-]+(?=[\/\?&#]|$)|\b(?:[A-Z]|\d)[\w-]*\.[\w\.-]*|=[a-z.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&]|$)|\b[a-z.]*[_$1-9][\w.-]*/g,
                    this._removeDots)
         .replace(/\s*\[\d+\]/g, '_ARRAY_ACCESS_');
 

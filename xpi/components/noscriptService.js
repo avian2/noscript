@@ -4830,7 +4830,9 @@ var ns = {
       var isMedia = ("nsIDOMHTMLVideoElement" in Ci) && (obj instanceof Ci.nsIDOMHTMLVideoElement || obj instanceof Ci.nsIDOMHTMLAudioElement);
       
       if (isMedia) {
-        if (jsEnabled && !obj.controls) {
+        if (jsEnabled && !obj.controls
+            && !/[#?]/.test(url) // try to avoid infinite loops when a dynamic GUID is present in the URL
+          ) {
           // we must reload, since the author-provided UI likely had no chance to wire events
           reload(true); // normal reload because of http://forums.informaction.com/viewtopic.php?f=10&t=7195
           return;

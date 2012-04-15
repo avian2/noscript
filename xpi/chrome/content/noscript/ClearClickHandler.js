@@ -30,7 +30,9 @@ ClearClickHandler.prototype = {
       }
       
       if (this.mouse === mouse) {
-        if (site !== this.site &&
+        let contentRx = /^(?:(?:ht|f)tps?|data|javascript|feed):/i;
+        if (site !== this.site && contentRx.test(this.site) &&
+            (contentRx.test(site) || !contentRx.test(ev.target.ownerDocument.defaultView.top.location)) &&
             (ts - this.ts) < this.quarantine) {
           this.ts = ts - this.quarantine / 2;
           return ns.getPref("clearClick.rapidFireCheck");
@@ -39,6 +41,7 @@ ClearClickHandler.prototype = {
       
       this.site = site;
       this.ts = ts;
+  
       
       return false;
     }
@@ -471,7 +474,7 @@ ClearClickHandler.prototype = {
       docPatcher.linkAlertHack(true);
       docPatcher.fbPresenceHack(true);
       docPatcher.abpTabsHack(true);
-      
+      docPatcher.trafficLightHack(true);
       try {
         docPatcher.opaque(true);
         
@@ -800,6 +803,7 @@ ClearClickHandler.prototype = {
       if (typeof(bgStyle) == "string") dElem.style.background = bgStyle;
      
       docPatcher.opaque(false);
+      docPatcher.trafficLightHack(false);
       docPatcher.abpTabsHack(false);
       docPatcher.fbPresenceHack(false);
       docPatcher.linkAlertHack(false);
@@ -908,7 +912,7 @@ ClearClickHandler.prototype = {
       try {
         for each (let t in tags) {
           let oo = d.getElementsByTagName(t);
-          for (let i = oo.length; j-- > 0;) {
+          for (let i = oo.length; i-- > 0;) {
             let o = oo[i];
             if (o != el && !ns.isWindowlessObject(o)) {
               let oPP = this._offsetParents(o);
@@ -995,7 +999,7 @@ DocPatcher.prototype = {
     const res = [];
     var s = null, p = '', n = null;
 
-    const r = this.getRect(this.o, d);
+    const r = this.o.getBoundingClientRect();
     const top = r.top;
     const bottom = r.bottom;
     const left = r.left;
@@ -1007,7 +1011,7 @@ DocPatcher.prototype = {
     
     const tw = d.createTreeWalker(d, Ci.nsIDOMNodeFilter.SHOW_ELEMENT, null, false);
     for (var n = null; (n = tw.nextNode());) {
-      b = this.getRect(n, d);
+      b = n.getBoundingClientRect();
       if (b.bottom < top || b.top > bottom ||
           b.right < left || b.left > right)
         continue;
@@ -1122,19 +1126,54 @@ DocPatcher.prototype = {
     this.ns.updateStyleSheet(sheetHandle, false);
   },
   
+  trafficLightHack: function(toggle) {
+    const ID = "tll_hui_container";
+    if (!(toggle && this.top.document.getElementById(ID))) return;
+    
+    delete this.__proto__.trafficLightHack;
+    try {
+      Cc["@mozilla.org/chrome/chrome-registry;1"]
+        .getService(Ci.nsIChromeRegistry)
+        .convertChromeURL(IOS.newURI("chrome://trafficlight/content", null, null));
+    } catch(e) {
+      this.__proto__.trafficLightHack = DUMMY_FUNC;
+      return;
+    }
+    this.__proto__._trafficLightHackToogle = false;
+    this.__proto__.trafficLightHack = function(toggle) {
+      var w = this.top;
+      var d = w.document;
+      var c = d.getElementById(ID);
+      if (!toggle) {
+        if (this._trafficLightHackToggle) {
+          c.style.visibility = "visible";
+          this._trafficLightHackToggle = false;
+        }
+        return;
+      }
+      if (w.getComputedStyle(c, '').visibility !== "visible") return;
+      
+      for each(let n in Array.push(c, c.getElementsByTagName("*"))) {
+        if (n.getBoundingClientRect().bottom > 50) return;
+      }
+      c.style.visibility = "hidden";
+      this._trafficLightHackToggle = true;    
+    }
+    this.trafficLightHack(toggle);
+  },
+  
   _linkAlertBox: null,
   linkAlertHack: function(toggle) {
     try {
       var w = this.top;
       var d = w.document;
       if (toggle) {
-        var box = d.getElementById("linkalert-box");
+        let box = d.getElementById("linkalert-box");
         if (!box || box.style.display) return;
-        var imgs = box.getElementsByTagName("img");
+        let imgs = box.getElementsByTagName("img");
         if (imgs.length > 5) return;
-        var img;
-        for (var j = imgs.length; j-- > 0;) {
-          img = imgs[j];
+        for (let j = imgs.length; j-- > 0;) {
+          let img = imgs[j];
           if (!/^(?:chrome:\/\/linkalert\/skin\/|(?:moz\-icon|file):\/\/)/.test(img.src) || img.naturalWidth == 0 ||
             img.offsetWidth > 32 || img.offsetHeight > 32) return;
         }
@@ -1197,7 +1236,7 @@ DocPatcher.prototype = {
       }
     } catch(e) {
     }
-    
+    delete this.__proto__.abpTabsHack;
     this.__proto__.abpTabsHack =
       hiddenClass
       ? function(toggle) {
