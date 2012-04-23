@@ -602,6 +602,7 @@ const MainContentPolicy = {
                 if(!forbid || this.isAllowedObject(locationURL, mimeKey, locationSite) ||
                    this.isAllowedObjectByDOM(aContext, locationURL, originURL, mimeKey, locationSite)) {
                   if (logIntercept && forbid) this.dump("Silverlight " + locationURL + " is whitelisted, ALLOW");
+                  this.handleClickToPlay(aContext);
                   return CP_OK;
                 }
               } else if (isFlash) {
@@ -668,6 +669,7 @@ const MainContentPolicy = {
             this.isAllowedObjectByDOM(aContext, locationURL, originURL, mimeKey, locationSite, originSite)
             ) {
             this.setExpando(aContext, "allowed", true);
+            this.handleClickToPlay(aContext);
             return CP_OK; // forceAllow
           }
         } catch(ex) {

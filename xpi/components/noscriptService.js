@@ -3287,6 +3287,7 @@ var ns = {
     return forbidDelegate.call(this, originURL, locationURL);
   },
   
+
   addFlashVars: function(url, embed) {
     // add flashvars to have a better URL ID
     if (embed instanceof Ci.nsIDOMElement) try {
@@ -3297,7 +3298,10 @@ var ns = {
           if (p.name && p.name.toLowerCase() === "flashvars")
             flashvars = p.value;
       }
-      if (flashvars) url += "#!flashvars#" + encodeURI(flashvars); 
+      if (flashvars) {
+        let videoId = flashvars.match(/video_?id=[^&]+/);
+        url += "#!flashvars#" + encodeURI(videoId && videoId[0] || flashvars);
+      }
     } catch(e) {
       if (this.consoleDump) this.dump("Couldn't add flashvars to " + url + ":" + e);
     }
@@ -3589,6 +3593,13 @@ var ns = {
   objectWhitelistLen: 0,
   _objectKeyRx: /^((?:\w+:\/\/)?[^\.\/\d]+)\d+(\.[^\.\/]+\.)/,
   objectKey: function(url, originSite) {
+    if (url.indexOf("id=") > 0) {
+      let [path, query] = url.split("?");
+      if (query) {
+        let id = query.match(/(?:^|&)(?:video_?)?id=([^&]+)/);
+        if (id) url = path + "?id=" + id[1];
+      }
+    }
     return (originSite || '') + ">" + IOUtil.anonymizeURL(url.replace(this._objectKeyRx, '$1$2'));
   },
   anyAllowedObject: function(site, mime) {
@@ -4776,6 +4787,12 @@ var ns = {
            obj.ownerDocument.URL == this.createPluginDocumentURL(obj.src || obj.href, "iframe");
   },
   
+  handleClickToPlay: function(obj) {
+    if (obj instanceof Ci.nsIObjectLoadingContent && ("playPlugin" in obj) && ("activated" in obj) &&
+        !obj.activated && ns.getPref("smartClickToPlay"))
+      Thread.asap(function() obj.playPlugin());
+  },
+  
   checkAndEnableObject: function(ctx) {
     var extras = ctx.extras;
     if (!this.confirmEnableObject(ctx.window, extras)) return;
@@ -4831,7 +4848,7 @@ var ns = {
       
       if (isMedia) {
         if (jsEnabled && !obj.controls
-            && !/[#?]/.test(url) // try to avoid infinite loops when a dynamic GUID is present in the URL
+            && !/(?:=[^&;]{10,}.*){2,}/.test(this.objectKey(url)) // try to avoid infinite loops when more than one long parameter is present in the object key
           ) {
           // we must reload, since the author-provided UI likely had no chance to wire events
           reload(true); // normal reload because of http://forums.informaction.com/viewtopic.php?f=10&t=7195
@@ -5159,31 +5176,32 @@ var ns = {
       
       var browser, win;
    
-      
-      if(type == 2 || type == 9) { // script redirection? cache site for menu
-        try {
-          var site = this.getSite(uri.spec);
-          win = IOUtil.findWindow(newChan) || ctx && ((ctx instanceof Ci.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
-          browser = win && DOM.findBrowserForNode(win);
-          if (browser) {
-            this.getRedirCache(browser, win.top.document.documentURI)
-                .push({ site: site, type: type });
-          } else {
-            if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
+      switch(type) {
+        case 2: case 9: // script redirection? cache site for menu
+          try {
+            var site = this.getSite(uri.spec);
+            win = IOUtil.findWindow(newChan) || ctx && ((ctx instanceof Ci.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
+            browser = win && DOM.findBrowserForNode(win);
+            if (browser) {
+              this.getRedirCache(browser, win.top.document.documentURI)
+                  .push({ site: site, type: type });
+            } else {
+              if (this.consoleDump) this.dump("Cannot find window for " + uri.spec);
+            }
+          } catch(e) {
+            if (this.consoleDump) this.dump(e);
           }
-        } catch(e) {
-          if (this.consoleDump) this.dump(e);
-        }
+          break;
         
-        if (type == 7) {
+        case 7: // frame
+
           ph.extra = CP_FRAMECHECK;
           if (win && win.frameElement && ph.context != win.frameElement) {
             // this shouldn't happen
             if (this.consoleDump) this.dump("Redirected frame change for destination " + uri.spec);
             ph.context = win.frameElement;
           }
-        }
-        
+          break;
       }
       
       if (this.shouldLoad.apply(this, ph.toArray()) != CP_OK) {

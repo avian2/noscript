@@ -233,6 +233,8 @@ pref("noscript.surrogate.glinks.replacement", "for each(let et in ['focus','mous
 pref("noscript.surrogate.glinks.sources", "!@^https?://[^/]+google\\..*/search");
 pref("noscript.surrogate.qs.sources", "edge.quantserve.com");
 pref("noscript.surrogate.qs.replacement", "window.quantserve=function(){}");
+pref("noscript.surrogate.uniblue.sources", "!@.uniblue.com .liutilities.com");
+pref("noscript.surrogate.uniblue.replacement", "for each(let l in document.links)if(/^https:\/\/store\./.test(l.href)){l.setAttribute('href',l.href.replace(/.*?:/, ''));l.parentNode.replaceChild(l,l)}");
 pref("noscript.surrogate.yieldman.sources", "*.yieldmanager.com");
 pref("noscript.surrogate.yieldman.replacement", "rmAddKey=rmAddCustomKey=rmShowAd=rmShowPop=rmShowInterstitial=rmGetQueryParameters=rmGetSize=rmGetWindowUrl=rmGetPubRedirect=rmGetClickUrl=rmReplace=rmTrim=rmUrlEncode=rmCanShowPop=rmCookieExists=rmWritePopFrequencyCookie=rmWritePopExpirationCookie=flashIntalledCookieExists=writeFlashInstalledCookie=flashDetection=rmGetCookie=function(){}");
 pref("noscript.surrogate.popunder.sources", "@^http:\\/\\/[\\w\\-\\.]+\.[a-z]+ wyciwyg:");
@@ -351,3 +353,5 @@ pref("noscript.sync.enabled", false);
 pref("noscript.ABE.rulesets.SYSTEM", "# Prevent Internet sites from requesting LAN resources.\r\nSite LOCAL\r\nAccept from LOCAL\r\nDeny");
 pref("noscript.ABE.rulesets.USER", "# User-defined rules. Feel free to experiment here.\r\n");
 pref("noscript.ABE.migration", 0);
+
+pref("noscript.smartClickToPlay", true);
