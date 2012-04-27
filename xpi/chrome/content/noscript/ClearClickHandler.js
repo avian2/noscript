@@ -210,8 +210,16 @@ ClearClickHandler.prototype = {
 
   },
   
-  createCanvas: function(doc) {
-    return doc.__clearClickCanvas || (doc.__clearClickCanvas = doc.createElementNS(HTML_NS, "canvas"));
+  get canvas() {
+    delete this.__proto__.canvas;
+    const impl = Cc["@mozilla.org/xul/xul-document;1"].createInstance(Ci.nsIDOMDocument).implementation;
+    return this.__proto__.canvas = (("createHTMLDocument" in impl)
+      ? impl.createHTMLDocument("")
+      : impl.createDocument(
+        HTML_NS, "html", impl.createDocumentType(
+          "html", "-//W3C//DTD HTML 4.01 Transitional//EN", "http://www.w3.org/TR/html4/loose.dtd"  
+        ))
+      ).createElementNS(HTML_NS, "canvas");
   },
   
   _semanticContainers: [Ci.nsIDOMHTMLParagraphElement, Ci.nsIDOMHTMLQuoteElement,
@@ -428,7 +436,7 @@ ClearClickHandler.prototype = {
     
     if (!browser) return false; // some extensions, e.g. FoxTab, cause this
     
-    var c = this.createCanvas(browser.ownerDocument);
+    var c = this.canvas;
     var gfx = c.getContext("2d");
     
     var bg = this.getBG(w);
@@ -444,29 +452,80 @@ ClearClickHandler.prototype = {
     
     var img1 = null, img2 = null, tmpImg = null;
     
-    function snapshot(w, x, y) {
+    function Snapshot(w, x, y) {
       gfx.drawWindow(w, Math.round(x), Math.round(y), c.width, c.height, bg);
       if (woi && w == top && rootBox) {
         gfx.fillStyle = bg;
         for each (let b in woi)
           gfx.fillRect(b.screenX - rootBox.screenX - x, b.screenY - rootBox.screenY - y, b.width, b.height);
       }
-      return c.toDataURL();
+      this.imageData = gfx.getImageData(0, 0, c.width, c.height);
     }
     
-    function snapshots(x1, y1, x2, y2) {
+    Snapshot.prototype = {
+      THRESHOLD: ns.getPref("clearClick.threshold") / 100,
+      resembles: function(other) {
+        if (other === null) return false;
+        
+        let buf1 = this.imageData.data, buf2 = other.imageData.data;
+        let diff = 0, eq = 0;
+        const w = box.width;
+        const h = box.height;
+        const tot = w * h;
+        const maxDiff = Math.round(tot * this.THRESHOLD);
+        const minEq = tot - maxDiff;
+        let resembles = true;
+        resembles_loop:
+        for (let x = 0; x < w; x++) {
+          for (let y = 0; y < h; y++) {
+            let p = y * h + x * 4;
+            let r1 = buf1[p], r2 = buf2[p],
+                g1 = buf1[++p], g2 = buf2[p],
+                b1 = buf1[++p], b2 = buf2[p];
+            if (r1 !== r2 || g1 !== g2 || b1 !== b2) {
+              if (++diff > maxDiff) {
+                resembles = false;
+                break resembles_loop;
+              }
+            } else if (++eq > minEq) {
+              break resembles_loop;
+            }
+          }
+        }
+        if (ns.consoleDump & LOG_CLEARCLICK) {
+          ns.dump("Diff: " + diff + " / Tot: " + tot + "(maxDiff = " + maxDiff + ")");
+        }
+        return resembles;
+      },
+      toURL: function() {
+        gfx.putImageData(this.imageData, 0, 0);
+        return c.toDataURL();
+      }
+    }
+    
+    function compareSnapshots(x1, y1, x2, y2) {
       img1 = null;
       try {
-        if (objClass) docPatcher.clean(true);
-        img1 = snapshot(w, x1, y1);
+        if (objClass) {
+          docPatcher.clean(true);
+        }
+        if (curtain && !curtain.parentNode) {
+          if (o.nextSibling) {
+            o.parentNode.insertBefore(curtain, o.nextSibling);
+          } else {
+            o.parentNode.appendChild(curtain);
+          }
+        }
+        img1 = new Snapshot(w, x1, y1);
       } catch(ex) {
         throw ex;
       } finally {
         docPatcher.clean(false);
       }
-      img2 = tmpImg = snapshot(top, x2, y2);
-      return (img1 != img2); 
+      img2 = tmpImg = new Snapshot(top, x2, y2);
+      return ret && !img1.resembles(img2); 
     }
+
     var sd = this._NO_SCROLLBARS;
 
     try {
@@ -641,8 +700,6 @@ ClearClickHandler.prototype = {
             if (ns.consoleDump & LOG_CLEARCLICK) ns.dump(e);
           }
           
-         
-          
         }
         
         // clip viewport intersecting with scrolling parents
@@ -682,7 +739,7 @@ ClearClickHandler.prototype = {
         c.width = box.width;
         c.height = box.height;
         
-        woi = this.findWindowedRects(o, box);
+        woi = this.findWindowedRects(ctx.isEmbed ? o : w.frameElement);
         
         if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
           
@@ -690,7 +747,7 @@ ClearClickHandler.prototype = {
           dElem.appendChild(curtain);
         }
 
-        img1 = snapshot(w, box.x, box.y);
+        img1 = new Snapshot(w, box.x, box.y);
       
       } finally {
         docPatcher.clean(false);
@@ -710,10 +767,10 @@ ClearClickHandler.prototype = {
       const offs = ctx.isEmbed ? [0] : [0, -1, 1, -2, 2, -3, -3];
 
       checkImage:
-      for each(var x in offs) {
-        for each(var y in offs) {
-          tmpImg = snapshot(top, offsetX + x, offsetY + y);
-          if (img1 == tmpImg) {
+      for each(let x in offs) {
+        for each(let y in offs) {
+          tmpImg = new Snapshot(top, offsetX + x, offsetY + y);
+          if (img1.resembles(tmpImg)) {
             ret = false;
             break checkImage;
           }
@@ -734,14 +791,8 @@ ClearClickHandler.prototype = {
           zIndex = w.getComputedStyle(o, '').zIndex;
           background = this.rndColor();
         }
-        
-        if (o.nextSibling) {
-          o.parentNode.insertBefore(curtain, o.nextSibling);
-        } else {
-          o.parentNode.appendChild(curtain);
-        }
-        
-        ret = snapshots(box.x, box.y, offsetX, offsetY);
+
+        ret = compareSnapshots(box.x, box.y, offsetX, offsetY);
       }
       
       if (ret && ctx.isEmbed && ("x" in ctx) && c.width > this.minWidth && c.height > this.minHeight) {
@@ -749,7 +800,7 @@ ClearClickHandler.prototype = {
         c.height = this.minHeight;
         for each(x in [Math.max(ctx.x - this.minWidth, box.oX), Math.min(ctx.x, box.oX + box.oW - this.minWidth)]) {
           for each(y in [Math.max(ctx.y - this.minHeight, box.oY), Math.min(ctx.y, box.oY + box.oH - this.minHeight)]) {
-            ret = snapshots(x, y, offsetX + (x - box.x), offsetY + (y - box.y));
+            ret = compareSnapshots(x, y, offsetX + (x - box.x), offsetY + (y - box.y));
             if (!ret) {
               offsetX += (x - box.x);
               offsetY += (y - box.y);
@@ -782,14 +833,15 @@ ClearClickHandler.prototype = {
             
           } else {
             curtain.parentNode.removeChild(curtain);
+            curtain = null;
           }
-          snapshots(box.x, box.y, offsetX, offsetY);
+          compareSnapshots(box.x, box.y, offsetX, offsetY);
         }
         
         ctx.img =
         {
-          src: img1,
-          altSrc: img2,
+          src: img1.toURL(),
+          altSrc: img2.toURL(),
           width: c.width,
           height: c.height
         }
@@ -902,9 +954,14 @@ ClearClickHandler.prototype = {
     return pp;
   },
   
-  findWindowedRects: function(el, box) {
+  get _ignoreWindowedZ() {
+    delete this.__proto__._ignoreWindowedZ;
+    return this.__proto__._ignoreWindowedZ = ns.geckoVersionCheck("10.0") < 0;
+  },
+  findWindowedRects: function(el) {
     const tags = ["object", "embed"];
-    let woi = null;
+    var woi = null;
+    
     while(el) {
       let d = el.ownerDocument;
       let w = d.defaultView;
@@ -922,10 +979,13 @@ ClearClickHandler.prototype = {
                   let s1 = w.getComputedStyle(p1, '');
                   let s2 = w.getComputedStyle(p2, '');
                   
-                  if (s2.display != 'none' && s2.visibility != 'hidden'  && s2.position != 'static' &&
-                     (s1.position == 'static'  || 
-                        (parseInt(s1.zIndex, 10) || 0) <= (parseInt(s2.zIndex, 10) || 0)
-                    )) {
+                  if (s2.display != 'none' && s2.visibility != 'hidden' &&
+                      (this._ignoreWindowedZ ||
+                        (s2.position != 'static' &&
+                         (s1.position == 'static'  || 
+                            (parseInt(s1.zIndex, 10) || 0) <= (parseInt(s2.zIndex, 10) || 0)))
+                      )
+                    ) {
                     (woi || (woi = [])).push(this.getBox(o, d, w));
                   }
                 }
@@ -1043,7 +1103,7 @@ DocPatcher.prototype = {
     
     for each(n in posn) n.__noscriptPos = false;
     
-    if(ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("DocPatcher.collectPositioned(): " + (Date.now() - t));
+    if(ns.consoleDump & LOG_CLEARCLICK) ns.dump("DocPatcher.collectPositioned(): " + (Date.now() - t));
     return res;
   },
   

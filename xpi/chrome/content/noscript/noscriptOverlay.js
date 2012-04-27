@@ -2364,7 +2364,7 @@ return noscriptUtil.service ? {
         if (w) {
           const ns = noscriptOverlay.ns;
           let url = doc.URL;
-          const jsBlocked = !ns.jsEnabled && /^https?:/.test(url) && !ns.isJSEnabled(ns.getSite(url));
+          const jsBlocked = /^https?:/.test(url) && !ns.isJSEnabled(ns.getSite(url));
           
           ns.setExpando(doc, "contentLoaded", true);
           if (w == w.top) {

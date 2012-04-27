@@ -6131,7 +6131,6 @@ var ns = {
           docShell.setupRefreshURIFromHeader(docShell.currentURI,  toGo + ";" + uri.spec);
           docShell.resumeRefreshURIs();
         }
-       
       }, false);
     }
     hookFocus(true);
@@ -6148,11 +6147,9 @@ var ns = {
         if(this.consoleDump) this.dump("Neutralizing UTF-7 charset!");
         docShell.documentCharsetInfo.forcedCharset = as.getAtom("UTF-8");
         docShell.documentCharsetInfo.parentCharset = docShell.documentCharsetInfo.forcedCharset;
-        docShell.reload(docShell.LOAD_FLAGS_CHARSET_CHANGE); // neded in Gecko > 1.9
+        docShell.reload(docShell.LOAD_FLAGS_CHARSET_CHANGE); // needed in Gecko > 1.9
       }
-    } catch(e) { 
-      if(this.consoleDump) this.dump("Error filtering charset on " + req.name + ": " + e) 
-    }
+    } catch(e) {}
   },
   
   _attemptNavigationInternal: function(doc, destURL, callback) {
@@ -6405,6 +6402,7 @@ var ns = {
   consoleService: Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService),
   
   log: function(msg, dump) {
+    if (msg.stack) msg += msg.stack;
     this.consoleService.logStringMessage(msg);
     if (dump) this.dump(msg, true);
   },
@@ -6418,6 +6416,7 @@ var ns = {
   },
  
   dump: function(msg, noConsole) {
+    if (msg.stack) msg += msg.stack;
     msg = "[NoScript] " + msg;
     dump(msg + "\n");
     if(this.consoleLog && !noConsole) this.log(msg);

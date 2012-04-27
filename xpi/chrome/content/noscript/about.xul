@@ -71,6 +71,7 @@ function about_onload() {
 
 function about_open(url, features) {
   noscriptUtil.browse(url, features);
+  window.close();
 }
 
 

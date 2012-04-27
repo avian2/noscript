@@ -240,7 +240,9 @@ var ScriptSurrogate = {
       if (typeof env !== "undefined") {
         s.env = env;
       }
-      Cu.evalInSandbox("with(window){" + scriptBlock + "}delete this.env;for each(let p in Object.keys(this))window[p]=this[p]", s, this.JS_VERSION);
+      let code = "with(window){" + scriptBlock + "}delete this.env;";
+      if ("keys" in Object) code += "for each(let p in Object.keys(this))window[p]=this[p];";
+      Cu.evalInSandbox(code, s, this.JS_VERSION);
     } catch (e) {
       if (ns.consoleDump) {
         ns.dump(e);
