@@ -269,7 +269,6 @@
   </popupset>
 
 
-
 <statusbar id="status-bar">
   <statusbarpanel id="noscript-statusLabel"
     insertbefore="statusbar-updates"

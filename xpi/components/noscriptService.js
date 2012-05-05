@@ -4194,22 +4194,19 @@ var ns = {
   
   handleBookmark: function(url, openCallback) {
     if (!url) return true;
-    const allowBookmarklets = !this.getPref("forbidBookmarklets", false);
-    const allowBookmarks = this.getPref("allowBookmarks", false);
-    if (!this.jsEnabled && 
-      (allowBookmarks || allowBookmarklets)) {
-      try {
-        var site;
-        if (allowBookmarklets && /^\s*(?:javascript|data):/i.test(url)) {
-          var ret = this.executeJSURL(url, openCallback);
-        } else if (allowBookmarks && !(this.isJSEnabled(site = this.getSite(url)) || this.isUntrusted(site))) {
+    try {
+      if (!this.getPref("forbidBookmarklets") && /^\s*(?:javascript|data):/i.test(url)) {
+        return this.executeJSURL(url, openCallback);
+      }
+      if (!this.isJSEnabled && this.getPref("allowBookmarks")) {
+        let site = this.getSite(url);
+        if (!(this.isJSEnabled(site) || this.isUntrusted(site))) {
           this.setJSEnabled(site, true);
           this.savePrefs();
         }
-        return ret;
-      } catch(e) {
-        if (ns.consoleDump) ns.dump(e + " " + e.stack);
       }
+    } catch(e) {
+      if (ns.consoleDump) ns.dump(e + " " + e.stack);
     }
     return false;
   },
@@ -4243,16 +4240,20 @@ var ns = {
     if(!window) return false;
     
     var site = this.getSite(window.document.documentURI) || this.getExpando(browser, "jsSite");
-    if (this.mozJSEnabled && !this.jsEnabled) {
+    if (this.mozJSEnabled && (!this.jsEnabled || this.isUntrusted(site))) {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
     
       let docShell = DOM.getDocShellForWindow(window);
     
       let snapshots = {
+        globalJS: this.jsEnabled,
         docJS: docShell.allowJavascript,
-        siteJS: this.isJSEnabled(site)
+        siteJS: this.jsPolicySites.sitesString,
+        untrusted: this.untrustedSites.sitesString
       };
-    
+      
+      let siteJSEnabled = this.isJSEnabled(site);
+      
       let doc = window.document;
       
       let focusListener = null;
@@ -4261,8 +4262,9 @@ var ns = {
 
         docShell.allowJavascript = true;
         if (!(this.jsEnabled = doc.documentURI === "about:blank" || ns.getPref(fromURLBar ? "allowURLBarImports" : "allowBookmarkletImports"))) {
-          if (!snapshots.siteJS) 
+          if (!siteJSEnabled) {
             this.setJSEnabled(site, true);
+          }
         } else {
           focusListener = function(ev) {
             ns.jsEnabled = DOM.mostRecentBrowserWindow.content == window;
@@ -4273,14 +4275,14 @@ var ns = {
         
         try {
           this.executingJSURL(doc, 1);
-          if (!(snapshots.siteJS && snapshots.docJS)) {
+          if (!(siteJSEnabled && snapshots.docJS)) {
             this._patchTimeouts(window, true);
           }
           
           window.location.href = url;
           
           Thread.yieldAll();
-          if (!(snapshots.siteJS && snapshots.docJS)) {
+          if (!(siteJSEnabled && snapshots.docJS)) {
             this._patchTimeouts(window, false);
           }
           
@@ -4308,11 +4310,13 @@ var ns = {
             for each(let et in ["focus", "blur"])
               browserWindow.removeEventListener(et, focusListener, true);
           
-          if (this.jsEnabled)
-            this.jsEnabled = false;
+          if (this.jsEnabled != snapshots.globalJS)
+            this.jsEnabled = snapshots.globalJS;
           
-          if (!snapshots.siteJS)
-              this.setJSEnabled(site, false);
+          this.jsPolicySites.sitesString = snapshots.siteJS;
+          this.untrustedSites.sitesString = snapshots.untrusted;
+          
+          this.flushCAPS();
           
           if (this.consoleDump & LOG_JS)
             this.dump("Restored snapshot permissions on " + site + "/" + (docShell.isLoadingDocument ? "loading" : docShell.currentURI.spec));

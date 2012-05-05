@@ -675,11 +675,9 @@ RequestWatchdog.prototype = {
         if (ns.consoleDump) this.dump(channel, "Evernote frame detected (noscript.compat.evernote)");
         return;
       }
-      
-      IOUtil.attachToChannel(channel, "noscript.checkWindowName", DUMMY_OBJ);
     }
     
-    
+    IOUtil.attachToChannel(channel, "noscript.checkWindowName", DUMMY_OBJ);
     
     let trustedOrigin = globalJS || ns.isJSEnabled(originSite) ||
         !origin // we consider null origin as "trusted" (i.e. we check for injections but 
@@ -1259,7 +1257,8 @@ var InjectionChecker = {
 ,
 
   _singleAssignmentRx: new RegExp(
-    "(?:\\b" + fuzzify('document') + "\\b[\\s\\S]*\\.|\\s" + fuzzify('setter') + "\\b[\\s\\S]*=)|/.*/[\\s\\S]*(?:\\.(?:"
+    "(?:\\b" + fuzzify('document') + "\\b[\\s\\S]*\\.|\\s" + fuzzify('setter') + "\\b[\\s\\S]*=)|/.*/[\\s\\S]*(?:\\.(?:" +
+     "\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=|" +
       + fuzzify('source|toString') + ")|\\[)|" + IC_EVENT_DOS_PATTERN
   ),
   _riskyAssignmentRx: new RegExp(
@@ -1281,6 +1280,18 @@ var InjectionChecker = {
       fuzzify('setter|location|innerHTML') +
       ')\\b[\\s\\S]*=|' +
       IC_EVENT_DOS_PATTERN +
+      // identifier's tail...         optional comment...         
+    '[\\w$\\u0080-\\uFFFF\\]\\)]' + IC_COMMENT_PATTERN + 
+    // accessor followed by function call or assignment.    
+     '(?:(?:\\[[\\s\\S]*\\]|\\.\\D)[\\s\\S]*(?:\\([\\s\\S]*\\)|=)' +
+       // double function call
+       '|\\([\\s\\S]*\\([\\s\\S]*\\)' +
+     ')|\\b(?:' + IC_EVAL_PATTERN +
+      ')\\b[\\s\\S]*\\(|\\b(?:' +
+      fuzzify('setter|location|innerHTML') +
+      ')\\b[\\s\\S]*=|' +
+      IC_EVENT_DOS_PATTERN +
+      "|\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=" +
       "|=[s\\\\[ux]?\d{2}" // escape (unicode/ascii/octal)
   ),
   
@@ -1366,6 +1377,10 @@ var InjectionChecker = {
           .replace(/[\x01-\x09\x0b-\x20]+/g, ' ')
         )));
     
+    if (s.indexOf("*/") > 0 && /\*\/[\s\S]+\/\*/.test(s)) { // possible scrambled multi-point with comment balancing
+      return this.maybeJS(s + ';' + s.match(/\*\/[\s\S]+/));
+    }
+    
     if (!this.maybeJS(s)) return false;
 
     const MAX_TIME = 8000, MAX_LOOPS = 1200;
@@ -1377,17 +1392,17 @@ var InjectionChecker = {
       safeCgiRx = /^(?:(?:[\.\?\w\-\/&:`\[\]]+=[\w \-:\+%#,`\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/,
         // r2l, chained query string parameters, protocol://domain
       headRx = /^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=]))/
+        // irrepairable syntax error, such as closed parens in the beginning
     ;
     
-    const injectionFinderRx = /(['"#;>:]|[\/\?=](?![\?&=])|&(?![\w\-\.\[\]&!]*=)|\*\/)(?!\1)/g;
+    const injectionFinderRx = /(['"#;>:\{\}]|[\/\?=](?![\?&=])|&(?![\w\-\.\[\]&!]*=)|\*\/)(?!\1)/g;
     injectionFinderRx.lastIndex = 0;    
     
     const t = Date.now();
     var iterations = 0;
     
-    for (let dangerPos = 0; (m = injectionFinderRx.exec(s));) {
+    for (let dangerPos = 0, m; (m = injectionFinderRx.exec(s));) {
     
-      
       let startPos = injectionFinderRx.lastIndex;
       let subj = s.substring(startPos);
       if (startPos > dangerPos) {

@@ -158,7 +158,7 @@
       var top = w.top;
       var browser = DOM.findBrowserForNode(top);
       
-      var c = this.createCanvas(browser.ownerDocument);
+      var c = this.canvas;
       var gfx = c.getContext("2d");
       
       var bg = this.getBG(w);

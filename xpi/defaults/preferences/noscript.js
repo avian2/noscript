@@ -281,6 +281,8 @@ pref("noscript.surrogate.plusone.sources", "apis.google.com/js/plusone.js");
 pref("noscript.surrogate.plusone.replacement", "gapi=function(){if(typeof Proxy==='undefined'){var f=arguments.callee;return f.__noSuchMethod__=f.plusone=f;}var p=Proxy.createFunction({get:function(proxy, name){return name in Object.prototype?Object.prototype[name]:p;}},function(){return p;});return p;}();");
 pref("noscript.surrogate.disqus-theme.sources", ">.disqus.com/*/build/themes/t_c4ca4238a0b923820dcc509a6f75849b.js*");
 pref("noscript.surrogate.disqus-theme.replacement", "DISQUS.dtpl.actions.register('comments.reply.new.onLoadingStart', function() { DISQUS.dtpl.actions.remove('comments.reply.new.onLoadingStart'); DISQUS.dtpl.actions.remove('comments.reply.new.onLoadingEnd');});");
+pref("noscript.surrogate.skimlinks.sources", ".skimlinks.com/api/");
+pref("noscript.surrogate.skimlinks.replacement", "window.skimlinks=function(){}");
 
 pref("noscript.placeholderMinSize", 32);
 pref("noscript.placeholderLongTip", true);

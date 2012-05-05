@@ -49,7 +49,6 @@ locale noscript es-CL jar:chrome/noscript.jar!/locale/es-CL/noscript/
 locale noscript es-ES jar:chrome/noscript.jar!/locale/es-ES/noscript/
 locale noscript et-EE jar:chrome/noscript.jar!/locale/et-EE/noscript/
 locale noscript eu    jar:chrome/noscript.jar!/locale/eu/noscript/
-locale noscript eu-ES jar:chrome/noscript.jar!/locale/eu-ES/noscript/
 locale noscript fa-IR jar:chrome/noscript.jar!/locale/fa-IR/noscript/
 locale noscript fi    jar:chrome/noscript.jar!/locale/fi/noscript/
 locale noscript fr    jar:chrome/noscript.jar!/locale/fr/noscript/

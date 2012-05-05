@@ -353,6 +353,7 @@ return noscriptUtil.service ? {
   
   _popupsInitialized: false,
   initPopups: function() {
+    
     const sticky = this.stickyUI; // early init
 
     const popup = $("noscript-status-popup");
@@ -365,7 +366,7 @@ return noscriptUtil.service ? {
     if (tbb) {
       tbb.setAttribute("type", this.hoverUI ? "button" : this.ns.getPref("toolbarToggle") ? "menu-button" : "menu");
     }
-    
+
     const buttons = [tbb, $("noscript-statusLabel")];
     let statusIcon = $("noscript-statusIcon");
     if ($("addon-bar")) {
@@ -375,7 +376,6 @@ return noscriptUtil.service ? {
           noscriptOverlay.initPopups();
         }, false);
       }
-      
       if (statusIcon) statusIcon.parentNode.removeChild(statusIcon);
     } else {
       // Fx 3.6.x or below
@@ -466,26 +466,24 @@ return noscriptUtil.service ? {
     
     
     
-    var j, k, node;
+    var node;
     
     const global = ns.jsEnabled;
     const blockUntrusted = global && ns.alwaysBlockUntrustedContent;
-    
-    var allSeps = popup.getElementsByTagName("menuseparator");
-   
+
     var seps = { insert: null, stop: null, global: null, untrusted: null };
-    var sepName;
-    for (j = allSeps.length; j-- > 0;) {
-      sepName = (node = allSeps[j]).className;
-      node.hidden = false;
-      for (k in seps) {
-        if (sepName.indexOf("-" + k) > -1) {
-          seps[k] = node;
+    {
+      let allSeps = popup.getElementsByTagName("menuseparator");
+      for (let j = allSeps.length; j-- > 0;) {
+        let sepName = (node = allSeps[j]).className;
+        node.hidden = false;
+        for (let k in seps) {
+          if (sepName.indexOf("-" + k) > -1) {
+            seps[k] = node;
+          }
         }
       }
     }
-    
-    delete allSeps;
 
     const miGlobal = seps.global.nextSibling;
     
@@ -579,15 +577,15 @@ return noscriptUtil.service ? {
     sites = sites || this.getSites();
     
     const topSite = sites.topSite;
-    
-    j = sites.indexOf(topSite);
-    var topDown = !/-sep-stop\b/.test(mainMenu.lastChild.className); 
-    if (j > -1 && j != (topDown ? sites.length - 1 : 0)) {
-      sites.splice(j, 1);
-      if (topDown) sites.push(topSite);
-      else sites.unshift(topSite);
+    {
+      let topIdx = sites.indexOf(topSite);
+      let topDown = !/-sep-stop\b/.test(mainMenu.lastChild.className); 
+      if (topIdx > -1 && topIdx != (topDown ? sites.length - 1 : 0)) {
+        sites.splice(topIdx, 1);
+        if (topDown) sites.push(topSite);
+        else sites.unshift(topSite);
+      }
     }
-    
     
     try {
       this.populatePluginsMenu(mainMenu, pluginsMenu, sites.pluginExtras);
@@ -641,7 +639,7 @@ return noscriptUtil.service ? {
     }
     
     menuGroups = [];
-    for (j = 0; j < sites.length; j++) {
+    for (let j = 0; j < sites.length; j++) {
       site = sites[j];
       
       matchingSite = jsPSs.matches(site);
@@ -737,17 +735,15 @@ return noscriptUtil.service ? {
     }
     
     
-    var blurred;
-
     const untrustedFrag = showUntrusted ? document.createDocumentFragment() : null;
     const mainFrag = document.createDocumentFragment();
     const sep = document.createElement("menuseparator");
     
-    j = menuGroups.length;
+    let mgCount = menuGroups.length;
     
     var refMI = document.createElement("menuitem");
     refMI.setAttribute("oncommand", "noscriptOverlay.menuCmd(event)");
-    if (sticky && (this.liveReload || j > 1 || enabled)) {
+    if (sticky && (this.liveReload || mgCount > 1 || enabled)) {
       refMI.setAttribute("closemenu", "none");
     }
     
@@ -816,16 +812,14 @@ return noscriptUtil.service ? {
       }
     }
     
-    if (j > 0 && seps.stop.previousSibling.nodeName != "menuseparator")
+    if (mgCount > 0 && seps.stop.previousSibling.nodeName != "menuseparator")
       mainFrag.appendChild(sep.cloneNode(false));
     
-    var fullTip = !!ns.getPref("siteInfoProvider");
-    var disabled;
+    const fullTip = !!ns.getPref("siteInfoProvider");
     
-    
-    while (j-- > 0) {
+    while (mgCount-- > 0) {
       
-      menuSites = menuGroups[j];
+      menuSites = menuGroups[mgCount];
       isTop = menuSites.isTop;
       enabled = menuSites.enabled;
       let showInMain = menuSites.showInMain;
@@ -862,8 +856,8 @@ return noscriptUtil.service ? {
         else cssClass = "noscript-cmd";
         
         
-        blurred = false;
-        disabled = locked || (enabled ? ns.isMandatory(menuSite) : blurred = ns.isForbiddenByHttpsStatus(menuSite));
+        let blurred = false;
+        let disabled = locked || (enabled ? ns.isMandatory(menuSite) : blurred = ns.isForbiddenByHttpsStatus(menuSite));
         if (disabled) {
           node.setAttribute("disabled", "true");
         } else {
@@ -1166,7 +1160,7 @@ return noscriptUtil.service ? {
     const trusted = ns.jsPolicySites;
     const tempToPerm = permanent === -1;
     var site;
-    for (var j = sites.length; j-- > 0;) {
+    for (let j = sites.length; j-- > 0;) {
       if (tempToPerm) {
         site = trusted.matches(sites[j]);
         if (!(site && ns.isTemp(site)) || ns.isUntrusted(site)) continue;
@@ -2428,7 +2422,6 @@ return noscriptUtil.service ? {
     
       try {
         noscriptOverlay.listeners.setup();
-        noscriptOverlay.initPopups();
         noscriptOverlay.wrapBrowserAccess();
         let hacks = noscriptOverlay.Hacks;
         hacks.torButton();
