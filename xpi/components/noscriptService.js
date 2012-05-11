@@ -4198,7 +4198,7 @@ var ns = {
       if (!this.getPref("forbidBookmarklets") && /^\s*(?:javascript|data):/i.test(url)) {
         return this.executeJSURL(url, openCallback);
       }
-      if (!this.isJSEnabled && this.getPref("allowBookmarks")) {
+      if (!this.jsEnabled && this.getPref("allowBookmarks")) {
         let site = this.getSite(url);
         if (!(this.isJSEnabled(site) || this.isUntrusted(site))) {
           this.setJSEnabled(site, true);
@@ -6577,3 +6577,6 @@ var ns = {
 
 ns.wrappedJSObject = ns;
 ns.__global__ = this; // debugging helper necessary on Gecko >= 13
+ns._e = function(f) {
+  return eval("(" + f + ")()"); 
+}

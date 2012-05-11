@@ -224,6 +224,8 @@ pref("noscript.cp.last", true);
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.debug", false);
 pref("noscript.surrogate.sandbox", true);
+pref("noscript.surrogate.adagionet.sources", ".adagionet.com");
+pref("noscript.surrogate.adagionet.replacement", "adagioWriteTag=adagioWriteBanner=function(){}");
 pref("noscript.surrogate.adfly.sources", "!@.adf.ly");
 pref("noscript.surrogate.adfly.replacement", "for each(let s in document.getElementsByTagName('script')){let m=s.textContent.match(/\\bcountdown\\b[\\s\\S]+\\bvar\\s+url\\s+=\\s+[\"'](https?:[^'\"]+)/);if(m){window.location.href=m[1];break}}");
 pref("noscript.surrogate.digg.sources", "!@digg.com/newsbar/*");
@@ -310,7 +312,7 @@ pref("noscript.ABE.localExtras", "");
 
 pref("noscript.asyncNetworking", true);
 pref("noscript.inclusionTypeChecking", true);
-pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com .amazonaws.com");
+pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com .amazonaws.com lesscss.googlecode.com/files/");
 pref("noscript.inclusionTypeChecking.checkDynamic", false);
 pref("noscript.nosniff", true);
 

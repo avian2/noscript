@@ -352,7 +352,7 @@ RequestWatchdog.prototype = {
     }
     
     if (/[%=\(\\<]/.test(originalAttempt) && (
-      InjectionChecker.checkJS(originalAttempt ||  InjectionChecker.checkHTML(originalAttempt)))) {
+      InjectionChecker.checkURL(originalAttempt ||  InjectionChecker.checkHTML(originalAttempt)))) {
       window.name = originalAttempt.replace(/[%=\(\\<]/g, " ");
     }
 
@@ -360,7 +360,7 @@ RequestWatchdog.prototype = {
       try {
         if ((originalAttempt.length % 4 == 0)) { 
           var bin = window.atob(window.name);
-          if(/[=\(\\]/.test(bin) && InjectionChecker.checkJS(bin)) {
+          if(/[%=\(\\]/.test(bin) && InjectionChecker.checkURL(bin)) {
             window.name = "BASE_64_XSS";
           }
         }
@@ -1103,7 +1103,7 @@ var InjectionChecker = {
   },
   
   get breakStops() {
-    var def = "\\/\\?&#;\\s\\x00<>"; // we stop on URL, JS and HTML delimiters
+    var def = "\\/\\?&#;\\s\\x00<>}"; // we stop on URL, JS and HTML delimiters
     var bs = {
       nq: new RegExp("[" + def + "]")
     };
@@ -1173,7 +1173,7 @@ var InjectionChecker = {
     // optimistic case first, one big JSON block
     for (;;) {
      
-      let m = s.match(/{[\s\S]*}/);
+      let m = s.match(/{[\s\S]+}/);
       if (!m) return s;
       
       let whole = s;
@@ -1185,7 +1185,7 @@ var InjectionChecker = {
             return s;
           
           this.log("Reducing big JSON " + expr);
-          return s.replace(expr, '_JSON_');
+          return s.replace(expr, '{}');
         } catch(e) {}
       }
       
@@ -1199,7 +1199,7 @@ var InjectionChecker = {
               continue;
             
             this.log("Reducing JSON " + expr);
-            s = s.replace(expr, '"_JSON_"');
+            s = s.replace(expr, '{}');
             continue;
           } catch(e) {}
           
@@ -1208,12 +1208,12 @@ var InjectionChecker = {
           let qred = this.reduceQuotes(expr);
           if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(qred)) {
              this.log("Reducing pseudo-JSON " + expr);
-             s = s.replace(expr, '"_PseudoJSON_"');
+             s = s.replace(expr, '{}');
           } else if (!/[\(=\.]|[^:\s]\s*\[|:\s*(?:location|document|eval|open|show\w*Dialog)\b/.test(qred) && 
              this.checkJSSyntax("JSON = " + qred) // no-assignment JSON fails with "invalid label"
           ) { 
             this.log("Reducing slow JSON " + expr);
-            s = s.replace(expr, '"_SlowJSON_"');
+            s = s.replace(expr, '{}');
           }
         }
         
@@ -1577,6 +1577,10 @@ var InjectionChecker = {
                 moved = m[1] != ':';
               } else break;
             }
+            else if (/finally without try/.test(errmsg)) {
+              expr = "try{" + expr;
+              moved = true;
+            }
           }
         }
       }
@@ -1589,7 +1593,7 @@ var InjectionChecker = {
   checkJS: function(s, unescapedUni) {
     this.log(s);
     
-    var hasUnicodeEscapes = !unescapedUni && /\\u[0-9a-f]{4}/.test(s);
+    var hasUnicodeEscapes = !unescapedUni && /\\u[0-9a-f]{4}/i.test(s);
     if (hasUnicodeEscapes && /\\u00(?:22|27|2f)/i.test(s)) {
       this.escalate("Unicode-escaped lower ASCII");
       return true;
@@ -1781,8 +1785,16 @@ var InjectionChecker = {
     if (ASPIdiocy.affects(s)) {
       if (this.checkRecursive(ASPIdiocy.filter(s), depth, isPost))
         return true;
-    } else if (ASPIdiocy.hasBadPercents(s) && this.checkRecursive(ASPIdiocy.removeBadPercents(s), depth, isPost))
+    }
+    
+    if (ASPIdiocy.hasBadPercents(s) && this.checkRecursive(ASPIdiocy.removeBadPercents(s), depth, isPost))
       return true;
+    
+    {
+      let coalesced = ASPIdiocy.coalesceQuery(s);
+      if (coalesced !== s && this._checkRecursive(coalesced, depth))
+        return true;
+    }
     
     if (this.isPost) {
       s = this.formUnescape(s);
@@ -2473,7 +2485,29 @@ var ASPIdiocy = {
   removeBadPercents: function(s) s.replace(this._badPercentRx, ''),
   affects: function(s) this._affectsRx.test(s),
   filter: function(s) this.removeBadPercents(s).replace(this._replaceRx, this._replace),
-  
+  coalesceQuery: function(s) {
+    let [p, q] = s.split("?");
+    if (!q) return s;
+    let unchanged = true;
+    let pairs = q.split("&");
+    let accumulator = { __proto__: null };
+    for (let j = 0, len = pairs.length; j < len; j++) {
+      let nv = pairs[j];
+      let eq = nv.indexOf("=");
+      if (eq === -1) continue;
+      let key = "#" + unescape(nv.substring(0, eq)).toLowerCase();
+      if (key in accumulator) {
+        delete pairs[j];
+        pairs[accumulator[key]] += ", " + nv.substring(eq + 1);
+        unchanged = false;
+      } else {
+        accumulator[key] = j;
+      }
+    }
+    if (unchanged) return s;
+    for (let j = pairs.length; j-- > 0;) if (!pairs[j]) pairs.splice(j, 1);
+    return p + "?" + pairs.join("&");
+  },
   _replace: function(match, hex) {
      // lazy init
      INCLUDE("ASPIdiocy");
