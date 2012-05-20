@@ -191,7 +191,12 @@ ChannelReplacement.prototype = {
   _callSink: function(sink, oldChan, newChan, flags) {
     try { 
       if ("onChannelRedirect" in sink) sink.onChannelRedirect(oldChan, newChan, flags);
-      else sink.asyncOnChannelRedirect(oldChan, newChan, flags, this._redirectCallback);
+      else if ("asyncOnChannelRedirect" in sink) {
+        sink.asyncOnChannelRedirect(oldChan, newChan, flags, this._redirectCallback);
+      } else {
+        ABE.log("Unexpected: asyncOnChannelRedirect not found, instanceof nsIChannelEventSink = " + (sink instanceof Ci.nsIChannelEventSink) + "\n" +
+                sink + "\n" + (new Error().stack));
+      }
     } catch(e) {
       if (e.toString().indexOf("(NS_ERROR_DOM_BAD_URI)") !== -1 && oldChan.URI.spec !== newChan.URI.spec) {
         let oldURL = oldChan.URI.spec;

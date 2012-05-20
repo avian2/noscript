@@ -1370,6 +1370,7 @@ var InjectionChecker = {
   checkJSBreak: function InjectionChecker_checkJSBreak(s) {
     // Direct script injection breaking JS string literals or comments
     
+    
     // cleanup most urlencoded noise and reduce JSON/XML
     s = this.reduceXML(this.reduceJSON(this.collapseChars(
         s.replace(/\%\d+[a-z\(]\w*/gi, '`')
@@ -1378,7 +1379,7 @@ var InjectionChecker = {
         )));
     
     if (s.indexOf("*/") > 0 && /\*\/[\s\S]+\/\*/.test(s)) { // possible scrambled multi-point with comment balancing
-      return this.maybeJS(s + ';' + s.match(/\*\/[\s\S]+/));
+      s += ';' + s.match(/\*\/[\s\S]+/);
     }
     
     if (!this.maybeJS(s)) return false;
@@ -1783,16 +1784,14 @@ var InjectionChecker = {
     this.base64tested = [];
     
     if (ASPIdiocy.affects(s)) {
-      if (this.checkRecursive(ASPIdiocy.filter(s), depth, isPost))
+      if (this.checkRecursive(ASPIdiocy.process(s), depth, isPost))
         return true;
-    }
-    
-    if (ASPIdiocy.hasBadPercents(s) && this.checkRecursive(ASPIdiocy.removeBadPercents(s), depth, isPost))
+    } else if (ASPIdiocy.hasBadPercents(s) && this.checkRecursive(ASPIdiocy.removeBadPercents(s), depth, isPost))
       return true;
     
-    {
+    if (s.indexOf("coalesced:") !== 0) {
       let coalesced = ASPIdiocy.coalesceQuery(s);
-      if (coalesced !== s && this._checkRecursive(coalesced, depth))
+      if (coalesced !== s && this.checkRecursive("coalesced:" + coalesced, depth, isPost))
         return true;
     }
     
@@ -2484,30 +2483,55 @@ var ASPIdiocy = {
   hasBadPercents: function(s) this._badPercentRx.test(s),
   removeBadPercents: function(s) s.replace(this._badPercentRx, ''),
   affects: function(s) this._affectsRx.test(s),
+  process: function(s) {
+    s = this.filter(s);
+    return /[\uff5f-\uffff]/.test(s) ? s + '&' + s.replace(/[\uff5f-\uffff]/g, '?') : s;
+  },
   filter: function(s) this.removeBadPercents(s).replace(this._replaceRx, this._replace),
-  coalesceQuery: function(s) {
-    let [p, q] = s.split("?");
+    
+  coalesceQuery: function(s) { // HPP protection, see https://www.owasp.org/images/b/ba/AppsecEU09_CarettoniDiPaola_v0.8.pdf
+    let qm = s.indexOf("?");
+    if (qm < 0) return s;
+    let p = s.substring(0, qm);
+    let q = s.substring(qm + 1);
     if (!q) return s;
+    
     let unchanged = true;
-    let pairs = q.split("&");
-    let accumulator = { __proto__: null };
-    for (let j = 0, len = pairs.length; j < len; j++) {
-      let nv = pairs[j];
-      let eq = nv.indexOf("=");
-      if (eq === -1) continue;
-      let key = "#" + unescape(nv.substring(0, eq)).toLowerCase();
-      if (key in accumulator) {
-        delete pairs[j];
-        pairs[accumulator[key]] += ", " + nv.substring(eq + 1);
-        unchanged = false;
-      } else {
-        accumulator[key] = j;
+    let emptyParams = false;
+    
+    let pairs = (function rearrange(joinNames) {
+      let pairs = q.split("&");
+      let accumulator = { __proto__: null };
+      for (let j = 0, len = pairs.length; j < len; j++) {
+        let nv = pairs[j];
+        let eq = nv.indexOf("=");
+        if (eq === -1) {
+          emptyParams = true;
+          if (joinNames && j < len - 1) {
+            pairs[j + 1] = nv + "&" + pairs[j + 1];
+            delete pairs[j];
+          }
+          continue;
+        }
+        let key = "#" + unescape(nv.substring(0, eq)).toLowerCase();
+        if (key in accumulator) {
+          delete pairs[j];
+          pairs[accumulator[key]] += ", " + nv.substring(eq + 1);
+          unchanged = false;
+        } else {
+          accumulator[key] = j;
+        }
       }
-    }
+      return (emptyParams && !(unchanged || joinNames))
+        ? pairs.concat(rearrange(true).filter(function(p) pairs.indexOf(p) === -1))
+        : pairs;
+    })();
+    
     if (unchanged) return s;
     for (let j = pairs.length; j-- > 0;) if (!pairs[j]) pairs.splice(j, 1);
-    return p + "?" + pairs.join("&");
+    return p + pairs.join("&");
   },
+  
   _replace: function(match, hex) {
      // lazy init
      INCLUDE("ASPIdiocy");

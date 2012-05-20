@@ -762,7 +762,7 @@ function Network(s) {
   this.addr = this.ipv4 ? this._parseIPV4(addr) : this._parseIPV6(addr) ;
 }
 
-Network._netRx = /^(?:(?:\d+\.){1,3}\d*|[0-9af:]*:[0-9af:]*:[0-9af:]*)(:?\/\d{1,3})?$/i;
+Network._netRx = /^(?:(?:\d+\.){1,3}\d*|[0-9a-f:]*:[0-9a-f:]*:[0-9a-f:]*)(:?\/\d{1,3})?$/i;
 Network.isNet = function(s) {
   return this._netRx.test(s);
 }
@@ -1354,11 +1354,15 @@ var ns = {
             }
           } catch(e) {}
         }
-  
-        if ((ncb instanceof Ci.nsIXMLHttpRequest) && !ns.isCheckedChannel(channel)) {
-          if (ns.consoleDump) ns.dump("Skipping cross-site checks for chrome XMLHttpRequest " + channel.name + ", " + loadFlags + ", "
-                                      + channel.owner + ", " + !!PolicyState.hints);
-          return;
+        
+        const IBCL = Ci.nsIBadCertListener2;
+        let bgReq = ncb instanceof Ci.nsIXMLHttpRequest || ncb instanceof IBCL;
+        if (!bgReq) try { bgReq = ncb.getInterface(IBCL); } catch (e) {}
+        if (bgReq && !ns.isCheckedChannel(channel)) {
+            if (ns.consoleDump) {
+              ns.dump("Skipping cross-site checks for chrome background request " + channel.name + ", " + loadFlags + ", " + channel.owner + ", " + !!PolicyState.hints);
+            }
+            return;
         }
         
         ns.requestWatchdog.onHttpStart(channel);

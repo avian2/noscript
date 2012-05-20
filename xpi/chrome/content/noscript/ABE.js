@@ -1452,9 +1452,8 @@ const WAN = {
       Thread.delay(this._periodic, 1000, this, [this._enabled != b]);
       if (!this._observing) {
         this._observing = true;
-        const os = OS;
-        os.addObserver(this, "network:offline-status-changed", true);
-        os.addObserver(this, "wake_notification", true);
+        OS.addObserver(this, "network:offline-status-changed", true);
+        OS.addObserver(this, "wake_notification", true);
       }
     } else {
       this._timer = this.ip = this.ipMatcher = null;
@@ -1515,7 +1514,9 @@ const WAN = {
     }
     var url = "http://" + (ip.indexOf(':') > -1 ? "[" + ip + "]" : ip);
     var xhr = this._createAnonXHR(url);
-    xhr.channel.setRequestHeader("User-Agent", this.fingerprintUA, false);
+    var ch = xhr.channel;
+    ch.setRequestHeader("User-Agent", this.fingerprintUA, false);
+    ch.loadFlags = ch.loadFlags & ~ch.LOAD_ANONYMOUS; // prevents redirect loops on some routers
     var self = this;
     xhr.addEventListener("readystatechange", function() {
 
@@ -1560,7 +1561,7 @@ const WAN = {
           if (h != 'Host') ch.setRequestHeader(h, '', false); // clear header
         });
       }
-      ch.loadFlags = ch.LOAD_BYPASS_CACHE | ch.LOAD_ANONYMOUS;;
+      ch.loadFlags = ch.LOAD_BYPASS_CACHE | ch.LOAD_ANONYMOUS;
     } else xhr = null;
     return xhr;
   },
