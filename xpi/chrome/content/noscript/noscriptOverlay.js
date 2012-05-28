@@ -1489,7 +1489,7 @@ return noscriptUtil.service ? {
   },
   
   patchNotificationBox: function(nb, pos) {
-    if (nb._noscriptPatched) return;
+     if (nb._noscriptPatched) return;
     
     nb._noscriptPatched = true;
     

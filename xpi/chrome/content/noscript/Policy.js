@@ -589,17 +589,24 @@ const MainContentPolicy = {
             if (isFlash) this.tagWindowlessObject(aContext);
 
             if (forbid) {
+              
+              if (this.allowedMimeRegExp &&
+                  (this.allowedMimeRegExp.test(aMimeTypeGuess) ||
+                    this.allowedMimeRegExp.test(aMimeTypeGuess + "@" + locationSite))
+                  ) {
+                return CP_OK;
+              }
+              
               if (isSilverlight) {
                 if (logIntercept) this.dump("Silverlight " + aContentLocation.spec + " " + typeof(aContext) + " " + aContentType + ", " + aInternalCall);
                
                 this.setExpando(aContext, "silverlight", aContentType != 12);
-                if (!forbid) return CP_OK;
                 
                 locationURL = this.resolveSilverlightURL(aRequestOrigin, aContext);
                 locationSite = this.getSite(locationURL);
                 originURL = aRequestOrigin && aRequestOrigin.spec;
                 
-                if(!forbid || this.isAllowedObject(locationURL, mimeKey, locationSite) ||
+                if(this.isAllowedObject(locationURL, mimeKey, locationSite) ||
                    this.isAllowedObjectByDOM(aContext, locationURL, originURL, mimeKey, locationSite)) {
                   if (logIntercept && forbid) this.dump("Silverlight " + locationURL + " is whitelisted, ALLOW");
                   this.handleClickToPlay(aContext);
@@ -608,14 +615,8 @@ const MainContentPolicy = {
               } else if (isFlash) {
                 locationURL = this.addFlashVars(locationURL, aContext);
               }
-            } else if (!(this.allowedMimeRegExp &&
-                          (this.allowedMimeRegExp.test(aMimeTypeGuess) ||
-                            this.allowedMimeRegExp.test(aMimeTypeGuess + "@" + locationSite))
-                      )) {
-              forbid = this.forbidPlugins && !(isJava || isFlash || isSilverlight);
-              if (forbid) {
-                locationURL = this.addObjectParams(locationURL, aContext);
-              }
+            } else if ((forbid = this.forbidPlugins && !(isJava || isFlash || isSilverlight))) {
+              locationURL = this.addObjectParams(locationURL, aContext);
             }
           }
         }

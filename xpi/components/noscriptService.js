@@ -3894,6 +3894,17 @@ var ns = {
             document.body.appendChild(container);
           }
           let url = m[1];
+          if (url.indexOf("\\") !== -1 &&
+              url.indexOf('"') === -1 // notice that m[1] is guaranteed not to contain quotes nor whitespace, but we double check anyway :)
+            ) {
+            // resolve JS escapes, see http://forums.informaction.com/viewtopic.php?f=10&t=8792
+            let sandbox = new Cu.Sandbox("about:blank");
+            try {
+              url = Cu.evalInSandbox('"' + url + '"', sandbox); // this is safe, since we've got no quotes...
+            } catch(e) {
+              // ...but a trailing backslash could cause a (harmless) syntax error anyway
+            }
+          }
           let a = document.createElementNS(HTML_NS, "a");
           a.href = url;
           container.appendChild(a);
@@ -4032,7 +4043,7 @@ var ns = {
       try {
         html5 = this.prefService.getBoolPref("html5.parser.enable");
       } catch(e) {
-        html5 = false;
+        html5 = this.geckoVersionCheck('2') > 0;
       }
 
       var node, nodeName;
@@ -5310,7 +5321,7 @@ var ns = {
           
           let origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
           
-          if (nosniff || origin && this.getBaseDomain(origin.host) !== this.getBaseDomain(channel.URI.host)) {
+          if (nosniff || origin && this.getBaseDomain(this.getSite(origin.spec)) !== this.getBaseDomain(channel.URI.host)) {
 
             var mime;
             try {
