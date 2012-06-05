@@ -1355,16 +1355,17 @@ var ns = {
           } catch(e) {}
         }
         
-        const IBCL = Ci.nsIBadCertListener2;
-        let bgReq = ncb instanceof Ci.nsIXMLHttpRequest || ncb instanceof IBCL;
-        if (!bgReq) try { bgReq = ncb.getInterface(IBCL); } catch (e) {}
-        if (bgReq && !ns.isCheckedChannel(channel)) {
-            if (ns.consoleDump) {
-              ns.dump("Skipping cross-site checks for chrome background request " + channel.name + ", " + loadFlags + ", " + channel.owner + ", " + !!PolicyState.hints);
-            }
-            return;
+        if (ncb) {
+          const IBCL = Ci.nsIBadCertListener2;
+          let bgReq = ncb instanceof Ci.nsIXMLHttpRequest || ncb instanceof IBCL;
+          if (!bgReq) try { bgReq = ncb.getInterface(IBCL); } catch (e) {}
+          if (bgReq && !ns.isCheckedChannel(channel)) {
+              if (ns.consoleDump) {
+                ns.dump("Skipping cross-site checks for chrome background request " + channel.name + ", " + loadFlags + ", " + channel.owner + ", " + !!PolicyState.hints);
+              }
+              return;
+          }
         }
-        
         ns.requestWatchdog.onHttpStart(channel);
       }
     }
@@ -5321,7 +5322,7 @@ var ns = {
           
           let origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
           
-          if (nosniff || origin && this.getBaseDomain(this.getSite(origin.spec)) !== this.getBaseDomain(channel.URI.host)) {
+          if (nosniff || origin && this.getBaseDomain(this.getDomain(origin)) !== this.getBaseDomain(channel.URI.host)) {
 
             var mime;
             try {
@@ -5337,7 +5338,7 @@ var ns = {
                 ? (nosniff
                     ? /(?:script|\bjs(?:on)?)\b/i // strictest
                     : /(?:script|\b(?:js(?:on)?)|css)\b/i) // allow css mime on js
-                : (PolicyUtil.isXSL(ph.context) ? /\bx[ms]l/i : /\bcss\b/i)
+                : (PolicyUtil.isXSL(ph.context) || ph.mimeType.indexOf("/x") > 0) ? /\bx[ms]l/i : /\bcss\b/i
               ).test(mime);
             
             if (okMime) return true;
@@ -5365,7 +5366,7 @@ var ns = {
 
               if (ext &&
                   (ctype === 2 && /^js(?:on)?$/i.test(ext) ||
-                   ctype === 4 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context))))
+                   ctype === 4 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context) || ph.mimeType.indexOf("/x") > 0)))
                 ) {
                 // extension matches and not an attachment, likely OK
                 return true; 
@@ -6350,8 +6351,7 @@ var ns = {
   
   get externalFilters() {
     delete this.externalFilters;
-    if ("nsITraceableChannel" in Ci && // Fx >= 3.0 
-        ("nsIProcess2" in Ci || // Fx 3.5
+    if (("nsIProcess2" in Ci || // Fx 3.5
          "runAsync" in Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess) // Fx >= 3.6 
         )) {
       INCLUDE("ExternalFilters");

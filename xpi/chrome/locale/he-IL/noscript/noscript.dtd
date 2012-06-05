@@ -2,19 +2,19 @@
 <!ENTITY noscriptOptions.accesskey "ג">
 <!ENTITY noscriptOptionsLong "NoScript הגדרות של">
 <!ENTITY noscriptAbout "אודות NoScript @VERSION@">
-<!ENTITY noscriptPermissionsText "אתה יכול לציין איזה אתרי אינטרנט מותרים להפעיל סקריפטים. הקלד את הכתובת או התחום (למשל, &quot;http://www.site.com&quot; או &quot;site.com&quot;) של האתר שברצונך לאפשר ולאחר מכן לחץ על התר.">
-<!ENTITY noscriptWebAddress "כתובת אתר האינטרנט:">
+<!ENTITY noscriptPermissionsText "ציין אילו אתרים יכולים לקבל היתר להפעלת קבצי Script. הקלד את כתובת האתר או את שם התחום (כגון: &quot;http://www.site.com&quot; או &quot;site.com&quot;) ולאחר מכן לחץ על התר.">
+<!ENTITY noscriptWebAddress "כתובת/תחום:">
 <!ENTITY noscriptAllow "התר">
-<!ENTITY noscriptAllow.accesskey "ה">
+<!ENTITY noscriptAllow.accesskey "ת">
 <!ENTITY noscriptForbid "אסור">
-<!ENTITY noscriptForbid.accesskey "א">
+<!ENTITY noscriptForbid.accesskey "ס">
 <!ENTITY noscriptTrust "סמן כמהימן">
 <!ENTITY noscriptTrust.accesskey "מ">
 <!ENTITY noscriptUntrust "סמן כלא מהימן">
-<!ENTITY noscriptUntrust.accesskey "ל">
-<!ENTITY noscriptRemoveSelected "הסר אתרים נבחרים">
-<!ENTITY noscriptGloballyEnabled "סקריפטים מותרים בכל אתר (מסוכן)">
-<!ENTITY noscriptAutoReload "טען מחדש דפים שמושפעים משינוי הרשאות באופן אוטומטי">
+<!ENTITY noscriptUntrust.accesskey "כ">
+<!ENTITY noscriptRemoveSelected "הסר">
+<!ENTITY noscriptGloballyEnabled "קבצי Script מותרים באופן כללי (לא מומלץ)">
+<!ENTITY noscriptAutoReload "טען מחדש דפים שמושפעים בעת שינוי הרשאות באופן עצמי">
 <!ENTITY noscriptGeneral "כללי">
 <!ENTITY noscriptAppearance "תצוגה">
 <!ENTITY noscriptShow "הצג...">
@@ -24,99 +24,99 @@
 <!ENTITY noscriptFullDom "תחומים מלאים (www.noscript.net)">
 <!ENTITY noscriptBaseDom "תחומי בסיס ברמה שנייה (noscript.net)">
 <!ENTITY noscriptTempCmd "התר באופן זמני [...]">
-<!ENTITY noscriptSound "צליל משוב כשסקריפטים נחסמים">
+<!ENTITY noscriptSound "הפעל צליל משוב כאשר קבצי Script נחסמים">
 <!ENTITY noscriptImport "יבא">
-<!ENTITY noscriptImport.accesskey "י">
+<!ENTITY noscriptImport.accesskey "ב">
 <!ENTITY noscriptExport "יצא">
 <!ENTITY noscriptExport.accesskey "צ">
-<!ENTITY noscriptNotify "הצג הודעה אודות סקריפטים חסומים">
+<!ENTITY noscriptNotify "הצג הודעה אודות קבצי Script חסומים">
 <!ENTITY noscriptNotify.bottom "מקם הודעות בתחתית הדף">
 <!ENTITY noscriptSound.choose "בחר">
-<!ENTITY noscriptSound.choose.accesskey "ב">
+<!ENTITY noscriptSound.choose.accesskey "ח">
 <!ENTITY noscriptSound.play "נגן">
 <!ENTITY noscriptSound.play.accesskey "נ">
-<!ENTITY noscriptSound.reset "אפס לברירת מחדל">
+<!ENTITY noscriptSound.reset "איפוס">
 <!ENTITY noscriptSound.reset.accesskey "פ">
 <!ENTITY noscriptAdvanced "מתקדם">
-<!ENTITY noscriptAdditionalPermissions "הרשאות נוספות עבור אתרים מהימנים">
-<!ENTITY noscriptAllowClipboard "אפשר להעתיק ולהדביק טקסט עשיר מאחסון זיכרון חיצוני">
+<!ENTITY noscriptAdditionalPermissions "הרשאות נוספות באתרים מהימנים">
+<!ENTITY noscriptAllowClipboard "אפשר העתקה והדבקה של מלל עשיר מאחסון זכרון חיצוני">
 <!ENTITY noscriptAdditionalRestrictions "הגבלות נוספות באתרים שאינם מהימנים">
 <!ENTITY noscriptPlugins "תוספים">
 <!ENTITY noscriptContentBlocker "החל הגבלות אלו גם על אתרים מהימנים">
-<!ENTITY noscriptForbidJava "מנע Java ™">
+<!ENTITY noscriptForbidJava "מנע ™Java">
 <!ENTITY noscriptForbidXSLT "מנע XSLT">
-<!ENTITY noscriptForbidSilverlight "מנע Microsoft ® Silverlight ™">
+<!ENTITY noscriptForbidSilverlight "מנע ™Silverlight">
 <!ENTITY noscriptForbidIFrames "מנע &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "מנע &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "מנע @font-face">
 <!ENTITY noscriptForbidWebGL "אסור על WebGL">
-<!ENTITY noscriptForbidMedia "מנע &lt;AUDIO&gt; / &lt;VIDEO&gt;">
-<!ENTITY noscriptForbidFlash "מנע Adobe ® Flash ®">
+<!ENTITY noscriptForbidMedia "מנע &lt;AUDIO&gt;/&lt;VIDEO&gt;">
+<!ENTITY noscriptForbidFlash "מנע ®Flash">
 <!ENTITY noscriptForbidPlugins "מנע תוספים אחרים">
-<!ENTITY noscriptReloadWarn "אפשרויות אלה ייכנסו לתוקף בפתיחת דפים חדשים או ע&quot;י רענון מחדש (באופן ידני) של דפים">
-<!ENTITY noscriptConfirmUnblock "בקש אישור לפני ביטול חסימה זמנית של אובייקט">
+<!ENTITY noscriptReloadWarn "אפשרויות אלה ישפיעו על דפים חדשים או על כאלה שיטענו מחדש באופן ידני">
+<!ENTITY noscriptConfirmUnblock "בקש אישור לפני ביטול חסימה של רכיב באופן זמני">
 <!ENTITY noscriptStatusLabel "כותרת שורת מצב">
 <!ENTITY noscriptForbidBookmarklets "מנע יישומי סימניה">
 <!ENTITY noscriptShowPlaceholder "הצג סמל כתחליף">
-<!ENTITY noscriptTruncateTitle "חתוך את הכותרות במסמך">
-<!ENTITY noscriptFixLinks "נסה לתקן קישורים של JavaScript">
+<!ENTITY noscriptTruncateTitle "חתוך כותרות במסמך">
+<!ENTITY noscriptFixLinks "נסה לתקן קישורים של JS">
 <!ENTITY noscriptAllowBookmarks "אפשר אתרים שנפתחים דרך הסימניות">
 <!ENTITY noscriptAllowViaBookmarks "אפשר אתרים שנפתחים דרך הסימניות">
-<!ENTITY noscriptAllowPing "התר &lt;A PING...&gt;">
+<!ENTITY noscriptAllowPing "התר &lt;...A PING&gt;">
 <!ENTITY noscriptAllowLocalLinks "התר קישורים מקומיים">
-<!ENTITY noscriptForbidPing "מנע &lt;A PING...&gt;">
-<!ENTITY noscriptForbidMetaRefresh "מנע ניתובים מחודשים של META באלמנטים של &lt;NOSCRIPT&gt;">
-<!ENTITY noscriptForbidMetaRefresh.accesskey "ע">
-<!ENTITY noscriptWhitelist "רשימת מותרים">
+<!ENTITY noscriptForbidPing "מנע &lt;...A PING&gt;">
+<!ENTITY noscriptForbidMetaRefresh "מנע ניתוב META מחדש בתוך רכיבי &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "נ">
+<!ENTITY noscriptWhitelist "היתרים">
 <!ENTITY noscriptPermissions "הרשאות">
 <!ENTITY noscriptRefresh "רענן מחדש">
 <!ENTITY noscriptNotifications "הודעות">
-<!ENTITY noscriptToolbarToggle "לחיצה שמאלית על הכפתור בסרגל הכלים של NoScript משנה את מצב ההרשאות עבור האתר הראשי הנוכחי">
-<!ENTITY noscriptTrusted "אתר אמין">
-<!ENTITY noscriptUntrusted "אתר לא אמין">
+<!ENTITY noscriptToolbarToggle "לחיצה שמאלית על לחצן סרגל כלים של NoScript תביא לשינוי מצב הרשאות של אתר ראשי נוכחי">
+<!ENTITY noscriptTrusted "מהימן">
+<!ENTITY noscriptUntrusted "לא מהימן">
 <!ENTITY noscriptUnknown "לא ידוע">
 <!ENTITY noscriptAdd "הוסף">
-<!ENTITY noscriptAdd.accesskey "ה">
+<!ENTITY noscriptAdd.accesskey "ס">
 <!ENTITY noscriptClose "סגור">
 <!ENTITY noscriptSiteManager "מנהל אתר">
 <!ENTITY noscriptSecurityManager "מנהל אבטחה">
 <!ENTITY noscriptPolicies "מדיניות">
 <!ENTITY noscriptDefaultPolicies "מדיניות ברירת מחדל">
 <!ENTITY noscriptSitePolicies "מדיניות מפורשת של אתר">
-<!ENTITY noscriptNselNever "הסתר אלמנטים של &lt;NOSCRIPT&gt;">
-<!ENTITY noscriptNselForce "הצג אלמנט של &lt;NOSCRIPT&gt; שבא אחרי &lt;SCRIPT&gt; חסום.">
+<!ENTITY noscriptNselNever "הסתר רכיבים של &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "הצג רכיב של &lt;NOSCRIPT&gt; שבא אחרי &lt;SCRIPT&gt; חסום.">
 <!ENTITY noscriptAutoAllowTopLevel "התר אתרים ראשיים באופן זמני כברירת מחדל">
-<!ENTITY noscriptDescription "הגנה נוספת עבור Firefox שלך: NoScript מאפשר ל JavaScript, Java (ותוספות אחרות) לפעול רק בתחומים מהימנים על פי בחירתך (למשל, אתר הבית של חשבון הבנק שלך). גישה זו מבוססת על &quot;רשימת מותרים&quot; החוסמת מראש את מה שאינו מורשה, מונעת ניצול של פרצות אבטחה (כאלה שידועים ואפילו שעדיין לא!) מבלי לגרוע בתיפקודיות הגלישה... מומחים יסכימו: ש- Firefox הוא באמת בטוח יותר עם NoScript :-)">
+<!ENTITY noscriptDescription "הגנה נוספת עבור ה־Firefox שלך: NoScript מתיר ל־ ™JS, Java (ותוספות אחרות) לפעול רק בתחומים מהימנים על פי בחירתך (כגון: אתר הבית של חשבון הבנק שלך). גישה זו מבוססת על &quot;רשימת מותרים&quot; החוסמת מראש את מה שאינו מורשה, מונעת ניצול של פרצות אבטחה (כאלה שידועים ואפילו שעדיין לא!) מבלי לגרוע בתיפקודיות הגלישה..! מומחים יסכימו ש־Firefox בטוח יותר עם NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "חסום סורקים מבוססי CSS">
-<!ENTITY noscriptOptFilterXGet "הסר בקשות חשודות בין אתרים של צד שלישי">
-<!ENTITY noscriptOptFilterXPost "הפוך בקשות POST מאתרים של צד שלישי לבקשות GET ללא נתונים נלווים">
+<!ENTITY noscriptOptFilterXGet "הסר בקשות צד שלישי חשודות בין אתרים">
+<!ENTITY noscriptOptFilterXPost "הפוך בקשות POST של אתרים מצד שלישי לבקשות GET ללא נתונים נלווים">
 <!ENTITY noscriptShowConsole "הצג מסוף...">
 <!ENTITY noscriptShowConsole.accesskey "ס">
 <!ENTITY noscriptXss "XSS (סקריפטים מאתרים מצד שלישי)">
 <!ENTITY noscriptXss.accesskey "X">
 <!ENTITY noscriptXssFaq "שאלות נפוצות בנושא XSS...">
 <!ENTITY noscriptXssFaq.accesskey "ל">
-<!ENTITY noscriptUnsafeReload "טעינה מחדש לא בטוחה">
-<!ENTITY noscriptUnsafeReload.accesskey "ט">
+<!ENTITY noscriptUnsafeReload "טעינה מחדש שאינה בטוחה">
+<!ENTITY noscriptUnsafeReload.accesskey "ע">
 <!ENTITY noscriptXssExceptions "הגנת Anti-XSS ליוצאים מן הכלל">
-<!ENTITY noscriptXssExceptions.description "יעדים התואמים לביטויים רגילים אלה לא יהיו מוגנים פני XSS.">
+<!ENTITY noscriptXssExceptions.description "יעדים התואמים לביטויים רגילים אלה לא יהיו מוגנים מפני XSS.">
 <!ENTITY noscriptMatchSample "דוגמה התואמת לתבנית:">
-<!ENTITY noscriptReset "אפס">
-<!ENTITY noscriptReset.accesskey "א">
+<!ENTITY noscriptReset "איפוס">
+<!ENTITY noscriptReset.accesskey "פ">
 <!ENTITY noscriptResetDef "אפס להגדרות ברירת מחדל">
-<!ENTITY noscriptResetDef.accesskey "ר">
+<!ENTITY noscriptResetDef.accesskey "ב">
 <!ENTITY noscriptOptionsWidth "40em">
 <!ENTITY noscriptRevokeTemp "בטל הרשאות זמניות">
-<!ENTITY noscriptRevokeTemp.accesskey "ט">
-<!ENTITY noscriptNoUntrustedPlaceholder "אל תציג מציין מיקום עבור אובייקטים שמגיעים מאתרים שסומנו כלא מהימנים">
-<!ENTITY noscriptCollapseBlockedObjects "צמצם אובייקטים חסומים">
-<!ENTITY noscriptExceptions "חריגים ...">
-<!ENTITY noscriptBlockedObjects "אובייקטים חסומים">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "חסום כל אובייקט שמגיע מאתר המסומן כלא מהימן">
-<!ENTITY noscriptTempAllowPage "זמנית התר את כל הדף זה">
-<!ENTITY noscriptTempAllowPage.accesskey "ז">
-<!ENTITY noscriptAllowPage "התר את כל הדף זה">
-<!ENTITY noscriptAllowPage.accesskey "ה">
+<!ENTITY noscriptRevokeTemp.accesskey "ש">
+<!ENTITY noscriptNoUntrustedPlaceholder "אל תציג מצייני מיקום עבור רכיבים המגיעים מאתרים שסומנו כלא מהימנים">
+<!ENTITY noscriptCollapseBlockedObjects "צמצם רכיבים חסומים">
+<!ENTITY noscriptExceptions "חריגים...">
+<!ENTITY noscriptBlockedObjects "רכיבים חסומים">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "חסום כל רכיב שמגיע מאתר המסומן כלא מהימן">
+<!ENTITY noscriptTempAllowPage "התר באופן זמני את כל הדף הזה">
+<!ENTITY noscriptTempAllowPage.accesskey "נ">
+<!ENTITY noscriptAllowPage "התר את כל הדף הזה">
+<!ENTITY noscriptAllowPage.accesskey "כ">
 <!ENTITY noscriptTempToPerm "הפוך הרשאות בדף לקבועות">
 <!ENTITY noscriptTempToPerm.accesskey "פ">
 <!ENTITY noscriptHttps "HTTPS">
@@ -124,63 +124,63 @@
 <!ENTITY noscriptHttpsFaq.accesskey "צ">
 <!ENTITY noscriptHttps.behavior "התנהגות">
 <!ENTITY noscriptHttps.cookies "קבצי Cookie">
-<!ENTITY noscriptHttps.description "אסור על תוכן אינטרנט פעיל, אלא אם כן הוא מגיע מחיבור מאובטח (HTTPS):">
+<!ENTITY noscriptHttps.description "מנע תוכן רשת פעיל, אלא אם כן הוא מגיע מחיבור מאובטח (HTTPS):">
 <!ENTITY noscriptHttps.never "אף פעם">
-<!ENTITY noscriptHttps.proxy "בעת שימוש ב- proxy (מומלץ עם Tor)">
+<!ENTITY noscriptHttps.proxy "בעת שימוש ב־proxy (מומלץ עם Tor)">
 <!ENTITY noscriptHttps.always "תמיד">
-<!ENTITY noscriptHttpsForced "כפה את האתרים הבאים להשתמש בחיבורים מאובטחים (HTTPS):">
-<!ENTITY noscriptHttpsForcedExceptions "לעולם אל תכפה חיבורים מאובטחים (HTTPS) עבור האתרים הבאים:">
-<!ENTITY noscriptSecureCookies "אפשר ניהול אוטומטי של קבצי Cookie מאובטחים">
-<!ENTITY noscriptSecureCookiesForced "כפה הצפנה עבור כל קבצי ה- Cookies שנקבעו ע&quot;י חיבור HTTPS באתרים הבאים:">
+<!ENTITY noscriptHttpsForced "כפה את האתרים הבאים לעשות שימוש בחיבור מאובטח (HTTPS):">
+<!ENTITY noscriptHttpsForcedExceptions "אל תכפה שימוש בחיבור מאובטח (HTTPS) עבור האתרים הבאים:">
+<!ENTITY noscriptSecureCookies "אפשר ניהול עצמי של קבצי Cookie מאובטחים">
+<!ENTITY noscriptSecureCookiesForced "כפה הצפנה עבור כל קבצי ה־Cookies שנקבעו ע&quot;י חיבור HTTPS באתרים הבאים:">
 <!ENTITY noscriptSecureCookiesExceptions "התעלם מקבצי Cookie לא בטוחים שנקבעו ע&quot;י חיבור HTTPS באתרים הבאים:">
-<!ENTITY noscriptClearClickTitle "אזהרת ClearClick">
-<!ENTITY noscriptClearClickHeader "Clickjacking אפשרי / ניסיון תיקון ממשק המשתמש!">
+<!ENTITY noscriptClearClickTitle "הזהר אותי מפני ClearClick">
+<!ENTITY noscriptClearClickHeader "Clickjacking אפשרי/ניסיון תיקון ממשק המשתמש!">
 <!ENTITY noscriptClearClickDescription "NoScript מעכב את פעולת הגומלין של העכבר או המקלדת עם רכיב מוסתר באופן חלקי. לחץ על התמונה שלהלן כדי לעבור בין הרכיב החסום לגירסה הברורה שלו.">
-<!ENTITY noscriptClearClickOpt "הגנה מפני ClearClick בדפים...">
+<!ENTITY noscriptClearClickOpt "הגנה מפני ClearClick">
 <!ENTITY noscriptClearClickReport "דווח">
 <!ENTITY noscriptClearClickReport.accesskey "ד">
-<!ENTITY noscriptClearClickReportId "מזהה דוח:">
+<!ENTITY noscriptClearClickReportId "מזהה דו&quot;ח:">
 <!ENTITY noscriptTrustedPagesAdj "מהימן">
 <!ENTITY noscriptUntrustedPagesAdj "לא מהימן">
-<!ENTITY noscriptKeepLocked "שמור על אלמנט זה נעול (מומלץ)">
-<!ENTITY noscriptEmbeddings "אובייקטים משולבים בדף">
+<!ENTITY noscriptKeepLocked "שמור על רכיב זה נעול (מומלץ)">
+<!ENTITY noscriptEmbeddings "רכיבים">
 <!ENTITY noscriptPrev "הקודם">
 <!ENTITY noscriptNext "הבא">
 <!ENTITY noscriptFrameOptErr.title "אין אפשרות להציג תוכן זה במסגרת">
 <!ENTITY noscriptFrameOptErr.desc "כדי להגן על האבטחה שלך, המוציא לאור של תוכן זה אינו מאפשר שהוא יוצג במסגרת.">
 <!ENTITY noscriptFrameOptErr.link "לחץ כאן כדי לפתוח תוכן זה בחלון חדש">
-<!ENTITY noscriptBookmarkSync "גבה את ההגדרות של NoScript בסימניה עבור סנכרון קל">
-<!ENTITY noscriptNotifyMeta "הצג הודעה אודות ניתובים מחודשים של META חסום">
-<!ENTITY noscriptNotifyMeta.accesskey "נ">
-<!ENTITY noscriptShowReleaseNotes "הצג את הערות השחרור בעדכונים">
+<!ENTITY noscriptBookmarkSync "גבה הגדרות של NoScript בסימניה עבור סנכרון קל">
+<!ENTITY noscriptNotifyMeta "הצג הודעה אודות ניתוב מחדש של META חסום">
+<!ENTITY noscriptNotifyMeta.accesskey "צ">
+<!ENTITY noscriptShowReleaseNotes "הצג הערות שחרור לאחר כל עדכון של NoScript">
 <!ENTITY ABE "ABE">
-<!ENTITY ABE.accesskey "A">
-<!ENTITY ABE.rulesets.label "ערכת כללים:">
-<!ENTITY ABE.enabled.label "אפשר את ABE (אוכף גבולות יישום)">
+<!ENTITY ABE.accesskey "B">
+<!ENTITY ABE.rulesets.label "ערכות כללים:">
+<!ENTITY ABE.enabled.label "אפשר את ABE (אכיפת גבולות יישום)">
 <!ENTITY ABE.siteEnabled.label "אפשר לאתרים לדחוף את ערכת הכללים שלהם">
-<!ENTITY ABE.edit.label "ערוך ...">
-<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.edit.label "ערוך...">
+<!ENTITY ABE.edit.accesskey "ע">
 <!ENTITY ABE.enable.label "התר">
 <!ENTITY ABE.enable.accesskey "ת">
 <!ENTITY ABE.disable.label "מנע">
-<!ENTITY ABE.disable.accesskey "מ">
+<!ENTITY ABE.disable.accesskey "נ">
 <!ENTITY ABE.refresh.label "רענן">
-<!ENTITY ABE.refresh.accesskey "ר">
+<!ENTITY ABE.refresh.accesskey "ע">
 <!ENTITY noscriptUninstall "הסר">
 <!ENTITY noscriptRecentBlocked "אתרים שנחסמו לאחרונה">
-<!ENTITY noscriptExternalFilters "מסננים חיצוניים">
+<!ENTITY noscriptExternalFilters "מסננים">
 <!ENTITY noscriptEF.enable "אפשר מסננים חיצוניים">
-<!ENTITY noscriptEF.add "מסנן חדש ...">
+<!ENTITY noscriptEF.add "מסנן חדש...">
 <!ENTITY noscriptEF.executable "קובץ הפעלה:">
-<!ENTITY noscriptEF.browse "עיון ...">
-<!ENTITY noscriptEF.contentType "סוג תוכן (MIME) שיסונן (התאמה מדויקת או ביטוי רגיל):">
-<!ENTITY noscriptEF.exceptions "אל תסנן אובייקטים שבאים מאתרים אלה:">
+<!ENTITY noscriptEF.browse "עיון...">
+<!ENTITY noscriptEF.contentType "סוג תוכן MIME שיסונן ע&quot;י התאמה מדויקת או ביטוי רגיל:">
+<!ENTITY noscriptEF.exceptions "אל תסנן רכיבים שבאים מאתרים אלה:">
 <!ENTITY noscriptEF.remove "הסר">
 <!ENTITY noscriptPreset "רמת אבטחה">
-<!ENTITY noscriptPreset.off "כבוי (אתה רציני?!)">
-<!ENTITY noscriptPreset.low "מעבר קל (רשימה אסורה + אבטחת האינטרנט)">
-<!ENTITY noscriptPreset.medium "קלאסי (רשימה מותרת + אבטחת האינטרנט)">
+<!ENTITY noscriptPreset.off "כבוי (האם אתה רציני?!)">
+<!ENTITY noscriptPreset.low "מעבר קל (רשימה אסורה + אבטחת רשת)">
+<!ENTITY noscriptPreset.medium "קלאסי (רשימה מותרת + אבטחת רשת)">
 <!ENTITY noscriptPreset.high "מבצר (נעילה מלאה)">
-<!ENTITY noscript.hoverUI "פתח את תפריט ההרשאות בעת הצבת מצביע העכבר מעל הסמל של NoScript">
+<!ENTITY noscript.hoverUI "פתח תפריט הרשאות בעת הצבת מצביע העכבר מעל הסמל של NoScript">
 <!ENTITY noscriptDonate "תרום">
 <!ENTITY noscriptDonate.accesskey "ר">

@@ -134,7 +134,7 @@
 <!ENTITY noscriptSecureCookiesForced "বিপজ্জনক নিম্নলিখিত সাইটগুলির মধ্যে HTTPS উপর সেট কুকি উপেক্ষা করুনঃ">
 <!ENTITY noscriptSecureCookiesExceptions "বিপজ্জনক নিম্নলিখিত সাইটগুলির মধ্যে HTTPS উপর সেট কুকি উপেক্ষা করুন:">
 <!ENTITY noscriptClearClickTitle "ক্লিয়ারক্লিক সতর্কবাণী">
-<!ENTITY noscriptClearClickHeader "সম্ভাব্য ক্লিকজাক / UI 'তে প্রচেষ্টা নিরাকরণ!">
+<!ENTITY noscriptClearClickHeader "সম্ভাব্য ক্লিকজাক / UI \'তে প্রচেষ্টা নিরাকরণ!">
 <!ENTITY noscriptClearClickDescription "নোস্ক্রিপ্ট একটি আংশিকভাবে গোপন উপাদান দিয়ে একটি মাউস বা কিবোর্ড যোগাযোগ রূদ্ধ. আটকান এবং স্পষ্ট সংস্করণের মধ্যে চক্র নীচের ইমেজে ক্লিক করুন.">
 <!ENTITY noscriptClearClickOpt "পৃষ্ঠা থেকে ক্লিয়ারক্লিক রক্ষা ...">
 <!ENTITY noscriptClearClickReport "প্রতিবেদন">
@@ -182,5 +182,5 @@
 <!ENTITY noscript.hoverUI "অনুমতি মেনু খুলবে যখন নোস্ক্রিপ্ট এর আইকনের উপর মাউস নিয়ে যাওয়া হবে">
 <!ENTITY noscriptDonate "সাহায্য করুন">
 <!ENTITY noscriptDonate.accesskey "o">
-<!ENTITY noscriptForbidWebGL "Forbid WebGL">
+<!ENTITY noscriptForbidWebGL "WebGL প্রতিষেধ করুন">
 <!ENTITY noscriptTruncateTitle "Truncate document titles">

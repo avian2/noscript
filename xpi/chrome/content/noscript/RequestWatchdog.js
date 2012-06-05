@@ -131,7 +131,7 @@ RequestWatchdog.prototype = {
         this.externalLoad = null;
       }
       
-      if (isDoc && ChannelReplacement.supported) {
+      if (isDoc) {
         
         let url = abeReq.destination;
         if (url.indexOf("#!") > 0 &&

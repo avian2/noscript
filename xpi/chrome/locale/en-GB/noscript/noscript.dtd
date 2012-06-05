@@ -180,7 +180,7 @@
 <!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
 <!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
 <!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
-<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
+<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript\'s icon">
 <!ENTITY noscriptDonate "Donate">
 <!ENTITY noscriptDonate.accesskey "o">
 <!ENTITY noscriptForbidWebGL "Forbid WebGL">

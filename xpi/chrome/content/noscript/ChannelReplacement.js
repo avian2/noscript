@@ -20,8 +20,6 @@ function ChannelReplacement(chan, newURI, newMethod) {
   return this._init(chan, newURI, newMethod);
 }
 
-ChannelReplacement.supported = "nsITraceableChannel" in Ci;
-
 ChannelReplacement.runWhenPending = function(channel, callback) {
   if (channel.isPending()) {
     callback();
@@ -61,7 +59,7 @@ ChannelReplacement.prototype = {
   },
   
   _init: function(chan, newURI, newMethod) {
-    if (!(ChannelReplacement.supported && chan instanceof Ci.nsITraceableChannel))
+    if (!(chan instanceof Ci.nsITraceableChannel))
       throw this._unsupportedError;
   
     newURI = newURI || chan.URI;

@@ -251,9 +251,8 @@ const ABE = {
   deferIfNeeded: function(req) {
     var host = req.destinationURI.host;
     if (!(req.canDoDNS && req.deferredDNS) ||
-        !ChannelReplacement.supported ||
         DNS.isIP(host) ||
-        DNS.getCached(host) || // getCached() rather than isCached(), otherwise we defer even for lazy expiration
+        DNS.isCached(host) || 
         req.channel.redirectionLimit == 0 || req.channel.status != 0 ||
         req.channel.notificationCallbacks instanceof Ci.nsIObjectLoadingContent // OBJECT elements can't be channel-replaced :(
         ) 
@@ -268,15 +267,20 @@ const ABE = {
         
         if ((req.channel instanceof Ci.nsITransportEventSink)
             && req.isDoc && !(req.subdoc || req.dnsNotified)) try {
-          ABE.log("DNS notification for " + req.destination);
-          req.dnsNotified = true; // unexplicable recursions have been reported... 
-          req.channel.onTransportStatus(null, 0x804b0003, 0, 0); // notify STATUS_RESOLVING
+          Thread.asap(function() {
+            if (!req.dnsNotified) {
+              ABE.log("DNS notification for " + req.destination);
+              req.dnsNotified = true; // unexplicable recursions have been reported... 
+              req.channel.onTransportStatus(null, 0x804b0003, 0, 0); // notify STATUS_RESOLVING
+            }
+          });
         } catch(e) {}
         
         req.replace(false, null, function(replacement) {      
           ABE.log(host + " not cached in DNS, deferring ABE checks after DNS resolution for request " + req.serial);
-
+          
           DNS.resolve(host, 0, function(dnsRecord) {
+            req.dnsNotified = true; // prevents spurious notifications
             replacement.open();
           });
         });
@@ -544,11 +548,6 @@ var ABEActions = {
       return ABERes.SKIPPED;
     }
     
-    if (!ChannelReplacement.supported) {
-      ABE.log("Couldn't replace " + req.destination + " for Anonymize, falling back to Deny.");
-      return this.deny(req);
-    }
-
     req.replace(
       idempotent ? null : "GET",
       anonURI,
@@ -995,12 +994,9 @@ ABERequest.prototype = Lang.memoize({
   },
    
   replace: function(newMethod, newURI, callback) {
-    if (ChannelReplacement.supported) {
-      new ChannelReplacement(this.channel, newURI, newMethod)
+    new ChannelReplacement(this.channel, newURI, newMethod)
         .replace(newMethod || newURI, callback);
-      return true;
-    }
-    return false; 
+    return true; 
   },
   
   isBrowserURI: function(uri) {

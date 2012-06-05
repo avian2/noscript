@@ -9,27 +9,17 @@ const HTTPS = {
   httpsForced: null,
   httpsForcedExceptions: null,
 
-  get forceChannel() {
-    delete this.forceChannel;
-    return this.forceChannel = ChannelReplacement.supported
-      ? function(channel) this.mustForce(channel.URI) && this.replaceChannel(channel)
-      : function(channel) this.forceURI(channel.URI)
-  },
-  
+  forceChannel: function(channel) this.mustForce(channel.URI) && this.replaceChannel(channel),
   replaceChannel: function(channel) {
-    if (ChannelReplacement.supported) {
-      ChannelReplacement.runWhenPending(channel, function() {
-        var uri = channel.URI.clone();
-        uri.scheme = "https";
-        new ChannelReplacement(channel, uri).replace(true);
-        HTTPS.log("Forced Channel " + uri.spec);
-      });
-      return true;
-    }
+
+    ChannelReplacement.runWhenPending(channel, function() {
+      var uri = channel.URI.clone();
+      uri.scheme = "https";
+      new ChannelReplacement(channel, uri).replace(true);
+      HTTPS.log("Forced Channel " + uri.spec);
+    });
+    return true;
     
-    this.log("Aborting redirection " + channel.name + ", should be HTTPS!");
-    IOUtil.abort(channel);
-    return false;
   },
   
   forceURI: function(uri, fallback, ctx) {
