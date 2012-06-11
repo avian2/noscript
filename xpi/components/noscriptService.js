@@ -5512,17 +5512,11 @@ var ns = {
     
     var contentDisposition = "";
     
-    var isHTTP = req instanceof Ci.nsIHttpChannel
-    
+    var isHTTP = req instanceof Ci.nsIHttpChannel;
     if (isHTTP) {
-      
       try {
         contentDisposition = req.getResponseHeader("Content-disposition");
       } catch(e) {}
-      
-
-      if (domWindow.document)
-        this.filterUTF7(req, domWindow, docShell = DOM.getDocShellForWindow(domWindow)); 
     }
     
     const topWin = domWindow == domWindow.top;
@@ -5738,6 +5732,8 @@ var ns = {
   
   _pageModMaskRx: /^(?:chrome|resource|view-source):/,
   onWindowSwitch: function(url, win, docShell) {
+    if (this.filterBadCharsets(docShell)) return;
+    
     const doc = docShell.document;
     const flag = "__noScriptEarlyScripts__";
     if (flag in doc && doc[flag] === url) return;
@@ -6158,18 +6154,23 @@ var ns = {
   },  
   // end nsIWebProgressListener
   
-  filterUTF7: function(req, window, docShell) {
+  _badCharsetRx: /\butf-?7\$|^armscii-8$/i,
+  filterBadCharsets: function(docShell) {
     try {
-      if (!docShell) return;
-      var as = Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
-      if(window.document.characterSet == "UTF-7" ||
-        !req.contentCharset && (docShell.documentCharsetInfo.parentCharset + "") == "UTF-7") {
-        if(this.consoleDump) this.dump("Neutralizing UTF-7 charset!");
-        docShell.documentCharsetInfo.forcedCharset = as.getAtom("UTF-8");
-        docShell.documentCharsetInfo.parentCharset = docShell.documentCharsetInfo.forcedCharset;
+      let rx = this._badCharsetRx;
+      let charsetInfo = docShell.documentCharsetInfo || docShell;
+      let cs = charsetInfo.charset;
+      if(rx.test(cs)) {
+        this.log("[NoScript XSS] Neutralizing bad charset " + cs);
+        let as = Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
+        charsetInfo.forcedCharset = as.getAtom("UTF-8");
         docShell.reload(docShell.LOAD_FLAGS_CHARSET_CHANGE); // needed in Gecko > 1.9
+        return true;
       }
-    } catch(e) {}
+    } catch(e) {
+      if (this.consoleDump) this.dump("Error filtering charset " + e);
+    }
+    return false;
   },
   
   _attemptNavigationInternal: function(doc, destURL, callback) {
