@@ -6436,6 +6436,7 @@ var ns = {
   },
  
   dump: function(msg, noConsole) {
+    if (!this.consoleDump) return;
     if (msg.stack) msg += msg.stack;
     msg = "[NoScript] " + msg;
     dump(msg + "\n");
