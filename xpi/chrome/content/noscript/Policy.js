@@ -587,16 +587,16 @@ const MainContentPolicy = {
             }
             
             if (isFlash) this.tagWindowlessObject(aContext);
-
+            
+            if (this.allowedMimeRegExp &&
+                  (this.allowedMimeRegExp.test(aMimeTypeGuess || mimeKey) ||
+                    this.allowedMimeRegExp.test((aMimeTypeGuess || mimeKey) + "@" + locationSite))
+                ) {
+              return CP_OK;
+            }
+             
             if (forbid) {
-              
-              if (this.allowedMimeRegExp &&
-                  (this.allowedMimeRegExp.test(aMimeTypeGuess) ||
-                    this.allowedMimeRegExp.test(aMimeTypeGuess + "@" + locationSite))
-                  ) {
-                return CP_OK;
-              }
-              
+
               if (isSilverlight) {
                 if (logIntercept) this.dump("Silverlight " + aContentLocation.spec + " " + typeof(aContext) + " " + aContentType + ", " + aInternalCall);
                

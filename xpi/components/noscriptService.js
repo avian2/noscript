@@ -1623,12 +1623,14 @@ var ns = {
       // multiple rx autoanchored
       case "hideOnUnloadRegExp":
         this.updateStyleSheet("." + this.hideObjClassName + " {display: none !important}", true);
-      case "allowedMimeRegExp":
       case "requireReloadRegExp":
       case "whitelistRegExp":
         this.updateRxPref(name, "", "^", this.rxParsers.multi);
       break;
-        
+      
+      case "allowedMimeRegExp":
+        this.updateRxPref(name, "", "^", this.rxParsers.multi);
+      break;
         
       case "safeJSRx":
         this.initSafeJSRx();
@@ -1685,12 +1687,11 @@ var ns = {
     },
     multi: function(s, flags) {
       var anchor = /\^/.test(flags);
-      var lines = s.split(/[\n\r]+/)
+      var lines = s.split(anchor ? /\s+/ : /[\n\r]+/)
           .filter(function(l) { return /\S/.test(l) });
       return new RegExp(
-        "(?:" +
         (anchor ? lines.map(ns.rxParsers.anchor) : lines).join('|')
-        + ")",
+        ,
         anchor ? flags.replace(/\^/g, '') : flags);
     }
   },
@@ -1749,7 +1750,8 @@ var ns = {
                 'noscript .__noscriptPlaceholder__ { display: inline !important; }';
       break;
       case "clearClick":
-        sheet = ".__noscriptOpaqued__ { opacity: 1 !important; visibility: visible; filter: none !important } " +
+        sheet = "body { cursor: auto !important } " + 
+                ".__noscriptOpaqued__ { opacity: 1 !important; visibility: visible; filter: none !important } " +
                 "iframe.__noscriptOpaqued__ { display: block !important; } " +
                 "object.__noscriptOpaqued__, embed.__noscriptOpaqued__ { display: inline !important } " +
                 ".__noscriptJustOpaqued__ { opacity: 1 !important } " +
