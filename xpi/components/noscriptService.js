@@ -1055,7 +1055,8 @@ const IOUtil = {
         case "view-source":
           return this.unwrapURL(url.path);
         case "feed":
-          let u = url.spec.substring(5);
+        case "pcast":
+          let u = url.spec.substring(url.scheme.length + 1);
           if (u.substring(0, 2) == '//') u = "http:" + u;
           return this.unwrapURL(u);
         case "wyciwyg":
@@ -3808,16 +3809,18 @@ var ns = {
     try {
       if (document.documentURI.indexOf("http") !== 0) return 0;
       
-      var window = document.defaultView;
+      let window = document.defaultView;
       if (!window) return 0;
       
-      var hasVisibleLinks = this.hasVisibleLinks(document);
+      let hasVisibleLinks = this.hasVisibleLinks(document);
       if (!this.jsredirectForceShow && hasVisibleLinks) 
         return 0;
       
-      var seen = [];
-      const body = document.body;
-      var cstyle = document.defaultView.getComputedStyle(body, "");
+      let body = document.body;
+      if (!body) return 0;
+
+      let seen = [];
+      let cstyle = document.defaultView.getComputedStyle(body, "");
       if (cstyle) {
         if (cstyle.visibility != "visible") {
           body.style.visibility = "visible";
@@ -4828,7 +4831,7 @@ var ns = {
     
     var isLegacyFrame = this.isLegacyFrameReplacement(ctx.object);
      
-    if (isLegacyFrame || (mime == doc.contentType && 
+    if (isLegacyFrame || (mime == doc.contentType && doc.body &&
         (ctx.anchor == doc.body.firstChild && 
          ctx.anchor == doc.body.lastChild ||
          (ctx.object instanceof Ci.nsIDOMHTMLEmbedElement) && ctx.object.src != url))
@@ -5933,8 +5936,8 @@ var ns = {
         const o = d.createElement("object");
         o.type = "application/x-java-vm";
         o.data = "data:" + o.type + ",";
-        d.body.appendChild(o);
-        d.body.removeChild(o);
+        d.documentElement.appendChild(o);
+        d.documentElement.removeChild(o);
         const k = function() {};
         w.__defineGetter__("java", k);
         w.__defineGetter__("Packages", k);
@@ -6011,7 +6014,7 @@ var ns = {
           
           // this.dump(req.URI.spec + " state " + stateFlags + ", " + req.loadFlags +  ", pending " + req.isPending());
           
-          var w = wp.DOMWindow;
+          var w = req.URI.schemeIs("data") ? DOM.findWindow(req) : wp.DOMWindow;
           
           if (w) {
             

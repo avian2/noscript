@@ -322,8 +322,9 @@ const MainContentPolicy = {
           
           locationURL = aContentLocation.spec;
           originURL = aRequestOrigin && aRequestOrigin.spec || "";
-          
-          if (locationURL.indexOf("view-source:") === 0 && /^(?:https?|ftp):/.test(originURL))
+          let vsPos = locationURL.indexOf("view-source:");
+          if (vsPos !== -1 && vsPos < 7 // includes feed: and pcast: prefixed URLs
+              && /^(?:https?|ftp):/.test(originURL))
             return this.reject("Embedded view-source:", arguments);
           
           if (locationURL == "about:blank" || /^chrome:/.test(locationURL)
