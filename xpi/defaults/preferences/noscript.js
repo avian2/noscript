@@ -29,7 +29,7 @@ pref("noscript.showExternalFilters", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
 pref("noscript.mandatory", "chrome: blob: about: about:addons about:blocked about:crashes about:home about:config about:neterror about:certerror about:memory about:plugins about:privatebrowsing about:sessionrestore about:support resource:");
-pref("noscript.default", "about:blank addons.mozilla.org browserid.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv informaction.com yahoo.com yimg.com yahooapis.com youtube.com ytimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com wlxrs.com");
+pref("noscript.default", "about:blank addons.mozilla.org persona.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv informaction.com yahoo.com yimg.com yahooapis.com youtube.com ytimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com wlxrs.com");
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
 pref("noscript.forbidSilverlight", true);
@@ -78,7 +78,7 @@ pref("noscript.allowPageLevel", 0);
 
 pref("noscript.forbidImpliesUntrust", false);
 pref("noscript.keys.toggle", "ctrl shift VK_BACK_SLASH.|");
-pref("noscript.keys.ui", "ctrl shift N");
+pref("noscript.keys.ui", "ctrl shift S");
 pref("noscript.keys.tempAllowPage", "");
 pref("noscript.keys.revokeTemp", "");
 

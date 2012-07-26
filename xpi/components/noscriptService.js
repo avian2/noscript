@@ -2008,6 +2008,10 @@ var ns = {
       
       "2.2.9rc2": {
         "addons.mozilla.org": ["browserid.org"]
+      },
+      
+      "@VERSION@rc2": {
+        "!browserid.org": ["persona.org"]
       }
     };
     
@@ -2015,10 +2019,13 @@ var ns = {
       if (this.versionComparator.compare(prev, v) < 0) {
         let cascading = versions[v];
         for (let site in cascading) {
-          if (this.isJSEnabled(site)) {
-            let newSite = cascading[site];
+          let newSite = cascading[site];
+          let replace = site[0] === "!";
+          if (replace) site = site.substring(1);
+          if (this.isJSEnabled(site)) { 
             this.jsPolicySites.remove(newSite, true, false);
             this.setJSEnabled(newSite, true);
+            if (replace) this.jsPolicySites.remove(site, true, false);
           }
         }
       }
@@ -4548,7 +4555,6 @@ var ns = {
       let oi = objInfo[count];
       let object = oi.embed;
       let extras = oi.pluginExtras;
-      let objectTag = object.tagName;
       
       try {
         extras.site = this.getSite(extras.url);
@@ -4556,7 +4562,17 @@ var ns = {
         if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site))
           continue;
         
-        extras.tag = "<" + (this.isLegacyFrameReplacement(object) ? "FRAME" : objectTag.toUpperCase()) + ">";
+        let objectTag = object.tagName.toUpperCase();
+        if (objectTag === "VIDEO") {
+          // Youtube HTML5 hack
+          let player = document.getElementById("movie_player-html5");
+          if (player) {
+            let rx = /\bhtml5-before-playback\b/;
+            if (rx.test(player.className)) player.className = player.className.replace(rx, '');
+          }
+        }
+        
+        extras.tag = "<" + (this.isLegacyFrameReplacement(object) ? "FRAME" : objectTag) + ">";
         extras.title =  extras.tag + ", " +  
             this.mimeEssentials(extras.mime) + "@" +
             (longTip ? extras.url : extras.url.replace(/[#\?].*/, ''));
@@ -4876,7 +4892,33 @@ var ns = {
             && !/(?:=[^&;]{10,}.*){2,}/.test(this.objectKey(url)) // try to avoid infinite loops when more than one long parameter is present in the object key
           ) {
           // we must reload, since the author-provided UI likely had no chance to wire events
-          reload(true); // normal reload because of http://forums.informaction.com/viewtopic.php?f=10&t=7195
+  
+          let url = doc.URL;
+          if (doc.getElementById("movie_player-html5")) {
+            // Youtube HTML5 hack, autoclick thumbnail on page reload
+            DOM.getDocShellForWindow(doc.defaultView)
+              .chromeEventHandler.addEventListener("load", function(ev) {
+              try {
+                let w = ev.target.defaultView;
+                if (w == w.top) {
+                  ev.currentTarget.removeEventListener(ev.type, arguments.callee,  true);
+                }
+                if (ev.target.URL === url) {
+                  let attempts = 10;
+                  w.setTimeout(function() {
+                    let node = w.document.getElementById("movie_player-html5");
+                    if (node && (node = node.getElementsByClassName("video-thumbnail")[0])) {
+                      node.click();
+                    } else {
+                      if (attempts-- > 0) w.setTimeout(arguments.callee, 500);
+                    }
+                  }, 500);
+                }
+              } catch(e) {}
+            }, true);
+          }
+          
+          reload(true); // normal reload because of http://forums.informaction.com/viewtopic.php?f=10&t=7195 
           return;
         }
         obj.autoplay = true;
@@ -6499,7 +6541,11 @@ var ns = {
     const prevVer = this.getPref("version", "");
     
     if ((this.firstRun = prevVer != ver)) {
-      if (prevVer) this.onVersionChanged(prevVer);
+      if (prevVer) try {
+        this.onVersionChanged(prevVer);
+      } catch (ex) {
+        Cu.reportError(ex);
+      }
       this.setPref("version", ver);
       this.savePrefs();
       const betaRx = /(?:a|alpha|b|beta|pre|rc)\d*$/; // see http://viewvc.svn.mozilla.org/vc/addons/trunk/site/app/config/constants.php?view=markup#l431

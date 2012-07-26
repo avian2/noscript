@@ -158,6 +158,7 @@ RequestWatchdog.prototype = {
         }
         
         new DOSChecker(abeReq).run(function() {
+          MaxRunTime.increase(40);
           return this.filterXSS(abeReq);
         }, this);
       }
@@ -1242,7 +1243,7 @@ var InjectionChecker = {
       }
       if (qnum % 2) break; // odd quotes
 
-      let t = tail.replace(/^<\??\s*\/?[a-zA-Z][\w\:\-]*(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+\*\?&;=`]*")*[\+\s]*\/?\??>/, ';xml;');
+      let t = tail.replace(/^<(\??\s*\/?[a-zA-Z][\w\:\-]*)(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+\*\?&;=`]*")*[\+\s]*(\/?\??)>/, '<$1$2>');
       if (t === tail) break;
       
       (res || (res = [])).push(head);
@@ -1689,7 +1690,7 @@ var InjectionChecker = {
   
   HeadersChecker: /[\r\n]\s*(?:content-(?:type|encoding))\s*:/i,
   checkHeaders: function(s) this._rxCheck("Headers", s),
-  SQLIChecker:  /\bunion\b[\w\W]+\bselect\b[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/i,
+  SQLIChecker: /(?:\bunion\b|\()[\w\W]+\bselect\b[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/i,
   checkSQLI: function(s) this._rxCheck("SQLI", s),
   
   base64: false,
@@ -2433,7 +2434,7 @@ function DOSChecker(request, canSpin) {
 }
 
 DOSChecker.abort = function(req, info) {
-  IOUtil.abort(("channel" in req) ? req.channel : req, true);
+  if (req) IOUtil.abort(("channel" in req) ? req.channel : req, true);
   ns.log("[NoScript DOS] Aborted potential DOS attempt: " +
          ( ("name" in req) ? req.name : req ) +
          "\n" + (info || new Error().stack));
@@ -2462,25 +2463,30 @@ DOSChecker.prototype = {
 var MaxRunTime = {
   branch: Cc["@mozilla.org/preferences-service;1"]
         .getService(Ci.nsIPrefService).getBranch("dom."),
-  pref: "max_script_run_time",
+  prefs: ["max_script_run_time", "max_chrome_script_run_time"],
+  stored: [],
   increase: function(v) {
-    var cur;
-    try {
-      cur = this.branch.getIntPref(this.pref);
-    } catch(e) {
-      cur = -1;
+    let prefs = this.prefs, stored = this.stored;
+    for (let j = prefs.length; j-- > 0;) {
+      let cur, pref = prefs[j];
+      try {
+        cur = this.branch.getIntPref(pref);
+      } catch(e) {
+        cur = -1;
+      }
+      if (cur <= 0 || cur >= v) return;
+      if (typeof stored[j] === "undefined") try {
+        stored[j] = cur;
+      } catch(e) {}
+      this.branch.setIntPref(pref, v);
     }
-    if (cur <= 0 || cur >= v) return;
-    if (typeof(this.storedValue) === "undefined") try {
-      this.storedValue = cur;
-    } catch(e) {}
-    this.branch.setIntPref(this.pref, v);
   },
   restore: function() {
-    if (typeof(this.storedValue) !== "undefined") {
-      this.branch.setIntPref(this.pref, this.storedValue);
-      delete this.storedValue;
+    let prefs = this.prefs, stored = this.stored;
+    for (let j = stored.length; j-- > 0;) {
+      this.branch.setIntPref(prefs[j], stored[j]);
     }
+    stored.length = 0;
   }
 };
 
