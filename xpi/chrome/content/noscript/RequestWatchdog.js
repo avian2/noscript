@@ -744,10 +744,15 @@ RequestWatchdog.prototype = {
         skipRx = /#[^#]+$/; // remove receiver's hash
       } else if (/^https?:\/\/apps\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
         skipRx = /&invite_url=javascript[^&]+/; // Zynga stuff
+      } else if (/^https?:\/\/l\.yimg\.com\/j\/static\/frame\?e=/.test(originalSpec) &&
+                /\.yahoo\.com$/.test(originSite) &&
+                ns.getPref("filterXExceptions.yahoo")) {
+        skipArr = ['e'];
+        if (ns.consoleDump) this.dump(channel, "Yahoo exception");
       }
-      
+                
       if (skipArr) {
-        skipRx = new RegExp("(?:^|&)(?:" + skipArr.join('|') + ")=[^&]+");
+        skipRx = new RegExp("(?:^|[&?])(?:" + skipArr.join('|') + ")=[^&]+");
       }
       
       if (!stripPost)
@@ -1105,7 +1110,7 @@ var InjectionChecker = {
   },
   
   get breakStops() {
-    var def = "\\/\\?&#;\\s\\x00<>}"; // we stop on URL, JS and HTML delimiters
+    var def = "\\/\\?&#;\\s\\x00}"; // we stop on URL and JS delimiters
     var bs = {
       nq: new RegExp("[" + def + "]")
     };
@@ -1228,30 +1233,29 @@ var InjectionChecker = {
     return s;
   },
   
-  reduceXML: function(s) {
+  reduceXML: function reduceXML(s) {
     var res;
     
-    for (;;) {
-      let pos = s.indexOf("<");
-      if (pos === -1) break;
+    for (let pos = s.indexOf("<"); pos !== -1;) {
       
       let head = s.substring(0, pos);
       let tail = s.substring(pos);
+
       let qnum = 0;
       for (pos = -1; (pos = head.indexOf('"', ++pos)) > -1; ) {
         if (pos === 0 || head[pos - 1] != '\\') qnum++;
       }
-      if (qnum % 2) break; // odd quotes
-
-      let t = tail.replace(/^<(\??\s*\/?[a-zA-Z][\w\:\-]*)(?:[\s\+]+[\w\:\-]+="[\w\:\-\/\.#%\s\+\*\?&;=`]*")*[\+\s]*(\/?\??)>/, '<$1$2>');
-      if (t === tail) break;
+      if (qnum % 2)  break; // odd quotes
       
+      let t = tail.replace(/^<(\??\s*\/?[a-zA-Z][\w:-]*)(?:[\s+]+[\w:-]+="[^"]*")*[\s+]*(\/?\??)>/, '<$1$2>');
+     
       (res || (res = [])).push(head);
       s = t;
+      pos = s.indexOf("<", 1);
     }
     if (res) {
       res.push(s);
-      s = res.join('').replace(/(?:\s*;xml;\s*)+/g, ';xml;');
+      s = res.join('');
     }
     
     return s;
@@ -1303,7 +1307,8 @@ var InjectionChecker = {
   maybeJS: function(expr) {
     expr = // dotted URL components can lead to false positives, let's remove them
       expr.replace(this._removeDotsRx, this._removeDots)
-        .replace(this._arrayAccessRx, '_ARRAY_ACCESS_');
+        .replace(this._arrayAccessRx, '_ARRAY_ACCESS_')
+        .replace(/<([\w:]+)>[^<]+<\/\1>/g, '<$1/>'); // reduce XML text nodes
     
     if (expr.indexOf(")") !== -1) expr += ")"; // account for externally balanced parens
    if(this._assignmentRx.test(expr) && !this._badRightHandRx.test(expr)) // commonest case, single assignment or simple chained assignments, no break
@@ -1475,11 +1480,15 @@ var InjectionChecker = {
             hunt = false;
           } else {
             len += pos;
-            if (quote && subj[len] == quote) {
+            if (quote && subj[len] === quote) {
               len++;
+            } else if (subj[len - 1] === '<') {
+              // invalid JS, and mabe in the middle of XML block
+              len++;
+              continue;
             }
             expr = subj.substring(0, len);
-            if (pos == 0) len++;
+            if (pos === 0) len++;
           }
         }
         
@@ -1492,10 +1501,11 @@ var InjectionChecker = {
            
         if(invalidCharsRx && invalidCharsRx.test(expr)) {
           this.log("Quick skipping invalid chars");
- 
           break;
         }
-     
+        
+        
+        
         if (quote) {
           if (this.checkNonTrivialJSSyntax(expr)) {
             this.log("Non-trivial JS inside quoted string detected", t, iterations);
@@ -1783,8 +1793,7 @@ var InjectionChecker = {
   
   checkURL: function(url) {
     // let's assume protocol and host are safe, but keep the leading double slash to keep comments in account
-    url = url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "//");
-    return this.checkRecursive(url);
+    return this.checkRecursive( url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "//"));
   },
   
   checkRecursive: function(s, depth, isPost) {

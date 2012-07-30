@@ -1489,7 +1489,7 @@ return noscriptUtil.service ? {
   },
   
   patchNotificationBox: function(nb, pos) {
-     if (nb._noscriptPatched) return;
+    if (nb._noscriptPatched) return;
     
     nb._noscriptPatched = true;
     
@@ -1518,9 +1518,17 @@ return noscriptUtil.service ? {
       }
     }
     if (!stack) {
-     stack = nb.ownerDocument.createElement("stack");
-     stack.setAttribute("class", "noscript-bottom-notify");
-     nb.appendChild(stack);
+      stack = nb.ownerDocument.createElement("stack");
+      stack.setAttribute("class", "noscript-bottom-notify");
+      nb.appendChild(stack);
+      nb.appendChild = function(node) {
+        this.__proto__.appendChild.call(this, node);
+        this.__proto__.appendChild.call(this, stack);
+      }
+      nb._showNotification = function(notification, slideIn, skipAnim) {
+        if (!slideIn) stack.removeAttribute("height");
+        this.__proto__._showNotification.apply(this, arguments);
+      }
     }
     nb._noscriptBottomStack_ = stack;
   },
@@ -1840,6 +1848,7 @@ return noscriptUtil.service ? {
     var widget = this.getNsNotification(box); // Modified by Higmmer
     if (widget) {
       if (box._timer) clearTimeout(box._timer);
+      widget.parentNode.removeAttribute("height");
       if (widget.close) {
         if (box.currentNotification == widget) {
           box.currentNotification = null;

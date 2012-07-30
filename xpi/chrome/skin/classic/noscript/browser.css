@@ -289,7 +289,6 @@ menupopup[sticky="true"][disabled="true"] {
 #addon-bar > #noscript-tbb, #addon-bar > #noscript-tbb-page, #addon-bar > #noscript-tbb-revoke-temp
 { min-width: 16px !important }
 
-
 notification {
   word-wrap: break-word !important;
 }

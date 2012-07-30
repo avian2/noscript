@@ -2010,7 +2010,7 @@ var ns = {
         "addons.mozilla.org": ["browserid.org"]
       },
       
-      "@VERSION@rc2": {
+      "2.4.9rc2": {
         "!browserid.org": ["persona.org"]
       }
     };
@@ -4519,7 +4519,8 @@ var ns = {
     }
     return ret;
   },
-    
+  
+  _phAnchorProps: ["position", "top", "bottom", "left", "right"],  
   processObjectElements: function(document, sites, loaded) {
     const pluginExtras = this.findPluginExtras(document);
     sites.pluginCount += pluginExtras.length;
@@ -4623,10 +4624,17 @@ var ns = {
           innerDiv.setAttribute("style", cssDef + forcedCSS);
           
           restrictedSize = (collapse || style.display === "none" || style.visibility === "hidden");
-
+      
           anchor.style.width = style.width;
           anchor.style.height = style.height;
-
+          if (style.position !== "static") {
+            anchor.style.position = style.position;
+            anchor.style.top = style.top;
+            anchor.style.left = style.left;
+            anchor.style.bottom = style.bottom;
+            anchor.style.right = style.right;
+            innerDiv.style.position = "static";
+          }
         } else restrictedSize = collapse;
         
         if (restrictedSize) {
@@ -4830,10 +4838,12 @@ var ns = {
   
   handleClickToPlay: function(obj) {
     if (obj instanceof Ci.nsIObjectLoadingContent && ("playPlugin" in obj) && ("activated" in obj) &&
-        !obj.activated && ns.getPref("smartClickToPlay"))
+        !obj.activated && this.getPref("smartClickToPlay") && !this.getExpando(obj, "activated")) {
+      this.setExpando(obj, "activated", true);
       Thread.asap(function() obj.playPlugin());
+    }
   },
-  
+
   checkAndEnableObject: function(ctx) {
     var extras = ctx.extras;
     if (!this.confirmEnableObject(ctx.window, extras)) return;

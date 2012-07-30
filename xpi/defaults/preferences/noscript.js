@@ -116,6 +116,7 @@ pref("noscript.filterXExceptions.livejournal", true);
 pref("noscript.filterXExceptions.lycosmail", true);
 pref("noscript.filterXExceptions.medicare", true);
 pref("noscript.filterXExceptions.readability", true);
+pref("noscript.filterXExceptions.yahoo", true);
 pref("noscript.filterXExceptions.visa", true);
 pref("noscript.filterXExceptions.verizon", true);
 pref("noscript.filterXExceptions.zendesk", true);
