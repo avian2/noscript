@@ -2516,7 +2516,34 @@ return noscriptUtil.service ? {
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.prefsObserver.register();
       
+      let self = this;
       
+      window.addEventListener("keyup", function(ev) {
+        if (ev.keyCode !== 46) return;
+        if (self.tapped) {
+          let el = self.tapped;
+          self.tapped = null;
+          let w = el.ownerDocument.defaultView;
+          if (w.top == content && !('' + w.getSelection())) {
+            do {
+              if (w.getComputedStyle(el, '') !== "static") {
+                (self.tapped = el.parentNode).removeChild(el);
+                break;
+              }
+            } while ((el = el.parentNode));
+          }
+        }
+      }, false);
+      
+      window.addEventListener("mousedown", function(ev) {
+        if (ev.button !== 0) return;
+        let el = ev.target;
+        self.tapped = (el.ownerDocument.defaultView.top == content) && el;
+      }, false);
+      
+      window.addEventListener("mouseup", function(ev) {
+        self.tapped = null;
+      }, false);
       
     },
     

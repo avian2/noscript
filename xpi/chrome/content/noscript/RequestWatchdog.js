@@ -740,7 +740,10 @@ RequestWatchdog.prototype = {
           ns.getPref("filterXExceptions.livejournal")) {
         if (ns.consoleDump) this.dump(channel, "Livejournal-like comments exception");
         skipArr = ['body'];
-      } else if (url.ref && /^https?:\/\/api\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
+      } else if (url.ref &&
+          (/^https?:\/\/api\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) ||
+          (/^https:\/\/tbpl\.mozilla\.org\//.test(origin)) // work-around for hg reftest DOS
+          ) {
         skipRx = /#[^#]+$/; // remove receiver's hash
       } else if (/^https?:\/\/apps\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
         skipRx = /&invite_url=javascript[^&]+/; // Zynga stuff

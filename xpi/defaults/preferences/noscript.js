@@ -313,7 +313,7 @@ pref("noscript.ABE.localExtras", "");
 
 pref("noscript.asyncNetworking", true);
 pref("noscript.inclusionTypeChecking", true);
-pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com .amazonaws.com lesscss.googlecode.com/files/");
+pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com .amazonaws.com lesscss.googlecode.com/files/ .hp-ww.com");
 pref("noscript.inclusionTypeChecking.checkDynamic", false);
 pref("noscript.nosniff", true);
 

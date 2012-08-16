@@ -1568,13 +1568,16 @@ var ns = {
       case "inclusionTypeChecking":
       case "nosniff":
       case "showBlankSources":
-      case "liveConnectInterception":
       case "audioApiInterception":
       case "allowHttpsOnly":
       case "removeSMILKeySniffer":
         this[name] = this.getPref(name, this[name]);  
       break;
       
+      case "liveConnectInterception":
+        this[name] = this.geckoVersionCheck("16.0") === -1 && this.getPref(name, this[name]);
+      break;
+    
       case "sync.enabled":
         this._updateSync();
       break;
@@ -1751,7 +1754,7 @@ var ns = {
                 'noscript .__noscriptPlaceholder__ { display: inline !important; }';
       break;
       case "clearClick":
-        sheet = "body { cursor: auto !important } " + 
+        sheet = "body:not([id]) { cursor: auto !important } " + 
                 ".__noscriptOpaqued__ { opacity: 1 !important; visibility: visible; filter: none !important } " +
                 "iframe.__noscriptOpaqued__ { display: block !important; } " +
                 "object.__noscriptOpaqued__, embed.__noscriptOpaqued__ { display: inline !important } " +
@@ -4998,46 +5001,44 @@ var ns = {
     return true;
   },
   
-  _silverlightPatch: function() {
-    HTMLObjectElement.prototype.__defineGetter__("IsVersionSupported", function() {
-      return (/^application\/x-silverlight\b/.test(this.type))
-        ? function(n) { return true; } : undefined;
-    });
-  }.toSource() + "()",
-  
-  _flashPatch: function() {
-    var type = "application/x-shockwave-flash";
-    var ver;
-    var setAttribute = HTMLObjectElement.prototype.setAttribute;
-    HTMLObjectElement.prototype.setAttribute = function(n, v) {
-      if (n == "type" && v == type && !this.data) {
-        this._pendingType = v;
-        
-       
-        this.SetVariable = function() {}; // can't use DUMMY_FUNC, we're in content context
-        this.GetVariable = function(n) {
-          if (n !== "$version") return undefined;
+  _silverlightPatch: 'HTMLObjectElement.prototype.__defineGetter__("IsVersionSupported", function() ((/^application\\/x-silverlight\\b/.test(this.type)) ? function(n) true : undefined));',
+    
+  get _flashPatch() {
+    delete this._flashPatch;
+    return this._flashPatch = function() {
+      var type = "application/x-shockwave-flash";
+      var ver;
+      var setAttribute = HTMLObjectElement.prototype.setAttribute;
+      HTMLObjectElement.prototype.setAttribute = function(n, v) {
+        if (n == "type" && v == type && !this.data) {
+          this._pendingType = v;
           
-          if (!ver) {
-            ver = navigator.plugins["Shockwave Flash"]
-              .description.match(/(\d+)\.(\d+)(?:\s*r(\d+))?/); 
-            ver.shift();
-            ver.push('99');
-            ver = "WIN " + ver.join(",");
+         
+          this.SetVariable = function() {}; // can't use DUMMY_FUNC, we're in content context
+          this.GetVariable = function(n) {
+            if (n !== "$version") return undefined;
+            
+            if (!ver) {
+              ver = navigator.plugins["Shockwave Flash"]
+                .description.match(/(\d+)\.(\d+)(?:\s*r(\d+))?/); 
+              ver.shift();
+              ver.push('99');
+              ver = "WIN " + ver.join(",");
+            }
+            
+            return ver;
           }
-          
-          return ver;
         }
-      }
-      
-      setAttribute.call(this, n, v);
-      if (n === "data" && ("_pendingType" in this) && this._pendingType === type) {
-        setAttribute.call(this, "type", type);
-        this._pendingType = null;
-      }
-    };
-
-  }.toSource() + "()",
+        
+        setAttribute.call(this, n, v);
+        if (n === "data" && ("_pendingType" in this) && this._pendingType === type) {
+          setAttribute.call(this, "type", type);
+          this._pendingType = null;
+        }
+      };
+  
+    }.toSource() + "()";
+  },
   
   _attachSilverlightExtras: function(embed, extras) {
     extras.silverlight = true;
