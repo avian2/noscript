@@ -10,18 +10,21 @@ ClearClickHandler.prototype = {
   uiEvents: ["mousedown", "mouseup", "click", "dblclick", "drop", "keydown", "keypress", "keyup", "blur"],
   
   rapidFire: {
+    events: ["keydown", "mousedown", "mouseover"],
     quarantine: 800,
     site: null,
     ts: 0,
     mouse: false,
+    lastOver: { x: 0, y: 0, site: '', ts: 0 },
    
     check: function(ev, site, ts) {
-      const typeChar = ev.type[0];
+      const type = ev.type;
       
-      let mouse = false;
-      switch(typeChar) {
+      let mouse = false, over = false;
+      switch(type[0]) {
         case 'c': case 'm':
           mouse = true;
+          over = type === "mouseover";
         case 'k':
         break;
       
@@ -29,20 +32,62 @@ ClearClickHandler.prototype = {
           return false;
       }
       
+      // ns.log(ev.type + " " + ev.target + "@" + site + " <- " + this.site + " -- " + ev.timeStamp)
+      
+      let lo = this.lastOver;
+        
       if (this.mouse === mouse) {
-        let contentRx = /^(?:(?:ht|f)tps?|data|javascript|feed):/i;
-        if (site !== this.site && contentRx.test(this.site) &&
-            (contentRx.test(site) || !contentRx.test(ev.target.ownerDocument.defaultView.top.location)) &&
-            (ts - this.ts) < this.quarantine) {
-          this.ts = ts - this.quarantine / 2;
-          return ns.getPref("clearClick.rapidFireCheck");
+        if (site !== this.site) {
+          let contentRx = /^(?:(?:ht|f)tps?|data|javascript|feed):/i;
+          if (contentRx.test(this.site) &&
+              (contentRx.test(site) || !contentRx.test(ev.target.ownerDocument.defaultView.top.location))
+              ) {
+              
+            if (lo.site && lo.site !== site && (ts - lo.ts) < this.quarantine) {
+              let d = ev.target.ownerDocument;
+              let w = d.defaultView;
+              let de = d.documentElement;
+              let width = de.clientWidth;
+              let height = de.clientHeight;
+              let top = w.mozInnerScreenY + w.scrollY + de.offsetTop;
+              let left = w.mozInnerScreenX + w.scrollX + de.offsetLeft;
+              // ns.log("HOVER " + ev.target + "@" + lo.site + ", " + top + ", " + left + ", " + (top + height) + ", " + (left + width) + " - " + lo.y + ", " + lo.x );
+              if (lo.x > left && lo.x - left < width && lo.y > top && lo.y - top < height) {
+                this.ts = ts;
+                // ns.log("HOVER TS " + ts);
+              }
+              lo.site = '';
+            }
+            
+            if (over) {
+               if (ts - lo.ts < this.quarantine) return false;
+            } else {
+                if (ts - this.ts < this.quarantine) {
+                  if (!lo.site) this.ts = ts - this.quarantine / 2;
+                  return ns.getPref("clearClick.rapidFireCheck");
+                } 
+            }
+            
+          }
         }
       } else this.mouse = mouse;
       
       this.site = site;
-      this.ts = ts;
-  
       
+      if (over) {
+        if (!ev.target.contentWindow) {
+          lo.site = site;
+          lo.ts = ts;
+          let w = ev.target.ownerDocument.defaultView;
+          lo.x = ev.pageX + w.mozInnerScreenX;
+          lo.y = ev.pageY + w.mozInnerScreenY;
+        }
+      } else {
+        if (mouse) {
+          lo.site = '';
+        }
+        this.ts = ts;
+      }
       return false;
     }
   },
@@ -52,7 +97,8 @@ ClearClickHandler.prototype = {
     var doc = browser.ownerDocument;
     if (!("__ClearClick__" in doc)) {
       doc.__ClearClick__ = true;
-      for each(let et in ["keydown", "mousedown"]) doc.addEventListener(et, this, true);
+      for each(let et in this.rapidFire.events)
+        doc.addEventListener(et, this, true);
     }
     
     var ceh = browser.docShell.chromeEventHandler;
@@ -245,7 +291,7 @@ ClearClickHandler.prototype = {
     const d = o.ownerDocument;
     if (!d) return;
     
-    if (d === ev.currentTarget || // chrome source, see rapid fire installation
+    if (d === ev.currentTarget || // chrome source, see rapidFire installation
         ev.button || // right or middle click
         ev.keyCode && // special keys, e.g. for UI navigation
         (ev.ctrlKey || ev.metaKey || ev.altKey || ev.keyCode < 48 && ev.keyCode !== 13 && ev.keyCode !== 32)
@@ -274,6 +320,8 @@ ClearClickHandler.prototype = {
              " in "  + (ts - this.rapidFire.ts) + "ms)", true);
       return;
     }
+    
+    if (ev.type === "mouseover") return;
     
     if (!("__clearClickUnlocked" in top)) 
       top.__clearClickUnlocked = !this.appliesHere(topURL);

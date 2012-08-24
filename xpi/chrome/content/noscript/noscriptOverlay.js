@@ -2519,14 +2519,14 @@ return noscriptUtil.service ? {
       let self = this;
       
       window.addEventListener("keyup", function(ev) {
-        if (ev.keyCode !== 46) return;
-        if (self.tapped) {
+        if (self.tapped && ev.keyCode === 46) {
           let el = self.tapped;
           self.tapped = null;
+          self.delKey = true;
           let w = el.ownerDocument.defaultView;
           if (w.top == content && !('' + w.getSelection())) {
             do {
-              if (w.getComputedStyle(el, '') !== "static") {
+              if (w.getComputedStyle(el, '').position !== "static") {
                 (self.tapped = el.parentNode).removeChild(el);
                 break;
               }
@@ -2536,12 +2536,21 @@ return noscriptUtil.service ? {
       }, false);
       
       window.addEventListener("mousedown", function(ev) {
-        if (ev.button !== 0) return;
-        let el = ev.target;
-        self.tapped = (el.ownerDocument.defaultView.top == content) && el;
+        if (ev.button === 0) {
+          let el = ev.target;
+          self.tapped = (el.ownerDocument.defaultView.top == content) && el;
+          self.delKey = false;
+        }
       }, false);
       
       window.addEventListener("mouseup", function(ev) {
+        if (self.delKey) {
+          self.delKey = false;
+          if (ev.target.ownerDocument.defaultView.top == content) {
+            ev.preventDefault();
+            ev.stopPropagation();
+          }
+        }
         self.tapped = null;
       }, false);
       
