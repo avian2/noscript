@@ -1682,7 +1682,8 @@ var InjectionChecker = {
   checkAttributes: function(s) {
     s = this.reduceDashPlus(s);
     return this._rxCheck("Attributes", s) ||
-        /\\/.test(s) && this._rxCheck("Attributes", this.unescapeCSS(s));
+        /\\/.test(s) && this._rxCheck("Attributes", this.unescapeCSS(s)) ||
+        /data:[^,]*,\S+\s/i.test(s) && this._rxCheck("Attributes", this.urlUnescape(s.replace(/\s/g, '')));
   },
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
@@ -1795,8 +1796,12 @@ var InjectionChecker = {
   
   
   checkURL: function(url) {
-    // let's assume protocol and host are safe, but keep the leading double slash to keep comments in account
-    return this.checkRecursive( url.replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "//"));
+    return this.checkRecursive(url
+      // assume protocol and host are safe, but keep the leading double slash to keep comments in account
+      .replace(/^[a-z]+:\/\/.*?(?=\/|$)/, "//")
+      // Remove outer parenses from ASP.NET cookieless session's AppPathModifier
+      .replace(/\/\((S\(\w{24}\))\)\//, '/$1/')
+    );
   },
   
   checkRecursive: function(s, depth, isPost) {
@@ -2337,7 +2342,7 @@ XSanitizer.prototype = {
     }
     // regular duty
     s = s.replace(this.primaryBlacklist, " ")
-      .replace(/\bjavascript:+|\bdata:[^,]+,(?=[^<]*<)|-moz-binding|@import/ig,
+      .replace(/\bjavascript:+|\bdata:[^,]+,(?=[^<]*<|%25%20|%\s+[2-3][0-9a-f])|-moz-binding|@import/ig,
                 function(m) { return m.replace(/(.*?)(\w)/, "$1#no$2"); });
 
     if (this.extraBlacklist) { // additional user-defined blacklist for emergencies

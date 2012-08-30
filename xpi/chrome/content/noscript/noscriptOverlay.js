@@ -2519,29 +2519,37 @@ return noscriptUtil.service ? {
       let self = this;
       
       window.addEventListener("keyup", function(ev) {
-        if (self.tapped && ev.keyCode === 46) {
+        if (self.tapped && ev.keyCode === 46 &&
+            noscriptOverlay.ns.getPref("eraseFloatingElements")
+          ) {
           let el = self.tapped;
           self.tapped = null;
           self.delKey = true;
-          let w = el.ownerDocument.defaultView;
+          let doc = el.ownerDocument;
+          let w = doc.defaultView;
           if (w.top == content && !('' + w.getSelection())) {
+            let root = doc.body || doc.documentElement;
+            let posRx = /^(?:absolute|fixed)$/;
             do {
-              if (w.getComputedStyle(el, '').position !== "static") {
+              if (posRx.test(w.getComputedStyle(el, '').position)) {
                 (self.tapped = el.parentNode).removeChild(el);
                 break;
               }
-            } while ((el = el.parentNode));
+            } while ((el = el.parentNode) && el != root);
           }
         }
-      }, false);
+      }, true);
       
       window.addEventListener("mousedown", function(ev) {
         if (ev.button === 0) {
+          let ns = noscriptOverlay.ns;
           let el = ev.target;
-          self.tapped = (el.ownerDocument.defaultView.top == content) && el;
+          self.tapped = ns.isJSEnabled(ns.getSite(el.ownerDocument.documentURI))
+            ? null
+            : (el.ownerDocument.defaultView.top == content) && el;
           self.delKey = false;
         }
-      }, false);
+      }, true);
       
       window.addEventListener("mouseup", function(ev) {
         if (self.delKey) {
@@ -2552,7 +2560,7 @@ return noscriptUtil.service ? {
           }
         }
         self.tapped = null;
-      }, false);
+      }, true);
       
     },
     

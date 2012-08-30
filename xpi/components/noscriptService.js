@@ -4330,12 +4330,13 @@ var ns = {
           docShell.allowJavascript = snapshots.docJS;
         
         Thread.asap(function() {
-          if (doc.defaultView && this.executingJSURL(doc) > 1) {
-            this.delayExec(arguments.callee, 100);
-            return;
-          }
-          
-          this.executingJSURL(doc, 0);
+          try {
+            if (doc.defaultView && this.executingJSURL(doc) > 1) {
+              this.delayExec(arguments.callee, 100);
+              return;
+            }
+            this.executingJSURL(doc, 0);
+          } catch (e) {} // the document could be dead, e.g. after a javascript: non-void expression evaluation
           
           if (focusListener)
             for each(let et in ["focus", "blur"])
