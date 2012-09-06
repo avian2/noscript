@@ -153,7 +153,7 @@ function NSGetFactory(cid) {
 }
 
 const CP_OK = 1;
-const CP_REJECT = -4;
+const CP_REJECT = -2; // CP_REJECT_TYPE doesn't case the -moz-suppressed CSS pseudo class to be added
 const CP_NOP = function() CP_OK;
 const CP_FRAMECHECK = 2;
 const CP_SHOULDPROCESS = 4;
@@ -1358,7 +1358,8 @@ var ns = {
         
         if (ncb) {
           const IBCL = Ci.nsIBadCertListener2;
-          let bgReq = ncb instanceof Ci.nsIXMLHttpRequest || ncb instanceof IBCL;
+          let bgReq = ncb instanceof Ci.nsIXMLHttpRequest || ncb instanceof IBCL 
+            || ("responseXML" in ncb); // for some reason, since Gecko 15 (new XMLHttpRequest() instanceof Ci.nsIXMLHttpRequest) === false
           if (!bgReq) try { bgReq = ncb.getInterface(IBCL); } catch (e) {}
           if (bgReq && !ns.isCheckedChannel(channel)) {
               if (ns.consoleDump) {
@@ -4114,8 +4115,9 @@ var ns = {
     var docShell = metaRefreshInfo.docShell || DOM.getDocShellForWindow(document.defaultView); 
     this.enableMetaRefresh(docShell);
     if (docShell instanceof Ci.nsIRefreshURI) {
-      var baseURI = metaRefreshInfo.baseURI || IOS.newURI(document.documentURI, null, null);
-      docShell.setupRefreshURIFromHeader(baseURI, "0;" + metaRefreshInfo.uri);
+      this.setupRefresh(docShell,
+         metaRefreshInfo.baseURI || IOS.newURI(document.documentURI, null, null),
+        "0;" + metaRefreshInfo.uri);
     }
   },
   doBlockMetaRefresh: function(metaRefreshInfo) {
@@ -4143,6 +4145,14 @@ var ns = {
     }
   },
   
+  setupRefresh: function(docShell, baseURI, header) {
+    try {
+      // Gecko <= 16
+      docShell.nsIRefreshURI.setupRefreshURIFromHeader(baseURI, header);
+    } catch (e) {
+      docShell.nsIRefreshURI.setupRefreshURIFromHeader(baseURI, docShell.document.nodePrincipal, header);
+    }
+  },
 
   // These catch both Paypal's variant,
   // if (parent.frames.length > 0){ top.location.replace(document.location); }
@@ -4767,9 +4777,36 @@ var ns = {
   onOverlayedPlaceholderClick: function(ev) {
     var el = ev.originalTarget;
     var doc = el.ownerDocument;
+    
+    // check for cloned nodes, like on http://www.vmware.com/products/workstation/new.html
+    for (let ph = el; ph.className && ph.className.indexOf("__noscriptPlaceholder__") !== -1; ph = ph.parentNode) {
+      if (ph.href && ph.title) {
+        if (this.getExpando(ph, "removedNode")) {
+          this.onPlaceholderClick(ev, ph);
+          return;
+        }
+        
+        let pluginExtras = this.findPluginExtras(doc);
+        if (pluginExtras) {
+          for (let j = pluginExtras.length; j-- > 0;) {
+            if (pluginExtras[j].title === ph.title) {
+              let o = pluginExtras[j].placeholder;
+              let n = this.getExpando(o, "removedNode");
+              this.setExpando(ph, "removedNode", n);
+              this.setPluginExtras(ph, this.getPluginExtras(n));
+              this.onPlaceholderClick(ev, ph);            
+              return;
+            }
+          }
+        }
+        break;
+      }
+    }
+    
+    // check for non-statically positioned nodes
     var win = doc.defaultView;
-    var style = win.getComputedStyle(el, "");
-    if (style.position === "absolute") {
+    var style = win.getComputedStyle(el.offsetParent || el, "");
+    if (style.position !== "static") {
       let ph = this._findPlaceholder(doc, { x: ev.clientX + win.scrollX, y: ev.clientY + win.scrollY });
       if (ph) {
         let object = this.getExpando(ph, "removedNode");
@@ -4779,6 +4816,7 @@ var ns = {
       }
     }
   },
+  
   _findPlaceholder: function(doc, p) {
     let pluginExtras = this.findPluginExtras(doc);
     if (pluginExtras) {
@@ -6203,7 +6241,7 @@ var ns = {
             (bg || docShell.refreshPending)) {
           var toGo = Math.round((delay - (Date.now() - ts)) / 1000);
           if (toGo < 1) toGo = 1;
-          docShell.setupRefreshURIFromHeader(docShell.currentURI,  toGo + ";" + uri.spec);
+          ns.setupRefresh(docShell, docShell.currentURI,  toGo + ";" + uri.spec);
           docShell.resumeRefreshURIs();
         }
       }, false);

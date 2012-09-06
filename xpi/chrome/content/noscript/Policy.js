@@ -112,13 +112,38 @@ const NOPContentPolicy = {
 // TYPE_PING = 10
 // TYPE_XMLHTTPREQUEST = 11
 // TYPE_OBJECT_SUBREQUEST = 12
-// REJECT_SERVER = -3
 // ACCEPT = 1
 
 
 const MainContentPolicy = {
   shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
+    if (!aContentLocation) {
+      aContentLocation = aRequestOrigin;
+      try {
+        if (aContentType === 5 && /^application\/x-java\b/i.test(aMimeTypeGuess)) {
+       
+          let cs = aContext.ownerDocument.characterSet;
+          
+          let code = aContext.getAttribute("code");
+          let codeBase = aContext.getAttribute("codebase");
+          
+          if (codeBase) {
+            try {
+              aContentLocation = IOS.newURI(codeBase, cs, aContentLocation);
+            } catch (e) {}
+          }
+          if (code) {
+            try {
+              if (!/\.class\s*$/i.test(code)) code += ".class";
+              aContentLocation = IOS.newURI(code, cs, aContentLocation);
+            } catch (e) {}
+          }
+        }
+      } catch (e) {}
+    }
+    
     var logIntercept = this.consoleDump, logBlock;
+    
     if(logIntercept) {
       logBlock = logIntercept & LOG_CONTENT_BLOCK;
       logIntercept = logIntercept & LOG_CONTENT_INTERCEPT;

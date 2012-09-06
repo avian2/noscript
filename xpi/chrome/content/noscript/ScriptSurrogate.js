@@ -237,7 +237,14 @@ var ScriptSurrogate = {
       this._sandboxParams.sandboxPrototype = w;
       let s = new Cu.Sandbox(w, this._sandboxParams);
       if (!("top" in s)) s.__proto__ = w;
-      if (typeof env !== "undefined") s.env = env;
+      if (typeof env !== "undefined") {
+        s.env = env;
+        let ep = {};
+        for (let p in env) {
+          ep[p] = "rw";
+        }
+        env.__exposedProps__ = ep;
+      }
       let code = "with(window){" + scriptBlock + "}delete this.env;";
       if ("keys" in Object) code += "for each(let p in Object.keys(this))window[p]=this[p];";
       Cu.evalInSandbox(code, s, this.JS_VERSION);
