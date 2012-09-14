@@ -119,25 +119,78 @@ const MainContentPolicy = {
   shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
     if (!aContentLocation) {
       aContentLocation = aRequestOrigin;
+    }
+    if (aContentType === 5 && /^application\/x-java\b/i.test(aMimeTypeGuess) &&
+        aInternalCall !== CP_OBJECTARC) {
       try {
-        if (aContentType === 5 && /^application\/x-java\b/i.test(aMimeTypeGuess)) {
-       
-          let cs = aContext.ownerDocument.characterSet;
-          
-          let code = aContext.getAttribute("code");
-          let codeBase = aContext.getAttribute("codebase");
-          
-          if (codeBase) {
-            try {
-              aContentLocation = IOS.newURI(codeBase, cs, aContentLocation);
-            } catch (e) {}
+        let cs = aContext.ownerDocument.characterSet;
+        let code, codeBase, archive;
+        
+        let pp = aContext.getElementsByTagName("param");
+        for (let j = 0, len = pp.length; j < len; j++) {
+          let p = pp[j];
+          if (p.parentNode == aContext) {
+            switch(p.name.toLowerCase()) {
+              case "code": code = p.value; break;
+              case "codebase": codeBase = p.value; break;
+              case "archive": archive = p.value; break;
+            }
           }
-          if (code) {
+        }
+        
+        if (!code)
+          code = aContext.getAttribute("code");
+        
+        if (!codeBase)
+          codeBase = aContext.getAttribute("codebase") ||
+          (aContext instanceof Ci.nsIDOMHTMLAppletElement ? "/" : ".");
+        
+        if (!archive)
+          archive = aContext.getAttribute("archive");
+        
+        try {
+          aContentLocation = IOS.newURI(codeBase, cs, aRequestOrigin);
+        } catch (e) {}
+ 
+        if (aContext instanceof Ci.nsIDOMHTMLEmbedElement) {
+          code = aContext.getAttribute("code"); 
+          if (code && /\bjava\b/.test(aMimeTypeGuess)) {
+            archive = archive ? code + " " + archive : code;
+          } else code = '';
+        }
+        if (archive) {
+          let prePaths;
+          let base = aContentLocation;       
+          let jars = archive.split(/[\s,]+/)
+          for (let j = jars.length; j-- > 0;) {
             try {
-              if (!/\.class\s*$/i.test(code)) code += ".class";
-              aContentLocation = IOS.newURI(code, cs, aContentLocation);
-            } catch (e) {}
+              let jar = jars[j];
+              let u = IOS.newURI(base, cs, jar);
+              let prePath = u.prePath;
+              if (prePath !== base.prePath) {
+                if (prePaths) {
+                  if (prePaths.indexOf(prePath) !== -1) continue;
+                  prePaths.push(prePath);
+                } else prePaths = [prePath];
+              } else {
+                if (j === 0 && code === jar) aContentLocation = u;
+                continue;
+              }
+              this.setExpando(aContext, "allowed", null);
+              let res = this.shouldLoad(aContentType, u, aRequestOrigin, aContext, aMimeTypeGuess, CP_OBJECTARC);
+              if (res !== CP_OK) return res;
+            } catch (e) {
+              this.dump(e)
+            }
           }
+          this.setExpando(aContext, "allowed", null);
+        }
+        
+        if (code) {
+          try {
+            if (!/\.class\s*$/i.test(code)) code += ".class";
+            aContentLocation = IOS.newURI(code, cs, aContentLocation);
+          } catch (e) {}
         }
       } catch (e) {}
     }
@@ -261,46 +314,6 @@ const MainContentPolicy = {
           break;
         
         case 5: // embeds
-          // here we account for sloppy handling of the archive and code attributes on applets
-          if (!aInternalCall) {
-              
-            let archive = aContext.getAttribute("archive");
-            let code = '';
-            if (aContext instanceof Ci.nsIDOMHTMLEmbedElement) {
-              code = aContext.getAttribute("code"); 
-              if (code && /\bjava\b/.test(aMimeTypeGuess)) {
-                archive = archive ? code + " " + archive : code;
-              } else code = '';
-            }
-            if (archive) {
-              let prePaths;
-              let base = aContentLocation;       
-              let jars = archive.split(/[\s,]+/)
-              for (let j = jars.length; j-- > 0;) {
-                try {
-                  let jar = jars[j];
-                  let u = IOUtil.newURI(base.resolve(jar));
-                  let prePath = u.prePath;
-                  if (prePath !== base.prePath) {
-                    if (prePaths) {
-                      if (prePaths.indexOf(prePath) !== -1) continue;
-                      prePaths.push(prePath);
-                    } else prePaths = [prePath];
-                  } else {
-                    if (j === 0 && code === jar) aContentLocation = u;
-                    continue;
-                  }
-                  this.setExpando(aContext, "allowed", null);
-                  let res = this.shouldLoad(aContentType, u, aRequestOrigin, aContext, aMimeTypeGuess, CP_OBJECTARC);
-                  if (res !== CP_OK) return res;
-                } catch (e) {
-                  this.dump(e)
-                }
-              }
-              this.setExpando(aContext, "allowed", null);
-            }
-          }
-  
 
           if (aContentLocation && aRequestOrigin && 
               (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) &&

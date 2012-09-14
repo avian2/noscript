@@ -88,6 +88,21 @@ const DOM = {
                   .getService(Ci.nsIWindowMediator);
   },
   
+  get browserWinURI() {
+    let uri = this.browserWinChromeURI;
+    if (!uri) return null;
+    delete this.browserWinURI;
+    return this.browserWinURI = uri.schemeIs("chrome")
+      ? Cc["@mozilla.org/chrome/chrome-registry;1"].getService(Ci.nsIChromeRegistry).convertChromeURL(uri)
+      : uri;
+  },
+  get browserWinChromeURI() {
+    let w = this.mostRecentBrowserWindow;
+    if (!w) return null;
+    delete this.browserWinChromeURI;
+    return this.browserWinChromeURI = w.document.documentURIObject;
+  },
+  
   browserWinType: 'navigator:browser',
   perWinType: function(delegate) {
     var wm = this.windowMediator;

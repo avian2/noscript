@@ -6099,15 +6099,17 @@ var ns = {
         
         
         if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC) {
-          if (req.URI.spec == "about:blank" && !IOUtil.extractInternalReferrer(req) ) {
-           // new tab, we shouldn't touch its window otherwise we break stuff like newTabURL
-           return;
-          }
+          if (!(req instanceof Ci.nsIHttpChannel) && (
+                // prevent about:newTab breakage
+                req.name == "about:blank" && !IOUtil.extractInternalReferrer(req) ||
+                // work around for https://bugzilla.mozilla.org/show_bug.cgi?id=771655
+                req.URI.schemeIs("data") ||
+                // work around for https://bugzilla.mozilla.org/show_bug.cgi?id=789773
+                req.URI.equals(DOM.browserWinURI)
+              )
+            ) return;
           
-          // this.dump(req.URI.spec + " state " + stateFlags + ", " + req.loadFlags +  ", pending " + req.isPending());
-          
-          var w = req.URI.schemeIs("data") ? DOM.findWindow(req) : wp.DOMWindow;
-          
+          let w = wp.DOMWindow;
           if (w) {
             
             if (w != w.top && w.frameElement) {
