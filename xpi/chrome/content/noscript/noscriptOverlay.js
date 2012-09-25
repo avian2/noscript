@@ -1972,10 +1972,10 @@ return noscriptUtil.service ? {
                                                   ? "untrusted" :
                                                     blockedObjects ? "no-emb" : "no") 
             : (untrusted > 0 && !notificationNeeded
-                ? (blockedObjects ? "yu-emb" : global ? "yu-glb" : "yu") 
+                ? (blockedObjects ? (global ? "glb-emb" : "yu-emb") : global ? "yu-glb" : "yu") 
                 : topTrusted
                   ? allowed == total - blockedObjects
-                      ? "emb"
+                      ? (global ? "glb-emb" : "emb")
                       : "prt"
                   : ns.docShellJSBlocking == 2
                       ? "no"

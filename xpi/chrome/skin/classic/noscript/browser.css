@@ -106,6 +106,14 @@ toolbar[mode="full"] #noscript-tbb[type="menu"] {
   list-style-image: url(no-emb16.png);
 }
 
+.noscript-glb-emb,
+#noscript-tbb.noscript-glb-emb,
+#noscript-statusIcon.noscript-glb-emb
+{
+  list-style-image: url(glb-emb16.png);
+}
+
+
 .noscript-inactive-subprt,
 #noscript-tbb.noscript-inactive-subprt,
 #noscript-statusIcon.noscript-inactive-subprt,

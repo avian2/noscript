@@ -4729,8 +4729,25 @@ var ns = {
         if (r.extras.pluginDocument) {
           this.setPluginExtras(r.object, null);
           if (r.object.parentNode) r.object.parentNode.insertBefore(r.placeholder, r.object);
-        } else {
-          if (r.object.parentNode) r.object.parentNode.replaceChild(r.placeholder, r.object);
+        } else if (r.object.parentNode) {
+          let p = r.placeholder;
+          r.object.parentNode.insertBefore(p, r.object);
+          if (p.style.position === "absolute") {
+            let b = p.getBoundingClientRect();
+            if (b.width && b.height &&
+                p !== p.ownerDocument.defaultView
+                  .QueryInterface(Ci.nsIInterfaceRequestor)
+                  .getInterface(Ci.nsIDOMWindowUtils)
+                .elementFromPoint(b.left + b.width / 2, b.top + b.height / 2, false, false)
+              ) {
+              let d = p.ownerDocument;
+              let w = d.defaultView;
+              p.style.top = (b.top + w.scrollY) + "px";
+              p.style.left = (b.left + w.scrollX) + "px";
+              p.style.zIndex = DOM.maxZIndex;;
+              d.body.appendChild(p) 
+            }
+          }
         }
         r.extras.placeholder = r.placeholder;
         this._collectPluginExtras(pluginExtras, r.extras);

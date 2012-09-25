@@ -242,7 +242,7 @@
     
               padding = margin = borderWidth = MozOutlineWidth = "0px";
               position = "absolute";
-              zIndex = "99999999";
+              zIndex = DOM.maxZIndex;
               
               background = this.rndColor();
             }

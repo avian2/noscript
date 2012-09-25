@@ -1,5 +1,7 @@
 const DOM = {
   
+  maxZIndex: "99999999",
+  
   confirm: function(s) {  // for interactive debugging purposes
     return this.mostRecentBrowserWindow.confirm(s);
   },
