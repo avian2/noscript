@@ -92,7 +92,7 @@ var noscriptBM = {
       if("handleURLBarCommand" in window) { // Fx 3.0
         noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
         window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
-      } else { // Fx >= 3.5
+      } else if ("gBrowser" in window) { // Fx >= 3.5
         noscriptBM.handleURLBarCommandOriginal = gBrowser.loadURIWithFlags;
         gBrowser.loadURIWithFlags = noscriptBM.loadURIWithFlags;
       }

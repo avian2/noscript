@@ -476,9 +476,16 @@ ClearClickHandler.prototype = {
   
   checkObstruction: function(o, ctx) {
     var d = o.ownerDocument;
+    var w = d.defaultView;
+    if (!(ctx.isEmbed || d instanceof Ci.nsIDOMHTMLDocument)) {
+      o = w.frameElement;
+      d = o.ownerDocument;
+      w = d.defaultView;
+      ctx.isEmbed = true;
+    }
+ 
     var dElem = d.documentElement;
     
-    var w = d.defaultView;
     var top = w.top;
     var browser = DOM.findBrowserForNode(top);
     

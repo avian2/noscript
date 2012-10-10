@@ -1125,7 +1125,7 @@ var InjectionChecker = {
   },
   
   collapseChars: function(s) {
-    return s.replace(/\;+/g, ';').replace(/\/{2,}/g, '//')
+    return s.replace(/\;+/g, ';').replace(/\/{3,}/g, '///')
       .replace(/\s+/g, function(s) {
       return /\n/g.test(s) ? '\n' : ' ';  
     });
@@ -2351,6 +2351,7 @@ XSanitizer.prototype = {
     
     if (this.brutal) { // injection checks were positive
       s = InjectionChecker.reduceDashPlus(s)
+        .replace(/\bdata:/ig, "nodata:")
         .replace(/['\(\)\=\[\]<\r\n]/g, " ")
         .replace(/0x[0-9a-f]{16,}|0b[01]{64,}/gi, " ")
         .replace(this._brutalReplRx, String.toUpperCase)

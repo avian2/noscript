@@ -986,7 +986,7 @@ const IOUtil = {
     return Ci.nsIProxiedChannel && (channel instanceof Ci.nsIProxiedChannel) 
     ? channel.proxyInfo
     : Components.classes["@mozilla.org/network/protocol-proxy-service;1"]
-        .getService(Components.interfaces.nsIProtocolProxyService)
+        .getService(Ci.nsIProtocolProxyService)
         .resolve(channel.URI, 0);
   },
   
@@ -4146,12 +4146,13 @@ var ns = {
   },
   
   setupRefresh: function(docShell, baseURI, header) {
-    try {
-      // Gecko <= 16
-      docShell.nsIRefreshURI.setupRefreshURIFromHeader(baseURI, header);
-    } catch (e) {
-      docShell.nsIRefreshURI.setupRefreshURIFromHeader(baseURI, docShell.document.nodePrincipal, header);
-    }
+    if (docShell instanceof Ci.nsIRefreshURI)
+      try {
+        // Gecko <= 16
+        docShell.setupRefreshURIFromHeader(baseURI, header);
+      } catch (e) {
+        docShell.setupRefreshURIFromHeader(baseURI, docShell.document.nodePrincipal, header);
+      }
   },
 
   // These catch both Paypal's variant,
@@ -4381,9 +4382,9 @@ var ns = {
           };
           window.__runTimeouts = function() {
             var t, count = 0;
-            while (tt.length && count++ < 50) { // let's prevent infinite pseudo-loops
-              tt.sort(function(b, a) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); });
-              t = tt.pop();
+            while (tt.length && count++ < 200) { // let's prevent infinite pseudo-loops
+              tt.sort(function(a, b) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); });
+              t = tt.shift();
               t.f.call(window, t.a);
             }
             delete window.__runTimeouts;
@@ -4724,28 +4725,31 @@ var ns = {
   },
   
   createPlaceholders: function(replacements, pluginExtras, document) {
-    for each (var r in replacements) {
+    for each (let r in replacements) {
       try {
         if (r.extras.pluginDocument) {
           this.setPluginExtras(r.object, null);
           if (r.object.parentNode) r.object.parentNode.insertBefore(r.placeholder, r.object);
         } else if (r.object.parentNode) {
           let p = r.placeholder;
-          r.object.parentNode.insertBefore(p, r.object);
+          r.object.parentNode.replaceChild(p, r.object);
           if (p.style.position === "absolute") {
             let b = p.getBoundingClientRect();
+            let el;
             if (b.width && b.height &&
-                p !== p.ownerDocument.defaultView
+                p !== (el = p.ownerDocument.defaultView
                   .QueryInterface(Ci.nsIInterfaceRequestor)
                   .getInterface(Ci.nsIDOMWindowUtils)
-                .elementFromPoint(b.left + b.width / 2, b.top + b.height / 2, false, false)
+                  .elementFromPoint(
+                    b.left + b.width / 2, b.top + b.height / 2, false, false)
+                  ) && p.firstChild !== el && p.firstChild !== el.parentNode
               ) {
               let d = p.ownerDocument;
               let w = d.defaultView;
               p.style.top = (b.top + w.scrollY) + "px";
               p.style.left = (b.left + w.scrollX) + "px";
-              p.style.zIndex = DOM.maxZIndex;;
-              d.body.appendChild(p) 
+              p.style.zIndex = DOM.maxZIndex;
+              d.body.appendChild(p);
             }
           }
         }
@@ -4993,7 +4997,9 @@ var ns = {
         obj.autoplay = true;
       }
       
-      if (ctx.anchor.parentNode) {
+      let parent = ctx.anchor.parentNode; 
+      
+      if (parent && parent.ownerDocument == ctx.anchor.ownerDocument) {
         this.setExpando(obj, "allowed", true);
         
         if (jsEnabled) {
@@ -5003,7 +5009,7 @@ var ns = {
           );
         }
         
-        ctx.anchor.parentNode.replaceChild(obj, ctx.anchor);
+        parent.replaceChild(obj, ctx.anchor);
         var style = doc.defaultView.getComputedStyle(obj, '');
         
         if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2)
