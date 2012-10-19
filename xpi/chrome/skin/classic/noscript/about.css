@@ -12,7 +12,6 @@ dialog, .dialog-content-box {
 #clientBox {
   color: #000;
   padding: 0px; margin: 0px;
-  max-height: 400px;
   background: white none;
   border: none;
 }
@@ -47,8 +46,7 @@ dialog, .dialog-content-box {
 #extensionDescription {
   color: #444;
   text-align: justify;
-  width: 370px;
-  max-height: 200px;
+  max-width: 600px;
   overflow: auto;
 }
 

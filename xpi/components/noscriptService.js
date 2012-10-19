@@ -985,7 +985,7 @@ const IOUtil = {
   getProxyInfo: function(channel) {
     return Ci.nsIProxiedChannel && (channel instanceof Ci.nsIProxiedChannel) 
     ? channel.proxyInfo
-    : Components.classes["@mozilla.org/network/protocol-proxy-service;1"]
+    : Cc["@mozilla.org/network/protocol-proxy-service;1"]
         .getService(Ci.nsIProtocolProxyService)
         .resolve(channel.URI, 0);
   },
@@ -1368,7 +1368,10 @@ var ns = {
               return;
           }
         }
-        ns.requestWatchdog.onHttpStart(channel);
+        
+        let abeReq = ns.requestWatchdog.onHttpStart(channel);
+        if (abeReq && abeReq.isDoc) ns._handleDocJS1(abeReq.window, channel);
+            
       }
     }
   },
@@ -2192,25 +2195,25 @@ var ns = {
       case 0:
         return false;
       case 1:
-        return this._unsafeSchemeRx.test(site) && this.isProxied(site);
+        return this._unsafeSchemeRx.test(site) && this.isProxied();
       case 2:
         return this._unsafeSchemeRx.test(site);
     }
     return false;
   },
-  isProxied: function(u) {
-    var ps = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);
-   
-    this.isProxied = function(u) {
-      try {
-        if (!(u instanceof Ci.nsIURI)) {
-          u = IOS.newURI(u, null, null);
-        }
-        return ps.resolve(u, 0).type != "direct";
-      } catch(e) {
+  
+  get proxyService() {
+    delete this.proxyService;
+    return this.proxyService = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);
+  },
+  
+  isProxied: function() {
+    switch (this.proxyService.proxyConfigType) {
+      case 0:
+      case 5:
         return false;
-      }
     }
+    return true;
   },
 
   jsPolicySites: new PolicySites(),
@@ -5763,18 +5766,17 @@ var ns = {
   },
   
   _handleDocJS1: function(win, req) {
-    
-    const abeSandboxed = (req instanceof Ci.nsIHttpChannel) && ABE.isSandboxed(req);
+    const abeSandboxed = req instanceof Ci.nsIHttpChannel && ABE.isSandboxed(req);
     const docShellJSBlocking = this.docShellJSBlocking || abeSandboxed;
         
     if (!docShellJSBlocking || (win instanceof Ci.nsIDOMChromeWindow)) return;
-
+  
     try {
       
-      var docShell = DOM.getDocShellForWindow(win) ||
+      let docShell = DOM.getDocShellForWindow(win) ||
                      DOM.getDocShellForWindow(IOUtil.findWindow(req));
-      
-      var url = req.URI.spec;
+     
+      let url = req.URI.spec;
       if (!/^https?:/.test(url)) url = req.originalURI.spec;
 
       if (!docShell) {
@@ -5787,11 +5789,11 @@ var ns = {
         return;
       }
       
-      var jsEnabled;
+      let jsEnabled;
       if (docShellJSBlocking & 2) { // block not whitelisted
         jsEnabled = url && this.isJSEnabled(this.getSite(url)) || /^about:/.test(url);
       } else if (docShellJSBlocking & 1) { // block untrusted only
-        var site = this.getSite(url);
+        let site = this.getSite(url);
         jsEnabled = !(this.isUntrusted(site) || this.isForbiddenByHttpsStatus(site));
       } else return;
       
@@ -5800,7 +5802,7 @@ var ns = {
       
       // Trying to be kind with other docShell-level blocking apps (such as Tab Mix Plus), we
       // check if we're the ones who actually blocked this docShell, or if this channel is out of our control
-      var prevBlocked = this.getExpando(win.document, "prevBlocked");
+      let prevBlocked = this.getExpando(win.document, "prevBlocked");
       prevBlocked = prevBlocked ? prevBlocked.value : "?";
 
       if (dump)
@@ -5947,7 +5949,9 @@ var ns = {
     const win = subj.defaultView || subj;
     if (win instanceof Ci.nsIDOMChromeWindow) return;
     const docShell = this.dom.getDocShellForWindow(win);
-    if (docShell) this.executeEarlyScripts(docShell.document.documentURI, win, docShell);
+    if (docShell) {
+      this.executeEarlyScripts(docShell.document.documentURI, win, docShell);
+    }
   },
   
   get unescapeHTML() {
@@ -6120,6 +6124,7 @@ var ns = {
           return;
         }
         
+        PolicyState.attach(req); // this is needed after bug 797684 fix, because http observers are notified later
         
         if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC) {
           if (!(req instanceof Ci.nsIHttpChannel) && (
@@ -6142,9 +6147,6 @@ var ns = {
                 return;
               }
             }
-
-            this._handleDocJS1(w, req);
-            
           }
   
         } else try {

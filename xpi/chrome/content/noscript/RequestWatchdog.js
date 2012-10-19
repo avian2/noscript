@@ -106,11 +106,11 @@ RequestWatchdog.prototype = {
     const loadFlags = channel.loadFlags;
     let isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
 
-    PolicyState.attach(channel);
+    PolicyState.attach(channel); // this works before bug 797684 fix, see ns.onStateChange for now
     let abeReq = new ABERequest(channel);
     RequestGC.add(channel);
     
-    if (HTTPS.forceChannel(channel)) return;
+    if (HTTPS.forceChannel(channel)) return null;
 
     if (isDoc) {
       let ph = PolicyState.extract(channel);
@@ -119,7 +119,7 @@ RequestWatchdog.prototype = {
         isDoc = !(context instanceof Ci.nsIDOMHTMLEmbedElement || /^application\/x-/i.test(ph.mimeType));
         if (isDoc && this._bug677050 && !(loadFlags & channel.LOAD_REPLACE) && (context instanceof Ci.nsIDOMHTMLObjectElement)) {
           (new ChannelReplacement(channel)).replace();
-          return;
+          return null;
         }
       }
     }
@@ -153,7 +153,7 @@ RequestWatchdog.prototype = {
               if (isReload) requestWatchdog.noscriptReload = newURL;
               replacement.open();
             });
-            return;
+            return null;
           }          
         }
         
@@ -165,10 +165,11 @@ RequestWatchdog.prototype = {
       if (!channel.status) {
         this.handleABE(abeReq, isDoc);
       }
-      
+      return abeReq;
     } catch(e) {
       this.die(channel, e);
-    } 
+    }
+    return null;
   },
   
   die: function(channel, e) {

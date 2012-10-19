@@ -3,7 +3,6 @@ const PolicyState = {
   _uris: [],
   URI: null,
   hints: null,
-  
   checking: [],
   addCheck: function(url) {
     if (this.checking.indexOf(url) === -1)
@@ -20,6 +19,11 @@ const PolicyState = {
   attach: function(channel) {
     if (this.URI === channel.URI) {
       if (this._debug) this._uris.push(this.URI);
+      if (this.hints.contentType === 6 &&
+          this.hints.requestOrigin && this.hints.requestOrigin.schemeIs("moz-nullprincipal") &&  
+            /\nhandleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml:\d+\n/.test(new Error().stack)) {
+        this.hints.requestOrigin = ABE.BROWSER_URI;
+      }
       IOUtil.attachToChannel(channel, "noscript.policyHints", this.hints);
       this.reset();
     }
