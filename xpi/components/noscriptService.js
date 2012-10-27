@@ -1370,8 +1370,7 @@ var ns = {
         }
         
         let abeReq = ns.requestWatchdog.onHttpStart(channel);
-        if (abeReq && abeReq.isDoc) ns._handleDocJS1(abeReq.window, channel);
-            
+        if (abeReq && abeReq.isDoc) ns._handleDocJS(abeReq.window, channel, true);   
       }
     }
   },
@@ -2019,6 +2018,9 @@ var ns = {
       
       "2.4.9rc2": {
         "!browserid.org": ["persona.org"]
+      },
+      "@VERSION@rc3": {
+        "live.com": ["gfx.ms", "afx.ms"] // fully Microsoft-controlled (no user content), now required by MS mail services
       }
     };
     
@@ -2195,7 +2197,7 @@ var ns = {
       case 0:
         return false;
       case 1:
-        return this._unsafeSchemeRx.test(site) && this.isProxied();
+        return this._unsafeSchemeRx.test(site) && this.isProxied(site);
       case 2:
         return this._unsafeSchemeRx.test(site);
     }
@@ -2207,13 +2209,28 @@ var ns = {
     return this.proxyService = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);
   },
   
-  isProxied: function() {
+  isProxied: function(site) {
+    this.isProxied = "proxyConfigType" in this.proxyService
+      ? this._isProxied : this._isProxiedSite;
+    return this.isProxied();
+  },
+  _isProxied: function() {
     switch (this.proxyService.proxyConfigType) {
-      case 0:
-      case 5:
+      case 0: // direct
+      case 5: // system
         return false;
     }
     return true;
+  },
+  _isProxiedSite: function(uri) { // Gecko < 2 has no proxyConfigType, so we must resolve per URI 
+    try {
+      if (!(uri instanceof Ci.nsIURI)) {
+        uri = IOS.newURI(uri || "http://noscript.net/", null, null);
+      }
+      return this.proxyService.resolve(uri, 0).type != "direct";
+    } catch(e) {
+      return false;
+    }
   },
 
   jsPolicySites: new PolicySites(),
@@ -3712,7 +3729,10 @@ var ns = {
     this.objectWhitelistLen = 0;
   },
   
-  
+  isAllowedMime: function(mime, site) (this.allowedMimeRegExp && (
+                                        this.allowedMimeRegExp.test(mime) ||
+                                        this.allowedMimeRegExp.test(mime + "@" + site)))
+  ,
   countObject: function(embed, site) {
     if(!site) return;
     try {
@@ -4745,7 +4765,7 @@ var ns = {
                   .getInterface(Ci.nsIDOMWindowUtils)
                   .elementFromPoint(
                     b.left + b.width / 2, b.top + b.height / 2, false, false)
-                  ) && p.firstChild !== el && p.firstChild !== el.parentNode
+                  ) && el && p.firstChild !== el && p.firstChild !== el.parentNode
               ) {
               let d = p.ownerDocument;
               let w = d.defaultView;
@@ -5286,7 +5306,6 @@ var ns = {
     redirectCallback.onRedirectVerifyCallback(0);
   },
   onChannelRedirect: function(oldChan, newChan, flags) {
-    
     const uri = newChan.URI;
     
     if (flags === Ci.nsIChannelEventSink.REDIRECT_INTERNAL && oldChan.URI.spec === uri.spec)
@@ -5362,11 +5381,7 @@ var ns = {
       if (newChan instanceof Ci.nsIHttpChannel)
         HTTPS.onCrossSiteRequest(newChan, oldChan.URI.spec,
                                browser || DOM.findBrowserForNode(IOUtil.findWindow(oldChan)), rw);
-      
-      // docshell JS state management
-      win = win || IOUtil.findWindow(oldChan);
-      this._handleDocJS2(win, oldChan);
-      this._handleDocJS1(win, newChan);
+
     }
     
   },
@@ -5765,17 +5780,20 @@ var ns = {
       return this.clearClickHandler = new ClearClickHandler(this);
   },
   
-  _handleDocJS1: function(win, req) {
+  DOC_JS_STATUS_KEY: "noscript.dsjsBlocked", 
+  _handleDocJS: function(win, req, requireNetwork) {
     const abeSandboxed = req instanceof Ci.nsIHttpChannel && ABE.isSandboxed(req);
     const docShellJSBlocking = this.docShellJSBlocking || abeSandboxed;
         
     if (!docShellJSBlocking || (win instanceof Ci.nsIDOMChromeWindow)) return;
-  
+    const dump = this.consoleDump & LOG_JS;
     try {
       
       let docShell = DOM.getDocShellForWindow(win) ||
                      DOM.getDocShellForWindow(IOUtil.findWindow(req));
-     
+      
+      if (requireNetwork == docShell.restoringDocument) return;
+      
       let url = req.URI.spec;
       if (!/^https?:/.test(url)) url = req.originalURI.spec;
 
@@ -5797,12 +5815,17 @@ var ns = {
         jsEnabled = !(this.isUntrusted(site) || this.isForbiddenByHttpsStatus(site));
       } else return;
       
-      const dump = this.consoleDump & LOG_JS;
       const prevStatus = docShell.allowJavascript;
-      
+      const BLOCKED_KEY = this.DOC_JS_STATUS_KEY;
       // Trying to be kind with other docShell-level blocking apps (such as Tab Mix Plus), we
       // check if we're the ones who actually blocked this docShell, or if this channel is out of our control
-      let prevBlocked = this.getExpando(win.document, "prevBlocked");
+      
+      if (dump) this.dump("About to retrieve previously blocked info...");
+      let prevBlocked = requireNetwork && (req.loadFlags & req.LOAD_REPLACE)
+                            && IOUtil.extractFromChannel(req, BLOCKED_KEY, true) ||
+                      this.getExpando(win, BLOCKED_KEY);
+                            
+      
       prevBlocked = prevBlocked ? prevBlocked.value : "?";
 
       if (dump)
@@ -5820,7 +5843,7 @@ var ns = {
             if(/^on/i.test(aa[j].name)) aa[j].value = "";
           }
         } catch(e1) {
-          if (this.consoleDump & LOG_JS)
+          if (dump)
             this.dump("Error purging body attributes: " + e2);
         }
       }
@@ -5833,29 +5856,21 @@ var ns = {
                         // we prefer the latter because it coerces to boolean
                 };
       dsjsBlocked.wrappedJSObject = dsjsBlocked;
-      IOUtil.attachToChannel(req, "noscript.dsjsBlocked", dsjsBlocked);
+      IOUtil.attachToChannel(req, BLOCKED_KEY, dsjsBlocked);
       
       
       ABE.sandbox(docShell, false);
       docShell.allowJavascript = jsEnabled;
     } catch(e2) {
-      if (this.consoleDump & LOG_JS)
-        this.dump("Error switching docShell JS: " + e2);
+      if (dump)
+        this.dump("Error switching docShell JS: " + e2 + e2.stack);
     }
-  },
-  
-  _handleDocJS2: function(win, req) {
-    // called at the beginning of onLocationChange
-    if (win)
-      this.setExpando(win.document, "prevBlocked",
-        IOUtil.extractFromChannel(req, "noscript.dsjsBlocked")
-      );
   },
   
   _pageModMaskRx: /^(?:chrome|resource|view-source):/,
   onWindowSwitch: function(url, win, docShell) {
     if (this.filterBadCharsets(docShell)) return;
-    
+     
     const doc = docShell.document;
     const flag = "__noScriptEarlyScripts__";
     if (flag in doc && doc[flag] === url) return;
@@ -6139,7 +6154,7 @@ var ns = {
           
           let w = wp.DOMWindow;
           if (w) {
-            
+           
             if (w != w.top && w.frameElement) {
               ph = ph || PolicyState.extract(req);
               if (ph && this.shouldLoad(7, req.URI, ph.requestOrigin, w.frameElement, ph.mimeType, CP_FRAMECHECK) != CP_OK) { // late frame/iframe check
@@ -6147,6 +6162,7 @@ var ns = {
                 return;
               }
             }
+            this._handleDocJS(w, req, false);
           }
   
         } else try {
@@ -6185,14 +6201,14 @@ var ns = {
   },
   
   onLocationChange: function(wp, req, location) {
-    if (req && (req instanceof Ci.nsIChannel)) try {       
-      this._handleDocJS2(wp.DOMWindow, req);
-      
+    if (req && (req instanceof Ci.nsIChannel)) try {
+      let w = wp.DOMWindow;
       if (this.consoleDump & LOG_JS)
         this.dump("Location Change - req.URI: " + req.URI.spec + ", window.location: " +
-                (wp.DOMWindow && wp.DOMWindow.location.href) + ", location: " + location.spec);
-
-      this.onBeforeLoad(req, wp.DOMWindow, location);
+                (w && w.location.href) + ", location: " + location.spec);
+       
+      this.setExpando(w, this.DOC_JS_STATUS_KEY, IOUtil.extractFromChannel(req, this.DOC_JS_STATUS_KEY, false));
+      this.onBeforeLoad(req, w, location);
     } catch(e) {
       if (this.consoleDump) this.dump(e);
     }

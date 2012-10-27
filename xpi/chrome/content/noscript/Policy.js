@@ -611,8 +611,8 @@ const MainContentPolicy = {
       if (!(forbid || locationSite == "chrome:")) {
         
         forbid = blockThisFrame || untrusted && this.alwaysBlockUntrustedContent;
-        if (!forbid && this.forbidSomeContent) {
-          if (aMimeTypeGuess) {
+        if (!forbid) {
+          if (this.forbidSomeContent && aMimeTypeGuess) {
            
             forbid = 
               (
@@ -631,13 +631,8 @@ const MainContentPolicy = {
             
             if (isFlash) this.tagWindowlessObject(aContext);
             
-            if (this.allowedMimeRegExp &&
-                  (this.allowedMimeRegExp.test(aMimeTypeGuess || mimeKey) ||
-                    this.allowedMimeRegExp.test((aMimeTypeGuess || mimeKey) + "@" + locationSite))
-                ) {
-              return CP_OK;
-            }
-             
+            if (this.isAllowedMime(aMimeTypeGuess || mimeKey, locationSite)) return CP_OK;
+            
             if (forbid) {
 
               if (isSilverlight) {
@@ -662,6 +657,10 @@ const MainContentPolicy = {
               locationURL = this.addObjectParams(locationURL, aContext);
             }
           }
+        } else if (blockThisFrame &&
+                   this.isAllowedMime(aMimeTypeGuess || mimeKey, locationSite) ||
+                   this.isAllowedMime("FRAME", locationSite)) {
+          return CP_OK;
         }
       }
 

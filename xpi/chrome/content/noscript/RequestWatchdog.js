@@ -741,10 +741,11 @@ RequestWatchdog.prototype = {
           ns.getPref("filterXExceptions.livejournal")) {
         if (ns.consoleDump) this.dump(channel, "Livejournal-like comments exception");
         skipArr = ['body'];
-      } else if (url.ref &&
-          (/^https?:\/\/api\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) ||
-          (/^https:\/\/tbpl\.mozilla\.org\//.test(origin)) // work-around for hg reftest DOS
-          ) {
+      } else if (url.ref && trustedOrigin &&
+          (/^https?:\/\/api\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")
+          || /^https:\/\/tbpl\.mozilla\.org\//.test(origin)  // work-around for hg reftest DOS
+          || /^https:\/\/[^\/]+.googleusercontent\.com\/gadgets\/ifr\?/.test(originalSpec) && ns.getPref("filterXExceptions.ggadgets") // Google gadgets 
+          )) {
         skipRx = /#[^#]+$/; // remove receiver's hash
       } else if (/^https?:\/\/apps\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
         skipRx = /&invite_url=javascript[^&]+/; // Zynga stuff

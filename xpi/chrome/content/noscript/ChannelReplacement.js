@@ -187,7 +187,8 @@ ChannelReplacement.prototype = {
   },
   
   _callSink: function(sink, oldChan, newChan, flags) {
-    try { 
+    try {
+      sink instanceof Ci.nsISupports;
       if ("onChannelRedirect" in sink) sink.onChannelRedirect(oldChan, newChan, flags);
       else if ("asyncOnChannelRedirect" in sink) {
         sink.asyncOnChannelRedirect(oldChan, newChan, flags, this._redirectCallback);
