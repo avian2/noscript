@@ -2,34 +2,7 @@ function Strings(chromeName) {
   this.chromeName = chromeName;
 }
 
-Strings.wrap = function(s, length, sep) {
-  if (!sep) sep = ' ';
-    
-  function wrapPara(p) {
-    if (!length) length = 80;
-    if (p.length <= length) return p;
-    chunks = [];
-    var pos;
-    while (p.length > length) {
-      pos = p.lastIndexOf(sep, length);
-      if (pos < 0) pos = p.indexOf(sep, length);
-      if (pos < 0) break;
-      chunks.push(p.substring(0, pos));
-      p = p.substring(pos + 1);
-    }
-
-    if (chunks.length) {
-      res  = chunks.join("\n");
-      if (p.length) res += "\n" + p;
-      return res;
-    } else return p;
-  }
-  if (typeof(s) != "string") s = s.toString();
-  var paras = s.split("\n");
-  
-  for (var j = 0; j < paras.length; j++) paras[j] = wrapPara(paras[j]);
-  return paras.join("\n");
-}
+Strings.wrap = function(s, count) s.replace(new RegExp("\\w{" + (parseInt(count) || 20) + "}", 'g'), "$&\u200B");
 
 Strings.prototype = {
   bundles: {},

@@ -44,15 +44,13 @@ var ScriptSurrogate = {
     var mapping;
     for (key in map) {
       mapping = map[key];
-      if (!mapping.error) {
-        if (mapping.forPage) mappings.forPage.push(mapping);
-        if (mapping.noScript) mappings.noScript.push(mapping);
-        else if (!mapping.forPage) {
-          if (!(mapping.before || mapping.after)) mappings.inclusion.push(mapping);
-          else {
-            if (mapping.before) mappings.before.push(mapping);
-            if (mapping.after) mappings.after.push(mapping);
-          }
+      if (mapping.forPage) mappings.forPage.push(mapping);
+      if (mapping.noScript) mappings.noScript.push(mapping);
+      else if (!mapping.forPage) {
+        if (!(mapping.before || mapping.after)) mappings.inclusion.push(mapping);
+        else {
+          if (mapping.before) mappings.before.push(mapping);
+          if (mapping.after) mappings.after.push(mapping);
         }
       }
     }
@@ -96,12 +94,8 @@ var ScriptSurrogate = {
           value = new AddressMatcher(value);
           break;
         
-        case "replacement":
-          if (!this.syntaxChecker.check(value)) {
-            Cu.reportError("Error parsing " + name  + " surrogate " + (mapping.error = this.syntaxChecker.lastError));
-          }
-          break;
-        
+        // case "replacement": // deferred, see SurrogateMapping.replacement
+          
         default:
           return;
       }
@@ -110,6 +104,27 @@ var ScriptSurrogate = {
     } catch (e) {
       Cu.reportError(e);
     }
+  },
+  
+  initReplacement: function(m) {
+    var r;
+    try {
+      r = this.prefs.getCharPref(m.name + ".replacement");
+      
+      if (/^(?:file:\/\/|\.\.?\/)/.test(r)) {
+        r = IO.readFile(IOS.newURI(this._resolveFile(mapping.replacement), null, null)
+              .QueryInterface(Ci.nsIFileURL).file);
+      }
+      
+      if (r && !this.syntaxChecker.check(r)) {
+        throw this.syntaxChecker.lastError;
+      }
+    } catch (e) {
+      m.error = e;
+      Cu.reportError("Error loading " + m.name + " surrogate: " + e + (r ? "\n" + r : ""));
+      r = "";
+    }
+    return r;
   },
   
   observe: function(prefs, topic, key) {
@@ -130,7 +145,7 @@ var ScriptSurrogate = {
   getScripts: function(scriptURL, pageURL, noScript, scripts) {
 
     var isPage = scriptURL === pageURL;
-    var code;
+
     const list = noScript
       ? this.mappings.noScript
       : isPage
@@ -146,17 +161,8 @@ var ScriptSurrogate = {
       if (mapping.sources && mapping.sources.test(scriptURL) &&
           !(mapping.exceptions && mapping.exceptions.test(pageURL)) &&
           mapping.replacement) {
-        if (/^(?:file:\/\/|\.\.?\/)/.test(mapping.replacement)) {
-          try {
-            code = IO.readFile(IOS.newURI(this._resolveFile(mapping.replacement), null, null)
-                               .QueryInterface(Ci.nsIFileURL).file);
-          } catch(e) {
-            ns.dump("Error loading " + mapping.replacement + ": " + e);
-            continue;
-          }
-        } else {
-          code = mapping.replacement;
-        }
+        let code = mapping.replacement;
+       
         if (!noScript && mapping.noScript)
           code = 'window.addEventListener("DOMContentLoaded", function(event) {' +
                     code + '}, true)';
@@ -281,10 +287,14 @@ var ScriptSurrogate = {
 
 function SurrogateMapping(name) {
   this.name = name;
+  this.__defineGetter__("replacement", this._replacement);
 }
 SurrogateMapping.prototype = {
   sources: null,
-  replacement: null,
+  _replacement: function() {
+    delete this.replacement; 
+    return this.replacement = ScriptSurrogate.initReplacement(this);
+  },
   exceptions: null,
   error: null,
   

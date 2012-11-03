@@ -1400,7 +1400,17 @@ var DoNotTrack = {
       channel.setRequestHeader("Connection", "", false);
       channel.setRequestHeader("Connection", conn, false);
     } catch(e) {}
-  }
+  },
+  
+  getDOMPatch: function(docShell) {
+    try {
+      if (docShell.document.defaultView.navigator.doNotTrack !== "yes" &&
+          docShell.currentDocumentChannel.getRequestHeader("DNT") === "1") {
+        return 'Object.defineProperty(window.navigator, "doNotTrack", { configurable: true, enumerable: true, value: "yes" });';
+      }
+    } catch (e) {}
+    return "";
+  },
 }
 
 const WAN = {

@@ -1595,7 +1595,7 @@ return noscriptUtil.service ? {
     const browser = gb.selectedBrowser;
     
     const popup = "noscript-notify-popup";
-    
+
     var widget = this.getNsNotification(box);
     if (widget) {
      if (widget.localName == "notification") {
@@ -1756,7 +1756,7 @@ return noscriptUtil.service ? {
     const notificationValue = "noscript-abe-notification";
     const box = this.getAltNotificationBox(browser, notificationValue);
     
-    var label = this.getString("ABE.notify", [info.request, info.lastRule.destinations, info.lastPredicate]);
+    var label =  this.ns.Strings.wrap(this.getString("ABE.notify", [info.request, info.lastRule.destinations, info.lastPredicate]));
     
     if (!(box && box.appendNotification)) {
       if (!this.supportsNotifications && this.ns.getPref("ABE.legacyPrompt")) {

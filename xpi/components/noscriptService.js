@@ -352,24 +352,13 @@ const SiteUtils = new function() {
     return ss.join(" ");
   };
   
-  this.crop = function(url, width, max) {
-    width = width || 100;
-    if (url.length < width) return url;
-    
+  this.crop = function(url, max) {
     max = max || 2000;
-    if (max > width && url.length > max) {
+    if (url.length > max) {
         return this.crop(url.substring(0, max / 2)) + "\n[...]\n" + 
           this.crop(url.substring(url.length - max / 2));
     }
-    
-    var parts = [];
-   
-    while (url.length > width) {
-      parts.push(url.substring(0, width));
-      url = url.substring(width);
-    }
-    parts.push(url);
-    return parts.join("\n");
+    return url.replace(/\w{20}/g, "$&\u200B");
   };
 }
 
@@ -1801,9 +1790,14 @@ var ns = {
   
   get getString() {
     delete this.getString;
-    INCLUDE('Strings');
-    const ss = new Strings("noscript");
+    const ss = new this.Strings("noscript");
     return this.getString = function(name, parms) { return ss.getString(name, parms) };
+  },
+  
+  get Strings() {
+    delete this.Strings;
+    INCLUDE('Strings');
+    return this.Strings = Strings;
   },
   
   _uninstalling: false,
@@ -2019,7 +2013,7 @@ var ns = {
       "2.4.9rc2": {
         "!browserid.org": ["persona.org"]
       },
-      "@VERSION@rc3": {
+      "2.5.9rc3": {
         "live.com": ["gfx.ms", "afx.ms"] // fully Microsoft-controlled (no user content), now required by MS mail services
       }
     };
@@ -4614,7 +4608,7 @@ var ns = {
         extras.tag = "<" + (this.isLegacyFrameReplacement(object) ? "FRAME" : objectTag) + ">";
         extras.title =  extras.tag + ", " +  
             this.mimeEssentials(extras.mime) + "@" +
-            (longTip ? extras.url : extras.url.replace(/[#\?].*/, ''));
+            (longTip ? SiteUtils.crop(extras.url) : extras.url.replace(/[#\?].*/, ''));
         
         if ((extras.alt = object.getAttribute("alt")))
           extras.title += ' "' + extras.alt + '"'
@@ -5896,21 +5890,23 @@ var ns = {
         newWin.addEventListener("change", this.bind(this.onContentChange), true);
       }
     } else {
-      
+
       if (this.implementToStaticHTML && !("toStaticHTML" in doc.defaultView)) {
         scripts = [this._toStaticHTMLDef];
         doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
       }
-
+      
+      let dntPatch = DoNotTrack.getDOMPatch(docShell);
+      if (dntPatch) {
+        (scripts || (scripts = [])).push(dntPatch);
+      }
+      
       if (this.forbidWebGL && !this.isAllowedObject(site, "WebGL", site, site)) {
         (scripts || (scripts = [])).push(this._webGLInterceptionDef);
         doc.addEventListener("NoScript:WebGL", this._webGLHandler, false, true);
         let sites = this._webGLSites;
         if (site in sites) {
-          this._webGLRecord(doc, site);/*
-          doc.defaultView.addEventListener("pagehide", function(ev) {
-            delete sites[site];
-          }, false);*/
+          this._webGLRecord(doc, site);
         }
       }
         

@@ -353,8 +353,7 @@ RequestWatchdog.prototype = {
       } catch(e) {}
     }
     
-    if (/[%=\(\\<]/.test(originalAttempt) && (
-      InjectionChecker.checkURL(originalAttempt ||  InjectionChecker.checkHTML(originalAttempt)))) {
+    if (/[%=\(\\<]/.test(originalAttempt) && InjectionChecker.checkURL(originalAttempt)) {
       window.name = originalAttempt.replace(/[%=\(\\<]/g, " ");
     }
 
