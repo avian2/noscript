@@ -169,7 +169,7 @@ const MainContentPolicy = {
           for (let j = jars.length; j-- > 0;) {
             try {
               let jar = jars[j];
-              let u = IOS.newURI(base, cs, jar);
+              let u = IOS.newURI(jar, cs, base);
               let prePath = u.prePath;
               if (prePath !== base.prePath) {
                 if (prePaths) {

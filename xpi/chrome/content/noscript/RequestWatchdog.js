@@ -103,6 +103,7 @@ RequestWatchdog.prototype = {
   _bug677050: ns.geckoVersionCheck("6.0") >= 0,
   
   onHttpStart: function(channel) {
+    
     const loadFlags = channel.loadFlags;
     let isDoc = loadFlags & this.DOCUMENT_LOAD_FLAGS;
 
@@ -572,9 +573,19 @@ RequestWatchdog.prototype = {
       if (/^about:(?!blank)/.test(originSite))
         return; // any about: URL except about:blank
       
+      if (/^https?:\/\/my\.ebay\.(?:\w{2,3}|co\.uk)\/ws\/eBayISAPI\.dll\?[^<'"%]*CurrentPage=MyeBayAllFavorites\b[^<'"%]*$/.test(origin) &&
+          /^https?:\/\/www\.ebay\.(?:\w{2,3}|co\.uk)\/sch\/i\.html\?[^<'"]*$/.test(unescapedSpec) &&
+          url.scheme === abeReq.originURI.scheme &&
+          ns.getBaseDomain(ns.getDomain(url)) === ns.getBaseDomain(ns.getDomain(abeReq.originURI)) &&
+          ns.getPref("filterXException.ebay")) {
+        if (ns.consoleDump) this.dump(channel, "Ebay exception");
+        return;
+      }  
+      
+      
       if (channel.requestMethod == "POST") {
         
-        if (/^https:\/\/(?:cap\.securecode\.com|www\.securesuite\.net|(?:.*?\.)?firstdata\.(?:l[tv]|com))$/.test(originSite) &&
+        if (/^https:\/\/(?:cap\.securecode\.com|www\.securesuite\.net|(?:.*?\.)?firstdata\.(?:l[tv]|com))$/.test(origin) &&
             ns.getPref("filterXException.visa")) {
           if (ns.consoleDump) this.dump(channel, "Verified by Visa exception");
           return;
@@ -1240,7 +1251,7 @@ var InjectionChecker = {
   reduceXML: function reduceXML(s) {
     var res;
     
-    for (let pos = s.indexOf("<"); pos !== -1;) {
+    for (let pos = s.indexOf("<"); pos !== -1; pos = s.indexOf("<", 1)) {
       
       let head = s.substring(0, pos);
       let tail = s.substring(pos);
@@ -1255,7 +1266,6 @@ var InjectionChecker = {
      
       (res || (res = [])).push(head);
       s = t;
-      pos = s.indexOf("<", 1);
     }
     if (res) {
       res.push(s);
@@ -1487,7 +1497,7 @@ var InjectionChecker = {
             if (quote && subj[len] === quote) {
               len++;
             } else if (subj[len - 1] === '<') {
-              // invalid JS, and mabe in the middle of XML block
+              // invalid JS, and maybe in the middle of XML block
               len++;
               continue;
             }

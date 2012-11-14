@@ -114,6 +114,7 @@ pref("noscript.filterXExceptions", "^https?://([a-z]+)\\.google\\.(?:[a-z]{1,3}\
 pref("noscript.filterXExceptions.blogspot", true);
 pref("noscript.filterXExceptions.deviantart", true);
 pref("noscript.filterXExceptions.fbconnect", true);
+pref("noscript.filterXExceptions.ebay", true);
 pref("noscript.filterXExceptions.ggadgets", true);
 pref("noscript.filterXExceptions.letitbit", true);
 pref("noscript.filterXExceptions.livejournal", true);
@@ -290,8 +291,8 @@ pref("noscript.surrogate.disqus-theme.sources", ">.disqus.com/*/build/themes/t_c
 pref("noscript.surrogate.disqus-theme.replacement", "DISQUS.dtpl.actions.register('comments.reply.new.onLoadingStart', function() { DISQUS.dtpl.actions.remove('comments.reply.new.onLoadingStart'); DISQUS.dtpl.actions.remove('comments.reply.new.onLoadingEnd');});");
 pref("noscript.surrogate.skimlinks.sources", ".skimlinks.com/api/");
 pref("noscript.surrogate.skimlinks.replacement", "window.skimlinks=function(){}");
-pref("noscript.surrogate.picbucks.sources", "!*.picbucks.com");
-pref("noscript.surrogate.picbucks.replacement", "for each(let s in document.getElementsByTagName('script')) { let m = s.textContent.match(/Lbjs\.TargetUrl = '(http[^']*)/); if (m) { location.href = m[1]; break; } }");
+pref("noscript.surrogate.picbucks.sources", "!*.picbucks.com  http://www.imagebax.com/show.php/*");
+pref("noscript.surrogate.picbucks.replacement", "for each(let s in document.getElementsByTagName('script')) { let m = s.textContent.match(/(?:Lbjs\\.TargetUrl\\s*=\\s*|Array\\s*\\().*(\\bhttp[^'\"]*)/); if (m) { location.href = m[1]; break; } }");
 pref("noscript.surrogate.imagebunk.sources", "!http://imagebunk.com/image/*");
 pref("noscript.surrogate.imagebunk.replacement", "document.body.insertBefore(document.getElementById('img_obj'), document.body.firstChild)");
 pref("noscript.surrogate.picsee.sources", "!^https?://picsee\\.net/2\\d.*\\.html");

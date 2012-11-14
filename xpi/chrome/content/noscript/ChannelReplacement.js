@@ -275,7 +275,7 @@ ChannelReplacement.prototype = {
           ABE.log("Opening delayed channel: " + oldChan.name + " - (current loading channel for this window " + (overlap && overlap.name) + ")");
         }
         
-         oldChan.loadGroup = this.loadGroup;
+        oldChan.loadGroup = this.loadGroup;
     
         this._onChannelRedirect();
         newChan.asyncOpen(ccl.originalListener, ccl.originalCtx);
@@ -288,6 +288,7 @@ ChannelReplacement.prototype = {
           if (this._classifierClass)
             this._classifierClass.createInstance(Ci.nsIChannelClassifier).start(newChan, true);
         }
+        
       } catch (e) {
         ABE.log(e);
       }

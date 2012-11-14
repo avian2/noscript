@@ -996,6 +996,7 @@ const IOUtil = {
   },
   
   abort: function(channel, noNetwork) {
+    if (ns.consoleDump) ns.dump("Aborting " + channel.name + " @ " + new Error().stack);
     channel.cancel(Cr.NS_ERROR_ABORT);
   },
   
@@ -1333,33 +1334,47 @@ var ns = {
     
   httpObserver: {
     observe: function(channel, topic, data) {
-      if (channel instanceof Ci.nsIHttpChannel) {
-        let ncb = channel.notificationCallbacks;
-        let loadFlags = channel.loadFlags;
-        if (!(loadFlags || ncb || channel.owner)) {
-          try {
-            if (channel.getRequestHeader("Content-type") == "application/ocsp-request") {
-              if (ns.consoleDump) ns.dump("Skipping cross-site checks for OCSP request " + channel.name);
-              return;
-            }
-          } catch(e) {}
-        }
-        
-        if (ncb) {
-          const IBCL = Ci.nsIBadCertListener2;
-          let bgReq = ncb instanceof Ci.nsIXMLHttpRequest || ncb instanceof IBCL 
-            || ("responseXML" in ncb); // for some reason, since Gecko 15 (new XMLHttpRequest() instanceof Ci.nsIXMLHttpRequest) === false
-          if (!bgReq) try { bgReq = ncb.getInterface(IBCL); } catch (e) {}
-          if (bgReq && !ns.isCheckedChannel(channel)) {
-              if (ns.consoleDump) {
-                ns.dump("Skipping cross-site checks for chrome background request " + channel.name + ", " + loadFlags + ", " + channel.owner + ", " + !!PolicyState.hints);
-              }
-              return;
+      try {
+        if (channel instanceof Ci.nsIHttpChannel) {
+          
+          if (channel.status) {
+            if (ns.consoleDump)
+              ns.dump("Unexpected! HTTP observer called on aborted channel " +
+                        channel.name + " (0x" + channel.status.toString(16) + ")");
+            return;
           }
+          
+          let ncb = channel.notificationCallbacks;
+          let loadFlags = channel.loadFlags;
+          if (!(loadFlags || ncb || channel.owner)) {
+            try {
+              if (channel.getRequestHeader("Content-type") == "application/ocsp-request") {
+                if (ns.consoleDump) ns.dump("Skipping cross-site checks for OCSP request " + channel.name);
+                return;
+              }
+            } catch(e) {}
+          }
+          
+          if (ncb) {
+            const IBCL = Ci.nsIBadCertListener2;
+            let bgReq = ncb instanceof Ci.nsIXMLHttpRequest || ncb instanceof IBCL 
+              || ("responseXML" in ncb); // for some reason, since Gecko 15 (new XMLHttpRequest() instanceof Ci.nsIXMLHttpRequest) === false
+            if (!bgReq) try { bgReq = ncb.getInterface(IBCL); } catch (e) {}
+            if (bgReq && !ns.isCheckedChannel(channel)) {
+                if (ns.consoleDump) {
+                  ns.dump("Skipping cross-site checks for chrome background request " + channel.name + ", " + loadFlags + ", " + channel.owner + ", " + !!PolicyState.hints);
+                }
+                return;
+            }
+          }
+          
+          let abeReq = ns.requestWatchdog.onHttpStart(channel);
+          ns.dump("HTTP observer processed " + channel.name);
+          if (abeReq && abeReq.isDoc) ns._handleDocJS(abeReq.window, channel, true);   
         }
-        
-        let abeReq = ns.requestWatchdog.onHttpStart(channel);
-        if (abeReq && abeReq.isDoc) ns._handleDocJS(abeReq.window, channel, true);   
+
+      } catch (e) {
+        ns.dump(e + "\n" + e.stack);
       }
     }
   },
@@ -6124,7 +6139,7 @@ var ns = {
     var ph;
     
     if (stateFlags & WP_STATE_START) {
-      if (req instanceof Ci.nsIChannel) { 
+      if (req instanceof Ci.nsIChannel) {
         // handle docshell JS switching and other early duties
 
         if (PolicyState.isChecking(req.URI)) {
@@ -6160,19 +6175,7 @@ var ns = {
             }
             this._handleDocJS(w, req, false);
           }
-  
-        } else try {
-
-          ph = ph || PolicyState.extract(req); 
-          
-          if (!ph && req instanceof Ci.nsIHttpChannel && wp.DOMWindow.document instanceof Ci.nsIDOMXULDocument
-                  && !/^(?:chrome|resource):/i.test(wp.DOMWindow.document.documentURI)) {
-            if (!this.isJSEnabled(req.URI.prePath)) {
-              IOUtil.abort(req);
-              if (this.consoleDump & LOG_CONTENT_BLOCK) this.dump("Aborted XUL script " + req.URI.spec);
-            }
-          }
-        } catch(e) {}
+        } 
       }
     } else if ((stateFlags & WP_STATE_STOP))  {
       // STOP REQUEST
