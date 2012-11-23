@@ -77,10 +77,13 @@ var noscriptUtil = {
   }
 ,
   openConsole: function() {
-    if (window.toJavaScriptConsole) {
+    if ("toErrorConsole" in window) {
+        toErrorConsole();
+    }
+    else if ("toJavaScriptConsole" in window) {
         toJavaScriptConsole();
     } else {
-        window.open("chrome://global/content/console.xul", "_js_console_", "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar");
+        window.openDialog("chrome://global/content/console.xul", "", "chrome,all,dialog=no");
     }
   },
   

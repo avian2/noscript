@@ -46,7 +46,7 @@ dialog, .dialog-content-box {
 #extensionDescription {
   color: #444;
   text-align: justify;
-  max-width: 600px;
+  max-width: 550px;
   overflow: auto;
 }
 

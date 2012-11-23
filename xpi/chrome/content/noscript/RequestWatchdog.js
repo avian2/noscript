@@ -764,8 +764,9 @@ RequestWatchdog.prototype = {
                 ns.getPref("filterXExceptions.yahoo")) {
         skipArr = ['e'];
         if (ns.consoleDump) this.dump(channel, "Yahoo exception");
+      } else if (/^https?:\/\/wpcomwidgets.com\/\?/.test(originalSpec)) {
+        skipArr = ["_data"];
       }
-                
       if (skipArr) {
         skipRx = new RegExp("(?:^|[&?])(?:" + skipArr.join('|') + ")=[^&]+");
       }
