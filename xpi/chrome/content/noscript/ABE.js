@@ -803,16 +803,16 @@ ABEPredicate.prototype = {
   permissive: false,
   
   subdoc: false,
-	self: false,
+  self: false,
   sameDomain: false,
   sameBaseDomain: false,
-	local: false,
-	
-	allMethods: true,
-	allOrigins: true,
-	
-	methodRx: null,
-	origin: null,
+  local: false,
+  
+  allMethods: true,
+  allOrigins: true,
+  
+  methodRx: null,
+  origin: null,
   
   inclusion: false,
   inlcusionTypes: [],
@@ -848,41 +848,44 @@ ABEPredicate.prototype = {
     };
   },
  
-	_methodFilter: function(m) {
-		switch(m) {
-			case "SUB":
-				return !(this.subdoc = true);
-			case "ALL":
-				return !(this.allMethods = true);
-		}
-		return true;
-	},
+  _methodFilter: function(m) {
+    switch(m) {
+      case "SUB":
+	return !(this.subdoc = true);
+      case "ALL":
+	return !(this.allMethods = true);
+    }
+    return true;
+  },
   
-	_originFilter: function(s) {
-		switch(s) {
-			case "SELF":
-				return !(this.self = true);
+  _originFilter: function(s) {
+    switch(s) {
+      case "SELF":
+	return !(this.self = true);
       case "SELF+":
         return !(this.sameDomain = true);
       case "SELF++":
         return !(this.sameBaseDomain = true);
-			case "LOCAL":
-				return !(this.local = true);
-			case "ALL":
-				return !(this.allOrigins = true);
-		}
-		return true;
-	},
+      case "LOCAL":
+        return !(this.local = true);
+      case "ALL":
+        return !(this.allOrigins = true);
+    }
+    return true;
+  },
 	
   match: function(req) {
     return (this.allMethods || this.subdoc && req.isSubdoc ||
             this.inclusion && req.isOfType(this.inclusionTypes) ||
-						this.methodRx && this.methodRx.test(req.method)) &&
-			(this.allOrigins ||
-        this.self && req.isSelf || this.sameDomain && req.isSameDomain || this.sameBaseDomain && req.isSameBaseDomain ||
-				(this.permissive ? req.matchAllOrigins(this.origin) : req.matchSomeOrigins(this.origin)) ||
-				this.local && req.localOrigin
-			);
+	    this.methodRx && this.methodRx.test(req.method)) &&
+	    (this.allOrigins ||
+              this.self && req.isSelf ||
+              this.sameDomain && req.isSameDomain ||
+              this.sameBaseDomain && req.isSameBaseDomain ||
+		(this.permissive
+                  ? req.matchAllOrigins(this.origin)
+                  : req.matchSomeOrigins(this.origin)) || this.local && req.localOrigin
+		);
   },
   
   toString: function() {

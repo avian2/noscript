@@ -20,7 +20,7 @@ var noscriptBM = {
       return;
    
     var originalArguments = arguments;
-    var callback = function() { noscriptBM.handleURLBarCommandOriginal.apply(window, originalArguments); };
+    var callback = function() { noscriptBM.handleURLBarCommandOriginal(originalArguments) };
     
     var shortcut = gURLBar.value;
     var jsrx = /^\s*(?:data|javascript):/i;
@@ -52,17 +52,17 @@ var noscriptBM = {
   loadURIWithFlags: function() { // Fx 3.5 and above command bar interception
     try {
       if ("gURLBar" in window) {
-        var handleCommand = window.gURLBar.handleCommand;
-        var times = 5;
-        for(var caller, f = arguments.callee; (caller = f.caller) && times; f = caller, times--) {
+        let handleCommand = window.gURLBar.handleCommand;
+        let times = 5;
+        for(let caller, f = arguments.callee; (caller = f.caller) && times; f = caller, times--) {
           if (caller.name.substring(0, 2) === "on") break; // work around for bug 666371
-          if (caller === handleCommand) {
+          if (caller === handleCommand || caller.name === "handleCommand") {
             return noscriptBM.handleURLBarCommand.apply(window, arguments);
           }
         }
       }
     } catch(e) {}
-    return noscriptBM.handleURLBarCommandOriginal.apply(gBrowser, arguments);
+    return noscriptBM.handleURLBarCommandOriginal(arguments);
   },
 
   handleBookmark: function(url, openCallback) {
@@ -86,16 +86,19 @@ var noscriptBM = {
     noscriptBM.init();
   },
   init: function() {
-        // patch URLBar for keyword-triggered bookmarklets:
+    // patch URLBar for keyword-triggered bookmarklets:
     // we do it early, in case user has a bookmarklet startup page
     if (!noscriptBM.handleURLBarCommandOriginal) {
+      let patch = null;
       if("handleURLBarCommand" in window) { // Fx 3.0
-        noscriptBM.handleURLBarCommandOriginal = window.handleURLBarCommand;
+        patch = { obj: window, func: window.handleURLBarCommand };
         window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
       } else if ("gBrowser" in window) { // Fx >= 3.5
-        noscriptBM.handleURLBarCommandOriginal = gBrowser.loadURIWithFlags;
+        patch = { obj: gBrowser, func: gBrowser.loadURIWithFlags };
         gBrowser.loadURIWithFlags = noscriptBM.loadURIWithFlags;
       }
+      if (patch)
+        noscriptBM.handleURLBarCommandOriginal = function(args) patch.func.apply(patch.obj, args);
     }
     
     // delay bookmark stuff

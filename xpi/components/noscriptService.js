@@ -1369,7 +1369,7 @@ var ns = {
           }
           
           let abeReq = ns.requestWatchdog.onHttpStart(channel);
-          ns.dump("HTTP observer processed " + channel.name);
+
           if (abeReq && abeReq.isDoc) ns._handleDocJS(abeReq.window, channel, true);   
         }
 
@@ -1379,10 +1379,17 @@ var ns = {
     }
   },
   
+  earlyHttpObserver: {
+    observe: function(channel, topic, data) {
+      Policy.attach(channel);
+    }
+  },
+  
   OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "sessionstore-windows-restored",
                     "browser:purge-session-history", "private-browsing",
                     "content-document-global-created", "document-element-inserted"],
   register: function() {
+    OS.addObserver(this.earlyHttpObserver, "http-on-opening-request", false);
     OS.addObserver(this.httpObserver, "http-on-modify-request", false);
     this.OBSERVED_TOPICS.forEach(function(topic) {
       OS.addObserver(this, topic, true);
@@ -1394,6 +1401,7 @@ var ns = {
         OS.removeObserver(this, topic);
       } catch (e) {}
     }, this);
+    OS.removeObserver(this.earlyHttpObserver, "http-on-opening-request", false);
     OS.removeObserver(this.httpObserver, "http-on-modify-request");
   }
 ,

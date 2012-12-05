@@ -1323,9 +1323,10 @@ var InjectionChecker = {
     expr = // dotted URL components can lead to false positives, let's remove them
       expr.replace(this._removeDotsRx, this._removeDots)
         .replace(this._arrayAccessRx, '_ARRAY_ACCESS_')
-        .replace(/<([\w:]+)>[^<]+<\/\1>/g, '<$1/>'); // reduce XML text nodes
-    
-    if (expr.indexOf(")") !== -1) expr += ")"; // account for externally balanced parens
+        .replace(/<([\w:]+)>[^<]+<\/\1>/g, '<$1/>') // reduce XML text nodes
+         .replace(/(^|[=;.+-])\s*[\[(]+/g, '$1') // remove leading parens and braces
+        ; 
+   if (expr.indexOf(")") !== -1) expr += ")"; // account for externally balanced parens
    if(this._assignmentRx.test(expr) && !this._badRightHandRx.test(expr)) // commonest case, single assignment or simple chained assignments, no break
       return this._singleAssignmentRx.test(expr) || this._riskyAssignmentRx.test(expr) && this._nameRx.test(expr);
     
