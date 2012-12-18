@@ -353,7 +353,7 @@ const SiteUtils = new function() {
   };
   
   this.crop = function(url, max) {
-    max = max || 2000;
+    max = max || 1000;
     if (url.length > max) {
         return this.crop(url.substring(0, max / 2)) + "\n[...]\n" + 
           this.crop(url.substring(url.length - max / 2));
@@ -1759,14 +1759,19 @@ var ns = {
       case "nselNever":
         sheet = "noscript, noscript * { display: none !important }";
         break;
-      case "showPlaceholder": 
+      case "showPlaceholder":
+        let bim = "background-image: -moz-image-rect(url(" + this.skinBase + "close.png),";
         sheet = '.__noscriptPlaceholder__ { direction: ltr !important; display: inline-block !important; } ' +
-                '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: inline-block !important; ' +
+                '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: inline-block !important; position: relative !important;' +
                 'outline-color: #fc0 !important; outline-style: solid !important; outline-width: 1px !important; outline-offset: -1px !important;' +
                 'cursor: pointer !important; background: #ffffe0 url("' + 
                     this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; margin-top: 0px !important; margin-bottom: 0px !important;} ' +
                 '.__noscriptPlaceholder__1 > .__noscriptPlaceholder__2 { display: inline-block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
-                'noscript .__noscriptPlaceholder__ { display: inline !important; }';
+                'noscript .__noscriptPlaceholder__ { display: inline !important; }' +
+                '.__noscriptPlaceholder__1 > .closeButton { display: block !important; position: absolute !important; top: 0 !important; right: 0 !important;' +
+                bim + "0,25%,100%,0) !important; width: 16px !important; height: 16px !important; opacity: .8 !important}" +
+                '.__noscriptPlaceholder__1 > .closeButton:hover {' + bim + '0,50%,100%,25%) !important; opacity: 1 !important}' +
+                '.__noscriptPlaceholder__1 > .closeButton:hover:active {' + bim + '0,75%,100%,50%) !important; opacity: 1 !important}'
       break;
       case "clearClick":
         sheet = "body:not([id]) { cursor: auto !important } " + 
@@ -3183,7 +3188,7 @@ var ns = {
 ,
   
   getAllowObjectMessage: function(extras) {
-    let url = SiteUtils.crop(extras.url);
+    let url = SiteUtils.crop(extras.url).replace(/\S{80}/g, "$&\n");
     let details = extras.mime + " " + (extras.tag || (extras.mime === "WebGL" ? "<CANVAS>" : "<OBJECT>")) + " / " + extras.originSite; 
     return this.getString("allowTemp", [url + "\n(" + details + ")\n"]);
   }
@@ -4688,7 +4693,6 @@ var ns = {
             anchor.style.left = style.left;
             anchor.style.bottom = style.bottom;
             anchor.style.right = style.right;
-            innerDiv.style.position = "static";
           }
         } else restrictedSize = collapse;
         
@@ -4698,7 +4702,10 @@ var ns = {
         }
         
         innerDiv.style.visibility = "visible";
-
+        
+        let closeButton = innerDiv.appendChild(document.createElementNS(HTML_NS, "div"));
+        closeButton.className = "closeButton";
+        
         anchor.appendChild(innerDiv);
         
         // icon div
@@ -4823,7 +4830,9 @@ var ns = {
     const object = this.getExpando(anchor, "removedNode");
     
     if (object) try {
-      if (ev.shiftKey) {
+      let shift = ev.shiftKey;
+      let closeButton = ev.target.className === "closeButton";
+      if (closeButton ? !shift : shift) {
         anchor.style.display = "none";
         anchor.id = anchor.className = "";
         return;
@@ -4863,34 +4872,6 @@ var ns = {
         break;
       }
     }
-    
-    // check for non-statically positioned nodes
-    var win = doc.defaultView;
-    var style = win.getComputedStyle(el.offsetParent || el, "");
-    if (style.position !== "static") {
-      let ph = this._findPlaceholder(doc, { x: ev.clientX + win.scrollX, y: ev.clientY + win.scrollY });
-      if (ph) {
-        let object = this.getExpando(ph, "removedNode");
-        if (object && !(object instanceof Ci.nsIDOMHTMLAnchorElement))
-          this.setExpando(object, "overlay", el);
-        this.onPlaceholderClick(ev, ph);
-      }
-    }
-  },
-  
-  _findPlaceholder: function(doc, p) {
-    let pluginExtras = this.findPluginExtras(doc);
-    if (pluginExtras) {
-      for (let j = pluginExtras.length; j-- > 0;) {
-        let ph = pluginExtras[j].placeholder;
-        if (ph) try {
-          if (DOM.elementContainsPoint(ph, p)) return ph;
-        } catch(e) {
-          if (this.consoleDump) this.dump(e);
-        }
-      }
-    }
-    return null;
   },
   
   checkAndEnablePlaceholder: function(anchor, object) {

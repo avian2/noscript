@@ -585,6 +585,10 @@ RequestWatchdog.prototype = {
       
       if (channel.requestMethod == "POST") {
         
+        if (originSite === "https://twitter.com" && /^https:\/\/.*\.twitter.com$/.test(targetSite)) {
+          return;
+        }
+        
         if (/^https:\/\/(?:cap\.securecode\.com|www\.securesuite\.net|(?:.*?\.)?firstdata\.(?:l[tv]|com))$/.test(origin) &&
             ns.getPref("filterXException.visa")) {
           if (ns.consoleDump) this.dump(channel, "Verified by Visa exception");
