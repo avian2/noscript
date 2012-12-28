@@ -522,10 +522,11 @@ ClearClickHandler.prototype = {
       resembles: function(other) {
         if (other === null) return false;
         
-        let buf1 = this.imageData.data, buf2 = other.imageData.data;
+        let buf1 = this.imageData.data;
+        let buf2 = other.imageData.data;
         let diff = 0, eq = 0;
-        const w = box.width;
-        const h = box.height;
+        const w = this.imageData.width;
+        const h = this.imageData.height;
         const tot = w * h;
         const maxDiff = Math.round(tot * this.THRESHOLD);
         const minEq = tot - maxDiff;
@@ -533,7 +534,7 @@ ClearClickHandler.prototype = {
         resembles_loop:
         for (let x = 0; x < w; x++) {
           for (let y = 0; y < h; y++) {
-            let p = y * h + x * 4;
+            let p = (y * w + x) * 4;
             let r1 = buf1[p], r2 = buf2[p],
                 g1 = buf1[++p], g2 = buf2[p],
                 b1 = buf1[++p], b2 = buf2[p];
@@ -552,8 +553,8 @@ ClearClickHandler.prototype = {
         }
         return resembles;
       },
-      toURL: function() {
-        gfx.putImageData(this.imageData, 0, 0);
+      toURL: function(imageData) {
+        gfx.putImageData(imageData || this.imageData, 0, 0);
         return c.toDataURL();
       }
     }

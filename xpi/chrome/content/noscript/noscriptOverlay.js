@@ -497,6 +497,9 @@ return noscriptUtil.service ? {
       miGlobal.hidden = seps.global.hidden = true;
     }
     
+    node = popup.getElementsByClassName("noscript-about")[0];
+    if (node) node.hidden = !ns.getPref("showAbout");
+    
     node = miGlobal.nextSibling;
     const mainMenu = node.parentNode;
 

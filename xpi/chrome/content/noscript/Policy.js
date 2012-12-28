@@ -122,6 +122,8 @@ const NOPContentPolicy = {
 const MainContentPolicy = {
   shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
     if (!aContentLocation) {
+      if (aContentType === 5 && aInternalCall === CP_SHOULDPROCESS && aMimeTypeGuess === "application/x-shockwave-flash")
+        return this.reject("Empty Flash object", arguments); 
       aContentLocation = aRequestOrigin;
     }
     if (aContentType === 5 && /^application\/x-java\b/i.test(aMimeTypeGuess) &&

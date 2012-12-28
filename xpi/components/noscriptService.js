@@ -1381,7 +1381,7 @@ var ns = {
   
   earlyHttpObserver: {
     observe: function(channel, topic, data) {
-      Policy.attach(channel);
+      PolicyState.attach(channel);
     }
   },
   
@@ -3293,7 +3293,7 @@ var ns = {
   cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
     this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
       ", origin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + 
-        ((aContext instanceof Ci.nsIDOMHTMLElement) ? "<HTML Element>" // try not to cause side effects of toString() during load
+        ((aContext instanceof Ci.nsIDOMHTMLElement) ? "<HTML " + aContext.tagName + ">" // try not to cause side effects of toString() during load
           : aContext)  + 
         ", mime: " + aMimeTypeGuess + ", " + aInternalCall);
   },
@@ -4580,7 +4580,6 @@ var ns = {
     return ret;
   },
   
-  _phAnchorProps: ["position", "top", "bottom", "left", "right"],  
   processObjectElements: function(document, sites, loaded) {
     const pluginExtras = this.findPluginExtras(document);
     sites.pluginCount += pluginExtras.length;
@@ -4596,6 +4595,8 @@ var ns = {
     
     const minSize = this.getPref("placeholderMinSize"),
           longTip = this.getPref("placeholderLongTip");
+    
+    const skipCSS = /^(?:position|top|left|right|bottom)$/;
     
     var replacements = null,
         collapse = this.collapseObject,
@@ -4678,7 +4679,8 @@ var ns = {
         if (style) {
           for (let cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
             let cssProp = style.item(cssCount);
-            cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
+            if (!skipCSS.test(cssProp))
+              cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
           }
           
           innerDiv.setAttribute("style", cssDef + forcedCSS);
@@ -5310,9 +5312,7 @@ var ns = {
       return;    
   
     const rw = this.requestWatchdog;    
-    
-    HTTPS.forceChannel(newChan);
-    
+
     IOUtil.attachToChannel(newChan, "noscript.redirectFrom", oldChan.URI);
     
     ABE.updateRedirectChain(oldChan, newChan);

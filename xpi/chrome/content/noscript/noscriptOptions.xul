@@ -182,6 +182,7 @@
        <hbox>
           <vbox flex="1">
             <checkbox id="opt-showGlobal" label="Allow Globally" />
+	     <checkbox id="opt-showAbout" label="&noscriptAbout;" />
             <checkbox id="opt-showUntrusted" label="&noscriptUntrusted;" />
             <checkbox id="opt-showBlockedObjects" label="&noscriptBlockedObjects;" />
             <checkbox id="opt-showRecentlyBlocked" label="&noscriptRecentBlocked;" />
