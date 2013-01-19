@@ -153,7 +153,7 @@ function NSGetFactory(cid) {
 }
 
 const CP_OK = 1;
-const CP_REJECT = -2; // CP_REJECT_TYPE doesn't case the -moz-suppressed CSS pseudo class to be added
+const CP_REJECT = -2; // CP_REJECT_TYPE doesn't cause the -moz-suppressed CSS pseudo class to be added
 const CP_NOP = function() CP_OK;
 const CP_FRAMECHECK = 2;
 const CP_SHOULDPROCESS = 4;
@@ -1771,7 +1771,8 @@ var ns = {
                 '.__noscriptPlaceholder__1 > .closeButton { display: block !important; position: absolute !important; top: 0 !important; right: 0 !important;' +
                 bim + "0,25%,100%,0) !important; width: 16px !important; height: 16px !important; opacity: .8 !important}" +
                 '.__noscriptPlaceholder__1 > .closeButton:hover {' + bim + '0,50%,100%,25%) !important; opacity: 1 !important}' +
-                '.__noscriptPlaceholder__1 > .closeButton:hover:active {' + bim + '0,75%,100%,50%) !important; opacity: 1 !important}'
+                '.__noscriptPlaceholder__1 > .closeButton:hover:active {' + bim + '0,75%,100%,50%) !important; opacity: 1 !important}' +
+                '.__noscriptPlaceholder__1 > .msg { text-align: center !important; bottom: 0 !important; left: 0 !important; width: 100% !important; position: absolute !important; font-size: 12px !important; font-weight: bold !important; font-family: sans-serif !important; }'
       break;
       case "clearClick":
         sheet = "body:not([id]) { cursor: auto !important } " + 
@@ -4624,6 +4625,8 @@ var ns = {
         if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site))
           continue;
         
+        let msg = "";
+        
         let objectTag = object.tagName.toUpperCase();
         if (objectTag === "VIDEO") {
           // Youtube HTML5 hack
@@ -4735,6 +4738,12 @@ var ns = {
         } else {
           iconSize = 32;
           innerDiv.style.backgroundPosition = "center";
+          if (msg) {
+            let msgDiv = document.createElement("div");
+            msgDiv.className = "msg";
+            msgDiv.textContent = msg;
+            anchor.firstChild.appendChild(msgDiv);
+          }
         }
         innerDiv.style.backgroundImage = this.cssMimeIcon(extras.mime, iconSize);
         

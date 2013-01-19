@@ -601,14 +601,14 @@ EFCacheHandler.prototype = {
     return true;
   },
   
-  onCacheEntryAvailable : function(ce, accessGranted, status) {
+  onCacheEntryAvailable: function(ce, accessGranted, status) {
     var handler = this.handler;
     
     if (Components.isSuccessCode(status) && handler.onCacheWrite) {
       
       ce.setExpirationTime(this.expirationTime);
       
-      if (this.securityInfo) ce.setSecurityInfo(this.securityInfo);
+      if (this.securityInfo) ce.securityInfo = this.securityInfo;
       
       let md = this.metaData;
       for (let key in md) {
@@ -698,6 +698,7 @@ var EFCacheSessions = {
   },
   
   onCacheEntryAvailable: function(ce, accessGranted, status) {
+    if (!status) return;
     try {
       if (accessGranted == this.READ_ACCESS && ce instanceof this.nsICacheEntryDescriptor) {
         try {
@@ -718,7 +719,7 @@ var EFCacheSessions = {
       }
       ce.markValid();
     } catch(e) {
-      ce.close();
+      if (ce) ce.close();
     }
   },
   

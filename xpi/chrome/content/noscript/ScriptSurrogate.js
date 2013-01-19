@@ -94,7 +94,7 @@ var ScriptSurrogate = {
           value = new AddressMatcher(value);
           break;
         
-        // case "replacement": // deferred, see SurrogateMapping.replacement
+        // case "exceptions": case "replacement": // deferred, see SurrogateMapping.replacement
           
         default:
           return;

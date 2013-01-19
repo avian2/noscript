@@ -15,8 +15,6 @@ var nsopt = {
       return;
     }
     
-   
-    
     this.utils = new UIUtils(ns);
     this.utils.resumeTabSelections();
     

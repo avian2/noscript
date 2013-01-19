@@ -92,7 +92,8 @@
   <listbox id="urlList" seltype="multiple" 
     onselect="nsopt.urlListChanged()"
     onkeyup="if (event.keyCode == event.DOM_VK_DELETE) nsopt.remove();"
-		onclick="nsopt.openInfo(event);"
+    onkeydown="if (event.keyCode === event.DOM_VK_A &amp;&amp; event.ctrlKey) { this.selectAll(); return false; }"
+    onclick="nsopt.openInfo(event);"
     flex="1"
     rows="8"
   >
