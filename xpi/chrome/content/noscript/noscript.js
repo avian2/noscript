@@ -99,7 +99,7 @@ var noscriptUtil = {
     this.browse("https://secure.informaction.com/donate/?id=noscript&src=" + src);
   },
   
-  openInfo: function(about) {
+  openInfo:function(about) {
     const ns = this.service;
     
     let url = ns.getPref("siteInfoProvider");
@@ -127,7 +127,30 @@ var noscriptUtil = {
        this.getString("siteInfo.confirm", [domain, ns.getSite(url) || "?", url]),
         "confirmSiteInfo", "NoScript"
       )) {
-      this.browse(url);
+      let w = this.browse(url);
+      if ("noscriptOverlay" in window) {
+          let et = "DOMContentLoaded";
+          let eh = function(ev) {
+            let d = ev.target;
+            if (d.URL !== url) return;
+            let button = d.getElementById("allow-button");
+            if (!button) return;
+            
+            let ns = noscriptOverlay.ns;
+            let enabled = ns.isJSEnabled(domain);
+            
+            button.textContent = noscriptOverlay.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]);
+            button.style.display = "";
+           
+            button.addEventListener("click", function(e) { 
+              noscriptOverlay.safeAllow(domain, !enabled, false, ns.RELOAD_ALL);
+              d.defaultView.close();
+            }, false);
+          };
+          w.addEventListener(et, eh, true);
+         
+          w.setTimeout(function() w.removeEventListener(et, eh, true), 20000);
+      }
       return true;
     }
     
@@ -139,9 +162,9 @@ var noscriptUtil = {
     if(w && !w.closed && w.gBrowser) {
       w.gBrowser.selectedTab = w.gBrowser.addTab(url);
     } else {
-      w = window.open(url, "_blank", features || null);
+      window.open(url, "_blank", features || null).focus();
     }
-    w.focus();
+    return w;
   }
   
 };

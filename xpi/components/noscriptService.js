@@ -5751,23 +5751,24 @@ var ns = {
       
       if (this.consoleDump & LOG_CONTENT_BLOCK) 
         this.dump("Blocking top-level plugin document");
-
-      IOUtil.abort(req);
       
       
-      ["embed", "video", "audio"].forEach(function(tag) {
-        var embeds = domWindow.document.getElementsByTagName(tag);
-        var eType = "application/x-noscript-blocked";
-        var eURL = "data:" + eType + ",";
-        var e;
-        for (var j = embeds.length; j-- > 0;) {
-          e = embeds.item(j);
-          if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) != CP_OK) {
-            e.src = eURL;
-            e.type = eType;
+      if (this._abortPluginDocLoads) {
+        IOUtil.abort(req);  
+        ["embed", "video", "audio"].forEach(function(tag) {
+          var embeds = domWindow.document.getElementsByTagName(tag);
+          var eType = "application/x-noscript-blocked";
+          var eURL = "data:" + eType + ",";
+          var e;
+          for (var j = embeds.length; j-- > 0;) {
+            e = embeds.item(j);
+            if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) != CP_OK) {
+              e.src = eURL;
+              e.type = eType;
+            }
           }
-        }
-      }, this);
+        }, this);
+      }
       
       if (xssInfo) overlay.notifyXSS(xssInfo);
       
@@ -5778,6 +5779,11 @@ var ns = {
         if (xssInfo) overlay.notifyXSSOnLoad(xssInfo);
       }
     }
+  },
+  
+  get _abortPluginDocLoads() {
+    delete this._abortPluginDocLoads;
+    return this._abortPluginDocLoads = this.geckoVersionCheck("18.0.1") < 0;
   },
   
   hasClearClickHandler: false,
