@@ -855,6 +855,7 @@ SyntaxChecker.prototype = {
        return !!(this.lastFunction = this.ev("new Function(script)"));
      } catch(e) {
        this.lastError = e;
+       this.lastFunction = null;
      }
      return false;
   },
@@ -1297,19 +1298,9 @@ var ns = {
           break;
         case "sessionstore-windows-restored":
           ns.checkVersion();
+          INCLUDE("Removal");
           break;
         
-        case "em-action-requested":
-          if ((subject instanceof Ci.nsIUpdateItem)
-              && subject.id == this.EXTENSION_ID ) {
-            if (data == "item-uninstalled" || data == "item-disabled") {
-              this.uninstalling = true;
-            } else if (data == "item-enabled") {
-              this.uninstalling = false;
-            }
-          }
-        break;
-      
         case "private-browsing":
           if (data == "enter") {
             STS.enterPrivateBrowsing();
@@ -1828,20 +1819,7 @@ var ns = {
     INCLUDE('Strings');
     return this.Strings = Strings;
   },
-  
-  _uninstalling: false,
-  get uninstalling() {
-    return this._uninstalling;
-  },
-  set uninstalling(b) {
-    if (!this._uninstalling) {
-      if (b) this.uninstallJob();
-    } else {
-      if (!b) this.undoUninstallJob();
-    }
-    return this._uninstalling = b;
-  }
-,
+
   _inited: false,
   POLICY_NAME: "maonoscript",
   prefService: null,
@@ -2407,9 +2385,9 @@ var ns = {
   globalJS: false,
   get jsEnabled() {
     try {
-      return this.mozJSEnabled && this.caps.getCharPref("default.javascript.enabled") != "noAccess";
+      return this.mozJSEnabled && this.caps.getCharPref("default.javascript.enabled") !== "noAccess";
     } catch(ex) {
-      return this.uninstalling ? this.mozJSEnabled : (this.jsEnabled = this.globalJS);
+      return this.jsEnabled = this.globalJS;
     }
   }
 ,
@@ -2942,13 +2920,6 @@ var ns = {
       this.eraseTemp();
       this.savePrefs(true);
     } catch(ex) {}
-  }
-,
-  uninstallJob: function() {
-    // this.resetJSCaps();
-  },
-  undoUninstallJob: function() {
-    // this.setupJSCaps();
   }
 ,
   getPref: function(name, def) {
@@ -6297,20 +6268,75 @@ var ns = {
   },  
   // end nsIWebProgressListener
   
-  _badCharsetRx: /\butf-?7\$|^armscii-8$/i,
+  _badCharsetRx: /\bUTF-?7\$|^armscii-8$/i,
+  _goodCharsetRx: /^UTF-?8$/i,
   filterBadCharsets: function(docShell) {
     try {
-      let rx = this._badCharsetRx;
       let charsetInfo = docShell.documentCharsetInfo || docShell;
-      let cs = charsetInfo.charset;
-      if(rx.test(cs)) {
-        this.log("[NoScript XSS] Neutralizing bad charset " + cs);
-        let as = Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
-        charsetInfo.forcedCharset = as.getAtom("UTF-8");
-        docShell.reload(docShell.LOAD_FLAGS_CHARSET_CHANGE); // needed in Gecko > 1.9
-        return true;
+      let cs;
+      try {
+        cs = charsetInfo.charset;
+      } catch (e) {
+        cs = docShell.document.characterSet;
       }
+      
+      if (this._goodCharsetRx.test(cs)) return false;
+      
+      if(this._badCharsetRx.test(cs)) {
+        this.log("[NoScript XSS] Neutralizing bad charset " + cs);
+      } else {
+        let uri = docShell.currentURI;
+        if (!(uri instanceof Ci.nsIURL)) return false;
+        let url = unescape(uri.spec);
+        try {
+          let exceptions = this.getPref("xss.checkCharset.exceptions");
+          if (exceptions && AddressMatcher.create(exceptions).test(url)) return false;
+        } catch (e) {}
+        
+        let ic = this.injectionChecker;
+        let unicode = /^UTF-?16/i.test(cs) && url.indexOf("\0") !== -1;
+        let le = unicode && /LE$/i.test(cs);
+        
+        function decode(u) {
+          if (unicode) {
+            let pos = u.indexOf("\0");
+            if (pos > -1) {
+              if (le) pos--;
+              return u.substring(0, pos) + ic.toUnicode(u.substring(pos), cs);
+            }
+          }
+          return ic.toUnicode(u, cs);
+        }
+        
+        function check(original, decoded) original === decoded || !ic.checkRecursive(decoded, 1);
+        
+        let [filePath, query, ref] = ["filePath", "query", "ref"].map(function(p) unescape(uri[p]));
+        
+        if ( // check...
+            // ...whole URL
+            check(url, decode(url)) && 
+            // ...whole path
+            check(filePath, decode(filePath)) &&
+            // ...path parts
+            check(filePath,  uri.filePath.split("/").map(function(p) decode(unescape(p))).join("/")) &&
+            // ... whole query
+            check(query, decode(query)) &&
+            // ... query parts
+            check(query, uri.query.split("&").map(function(p) p.split("=").map(function(p) decode(unescape(p))).join("=")).join("&")) &&
+            // ... fragment
+            check(ref, decode(ref))
+          ) return false;
+            
+        this.log("[NoScript XSS] Potential XSS with charset " + cs + ", forcing UTF-8");
+      }
+      docShell.allowJavascript = false;
+      Thread.asap(function() docShell.allowJavascript = true);
+      let as = Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
+      charsetInfo.forcedCharset = as.getAtom("UTF-8");
+      docShell.reload(docShell.LOAD_FLAGS_CHARSET_CHANGE); // needed in Gecko > 1.9
+      return true;
     } catch(e) {
+      ns.log(e)
       if (this.consoleDump) this.dump("Error filtering charset " + e);
     }
     return false;

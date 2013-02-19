@@ -1290,7 +1290,8 @@ var InjectionChecker = {
     "\\b(?:" + fuzzify('location|innerHTML') + ")\\b[\\s\\S]*="
   ),
   _nameRx: new RegExp(
-    "=[\\s\\S]*\\b" + fuzzify('name') + "\\b"
+    "=[\\s\\S]*\\b" + fuzzify('name') + "\\b|" +
+    fuzzify("hostname") + "[\\s\\S]*=[\\s\\S]*(?:\\b\\d|[\"'{}~^|<*/+-])"
   ),
   
   _maybeJSRx: new RegExp(
@@ -1407,10 +1408,12 @@ var InjectionChecker = {
     if (!this.maybeJS(s)) return false;
 
     const MAX_TIME = 8000, MAX_LOOPS = 1200;
-
+    
+    const logEnabled = this.logEnabled;
+    
     const
       invalidCharsRx = /[\u007f-\uffff]/.test(s) && this.invalidCharsRx,
-      dangerRx = /\(|\[[^\]]+\]|(?:setter|location|innerHTML|cookie|on\w{3,}|\.\D)[^&]*=[\s\S]*?[\w\$\u0080-\uFFFF\.\[\]\-]+/,
+      dangerRx = /\(|\[[^\]]+\]|(?:setter|location|innerHTML|cookie|on\w{3,}|\.\D)[^&]*=[\s\S]*?(?:\/\/|[\w$\u0080-\uFFFF.[\]})'"-]+)/,
       exprMatchRx = /^[\s\S]*?[=\)]/,
       safeCgiRx = /^(?:(?:[\.\?\w\-\/&:`\[\]]+=[\w \-:\+%#,`\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/,
         // r2l, chained query string parameters, protocol://domain
@@ -1418,7 +1421,7 @@ var InjectionChecker = {
         // irrepairable syntax error, such as closed parens in the beginning
     ;
     
-    const injectionFinderRx = /(['"#;>:{}]|[\/\?=](?![\?&=])|&(?![\w\-\.\[\]&!]*=)|\*\/)(?!\1)/g;
+    const injectionFinderRx = /(['"#;>:{}]|[/?=](?![?&=])|&(?![\w-.[\]&!-]*=)|\*\/)(?!\1)/g;
     injectionFinderRx.lastIndex = 0;    
     
     const t = Date.now();
@@ -1430,18 +1433,20 @@ var InjectionChecker = {
       let subj = s.substring(startPos);
       if (startPos > dangerPos) {
         dangerRx.lastIndex = startPos;
-        if (!dangerRx.exec(s)) return false;
+        if (!dangerRx.exec(s)) {
+          this.log("Can't find any danger in " + s);
+          return false;
+        }
         dangerPos = dangerRx.lastIndex;
       }
        
-
-      if (!this.maybeJS(subj)) {
+      let breakSeq = m[1];
+      let quote = breakSeq == '"' || breakSeq == "'" ? breakSeq : '';
+      
+      if (!this.maybeJS(quote ? quote + subj : subj)) {
          this.log("Fast escape on " + subj, t, iterations);
          return false;
       }
-
-      
-      let breakSeq = m[1];
 
       let script = this.reduceURLs(subj);
     
@@ -1476,10 +1481,7 @@ var InjectionChecker = {
         injectionFinderRx.lastIndex += m[0].length - 1;
         continue;
       }
-      
 
-      
-      let quote = breakSeq == '"' || breakSeq == "'" ? breakSeq : '';
       let bs = this.breakStops[quote || 'nq']  
    
       for (let len = expr.length, moved = false, hunt = !!expr, lastExpr = ''; hunt;) {
@@ -1568,7 +1570,7 @@ var InjectionChecker = {
           }
           if(this.syntax.lastError) { // could be null if we're here thanks to checkLastFunction()
             let errmsg = this.syntax.lastError.message;
-            this.log(errmsg + " --- " + script + " --- ", t, iterations);
+            if (logEnabled) this.log(errmsg + " --- " + this.syntax.sandbox.script + " --- ", t, iterations);
             if(!quote) {
               if (errmsg.indexOf("left-hand") !== -1) {
                 let m = subj.match(/^([^\]\(\\'"=\?]+?)[\w$\u0080-\uffff\s]+[=\?]/);
@@ -1603,20 +1605,24 @@ var InjectionChecker = {
                 hunt = moved = true;
               } else break;
             }
-            else if((m = errmsg.match(/\bmissing ([:\]\)\}]) /))) {
-              let newLen = subj.indexOf(m[1], len);
+            else if((m = errmsg.match(/\b(?:property id\b|missing ([:\]\)\}]) )/))) {
+              let char = m[1] || '}';
+              let newLen = subj.indexOf(char, len);
               let nextParamPos = subj.substring(len).search(/[^&]&(?!&)/)
               if (newLen !== -1 && (nextParamPos === -1 || newLen <= len + nextParamPos)) {
+                this.log("Extending to next " + char);
                 expr = subj.substring(0, len = ++newLen);
-                moved = m[1] !== ':';
-              } else if (m[1] !== ':') {
+                moved = char !== ':';
+              } else if (char !== ':') {
                 let lastChar = expr[expr.length - 1];
-                if (lastChar === m[1] && (len > subj.length || lastChar != subj[len - 1])) break;
-                expr += m[1];
+                if (lastChar === char && (len > subj.length || lastChar != subj[len - 1])) break;
+                expr += char;
                 moved = hunt = true;
                 len++;
-                this.log("Balancing " + m[1], t, iterations);
-              } else break;
+                this.log("Balancing " + char, t, iterations);
+              } else {
+                 break;
+              }
             }
             else if (/finally without try/.test(errmsg)) {
               expr = "try{" + expr;
@@ -1639,6 +1645,12 @@ var InjectionChecker = {
       this.escalate("Unicode-escaped lower ASCII");
       return true;
     }
+    
+    if (/\\x[0-9a-f]{2}[\s\S]*['"]/i.test(s)) {
+      this.escalate("Obfuscated string literal");
+      return true;
+    }
+    
     this.syntax.lastFunction = null;
     let ret = this.checkAttributes(s) ||
       /[\\\(]|=[^=]/.test(s) &&  this.checkJSBreak(s) || // MAIN
@@ -1655,6 +1667,11 @@ var InjectionChecker = {
   
   unescapeJS: function(s) {
     return s.replace(/\\u([0-9a-f]{4})/gi, function(s, c) {
+      return String.fromCharCode(parseInt(c, 16));
+    });
+  },
+   unescapeJSLiteral: function(s) {
+    return s.replace(/\\x([0-9a-f]{2})/gi, function(s, c) {
       return String.fromCharCode(parseInt(c, 16));
     });
   },
@@ -1824,9 +1841,11 @@ var InjectionChecker = {
   checkRecursive: function(s, depth, isPost) {
     if (typeof(depth) != "number")
       depth = 3;
+    
     this.isPost = isPost || false;
     this.base64 = false;
     this.base64tested = [];
+    
     
     if (ASPIdiocy.affects(s)) {
       if (this.checkRecursive(ASPIdiocy.process(s), depth, isPost))
@@ -1840,7 +1859,7 @@ var InjectionChecker = {
         return true;
     }
     
-    if (this.isPost) {
+    if (isPost) {
       s = this.formUnescape(s);
       if (this.checkBase64Frag(Base64.purify(s))) return true;
       
@@ -1853,13 +1872,13 @@ var InjectionChecker = {
     } else {
       if (this.checkBase64(s.replace(/^\/{1,3}/, ''))) return true;
     }
-    
-    if (this.isPost) s = "#" + s; // allows the string to be JS-checked as a whole
+
+    if (isPost) s = "#" + s; // allows the string to be JS-checked as a whole
     return this._checkRecursive(s, depth);
   },
   
   _checkRecursive: function(s, depth) {
-    
+
     if (this.checkHTML(s) || this.checkJS(s) || this.checkSQLI(s) || this.checkHeaders(s))
       return true;
     
@@ -1875,6 +1894,7 @@ var InjectionChecker = {
       return true;
     
     var unescaped = this.urlUnescape(s);
+    let badUTF8 = this.utf8EscapeError;
     
     if (this._checkOverDecoding(s, unescaped))
       return true;
@@ -1887,14 +1907,30 @@ var InjectionChecker = {
       }
     }
     
-    if (unescaped != s && this._checkRecursive(unescaped, depth))
-      return true;
+    if (/\\x[0-9a-f]/i.test(unescaped)) {
+      let literal = this.unescapeJSLiteral(unescaped);
+      if (unescaped !== literal && this._checkRecursive(literal, depth)) {
+        this.log("Escaped literal match!"); 
+        return true;
+      } 
+    }
     
     if (unescaped.indexOf("\x1b(J") !== -1 && this._checkRecursive(unescaped.replace(/\x1b\(J/g, ''), depth) || // ignored in iso-2022-jp
         unescaped.indexOf("\x7e\x0a") !== -1 && this._checkRecursive(unescaped.replace(/\x7e\x0a/g, '')) // ignored in hz-gb-2312       
       )
       return true;
 
+    if (unescaped !== s) {
+      if (badUTF8) {
+        try {
+          if (this._checkRecursive(this.toUnicode(unescaped, "UTF-8"))) return true;
+        } catch (e) {
+          this.log(e);
+        }
+      }
+      if (this._checkRecursive(unescaped, depth)) return true;
+    }
+    
     s = this.ebayUnescape(unescaped);
     if (s != unescaped && this._checkRecursive(s, depth))
       return true;
@@ -1946,11 +1982,30 @@ var InjectionChecker = {
     );
   },
   
+  toUnicode: function(s, charset) {
+    let sis = Cc["@mozilla.org/io/string-input-stream;1"]
+          .createInstance(Ci.nsIStringInputStream);
+    sis.setData(s, s.length);
+    let is = Cc["@mozilla.org/intl/converter-input-stream;1"]
+          .createInstance(Ci.nsIConverterInputStream);
+    is.init(sis, charset || null, 0, is.DEFAULT_REPLACEMENT_CHARACTER);
+    let str = {};
+    if (is.readString(4096, str) === 0) return str.value;
+    let ret = [str.value];
+    while (is.readString(4096, str) !== 0) {
+      ret.push(str.value);
+    }
+    return ret.join('');
+  },
+  
+  utf8EscapeError: true,
   urlUnescape: function(url, brutal) {
     var od = this.utf8OverDecode(url, !brutal);
+    this.utf8EscapeError = false;
     try {
       return decodeURIComponent(od);
     } catch(warn) {
+      this.utf8EscapeError = true;
       if (url != od) url += " (" + od + ")";  
       this.log("Problem decoding " + url + ", maybe not an UTF-8 encoding? " + warn.message);
       return unescape(brutal ? ASPIdiocy.filter(od) : od);

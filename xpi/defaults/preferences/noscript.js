@@ -106,6 +106,7 @@ pref("noscript.xss.trustExternal", true);
 pref("noscript.xss.trustTemp", true);
 pref("noscript.xss.checkInclusions", true);
 pref("noscript.xss.checkInclusions.exceptions", "intensedebate.com/idc/js/");
+pref("noscript.xss.checkCharset.exceptions", "");
 
 pref("noscript.filterXPost", true);
 pref("noscript.filterXGet", true);
