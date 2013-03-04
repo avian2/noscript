@@ -99,7 +99,7 @@ var noscriptUtil = {
     this.browse("https://secure.informaction.com/donate/?id=noscript&src=" + src);
   },
   
-  openInfo:function(about) {
+  openInfo: function(about) {
     const ns = this.service;
     
     let url = ns.getPref("siteInfoProvider");
@@ -127,6 +127,7 @@ var noscriptUtil = {
        this.getString("siteInfo.confirm", [domain, ns.getSite(url) || "?", url]),
         "confirmSiteInfo", "NoScript"
       )) {
+      let currentTab = window.gBrowser && gBrowser.selectedTab;
       let w = this.browse(url);
       if ("noscriptOverlay" in window) {
           let et = "DOMContentLoaded";
@@ -139,13 +140,28 @@ var noscriptUtil = {
             let ns = noscriptOverlay.ns;
             let enabled = ns.isJSEnabled(domain);
             
-            button.textContent = noscriptOverlay.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]);
+            button.firstChild.textContent = noscriptOverlay.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]);
             button.style.display = "";
-           
-            button.addEventListener("click", function(e) { 
-              noscriptOverlay.safeAllow(domain, !enabled, false, ns.RELOAD_ALL);
+            button.className = enabled ? "forbid" : "allow";
+            
+            function complete(enable) {
+              noscriptOverlay.safeAllow(domain, enable, false, ns.RELOAD_ALL);
               d.defaultView.close();
-            }, false);
+              if (currentTab) gBrowser.selectedTab = currentTab;
+            }
+            
+            button.addEventListener("click", function(e) complete(!enabled), false);
+            
+            if (!(enabled || ns.isUntrusted(domain))) {
+              button = d.getElementById("distrust-button");
+              if (!button) return;
+              button.style.display = "";
+              button.firstChild.textContent = noscriptOverlay.getString("distrust", [domain]);
+              button.addEventListener("click", function(e) {
+                ns.setUntrusted(domain, true);
+                complete(false);
+              }, false);
+            }
           };
           w.addEventListener(et, eh, true);
          

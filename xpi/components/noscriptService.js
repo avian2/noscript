@@ -3269,10 +3269,10 @@ var ns = {
           : aContext)  + 
         ", mime: " + aMimeTypeGuess + ", " + aInternalCall);
   },
-  reject: function(what, args /* [aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall] */) {
+  reject: function(what, args /* [aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, [aPrincipal] ] */) {
     
     if (this.consoleDump) {
-      if(this.consoleDump & LOG_CONTENT_BLOCK && args.length == 6) {
+      if(this.consoleDump & LOG_CONTENT_BLOCK && args.length >= 6) {
         this.cpDump("BLOCKED " + what, args[0], args[1], args[2], args[3], args[4], args[5]);
       }
       if(this.consoleDump & LOG_CONTENT_CALL) {

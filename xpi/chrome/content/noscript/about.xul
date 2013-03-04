@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-
-<?xml-stylesheet href="chrome://noscript/skin/about.css" type="text/css"?>
-<!DOCTYPE dialog SYSTEM "chrome://noscript/locale/noscript.dtd">
-
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?><?xml-stylesheet href="chrome://noscript/skin/about.css" type="text/css"?><!DOCTYPE dialog SYSTEM "chrome://noscript/locale/noscript.dtd">
 <dialog title="About NoScript" chromehidden="menubar toolbar location directories status extrachrome" id="genericAbout" onload="about_onload()" buttons="accept" xmlns:em="http://www.mozilla.org/2004/em-rdf#" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 <script type="application/x-javascript" src="chrome://noscript/content/noscript.js"/>
 <script type="application/x-javascript">

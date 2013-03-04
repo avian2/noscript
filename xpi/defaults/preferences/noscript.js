@@ -122,6 +122,7 @@ pref("noscript.filterXExceptions.letitbit", true);
 pref("noscript.filterXExceptions.livejournal", true);
 pref("noscript.filterXExceptions.lycosmail", true);
 pref("noscript.filterXExceptions.medicare", true);
+pref("noscript.filterXException.photobucket", true);
 pref("noscript.filterXExceptions.readability", true);
 pref("noscript.filterXExceptions.yahoo", true);
 pref("noscript.filterXExceptions.visa", true);
@@ -328,7 +329,7 @@ pref("noscript.ABE.localExtras", "");
 
 pref("noscript.asyncNetworking", true);
 pref("noscript.inclusionTypeChecking", true);
-pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com .amazonaws.com lesscss.googlecode.com/files/ .hp-ww.com");
+pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com .amazonaws.com lesscss.googlecode.com/files/ .hp-ww.com .yandex.st");
 pref("noscript.inclusionTypeChecking.checkDynamic", false);
 pref("noscript.nosniff", true);
 

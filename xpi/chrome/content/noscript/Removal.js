@@ -33,6 +33,7 @@ var Removal = {
           case 0: return;
           case 2:
             ns.jsEnabled = true;
+            ns.savePrefs();
             ns.reloadWhereNeeded();
           default:
         }

@@ -229,6 +229,16 @@ const MainContentPolicy = {
       var isHTTP = scheme === "http" || scheme === "https";
       
       if (isHTTP) {
+        
+        // reject any cross-site google-analytics subrequest unless explicitly whitelisted
+        if (aContentType !== 2 && aContentType !== 6 &&
+            unwrappedLocation.host.indexOf("google-analytics") !== -1 &&
+            unwrappedLocation.prePath !== (aRequestOrigin && aRequestOrigin.prePath) &&
+            !this.isJSEnabled(this.getSite(unwrappedLocation.spec))
+            ) {
+          return this.reject("Google Analytics web bug", arguments); 
+        }
+        
         if (aRequestOrigin &&
             aContentType !== 4 // Bug 677643
             ) {

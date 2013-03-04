@@ -582,6 +582,14 @@ RequestWatchdog.prototype = {
         return;
       }  
       
+      if (/^https?:\/\/(?:[^/]+\.)photobucket.com$/.test(originSite) &&
+          /^https?:\/\/(?:[^/]+\.)photobucket.com\/[^<]*$/.test(unescapedSpec) &&
+          url.scheme === abeReq.originURI.scheme &&
+          ns.getBaseDomain(ns.getDomain(url)) === ns.getBaseDomain(ns.getDomain(abeReq.originURI)) &&
+          ns.getPref("filterXException.photobucket")) {
+        if (ns.consoleDump) this.dump(channel, "Photobucket exception");
+        return;
+      }
       
       if (channel.requestMethod == "POST") {
         
