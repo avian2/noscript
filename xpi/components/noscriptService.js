@@ -1240,7 +1240,15 @@ var Thread = {
 };
 
 
-LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler", "STS", "ChannelReplacement");
+LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler", "ChannelReplacement");
+
+__defineGetter__("STS", function() {
+  delete this.STS;
+  if (ns.geckoVersionCheck("4.0") >= 0) // Gecko >= 4 has built-in HSTS
+    return STS = { __noSuchMethod__: function() false };
+  INCLUDE("STS");
+  return STS;
+});
 
 __defineGetter__("ABE", function() {
   if (ns.consoleDump) ns.dump("ABE kickstart at " + (new Error().stack));
@@ -2022,7 +2030,10 @@ var ns = {
       },
       "2.5.9rc3": {
         "live.com": ["gfx.ms", "afx.ms"] // fully Microsoft-controlled (no user content), now required by MS mail services
-      }
+      },
+      "@VERSION@rc2": {
+        "live.com": ["sfx.ms"] // fully Microsoft-controlled (no user content), now required by MS mail services
+      },
     };
     
     for (let v in versions) {
@@ -3291,7 +3302,7 @@ var ns = {
     PolicyState.cancel(args);
     
     let win = DOM.findWindow(args[3]);
-    this.recordBlocked(this.getSite(args[1].spec), this.getSite(win && win.top.location.href || args[2].spec));
+    if (args[1]) this.recordBlocked(this.getSite(args[1].spec) || "", this.getSite(win && win.top.location.href || args[2] && args[2].spec));
     
     return CP_REJECT;
   },

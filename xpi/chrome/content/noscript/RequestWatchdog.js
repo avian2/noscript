@@ -100,7 +100,8 @@ RequestWatchdog.prototype = {
     }
   },
   
-  _bug677050: ns.geckoVersionCheck("6.0") >= 0,
+  _bug677050: ns.geckoVersionCheck("6.0") >= 0 &&
+    ns.geckoVersionCheck("18.0") < 0, // fixed by http-on-modify-request made asynchronous in Gecko 18
   
   onHttpStart: function(channel) {
     
@@ -1353,12 +1354,88 @@ var InjectionChecker = {
     return this.maybeJS(this.reduceQuotes(expr)) && this.checkJSSyntax(expr);
   },
   
+   stripLiteralsAndComments: function(s) {
+    "use strict";
+       
+    const MODE_NORMAL = 0;
+    const MODE_REGEX = 1;
+    const MODE_SINGLEQUOTE = 2;
+    const MODE_DOUBLEQUOTE = 3;
+    const MODE_BLOCKCOMMENT = 4;
+    const MODE_LINECOMMENT = 6;
+ 
+    let mode = MODE_NORMAL;
+    let escape = false;
+    let res = [];
+    function handleQuotes(c, q, type) {
+       if (escape) {
+          escape = false;
+        } else if (c == '\\') {
+          escape = true;
+        } else if (c === q) {
+          res.push(type);
+          mode = MODE_NORMAL;
+        }
+    }
+    for (let j = 0, l = s.length; j < l; j++) {
+        
+        switch(mode) {
+          case MODE_REGEX:
+            handleQuotes(s[j], '/', "_REGEXP_");
+            break;
+          case MODE_SINGLEQUOTE:
+            handleQuotes(s[j], "'", "_QS_");
+            break;
+          case MODE_DOUBLEQUOTE:
+            handleQuotes(s[j], '"', "_DQS_");
+            break;
+          case MODE_BLOCKCOMMENT:
+            if (s[j] === '/' && s[j-1] === '*') {
+               res.push("/**/");
+               mode = MODE_NORMAL;
+            }
+            break;
+          case MODE_LINECOMMENT:
+            if (s[j] === '\n') {
+               res.push("//\n");
+               mode = MODE_NORMAL;
+            }
+            break;
+        default:
+          switch(s[j]) {
+             case '"':
+                mode = MODE_DOUBLEQUOTE;
+                break;
+             case "'":
+                mode = MODE_SINGLEQUOTE;
+                break;
+             case '/':
+                switch(s[j+1]) {
+                   case '*':
+                      mode = MODE_BLOCKCOMMENT;
+                      break;
+                   case '/':
+                      mode = MODE_LINECOMMENT;
+                      break;
+                   default:
+                      mode = MODE_REGEX;
+                }
+                break;
+             default:
+                res.push(s[j]);
+          }
+            
+       }
+    }
+    return res.join('');
+  },
+  
   checkLastFunction: function() {
     var fn = this.syntax.lastFunction;
     if (!fn) return false;
     var m = fn.toSource().match(/\{([\s\S]*)\}/);
     if (!m) return false;
-    var expr = m[1];
+    var expr = this.stripLiteralsAndComments(m[1]);
     return /=[\s\S]*cookie|\b(?:setter|document|location|innerHTML|\.\W*src)[\s\S]*=|[\w$\u0080-\uffff\)\]]\s*[\[\(]/.test(expr) ||
             this.maybeJS(expr);
   },

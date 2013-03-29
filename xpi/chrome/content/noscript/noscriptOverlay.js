@@ -1078,7 +1078,7 @@ return noscriptUtil.service ? {
       for (let j = egroup.length; j-- > 0;) {
         let e = egroup[j];
         
-        if (ns.isAllowedObject(e.url, e.mime, e.originSite) && !e.placeholder ||
+        if (ns.isAllowedObject(e.url, e.mime, e.site, e.originSite) && !(e.placeholder && e.placeholder.parentNode) ||
             typeof(e) != "object" || (e.tag && !e.placeholder)
           )
           continue;
@@ -1928,7 +1928,9 @@ return noscriptUtil.service ? {
           let pe = pes[j];
           for (let k = pe.length; k-- > 0;) {
             let e = pe[k];
-            if (e && (e.placeholder || e.document)) blockedObjects++;
+            if (e && (e.placeholder && (e.placeholder.parentNode || !ns.isAllowedObject(e.url, e.mime, e.site, e.originSite))
+                      || e.document)
+              ) blockedObjects++;
           }
         }
       }
