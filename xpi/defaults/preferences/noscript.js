@@ -30,7 +30,7 @@ pref("noscript.showExternalFilters", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
 pref("noscript.mandatory", "chrome: blob: about: about:addons about:blocked about:crashes about:home about:config about:neterror about:certerror about:memory about:plugins about:privatebrowsing about:sessionrestore about:support resource:");
-pref("noscript.default", "about:blank addons.mozilla.org persona.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv informaction.com yahoo.com yimg.com yahooapis.com youtube.com ytimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com afx.ms gfx.ms sfx.ms wlxrs.com");
+pref("noscript.default", "about:blank addons.mozilla.org persona.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv informaction.com yahoo.com yimg.com yahooapis.com youtube.com ytimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com live.net outlook.com afx.ms gfx.ms sfx.ms wlxrs.com");
 
 pref("noscript.eraseFloatingElements", true);
 
@@ -233,6 +233,8 @@ pref("noscript.cp.last", true);
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.debug", false);
 pref("noscript.surrogate.sandbox", true);
+pref("noscript.surrogate.360Haven.sources", "@www.360haven.com");
+pref("noscript.surrogate.360Haven.replacement", "Object.defineProperty(window,'adblock',{get:function() false,set: function() false});Object.defineProperty(window,'google_ad_client',{get: function () { return {__noSuchMethod__: function() this}}});Object.defineProperty(window.HTMLBodyElement.prototype,'innerHTML',{get:function() ''});");
 pref("noscript.surrogate.adagionet.sources", ".adagionet.com");
 pref("noscript.surrogate.adagionet.replacement", "adagioWriteTag=adagioWriteBanner=function(){}");
 pref("noscript.surrogate.adfly.sources", "@^https?://adf.ly/\d+/");

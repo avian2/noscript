@@ -19,15 +19,22 @@ const PolicyState = {
   attach: function(channel) {
     if (this.URI === channel.URI) {
       if (this._debug) this._uris.push(this.URI);
-      if (this.hints.contentType === 6 &&
-          this.hints.requestOrigin && this.hints.requestOrigin.schemeIs("moz-nullprincipal") &&  
-            /\nhandleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml:\d+\n/.test(new Error().stack)) {
-        this.hints.requestOrigin = ABE.BROWSER_URI;
+      if (this.hints.contentType === 6) {
+        let origin = this.hints.requestOrigin;
+        if (origin && origin.schemeIs("moz-nullprincipal")) {
+          // ns.log(this.hints.contentLocation.spec + " < " + origin.spec + ", " + this.hints.owner.URI.spec + "; " + this.hints.context.docShell.currentURI.spec);
+          if (/\nhandleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml:\d+\n/.test(new Error().stack)) {
+            this.hints.requestOrigin = ABE.BROWSER_URI;
+          } else  if (this.hints.context.docShell) {
+            this.hints.requestOrigin = IOUtil.unwrapURL(this.hints.context.docShell.currentURI);
+          }
+        }
       }
       IOUtil.attachToChannel(channel, "noscript.policyHints", this.hints);
       this.reset();
     }
-  },
+  }
+,
   extract: function(channel, detach) {
     var res = IOUtil.extractFromChannel(channel, "noscript.policyHints", !detach);
     if (detach && res !== null && this._debug) {
@@ -65,7 +72,7 @@ function PolicyHints(hints) {
 }
 
 PolicyHints.prototype = (function() {
-  const props = ["contentType", "contentLocation", "requestOrigin", "context", "mimeType", "extra"];
+  const props = ["contentType", "contentLocation", "requestOrigin", "context", "mimeType", "extra", "owner"];
   const proto = {
     get wrappedJSObject() this,
     toArray: function() props.map(function(p) this[p], this),

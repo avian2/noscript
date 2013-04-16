@@ -69,7 +69,7 @@ ChannelReplacement.prototype = {
     this.oldChannel = chan;
     this.channel = newChan;
     
-    // porting of http://mxr.mozilla.org/mozilla-central/source/netwerk/protocol/http/src/nsHttpChannel.cpp#2750
+    // porting of http://lxr.mozilla.org/mozilla-central/source/netwerk/base/src/nsBaseChannel.cpp#69
     
     var loadFlags = chan.loadFlags;
     
@@ -80,6 +80,11 @@ ChannelReplacement.prototype = {
     newChan.loadGroup = chan.loadGroup;
     newChan.notificationCallbacks = chan.notificationCallbacks;
     newChan.loadFlags = loadFlags | newChan.LOAD_REPLACE;
+    
+    if ("nsIPrivateBrowsingService" in Ci &&
+         chan instanceof Ci.nsIPrivateBrowsingService && chan.isChannelPrivate &&
+         newChan instanceof Ci.nsIPrivateBrowsingService && !newChan.isChannelPrivate)
+      newChan.setPrivate(true);
     
     if (!(newChan instanceof Ci.nsIHttpChannel))
       return this;
@@ -119,6 +124,8 @@ ChannelReplacement.prototype = {
       } else {
         newChan.documentURI = chan.documentURI;
       }
+      newChan.forceAllowThirdPartyCookie = chan.forceAllowThirdPartyCookie;
+      newChan.allowSpdy = chan.allowSpdy;
     }
     
     if (chan instanceof Ci.nsIEncodedChannel && newChan instanceof Ci.nsIEncodedChannel) {

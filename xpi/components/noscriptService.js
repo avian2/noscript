@@ -2031,8 +2031,11 @@ var ns = {
       "2.5.9rc3": {
         "live.com": ["gfx.ms", "afx.ms"] // fully Microsoft-controlled (no user content), now required by MS mail services
       },
-      "@VERSION@rc2": {
+      "2.6.5.9rc2": {
         "live.com": ["sfx.ms"] // fully Microsoft-controlled (no user content), now required by MS mail services
+      },
+      "@VERSION@rc5": {
+        "live.com": ["outlook.com", "live.net"] // fully Microsoft-controlled (no user content), now required by MS mail services
       },
     };
     
@@ -4433,7 +4436,7 @@ var ns = {
     var w = doc.defaultView;
     try {
       ns._patchTimeouts(w, true);
-      var xhr = ns.createCheckedXHR("GET", src, false);
+      var xhr = ns.createCheckedXHR("GET", src, false, w);
       xhr.send(null);
       
       this._runJS(doc.defaultView, xhr.responseText);
@@ -4468,7 +4471,7 @@ var ns = {
     IOUtil.attachToChannel(c, "noscript.checkedChannel", v ? DUMMY_OBJ : null);
   },
   
-  createCheckedXHR: function(method, url, async) {
+  createCheckedXHR: function(method, url, async, window) {
     if (typeof(async) == "undefined") async = true;
     var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
     xhr.open(method, url, !!async);
@@ -4476,6 +4479,17 @@ var ns = {
     
     if (typeof(async) === "function")
       xhr.addEventListener("readystatechange", async, false);
+    
+    var privacyContext = window && window.QueryInterface(Ci.nsIInterfaceRequestor)
+      .getInterface(Ci.nsIWebNavigation);
+    if ((privacyContext instanceof Ci.nsILoadContext) && ("usePrivateBrowsing" in privacyContext) 
+            && privacyContext.usePrivateBrowsing) {
+      if (xhr.channel instanceof Ci.nsIPrivateBrowsingChannel) {
+        xhr.channel.setPrivate(true);
+      } else {
+        xhr.channel.loadFlags |= xhr.channel.INHIBIT_PERSISTENT_CACHING;
+      }
+    }
     
     return xhr;
   },
@@ -6369,7 +6383,7 @@ var ns = {
             req.abort();
           }
         } catch(e) {}
-      });
+      }, doc.defaultView);
       req.send(null);
     }
   },

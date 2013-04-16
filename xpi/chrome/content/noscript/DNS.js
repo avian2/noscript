@@ -11,6 +11,7 @@ function DNSRecord(record) {
       for (;;) this.entries.push(record.getNextAddrAsString());
     } catch(e) {
       // NS_ERROR_NOT_AVAILABLE, no more records
+      // notice that hasMore() internall just calls getNextAttr(), checks for errors and resets the iterator
     }
     ttl = this.TTL;
     if (!this.entries.length) this.valid = false;
