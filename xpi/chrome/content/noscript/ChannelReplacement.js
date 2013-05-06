@@ -124,8 +124,10 @@ ChannelReplacement.prototype = {
       } else {
         newChan.documentURI = chan.documentURI;
       }
-      newChan.forceAllowThirdPartyCookie = chan.forceAllowThirdPartyCookie;
-      newChan.allowSpdy = chan.allowSpdy;
+      if ("forceAllowThirdPartyCookie" in newChan)
+        newChan.forceAllowThirdPartyCookie = chan.forceAllowThirdPartyCookie;
+      if ("allowSpdy" in newChan)
+        newChan.allowSpdy = chan.allowSpdy;
     }
     
     if (chan instanceof Ci.nsIEncodedChannel && newChan instanceof Ci.nsIEncodedChannel) {

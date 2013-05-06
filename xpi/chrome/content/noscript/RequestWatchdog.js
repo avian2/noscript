@@ -1200,7 +1200,7 @@ var InjectionChecker = {
     s = s.replace(/:\/\/[^'"\n]*/g, ':');
     
     return (/\bhttps?:$/.test(s) && !/\bh\W*t\W*t\W*p\W*s?.*=/.test(s))
-      ? s.replace(/https?:$/, '')
+      ? s.replace(/\b(?:[\w.]+=)?https?:$/, '')
       : s;
   },
   

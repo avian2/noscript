@@ -2034,7 +2034,7 @@ var ns = {
       "2.6.5.9rc2": {
         "live.com": ["sfx.ms"] // fully Microsoft-controlled (no user content), now required by MS mail services
       },
-      "@VERSION@rc5": {
+      "2.6.6rc5": {
         "live.com": ["outlook.com", "live.net"] // fully Microsoft-controlled (no user content), now required by MS mail services
       },
     };
