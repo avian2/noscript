@@ -4601,10 +4601,15 @@ var ns = {
         pluginDocument = false;
     
     try {
-      pluginDocument = count == 1 && (objInfo[0].pluginExtras.url == document.URL) && !objInfo[0].embed.nextSibling;
+      pluginDocument = count == 1 && (
+          objInfo[0].pluginExtras.url === document.URL && !objInfo[0].embed.nextSibling ||
+          document.body.lastChild === objInfo[0].embed && document.body.lastChild === document.body.firstChild
+        );
       if (pluginDocument) {
         collapse = false;
         forcedCSS = ";outline-style: none !important;-moz-outline-style: none !important;";
+        if (document.defaultView.frameElement)
+          document.defaultView.frameElement.style.overflow = "hidden";
       }
     } catch(e) {}
     
@@ -5576,13 +5581,22 @@ var ns = {
       var isObject;
       
       const domWindow = IOUtil.findWindow(req);
-      if (domWindow && domWindow == domWindow.top) {
-        var ph = PolicyState.extract(req);
-        if (!(ph && (ph.context instanceof Ci.nsIDOMHTMLObjectElement)))
-          return; // for top windows we call onBeforeLoad in onLocationChange
-        isObject = true;
-      }
+      var ph = PolicyState.extract(req);
+      if (ph) {
+        if (!(isObject = ph.context instanceof Ci.nsIDOMHTMLObjectElement)) {
+            switch(ph.contentType) {
+                case 6: // document
+                case 7: // subdocument
+                    break;
+                default:
+                    return; // e.g. plugin content or XHR
+            }
+        } 
+      } else isObject = false;
       
+      if (domWindow && domWindow == domWindow.top && !isObject)
+        return;
+
       var status = req.responseStatus;
       if (status >= 300 && status < 400) // redirect, wait for ultimate destination, see http://forums.informaction.com/viewtopic.php?f=7&t=2630
         return;

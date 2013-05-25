@@ -23,7 +23,7 @@ const PolicyState = {
         let origin = this.hints.requestOrigin;
         if (origin && origin.schemeIs("moz-nullprincipal")) {
           // ns.log(this.hints.contentLocation.spec + " < " + origin.spec + ", " + this.hints.owner.URI.spec + "; " + this.hints.context.docShell.currentURI.spec);
-          if (/\n(?:handleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml|noscriptBM\.handleURLBarCommand@chrome:\/\/noscript\/content\/noscriptBM\.js):\d+\n/
+          if (/\n(?:handleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml|.*?@chrome:\/\/noscript\/content\/noscriptBM\.js):\d+\n/
             .test(new Error().stack)) {
             this.hints.requestOrigin = ABE.BROWSER_URI;
           } else  if (this.hints.context.docShell) {
