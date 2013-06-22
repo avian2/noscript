@@ -278,7 +278,7 @@ ChannelReplacement.prototype = {
       newChan = this.channel,
       overlap;
 
-    if (!(this.window && (overlap = ABERequest.getLoadingChannel(this.window)) !== oldChan)) {
+    if (!(this.window && (overlap = ABERequest.getLoadingChannel(this.window)) && overlap !== oldChan)) {
       try {
         if (ABE.consoleDump && this.window) {
           ABE.log("Opening delayed channel: " + oldChan.name + " - (current loading channel for this window " + (overlap && overlap.name) + ")");

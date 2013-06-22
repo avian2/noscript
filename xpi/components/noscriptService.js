@@ -5930,7 +5930,9 @@ var ns = {
         (scripts || (scripts = [])).push(dntPatch);
       }
       
-      if (this.forbidWebGL && !this.isAllowedObject(site, "WebGL", site, site)) {
+      if (this.forbidWebGL &&
+          !(this.isAllowedObject(site, "WebGL", site, site) || this.isAllowedMime("WebGL", site))
+        ) {
         (scripts || (scripts = [])).push(this._webGLInterceptionDef);
         doc.addEventListener("NoScript:WebGL", this._webGLHandler, false, true);
         let sites = this._webGLSites;
@@ -6535,17 +6537,17 @@ var ns = {
   },
   
   extractJSLink: function(js) {
-    const findLink = /(['"])([\/\w-\?\.#%=&:@]+)\1/g;
+    const findLink = /(['"])(.*?)\1/g;
+    const badURIChar = /[^\/\w-\?\.#%=&:@]/;
     findLink.lastIndex = 0;
-    var maxScore = -1;
-    var score; 
-    var m, s, href;
+    var maxScore = 0;
+    var m, href;
     while ((m = findLink.exec(js))) {
-      s = m[2];
+      let s = m[2];
       if (/^https?:\/\//.test(s)) return s;
-      score = 0;
-      if (s.indexOf("/") > -1) score += 2;
-      if (s.indexOf(".") > 0) score += 1;
+      let score = (badURIChar.test(s) ? 0 : 3) +
+        (s.split("/").length - 1) * 2 +
+        s.split("."). length - 1;
       if (score > maxScore) {
         maxScore = score;
         href = s;

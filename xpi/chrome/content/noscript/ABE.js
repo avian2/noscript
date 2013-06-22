@@ -957,7 +957,9 @@ ABERequest.prototype = Lang.memoize({
     
     if (this.isDoc) {
       var w = this.window;
-      if (w) w.__loadingChannel__ = channel;
+      if (w) try {
+        w.__loadingChannel__ = channel;
+      } catch (e) {}
     }
     
     var ou = ABERequest.getOrigin(channel);
