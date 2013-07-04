@@ -4931,10 +4931,9 @@ var ns = {
            (obj.ownerDocument.defaultView.frameElement instanceof Ci.nsIDOMHTMLFrameElement) &&
            obj.ownerDocument.URL == this.createPluginDocumentURL(obj.src || obj.href, "iframe");
   },
-  
+  isClickToPlay: function(obj) obj instanceof Ci.nsIObjectLoadingContent && ("playPlugin" in obj) && ("activated" in obj) && !obj.activated,
   handleClickToPlay: function(obj) {
-    if (obj instanceof Ci.nsIObjectLoadingContent && ("playPlugin" in obj) && ("activated" in obj) &&
-        !obj.activated && this.getPref("smartClickToPlay") && !this.getExpando(obj, "activated")) {
+    if (this.isClickToPlay(obj) && this.getPref("smartClickToPlay") && !this.getExpando(obj, "activated")) {
       this.setExpando(obj, "activated", true);
       Thread.asap(function() obj.playPlugin());
     }

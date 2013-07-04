@@ -113,8 +113,8 @@
 <!ENTITY noscriptExceptions "Výjimky">
 <!ENTITY noscriptBlockedObjects "Blokované objekty">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Blokovat každý objekt pocházející z nedůvěryhodné stránky">
-<!ENTITY noscriptTempAllowPage "Temporarily allow all this page">
-<!ENTITY noscriptTempAllowPage.accesskey "P">
+<!ENTITY noscriptTempAllowPage "Dočasně povolit celou stránku">
+<!ENTITY noscriptTempAllowPage.accesskey "D">
 <!ENTITY noscriptAllowPage "Povolit pro celou stránku">
 <!ENTITY noscriptAllowPage.accesskey "s">
 <!ENTITY noscriptTempToPerm "Udělit trvale povolení pro tuto stránku">

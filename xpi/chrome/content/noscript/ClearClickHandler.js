@@ -340,7 +340,8 @@ ClearClickHandler.prototype = {
               : (w.__clearClickUnlocked = this.isWhitelisted(w))
             ) ||
             this.sameSiteParents(w) // cross-site document?
-          ) || 
+          ) ||
+          isEmbed && ns.isClickToPlay(o) ||
           ns.getPluginExtras(o) && ns.getPref("confirmUnblock") || // Just enabled from NS placeholder after prompt?
            this.checkSubexception(isEmbed && (o.src || o.data) || w.location.href)
     }
