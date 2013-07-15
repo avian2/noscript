@@ -1938,6 +1938,15 @@ var InjectionChecker = {
     } else if (ASPIdiocy.hasBadPercents(s) && this.checkRecursive(ASPIdiocy.removeBadPercents(s), depth, isPost))
       return true;
     
+    if (FlashIdiocy.affects(s)) {
+      let purged = FlashIdiocy.purgeBadEncodings(s);
+      if (purged !== s && this.checkRecursive(purged, depth, isPost))
+        return true;
+      let decoded = FlashIdiocy.platformDecode(purged);
+      if (decoded !== purged && this.checkRecursive(decoded, depth, isPost))
+        return true;
+    }
+    
     if (s.indexOf("coalesced:") !== 0) {
       let coalesced = ASPIdiocy.coalesceQuery(s);
       if (coalesced !== s && this.checkRecursive("coalesced:" + coalesced, depth, isPost))
@@ -2345,8 +2354,11 @@ XSanitizer.prototype = {
     var neutralized = Entities.neutralizeAll(urlSpec, /[^\\'"\x00-\x07\x09\x0B\x0C\x0E-\x1F\x7F<>]/);
     if (urlSpec != neutralized) url.spec = neutralized;
     
-    if (this.base64) {
-      url.spec = url.prePath; // drastic, but with base64 we cannot take the risk!
+    if (this.base64 ||
+        FlashIdiocy.affects(urlSpec) ||
+        FlashIdiocy.affects(unescape(urlSpec))
+      ) {
+      url.spec = url.prePath; // drastic, but with base64 / FlashIdiocy we cannot take the risk!
     }
     
     if (url.getRelativeSpec(original) && unescape(url.spec) != unescape(original.spec)) { // ok, this seems overkill but take my word, the double check is needed
@@ -2730,3 +2742,12 @@ var ASPIdiocy = {
   }
 }
 
+var FlashIdiocy = {
+  _affectsRx: /%(?:[8-9a-f]|[0-7]?[^0-9a-f])/i, // high (non-ASCII) percent encoding or invalid second digit
+  affects: function(s) this._affectsRx.test(s),
+  
+  purgeBadEncodings: function(s) {
+    INCLUDE("FlashIdiocy");
+    return this.purgeBadEncodings(s);
+  }
+}
