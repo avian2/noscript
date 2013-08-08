@@ -1361,7 +1361,7 @@ var ns = {
             if (!bgReq) try { bgReq = ncb.getInterface(IBCL); } catch (e) {}
             if (bgReq && !ns.isCheckedChannel(channel)) {
                 if (ns.consoleDump) {
-                  ns.dump("Skipping cross-site checks for chrome background request " + channel.name + ", " + loadFlags + ", " + channel.owner + ", " + !!PolicyState.hints);
+                  ns.dump("Skipping cross-site checks for chrome background request " + channel.name + ", " + loadFlags + ", " + channel.owner);
                 }
                 return;
             }
@@ -1380,6 +1380,11 @@ var ns = {
   
   earlyHttpObserver: {
     observe: function(channel, topic, data) {
+      INCLUDE("Policy");
+      delete this.observe;
+      (this.observe = this._observe)(channel, topic, data);
+    },
+    _observe: function(channel, topic, data) {
       PolicyState.attach(channel);
     }
   },
@@ -4607,9 +4612,8 @@ var ns = {
         );
       if (pluginDocument) {
         collapse = false;
-        forcedCSS = ";outline-style: none !important;-moz-outline-style: none !important;";
-        if (document.defaultView.frameElement)
-          document.defaultView.frameElement.style.overflow = "hidden";
+        forcedCSS = ";outline-style: none !important;-moz-outline-style: none !important; width: 100%";
+        
       }
     } catch(e) {}
     
@@ -5761,22 +5765,19 @@ var ns = {
       if (this.consoleDump & LOG_CONTENT_BLOCK) 
         this.dump("Blocking top-level plugin document");
       
-      
-      if (this._abortPluginDocLoads) {
-        IOUtil.abort(req);  
-        ["embed", "video", "audio"].forEach(function(tag) {
-          var embeds = domWindow.document.getElementsByTagName(tag);
-          var eType = "application/x-noscript-blocked";
-          var eURL = "data:" + eType + ",";
-          var e;
-          for (var j = embeds.length; j-- > 0;) {
-            e = embeds.item(j);
-            if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) != CP_OK) {
+      for each (let tag in ["embed", "video", "audio"]) {
+        let embeds = domWindow.document.getElementsByTagName(tag);
+        if (embeds.length > 0 && (tag !== "embed" || this._abortPluginDocLoads)) {
+          let eType = "application/x-noscript-blocked";
+          let eURL = "data:" + eType + ",";
+          for (let j = embeds.length; j-- > 0;) {
+            let e = embeds.item(j);
+            if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) !== CP_OK) {
               e.src = eURL;
               e.type = eType;
             }
           }
-        }, this);
+        }
       }
       
       if (xssInfo) overlay.notifyXSS(xssInfo);

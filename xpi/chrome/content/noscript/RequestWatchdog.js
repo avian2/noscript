@@ -1823,7 +1823,7 @@ var InjectionChecker = {
   
   HeadersChecker: /[\r\n]\s*(?:content-(?:type|encoding))\s*:/i,
   checkHeaders: function(s) this._rxCheck("Headers", s),
-  SQLIChecker: /(?:\bunion\b|\()[\w\W]+\bselect\b[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/i,
+  SQLIChecker: /(?:\bunion\b|\()[\w\W]*\bselect\b[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/i,
   checkSQLI: function(s) this._rxCheck("SQLI", s),
   
   base64: false,

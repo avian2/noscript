@@ -321,7 +321,7 @@ const MainContentPolicy = {
         
         case 4: // STYLESHEETS
           if (PolicyUtil.isXSL(aContext) && /\/x[ms]l/.test(aMimeTypeGuess) &&
-              !/chrome|resource/.test(aContentLocation.scheme) &&
+              !/^(?:chrome|resource)$/.test(aContentLocation.scheme) &&
                 this.getPref("forbidXSLT", true)) {
             forbid = isScript = true; // we treat XSLT like scripts
             break;
@@ -361,7 +361,7 @@ const MainContentPolicy = {
           }
           
           case 15: // media
-          if (aContentType == 15) {
+          if (aContentType === 15) {
               if (aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
               // let's wire poor man's video/audio toggles if JS is disabled and therefore controls are not available
               this.delayExec(function() {
@@ -628,7 +628,7 @@ const MainContentPolicy = {
   
       mimeKey = mimeKey || aMimeTypeGuess || "application/x-unknown";
       
-      if (!(forbid || locationSite == "chrome:")) {
+      if (!(forbid || locationSite === "chrome:")) {
         
         forbid = blockThisFrame || untrusted && this.alwaysBlockUntrustedContent;
         if (!forbid) {
@@ -684,7 +684,7 @@ const MainContentPolicy = {
         }
       }
 
-      if (forbid && !this.contentBlocker) {
+      if (forbid && (!this.contentBlocker || /^resource:/.test(locationSite))) {
         
         originURL = originURL || (aRequestOrigin && aRequestOrigin.spec);
         originSite = originSite || this.getSite(originURL);
