@@ -779,9 +779,11 @@ RequestWatchdog.prototype = {
         if (ns.consoleDump) this.dump(channel, "Yahoo exception");
       } else if (/^https?:\/\/wpcomwidgets.com\/\?/.test(originalSpec)) {
         skipArr = ["_data"];
+      } else if (/^https:\/\/docs\.google\.com\/picker\?/.test(originalSpec)) {
+        skipArr = ["nav", "pp"];
       }
       if (skipArr) {
-        skipRx = new RegExp("(?:^|[&?])(?:" + skipArr.join('|') + ")=[^&]+");
+        skipRx = new RegExp("(?:^|[&?])(?:" + skipArr.join('|') + ")=[^&]+", "g");
       }
       
       if (!stripPost)
@@ -1823,7 +1825,8 @@ var InjectionChecker = {
   
   HeadersChecker: /[\r\n]\s*(?:content-(?:type|encoding))\s*:/i,
   checkHeaders: function(s) this._rxCheck("Headers", s),
-  SQLIChecker: /(?:\bunion\b|\()[\w\W]*\bselect\b[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/i,
+  SQLIChecker: /(?:(?:\bunion\b|\()[\w\W]*\bselect\b|(?:updatexml|extractvalue)\b[\w\W]*\()[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/i
+  ,
   checkSQLI: function(s) this._rxCheck("SQLI", s),
   
   base64: false,
