@@ -101,7 +101,7 @@
 <!ENTITY noscriptUnsafeReload "Rechargement non sécurisé">
 <!ENTITY noscriptUnsafeReload.accesskey "R">
 <!ENTITY noscriptXssExceptions "Exceptions de protection anti-XSS">
-<!ENTITY noscriptXssExceptions.description "Les destinations correspondantes aux expressions régulières suivantes ne seront pas protégées contre les scripts entre sites XSS">
+<!ENTITY noscriptXssExceptions.description "Les destinations correspondant aux expressions régulières suivantes ne seront pas protégées contre le XSS">
 <!ENTITY noscriptMatchSample "Exemple de motif :">
 <!ENTITY noscriptReset "Réinitialiser">
 <!ENTITY noscriptReset.accesskey "R">
@@ -114,7 +114,7 @@
 <!ENTITY noscriptCollapseBlockedObjects "Utiliser l&apos;espace libéré par les éléments bloqués">
 <!ENTITY noscriptExceptions "Exceptions...">
 <!ENTITY noscriptBlockedObjects "Objets bloqués">
-<!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquer tous les objets venant d&apos;un site marqué comme non fiables">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Bloquer tous les objets venant d&apos;un site marqué comme non fiable">
 <!ENTITY noscriptTempAllowPage "Autoriser cette page temporairement">
 <!ENTITY noscriptTempAllowPage.accesskey "P">
 <!ENTITY noscriptAllowPage "Autoriser toute la page">
@@ -142,8 +142,8 @@
 <!ENTITY noscriptClearClickReport "Rapport">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "ID du rapport">
-<!ENTITY noscriptTrustedPagesAdj "fiable">
-<!ENTITY noscriptUntrustedPagesAdj "non fiable">
+<!ENTITY noscriptTrustedPagesAdj "fiables">
+<!ENTITY noscriptUntrustedPagesAdj "non fiables">
 <!ENTITY noscriptKeepLocked "Garder cet environnement verrouillé (recommandé)">
 <!ENTITY noscriptEmbeddings "Objets embarqués">
 <!ENTITY noscriptPrev "Précédent">
@@ -153,13 +153,13 @@
 <!ENTITY noscriptFrameOptErr.link "Cliquez ici pour ouvrir ce contenu dans une nouvelle fenêtre">
 <!ENTITY noscriptBookmarkSync "Sauvegarder la configuration de NoScript dans un marque-page pour une synchronisation facile">
 <!ENTITY noscriptShowReleaseNotes "Afficher les notes de version lors des mises à jour">
-<!ENTITY ABE "ABE">
+<!ENTITY ABE "EFA">
 <!ENTITY ABE.accesskey "A">
 <!ENTITY ABE.rulesets.label "Jeux de règles :">
-<!ENTITY ABE.enabled.label "Activer ABE (Application Boundaries Enforcer, Exécuteur de frontières des applications)">
+<!ENTITY ABE.enabled.label "Activer EFA (Exécuteur de Frontières des Applications -- Application Boundaries Enforcer)">
 <!ENTITY ABE.siteEnabled.label "Autoriser les sites à faire passer leurs propres jeux de règles">
 <!ENTITY ABE.edit.label "Éditer…">
-<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.edit.accesskey "e">
 <!ENTITY ABE.enable.label "Activer">
 <!ENTITY ABE.enable.accesskey "v">
 <!ENTITY ABE.disable.label "Désactiver">
@@ -177,7 +177,7 @@
 <!ENTITY noscriptEF.exceptions "Ne pas filtrer les objets provenant de ces sites :">
 <!ENTITY noscriptEF.remove "Supprimer">
 <!ENTITY noscriptPreset "Niveau de sécurité">
-<!ENTITY noscriptPreset.off "Off (vous êtes sérieux ?!)">
+<!ENTITY noscriptPreset.off "Éteint (vous êtes sérieux ?!)">
 <!ENTITY noscriptPreset.low "Passage facile (liste noire + sécurité web)">
 <!ENTITY noscriptPreset.medium "Classique (liste blanche + sécurité web)">
 <!ENTITY noscriptPreset.high "Forteresse (blocus complet)">

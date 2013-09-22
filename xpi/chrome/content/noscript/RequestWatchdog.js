@@ -592,6 +592,14 @@ RequestWatchdog.prototype = {
         return;
       }
       
+      if (/^https?:\/\/www\.youtube\.com$/.test(originSite) &&
+          /^https:\/\/(?:plus\.googleapis|apis\.google)\.com\/[\w/]+\/widget\/render\/comments\?/.test(originalSpec) &&
+          ns.getPref("filterXExceptions.yt_comments")
+          ) {
+        if (ns.consoleDump) this.dump(channel, "YouTube comments exception");
+        return;
+      }
+      
       if (channel.requestMethod == "POST") {
         
         if (originSite === "https://twitter.com" && /^https:\/\/.*\.twitter.com$/.test(targetSite)) {
@@ -668,7 +676,7 @@ RequestWatchdog.prototype = {
           if (ns.consoleDump) this.dump(channel, "Readability exception");
           return;
         }
-        
+
       }
     
     } else { // maybe data or javascript URL?

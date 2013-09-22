@@ -2021,34 +2021,34 @@ var ns = {
     // update hacks
     var versions = {
       "2.1.1.2rc6": {
-        "hotmail.com": ["wlxrs.com"], // required by Hotmail/Live webmail
-        "google.com": ["googleapis.com", "gstatic.com"], // required by most Google services and also by external resources
-        "addons.mozilla.org": ["paypal.com", "paypalobjects.com"] // required for the "Contribute" AMO feature not to break badly with no warning
+        "hotmail.com": "wlxrs.com", // required by Hotmail/Live webmail
+        "google.com": "googleapis.com gstatic.com", // required by most Google services and also by external resources
+        "addons.mozilla.org": "paypal.com paypalobjects.com" // required for the "Contribute" AMO feature not to break badly with no warning
       },
       
       "2.2.9rc2": {
-        "addons.mozilla.org": ["browserid.org"]
+        "addons.mozilla.org": "persona.org"
       },
       
       "2.4.9rc2": {
-        "!browserid.org": ["persona.org"]
+        "!browserid.org": "persona.org"
       },
       "2.5.9rc3": {
-        "live.com": ["gfx.ms", "afx.ms"] // fully Microsoft-controlled (no user content), now required by MS mail services
+        "live.com": "gfx.ms afx.ms" // fully Microsoft-controlled (no user content), now required by MS mail services
       },
       "2.6.5.9rc2": {
-        "live.com": ["sfx.ms"] // fully Microsoft-controlled (no user content), now required by MS mail services
+        "live.com": "sfx.ms" // fully Microsoft-controlled (no user content), now required by MS mail services
       },
       "2.6.6rc5": {
-        "live.com": ["outlook.com", "live.net"] // fully Microsoft-controlled (no user content), now required by MS mail services
-      },
+        "live.com": "outlook.com live.net" // fully Microsoft-controlled (no user content), now required by MS mail services
+      }
     };
     
     for (let v in versions) {
       if (this.versionComparator.compare(prev, v) < 0) {
         let cascading = versions[v];
         for (let site in cascading) {
-          let newSite = cascading[site];
+          let newSite = cascading[site].split(/\s+/);
           let replace = site[0] === "!";
           if (replace) site = site.substring(1);
           if (this.isJSEnabled(site)) { 
@@ -4795,7 +4795,7 @@ var ns = {
           if (r.object.parentNode) r.object.parentNode.insertBefore(r.placeholder, r.object);
         } else if (r.object.parentNode) {
           let p = r.placeholder;
-          r.object.parentNode.replaceChild(p, r.object);
+          r.object.parentNode.insertBefore(p, r.object);
           if (p.style.position === "absolute") {
             let b = p.getBoundingClientRect();
             let el;
@@ -4983,6 +4983,7 @@ var ns = {
     extras.placeholder = null;
     this.delayExec(function() {
       var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
+      if (ctx.object.parentNode) ctx.object.parentNode.removeChild(ctx.object);
       var obj = ctx.object.cloneNode(true);
       
       function reload(slow) {

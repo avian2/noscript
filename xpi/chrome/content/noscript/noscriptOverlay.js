@@ -1478,10 +1478,11 @@ return noscriptUtil.service ? {
     // this won't get any notification for Fennec, which is good.
     
     var gb = getBrowser();
+    
+    if (!(gb && gb.getNotificationBox)) return null; // SeaMonkey, Fennec...
+    
     browser = browser || gb.selectedBrowser;
     if (!pos) pos = this.notificationPos;
-
-    if (!gb.getNotificationBox) return null; // SeaMonkey, Fennec...
 
     var nb = gb.getNotificationBox(browser);
     
