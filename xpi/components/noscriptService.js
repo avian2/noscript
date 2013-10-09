@@ -4795,7 +4795,10 @@ var ns = {
           if (r.object.parentNode) r.object.parentNode.insertBefore(r.placeholder, r.object);
         } else if (r.object.parentNode) {
           let p = r.placeholder;
-          r.object.parentNode.insertBefore(p, r.object);
+          let o = r.object;
+          o.parentNode.insertBefore(p, o);
+          o._display = o.style.display;
+          o.style.display = "none";
           if (p.style.position === "absolute") {
             let b = p.getBoundingClientRect();
             let el;
@@ -4984,7 +4987,9 @@ var ns = {
     this.delayExec(function() {
       var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
       if (ctx.object.parentNode) ctx.object.parentNode.removeChild(ctx.object);
+      if ("_display" in ctx.object) ctx.object.style.display = ctx.object._display;
       var obj = ctx.object.cloneNode(true);
+      
       
       function reload(slow) {
         ns.allowObjectByDOM(ctx.anchor, url, doc.documentURI, mime);

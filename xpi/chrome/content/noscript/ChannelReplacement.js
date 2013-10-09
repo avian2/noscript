@@ -108,9 +108,8 @@ ChannelReplacement.prototype = {
         } catch(e) {
           newChan.setUploadStream(stream, '', -1);
         }
-        
-        newChan.requestMethod = chan.requestMethod;
       }
+      newChan.requestMethod = chan.requestMethod;
     } else {
       newChan.requestMethod = newMethod;
     }
