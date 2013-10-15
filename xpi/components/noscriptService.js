@@ -4439,25 +4439,35 @@ var ns = {
     var doc = scriptElem.ownerDocument;
     ns.executingJSURL(doc, 1);
     var w = doc.defaultView;
+    
+    
     try {
       ns._patchTimeouts(w, true);
-      var xhr = ns.createCheckedXHR("GET", src, false, w);
+      var xhr = ns.createCheckedXHR("GET", src, function() {
+        if (xhr.readyState === 4) {
+          ns._runJS(doc.defaultView, xhr.responseText);
+          var ev = doc.createEvent("HTMLEvents");
+          ev.initEvent("load", false, true);                             
+          Thread.asap(function() {
+            scriptElem.dispatchEvent(ev);
+            dispose();
+          });
+        }
+      }, w);
       xhr.send(null);
-      
-      this._runJS(doc.defaultView, xhr.responseText);
-      var ev = doc.createEvent("HTMLEvents");
-      ev.initEvent("load", false, true);
     } catch(e) {
+      dispose();
       ns.dump(e);
-    } finally {
+    }
+    
+    function dispose() {
       Thread.asap(function() {
         try {
-          scriptElem.dispatchEvent(ev);
           ns._patchTimeouts(w, false);
         } catch(e) {}
         ns.executingJSURL(doc, -1);
       });
-    }
+    };
   },
   
   executingJSURL: function(doc, n) {
@@ -4957,6 +4967,7 @@ var ns = {
     this.allowObject(url, mime, extras.originSite);
     var doc = ctx.anchor.ownerDocument;
     
+  
     var isLegacyFrame = this.isLegacyFrameReplacement(ctx.object);
      
     if (isLegacyFrame || (mime == doc.contentType && doc.body &&
@@ -4977,6 +4988,12 @@ var ns = {
     } else if (mime === "WebGL" || this.getExpando(ctx, "silverlight")) {
       this.allowObject(doc.documentURI, mime);
       if (mime === "WebGL") delete this._webGLSites[this.getSite(doc.documentURI)];
+      this.quickReload(doc.defaultView);
+      return;
+    }
+    
+    
+    if (url == doc.URL) { // full page content, just reload
       this.quickReload(doc.defaultView);
       return;
     }
@@ -5003,6 +5020,7 @@ var ns = {
       var isMedia = ("nsIDOMHTMLVideoElement" in Ci) && (obj instanceof Ci.nsIDOMHTMLVideoElement || obj instanceof Ci.nsIDOMHTMLAudioElement);
       
       if (isMedia) {
+        
         if (jsEnabled && !obj.controls
             && !/(?:=[^&;]{10,}.*){2,}/.test(this.objectKey(url)) // try to avoid infinite loops when more than one long parameter is present in the object key
           ) {
