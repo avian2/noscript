@@ -51,16 +51,8 @@ var noscriptBM = {
   
   loadURIWithFlags: function() { // Fx 3.5 and above command bar interception
     try {
-      if ("gURLBar" in window) {
-        let handleCommand = window.gURLBar.handleCommand;
-        let times = 5;
-        for(let caller, f = arguments.callee; (caller = f.caller) && times; f = caller, times--) {
-          if (caller.name.substring(0, 2) === "on") break; // work around for bug 666371
-          if (caller === handleCommand || caller.name === "handleCommand") {
-            return noscriptBM.handleURLBarCommand.apply(window, arguments);
-          }
-        }
-      }
+      if ("gURLBar" in window && /\nhandleCommand\b.*@chrome:\/\//.test(new Error().stack))
+        return noscriptBM.handleURLBarCommand.apply(window, arguments);
     } catch(e) {}
     return noscriptBM.handleURLBarCommandOriginal(arguments);
   },
@@ -105,13 +97,16 @@ var noscriptBM = {
     window.setTimeout(noscriptBM.delayedInit, 50);
   },
   delayedInit: function() {
-    if ("getShortcutOrURI" in window) {
-      let getShortcutOrURIOriginal = getShortcutOrURI;
-      getShortcutOrURI = function(aURL, aPostDataRef) {
-        if ("gURLBar" in window && window.gURLBar) {
-          window.gURLBar.originalShortcut = aURL;
+    for each (let f in ["getShortcutOrURIAndPostData" /* Fx >= 25 */, "getShortcutOrURI"]) {
+      if (f in window) {
+        let getShortcut = window[f];
+        window[f] = function(aURL) {
+          if ("gURLBar" in window && window.gURLBar) {
+            window.gURLBar.originalShortcut = aURL;
+          }
+          return getShortcut.apply(window, arguments);
         }
-        return getShortcutOrURIOriginal(aURL, aPostDataRef);
+        break;
       }
     }
     

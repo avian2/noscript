@@ -40,7 +40,7 @@ ClearClickHandler.prototype = {
         if (site !== this.site) {
           let contentRx = /^(?:(?:ht|f)tps?|data|javascript|feed):/i;
           if (contentRx.test(this.site) &&
-              (contentRx.test(site) || !contentRx.test(ev.target.ownerDocument.defaultView.top.location))
+              (contentRx.test(site) || !contentRx.test(ev.target.ownerDocument.defaultView.top.location.href))
               ) {
               
             if (lo.site && lo.site !== site && (ts - lo.ts) < this.quarantine) {

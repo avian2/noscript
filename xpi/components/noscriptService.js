@@ -5135,10 +5135,10 @@ var ns = {
         if (n == "type" && v == type && !this.data) {
           this._pendingType = v;
           
-         
-          this.SetVariable = function() {}; // can't use DUMMY_FUNC, we're in content context
+          
+          this.SetVariable = function() this.__proto__.SetVariable.apply(this, arguments);
           this.GetVariable = function(n) {
-            if (n !== "$version") return undefined;
+            if (n !== "$version") return this.__proto__.SetVariable.apply(this, arguments);
             
             if (!ver) {
               ver = navigator.plugins["Shockwave Flash"]
