@@ -637,7 +637,12 @@ ClearClickHandler.prototype = {
         let maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), sd.w ? 0 : Math.min(this.minWidth, dElem.offsetWidth), 8);
         let maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), sd.h ? 0 : Math.min(this.minHeight, dElem.offsetHeight, 8));
   
-        box = this.getBox(o, d, w);
+        for (;;) {
+            box = this.getBox(o, d, w);
+            if (box.width > 0 && box.height > 0) break;
+            o = o.parentNode;
+            if (!o) return false;
+        }
         
         // expand to parent form if needed
         var form = o.form;

@@ -575,8 +575,8 @@ const MainContentPolicy = {
             if (scriptURL.lastIndexOf('/') === scriptURL.length - 1)
               scriptURL = scriptURL.slice(0, -1); // right trim slash
             let decodedOrigin = InjectionChecker.urlUnescape(aRequestOrigin.spec);
-            if ((decodedOrigin.indexOf(scriptURL) > 0 || // don't use < 0 b/c on redirections origin == scriptURL
-                Entities.convertAll(decodedOrigin).indexOf(scriptURL) !== -1) &&
+            if ((decodedOrigin.indexOf(scriptURL) > 0 || // don't use 0 b/c on redirections origin == scriptURL
+                Entities.convertAll(decodedOrigin).indexOf(scriptURL) > 0) &&
                 this.getPref("xss.checkInclusions") &&
                 !new AddressMatcher(this.getPref("xss.checkInclusions.exceptions", "")).test(locationURL)
               ) {
