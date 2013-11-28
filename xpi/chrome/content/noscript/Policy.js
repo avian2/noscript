@@ -1,8 +1,5 @@
-const PolicyState = {
-  _debug: false,
-  _uris: [],
-  URI: null,
-  hints: null,
+PolicyState = {
+  hintsList: [],
   checking: [],
   addCheck: function(url) {
     if (this.checking.indexOf(url) === -1)
@@ -16,60 +13,74 @@ const PolicyState = {
     return this.checking.indexOf(url) > -1;
   },
   
+  hintsForURI: function(uri, clear) {
+    let hl = this.hintsList;
+    for (let j = hl.length; j--;) {
+      let h = hl[j];
+      let u = h.URIRef.get();
+      if (u === uri || !u) {
+        if (clear || !u) hl.splice(j, 1);
+        if (u) return h;
+      }
+    }
+    return null;
+  },
+  
   attach: function(channel) {
-    if (this.URI === channel.URI) {
-      if (this._debug) this._uris.push(this.URI);
-      if (this.hints.contentType === 6) {
-        let origin = this.hints.requestOrigin;
+    let URIs = this.URIs;
+    let uri = channel.URI;
+    let hints = this.hintsForURI(uri, true);
+    if (hints) {
+      if (hints.contentType === 6) {
+        let origin = hints.requestOrigin;
         if (origin && origin.schemeIs("moz-nullprincipal")) {
-          // ns.log(this.hints.contentLocation.spec + " < " + origin.spec + ", " + this.hints.owner.URI.spec + "; " + this.hints.context.docShell.currentURI.spec);
+          // ns.log(hints.contentLocation.spec + " < " + origin.spec + ", " + hints.owner.URI.spec + "; " + hints.context.docShell.currentURI.spec);
           if (/\n(?:handleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml|.*?@chrome:\/\/noscript\/content\/noscriptBM\.js):\d+\n/
             .test(new Error().stack)) {
-            this.hints.requestOrigin = ABE.BROWSER_URI;
+            hints.requestOrigin = ABE.BROWSER_URI;
           } else  if (this.hints.context.docShell) {
-            this.hints.requestOrigin = IOUtil.unwrapURL(this.hints.context.docShell.currentURI);
+            hints.requestOrigin = IOUtil.unwrapURL(hints.context.docShell.currentURI);
           }
         }
       }
-      IOUtil.attachToChannel(channel, "noscript.policyHints", this.hints);
-      this.reset();
+      IOUtil.attachToChannel(channel, "noscript.policyHints", hints);
     }
   }
 ,
-  extract: function(channel, detach) {
-    var res = IOUtil.extractFromChannel(channel, "noscript.policyHints", !detach);
-    if (detach && res !== null && this._debug) {
-      var idx = this._uris.indexOf(channel.URI);
-      if (idx > -1) this._uris.splice(idx, 1);
-    }
-    return res;
-  },
-  detach: function(channel) {
-    return this.extract(channel, true);
-  },
-  reset: function() {
-    this.URI = this.hints = null;
+  extract: function(channel, detach) IOUtil.extractFromChannel(channel, "noscript.policyHints", !detach)
+,
+  detach: function(channel) this.extract(channel, true)
+,
+  reset: function(uri) {
+    this.hintsForURI(uri, true);
   },
   cancel: function(hints) {
-    this.reset();
     hints._psCancelled = true;
   },
  
   save: function(uri, hints) {
+  
     if ("_psCancelled" in hints) return false;
-    this.URI = uri;
-    this.hints = new PolicyHints(hints);
+    let existing = this.hintsForURI(uri);
+    if (!existing) this.hintsList.push(new PolicyHints(uri, hints));
     return true;
   },
   
   toString: function() {
-    return this._uris.map(function(u) { return u.spec; }).join(", ");
+    return "PolicyState: " + this.hintsList.map(function(h) h.URIRef.get()).toSource()
   }
 }
 
-function PolicyHints(hints) {
+function PolicyHints(uri, hints) {
   this.args = hints;
+  if (hints[1] === uri) {
+    hints[1] = uri.clone(); // avoid cyclic references
+    if (hints[2] === uri) {
+      hints[2] = hints[1];
+    }
+  }
   this.context = hints[3]; // turns it into a weak reference
+  this.URIRef = Cu.getWeakReference(uri);
 }
 
 PolicyHints.prototype = (function() {
@@ -331,7 +342,7 @@ const MainContentPolicy = {
         case 14: // fonts
           forbid = this.forbidFonts;
           if (!forbid) return CP_OK;
-          mimeKey = "Font";
+          mimeKey = "FONT";
           if (aContentLocation && aRequestOrigin && aContentLocation.schemeIs("data"))
             locationURL = this.getSite(aRequestOrigin.spec);
           
@@ -651,7 +662,7 @@ const MainContentPolicy = {
             
             if (isFlash) this.tagWindowlessObject(aContext);
             
-            if (this.isAllowedMime(aMimeTypeGuess || mimeKey, locationSite)) return CP_OK;
+            if (this.isAllowedMime(mimeKey, locationSite)) return CP_OK;
             
             if (forbid) {
 
@@ -678,7 +689,7 @@ const MainContentPolicy = {
             }
           }
         } else if (blockThisFrame &&
-                   this.isAllowedMime(aMimeTypeGuess || mimeKey, locationSite) ||
+                   this.isAllowedMime(mimeKey, locationSite) ||
                    this.isAllowedMime("FRAME", locationSite)) {
           return CP_OK;
         }
@@ -782,7 +793,7 @@ const MainContentPolicy = {
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
       
       if (isHTTP) PolicyState.save(unwrappedLocation, arguments);
-      else PolicyState.reset();
+      else PolicyState.reset(unwrappedLocation);
       
     }
     return CP_OK;

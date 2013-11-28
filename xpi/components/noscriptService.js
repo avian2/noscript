@@ -1385,7 +1385,7 @@ var ns = {
       (this.observe = this._observe)(channel, topic, data);
     },
     _observe: function(channel, topic, data) {
-      PolicyState.attach(channel);
+      if (channel instanceof Ci.nsIHttpChannel) PolicyState.attach(channel);
     }
   },
   
@@ -1652,7 +1652,7 @@ var ns = {
       break;
       
       case "allowedMimeRegExp":
-        this.updateRxPref(name, "", "^", this.rxParsers.multi);
+        this.updateRxPref(name, "", "^i", this.rxParsers.multi);
       break;
         
       case "safeJSRx":

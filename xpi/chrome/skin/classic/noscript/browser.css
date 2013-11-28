@@ -108,7 +108,10 @@ toolbar[mode="full"] #noscript-tbb[type="menu"] {
 
 .noscript-glb-emb,
 #noscript-tbb.noscript-glb-emb,
-#noscript-statusIcon.noscript-glb-emb
+#noscript-statusIcon.noscript-glb-emb,
+.noscript-inactive-glb-emb,
+#noscript-tbb.noscript-inactive-glb-emb,
+#noscript-statusIcon.noscript-inactive-glb-emb
 {
   list-style-image: url(glb-emb16.png);
 }
