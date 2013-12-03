@@ -1,40 +1,57 @@
-PolicyState = {
+var PolicyState = {
   hintsList: [],
   checking: [],
   addCheck: function(url) {
-    if (this.checking.indexOf(url) === -1)
-      this.checking.push(url);
+    if (typeof Map === "function") {
+      this.checking = new Map(),
+      this.addCheck = function(url) { this.checking.set(url, true); }
+      this.removeCheck = function(url) { this.checking.delete(url); }
+      PolicyState.isChecking = function(url) this.checking.has(url);
+    } else {
+      this.addCheck = function(url) {
+        if (this.checking.indexOf(url) === -1)
+          this.checking.push(url);
+      }
+    }
+    this.addCheck(url);
   },
+  
   removeCheck: function(url) {
-    var idx = this.checking.indexOf(url);
-    if (idx > -1) this.checking.splice(idx, 1);
+    let idx = this.checking.indexOf(url);
+    if (idx !== -1) this.checking.splice(idx, 1);
   },
   isChecking: function(url) {
-    return this.checking.indexOf(url) > -1;
+    return this.checking.indexOf(url) !== -1;
   },
   
   hintsForURI: function(uri, clear) {
     let hl = this.hintsList;
+    let spec = uri.spec;
+    
     for (let j = hl.length; j--;) {
       let h = hl[j];
-      let u = h.URIRef.get();
-      if (u === uri || !u) {
-        if (clear || !u) hl.splice(j, 1);
-        if (u) return h;
+      if (h.URISpec !== spec)  continue;
+      
+      if (h.URIRef.get() === uri) {
+        if (clear) hl.splice(j, 1);
+        return h;
       }
     }
     return null;
   },
   
   attach: function(channel) {
-    let URIs = this.URIs;
     let uri = channel.URI;
+    if (this.extract(channel) ||
+        !(uri.schemeIs("http") || uri.schemeIs("https")))
+      return;
+    
     let hints = this.hintsForURI(uri, true);
     if (hints) {
+      hints._attached = true;
       if (hints.contentType === 6) {
         let origin = hints.requestOrigin;
         if (origin && origin.schemeIs("moz-nullprincipal")) {
-          // ns.log(hints.contentLocation.spec + " < " + origin.spec + ", " + hints.owner.URI.spec + "; " + hints.context.docShell.currentURI.spec);
           if (/\n(?:handleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml|.*?@chrome:\/\/noscript\/content\/noscriptBM\.js):\d+\n/
             .test(new Error().stack)) {
             hints.requestOrigin = ABE.BROWSER_URI;
@@ -44,30 +61,50 @@ PolicyState = {
         }
       }
       IOUtil.attachToChannel(channel, "noscript.policyHints", hints);
+    } else {
+      // if (!this.extract(channel)) ns.log("Missing hints for " + channel.name + ", " + channel.status + ", " + channel.loadFlags);
     }
   }
 ,
   extract: function(channel, detach) IOUtil.extractFromChannel(channel, "noscript.policyHints", !detach)
 ,
-  detach: function(channel) this.extract(channel, true)
+  detach: function(channel) {
+    let uri = channel.URI;
+    if (!(uri.schemeIs("http") || uri.schemeIs("https"))) return null; 
+    let hints = this.extract(channel, true);
+    if (!hints) this.reset(uri);
+    return hints;
+  }
 ,
   reset: function(uri) {
-    this.hintsForURI(uri, true);
+    if (uri) this.hintsForURI(uri, true);
+    else this.sweep();
   },
   cancel: function(hints) {
     hints._psCancelled = true;
   },
- 
+  
+  SWEEP_COUNTDOWN: 1000,
+  _sweepCount: 1000,
   save: function(uri, hints) {
   
     if ("_psCancelled" in hints) return false;
-    let existing = this.hintsForURI(uri);
-    if (!existing) this.hintsList.push(new PolicyHints(uri, hints));
+
+    this.hintsList.push(new PolicyHints(uri, hints));
+    
+    if (this._sweepCount-- < 0) this.sweep();
     return true;
   },
   
+  sweep: function() {
+    this._sweepCount = this.SWEEP_COUNTDOWN;
+    let hl = this.hintsList;
+    for (let j = hl.length; j--;)
+        if (!hl[j].URIRef.get()) hl.splice(j, 1);
+  },
+  
   toString: function() {
-    return "PolicyState: " + this.hintsList.map(function(h) h.URIRef.get()).toSource()
+    return "PolicyState: " + this.hintsList.map(function(h) h.URISpec + " - " + h.URIRef.get()).toSource()
   }
 }
 
@@ -81,6 +118,7 @@ function PolicyHints(uri, hints) {
   }
   this.context = hints[3]; // turns it into a weak reference
   this.URIRef = Cu.getWeakReference(uri);
+  this.URISpec = uri.spec; // for fast lookups
 }
 
 PolicyHints.prototype = (function() {
@@ -95,7 +133,8 @@ PolicyHints.prototype = (function() {
     this.__defineGetter__(p, function() this.args[i]);
     switch(p) {
       case "context":
-        this.__defineSetter__(p, function(v) {
+        this.__defineSetter__(p,
+        function(v) {
           try {
             v =  v ? Cu.getWeakReference(v) : null;
           } catch (e) {
@@ -693,6 +732,8 @@ const MainContentPolicy = {
                    this.isAllowedMime("FRAME", locationSite)) {
           return CP_OK;
         }
+      } else {
+        if (this.isAllowedMime(mimeKey, locationSite)) return CP_OK;
       }
 
       if (forbid && (!this.contentBlocker || /^resource:/.test(locationSite))) {
@@ -793,7 +834,7 @@ const MainContentPolicy = {
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
       
       if (isHTTP) PolicyState.save(unwrappedLocation, arguments);
-      else PolicyState.reset(unwrappedLocation);
+
       
     }
     return CP_OK;
