@@ -239,6 +239,8 @@ pref("noscript.surrogate.360Haven.sources", "@www.360haven.com");
 pref("noscript.surrogate.360Haven.replacement", "Object.defineProperty(window,'adblock',{get:function() false,set: function() false});Object.defineProperty(window,'google_ad_client',{get: function () { return {__noSuchMethod__: function() this}}});Object.defineProperty(window.HTMLBodyElement.prototype,'innerHTML',{get:function() ''});");
 pref("noscript.surrogate.adagionet.sources", ".adagionet.com");
 pref("noscript.surrogate.adagionet.replacement", "adagioWriteTag=adagioWriteBanner=function(){}");
+pref("noscript.surrogate.addthis.sources", "s7.addthis.com/*addthis_widget.js");
+pref("noscript.surrogate.addthis.replacement", "addthis=(function(){var f=arguments.callee;return f.__noSuchMethod__=f.data=f.bar=f.dynamic=f.login=f.ad=f.util=f.user=f.session=f})();");
 pref("noscript.surrogate.adfly.sources", "@^https?://adf.ly/\d+/");
 pref("noscript.surrogate.adfly.replacement", "setInterval(function(){if(window.flash_loaded){paid=true;sendInt();if(countdown>0){countdown=0;setTimeout(function(){document.getElementById('skip_button').click()},1500)}}},500)");
 pref("noscript.surrogate.digg.sources", "!@digg.com/newsbar/*");
