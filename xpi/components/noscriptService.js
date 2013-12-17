@@ -1558,13 +1558,18 @@ var ns = {
           this.forbidIFrames || this.forbidFrames;
       break;
       
+      case "docShellJSBlocking":
+        if ("nsIDomainPolicy" in Ci) {
+          this[name] = 2;
+          break;
+        }
       case "emulateFrameBreak":
       case "filterXPost":
       case "filterXGet":
       case "autoAllow":
       case "contentBlocker":
       case "alwaysShowObjectSources":
-      case "docShellJSBlocking":
+      
       case "showUntrustedPlaceholder":
       case "collapseObject":
       case "truncateTitle":
