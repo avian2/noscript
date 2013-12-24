@@ -1319,14 +1319,16 @@ var InjectionChecker = {
        // double function call
      '|\\([\\s\\S]*\\([\\s\\S]*\\)' +
      ')|(?:^|\\W)(?:' + IC_EVAL_PATTERN +
-      ')(?:\\W+[\\s\\S]*|)\\(|\\b(?:' +
+      ')(?:\\W+[\\s\\S]*|)\\(|=\W*(?:'+
+     IC_EVAL_PATTERN +
+      ')|\\b(?:' +
       fuzzify('setter|location|innerHTML') +
       ')\\b[\\s\\S]*=|' +
       IC_EVENT_DOS_PATTERN +
       "|\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=" +
       "|=[s\\\\[ux]?\d{2}" // escape (unicode/ascii/octal)
   ),
-  
+    
   _riskyParensRx: new RegExp(
     "(?:^|\\W)(?:(?:" + IC_EVAL_PATTERN + "|on\\w+)\\s*\\(|" +
     fuzzify("with") + "\\b[\\s\\S]*\\(|" +
@@ -2551,7 +2553,7 @@ XSanitizer.prototype = {
   ),
   _brutalReplRx: new RegExp(
     '(?:' + fuzzify('setter|location|innerHTML|cookie|name|document|toString|') +
-    IC_WINDOW_OPENER_PATTERN + '|' + IC_EVENT_PATTERN + ')',
+    IC_EVAL_PATTERN + '|' + IC_EVENT_PATTERN + ')',
     "g"
   )
   
