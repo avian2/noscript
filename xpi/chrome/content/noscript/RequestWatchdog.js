@@ -1315,18 +1315,18 @@ var InjectionChecker = {
   
   _maybeJSRx: new RegExp(
     // accessor followed by function call or assignment.    
-     '(?:(?:\\[[\\s\\S]*\\]|\\.\\D)[\\s\\S]*(?:\\([\\s\\S]*\\)|=[\\s\\S]*\\S)' +
-       // double function call
-     '|\\([\\s\\S]*\\([\\s\\S]*\\)' +
-     ')|(?:^|\\W)(?:' + IC_EVAL_PATTERN +
-      ')(?:\\W+[\\s\\S]*|)\\(|=\W*(?:'+
-     IC_EVAL_PATTERN +
-      ')|\\b(?:' +
-      fuzzify('setter|location|innerHTML') +
-      ')\\b[\\s\\S]*=|' +
-      IC_EVENT_DOS_PATTERN +
-      "|\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=" +
-      "|=[s\\\\[ux]?\d{2}" // escape (unicode/ascii/octal)
+    '(?:(?:\\[[\\s\\S]*\\]|\\.\\D)[\\s\\S]*(?:\\([\\s\\S]*\\)|=[\\s\\S]*\\S)' +
+    // double function call
+    '|\\([\\s\\S]*\\([\\s\\S]*\\)' +
+    ')|(?:^|\\W)(?:' + IC_EVAL_PATTERN +
+    ')(?:\\W+[\\s\\S]*|)\\(|[=(][\\s\\S]*(?:'+
+    IC_EVAL_PATTERN +
+    ')|\\b(?:' +
+    fuzzify('setter|location|innerHTML') +
+    ')\\b[\\s\\S]*=|' +
+    IC_EVENT_DOS_PATTERN +
+    "|\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=" +
+    "|=[s\\\\[ux]?\d{2}" // escape (unicode/ascii/octal)
   ),
     
   _riskyParensRx: new RegExp(
