@@ -1805,7 +1805,7 @@ var InjectionChecker = {
   
   AttributesChecker: new RegExp(
     "\\W(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|[\\s\\S]*(?:\\bname\\b|\\\\[ux]\\d))|data:[^,]+(?:" +
-    fuzzify("base64") + "[^,]*,|,[\\w\\W]*?<[^<]*\\w[^<]*>))|@" +
+    fuzzify("base64|charset") + "[^,]*,|,[\\w\\W]*?<[^<]*\\w[^<]*>))|@" +
     ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
       "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
       .replace(/[a-rt-z\-]/g, "\\W*$&"), 
@@ -1819,8 +1819,8 @@ var InjectionChecker = {
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings|set|animate") + 
-    ")[^>\\w])|(?:<\\w[\\s\\S]*[\\s/]|['\"](?:[\\s\\S]*[\\s/])?)(?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
-     ")[\\s\\x08]*=", "i"),
+    ")[^>\\w])|(?:<\\w|['\"])[\\s\\S]*\\b(?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
+     ")\\W*=", "i"),
   
   checkHTML: function(s) {
     return  this._rxCheck("HTML", s);
