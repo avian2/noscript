@@ -1804,8 +1804,7 @@ var InjectionChecker = {
   },
   
   AttributesChecker: new RegExp(
-    "\\W(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|[\\s\\S]*(?:\\bname\\b|\\\\[ux]\\d))|data:[^,]+(?:" +
-    fuzzify("base64|charset") + "[^,]*,|,[\\w\\W]*?<[^<]*\\w[^<]*>))|@" +
+    "\\W(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|[\\s\\S]*(?:\\bname\\b|\\\\[ux]\\d))|data:(?:[a-z]\\w+/\\w[\\w+-]+\\w)?[;,])|@" +
     ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
       "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
       .replace(/[a-rt-z\-]/g, "\\W*$&"), 
