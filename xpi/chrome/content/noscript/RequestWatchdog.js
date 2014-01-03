@@ -1813,7 +1813,7 @@ var InjectionChecker = {
     s = this.reduceDashPlus(s);
     return this._rxCheck("Attributes", s) ||
         /\\/.test(s) && this._rxCheck("Attributes", this.unescapeCSS(s)) ||
-        /data:[^,]*,\S+\s/i.test(s) && this._rxCheck("Attributes", this.urlUnescape(s.replace(/\s/g, '')));
+        /data:[^,]*,\S+\s/i.test(s) && this.checkHTML(this.urlUnescape(s.replace(/\s/g, '')));
   },
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
