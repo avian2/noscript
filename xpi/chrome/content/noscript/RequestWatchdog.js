@@ -1804,25 +1804,39 @@ var InjectionChecker = {
   },
   
   AttributesChecker: new RegExp(
-    "\\W(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|[\\s\\S]*(?:\\bname\\b|\\\\[ux]\\d))|data:(?:[a-z]\\w+/\\w[\\w+-]+\\w)?[;,])|@" +
+    "(?:\\W|^)(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|[\\s\\S]*(?:\\bname\\b|\\\\[ux]\\d))|" +
+    "data:(?:(?:[a-z]\\w+/\\w[\\w+-]+\\w)?[;,]|[\\s\\S]*;[\\s\\S]*\\b(?:base64|charset=)|[\\s\\S]*,[\\s\\S]*<[\\s\\S]*\\w[\\s\\S]*>))|@" +
     ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" + 
       "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
       .replace(/[a-rt-z\-]/g, "\\W*$&"), 
     "i"),
   checkAttributes: function(s) {
     s = this.reduceDashPlus(s);
-    return this._rxCheck("Attributes", s) ||
-        /\\/.test(s) && this._rxCheck("Attributes", this.unescapeCSS(s)) ||
-        /data:[^,]*,\S+\s/i.test(s) && this.checkHTML(this.urlUnescape(s.replace(/\s/g, '')));
+    if (this._rxCheck("Attributes", s)) return true;
+    if (/\\/.test(s) && this._rxCheck("Attributes", this.unescapeCSS(s))) return true;
+    let dataPos = s.search(/data:\S*\s/i);
+    if (dataPos !== -1) {
+      let data = this.urlUnescape(s.substring(dataPos).replace(/\s/g, ''));
+      if (this.checkHTML(data) || this.checkAttributes(data)) return true;
+    }
+    return false;
   },
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings|set|animate") + 
-    ")[^>\\w])|(?:<\\w[\\s\\S]*[\\s\\0/]|['\"])(?:formaction|style|background|src|lowsrc|ping|href|" + IC_EVENT_PATTERN +
+    ")[^>\\w])|(?:<\\w[\\s\\S]*[\\s\\0/]|['\"])(?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
      ")[\\s\\0]*=", "i"),
   
   checkHTML: function(s) {
-    return  this._rxCheck("HTML", s);
+   let links = s.match(/\bhref[\s\0]*=[\s\0]*(?:(["'])[\s\S]*\1|[^>\s]*)/ig)
+   if (links) {
+      for each (let l in links) {
+        l = l.replace(/^href[\s\0]*=[\s\0]*/i, '');
+        l = /^["']/.test(l) ? l.replace(/^(['"])([\s\S]*)\1/g, '$2') : l.replace(/[\s>][\s\S]*/, '');
+        if (/^(?:javascript|data):/.test(l) || this._checkRecursive(l, 3)) return true;
+      }
+    }
+    return this._rxCheck("HTML", s);
   },
   
   checkNoscript: function(s) {
