@@ -1240,7 +1240,7 @@ var Thread = {
 };
 
 
-LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler", "ChannelReplacement");
+LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler", "ChannelReplacement", "WinScript");
 
 __defineGetter__("STS", function() {
   delete this.STS;
@@ -1559,10 +1559,6 @@ var ns = {
       break;
       
       case "docShellJSBlocking":
-        if ("nsIDomainPolicy" in Ci) {
-          this[name] = 2;
-          break;
-        }
       case "emulateFrameBreak":
       case "filterXPost":
       case "filterXGet":
@@ -4342,10 +4338,10 @@ var ns = {
       let focusListener = null;
       
       try {
-
+        WinScript.unblock(window);
         docShell.allowJavascript = true;
         if (!(this.jsEnabled = doc.documentURI === "about:blank" || ns.getPref(fromURLBar ? "allowURLBarImports" : "allowBookmarkletImports"))) {
-          if (!siteJSEnabled) {
+          if (site && !siteJSEnabled) {
             this.setJSEnabled(site, true);
           }
         } else {
@@ -4375,7 +4371,7 @@ var ns = {
 
         return true;
       } finally {
-        
+        WinScript.block(window);
         this.setExpando(browser, "jsSite", site);
         if (!docShell.isLoadingDocument && docShell.currentURI &&  
             this.getSite(docShell.currentURI.spec) == site)
@@ -5921,15 +5917,17 @@ var ns = {
   
   _pageModMaskRx: /^(?:chrome|resource|view-source):/,
   onWindowSwitch: function(url, win, docShell) {
-    if (this.filterBadCharsets(docShell)) return;
-     
     const doc = docShell.document;
+    if (!win) win = doc.defaultView;
+    if (win._xssChecked && this.filterBadCharsets(docShell)) return;
+
     const flag = "__noScriptEarlyScripts__";
     if (flag in doc && doc[flag] === url) return;
     doc[flag] = url;
     
     const site = this.getSite(url);
     var jsBlocked = !(docShell.allowJavascript && (this.jsEnabled || this.isJSEnabled(site)));
+    if (jsBlocked && !/^data:/.test(url)) WinScript.block(win);
     
     if (!((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page

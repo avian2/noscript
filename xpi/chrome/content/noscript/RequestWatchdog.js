@@ -809,6 +809,7 @@ RequestWatchdog.prototype = {
       }
     }
     
+    window._xssChecked = true;
     
     if (trustedOrigin && !(injectionAttempt || stripPost))
       return;
@@ -1823,15 +1824,15 @@ var InjectionChecker = {
   },
   
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
-   fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings|set|animate") + 
+   fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings|set|isindex|animate") + 
     ")[^>\\w])|(?:<\\w[\\s\\S]*[\\s\\0/]|['\"])(?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
      ")[\\s\\0]*=", "i"),
   
   checkHTML: function(s) {
-   let links = s.match(/\bhref[\s\0]*=[\s\0]*(?:(["'])[\s\S]*\1|[^>\s]*)/ig)
-   if (links) {
+     let links = s.match(/\b(?:href|src|(?:form)?action)[\s\0]*=[\s\0]*(?:(["'])[\s\S]*?\1|[^'"<>][^>\s]*)/ig);
+     if (links) {
       for each (let l in links) {
-        l = l.replace(/^href[\s\0]*=[\s\0]*/i, '');
+        l = l.replace(/[^=]*=[\s\0]*/i, '');
         l = /^["']/.test(l) ? l.replace(/^(['"])([\s\S]*)\1/g, '$2') : l.replace(/[\s>][\s\S]*/, '');
         if (/^(?:javascript|data):/.test(l) || this._checkRecursive(l, 3)) return true;
       }
