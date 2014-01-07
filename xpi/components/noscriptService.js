@@ -5917,17 +5917,18 @@ var ns = {
   
   _pageModMaskRx: /^(?:chrome|resource|view-source):/,
   onWindowSwitch: function(url, win, docShell) {
+    
+    if (IOUtil.extractFromChannel(docShell.currentDocumentChannel, "noscript.xssChecked", true) &&
+        this.filterBadCharsets(docShell)) return;
+    
     const doc = docShell.document;
-    if (!win) win = doc.defaultView;
-    if (win._xssChecked && this.filterBadCharsets(docShell)) return;
-
     const flag = "__noScriptEarlyScripts__";
     if (flag in doc && doc[flag] === url) return;
     doc[flag] = url;
-    
+   
     const site = this.getSite(url);
     var jsBlocked = !(docShell.allowJavascript && (this.jsEnabled || this.isJSEnabled(site)));
-    if (jsBlocked && !/^data:/.test(url)) WinScript.block(win);
+    if (jsBlocked && !/^data:/.test(url)) WinScript.block(doc.defaultView);
     
     if (!((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page
@@ -6395,13 +6396,16 @@ var ns = {
             check(ref, decode(ref))
           ) return false;
             
-        this.log("[NoScript XSS] Potential XSS with charset " + cs + ", forcing UTF-8");
+        this.log("[NoScript XSS] Potential XSS with charset " + cs + ", aborting request");
       }
+      /*
       docShell.allowJavascript = false;
       Thread.asap(function() docShell.allowJavascript = true);
       let as = Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
       charsetInfo.forcedCharset = as.getAtom("UTF-8");
       docShell.reload(docShell.LOAD_FLAGS_CHARSET_CHANGE); // needed in Gecko > 1.9
+      */
+      this.requestWatchdog.abortChannel(docShell.currentDocumentChannel);
       return true;
     } catch(e) {
       ns.log(e)

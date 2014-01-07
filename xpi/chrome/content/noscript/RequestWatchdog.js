@@ -381,6 +381,8 @@ RequestWatchdog.prototype = {
     
     const channel = abeReq.channel;
     
+    IOUtil.extractFromChannel(channel, "noscript.xssChecked"); // remove redirected info
+    
     const url = abeReq.destinationURI;
     const originalSpec = abeReq.destination;
 
@@ -606,6 +608,14 @@ RequestWatchdog.prototype = {
           return;
         }
         
+        if (/^https?:\/\/csr\.ebay\.(?:\w{2,3}|co\.uk)\/cse\/start\.jsf$/.test(origin) &&
+            /^https?:\/\/msa-lfn\.ebay\.(?:\w{2,3}|co\.uk)\/ws\/eBayISAPI\.dll\?[^<'"%]*$/.test(unescapedSpec) &&
+            url.scheme === abeReq.originURI.scheme &&
+            ns.getPref("filterXException.ebay")) {
+        if (ns.consoleDump) this.dump(channel, "Ebay exception");
+        return;
+      }  
+        
         if (/^https:\/\/(?:cap\.securecode\.com|www\.securesuite\.net|(?:.*?\.)?firstdata\.(?:l[tv]|com))$/.test(origin) &&
             ns.getPref("filterXException.visa")) {
           if (ns.consoleDump) this.dump(channel, "Verified by Visa exception");
@@ -809,7 +819,7 @@ RequestWatchdog.prototype = {
       }
     }
     
-    window._xssChecked = true;
+    IOUtil.attachToChannel(channel, "noscript.xssChecked", DUMMY_OBJ); // remove redirected info
     
     if (trustedOrigin && !(injectionAttempt || stripPost))
       return;
@@ -925,6 +935,8 @@ RequestWatchdog.prototype = {
     
   },
   
+  
+  
   isBadException: function(host) {
     // TLD check for Google search
     let m = host.match(/\bgoogle\.((?:[a-z]{1,3}\.)?[a-z]+)$/i);
@@ -947,19 +959,34 @@ RequestWatchdog.prototype = {
      }
   },
   
+  abortChannel: function(channel, reason) {
+    let originURI = ABERequest.getOrigin(channel)
+    let requestInfo = this.addXssInfo(new RequestInfo(channel), {
+      reason: reason || "filterXGet",
+      originalAttempt: channel.name,
+      origin: originURI && originURI.spec || "",
+      silent: false, 
+    });
+    this.abort(requestInfo);
+    this.attachUnsafeRequest(requestInfo);
+  },
+  
   abort: function(requestInfo) {
     var channel = requestInfo.channel;
     
     if (channel instanceof Ci.nsIRequest)
       IOUtil.abort(channel);
     
+    if (requestInfo.browser) {
+      requestInfo.browser.stop(requestInfo.browser.STOP_ALL);
+    }
     this.dump(channel, "Aborted - " + requestInfo.reason);
  
     this.notify(requestInfo);
   },
   
   mergeDefaults: function(o1, o2) {
-    for (p in o2) {
+    for (let p in o2) {
       if (!(p in o1)) o1[p] = o2[p];
     }
     return o1;
@@ -985,6 +1012,7 @@ RequestWatchdog.prototype = {
     ns.log(msg);
    
     try {
+      let sync = requestInfo.channel.status !== 0;
       if (requestInfo.silent || !requestInfo.window || !ns.getPref("xss.notify", true)) 
         return;
       if(requestInfo.window != requestInfo.window.top) { 
@@ -999,9 +1027,14 @@ RequestWatchdog.prototype = {
         if(!ns.getPref("xss.notify.subframes", true))
           return;
 
-        var overlay = ns.findOverlay(requestInfo.browser);
+        sync = true;
+      }
+      
+      if (sync) {
+        let overlay = ns.findOverlay(requestInfo.browser);
         if(overlay) overlay.notifyXSS(requestInfo);
       }
+      
       requestInfo.wrappedJSObject = requestInfo;
       IOUtil.attachToChannel(requestInfo.channel, "noscript.XSS", requestInfo);
     } catch(e) {
@@ -2624,8 +2657,13 @@ const Base64 = {
 
 function RequestInfo(channel, url, origin, window) {
   this.channel = channel;
+  if (!url) url = channel.URI;
   this.sanitizedURI = url;
-  this.window = window;
+  this.window = window || IOUtil.findWindow(channel);
+  if (!origin) {
+    let originURI = ABERequest.getOrigin(channel);
+    origin = originURI && originURI.spec || "???";
+  }
   this.unsafeRequest = {
     URI: url.clone(),
     postData: null,
