@@ -1277,7 +1277,8 @@ var ns = {
     
     switch (topic) {
       case "content-document-global-created":
-        if (subject == subject.top) return;
+        this.onWindowCreated(subject, data);
+        return;
       case "document-element-inserted":
         this.beforeScripting(subject, data);
       return;
@@ -5928,7 +5929,6 @@ var ns = {
    
     const site = this.getSite(url);
     var jsBlocked = !(docShell.allowJavascript && (this.jsEnabled || this.isJSEnabled(site)));
-    if (jsBlocked && !/^data:/.test(url)) WinScript.block(doc.defaultView);
     
     if (!((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page
@@ -5993,6 +5993,17 @@ var ns = {
     ScriptSurrogate.apply(doc, url, url, jsBlocked, scripts);
   },
   
+  onWindowCreated: function(window, site) {
+    this.beforeScripting(window, site);
+    return (this.onWindowCreated = this._onWindowCreatedReal)(window, site);
+  },
+  
+  _onWindowCreatedReal: function(window, site) {
+    site = this.getSite(site);
+    if (site && !this.isJSEnabled(site)) WinScript.block(window);
+   
+  },
+  
   beforeScripting: function(subj, url) { // early stub
     if (!this.httpStarted) {
       let url = subj.location || subj.documentURI;
@@ -6009,7 +6020,6 @@ var ns = {
     this.executeEarlyScripts = this.onWindowSwitch;
     // replace legacy code paths
     if (subj.documentElement) { // we got document element inserted
-      OS.removeObserver(this, "content-document-global-created");
       this.onWindowSwitch = null;
     }
     this.beforeScripting = this._beforeScriptingReal;

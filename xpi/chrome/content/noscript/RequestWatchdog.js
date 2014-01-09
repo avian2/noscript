@@ -612,9 +612,9 @@ RequestWatchdog.prototype = {
             /^https?:\/\/msa-lfn\.ebay\.(?:\w{2,3}|co\.uk)\/ws\/eBayISAPI\.dll\?[^<'"%]*$/.test(unescapedSpec) &&
             url.scheme === abeReq.originURI.scheme &&
             ns.getPref("filterXException.ebay")) {
-        if (ns.consoleDump) this.dump(channel, "Ebay exception");
-        return;
-      }  
+          if (ns.consoleDump) this.dump(channel, "Ebay exception");
+          return;
+        } 
         
         if (/^https:\/\/(?:cap\.securecode\.com|www\.securesuite\.net|(?:.*?\.)?firstdata\.(?:l[tv]|com))$/.test(origin) &&
             ns.getPref("filterXException.visa")) {
@@ -1239,9 +1239,9 @@ var InjectionChecker = {
     // nested URLs with protocol are parsed as C++ style comments, and since
     // they're potentially very expensive, we preemptively remove them if possible
     while (/^[^'"]*?:\/\//.test(s)) {
-      s = s.replace(/:\/\/.*/, ':');
+      s = s.replace(/:\/\/[^*\s]*/, ':');
     }    
-    s = s.replace(/:\/\/[^'"\n]*/g, ':');
+    s = s.replace(/:\/\/[^'"*\n]*/g, ':');
     
     return (/\bhttps?:$/.test(s) && !/\bh\W*t\W*t\W*p\W*s?.*=/.test(s))
       ? s.replace(/\b(?:[\w.]+=)?https?:$/, '')
