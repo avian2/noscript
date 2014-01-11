@@ -5999,9 +5999,10 @@ var ns = {
   },
   
   _onWindowCreatedReal: function(window, site) {
-    site = this.getSite(site);
+    let origin = window.document.nodePrincipal.origin;
+    if (/^(?:\[System Principal\]$|moz-safe-about:)/.test(origin)) return;
+    site = this.getSite(origin || site);
     if (site && !this.isJSEnabled(site)) WinScript.block(window);
-   
   },
   
   beforeScripting: function(subj, url) { // early stub
