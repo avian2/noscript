@@ -77,7 +77,20 @@ var noscriptUtil = {
   }
 ,
   openConsole: function() {
-    if ("toErrorConsole" in window) {
+    if ("HUDService" in window && HUDService.getBrowserConsole && HUDService.toggleBrowserConsole) {
+      let bc = HUDService.getBrowserConsole();
+      function showJS(bc) { bc.setFilterState("jslog", true); }
+      if (bc) { 
+        showJS(bc);
+        let w = bc.chromeWindow;
+        if (w.windowState === w.STATE_MINIMIZED) {
+          w.restore();
+        }
+        w.focus();
+      }
+      else HUDService.toggleBrowserConsole().then(showJS);
+      
+    } else if ("toErrorConsole" in window) {
         toErrorConsole();
     }
     else if ("toJavaScriptConsole" in window) {

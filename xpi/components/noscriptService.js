@@ -5995,7 +5995,7 @@ var ns = {
   
   onWindowCreated: function(window, site) {
     this.beforeScripting(window, site);
-    return (this.onWindowCreated = this._onWindowCreatedReal)(window, site);
+    return (this.onWindowCreated = this._onWindowCreatedReal).apply(this, arguments);
   },
   
   _onWindowCreatedReal: function(window, site) {

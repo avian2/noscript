@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Options">
 <!ENTITY noscriptOptions.accesskey "O">
 <!ENTITY noscriptOptionsLong "Options de NoScript">
-<!ENTITY noscriptAbout "À propos de NoScript @VERSION@">
+<!ENTITY noscriptAbout "À propos de NoScript @VERSION@…">
 <!ENTITY noscriptPermissionsText "Il est possible de spécifier quels sites Web sont autorisés à exécuter des scripts. Saisissez l&apos;adresse exacte du site que vous désirez autoriser puis cliquez sur Autoriser.">
 <!ENTITY noscriptWebAddress "Adresse du site Web :">
 <!ENTITY noscriptAllow "Autoriser">
@@ -156,7 +156,7 @@
 <!ENTITY ABE "EFA">
 <!ENTITY ABE.accesskey "A">
 <!ENTITY ABE.rulesets.label "Jeux de règles :">
-<!ENTITY ABE.enabled.label "Activer EFA (Exécuteur de Frontières des Applications -- Application Boundaries Enforcer)">
+<!ENTITY ABE.enabled.label "Activer EFA (Exécuteur de Frontières des Applications)">
 <!ENTITY ABE.siteEnabled.label "Autoriser les sites à faire passer leurs propres jeux de règles">
 <!ENTITY ABE.edit.label "Éditer…">
 <!ENTITY ABE.edit.accesskey "e">
