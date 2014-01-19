@@ -15,6 +15,8 @@ var nsopt = {
       return;
     }
     
+    ns.optionsDialogRef = Components.utils.getWeakReference(window);
+    
     this.utils = new UIUtils(ns);
     this.utils.resumeTabSelections();
     

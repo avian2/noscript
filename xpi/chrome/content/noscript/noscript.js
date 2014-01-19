@@ -45,11 +45,17 @@ var noscriptUtil = {
   }
 ,
   openOptionsDialog: function(params) {
+    let odRef = this.service.optionsDialogRef;
+    let od = odRef && odRef.get();
+    if (od && !od.closed) {
+      od.focus();
+      return;
+    }
     window.openDialog(
         this.chromeBase + this.chromeName + "Options.xul", 
         this.chromeName + "Options",
-        "chrome, dialog, centerscreen, alwaysRaised",
-        params);  
+        "chrome, dialog=no, centerscreen",
+        params);
   },
   
   openXssOptions: function() {
