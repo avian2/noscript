@@ -1036,11 +1036,6 @@ return noscriptUtil.service ? {
           node.setAttribute("disabled", "true");
       }
       
-      parent.appendChild(document.createElement("menuseparator"));
-      node = parent.appendChild(document.createElement("menuitem"));
-      node.setAttribute("label", ns.getString("ef.options", [filterName]));
-      node.setAttribute("statustext", filterName);
-      node.setAttribute("oncommand", "noscriptUtil.openEFOptions(this)");
     }
     
     anchor.parentNode.insertBefore(df, anchor);

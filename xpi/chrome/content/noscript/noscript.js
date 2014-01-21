@@ -54,7 +54,7 @@ var noscriptUtil = {
     window.openDialog(
         this.chromeBase + this.chromeName + "Options.xul", 
         this.chromeName + "Options",
-        "chrome, dialog=no, centerscreen",
+        "chrome, dialog, centerscreen, minimizable, alwaysraised=no",
         params);
   },
   

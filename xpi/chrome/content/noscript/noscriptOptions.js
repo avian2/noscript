@@ -21,8 +21,7 @@ var nsopt = {
     this.utils.resumeTabSelections();
     
     abeOpts.init();
-    EF.init();
-    
+
     var locked = ns.locked;
     for each (var widget in ["urlText","urlList", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
       this[widget] = $(widget);
@@ -250,8 +249,6 @@ var nsopt = {
     if (this.tempRevoked) {
       ns.resetAllowedObjects();
     }
-    
-    EF.save();
     
     var global = this.jsglobal.getAttribute("checked") == "true";
     var untrustedSites = this.untrustedSites;
@@ -702,170 +699,4 @@ var abeOpts = {
     this.sync();
   }
   
-}
-
-var EF = {
-  _dirty: false,
-  _compare: function(a, b) { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; },
-  currentFilter: null,
-  get list() {
-    delete this.list;
-    return this.list = $("ef-list");
-  },
-  get filters() {
-    delete this.filters;
-    return this.filters = ns.externalFilters.cloneFilters();
-  },
-  
-  init: function() {
-    var tab = $("nsopt-tabEF");
-    if (!ns.externalFilters.supported) {
-      if (tab.selected) {
-        tab.parentNode.selectedIndex = 0;
-      }
-      tab.hidden = true;
-      return;
-    }
-    
-    if (tab.selected) {
-      this.populate();
-    } else {
-      tab.addEventListener("command", function(ev) {
-        tab.removeEventListener("command", arguments.callee, false);
-        EF.populate();
-      }, false);
-    }
-  },
-  
-  populate: function() {
-    const ef = ns.externalFilters;
-    const list = this.list;
-    const filters = this.filters;
-    filters.sort(this._compare);
-    list.removeAllItems();
-    list.selectedItem = null;
-    
-    const filterName = ef.lastFilterName || filters[0] && filters[0].name; 
-    
-    filters.forEach(function(f) {
-      var mi = list.appendItem(f.name);
-      if (!f.valid) mi.setAttribute("class", "noscript-error");
-      if (f.name == filterName) {
-        list.selectedItem = mi;
-        $("ef-exe").value = f.exe && f.exe.path || '';
-        $("ef-type").value = f.contentType;
-        $("ef-exceptions").value = f.whitelist && f.whitelist.source || '';
-        this.currentFilter = f;
-      }
-    }, this);
-    
-    ["ef-remove", "ef-browse", "ef-type", "ef-exceptions"].map($).forEach(
-      this.currentFilter
-      ? function(el) { el && el.removeAttribute("disabled"); }
-      : function(el) { el && el.setAttribute("disabled", "true"); }
-    );
-    
-    if (this.currentFilter) {
-      if (this.currentFilter.builtIn) {
-        $("ef-remove").setAttribute("disabled", "true");
-      } else {
-        $("ef-remove").removeAttribute("disabled");
-      }
-    }
-    this.validate();
-  },
-  
-  onSelect: function(ev) {
-    ns.externalFilters.lastFilterName = this.list.selectedItem && this.list.selectedItem.label;
-    this.populate();
-  },
-  
-  onTypeChange: function(ev) {
-    if (!this.currentFilter) return;
-    this.currentFilter.contentType = ev.target.value;
-    this._dirty = true;
-  },
-  
-  onExceptionsChange: function(ev) {
-    if (this.currentFilter) {
-      var node = ev.target;
-      var wl = new ns.AddressMatcher(node.value);
-      if (wl.rx || !node.value) {
-        node.removeAttribute("class");
-        this.currentFilter.whitelist = wl;
-        this._dirty = true;
-      } else {
-        node.setAttribute("class", "noscript-error");
-      }
-    }
-  },
-  
-  locateExe: function(f) {
-    f = f || this.currentFilter;
-    if (!f) return;
-    
-    const IFP = Ci.nsIFilePicker;
-    const fp = Cc["@mozilla.org/filepicker;1"].createInstance(IFP);
-      
-    fp.init(window, ns.getString("ef.locateExe", [f.name]), IFP.modeOpen);
-    fp.appendFilters(IFP.filterApps);
-    fp.filterIndex = 0;
-    const ret = fp.show();
-    if (ret == IFP.returnOK) {
-      var exe = fp.file;
-      if (exe.exists() && exe.isExecutable()) {  
-        f.exe = exe;
-        $("ef-exe").value = exe.path;
-        this._dirty = true;
-      }
-    }
-    this.validate();
-  },
-  
-  validate: function() {
-    var mi = this.list.selectedItem;
-    if (mi) {
-      if (this.currentFilter && !this.currentFilter.valid && this.list.selectedItem) {
-        mi.setAttribute("class", "noscript-error");
-      } else {
-        mi.removeAttribute("class");
-        return true;
-      }
-    }
-    return false;
-  },
-  
-  create: function() {
-    const ret = { value: "" };
-    if(noscriptUtil.prompter.prompt(window, document.title,
-          ns.getString("ef.newName"), ret, null, {}) && 
-       /^[a-z]/i.test(ret.value)
-       ) {
-      
-      const ef = ns.externalFilters;
-      var f = ef.create(ret.value);
-      if (!f.name) return;
-      
-      if (!this.filters.some(f.same, f)) {
-        this.locateExe(f);
-        if (!f.exe) return;
-        this.filters.push(f);
-      }
-      
-      ef.lastFilterName = f.name;
-      this.populate();
-    }
-  },
-  
-  remove: function() {
-    if (this.currentFilter &&
-        noscriptUtil.prompter.confirm(window, document.title, ns.getString("confirm"))) {
-      this.filters.splice(this.filter.indexOf(this.currentFilter), 1);
-      this.populate();
-    }
-  },
-  
-  save: function() {
-    if (this._dirty) ns.externalFilters.save(this.filters);
-  }
 }

@@ -51,7 +51,6 @@
          <radio label="&noscriptBaseDom;" value="3"/>
       </radiogroup>
     </groupbox>
-    <separator />
 		<checkbox id="opt-hoverUI" label="&noscript.hoverUI;" oncommand="nsopt.toggleHoverUI()" />
     <groupbox id="toolbarToggleGroup" class="ia-indent">
       <caption orient="vertical">
@@ -70,7 +69,7 @@
     <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
     <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
     <checkbox id="opt-placesPrefs" label="&noscriptBookmarkSync;" />
-    <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
+   
     <spacer flex="1" />
     <button id="importConfButton" label="&noscriptImport;" hidden="true" oncommand="nsopt.importConf()" />
     <button id="exportConfButton" label="&noscriptExport;" hidden="true" oncommand="nsopt.exportConf()" />
@@ -94,8 +93,7 @@
     onkeyup="if (event.keyCode == event.DOM_VK_DELETE) nsopt.remove();"
     onkeydown="if (event.keyCode === event.DOM_VK_A &amp;&amp; event.ctrlKey) { this.selectAll(); return false; }"
     onclick="nsopt.openInfo(event);"
-    flex="1"
-    rows="8"
+  
   >
   <listitem id="fake_url_item" label=" " />
   </listbox>
@@ -109,6 +107,7 @@
     <button id="exportButton" label="&noscriptExport;" accesskey="&noscriptExport.accesskey;" 
        oncommand="nsopt.importExport('export')"/>
   </hbox>
+   <checkbox id="jsglobal" label="&noscriptGloballyEnabled;" />
   </vbox>
   </tabpanel><!-- END Whitelist -->
   
@@ -142,16 +141,9 @@
 			<checkbox id="invopt-showUntrustedPlaceholder" label="&noscriptNoUntrustedPlaceholder;" />
 			<checkbox id="opt-confirmUnblock" label="&noscriptConfirmUnblock;" />
       <checkbox id="opt-collapseObject" label="&noscriptCollapseBlockedObjects;" />
-      
-			<separator/>
+    
 			<hbox>
-        <vbox>
-					<label class="header" control="cc1" value="&noscriptClearClickOpt;" />
-          <hbox id="clearClickOpts">
-            <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
-            <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
-          </hbox>
-        </vbox>
+        
         <spacer flex="1" />
       </hbox>
     </vbox>
@@ -161,12 +153,12 @@
     <vbox flex="1">
  
     <label class="header" value="&noscriptShow;"/>
-		<separator/>
+
     <checkbox id="opt-statusIcon" label="&noscriptStatusIcon;" />
     <checkbox id="opt-statusLabel" label="&noscriptStatusLabel;" />
 		<checkbox id="opt-ctxMenu" label="&noscriptCtxMenu;" />
    
-    <groupbox>
+      <separator />
        <hbox>
          <vbox flex="1">
            <checkbox id="opt-showPermanent" label="Allow [...]" />
@@ -195,13 +187,13 @@
             <checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
           </vbox>
         </hbox>
-     </groupbox>
+
   </vbox>
   </tabpanel><!-- END Appearance -->
   
   <tabpanel><!-- Notifications -->
     <vbox flex="1">
-      <groupbox id="fx-notifications">
+      <vbox id="fx-notifications">
         <vbox id="notifyOpts">
           <checkbox id="opt-notify" label="&noscriptNotify;" />
           <vbox class="ia-indent">
@@ -225,11 +217,14 @@
                  tooltiptext="&noscriptXssFaq;" />
         </hbox>
         
-        <separator class="thin" />
+   
         <checkbox id="opt-forbidMetaRefresh.notify" label="&noscriptNotifyMeta;" accesskey="&noscriptNotifyMeta.accesskey;"/>
-        <separator class="thin" />
+  
         <checkbox id="opt-ABE.notify" label="&ABE;"/><!-- TODO: accesskey -->
-      </groupbox>
+      </vbox>
+      
+      <checkbox id="opt-clearClick.prompt" label="&noscriptClearClickTitle;"/>
+      
       <groupbox class="ia-indent">
         <caption><checkbox id="opt-sound" label="&noscriptSound;" /></caption>
        
@@ -248,9 +243,7 @@
         </hbox>
         
       </groupbox>
-      <separator />
-      <checkbox id="opt-clearClick.prompt" label="&noscriptClearClickTitle;"/>
-      <separator />
+
       <checkbox id="opt-firstRunRedirection" label="&noscriptShowReleaseNotes;"/>
     </vbox>
   </tabpanel><!-- END Notifications -->
@@ -265,13 +258,13 @@
         <tab class="noscript-xss" label=" &noscriptXss; " id="nsopt-tabXss"/>
         <tab class="noscript-https" label=" &noscriptHttps; " id="nsopt-tabHttps"/>
         <tab class="noscript-abe" label="&ABE;" id="nsopt-tabABE"/>
-				<tab class="noscript-ef" label="&noscriptExternalFilters;" id="nsopt-tabEF"/>
+	<tab class="noscript-clearclick" label="ClearClick" id="nsopt-tabClearClick"/>
       </tabs>
       <tabpanels flex="1">
           <tabpanel>
           <vbox flex="1">
             <label class="header" value="&noscriptAdditionalRestrictions;" />
-            <separator />
+      
                 <checkbox id="opt-forbidBookmarklets" label="&noscriptForbidBookmarklets;" />
                 <checkbox id="opt-noping" label="&noscriptForbidPing;" />
                 <separator class="thin"/>
@@ -290,7 +283,7 @@
          <tabpanel><!-- Additional Permissions -->
             <vbox flex="1">
               <label class="header" value="&noscriptAdditionalPermissions;" />
-                <separator />
+
               <checkbox id="opt-nselForce" label="&noscriptNselForce;" />
               <checkbox id="mozopt-browser.send_pings" label="&noscriptAllowPing;" />
               
@@ -345,7 +338,7 @@
                         <menuitem label="&noscriptHttps.always;" value="3"/>
                       </menupopup>
                     </menulist>
-                    <separator class="thin" />  
+               
                     <description control="opt-httpsForced" style="white-space: normal">&noscriptHttpsForced;</description>
                     <textbox id="opt-httpsForced" multiline="true" flex="1" />
                     <description control="opt-httpsForcedExceptions" style="white-space: normal">&noscriptHttpsForcedExceptions;</description>
@@ -354,11 +347,11 @@
                 </tabpanel>
                 <tabpanel>
                   <vbox flex="1">
-                    <groupbox>
+                    <groupbox flex="1">
                       <caption><checkbox id="opt-secureCookies" label="&noscriptSecureCookies;" oncommand="nsopt.utils.syncGroup(this)" /></caption>
                       <description control="opt-secureCookiesForced" style="white-space: normal">&noscriptSecureCookiesForced;</description>
                       <textbox id="opt-secureCookiesForced" multiline="true" flex="1" />
-                      <separator class="thin" />
+                     
                       <description control="opt-secureCookiesExceptions" style="white-space: normal">&noscriptSecureCookiesExceptions;</description>
                       <textbox id="opt-secureCookiesExceptions" multiline="true" flex="1" />
                     </groupbox>
@@ -386,10 +379,10 @@
 							<checkbox id="opt-ABE.wanIpAsLocal" label="" />
 							</vbox>
             </hbox>
-            <separator class="thin" />
-						<vbox height="220">
+
+						<vbox >
             <label control="abeRulesets-list" value="&ABE.rulesets.label;" />
-            <hbox flex="1">
+            <hbox>
               <listbox id="abeRulesets-list" 
                 onselect="abeOpts.selected(this)"
                 ondblclick="abeOpts.edit(this)"
@@ -402,7 +395,7 @@
               <listitem label="USER" />
               </listbox>
               <splitter style="background: transparent; margin: 0; border-width: 0" />
-              <textbox id="abeRuleset-text" flex="4" multiline="true" wrap="off"
+              <textbox id="abeRuleset-text" flex="5" multiline="true" wrap="off"
 											 onchange="abeOpts.changed()"
 											 oninput="abeOpts.input(this)"
 											 style="margin-left: 0"
@@ -423,35 +416,17 @@
           </vbox>
        </tabpanel><!-- End ABE -->
 			 
-			 <tabpanel><!-- EF -->
+			 <tabpanel><!--  ClearClick -->
           <vbox flex="1">
-						<hbox align="center">
-							<checkbox id="opt-ef.enabled" label="&noscriptEF.enable;" flex="1"/>
-							<button id="ef-add" oncommand="EF.create()" label="&noscriptEF.add;" />
-						</hbox>
-						
-						<hbox align="center">
-							<menulist id="ef-list" flex="1" oncommand="EF.onSelect(event)">
-								<menupopup id="ef-list-popup" />
-							</menulist>
-							<button id="ef-remove" oncommand="EF.remove()" label="&noscriptEF.remove;" />
-							
-						</hbox>
-						
-						<label control="ef-type" value="&noscriptEF.contentType;" />  
-						<hbox><textbox id="ef-type" flex="1" oninput="EF.onTypeChange(event)" /></hbox>
-						
-						<label control="ef-exe" value="&noscriptEF.executable;" />  
-						<hbox align="center">
-							<textbox id="ef-exe" readonly="true" flex="1" />
-							<button  id="ef-browse" label="&noscriptEF.browse;" oncommand="EF.locateExe()" />
-						</hbox>
-						
-						<label control="ef-exceptions" value="&noscriptEF.exceptions;" /> 
-            <textbox id="ef-exceptions" multiline="true" flex="1" 
-              cols="60" rows="3"  oninput="EF.onExceptionsChange(event)" />
+
+					<label class="header" control="cc1" value="&noscriptClearClickOpt;" />
+          <vbox id="clearClickOpts">
+            <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
+            <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
           </vbox>
-       </tabpanel><!-- End EF -->
+        </vbox>
+ 
+       </tabpanel><!-- End ClearClick -->
 			 
       </tabpanels>
       
