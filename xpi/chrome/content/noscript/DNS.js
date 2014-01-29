@@ -310,8 +310,9 @@ var DNS = {
     return this.isLocalHost(host, all);
   },
   
+  _localDomainRx: /\.local$/i,
   isLocalHost: function(host, all, dontResolve) {
-    if (host == "localhost") return true;
+    if (host === "localhost" || this._localDomainRx.test(host)) return true;
     if (this.isIP(host)) {
       return this.isLocalIP(host);
     }

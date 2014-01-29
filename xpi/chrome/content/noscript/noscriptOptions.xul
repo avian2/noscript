@@ -93,7 +93,7 @@
     onkeyup="if (event.keyCode == event.DOM_VK_DELETE) nsopt.remove();"
     onkeydown="if (event.keyCode === event.DOM_VK_A &amp;&amp; event.ctrlKey) { this.selectAll(); return false; }"
     onclick="nsopt.openInfo(event);"
-  
+    flex="1"
   >
   <listitem id="fake_url_item" label=" " />
   </listbox>
@@ -382,7 +382,7 @@
 
 						<vbox >
             <label control="abeRulesets-list" value="&ABE.rulesets.label;" />
-            <hbox>
+            <hbox flex="1">
               <listbox id="abeRulesets-list" 
                 onselect="abeOpts.selected(this)"
                 ondblclick="abeOpts.edit(this)"
