@@ -3274,9 +3274,7 @@ var ns = {
   
   versionComparator: Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator),
   geckoVersion: ("@mozilla.org/xre/app-info;1" in  Cc) ? Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).platformVersion : "0.0",
-  geckoVersionCheck: function(v) {
-    return this.versionComparator.compare(this.geckoVersion, v);
-  },
+  geckoVersionCheck: function(v) this.versionComparator.compare(this.geckoVersion, v),
   
   
   _bug453825: true,
