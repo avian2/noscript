@@ -4372,7 +4372,7 @@ var ns = {
 
         return true;
       } finally {
-        WinScript.block(window);
+        if (!siteJSEnabled) WinScript.block(window);
         this.setExpando(browser, "jsSite", site);
         if (!docShell.isLoadingDocument && docShell.currentURI &&  
             this.getSite(docShell.currentURI.spec) == site)
