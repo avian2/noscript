@@ -4357,8 +4357,11 @@ var ns = {
             this._patchTimeouts(window, true);
           }
           
-          window.location.href = url;
-          
+          if (/^javascript:/i.test(url) && this.geckoVersionCheck("24") > 0) {
+            ScriptSurrogate.executeSandbox(window.document, decodeURIComponent(url.substring("javascript:".length)));
+          } else {
+            window.location.href = url;
+          }
           Thread.yieldAll();
           if (!(siteJSEnabled && snapshots.docJS)) {
             this._patchTimeouts(window, false);
