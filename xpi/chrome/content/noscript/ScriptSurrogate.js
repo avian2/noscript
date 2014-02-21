@@ -238,13 +238,15 @@ var ScriptSurrogate = {
   
   getPrincipal: ns.geckoVersionCheck("24") > 0 ? function(doc) doc.nodePrincipal : function(doc) doc.defaultView,
   
+  
   executeSandbox: function(document, scriptBlock, env) {
     var w = document.defaultView;
+    var s;
     try {
       if (typeof w.wrappedJSObject === "object") w = w.wrappedJSObject;
       this._sandboxParams.sandboxName = "NoScript::ScriptSurrogate@" + document.documentURI;
       this._sandboxParams.sandboxPrototype = w;
-      let s = new Cu.Sandbox(this.getPrincipal(document), this._sandboxParams);
+      s = new Cu.Sandbox(this.getPrincipal(document), this._sandboxParams);
       if (!("top" in s)) s.__proto__ = w;
       if (typeof env !== "undefined") {
         s.env = env;
@@ -265,6 +267,9 @@ var ScriptSurrogate = {
       if (this.debug) Cu.reportError(e);
     } finally {
       delete this._sandboxParams.sandboxPrototype;
+      if (s && ("nukeSandbox" in Cu)) {
+        Cu.nukeSandbox(s);
+      }
     }
   },
   

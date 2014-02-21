@@ -1019,10 +1019,6 @@ const IOUtil = {
     return null;
   },
   
-  readFile: IO.readFile,
-  writeFile: IO.writeFile,
-  safeWriteFIle: IO.safeWriteFile,
-  
   _protocols: {}, // caching them we gain a 33% speed boost in URI creation :)
   newURI: function(url) {
     try {
@@ -1240,7 +1236,17 @@ var Thread = {
 };
 
 
-LAZY_INCLUDE("DNS", "HTTPS", "ScriptSurrogate", "DOM", "URIValidator", "ClearClickHandler", "ChannelReplacement", "WinScript");
+LAZY_INCLUDE(
+  "DNS",
+  "HTTPS",
+  "ScriptSurrogate",
+  "DOM",
+  "URIValidator",
+  "ClearClickHandler",
+  "ChannelReplacement",
+  "WinScript",
+  "JSURL"
+);
 
 __defineGetter__("STS", function() {
   delete this.STS;
@@ -4353,17 +4359,18 @@ var ns = {
         
         try {
           this.executingJSURL(doc, 1);
-          if (!(siteJSEnabled && snapshots.docJS)) {
+          let noJS = !(siteJSEnabled && snapshots.docJS);
+          if (noJS) {
             this._patchTimeouts(window, true);
           }
           
           if (/^javascript:/i.test(url) && this.geckoVersionCheck("24") > 0) {
-            ScriptSurrogate.executeSandbox(window.document, decodeURIComponent(url.substring("javascript:".length)));
+            JSURL.load(url, doc);
           } else {
             window.location.href = url;
           }
           Thread.yieldAll();
-          if (!(siteJSEnabled && snapshots.docJS)) {
+          if (noJS) {
             this._patchTimeouts(window, false);
           }
           
