@@ -110,7 +110,7 @@ var ScriptSurrogate = {
     var r;
     try {
       r = this.prefs.getComplexValue(m.name + ".replacement",
-                         Ci.nsIPrefLocalizedString).data;
+                         Ci.nsISupportsString).data;
       if (/^(?:file:\/\/|\.\.?\/)/.test(r)) {
         r = IO.readFile(IOS.newURI(this._resolveFile(mapping.replacement), null, null)
               .QueryInterface(Ci.nsIFileURL).file);
