@@ -82,8 +82,7 @@ var JSURL = {
     var docShell = win.QueryInterface(Ci.nsIInterfaceRequestor)
                    .getInterface(Ci.nsIWebNavigation)
                    .QueryInterface(Ci.nsIDocShell);
-    win.location.href = "javascript:" + encodeURIComponent(code);
-    Thread.yieldAll() ;
+    ScriptSurrogate.executeDOM(doc, code);
     docShell.document.addEventListener(type, listener, true)
   },
 }
