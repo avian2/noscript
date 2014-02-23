@@ -65,9 +65,6 @@ var JSURL = {
     } finally {
       try { e(this._restore) } catch(e) {}
       eventTarget.removeEventListener(event, listener, true);
-      if (s && ("nukeSandbox" in Cu)) {
-        Cu.nukeSandbox(s);
-      }
     }
   },
   
