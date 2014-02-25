@@ -1,17 +1,13 @@
 var JSURL = {
   JS_VERSION: "1.8",
   load: function(url, document) {
-    let script = url.substring("javascript:".length);
-    let noEncoded = script.replace(/%[0-9a-f]{2}/gi, '');
-    if (noEncoded !== script && encodeURIComponent(noEncoded) === noEncoded) {
-      try {
-        script = decodeURIComponent(script);
-      } catch(e) {
-        script = unescape(script);
-      }
-    }
-    
-    this._run(document, script);
+    this._run(document, url.substring("javascript:".length)
+      .replace(/(?:%[0-9a-f]{2})+/g, function(m) {
+        try {
+          return decodeURIComponent(m);
+        } catch (e) {}
+        return unescape(m);
+      }));
   },
   
   _patch: (function() {
@@ -56,9 +52,12 @@ var JSURL = {
     var ret;
     try {
         ret = e(code);   
-        if (typeof(ret) !== "undefined") {
-           s.__ret__ = ret;
-           e('document.open();document.write(this.__ret__);delete this.__ret__;document.close()');
+        if (typeof(ret) !== "undefined" &&
+            !DOM.getDocShellForWindow(w).isLoadingDocument) {
+          s._ret_ = ret;
+          e("window.location.href = 'javascript:' + JSON.stringify('' + this._ret_)");
+          delete s._ret_;
+          Thread.yieldAll();
         }
     } catch (e) {
         try { w.console.error("" + e) } catch(consoleError) { Cu.reportError(e) }
@@ -79,10 +78,8 @@ var JSURL = {
     var code = (typeof(e.detail) === "string") 
                    ? 'document.__proto__.write.call(document, unescape("' + escape(e.detail) + '"))'
                    : 'document.__proto.__open.call(document)';
-    var docShell = win.QueryInterface(Ci.nsIInterfaceRequestor)
-                   .getInterface(Ci.nsIWebNavigation)
-                   .QueryInterface(Ci.nsIDocShell);
-    ScriptSurrogate.executeDOM(doc, code);
+    var docShell = DOM.getDocShellForWindow(win);
+    ScriptSurrogate.executeDOM(doc, code); // window/document may be changed by this
     docShell.document.addEventListener(type, listener, true)
   },
 }
