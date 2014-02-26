@@ -4872,7 +4872,16 @@ var ns = {
       let shift = ev.shiftKey;
       let closeButton = ev.target.className === "closeButton";
       if (closeButton ? !shift : shift) {
-        anchor.style.display = "none";
+        if (this.collapseObject ||
+            this.getPref("placeholderCollapseOnClose", false)) {
+          anchor.style.display = "none";
+        } else {
+          anchor.style.visibility = "hidden";
+          anchor.style.width = anchor.offsetWidth + "px";
+          anchor.style.height = anchor.offsetHeight + "px";
+          anchor.removeChild(anchor.firstChild);
+          anchor.style.display = "block";
+        }
         anchor.id = anchor.className = "";
         return;
       }

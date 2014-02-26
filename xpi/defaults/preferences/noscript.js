@@ -313,6 +313,7 @@ pref("noscript.surrogate.picsee.replacement", "location.replace(location.href.re
 
 pref("noscript.placeholderMinSize", 32);
 pref("noscript.placeholderLongTip", true);
+pref("noscript.placeholderCollapseOnClose", false);
 
 pref("noscript.compat.evernote", true);
 pref("noscript.compat.gnotes", true);
