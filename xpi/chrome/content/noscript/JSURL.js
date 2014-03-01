@@ -64,7 +64,7 @@ var JSURL = {
     var s =  new Cu.Sandbox(document.nodePrincipal, {
         sandboxName: "NoScript::JSURL@" + document.documentURI,
         sandboxPrototype: w,
-        wantXray: false,
+        wantXrays: false,
       });
     var e = function(script)  Cu.evalInSandbox("with(window) {" + script + "}", s, JSURL.JS_VERSION);
     e(this._patch);
