@@ -174,6 +174,13 @@ const NOPContentPolicy = {
 // TYPE_PING = 10
 // TYPE_XMLHTTPREQUEST = 11
 // TYPE_OBJECT_SUBREQUEST = 12
+// TYPE_DTD = 13
+// TYPE_FONT = 14
+// TYPE_MEDIA = 15
+// TYPE_WEBSOCKET = 16
+// TYPE_CSP_REPORT = 17
+// TYPE_XSLT = 18
+// TYPE_BEACON = 19
 // ACCEPT = 1
 
 
@@ -370,8 +377,11 @@ const MainContentPolicy = {
           break;
         
         case 4: // STYLESHEETS
-          if (PolicyUtil.isXSL(aContext) && /\/x[ms]l/.test(aMimeTypeGuess) &&
-              !/^(?:chrome|resource)$/.test(aContentLocation.scheme) &&
+          if (PolicyUtil.supportsXSL ||
+              !(PolicyUtil.isXSL(aContext) && /\/x[ms]l/.test(aMimeTypeGuess))
+             ) return CP_OK;
+        case 18: // XSL
+          if (!/^(?:chrome|resource)$/.test(aContentLocation.scheme) &&
                 this.getPref("forbidXSLT", true)) {
             forbid = isScript = true; // we treat XSLT like scripts
             break;
@@ -850,6 +860,7 @@ const MainContentPolicy = {
 }
 
 var PolicyUtil = {
+  unsupportedXSL: !("TYPE_XSLT" in Ci.nsIContentPolicy),
   isXSL: function(ctx) {
     return ctx && !(ctx instanceof Ci.nsIDOMHTMLLinkElement || ctx instanceof Ci.nsIDOMHTMLStyleElement || ctx instanceof Ci.nsIDOMHTMLDocument);
   }
