@@ -55,7 +55,7 @@ var PolicyState = {
           if (/\n(?:handleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml|.*?@chrome:\/\/noscript\/content\/noscriptBM\.js):\d+\n/
             .test(new Error().stack)) {
             hints.requestOrigin = ABE.BROWSER_URI;
-          } else  if (this.hints.context.docShell) {
+          } else  if (hints.context.docShell) {
             hints.requestOrigin = IOUtil.unwrapURL(hints.context.docShell.currentURI);
           }
         }
@@ -305,7 +305,7 @@ const MainContentPolicy = {
         }
         
         if (aRequestOrigin &&
-            aContentType !== 4 // Bug 677643
+            !(aContentType === 4 && this._bug677643)
             ) {
           
           HTTPS.forceURI(unwrappedLocation, null, aContext);
@@ -834,6 +834,7 @@ const MainContentPolicy = {
         }
       }
     } catch(e) {
+      Cu.reportError(e);
       return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
     } finally {
       
@@ -844,7 +845,7 @@ const MainContentPolicy = {
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
       
       if (isHTTP) PolicyState.save(unwrappedLocation, arguments);
-
+      
       
     }
     return CP_OK;
@@ -856,7 +857,9 @@ const MainContentPolicy = {
   },
   check: function() {
     return false;
-  }
+  },
+  
+  
 }
 
 var PolicyUtil = {

@@ -2011,11 +2011,15 @@ var ns = {
       this.prefs.removeObserver("", this);
       this.mozJSPref.removeObserver("enabled", this);
       this.resetJSCaps();
+      this.eraseTemp();
       if (typeof PolicyState === "object") PolicyState.reset();
       
       if (this.placesPrefs) this.placesPrefs.dispose();
       
       STS.dispose();
+      
+      
+      this.savePrefs(true);
       
       if(this.consoleDump & LOG_LEAKS) this.reportLeaks();
     } catch(e) {
@@ -2411,11 +2415,19 @@ var ns = {
 ,
   globalJS: false,
   get jsEnabled() {
-    try {
-      return this.mozJSEnabled && this.caps.getCharPref("default.javascript.enabled") !== "noAccess";
-    } catch(ex) {
-      return this.jsEnabled = this.globalJS;
-    }
+    this.__defineGetter__("jsEnabled",
+        WinScript.supported
+          ? function() this.mozJSEnabled && this.globalJS
+          : function() {
+            if (!this.mozJSEnabled) return false;
+            try {
+              return this.caps.getCharPref("default.javascript.enabled") !== "noAccess";
+            } catch(ex) {
+              return this.globalJS;
+            }
+          }
+        );
+    return this.jsEnabled;
   }
 ,
   set jsEnabled(enabled) {
@@ -2424,9 +2436,10 @@ var ns = {
     }
     const prefName = "default.javascript.enabled";
     try {
-      this.caps.clearUserPref("default.javascript.enabled");
+      this.caps.clearUserPref(prefName);
     } catch(e) {}
-    this.defaultCaps.setCharPref(prefName, enabled ? "allAccess" : "noAccess");
+    if (!WinScript.supported)
+      this.defaultCaps.setCharPref(prefName, enabled ? "allAccess" : "noAccess");
     
     this.setPref("global", enabled);
     if (enabled) {
@@ -2867,6 +2880,12 @@ var ns = {
   _editingPolicies: false,
   setupJSCaps: function() {
     if (this._editingPolicies) return;
+    
+    if (WinScript.supported) {
+      this.resetJSCaps();
+      return;
+    }
+    
     this._editingPolicies = true;
     try {
       const POLICY_NAME = this.POLICY_NAME;
@@ -2923,29 +2942,18 @@ var ns = {
       this._observingPolicies = false;
     }
     try {
-      const POLICY_NAME = this.POLICY_NAME;
-      var prefArray = SiteUtils.splitString(
+      let POLICY_NAME = this.POLICY_NAME;
+      let prefString = SiteUtils.splitString(
         this.getPref("excaps", true) ? this.getPref("policynames", "") : this.caps.getCharPref("policynames")
-      );
-      var pcount = prefArray.length;
-      const prefArrayTarget = [];
-      for (var pcount = prefArray.length; pcount-- > 0;) {
-        if (prefArray[pcount] != POLICY_NAME) prefArrayTarget[prefArrayTarget.length] = prefArray[pcount];
-      }
-      var prefString = prefArrayTarget.join(" ").replace(/\s+/g,' ').replace(/^\s+/,'').replace(/\s+$/,'');
+      ).filter(function(s) s && s !== POLICY_NAME).join(" ");
+      
       if (prefString) {
         this.caps.setCharPref("policynames", prefString);
       } else {
         try {
           this.caps.clearUserPref("policynames");
-        } catch(ex1) {}
+        } catch(ex) {}
       }
-      try {
-        this.clearUserPref("policynames");
-      } catch(ex1) {}
-      
-      this.eraseTemp();
-      this.savePrefs(true);
     } catch(ex) {}
   }
 ,
@@ -3232,19 +3240,20 @@ var ns = {
     if (this.httpStarted) {
       delegate = this.disabled ||
         (this.globalJS &&
-          !(this.alwaysBlockUntrustedContent || this.contentBlocker || this.httpsForced))   
+          !(this.alwaysBlockUntrustedContent || this.contentBlocker || HTTPS.httpsForced))   
       ? NOPContentPolicy
       : MainContentPolicy;
     
       for (var p in delegate) this[p] = delegate[p];
     } else delegate = null;
     
-    if (delegate != NOPContentPolicy && (last || this.mimeService)) {
+    if (delegate !== NOPContentPolicy && (last || this.mimeService)) {
       // removing and adding the category late in the game allows to be the latest policy to run,
       // and nice to AdBlock Plus
       // this.dump("Adding category");
       catMan.addCategoryEntry(cat, this.CTRID, this.CTRID, false, true);
-    } else this.dump("No category?!" + (delegate == NOPContentPolicy) + ", " + last + ", " + this.mimeService);
+    } else this.dump("No category?!" + (delegate === NOPContentPolicy) + ", " + last + ", " + this.mimeService);
+    
     
     if (!this.mimeService) {
       this.initSafeJSRx();
@@ -3285,6 +3294,10 @@ var ns = {
   
   _bug453825: true,
   _bug472495: true,
+  get _bug677643() {
+    delete this._bug677643;
+    return this._bug677643 = this.geckoVersionCheck('8.0') < 0;
+  },
 
   cpConsoleFilter: [2, 5, 6, 7, 15],
   cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {

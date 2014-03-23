@@ -11,10 +11,16 @@ const HTTPS = {
 
   forceChannel: function(channel) this.mustForce(channel.URI) && this.replaceChannel(channel),
   replaceChannel: function(channel) {
-
+    var uri = channel.URI.clone();
+    uri.scheme = "https";
+    if ("redirectTo" in channel) try {
+      HTTPS.log("redirectTo " + uri.spec);
+      channel.redirectTo(uri);
+    } catch(e) {
+      HTTPS.log(e);   
+    }
     ChannelReplacement.runWhenPending(channel, function() {
-      var uri = channel.URI.clone();
-      uri.scheme = "https";
+    
       new ChannelReplacement(channel, uri).replace(true);
       HTTPS.log("Forced Channel " + uri.spec);
     });

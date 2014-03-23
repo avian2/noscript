@@ -1,6 +1,7 @@
 var WinScript = ("blockScriptForGlobal" in Cu)
 ?
 {
+  supported: true,
   block: function(window) {
     if (window._blockScriptForGlobal) return;
     Cu.blockScriptForGlobal(window);
@@ -36,5 +37,6 @@ var WinScript = ("blockScriptForGlobal" in Cu)
 }
 :
 {
+  supported: false,
   __noSuchMethod__: function() {}
 }
