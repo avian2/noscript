@@ -46,7 +46,10 @@ var noscriptUtil = {
 ,
   openOptionsDialog: function(params) {
     let odRef = this.service.optionsDialogRef;
-    let od = odRef && odRef.get();
+    let od;
+    try {
+      od = odRef && odRef.get();
+    } catch (e) {}
     if (od && !od.closed) {
       od.focus();
       return;

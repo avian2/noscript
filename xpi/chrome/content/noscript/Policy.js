@@ -31,10 +31,12 @@ var PolicyState = {
     for (let j = hl.length; j--;) {
       let h = hl[j];
       if (h.URISpec !== spec)  continue;
-      
-      if (h.URIRef.get() === uri) {
-        if (clear) hl.splice(j, 1);
-        return h;
+      try {
+        if (h.URIRef.get() === uri) {
+          if (clear) hl.splice(j, 1);
+          return h;
+        }
+      } catch(e) {
       }
     }
     return null;
@@ -99,8 +101,15 @@ var PolicyState = {
   sweep: function() {
     this._sweepCount = this.SWEEP_COUNTDOWN;
     let hl = this.hintsList;
-    for (let j = hl.length; j--;)
-        if (!hl[j].URIRef.get()) hl.splice(j, 1);
+    for (let j = hl.length; j--;) {
+      let u;
+      try {
+        u = hl[j].URIRef.get();
+      } catch(e) {
+        u = null;
+      }
+      if (!u) hl.splice(j, 1);
+    }
   },
   
   toString: function() {

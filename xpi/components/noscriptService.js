@@ -288,7 +288,7 @@ const SiteUtils = new function() {
           : scheme;
       }
     } catch(ex) {
-      return "";
+      return url.slice(-2) === ":0" ? this.getSite(url.slice(0, -2)) + ":0" : ""; 
     }
   };
   
@@ -1536,6 +1536,7 @@ var ns = {
         this.untrustedSites.fromPref(branch, name);
       break;
       case "default.javascript.enabled":
+          let dc = this.defaultCaps;
           if (dc.getCharPref(name) != "noAccess") {
             dc.unlockPref(name);
             dc.setCharPref(name, "noAccess");
@@ -2423,7 +2424,7 @@ var ns = {
             try {
               return this.caps.getCharPref("default.javascript.enabled") !== "noAccess";
             } catch(ex) {
-              return this.globalJS;
+              return this.jsEnabled = this.globalJS;
             }
           }
         );
