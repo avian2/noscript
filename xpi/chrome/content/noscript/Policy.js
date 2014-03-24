@@ -834,7 +834,6 @@ const MainContentPolicy = {
         }
       }
     } catch(e) {
-      Cu.reportError(e);
       return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
     } finally {
       
@@ -854,9 +853,6 @@ const MainContentPolicy = {
   
   shouldProcess: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, aExtra) {
     return this.shouldLoad(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, CP_SHOULDPROCESS);
-  },
-  check: function() {
-    return false;
   },
   
   
