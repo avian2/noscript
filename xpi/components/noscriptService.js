@@ -288,7 +288,7 @@ const SiteUtils = new function() {
           : scheme;
       }
     } catch(ex) {
-      return url.slice(-2) === ":0" ? this.getSite(url.slice(0, -2)) + ":0" : ""; 
+      return "";
     }
   };
   
