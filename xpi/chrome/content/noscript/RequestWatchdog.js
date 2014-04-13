@@ -746,18 +746,16 @@ RequestWatchdog.prototype = {
       
       this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel, window), channel);
       
-      // here we exceptionally consider same site also http<->https (target would be blocked by
-      // certificate checks if something phishy is going on with DNS)
+      // here we exceptionally consider same site also https->http with same domain
       
-      if (injectionCheck < 3) {
-        if (/^https?:/.test(originSite)) {
-          let originDomain = ns.getDomain(originSite), targetDomain = ns.getDomain(url);
-          if (targetDomain == originDomain) {
-            this.dump(channel, "Same domain with HTTP(S) origin");
-            return;
-          }
+      if (injectionCheck < 3 && originSite && abeReq.originURI.schemeIs("https")) {
+        let originDomain = ns.getDomain(originSite), targetDomain = ns.getDomain(url);
+        if (targetDomain == originDomain) {
+          this.dump(channel, "Same domain with HTTPS origin");
+          return;
         }
       }
+      
     }
     
     let stripPost = !trustedOrigin && ns.filterXPost; 
@@ -799,6 +797,8 @@ RequestWatchdog.prototype = {
         skipArr = ["_data"];
       } else if (/^https:\/\/docs\.google\.com\/picker\?/.test(originalSpec)) {
         skipArr = ["nav", "pp"];
+      } else if (/^https:\/\/.*[\?&]scope=/.test(originalSpec)) {
+        skipRx = /[\?&]scope=[+\w]+(?=&|$)/;
       }
       if (skipArr) {
         skipRx = new RegExp("(?:^|[&?])(?:" + skipArr.join('|') + ")=[^&]+", "g");

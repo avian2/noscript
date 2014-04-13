@@ -150,7 +150,7 @@ PolicyHints.prototype = (function() {
             v = null;
           }
           if (v) {
-            this.__defineGetter__(i, function() v.get());
+            this.__defineGetter__(i, function() { try { return v.get() } catch (e) {} return null } );
           } else {
             this.args[i] = v;
           }
@@ -853,7 +853,12 @@ const MainContentPolicy = {
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
       
       if (isHTTP) PolicyState.save(unwrappedLocation, arguments);
-      
+      else if (aContentLocation.schemeIs("file") && aContext && ("location" in aContext)
+               && ns.getPref("allowLocalLinks") &&
+               aRequestOrigin && /^https?$/i.test(aRequestOrigin.scheme)){
+        Thread.asap(function() aContext.location.href = aContentLocation.spec);
+        return this.reject("Skipping cross-scheme load " + aContentLocation.spec + " from " + aRequestOrigin.spec, arguments);
+      }
       
     }
     return CP_OK;
