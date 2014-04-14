@@ -1673,8 +1673,8 @@ var ns = {
       break;
       case "allowLocalLinks":
         this.updateExtraPerm(name, "checkloaduri", ["enabled"]);
+        this[name] = this.getPref(name, false);
       break;
-      
       case "nselForce":
       case "nselNever":
       case "showPlaceholder":
@@ -2414,6 +2414,10 @@ var ns = {
   
   sortedSiteSet: function(s) { return  SiteUtils.sortedSet(s); }
 ,
+  get supportsCAPS() {
+    delete this.supportsCAPS;
+    return this.supportsCAPS = !WinScript.supported;
+  },
   globalJS: false,
   get jsEnabled() {
     this.__defineGetter__("jsEnabled",
@@ -2439,7 +2443,7 @@ var ns = {
     try {
       this.caps.clearUserPref(prefName);
     } catch(e) {}
-    if (!WinScript.supported)
+    if (this.supportsCAPS)
       this.defaultCaps.setCharPref(prefName, enabled ? "allAccess" : "noAccess");
     
     this.setPref("global", enabled);
@@ -2589,6 +2593,16 @@ var ns = {
 
       for (let ts = Date.now(), elapsed = 0; elapsed < 30 && (browser = bi.next()); elapsed = Date.now() - ts) {
         
+        if (WinScript.supported) {
+          this.traverseDocShells(function(docShell) {
+            let site = this.getSite(docShell.currentURI.spec);
+            if (!(this.isJSEnabled(site) || this.checkShorthands(site))) {
+              WinScript.block(docShell.document.defaultView)
+            }
+            return false;
+          }, this, browser);
+        }
+        
         let sites = this.getSites(browser);
         let noFrames = sites.docSites.length === 1;
         
@@ -2634,7 +2648,7 @@ var ns = {
             
             let xss = this.traverseDocShells(function(docShell) {
               let site = this.getSite(docShell.currentURI.spec);
-         
+
               // is this a newly allowed docShell?
               if ((this.isJSEnabled(site) || this.checkShorthands(site)) &&
                   (lastGlobal
@@ -2669,7 +2683,7 @@ var ns = {
                     return true; // better err on the safe side
                   }
                 }
-              }
+              } 
               return false;
             }, this, browser);
             
@@ -2882,7 +2896,7 @@ var ns = {
   setupJSCaps: function() {
     if (this._editingPolicies) return;
     
-    if (WinScript.supported) {
+    if (!this.supportsCAPS) {
       this.resetJSCaps();
       return;
     }
@@ -6036,6 +6050,8 @@ var ns = {
     if (site && !this.isJSEnabled(site)) WinScript.block(window);
   },
   
+ 
+  
   beforeScripting: function(subj, url) { // early stub
     if (!this.httpStarted) {
       let url = subj.location || subj.documentURI;
@@ -6627,6 +6643,26 @@ var ns = {
       }
     }
     return href || "";
+  },
+  
+  checkLocalLink: function(url, principal) {
+    if (!(this.allowLocalLinks && WinScript.supported)) return false; 
+    if (url instanceof Ci.nsIURI) {
+      if (!url.schemeIs("file")) return false;
+      url = url.spec;
+    } else if (typeof url !== "string" || url.indexOf("file:///") !== 0) return false;
+    let site = principal.URI ? principal.URI.spec : principal.origin;
+    
+    if (!/^(ht|f)tps?:/.test(site)) return false;
+    
+    let [to, from] = [ AddressMatcher.create(this.getPref("allowLocalLinks." + n, ""))
+                        for each (n in ["to", "from"]) ];
+    
+    return ((from
+              ? from.test(site)
+              : this.isJSEnabled(this.getSite(principal.origin)))
+        && (!to || to.test(url))
+      );
   },
   
   createXSanitizer: function() {

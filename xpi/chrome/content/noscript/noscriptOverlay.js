@@ -2435,7 +2435,7 @@ return noscriptUtil.service ? {
         noscriptOverlay.wrapBrowserAccess();
         let hacks = noscriptOverlay.Hacks;
         hacks.torButton();
-
+        hacks.allowLocalLinks();
         window.setTimeout(function() {
           hacks.pdfDownload();
           Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader)
@@ -2699,14 +2699,41 @@ return noscriptUtil.service ? {
   },
   
   Hacks: {
-  
+    allowLocalLinks: function() {
+      let ns = noscriptOverlay.ns;
+      if ("urlSecurityCheck" in window) {
+        let usc = window.urlSecurityCheck;
+        window.urlSecurityCheck = function(aURL, aPrincipal, aFlags) {
+          if (!ns.checkLocalLink(aURL, aPrincipal)) {
+            usc.apply(this, arguments);
+          }
+        }
+      }
+      if ("handleLinkClick" in window) {
+        let hlc = window.handleLinkClick;
+        window.handleLinkClick = function(ev, href, linkNode) {
+          let ret = hlc.apply(this, arguments);
+          if (!ret && ns.checkLocalLink(linkNode.href, linkNode.nodePrincipal)) {
+            try {
+              let w = ev.view.open("about:blank", linkNode.target || "_self");
+              w.location.href = linkNode.href;
+              ev.preventDefault();
+              ret = true;
+            } catch (e) {
+             ret = false;
+            }
+          }
+          return ret;
+        }
+      }
+    },
     pdfDownload: function() {
       if (typeof(mouseClick) != "function") return;
       var tb = getBrowser();
       tb.removeEventListener("click", mouseClick, true);
       tb.addEventListener("click", mouseClick, false);
     },
-    
+  
     torButton: function() {
       if ("torbutton_update_tags" in window && typeof(window.torbutton_update_tags) == "function") {
         // we make TorButton aware that we could have a part in suppressing JavaScript on the browser

@@ -113,6 +113,10 @@ var nsopt = {
     if (!ns.placesSupported)
       $("opt-placesPrefs").setAttribute("hidden", "true");
     
+    if (!ns.supportsCAPS) {
+      $("opt-allowClipboard").setAttribute("collapsed", "true");
+    }
+    
     this.initExtraButtons();
     
     this.addButton.setAttribute("enabled", "false");
