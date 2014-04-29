@@ -399,7 +399,13 @@ return noscriptUtil.service ? {
         button.insertBefore(localPopup, button.firstChild);
         if (!sticky) localPopup._context = true;
       }
-      localPopup.position = /^(?:addon|status)-bar$/.test(button.parentNode.id)
+      let downside = false;
+      try {
+        downside = (button.boxObject.y > document.documentElement.boxObject.height / 2);
+      } catch(e) {
+        downside = false;
+      }
+      localPopup.position = downside || /(?:addon|status)/.test(button.parentNode.id)
         ? "before_start"
         : "after_start";
     }
