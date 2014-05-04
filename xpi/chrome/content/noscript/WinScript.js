@@ -8,6 +8,7 @@ var WinScript = ("blockScriptForGlobal" in Cu)
     window._blockScriptForGlobal = true;
     // work-around for https://bugzilla.mozilla.org/show_bug.cgi?id=958962
     this._patchStyle(window.document);
+    this._blockEvents(window);
   },
   unblock: function(window) {
     if (!window._blockScriptForGlobal) return;
@@ -33,7 +34,15 @@ var WinScript = ("blockScriptForGlobal" in Cu)
           break;
       }
     }
- }
+ },
+ get _blockEvents() {
+   let et = ["start", "finish", "bounce"],
+       eh = function(e) {  e.preventDefault(); e.stopPropagation(); };
+   delete this._blockEvents;
+   return this._blockEvents = function(window) {
+    for each(let t in et) window.addEventListener(t, eh, true);
+   }
+ },
 }
 :
 {

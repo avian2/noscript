@@ -867,7 +867,7 @@ const MainContentPolicy = {
 }
 
 var PolicyUtil = {
-  unsupportedXSL: !("TYPE_XSLT" in Ci.nsIContentPolicy),
+  supportsXSL: ("TYPE_XSLT" in Ci.nsIContentPolicy),
   isXSL: function(ctx) {
     return ctx && !(ctx instanceof Ci.nsIDOMHTMLLinkElement || ctx instanceof Ci.nsIDOMHTMLStyleElement || ctx instanceof Ci.nsIDOMHTMLDocument);
   }
