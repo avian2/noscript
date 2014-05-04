@@ -399,15 +399,11 @@ return noscriptUtil.service ? {
         button.insertBefore(localPopup, button.firstChild);
         if (!sticky) localPopup._context = true;
       }
-      let downside = false;
-      try {
-        downside = (button.boxObject.y > document.documentElement.boxObject.height / 2);
-      } catch(e) {
-        downside = false;
-      }
-      localPopup.position = downside || /(?:addon|status)/.test(button.parentNode.id)
+      if (!this._mustReverse(localPopup)) {
+        localPopup.position = /(?:addon|status)/.test(button.parentNode.id)
         ? "before_start"
         : "after_start";
+      }
     }
   },
   
@@ -444,17 +440,23 @@ return noscriptUtil.service ? {
   },
  
   _currentPopup: null,
-  
-  prepareMenu: function(popup, sites) {
-    let mustReverse;
-    
-    if (popup.id === "noscript-tbb-popup") {
-      mustReverse = popup.position === "after_start";
-      if (/\bnoscript-(?:about|options)\b/.test(popup.lastChild.className)) {
+  _mustReverse: function(popup) {
+    if (popup.id !== "noscript-tbb-popup") return false;
+    if (/\bnoscript-(?:about|options)\b/.test(popup.lastChild.className))  {
       // already reversed: we need it straight to populate
-        this.reverse(popup);
-      }
-    } else mustReverse = false;
+      this.reverse(popup);
+    }
+    let upper;
+    try {
+      upper = popup.parentNode.boxObject.screenY < screen.availHeight / 2;
+    } catch(e) {
+      upper = false;
+    }
+    popup.position = upper ? "after_start" : "before_start";
+    return upper;
+  },
+  prepareMenu: function(popup, sites) {
+    let mustReverse = this._mustReverse(popup);
 
     const ns = this.ns;
     const sticky = popup.getAttribute("sticky") == "true";
