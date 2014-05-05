@@ -141,6 +141,9 @@ return noscriptUtil.service ? {
             case "open":
             case "showing":
               popup.hidePopup();
+              if (popup.state !== "closed") try {
+                popup. boxObject.QueryInterface(Components.interfaces.nsIPopupBoxObject).hidePopup()
+              } catch(e) {}
               break;
           }
         }
