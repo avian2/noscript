@@ -702,25 +702,37 @@ AddressMatcher.prototype = {
 
           return '^' + p.replace(/\*/g, '.*?').replace(/^([^\/:]+:\/*)\.\*/, "$1[^/]*");
         } 
-        // raw regexp!
-        try {
-         new RegExp(p); // check syntax
-        } catch(e) {
-          dump("Illegal regexp in AddressMatcher: " + p + " -- " + e + "\n");
-          return null;
-        }
+        
         return p;
-      }, this).filter(function(p) { return p !== null; });
+      }, this).filter(function(p) { return p !== null });
 
       if (universal) {
         this.test = this._universal.test;
         return this._universal;
       }
-      return rxs.length ? new RegExp(rxs.join("|")) : null;
+      
+      if (rxs.length !== 0) { 
+        try {
+          return new RegExp(rxs.join("|"));
+        } catch(e) {
+          rxs = rxs.filter(function(p) {
+            try {
+              new RegExp(p);
+              return true;
+            } catch(e) {
+              dump("Illegal regexp in AddressMatcher: " + p + " -- " + e + "\n");
+            }
+            return false;
+          });
+          if (rxs.length !== 0) {
+            return new RegExp(rxs.join("|"));
+          }
+        }
+      }
     } catch(e) {
       dump("Illegal AddressMatcher: " + s + " -- " + e + "\n");
-      return null;
     }
+    return null;
   }
 };
 

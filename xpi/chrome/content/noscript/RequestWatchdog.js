@@ -1358,6 +1358,7 @@ var InjectionChecker = {
     ')|\\b(?:' +
     fuzzify('setter|location|innerHTML') +
     ')\\b[\\s\\S]*=|' +
+    '.' + IC_COMMENT_PATTERN + "src" + IC_COMMENT_PATTERN + '=' +
     IC_EVENT_DOS_PATTERN +
     "|\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=" +
     "|=[s\\\\[ux]?\d{2}" // escape (unicode/ascii/octal)
@@ -1400,7 +1401,10 @@ var InjectionChecker = {
     return this.maybeJS(this.reduceQuotes(expr)) && this.checkJSSyntax(expr);
   },
   
-   stripLiteralsAndComments: function(s) {
+  
+  wantsExpression: function(s) /(?:^[+-]|[!%&(,*/:;<=>?\[^|]|[^-]-|[^+]\+)\s*$/.test(s),
+  
+  stripLiteralsAndComments: function(s) {
     "use strict";
        
     const MODE_NORMAL = 0;
@@ -1464,7 +1468,8 @@ var InjectionChecker = {
                       mode = MODE_LINECOMMENT;
                       break;
                    default:
-                      mode = MODE_REGEX;
+                      if (this.wantsExpression(s)) mode = MODE_REGEX;
+                      else res.push('/'); // after a self-contained expression: division operator 
                 }
                 break;
              default:
