@@ -1468,7 +1468,9 @@ var InjectionChecker = {
                       mode = MODE_LINECOMMENT;
                       break;
                    default:
-                      if (this.wantsExpression(s)) mode = MODE_REGEX;
+                      let r = res.join('');
+                      res = [r];
+                      if (this.wantsExpression(r)) mode = MODE_REGEX;
                       else res.push('/'); // after a self-contained expression: division operator 
                 }
                 break;
