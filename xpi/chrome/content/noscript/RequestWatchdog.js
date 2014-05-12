@@ -1194,16 +1194,12 @@ var InjectionChecker = {
     return this.breakStops = bs;
   },
   
-  collapseChars: function(s) {
-    return s.replace(/\;+/g, ';').replace(/\/{3,}/g, '///')
-      .replace(/\s+/g, function(s) {
-      return /\n/g.test(s) ? '\n' : ' ';  
-    });
-  },
+  collapseChars: function(s)
+      s.replace(/\;+/g, ';').replace(/\/{4,}/g, '////')
+        .replace(/\s+/g, function(s) /\n/g.test(s) ? '\n' : ' ')
+  ,
   
-  reduceBackSlashes: function(bs) {
-    return bs.length % 2 ? "" : "\\";
-  },
+  _reduceBackslashes: function(bs) bs.length % 2 ? "\\" : "",
   
   reduceQuotes: function(s) {
     if (s[0] == '/') {
@@ -1218,7 +1214,7 @@ var InjectionChecker = {
     if (/['"\/]/.test(s)) {
     
       // drop noisy backslashes
-      s = s.replace(/\\{2,}/g, this.reduceBackSlashes);
+      s = s.replace(/\\{2,}/g, this._reduceBackslashes);
       
       // drop escaped quotes
       s = s.replace(/\\["'\/]/g, " EQ ");
