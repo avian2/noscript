@@ -668,6 +668,13 @@ const MainContentPolicy = {
 
         if ((untrusted || forbid) && scheme !== "data") {
           if (scriptElement) {
+            let fakeLoad = this.fakeScriptLoadEvents;
+            if (fakeLoad.enabled && !(fakeLoad.onlyRequireJS && !aContext.hasAttribute("data-requiremodule")) &&
+                !(fakeLoad.exceptions && fakeLoad.exceptions.test(locationURL) ||
+                  fakeLoad.docExceptions && fakeLoad.docExceptions.test(contentDocument.URL))) {
+              this.setExpando(aContext, "blocked", true);
+              contentDocument.defaultView.addEventListener("error", PolicyUtil.onScriptError, true);
+            }
             if (ScriptSurrogate.apply(contentDocument, locationURL)) {
               let surrogates = this.getExpando(contentDocument, "surrogates", {});
               surrogates[locationURL] = true;
@@ -870,5 +877,15 @@ var PolicyUtil = {
   supportsXSL: ("TYPE_XSLT" in Ci.nsIContentPolicy),
   isXSL: function(ctx) {
     return ctx && !(ctx instanceof Ci.nsIDOMHTMLLinkElement || ctx instanceof Ci.nsIDOMHTMLStyleElement || ctx instanceof Ci.nsIDOMHTMLDocument);
-  }
+  },
+  onScriptError: function(ev) { 
+    var s = ev.target;
+    if (s instanceof Ci.nsIDOMHTMLScriptElement && ns.getExpando(s, "blocked")) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      ev = s.ownerDocument.createEvent('HTMLEvents');
+      ev.initEvent('load', false, true);
+      s.dispatchEvent(ev)
+    }
+ }
 };

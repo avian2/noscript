@@ -250,7 +250,7 @@ pref("noscript.surrogate.digg.replacement", "window.location.href=document.query
 pref("noscript.surrogate.dimtus.sources", "!@^http://(?:dimtus|imageteam)\\.(?:com|org)/img-");
 pref("noscript.surrogate.dimtus.replacement", "document.querySelector('.overlay_ad').style.display='none'");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
-pref("noscript.surrogate.ga.replacement", "(function(){var _0=function(){return _0;};_0.__noSuchMethod__=_0;with(window)urchinTracker=function(){},_gaq={__noSuchMethod__:_0,push:function(f){if(typeof f=='function')f();else if(f&&f.shift&&f[0]in this)this[f.shift()].apply(this,f)},_link:function(h){if(h)location.href=h},_linkByPost:function(f){if(f&&f.submit)f.submit();return true},_getLinkerUrl:function(u){return u},_trackEvent:_0},_gat={__noSuchMethod__:function(){return _gaq}}})()");
+pref("noscript.surrogate.ga.replacement", "(function(){var _0=function(){return _0;};_0.__noSuchMethod__=_0;with(window)urchinTracker=ga=function(){},_gaq={__noSuchMethod__:_0,push:function(f){if(typeof f=='function')f();else if(f&&f.shift&&f[0]in this)this[f.shift()].apply(this,f)},_link:function(h){if(h)location.href=h},_linkByPost:function(f){if(f&&f.submit)f.submit();return true},_getLinkerUrl:function(u){return u},_trackEvent:_0},_gat={__noSuchMethod__:function(){return _gaq}}})()");
 pref("noscript.surrogate.glinks.replacement", "for each(let et in ['focus','mouseover','mousedown','click'])addEventListener(et,function(e){var a=e.target,href=a.href&&a.getAttribute&&a.getAttribute('href');if(href&&/^(?:http|\/url)/.test(href)&&!a._href){a._href=a.href=a.href.replace(/.*\/url.*[?&](?:url|q)=(http[^&]+).*/,function(a,b)decodeURIComponent(b));do{if(/\brwt\(/.test(a.getAttribute('onmousedown')))a.removeAttribute('onmousedown')}while((a=a.parentElement))}},true)");
 pref("noscript.surrogate.glinks.sources", "!@^https?://[^/]+google\\..*/search");
 pref("noscript.surrogate.gravatar.sources", ".gravatar.com");
@@ -314,6 +314,11 @@ pref("noscript.surrogate.imagebunk.sources", "!http://imagebunk.com/image/*");
 pref("noscript.surrogate.imagebunk.replacement", "document.body.insertBefore(document.getElementById('img_obj'), document.body.firstChild)");
 pref("noscript.surrogate.picsee.sources", "!^https?://picsee\\.net/2\\d.*\\.html");
 pref("noscript.surrogate.picsee.replacement", "location.replace(location.href.replace(/(\\/2\\d{3}[^\\/]*)(.*)\\.html/, '/upload$1/$2'));");
+
+pref("noscript.fakeScriptLoadEvents.enabled", true);
+pref("noscript.fakeScriptLoadEvents.onlyRequireJS", true);
+pref("noscript.fakeScriptLoadEvents.exceptions", "");
+pref("noscript.fakeScriptLoadEvents.docExceptions", "");
 
 pref("noscript.placeholderMinSize", 32);
 pref("noscript.placeholderLongTip", true);

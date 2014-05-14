@@ -1496,6 +1496,8 @@ var ns = {
   inclusionTypeChecking: true,
   nosniff: true,
   
+  fakeScriptLoadEvents: {},
+  
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
     const root = prefs.root;
@@ -1614,6 +1616,16 @@ var ns = {
         this[name] = this.getPref(name, this[name]);  
       break;
       
+      
+      case "fakeScriptLoadEvents.enabled":   
+      case "fakeScriptLoadEvents.onlyRequireJS":
+      case "fakeScriptLoadEvents.exceptions":
+      case "fakeScriptLoadEvents.docExceptions":
+        let sub = name.split('.')[1];
+        let value = this.getPref(name);
+        this.fakeScriptLoadEvents[sub] = typeof value === "boolean" ? value : AddressMatcher.create(value);
+      break;
+    
       case "liveConnectInterception":
         this[name] = this.geckoVersionCheck("16.0") === -1 && this.getPref(name, this[name]);
       break;
@@ -1950,6 +1962,7 @@ var ns = {
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
       "removeSMILKeySniffer",
+      "fakeScriptLoadEvents.enabled", "fakeScriptLoadEvents.onlyRequireJS", "fakeScriptLoadEvents.exceptions", "fakeScriptLoadEvents.docExceptions"
       ]) {
       try {
         this.syncPrefs(this.prefs, p);
@@ -6094,9 +6107,16 @@ var ns = {
     }
   },
   
-  get unescapeHTML() {
-    delete this.unescapeHTML;
-    return this.unescapeHTML = Cc["@mozilla.org/feed-unescapehtml;1"].getService(Ci.nsIScriptableUnescapeHTML)
+  get sanitizeHTML() {
+    delete this.sanitizeHTML;
+    return this.sanitizeHTML = ("nsIParserUtils" in Ci)
+      ? function(s, t) {
+          t.innerHTML = Cc["@mozilla.org/parserutils;1"].getService(Ci.nsIParserUtils).sanitize(s, 0)
+      }
+      : function(s, t) {
+          t.appendChild(Cc["@mozilla.org/feed-unescapehtml;1"].getService(Ci.nsIScriptableUnescapeHTML)
+                        .parseFragment(s, false, null, t));
+      };
   },
   get implementToStaticHTML() {
     delete this.implementToStaticHTML;
@@ -6108,7 +6128,7 @@ var ns = {
       var doc = t.ownerDocument;
       t.parentNode.removeChild(t);
       var s = t.getAttribute("data-source");
-      t.appendChild(ns.unescapeHTML.parseFragment(s, false, null, t));
+      ns.sanitizeHTML(s, t);
       // remove attributes from forms
       for each (let f in Array.slice(t.getElementsByTagName("form"))) {
         for each(let a in Array.slice(f.attributes)) {
@@ -6116,11 +6136,13 @@ var ns = {
         }
       }
       
-      let res = doc.evaluate('//@href', t, null, Ci.nsIDOMXPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-      for (let j = res.snapshotLength; j-- > 0;) {
-        let attr = res.snapshotItem(j);
-        if (InjectionChecker.checkURL(attr.nodeValue))
-          attr.nodeValue = "#";
+      for each(let a in ['href', 'to', 'from', 'by', 'values']) {
+        let res = doc.evaluate('//@' + a, t, null, Ci.nsIDOMXPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        for (let j = res.snapshotLength; j-- > 0;) {
+          let attr = res.snapshotItem(j);
+          if (InjectionChecker.checkURL(attr.nodeValue))
+            attr.nodeValue = "";
+        }
       }
       
     } catch(e){ if (ns.consoleDump) ns.dump(e) }
