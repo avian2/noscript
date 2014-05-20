@@ -361,7 +361,7 @@ RequestWatchdog.prototype = {
 
     if (originalAttempt.length > 11) {
       try {
-        if ((originalAttempt.length % 4 == 0)) { 
+        if ((originalAttempt.length % 4 === 0)) { 
           var bin = window.atob(window.name);
           if(/[%=\(\\]/.test(bin) && InjectionChecker.checkURL(bin)) {
             window.name = "BASE_64_XSS";
@@ -607,6 +607,11 @@ RequestWatchdog.prototype = {
         if (originSite === "https://twitter.com" && /^https:\/\/.*\.twitter.com$/.test(targetSite)) {
           return;
         }
+        
+        if (originSite === "https://www.gmx.com" && targetSite === "https://login.gmx.com") {
+          return;
+        }
+        
         
         if (/^https?:\/\/csr\.ebay\.(?:\w{2,3}|co\.uk)\/cse\/start\.jsf$/.test(origin) &&
             /^https?:\/\/msa-lfn\.ebay\.(?:\w{2,3}|co\.uk)\/ws\/eBayISAPI\.dll\?[^<'"%]*$/.test(unescapedSpec) &&
