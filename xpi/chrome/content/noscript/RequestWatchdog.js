@@ -608,8 +608,8 @@ RequestWatchdog.prototype = {
           return;
         }
         
-        if (originSite === "https://www.gmx.com" && targetSite === "https://login.gmx.com") {
-          return;
+        if (targetSite === "https://login.gmx.com" && /^https?:\/\/(?:(?:www\.)?gmx|s\.uicdn)\.com$/.test(originSite)) {
+          return ;
         }
         
         

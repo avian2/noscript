@@ -54,7 +54,7 @@ var PolicyState = {
       if (hints.contentType === 6) {
         let origin = hints.requestOrigin;
         if (origin && origin.schemeIs("moz-nullprincipal")) {
-          if (/\n(?:handleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml|.*?@chrome:\/\/noscript\/content\/noscriptBM\.js):\d+\n/
+          if (/\n(?:handleCommand@chrome:\/\/[\w/-]+\/urlbarBindings\.xml|.*?@chrome:\/\/noscript\/content\/noscriptBM\.js)(?::\d+)+\n/
             .test(new Error().stack)) {
             hints.requestOrigin = ABE.BROWSER_URI;
           } else  if (hints.context.docShell) {
