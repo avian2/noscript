@@ -608,11 +608,6 @@ RequestWatchdog.prototype = {
           return;
         }
         
-        if (targetSite === "https://login.gmx.com" && /^https?:\/\/(?:(?:www\.)?gmx|s\.uicdn)\.com$/.test(originSite)) {
-          return ;
-        }
-        
-        
         if (/^https?:\/\/csr\.ebay\.(?:\w{2,3}|co\.uk)\/cse\/start\.jsf$/.test(origin) &&
             /^https?:\/\/msa-lfn\.ebay\.(?:\w{2,3}|co\.uk)\/ws\/eBayISAPI\.dll\?[^<'"%]*$/.test(unescapedSpec) &&
             url.scheme === abeReq.originURI.scheme &&
@@ -804,6 +799,9 @@ RequestWatchdog.prototype = {
         skipArr = ["nav", "pp"];
       } else if (/^https:\/\/.*[\?&]scope=/.test(originalSpec)) {
         skipRx = /[\?&]scope=[+\w]+(?=&|$)/;
+      } else if (/^https:\/\/login\.(?:gmx|mail)\.com$/.test(targetSite) && channel.requestMethod === "POST" ||
+                 /^https?:\/\/[^/.]+\.mail\.com\/login\?/.test(originalSpec))  {
+        skipArr = ["successURL", "mobileSuccessURL"];
       }
       if (skipArr) {
         skipRx = new RegExp("(?:^|[&?])(?:" + skipArr.join('|') + ")=[^&]+", "g");

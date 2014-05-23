@@ -1613,6 +1613,8 @@ var ns = {
       case "audioApiInterception":
       case "allowHttpsOnly":
       case "removeSMILKeySniffer":
+      case  "restrictSubdocScripting":
+      case  "cascadePermissions":
         this[name] = this.getPref(name, this[name]);  
       break;
       
@@ -1962,7 +1964,8 @@ var ns = {
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
       "removeSMILKeySniffer",
-      "fakeScriptLoadEvents.enabled", "fakeScriptLoadEvents.onlyRequireJS", "fakeScriptLoadEvents.exceptions", "fakeScriptLoadEvents.docExceptions"
+      "fakeScriptLoadEvents.enabled", "fakeScriptLoadEvents.onlyRequireJS", "fakeScriptLoadEvents.exceptions", "fakeScriptLoadEvents.docExceptions",
+      "restrictSubdocScripting", "cascadePermissions",
       ]) {
       try {
         this.syncPrefs(this.prefs, p);
@@ -6065,14 +6068,32 @@ var ns = {
   
   onWindowCreated: function(window, site) {
     this.beforeScripting(window, site);
-    return (this.onWindowCreated = this._onWindowCreatedReal).apply(this, arguments);
+
+    return (this.onWindowCreated =
+            WinScript.supported
+              ? this._onWindowCreatedReal
+              : function(){}
+          ).apply(this, arguments);
   },
   
   _onWindowCreatedReal: function(window, site) {
+
     let origin = window.document.nodePrincipal.origin;
     if (/^(?:\[System Principal\]$|moz-safe-about:)/.test(origin)) return;
+    let blockIt;
+    
     site = this.getSite(origin || site);
-    if (site && !this.isJSEnabled(site)) WinScript.block(window);
+    if ((this.cascadePermissions || this.restrictSubdocScripting) && window.top !== window) {
+      if (this.cascadePermissions) {
+        blockIt = WinScript.isBlocked(window.top) || this.isUntrusted(site);
+      } else if (this.restrictSubdocScripting && WinScript.isBlocked(window.parent)) {
+        blockIt = true;
+      }
+    } 
+     
+    if (typeof blockIt === "undefined") blockIt = site && !this.isJSEnabled(site);
+    
+    if (blockIt) WinScript.block(window);
   },
   
  

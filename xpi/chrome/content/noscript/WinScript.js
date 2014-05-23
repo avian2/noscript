@@ -15,6 +15,9 @@ var WinScript = ("blockScriptForGlobal" in Cu)
     Cu.unblockScriptForGlobal(window);
     window._blockScriptForGlobal = false;
   },
+  isBlocked: function(window) {
+    return window._blockScriptForGlobal;
+  },
   _domUtils: Cc["@mozilla.org/inspector/dom-utils;1"].getService(Ci.inIDOMUtils),
   _patchStyle: function(doc) {
     let ss = this._domUtils.getAllStyleSheets(doc);

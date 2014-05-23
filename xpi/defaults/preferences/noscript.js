@@ -196,7 +196,8 @@ pref("noscript.hideOnUnloadRegExp", "video/.*");
 pref("noscript.untrustedGranularity", 3);
 pref("noscript.requireReloadRegExp", "application/x-vnd\\.moveplayer\\b.*");
 
-pref("noscript.trustEV", false);
+pref("noscript.restrictSubdocScripting", false);
+pref("noscript.cascadePermissions", false);
 
 pref("noscript.secureCookies", false);
 pref("noscript.secureCookiesExceptions", "");
