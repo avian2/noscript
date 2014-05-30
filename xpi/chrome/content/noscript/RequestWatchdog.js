@@ -799,9 +799,6 @@ RequestWatchdog.prototype = {
         skipArr = ["nav", "pp"];
       } else if (/^https:\/\/.*[\?&]scope=/.test(originalSpec)) {
         skipRx = /[\?&]scope=[+\w]+(?=&|$)/;
-      } else if (/^https:\/\/login\.(?:gmx|mail)\.com$/.test(targetSite) && channel.requestMethod === "POST" ||
-                 /^https?:\/\/[^/.]+\.mail\.com\/login\?/.test(originalSpec))  {
-        skipArr = ["successURL", "mobileSuccessURL"];
       }
       if (skipArr) {
         skipRx = new RegExp("(?:^|[&?])(?:" + skipArr.join('|') + ")=[^&]+", "g");
@@ -1377,14 +1374,18 @@ var InjectionChecker = {
   _assignmentRx: /^(?:[^()="'\s]+=(?:[^(='"\[+]+|[?a-zA-Z_0-9;,&=/]+|[\d.|]+))$/,
   _badRightHandRx: /=[\s\S]*(?:_QS_\b|[|.][\s\S]*source\b|<[\s\S]*\/[^>]*>)/,
   _wikiParensRx: /^(?:[\w.|-]+\/)*\(*[\w\s-]+\([\w\s-]+\)[\w\s-]*\)*$/,
-  _neutralDotsRx: /(?:^|[\/;&#])[\w-]+\.[\w-]+[\?;\&#]/g, 
+  _neutralDotsRx: /(?:^|[\/;&#])[\w-]+\.[\w-]+[\?;\&#]/g,
+  _openIdRx: /^scope=(?:\w+\+)\w/, // OpenID authentication scope parameter, see http://forums.informaction.com/viewtopic.php?p=69851#p69851
+  _gmxRx: /\$\(clientName\)-\$\(dataCenter\)\.(\w+\.)+\w+/, // GMX webmail, see http://forums.informaction.com/viewtopic.php?p=69700#p69700
   
   maybeJS: function(expr) {
     expr = // dotted URL components can lead to false positives, let's remove them
       expr.replace(this._removeDotsRx, this._removeDots)
         .replace(this._arrayAccessRx, '_ARRAY_ACCESS_')
         .replace(/<([\w:]+)>[^<]+<\/\1>/g, '<$1/>') // reduce XML text nodes
-         .replace(/(^|[=;.+-])\s*[\[(]+/g, '$1') // remove leading parens and braces
+        .replace(/(^|[=;.+-])\s*[\[(]+/g, '$1') // remove leading parens and braces
+        .replace(this._openIdRx, '_OPENID_SCOPE_=XYZ')
+        .replace(this._gmxRx, '_GMX_-_GMX_')
         ; 
    if (expr.indexOf(")") !== -1) expr += ")"; // account for externally balanced parens
    if(this._assignmentRx.test(expr) && !this._badRightHandRx.test(expr)) // commonest case, single assignment or simple chained assignments, no break

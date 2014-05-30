@@ -51,4 +51,4 @@ var WinScript = ("blockScriptForGlobal" in Cu)
 {
   supported: false,
   __noSuchMethod__: function() {}
-}
+};
