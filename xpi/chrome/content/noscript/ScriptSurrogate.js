@@ -174,11 +174,48 @@ var ScriptSurrogate = {
     return scripts;
   },
   
-  _afterHandler: function(ev) {
-    let s = ev.target;
-    if (s instanceof Ci.nsIDOMHTMLScriptElement && s.src)
-      ScriptSurrogate.apply(s.ownerDocument, s.src, ">", false);
+  
+  _errorListener: function(ev) { 
+    var s = ev.target;
+    if (!(s instanceof Ci.nsIDOMHTMLScriptElement)) return;
+    let url = s.src;
+    if (!url) return;
     
+    let doc = s.ownerDocument;
+    let hasSurrogate = ScriptSurrogate.apply(doc, url);
+    if (hasSurrogate) {
+      
+    }
+    let fakeLoad = ns.fakeScriptLoadEvents;
+    if ((hasSurrogate ||
+         fakeLoad.enabled &&
+         !(fakeLoad.onlyRequireJS && !s.hasAttribute("data-requiremodule"))
+         ) &&
+        !(fakeLoad.exceptions && fakeLoad.exceptions.test(url) ||
+          fakeLoad.docExceptions && fakeLoad.docExceptions.test(doc.URL))) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      ev = s.ownerDocument.createEvent('HTMLEvents');
+      ev.initEvent('load', false, true);
+      s.dispatchEvent(ev)
+    }
+  },
+  _execListener: function(ev) {
+    let s = ev.target;
+    if (s instanceof Ci.nsIDOMHTMLScriptElement && s.src) {
+      ScriptSurrogate.apply(s.ownerDocument, s.src, ev.type[0] === 'b' ? "<" : ">", false);
+    }
+  },
+  
+  replaceScript: function(scriptElement) {
+    if (scriptElement._surrogated) return true;
+    
+    let src = scriptElement.src;
+    let doc = scriptElement.ownerDocument;
+    
+    return (src && doc) && this.apply(doc, src, false, false) &&
+       (ns.getExpando(doc, "surrogates", {})[url] =
+        scriptElement._surrogated = true);
   },
   
   apply: function(document, scriptURL, pageURL, noScript, scripts) {
@@ -186,9 +223,13 @@ var ScriptSurrogate = {
     
     if (this.enabled) {
       scripts = this.getScripts(scriptURL, pageURL, noScript, scripts);
-      if (!noScript && this.mappings.after.length && !document._noscriptAfterSurrogates) {
-        document._noscriptAfterSurrogates = true;
-        document.addEventListener("load", this._afterHandler, true);
+      if (pageURL && !noScript) {
+        let w = document.defaultView;
+        w.addEventListener("error", this._errorListener, true);
+        if (this.mappings.before.length)
+          w.addEventListener("beforescriptexecute", this._execListener, true);
+        if (this.mappings.after.length)
+          w.addEventListener("afterscriptexecute", this._execListener, true); 
       }
     }
 
@@ -286,7 +327,11 @@ var ScriptSurrogate = {
       if (ns.consoleDump) ns.dump(e);
       if (this.debug) Cu.reportError(e);
     }
-  }
+  },
+  
+  
+  
+  
 }
 
 function SurrogateMapping(name) {

@@ -1358,7 +1358,8 @@ var ns = {
           if (channel.status) {
             if (ns.consoleDump)
               ns.dump("Unexpected! HTTP observer called on aborted channel " +
-                        channel.name + " (0x" + channel.status.toString(16) + ")");
+                        channel.name + " (0x" + channel.status.toString(16) + ") - " +
+                        new Error().stack);
             return;
           }
           
@@ -6003,6 +6004,8 @@ var ns = {
     const site = this.getSite(url);
     var jsBlocked = !(docShell.allowJavascript && (this.jsEnabled || this.isJSEnabled(site)));
     
+    
+    
     if (!((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page
       url = "wyciwyg:"; // don't execute on document.open() pages with a misleading URL
@@ -6014,6 +6017,9 @@ var ns = {
     var scripts;
     
     if (jsBlocked) {
+      
+      this.blockEvents(doc.defaultView);
+      
       if (this.getPref("fixLinks")) {
         let newWin = doc.defaultView;
         newWin.addEventListener("click", this.bind(this.onContentClick), true);
@@ -6126,6 +6132,15 @@ var ns = {
     if (docShell) {
       this.executeEarlyScripts(docShell.document.documentURI, win, docShell);
     }
+  },
+  
+  blockEvents: function(window) {
+    let et = ["start", "finish", "bounce"],
+        eh = function(e) {  e.preventDefault(); e.stopPropagation(); };
+    
+    return (this.blockEvents = function(window) {
+      for each(let t in et) window.addEventListener(t, eh, true);
+    })(window);
   },
   
   get sanitizeHTML() {

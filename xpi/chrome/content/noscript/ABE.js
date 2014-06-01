@@ -516,9 +516,6 @@ var ABEActions = {
   },
   deny: function(req) {
     IOUtil.abort(req.channel, true);
-    if (req.isOfType(Ci.nsIContentPolicy.TYPE_SCRIPT)) try {
-      ScriptSurrogate.apply(req.window.document, req.destination);
-    } catch (e) {}
     return ABERes.FATAL;
   },
   
