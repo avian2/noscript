@@ -8,7 +8,6 @@ var WinScript = ("blockScriptForGlobal" in Cu)
     window._blockScriptForGlobal = true;
     // work-around for https://bugzilla.mozilla.org/show_bug.cgi?id=958962
     this._patchStyle(window.document);
-    blockEvents(window);
   },
   unblock: function(window) {
     if (!window._blockScriptForGlobal) return;
