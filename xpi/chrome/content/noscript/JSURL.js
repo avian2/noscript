@@ -34,11 +34,10 @@ var JSURL = {
         function patch(o, m, f) {
             var saved = o[m];
             f._restore = function() { o[m] = saved };
+            f._bypass = saved;
             o[m] = f;
         }
-        function restore(o, m) {
-            o[m] = o[m]._saved;
-        }
+        
         patch(d, "open", function() { op(null) });
         patch(d, "write", function(s) {
             op(typeof(s) === "string" ? s : "" + s); 
@@ -46,7 +45,7 @@ var JSURL = {
         patch(d, "writeln", function(s) { this.write(s + "\n") });
         
         patch(w, "open", function() {
-          return patchAll(Object.getPrototypeOf(w).open.apply(w, arguments));  
+          return patchAll(w.open._bypass.apply(w, arguments));  
         });
         
         return w;
