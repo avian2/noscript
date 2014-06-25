@@ -258,7 +258,7 @@
         <tab class="noscript-xss" label=" &noscriptXss; " id="nsopt-tabXss"/>
         <tab class="noscript-https" label=" &noscriptHttps; " id="nsopt-tabHttps"/>
         <tab class="noscript-abe" label="&ABE;" id="nsopt-tabABE"/>
-	<tab class="noscript-clearclick" label="ClearClick" id="nsopt-tabClearClick"/>
+				<tab class="noscript-clearclick" label="ClearClick" id="nsopt-tabClearClick"/>
       </tabs>
       <tabpanels flex="1">
           <tabpanel>
@@ -273,6 +273,10 @@
                 <checkbox id="opt-forbidXSLT" label="&noscriptForbidXSLT;" />
                 <separator class="thin"/>
                 <checkbox id="opt-fixLinks" label="&noscriptFixLinks;" />
+								
+								<separator class="thin"/>
+								<checkbox id="opt-restrictSubdocScripting" label="&noscriptRestrictSubdocScripting;" />
+								
              <separator />
              <label class="text-link header" 
               onclick="document.getElementById('nsopt-tabsMain').selectedTab = document.getElementById('nsopt-tabEmbeddings')"
@@ -290,7 +294,9 @@
               <separator class="thin" />
               <checkbox id="opt-allowClipboard" label="&noscriptAllowClipboard;" />
               <checkbox id="opt-allowLocalLinks" label="&noscriptAllowLocalLinks;" />
-             
+							
+							<separator class="thin" />
+							<checkbox id="opt-cascadePermissions" label="&noscriptCascadePermissions;" />
              </vbox>
           </tabpanel><!-- END Additional Permissions -->
         

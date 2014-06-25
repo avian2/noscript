@@ -184,3 +184,5 @@
 <!ENTITY noscriptDonate "Donate">
 <!ENTITY noscriptDonate.accesskey "o">
 <!ENTITY noscriptForbidWebGL "Forbid WebGL">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

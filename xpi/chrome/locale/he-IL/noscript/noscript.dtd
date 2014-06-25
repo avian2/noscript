@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "פתח את תפריט ההרשאות בעת הצבת מצביע העכבר מעל הסמל של NoScript">
 <!ENTITY noscriptDonate "תרום">
 <!ENTITY noscriptDonate.accesskey "">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

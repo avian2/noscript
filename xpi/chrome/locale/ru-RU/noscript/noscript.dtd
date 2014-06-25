@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "Открывать меню разрешению при наведении мыши на значок">
 <!ENTITY noscriptDonate "Пожертвовать">
 <!ENTITY noscriptDonate.accesskey "в">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

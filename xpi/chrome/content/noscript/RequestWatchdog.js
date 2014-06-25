@@ -100,9 +100,6 @@ RequestWatchdog.prototype = {
     }
   },
   
-  _bug677050: ns.geckoVersionCheck("6.0") >= 0 &&
-    ns.geckoVersionCheck("18.0") < 0, // fixed by http-on-modify-request made asynchronous in Gecko 18
-  
   onHttpStart: function(channel) {
     
     const loadFlags = channel.loadFlags;
@@ -119,7 +116,7 @@ RequestWatchdog.prototype = {
       let context = ph && ph.context;
       if (context) {
         isDoc = !(context instanceof Ci.nsIDOMHTMLEmbedElement || /^application\/x-/i.test(ph.mimeType));
-        if (isDoc && this._bug677050 && !(loadFlags & channel.LOAD_REPLACE) && (context instanceof Ci.nsIDOMHTMLObjectElement)) {
+        if (isDoc && Bug.$677050 && !(loadFlags & channel.LOAD_REPLACE) && (context instanceof Ci.nsIDOMHTMLObjectElement)) {
           (new ChannelReplacement(channel)).replace();
           return null;
         }

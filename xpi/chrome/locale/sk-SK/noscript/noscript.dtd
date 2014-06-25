@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "Otvoriť ponuku povolení po presunutí myši nad ikonu rozšírenia NoScript">
 <!ENTITY noscriptDonate "Prispieť">
 <!ENTITY noscriptDonate.accesskey "P">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

@@ -60,7 +60,8 @@ var JSURL = {
   
   _run: function(document, code) {
     var w = document.defaultView;
-    var s =  new Cu.Sandbox(document.nodePrincipal, {
+    var p = document.nodePrincipal;
+    var s =  new Cu.Sandbox(CSP.isBlocked(w) ? [p] : p, {
         sandboxName: "NoScript::JSURL@" + document.documentURI,
         sandboxPrototype: w,
         wantXrays: false,

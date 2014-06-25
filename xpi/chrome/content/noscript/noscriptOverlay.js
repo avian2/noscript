@@ -481,7 +481,8 @@ return noscriptUtil.service ? {
     
     const global = ns.jsEnabled;
     const blockUntrusted = global && ns.alwaysBlockUntrustedContent;
-
+    const cascadePermissions = ns.cascadePermissions;
+    
     var seps = { insert: null, stop: null, global: null, untrusted: null };
     {
       let allSeps = popup.getElementsByTagName("menuseparator");
@@ -849,7 +850,12 @@ return noscriptUtil.service ? {
       while (scount-- > 0) {
         menuSite = menuSites[scount];
         
+        
+        
         untrusted = !enabled && (blockUntrusted || ns.isUntrusted(menuSite));
+        
+          let cascaded = cascadePermissions && !isTop;
+        
         if (untrusted) {
           untrustedCount++;
           showInMain = true;
@@ -857,7 +863,7 @@ return noscriptUtil.service ? {
         else if (!enabled)
           unknownCount++;
         
-        parent = (untrusted && showUntrusted) ? untrustedFrag : mainFrag;
+        parent = showUntrusted && untrusted ? untrustedFrag : mainFrag;
         if (!parent) continue;
                 
         domain = isTop && docJSBlocked ? "[ " + menuSite + " ]" : menuSite;
@@ -889,17 +895,19 @@ return noscriptUtil.service ? {
     
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
         
-        if ((showPermanent || enabled) && !(global && enabled) && showInMain) 
+        if ((showPermanent || enabled) && !((global || cascaded) && enabled) &&
+            showInMain && !(cascaded && parent !== untrustedFrag)) 
           parent.appendChild(node);
       
         if (!disabled) {
-          if (showTemp && !(enabled || blurred) && showInMain) {
+          if (showTemp && !(enabled || blurred || cascaded) && showInMain) {
             extraNode = node.cloneNode(false);
             extraNode.setAttribute("label", this.getString("allowTemp", [domain]));
             extraNode.setAttribute("class", cssClass + " noscript-temp noscript-allow");
             parent.appendChild(extraNode);
           }
-          if (((showUntrusted && untrustedMenu || showDistrust) && !(domain in jsPSs.sitesMap) ||
+          if (((showUntrusted && untrustedMenu || showDistrust) && 
+                (cascaded || !(domain in jsPSs.sitesMap)) ||
                 blockUntrusted && (showUntrusted || showDistrust)
                 ) && !untrusted) {
             parent = (showUntrusted && !blockUntrusted ? untrustedFrag : mainFrag);
@@ -2712,6 +2720,8 @@ return noscriptUtil.service ? {
   Hacks: {
     allowLocalLinks: function() {
       let ns = noscriptOverlay.ns;
+      if (ns.geckoVersionCheck("30") >= 0) return;
+      
       if ("urlSecurityCheck" in window) {
         let usc = window.urlSecurityCheck;
         window.urlSecurityCheck = function(aURL, aPrincipal, aFlags) {

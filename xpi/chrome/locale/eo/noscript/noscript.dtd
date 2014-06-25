@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "Aperigi la rajtigmenuon kiam la musmontrilo estas sur bildsimbolo de NoScript">
 <!ENTITY noscriptDonate "Donaci">
 <!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

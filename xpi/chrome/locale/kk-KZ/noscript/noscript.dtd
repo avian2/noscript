@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "Тышқан NoScript таңбашасынан өткен кезде рұқсаттар мәзірін ашу">
 <!ENTITY noscriptDonate "Ақшалай көмектесу">
 <!ENTITY noscriptDonate.accesskey "ш">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

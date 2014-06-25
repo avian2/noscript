@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "Otvoriti meni dopustenja u slucaju mouseover-a nad NoScript ikonom">
 <!ENTITY noscriptDonate "Donacija">
 <!ENTITY noscriptDonate.accesskey "d">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

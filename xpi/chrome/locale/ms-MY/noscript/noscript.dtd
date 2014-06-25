@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "Buka menu keizinan apabila tetikus hover pada ikon NoScript">
 <!ENTITY noscriptDonate "Derma">
 <!ENTITY noscriptDonate.accesskey "D">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

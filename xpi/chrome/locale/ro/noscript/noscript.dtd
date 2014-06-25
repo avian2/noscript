@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "Afișează meniul permisiunilor când mausul survolează pictograma NoScript">
 <!ENTITY noscriptDonate "Donați">
 <!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

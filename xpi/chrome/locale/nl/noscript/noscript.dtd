@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "Toestemmingen menu openen als muis over NoScript pictogram wordt geplaatst">
 <!ENTITY noscriptDonate "Doneren">
 <!ENTITY noscriptDonate.accesskey "D">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

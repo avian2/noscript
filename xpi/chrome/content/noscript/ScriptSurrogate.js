@@ -277,7 +277,7 @@ var ScriptSurrogate = {
     sandboxName: ""
   },
   
-  getPrincipal: ns.geckoVersionCheck("24") > 0 ? function(doc) doc.nodePrincipal : function(doc) doc.defaultView,
+  getPrincipal: ns.geckoVersionCheck("24") > 0 ? function(doc) [doc.nodePrincipal] : function(doc) doc.defaultView,
   
   
   executeSandbox: function(document, scriptBlock, env) {

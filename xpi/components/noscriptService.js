@@ -1249,6 +1249,9 @@ var Thread = {
 
 
 LAZY_INCLUDE(
+  "Bug",
+  "CSP",
+  "DocShellScript",
   "DNS",
   "HTTPS",
   "ScriptSurrogate",
@@ -1615,11 +1618,13 @@ var ns = {
       case "allowHttpsOnly":
       case "removeSMILKeySniffer":
       case  "restrictSubdocScripting":
-      case  "cascadePermissions":
         this[name] = this.getPref(name, this[name]);  
       break;
       
-      
+      case  "cascadePermissions":
+        this[name] = this.geckoVersionCheck("24") >= 0 && this.getPref(name, this[name]);  
+      break;
+    
       case "fakeScriptLoadEvents.enabled":   
       case "fakeScriptLoadEvents.onlyRequireJS":
       case "fakeScriptLoadEvents.exceptions":
@@ -1700,7 +1705,6 @@ var ns = {
       break;
       case "allowLocalLinks":
         this.updateExtraPerm(name, "checkloaduri", ["enabled"]);
-        this[name] = this.getPref(name, false);
       break;
       case "nselForce":
       case "nselNever":
@@ -1775,6 +1779,7 @@ var ns = {
   updateExtraPerm: function(prefName, baseName, names) {
     var cpName;
     var enabled = this.getPref(prefName, false);
+    this[prefName] = enabled;
     for (var j = names.length; j-- > 0;) {
       cpName = this.POLICY_NAME + "." + baseName + "." + names[j];
       try {
@@ -1786,6 +1791,9 @@ var ns = {
           }
         }
       } catch(ex) {}
+    }
+    if (!this._batchPrefs) {
+      this.setupJSCaps();
     }
   },
   
@@ -1933,7 +1941,8 @@ var ns = {
     this.mandatorySites.sitesString = this.getPref("mandatory", "chrome: about: resource:");
     
     this.captureExternalProtocols();
-     
+    
+    this._batchPrefs = true;
     for each(var p in [
       "autoAllow",
       "allowClipboard", "allowLocalLinks",
@@ -1974,7 +1983,7 @@ var ns = {
         dump("[NoScript init error] " + e.message + ":" + e.stack + " setting " + p + "\n");
       }
     }
-    
+    this._batchPrefs = false;
 
     
     
@@ -2447,20 +2456,20 @@ var ns = {
     delete this.supportsCAPS;
     return this.supportsCAPS = !WinScript.supported;
   },
+  get usingCAPS() {
+    return this.supportsCAPS && !this.cascadePermissions;
+  },
   globalJS: false,
   get jsEnabled() {
-    this.__defineGetter__("jsEnabled",
-        WinScript.supported
-          ? function() this.mozJSEnabled && this.globalJS
-          : function() {
-            if (!this.mozJSEnabled) return false;
-            try {
-              return this.caps.getCharPref("default.javascript.enabled") !== "noAccess";
-            } catch(ex) {
-              return this.jsEnabled = this.globalJS;
-            }
-          }
-        );
+    if (!this.usingCAPS) return this.mozJSEnabled && this.globalJS;
+    
+    if (!this.mozJSEnabled) return false;
+    try {
+      return this.caps.getCharPref("default.javascript.enabled") !== "noAccess";
+    } catch(ex) {
+      return this.jsEnabled = this.globalJS;
+    }
+       
     return this.jsEnabled;
   }
 ,
@@ -2473,7 +2482,7 @@ var ns = {
       this.caps.clearUserPref(prefName);
     } catch(e) {}
     if (this.supportsCAPS)
-      this.defaultCaps.setCharPref(prefName, enabled ? "allAccess" : "noAccess");
+      this.defaultCaps.setCharPref(prefName, enabled || !this.usingCAPS ? "allAccess" : "noAccess");
     
     this.setPref("global", enabled);
     if (enabled) {
@@ -2927,7 +2936,7 @@ var ns = {
     
     if (!this.supportsCAPS) {
       this.resetJSCaps();
-      return;
+      if (!(this.allowLocalLinks || this.allowClipboard)) return;
     }
     
     this._editingPolicies = true;
@@ -2987,8 +2996,9 @@ var ns = {
     }
     try {
       let POLICY_NAME = this.POLICY_NAME;
+      let exclusive = this.getPref("excaps", true) && (this.supportsCAPS  || this.allowLocalLinks || this.allowClipboard);
       let prefString = SiteUtils.splitString(
-        this.getPref("excaps", true) ? this.getPref("policynames", "") : this.caps.getCharPref("policynames")
+       exclusive ? this.getPref("policynames", "") : this.caps.getCharPref("policynames")
       ).filter(function(s) s && s !== POLICY_NAME).join(" ");
       
       if (prefString) {
@@ -3336,13 +3346,6 @@ var ns = {
   geckoVersionCheck: function(v) this.versionComparator.compare(this.geckoVersion, v),
   
   
-  _bug453825: true,
-  _bug472495: true,
-  get _bug677643() {
-    delete this._bug677643;
-    return this._bug677643 = this.geckoVersionCheck('8.0') < 0;
-  },
-
   cpConsoleFilter: [2, 5, 6, 7, 15],
   cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
     this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
@@ -6074,35 +6077,55 @@ var ns = {
   
   onWindowCreated: function(window, site) {
     this.beforeScripting(window, site);
-
-    return (this.onWindowCreated =
-            WinScript.supported
-              ? this._onWindowCreatedReal
-              : function(){}
-          ).apply(this, arguments);
+    (this.onWindowCreated = this._onWindowCreatedReal).apply(this, arguments);
   },
   
+  isBrowserOrigin: function(origin) /^(?:\[System Principal\]$|moz-safe-about:)/.test(origin),
+  
   _onWindowCreatedReal: function(window, site) {
-
     let origin = window.document.nodePrincipal.origin;
-    if (/^(?:\[System Principal\]$|moz-safe-about:)/.test(origin)) return;
+    if (this.isBrowserOrigin(origin)) return;
     let blockIt;
-    
+    let blocker = WinScript.supported ? WinScript : DocShellScript;
     site = this.getSite(origin || site);
     if ((this.cascadePermissions || this.restrictSubdocScripting) && window.top !== window) {
       if (this.cascadePermissions) {
-        blockIt = WinScript.isBlocked(window.top) || this.isUntrusted(site);
-      } else if (this.restrictSubdocScripting && WinScript.isBlocked(window.parent)) {
+        blockIt = blocker.isBlocked(window.top) || this.isUntrusted(site);
+      } else if (this.restrictSubdocScripting && blocker.isBlocked(window.parent)) {
         blockIt = true;
       }
     } 
      
-    if (typeof blockIt === "undefined") blockIt = site && !this.isJSEnabled(site);
+    if (typeof blockIt === "undefined")
+      blockIt = site && (this.usingCAPS && !this.restrictSubdocScripting ? this.isUntrusted(site) : !this.isJSEnabled(site));
     
-    if (blockIt) WinScript.block(window);
+    if (blockIt) {
+      blocker.block(window);
+    } else {
+      blocker.unblock(window);
+    }
   },
   
- 
+  _domUtils: Cc["@mozilla.org/inspector/dom-utils;1"].getService(Ci.inIDOMUtils),
+  _patchStyle: function(doc) {
+    let ss = this._domUtils.getAllStyleSheets(doc);
+    // reverse loop because the preference stylesheet is almost always the last one
+    for (let j = ss.length; j-- > 0;) { 
+      let s = ss[j];
+      if(s.href === "about:PreferenceStyleSheet") {
+          let rules = s.cssRules;
+          // skip 1st & 2nd, as they are HTML & SVG namespaces
+          for (let j = 2, len = rules.length; j < len; j++) {
+              let r = rules[j];
+              if (r.cssText === "noscript { display: none ! important; }") {
+                  s.deleteRule(j);
+                  break;
+              }
+          }
+          break;
+      }
+    }
+ },
   
   beforeScripting: function(subj, url) { // early stub
     if (!this.httpStarted) {
@@ -6327,10 +6350,8 @@ var ns = {
         if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC) {
           if (!(req instanceof Ci.nsIHttpChannel) && (
                 // prevent about:newTab breakage
-                req.name == "about:blank" && !IOUtil.extractInternalReferrer(req) ||
-                // work around for https://bugzilla.mozilla.org/show_bug.cgi?id=771655
-                req.URI.schemeIs("data") ||
-                // work around for https://bugzilla.mozilla.org/show_bug.cgi?id=789773
+                req.name == "about:blank" && !IOUtil.extractInternalReferrer(req) && Bug.$771655 ||
+                req.URI.schemeIs("data") &&  Bug.$789773 ||
                 req.URI.equals(DOM.browserWinURI)
               )
             ) return;
@@ -6715,15 +6736,19 @@ var ns = {
     return href || "";
   },
   
-  checkLocalLink: function(url, principal) {
-    if (!(this.allowLocalLinks && WinScript.supported)) return false; 
+  
+  checkLocalLink: function(url, principal, fromPolicy) {
+    
+    if (!this.allowLocalLinks || this.supportsCAPS && !fromPolicy)
+      return fromPolicy;
+    
     if (url instanceof Ci.nsIURI) {
-      if (!url.schemeIs("file")) return false;
+      if (!url.schemeIs("file")) return fromPolicy;
       url = url.spec;
-    } else if (typeof url !== "string" || url.indexOf("file:///") !== 0) return false;
+    } else if (typeof url !== "string" || url.indexOf("file:///") !== 0) return fromPolicy;
     let site = principal.URI ? principal.URI.spec : principal.origin;
     
-    if (!/^(ht|f)tps?:/.test(site)) return false;
+    if (!/^(ht|f)tps?:/.test(site)) return fromPolicy;
     
     let [to, from] = [ AddressMatcher.create(this.getPref("allowLocalLinks." + n, ""))
                         for each (n in ["to", "from"]) ];

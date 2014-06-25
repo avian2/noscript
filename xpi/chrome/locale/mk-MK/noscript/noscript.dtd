@@ -184,3 +184,5 @@
 <!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
 <!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
 <!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

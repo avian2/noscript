@@ -298,7 +298,13 @@ const MainContentPolicy = {
       unwrappedLocation = IOUtil.unwrapURL(aContentLocation);
       scheme = unwrappedLocation.scheme;
       
-    
+      if (scheme === "file") {
+        let principal =  aContext && (aContext.nodePrincipal ||
+                                      aContext.document && aContext.document.nodePrincipal);
+        if (!ns.checkLocalLinks(unwrappedLocation, principal, true)) {
+          return this.reject("Local File Link", arguments);
+        }
+      }
       
       var isHTTP = scheme === "http" || scheme === "https";
       
@@ -314,7 +320,7 @@ const MainContentPolicy = {
         }
         
         if (aRequestOrigin &&
-            !(aContentType === 4 && this._bug677643)
+            !(aContentType === 4 && Bug.$677643)
             ) {
           
           HTTPS.forceURI(unwrappedLocation, null, aContext);
@@ -380,7 +386,16 @@ const MainContentPolicy = {
             return CP_OK;
             
           return this.reject("Ping", arguments);
+        
+         case 17: // CSP report, avoid exfiltration on untrusted resources
+          if (this.jsEnabled ||
+              this.isJSEnabled(this.getSite(aContentLocation.spec)) &&
+              aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec))
+            )
+            return CP_OK;
             
+          return this.reject("CSP report", arguments);
+        
         case 2:
           forbid = isScript = true;
           break;
@@ -628,7 +643,8 @@ const MainContentPolicy = {
        
         let scriptElement;
         if (aContentType === 2) { // "real" JavaScript include
-          if (originSite && !this.isJSEnabled(originSite) &&
+          if (!this.cascadePermissions &&
+              originSite && !this.isJSEnabled(originSite) &&
               isHTTP && httpOrigin) {
             // JavaScript-disabled page with script inclusion
             this.syncUI(contentDocument);
@@ -662,9 +678,15 @@ const MainContentPolicy = {
           }
         } else isScript = scriptElement = false;
 
-        if (forbid) forbid = !this.isJSEnabled(locationSite);
-        if (forbid && this.ignorePorts && /:\d+$/.test(locationSite))
-          forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
+        if (forbid) {
+          if (this.cascadePermissions) {
+            forbid = untrusted;
+          } else {
+            forbid = !this.isJSEnabled(locationSite);
+            if (forbid && this.ignorePorts && /:\d+$/.test(locationSite))
+              forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
+          }
+        }
 
         if ((untrusted || forbid) && scheme !== "data") {
           if (scriptElement) {
@@ -782,6 +804,11 @@ const MainContentPolicy = {
       mustCountObject = true;
       
       if (forbid) forbid = !(aContentLocation.schemeIs("file") && aRequestOrigin && aRequestOrigin.schemeIs("resource")); // fire.fm work around
+      
+      if (forbid && this.cascadePermissions && !this.contentBlocker) {
+        let principal = aContext.ownerDocument && aContext.ownerDocument.defaultView.top.document.nodePrincipal;
+        forbid = untrusted || !this.isJSEnabled(this.getSite(principal.origin)); 
+      }
       
       if (forbid) {
         

@@ -184,3 +184,5 @@
 <!ENTITY noscriptDonate.accesskey "o">
 <!ENTITY noscriptForbidWebGL "WebGL প্রতিষেধ করুন">
 <!ENTITY noscriptTruncateTitle "Truncate document titles">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

@@ -184,3 +184,5 @@
 <!ENTITY noscript.hoverUI "Hozzáférések menü megnyitása, ha az egér kurzora a NoScript ikon felett van">
 <!ENTITY noscriptDonate "Hozzájárulás">
 <!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
