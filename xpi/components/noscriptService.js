@@ -6336,7 +6336,11 @@ var ns = {
     if (stateFlags & WP_STATE_START) {
       if (req instanceof Ci.nsIChannel) {
         // handle docshell JS switching and other early duties
-
+        try {
+          req.name
+        } catch(e) {
+          ns.log(e + " in " + req.URI.spec);
+        }
         if (PolicyState.isChecking(req.URI)) {
           // ContentPolicy couldn't complete! DOS attack?
           PolicyState.removeCheck(req.URI);
@@ -6350,7 +6354,7 @@ var ns = {
         if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC) {
           if (!(req instanceof Ci.nsIHttpChannel) && (
                 // prevent about:newTab breakage
-                req.name == "about:blank" && !IOUtil.extractInternalReferrer(req) && Bug.$771655 ||
+                req.URI.spec == "about:blank" && !IOUtil.extractInternalReferrer(req) && Bug.$771655 ||
                 req.URI.schemeIs("data") &&  Bug.$789773 ||
                 req.URI.equals(DOM.browserWinURI)
               )

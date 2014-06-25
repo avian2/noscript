@@ -1910,6 +1910,7 @@ return noscriptUtil.service ? {
     
     const ns = this.ns;
     const global = ns.jsEnabled;
+    const cascadePermissions = ns.cascadePermissions;
     const jsPSs = ns.jsPolicySites;
     const untrustedSites = ns.untrustedSites;
 
@@ -1994,8 +1995,8 @@ return noscriptUtil.service ? {
       }
       
       allowed = allowedSites.length;
-      lev = (allowed == total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
-            : (allowed == 0 || active == 0) ? (global
+      lev = (allowed === total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
+            : (allowed === 0 || active === 0) ? (global
                                               ? "untrusted-glb" :
                                                 topUntrusted
                                                   ? "untrusted" :
@@ -2003,14 +2004,17 @@ return noscriptUtil.service ? {
             : (untrusted > 0 && !notificationNeeded
                 ? (blockedObjects ? (global ? "glb-emb" : "yu-emb") : global ? "yu-glb" : "yu") 
                 : topTrusted
-                  ? allowed == total - blockedObjects
+                  ? allowed === total - blockedObjects
                       ? (global ? "glb-emb" : "emb")
-                      : "prt"
-                  : ns.docShellJSBlocking == 2
+                      : (cascadePermissions ? "yes" : "prt")
+                  : ns.docShellJSBlocking === 2 || cascadePermissions || ns.restrictSubdocScripting
                       ? "no"
                       : "subprt"
               );
-      notificationNeeded = notificationNeeded && totalAnnoyances > 0;
+      notificationNeeded = notificationNeeded &&
+        (totalAnnoyances > 0 &&
+          (!cascadePermissions || !topTrusted || blockedObjects)
+        );
     }
     
     let message = this.getString(
