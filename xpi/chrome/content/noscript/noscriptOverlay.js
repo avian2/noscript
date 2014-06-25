@@ -935,7 +935,9 @@ return noscriptUtil.service ? {
     
     // temp allow all this page
     if (!(tempMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", true)))) {
-      tempMenuItem.setAttribute("tooltiptext", this.allowPage(false, true, sites).join(", "));
+      let allowable = this.allowPage(false, true, sites);
+      if (allowable.length) tempMenuItem.setAttribute("tooltiptext", allowable.join(", "));
+      else tempMenuItem.hidden = true;
     }
 
     
@@ -945,7 +947,9 @@ return noscriptUtil.service ? {
       tempMenuItem.parentNode.insertBefore(node, tempMenuItem);
     }
     if (!(node.hidden = unknownCount == 0 || !ns.getPref("showAllowPage", true))) {
-      node.setAttribute("tooltiptext", this.allowPage(true, true, sites).join(", "));
+       let allowable = this.allowPage(true, true, sites);
+      if (allowable.length) node.setAttribute("tooltiptext", allowable.join(", "));
+      else node.hidden = true;
     }
     
     // "allow page" accelerators
@@ -1176,8 +1180,13 @@ return noscriptUtil.service ? {
     const level = ns.getPref("allowPageLevel", 0) || ns.preferredSiteLevel;
     const trusted = ns.jsPolicySites;
     const tempToPerm = permanent === -1;
-    var site;
+    
+    const topSite = sites.topSite;
+    const cascade = topSite && ns.cascadePermissions;
+    
     for (let j = sites.length; j-- > 0;) {
+      let site = sites[j];
+      if (cascade && topSite !== site)  continue;
       if (tempToPerm) {
         site = trusted.matches(sites[j]);
         if (!(site && ns.isTemp(site)) || ns.isUntrusted(site)) continue;
