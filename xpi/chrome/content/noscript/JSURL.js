@@ -13,7 +13,7 @@ var JSURL = {
   _patch: (function() {
       (function patchAll(w) {
         if (!w || w.open && w.open._bypass)
-          return null;
+          return w;
         
         var d = w.document;
         
