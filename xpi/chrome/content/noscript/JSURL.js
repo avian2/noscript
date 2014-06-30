@@ -12,7 +12,8 @@ var JSURL = {
   
   _patch: (function() {
       (function patchAll(w) {
-        if (!w) return null;
+        if (!w || w.open && w.open._bypass)
+          return null;
         
         var d = w.document;
         

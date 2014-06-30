@@ -6336,16 +6336,12 @@ var ns = {
     if (stateFlags & WP_STATE_START) {
       if (req instanceof Ci.nsIChannel) {
         // handle docshell JS switching and other early duties
-        try {
-          req.name
-        } catch(e) {
-          ns.log(e + " in " + req.URI.spec);
-        }
+        
         if (PolicyState.isChecking(req.URI)) {
           // ContentPolicy couldn't complete! DOS attack?
           PolicyState.removeCheck(req.URI);
           IOUtil.abort(req);
-          this.log("Aborted " + req.name + " on start, possible DOS attack against content policy.");
+          this.log("Aborted " + req.URI.spec + " on start, possible DOS attack against content policy.");
           return;
         }
         
