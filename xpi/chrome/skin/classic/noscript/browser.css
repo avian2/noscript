@@ -289,6 +289,10 @@ menupopup[sticky="true"][disabled="true"] {
 toolbar #noscript-tbb-revoke-temp, toolbar #noscript-tbb-temp-page, toolbar #noscript-tbb {
   max-width: 48px;
 }
+#nav-bar-customization-target > #noscript-tbb {
+    max-width: none;
+}
+
 
 #addon-bar > #noscript-tbb .toolbarbutton-text,
 #addon-bar > #noscript-tbb-page  .toolbarbutton-text,
