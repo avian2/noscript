@@ -5095,8 +5095,8 @@ var ns = {
           ns.quickReload(doc.defaultView);
         }
       }
-      
-      var isMedia = ("nsIDOMHTMLVideoElement" in Ci) && (obj instanceof Ci.nsIDOMHTMLVideoElement || obj instanceof Ci.nsIDOMHTMLAudioElement);
+      let win = doc.defaultView;
+      let isMedia = win && ("VideoElement" in win) && (obj instanceof win.VideoElement || obj instanceof win.AudioElement);
       
       if (isMedia) {
         
