@@ -6083,7 +6083,8 @@ var ns = {
   isBrowserOrigin: function(origin) /^(?:\[System Principal\]$|moz-safe-about:)/.test(origin),
   
   _onWindowCreatedReal: function(window, site) {
-    let origin = window.document.nodePrincipal.origin;
+    let document = window.document;
+    let origin = document.nodePrincipal.origin;
     if (this.isBrowserOrigin(origin)) return;
     let blockIt;
     let blocker = WinScript.supported ? WinScript : DocShellScript;
@@ -6101,6 +6102,7 @@ var ns = {
     
     if (blockIt) {
       blocker.block(window);
+      this._patchStyle(document);
     } else {
       blocker.unblock(window);
     }
