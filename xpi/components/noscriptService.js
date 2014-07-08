@@ -5096,8 +5096,8 @@ var ns = {
         }
       }
       let win = doc.defaultView;
-      let isMedia = win && ("VideoElement" in win) && (obj instanceof win.VideoElement || obj instanceof win.AudioElement);
-      
+      let isMedia = win && ("HTMLMediaElement" in win) && (obj instanceof win.HTMLMediaElement);
+
       if (isMedia) {
         
         if (jsEnabled && !obj.controls
