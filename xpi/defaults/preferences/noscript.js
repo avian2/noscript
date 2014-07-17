@@ -350,7 +350,7 @@ pref("noscript.ABE.localExtras", "");
 
 pref("noscript.asyncNetworking", true);
 pref("noscript.inclusionTypeChecking", true);
-pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com .amazonaws.com lesscss.googlecode.com/files/ .hp-ww.com .yandex.st");
+pref("noscript.inclusionTypeChecking.exceptions", "https://scache.vzw.com/ http://cache.vzw.com .sony-europe.com .amazonaws.com .hp-ww.com .yandex.st cdn.directvid.com/*.jsx");
 pref("noscript.inclusionTypeChecking.checkDynamic", false);
 pref("noscript.nosniff", true);
 

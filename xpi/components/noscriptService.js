@@ -6089,6 +6089,10 @@ var ns = {
     let blockIt;
     let blocker = WinScript.supported ? WinScript : DocShellScript;
     site = this.getSite(origin || site);
+    
+    if (site === 'moz-nullprincipal:')
+      for (let w = window; !((site = this.getSite(w.location.href)) || w.parent === w); w = w.parent);
+    
     if ((this.cascadePermissions || this.restrictSubdocScripting) && window.top !== window) {
       if (this.cascadePermissions) {
         blockIt = blocker.isBlocked(window.top) || this.isUntrusted(site);
