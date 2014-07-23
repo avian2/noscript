@@ -479,8 +479,8 @@ RequestWatchdog.prototype = {
     const globalJS = ns.globalJS;
     let trustedTarget = globalJS;
     if(!trustedTarget) {
+      window = window || abeReq.window;
       if(ns.autoAllow) {
-        window = window || abeReq.window;
         if (window && window == window.top) {
           targetSite = ns.getQuickSite(originalSpec, ns.autoAllow);
           if(targetSite && !ns.isJSEnabled(targetSite)) {
@@ -496,8 +496,8 @@ RequestWatchdog.prototype = {
           if (ns.checkShorthands(targetSite)) {
             ns.autoTemp(targetSite);
             trustedTarget = true;
-          } else {
-            ns.recordBlocked(targetSite);
+          } else if (window) {
+            ns.recordBlocked(window, targetSite, originSite);
           }
         }
       }

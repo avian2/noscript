@@ -91,7 +91,7 @@
               label="&noscriptReset;"
               class="menuitem-iconic"
               accesskey="&noscriptReset.accesskey;"
-              oncommand="noscriptOverlay.ns.recentlyBlocked = []"
+              oncommand="noscriptOverlay.recentlyBlocked = []"
              />
           </menupopup>
        </menu>

@@ -75,7 +75,7 @@ const DOM = {
     
   getChromeWindow: function(window) {
     try {
-      return this.getDocShellForWindow(window)
+      return this.getDocShellForWindow(window.top)
         .QueryInterface(Ci.nsIDocShellTreeItem).rootTreeItem
         .QueryInterface(Ci.nsIInterfaceRequestor)
         .getInterface(Ci.nsIDOMWindow).window;

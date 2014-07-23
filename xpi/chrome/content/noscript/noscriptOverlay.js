@@ -7,6 +7,7 @@ const Ci = Components.interfaces;
 return noscriptUtil.service ? {
 
   ns: noscriptUtil.service,
+  recentlyBlocked: [],
   
   getString: function(key, parms) {
     return noscriptUtil.getString(key, parms);
@@ -768,10 +769,10 @@ return noscriptUtil.service ? {
       let max = ns.getPref("recentlyBlockedCount");
       let dejaVu = [],
           count = 0,
-          recent = ns.recentlyBlocked,
+          recent = this.recentlyBlocked,
           current = false;
       
-      let tooltip = noscriptOverlay.getSiteTooltip(false, !!ns.getPref("siteInfoProvider"));
+      let tooltip = this.getSiteTooltip(false, !!ns.getPref("siteInfoProvider"));
       
       for (let j = recent.length; j-- > 0;) {
         
@@ -2112,23 +2113,28 @@ return noscriptUtil.service ? {
     this.ns.applyPreset(menulist.selectedItem.value);
   },
   
-  prefsObserver: {
+  observer: {
     ns: noscriptUtil.service,
     QueryInterface: noscriptUtil.service.generateQI([
         Ci.nsIObserver, 
         Ci.nsISupportsWeakReference])
   ,
     observe: function(subject, topic, data) {
-      
-      if (topic == "noscript:sync-ui") {
-        noscriptOverlay.syncUI(subject);
-        return;
-      }
-      
       if (subject == this.ns.caps) {
          noscriptOverlay.syncUI();
          return;
       }
+      
+      switch(topic) {
+        case "noscript:sync-ui":
+          noscriptOverlay.syncUI(subject);
+          return;
+        case "browser:purge-session-history":
+          noscriptOverlay.recentlyBlocked = [];
+          return;
+      }
+      
+      // prefs
       
       switch (data) {
         case "preset":
@@ -2174,12 +2180,17 @@ return noscriptUtil.service ? {
           noscriptOverlay.initPopups();
           
         break;
+        
       }
     },
     _registered: false,
+    _topics: ["noscript:sync-ui", "browser:purge-session-history"],
     register: function() {
       const ns = this.ns;
-      ns.os.addObserver(this, "noscript:sync-ui", true);
+      const os = ns.os;
+      for each (let t in this._topics){
+        os.addObserver(this, t, true);
+      }
       ns.prefs.addObserver("", this, true);
       ns.caps.addObserver("", this, true);
       const initPrefs = [
@@ -2190,14 +2201,17 @@ return noscriptUtil.service ? {
         "stickyUI.liveReload",
         "hoverUI"
         ];
-      for (var j = 0; j < initPrefs.length; j++) {
-        this.observe(null, null, initPrefs[j]);
+      for each (let p in initPrefs) {
+        this.observe(null, null, p);
       }
       this._registered = true;
     },
     remove: function() {
       const ns = this.ns;
-      ns.os.removeObserver(this, "noscript:sync-ui");
+      const os = ns.os;
+      for each (let t in this._topics){
+        os.removeObserver(this, t);
+      }
       ns.prefs.removeObserver("", this);
       ns.caps.removeObserver("", this);
     }
@@ -2547,7 +2561,7 @@ return noscriptUtil.service ? {
 
      
       noscriptOverlay.shortcutKeys.register();
-      noscriptOverlay.prefsObserver.register();
+      noscriptOverlay.observer.register();
       
       let self = this;
       
@@ -2615,7 +2629,7 @@ return noscriptUtil.service ? {
       window.removeEventListener("pageshow", this.onPageShow, true);
       window.removeEventListener("DOMContentLoaded", this.onContentLoad, false);
 
-      noscriptOverlay.prefsObserver.remove();
+      noscriptOverlay.observer.remove();
       noscriptOverlay.shortcutKeys.remove();
       
      $("contentAreaContextMenu").removeEventListener("popupshowing", this.onMainContextMenu, false);

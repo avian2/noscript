@@ -1344,8 +1344,8 @@ var ns = {
           }
         // break; 
         case "browser:purge-session-history":
-          this.recentlyBlocked = [];
           STS.eraseDB();
+          this.eraseTemp();
         break;
         
         
@@ -3376,7 +3376,8 @@ var ns = {
     PolicyState.cancel(args);
     
     let win = DOM.findWindow(args[3]);
-    if (args[1]) this.recordBlocked(this.getSite(args[1].spec) || "", this.getSite(win && win.top.location.href || args[2] && args[2].spec));
+    if (args[1] && win)
+      this.recordBlocked(win, this.getSite(args[1].spec) || "", this.getSite(win.location.href || args[2] && args[2].spec));
     
     return CP_REJECT;
   },
@@ -5505,10 +5506,13 @@ var ns = {
     return redirCache[uri] || (redirCache[uri] = []);
   },
   
-  recentlyBlocked: [],
   _recentlyBlockedMax: 40,
-  recordBlocked: function(site, origin) {
-    const l = this.recentlyBlocked;
+  recordBlocked: function(win, site, origin) {
+    if (!(win && this.getPref("showRecentlyBlocked"))) return;
+    let overlay = DOM.getChromeWindow(win).noscriptOverlay;
+    if (!overlay) return;
+    
+    const l = overlay.recentlyBlocked;
     let pos = l.length;
     while (pos-- > 0) if (l[pos].site === site) break;
     
@@ -5523,7 +5527,7 @@ var ns = {
     
     l.push(entry);
     if (l.length > this._recentlyBlockedMax) {
-      this.recentlyBlocked = l.slice(- this._recentlyBlockedMax / 2);
+      overlay.recentlyBlocked = l.slice(- this._recentlyBlockedMax / 2);
     }
   },
 
@@ -6240,8 +6244,8 @@ var ns = {
       originSite: site,
       mime: "WebGL"            
     });
+    let doc = ctx.ownerDocument || ctx;
     if (fromDOM) {
-      let doc = ctx.ownerDocument || ctx;
       let ds = DOM.getDocShellForWindow(doc.defaultView);
       if (ds.isLoadingDocument) { // prevent fallback redirection from hiding us
         let sites = this._webGLSites;
@@ -6249,7 +6253,7 @@ var ns = {
         doc.defaultView.addEventListener("load", function(ev) delete sites[site], false);
       }
     }
-    this.recordBlocked(site, site);
+    this.recordBlocked(doc.defaultView, site, site);
   },
   get _webGLInterceptionDef() {
     delete this._webGLInterceptionDef;
