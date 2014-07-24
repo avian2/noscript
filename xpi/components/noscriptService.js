@@ -5030,8 +5030,7 @@ var ns = {
   },
   isClickToPlay: function(obj) obj instanceof Ci.nsIObjectLoadingContent && ("playPlugin" in obj) && ("activated" in obj) && !obj.activated,
   handleClickToPlay: function(obj) {
-    if (this.isClickToPlay(obj) && this.getPref("smartClickToPlay") && !this.getExpando(obj, "activated")) {
-      this.setExpando(obj, "activated", true);
+    if (this.isClickToPlay(obj) && this.getPref("smartClickToPlay")) {
       Thread.asap(function() obj.playPlugin());
     }
   },
