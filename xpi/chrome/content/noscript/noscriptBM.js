@@ -100,12 +100,15 @@ var noscriptBM = {
     for each (let f in ["getShortcutOrURIAndPostData" /* Fx >= 25 */, "getShortcutOrURI"]) {
       if (f in window) {
         let getShortcut = window[f];
-        window[f] = function(aURL) {
+        let replacement = function(aURL) {
           if ("gURLBar" in window && window.gURLBar) {
             window.gURLBar.originalShortcut = aURL;
           }
           return getShortcut.apply(window, arguments);
         }
+        window[f] = getShortcut.length === 2
+          ? function(aURL, callback) replacement.apply(window, arguments)
+          : function(aURL) replacement.apply(window, arguments);
         break;
       }
     }
