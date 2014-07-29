@@ -342,7 +342,7 @@ RequestWatchdog.prototype = {
     return homes ? homes.split("|") : [];
   },
   
-  checkWindowName: function(window) {
+  checkWindowName: function(window, url) {
     var originalAttempt = window.name;
     
     if (/\s*{[\s\S]+}\s*/.test(originalAttempt)) {
@@ -367,7 +367,7 @@ RequestWatchdog.prototype = {
       } catch(e) {}
     }
     if (originalAttempt != window.name) {
-      ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '" to "' + window.name + '".');
+      ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '"\nto\n"' + window.name + '"\nURL: ' + url);
     }
   },
   

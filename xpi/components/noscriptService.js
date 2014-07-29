@@ -5811,7 +5811,7 @@ var ns = {
     }
     
     if (IOUtil.extractFromChannel(req, "noscript.checkWindowName")) {
-      this.requestWatchdog.checkWindowName(domWindow);
+      this.requestWatchdog.checkWindowName(domWindow, req.URI.spec);
     }
     
     if (this.onWindowSwitch && docShell &&

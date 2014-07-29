@@ -297,6 +297,8 @@ pref("noscript.surrogate.ab_mirago.sources", "^http://intext\\.mirago\\.");
 pref("noscript.surrogate.ab_mirago.replacement", "HLSysBannerUrl=''");
 pref("noscript.surrogate.ab_mirando.sources", "^http://get\\.mirando\\.");
 pref("noscript.surrogate.ab_mirando.replacement", "Mirando={}");
+pref("noscript.surrogate.darla.sources", ">http://l.yimg.com/rq/darla/*");
+pref("noscript.surrogate.darla.replacement", "if (typeof window.DARLA === 'object') DARLA.prefetch = DARLA.render = function() {}");
 pref("noscript.surrogate.facebook_connect.sources", "connect.facebook.net");
 pref("noscript.surrogate.facebook_connect.replacement", "FB=(function(){var f=arguments.callee;return f.__noSuchMethod__=f.Event=f.XFBML=f;})();");
 pref("noscript.surrogate.revsci.sources", "js.revsci.net");
