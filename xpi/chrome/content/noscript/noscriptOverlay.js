@@ -483,6 +483,7 @@ return noscriptUtil.service ? {
     const global = ns.jsEnabled;
     const blockUntrusted = global && ns.alwaysBlockUntrustedContent;
     const cascadePermissions = ns.cascadePermissions;
+    const globalHttps = ns.globalHttpsWhitelist;
     
     var seps = { insert: null, stop: null, global: null, untrusted: null };
     {
@@ -681,7 +682,9 @@ return noscriptUtil.service ? {
       }
       
 
-      enabled = !!matchingSite;
+      enabled = !!(matchingSite ||
+                   globalHttps && ns.isGlobalHttps(content, site) && (matchingSite = site)
+                );
       
       let showInMain = embedOnlySites
         ? embedOnlySites.indexOf(site) === -1 || hideUntrustedPlaceholder && enabled : true;
@@ -781,7 +784,8 @@ return noscriptUtil.service ? {
         
         if (!s || sites.indexOf(s) > -1) continue;
         
-        let jsEnabled = ns.isJSEnabled(s);
+        let ghEnabled = globalHttps && ns.isGlobalHttps(content, s);
+        let jsEnabled = ghEnabled || ns.isJSEnabled(s);
         
         if (jsEnabled && (!ns.contentBlocker || ns.isAllowedObject("!", "*", s)))
           continue;
@@ -838,6 +842,7 @@ return noscriptUtil.service ? {
       menuSites = menuGroups[mgCount];
       isTop = menuSites.isTop;
       enabled = menuSites.enabled;
+     
       let showInMain = menuSites.showInMain;
       
       if (untrustedFrag && untrustedFrag.firstChild) {
@@ -850,12 +855,11 @@ return noscriptUtil.service ? {
         
       while (scount-- > 0) {
         menuSite = menuSites[scount];
-        
-        
+        let ghEnabled = globalHttps && ns.isGlobalHttps(content, menuSite);
         
         untrusted = !enabled && (blockUntrusted || ns.isUntrusted(menuSite));
         
-          let cascaded = cascadePermissions && !isTop;
+        let cascaded = cascadePermissions && !isTop;
         
         if (untrusted) {
           untrustedCount++;
@@ -896,7 +900,7 @@ return noscriptUtil.service ? {
     
         node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
         
-        if ((showPermanent || enabled) && !((global || cascaded) && enabled) &&
+        if ((showPermanent || enabled) && !((global || cascaded || ghEnabled) && enabled) &&
             showInMain && !(cascaded && parent !== untrustedFrag)) 
           parent.appendChild(node);
       
@@ -908,7 +912,7 @@ return noscriptUtil.service ? {
             parent.appendChild(extraNode);
           }
           if (((showUntrusted && untrustedMenu || showDistrust) && 
-                (cascaded || !(domain in jsPSs.sitesMap)) ||
+                (cascaded || ghEnabled || !(domain in jsPSs.sitesMap)) ||
                 blockUntrusted && (showUntrusted || showDistrust)
                 ) && !untrusted) {
             parent = (showUntrusted && !blockUntrusted ? untrustedFrag : mainFrag);
@@ -1912,6 +1916,7 @@ return noscriptUtil.service ? {
     const ns = this.ns;
     const global = ns.jsEnabled;
     const cascadePermissions = ns.cascadePermissions;
+    const globalHttps = ns.globalHttpsWhitelist;
     const jsPSs = ns.jsPolicySites;
     const untrustedSites = ns.untrustedSites;
 
@@ -1943,6 +1948,7 @@ return noscriptUtil.service ? {
     var topTrusted = false;
     var topUntrusted = false;
 
+    let win = content;
     
     if (global && !ns.alwaysBlockUntrustedContent) {
       lev = "glb";
@@ -1966,10 +1972,10 @@ return noscriptUtil.service ? {
       while (s-- > 0) {
         let url = sites[s];
         let isUntrusted = untrustedSites.matches(url);
-        let site = !isUntrusted && (global ? url : jsPSs.matches(url));
+        let site = !isUntrusted && (global || globalHttps && ns.isGlobalHttps(win, url) ? url : jsPSs.matches(url));
         
         if (url == sites.topSite) {
-          if (site && (!ns.httpStarted || ns.dom.getDocShellForWindow(content).allowJavascript)) topTrusted = true;
+          if (site && (!ns.httpStarted || ns.dom.getDocShellForWindow(win).allowJavascript)) topTrusted = true;
           else {
             site = null;
             if (isUntrusted) topUntrusted = true;
@@ -2048,7 +2054,7 @@ return noscriptUtil.service ? {
     }
     
     if (notificationNeeded) { // notifications
-      let win = content;
+      
       if (this.notify) {
         this.notificationShow(message,
           this.getIcon(widget), 

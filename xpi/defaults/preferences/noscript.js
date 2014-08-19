@@ -58,6 +58,8 @@ pref("noscript.allowCachingObjects", true);
 
 pref("noscript.showPlaceholder", true);
 pref("noscript.global", false);
+pref("noscript.globalHttpsWhitelist", false);
+
 pref("noscript.confirmUnblock", true);
 pref("noscript.confirmUnsafeReload", true);
 pref("noscript.statusLabel", false);

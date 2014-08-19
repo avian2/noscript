@@ -184,5 +184,6 @@
 <!ENTITY noscript.hoverUI "Apri il menù dei permessi quando il mouse sorvola l'icona di NoScript">
 <!ENTITY noscriptDonate "Donazione">
 <!ENTITY noscriptDonate.accesskey "o">
-<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
-<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
+<!ENTITY noscriptCascadePermissions "Propaga i permessi del documento principale a tutti i sottodocumenti e agli script esterni">
+<!ENTITY noscriptRestrictSubdocScripting "Blocca gli script dei sottodocumenti se il documento principale non è nella whitelist">
+<!ENTITY noscriptGlobalHttpsWhitelist "Permetti automaticamente gli script HTTPS inclusi in documenti HTTPS">

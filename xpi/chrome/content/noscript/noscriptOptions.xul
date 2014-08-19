@@ -331,19 +331,13 @@
               <tabs>
                 <tab label=" &noscriptHttps.behavior; " id="nsopt-tabHttpsBehavior" />
                 <tab label=" &noscriptHttps.cookies; " id="nsopt-tabHttpsCookies"/>
+								<tab label=" &noscriptPermissions; " id="nsopt-tabHttpsPermissions"/>
+	
               </tabs>
             
               <tabpanels flex="1">
                 <tabpanel>
                   <vbox flex="1">
-                    <description control="sel-allowHttpsOnly" style="white-space: normal">&noscriptHttps.description;</description>
-                    <menulist id="sel-allowHttpsOnly">
-                      <menupopup id="mp-allowHttpsOnly">
-                        <menuitem label="&noscriptHttps.never;" value="0" selected="true" />
-                        <menuitem label="&noscriptHttps.proxy;" value="1"/>
-                        <menuitem label="&noscriptHttps.always;" value="3"/>
-                      </menupopup>
-                    </menulist>
                
                     <description control="opt-httpsForced" style="white-space: normal">&noscriptHttpsForced;</description>
                     <textbox id="opt-httpsForced" multiline="true" flex="1" />
@@ -361,6 +355,21 @@
                       <description control="opt-secureCookiesExceptions" style="white-space: normal">&noscriptSecureCookiesExceptions;</description>
                       <textbox id="opt-secureCookiesExceptions" multiline="true" flex="1" />
                     </groupbox>
+                  </vbox>
+                </tabpanel>
+								<tabpanel>
+                  <vbox flex="1">
+                    <description control="sel-allowHttpsOnly" style="white-space: normal">&noscriptHttps.description;</description>
+                    <menulist id="sel-allowHttpsOnly">
+                      <menupopup id="mp-allowHttpsOnly">
+                        <menuitem label="&noscriptHttps.never;" value="0" selected="true" />
+                        <menuitem label="&noscriptHttps.proxy;" value="1"/>
+                        <menuitem label="&noscriptHttps.always;" value="3"/>
+                      </menupopup>
+                    </menulist>
+										<spacer flex="1" />
+                    <checkbox id="opt-globalHttpsWhitelist" label="&noscriptGlobalHttpsWhitelist;" />
+										<spacer flex="1" />
                   </vbox>
                 </tabpanel>
               </tabpanels>

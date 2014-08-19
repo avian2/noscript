@@ -1376,6 +1376,8 @@ var InjectionChecker = {
   _gmxRx: /\$\(clientName\)-\$\(dataCenter\)\.(\w+\.)+\w+/, // GMX webmail, see http://forums.informaction.com/viewtopic.php?p=69700#p69700
   
   maybeJS: function(expr) {
+    // ES6 templates, extremely insidious!!!
+    if (/`[\s\S]*`/.test(expr)) return true;
     expr = // dotted URL components can lead to false positives, let's remove them
       expr.replace(this._removeDotsRx, this._removeDots)
         .replace(this._arrayAccessRx, '_ARRAY_ACCESS_')
@@ -1531,7 +1533,7 @@ var InjectionChecker = {
     
     // cleanup most urlencoded noise and reduce JSON/XML
     s = this.reduceXML(this.reduceJSON(this.collapseChars(
-        s.replace(/\%\d+[a-z\(]\w*/gi, '`')
+        s.replace(/\%\d+[a-z\(]\w*/gi, '§')
           .replace(/[\r\n\u2028\u2029]+/g, "\n")
           .replace(/[\x01-\x09\x0b-\x20]+/g, ' ')
         )));
@@ -1548,11 +1550,11 @@ var InjectionChecker = {
     
     const
       invalidCharsRx = /[\u007f-\uffff]/.test(s) && this.invalidCharsRx,
-      dangerRx = /\(|\[[^\]]+\]|(?:setter|location|innerHTML|cookie|on\w{3,}|\.\D)[^&]*=[\s\S]*?(?:\/\/|[\w$\u0080-\uFFFF.[\]})'"-]+)/,
-      exprMatchRx = /^[\s\S]*?[=\)]/,
-      safeCgiRx = /^(?:(?:[\.\?\w\-\/&:`\[\]]+=[\w \-:\+%#,`\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/,
+      dangerRx = /\(|`[\s\S]*`|\[[^\]]+\]|(?:setter|location|innerHTML|cookie|on\w{3,}|\.\D)[^&]*=[\s\S]*?(?:\/\/|[\w$\u0080-\uFFFF.[\]})'"-]+)/,
+      exprMatchRx = /^[\s\S]*?(?:[=\)]|`[\s\S]*`)/,
+      safeCgiRx = /^(?:(?:[\.\?\w\-\/&:§\[\]]+=[\w \-:\+%#,§\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/,
         // r2l, chained query string parameters, protocol://domain
-      headRx = /^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:`|[^&]&[\w\.]+=[^=]))/
+      headRx = /^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:§|[^&]&[\w\.]+=[^=]))/
         // irrepairable syntax error, such as closed parens in the beginning
     ;
     
@@ -2585,7 +2587,7 @@ XSanitizer.prototype = {
     if (this.brutal) { // injection checks were positive
       s = InjectionChecker.reduceDashPlus(s)
         .replace(/\bdata:/ig, "nodata:")
-        .replace(/['\(\)\=\[\]<\r\n]/g, " ")
+        .replace(/['\(\)\=\[\]<\r\n`]/g, " ")
         .replace(/0x[0-9a-f]{16,}|0b[01]{64,}/gi, " ")
         .replace(this._brutalReplRx, String.toUpperCase)
         .replace(/Q[\da-fA-Fa]{2}/g, "Q20") // Ebay-style escaping

@@ -1617,7 +1617,8 @@ var ns = {
       case "audioApiInterception":
       case "allowHttpsOnly":
       case "removeSMILKeySniffer":
-      case  "restrictSubdocScripting":
+      case "restrictSubdocScripting":
+      case "globalHttpsWhitelist":
         this[name] = this.getPref(name, this[name]);  
       break;
       
@@ -2274,7 +2275,19 @@ var ns = {
     }
     return false;
   },
-  
+  isGlobalHttps: function(win, /*optional */ s) {
+    let allow = false;
+    function isAllowed(s) { return /^https:/i.test(s) && !ns.isUntrusted(s); }
+    if (s && !isAllowed(s)) return false;
+    
+    for (;; win = win.parent) {
+      let site = this.getSite(win.document.nodePrincipal.origin);
+      if ((allow = isAllowed(site)) || win === win.parent)
+        break;
+    }
+    
+    return allow;
+  },
   get proxyService() {
     delete this.proxyService;
     return this.proxyService = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);
@@ -2457,7 +2470,7 @@ var ns = {
     return this.supportsCAPS = !WinScript.supported;
   },
   get usingCAPS() {
-    return this.supportsCAPS && !this.cascadePermissions;
+    return this.supportsCAPS && !(this.cascadePermissions || this.globalHttpsWhitelist);
   },
   globalJS: false,
   get jsEnabled() {
@@ -6094,7 +6107,11 @@ var ns = {
     site = this.getSite(origin || site);
     
     if (site === 'moz-nullprincipal:')
-      for (let w = window; !((site = this.getSite(w.location.href)) || w.parent === w); w = w.parent);
+      for (let w = window; !((site = this.getSite(w.document.nodePrincipal.origin)) || w.parent === w); w = w.parent);
+     
+    if (this.globalHttpsWhitelist && this.isGlobalHttps(window)) {
+      blockIt = false;
+    }
     
     if ((this.cascadePermissions || this.restrictSubdocScripting) && window.top !== window) {
       if (this.cascadePermissions) {
@@ -6102,7 +6119,9 @@ var ns = {
       } else if (this.restrictSubdocScripting && blocker.isBlocked(window.parent)) {
         blockIt = true;
       }
-    } 
+    }
+    
+    
      
     if (typeof blockIt === "undefined")
       blockIt = site && (this.usingCAPS && !this.restrictSubdocScripting ? this.isUntrusted(site) : !this.isJSEnabled(site));

@@ -643,7 +643,7 @@ const MainContentPolicy = {
        
         let scriptElement;
         if (aContentType === 2) { // "real" JavaScript include
-          if (!this.cascadePermissions &&
+          if (!(this.cascadePermissions || this.globalHttpsWhitelist) &&
               originSite && !this.isJSEnabled(originSite) &&
               isHTTP && httpOrigin) {
             // JavaScript-disabled page with script inclusion
@@ -679,12 +679,22 @@ const MainContentPolicy = {
         } else isScript = scriptElement = false;
 
         if (forbid) {
-          if (this.cascadePermissions) {
-            forbid = untrusted;
-          } else {
-            forbid = !this.isJSEnabled(locationSite);
-            if (forbid && this.ignorePorts && /:\d+$/.test(locationSite))
-              forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
+          if (this.globalHttpsWhitelist) {
+            let doc = aContext.ownerDocument || aContext;
+            let win = doc && doc.defaultView;
+            if (win) {
+              forbid = !this.isGlobalHttps(win);
+            }
+          }
+          if (forbid) {
+            
+            if (this.cascadePermissions) {
+              forbid = untrusted;
+            } else {
+              forbid = !this.isJSEnabled(locationSite);
+              if (forbid && this.ignorePorts && /:\d+$/.test(locationSite))
+                forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
+            }
           }
         }
 
