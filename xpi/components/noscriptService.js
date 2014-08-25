@@ -4457,7 +4457,7 @@ var ns = {
           if ((fromURLBar || noJS) && /^javascript:/i.test(url) && this.geckoVersionCheck("24") > 0) {
             JSURL.load(url, doc);
           } else {
-            window.location.href = url;
+            openCallback();
           }
           Thread.yieldAll();
           if (noJS) {
