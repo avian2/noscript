@@ -356,58 +356,72 @@ return noscriptUtil.service ? {
   },
   
   _popupsInitialized: false,
+  _initPopupsRecursion: false,
   initPopups: function() {
+    if (this._initPopupsRecursion) return;
+    this._initPopupsRecursion = true;
+    try {
+      
     
-    const sticky = this.stickyUI; // early init
-
-    const popup = $("noscript-status-popup");
-    if (!popup) return; // Fennec?
-    
-    const install = !this._popupsInitialized;
-    this._popupsInitialized = true;
-    
-    const tbb = $("noscript-tbb");
-    if (tbb) {
-      tbb.setAttribute("type", this.hoverUI ? "button" : this.ns.getPref("toolbarToggle") ? "menu-button" : "menu");
-    }
-
-    const buttons = [tbb, $("noscript-statusLabel")];
-    let statusIcon = $("noscript-statusIcon");
-    if ($("addon-bar")) {
-      // Fx 4 or above
-      if (install) {  
-        window.addEventListener("aftercustomization", function(ev) {
-          noscriptOverlay.initPopups();
-        }, false);
+      const sticky = this.stickyUI; // early init
+  
+      const popup = $("noscript-status-popup");
+      if (!popup) return; // Fennec?
+      
+      const install = !this._popupsInitialized;
+      this._popupsInitialized = true;
+      
+      const tbb = $("noscript-tbb");
+      if (tbb) {
+        tbb.setAttribute("type", this.hoverUI ? "button" : this.ns.getPref("toolbarToggle") ? "menu-button" : "menu");
       }
-      if (statusIcon) statusIcon.parentNode.removeChild(statusIcon);
-    } else {
-      // Fx 3.6.x or below
-      if (install) {  
-        let btcd = window.BrowserToolboxCustomizeDone;
-        if (btcd) window.BrowserToolboxCustomizeDone = function(done) {
-          btcd(done);
-          if (done) noscriptOverlay.initPopups();
+  
+      const buttons = [tbb, $("noscript-statusLabel")];
+      let statusIcon = $("noscript-statusIcon");
+      
+      if (install && "CustomizableUI" in window) {
+        CustomizableUI.addListener({
+          onWidgetAdded: function() noscriptOverlay.initPopups()
+        });
+      }
+      if ($("addon-bar")) {
+        // Fx 4 or above
+        if (install) {  
+          window.addEventListener("aftercustomization", function(ev) {
+            noscriptOverlay.initPopups();
+          }, false);
+        }
+        if (statusIcon) statusIcon.parentNode.removeChild(statusIcon);
+      } else {
+        // Fx 3.6.x or below
+        if (install) {  
+          let btcd = window.BrowserToolboxCustomizeDone;
+          if (btcd) window.BrowserToolboxCustomizeDone = function(done) {
+            btcd(done);
+            if (done) noscriptOverlay.initPopups();
+          }
+        }
+        
+        buttons.push(statusIcon);
+      }
+      // copy status bar menus
+      for each(let button in buttons) {
+        if (!button) continue;
+        let localPopup = button.firstChild;
+        if (!(localPopup && /popup/.test(localPopup.tagName))) {
+          localPopup = popup.cloneNode(true);
+          localPopup.id  = button.id + "-popup";
+          button.insertBefore(localPopup, button.firstChild);
+          if (!sticky) localPopup._context = true;
+        }
+        if (!this._mustReverse(localPopup)) {
+          localPopup.position = /(?:addon|status)/.test(button.parentNode.id)
+          ? "before_start"
+          : "after_start";
         }
       }
-      
-      buttons.push(statusIcon);
-    }
-    // copy status bar menus
-    for each(let button in buttons) {
-      if (!button) continue;
-      let localPopup = button.firstChild;
-      if (!(localPopup && /popup/.test(localPopup.tagName))) {
-        localPopup = popup.cloneNode(true);
-        localPopup.id  = button.id + "-popup";
-        button.insertBefore(localPopup, button.firstChild);
-        if (!sticky) localPopup._context = true;
-      }
-      if (!this._mustReverse(localPopup)) {
-        localPopup.position = /(?:addon|status)/.test(button.parentNode.id)
-        ? "before_start"
-        : "after_start";
-      }
+    } finally {
+      this._initPopupsRecursion = false;
     }
   },
   

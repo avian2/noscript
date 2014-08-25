@@ -1976,7 +1976,7 @@ var ns = {
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
       "removeSMILKeySniffer",
       "fakeScriptLoadEvents.enabled", "fakeScriptLoadEvents.onlyRequireJS", "fakeScriptLoadEvents.exceptions", "fakeScriptLoadEvents.docExceptions",
-      "restrictSubdocScripting", "cascadePermissions",
+      "restrictSubdocScripting", "cascadePermissions", "globalHttpsWhitelist"
       ]) {
       try {
         this.syncPrefs(this.prefs, p);
@@ -2275,15 +2275,16 @@ var ns = {
     }
     return false;
   },
+  _isHttpsAndNotUntrusted: function(s) /^https:/i.test(s) && !this.isUntrusted(s),
   isGlobalHttps: function(win, /*optional */ s) {
     let allow = false;
-    function isAllowed(s) { return /^https:/i.test(s) && !ns.isUntrusted(s); }
-    if (s && !isAllowed(s)) return false;
+    if (s && !this._isHttpsAndNotUntrusted(s)) return false;
     
     for (;; win = win.parent) {
       let site = this.getSite(win.document.nodePrincipal.origin);
-      if ((allow = isAllowed(site)) || win === win.parent)
+      if (!(allow = s && site === s || this._isHttpsAndNotUntrusted(site)) || win === win.parent)
         break;
+      s = site;
     }
     
     return allow;
@@ -2318,12 +2319,27 @@ var ns = {
   },
 
   jsPolicySites: new PolicySites(),
-  isJSEnabled: function(s) {
-    return !(this.globalJS
-      ? this.alwaysBlockUntrustedContent && this.untrustedSites.matches(s)
-      : !this.jsPolicySites.matches(s) || this.untrustedSites.matches(s)
-        || this.isForbiddenByHttpsStatus(s)
-    );
+  isJSEnabled: function(s, window) {
+    if (this.globalJS) {
+      return !(this.alwaysBlockUntrustedContent && this.untrustedSites.matches(s));
+    }
+    
+    if (this.untrustedSites.matches(s) || this.isForbiddenByHttpsStatus(s)) return false;
+    
+    let enabled = !!(this.jsPolicySites.matches(s));
+    
+    if (window) {
+      
+      enabled = enabled || this.globalHttpsWhitelist && s.indexOf("https:") === 0 && this.isGlobalHttps(window);
+      
+      if (enabled ? this.restrictSubdocScripting : this.cascadePermissions) {
+        let topSite = this.getSite(window.top.document.nodePrincipal.origin);
+        if (topSite !== s) enabled = this.isJSEnabled(topSite);
+      }   
+    }
+    
+    return enabled;
+  
   },
   setJSEnabled: function(site, is, fromScratch, cascadeTrust) {
         

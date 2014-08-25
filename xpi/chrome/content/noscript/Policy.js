@@ -341,9 +341,10 @@ const MainContentPolicy = {
                   this.isCachedObjectMime(aMimeTypeGuess) &&
                   !(aContext.offsetWidth && aContext.offsetHeight) &&
                   this.getPref("allowCachingObjects") &&
-                  aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec)) &&
+                  let (win = aContext.ownerDocument.defaultView)
+                  aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec), win) &&
                   !this.pluginForMime(aMimeTypeGuess) &&
-                  (aMimeTypeGuess.indexOf("css") > 0 || this.isJSEnabled(this.getSite(aContentLocation.spec)))
+                  (aMimeTypeGuess.indexOf("css") > 0 || this.isJSEnabled(this.getSite(aContentLocation.spec), win))
                  ) {
                 return CP_OK;
               }
@@ -446,7 +447,7 @@ const MainContentPolicy = {
           
           case 15: // media
           if (aContentType === 15) {
-              if (aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec))) {
+              if (aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec), aContext.ownerDocument.defaultView)) {
               // let's wire poor man's video/audio toggles if JS is disabled and therefore controls are not available
               this.delayExec(function() {
                 aContext.addEventListener("click", function(ev) {
@@ -644,7 +645,7 @@ const MainContentPolicy = {
         let scriptElement;
         if (aContentType === 2) { // "real" JavaScript include
           if (!(this.cascadePermissions || this.globalHttpsWhitelist) &&
-              originSite && !this.isJSEnabled(originSite) &&
+              originSite && !this.isJSEnabled(originSite, contentDocument.window) &&
               isHTTP && httpOrigin) {
             // JavaScript-disabled page with script inclusion
             this.syncUI(contentDocument);
@@ -679,23 +680,9 @@ const MainContentPolicy = {
         } else isScript = scriptElement = false;
 
         if (forbid) {
-          if (this.globalHttpsWhitelist) {
-            let doc = aContext.ownerDocument || aContext;
-            let win = doc && doc.defaultView;
-            if (win) {
-              forbid = !this.isGlobalHttps(win);
-            }
-          }
-          if (forbid) {
-            
-            if (this.cascadePermissions) {
-              forbid = untrusted;
-            } else {
-              forbid = !this.isJSEnabled(locationSite);
-              if (forbid && this.ignorePorts && /:\d+$/.test(locationSite))
-                forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
-            }
-          }
+          let doc = aContext.ownerDocument || aContext;
+          let win = doc && doc.defaultView;
+          forbid = !this.isJSEnabled(locationSite, win);
         }
 
         if ((untrusted || forbid) && scheme !== "data") {
@@ -787,14 +774,16 @@ const MainContentPolicy = {
         originURL = originURL || (aRequestOrigin && aRequestOrigin.spec);
         originSite = originSite || this.getSite(originURL);
         
+        let win = aContext.ownerDocument ? aContext.ownerDocument.defaultView : aContext.defaultView || aContext;
+        
         let jsRx = /^(?:javascript|data):/;
         
         let originOK = originSite 
-          ? this.isJSEnabled(originSite) 
+          ? this.isJSEnabled(originSite, win) 
           : jsRx.test(originURL); // if we've got such an origin, parent should be trusted
         
         let locationOK = locationSite 
-              ? this.isJSEnabled(locationSite) 
+              ? this.isJSEnabled(locationSite, win3) 
               : jsRx.test(locationURL) && originOK // use origin for javascript: or data:
         ;
         
@@ -817,7 +806,7 @@ const MainContentPolicy = {
       
       if (forbid && this.cascadePermissions && !this.contentBlocker) {
         let principal = aContext.ownerDocument && aContext.ownerDocument.defaultView.top.document.nodePrincipal;
-        forbid = untrusted || !this.isJSEnabled(this.getSite(principal.origin)); 
+        forbid = untrusted || !this.isJSEnabled(this.getSite(principal.origin), aContext.ownerDocument.defaultView); 
       }
       
       if (forbid) {

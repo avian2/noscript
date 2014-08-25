@@ -483,7 +483,7 @@ RequestWatchdog.prototype = {
       if(ns.autoAllow) {
         if (window && window == window.top) {
           targetSite = ns.getQuickSite(originalSpec, ns.autoAllow);
-          if(targetSite && !ns.isJSEnabled(targetSite)) {
+          if(targetSite && !ns.isJSEnabled(targetSite, window)) {
             ns.autoTemp(targetSite);
           }
           targetSite = su.getSite(originalSpec);
@@ -491,7 +491,7 @@ RequestWatchdog.prototype = {
       }
       if(!trustedTarget) {
         targetSite = su.getSite(originalSpec);
-        trustedTarget = ns.isJSEnabled(targetSite);
+        trustedTarget = ns.isJSEnabled(targetSite, window);
         if(!trustedTarget) {
           if (ns.checkShorthands(targetSite)) {
             ns.autoTemp(targetSite);
@@ -719,7 +719,8 @@ RequestWatchdog.prototype = {
     
     IOUtil.attachToChannel(channel, "noscript.checkWindowName", DUMMY_OBJ);
     
-    let trustedOrigin = globalJS || ns.isJSEnabled(originSite) ||
+    let focusedBrowserWin = DOM.mostRecentBrowserWindow;
+    let trustedOrigin = globalJS || ns.isJSEnabled(originSite, focusedBrowserWin && focusedBrowserWin.content) ||
         !origin // we consider null origin as "trusted" (i.e. we check for injections but 
                 // don't strip POST unconditionally) to make some extensions (e.g. Google Gears) 
                 // work. For dangerous edge cases we should have moz-null-principal: now, anyway.

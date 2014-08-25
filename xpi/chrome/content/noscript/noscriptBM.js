@@ -49,10 +49,12 @@ var noscriptBM = {
     callback(); 
   },
   
-  loadURIWithFlags: function() { // Fx 3.5 and above command bar interception
+  loadURIWithFlags: function(url, flags) { // Fx 3.5 and above command bar interception
     try {
-      if ("gURLBar" in window && /\nhandleCommand\b.*@chrome:\/\//.test(new Error().stack))
+      if ("gURLBar" in window && /\nhandleCommand\b.*@chrome:\/\//.test(new Error().stack)) {
+        if (/^(?:javascript|data):/i.test(url)) arguments[1] |= Ci.nsIWebNavigation.LOAD_FLAGS_ALLOW_POPUPS;
         return noscriptBM.handleURLBarCommand.apply(window, arguments);
+      }
     } catch(e) {}
     return noscriptBM.handleURLBarCommandOriginal(arguments);
   },
