@@ -774,7 +774,11 @@ const MainContentPolicy = {
         originURL = originURL || (aRequestOrigin && aRequestOrigin.spec);
         originSite = originSite || this.getSite(originURL);
         
-        let win = aContext.ownerDocument ? aContext.ownerDocument.defaultView : aContext.defaultView || aContext;
+        let win = aContext && (
+          aContext.ownerDocument
+          ? aContext.ownerDocument.defaultView
+          : aContext.document ? aContext : aContext.defaultView
+        );
         
         let jsRx = /^(?:javascript|data):/;
         
@@ -783,7 +787,7 @@ const MainContentPolicy = {
           : jsRx.test(originURL); // if we've got such an origin, parent should be trusted
         
         let locationOK = locationSite 
-              ? this.isJSEnabled(locationSite, win3) 
+              ? this.isJSEnabled(locationSite, win)
               : jsRx.test(locationURL) && originOK // use origin for javascript: or data:
         ;
         
