@@ -4396,7 +4396,7 @@ var ns = {
       node = null;
       var self = this;
       return !this.__ns.handleBookmark(url, function(url) {
-        method.caller.apply(self, patch.caller.arguments);
+        method.caller.apply(self, method.caller.arguments);
         self = null;
       });
     } finally {

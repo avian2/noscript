@@ -342,32 +342,41 @@ RequestWatchdog.prototype = {
     return homes ? homes.split("|") : [];
   },
   
-  checkWindowName: function(window, url) {
-    var originalAttempt = window.name;
-    
-    if (/\s*{[\s\S]+}\s*/.test(originalAttempt)) {
-      try {
-        ns.json.decode(originalAttempt); // fast track for crazy JSON in name like on NYT
-        return;
-      } catch(e) {}
-    }
-    
-    if (/[%=\(\\<]/.test(originalAttempt) && InjectionChecker.checkURL(originalAttempt)) {
-      window.name = originalAttempt.replace(/[%=\(\\<]/g, " ");
-    }
+  checkWindowName: function (window, url) {
+     var originalAttempt = window.name;
+     try {
+       if (/^https?:\/\/(?:[^/]*\.)?\byimg\.com\/rq\/darla\//.test(url) &&
+          ns.getPref("filterXExceptions.darla_name")) {
+         window.name = "DARLA_JUNK";
+         return;
+       }
 
-    if (originalAttempt.length > 11) {
-      try {
-        if ((originalAttempt.length % 4 === 0)) { 
-          var bin = window.atob(window.name);
-          if(/[%=\(\\]/.test(bin) && InjectionChecker.checkURL(bin)) {
-            window.name = "BASE_64_XSS";
-          }
-        }
-      } catch(e) {}
-    }
-    if (originalAttempt != window.name) {
-      ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '"\nto\n"' + window.name + '"\nURL: ' + url);
+       if (/\s*{[\s\S]+}\s*/.test(originalAttempt)) {
+         try {
+           ns.json.decode(originalAttempt); // fast track for crazy JSON in name like on NYT
+           return;
+         } catch(e) {}
+       }
+
+       if (/[%=\(\\<]/.test(originalAttempt) && InjectionChecker.checkURL(originalAttempt)) {
+         window.name = originalAttempt.replace(/[%=\(\\<]/g, " ");
+       }
+
+       if (originalAttempt.length > 11) {
+         try {
+           if ((originalAttempt.length % 4 === 0)) { 
+             var bin = window.atob(window.name);
+             if(/[%=\(\\]/.test(bin) && InjectionChecker.checkURL(bin)) {
+               window.name = "BASE_64_XSS";
+             }
+           }
+         } catch(e) {}
+       }
+    } finally {
+      if (originalAttempt != window.name) {
+        ns.log('[NoScript XSS]: sanitized window.name, "' + originalAttempt + '"\nto\n"' + window.name + '"\nURL: ' + url);
+        ns.log(url + "\n" + window.location.href)
+      }
     }
   },
   

@@ -118,6 +118,7 @@ pref("noscript.filterXGetRx", "<+(?=[^<>=\-\\d\\. /\\(])|[\\\\\"\\x00-\\x07\\x09
 pref("noscript.filterXGetUserRx", "");
 pref("noscript.filterXExceptions", "^https?://([a-z]+)\\.google\\.(?:[a-z]{1,3}\\.)?[a-z]+/(?:search|custom|\\1)\\?\n^https?://([a-z]*)\\.?search\\.yahoo\\.com/search(?:\\?|/\\1\\b)\n^https?://[a-z]+\\.wikipedia\\.org/wiki/[^\"<>\?%]+$\n^https?://translate\.google\.com/translate_t[^\"'<>\?%]+$\n^https://secure\\.wikimedia\\.org/wikipedia/[a-z]+/wiki/[^\"<>\\?%]+$");
 pref("noscript.filterXExceptions.blogspot", true);
+pref("noscript.filterXExceptions.darla_name", true);
 pref("noscript.filterXExceptions.deviantart", true);
 pref("noscript.filterXExceptions.fbconnect", true);
 pref("noscript.filterXExceptions.ebay", true);
@@ -299,8 +300,6 @@ pref("noscript.surrogate.ab_mirago.sources", "^http://intext\\.mirago\\.");
 pref("noscript.surrogate.ab_mirago.replacement", "HLSysBannerUrl=''");
 pref("noscript.surrogate.ab_mirando.sources", "^http://get\\.mirando\\.");
 pref("noscript.surrogate.ab_mirando.replacement", "Mirando={}");
-pref("noscript.surrogate.darla.sources", ">^https?://[^/]*\\.yimg\\.com/.*/darla/");
-pref("noscript.surrogate.darla.replacement", "if(typeof window.DARLA==='object'){let x;function log(s)console.log('[DARLA NoScript Surrogate] '+s);log(location.href);try{let host=top.location.host;if(x=/\bmail.*yahoo\./.test(host)){log('Skipping not to break '+host)}}catch(e){log(e)}if(!x)DARLA.prefetch=DARLA.render=function(){}}");
 pref("noscript.surrogate.facebook_connect.sources", "connect.facebook.net");
 pref("noscript.surrogate.facebook_connect.replacement", "FB=(function(){var f=arguments.callee;return f.__noSuchMethod__=f.Event=f.XFBML=f;})();");
 pref("noscript.surrogate.revsci.sources", "js.revsci.net");
