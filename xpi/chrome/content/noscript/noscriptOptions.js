@@ -1,5 +1,6 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const Cu = Components.utils;
 
 var ns = noscriptUtil.service;
 
@@ -574,7 +575,7 @@ var abeOpts = {
     if (current && this.dirty) {
       
       let name = current.value;
-      let source = $("abeRuleset-text").value;
+      let source = $("abeRuleset-text-container").selectedPanel.value;
       let ruleset = ABE.createRuleset(name, source);
       if (ruleset.errors && this.dirty) {
         this.dirty = null;
@@ -605,7 +606,13 @@ var abeOpts = {
     try {
       const map = {__proto__: null};
       var l = this.list;
-      for(var j = l.getRowCount(); j-- > 0; l.removeItemAt(j));
+      for(var j = l.getRowCount(); j-- > 0; l.removeItemAt(j)) {
+        try {
+          let rc = $("abeRuleset-text-container");
+          rc.removeChild(rc.lastChild);
+        }
+        catch (e) { /* no textboxes present to remove, ignore */ }
+      }
       var rulesets = ABE.rulesets;
       var selItem = null;
       if (rulesets) {
@@ -622,6 +629,17 @@ var abeOpts = {
             i.className = "noscript-error";
             this.errors = rs.errors;
           }
+          let textbox = document.createElement("textbox");
+          let textboxAttributes = {
+            "flex":"5",
+            "multiline":"true",
+            "wrap":"off",
+            "onchange":"abeOpts.changed()",
+            "oninput":"abeOpts.input(this)",
+            "value":rs.source
+          };
+          for (let a in textboxAttributes) { textbox.setAttribute(a, textboxAttributes[a]); }
+          $("abeRuleset-text-container").appendChild(textbox);
         }
       }
       this._map = map; 
@@ -669,25 +687,32 @@ var abeOpts = {
     
     $("abeEnable-button").disabled = ! ($("abeDisable-button").disabled = !rs || rs.disabled);
     $("abeRefresh-button").disabled = this.list.getRowCount() == 0;
+    $("abeRuleset-text-container").setAttribute("selectedIndex", this.list.selectedIndex);
     
-    var text = $("abeRuleset-text");
+    var text = $("abeRuleset-text-container").selectedPanel;
     text.className = selItem && selItem.className || '';
     text.disabled = !selItem || selItem.disabled;
     text.value = rs && rs.source;
     
     text = $("abeRuleset-errors");
     if (rs && rs.errors) {
-      text.hidden = false;
+      this.ShowHideABEError(false);
       text.value = rs.errors.join("\n");
     }
     else {
-      text.hidden = true;
+      this.ShowHideABEError(true);
       text.value = "";
     }
   },
   
   refresh: function() {
     ABE.refresh();
+  },
+ 
+  ShowHideABEError: function(hidden) {
+    for (let n of document.getElementsByClassName("abe-error-element")) {
+      n.hidden = hidden;
+    }
   },
   
   toggle: function(enabled) {

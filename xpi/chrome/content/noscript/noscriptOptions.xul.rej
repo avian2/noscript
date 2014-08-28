@@ -1,0 +1,25 @@
+*** /dev/null
+--- /dev/null
+***************
+*** 398
+-                   <vbox >
+--- 398 -----
++       <vbox >
+***************
+*** 413
+-               <textbox id="abeRuleset-text" flex="5" multiline="true" wrap="off"
+--- 413 -----
++               <!-- <textbox id="abeRuleset-text" flex="5" multiline="true" wrap="off"
+***************
+*** 417
+-                      />
+--- 417,418 -----
++                      /> -->
++               <deck id="abeRuleset-text-container" flex="5" style="margin-left: 0" />
+***************
+*** 419,420
+-                   <splitter style="background: transparent; margin: 0px; border-width: 0px" />
+-                   <textbox id="abeRuleset-errors" class="noscript-error" style="width: 100%"
+--- 420,421 -----
++                   <splitter style="background: transparent; margin: 0px; border-width: 0px" class="abe-error-element" />
++                   <textbox id="abeRuleset-errors" class="noscript-error abe-error-element" style="width: 100%"

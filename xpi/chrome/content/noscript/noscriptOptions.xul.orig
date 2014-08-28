@@ -370,7 +370,7 @@
 										<spacer flex="1" />
                     <checkbox id="opt-globalHttpsWhitelist" label="&noscriptGlobalHttpsWhitelist;" />
 										<spacer flex="1" />
-      </vbox>
+                  </vbox>
                 </tabpanel>
               </tabpanels>
             </tabbox>
@@ -395,7 +395,7 @@
 							</vbox>
             </hbox>
 
-					<vbox >
+						<vbox >
             <label control="abeRulesets-list" value="&ABE.rulesets.label;" />
             <hbox flex="1">
               <listbox id="abeRulesets-list" 
@@ -410,15 +410,16 @@
               <listitem label="USER" />
               </listbox>
               <splitter style="background: transparent; margin: 0; border-width: 0" />
-							<vbox flex="5">
-              <deck id="abeRuleset-text-container" flex="5" style="margin-left: 0" />
-							<splitter style="background: transparent; margin: 0px; border-width: 0px" class="abe-error-element" />
-            <textbox id="abeRuleset-errors" class="noscript-error abe-error-element" style="width: 100%"
-										 readonly="true" multiline="true" rows="2" hidden="true" value="" />
-							</vbox>
+              <!-- <textbox id="abeRuleset-text" flex="5" multiline="true" wrap="off"
+											 onchange="abeOpts.changed()"
+											 oninput="abeOpts.input(this)"
+											 style="margin-left: 0"
+							/>
             </hbox>
-						
-					</vbox>
+						<splitter style="background: transparent; margin: 0px; border-width: 0px" />
+						<textbox id="abeRuleset-errors" class="noscript-error" style="width: 100%"
+								readonly="true" multiline="true" rows="2" hidden="true" value="" />
+						</vbox>
             <hbox align="center">
               <button id="abeRefresh-button" label="&ABE.refresh.label;" accesskey="&ABE.refresh.accesskey;" oncommand="abeOpts.refresh()" />
               <spacer flex="2"/>
