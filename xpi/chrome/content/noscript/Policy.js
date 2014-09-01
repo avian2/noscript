@@ -683,6 +683,8 @@ const MainContentPolicy = {
           let doc = aContext.ownerDocument || aContext;
           let win = doc && doc.defaultView;
           forbid = !this.isJSEnabled(locationSite, win);
+          if (forbid && this.ignorePorts && /:\d+$/.test(locationSite))
+            forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
         }
 
         if ((untrusted || forbid) && scheme !== "data") {

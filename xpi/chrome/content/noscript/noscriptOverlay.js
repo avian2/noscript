@@ -381,7 +381,14 @@ return noscriptUtil.service ? {
       
       if (install && "CustomizableUI" in window) {
         CustomizableUI.addListener({
-          onWidgetAdded: function() noscriptOverlay.initPopups()
+          onWidgetAdded: function(aWidgetId) {
+            for each(let b in buttons) {
+              if(b && b.id == aWidgetId) {           
+                noscriptOverlay.initPopups();
+                return;
+              }
+            }
+          }
         });
       }
       if ($("addon-bar")) {
