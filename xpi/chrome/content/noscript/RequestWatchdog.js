@@ -780,6 +780,8 @@ RequestWatchdog.prototype = {
         stripPost = false;
         // Paypal buttons encrypted parameter causes a DOS, strip it out
         skipArr = ['encrypted'];
+      } else if (let (rx = /\.adnxs\.com$/) rx.test(originSite) && rx.test(targetSite)) {
+        skipArr = ['udj'];
       } else if (/^https?:\/\/www\.mendeley\.com\/import\/bookmarklet\/$/.test(originalSpec)) {
         skipArr = ['html'];
       } else if (/^https?:\/\/[\w\-\.]+\/talkpost_do(?:\.bml)?$/.test(originalSpec) &&

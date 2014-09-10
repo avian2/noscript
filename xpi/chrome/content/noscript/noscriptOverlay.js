@@ -377,20 +377,21 @@ return noscriptUtil.service ? {
       }
   
       const buttons = [tbb, $("noscript-statusLabel")];
-      let statusIcon = $("noscript-statusIcon");
-      
       if (install && "CustomizableUI" in window) {
         CustomizableUI.addListener({
-          onWidgetAdded: function(aWidgetId) {
-            for each(let b in buttons) {
-              if(b && b.id == aWidgetId) {           
-                noscriptOverlay.initPopups();
+          onWidgetAfterDOMChange: function(aWidget) {
+            for each(let b in buttonIds) {
+              if(b == aWidget.id) {
+                window.setTimeout(function() { noscriptOverlay.initPopups(); }, 0);
                 return;
               }
             }
           }
         });
       }
+      
+      let statusIcon = $("noscript-statusIcon");
+      
       if ($("addon-bar")) {
         // Fx 4 or above
         if (install) {  
