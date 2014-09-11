@@ -377,10 +377,11 @@ return noscriptUtil.service ? {
       }
   
       const buttons = [tbb, $("noscript-statusLabel")];
+      
       if (install && "CustomizableUI" in window) {
         CustomizableUI.addListener({
           onWidgetAfterDOMChange: function(aWidget) {
-            for each(let b in buttonIds) {
+            for each(let b in ['noscript-tbb', 'noscript-statusLabel']) {
               if(b == aWidget.id) {
                 window.setTimeout(function() { noscriptOverlay.initPopups(); }, 0);
                 return;
