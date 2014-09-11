@@ -710,7 +710,7 @@ var abeOpts = {
   },
  
   ShowHideABEError: function(hidden) {
-    for (let n of document.getElementsByClassName("abe-error-element")) {
+    for each (let n in document.getElementsByClassName("abe-error-element")) {
       n.hidden = hidden;
     }
   },

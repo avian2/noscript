@@ -401,3 +401,5 @@ pref("noscript.ABE.rulesets.USER", "# User-defined rules. Feel free to experimen
 pref("noscript.ABE.migration", 0);
 
 pref("noscript.smartClickToPlay", true);
+
+pref("noscript.removalWarning", true);

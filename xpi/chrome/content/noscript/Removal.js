@@ -14,7 +14,8 @@ var Removal = {
   },
   
   prompt: function(addon, uninstalling) {
-    if (addon.id === EXTENSION_ID && !ns.jsEnabled) {
+    if (addon.id === EXTENSION_ID && !ns.jsEnabled && ns.getPref("removalWarning", true)) {
+      let alwaysAsk = { value: true };
       try {
         let p = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
         switch (p.confirmEx(
@@ -27,17 +28,18 @@ var Removal = {
           ns.getString("removal.yes"), // in wstring aButton0Title,
           null, // in wstring aButton1Title,
           ns.getString("removal.no"), // in wstring aButton2Title,
-          null, // in wstring aCheckMsg,
-          {} // inout boolean aCheckState
+          ns.getString("alwaysAsk"), // in wstring aCheckMsg,
+          alwaysAsk // inout boolean aCheckState
         )) {
-          case 0: return;
-          case 2:
+          case 0: return; // YES, remove!
+          case 2: // NO (globally allow instead)
             ns.jsEnabled = true;
             ns.savePrefs();
             ns.reloadWhereNeeded();
-          default:
+            break;
+          default: // CANCEL
+            alwaysAsk.value = true;
         }
-        
         addon.userDisabled = false;
         if (("cancelUninstall" in addon)) {
           addon.cancelUninstall();
@@ -46,6 +48,10 @@ var Removal = {
         }
       } catch (e) {
         Cu.reportError(e);
+      } finally {
+        if (!alwaysAsk.value) {
+          ns.setPref("removalWarning", false);
+        }
       }
     }
   }
