@@ -1,12 +1,13 @@
 #palette-box #noscript-tbb {
   list-style-image: url("icon24.png");
 }
-#noscript-tbb[type="menu"] {
+#noscript-tbb[type="menu"]:not([cui-areatype="menu-panel"]) {
   -moz-box-orient: horizontal !important;
 }
 toolbar[mode="full"] #noscript-tbb[type="menu"] {
   -moz-binding: url("chrome://global/content/bindings/toolbarbutton.xml#menu-vertical");
 }
+
 
 #noscript-statusIcon,
 #noscript-statusRedirect,

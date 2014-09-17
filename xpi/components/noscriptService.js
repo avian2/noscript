@@ -5355,7 +5355,7 @@ var ns = {
       
       // Collect document / cached plugin URLs
       let win = document.defaultView;
-      let docURI = docURI = document.documentURI;
+      let docURI = document.documentURI;
       let url = this.getSite(docURI);
       
       if (url) {
@@ -5397,7 +5397,7 @@ var ns = {
       this.processScriptElements(document, sites, url);
       
     }, this, browser);
-
+    
     let document = top.document;
     let cache = this.getExpando(document, "objectSites");
     if(cache) {
