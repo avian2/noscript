@@ -214,7 +214,7 @@ var ScriptSurrogate = {
     let doc = scriptElement.ownerDocument;
     
     return (src && doc) && this.apply(doc, src, false, false) &&
-       (ns.getExpando(doc, "surrogates", {})[url] =
+       (ns.getExpando(doc, "surrogates", {})[src] =
         scriptElement._surrogated = true);
   },
   

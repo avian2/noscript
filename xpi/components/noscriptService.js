@@ -3432,7 +3432,7 @@ var ns = {
     var win = aContext && aContext.defaultView;
     if(win) this.getExpando(win.top.document, "codeSites", []).push(locationSite);
     
-    return forbidDelegate.call(this, originURL, locationURL);
+    return forbidDelegate.call(this, originURL, locationURL, win);
   },
   
 
@@ -3624,7 +3624,7 @@ var ns = {
      return false;
   },
   
-  forbiddenXBLContext: function(originURL, locationURL) {
+  forbiddenXBLContext: function(originURL, locationURL, window) {
     if (locationURL == this.nopXBL) return false; // always allow our nop binding
     
     var locationSite = this.getSite(locationURL);
@@ -3636,18 +3636,18 @@ var ns = {
       case 3: // allow only trusted XBL on trusted sites
         if (!locationSite) return true;
       case 2: // allow trusted and data: (Fx 3) XBL on trusted sites
-        if (!(this.isJSEnabled(originSite) ||
+        if (!(this.isJSEnabled(originSite, window) ||
             locationSite.indexOf("file:") === 0 // we trust local files to allow Linux theming
              )) return true;
       case 1: // allow trusted and data: (Fx 3) XBL on any site
-        if (!(this.isJSEnabled(locationSite) || /^(?:data|file|resource):/.test(locationURL))) return true;
+        if (!(this.isJSEnabled(locationSite, window) || /^(?:data|file|resource):/.test(locationURL))) return true;
       case 0: // allow all XBL
         return false;
     }
     return true;
   },
   
-  forbiddenXHRContext: function(originURL, locationURL) {
+  forbiddenXHRContext: function(originURL, locationURL, window) {
     var locationSite = this.getSite(locationURL);
     // var originSite = this.getSite(originURL);
     switch (this.forbidXHR) {
@@ -3656,7 +3656,7 @@ var ns = {
       case 2: // allow same-site XHR only
         if (locationSite != originSite) return true;
       case 1: // allow trusted XHR targets only
-        if (!(this.isJSEnabled(locationSite))) return true;
+        if (!(this.isJSEnabled(locationSite, window))) return true;
       case 0: // allow all XBL
         return false;
     }
@@ -5232,7 +5232,8 @@ var ns = {
   },
   
   _silverlightPatch: 'HTMLObjectElement.prototype.__defineGetter__("IsVersionSupported", function() ((/^application\\/x-silverlight\\b/.test(this.type)) ? function(n) true : undefined));',
-    
+  
+  _protectNamePatch: "let x=__lookupSetter__(\"name\");__defineSetter__(\"name\",function(n){let s=document.currentScript;if(s&&/[^.\\s]\\s*name\\s*=/.test(s.textContent)){console.log(\"NoScript prevented \\\"\" + n + \"\\\" from being assigned to window.name\")}else{x.call(this,n);}})",
   get _flashPatch() {
     delete this._flashPatch;
     return this._flashPatch = function() {
@@ -6027,8 +6028,9 @@ var ns = {
   
   _pageModMaskRx: /^(?:chrome|resource|view-source):/,
   onWindowSwitch: function(url, win, docShell) {
+    let channel = docShell.currentDocumentChannel;
     
-    if (IOUtil.extractFromChannel(docShell.currentDocumentChannel, "noscript.xssChecked", true) &&
+    if (IOUtil.extractFromChannel(channel, "noscript.xssChecked", true) &&
         this.filterBadCharsets(docShell)) return;
     
     const doc = docShell.document;
@@ -6100,8 +6102,12 @@ var ns = {
       if (this.forbidSilverlight && this.silverlightPatch)
         (scripts || (scripts = [])).push(this._silverlightPatch);
 
-      if(this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url))
+      if( this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url))
           (scripts || (scripts = [])).push(this.jsHack);
+          
+      if (IOUtil.extractFromChannel(channel, "noscript.protectName") && this.getPref("protectWindowNameXAssignment")) {
+        (scripts || (scripts = [])).push(this._protectNamePatch);
+      }
     }
     
     ScriptSurrogate.apply(doc, url, url, jsBlocked, scripts);

@@ -135,6 +135,8 @@ pref("noscript.filterXExceptions.verizon", true);
 pref("noscript.filterXExceptions.zendesk", true);
 pref("noscript.filterXExceptions.yt_comments", true);
 
+pref("noscript.protectWindowNameXAssignment", true);
+
 pref("noscript.injectionCheck", 2);
 pref("noscript.injectionCheckPost", true);
 pref("noscript.injectionCheckHTML", true);

@@ -771,7 +771,9 @@ RequestWatchdog.prototype = {
       
     let injectionAttempt = injectionCheck && (injectionCheck > 1 || !trustedOrigin || ns.isTemp(originSite)) &&
       (!window || ns.injectionCheckSubframes || window == window.top);
-
+    
+   
+    
     if (injectionAttempt) {
       let skipArr, skipRx;
       let isPaypal = this.PAYPAL_BUTTON_RX.test(originalSpec);
@@ -813,18 +815,31 @@ RequestWatchdog.prototype = {
         skipRx = new RegExp("(?:^|[&?])(?:" + skipArr.join('|') + ")=[^&]+", "g");
       }
       
+      
+      let injectionChecker = ns.injectionChecker;
+      
+      injectionChecker.reset();
+      
       if (!stripPost)
         stripPost = postInjection =
           ns.filterXPost &&
           (!origin || originSite != "chrome:") &&
-          channel.requestMethod == "POST" && ns.injectionChecker.checkPost(channel, skipArr);
+          channel.requestMethod == "POST" && injectionChecker.checkPost(channel, skipArr);
       
-      injectionAttempt = ns.filterXGet && ns.injectionChecker.checkURL(
+      let protectName = injectionChecker.nameAssignment;
+      
+      injectionAttempt = ns.filterXGet && injectionChecker.checkURL(
         skipRx ? originalSpec.replace(skipRx, '') : originalSpec);
+      
+      if ((protectName = (protectName || injectionChecker.nameAssignment)))
+        IOUtil.attachToChannel(channel, "noscript.protectName", DUMMY_OBJ); // remove redirected info
+      
+      
       
       if (ns.consoleDump) {
         if (injectionAttempt) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
         if (postInjection) this.dump(channel, "Detected POST injection attempt at level "  + injectionCheck);
+        if (protectName) this.dump(channel, "Name assignment detected, gonna protect window.name");
       }
     }
     
@@ -1136,6 +1151,16 @@ const IC_EVENT_DOS_PATTERN =
       + "|\\b(?:" + IC_WINDOW_OPENER_PATTERN + ")\\b[\\s\\S]+\\b(?:" + IC_EVENT_PATTERN + ")[\\s\\S]*=";
       
 var InjectionChecker = {
+  reset: function () {
+    
+    this.isPost =
+      this.base64 =
+      this.nameAssignment = false;
+      
+    this.base64tested = [];
+   
+  },
+  
   fuzzify: fuzzify,
   syntax: new SyntaxChecker(),
   _log: function(msg, t, i) {
@@ -1196,7 +1221,7 @@ var InjectionChecker = {
     var bs = {
       nq: new RegExp("[" + def + "]")
     };
-    Array.forEach("'\"", // special treatment for quotes
+    Array.forEach("'\"`", // special treatment for quotes
       function(c) { bs[c] = new RegExp("[" + def + c + "]"); }
     );
     delete this.breakStops;  
@@ -1570,7 +1595,7 @@ var InjectionChecker = {
         // irrepairable syntax error, such as closed parens in the beginning
     ;
     
-    const injectionFinderRx = /(['"#;>:{}]|[/?=](?![?&=])|&(?![\w-.[\]&!-]*=)|\*\/)(?!\1)/g;
+    const injectionFinderRx = /(['"`#;>:{}]|[/?=](?![?&=])|&(?![\w-.[\]&!-]*=)|\*\/)(?!\1)/g;
     injectionFinderRx.lastIndex = 0;    
     
     const t = Date.now();
@@ -1590,7 +1615,7 @@ var InjectionChecker = {
       }
        
       let breakSeq = m[1];
-      let quote = breakSeq == '"' || breakSeq == "'" ? breakSeq : '';
+      let quote = breakSeq in this.breakStops ? breakSeq : '';
       
       if (!this.maybeJS(quote ? quote + subj : subj)) {
          this.log("Fast escape on " + subj, t, iterations);
@@ -1789,6 +1814,10 @@ var InjectionChecker = {
   checkJS: function(s, unescapedUni) {
     this.log(s);
     
+    if (/[^&\?]\bname\s*=[^=]/.test(s)) {
+      this.nameAssignment = true;
+    }
+    
     var hasUnicodeEscapes = !unescapedUni && /\\u[0-9a-f]{4}/i.test(s);
     if (hasUnicodeEscapes && /\\u00[0-7][0-9a-f]/i.test(s)) {
       this.escalate("Unicode-escaped lower ASCII");
@@ -1797,6 +1826,11 @@ var InjectionChecker = {
     
     if (/\\x[0-9a-f]{2}[\s\S]*['"]/i.test(s)) {
       this.escalate("Obfuscated string literal");
+      return true;
+    }
+    
+    if (/`[\s\S]*\$\{[\s\S]+[=(][\s\S]+\}[\s\S]*`/.test(s)) {
+      this.escalate("ES6 string interpolation");
       return true;
     }
     
@@ -2005,10 +2039,8 @@ var InjectionChecker = {
     if (typeof(depth) != "number")
       depth = 3;
     
+    this.reset();
     this.isPost = isPost || false;
-    this.base64 = false;
-    this.base64tested = [];
-    
     
     if (ASPIdiocy.affects(s)) {
       if (this.checkRecursive(ASPIdiocy.process(s), depth, isPost))
