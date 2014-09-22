@@ -1814,7 +1814,7 @@ var InjectionChecker = {
   checkJS: function(s, unescapedUni) {
     this.log(s);
     
-    if (/[^&\?]\bname\s*=[^=]/.test(s)) {
+    if (/\?name\b[\s\S]*:|[^&?]\bname\b/.test(s)) {
       this.nameAssignment = true;
     }
     

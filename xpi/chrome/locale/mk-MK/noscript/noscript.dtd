@@ -178,6 +178,7 @@
 <!ENTITY noscriptEF.executable "Извршна датотека:">
 <!ENTITY noscriptPreset "Ниво на Безбедност">
 <!ENTITY noscriptPreset.off "Исклучи (дали сте сериозни?!)">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
 <!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
 <!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">

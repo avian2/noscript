@@ -14,7 +14,8 @@
 <!ENTITY noscriptUntrust.accesskey "n">
 <!ENTITY noscriptRemoveSelected "Rimuovi i siti selezionati">
 <!ENTITY noscriptGloballyEnabled "Esecuzione script abilitati globalmente (pericoloso)">
-<!ENTITY noscriptAutoReload "Aggiorna automaticamente la pagina quando i permessi cambiano">
+<!ENTITY noscriptAutoReload "Ricarica automaticamente la pagina quando i permessi cambiano">
+<!ENTITY noscriptAutoReload.currentTab "Ricarica solo la scheda corrente">
 <!ENTITY noscriptGeneral "Generale">
 <!ENTITY noscriptAppearance "Aspetto">
 <!ENTITY noscriptShow "Mostra…">

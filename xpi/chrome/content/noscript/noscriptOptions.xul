@@ -67,6 +67,10 @@
     
 
     <checkbox id="opt-autoReload" label="&noscriptAutoReload;" />
+		<vbox class="ia-indent">
+        <checkbox id="invopt-autoReload.allTabs" label="&noscriptAutoReload.currentTab;"  />
+		</vbox>
+		<separator class="thin"/>
     <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
     <checkbox id="opt-placesPrefs" label="&noscriptBookmarkSync;" />
    

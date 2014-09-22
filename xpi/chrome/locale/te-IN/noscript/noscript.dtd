@@ -142,6 +142,7 @@
 <!ENTITY noscriptEmbeddings "Embedded Objects">
 <!ENTITY noscriptPrev "Previuous">
 <!ENTITY noscriptNext "Next">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptForbidXSLT "Forbid XSLT">
 <!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">

@@ -166,6 +166,7 @@
 <!ENTITY ABE.refresh.accesskey "О">
 <!ENTITY noscriptUninstall "Деинсталирај">
 <!ENTITY noscriptRecentBlocked "Недавно блокиране странице">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptExternalFilters "External Filters">

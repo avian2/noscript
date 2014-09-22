@@ -184,6 +184,7 @@
 <!ENTITY noscript.hoverUI "Тышқан NoScript таңбашасынан өткен кезде рұқсаттар мәзірін ашу">
 <!ENTITY noscriptDonate "Ақшалай көмектесу">
 <!ENTITY noscriptDonate.accesskey "ш">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
 <!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
 <!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">

@@ -183,6 +183,7 @@
 <!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript\'s icon">
 <!ENTITY noscriptDonate "Donate">
 <!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptForbidWebGL "Forbid WebGL">
 <!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
 <!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">

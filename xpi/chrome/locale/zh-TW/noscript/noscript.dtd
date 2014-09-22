@@ -184,6 +184,7 @@
 <!ENTITY noscript.hoverUI "當滑鼠移至 NoScript's 圖示時開啟權限選單">
 <!ENTITY noscriptDonate "贊助">
 <!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
 <!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
 <!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">

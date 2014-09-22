@@ -5233,7 +5233,7 @@ var ns = {
   
   _silverlightPatch: 'HTMLObjectElement.prototype.__defineGetter__("IsVersionSupported", function() ((/^application\\/x-silverlight\\b/.test(this.type)) ? function(n) true : undefined));',
   
-  _protectNamePatch: "let x=__lookupSetter__(\"name\");__defineSetter__(\"name\",function(n){let s=document.currentScript;if(s&&/[^.\\s]\\s*name\\s*=/.test(s.textContent)){console.log(\"NoScript prevented \\\"\" + n + \"\\\" from being assigned to window.name\")}else{x.call(this,n);}})",
+  _protectNamePatch: "let x=__lookupSetter__(\"name\");__defineSetter__(\"name\",function(n){let s=document.currentScript;if(s&&/\\bname\\b/.test(s.textContent)){console.log(\"NoScript prevented \\\"\" + n + \"\\\" from being assigned to window.name\")}else{x.call(this,n);}})",
   get _flashPatch() {
     delete this._flashPatch;
     return this._flashPatch = function() {

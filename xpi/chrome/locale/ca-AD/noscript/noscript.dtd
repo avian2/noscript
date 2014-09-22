@@ -166,6 +166,7 @@
 <!ENTITY ABE.refresh.accesskey "r">
 <!ENTITY noscriptUninstall "Desinatal·lar">
 <!ENTITY noscriptRecentBlocked "Llocs bloquejats recentment">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">
 <!ENTITY noscriptExternalFilters "External Filters">

@@ -184,6 +184,7 @@
 <!ENTITY noscript.hoverUI "فتح قائمة الإذِن عندما يحوم المؤشّر فوق رمز نوسكريبت">
 <!ENTITY noscriptDonate "التبرع">
 <!ENTITY noscriptDonate.accesskey "ت">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
 <!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
 <!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">

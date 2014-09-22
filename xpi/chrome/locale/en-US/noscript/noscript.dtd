@@ -15,6 +15,7 @@
 <!ENTITY noscriptRemoveSelected "Remove Selected Sites">
 <!ENTITY noscriptGloballyEnabled "Scripts Globally Allowed (dangerous)">
 <!ENTITY noscriptAutoReload "Automatically reload affected pages when permissions change">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptGeneral "General">
 <!ENTITY noscriptAppearance "Appearance">
 <!ENTITY noscriptShow "Show…">

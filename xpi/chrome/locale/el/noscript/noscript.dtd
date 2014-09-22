@@ -184,6 +184,7 @@
 <!ENTITY noscript.hoverUI "Άνοιγμα του μενού αδειοδοτήσεων όταν περνάει το ποντίκι πάνω από το εικονίδιο του NoScript">
 <!ENTITY noscriptDonate "Δωρεά">
 <!ENTITY noscriptDonate.accesskey "ω">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
 <!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
 <!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">

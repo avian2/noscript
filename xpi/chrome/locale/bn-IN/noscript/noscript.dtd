@@ -183,6 +183,7 @@
 <!ENTITY noscriptDonate "সাহায্য করুন">
 <!ENTITY noscriptDonate.accesskey "o">
 <!ENTITY noscriptForbidWebGL "WebGL প্রতিষেধ করুন">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptTruncateTitle "Truncate document titles">
 <!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
 <!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
