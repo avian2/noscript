@@ -1368,6 +1368,7 @@ var InjectionChecker = {
     "(?:\\b" + fuzzify('document') + "\\b[\\s\\S]*\\.|\\s" + fuzzify('setter') + "\\b[\\s\\S]*=)|/.*/[\\s\\S]*(?:\\.(?:" +
      "\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=|" +
       + fuzzify('source|toString') + ")|\\[)|" + IC_EVENT_DOS_PATTERN
+      + "|[+-]{2}\\s*([$a-z][\\s\\S]*[[.])|(?:\\]|\\.\\s*\\w+)\\s*([+-]{2}|[+*/<>~-]+\\s*=)" // inc/dec/compound operators
   ),
   _riskyAssignmentRx: new RegExp(
     "\\b(?:" + fuzzify('location|innerHTML') + ")\\b[\\s\\S]*="
@@ -1405,7 +1406,7 @@ var InjectionChecker = {
   _removeDotsRx: /^openid\.[\w.-]+(?==)|(?:[?&#\/]|^)[\w.-]+(?=[\/\?&#]|$)|[\w\.]*(?:\b[A-Z]+|\d|[a-z][$_])[\w.-]*|=[a-z.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&/]|$)/g,
   _removeDots: function(p) p.replace(InjectionChecker._dotRx, '|'),
   _arrayAccessRx: /\s*\[\d+\]/g,
-  _assignmentRx: /^(?:[^()="'\s]+=(?:[^(='"\[+]+|[?a-zA-Z_0-9;,&=/]+|[\d.|]+))$/,
+  _assignmentRx: /^(?:[^()="'\s]+=(?:[^(='"\[+]+|[?a-zA-Z_0-9;,&=/]+|[\d.|]+))$|(?:^|[+-]{2}|[+*/<>~-]+\\s*=)/,
   _badRightHandRx: /=[\s\S]*(?:_QS_\b|[|.][\s\S]*source\b|<[\s\S]*\/[^>]*>)/,
   _wikiParensRx: /^(?:[\w.|-]+\/)*\(*[\w\s-]+\([\w\s-]+\)[\w\s-]*\)*$/,
   _neutralDotsRx: /(?:^|[\/;&#])[\w-]+\.[\w-]+[\?;\&#]/g,
@@ -1569,7 +1570,7 @@ var InjectionChecker = {
     
     
     // cleanup most urlencoded noise and reduce JSON/XML
-    s = this.reduceXML(this.reduceJSON(this.collapseChars(
+    s = ';' + this.reduceXML(this.reduceJSON(this.collapseChars(
         s.replace(/\%\d+[a-z\(]\w*/gi, '§')
           .replace(/[\r\n\u2028\u2029]+/g, "\n")
           .replace(/[\x01-\x09\x0b-\x20]+/g, ' ')
@@ -1587,8 +1588,8 @@ var InjectionChecker = {
     
     const
       invalidCharsRx = /[\u007f-\uffff]/.test(s) && this.invalidCharsRx,
-      dangerRx = /\(|`[\s\S]*`|\[[^\]]+\]|(?:setter|location|innerHTML|cookie|on\w{3,}|\.\D)[^&]*=[\s\S]*?(?:\/\/|[\w$\u0080-\uFFFF.[\]})'"-]+)/,
-      exprMatchRx = /^[\s\S]*?(?:[=\)]|`[\s\S]*`)/,
+      dangerRx = /\(|(?:^|[+-]{2}|[+*/<>~-]+\\s*=)|`[\s\S]*`|\[[^\]]+\]|(?:setter|location|innerHTML|cookie|on\w{3,}|\.\D)[^&]*=[\s\S]*?(?:\/\/|[\w$\u0080-\uFFFF.[\]})'"-]+)/,
+      exprMatchRx = /^[\s\S]*?(?:[=\)]|`[\s\S]*`|[+-]{2}|[+*/<>~-]+\\s*=)/,
       safeCgiRx = /^(?:(?:[\.\?\w\-\/&:§\[\]]+=[\w \-:\+%#,§\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/,
         // r2l, chained query string parameters, protocol://domain
       headRx = /^(?:[^'"\/\[\(]*[\]\)]|[^"'\/]*(?:§|[^&]&[\w\.]+=[^=]))/
@@ -1836,7 +1837,7 @@ var InjectionChecker = {
     
     this.syntax.lastFunction = null;
     let ret = this.checkAttributes(s) ||
-      /[\\\(]|=[^=]/.test(s) &&  this.checkJSBreak(s) || // MAIN
+      (/[\\\(]|=[^=]/.test(s) || this._singleAssignmentRx.test(s)) &&  this.checkJSBreak(s) || // MAIN
       hasUnicodeEscapes && this.checkJS(this.unescapeJS(s), true); // optional unescaped recursion
     if (ret) {
       let msg = "JavaScript Injection in " + s;
