@@ -1363,12 +1363,11 @@ var InjectionChecker = {
     return s;
   }
 ,
-
+  
   _singleAssignmentRx: new RegExp(
     "(?:\\b" + fuzzify('document') + "\\b[\\s\\S]*\\.|\\s" + fuzzify('setter') + "\\b[\\s\\S]*=)|/.*/[\\s\\S]*(?:\\.(?:" +
      "\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=|" +
       + fuzzify('source|toString') + ")|\\[)|" + IC_EVENT_DOS_PATTERN
-      + "|[+-]{2}\\s*([$a-z][\\s\\S]*[[.])|(?:\\]|\\.\\s*\\w+)\\s*([+-]{2}|[+*/<>~-]+\\s*=)" // inc/dec/compound operators
   ),
   _riskyAssignmentRx: new RegExp(
     "\\b(?:" + fuzzify('location|innerHTML') + ")\\b[\\s\\S]*="
@@ -1406,7 +1405,8 @@ var InjectionChecker = {
   _removeDotsRx: /^openid\.[\w.-]+(?==)|(?:[?&#\/]|^)[\w.-]+(?=[\/\?&#]|$)|[\w\.]*(?:\b[A-Z]+|\d|[a-z][$_])[\w.-]*|=[a-z.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&/]|$)/g,
   _removeDots: function(p) p.replace(InjectionChecker._dotRx, '|'),
   _arrayAccessRx: /\s*\[\d+\]/g,
-  _assignmentRx: /^(?:[^()="'\s]+=(?:[^(='"\[+]+|[?a-zA-Z_0-9;,&=/]+|[\d.|]+))$|(?:^|[+-]{2}|[+*/<>~-]+\\s*=)/,
+  _riskyOperatorsRx: /[+-]{2}\s*([$a-z][\s\S]*[[.])|(?:\]|\.\s*\w+)\s*([+-]{2}|[+*\/<>~-]+\s*=)/, // inc/dec/self-modifying assignments on DOM props
+  _assignmentRx: /^(?:[^()="'\s]+=(?:[^(='"\[+]+|[?a-zA-Z_0-9;,&=/]+|[\d.|]+))$/,
   _badRightHandRx: /=[\s\S]*(?:_QS_\b|[|.][\s\S]*source\b|<[\s\S]*\/[^>]*>)/,
   _wikiParensRx: /^(?:[\w.|-]+\/)*\(*[\w\s-]+\([\w\s-]+\)[\w\s-]*\)*$/,
   _neutralDotsRx: /(?:^|[\/;&#])[\w-]+\.[\w-]+[\?;\&#]/g,
@@ -1423,11 +1423,14 @@ var InjectionChecker = {
         .replace(/(^|[=;.+-])\s*[\[(]+/g, '$1') // remove leading parens and braces
         .replace(this._openIdRx, '_OPENID_SCOPE_=XYZ')
         .replace(this._gmxRx, '_GMX_-_GMX_')
-        ; 
-   if (expr.indexOf(")") !== -1) expr += ")"; // account for externally balanced parens
-   if(this._assignmentRx.test(expr) && !this._badRightHandRx.test(expr)) // commonest case, single assignment or simple chained assignments, no break
-      return this._singleAssignmentRx.test(expr) || this._riskyAssignmentRx.test(expr) && this._nameRx.test(expr);
+        ;
+        
+    if (this._riskyOperatorsRx.test(expr)) return true;
     
+    if (expr.indexOf(")") !== -1) expr += ")"; // account for externally balanced parens
+    if(this._assignmentRx.test(expr) && !this._badRightHandRx.test(expr)) // commonest case, single assignment or simple chained assignments, no break
+       return this._singleAssignmentRx.test(expr) || this._riskyAssignmentRx.test(expr) && this._nameRx.test(expr);
+     
     return this._riskyParensRx.test(expr) ||
       this._maybeJSRx.test(expr.replace(this._neutralDotsRx, '')) &&
         !this._wikiParensRx.test(expr); 
@@ -1837,7 +1840,7 @@ var InjectionChecker = {
     
     this.syntax.lastFunction = null;
     let ret = this.checkAttributes(s) ||
-      (/[\\\(]|=[^=]/.test(s) || this._singleAssignmentRx.test(s)) &&  this.checkJSBreak(s) || // MAIN
+      (/[\\\(]|=[^=]/.test(s) || this._riskyOperatorsRx.test(s)) &&  this.checkJSBreak(s) || // MAIN
       hasUnicodeEscapes && this.checkJS(this.unescapeJS(s), true); // optional unescaped recursion
     if (ret) {
       let msg = "JavaScript Injection in " + s;
