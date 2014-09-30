@@ -23,7 +23,6 @@
   
   <script type="application/x-javascript;version=1.8" src="noscript.js" />
   <script type="application/x-javascript;version=1.8" src="iaUI.js" />
-  <script type="application/x-javascript;version=1.8" src="tree-copy.js" />
   <script type="application/x-javascript;version=1.8" src="noscriptOptions.js" />
   
   <vbox style="width: &noscriptOptionsWidth;">
@@ -93,22 +92,15 @@
       accesskey="&noscriptAllow.accesskey;" 
       oncommand="nsopt.allow()"/>
   </hbox>
-
- <tree id="urlListDisplay"
-    onselect="nsopt.urlListChanged(true)"
+  <listbox id="urlList" seltype="multiple" 
+    onselect="nsopt.urlListChanged()"
     onkeyup="if (event.keyCode == event.DOM_VK_DELETE) nsopt.remove();"
-    onkeydown="if(event.ctrlKey || event.metaKey){if (event.keyCode === event.DOM_VK_A) { noscriptTreeCc.selectAll($('urlListDisplay')); }else if (event.keyCode === event.DOM_VK_C){nsopt.copyUrlListSel(); }}return false;"
-    onclick="if(event.button === 1){nsopt.openInfo(event);}else if (event.button === 2){nsopt.copyUrlListSel()}"
-    hidecolumnpicker="true"
-    seltype="multiple"
+    onkeydown="if (event.keyCode === event.DOM_VK_A &amp;&amp; event.ctrlKey) { this.selectAll(); return false; }"
+    onclick="nsopt.openInfo(event);"
     flex="1"
-    multicol="true"
   >
-    <treecols>
-      <treecol label="foo" flex="1" />
-    </treecols>
-    <treechildren />
-  </tree>
+  <listitem id="fake_url_item" label=" " />
+  </listbox>
   <separator class="thin"/>
   <hbox>
     <button id="removeButton" disabled="true" label="&noscriptRemoveSelected;" oncommand="nsopt.remove()"/>

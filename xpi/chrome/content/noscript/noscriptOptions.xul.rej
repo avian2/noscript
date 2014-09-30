@@ -1,0 +1,9 @@
+*** /dev/null
+--- /dev/null
+***************
+*** 96,97
+-   <listbox id="urlList" seltype="multiple"
+-     onselect="nsopt.urlListChanged()"
+--- 97,98 -----
++   <tree id="urlListDisplay"
++     onselect="nsopt.urlListChanged(true)"

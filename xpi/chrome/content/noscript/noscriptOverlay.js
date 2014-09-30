@@ -355,11 +355,26 @@ return noscriptUtil.service ? {
     return tip;
   },
   
+  _customizableUIListener: {
+    onWidgetAfterDOMChange: function(aWidget) {
+      for each(let b in ['noscript-tbb', 'noscript-statusLabel']) {
+        if(b == aWidget.id) {
+          window.setTimeout(function() { noscriptOverlay.initPopups(); }, 0);
+          return;
+        }
+      }
+    }
+  },
+        
   _popupsInitialized: false,
   _initPopupsRecursion: false,
+  
   initPopups: function() {
+    noscriptOverlay.ns.log("InitPopup: " + (this._initPopupsRecursion + ", " + this._popupsInitialized) + " - " + new Error().stack);
     if (this._initPopupsRecursion) return;
+    
     this._initPopupsRecursion = true;
+    
     try {
       
     
@@ -379,23 +394,14 @@ return noscriptUtil.service ? {
       const buttons = [tbb, $("noscript-statusLabel")];
       
       if (install && "CustomizableUI" in window) {
-        CustomizableUI.addListener({
-          onWidgetAfterDOMChange: function(aWidget) {
-            for each(let b in ['noscript-tbb', 'noscript-statusLabel']) {
-              if(b == aWidget.id) {
-                window.setTimeout(function() { noscriptOverlay.initPopups(); }, 0);
-                return;
-              }
-            }
-          }
-        });
+        CustomizableUI.addListener(this._customizableUIListener);
       }
       
       let statusIcon = $("noscript-statusIcon");
       
       if ($("addon-bar")) {
-        // Fx 4 or above
-        if (install) {  
+        // Fx 4  till Austrails
+        if (install &&  !("CustomizableUI" in window)) {  
           window.addEventListener("aftercustomization", function(ev) {
             noscriptOverlay.initPopups();
           }, false);

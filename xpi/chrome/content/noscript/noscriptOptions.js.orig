@@ -1,4 +1,6 @@
-// Cc, Ci, Cu should be already defined by tree-copy.js
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
 
 var ns = noscriptUtil.service;
 
@@ -7,7 +9,6 @@ var nsopt = {
 
   dom2: /^(?:http[s]?|file):\/\/([^\.\?\/#,;:\\\@]+(:?\.[^\.\?\/#,;:\\\@]+$|$))/,
   utils: null,
-  whitelistURLs: [],
   init: function() {
 
     if(ns.uninstalling) { // this should never happen! 
@@ -23,7 +24,7 @@ var nsopt = {
     abeOpts.init();
 
     var locked = ns.locked;
-    for each (var widget in ["urlText","urlListDisplay", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
+    for each (var widget in ["urlText","urlList", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
       this[widget] = $(widget);
       if(locked) this[widget].disabled = true;
     }
@@ -39,8 +40,6 @@ var nsopt = {
     this.untrustedSites = ns.untrustedSites.clone();
     this.tempSites = ns.tempSites.clone();
     this.gTempSites = ns.gTempSites.clone();
-
-    this.urlListDisplay.boxObject.QueryInterface(Ci.nsITreeBoxObject);
     this.populateUrlList();
     
     this.jsglobal.checked = ns.jsEnabled;
@@ -279,11 +278,11 @@ var nsopt = {
     return true;
   },
   
-  urlListChanged: function(dontUpdate) {
-    const selectedItems = noscriptTreeCc.getSelectedItems(this.urlListDisplay, this.whitelistURLs);
+  urlListChanged: function() {
+    const selectedItems = this.urlList.selectedItems;
     var removeDisabled = true;
     for(var j = selectedItems.length; j-- > 0;) {
-      if(!selectedItems[j].mandatory) {
+      if(selectedItems[j].getAttribute("disabled") != "true") {
         removeDisabled = false;
         break;
       }
@@ -292,14 +291,13 @@ var nsopt = {
     $("revokeButton")
       .setAttribute("disabled", this.tempRevoked || 
           !(this.tempSites.sitesString || this.gTempSites.sitesString || ns.objectWhitelistLen));
-    if (!dontUpdate) nsWhitelistTreeView.updateTree();
     this.urlChanged();
   },
   
   openInfo: function(ev) {
     if (ev.button === 1) {
       setTimeout(function() {
-        const selectedItems = noscriptTreeCc.getSelectedItems(nsopt.urlListDisplay, nsopt.whitelistURLs);
+        const selectedItems = nsopt.urlList.selectedItems;
         const domains = [];
         for (let j = selectedItems.length; j-- > 0;) {
           let site = selectedItems[j].value;
@@ -309,10 +307,6 @@ var nsopt = {
         domains.forEach(noscriptUtil.openInfo, noscriptUtil);
       }, 0); // delayed to let middle-click autoselect the underlying item
     }
-  },
-
-  copyUrlListSel: function() {
-    noscriptTreeCc.doCopy(this.urlListDisplay, "", " ");
   },
   
   urlChanged: function() {
@@ -340,17 +334,20 @@ var nsopt = {
   },
   
   ensureVisible: function(site) {
-    for(var j = nsWhitelistTreeView.rowCount; j-- > 0;) {
-      if(nsWhitelistTreeView.getCellText(j) == site) {
-        this.urlListDisplay.boxObject.ensureRowIsVisible(j);
+    var item;
+    const ul = this.urlList;
+    for(var j = ul.getRowCount(); j-- > 0;) {
+      if((item = ul.getItemAtIndex(j)).getAttribute("value") == site) {
+        ul.ensureElementIsVisible(item);
       }
     }
   },
-
+  
   populateUrlList: function() {
     const policy = this.trustedSites;
     const sites = this.trustedSites.sitesList;
-    this.whitelistURLs = [];
+    const ul = this.urlList;
+    for(var j = ul.getRowCount(); j-- > 0; ul.removeItemAt(j));
     const dom2 = this.dom2;
     var site, item;
     var match, k, len;
@@ -363,17 +360,15 @@ var nsopt = {
       if((match = site.match(dom2)) && policy.matches(item = match[1])) 
         continue;
       
-      item = {value:site};
+      item = ul.appendItem(site, site);
       if(ns.isMandatory(site)) { 
-        item.mandatory = true;
+        item.setAttribute("disabled", "true");
       }
-      item.temp = site in tempMap;
-      this.whitelistURLs.push(item);
+      item.style.fontStyle = (site in tempMap) ? "italic" : "normal";
     }
-    this.urlListDeselectAll();
     this.urlListChanged();
   },
-
+  
   allow: function() {
     const site = ns.getSite(this.urlText.value);
     this.trustedSites.add(site);
@@ -387,10 +382,11 @@ var nsopt = {
   },
   
   remove: function() {
-    const ul = this.urlListDisplay;
-    const selectedItems = noscriptTreeCc.getSelectedItems(ul, this.whitelistURLs);
-    var visIdx = ul.boxObject.getFirstVisibleRow();
-    var lastIdx = visIdx + ul.boxObject.getPageLength();
+    const ul = this.urlList;
+    const selectedItems = ul.selectedItems;
+    var visIdx = ul.getIndexOfFirstVisibleRow();
+    var lastIdx = visIdx + ul.getNumberOfVisibleRows();
+   
     
     
     
@@ -407,14 +403,25 @@ var nsopt = {
     this.tempSites.remove(removed, true, true); // see noscriptService#eraseTemp()
     this.gTempSites.remove(removed, true, true);
       
+      
+    if(selectedItems.length == 1) {
+      if(removed.length == 1) {
+        ul.removeItemAt(ul.getIndexOfItem(selectedItems[0]));  
+      }
+      return;
+    }
+
     this.populateUrlList();
-
+    try {
+      var rowCount = ul.getRowCount();
+      if(rowCount > lastIdx) {
+        ul.scrollToIndex(visIdx);
+      } else {
+        ul.ensureIndexIsVisible(rowCount - 1);
+      } 
+    } catch(e) {}
   },
-
-  urlListDeselectAll: function() {
-    this.urlListDisplay.view.selection.clearSelection();
-  },
-
+  
   tempRevoked: false,
   revokeTemp: function() {
     this.trustedSites.remove(this.tempSites.sitesList, true, true);
@@ -722,43 +729,3 @@ var abeOpts = {
   }
   
 }
-
-var nsWhitelistTreeView = {
-  rowCount: nsopt.whitelistURLs.length,
-  getCellText: function(r, c) { return nsopt.whitelistURLs[r].value; },
-  setTree: function(treebox){ this.treebox = treebox; },
-  isContainer: function(row){ return false; },
-  isSeparator: function(row){ return false; },
-  isSorted: function(){ return true; },
-  getLevel: function(row){ return 0; },
-  getImageSrc: function(row,col){ return null; },
-  getRowProperties: function(row,props) {
-    // ??? need to set multicol manually for some reason
-    if (props) {
-      let aserv=Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
-      props.AppendElement(aserv.getAtom("multicol"));
-    }
-    else { return "multicol" }
-  },
-  getCellProperties: function(row,col,props) {
-    var psl = [];
-    if (nsopt.whitelistURLs[row].temp) psl.push("temp");
-    if (nsopt.whitelistURLs[row].mandatory) psl.push("mandatory");
-    if (psl.length == 0) return;
-    if (props) {
-      let aserv=Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
-      for each (let s in psl) props.AppendElement(aserv.getAtom(s));
-    }
-    else { return psl.join(" ") }
-  },
-  getColumnProperties: function(colid,col,props){},
-  cycleHeader: function(col){},
-
-  // Custom properties and methods
-  updateTree: function() {
-    var r = nsopt.urlListDisplay.boxObject.getFirstVisibleRow();
-    nsWhitelistTreeView.rowCount = nsopt.whitelistURLs.length;
-    $("urlListDisplay").view = nsWhitelistTreeView;
-    nsopt.urlListDisplay.boxObject.scrollToRow(r);
-  },
-};

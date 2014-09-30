@@ -31,3 +31,16 @@ tabbox#nsopt-tabsAdvanced > tab {
 .flexible-cbx {
   white-space: normal;
 }
+
+#urlListDisplay treecols {
+  height: 0px;
+  overflow: hidden;
+}
+
+#urlListDisplay treechildren::-moz-tree-cell-text(temp) {
+  font-style: italic;
+}
+
+#urlListDisplay treechildren::-moz-tree-cell-text(mandatory) {
+  color: #999;
+}
