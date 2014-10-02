@@ -1383,16 +1383,17 @@ var InjectionChecker = {
     // double function call
     '|\\([\\s\\S]*\\([\\s\\S]*\\)' +
     ')|(?:^|\\W)(?:' + IC_EVAL_PATTERN +
-    ')(?:\\W+[\\s\\S]*|)\\(|[=(][\\s\\S]*(?:'+
-    IC_EVAL_PATTERN +
-    ')|\\b(?:' +
-    fuzzify('setter|location|innerHTML') +
+    ')(?:\\W+[\\s\\S]*|)[(`]|[=(][\\s\\S]*(?:' + // calling eval-like functions directly or...
+    IC_EVAL_PATTERN + // ... assigning them to another function possibly called by the victim later
+    ')\s*[\\n,;:|]|\\b(?:' +
+    fuzzify('setter|location|innerHTML') +  // eval-like assignments
     ')\\b[\\s\\S]*=|' +
     '.' + IC_COMMENT_PATTERN + "src" + IC_COMMENT_PATTERN + '=' +
     IC_EVENT_DOS_PATTERN +
     "|\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=" +
     "|=[s\\\\[ux]?\d{2}" // escape (unicode/ascii/octal)
-  ),
+  )
+ ,
     
   _riskyParensRx: new RegExp(
     "(?:^|\\W)(?:(?:" + IC_EVAL_PATTERN + "|on\\w+)\\s*\\(|" +
@@ -1414,8 +1415,11 @@ var InjectionChecker = {
   _gmxRx: /\$\(clientName\)-\$\(dataCenter\)\.(\w+\.)+\w+/, // GMX webmail, see http://forums.informaction.com/viewtopic.php?p=69700#p69700
   
   maybeJS: function(expr) {
-    // ES6 templates, extremely insidious!!!
-    if (/`[\s\S]*`/.test(expr)) return true;
+   
+    if (/`[\s\S]*`/.test(expr) ||  // ES6 templates, extremely insidious!!!
+        this._riskyOperatorsRx.test(expr) // this must be checked before removing dots...
+        ) return true;
+    
     expr = // dotted URL components can lead to false positives, let's remove them
       expr.replace(this._removeDotsRx, this._removeDots)
         .replace(this._arrayAccessRx, '_ARRAY_ACCESS_')
@@ -1426,8 +1430,6 @@ var InjectionChecker = {
         .replace(this._gmxRx, '_GMX_-_GMX_')
         ;
         
-    if (this._riskyOperatorsRx.test(expr)) return true;
-    
     if (expr.indexOf(")") !== -1) expr += ")"; // account for externally balanced parens
     if(this._assignmentRx.test(expr) && !this._badRightHandRx.test(expr)) // commonest case, single assignment or simple chained assignments, no break
        return this._singleAssignmentRx.test(expr) || this._riskyAssignmentRx.test(expr) && this._nameRx.test(expr);
