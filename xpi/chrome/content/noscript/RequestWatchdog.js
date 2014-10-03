@@ -1406,7 +1406,7 @@ var InjectionChecker = {
   _removeDotsRx: /^openid\.[\w.-]+(?==)|(?:[?&#\/]|^)[\w.-]+(?=[\/\?&#]|$)|[\w\.]*(?:\b[A-Z]+|\d|[a-z][$_])[\w.-]*|=[a-z.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&/]|$)/g,
   _removeDots: function(p) p.replace(InjectionChecker._dotRx, '|'),
   _arrayAccessRx: /\s*\[\d+\]/g,
-  _riskyOperatorsRx: /[+-]{2}\s*([$a-z][\s\S]*[[.])|(?:\]|\.\s*\w+)\s*([+-]{2}|[+*\/<>~-]+\s*=)/, // inc/dec/self-modifying assignments on DOM props
+  _riskyOperatorsRx: /[+-]{2}\s*(?:[$a-z][\s\S]*[[.]|location)|(?:\]|\.\s*\w+|location)\s*([+-]{2}|[+*\/<>~-]+\s*=)/, // inc/dec/self-modifying assignments on DOM props
   _assignmentRx: /^(?:[^()="'\s]+=(?:[^(='"\[+]+|[?a-zA-Z_0-9;,&=/]+|[\d.|]+))$/,
   _badRightHandRx: /=[\s\S]*(?:_QS_\b|[|.][\s\S]*source\b|<[\s\S]*\/[^>]*>)/,
   _wikiParensRx: /^(?:[\w.|-]+\/)*\(*[\w\s-]+\([\w\s-]+\)[\w\s-]*\)*$/,
