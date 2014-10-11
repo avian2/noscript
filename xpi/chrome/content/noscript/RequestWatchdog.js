@@ -1392,7 +1392,8 @@ var InjectionChecker = {
     IC_EVENT_DOS_PATTERN +
     "|\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=" +
     "|=[s\\\\[ux]?\d{2}" + // escape (unicode/ascii/octal)
-    "|=" + IC_COMMENT_PATTERN + "(?:toSource|valueOf)[\\s\\S]+=[\\s\\S]*" + IC_EVAL_PATTERN
+    "|\\b(?:toString|valueOf)\\b" + IC_COMMENT_PATTERN + "=[\\s\\S]*(?:" + IC_EVAL_PATTERN +
+    ")"
   )
  ,
     
