@@ -1391,7 +1391,8 @@ var InjectionChecker = {
     '.' + IC_COMMENT_PATTERN + "src" + IC_COMMENT_PATTERN + '=' +
     IC_EVENT_DOS_PATTERN +
     "|\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=" +
-    "|=[s\\\\[ux]?\d{2}" // escape (unicode/ascii/octal)
+    "|=[s\\\\[ux]?\d{2}" + // escape (unicode/ascii/octal)
+    "|=" + IC_COMMENT_PATTERN + "(?:toSource|valueOf)[\\s\\S]+=[\\s\\S]*" + IC_EVAL_PATTERN
   )
  ,
     
@@ -1406,7 +1407,7 @@ var InjectionChecker = {
   _removeDotsRx: /^openid\.[\w.-]+(?==)|(?:[?&#\/]|^)[\w.-]+(?=[\/\?&#]|$)|[\w\.]*(?:\b[A-Z]+|\d|[a-z][$_])[\w.-]*|=[a-z.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&/]|$)/g,
   _removeDots: function(p) p.replace(InjectionChecker._dotRx, '|'),
   _arrayAccessRx: /\s*\[\d+\]/g,
-  _riskyOperatorsRx: /[+-]{2}\s*(?:\/[*/][\s\S]+)?(?:[$a-z][\s\S]*[[.]|location)|(?:\]|\.\s*(?:\/[*/][\s\S]+)?\w+|location)\s*(?:\/[*/][\s\S]+)?([+-]{2}|[+*\/<>~-]+\s*(?:\/[*/][\s\S]+)?=)/, // inc/dec/self-modifying assignments on DOM props
+  _riskyOperatorsRx: /[+-]{2}\s*(?:\/[*/][\s\S]+)?(?:\w+(?:\/[*/][\s\S]+)?[[.]|location)|(?:\]|\.\s*(?:\/[*/][\s\S]+)?\w+|location)\s*(?:\/[*/][\s\S]+)?([+-]{2}|[+*\/<>~-]+\s*(?:\/[*/][\s\S]+)?=)/, // inc/dec/self-modifying assignments on DOM props
   _assignmentRx: /^(?:[^()="'\s]+=(?:[^(='"\[+]+|[?a-zA-Z_0-9;,&=/]+|[\d.|]+))$/,
   _badRightHandRx: /=[\s\S]*(?:_QS_\b|[|.][\s\S]*source\b|<[\s\S]*\/[^>]*>)/,
   _wikiParensRx: /^(?:[\w.|-]+\/)*\(*[\w\s-]+\([\w\s-]+\)[\w\s-]*\)*$/,
