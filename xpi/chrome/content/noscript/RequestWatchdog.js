@@ -1370,7 +1370,7 @@ var InjectionChecker = {
       + fuzzify('source|toString') + ")|\\[)|" + IC_EVENT_DOS_PATTERN
   ),
   _riskyAssignmentRx: new RegExp(
-    "\\b(?:" + fuzzify('location|innerHTML') + ")\\b[\\s\\S]*="
+    "\\b(?:" + fuzzify('location|innerHTML|outerHTML') + ")\\b[\\s\\S]*="
   ),
   _nameRx: new RegExp(
     "=[\\s\\S]*\\b" + fuzzify('name') + "\\b|" +
@@ -1386,14 +1386,15 @@ var InjectionChecker = {
     ')(?:\\W+[\\s\\S]*|)[(`]|[=(][\\s\\S]*(?:' + // calling eval-like functions directly or...
     IC_EVAL_PATTERN + // ... assigning them to another function possibly called by the victim later
     ')\s*[\\n,;:|]|\\b(?:' +
-    fuzzify('setter|location|innerHTML') +  // eval-like assignments
+    fuzzify('setter|location|innerHTML|outerHTML') +  // eval-like assignments
     ')\\b[\\s\\S]*=|' +
     '.' + IC_COMMENT_PATTERN + "src" + IC_COMMENT_PATTERN + '=' +
     IC_EVENT_DOS_PATTERN +
     "|\\b" + fuzzify("onerror") + "\\b[\\s\\S]*=" +
     "|=[s\\\\[ux]?\d{2}" + // escape (unicode/ascii/octal)
-    "|\\b(?:toString|valueOf)\\b" + IC_COMMENT_PATTERN + "=[\\s\\S]*(?:" + IC_EVAL_PATTERN +
-    ")"
+    "|\\b(?:toString|valueOf)\\b" + IC_COMMENT_PATTERN + "=[\\s\\S]*(?:" + IC_EVAL_PATTERN + ")" +
+    "|(?:\\)|(?:[^\\w$]|^)[$a-zA-Z_\\u0ff-\\uffff][$\\w\\u0ff-\\uffff]*)" + IC_COMMENT_PATTERN + '=>' + // concise function definition
+    "|(?:[^\\w$]|^)" + IC_EVENT_PATTERN + IC_COMMENT_PATTERN + "="
   )
  ,
     
@@ -1534,7 +1535,7 @@ var InjectionChecker = {
     var m = fn.toSource().match(/\{([\s\S]*)\}/);
     if (!m) return false;
     var expr = this.stripLiteralsAndComments(m[1]);
-    return /=[\s\S]*cookie|\b(?:setter|document|location|innerHTML|\.\W*src)[\s\S]*=|[\w$\u0080-\uffff\)\]]\s*[\[\(]/.test(expr) ||
+    return /=[\s\S]*cookie|\b(?:setter|document|location|(?:inn|out)erHTML|\.\W*src)[\s\S]*=|[\w$\u0080-\uffff\)\]]\s*[\[\(]/.test(expr) ||
             this.maybeJS(expr);
   },
   
@@ -1596,7 +1597,7 @@ var InjectionChecker = {
     
     const
       invalidCharsRx = /[\u007f-\uffff]/.test(s) && this.invalidCharsRx,
-      dangerRx = /\(|(?:^|[+-]{2}|[+*/<>~-]+\\s*=)|`[\s\S]*`|\[[^\]]+\]|(?:setter|location|innerHTML|cookie|on\w{3,}|\.\D)[^&]*=[\s\S]*?(?:\/\/|[\w$\u0080-\uFFFF.[\]})'"-]+)/,
+      dangerRx = /\(|(?:^|[+-]{2}|[+*/<>~-]+\\s*=)|`[\s\S]*`|\[[^\]]+\]|(?:setter|location|(?:inn|out)erHTML|cookie|on\w{3,}|\.\D)[^&]*=[\s\S]*?(?:\/\/|[\w$\u0080-\uFFFF.[\]})'"-]+)/,
       exprMatchRx = /^[\s\S]*?(?:[=\)]|`[\s\S]*`|[+-]{2}|[+*/<>~-]+\\s*=)/,
       safeCgiRx = /^(?:(?:[\.\?\w\-\/&:§\[\]]+=[\w \-:\+%#,§\.]*(?:[&\|](?=[^&\|])|$)){2,}|\w+:\/\/\w[\w\-\.]*)/,
         // r2l, chained query string parameters, protocol://domain
@@ -2658,7 +2659,7 @@ XSanitizer.prototype = {
     "ig"
   ),
   _brutalReplRx: new RegExp(
-    '(?:' + fuzzify('setter|location|innerHTML|cookie|name|document|toString|') +
+    '(?:' + fuzzify('setter|location|innerHTML|outerHTML|cookie|name|document|toString|') +
     IC_EVAL_PATTERN + '|' + IC_EVENT_PATTERN + ')',
     "g"
   )
