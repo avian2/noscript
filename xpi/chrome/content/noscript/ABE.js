@@ -971,7 +971,7 @@ ABERequest.prototype = Lang.memoize({
         ou = ph && ph.requestOrigin ||
             ((IOUtil.unwrapURL(channel.originalURI).spec != this.destination) 
               ? channel.originalURI 
-              : IOUtil.extractInternalReferrer(channel)
+              : IOUtil.extractInternalReferrer(channel) || channel.referrer
             ) || null;
       }
       

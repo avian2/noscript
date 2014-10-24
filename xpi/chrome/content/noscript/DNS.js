@@ -328,7 +328,8 @@ var DNS = {
     return res;
   },
   
-  _localIPRx: /^(?:(?:0|127|10|169\.254|172\.(?:1[6-9]|2\d|3[0-1])|192\.168)\..*\.[^0]\d*$|(?:(?:255\.){3}255|::1?)$|f(?:[cd]|e[c-f])[0-9a-f]*:)/i,
+  _localIP6Rx: /^(?:::1?$|f(?:[cd]|e[c-f])[0-9a-f]*:)/i,
+  get _localIPMatcher() new AddressMatcher('0. 127. 10. 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 255.255.255.255'),
   isLocalIP: function(addr) {
     // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose but incomplete (missing IPv6 ULA) implementation
     // Relevant RFCs linked at http://en.wikipedia.org/wiki/Private_network
@@ -336,7 +337,7 @@ var DNS = {
     //       AAAA DNS records. The safest work-around is considering them external to the LAN always.
     return (addr.indexOf("2002:") === 0
         ? this.isLocalIP(this.ip6to4(addr))
-        : this._localIPRx.test(addr)
+        : this._localIP6Rx.test(addr) || this._localIPMatcher.testIP(addr)
         ) ||
       this.localExtras && this.localExtras.testIP(addr) ||
       WAN.ipMatcher && WAN.ipMatcher.testIP(addr);
@@ -346,7 +347,8 @@ var DNS = {
     let m = addr.match(this._ip6to4Rx);
     return m && m.slice(1).map(function(h) parseInt(h, 16)).join(".") || "";
   },
-  _ipRx: /^(?:\d+\.){3}\d+$|:.*:/,
+  _ipRx: /^(?:0|[1-9]\d{0,2}\.){3}(?:0|[1-9]\d{0,2})$|:.*:/i, // very restrictive, rejects IPv4 hex, octal and int32
+  _ipRx_permissive: /^(?:(?:\d+|0x[a-f0-9]+)\.){0,3}(?:\d+|0x[a-f0-9]+)$|:.*:/i,
   isIP: function(host) this._ipRx.test(host)
 };
 
