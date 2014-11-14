@@ -335,18 +335,20 @@ var DNS = {
     // Relevant RFCs linked at http://en.wikipedia.org/wiki/Private_network
     // Note: we omit link-local IPv6 addresses (fe80:/10) on purpose, because they're currently found in the wild as misconfigured
     //       AAAA DNS records. The safest work-around is considering them external to the LAN always.
-    return (addr.indexOf("2002:") === 0
-        ? this.isLocalIP(this.ip6to4(addr))
-        : this._localIP6Rx.test(addr) || this._localIPMatcher.testIP(addr)
-        ) ||
+    
+    return this._localIP6Rx.test(addr) ||
+      this._localIPMatcher.testIP(addr = this.ip6to4(addr)) ||
       this.localExtras && this.localExtras.testIP(addr) ||
       WAN.ipMatcher && WAN.ipMatcher.testIP(addr);
   },
-  _ip6to4Rx: /^2002:[A-F0-9:]+:([A-F0-9]{2})([A-F0-9]{2}):([A-F0-9]{2})([A-F0-9]{2})$/i,
-  ip6to4: function(addr) {
-    let m = addr.match(this._ip6to4Rx);
-    return m && m.slice(1).map(function(h) parseInt(h, 16)).join(".") || "";
-  },
+  _ip6to4Rx: /^2002:([A-F0-9]{2})([A-F0-9]{2}):([A-F0-9]{2})([A-F0-9]{2})|:(?:\d+\.){3}\d+$/i,
+  ip6to4: function(addr) let (m = addr.match(this._ip6to4Rx) )
+      m ? (m[1]
+          ? m.slice(1).map(function(h) parseInt(h, 16)).join(".") 
+          : m[0].substring(1)
+       ) 
+      : addr
+   ,
   _ipRx: /^(?:0|[1-9]\d{0,2}\.){3}(?:0|[1-9]\d{0,2})$|:.*:/i, // very restrictive, rejects IPv4 hex, octal and int32
   _ipRx_permissive: /^(?:(?:\d+|0x[a-f0-9]+)\.){0,3}(?:\d+|0x[a-f0-9]+)$|:.*:/i,
   isIP: function(host) this._ipRx.test(host)

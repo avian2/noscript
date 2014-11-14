@@ -804,7 +804,7 @@ Network.prototype = {
   },
   
   parse: function(addr) {
-    return  this._isIPV4(addr) ? this._parseIPV4(addr) : this._parseIPV6(addr);
+    return this._isIPV4(addr) ? this._parseIPV4(addr) : this._parseIPV6(addr);
   },
   _parseIPV6: function(addr) {
     var parts = addr.split(":");
@@ -823,35 +823,28 @@ Network.prototype = {
     var pos;
     for (j = 4; j-- > 0; ) {
       pos = j * 8;
-      ret[j] = (parseInt(s.substring(pos, pos + 8), 16) & this.ipv6Mask[j])>>> 0;
+      ret[j] = parseInt(s.substring(pos, pos + 8), 16) & this.ipv6Mask[j];
     }
     return ret;
   },
   _pows: [0x1000000, 0x10000, 0x100, 1],
   _parseIPV4: function(addr) {
     var parts = addr.split(".");
-    var ret, byt3;
-    if (parts.length === 1 && addr.indexOf(".") === -1) {
-      ret = parseInt(addr);
-    } else {
-      ret = 0
-      for (let j = parts.length; j-- > 0;) {
-        let p = parts[j];
-        byt3 = parseInt(p,
-                        p[0] === '0' ? (/[xX]/.test(p[1]) ? 16 : 8) : 10);
-        if (byt3) {
-          if (byt3 > 255) byt3 = 255;
-          ret += byt3 * this._pows[j];
-        } else if (j == parts.length - 1 && parts[j] == '') {
-          parts.pop();
-        }
-      }
-      if (parts.length < 4 && this.mask == 32 && typeof (this.addr) == "undefined") {
-        this.mask = parts.length * 8;
-        this.ipv4Mask = this._maskToBits(this.mask, 32);
+    var ret = 0, byt3;
+    for (var j = parts.length; j-- > 0;) {
+      byt3 = parseInt(parts[j], 10);
+      if (byt3) {
+        if (byt3 > 255) byt3 = 255;
+        ret += byt3 * this._pows[j];
+      } else if (j == parts.length - 1 && parts[j] == '') {
+        parts.pop();
       }
     }
-    return (ret & this.ipv4Mask) >>> 0;
+    if (parts.length < 4 && this.mask == 32 && typeof (this.addr) == "undefined") {
+      this.mask = parts.length * 8;
+      this.ipv4Mask = this._maskToBits(this.mask, 32);
+    }
+    return ret & this.ipv4Mask;
   },
   
   toString: function() {
@@ -2100,6 +2093,9 @@ var ns = {
       },
       "2.6.6rc5": {
         "live.com": "outlook.com live.net" // fully Microsoft-controlled (no user content), now required by MS mail services
+      },
+      "@VERSION@": {
+        "vimeo.com": "vimeocdn.com" // no movie will play anymore without this
       }
     };
     
