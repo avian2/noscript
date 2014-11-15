@@ -2094,7 +2094,7 @@ var ns = {
       "2.6.6rc5": {
         "live.com": "outlook.com live.net" // fully Microsoft-controlled (no user content), now required by MS mail services
       },
-      "@VERSION@": {
+      "@VERSION@rc1": {
         "vimeo.com": "vimeocdn.com" // no movie will play anymore without this
       }
     };
