@@ -282,8 +282,12 @@ pref("noscript.surrogate.imagebam.replacement", "(function(){if(\"over18\" in wi
 pref("noscript.surrogate.imagebam.sources", "!@*.imagebam.com");
 pref("noscript.surrogate.imagehaven.replacement", "['agreeCont','TransparentBlack'].forEach(function(id){var o=document.getElementById(id);if(o)o.style.display='none'})");
 pref("noscript.surrogate.imagehaven.sources", "!@*.imagehaven.net");
+pref("noscript.surrogate.imgreserve.sources", "!imgreserve.com");
+pref("noscript.surrogate.imgreserve.replacement", "let b=document.querySelector('input[value=\"YES\"]');if(b)b.addEventListener('click',function(){document.cookie='AgeVerification=1';location.href=location},true)");
 pref("noscript.surrogate.interstitialBox.replacement", "__defineSetter__('interstitialBox',function(){});__defineGetter__('interstitialBox',function(){return{}})");
 pref("noscript.surrogate.interstitialBox.sources", "@*.imagevenue.com");
+pref("noscript.surrogate.invodo.sources", ".invodo.com");
+pref("noscript.surrogate.invodo.replacement", "Invodo={__noSuchMethod__:function(){}}");
 pref("noscript.surrogate.googleThumbs.replacement", "(function(){var ss=document.getElementsByTagName('script');var s,t,m,id,i;for(var j=ss.length;j-->0;)if(((s=ss[j])&&(t=s.firstChild&&s.firstChild.nodeValue)&&(id=t.match(/\w+thumb\d+/))&&(m=t.match(/['\"](data:[^'\"]+)/)))&&(i=document.getElementById(id)))i.src=m[1].replace(/\\\\(u[0-9a-f]{4}|x[0-9a-f]{2})/ig,function(a,b){return String.fromCharCode(parseInt(b.substring(1), 16))})})()");
 pref("noscript.surrogate.googleThumbs.sources", "!^https?://www\\.google\\.[a-z]+/search");
 pref("noscript.surrogate.amo.replacement", "addEventListener('click',function(e){if(e.button)return;var a=e.target.parentNode;var hash=a.getAttribute('data-hash');if(hash){var b=a.parentNode.parentNode;InstallTrigger.install({x:{URL:a.href,IconURL:b.getAttribute('data-icon'),Hash:hash,toString:function(){return a.href}}});e.preventDefault()}},false)");
@@ -322,7 +326,6 @@ pref("noscript.surrogate.imagebunk.sources", "!http://imagebunk.com/image/*");
 pref("noscript.surrogate.imagebunk.replacement", "document.body.insertBefore(document.getElementById('img_obj'), document.body.firstChild)");
 pref("noscript.surrogate.personaorg.sources", "login.persona.org");
 pref("noscript.surrogate.personaorg.replacement", "if(typeof navigator.id==='undefined'){navigator.id={__noSuchMethod__:function(){},watch:function(){}}}");
-
 pref("noscript.surrogate.picsee.sources", "!^https?://picsee\\.net/2\\d.*\\.html");
 pref("noscript.surrogate.picsee.replacement", "location.replace(location.href.replace(/(\\/2\\d{3}[^\\/]*)(.*)\\.html/, '/upload$1/$2'));");
 

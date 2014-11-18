@@ -2094,7 +2094,7 @@ var ns = {
       "2.6.6rc5": {
         "live.com": "outlook.com live.net" // fully Microsoft-controlled (no user content), now required by MS mail services
       },
-      "@VERSION@rc1": {
+      "2.6.9.4rc1": {
         "vimeo.com": "vimeocdn.com" // no movie will play anymore without this
       }
     };
@@ -6126,6 +6126,7 @@ var ns = {
   _onWindowCreatedReal: function(window, site) {
     let document = window.document;
     let origin = document.nodePrincipal.origin;
+    
     if (this.isBrowserOrigin(origin)) return;
     let blockIt;
     let blocker = WinScript.supported ? WinScript : DocShellScript;
@@ -6182,6 +6183,8 @@ var ns = {
   
   beforeScripting: function(subj, url) { // early stub
     if (!this.httpStarted) {
+      INCLUDE("ScriptlessBGThumbs");
+      
       let url = subj.location || subj.documentURI;
       
       if (/^(?:about|resource|chrome|file|moz-nullprincipal):/.test(url)) {
