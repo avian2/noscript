@@ -370,7 +370,6 @@ return noscriptUtil.service ? {
   _initPopupsRecursion: false,
   
   initPopups: function() {
-    noscriptOverlay.ns.log("InitPopup: " + (this._initPopupsRecursion + ", " + this._popupsInitialized) + " - " + new Error().stack);
     if (this._initPopupsRecursion) return;
     
     this._initPopupsRecursion = true;
@@ -2868,7 +2867,7 @@ return noscriptUtil.service ? {
         window.setTimeout(function() {
           alert("NoScript is not properly installed and cannot operate correctly.\n" + 
                 "Please install it again and check the Install FAQ section on http://noscript.net/faq if this problem persists.");
-          noscriptUtil.browse("http://noscript.net/faq#faqsec2", null);
+          noscriptUtil.browse("https://noscript.net/faq#faqsec2", null);
             
         },10);
       }, false);

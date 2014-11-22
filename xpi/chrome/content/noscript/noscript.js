@@ -110,11 +110,11 @@ var noscriptUtil = {
   },
   
   openFaq: function(which) {
-    this.browse("http://noscript.net/faq#" + which);
+    this.browse("https://noscript.net/faq#" + which);
   },
   
   openHelp: function(section) {
-    this.browse("http://noscript.net/help/" + section);
+    this.browse("https://noscript.net/help/" + section);
   },
   
   openDonate: function(src) {

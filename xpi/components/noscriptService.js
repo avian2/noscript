@@ -2313,7 +2313,7 @@ var ns = {
   _isProxiedSite: function(uri) { // Gecko < 2 has no proxyConfigType, so we must resolve per URI 
     try {
       if (!(uri instanceof Ci.nsIURI)) {
-        uri = IOS.newURI(uri || "http://noscript.net/", null, null);
+        uri = IOS.newURI(uri || "https://noscript.net/", null, null);
       }
       return this.proxyService.resolve(uri, 0).type != "direct";
     } catch(e) {
@@ -6182,8 +6182,8 @@ var ns = {
  },
   
   beforeScripting: function(subj, url) { // early stub
+    INCLUDE("ScriptlessBGThumbs");
     if (!this.httpStarted) {
-      INCLUDE("ScriptlessBGThumbs");
       
       let url = subj.location || subj.documentURI;
       
@@ -6977,7 +6977,7 @@ var ns = {
           const name = "noscript";
           const domain = name.toLowerCase() + ".net";
 
-          IOS.newChannel("http://" + domain + "/-", null, null).asyncOpen({ // DNS prefetch
+          IOS.newChannel("https://" + domain + "/-", null, null).asyncOpen({ // DNS prefetch
             onStartRequest: function() {},
             onStopRequest: function(req, ctx) {
               if (req.status && req.status !== NS_BINDING_REDIRECTED) {
@@ -6990,7 +6990,7 @@ var ns = {
               if (typeof(browser.addTab) != "function") return;
              
               
-              var url = "http://" + domain + "/?ver=" + ver;
+              var url = "https://" + domain + "/?ver=" + ver;
               var hh = "X-IA-Post-Install: " + name + " " + ver;
               if (prevVer) {
                 url += "&prev=" + prevVer;

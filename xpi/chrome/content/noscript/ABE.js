@@ -1430,7 +1430,7 @@ const WAN = {
   noResource: false,
   logging: true,
   fingerprintLogging: false,
-  fingerprintUA: "Mozilla/5.0 (ABE, http://noscript.net/abe/wan)",
+  fingerprintUA: "Mozilla/5.0 (ABE, https://noscript.net/abe/wan)",
   fingerprintHeader: "X-ABE-Fingerprint",
   QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   

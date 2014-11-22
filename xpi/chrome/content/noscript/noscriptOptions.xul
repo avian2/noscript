@@ -327,7 +327,7 @@
             <textbox id="xssEx-regexp" multiline="true" flex="1" /> 
             <hbox align="center">
               <label control="xssEx-sample" value="&noscriptMatchSample;" />
-              <textbox id="xssEx-sample" flex="1" value="http://www.google.com/search?q=test" />
+              <textbox id="xssEx-sample" flex="1" value="https://www.google.com/search?q=test" />
             </hbox>
           </vbox>
         </tabpanel>

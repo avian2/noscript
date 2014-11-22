@@ -34,6 +34,9 @@ pref("noscript.default", "about:blank addons.mozilla.org persona.org mozilla.net
 
 pref("noscript.eraseFloatingElements", true);
 
+pref("noscript.bgThumbs.allowed", false);
+pref("noscript.bgThumbs.disableJS", true);
+
 pref("noscript.forbidJava", true);
 pref("noscript.forbidFlash", true);
 pref("noscript.forbidSilverlight", true);
@@ -313,7 +316,7 @@ pref("noscript.surrogate.revsci.replacement", "rsinetsegs=[];DM_addEncToLoc=DM_t
 pref("noscript.surrogate.adriver.sources", "ad.adriver.ru/cgi-bin/erle.cgi");
 pref("noscript.surrogate.adriver.replacement", "if(top!==self&&top.location.href===location.href)setTimeout('try{document.close();}catch(e){}',100)");
 pref("noscript.surrogate.twitter.sources", "platform.twitter.com");
-pref("noscript.surrogate.twitter.replacement", "twttr=(function(){var f=arguments.callee;return f.__noSuchMethod__=f.events=f.anywhere=f})();");
+pref("noscript.surrogate.twitter.replacement", "twttr=(function(){var f=arguments.callee; var ro = f.__noSuchMethod__=f.events=f.anywhere=f; ro.widgets={__noSuchMethod__:function(){}}; return ro})();");
 pref("noscript.surrogate.plusone.sources", "apis.google.com/js/plusone.js");
 pref("noscript.surrogate.plusone.replacement", "gapi=(function(){var f=arguments.callee;return f.__noSuchMethod__=f.plusone=f;})();");
 pref("noscript.surrogate.disqus-theme.sources", ">.disqus.com/*/build/themes/t_c4ca4238a0b923820dcc509a6f75849b.js*");
@@ -382,7 +385,7 @@ pref("noscript.subscription.checkInterval", 24);
 pref("noscript.subscription.trustedURL", "");
 pref("noscript.subscription.untrustedURL", "");
 
-pref("noscript.siteInfoProvider", "http://noscript.net/about/%utf8%;%ace%");
+pref("noscript.siteInfoProvider", "https://noscript.net/about/%utf8%;%ace%");
 pref("noscript.alwaysShowObjectSources", false);
 
 pref("noscript.ef.enabled", false);

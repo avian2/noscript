@@ -38,7 +38,7 @@ var ClearClick = {
   },
   
   disclosure: function() {
-    noscriptUtil.browse("http://noscript.net/faq#clearclick", null);
+    noscriptUtil.browse("https://noscript.net/faq#clearclick", null);
     this.dialog.cancelDialog();
   },
   
@@ -87,7 +87,7 @@ var ClearClick = {
       }
     }, false);
     
-    xhr.open("POST", "http://noscript.net/ws/clearclick/", true);
+    xhr.open("POST", "https://noscript.net/ws/clearclick/", true);
     
     var p = this.params;
     var data = {
