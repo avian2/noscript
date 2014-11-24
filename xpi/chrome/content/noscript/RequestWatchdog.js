@@ -600,7 +600,7 @@ RequestWatchdog.prototype = {
         return;
       }
       
-      if (/^https?:\/\/www\.youtube\.com$/.test(originSite) &&
+      if (originSite === "https://www.youtube.com" &&
           /^https:\/\/(?:plus\.googleapis|apis\.google)\.com\/[\w/]+\/widget\/render\/comments\?/.test(originalSpec) &&
           ns.getPref("filterXExceptions.yt_comments")
           ) {
@@ -609,6 +609,10 @@ RequestWatchdog.prototype = {
       }
       
       if (channel.requestMethod == "POST") {
+        
+        if (originSite === "https://sso.post.ch" && targetSite === "https://app.swisspost.ch") {
+          return;
+        }
         
         if (originSite === "https://twitter.com" && /^https:\/\/.*\.twitter.com$/.test(targetSite)) {
           return;

@@ -355,17 +355,7 @@ return noscriptUtil.service ? {
     return tip;
   },
   
-  _customizableUIListener: {
-    onWidgetAfterDOMChange: function(aWidget) {
-      for each(let b in ['noscript-tbb', 'noscript-statusLabel']) {
-        if(b == aWidget.id) {
-          window.setTimeout(function() { noscriptOverlay.initPopups(); }, 0);
-          return;
-        }
-      }
-    }
-  },
-        
+   
   _popupsInitialized: false,
   _initPopupsRecursion: false,
   
@@ -391,10 +381,6 @@ return noscriptUtil.service ? {
       }
   
       const buttons = [tbb, $("noscript-statusLabel")];
-      
-      if (install && "CustomizableUI" in window) {
-        CustomizableUI.addListener(this._customizableUIListener);
-      }
       
       let statusIcon = $("noscript-statusIcon");
       
@@ -2532,6 +2518,7 @@ return noscriptUtil.service ? {
     },
     onUnload: function(ev) {
       window.removeEventListener("unload", arguments.callee, false);
+      
       noscriptOverlay.listeners.teardown();
       window.browserDOMWindow = null;
       noscriptOverlay.dispose();
@@ -2557,6 +2544,17 @@ return noscriptUtil.service ? {
     
     onActivation: function() {
       noscriptOverlay.syncUI();
+    },
+    
+    customizableUIListener: {
+      onWidgetAfterDOMChange: function(aWidget) {
+        for each(let b in ['noscript-tbb', 'noscript-statusLabel']) {
+          if(b == aWidget.id) {
+            window.setTimeout(function() { noscriptOverlay.initPopups(); }, 0);
+            return;
+          }
+        }
+      }
     },
     
     setup: function(delayed) {
@@ -2643,12 +2641,20 @@ return noscriptUtil.service ? {
         self.tapped = null;
       }, true);
       
+      if ("CustomizableUI" in window) {
+        CustomizableUI.addListener(this.customizableUIListener);
+      }
+      
     },
     
     
    
     teardown: function() {
 
+      if ("CustomizableUI" in window) {
+        CustomizableUI.removeListener(this.customizableUIListener);
+      }
+      
       var b = getBrowser();
       if (b) {
         b.removeEventListener("click", this.onBrowserClick, true);

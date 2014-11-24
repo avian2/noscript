@@ -80,7 +80,7 @@ function about_open(url, features) {
 <vbox id="clientBoxInternal" flex="1">
 <hbox align="start">
 <vbox id="logoBox">
-<image id="logo" src="chrome://noscript/skin/icon80.png" class="text-link" tooltiptext="Visit Extension Home Page" onclick="about_open('http://noscript.net')"/>
+<image id="logo" src="chrome://noscript/skin/icon80.png" class="text-link" tooltiptext="Visit Extension Home Page" onclick="about_open('https://noscript.net')"/>
 </vbox>
 <vbox flex="1">
 <hbox id="headBox" align="end">
@@ -164,9 +164,9 @@ function about_open(url, features) {
 <hbox>
 <label id="license" class="text-link" tooltiptext="Read end-user license" onclick="about_open('chrome://noscript/content/NoScript_License.txt')">License</label>
 <spacer flex="1"/>
-<label id="changelog" class="text-link" align="center" tooltiptext="See Changelog" onclick="about_open('http://noscript.net/changelog#@VERSION@')">Changelog</label>
+<label id="changelog" class="text-link" align="center" tooltiptext="See Changelog" onclick="about_open('https://noscript.net/changelog#@VERSION@')">Changelog</label>
 <spacer flex="1"/>
-<label id="extensionHomepage" class="text-link" tooltiptext="Visit Extension Home Page" onclick="about_open('http://noscript.net')">http://noscript.net</label>
+<label id="extensionHomepage" class="text-link" tooltiptext="Visit Extension Home Page" onclick="about_open('https://noscript.net')">https://noscript.net</label>
 </hbox>
 </vbox>
 </vbox>
