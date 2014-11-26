@@ -2336,8 +2336,13 @@ var ns = {
       enabled = enabled || this.globalHttpsWhitelist && s.indexOf("https:") === 0 && this.isGlobalHttps(window);
       
       if (enabled ? this.restrictSubdocScripting : this.cascadePermissions) {
-        let topSite = this.getSite(window.top.document.nodePrincipal.origin);
-        if (topSite !== s) enabled = this.isJSEnabled(topSite);
+        let topOrigin = window.top.document.nodePrincipal.origin;
+        if (this.isBrowserOrigin(topOrigin)) {
+          enabled = true;
+        } else {
+          let topSite = this.getSite(topOrigin);
+          if (topSite !== s) enabled = this.isJSEnabled(topSite);
+        }
       }   
     }
     
