@@ -73,6 +73,7 @@ const HTTPS = {
   mustForce: function(uri) {
     return (uri.schemeIs("http") &&
         (this.httpsForced && this.httpsForced.test(uri.spec) ||
+         this.httpsForcedBuiltIn && this.httpsForcedBuiltIn.test(uri.spec) ||
          STS.isSTSURI(uri)) &&
           !(this.httpsForcedExceptions &&
             this.httpsForcedExceptions.test(uri.spec)
@@ -351,7 +352,9 @@ const HTTPS = {
 });
 
 ["secureCookies", "secureCookiesExceptions", "secureCookiesForced",
-  "httpsForced", "httpsForcedExceptions", "STS.enabled"].forEach(function(p) {
+  "httpsForcedBuiltIn", "httpsForced", "httpsForcedExceptions",
+  "STS.enabled"]
+    .forEach(function(p) {
   try {
     ns.syncPrefs(ns.prefs, p);
   } catch(e) {

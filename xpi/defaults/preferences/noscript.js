@@ -214,6 +214,7 @@ pref("noscript.secureCookies.recycle", false);
 pref("noscript.secureCookies.perTab", false);
 
 pref("noscript.httpsForced", "");
+pref("noscript.httpsForcedBuiltIn", "www.youtube.com");
 pref("noscript.allowHttpsOnly", 0);
 
 pref("noscript.https.showInConsole", true);

@@ -3820,27 +3820,35 @@ var ns = {
     var url = this.getObjectURLWithDOM(obj, objectURL, parentURL);
     if (url) this.allowObject(url, mime, originSite || this.getSite(parentURL));
   },
-  getObjectURLWithDOM: function(obj, objectURL, parentURL) {
-    var id = obj.id;
-    if (!id) {
-      try {
-        let parents = [], ss = [];
-        for (; obj;) {
-          let t = obj.tagName;
-          if (t) ss.push(t);
-          let node = obj.previousSibling;
-          if (!node) {
-            parents.push(ss.join("-"));
-            ss.length = 0;
-            node = obj.parentNode;
+  getObjectURLWithDOM:  function(obj, objectURL, parentURL) {
+    let doc = obj.ownerDocument;
+    let suffix = encodeURIComponent(parentURL);
+    if (!doc) return objectURL + "#!#@" + suffix;
+    
+    let id = obj.id || "";
+    let t = obj.tagName.toUpperCase();
+  
+    const ytFrameURL = "https://www.youtube.com/embed/";
+    ns.log("IFRAME" === t + ","+ objectURL.substring(0, ytFrameURL))
+    if ("IFRAME" === t && objectURL.substring(0, ytFrameURL.length) === ytFrameURL) {
+      objectURL = ytFrameURL;
+      id = "(ytFrame)";
+    } else {
+      objectURL = objectURL.replace(/[\?#].*/, '');
+      if (!id) {
+        let ee = doc.getElementsByTagName(t); 
+
+        for (let j = ee.length; j-- > 0;) {
+          if (ee[j] === obj) {
+            id = t + "(" + j + ")";
+            break;
           }
-          obj = node;
         }
-        id = parents.join(".");
-      } catch (e) {}
+      }
     }
-    return objectURL.replace(/[\?#].*/, '') + "#!#" + id + "@" + encodeURIComponent(parentURL);
+    return objectURL + "#!#" + id + "@" + suffix;
   },
+  
   resetAllowedObjects: function() {
     this.objectWhitelist = {};
     this.objectWhitelistLen = 0;
@@ -4404,7 +4412,7 @@ var ns = {
       node = null;
       var self = this;
       return !this.__ns.handleBookmark(url, function(url) {
-        method.caller.apply(self, method.caller.arguments);
+        if (method.caller) method.caller.apply(self, method.caller.arguments);
         self = null;
       });
     } finally {
@@ -4462,10 +4470,12 @@ var ns = {
             this._patchTimeouts(window, true);
           }
           
-          if ((fromURLBar || noJS) && /^javascript:/i.test(url) && this.geckoVersionCheck("24") > 0) {
+          let gecko24 = this.geckoVersionCheck("24") >= 0;
+          if ((fromURLBar || noJS) && /^javascript:/i.test(url) && gecko24) {
             JSURL.load(url, doc);
           } else {
-            openCallback();
+            if (gecko24) openCallback();
+            else window.location.href = url;
           }
           Thread.yieldAll();
           if (noJS) {
@@ -5072,7 +5082,7 @@ var ns = {
     }
   },
 
-  checkAndEnableObject: function(ctx) {
+  checkAndEnableObject:  function(ctx) {
     var extras = ctx.extras;
     if (!this.confirmEnableObject(ctx.window, extras)) return;
     
@@ -5081,17 +5091,18 @@ var ns = {
     var url = extras.url;
     
     this.allowObject(url, mime, extras.originSite);
-    var doc = ctx.anchor.ownerDocument;
+    let a = ctx.anchor;
+    var doc = a.ownerDocument;
     
   
     var isLegacyFrame = this.isLegacyFrameReplacement(ctx.object);
      
     if (isLegacyFrame || (mime == doc.contentType && doc.body &&
-        (ctx.anchor == doc.body.firstChild && 
-         ctx.anchor == doc.body.lastChild ||
+        (a === doc.body.firstChild && 
+         a === doc.body.lastChild ||
          (ctx.object instanceof Ci.nsIDOMHTMLEmbedElement) && ctx.object.src != url))
       ) { // stand-alone plugin or frame
-        doc.body.removeChild(ctx.anchor); // TODO: add a throbber
+        doc.body.removeChild(a); // TODO: add a throbber
         if (isLegacyFrame) {
           this.setExpando(doc.defaultView.frameElement, "allowed", true);
           // doc.defaultView.frameElement.src = url;
@@ -5114,7 +5125,7 @@ var ns = {
       return;
     }
     
-    this.setExpando(ctx.anchor, "removedNode", null);
+    this.setExpando(a, "removedNode", null);
     extras.allowed = true;
     extras.placeholder = null;
     this.delayExec(function() {
@@ -5125,8 +5136,10 @@ var ns = {
       
       
       function reload(slow) {
-        ns.allowObjectByDOM(ctx.anchor, url, doc.documentURI, mime);
+        ns.log( ns. getObjectURLWithDOM(obj, url, doc.documentURI));
+        ns.allowObjectByDOM(obj, url, doc.documentURI, mime);
         if (slow) {
+          ns.log("RELOAD")
           DOM.getDocShellForWindow(doc.defaultView).reload(0);
         } else {
           ns.quickReload(doc.defaultView);
@@ -5173,20 +5186,34 @@ var ns = {
         obj.autoplay = true;
       }
       
-      let parent = ctx.anchor.parentNode; 
+      let parent = a.parentNode; 
       
-      if (parent && parent.ownerDocument == ctx.anchor.ownerDocument) {
-        this.setExpando(obj, "allowed", true);
+      if (parent && parent.ownerDocument == doc) {
         
         if (jsEnabled) {
+          
+          if (/IFRAME/i.test(extras.tag) && /^https:\/\/www\.youtube\.com\/embed\//.test(url)) {
+            reload();
+            return;
+          }
+          
           ScriptSurrogate.executeSandbox(doc,
             "env.a.__noSuchMethod__ = env.o.__noSuchMethod__ = function(m, a) { return env.n[m].apply(env.n, a) }",
-            { a: ctx.anchor, o: ctx.object, n: obj }
+            { a: a, o: ctx.object, n: obj }
           );
         }
         
-        parent.replaceChild(obj, ctx.anchor);
+        this.setExpando(obj, "allowed", true);
+        parent.replaceChild(obj, a);
         var style = doc.defaultView.getComputedStyle(obj, '');
+       
+        let body = doc.body;
+        if (body && body.clientWidth === obj.offsetWidth && body.clientHeight === obj.offsetHeight) {
+          // full size applet/movie
+          reload();
+          return;
+        }
+   
         
         if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2)
             && !/frame/i.test(extras.tag)) {
