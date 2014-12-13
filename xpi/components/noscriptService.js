@@ -2326,7 +2326,7 @@ var ns = {
 
   jsPolicySites: new PolicySites(),
   isJSEnabled: function(s, window) {
-    if (this.globalJS) {
+     if (this.globalJS) {
       return !(this.alwaysBlockUntrustedContent && this.untrustedSites.matches(s));
     }
     
@@ -2335,20 +2335,21 @@ var ns = {
     let enabled = !!(this.jsPolicySites.matches(s));
     
     if (window) {
-      
-      enabled = enabled || this.globalHttpsWhitelist && s.indexOf("https:") === 0 && this.isGlobalHttps(window);
-      
-      if (enabled ? this.restrictSubdocScripting : this.cascadePermissions) {
-        let topOrigin = window.top.document.nodePrincipal.origin;
+      let top = window.top;
+      enabled = enabled || 
+               this.globalHttpsWhitelist && s.indexOf("https:") === 0 && (window === top || this.isGlobalHttps(window));
+      if (top !== window && (enabled ? this.restrictSubdocScripting : this.cascadePermissions)) {
+        let topOrigin = top.document.nodePrincipal.origin;
         if (this.isBrowserOrigin(topOrigin)) {
           enabled = true;
         } else {
           let topSite = this.getSite(topOrigin);
-          if (topSite !== s) enabled = this.isJSEnabled(topSite);
+          ns.log("HERE " + topSite);
+          if (topSite !== s) enabled = this.isJSEnabled(topSite, top);
         }
       }   
     }
-    
+  
     return enabled;
   
   },
@@ -4110,9 +4111,10 @@ var ns = {
     var scount = scripts.length;
     var surrogates = this.getExpando(document, "surrogates", {});
     if (scount) {
+      let win = document.defaultView;
       const HTMLElement = Ci.nsIDOMHTMLElement;
       sites.scriptCount += scount;
-      let nselForce = this.nselForce && this.isJSEnabled(docSite);
+      let nselForce = this.nselForce && this.isJSEnabled(docSite, win);
       let isHTMLScript;
       while (scount-- > 0) {
         let script = scripts.item(scount);
@@ -4133,7 +4135,7 @@ var ns = {
           
           if (nselForce && isHTMLScript &&
               !(script.__nselForce ||
-                this.isJSEnabled(scriptSite) ||
+                this.isJSEnabled(scriptSite, win) ||
                 this.isUntrusted(scriptSite))) {
             
             this.showNextNoscriptElement(script);
@@ -4193,10 +4195,11 @@ var ns = {
   
   metaRefreshWhitelist: {},
   processMetaRefresh: function(document, notifyCallback) {
-    var docShell = DOM.getDocShellForWindow(document.defaultView);
+    let win = document.defaultView;
+    var docShell = DOM.getDocShellForWindow(win);
     if (!this.forbidMetaRefresh ||    
        this.metaRefreshWhitelist[document.documentURI] ||
-       this.isJSEnabled(this.getSite(document.documentURI)) ||
+       this.isJSEnabled(this.getSite(document.documentURI), win) ||
        !document.getElementsByTagName("noscript")[0]
        ) {
       if (!docShell.allowMetaRedirects) this.disableMetaRefresh(docShell); // refresh blocker courtesy
@@ -4317,7 +4320,7 @@ var ns = {
     // if it starts with a frame breaker, we honor it.
     var d = w.document;
     var url = d.URL;
-    if (url.indexOf("http") !== 0 || this.isJSEnabled(this.getSite(url))) return false;
+    if (url.indexOf("http") !== 0 || this.isJSEnabled(this.getSite(url), w)) return false;
     var ss = d.getElementsByTagName("script");
     var sc, m, code;
     for (var j = 0, len = 5, s; j < len && (s = ss[j]); j++) {
@@ -4445,7 +4448,7 @@ var ns = {
         untrusted: this.untrustedSites.sitesString
       };
       
-      let siteJSEnabled = this.isJSEnabled(site);
+      let siteJSEnabled = this.isJSEnabled(site, window);
       
       let doc = window.document;
       
@@ -4890,7 +4893,7 @@ var ns = {
     }
 
     if (replacements) {
-      if (this.isJSEnabled(this.getSite(document.URL))) this.patchObjects(document);
+      if (this.isJSEnabled(this.getSite(document.URL), win)) this.patchObjects(document);
       this.delayExec(this.createPlaceholders, 0, replacements, pluginExtras, document);
     }
   },
@@ -5132,7 +5135,7 @@ var ns = {
     extras.allowed = true;
     extras.placeholder = null;
     this.delayExec(function() {
-      var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI));
+      var jsEnabled = ns.isJSEnabled(ns.getSite(doc.documentURI), doc.defaultView);
       if (ctx.object.parentNode) ctx.object.parentNode.removeChild(ctx.object);
       if ("_display" in ctx.object) ctx.object.style.display = ctx.object._display;
       var obj = ctx.object.cloneNode(true);
@@ -6688,7 +6691,7 @@ var ns = {
     
     var doc = s.ownerDocument;
     var url = doc.documentURI;
-    if (this.isJSEnabled(this.getSite(url))) return;
+    if (this.isJSEnabled(this.getSite(url), doc.defaultView)) return;
     
     var opt = s.options[s.selectedIndex];
     if (!opt) return;

@@ -2451,14 +2451,15 @@ return noscriptUtil.service ? {
       var doc = ev.originalTarget;
       
       if (doc instanceof HTMLDocument) {
-        var w = doc.defaultView;
+        let w = doc.defaultView;
         if (w) {
           const ns = noscriptOverlay.ns;
-          let url = doc.URL;
-          const jsBlocked = /^https?:/.test(url) && !ns.isJSEnabled(ns.getSite(url));
+          
           
           ns.setExpando(doc, "contentLoaded", true);
           if (w == w.top) {
+            let url = doc.URL;
+            let jsBlocked = /^https?:/.test(url) && !ns.isJSEnabled(ns.getSite(url), w);
             if (jsBlocked) {
               ns.doRemoveSMILKeySniffers(doc);
               ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
