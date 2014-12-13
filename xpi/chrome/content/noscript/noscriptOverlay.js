@@ -355,7 +355,25 @@ return noscriptUtil.service ? {
     return tip;
   },
   
+  isPrivate: function() {
+    try {
+          // Firefox 20+
+      Cu.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
+      return PrivateBrowsingUtils.isWindowPrivate(content);
+    } catch(e) {
+
+      try {
+        return  Cc["@mozilla.org/privatebrowsing;1"].
+                                getService(Ci.nsIPrivateBrowsingService).
+                                privateBrowsingEnabled;
+      } catch(e) {
+        Components.utils.reportError(e);
+        return false;
+      }
+    }
    
+  },
+  
   _popupsInitialized: false,
   _initPopupsRecursion: false,
   
@@ -473,6 +491,7 @@ return noscriptUtil.service ? {
     popup.position = upper ? "after_start" : "before_start";
     return upper;
   },
+  
   prepareMenu: function(popup, sites) {
     let mustReverse = this._mustReverse(popup);
 
@@ -647,9 +666,11 @@ return noscriptUtil.service ? {
     const showUntrusted = ns.getPref("showUntrusted", true);
     const showDistrust = ns.getPref("showDistrust", true);
     const showNothing = !(showAddress || showDomain || showBase || showUntrusted);
-    const showPermanent = ns.getPref("showPermanent", true);
-    const showTemp = !locked && ns.getPref("showTemp", true);
-    
+    let volatileOnly = this.isPrivate() && ns.getPref("volatilePrivatePermissions");
+    let showPermanent = ns.getPref("showPermanent", true);
+    const showTemp = !locked && (ns.getPref("showTemp", true) || volatileOnly && showPermanent);
+    if (volatileOnly) showPermanent = false;
+
     var parent = null, extraNode = null;
     var untrustedCount = 0, unknownCount = 0, tempCount = 0;
     const untrustedSites = ns.untrustedSites;
@@ -965,7 +986,7 @@ return noscriptUtil.service ? {
     if (node.nextSibling != tempMenuItem) {
       tempMenuItem.parentNode.insertBefore(node, tempMenuItem);
     }
-    if (!(node.hidden = unknownCount == 0 || !ns.getPref("showAllowPage", true))) {
+    if (!(node.hidden = volatileOnly || unknownCount == 0 || !ns.getPref("showAllowPage", true))) {
        let allowable = this.allowPage(true, true, sites);
       if (allowable.length) node.setAttribute("tooltiptext", allowable.join(", "));
       else node.hidden = true;
@@ -986,7 +1007,7 @@ return noscriptUtil.service ? {
     if (tempMenuItem.nextSibling != node) {
       tempMenuItem.parentNode.insertBefore(node, tempMenuItem.nextSibling);
     }
-    if (!(node.hidden = tempCount == 0 || !ns.getPref("showTempToPerm"))) {
+    if (!(node.hidden = volatileOnly || tempCount == 0 || !ns.getPref("showTempToPerm"))) {
       node.setAttribute("tooltiptext", this.tempToPerm(true, sites).join(", "));
     }
 

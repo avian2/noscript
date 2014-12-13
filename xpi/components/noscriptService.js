@@ -2070,6 +2070,9 @@ var ns = {
   
  
   onVersionChanged: function(prev) {
+    if (!this.getPref("allowWhitelistUpdates")) {
+      return;
+    }
     // update hacks
     var versions = {
       "2.1.1.2rc6": {
@@ -2456,7 +2459,7 @@ var ns = {
   }
 ,
   flushCAPS: function(sitesString) {
-    const ps = this.jsPolicySites;
+    const ps = this.useCAPS ? this.jsPolicySites : this.getPermanentSites();
     if (sitesString) ps.sitesString = sitesString;
     
     // dump("Flushing " + ps.sitesString);
