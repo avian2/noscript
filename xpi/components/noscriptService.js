@@ -2191,10 +2191,10 @@ var ns = {
       "gtemp": this.gTempSites
     };
     for (var p in sites) {
-      if (b
+      if ((b
           ? (p[0] != "g" || this.globalJS) && sites[p].add(s)
           : sites[p].remove(s, true, true) // keeps up and down, see #eraseTemp() 
-      ) sites[p].toPref(this.prefs, p);
+      ) && this.usingCAPS) sites[p].toPref(this.prefs, p);
     }
     return b;
   },

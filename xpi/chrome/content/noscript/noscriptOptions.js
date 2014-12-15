@@ -269,9 +269,13 @@ var nsopt = {
           || ns.gTempSites.sitesString != gTempSites.sitesString) {
         ns.untrustedSites.sitesString = untrustedSites.sitesString;
         ns.persistUntrusted();
-        ns.setPref("temp", tempSites.sitesString);
-        ns.setPref("gtemp", gTempSites.sitesString);
-        
+        if (ns.usingCAPS) {
+          ns.setPref("temp", tempSites.sitesString);
+          ns.setPref("gtemp", gTempSites.sitesString);
+        } else {
+          ns.tempSites.sitesString = tempSites.sitesString
+          ns.gTempSites.sitesString = gTempSites.sitesString
+        }
         ns.setJSEnabled(trustedSites.sitesList, true, true);
       }
       ns.jsEnabled = global;
