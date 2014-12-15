@@ -2344,7 +2344,6 @@ var ns = {
           enabled = true;
         } else {
           let topSite = this.getSite(topOrigin);
-          ns.log("HERE " + topSite);
           if (topSite !== s) enabled = this.isJSEnabled(topSite, top);
         }
       }   
@@ -3833,7 +3832,7 @@ var ns = {
     let t = obj.tagName.toUpperCase();
   
     const ytFrameURL = "https://www.youtube.com/embed/";
-    ns.log("IFRAME" === t + ","+ objectURL.substring(0, ytFrameURL))
+    
     if ("IFRAME" === t && objectURL.substring(0, ytFrameURL.length) === ytFrameURL) {
       objectURL = ytFrameURL;
       id = "(ytFrame)";
