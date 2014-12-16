@@ -2325,7 +2325,7 @@ var ns = {
   },
 
   jsPolicySites: new PolicySites(),
-  isJSEnabled: function(s, window) {
+  isJSEnabled: function (s, window) {
      if (this.globalJS) {
       return !(this.alwaysBlockUntrustedContent && this.untrustedSites.matches(s));
     }
@@ -2338,7 +2338,7 @@ var ns = {
       let top = window.top;
       enabled = enabled || 
                this.globalHttpsWhitelist && s.indexOf("https:") === 0 && (window === top || this.isGlobalHttps(window));
-      if (top !== window && (enabled ? this.restrictSubdocScripting : this.cascadePermissions)) {
+      if (enabled ? this.restrictSubdocScripting : this.cascadePermissions) {
         let topOrigin = top.document.nodePrincipal.origin;
         if (this.isBrowserOrigin(topOrigin)) {
           enabled = true;
@@ -2348,9 +2348,7 @@ var ns = {
         }
       }   
     }
-  
     return enabled;
-  
   },
   setJSEnabled: function(site, is, fromScratch, cascadeTrust) {
         
@@ -6079,7 +6077,7 @@ var ns = {
     doc[flag] = url;
    
     const site = this.getSite(url);
-    var jsBlocked = !(docShell.allowJavascript && (this.jsEnabled || this.isJSEnabled(site)));
+    var jsBlocked = !(docShell.allowJavascript && (this.jsEnabled || this.isJSEnabled(site, doc.defaultView)));
     
     
     

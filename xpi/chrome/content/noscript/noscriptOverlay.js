@@ -272,28 +272,34 @@ return noscriptUtil.service ? {
   }
   
 ,
+  parseMenuOpt: function(node) {
+    let opt = node.id.match(/-((?:inv)?opt)-(.*)/);
+    return opt && { name: opt[2], inverse: opt[1][0] === 'i'};
+  }
+,
   toggleMenuOpt: function(node) {
-    var val=node.getAttribute("checked")=="true";
-    var k=node.id.lastIndexOf("-opt-");
-    if (k>-1) {
-      this.ns.setPref(node.id.substring(5+k),val);
+    var val = node.getAttribute("checked") === "true";
+    var opt = this.parseMenuOpt(node);
+    if (opt) {
+      this.ns.setPref(opt.name, opt.inverse ? !val : val);
     }
     return val;
   }
 ,
-
   prepareOptItems: function(popup) {
     const notifications = this.getNotificationBox();
     const opts = popup.getElementsByAttribute("type", "checkbox");
     var k, j, node, id;
-    for (j = opts.length; j-- > 0;) {
-      node = opts[j];
-      var id = node.id;
-      if ((k = id.lastIndexOf("-opt-")) > -1) {
-        if ((!notifications) && id.indexOf("notification") - 1) {
+    for (let j = opts.length; j-- > 0;) {
+      let node = opts[j];
+      let opt = this.parseMenuOpt(node);
+      if (opt) {
+        if ((!notifications) && node.id.indexOf("notification") - 1) {
           node.setAttribute("hidden", "true");
         } else {
-          node.setAttribute("checked", this.ns.getPref(node.id.substring(5 + k)));
+          let val = this.ns.getPref(opt.name);
+          if (opt.inverse) val = !val;
+          node.setAttribute("checked", val);
         }
       }
     }
@@ -550,12 +556,11 @@ return noscriptUtil.service ? {
     node = miGlobal.nextSibling;
     const mainMenu = node.parentNode;
 
-    var tempMenuItem = $("noscript-revoke-temp-mi");
-    if (node != tempMenuItem) {
-      node = mainMenu.insertBefore(tempMenuItem, node);
-    }
     
-    var tempSites = ns.gTempSites.sitesString;
+    
+   
+    
+    let tempSites = ns.gTempSites.sitesString;
     tempSites = tempSites && (tempSites + " " + ns.tempSites.sitesString).replace(/\s+$/g, '') || ns.tempSites.sitesString;
 
     if ((tempSites || ns.objectWhitelistLen || ns.clearClickHandler && ns.clearClickHandler.whitelistLen) && ns.getPref("showRevokeTemp", true)) {
@@ -566,11 +571,24 @@ return noscriptUtil.service ? {
     }
     node = node.nextSibling;
     
+    let tempMenuItem;
+    tempMenuItem = $("noscript-mi-invopt-volatilePrivatePermissions");
+    tempMenuItem.hidden = !(this.isPrivate() && ns.getPref("showVolatilePrivatePermissionsToggle"));
+    
+    if (node != tempMenuItem) {
+      node = mainMenu.insertBefore(tempMenuItem, node);
+    }
+    
     tempMenuItem = $("noscript-temp-allow-page-mi");
     if (node != tempMenuItem) {
       mainMenu.insertBefore(tempMenuItem, node)
     } else {
       node = node.nextSibling;
+    }
+    
+    tempMenuItem = $("noscript-revoke-temp-mi");
+    if (node != tempMenuItem) {
+      node = mainMenu.insertBefore(tempMenuItem, node);
     }
     
     var xssMenu = $("noscript-xss-menu");
@@ -666,7 +684,9 @@ return noscriptUtil.service ? {
     const showUntrusted = ns.getPref("showUntrusted", true);
     const showDistrust = ns.getPref("showDistrust", true);
     const showNothing = !(showAddress || showDomain || showBase || showUntrusted);
-    let volatileOnly = this.isPrivate() && ns.getPref("volatilePrivatePermissions");
+    let isPrivate = this.isPrivate();
+    let volatileOnly = isPrivate && ns.getPref("volatilePrivatePermissions");
+    
     let showPermanent = ns.getPref("showPermanent", true);
     const showTemp = !locked && (ns.getPref("showTemp", true) || volatileOnly && showPermanent);
     if (volatileOnly) showPermanent = false;

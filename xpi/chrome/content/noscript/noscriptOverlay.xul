@@ -104,7 +104,11 @@
        <menuseparator class="noscript-sep-global" />
        <menuitem class="menuitem-iconic" />
        
-       
+       <menuitem id="noscript-mi-invopt-volatilePrivatePermissions"
+          label="&noscriptPermanentInPrivate;"
+          type="checkbox" autocheck="true"
+          oncommand="noscriptOverlay.toggleMenuOpt(this);noscriptOverlay._syncUINow()"
+         />
        <menuitem id="noscript-revoke-temp-mi"
           class="menuitem-iconic noscript-revoke-temp" 
           label="&noscriptRevokeTemp;" accesskey="&noscriptRevokeTemp.accesskey;"

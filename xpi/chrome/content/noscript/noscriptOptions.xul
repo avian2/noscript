@@ -199,7 +199,10 @@
             <checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
           </vbox>
         </hbox>
-
+	<separator />
+       <hbox>
+				 <checkbox id="invopt-volatilePrivatePermissions" label="&noscriptPermanentInPrivate;" />
+			 </hbox>
   </vbox>
   </tabpanel><!-- END Appearance -->
   

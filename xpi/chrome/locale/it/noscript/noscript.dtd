@@ -188,3 +188,4 @@
 <!ENTITY noscriptCascadePermissions "Propaga i permessi del documento principale a tutti i sottodocumenti e agli script esterni">
 <!ENTITY noscriptRestrictSubdocScripting "Blocca gli script dei sottodocumenti se il documento principale non è nella whitelist">
 <!ENTITY noscriptGlobalHttpsWhitelist "Permetti automaticamente gli script HTTPS inclusi in documenti HTTPS">
+<!ENTITY noscriptPermanentInPrivate "Comandi &quot;Permetti&quot; permanenti nelle finestre private">

@@ -188,3 +188,4 @@
 <!ENTITY noscriptRestrictSubdocScripting "Bloquer les scripts dans les sous-documents sur liste blanche, sur les pages non placées sur liste blanche">
 <!ENTITY noscriptGlobalHttpsWhitelist "Autoriser les scripts HTTPS globalement, dans les documents HTTPS">
 <!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
+<!ENTITY noscriptPermanentInPrivate "Permanent &quot;Allow&quot; commands in private windows">
