@@ -2459,7 +2459,7 @@ var ns = {
   }
 ,
   flushCAPS: function(sitesString) {
-    const ps = this.useCAPS ? this.jsPolicySites : this.getPermanentSites();
+    const ps = this.usingCAPS ? this.jsPolicySites : this.getPermanentSites();
     if (sitesString) ps.sitesString = sitesString;
     
     // dump("Flushing " + ps.sitesString);
