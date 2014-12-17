@@ -2958,6 +2958,8 @@ var ns = {
       this.persistUntrusted();
     }
     
+    this.tempSites.sitesString = this.gTempSites.sitesString = "";
+    
     this.setPref("temp", ""); 
     this.setPref("gtemp", "");
     

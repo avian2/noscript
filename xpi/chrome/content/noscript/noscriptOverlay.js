@@ -553,52 +553,44 @@ return noscriptUtil.service ? {
     node = popup.getElementsByClassName("noscript-about")[0];
     if (node) node.hidden = !ns.getPref("showAbout");
     
+    node = seps.global;
+    node.parentNode.insertBefore(
+        $("noscript-mi-invopt-volatilePrivatePermissions"), node
+        ).hidden = !(this.isPrivate() && ns.getPref("showVolatilePrivatePermissionsToggle"));
+    
+    
     node = miGlobal.nextSibling;
     const mainMenu = node.parentNode;
-
-    
-    
-   
-    
-    let tempSites = ns.gTempSites.sitesString;
-    tempSites = tempSites && (tempSites + " " + ns.tempSites.sitesString).replace(/\s+$/g, '') || ns.tempSites.sitesString;
-
-    if ((tempSites || ns.objectWhitelistLen || ns.clearClickHandler && ns.clearClickHandler.whitelistLen) && ns.getPref("showRevokeTemp", true)) {
-      node.hidden = seps.global.hidden = false;
-      node.setAttribute("tooltiptext", this.getRevokeTooltip(tempSites));
-    } else {
-      node.hidden = true;
+    {
+      let tempMenuItem = $("noscript-revoke-temp-mi");
+      if (node != tempMenuItem) {
+        node = mainMenu.insertBefore(tempMenuItem, node);
+      }
+      let tempSites = ns.gTempSites.sitesString;
+      tempSites = tempSites && (tempSites + " " + ns.tempSites.sitesString).replace(/\s+$/g, '') || ns.tempSites.sitesString;
+      if ((tempSites || ns.objectWhitelistLen || ns.clearClickHandler && ns.clearClickHandler.whitelistLen) && ns.getPref("showRevokeTemp", true)) {
+        node.hidden = seps.global.hidden = false;
+        node.setAttribute("tooltiptext", this.getRevokeTooltip(tempSites));
+      } else {
+        node.hidden = true;
+      }
     }
+    
     node = node.nextSibling;
-    
-    let tempMenuItem;
-    tempMenuItem = $("noscript-mi-invopt-volatilePrivatePermissions");
-    tempMenuItem.hidden = !(this.isPrivate() && ns.getPref("showVolatilePrivatePermissionsToggle"));
-    
-    if (node != tempMenuItem) {
-      node = mainMenu.insertBefore(tempMenuItem, node);
-    }
-    
-    tempMenuItem = $("noscript-temp-allow-page-mi");
-    if (node != tempMenuItem) {
-      mainMenu.insertBefore(tempMenuItem, node)
+    let allowPageMenuItem = $("noscript-temp-allow-page-mi");
+    if (node !== allowPageMenuItem) {
+      mainMenu.insertBefore(allowPageMenuItem, node)
     } else {
       node = node.nextSibling;
     }
-    
-    tempMenuItem = $("noscript-revoke-temp-mi");
-    if (node != tempMenuItem) {
-      node = mainMenu.insertBefore(tempMenuItem, node);
-    }
-    
-    var xssMenu = $("noscript-xss-menu");
-    
+
+    let xssMenu = $("noscript-xss-menu");
+      
     if (xssMenu && node != xssMenu) {
       mainMenu.insertBefore(xssMenu, node);
     }
     this.populateXssMenu(xssMenu.firstChild);
     this.syncXssWidget(xssMenu);
-    
 
     this.prepareOptItems(popup);
       
@@ -994,17 +986,17 @@ return noscriptUtil.service ? {
     mainMenu.insertBefore(mainFrag, seps.stop);
     
     // temp allow all this page
-    if (!(tempMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", true)))) {
+    if (!(allowPageMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", true)))) {
       let allowable = this.allowPage(false, true, sites);
-      if (allowable.length) tempMenuItem.setAttribute("tooltiptext", allowable.join(", "));
-      else tempMenuItem.hidden = true;
+      if (allowable.length) allowPageMenuItem.setAttribute("tooltiptext", allowable.join(", "));
+      else allowPageMenuItem.hidden = true;
     }
 
     
     // allow all this page
     node = $("noscript-allow-page-mi");
-    if (node.nextSibling != tempMenuItem) {
-      tempMenuItem.parentNode.insertBefore(node, tempMenuItem);
+    if (node.nextSibling !== allowPageMenuItem) {
+      allowPageMenuItem.parentNode.insertBefore(node, allowPageMenuItem);
     }
     if (!(node.hidden = volatileOnly || unknownCount == 0 || !ns.getPref("showAllowPage", true))) {
        let allowable = this.allowPage(true, true, sites);
@@ -1015,7 +1007,7 @@ return noscriptUtil.service ? {
     // "allow page" accelerators
     {
       let accel = ns.getPref("menuAccelerators");
-      for each(let el in [node, tempMenuItem]) 
+      for each(let el in [node, allowPageMenuItem]) 
         if (accel)
           el.setAttribute("accesskey", el.getAttribute("noaccesskey"));
         else
@@ -1024,8 +1016,8 @@ return noscriptUtil.service ? {
     
     // make permanent
     node = $("noscript-temp2perm-mi");
-    if (tempMenuItem.nextSibling != node) {
-      tempMenuItem.parentNode.insertBefore(node, tempMenuItem.nextSibling);
+    if (allowPageMenuItem.nextSibling != node) {
+      allowPageMenuItem.parentNode.insertBefore(node, allowPageMenuItem.nextSibling);
     }
     if (!(node.hidden = volatileOnly || tempCount == 0 || !ns.getPref("showTempToPerm"))) {
       node.setAttribute("tooltiptext", this.tempToPerm(true, sites).join(", "));
