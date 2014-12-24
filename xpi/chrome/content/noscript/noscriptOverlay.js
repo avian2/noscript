@@ -364,8 +364,9 @@ return noscriptUtil.service ? {
   isPrivate: function() {
     try {
           // Firefox 20+
-      Cu.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
+      Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
       return PrivateBrowsingUtils.isWindowPrivate(content);
+    
     } catch(e) {
 
       try {

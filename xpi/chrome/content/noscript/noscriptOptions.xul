@@ -197,12 +197,10 @@
             <checkbox id="opt-showTempAllowPage" label="&noscriptTempAllowPage;" />
             <checkbox id="opt-showTempToPerm" label="&noscriptTempToPerm;" />
             <checkbox id="opt-showRevokeTemp" label="&noscriptRevokeTemp;" />
+						<checkbox id="opt-showVolatilePrivatePermissionsToggle" label="&noscriptPermanentInPrivate;" />
           </vbox>
         </hbox>
-	<separator />
-       <hbox>
-				 <checkbox id="invopt-volatilePrivatePermissions" label="&noscriptPermanentInPrivate;" />
-			 </hbox>
+
   </vbox>
   </tabpanel><!-- END Appearance -->
   
