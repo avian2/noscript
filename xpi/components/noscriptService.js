@@ -1543,12 +1543,15 @@ var ns = {
         if (!this.jsPolicySites.fromPref(this.policyPB)) {
           this.resetDefaultSitePrefs();
         }
+        if (!this.usingCAPS) {
+          this.jsPolicySites.add(this.tempSites.sitesList);
+        }
         break;
       case "temp":
-        this.tempSites.fromPref(branch, name);
+        if (this.usingCAPS) this.tempSites.fromPref(branch, name);
       break;
       case "gtemp":
-        this.gTempSites.fromPref(branch, name);
+        if (this.usingCAPS) this.gTempSites.fromPref(branch, name);
       break;
       case "untrusted":
         this.untrustedSites.fromPref(branch, name);
