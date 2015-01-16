@@ -33,7 +33,7 @@ pref("noscript.mandatory", "chrome: blob: moz-safe-about: about: about:addons ab
 pref("noscript.default", "about:blank addons.mozilla.org persona.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv informaction.com yahoo.com yimg.com yahooapis.com youtube.com ytimg.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com live.net outlook.com afx.ms gfx.ms sfx.ms wlxrs.com ajax.aspnetcdn.com cdnjs.cloudflare.com code.jquery.com yandex.st mootools.net prototypejs.org tinymce.cachefly.net vjs.zendcdn.net");
 
 pref("noscript.allowWhitelistUpdates", true);
-pref("noscript.volatilePrivatePermissions", true);
+pref("noscript.volatilePrivatePermissions", false);
 pref("noscript.showVolatilePrivatePermissionsToggle", true);
 
 pref("noscript.eraseFloatingElements", true);
@@ -271,6 +271,8 @@ pref("noscript.surrogate.googletag.replacement", "googletag={__noSuchMethod__:fu
 pref("noscript.surrogate.googletag.sources", ".googletagservices.com");
 pref("noscript.surrogate.gravatar.sources", ".gravatar.com");
 pref("noscript.surrogate.gravatar.replacement", "with(Gravatar={my_hash:''})profile_cb=init=function(){};");
+pref("noscript.surrogate.microsoftSupport.replacement", "let c=document.getElementById('contentArea');if(c)c.style.display=''");
+pref("noscript.surrogate.microsoftSupport.sources", "!support.microsoft.com");
 pref("noscript.surrogate.modpagespeed.replacement", "let s=document.querySelector('noscript>meta[http-equiv=refresh]+style');if(s)s.parentNode.removeChild(s)");
 pref("noscript.surrogate.modpagespeed.sources", "!@^https?:");
 pref("noscript.surrogate.qs.sources", "*.quantserve.com");

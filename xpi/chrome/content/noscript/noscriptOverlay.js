@@ -365,7 +365,7 @@ return noscriptUtil.service ? {
     try {
           // Firefox 20+
       Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
-      return PrivateBrowsingUtils.isWindowPrivate(content);
+      return PrivateBrowsingUtils.isWindowPrivate(window);
     
     } catch(e) {
 
