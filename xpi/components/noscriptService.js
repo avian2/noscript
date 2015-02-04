@@ -6166,15 +6166,25 @@ var ns = {
   _onWindowCreatedReal: function(window, site) {
     let document = window.document;
     let origin = document.nodePrincipal.origin;
-    
     if (this.isBrowserOrigin(origin)) return;
     let blockIt;
     let blocker = WinScript.supported ? WinScript : DocShellScript;
+     ns.log("origin: " + origin + "; site: " +site)
     site = this.getSite(origin || site);
-    
-    if (site === 'moz-nullprincipal:')
-      for (let w = window; !((site = this.getSite(w.document.nodePrincipal.origin)) || w.parent === w); w = w.parent);
-     
+    if (site === 'moz-nullprincipal:') {
+      site = this.getSite(document.URL);
+      ns.log("site from doc: " + site)
+      if (!site) {
+        // "special" URI (e.g. data:), let's use opener
+        let docShell = DOM.getDocShellForWindow(window);
+        let channel = docShell.currentDocumentChannel;
+        if (channel) {
+          let openerURI = IOUtil.extractInternalReferrer(channel);
+          if (openerURI) site = this.getSite(openerURI.spec);
+        }
+      }
+    }
+    ns.log(window.location + " -- " + site);
     if (this.globalHttpsWhitelist && this.isGlobalHttps(window)) {
       blockIt = false;
     }
