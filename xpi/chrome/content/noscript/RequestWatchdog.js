@@ -1463,7 +1463,8 @@ var InjectionChecker = {
     const MODE_DOUBLEQUOTE = 3;
     const MODE_BLOCKCOMMENT = 4;
     const MODE_LINECOMMENT = 6;
- 
+    const MODE_INTERPOLATION = 7;
+    
     let mode = MODE_NORMAL;
     let escape = false;
     let res = [];
@@ -1489,6 +1490,9 @@ var InjectionChecker = {
           case MODE_DOUBLEQUOTE:
             handleQuotes(s[j], '"', "_DQS_");
             break;
+          case MODE_INTERPOLATION:
+            handleQuotes(s[j], '"', "``");
+            break;
           case MODE_BLOCKCOMMENT:
             if (s[j] === '/' && s[j-1] === '*') {
                res.push("/**/");
@@ -1509,10 +1513,14 @@ var InjectionChecker = {
              case "'":
                 mode = MODE_SINGLEQUOTE;
                 break;
+             case "`":
+                mode = MODE_INTERPOLATION;
+                break;
              case '/':
                 switch(s[j+1]) {
                    case '*':
                       mode = MODE_BLOCKCOMMENT;
+                      j+=2;
                       break;
                    case '/':
                       mode = MODE_LINECOMMENT;
