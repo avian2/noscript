@@ -1468,7 +1468,6 @@ var ns = {
   docShellJSBlocking: 1, // 0 - don't touch docShells, 1 - block untrusted, 2 - block not whitelisted
   
   forbidXBL: 4,
-  forbidXHR: 2,
   injectionCheck: 2,
   injectionCheckSubframes: true,
   
@@ -1603,7 +1602,6 @@ var ns = {
       case "forbidMetaRefresh":
       case "forbidIFramesContext":
       case "forbidXBL":
-      case "forbidXHR":
       case "ignorePorts":
       case "injectionCheck":
       case "jsredirectFollow":
@@ -1959,7 +1957,7 @@ var ns = {
       "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts", "forbidWebGL",
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
       "forbidMetaRefresh",
-      "forbidXBL", "forbidXHR",
+      "forbidXBL",
       "liveConnectInterception", "audioApiInterception",
       "inclusionTypeChecking", "nosniff",
       "alwaysBlockUntrustedContent",
@@ -3660,23 +3658,6 @@ var ns = {
     }
     return true;
   },
-  
-  forbiddenXHRContext: function(originURL, locationURL, window) {
-    var locationSite = this.getSite(locationURL);
-    // var originSite = this.getSite(originURL);
-    switch (this.forbidXHR) {
-      case 3: // forbid all XHR
-        return true;
-      case 2: // allow same-site XHR only
-        if (locationSite != originSite) return true;
-      case 1: // allow trusted XHR targets only
-        if (!(this.isJSEnabled(locationSite, window))) return true;
-      case 0: // allow all XBL
-        return false;
-    }
-    return true;
-  },
-  
   
   safeJSRx: false,
   initSafeJSRx: function() {
@@ -6169,11 +6150,11 @@ var ns = {
     if (this.isBrowserOrigin(origin)) return;
     let blockIt;
     let blocker = WinScript.supported ? WinScript : DocShellScript;
-     ns.log("origin: " + origin + "; site: " +site)
+    
     site = this.getSite(origin || site);
     if (site === 'moz-nullprincipal:') {
       site = this.getSite(document.URL);
-      ns.log("site from doc: " + site)
+      
       if (!site) {
         // "special" URI (e.g. data:), let's use opener
         let docShell = DOM.getDocShellForWindow(window);
@@ -6184,7 +6165,7 @@ var ns = {
         }
       }
     }
-    ns.log(window.location + " -- " + site);
+
     if (this.globalHttpsWhitelist && this.isGlobalHttps(window)) {
       blockIt = false;
     }

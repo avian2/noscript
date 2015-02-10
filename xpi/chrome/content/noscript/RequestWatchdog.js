@@ -1266,7 +1266,7 @@ var InjectionChecker = {
     }
     
     // remove c++ style comments    
-    return s.replace(/^([^'"\\]*?)\/\/[^\r\n]*/g, "$1//_COMMENT_");
+    return s.replace(/^([^'"`\\]*?)\/\/[^\r\n]*/g, "$1//_COMMENT_");
   },
   
   reduceURLs: function(s) {

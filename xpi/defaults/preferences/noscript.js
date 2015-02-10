@@ -171,7 +171,6 @@ pref("noscript.urivalid.mailto", "[^\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]*");
 pref("noscript.forbidExtProtSubdocs", true);
 
 pref("noscript.forbidXBL", 1);
-pref("noscript.forbidXHR", 1);
 
 pref("noscript.whitelistRegExp", "");
 
