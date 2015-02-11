@@ -1491,7 +1491,7 @@ var InjectionChecker = {
             handleQuotes(s[j], '"', "_DQS_");
             break;
           case MODE_INTERPOLATION:
-            handleQuotes(s[j], '"', "``");
+            handleQuotes(s[j], '`', "``");
             break;
           case MODE_BLOCKCOMMENT:
             if (s[j] === '/' && s[j-1] === '*') {
