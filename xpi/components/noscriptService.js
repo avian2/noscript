@@ -1468,6 +1468,7 @@ var ns = {
   docShellJSBlocking: 1, // 0 - don't touch docShells, 1 - block untrusted, 2 - block not whitelisted
   
   forbidXBL: 4,
+  forbidXHR: 1,
   injectionCheck: 2,
   injectionCheckSubframes: true,
   
@@ -1602,6 +1603,7 @@ var ns = {
       case "forbidMetaRefresh":
       case "forbidIFramesContext":
       case "forbidXBL":
+      case "forbidXHR":
       case "ignorePorts":
       case "injectionCheck":
       case "jsredirectFollow":
@@ -1957,7 +1959,7 @@ var ns = {
       "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts", "forbidWebGL",
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
       "forbidMetaRefresh",
-      "forbidXBL",
+      "forbidXBL", "forbidXHR",
       "liveConnectInterception", "audioApiInterception",
       "inclusionTypeChecking", "nosniff",
       "alwaysBlockUntrustedContent",
@@ -3658,6 +3660,24 @@ var ns = {
     }
     return true;
   },
+  
+  forbiddenXHRContext: function(originURL, locationURL, window) {
+    var locationSite = this.getSite(locationURL);
+    // var originSite = this.getSite(originURL);
+    switch (this.forbidXHR) {
+      case 3: // forbid all XHR
+        return true;
+      case 2: // allow same-site XHR only
+        if (locationSite && locationSite != originSite) return true;
+      case 1: // allow trusted XHR targets only
+        if (locationSite && locationSite !== "moz-nullprincipal:" && !this.isJSEnabled(locationSite, window))
+          return true;
+      case 0: // allow all XBL
+        return false;
+    }
+    return true;
+  },
+  
   
   safeJSRx: false,
   initSafeJSRx: function() {

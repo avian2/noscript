@@ -375,6 +375,11 @@ const MainContentPolicy = {
             this.forbiddenXMLRequest(aRequestOrigin, aContentLocation, aContext, this.forbiddenXBLContext) 
             ? this.reject("XBL", arguments) : CP_OK;
         
+        case 11: // in Firefox 3 we check for cross-site XHR
+          return this.forbidXHR && 
+            this.forbiddenXMLRequest(aRequestOrigin, aContentLocation, aContext, this.forbiddenXHRContext) 
+             ? this.reject("XHR", arguments) : CP_OK;
+        
         case 10: // TYPE_PING
           if (this.jsEnabled || !this.getPref("noping", true) || 
               aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec))
