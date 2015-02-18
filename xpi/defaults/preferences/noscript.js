@@ -338,7 +338,8 @@ pref("noscript.surrogate.personaorg.sources", "login.persona.org");
 pref("noscript.surrogate.personaorg.replacement", "if(typeof navigator.id==='undefined'){navigator.id={__noSuchMethod__:function(){},watch:function(){}}}");
 pref("noscript.surrogate.picsee.sources", "!^https?://picsee\\.net/2\\d.*\\.html");
 pref("noscript.surrogate.picsee.replacement", "location.replace(location.href.replace(/(\\/2\\d{3}[^\\/]*)(.*)\\.html/, '/upload$1/$2'));");
-
+pref("noscript.surrogate.owasp_antiClickjack.sources", "!^https?://");
+pref("noscript.surrogate.owasp_antiClickjack.replacement", "if(window.top===window){let s=document.querySelector('style#antiClickjack');if(s)s.parentNode.removeChild(s)}");
 pref("noscript.fakeScriptLoadEvents.enabled", true);
 pref("noscript.fakeScriptLoadEvents.onlyRequireJS", true);
 pref("noscript.fakeScriptLoadEvents.exceptions", "");
