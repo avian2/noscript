@@ -6201,7 +6201,7 @@ var ns = {
     
      
     if (typeof blockIt === "undefined")
-      blockIt = site && (this.usingCAPS && !this.restrictSubdocScripting ? this.isUntrusted(site) : !this.isJSEnabled(site));
+      blockIt = !site || (this.usingCAPS && !this.restrictSubdocScripting ? this.isUntrusted(site) : !this.isJSEnabled(site));
     
     if (blockIt) {
       blocker.block(window);
