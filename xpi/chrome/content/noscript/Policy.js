@@ -336,19 +336,19 @@ const MainContentPolicy = {
                 break;
             
             case 7:
-            
-              if ((aContext instanceof Ci.nsIDOMHTMLObjectElement) &&
-                  this.isCachedObjectMime(aMimeTypeGuess) &&
-                  !(aContext.offsetWidth && aContext.offsetHeight) &&
-                  this.getPref("allowCachingObjects") &&
-                  let (win = aContext.ownerDocument.defaultView)
-                  aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec), win) &&
-                  !this.pluginForMime(aMimeTypeGuess) &&
-                  (aMimeTypeGuess.indexOf("css") > 0 || this.isJSEnabled(this.getSite(aContentLocation.spec), win))
-                 ) {
-                return CP_OK;
+              if (aContext instanceof Ci.nsIDOMHTMLObjectElement) {
+                let win = aContext.ownerDocument.defaultView
+                if (this.isCachedObjectMime(aMimeTypeGuess) &&
+                    !(aContext.offsetWidth && aContext.offsetHeight) &&
+                    this.getPref("allowCachingObjects") &&
+                    
+                    aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec), win) &&
+                    !this.pluginForMime(aMimeTypeGuess) &&
+                    (aMimeTypeGuess.indexOf("css") > 0 || this.isJSEnabled(this.getSite(aContentLocation.spec), win))
+                   ) {
+                  return CP_OK;
+                }
               }
-              
               if (aContentType === 7 || aInternalCall) break;
               
             case 1: case 12: // we may have no chance to check later for unknown and sub-plugin requests

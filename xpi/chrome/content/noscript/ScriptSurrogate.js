@@ -234,11 +234,11 @@ var ScriptSurrogate = {
     }
 
     if (!scripts) return false;
-    
+
     const runner = noScript
       ? this.fallback
       : scriptURL === pageURL
-        ? let (win = document.defaultView) win != win.top
+        ? document.defaultView !== document.defaultView.top
             ? this.executeSandbox
             : (this.sandbox ? this.execute : this.executeDOM)
         : this.sandboxInclusions ? this.executeSandbox : this.executeDOM;

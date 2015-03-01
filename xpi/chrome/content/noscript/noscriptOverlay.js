@@ -2544,6 +2544,10 @@ return noscriptUtil.service ? {
           noscriptBM.init();
         }, 1500);
         
+        
+        if (window.messageManager) {
+          window.messageManager.loadFrameScript("chrome://noscript/content/fs/pasteHandler.js", true);
+        }
       } catch(e) {
         let msg = "[NoScript] Error initializing new window " + e + "\n" + e.stack; 
         noscriptOverlay.ns.log(msg);

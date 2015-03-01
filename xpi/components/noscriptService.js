@@ -2029,11 +2029,24 @@ var ns = {
     
     this._updateSync();
     
+    this._initE10s();
     
     if (this.consoleDump) this.dump("Init done in " + (Date.now() - t));  
     return true;
   },
   
+  globalMM: null,
+  _initE10s: function() {
+    if (! ("@mozilla.org/globalmessagemanager;1" in Cc)) return;
+    this.globalMM = Cc["@mozilla.org/globalmessagemanager;1"]
+        .getService(Ci.nsIMessageListenerManager)
+        .QueryInterface(Ci.nsIFrameScriptLoader)
+        .QueryInterface(Ci.nsIMessageBroadcaster);
+    this.globalMM.loadFrameScript("chrome://noscript/content/frameScript.js", true);
+  },
+  _disposeE10s: function() {
+    this.globalMM.removeDelayedFrameScript("chrome://noscript/content/frameScript.js");
+  },
   
   
   dispose: function() {
@@ -5881,6 +5894,7 @@ var ns = {
             this.clearClickHandler.install(browser);
           }
         }
+        
       }
     }
     
@@ -6288,6 +6302,24 @@ var ns = {
     delete this.implementToStaticHTML;
     return this.implementToStaticHTML = this.getPref("toStaticHTML");
   },
+  sanitizeStaticDOM: function(el) {
+     // remove attributes from forms
+    for each (let f in Array.slice(el.getElementsByTagName("form"))) {
+      for each(let a in Array.slice(f.attributes)) {
+        f.removeAttribute(a.name);
+      }
+    }
+    let doc = el.ownerDocument;
+    // remove dangerous URLs (e.g. javascript: or data: or reflected XSS URLs)
+    for each(let a in ['href', 'to', 'from', 'by', 'values']) {
+      let res = doc.evaluate('//@' + a, el, null, Ci.nsIDOMXPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+      for (let j = res.snapshotLength; j-- > 0;) {
+        let attr = res.snapshotItem(j);
+        if (InjectionChecker.checkURL(attr.nodeValue))
+          attr.nodeValue = "";
+      }
+    }
+  },
   _toStaticHTMLHandler:  function(ev) {
     try {
       var t = ev.target;
@@ -6295,22 +6327,7 @@ var ns = {
       t.parentNode.removeChild(t);
       var s = t.getAttribute("data-source");
       ns.sanitizeHTML(s, t);
-      // remove attributes from forms
-      for each (let f in Array.slice(t.getElementsByTagName("form"))) {
-        for each(let a in Array.slice(f.attributes)) {
-          f.removeAttribute(a.name);
-        }
-      }
-      
-      for each(let a in ['href', 'to', 'from', 'by', 'values']) {
-        let res = doc.evaluate('//@' + a, t, null, Ci.nsIDOMXPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-        for (let j = res.snapshotLength; j-- > 0;) {
-          let attr = res.snapshotItem(j);
-          if (InjectionChecker.checkURL(attr.nodeValue))
-            attr.nodeValue = "";
-        }
-      }
-      
+      ns.sanitizeStaticDOM(t);
     } catch(e){ if (ns.consoleDump) ns.dump(e) }
   },
   get _toStaticHTMLDef() {

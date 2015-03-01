@@ -248,6 +248,8 @@ pref("noscript.ignorePorts", true);
 
 pref("noscript.cp.last", true);
 
+pref("noscript.sanitizePaste", true);
+
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.debug", false);
 pref("noscript.surrogate.sandbox", true);
@@ -270,7 +272,7 @@ pref("noscript.surrogate.glinks.sources", "!@^https?://[^/]+google\\..*/search")
 pref("noscript.surrogate.googletag.replacement", "googletag={__noSuchMethod__:function()this,slots:{},cmd:{__noSuchMethod__:function()this}}");
 pref("noscript.surrogate.googletag.sources", ".googletagservices.com");
 pref("noscript.surrogate.gravatar.sources", ".gravatar.com");
-pref("noscript.surrogate.gravatar.replacement", "with(Gravatar={my_hash:''})profile_cb=init=function(){};");
+pref("noscript.surrogate.gravatar.replacement", "Gravatar={my_hash:'', profile_cb:function(){}, init:function(){}, __noSuchMethod__:function(){}}");
 pref("noscript.surrogate.microsoftSupport.replacement", "let c=document.getElementById('contentArea');if(c)c.style.display=''");
 pref("noscript.surrogate.microsoftSupport.sources", "!support.microsoft.com");
 pref("noscript.surrogate.modpagespeed.replacement", "let s=document.querySelector('noscript>meta[http-equiv=refresh]+style');if(s)s.parentNode.removeChild(s)");
