@@ -57,7 +57,7 @@ function sanitizeExtras(el) {
     let res = doc.evaluate('//@' + a, el, null, /* DOMXPathResult.UNORDERED_NODE_SNAPSHOT_TYPE */ 6, null);
     for (let j = res.snapshotLength; j-- > 0;) {
       let attr = res.snapshotItem(j);
-      if (/^\W*(?:(?:javascript|data):|https?:.*[[(<])/i.test(unescape(attr.value))) {
+      if (/^\W*(?:(?:javascript|data):|https?:[\s\S]+[[(<])/i.test(unescape(attr.value))) {
         attr.value = "javascript:void(0)";
         ret = true;
       }
