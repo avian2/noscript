@@ -6199,21 +6199,25 @@ var ns = {
         }
       }
     }
-
+    
+    window._NoScriptSite = site;
+     
     if (this.globalHttpsWhitelist && this.isGlobalHttps(window)) {
       blockIt = false;
-    }
-    
-    if ((this.cascadePermissions || this.restrictSubdocScripting) && window.top !== window) {
-      if (this.cascadePermissions) {
-        blockIt = blocker.isBlocked(window.top) || this.isUntrusted(site);
-      } else if (this.restrictSubdocScripting && blocker.isBlocked(window.parent)) {
-        blockIt = true;
+    } else {
+      if ((this.cascadePermissions || this.restrictSubdocScripting) && window.top !== window) {
+        if (this.cascadePermissions) {
+          blockIt = blocker.isBlocked(window.top) || this.isUntrusted(site);
+          if (!blockIt) {
+            let topSite = window.top._NoScriptSite;
+            blockIt = !this.isJSEnabled(topSite);
+          }
+        } else if (this.restrictSubdocScripting && blocker.isBlocked(window.parent)) {
+          blockIt = true;
+        }
       }
     }
     
-    
-     
     if (typeof blockIt === "undefined")
       blockIt = !site || (this.usingCAPS && !this.restrictSubdocScripting ? this.isUntrusted(site) : !this.isJSEnabled(site));
     
