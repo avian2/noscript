@@ -142,9 +142,10 @@ return noscriptUtil.service ? {
             case "open":
             case "showing":
               popup.hidePopup();
-              if (popup.state !== "closed") try {
-                popup. boxObject.QueryInterface(Components.interfaces.nsIPopupBoxObject).hidePopup()
-              } catch(e) {}
+              if (popup.state !== "closed" && 
+                 !("nsIPopupBoxObject" in Ci) ||
+                  popup.boxObject instanceof Ci.nsIPopupBoxObject)
+                popup.boxObject.hidePopup();
               break;
           }
         }
