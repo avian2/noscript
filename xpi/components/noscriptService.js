@@ -2303,7 +2303,7 @@ var ns = {
     if (s && !this._isHttpsAndNotUntrusted(s)) return false;
     
     for (;; win = win.parent) {
-      let site = this.getSite(win.document.nodePrincipal.origin);
+      let site = this.getSite(this.getPrincipalOrigin(win.document));
       if (!(allow = s && site === s || this._isHttpsAndNotUntrusted(site)) || win === win.parent)
         break;
       s = site;
@@ -2355,7 +2355,7 @@ var ns = {
       enabled = enabled || 
                this.globalHttpsWhitelist && s.indexOf("https:") === 0 && (window === top || this.isGlobalHttps(window));
       if (enabled ? this.restrictSubdocScripting : this.cascadePermissions) {
-        let topOrigin = top.document.nodePrincipal.origin;
+        let topOrigin = this.getPrincipalOrigin(top.document);
         if (this.isBrowserOrigin(topOrigin)) {
           enabled = true;
         } else {
@@ -2395,6 +2395,20 @@ var ns = {
     this.flushCAPS();
     
     return is;
+  },
+  
+  _buggyIPV6rx: /^[^/:]+:\/\/[^[](?:[0-9a-f]*:){2}/,
+  getPrincipalOrigin: function(node) {
+    let p = node.nodePrincipal;
+    let origin = p.origin;
+    if (this._buggyIPV6rx.test(origin)) try {
+      let uri = p.URI;
+      let hostPort = uri.hostPort;
+      if (hostPort && hostPort[0] === '[') origin = uri.scheme + "://" + hostPort;
+    } catch (e) {
+      ns.log(e);
+    }
+    return origin;
   },
   
   _removeAutoPorts: function(site) {
@@ -6180,7 +6194,7 @@ var ns = {
   
   _onWindowCreatedReal: function(window, site) {
     let document = window.document;
-    let origin = document.nodePrincipal.origin;
+    let origin = this.getPrincipalOrigin(document);
     if (this.isBrowserOrigin(origin)) return;
     let blockIt;
     let blocker = WinScript.supported ? WinScript : DocShellScript;
