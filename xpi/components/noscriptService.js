@@ -2360,7 +2360,7 @@ var ns = {
           enabled = true;
         } else {
           let topSite = this.getSite(topOrigin);
-          if (topSite !== s) enabled = this.isJSEnabled(topSite);
+          if (topSite !== s) enabled = this.isJSEnabled(topSite, enabled && this.restrictSubdocScripting && window);
         }
       }   
     }
