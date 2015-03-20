@@ -2116,7 +2116,7 @@ var ns = {
       "2.6.9.4rc1": {
         "vimeo.com": "vimeocdn.com" // no movie will play anymore without this
       },
-      "2.6.9.19rc1": {
+      "@VERSION@rc1": {
         "youtube.com": "googlevideo.com" // Youtube's HTML5 video player now requires this
       }
     };
