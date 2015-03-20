@@ -342,6 +342,10 @@ pref("noscript.surrogate.picsee.sources", "!^https?://picsee\\.net/2\\d.*\\.html
 pref("noscript.surrogate.picsee.replacement", "location.replace(location.href.replace(/(\\/2\\d{3}[^\\/]*)(.*)\\.html/, '/upload$1/$2'));");
 pref("noscript.surrogate.owasp_antiClickjack.sources", "!^https?://");
 pref("noscript.surrogate.owasp_antiClickjack.replacement", "if(window.top===window){let s=document.querySelector('style#antiClickjack');if(s)s.parentNode.removeChild(s)}");
+pref("noscript.surrogate.gigya.replacement", "gigya={__noSuchMethod__:function(){}, isGigya:true, __initialized:true};gigya.socialize={__noSuchMethod__:function(){}, addEventHandlers:function(){}}");
+pref("noscript.surrogate.gigya.sources", ".gigya.com");
+pref("noscript.surrogate.stripe.replacement", "Stripe={__noSuchMethod__:function(){}}");
+pref("noscript.surrogate.stripe.sources", "js.stripe.com");
 pref("noscript.fakeScriptLoadEvents.enabled", true);
 pref("noscript.fakeScriptLoadEvents.onlyRequireJS", true);
 pref("noscript.fakeScriptLoadEvents.exceptions", "");
