@@ -2115,6 +2115,9 @@ var ns = {
       },
       "2.6.9.4rc1": {
         "vimeo.com": "vimeocdn.com" // no movie will play anymore without this
+      },
+      "@VERSION@": {
+        "youtube.com": "googlevideo.com" // Youtube's HTML5 video player now requires this
       }
     };
     
@@ -3488,6 +3491,12 @@ var ns = {
             flashvars = p.value;
       }
       if (flashvars) {
+        let yahooRx = /\bYUIBridgeCallback=[^&]+/;
+        if (yahooRx.test(flashvars)) {
+          let d = embed.ownerDocument;
+          let m = d && d.URL.match(/(\d+)\.html\b/);
+          flashvars = flashvars.replace(yahooRx, m ? "_YUIvid_=" + m[1] : "");
+        }
         let videoId = flashvars.match(/video_?id=[^&]+/);
         url += "#!flashvars#" + encodeURI(videoId && videoId[0] || flashvars);
       }
@@ -5145,7 +5154,9 @@ var ns = {
           doc.defaultView.location.replace(url);
         } else this.quickReload(doc.defaultView, true);
         return;
-    } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime) || this.getExpando(ctx, "requiresReload")) {
+    } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime) || 
+               this.getExpando(ctx, "requiresReload") ||
+               /#!flashvars#.*\b_YUIvid_=/.test(url)) {
       this.quickReload(doc.defaultView);
       return;
     } else if (mime === "WebGL" || this.getExpando(ctx, "silverlight")) {
