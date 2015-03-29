@@ -544,14 +544,22 @@ const MainContentPolicy = {
               }
               
             } else if(scheme === "data" || scheme === "javascript") {
-              if (this.dropXssProtection && aContext instanceof Ci.nsIDOMXULElement &&
-                  aRequestOrigin.spec === "chrome://browser/content/browser.xul") {
-                let stack = new Error().stack.split("\n");
-                for (let j = stack.length; j-- > 0;)
-                if (stack[j].indexOf("onxbldrop([object DragEvent])@chrome://global/content/bindings/browser.xml") === 0) {
-                  ns.log('NoScript prevented "' + aContentLocation.spec + '" from being loaded on drop.');
-                  return this.reject("Drop XSS", arguments);
-                }            
+             
+              if (aContext instanceof Ci.nsIDOMXULElement) {
+                originURL = originURL || aRequestOrigin.spec;
+                if (originURL === "chrome://browser/content/browser.xul") {
+                  //code
+                  if (this.dropXssProtection) {
+                    let stack = new Error().stack.split("\n");
+                    for (let j = stack.length; j-- > 0;)
+                    if (stack[j].indexOf("onxbldrop([object DragEvent])@chrome://global/content/bindings/browser.xml") === 0) {
+                      ns.log('NoScript prevented "' + aContentLocation.spec + '" from being loaded on drop.');
+                      return this.reject("Drop XSS", arguments);
+                    }            
+                  }
+                } else if (!this.isJSEnabled(originSite = this.getSite(originURL))) {
+                  return this.reject("top level data: URI from forbidden origin", arguments);
+                }
               }
               return CP_OK; // JavaScript execution policies will take care of this
             } else if(scheme !== aRequestOrigin.scheme && 

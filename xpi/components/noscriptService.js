@@ -2116,7 +2116,7 @@ var ns = {
       "2.6.9.4rc1": {
         "vimeo.com": "vimeocdn.com" // no movie will play anymore without this
       },
-      "@VERSION@rc1": {
+      "2.6.9.19rc1": {
         "youtube.com": "googlevideo.com" // Youtube's HTML5 video player now requires this
       }
     };
@@ -5009,9 +5009,9 @@ var ns = {
   
   stackIsMine: function() {
     var s = Components.stack.caller;
-    var f = s.filename;
+    var f = s.filename.replace(/ line .*/, '');
     while((s = s.caller)) {
-      if (s.filename && f != s.filename) return false;
+      if (s.filename && f != s.filename.replace(/ line .*/, '')) return false;
     }
     return true;
   },
