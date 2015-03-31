@@ -3448,9 +3448,18 @@ var ns = {
     
     PolicyState.cancel(args);
     
-    let win = DOM.findWindow(args[3]);
-    if (args[1] && win)
-      this.recordBlocked(win, this.getSite(args[1].spec) || "", this.getSite(win.location.href || args[2] && args[2].spec));
+    
+    if (args[1]) {
+      let win = DOM.findWindow(args[3]);
+      let focusedWin = win;
+      if (!focusedWin) {
+        focusedWin = DOM.mostRecentBrowserWindow;
+        focusedWin = focusedWin && focusedWin.content;
+      }
+      if (focusedWin) {
+        this.recordBlocked(focusedWin, this.getSite(args[1].spec) || "", this.getSite(win && win.location.href || args[2] && args[2].spec));
+      }
+    }
     
     return CP_REJECT;
   },
