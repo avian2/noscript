@@ -3420,18 +3420,19 @@ var ns = {
   
   
   cpConsoleFilter: [2, 5, 6, 7, 15],
-  cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
+  cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, aPrincipal) {
     this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
-      ", origin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + 
+      ", requestOrigin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + 
         ((aContext instanceof Ci.nsIDOMHTMLElement) ? "<HTML " + aContext.tagName + ">" // try not to cause side effects of toString() during load
           : aContext)  + 
-        ", mime: " + aMimeTypeGuess + ", " + aInternalCall);
+        ", mime: " + aMimeTypeGuess + ", Internal: " + aInternalCall +
+        ", principal.origin: " + (aPrincipal && aPrincipal.origin));
   },
   reject: function(what, args /* [aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, [aPrincipal] ] */) {
     
     if (this.consoleDump) {
       if(this.consoleDump & LOG_CONTENT_BLOCK && args.length >= 6) {
-        this.cpDump("BLOCKED " + what, args[0], args[1], args[2], args[3], args[4], args[5]);
+        this.cpDump("BLOCKED " + what, args[0], args[1], args[2], args[3], args[4], args[5], args[6] && args[6]);
       }
       if(this.consoleDump & LOG_CONTENT_CALL) {
         this.dump(new Error().stack);
@@ -5192,7 +5193,7 @@ var ns = {
       
       
       function reload(slow) {
-        ns.log( ns. getObjectURLWithDOM(obj, url, doc.documentURI));
+        ns.log(ns. getObjectURLWithDOM(obj, url, doc.documentURI));
         ns.allowObjectByDOM(obj, url, doc.documentURI, mime);
         if (slow) {
           ns.log("RELOAD")
@@ -6218,6 +6219,8 @@ var ns = {
     if (this.isBrowserOrigin(origin)) return;
     let blockIt;
     let blocker = WinScript.supported ? WinScript : DocShellScript;
+    
+    if (this.consoleDump) ns.dump("Window created, origin: " + origin + ", site: " + site + ", URL: " + document.URL + ", location: " + window.location.href);
     
     site = this.getSite(origin || site);
     if (site === 'moz-nullprincipal:') {

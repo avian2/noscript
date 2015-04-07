@@ -29,7 +29,7 @@ pref("noscript.showBlockedObjects", true);
 pref("noscript.showExternalFilters", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
-pref("noscript.mandatory", "chrome: blob: moz-safe-about: about: about:addons about:blocked about:crashes about:home about:config about:neterror about:certerror about:memory about:plugins about:privatebrowsing about:sessionrestore about:support resource: about:srcdoc");
+pref("noscript.mandatory", "chrome: blob: mediasource: moz-safe-about: about: about:addons about:blocked about:crashes about:home about:config about:neterror about:certerror about:memory about:plugins about:privatebrowsing about:sessionrestore about:support resource: about:srcdoc");
 pref("noscript.default", "about:blank addons.mozilla.org persona.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv informaction.com yahoo.com yimg.com yahooapis.com youtube.com ytimg.com googlevideo.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com live.net outlook.com afx.ms gfx.ms sfx.ms wlxrs.com ajax.aspnetcdn.com cdnjs.cloudflare.com code.jquery.com yandex.st mootools.net prototypejs.org tinymce.cachefly.net vjs.zendcdn.net");
 
 pref("noscript.allowWhitelistUpdates", true);
@@ -269,7 +269,7 @@ pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.ga.replacement", "(function(){var _0=function()_0,_u=function(){};_0.__noSuchMethod__=_0;('ga'in window)||(ga=_u);with(window)urchinTracker=_u,_gaq={__noSuchMethod__:_0,push:function(f){if(typeof f=='function')f();else if(f&&f.shift&&f[0]in this)this[f.shift()].apply(this,f)},_set:function(a,b){if(typeof b=='function')b()},_link:function(h){if(h)location.href=h},_linkByPost:function(f){if(f&&f.submit)f.submit();return true},_getLinkerUrl:function(u){return u},_trackEvent:_0},_gat={__noSuchMethod__:function(){return _gaq}}})()");
 pref("noscript.surrogate.glinks.replacement", "for each(let et in ['focus','mouseover','mousedown','click'])addEventListener(et,function(e){var a=e.target,href=a.href&&a.getAttribute&&a.getAttribute('href');if(href&&/^(?:http|\/url)/.test(href)&&!a._href){a._href=a.href=a.href.replace(/.*\/url.*[?&](?:url|q)=(http[^&]+).*/,function(a,b)decodeURIComponent(b));do{if(/\brwt\(/.test(a.getAttribute('onmousedown')))a.removeAttribute('onmousedown')}while((a=a.parentElement))}},true)");
 pref("noscript.surrogate.glinks.sources", "!@^https?://[^/]+google\\..*/search");
-pref("noscript.surrogate.googletag.replacement", "googletag={__noSuchMethod__:function()this,slots:{},cmd:{__noSuchMethod__:function()this}}");
+pref("noscript.surrogate.googletag.replacement", "googletag={__noSuchMethod__:function()this,slots:{},cmd:{__noSuchMethod__:function()this, push:function(f){return f();}}}");
 pref("noscript.surrogate.googletag.sources", ".googletagservices.com");
 pref("noscript.surrogate.gravatar.sources", ".gravatar.com");
 pref("noscript.surrogate.gravatar.replacement", "Gravatar={my_hash:'', profile_cb:function(){}, init:function(){}, __noSuchMethod__:function(){}}");

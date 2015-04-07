@@ -194,7 +194,7 @@ const NOPContentPolicy = {
 
 
 const MainContentPolicy = {
-  shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
+  shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, principal) {
     if (!aContentLocation) {
       if (aContentType === 5 && aInternalCall === CP_SHOULDPROCESS && aMimeTypeGuess === "application/x-shockwave-flash")
         return this.reject("Empty Flash object", arguments); 
@@ -557,7 +557,10 @@ const MainContentPolicy = {
                       return this.reject("Drop XSS", arguments);
                     }            
                   }
-                } else if (!this.isJSEnabled(originSite = this.getSite(originURL))) {
+                } else if (
+                  !(aContext.ownerDocument.URL === originURL // Addon-SDK panels
+                     || this.isJSEnabled(originSite = this.getSite(originURL)))
+                  ) {
                   return this.reject("top level data: URI from forbidden origin", arguments);
                 }
               }
