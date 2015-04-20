@@ -30,7 +30,7 @@ pref("noscript.showExternalFilters", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
 pref("noscript.mandatory", "chrome: blob: mediasource: moz-safe-about: about: about:addons about:blocked about:crashes about:home about:config about:neterror about:certerror about:memory about:plugins about:privatebrowsing about:sessionrestore about:support resource: about:srcdoc");
-pref("noscript.default", "about:blank addons.mozilla.org persona.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv informaction.com yahoo.com yimg.com yahooapis.com youtube.com ytimg.com googlevideo.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com live.net outlook.com afx.ms gfx.ms sfx.ms wlxrs.com ajax.aspnetcdn.com cdnjs.cloudflare.com code.jquery.com yandex.st mootools.net prototypejs.org tinymce.cachefly.net vjs.zendcdn.net");
+pref("noscript.default", "about:blank addons.mozilla.org persona.org mozilla.net flashgot.net google.com gstatic.com googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv informaction.com yahoo.com yimg.com yahooapis.com youtube.com ytimg.com googlevideo.com maone.net noscript.net hotmail.com msn.com passport.com passport.net passportimages.com live.com live.net outlook.com afx.ms gfx.ms sfx.ms wlxrs.com ajax.aspnetcdn.com bootstrapcdn.com cdnjs.cloudflare.com code.jquery.com yandex.st mootools.net prototypejs.org tinymce.cachefly.net vjs.zendcdn.net");
 
 pref("noscript.allowWhitelistUpdates", true);
 pref("noscript.volatilePrivatePermissions", false);
@@ -341,11 +341,14 @@ pref("noscript.surrogate.personaorg.replacement", "if(typeof navigator.id==='und
 pref("noscript.surrogate.picsee.sources", "!^https?://picsee\\.net/2\\d.*\\.html");
 pref("noscript.surrogate.picsee.replacement", "location.replace(location.href.replace(/(\\/2\\d{3}[^\\/]*)(.*)\\.html/, '/upload$1/$2'));");
 pref("noscript.surrogate.owasp_antiClickjack.sources", "!^https?://");
-pref("noscript.surrogate.owasp_antiClickjack.replacement", "if(window.top===window){let s=document.querySelector('style#antiClickjack');if(s)s.parentNode.removeChild(s)}");
+pref("noscript.surrogate.owasp_antiClickjack.replacement", "if(window.top===window&&document.body.offsetWidth===0)['body','documentElement'].forEach(function(e){document[e].style.setProperty('display','unset','important')})");
 pref("noscript.surrogate.gigya.replacement", "gigya={__noSuchMethod__:function(){}, isGigya:true, __initialized:true};gigya.socialize={__noSuchMethod__:function(){}, addEventHandlers:function(){}}");
 pref("noscript.surrogate.gigya.sources", ".gigya.com");
 pref("noscript.surrogate.stripe.replacement", "Stripe={__noSuchMethod__:function(){}}");
 pref("noscript.surrogate.stripe.sources", "js.stripe.com");
+pref("noscript.surrogate.wp.sources", "!^.*\\/20\\d{2}\\/\\d{2}\\/\\d{2}\\/");
+pref("noscript.surrogate.wp.replacement", "let s=document.createElement('style');s.textContent='.site{opacity: 1 !important}';document.documentElement.appendChild(s)");
+
 pref("noscript.fakeScriptLoadEvents.enabled", true);
 pref("noscript.fakeScriptLoadEvents.onlyRequireJS", true);
 pref("noscript.fakeScriptLoadEvents.exceptions", "");

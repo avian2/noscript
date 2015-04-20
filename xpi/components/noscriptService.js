@@ -2118,6 +2118,9 @@ var ns = {
       },
       "2.6.9.19rc1": {
         "youtube.com": "googlevideo.com" // Youtube's HTML5 video player now requires this
+      },
+      "@VERSION@": {
+        "prototypejs.org": "bootstrapcdn.com" // Used by many sites, mostly for styles and fonts
       }
     };
     
