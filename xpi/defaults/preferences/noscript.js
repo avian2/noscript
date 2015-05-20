@@ -253,7 +253,7 @@ pref("noscript.sanitizePaste", true);
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.debug", false);
 pref("noscript.surrogate.sandbox", true);
-pref("noscript.surrogate.2mdn.replacment", "if('Proxy' in window){let _f=function(){};google={};Object.defineProperty(google,'__noSuchMethod__',{configurable:true,enumerable:false,value:_f});let ima={};ima.AdsManagerLoadedEvent=ima.AdErrorEvent={Type:new Proxy({},{get:function(){return 0}}),};ima.AdsLoader=ima.AdsRequest=ima.AdDisplayContainer=function(){return new Proxy({},{get:function(){return _f}});};google.ima=ima;}")
+pref("noscript.surrogate.2mdn.replacement", "if('Proxy' in window){let _f=function(){};google={};Object.defineProperty(google,'__noSuchMethod__',{configurable:true,enumerable:false,value:_f});let ima={};ima.AdsManagerLoadedEvent=ima.AdErrorEvent={Type:new Proxy({},{get:function(){return 0}}),};ima.AdsLoader=ima.AdsRequest=ima.AdDisplayContainer=function(){return new Proxy({},{get:function(){return _f}});};google.ima=ima;}");
 pref("noscript.surrogate.2mdn.sources", ".2mdn.net");
 pref("noscript.surrogate.360Haven.sources", "@www.360haven.com");
 pref("noscript.surrogate.360Haven.replacement", "Object.defineProperty(window,'adblock',{get:function() false,set: function() false});Object.defineProperty(window,'google_ad_client',{get: function () { return {__noSuchMethod__: function() this}}});Object.defineProperty(window.HTMLBodyElement.prototype,'innerHTML',{get:function() ''});");
@@ -269,7 +269,7 @@ pref("noscript.surrogate.dimtus.sources", "!@^http://(?:dimtus|imageteam)\\.(?:c
 pref("noscript.surrogate.dimtus.replacement", "document.querySelector('.overlay_ad').style.display='none'");
 pref("noscript.surrogate.ga.sources", "*.google-analytics.com");
 pref("noscript.surrogate.ga.replacement", "(function(){var _0=function()_0,_u=function(){};_0.__noSuchMethod__=_0;('ga'in window)||(ga=_u);with(window)urchinTracker=_u,_gaq={__noSuchMethod__:_0,push:function(f){if(typeof f=='function')f();else if(f&&f.shift&&f[0]in this)this[f.shift()].apply(this,f)},_set:function(a,b){if(typeof b=='function')b()},_link:function(h){if(h)location.href=h},_linkByPost:function(f){if(f&&f.submit)f.submit();return true},_getLinkerUrl:function(u){return u},_trackEvent:_0},_gat={__noSuchMethod__:function(){return _gaq}}})()");
-pref("noscript.surrogate.glinks.replacement", "for each(let et in ['focus','mouseover','mousedown','click'])addEventListener(et,function(e){var a=e.target,href=a.href&&a.getAttribute&&a.getAttribute('href');if(href&&/^(?:http|\/url)/.test(href)&&!a._href){a._href=a.href=a.href.replace(/.*\/url.*[?&](?:url|q)=(http[^&]+).*/,function(a,b)decodeURIComponent(b));do{if(/\brwt\(/.test(a.getAttribute('onmousedown')))a.removeAttribute('onmousedown')}while((a=a.parentElement))}},true)");
+pref("noscript.surrogate.glinks.replacement", "['focus','mouseover','mousedown','click'].forEach(function(et){addEventListener(et,function(e){var a=e.target,href=a.href&&a.getAttribute&&a.getAttribute('href');if(href&&/^(?:http|\/url)/.test(href)&&!a._href){a._href=a.href=a.href.replace(/.*\/url.*[?&](?:url|q)=(http[^&]+).*/,function(a,b)decodeURIComponent(b));do{if(/\brwt\(/.test(a.getAttribute('onmousedown')))a.removeAttribute('onmousedown')}while((a=a.parentElement))}},true)})");
 pref("noscript.surrogate.glinks.sources", "!@^https?://[^/]+google\\..*/search");
 pref("noscript.surrogate.googletag.replacement", "googletag={__noSuchMethod__:function()this,slots:{},cmd:{__noSuchMethod__:function()this, push:function(f){return f();}}}");
 pref("noscript.surrogate.googletag.sources", ".googletagservices.com");
@@ -282,7 +282,7 @@ pref("noscript.surrogate.modpagespeed.sources", "!@^https?:");
 pref("noscript.surrogate.qs.sources", "*.quantserve.com");
 pref("noscript.surrogate.qs.replacement", "window.quantserve=function(){}");
 pref("noscript.surrogate.uniblue.sources", "!@.uniblue.com .liutilities.com");
-pref("noscript.surrogate.uniblue.replacement", "for each(let l in document.links)if(/^https:\/\/store\./.test(l.href)){l.setAttribute('href',l.href.replace(/.*?:/, ''));l.parentNode.replaceChild(l,l)}");
+pref("noscript.surrogate.uniblue.replacement", "Array.forEach(document.links,function(l){if(/^https:\/\/store\./.test(l.href)){l.setAttribute('href',l.href.replace(/.*?:/, ''));l.parentNode.replaceChild(l,l)}})");
 pref("noscript.surrogate.yieldman.sources", "*.yieldmanager.com");
 pref("noscript.surrogate.yieldman.replacement", "rmAddKey=rmAddCustomKey=rmShowAd=rmShowPop=rmShowInterstitial=rmGetQueryParameters=rmGetSize=rmGetWindowUrl=rmGetPubRedirect=rmGetClickUrl=rmReplace=rmTrim=rmUrlEncode=rmCanShowPop=rmCookieExists=rmWritePopFrequencyCookie=rmWritePopExpirationCookie=flashIntalledCookieExists=writeFlashInstalledCookie=flashDetection=rmGetCookie=function(){}");
 pref("noscript.surrogate.popunder.sources", "@^http:\\/\\/[\\w\\-\\.]+\.[a-z]+ wyciwyg:");
@@ -335,7 +335,7 @@ pref("noscript.surrogate.disqus-theme.replacement", "DISQUS.dtpl.actions.registe
 pref("noscript.surrogate.skimlinks.sources", ".skimlinks.com/api/");
 pref("noscript.surrogate.skimlinks.replacement", "window.skimlinks=function(){}");
 pref("noscript.surrogate.picbucks.sources", "!*.picbucks.com  http://www.imagebax.com/show.php/*");
-pref("noscript.surrogate.picbucks.replacement", "for each(let s in document.getElementsByTagName('script')) { let m = s.textContent.match(/(?:Lbjs\\.TargetUrl\\s*=\\s*|Array\\s*\\().*(\\bhttp[^'\"]*)/); if (m) { location.href = m[1]; break; } }");
+pref("noscript.surrogate.picbucks.replacement", "Array.forEach(document.getElementsByTagName('script'), function(s){let m = s.textContent.match(/(?:Lbjs\\.TargetUrl\\s*=\\s*|Array\\s*\\().*(\\bhttp[^'\"]*)/); if (m) { location.href = m[1]; break; }})");
 pref("noscript.surrogate.imagebunk.sources", "!http://imagebunk.com/image/*");
 pref("noscript.surrogate.imagebunk.replacement", "document.body.insertBefore(document.getElementById('img_obj'), document.body.firstChild)");
 pref("noscript.surrogate.personaorg.sources", "login.persona.org");

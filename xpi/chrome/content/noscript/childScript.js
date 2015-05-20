@@ -17,7 +17,7 @@ LOADER.loadSubScript("chrome://noscript/content/WinScript.js", this);
 
 var IPC = {};
 IPC.child = {
-  QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsIMessageListener, Ci.nsISupportsWeakReference]),
   mm: Cc["@mozilla.org/childprocessmessagemanager;1"].getService(Ci.nsISyncMessageSender).QueryInterface(Ci.nsIMessageListenerManager),
   init: function() {
     OS.addObserver(this, "content-document-global-created", true);
@@ -29,10 +29,9 @@ IPC.child = {
       case "content-document-global-created":
 
         let window = subject;
-        dump(topic + " - " + data + ", " + window.document.URL);
+
         let blockIt = this.mm.sendSyncMessage("NoScript:mustBlockJS", { site: data }, { window: window })[0];
 
-        dump("BlockIt: " + blockIt);
         if (blockIt) {
           WinScript.block(window);
         } else {
@@ -40,10 +39,27 @@ IPC.child = {
         }
       break;
     }
+  },
+
+  receiveMessage: function(m) {
+    switch (m.name) {
+      case "NoScript:WinScript":
+        let window = m.objects.window;
+        if (!Cu.isCrossProcessWrapper(window)) {
+          switch (m.data.verb) {
+            case "block":
+              WinScript.block(window);
+              break;
+            case "unblock":
+              WinScript.unblock(window);
+              break;
+          }
+        }
+        break;
+    }
   }
 };
 
-dump("ChildScript loaded\n");
 
 //INCLUDE("WinScript");
 IPC.child.init();

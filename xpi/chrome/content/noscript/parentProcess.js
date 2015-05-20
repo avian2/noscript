@@ -35,7 +35,7 @@ IPC.parent = {
   receiveMessage: function(m) {
     switch(m.name) {
       case "NoScript:mustBlockJS":
-        return ns.mustBlockJS(m.objects.window, m.data.site);
+        return ns.mustBlockJS(m.objects.window, m.data.site, WinScript);
     }
   },
 };
