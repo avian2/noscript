@@ -16,44 +16,7 @@ const SERVICE_CATS = ["app-startup"];
 const IOS = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 const OS = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
 const LOADER = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
-const _INCLUDED = {};
-
-
-
-function IS_INCLUDED(name) name in _INCLUDED;
-
-function INCLUDE(name) {
-  if (arguments.length > 1)
-    for (var j = 0, len = arguments.length; j < len; j++)
-      INCLUDE(arguments[j]);
-  else if (!(name in _INCLUDED)) {
-    try {
-      _INCLUDED[name] = true;
-      let t = Date.now();
-      LOADER.loadSubScript("chrome://noscript/content/" + name + ".js");
-      // dump((t - TIME0) + " - loaded " + name + " in " + (Date.now() - t) + "\n")
-    } catch(e) {
-      let msg = "INCLUDE " + name + ": " + e + "\n" + e.stack;
-      Cu.reportError(msg);
-      dump(msg + "\n");
-    }
-  }
-}
-
-function LAZY_INCLUDE(name) {
-  if (arguments.length > 1)
-    for (var j = 0, len = arguments.length; j < len; j++)
-      arguments.callee(arguments[j]);
-  else if (!(name in this)) {
-    __defineGetter__(name, function() {
-      delete this[name];
-      if (ns.consoleDump) ns.dump(name + " kickstarted at " + (new Error().stack));
-      INCLUDE(name);
-      return this[name];
-    });
-  }
-}
-
+LOADER.loadSubScript("chrome://noscript/content/loader.js");
 
 const SERVICE_CONSTRUCTOR = function() {
 
@@ -74,7 +37,7 @@ const SERVICE_FACTORY = {
     var i = new SERVICE_CONSTRUCTOR();
     return this._instance = i;
   },
-  
+
   createInstance: function (outer, iid) {
     if (outer != null)
       throw Cr.NS_ERROR_NO_AGGREGATION;
@@ -100,9 +63,9 @@ var Module = {
       compMgr.QueryInterface(Ci.nsIComponentRegistrar
         ).registerFactoryLocation(SERVICE_CID,
         SERVICE_CTRID,
-        SERVICE_CTRID, 
+        SERVICE_CTRID,
         fileSpec,
-        location, 
+        location,
         type);
       const catMan = this.categoryManager;
       for (var j = 0, len = SERVICE_CATS.length; j < len; j++) {
@@ -120,7 +83,7 @@ var Module = {
       } catch(e) {}
     }
   },
-  
+
   unregisterSelf: function(compMgr, fileSpec, location) {
     compMgr.QueryInterface(Ci.nsIComponentRegistrar
       ).unregisterFactoryLocation(SERVICE_CID, fileSpec);
@@ -133,10 +96,10 @@ var Module = {
   getClassObject: function (compMgr, cid, iid) {
     if (cid.equals(SERVICE_CID))
       return SERVICE_FACTORY;
-  
+
     if (!iid.equals(Ci.nsIFactory))
       throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-    
+
     throw Cr.NS_ERROR_NO_INTERFACE;
   },
 
@@ -203,7 +166,7 @@ DUMMY_OBJ.wrappedJSObject = DUMMY_OBJ;
 const DUMMY_FUNC = function() {}
 const DUMMY_ARRAY = [];
 
-const SERVICE_IIDS = 
+const SERVICE_IIDS =
 [
 Ci.nsIContentPolicy,
 Ci.nsIObserver,
@@ -227,9 +190,9 @@ function xpcom_generateQI(iids) {
 
 const SiteUtils = new function() {
   const _domainPattern = this.domainPattern = /^[\w\u0080-\uffff][\w\-\.\u0080-\uffff]*$/;
-  this.ios = IOS;  
+  this.ios = IOS;
   this.uriFixup = Cc["@mozilla.org/docshell/urifixup;1"].getService(Ci.nsIURIFixup);
-  
+
   function sorter(a, b) {
     if (a == b) return 0;
     if (!a) return 1;
@@ -239,29 +202,29 @@ const SiteUtils = new function() {
         (dp.test(b) ? (a < b ? -1 : 1) : -1)
       : (dp.test(b) ? 1 : a < b ? -1 : 1);
   }
-  
+
   this.sort = function(ss) {
     return ss.sort(sorter);
   };
-  
+
   this.getSite = function(url) {
-    if (!url || 
+    if (!url ||
         url.charCodeAt(0) < 33  && // needs trimming
         !(url = url.replace(/^\s*(.*?)\s*$/, '$1'))) {
       return "";
     }
-    
+
     if (url.indexOf(":") == -1) {
       return this.domainMatch(url);
     }
-    
+
     var scheme;
     try {
       scheme = this.ios.extractScheme(url).toLowerCase();
       switch (scheme) {
         case "http": case "https": // commonest case first
           break;
-        case "javascript": case "data": 
+        case "javascript": case "data":
           return "";
         case "about":
           return url.split(/[\?#]/, 1)[0];
@@ -276,8 +239,8 @@ const SiteUtils = new function() {
     try {
       let uri = this.uriFixup.createExposableURI( // fix wyciwyg: and zaps userpass
                 IOUtil.unwrapURL(url) // unwrap JAR and view-source uris
-      ); 
-      
+      );
+
       try  {
         return uri.prePath;
       } catch(exNoPrePath) {
@@ -288,17 +251,17 @@ const SiteUtils = new function() {
           : scheme;
       }
     } catch(ex) {
-      return url.slice(-2) === ":0" ? this.getSite(url.slice(0, -2)) + ":0" : ""; 
+      return url.slice(-2) === ":0" ? this.getSite(url.slice(0, -2)) + ":0" : "";
     }
   };
-  
+
   this.list2set = function(sl) {
     // kill duplicates
     var prevSite = "";
     var site;
     for (var j = sl.length; j--> 0;) {
       site = sl[j];
-      if ((!site) || site == prevSite) { 
+      if ((!site) || site == prevSite) {
         sl.splice(j, 1);
       } else {
         prevSite = site;
@@ -306,27 +269,27 @@ const SiteUtils = new function() {
     }
     return sl;
   };
-  
+
   this.sortedSet = function(sl) {
     return this.list2set(this.sort(sl));
   }
-  
+
   this.splitString = function(s) {
     return s && /\S/.test(s) && s.split(/\s+/) || [];
   };
-  
+
   this.domainMatch = function(url) {
      const m = url.match(this.domainPattern);
      return m ? m[0].toLowerCase() : "";
   };
-  
+
   this.sanitizeList = function(sl) {
     for (var j = sl.length; j-- > 0; ) {
       sl[j] = this.getSite(sl[j]);
     }
     return sl;
   };
-  
+
   this.sanitizeMap = function(sm) {
     var site;
     delete sm[""];
@@ -339,23 +302,23 @@ const SiteUtils = new function() {
     }
     return sm;
   };
-  
+
   this.sanitizeString = function(s) {
-    return this.set2string(this.string2set(s)); 
+    return this.set2string(this.string2set(s));
   };
-  
+
   this.string2set = function(s) {
     return this.sortedSet(this.sanitizeList(this.splitString(s)));
   };
-  
+
   this.set2string = function(ss) {
     return ss.join(" ");
   };
-  
+
   this.crop = function(url, max) {
     max = max || 1000;
     if (url.length > max) {
-        return this.crop(url.substring(0, max / 2)) + "\n[...]\n" + 
+        return this.crop(url.substring(0, max / 2)) + "\n[...]\n" +
           this.crop(url.substring(url.length - max / 2));
     }
     return url.replace(/\w{20}/g, "$&\u200B");
@@ -417,7 +380,7 @@ PolicySites.prototype = {
     for (var s in sm) {
       sl.push(s);
     }
-    
+
     this._sitesString = SiteUtils.set2string(SiteUtils.sort(sl));
     this._sitesList = null;
     return this._sitesMap = sm;
@@ -450,7 +413,7 @@ PolicySites.prototype = {
     } catch(ex) {
       change = true;
     }
-    
+
     if (change) {
       this.settingPref = true;
       try {
@@ -466,7 +429,7 @@ PolicySites.prototype = {
     if (!site) return "";
     const sm = this.sitesMap;
     var match;
-    var dots; // track "dots" for fix to 2nd level domain policy lookup flaw 
+    var dots; // track "dots" for fix to 2nd level domain policy lookup flaw
     var pos = site.indexOf(':') + 1;
     if (pos > 0 && (pos == site.length || site[pos] == '/')) {
       if (sm[match = site.substring(0, pos)]) return match; // scheme match
@@ -485,7 +448,7 @@ PolicySites.prototype = {
         return submatch; // domain/subdomain match
       }
     }
-    
+
     if (sm[match]
         && (dots > 1 || sm[site]) // strict CAPS-style matching
         ) return match; // host match
@@ -507,11 +470,11 @@ PolicySites.prototype = {
   },
   remove: function(sites, keepUp, keepDown) {
     if (!sites) return false;
-    if (!(typeof(sites) == "object" && "push" in sites)) 
+    if (!(typeof(sites) == "object" && "push" in sites))
       return this.remove([sites], keepUp, keepDown);
     keepUp = keepUp || false;
     keepDown = keepDown || false;
-    
+
     const sm = this.sitesMap;
     var change = false;
     var site, match;
@@ -536,7 +499,7 @@ PolicySites.prototype = {
           this._remove(site);
         }
       }
-    
+
       if (site in sm) {
         this._remove(site);
         change = true;
@@ -545,16 +508,16 @@ PolicySites.prototype = {
     if (change) this.sitesMap = this._sitesMap;
     return change;
   },
-  
+
   _add: function(site) {
     return (site in this.sitesMap ? false : this.sitesMap[site] = true);
   },
-  
+
   add: function(sites) {
     if (!sites) return false;
-    if (!(typeof(sites) == "object" && "push" in sites)) 
+    if (!(typeof(sites) == "object" && "push" in sites))
       return this.add([sites]);
-    
+
     var change = false;
     var site;
     for (var j = sites.length; j-- > 0;) {
@@ -584,13 +547,13 @@ AddressMatcher.prototype = {
   rx: null,
   networks: null,
   netMatching: false,
-  
+
   _universal: { test: function(s) { return true; } },
-  
+
   _specRx: /^((?:ht|f)tps?:\/*)([^\/]*)/i,
   test:  function(u) {
     if (!this.rx) return false;
-    
+
     let spec = this._specRx.exec(u);
 
     if (spec) {
@@ -603,21 +566,21 @@ AddressMatcher.prototype = {
         // handle IDN
         if (host.substring(0, 4) === "xn--") {
           try {
-            if (this.rx.test(spec[1] + DNS.idn.convertACEtoUTF8(host) + spec.input.substring(spec[0].length))) 
+            if (this.rx.test(spec[1] + DNS.idn.convertACEtoUTF8(host) + spec.input.substring(spec[0].length)))
               return true;
           } catch (e) {}
         }
     }
-    
+
     return this.rx.test(u);
   },
-  
+
   testURI: function(uri) this.test(uri.spec),
-  
+
   _networkTest: function(uri, canDoDNS, allIPs) {
     var res = this.rx && this.rx.test(uri.spec || uri);
     if (res || !canDoDNS) return res;
-    
+
     if (!uri.spec) {
       uri = IOS.newURI(uri, null, null);
     }
@@ -626,9 +589,9 @@ AddressMatcher.prototype = {
       if (!host) return false;
       if (Network.isNet(host))
         return this.testIP(host);
-      
+
       var dnsRecord = DNS.resolve(host);
-      if (dnsRecord && dnsRecord.valid) 
+      if (dnsRecord && dnsRecord.valid)
         return allIPs ? dnsRecord.entries.every(this.testIP, this)
                       : dnsRecord.entries.some(this.testIP, this);
     } catch(e) {
@@ -636,21 +599,21 @@ AddressMatcher.prototype = {
     }
     return false;
   },
-  
+
   testIP: function(ip) {
      return this.networks.some(function(n) n.test(ip));
   },
-  
+
   parse: function(s) {
     try {
       var universal = false;
-      var rxs = s && s.split(/\s+/).map(function(p) {      
+      var rxs = s && s.split(/\s+/).map(function(p) {
         if (p === '*') {
           universal = true;
         }
-       
+
         if (universal || !/\S+/.test(p)) return null;
-        
+
         if (Network.isNet(p)) {
           var net;
           if (!this.netMatching) {
@@ -660,16 +623,16 @@ AddressMatcher.prototype = {
           } else {
             this.networks.push(net = new Network(p));
           }
-          
+
           if (p.indexOf("/") > -1 || (net.ipv4 ? net.mask < 32 : net.mask < 128))
             return null; // is a whole network, using IP for URL doesn't make sense
-          
+
           if (p.indexOf(":") > -1)
             p = "[" + p + "]"; // prepare IPv6 URL host
         }
-        
+
         if(!/[^\w\-\[\]/:%@;&#\?\.\*]/.test(p)) {
-         
+
           // either simple or glob
           const hasPath = /^(?:\w+:\/\/|)[^\/]+\//.test(p);
           const hasScheme = /^[a-z][\w\-]+:(?:\/+|[^/]*\D|$)/.test(p);
@@ -679,7 +642,7 @@ AddressMatcher.prototype = {
           if (!hasScheme) { // adjust for no protocol
             if (p.substring(0, 2) === '\\.') {
               // al_9x's proposed syntactic sugar to match both *.x.y and x.y
-              p = "(?:[^/]+\\.)?" + p.substring(2); 
+              p = "(?:[^/]+\\.)?" + p.substring(2);
             }
             p = "[a-z]\\w+://" + p;
           }
@@ -690,19 +653,19 @@ AddressMatcher.prototype = {
             // adjust for no path
              p += "(?::\\d+)?(?:[/\\?#]|$)";
           }
-          
+
           if (!/\*/.test(p)) {
             // simple "starts with..." site matching
             return '^' + p;
           }
-          
+
           // glob matching
           if (p.slice(-1) == '*') p = p.slice(0, -1); // optimize trailing *
-          else if (hasPath) p += '$'; 
+          else if (hasPath) p += '$';
 
           return '^' + p.replace(/\*/g, '.*?').replace(/^([^\/:]+:\/*)\.\*/, "$1[^/]*");
-        } 
-        
+        }
+
         return p;
       }, this).filter(function(p) { return p !== null });
 
@@ -710,8 +673,8 @@ AddressMatcher.prototype = {
         this.test = this._universal.test;
         return this._universal;
       }
-      
-      if (rxs.length !== 0) { 
+
+      if (rxs.length !== 0) {
         try {
           return new RegExp(rxs.join("|"));
         } catch(e) {
@@ -741,15 +704,15 @@ function Network(s) {
   var parts = s.split("/");
   var addr = parts[0];
   var smask;
-  
+
   if (!this._isIPV4(addr))
     this.ipv4 = false;
-  
+
   if (parts.length > 1) {
     this.mask = parseInt(parts[1]);
-    
+
     var defMask = this.ipv4 ? 32 : 128;
-    
+
     if (this.mask != defMask) {
       if (this.mask > defMask) this.mask = defMask;
       else {
@@ -773,7 +736,7 @@ Network.prototype = {
   mask: 32,
   ipv4Mask: 0xffffffff,
   ipv6Mask: [0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff],
-  
+
   _isIPV4: function(addr) {
     return addr.indexOf(":") < 0;
   },
@@ -790,19 +753,19 @@ Network.prototype = {
     }
     return ret;
   },
-  
+
   test: function(addr) {
     addr = this.parse(addr);
     if (typeof(addr) === "number")
       return this.addr === addr;
-    
-    if (typeof(this.addr) === "number") return false;   
+
+    if (typeof(this.addr) === "number") return false;
     for (var j = this.addr.length; j-- > 0;) {
       if (addr[j] !== this.addr[j]) return false;
     }
     return true;
   },
-  
+
   parse: function(addr) {
     return this._isIPV4(addr) ? this._parseIPV4(addr) : this._parseIPV6(addr);
   },
@@ -846,7 +809,7 @@ Network.prototype = {
     }
     return ret & this.ipv4Mask;
   },
-  
+
   toString: function() {
     return this.src;
   }
@@ -889,17 +852,17 @@ SyntaxChecker.prototype = {
 const IO = {
   readFile: function(file, charset) {
     var res;
-    
+
     const is = Cc["@mozilla.org/network/file-input-stream;1"]
       .createInstance(Ci.nsIFileInputStream );
     is.init(file ,0x01, 256 /*0400*/, null);
     const sis = Cc["@mozilla.org/scriptableinputstream;1"]
       .createInstance(Ci.nsIScriptableInputStream);
     sis.init(is);
-    
+
     res = sis.read(sis.available());
     is.close();
-    
+
     if (charset !== null) { // use "null" if you want uncoverted data...
       const unicodeConverter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
         .createInstance(Ci.nsIScriptableUnicodeConverter);
@@ -910,7 +873,7 @@ const IO = {
       }
       res = unicodeConverter.ConvertToUnicode(res);
     }
-  
+
     return res;
   },
   writeFile: function(file, content, charset) {
@@ -921,7 +884,7 @@ const IO = {
     } catch(ex) {
       unicodeConverter.charset = "UTF-8";
     }
-    
+
     content = unicodeConverter.ConvertFromUnicode(content);
     const os = Cc["@mozilla.org/network/file-output-stream;1"]
       .createInstance(Ci.nsIFileOutputStream);
@@ -929,7 +892,7 @@ const IO = {
     os.write(content, content.length);
     os.close();
   },
-  
+
   safeWriteFile: function(file, content, charset) {
     var tmp = file.clone();
     var name = file.leafName;
@@ -953,7 +916,7 @@ const IOUtil = {
   proxiedDNS: 0,
 
   attachToChannel: function(channel, key, requestInfo) {
-    if (channel instanceof Ci.nsIWritablePropertyBag2) 
+    if (channel instanceof Ci.nsIWritablePropertyBag2)
       channel.setPropertyAsInterface(key, requestInfo);
   },
   extractFromChannel: function(channel, key, preserve) {
@@ -983,19 +946,19 @@ const IOUtil = {
     var ref = this.extractInternalReferrer(channel);
     return ref && ref.spec || null;
   },
-  
+
   getProxyInfo: function(channel) {
-    return Ci.nsIProxiedChannel && (channel instanceof Ci.nsIProxiedChannel) 
+    return Ci.nsIProxiedChannel && (channel instanceof Ci.nsIProxiedChannel)
     ? channel.proxyInfo
     : Cc["@mozilla.org/network/protocol-proxy-service;1"]
         .getService(Ci.nsIProtocolProxyService)
         .resolve(channel.URI, 0);
   },
-  
-  
+
+
   canDoDNS: function(channel) {
     if (!channel || IOS.offline) return false;
-    
+
     var proxyInfo = this.getProxyInfo(channel);
     switch(this.proxiedDNS) {
       case 1:
@@ -1003,16 +966,16 @@ const IOUtil = {
       case 2:
         return true;
       default:
-        return !proxyInfo || proxyInfo.type == "direct";   
+        return !proxyInfo || proxyInfo.type == "direct";
     }
 
   },
-  
+
   abort: function(channel, noNetwork) {
     if (ns.consoleDump) ns.dump("Aborting " + channel.name + " @ " + new Error().stack);
     channel.cancel(Cr.NS_ERROR_ABORT);
   },
-  
+
   findWindow: function(channel) {
     for each(var cb in [channel.notificationCallbacks,
                        channel.loadGroup && channel.loadGroup.notificationCallbacks]) {
@@ -1021,7 +984,7 @@ const IOUtil = {
         // For Gecko 1.9.1
           return cb.getInterface(Ci.nsILoadContext).associatedWindow;
         } catch(e) {}
-        
+
         try {
           // For Gecko 1.9.0
           return cb.getInterface(Ci.nsIDOMWindow);
@@ -1030,12 +993,12 @@ const IOUtil = {
     }
     return null;
   },
-  
+
   _protocols: {}, // caching them we gain a 33% speed boost in URI creation :)
   newURI: function(url) {
     try {
       let scheme =  url.substring(0, url.indexOf(':'));
-      return (this._protocols[scheme] || 
+      return (this._protocols[scheme] ||
         (this._protocols[scheme] =
           Cc["@mozilla.org/network/protocol;1?name=" + scheme]
           .getService(Ci.nsIProtocolHandler)))
@@ -1044,12 +1007,12 @@ const IOUtil = {
       return IOS.newURI(url, null, null);
     }
   },
-  
-  unwrapURL: function(url) {  
+
+  unwrapURL: function(url) {
     try {
       if (!(url instanceof Ci.nsIURI))
         url = this.newURI(url);
-      
+
       switch (url.scheme) {
         case "view-source":
           return this.unwrapURL(url.path);
@@ -1066,11 +1029,11 @@ const IOUtil = {
       }
     }
     catch (e) {}
-    
+
     return url;
   },
-  
-  
+
+
   get _channelFlags() {
     delete this._channelFlags;
     const constRx = /^[A-Z_]+$/;
@@ -1090,22 +1053,22 @@ const IOUtil = {
     }
     return hf.join("\n");
   },
-  
+
   queryNotificationCallbacks: function(chan, iid) {
     var cb;
     try {
       cb = chan.notificationCallbacks.getInterface(iid);
       if (cb) return cb;
     } catch(e) {}
-    
+
     try {
       return chan.loadGroup && chan.loadGroup.notificationCallbacks.getInterface(iid);
     } catch(e) {}
-    
+
     return null;
   },
-  
- 
+
+
   anonymizeURI: function(uri, cookie) {
     if (uri instanceof Ci.nsIURL) {
       uri.query = this.anonymizeQS(uri.query, cookie);
@@ -1118,17 +1081,17 @@ const IOUtil = {
     parts[1] = this.anonymizeQS(parts[1], cookie);
     return parts.join("?");
   },
-  
+
   _splitName: function(nv) nv.split("=")[0],
   _qsRx: /[&=]/,
   _anonRx: /(?:auth|s\w+(?:id|key)$)/,
   anonymizeQS: function(qs, cookie) {
     if (!qs) return qs;
     if (!this._qsRx.test(qs)) return '';
-    
+
     var cookieNames, hasCookies;
     if ((hasCookies = !!cookie)) cookieNames = cookie.split(/\s*;\s*/).map(this._splitName)
-    
+
     let parms = qs.split("&");
     for (j = parms.length; j-- > 0;) {
       let nv = parms[j].split("=");
@@ -1143,17 +1106,17 @@ const IOUtil = {
     delete this.TLDService;
     return this.TLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Ci.nsIEffectiveTLDService);
   }
-  
+
 };
 
 
 var Thread = {
-  
+
   hostRunning: true,
   activeLoops: 0,
   _timers: [],
-  
-  spin: function(ctrl) { 
+
+  spin: function(ctrl) {
     ctrl.startTime = ctrl.startTime || Date.now();
     ctrl.timeout = false;
     this.activeLoops++;
@@ -1162,7 +1125,7 @@ var Thread = {
     ctrl.elapsed = Date.now() - ctrl.startTime;
     return ctrl.timeout;
   },
-  
+
   _spinInternal: function(ctrl) {
     var t = ctrl.startTime;
     var maxTime = parseInt(ctrl.maxTime)
@@ -1177,25 +1140,25 @@ var Thread = {
       }
     } else while(ctrl.running && this.hostRunning) this.yield();
   },
-  
+
   yield: function() {
     this.current.processNextEvent(true);
   },
-  
+
   yieldAll: function() {
     var t = this.current;
     while(t.hasPendingEvents()) t.processNextEvent(false);
   },
-  
+
   get current() {
     delete this.current;
-    var obj = "@mozilla.org/thread-manager;1" in Cc 
-      ? Cc["@mozilla.org/thread-manager;1"].getService() 
+    var obj = "@mozilla.org/thread-manager;1" in Cc
+      ? Cc["@mozilla.org/thread-manager;1"].getService()
       : Cc["@mozilla.org/thread;1"].createInstance(Ci.nsIThread);
     this.__defineGetter__("current", function() { return obj.currentThread; });
-    return this.current; 
+    return this.current;
   },
-  
+
   get currentQueue() {
     delete this.currentQueue;
     var eqs = null;
@@ -1208,9 +1171,9 @@ var Thread = {
       ? function() { return eqs.getSpecialEventQueue(IFace.CURRENT_THREAD_EVENT_QUEUE); }
       : this.__lookupGetter__("current")
     );
-    return this.currentQueue;  
+    return this.currentQueue;
   },
-  
+
   delay: function(callback, time, self, args) {
     var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
     this._timers.push(timer);
@@ -1219,11 +1182,11 @@ var Thread = {
       context: { callback: callback, args: args || DUMMY_ARRAY, self: self || null }
     }, time || 1, 0);
   },
-  
+
   dispatch: function(runnable) {
     this.current.dispatch(runnable, Ci.nsIEventTarget.DISPATCH_NORMAL);
   },
-  
+
   asap: function(callback, self, args) {
     this.current.dispatch({
       run: function() {
@@ -1244,7 +1207,7 @@ var Thread = {
       timer.cancel();
     }
   }
-  
+
 };
 
 
@@ -1262,14 +1225,6 @@ LAZY_INCLUDE(
   "WinScript",
   "JSURL"
 );
-
-__defineGetter__("STS", function() {
-  delete this.STS;
-  if (ns.geckoVersionCheck("4.0") >= 0) // Gecko >= 4 has built-in HSTS
-    return STS = { __noSuchMethod__: function() false };
-  INCLUDE("STS");
-  return STS;
-});
 
 __defineGetter__("ABE", function() {
   if (ns.consoleDump) ns.dump("ABE kickstart at " + (new Error().stack));
@@ -1289,13 +1244,13 @@ var ns = {
 ,
   get ABE() ABE,
   get OriginTracer() OriginTracer,
-  
+
   AddressMatcher: AddressMatcher,
   Thread: Thread,
 
-  // nsIObserver implementation 
+  // nsIObserver implementation
   observe: function(subject, topic, data) {
-    
+
     switch (topic) {
       case "content-document-global-created":
         this.onWindowCreated(subject, data);
@@ -1304,7 +1259,7 @@ var ns = {
         this.beforeScripting(subject, data);
       return;
     }
-    
+
     if (subject instanceof Ci.nsIPrefBranch2) {
       this.syncPrefs(subject, data);
     } else {
@@ -1313,8 +1268,8 @@ var ns = {
         case "xpcom-shutdown":
           this.unregister();
           break;
-        
-        case "profile-before-change": 
+
+        case "profile-before-change":
           this.dispose();
           Thread.hostRunning = false;
           break;
@@ -1330,34 +1285,31 @@ var ns = {
           ns.checkVersion();
           INCLUDE("Removal");
           break;
-        
+
         case "private-browsing":
           if (data == "enter") {
-            STS.enterPrivateBrowsing();
             if (!("_realDump_" in this)) this._realDump_ = this.dump;
             this.dump = DUMMY_FUNC;
           }
           if (data == "exit") {
             this.eraseTemp();
-            STS.exitPrivateBrowsing();
             this.dump = this._realDump_ || DUMMY_FUNC;
           }
-        // break; 
+        // break;
         case "browser:purge-session-history":
-          STS.eraseDB();
           this.eraseTemp();
         break;
-        
-        
+
+
       }
     }
   },
-    
+
   httpObserver: {
     observe: function(channel, topic, data) {
       try {
         if (channel instanceof Ci.nsIHttpChannel) {
-          
+
           if (channel.status) {
             if (ns.consoleDump)
               ns.dump("Unexpected! HTTP observer called on aborted channel " +
@@ -1365,7 +1317,7 @@ var ns = {
                         new Error().stack);
             return;
           }
-          
+
           let ncb = channel.notificationCallbacks;
           let loadFlags = channel.loadFlags;
           if (!(loadFlags || ncb || channel.owner)) {
@@ -1376,10 +1328,10 @@ var ns = {
               }
             } catch(e) {}
           }
-          
+
           if (ncb) {
             const IBCL = Ci.nsIBadCertListener2;
-            let bgReq = ncb instanceof Ci.nsIXMLHttpRequest || ncb instanceof IBCL 
+            let bgReq = ncb instanceof Ci.nsIXMLHttpRequest || ncb instanceof IBCL
               || ("responseXML" in ncb); // for some reason, since Gecko 15 (new XMLHttpRequest() instanceof Ci.nsIXMLHttpRequest) === false
             if (!bgReq) try { bgReq = ncb.getInterface(IBCL); } catch (e) {}
             if (bgReq && !ns.isCheckedChannel(channel)) {
@@ -1389,10 +1341,10 @@ var ns = {
                 return;
             }
           }
-          
+
           let abeReq = ns.requestWatchdog.onHttpStart(channel);
 
-          if (abeReq && abeReq.isDoc) ns._handleDocJS(abeReq.window, channel, true);   
+          if (abeReq && abeReq.isDoc) ns._handleDocJS(abeReq.window, channel, true);
         }
 
       } catch (e) {
@@ -1400,7 +1352,7 @@ var ns = {
       }
     }
   },
-  
+
   earlyHttpObserver: {
     observe: function(channel, topic, data) {
       INCLUDE("Policy");
@@ -1411,7 +1363,7 @@ var ns = {
       if (channel instanceof Ci.nsIHttpChannel) PolicyState.attach(channel);
     }
   },
-  
+
   OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "sessionstore-windows-restored",
                     "browser:purge-session-history", "private-browsing",
                     "content-document-global-created", "document-element-inserted"],
@@ -1432,23 +1384,23 @@ var ns = {
     OS.removeObserver(this.httpObserver, "http-on-modify-request");
   }
 ,
-  
+
   // Preference driven properties
   autoAllow: false,
 
   consoleDump: 0,
   consoleLog: false,
-  
+
   truncateTitle: true,
   truncateTitleLen: 255,
-  
+
   showBlankSources: false,
   showPlaceholder: true,
   showUntrustedPlaceholder: true,
   collapseObject: false,
   clearClick: 3,
 
-  
+
   forbidSomeContent: true,
   contentBlocker: false,
 
@@ -1460,48 +1412,48 @@ var ns = {
   forbidMedia: true,
   forbidFonts: true,
   forbidWebGL: false,
-  forbidIFrames: false, 
+  forbidIFrames: false,
   forbidIFramesContext: 2, // 0 = all iframes, 1 = different site, 2 = different domain, 3 = different base domain
   forbidFrames: false,
-  
+
   alwaysBlockUntrustedContent: true,
   docShellJSBlocking: 1, // 0 - don't touch docShells, 1 - block untrusted, 2 - block not whitelisted
-  
+
   forbidXBL: 4,
   forbidXHR: 1,
   injectionCheck: 2,
   injectionCheckSubframes: true,
-  
+
   jsredirectIgnore: false,
   jsredirectFollow: false,
   jsredirectForceShow: false,
   emulateFrameBreak: true,
-  
+
   jsHack: null,
   jsHackRegExp: null,
-  
+
   dropXssProtection: true,
   flashPatch: true,
   silverlightPatch: true,
-  
+
   nselNever: false,
   nselForce: true,
 
   filterXGetRx: "(?:<+(?=[^<>=\\d\\. ])|[\\\\'\"\\x00-\\x07\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F])",
   filterXGetUserRx: "",
-  
-  
+
+
   whitelistRegExp: null,
-  allowedMimeRegExp: null, 
+  allowedMimeRegExp: null,
   hideOnUnloadRegExp: null,
   requireReloadRegExp: null,
   ignorePorts: true,
-  
+
   inclusionTypeChecking: true,
   nosniff: true,
-  
+
   fakeScriptLoadEvents: {},
-  
+
   resetDefaultPrefs: function(prefs, exclude) {
     exclude = exclude || [];
     const root = prefs.root;
@@ -1519,22 +1471,22 @@ var ns = {
     }
     this.savePrefs();
   },
-  
+
   resetDefaultGeneralPrefs: function() {
     this.resetDefaultPrefs(this.prefs, ['version']);
   },
-  
+
   resetDefaultSitePrefs: function() {
     this.eraseTemp();
     this.setJSEnabled(this.splitList(this.getPref("default")), true, true);
   },
-  
+
   resetDefaults: function() {
     this.resetDefaultGeneralPrefs();
     this.jsEnabled = false;
     this.resetDefaultSitePrefs();
   },
-  
+
   syncPrefs: function(branch, name) {
     switch (name) {
       case "sites":
@@ -1586,7 +1538,7 @@ var ns = {
           this.forbidMedia || this.forbidFonts ||
           this.forbidIFrames || this.forbidFrames;
       break;
-      
+
       case "docShellJSBlocking":
       case "emulateFrameBreak":
       case "filterXPost":
@@ -1594,7 +1546,7 @@ var ns = {
       case "autoAllow":
       case "contentBlocker":
       case "alwaysShowObjectSources":
-      
+
       case "showUntrustedPlaceholder":
       case "collapseObject":
       case "truncateTitle":
@@ -1622,14 +1574,14 @@ var ns = {
       case "removeSMILKeySniffer":
       case "restrictSubdocScripting":
       case "globalHttpsWhitelist":
-        this[name] = this.getPref(name, this[name]);  
+        this[name] = this.getPref(name, this[name]);
       break;
-      
+
       case  "cascadePermissions":
-        this[name] = this.geckoVersionCheck("24") >= 0 && this.getPref(name, this[name]);  
+        this[name] = this.geckoVersionCheck("24") >= 0 && this.getPref(name, this[name]);
       break;
-    
-      case "fakeScriptLoadEvents.enabled":   
+
+      case "fakeScriptLoadEvents.enabled":
       case "fakeScriptLoadEvents.onlyRequireJS":
       case "fakeScriptLoadEvents.exceptions":
       case "fakeScriptLoadEvents.docExceptions":
@@ -1637,20 +1589,20 @@ var ns = {
         let value = this.getPref(name);
         this.fakeScriptLoadEvents[sub] = typeof value === "boolean" ? value : AddressMatcher.create(value);
       break;
-    
+
       case "liveConnectInterception":
         this[name] = this.geckoVersionCheck("16.0") === -1 && this.getPref(name, this[name]);
       break;
-    
+
       case "sync.enabled":
         this._updateSync();
       break;
-      
+
       case "subscription.trustedURL":
       case "subscription.untrustedURL":
         this.setPref("subscription.lastCheck", 0);
       break;
-      
+
       case "proxiedDNS":
       case "asyncNetworking":
         IOUtil[name] = this.getPref(name, IOUtil[name]);
@@ -1666,28 +1618,28 @@ var ns = {
       case "global":
         this.globalJS = this.getPref(name, false);
       break;
-      
+
       case "alwaysBlockUntrustedContent":
         this[name] = this.getPref(name, this[name]);
         this.initContentPolicy();
       break;
-      
+
       case "forbidMetaRefreshRemember":
         if (!this.getPref(name)) this.metaRefreshWhitelist = {};
       break;
-      
+
       // single rx
       case "filterXGetRx":
       case "filterXGetUserRx":
         this.updateRxPref(name, this[name], "g");
       break;
-      
+
       // multiple rx
       case "filterXExceptions":
       case "jsHackRegExp":
         this.updateRxPref(name, "", "", this.rxParsers.multi);
       break;
-      
+
       // multiple rx autoanchored
       case "hideOnUnloadRegExp":
         this.updateStyleSheet("." + this.hideObjClassName + " {display: none !important}", true);
@@ -1695,15 +1647,15 @@ var ns = {
       case "whitelistRegExp":
         this.updateRxPref(name, "", "^", this.rxParsers.multi);
       break;
-      
+
       case "allowedMimeRegExp":
         this.updateRxPref(name, "", "^i", this.rxParsers.multi);
       break;
-        
+
       case "safeJSRx":
         this.initSafeJSRx();
       break;
-      
+
       case "allowClipboard":
         this.updateExtraPerm(name, "Clipboard", ["cutcopy", "paste"]);
       break;
@@ -1716,18 +1668,18 @@ var ns = {
       case "clearClick":
         this.updateCssPref(name);
       break;
-      
+
       case "policynames":
         this.setupJSCaps();
       break;
-    
+
       case "clearClick.exceptions":
       case "clearClick.subexceptions":
         ClearClickHandler.prototype[name.split('.')[1]] = AddressMatcher.create(this.getPref(name, ''));
       break;
-      
+
       case "secureCookies":
-        HTTPS[name] = this.getPref(name, HTTPS[name]);  
+        HTTPS[name] = this.getPref(name, HTTPS[name]);
       break;
       case "secureCookiesExceptions":
       case "secureCookiesForced":
@@ -1736,13 +1688,10 @@ var ns = {
         HTTPS[name] = AddressMatcher.create(this.getPref(name, ''));
       break;
 
-      case "STS.enabled":
-        STS.enabled = this.getPref(name);
-      break;
-    
+
     }
   },
-  
+
   rxParsers: {
     simple: function(s, flags) {
       var anchor = /\^/.test(flags);
@@ -1769,7 +1718,7 @@ var ns = {
       this[name] = null;
     } else
     {
-      
+
       try {
         this[name] = parseRx(this.getPref(name, def), flags);
       } catch(e) {
@@ -1778,8 +1727,8 @@ var ns = {
       }
     }
   },
-  
-  
+
+
   updateExtraPerm: function(prefName, baseName, names) {
     var cpName;
     var enabled = this.getPref(prefName, false);
@@ -1800,7 +1749,7 @@ var ns = {
       this.setupJSCaps();
     }
   },
-  
+
   updateCssPref: function(name) {
     var value = this[name] = this.getPref(name);
     var sheet;
@@ -1816,7 +1765,7 @@ var ns = {
         sheet = '.__noscriptPlaceholder__ { direction: ltr !important; display: inline-block !important; } ' +
                 '.__noscriptPlaceholder__ > .__noscriptPlaceholder__1 { display: inline-block !important; position: relative !important;' +
                 'outline-color: #fc0 !important; outline-style: solid !important; outline-width: 1px !important; outline-offset: -1px !important;' +
-                'cursor: pointer !important; background: #ffffe0 url("' + 
+                'cursor: pointer !important; background: #ffffe0 url("' +
                     this.pluginPlaceholder + '") no-repeat left top !important; opacity: 0.6 !important; margin-top: 0px !important; margin-bottom: 0px !important;} ' +
                 '.__noscriptPlaceholder__1 > .__noscriptPlaceholder__2 { display: inline-block !important; background-repeat: no-repeat !important; background-color: transparent !important; width: 100%; height: 100%; display: block; margin: 0px; border: none } ' +
                 'noscript .__noscriptPlaceholder__ { display: inline !important; }' +
@@ -1827,7 +1776,7 @@ var ns = {
                 '.__noscriptPlaceholder__1 > .msg { text-align: center !important; bottom: 0 !important; left: 0 !important; width: 100% !important; position: absolute !important; font-size: 12px !important; font-weight: bold !important; font-family: sans-serif !important; }'
       break;
       case "clearClick":
-        sheet = "body:not([id]) { cursor: auto !important } " + 
+        sheet = "body:not([id]) { cursor: auto !important } " +
                 ".__noscriptOpaqued__ { opacity: 1 !important; visibility: visible; filter: none !important } " +
                 "iframe.__noscriptOpaqued__ { display: block !important; } " +
                 "object.__noscriptOpaqued__, embed.__noscriptOpaqued__ { display: inline !important } " +
@@ -1836,14 +1785,14 @@ var ns = {
                 ".__noscriptNoScrolling__ { overflow: hidden !important } " +
                 ".__noscriptHidden__ { visibility: hidden !important } " +
                 ".__noscriptBlank__ { background-color: white !important; color: white !important; border-color: white !important; background-image: none !important }";
-                
+
       break;
       default:
         return;
     };
     this.updateStyleSheet(sheet, value);
   },
-  
+
   get sss() {
     delete this.sss;
     try {
@@ -1853,7 +1802,7 @@ var ns = {
       return this.sss = null;
     }
   },
-  
+
   updateStyleSheet: function(sheet, enabled) {
     const sss = this.sss;
     if (!sss) return;
@@ -1864,17 +1813,17 @@ var ns = {
       try {
         if (enabled) sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
       } catch(e) {
-        this.log("[NoScript CSS] Can't register " + uri + ", " + e); 
+        this.log("[NoScript CSS] Can't register " + uri + ", " + e);
       }
     }
   },
-  
+
   get getString() {
     delete this.getString;
     const ss = new this.Strings("noscript");
     return this.getString = function(name, parms) { return ss.getString(name, parms) };
   },
-  
+
   get Strings() {
     delete this.Strings;
     INCLUDE('Strings');
@@ -1902,7 +1851,7 @@ var ns = {
     return v;
   },
   pluginPlaceholder: "",
-  
+
   _initResources: function() {
     const ios = IOS;
     var resProt = ios.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler);
@@ -1914,16 +1863,16 @@ var ns = {
     }
     this.pluginPlaceholder = this.skinBase + "icon32.png";
   },
-  
+
   init: function() {
     if (this._inited) return false;
-    
+
     let t = Date.now();
-    
+
     this._inited = true;
-    
+
     this._initResources();
-    
+
     OS.addObserver(this, "em-action-requested", true);
 
     const prefSrv = this.prefService = Cc["@mozilla.org/preferences-service;1"]
@@ -1935,17 +1884,17 @@ var ns = {
 
     this.policyPB = prefSrv.getBranch("capability.policy." + this.POLICY_NAME + ".").QueryInterface(PBI);
     this.prefs = prefSrv.getBranch("noscript.").QueryInterface(PBI);
-     
+
     this.policyPB.addObserver("sites", this, true);
-    
+
     this.prefs.addObserver("", this, true);
     this.mozJSPref = prefSrv.getBranch("javascript.").QueryInterface(PBI);
     this.mozJSPref.addObserver("enabled", this, true);
-    
+
     this.mandatorySites.sitesString = this.getPref("mandatory", "chrome: about: resource:");
-    
+
     this.captureExternalProtocols();
-    
+
     this._batchPrefs = true;
     for each(var p in [
       "autoAllow",
@@ -1953,8 +1902,8 @@ var ns = {
       "allowedMimeRegExp", "hideOnUnloadRegExp", "requireReloadRegExp",
       "consoleDump", "consoleLog", "contentBlocker", "alwaysShowObjectSources",
       "docShellJSBlocking",
-      "filterXPost", "filterXGet", 
-      "filterXGetRx", "filterXGetUserRx", 
+      "filterXPost", "filterXGet",
+      "filterXGetRx", "filterXGetUserRx",
       "filterXExceptions",
       "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts", "forbidWebGL",
       "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
@@ -1989,11 +1938,11 @@ var ns = {
     }
     this._batchPrefs = false;
 
-    
-    
-    
+
+
+
     this.setupJSCaps();
-    
+
     // locking management
     if ((this.locked = this.prefs.prefIsLocked("default"))) {
       try {
@@ -2015,76 +1964,68 @@ var ns = {
       // init jsPolicySites from prefs
       this.syncPrefs(this.policyPB, "sites");
     }
-    
+
     this.syncPrefs(this.mozJSPref, "enabled");
       if (this.consoleDump) ns.dump("T1 " + (Date.now() - t));
     if (this.getPref("tempGlobal", false))
       this.jsEnabled = false;
-   
+
     this.eraseTemp();
-    
+
     Thread.delay(this.checkSubscriptions, 10000, this);
-    
+
     this.reloadWhereNeeded(); // init snapshot
-    
+
     this._updateSync();
-    
+
     this._initE10s();
-    
-    if (this.consoleDump) this.dump("Init done in " + (Date.now() - t));  
+
+    if (this.consoleDump) this.dump("Init done in " + (Date.now() - t));
     return true;
   },
-  
-  globalMM: null,
+
+
   _initE10s: function() {
-    if (! ("@mozilla.org/globalmessagemanager;1" in Cc)) return;
-    this.globalMM = Cc["@mozilla.org/globalmessagemanager;1"]
-        .getService(Ci.nsIMessageListenerManager)
-        .QueryInterface(Ci.nsIFrameScriptLoader)
-        .QueryInterface(Ci.nsIMessageBroadcaster);
-    this.globalMM.loadFrameScript("chrome://noscript/content/frameScript.js", true);
+    INCLUDE("parentProcess");
   },
   _disposeE10s: function() {
-    this.globalMM.removeDelayedFrameScript("chrome://noscript/content/frameScript.js");
+    if (IPC.parent) IPC.parent.dispose();
   },
-  
-  
+
+
   dispose: function() {
     try {
       if(!this._inited) return;
       this._inited = false;
-      
+
       this.shouldLoad = this.shouldProcess = CP_NOP;
-      
+
       OS.removeObserver(this, "em-action-requested");
-      
+
       if (this.httpStarted) {
         this.categoryManager.deleteCategoryEntry("net-channel-event-sinks", this.CTRID, false);
         this.requestWatchdog.dispose();
         Cc['@mozilla.org/docloaderservice;1'].getService(nsIWebProgress).removeProgressListener(this);
       }
-      
+
       this.prefs.removeObserver("", this);
       this.mozJSPref.removeObserver("enabled", this);
       this.resetJSCaps();
       this.eraseTemp();
       if (typeof PolicyState === "object") PolicyState.reset();
-      
+
       if (this.placesPrefs) this.placesPrefs.dispose();
-      
-      STS.dispose();
-      
-      
+
       this.savePrefs(true);
-      
+      this._disposeE10s();
       if(this.consoleDump & LOG_LEAKS) this.reportLeaks();
     } catch(e) {
       this.dump(e + " while disposing.");
     }
-    
+
   },
-  
- 
+
+
   onVersionChanged: function(prev) {
     if (!this.getPref("allowWhitelistUpdates")) {
       return;
@@ -2096,11 +2037,11 @@ var ns = {
         "google.com": "googleapis.com gstatic.com", // required by most Google services and also by external resources
         "addons.mozilla.org": "paypal.com paypalobjects.com" // required for the "Contribute" AMO feature not to break badly with no warning
       },
-      
+
       "2.2.9rc2": {
         "addons.mozilla.org": "persona.org"
       },
-      
+
       "2.4.9rc2": {
         "!browserid.org": "persona.org"
       },
@@ -2119,11 +2060,11 @@ var ns = {
       "2.6.9.19rc1": {
         "youtube.com": "googlevideo.com" // Youtube's HTML5 video player now requires this
       },
-      "@VERSION@rc1": {
+      "2.6.9.22rc1": {
         "prototypejs.org": "bootstrapcdn.com" // Used by many sites, mostly for styles and fonts
       }
     };
-    
+
     for (let v in versions) {
       if (this.versionComparator.compare(prev, v) < 0) {
         let cascading = versions[v];
@@ -2131,7 +2072,7 @@ var ns = {
           let newSite = cascading[site].split(/\s+/);
           let replace = site[0] === "!";
           if (replace) site = site.substring(1);
-          if (this.isJSEnabled(site)) { 
+          if (this.isJSEnabled(site)) {
             this.jsPolicySites.remove(newSite, true, false);
             this.setJSEnabled(newSite, true);
             if (replace) this.jsPolicySites.remove(site, true, false);
@@ -2140,7 +2081,7 @@ var ns = {
       }
     }
   },
- 
+
   reportLeaks: function() {
     // leakage detection
     var parent = "__parent__" in this ? this.__parent__ : Cu.getGlobalForObject(this);
@@ -2149,31 +2090,31 @@ var ns = {
       this.dump(v + " = " + parent[v] + "\n");
     }
   },
-  
+
   get profiler() {
     delete this.profiler;
     INCLUDE("Profiler");
     return this.profiler = Profiler;
   },
-  
+
   httpStarted: false,
   get requestWatchdog() {
     if (ns.consoleDump) ns.dump("RW kickstart at " + new Error().stack);
     this.httpStarted = true;
-     
+
     INCLUDE("RequestWatchdog");
-    
+
     this.initContentPolicy(true);
-    
+
     Cc['@mozilla.org/docloaderservice;1'].getService(nsIWebProgress).addProgressListener(this,
                              nsIWebProgress.NOTIFY_LOCATION | nsIWebProgress.NOTIFY_STATE_REQUEST | nsIWebProgress.NOTIFY_STATUS |
                             ("NOTIFY_REFRESH" in nsIWebProgress ? nsIWebProgress.NOTIFY_REFRESH : 0));
     this.categoryManager.addCategoryEntry("net-channel-event-sinks", this.CTRID, this.CTRID, false, true);
-    
+
     delete this.requestWatchdog;
     return this.requestWatchdog = new RequestWatchdog();
   },
-  
+
   captureExternalProtocols: function() {
     try {
       const pb = this.prefService.getDefaultBranch("network.protocol-handler.");
@@ -2193,9 +2134,9 @@ var ns = {
       }
     } catch(e) {}
   },
-  
+
   extraCapturedProtocols: null,
-  
+
   mandatorySites: new PolicySites(),
   isMandatory: function(s) {
     return s && this.mandatorySites.matches(s);
@@ -2215,12 +2156,12 @@ var ns = {
     for (var p in sites) {
       if ((b
           ? (p[0] != "g" || this.globalJS) && sites[p].add(s)
-          : sites[p].remove(s, true, true) // keeps up and down, see #eraseTemp() 
+          : sites[p].remove(s, true, true) // keeps up and down, see #eraseTemp()
       ) && this.usingCAPS) sites[p].toPref(this.prefs, p);
     }
     return b;
   },
-  
+
   untrustedSites: new PolicySites(),
   isUntrusted: function(s) {
     return !!this.untrustedSites.matches(s);
@@ -2238,7 +2179,7 @@ var ns = {
     }
     this.untrustedSites.toPref(this.prefs, "untrusted");
   },
-  
+
   manualSites: new PolicySites(),
   isManual: function(s) {
     return !!this.manualSites.matches(s);
@@ -2265,7 +2206,7 @@ var ns = {
     }
     return b;
   },
-  
+
   autoTemp: function(site) {
     if (!(this.isUntrusted(site) || this.isManual(site) || this.isJSEnabled(site))) {
       this.setTemp(site, true);
@@ -2307,21 +2248,21 @@ var ns = {
   isGlobalHttps: function(win, /*optional */ s) {
     let allow = false;
     if (s && !this._isHttpsAndNotUntrusted(s)) return false;
-    
+
     for (;; win = win.parent) {
       let site = this.getSite(this.getPrincipalOrigin(win.document));
       if (!(allow = s && site === s || this._isHttpsAndNotUntrusted(site)) || win === win.parent)
         break;
       s = site;
     }
-    
+
     return allow;
   },
   get proxyService() {
     delete this.proxyService;
     return this.proxyService = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);
   },
-  
+
   isProxied: function(site) {
     this.isProxied = "proxyConfigType" in this.proxyService
       ? this._isProxied : this._isProxiedSite;
@@ -2335,7 +2276,7 @@ var ns = {
     }
     return true;
   },
-  _isProxiedSite: function(uri) { // Gecko < 2 has no proxyConfigType, so we must resolve per URI 
+  _isProxiedSite: function(uri) { // Gecko < 2 has no proxyConfigType, so we must resolve per URI
     try {
       if (!(uri instanceof Ci.nsIURI)) {
         uri = IOS.newURI(uri || "https://noscript.net/", null, null);
@@ -2351,14 +2292,14 @@ var ns = {
      if (this.globalJS) {
       return !(this.alwaysBlockUntrustedContent && this.untrustedSites.matches(s));
     }
-    
+
     if (this.untrustedSites.matches(s) || this.isForbiddenByHttpsStatus(s)) return false;
-    
+
     let enabled = !!(this.jsPolicySites.matches(s));
-    
+
     if (window) {
       let top = window.top;
-      enabled = enabled || 
+      enabled = enabled ||
                this.globalHttpsWhitelist && s.indexOf("https:") === 0 && (window === top || this.isGlobalHttps(window));
       if (enabled ? this.restrictSubdocScripting : this.cascadePermissions) {
         let topOrigin = this.getPrincipalOrigin(top.document);
@@ -2368,41 +2309,41 @@ var ns = {
           let topSite = this.getSite(topOrigin);
           if (topSite !== s) enabled = this.isJSEnabled(topSite, enabled && this.restrictSubdocScripting && window);
         }
-      }   
+      }
     }
     return enabled;
   },
   setJSEnabled: function(site, is, fromScratch, cascadeTrust) {
-        
+
     const ps = this.jsPolicySites;
     if (fromScratch) ps.sitesString = this.mandatorySites.sitesString;
     if (is) {
       ps.add(site);
       if (!fromScratch) {
-        if (this.untrustedSites.remove(site, false, !cascadeTrust)) 
+        if (this.untrustedSites.remove(site, false, !cascadeTrust))
           this.persistUntrusted();
-        
+
         this.setManual(site, false);
       }
     } else {
       ps.remove(site, false, true);
-      
+
       if (typeof(site) == "string") {
         this._removeAutoPorts(site);
       }
-      
+
       if (this.forbidImpliesUntrust) {
         this.setUntrusted(site, true);
       } else {
         this.setManual(site, true);
       }
     }
-    
+
     this.flushCAPS();
-    
+
     return is;
   },
-  
+
   _buggyIPV6rx: /^[^/:]+:\/\/[^[](?:[0-9a-f]*:){2}/,
   getPrincipalOrigin: function(node) {
     let p = node.nodePrincipal;
@@ -2416,7 +2357,7 @@ var ns = {
     }
     return origin;
   },
-  
+
   _removeAutoPorts: function(site) {
     // remove temporary permissions implied by this site for non-standard ports
 
@@ -2426,34 +2367,34 @@ var ns = {
       if (/:0$/.test(site)) site = site.replace(portRx, '');
       else return;
     }
-    
+
     const tempSites = this.tempSites;
     var portSites = this.tempSites.sitesString.match(/\S+:[1-9]\d*(?=\s|$)/g);
     if (!portSites) return;
-    
-    
+
+
     var domain = SiteUtils.domainMatch(site);
     var filter;
-    
+
     if (domain) {
       const dotDomain = "." + domain;
       const dLen = dotDomain.length;
       filter = function(d) {
         d = this.getDomain(d);
-        return d === domain || d.length > dLen && d.slice(- dLen) === dotDomain; 
+        return d === domain || d.length > dLen && d.slice(- dLen) === dotDomain;
       };
     } else {
       filter = function(s) { return s.replace(portRx, '') === site; };
     }
-    
+
     var doomedSites = portSites.filter(filter, this);
-    
+
     if (doomedSites.length) {
       tempSites.remove(doomedSites);
       this.jsPolicySites.remove(doomedSites);
     }
   },
-  
+
   get forbidImpliesUntrust() {
     return this.globalJS || this.autoAllow || this.getPref("forbidImpliesUntrust", false);
   }
@@ -2464,16 +2405,16 @@ var ns = {
     if (this.whitelistRegExp && this.whitelistRegExp.test(site)) {
       return true;
     }
-    
+
     if (!policy) policy = this.jsPolicySites;
-   
+
     let map = policy.sitesMap;
-    
+
     if (this.portRx.test(site)) {
       let portRx = this.portRx;
       if (this.ignorePorts && policy.matches(site.replace(/:\d+$/, '')))
         return true;
-      
+
       // port matching, with "0" as port wildcard  and * as nth level host wildcard
       let key = site.replace(portRx, ":0");
       if (key in map || site in map) return true;
@@ -2495,7 +2436,7 @@ var ns = {
   flushCAPS: function(sitesString) {
     const ps = this.usingCAPS ? this.jsPolicySites : this.getPermanentSites();
     if (sitesString) ps.sitesString = sitesString;
-    
+
     // dump("Flushing " + ps.sitesString);
     ps.toPref(this.policyPB);
   }
@@ -2507,7 +2448,7 @@ var ns = {
   }
 ,
   get placesPrefs() {
-    if (!this.getPref("placesPrefs", false)) return null; 
+    if (!this.getPref("placesPrefs", false)) return null;
     delete this.placesPrefs;
     try {
       INCLUDE('PlacesPrefs');
@@ -2523,7 +2464,7 @@ var ns = {
     if (this.placesPrefs && !skipPlaces) this.placesPrefs.save();
     return res;
   },
-  
+
   sortedSiteSet: function(s) { return  SiteUtils.sortedSet(s); }
 ,
   get supportsCAPS() {
@@ -2536,14 +2477,14 @@ var ns = {
   globalJS: false,
   get jsEnabled() {
     if (!this.usingCAPS) return this.mozJSEnabled && this.globalJS;
-    
+
     if (!this.mozJSEnabled) return false;
     try {
       return this.caps.getCharPref("default.javascript.enabled") !== "noAccess";
     } catch(ex) {
       return this.jsEnabled = this.globalJS;
     }
-       
+
     return this.jsEnabled;
   }
 ,
@@ -2557,7 +2498,7 @@ var ns = {
     } catch(e) {}
     if (this.supportsCAPS)
       this.defaultCaps.setCharPref(prefName, enabled || !this.usingCAPS ? "allAccess" : "noAccess");
-    
+
     this.setPref("global", enabled);
     if (enabled) {
       this.mozJSPref.setBoolPref("enabled", true);
@@ -2568,7 +2509,7 @@ var ns = {
   getSite: function(url) {
     return SiteUtils.getSite(url);
   },
-  
+
   getQuickSite: function(url, level) {
     var site = null;
     if (level > 0 && !this.jsEnabled) {
@@ -2580,23 +2521,23 @@ var ns = {
     }
     return site;
   },
-  
+
   get preferredSiteLevel() {
     return this.getPref("showAddress", false) ? 1 : this.getPref("showDomain", false) ? 2 : 3;
   },
-  
-  
+
+
   getDomain: function(site, force) {
     try {
       const url = (site instanceof Ci.nsIURL) ? site : IOUtil.newURI(site);
       const host = url.host;
-      return force || (this.ignorePorts || url.port === -1) && host[host.length - 1] != "." && 
+      return force || (this.ignorePorts || url.port === -1) && host[host.length - 1] != "." &&
             (host.lastIndexOf(".") > 0 || host == "localhost") ? host : '';
     } catch(e) {
       return '';
     }
   },
-  
+
   get _tldService() {
     delete this._tldService;
     return this._tldService = IOUtil.TLDService;
@@ -2604,10 +2545,10 @@ var ns = {
 
   getBaseDomain: function(domain) {
     if (!domain || DNS.isIP(domain)) return domain; // IP
-    
+
     var pos = domain.lastIndexOf('.');
     if (pos < 1 || (pos = domain.lastIndexOf('.', pos - 1)) < 1) return domain;
-    
+
     try {
       return this._tldService.getBaseDomainFromHost(domain);
     } catch(e) {
@@ -2649,62 +2590,62 @@ var ns = {
   },
   reloadWhereNeeded: function(reloadPolicy) {
     if (arguments.length === 0) reloadPolicy = this.RELOAD_ALL;
-    
+
     const trusted = this.jsPolicySites;
     const untrusted = this.untrustedSites;
     const global = this.jsEnabled;
-    
+
     var snapshot = this._lastSnapshot;
     var lastTrusted = snapshot.trusted;
     var lastUntrusted = snapshot.untrusted;
     var lastGlobal = snapshot.global;
     var lastObjects = snapshot.objects || this.objectWhitelist;
-    
+
     snapshot.global = global;
     snapshot.trusted = trusted.clone();
     snapshot.untrusted = untrusted.clone();
     snapshot.objects = this.objectWhitelist;
-    
+
     this.initContentPolicy();
-    
+
     if (!lastTrusted ||
         global == lastGlobal &&
-        lastObjects == this.objectWhitelist && 
+        lastObjects == this.objectWhitelist &&
         trusted.equals(lastTrusted) &&
         untrusted.equals(lastUntrusted)
-       ) 
+       )
       return;
-    
+
     let mustReload = !(
         reloadPolicy === this.RELOAD_NO ||
         !this.getPref("autoReload") ||
         global != lastGlobal && !this.getPref("autoReload.global")
       );
-    
+
     const currentTabOnly = reloadPolicy === this.RELOAD_CURRENT ||
       !this.getPref("autoReload.allTabs") ||
       global != lastGlobal && !this.getPref("autoReload.allTabsOnGlobal");
-    
+
     var useHistory = this.getPref("xss.reload.useHistory", false);
     var useHistoryExceptCurrent = this.getPref("xss.reload.useHistory.exceptCurrent", true);
-      
-    
-    
+
+
+
     const nsIWebNavigation = Ci.nsIWebNavigation;
     const nsIURL = Ci.nsIURL;
     const LOAD_FLAGS = nsIWebNavigation.LOAD_FLAGS_NONE;
- 
+
     const untrustedReload = !this.getPref("xss.trustReloads", false);
 
     var bi = DOM.createBrowserIterator();
     var isCurrentTab = true;
-    
+
     (function checkAndReload() {
 
       var browser;
 
       for (let ts = Date.now(), elapsed = 0; elapsed < 30 && (browser = bi.next()); elapsed = Date.now() - ts) {
-        
+
         if (WinScript.supported) {
           this.traverseDocShells(function(docShell) {
             let site = this.getSite(docShell.currentURI.spec);
@@ -2714,15 +2655,15 @@ var ns = {
             return false;
           }, this, browser);
         }
-        
+
         let sites = this.getSites(browser);
         let noFrames = sites.docSites.length === 1;
-        
+
         for (j = 0, len = sites.length; j < len; j++) {
           let site = sites[j];
-          
+
           let checkTop;
-          
+
           if (j === 0 && (noFrames || !isCurrentTab)) // top level, if unchanged and forbidden we won't reload
           {
             checkTop = sites.topSite === site;
@@ -2739,25 +2680,25 @@ var ns = {
               }
             }
           } else checkTop = false;
-          
+
           let prevStatus = !(lastGlobal
             ? this.alwaysBlockUntrustedContent && lastUntrusted.matches(site)
             : !(lastTrusted.matches(site) || this.checkShorthands(site, lastTrusted)) || lastUntrusted.matches(site)
           );
           let currStatus = this.isJSEnabled(site) || !!this.checkShorthands(site);
-          
+
           if (currStatus != prevStatus) {
             let forceReload = mustReload;
             const win =  browser.contentWindow;
             const wu = win.QueryInterface(Ci.nsIInterfaceRequestor)
                      .getInterface(Ci.nsIDOMWindowUtils);
             const rw = this.requestWatchdog;
-            
-            
+
+
             let canSuppressEvents = "suppressEventHandling" in wu;
             if (canSuppressEvents) wu.suppressEventHandling(true);
             // check XSS
-            
+
             let xss = this.traverseDocShells(function(docShell) {
               let site = this.getSite(docShell.currentURI.spec);
 
@@ -2766,9 +2707,9 @@ var ns = {
                   (lastGlobal
                     ? this.alwaysBlockUntrustedContent && lastUntrusted.matches(site)
                     : !(lastTrusted.matches(site) || this.checkShorthands(site, lastTrusted)) || lastUntrusted.matches(site)
-                  )                          
+                  )
                 ) {
-                
+
                 let channel = docShell.currentDocumentChannel;
                 if (channel instanceof Ci.nsIHttpChannel) {
                   try {
@@ -2795,10 +2736,10 @@ var ns = {
                     return true; // better err on the safe side
                   }
                 }
-              } 
+              }
               return false;
             }, this, browser);
-            
+
             if (xss) {
               forceReload = true;
               useHistoryExceptCurrent = true;
@@ -2809,9 +2750,9 @@ var ns = {
             } else {
               if (canSuppressEvents) wu.suppressEventHandling(false);
             }
-            
+
             rw.setUntrustedReloadInfo(browser, true);
-            
+
             let webNav = browser.webNavigation;
             let uri = webNav.currentURI;
             if (uri.schemeIs("http") || uri.schemeIs("https")) {
@@ -2825,7 +2766,7 @@ var ns = {
                   this.requestWatchdog.setUntrustedReloadInfo(browser, site != sites[j] && !trusted.matches(site));
                 } catch(e) {}
               }
-              
+
               if (useHistory && forceReload) {
                 if (useHistoryExceptCurrent) {
                   useHistoryExceptCurrent = false;
@@ -2846,8 +2787,8 @@ var ns = {
             break;
           }
         }
-        
-        if (mustReload && j === len) { 
+
+        if (mustReload && j === len) {
           // check plugin objects
           if (this.consoleDump & LOG_CONTENT_BLOCK) {
             this.dump("Checking object permission changes...");
@@ -2859,22 +2800,22 @@ var ns = {
              this.quickReload(browser.webNavigation);
           }
         }
-        
+
         if (currentTabOnly) {
           mustReload = false;
           continue;
         }
-        
+
         isCurrentTab = false;
       }
-      
+
       if (browser) Thread.delay(checkAndReload, 1, this);
-      
+
     }).apply(this);
-    
+
   },
-  
-  
+
+
   reloadAllowedObjects: function(browser, mime) {
     if (mime === "WebGL") {
       let curURL = browser.currentURI.spec;
@@ -2888,14 +2829,14 @@ var ns = {
         }
       }
     }
-    
+
     if (this.getPref("autoReload.onMultiContent", false)) {
       this.quickReload(browser.webNavigation);
       return;
     }
     var reloadEmbedders = this.getPref("autoReload.embedders");
     var canReloadPage = reloadEmbedders == 1 ? this.getPref("autoReload") : !!(reloadEmbedders);
-    
+
     var sites = this.getSites(browser);
     var egroup, j, e;
     for each (egroup in sites.pluginExtras) {
@@ -2931,7 +2872,7 @@ var ns = {
         return true;
       }
     }
- 
+
      for each (let egroup in sites.pluginExtras) {
       for (let j = 0, len = egroup.length; j < len; j++) {
         let e = egroup[j];
@@ -2943,14 +2884,14 @@ var ns = {
     }
     return false;
   },
-  
+
   quickReload: function(webNav, checkNullCache) {
     if (!(webNav instanceof Ci.nsIWebNavigation)) {
       webNav = DOM.getDocShellForWindow(webNav);
     }
-    
+
     var uri = webNav.currentURI;
-    
+
     if (checkNullCache && (webNav instanceof Ci.nsIWebPageDescriptor)) {
       try {
         var ch = IOS.newChannel(uri.spec, null, null);
@@ -2970,22 +2911,22 @@ var ns = {
         } catch(e1) {}
       }
     }
-    
+
 
     if (uri.schemeIs("http") || uri.schemeIs("https")) {
       this.requestWatchdog.noscriptReload = uri.spec;
     }
     webNav.reload(webNav.LOAD_FLAGS_CHARSET_CHANGE);
   },
-  
+
   getPermanentSites: function(whitelist, templist) {
     whitelist = (whitelist || this.jsPolicySites).clone();
     whitelist.remove((templist || this.tempSites).sitesList, true, true);
     return whitelist;
   },
-  
+
   eraseTemp: function() {
-    // remove temporary PUNCTUALLY: 
+    // remove temporary PUNCTUALLY:
     // keeps ancestors because the may be added as permanent after the temporary allow;
     // keeps descendants because they may already have been made permanent before the temporary, and then shadowed
     this.jsPolicySites.remove(this.tempSites.sitesList, true, true);
@@ -2993,28 +2934,28 @@ var ns = {
     if (this.untrustedSites.add(this.gTempSites.sitesList)) {
       this.persistUntrusted();
     }
-    
+
     this.tempSites.sitesString = this.gTempSites.sitesString = "";
-    
-    this.setPref("temp", ""); 
+
+    this.setPref("temp", "");
     this.setPref("gtemp", "");
-    
+
     this.setJSEnabled(this.mandatorySites.sitesList, true); // add mandatory
     this.resetAllowedObjects();
     if (this.hasClearClickHandler) this.clearClickHandler.resetWhitelist();
   }
-  
+
 ,
   _observingPolicies: false,
   _editingPolicies: false,
   setupJSCaps: function() {
     if (this._editingPolicies) return;
-    
+
     if (!this.supportsCAPS) {
       this.resetJSCaps();
       if (!(this.allowLocalLinks || this.allowClipboard)) return;
     }
-    
+
     this._editingPolicies = true;
     try {
       const POLICY_NAME = this.POLICY_NAME;
@@ -3022,9 +2963,9 @@ var ns = {
       var prefString = "", originalPrefString = "";
       var exclusive = this.getPref("excaps", true);
       try {
-        
-        prefArray = this.splitList(prefString = originalPrefString = 
-          (this.caps.prefHasUserValue("policynames") 
+
+        prefArray = this.splitList(prefString = originalPrefString =
+          (this.caps.prefHasUserValue("policynames")
             ? this.caps.getCharPref("policynames")
             : this.getPref("policynames") // saved value from dirty exit
           )
@@ -3044,15 +2985,15 @@ var ns = {
       } catch(ex) {
         prefString = POLICY_NAME;
       }
-      
+
       this.caps.setCharPref(POLICY_NAME + ".javascript.enabled", "allAccess");
-      
+
       try {
         this.caps.clearUserPref("policynames");
       } catch(e) {}
       this.defaultCaps.setCharPref("policynames", prefString);
 
-      
+
       if (!this._observingPolicies) {
         this.caps.addObserver("policynames", this, true);
         this._observingPolicies = true;
@@ -3076,7 +3017,7 @@ var ns = {
       let prefString = SiteUtils.splitString(
        exclusive ? this.getPref("policynames", "") : this.caps.getCharPref("policynames")
       ).filter(function(s) s && s !== POLICY_NAME).join(" ");
-      
+
       if (prefString) {
         this.caps.setCharPref("policynames", prefString);
       } else {
@@ -3136,7 +3077,7 @@ var ns = {
       } catch(e2) {}
     }
   },
-  
+
   get json() {
     delete this.json;
     try {
@@ -3152,25 +3093,25 @@ var ns = {
       }
     }
   },
-  
+
   get placesSupported() {
     return !(this.builtInSync && this.getPref("sync.enabled")) &&
       ("nsINavBookmarksService" in Components.interfaces) &&
       this.geckoVersionCheck("2.0") < 0;
   },
-  
+
 
   get builtInSync() {
     var ret = false
-    
+
     try {
       ret = this.prefService.getDefaultBranch("services.sync.prefs.sync.javascript.").getBoolPref("enabled");
     } catch (e) {}
-    
+
     delete this.builtInSync;
     return this.builtInSync = ret;
   },
-  
+
   _updateSync: function() {
     let t = Date.now();
     this._clearSync();
@@ -3178,7 +3119,7 @@ var ns = {
     if (this.consoleDump) this.dump("Sync prefs inited in " + (Date.now() - t));
   },
   _initSync: function() {
-    
+
     try {
       let branch = this.prefService.getDefaultBranch("services.sync.prefs.sync.noscript.");
       for each (let key in this.prefs.getChildList("", {})) {
@@ -3201,7 +3142,7 @@ var ns = {
     } catch(e) {
       this.dump(e);
     }
-    
+
   },
   _clearSync: function() {
     try {
@@ -3215,7 +3156,7 @@ var ns = {
       this.dump(e);
     }
   },
-  
+
   _dontSerialize: ["version", "temp", "preset", "placesPrefs.ts", "mandatory", "default"],
   serializeConf: function(beauty) {
     if (!this.json) return '';
@@ -3227,21 +3168,21 @@ var ns = {
         prefs[key] = this.getPref(key);
       }
     }
-    
+
     const conf = this.json.encode({
       prefs: prefs,
       whitelist: this.getPermanentSites().sitesString,
       V: this.VERSION
     });
-    
+
     return beauty ? conf.replace(/([^\\]"[^"]*[,\{])"/g, "$1\r\n\"").replace(/},?(?:\n|$)/g, "\r\n$&") : conf;
   },
-  
+
   restoreConf: function(s) {
     try {
       const json = this.json.decode(s.replace(/[\n\r]/g, ''));
       if (json.ABE) ABE.restoreJSONRules(json.ABE);
-      
+
       const prefs = json.prefs;
       const exclude = this._dontSerialize;
       for (let key in prefs) {
@@ -3249,13 +3190,13 @@ var ns = {
           this.setPref(key, prefs[key]);
         }
       }
-      
+
       if (prefs.global != ns.jsEnabled) ns.jsEnabled = prefs.global;
-      
+
       this.flushCAPS(json.whitelist);
-      this.setPref("temp", ""); 
+      this.setPref("temp", "");
       this.setPref("gtemp", "");
-      
+
       return true;
     } catch(e) {
       this.dump("Cannot restore configuration: " + e);
@@ -3264,9 +3205,9 @@ var ns = {
   }
 ,
   applyPreset: function(preset) {
-   
+
     this.resetDefaultPrefs(this.prefs, ['version', 'temp', 'untrusted', 'preset']);
-    
+
     switch(preset) {
       case "off":
         this.setPref("ABE.enabled", false);
@@ -3284,7 +3225,7 @@ var ns = {
       default:
         return;
     }
-    
+
     this.setPref("preset", preset);
     this.savePrefs();
   }
@@ -3323,10 +3264,10 @@ var ns = {
     IO.writeFile(file, content);
   }
 ,
-  
+
   getAllowObjectMessage: function(extras) {
     let url = SiteUtils.crop(extras.url).replace(/\S{80}/g, "$&\n");
-    let details = extras.mime + " " + (extras.tag || (extras.mime === "WebGL" ? "<CANVAS>" : "<OBJECT>")) + " / " + extras.originSite; 
+    let details = extras.mime + " " + (extras.tag || (extras.mime === "WebGL" ? "<CANVAS>" : "<OBJECT>")) + " / " + extras.originSite;
     return this.getString("allowTemp", [url + "\n(" + details + ")\n"]);
   }
 ,
@@ -3339,11 +3280,11 @@ var ns = {
     ABE; // kickstart
     return this.wan = WAN;
   },
-  
+
   os: OS,
   siteUtils: SiteUtils,
   mimeService: null,
- 
+
   shouldLoad: function(aContentType) {
     if (aContentType === 5) {
       this.requestWatchdog;
@@ -3352,47 +3293,47 @@ var ns = {
     return CP_OK;
   },
   shouldProcess: CP_NOP,
-  
+
   initContentPolicy: function(force) {
     if (force) INCLUDE("Policy");
     else if (!this.httpStarted) return;
-    
+
     const last = this.getPref("cp.last");
     const catMan = this.categoryManager;
-    const cat = "content-policy"; 
+    const cat = "content-policy";
     if (last)
       try {
         catMan.deleteCategoryEntry(cat, this.CTRID, false);
       } catch (e) {}
-    
+
     var delegate;
-    
+
     if (this.httpStarted) {
       delegate = this.disabled ||
         (this.globalJS &&
-          !(this.alwaysBlockUntrustedContent || this.contentBlocker || HTTPS.httpsForced))   
+          !(this.alwaysBlockUntrustedContent || this.contentBlocker || HTTPS.httpsForced))
       ? NOPContentPolicy
       : MainContentPolicy;
-    
+
       for (var p in delegate) this[p] = delegate[p];
     } else delegate = null;
-    
+
     if (delegate !== NOPContentPolicy && (last || this.mimeService)) {
       // removing and adding the category late in the game allows to be the latest policy to run,
       // and nice to AdBlock Plus
       // this.dump("Adding category");
       catMan.addCategoryEntry(cat, this.CTRID, this.CTRID, false, true);
     } else this.dump("No category?!" + (delegate === NOPContentPolicy) + ", " + last + ", " + this.mimeService);
-    
-    
+
+
     if (!this.mimeService) {
       this.initSafeJSRx();
       this.mimeService = Cc['@mozilla.org/uriloader/external-helper-app-service;1']
         .getService(Ci.nsIMIMEService);
     }
   },
- 
-  
+
+
   guessMime: function(uriOrExt) {
     try {
       var ext = (uriOrExt instanceof Ci.nsIURL) ? uriOrExt.fileExtension : uriOrExt;
@@ -3401,7 +3342,7 @@ var ns = {
       return "";
     }
   },
-  
+
   pluginForMime: function(mimeType) {
     if (!mimeType) return null;
     try {
@@ -3411,28 +3352,28 @@ var ns = {
       return mime && mime.enabledPlugin || null;
     } catch(e) { return null; }
   },
-  
+
   _mediaTypeRx: /^(?:vide|audi)o\/|\/ogg$/i,
   isMediaType: function(mimeType) {
     return this._mediaTypeRx.test(mimeType);
   },
-  
+
   versionComparator: Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator),
   geckoVersion: ("@mozilla.org/xre/app-info;1" in  Cc) ? Cc["@mozilla.org/xre/app-info;1"].getService(Ci.nsIXULAppInfo).platformVersion : "0.0",
   geckoVersionCheck: function(v) this.versionComparator.compare(this.geckoVersion, v),
-  
-  
+
+
   cpConsoleFilter: [2, 5, 6, 7, 15],
   cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, aPrincipal) {
-    this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) + 
-      ", requestOrigin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " + 
+    this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) +
+      ", requestOrigin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " +
         ((aContext instanceof Ci.nsIDOMHTMLElement) ? "<HTML " + aContext.tagName + ">" // try not to cause side effects of toString() during load
-          : aContext)  + 
+          : aContext)  +
         ", mime: " + aMimeTypeGuess + ", Internal: " + aInternalCall +
         ", principal.origin: " + (aPrincipal && aPrincipal.origin));
   },
   reject: function(what, args /* [aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, [aPrincipal] ] */) {
-    
+
     if (this.consoleDump) {
       if(this.consoleDump & LOG_CONTENT_BLOCK && args.length >= 6) {
         this.cpDump("BLOCKED " + what, args[0], args[1], args[2], args[3], args[4], args[5], args[6] && args[6]);
@@ -3449,10 +3390,10 @@ var ns = {
       case 5:
         if (args[3]) args[3].__noscriptBlocked = true;
     }
-    
+
     PolicyState.cancel(args);
-    
-    
+
+
     if (args[1]) {
       let win = DOM.findWindow(args[3]);
       let focusedWin = win;
@@ -3464,15 +3405,15 @@ var ns = {
         this.recordBlocked(focusedWin, this.getSite(args[1].spec) || "", this.getSite(win && win.location.href || args[2] && args[2].spec));
       }
     }
-    
+
     return CP_REJECT;
   },
-  
+
   nopXBL: "chrome://global/content/bindings/general.xml#basecontrol",
-   
+
   forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
     let originURL, locationURL;
-    if (aContentLocation.schemeIs("chrome") || !aRequestOrigin || 
+    if (aContentLocation.schemeIs("chrome") || !aRequestOrigin ||
          // GreaseMonkey Ajax comes from resource: hidden window
          // Google Toolbar Ajax from about:blank
            aRequestOrigin.schemeIs("chrome") || aRequestOrigin.schemeIs("resource") ||
@@ -3480,18 +3421,18 @@ var ns = {
            // Web Developer extension "appears" to XHR towards about:blank
            (locationURL = aContentLocation.spec) == "about:blank"
           ) return false;
-    
+
     let locationSite = this.getSite(locationURL);
     if (this.ignorePorts && this.portRx.test(locationSite) &&
         this.isJSEnabled(locationSite.replace(this.portRx, '')) && this.autoTemp(locationSite))
       return false;
-    
+
     var win = aContext && aContext.defaultView;
     if(win) this.getExpando(win.top.document, "codeSites", []).push(locationSite);
-    
+
     return forbidDelegate.call(this, originURL, locationURL, win);
   },
-  
+
 
   addFlashVars: function(url, embed) {
     // add flashvars to have a better URL ID
@@ -3518,12 +3459,12 @@ var ns = {
     }
     return url;
   },
-  
+
   addObjectParams: function(url, embed) {
     if (embed instanceof Ci.nsIDOMElement) try {
       var params = embed.getElementsByTagName("param");
       if (!params.length) return url;
-      
+
       var pp = [];
       for(let j = params.length; j-- > 0;) {
         pp.push(encodeURIComponent(params[j].name) + "=" + encodeURIComponent(params[j].value));
@@ -3534,7 +3475,7 @@ var ns = {
     }
     return url;
   },
-  
+
   tagWindowlessObject: function(o) {
     const rx = /^(?:opaque|transparent)$/i;
     var b;
@@ -3553,33 +3494,33 @@ var ns = {
       if (this.consoleDump) this.dump("Couldn't tag object for window mode.");
     }
   },
-  
+
   isWindowlessObject: function(o) {
     return this.getExpando(o, "windowless") || o.settings && o.settings.windowless;
   },
-  
+
   resolveSilverlightURL: function(uri, embed) {
     if(!uri) return "";
-    
-    
+
+
     if (embed instanceof Ci.nsIDOMElement) try {
-      
+
       var url = "";
       var params = embed.getElementsByTagName("param");
       if (!params.length) return uri.spec;
-      
+
       var name, value, pp = [];
       for (var j = params.length; j-- > 0;) { // iteration inverse order is important for "source"!
         name = params[j].name;
         value = params[j].value;
         if(!(name && value)) continue;
-        
+
         if (!url && name.toLowerCase() == "source") {
           try {
              url = uri.resolve(value);
              continue;
           } catch(e) {
-            if (this.consoleDump)  
+            if (this.consoleDump)
               this.dump("Couldn't resolve Silverlight URL " + uri.spec + " + " + value + ":" + e);
             url = uri.spec;
           }
@@ -3592,7 +3533,7 @@ var ns = {
     }
     return uri.spec;
   },
-  
+
   tagForReplacement: function(embed, pluginExtras) {
     try {
       var doc = embed.ownerDocument;
@@ -3624,17 +3565,17 @@ var ns = {
         "] for replacement: " + ex);
     }
   },
-  
+
   blockLegacyFrame: function(frame, uri, sync) {
 
     var verbose = this.consoleDump & LOG_CONTENT_BLOCK;
     if(verbose) {
       this.dump("Redirecting blocked legacy frame " + uri.spec + ", sync=" + sync);
     }
-    
-    
+
+
     var url = this.createPluginDocumentURL(uri.spec, "iframe");
-    
+
     if(sync) {
       if (verbose) dump("Legacy frame SYNC, setting to " + url + "\n");
       frame.contentWindow.location = url;
@@ -3646,17 +3587,17 @@ var ns = {
       }, false);
     }
     return true;
-  
+
   },
-  
-  
+
+
   isPluginDocumentURL: function(url, tag) {
     try {
       return url.replace(/(src%3D%22).*?%22/i, '$1%22') == this.createPluginDocumentURL('', tag)
     } catch(e) {}
     return false;
   },
-  
+
   createPluginDocumentURL: function(url, tag) {
     tag = tag ? tag.toLowerCase() : "embed";
     return 'data:text/html;charset=utf-8,' +
@@ -3664,7 +3605,7 @@ var ns = {
           tag + ' src="' + url + '" width="100%" height="100%"></' +
           tag + '></body></html>');
   },
-  
+
   forbiddenIFrameContext: function(originURL, locationURL) {
     if (this.isForbiddenByHttpsStatus(originURL)) return false;
     var domain = this.getDomain(locationURL, true);
@@ -3674,8 +3615,8 @@ var ns = {
         return true;
       case 3: // different 2nd level domain or either untrusted parent or origin
         if (!(this.untrustedSites.matches(this.getSite(locationURL)) ||
-            this.untrustedSites.matches(this.getSite(originURL)))) 
-          return this.getBaseDomain(this.getDomain(originURL, true)) != 
+            this.untrustedSites.matches(this.getSite(originURL))))
+          return this.getBaseDomain(this.getDomain(originURL, true)) !=
             this.getBaseDomain(domain);
       case 2: // different domain (unless forbidden by HTTPS status)
         if (this.getDomain(originURL, true) != domain) return true;
@@ -3686,13 +3627,13 @@ var ns = {
      }
      return false;
   },
-  
+
   forbiddenXBLContext: function(originURL, locationURL, window) {
     if (locationURL == this.nopXBL) return false; // always allow our nop binding
-    
+
     var locationSite = this.getSite(locationURL);
     var originSite = this.getSite(originURL);
-   
+
     switch (this.forbidXBL) {
       case 4: // allow only XBL from the same trusted site or chrome (default)
         if (locationSite != originSite) return true; // chrome is checked by the caller checkXML
@@ -3709,7 +3650,7 @@ var ns = {
     }
     return true;
   },
-  
+
   forbiddenXHRContext: function(originURL, locationURL, window) {
     var locationSite = this.getSite(locationURL);
     // var originSite = this.getSite(originURL);
@@ -3726,8 +3667,8 @@ var ns = {
     }
     return true;
   },
-  
-  
+
+
   safeJSRx: false,
   initSafeJSRx: function() {
     try {
@@ -3740,11 +3681,11 @@ var ns = {
     var js = url.replace(/^javascript:/i, "");
     return this.safeJSRx && js != url && this.safeJSRx.test(js);
   },
-  
+
   isFirebugJSURL: function(url) {
     return url == "javascript: eval(__firebugTemp__);"
   },
-  
+
   isExternalScheme: function(scheme) {
     try {
       return IOS.getProtocolHandler(scheme).scheme != scheme;
@@ -3755,7 +3696,7 @@ var ns = {
   normalizeExternalURI: function(uri) {
     var uriSpec = uri.spec;
     var uriValid = URIValidator.validate(uriSpec);
-    var fixURI = this.getPref("fixURI", true) && 
+    var fixURI = this.getPref("fixURI", true) &&
       this.getPref("fixURI.exclude", "").split(/[^\w\-]+/)
           .indexOf(uri.scheme) < 0;
     var msg;
@@ -3781,7 +3722,7 @@ var ns = {
     // encode all you can (i.e. don't touch valid encoded and delims)
     if (fixURI) {
       try {
-        uriSpec = uriSpec.replace(/[^%]|%(?![\da-f]{2})/gi, encodeURI); 
+        uriSpec = uriSpec.replace(/[^%]|%(?![\da-f]{2})/gi, encodeURI);
         if (uriSpec != uri.spec) {
           if (this.consoleDump) this.dump("Encoded URI: " + uri.spec + " to " + uriSpec);
           uri.spec = uriSpec;
@@ -3795,11 +3736,11 @@ var ns = {
     }
     return true;
   },
-  
+
   syncUI: function(document) {
     this.os.notifyObservers(document.defaultView.top, "noscript:sync-ui", null);
   },
-  
+
   objectWhitelist: {},
   ALL_TYPES: ["*"],
   objectWhitelistLen: 0,
@@ -3825,12 +3766,12 @@ var ns = {
   },
   isAllowedObject: function(url, mime, site, originSite) {
     let types = this.objectWhitelist[this.objectKey(url, originSite)] || this.objectWhitelist[this.objectKey(url)];
-    if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1)) 
+    if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1))
       return true;
-    
-    
+
+
     if (typeof(site) === "undefined") site = this.getSite(url);
-    
+
     for (;site;) {
       types = this.objectWhitelist[this.objectKey(site, originSite)] || this.objectWhitelist[this.objectKey(site)];
       if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1))
@@ -3841,17 +3782,17 @@ var ns = {
       if (s === site) break;
       site = s;
     }
-        
+
     return false;
   },
   _moreURLPartsRx: /\..*\.|:\//,
   _chopURLPartRx: /.*?(?::\/+|\.)/,
-  
+
   // Fire.fm compatibility shim :(
   setAllowedObject: function(url, mime) {
     this.allowObject(url, mime);
   },
-  
+
   allowObject: function(url, mime, originSite) {
     let key = this.objectKey(url, originSite);
     if (key in this.objectWhitelist) {
@@ -3880,19 +3821,19 @@ var ns = {
     let doc = obj.ownerDocument;
     let suffix = encodeURIComponent(parentURL);
     if (!doc) return objectURL + "#!#@" + suffix;
-    
+
     let id = obj.id || "";
     let t = obj.tagName.toUpperCase();
-  
+
     const ytFrameURL = "https://www.youtube.com/embed/";
-    
+
     if ("IFRAME" === t && objectURL.substring(0, ytFrameURL.length) === ytFrameURL) {
       objectURL = ytFrameURL;
       id = "(ytFrame)";
     } else {
       objectURL = objectURL.replace(/[\?#].*/, '');
       if (!id) {
-        let ee = doc.getElementsByTagName(t); 
+        let ee = doc.getElementsByTagName(t);
 
         for (let j = ee.length; j-- > 0;) {
           if (ee[j] === obj) {
@@ -3904,12 +3845,12 @@ var ns = {
     }
     return objectURL + "#!#" + id + "@" + suffix;
   },
-  
+
   resetAllowedObjects: function() {
     this.objectWhitelist = {};
     this.objectWhitelistLen = 0;
   },
-  
+
   isAllowedMime: function(mime, site) (this.allowedMimeRegExp && (
                                         this.allowedMimeRegExp.test(mime) ||
                                         this.allowedMimeRegExp.test(mime + "@" + site)))
@@ -3918,7 +3859,7 @@ var ns = {
     if(!site) return;
     try {
       var doc = embed.ownerDocument;
-      
+
       if (doc) {
         var topDoc = doc.defaultView.top.document;
         var os = this.getExpando(topDoc, "objectSites");
@@ -3930,7 +3871,7 @@ var ns = {
       }
     } catch (ex) {}
   },
-  
+
   getPluginExtras: function(obj) {
     return this.getExpando(obj, "pluginExtras");
   },
@@ -3944,12 +3885,12 @@ var ns = {
         this.dump("Setting plugin extras");
       }
     }
-      
+
     return extras;
   },
-  
+
   getExpando: function(domObject, key, defValue) {
-    return domObject && domObject.__noscriptStorage && domObject.__noscriptStorage[key] || 
+    return domObject && domObject.__noscriptStorage && domObject.__noscriptStorage[key] ||
            (defValue ? this.setExpando(domObject, key, defValue) : null);
   },
   setExpando: function(domObject, key, value) {
@@ -3959,15 +3900,15 @@ var ns = {
     else if(this.consoleDump) this.dump("Warning: cannot set expando " + key + " to value " + value);
     return value;
   },
-  
+
   cleanupBrowser: function(browser) {
     delete browser.__noscriptStorage;
   },
-  
+
   hasVisibleLinks: function(document) {
     const w = document.defaultView;
     if (!w) return false;
-    
+
     const links = document.links;
     let toBeChecked = null;
     for (let j = 0, l; (l = links[j]); j++) {
@@ -3978,7 +3919,7 @@ var ns = {
       }
     }
     if (!toBeChecked) return false;
-    
+
     let hiddenAncestors = [];
     for (let j = toBeChecked.length; j-- > 0;) {
       let n = toBeChecked[j];
@@ -4002,7 +3943,7 @@ var ns = {
     if (form && form.offsetHeight) return true;
     return false;
   },
-  
+
   _SMILElements: ["set", "animation"],
   doRemoveSMILKeySniffers: function(document) {
     if (!this.removeSMILKeySniffer) return;
@@ -4017,20 +3958,20 @@ var ns = {
       }
     }
   },
-  
+
   detectJSRedirects: function(document) {
     if (this.jsredirectIgnore) return 0;
-    
+
     try {
       if (document.documentURI.indexOf("http") !== 0) return 0;
-      
+
       let window = document.defaultView;
       if (!window) return 0;
-      
+
       let hasVisibleLinks = this.hasVisibleLinks(document);
-      if (!this.jsredirectForceShow && hasVisibleLinks) 
+      if (!this.jsredirectForceShow && hasVisibleLinks)
         return 0;
-      
+
       let body = document.body;
       if (!body) return 0;
 
@@ -4054,7 +3995,7 @@ var ns = {
           l.style.display = "block";
           seen.push(l.href);
         }
-        
+
 
         for (let forms = document.forms, j = 0, f; f = forms[j]; j++) {
           if (f.action) {
@@ -4072,20 +4013,20 @@ var ns = {
           }
         }
       }
-      
+
       var code;
       var container = null;
-      
+
       code = body && body.getAttribute("onload");
       const sources = code ? [code] : [];
       var scripts = document.getElementsByTagName("script");
       for (let j = 0, len = scripts.length; j < len; j++)
         sources.push(scripts[j].textContent);
-      
+
       scripts = null;
-      
+
       if (!sources[0]) return 0;
-      
+
       var follow = false;
       const findURL = /(?:(?:\b(?:open|replace)\s*\(|(?:\b(?:href|location|src|path|pathname|search)|(?:[Pp]ath|UR[IL]|[uU]r[il]))\s*=)\s*['"]|['"](?=https?:\/\/\w|\w*[\.\/\?]))([\?\/\.\w\-%\&][^\s'"]*)/g;
       const MAX_TIME = 1000;
@@ -4096,7 +4037,7 @@ var ns = {
         findURL.lastIndex = 0;
         code = sources[j];
         for (let m; m = findURL.exec(code);) {
-          
+
           if (!container) {
             container = document.createElementNS(HTML_NS, "div");
             with (container.style) {
@@ -4108,9 +4049,9 @@ var ns = {
               minHeight = "32px";
               textAlign = "left";
             }
-            follow = this.jsredirectFollow && window == window.top &&  
+            follow = this.jsredirectFollow && window == window.top &&
               !window.frames[0] &&
-              !document.evaluate('//body[normalize-space()!=""]', document, null, 
+              !document.evaluate('//body[normalize-space()!=""]', document, null,
                 Ci.nsIDOMXPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
             document.body.appendChild(container);
           }
@@ -4136,25 +4077,25 @@ var ns = {
           seen.push(a.href);
           a.appendChild(document.createTextNode(a.href));
           container.appendChild(document.createElementNS(HTML_NS, "br"));
-          
+
           if (seen.length >= MAX_LINKS || Date.now() - ts > MAX_TIME) break outerLoop;
         }
-        
+
         if (follow && seen.length == 1) {
-          this.log("[NoScript Following JS Redirection]: " + seen[0] + " FROM " + document.location.href); 
-          
+          this.log("[NoScript Following JS Redirection]: " + seen[0] + " FROM " + document.location.href);
+
           this.doFollowMetaRefresh({
             uri: seen[0],
             document: document
-          });  
+          });
         }
-        
+
         if (Date.now() - ts > MAX_TIME) break;
       }
       return seen.length;
-    } catch(e) { 
+    } catch(e) {
       this.dump(e.message + " while processing JS redirects");
-      return 0; 
+      return 0;
     }
   }
 ,
@@ -4178,18 +4119,18 @@ var ns = {
           scriptSrc = script.getAttribute("src");
           if (!/^[a-z]+:\/\//i.test(scriptSrc)) continue;
         } else continue;
-        
+
         let scriptSite = this.getSite(scriptSrc);
         if (scriptSite) {
           sites.push(scriptSite);
-          
+
           if (scriptSrc in surrogates) continue;
-          
+
           if (nselForce && isHTMLScript &&
               !(script.__nselForce ||
                 this.isJSEnabled(scriptSite, win) ||
                 this.isUntrusted(scriptSite))) {
-            
+
             this.showNextNoscriptElement(script);
           }
         }
@@ -4197,9 +4138,9 @@ var ns = {
     }
   }
 ,
-  
-  
-  showNextNoscriptElement: function(script) { 
+
+
+  showNextNoscriptElement: function(script) {
     const HTMLElement = Ci.nsIDOMHTMLElement;
     var child, el, j, doc, docShell;
     try {
@@ -4207,7 +4148,7 @@ var ns = {
 
         if (node instanceof HTMLElement) {
           script.__nselForce = true;
-          
+
           tag = node.tagName.toUpperCase();
           if (tag == "SCRIPT") {
             if (node.src) return;
@@ -4216,10 +4157,10 @@ var ns = {
           }
           if (tag != "NOSCRIPT")
             return;
-         
+
           child = node.firstChild;
           if (!(child && child.nodeType === 3)) break;
-          
+
           if (!doc) {
             doc = node.ownerDocument;
             docShell = this.dom.getDocShellForWindow(doc.defaultView);
@@ -4244,12 +4185,12 @@ var ns = {
       if (docShell) docShell.allowMetaRedirects = true;
     }
   },
-  
+
   metaRefreshWhitelist: {},
   processMetaRefresh: function(document, notifyCallback) {
     let win = document.defaultView;
     var docShell = DOM.getDocShellForWindow(win);
-    if (!this.forbidMetaRefresh ||    
+    if (!this.forbidMetaRefresh ||
        this.metaRefreshWhitelist[document.documentURI] ||
        this.isJSEnabled(this.getSite(document.documentURI), win) ||
        !document.getElementsByTagName("noscript")[0]
@@ -4261,7 +4202,7 @@ var ns = {
       var refresh, content, timeout, uri;
       var rr = document.getElementsByTagName("meta");
       if (!rr[0]) return;
-      
+
       var html5;
       try {
         html5 = this.prefService.getBoolPref("html5.parser.enable");
@@ -4270,7 +4211,7 @@ var ns = {
       }
 
       var node, nodeName;
-      const refreshRx = /refresh/i; 
+      const refreshRx = /refresh/i;
       for (var j = 0; (refresh = rr[j]); j++) {
         if (!refreshRx.test(refresh.httpEquiv)) continue;
         if (html5) { // older parser moves META outside the NOSCRIPT element if not in HEAD
@@ -4287,13 +4228,13 @@ var ns = {
             timeout = parseInt(content[0]) || 0;
             uri = uri.replace (/^\s*URL\s*=\s*/i, "");
             var isQuoted = /^['"]/.test(uri);
-            uri = isQuoted ? uri.match(/['"]([^'"]*)/)[1] : uri.replace(/\s[\s\S]*/, ''); 
+            uri = isQuoted ? uri.match(/['"]([^'"]*)/)[1] : uri.replace(/\s[\s\S]*/, '');
             try {
-              notifyCallback({ 
+              notifyCallback({
                 docShell: docShell,
                 document: document,
                 baseURI: docShell.currentURI,
-                uri: uri, 
+                uri: uri,
                 timeout: timeout
               });
             } catch(e) {
@@ -4318,7 +4259,7 @@ var ns = {
     if (forceRemember || this.getPref("forbidMetaRefresh.remember", false)) {
       this.metaRefreshWhitelist[document.documentURI] = metaRefreshInfo.uri;
     }
-    var docShell = metaRefreshInfo.docShell || DOM.getDocShellForWindow(document.defaultView); 
+    var docShell = metaRefreshInfo.docShell || DOM.getDocShellForWindow(document.defaultView);
     this.enableMetaRefresh(docShell);
     if (docShell instanceof Ci.nsIRefreshURI) {
       this.setupRefresh(docShell,
@@ -4332,7 +4273,7 @@ var ns = {
       this.metaRefreshWhitelist[document.documentURI] = null;
     }
   },
-  
+
   enableMetaRefresh: function(docShell) {
     if (docShell) {
       docShell.allowMetaRedirects = true;
@@ -4350,7 +4291,7 @@ var ns = {
       // if(this.consoleDump) dump("Disabled META refresh on " + (docShell.currentURI && docShell.currentURI.spec) + "\n");
     }
   },
-  
+
   setupRefresh: function(docShell, baseURI, header) {
     if (docShell instanceof Ci.nsIRefreshURI)
       try {
@@ -4382,15 +4323,15 @@ var ns = {
           try {
             sc = sc || new SyntaxChecker();
             var m;
-            if (sc.check(code) && 
-                (m = sc.lastFunction.toSource().match(this._frameBreakCapture)) && 
+            if (sc.check(code) &&
+                (m = sc.lastFunction.toSource().match(this._frameBreakCapture)) &&
                 (!m[1] || (m[1] == "top" || m[2] == "top") && m[1] != m[2])) {
               var top = w.top;
 
               var docShell = DOM.getDocShellForWindow(top);
               var allowJavascript = docShell.allowJavascript;
               var allowPlugins = docShell.allowPlugins;
-              if (allowJavascript) { // temporarily disable JS & plugins on the top frame to prevent counter-busting 
+              if (allowJavascript) { // temporarily disable JS & plugins on the top frame to prevent counter-busting
                 docShell.allowJavascript = docShell.allowPlugins = false;
                 top.addEventListener("pagehide", function(ev) {
                   ev.currentTarget.removeEventListener(ev.type, arguments.calle, false);
@@ -4412,7 +4353,7 @@ var ns = {
     }
     return false;
   },
-  
+
   knownFrames: {
     _history: {},
     add: function(url, parentSite) {
@@ -4428,7 +4369,7 @@ var ns = {
       this._history = {}
     }
   },
-  
+
   frameContentLoaded: function(w) {
     if (this.emulateFrameBreak && this.doEmulateFrameBreak(w)) return; // we're no more framed
 
@@ -4438,8 +4379,8 @@ var ns = {
       this.knownFrames.add(w.location.href, this.getSite(w.parent.location.href));
     }
   },
-  
-  
+
+
   handleBookmark: function(url, openCallback) {
     if (!url) return true;
     try {
@@ -4458,7 +4399,7 @@ var ns = {
     }
     return false;
   },
-  
+
   // applied to Places(UI)Utils
   placesCheckURLSecurity: function(node) {
     if(!this.__originalCheckURLSecurity(node)) return false;
@@ -4477,35 +4418,35 @@ var ns = {
       method._reentrant = false;
     }
   },
-  
-  
+
+
   executeJSURL: function(url, openCallback, fromURLBar) {
     var browserWindow = DOM.mostRecentBrowserWindow;
     var browser = browserWindow.noscriptOverlay.currentBrowser;
     if(!browser) return false;
-    
+
     var window = browser.contentWindow;
     if(!window) return false;
-    
+
     var site = this.getSite(window.document.documentURI) || this.getExpando(browser, "jsSite");
     if (this.mozJSEnabled && (!this.jsEnabled || this.isUntrusted(site))) {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
-    
+
       let docShell = DOM.getDocShellForWindow(window);
-    
+
       let snapshots = {
         globalJS: this.jsEnabled,
         docJS: docShell.allowJavascript,
         siteJS: this.jsPolicySites.sitesString,
         untrusted: this.untrustedSites.sitesString
       };
-      
+
       let siteJSEnabled = this.isJSEnabled(site, window);
-      
+
       let doc = window.document;
-      
+
       let focusListener = null;
-      
+
       try {
         WinScript.unblock(window);
         docShell.allowJavascript = true;
@@ -4520,14 +4461,14 @@ var ns = {
           for each(let et in ["focus", "blur"])
             browserWindow.addEventListener(et, focusListener, true);
         }
-        
+
         try {
           this.executingJSURL(doc, 1);
           let noJS = !(siteJSEnabled && snapshots.docJS);
           if (noJS) {
             this._patchTimeouts(window, true);
           }
-          
+
           let gecko24 = this.geckoVersionCheck("24") >= 0;
           if ((fromURLBar || noJS) && /^javascript:/i.test(url) && gecko24) {
             JSURL.load(url, doc);
@@ -4539,7 +4480,7 @@ var ns = {
           if (noJS) {
             this._patchTimeouts(window, false);
           }
-          
+
         } catch(e) {
           this.logError(e, true, "Bookmarklet or location scriptlet");
         }
@@ -4548,10 +4489,10 @@ var ns = {
       } finally {
         if (!siteJSEnabled) WinScript.block(window);
         this.setExpando(browser, "jsSite", site);
-        if (!docShell.isLoadingDocument && docShell.currentURI &&  
+        if (!docShell.isLoadingDocument && docShell.currentURI &&
             this.getSite(docShell.currentURI.spec) == site)
           docShell.allowJavascript = snapshots.docJS;
-        
+
         Thread.asap(function() {
           try {
             if (doc.defaultView && this.executingJSURL(doc) > 1) {
@@ -4560,28 +4501,28 @@ var ns = {
             }
             this.executingJSURL(doc, 0);
           } catch (e) {} // the document could be dead, e.g. after a javascript: non-void expression evaluation
-          
+
           if (focusListener)
             for each(let et in ["focus", "blur"])
               browserWindow.removeEventListener(et, focusListener, true);
-          
+
           if (this.jsEnabled != snapshots.globalJS)
             this.jsEnabled = snapshots.globalJS;
-          
+
           this.jsPolicySites.sitesString = snapshots.siteJS;
           this.untrustedSites.sitesString = snapshots.untrusted;
-          
+
           this.flushCAPS();
-          
+
           if (this.consoleDump & LOG_JS)
             this.dump("Restored snapshot permissions on " + site + "/" + (docShell.isLoadingDocument ? "loading" : docShell.currentURI.spec));
         }, this);
       }
     }
-    
+
     return false;
   },
-  
+
   _patchTimeouts: function(w, start) {
      this._runJS(w, start
       ? "if (!('__runTimeouts' in window)) " +
@@ -4606,24 +4547,24 @@ var ns = {
       : "if (('__runTimeouts' in window) && typeof(window.__runTimeouts) == 'function') window.__runTimeouts()"
     );
   },
-  
+
   _runJS: function(window, s) {
     window.location.href = "javascript:" + encodeURIComponent(s + "; void(0);");
   },
-  
+
   bookmarkletImport: function(scriptElem, src) {
     var doc = scriptElem.ownerDocument;
     ns.executingJSURL(doc, 1);
     var w = doc.defaultView;
-    
-    
+
+
     try {
       ns._patchTimeouts(w, true);
       var xhr = ns.createCheckedXHR("GET", src, function() {
         if (xhr.readyState === 4) {
           ns._runJS(doc.defaultView, xhr.responseText);
           var ev = doc.createEvent("HTMLEvents");
-          ev.initEvent("load", false, true);                             
+          ev.initEvent("load", false, true);
           Thread.asap(function() {
             scriptElem.dispatchEvent(ev);
             dispose();
@@ -4635,7 +4576,7 @@ var ns = {
       dispose();
       ns.dump(e);
     }
-    
+
     function dispose() {
       Thread.asap(function() {
         try {
@@ -4645,7 +4586,7 @@ var ns = {
       });
     };
   },
-  
+
   executingJSURL: function(doc, n) {
     const VAR = "JSURLExec";
     var v = this.getExpando(doc, VAR) || 0;
@@ -4654,26 +4595,26 @@ var ns = {
     }
     return v;
   },
-  
+
   isCheckedChannel: function(c) {
     return IOUtil.extractFromChannel(c, "noscript.checkedChannel", true);
   },
   setCheckedChannel: function(c, v) {
     IOUtil.attachToChannel(c, "noscript.checkedChannel", v ? DUMMY_OBJ : null);
   },
-  
+
   createCheckedXHR: function(method, url, async, window) {
     if (typeof(async) == "undefined") async = true;
     var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
     xhr.open(method, url, !!async);
     this.setCheckedChannel(xhr.channel, true);
-    
+
     if (typeof(async) === "function")
       xhr.addEventListener("readystatechange", async, false);
-    
+
     var privacyContext = window && window.QueryInterface(Ci.nsIInterfaceRequestor)
       .getInterface(Ci.nsIWebNavigation);
-    if ((privacyContext instanceof Ci.nsILoadContext) && ("usePrivateBrowsing" in privacyContext) 
+    if ((privacyContext instanceof Ci.nsILoadContext) && ("usePrivateBrowsing" in privacyContext)
             && privacyContext.usePrivateBrowsing) {
       if (xhr.channel instanceof Ci.nsIPrivateBrowsingChannel) {
         xhr.channel.setPrivate(true);
@@ -4681,10 +4622,10 @@ var ns = {
         xhr.channel.loadFlags |= xhr.channel.INHIBIT_PERSISTENT_CACHING;
       }
     }
-    
+
     return xhr;
   },
-  
+
   mimeEssentials: function(mime) {
      return mime && mime.replace(/^application\/(?:x-)?/, "") || "";
   },
@@ -4706,14 +4647,14 @@ var ns = {
             ? 'url("' + this.skinBase + "webgl" + size + '.png")'
             : 'url("moz-icon://noscript?size=' + size + '&contentType=' + mime.replace(/[^\w-\/]/g, '') + '")';
   },
-  
+
   _cachedObjectMimeRx: /^(?:text\/(?:javascript|css|x-c)|application\/(?:x-)?javascript)$/,
   isCachedObjectMime: function(mime) this._cachedObjectMimeRx.test(mime),
-  
+
   findPluginExtras: function(document) {
     return this.getExpando(document, "pluginExtras", []);
   },
-  
+
   appliesHere: function(pref, url) {
     return pref && ((ANYWHERE & pref) == ANYWHERE ||
        (this.isJSEnabled(this.getSite(url))
@@ -4721,7 +4662,7 @@ var ns = {
        )
       );
   },
-  
+
   _preprocessObjectInfo: function(doc) {
     const EMBED = Ci.nsIDOMHTMLEmbedElement,
           OBJECT = Ci.nsIDOMHTMLObjectElement;
@@ -4729,7 +4670,7 @@ var ns = {
     const pe = this.getExpando(doc, "pe");
     if (!pe) return null;
     this.setExpando(doc, "pe", null);
-    
+
     var ret = [];
     for (var j = pe.length; j-- > 0;) {
       let o = pe[j];
@@ -4738,59 +4679,59 @@ var ns = {
           o.embed = this._attachSilverlightExtras(o.embed, o.pluginExtras);
           if (!o.embed) continue; // skip unconditionally to prevent in-page Silverlight placeholders
         }
-        
+
         let embed = o.embed;
         if (this.getExpando(embed, "processed")) continue;
         this.setExpando(embed, "processed", true);
-        
+
         if (embed instanceof OBJECT || embed instanceof EMBED) {
           let node = embed;
           while ((node = node.parentNode) && !node.__noscriptBlocked)
             //  if (node instanceof OBJECT) o.embed = embed = node
             ;
-          
+
           if (node !== null) {
             pe.splice(j, 1);
             continue;
           }
         }
-        
+
         this.countObject(embed, o.pluginExtras.site);
-        
+
         this.setPluginExtras(embed, o.pluginExtras);
         if (embed.ownerDocument) ret.push(o);
-       } catch(e1) { 
-         if(this.consoleDump & LOG_CONTENT_BLOCK) 
-           this.dump("Error setting plugin extras: " + 
-             (o && o.pluginExtras && o.pluginExtras.url) + ", " + e1); 
+       } catch(e1) {
+         if(this.consoleDump & LOG_CONTENT_BLOCK)
+           this.dump("Error setting plugin extras: " +
+             (o && o.pluginExtras && o.pluginExtras.url) + ", " + e1);
        }
     }
     return ret;
   },
-  
+
   processObjectElements: function(document, sites, loaded) {
     const pluginExtras = this.findPluginExtras(document);
     sites.pluginCount += pluginExtras.length;
     sites.pluginExtras.push(pluginExtras);
-    
+
     const objInfo = this._preprocessObjectInfo(document);
     if (!objInfo) return;
-    
+
     var count = objInfo.length;
     if (count === 0) return;
-    
+
     sites.pluginCount += count;
-    
+
     const minSize = this.getPref("placeholderMinSize"),
           longTip = this.getPref("placeholderLongTip");
-    
+
     const skipCSS = /^(?:position|top|left|right|bottom)$/;
-    
+
     var replacements = null,
         collapse = this.collapseObject,
         forcedCSS = ";",
         pluginDocument = false;
-    
+
     try {
       pluginDocument = count == 1 && (
           objInfo[0].pluginExtras.url === document.URL && !objInfo[0].embed.nextSibling ||
@@ -4799,25 +4740,25 @@ var ns = {
       if (pluginDocument) {
         collapse = false;
         forcedCSS = ";outline-style: none !important;-moz-outline-style: none !important; width: 100%";
-        
+
       }
     } catch(e) {}
-    
+
     var win = document.defaultView;
 
     while (count--) {
       let oi = objInfo[count];
       let object = oi.embed;
       let extras = oi.pluginExtras;
-      
+
       try {
         extras.site = this.getSite(extras.url);
-        
+
         if(!this.showUntrustedPlaceholder && this.isUntrusted(extras.site))
           continue;
-        
+
         let msg = "";
-        
+
         let objectTag = object.tagName.toUpperCase();
         if (objectTag === "VIDEO") {
           // Youtube HTML5 hack
@@ -4827,24 +4768,24 @@ var ns = {
             if (rx.test(player.className)) player.className = player.className.replace(rx, '');
           }
         }
-        
+
         extras.tag = "<" + (this.isLegacyFrameReplacement(object) ? "FRAME" : objectTag) + ">";
-        extras.title =  extras.tag + ", " +  
+        extras.title =  extras.tag + ", " +
             this.mimeEssentials(extras.mime) + "@" +
             (longTip ? SiteUtils.crop(extras.url) : extras.url.replace(/[#\?].*/, ''));
-        
+
         if ((extras.alt = object.getAttribute("alt")))
           extras.title += ' "' + extras.alt + '"'
-        
-        
+
+
         let anchor = document.createElementNS(HTML_NS, "a");
         anchor.id = object.id;
         anchor.href = extras.url;
         anchor.setAttribute("title", extras.title);
-        
+
         this.setPluginExtras(anchor, extras);
         this.setExpando(anchor, "removedNode", object);
-     
+
         (replacements = replacements || []).push({object: object, placeholder: anchor, extras: extras });
 
         if (this.showPlaceholder && (object.offsetWidth || object.offsetHeight || !this.isCachedObjectMime(extras.mime))) {
@@ -4860,27 +4801,27 @@ var ns = {
           else anchor.style.visibility = "hidden";
           continue;
         }
-        
+
         object.className += " __noscriptObjectPatchMe__";
-        
+
         let innerDiv = document.createElementNS(HTML_NS, "div");
         innerDiv.className = "__noscriptPlaceholder__1";
-       
+
         let cssDef = "",
             restrictedSize,
             style = win.getComputedStyle(oi.embed, null);
-        
+
         if (style) {
           for (let cssCount = 0, cssLen = style.length; cssCount < cssLen; cssCount++) {
             let cssProp = style.item(cssCount);
             if (!skipCSS.test(cssProp))
               cssDef += cssProp + ": " + style.getPropertyValue(cssProp) + ";";
           }
-          
+
           innerDiv.setAttribute("style", cssDef + forcedCSS);
-          
+
           restrictedSize = (collapse || style.display === "none" || style.visibility === "hidden");
-      
+
           anchor.style.width = style.width;
           anchor.style.height = style.height;
           if (style.position !== "static") {
@@ -4891,25 +4832,25 @@ var ns = {
             anchor.style.right = style.right;
           }
         } else restrictedSize = collapse;
-        
+
         if (restrictedSize) {
           innerDiv.style.maxWidth = anchor.style.maxWidth = "32px";
           innerDiv.style.maxHeight = anchor.style.maxHeight = "32px";
         }
-        
+
         innerDiv.style.visibility = "visible";
-        
+
         let closeButton = innerDiv.appendChild(document.createElementNS(HTML_NS, "div"));
         closeButton.className = "closeButton";
-        
+
         anchor.appendChild(innerDiv);
-        
+
         // icon div
         innerDiv = innerDiv.appendChild(document.createElementNS(HTML_NS, "div"));
         innerDiv.className = "__noscriptPlaceholder__2";
-        
+
         let iconSize;
-        
+
         if(restrictedSize || style && (64 > (parseInt(style.width) || 0) || 64 > (parseInt(style.height) || 0))) {
           innerDiv.style.backgroundPosition = "bottom right";
           iconSize = 16;
@@ -4920,7 +4861,7 @@ var ns = {
             let aStyle = anchor.style, iStyle = innerDiv.parentNode.style;
             aStyle.overflow = "visible";
             aStyle.float = "left";
-            
+
             let isTop = !win.frameElement;
             aStyle.minWidth = iStyle.minWidth = Math.max(w, isTop ? minSize : Math.min(document.documentElement.offsetWidth - rect.left, minSize)) + "px";
             aStyle.minHeight = iStyle.minHeight = Math.max(h, isTop ? minSize : Math.min(document.documentElement.offsetHeight - rect.top, minSize)) + "px";
@@ -4937,11 +4878,11 @@ var ns = {
           }
         }
         innerDiv.style.backgroundImage = this.cssMimeIcon(extras.mime, iconSize);
-        
+
       } catch(objectEx) {
         ns.dump(objectEx + " processing plugin " + count + "@" + document.documentURI + "\n");
       }
-      
+
     }
 
     if (replacements) {
@@ -4949,7 +4890,7 @@ var ns = {
       this.delayExec(this.createPlaceholders, 0, replacements, pluginExtras, document);
     }
   },
-  
+
   get _objectPatch() {
     delete this._objectPatch;
     return this._objectPatch = function() {
@@ -4965,14 +4906,14 @@ var ns = {
       }
     }.toSource() + "()";
   },
-  
+
   patchObjects: function(document) {
     delete this.patchObjects;
     return (this.patchObjects = ("getElementsByClassName" in document)
       ? function(document) { ScriptSurrogate.executeDOM(document, this._objectPatch); }
       : DUMMY_FUNC).call(this, document);
   },
-  
+
   createPlaceholders: function(replacements, pluginExtras, document) {
     for each (let r in replacements) {
       try {
@@ -5007,7 +4948,7 @@ var ns = {
         }
         r.extras.placeholder = r.placeholder;
         this._collectPluginExtras(pluginExtras, r.extras);
-       
+
         ns.patchObjects(document);
       } catch(e) {
         this.dump(e);
@@ -5015,11 +4956,11 @@ var ns = {
     }
     this.syncUI(document);
   },
-  
+
   bind: function(f) {
     return "_bound" in f ? f._bound : f._bound = (function() { return f.apply(ns, arguments); });
   },
-  
+
   stackIsMine: function() {
     var s = Components.stack.caller;
     var f = s.filename.replace(/ line .*/, '');
@@ -5028,12 +4969,12 @@ var ns = {
     }
     return true;
   },
-  
+
   onPlaceholderClick: function(ev, anchor) {
     if (ev.button || !this.stackIsMine()) return;
     anchor = anchor || ev.currentTarget;
     const object = this.getExpando(anchor, "removedNode");
-    
+
     if (object) try {
       let shift = ev.shiftKey;
       let closeButton = ev.target.className === "closeButton";
@@ -5057,11 +4998,11 @@ var ns = {
       ev.stopPropagation();
     }
   },
-  
+
   onOverlayedPlaceholderClick: function(ev) {
     var el = ev.originalTarget;
     var doc = el.ownerDocument;
-    
+
     // check for cloned nodes, like on http://www.vmware.com/products/workstation/new.html
     for (let ph = el; ph.className && ph.className.indexOf("__noscriptPlaceholder__") !== -1; ph = ph.parentNode) {
       if (ph.href && ph.title) {
@@ -5069,7 +5010,7 @@ var ns = {
           this.onPlaceholderClick(ev, ph);
           return;
         }
-        
+
         let pluginExtras = this.findPluginExtras(doc);
         if (pluginExtras) {
           for (let j = pluginExtras.length; j-- > 0;) {
@@ -5078,7 +5019,7 @@ var ns = {
               let n = this.getExpando(o, "removedNode");
               this.setExpando(ph, "removedNode", n);
               this.setPluginExtras(ph, this.getPluginExtras(n));
-              this.onPlaceholderClick(ev, ph);            
+              this.onPlaceholderClick(ev, ph);
               return;
             }
           }
@@ -5087,21 +5028,21 @@ var ns = {
       }
     }
   },
-  
+
   checkAndEnablePlaceholder: function(anchor, object) {
     if (!(object || (object = this.getExpando(anchor, "removedNode")))) {
       if (ns.consoleDump) ns.dump("Missing node on placeholder!");
       return;
     }
-    
+
     if (ns.consoleDump) ns.dump("Enabling node from placeholder...");
-    
+
     const extras = this.getPluginExtras(anchor);
     const browser = DOM.findBrowserForNode(anchor);
- 
+
     if (!(extras && extras.url && extras.mime // && cache
       )) return;
-   
+
     this.delayExec(this.checkAndEnableObject, 1,
       {
         browser: browser,
@@ -5111,20 +5052,20 @@ var ns = {
         object: object
       });
   },
-  
+
   confirmEnableObject: function(win, extras) {
     // work around for Linux tooltip obstructing the confirmation dialog
     Thread.delay(function() {
       win.QueryInterface(Ci.nsIInterfaceRequestor)
         .getInterface(Ci.nsIDOMWindowUtils)
-        .sendMouseEvent("mousemove", win.document.body, 0, 0, 0, 0, 0);    
+        .sendMouseEvent("mousemove", win.document.body, 0, 0, 0, 0, 0);
     }, 100);
     return extras.skipConfirmation || win.noscriptUtil.confirm(
-      this.getAllowObjectMessage(extras), 
+      this.getAllowObjectMessage(extras),
       "confirmUnblock"
     );
   },
-  
+
   isLegacyFrameDocument: function(doc) {
     return (doc.defaultView.frameElement instanceof Ci.nsIDOMHTMLFrameElement) && this.isPluginDocumentURL(doc.URL, "iframe");
   },
@@ -5143,20 +5084,20 @@ var ns = {
   checkAndEnableObject:  function(ctx) {
     var extras = ctx.extras;
     if (!this.confirmEnableObject(ctx.window, extras)) return;
-    
+
 
     var mime = extras.mime;
     var url = extras.url;
-    
+
     this.allowObject(url, mime, extras.originSite);
     let a = ctx.anchor;
     var doc = a.ownerDocument;
-    
-  
+
+
     var isLegacyFrame = this.isLegacyFrameReplacement(ctx.object);
-     
+
     if (isLegacyFrame || (mime == doc.contentType && doc.body &&
-        (a === doc.body.firstChild && 
+        (a === doc.body.firstChild &&
          a === doc.body.lastChild ||
          (ctx.object instanceof Ci.nsIDOMHTMLEmbedElement) && ctx.object.src != url))
       ) { // stand-alone plugin or frame
@@ -5167,7 +5108,7 @@ var ns = {
           doc.defaultView.location.replace(url);
         } else this.quickReload(doc.defaultView, true);
         return;
-    } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime) || 
+    } else if (this.requireReloadRegExp && this.requireReloadRegExp.test(mime) ||
                this.getExpando(ctx, "requiresReload") ||
                /#!flashvars#.*\b_YUIvid_=/.test(url)) {
       this.quickReload(doc.defaultView);
@@ -5178,13 +5119,13 @@ var ns = {
       this.quickReload(doc.defaultView);
       return;
     }
-    
-    
+
+
     if (url == doc.URL) { // full page content, just reload
       this.quickReload(doc.defaultView);
       return;
     }
-    
+
     this.setExpando(a, "removedNode", null);
     extras.allowed = true;
     extras.placeholder = null;
@@ -5193,8 +5134,8 @@ var ns = {
       if (ctx.object.parentNode) ctx.object.parentNode.removeChild(ctx.object);
       if ("_display" in ctx.object) ctx.object.style.display = ctx.object._display;
       var obj = ctx.object.cloneNode(true);
-      
-      
+
+
       function reload(slow) {
         ns.log(ns. getObjectURLWithDOM(obj, url, doc.documentURI));
         ns.allowObjectByDOM(obj, url, doc.documentURI, mime);
@@ -5209,12 +5150,12 @@ var ns = {
       let isMedia = win && ("HTMLMediaElement" in win) && (obj instanceof win.HTMLMediaElement);
 
       if (isMedia) {
-        
+
         if (jsEnabled && !obj.controls
             && !/(?:=[^&;]{10,}.*){2,}/.test(this.objectKey(url)) // try to avoid infinite loops when more than one long parameter is present in the object key
           ) {
           // we must reload, since the author-provided UI likely had no chance to wire events
-  
+
           let url = doc.URL;
           if (doc.getElementById("movie_player-html5")) {
             // Youtube HTML5 hack, autoclick thumbnail on page reload
@@ -5239,42 +5180,42 @@ var ns = {
               } catch(e) {}
             }, true);
           }
-          
-          reload(true); // normal reload because of http://forums.informaction.com/viewtopic.php?f=10&t=7195 
+
+          reload(true); // normal reload because of http://forums.informaction.com/viewtopic.php?f=10&t=7195
           return;
         }
         obj.autoplay = true;
       }
-      
-      let parent = a.parentNode; 
-      
+
+      let parent = a.parentNode;
+
       if (parent && parent.ownerDocument == doc) {
-        
+
         if (jsEnabled) {
-          
+
           if (/IFRAME/i.test(extras.tag) && /^https:\/\/www\.youtube\.com\/embed\//.test(url)) {
             reload();
             return;
           }
-          
+
           ScriptSurrogate.executeSandbox(doc,
             "env.a.__noSuchMethod__ = env.o.__noSuchMethod__ = function(m, a) { return env.n[m].apply(env.n, a) }",
             { a: a, o: ctx.object, n: obj }
           );
         }
-        
+
         this.setExpando(obj, "allowed", true);
         parent.replaceChild(obj, a);
         var style = doc.defaultView.getComputedStyle(obj, '');
-       
+
         let body = doc.body;
         if (body && body.clientWidth === obj.offsetWidth && body.clientHeight === obj.offsetHeight) {
           // full size applet/movie
           reload();
           return;
         }
-   
-        
+
+
         if (jsEnabled && ((obj.offsetWidth || parseInt(style.width)) < 2 || (obj.offsetHeight || parseInt(style.height)) < 2)
             && !/frame/i.test(extras.tag)) {
           let ds = DOM.getDocShellForWindow(doc.defaultView);
@@ -5290,7 +5231,7 @@ var ns = {
       }
     }, 10);
     return;
-    
+
   },
 
   getSites: function(browser) {
@@ -5307,8 +5248,8 @@ var ns = {
     }
     return sites;
   },
-  
-  
+
+
   _collectPluginExtras: function(pluginExtras, extras) {
     for (var e, j = pluginExtras.length; j-- > 0;) {
       e = pluginExtras[j];
@@ -5325,9 +5266,9 @@ var ns = {
     pluginExtras.push(extras);
     return true;
   },
-  
+
   _silverlightPatch: 'HTMLObjectElement.prototype.__defineGetter__("IsVersionSupported", function() ((/^application\\/x-silverlight\\b/.test(this.type)) ? function(n) true : undefined));',
-  
+
   _protectNamePatch: "let x=__lookupSetter__(\"name\");__defineSetter__(\"name\",function(n){let s=document.currentScript;if(s&&/\\bname\\b/.test(s.textContent)){console.log(\"NoScript prevented \\\"\" + n + \"\\\" from being assigned to window.name\")}else{x.call(this,n);}})",
   get _flashPatch() {
     delete this._flashPatch;
@@ -5338,34 +5279,34 @@ var ns = {
       HTMLObjectElement.prototype.setAttribute = function(n, v) {
         if (n == "type" && v == type && !this.data) {
           this._pendingType = v;
-          
-          
+
+
           this.SetVariable = function() this.__proto__.SetVariable.apply(this, arguments);
           this.GetVariable = function(n) {
             if (n !== "$version") return this.__proto__.SetVariable.apply(this, arguments);
-            
+
             if (!ver) {
               ver = navigator.plugins["Shockwave Flash"]
-                .description.match(/(\d+)\.(\d+)(?:\s*r(\d+))?/); 
+                .description.match(/(\d+)\.(\d+)(?:\s*r(\d+))?/);
               ver.shift();
               ver.push('99');
               ver = "WIN " + ver.join(",");
             }
-            
+
             return ver;
           }
         }
-        
+
         setAttribute.call(this, n, v);
         if (n === "data" && ("_pendingType" in this) && this._pendingType === type) {
           setAttribute.call(this, "type", type);
           this._pendingType = null;
         }
       };
-  
+
     }.toSource() + "()";
   },
-  
+
   _attachSilverlightExtras: function(embed, extras) {
     extras.silverlight = true;
     var pluginExtras = this.findPluginExtras(embed.ownerDocument);
@@ -5384,8 +5325,8 @@ var ns = {
     }
     return embed;
   },
-  
-  
+
+
   traverseObjects: function(callback, self, browser) {
     return this.traverseDocShells(function(docShell) {
       let document = docShell.document;
@@ -5400,22 +5341,22 @@ var ns = {
       return false;
     }, self, browser);
   },
-  
+
   traverseDocShells: function(callback, self, browser) {
     if (!browser) {
-      const bi = DOM.createBrowserIterator(); 
+      const bi = DOM.createBrowserIterator();
       while((browser = bi.next()))
         if (this.traverseDocShells(callback, self, browser))
           return true;
-      
+
       return false;
     }
-    
+
     const docShells = browser.docShell.getDocShellEnumerator(
         Ci.nsIDocShellTreeItem.typeContent,
         browser.docShell.ENUMERATE_FORWARDS
     );
-    
+
     const nsIDocShell = Ci.nsIDocShell;
     const nsIWebNavigation = Ci.nsIWebNavigation;
 
@@ -5432,28 +5373,28 @@ var ns = {
     }
     return false;
   },
-  
+
   _enumerateSites: function(browser, sites) {
 
     const nsIDocShell = Ci.nsIDocShell;
 
     var top;
-    
+
     this.traverseDocShells(function(docShell) {
-    
+
       let document = docShell.document;
       if (!document) return;
-      
+
       // Truncate title as needed
       if (this.truncateTitle && document.title.length > this.truncateTitleLen) {
         document.title = document.title.substring(0, this.truncateTitleLen);
       }
-      
+
       // Collect document / cached plugin URLs
       let win = document.defaultView;
       let docURI = document.documentURI;
       let url = this.getSite(docURI);
-      
+
       if (url) {
         try {
           let domain = document.domain
@@ -5469,7 +5410,7 @@ var ns = {
            sites.unshift(domain);
           }
         } catch(e) {}
-        
+
         sites.docSites.push(url);
         sites.push(url);
 
@@ -5479,7 +5420,7 @@ var ns = {
       }
 
       let domLoaded = !!this.getExpando(document, "contentLoaded");
-      
+
       if (win === (top || (top = win.top))) {
         sites.topSite = url;
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
@@ -5488,12 +5429,12 @@ var ns = {
       let loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
       if (!(domLoaded || loaded))
         return;
-      
+
       this.processObjectElements(document, sites);
       this.processScriptElements(document, sites, url);
-      
+
     }, this, browser);
-    
+
     let document = top.document;
     let cache = this.getExpando(document, "objectSites");
     if(cache) {
@@ -5506,15 +5447,15 @@ var ns = {
       }
       if (!this.contentBlocker || this.alwaysShowObjectSources)
         sites.push.apply(sites, cache);
-      
+
       sites.push.apply(sites.pluginSites, cache);
     }
-    
+
     cache = this.getExpando(document, "codeSites");
     if(cache) sites.push.apply(sites, cache);
 
     const removeBlank = !(this.showBlankSources || sites.topSite == "about:blank");
-    
+
     for (let j = sites.length; j-- > 0;) {
       let url = sites[j];
       if (/:/.test(url) &&
@@ -5529,17 +5470,17 @@ var ns = {
         sites.splice(j, 1); // reject scheme-only URLs
       }
     }
-    
-    
+
+
     if (!sites.topSite) sites.topSite = sites[0] || '';
-    
-    return this.sortedSiteSet(sites); 
+
+    return this.sortedSiteSet(sites);
   },
-  
+
   findOverlay: function(browser) {
     return browser && browser.ownerDocument.defaultView.noscriptOverlay;
   },
-  
+
 
   // nsIChannelEventSink implementation
   asyncOnChannelRedirect: function(oldChan, newChan, flags, redirectCallback) {
@@ -5548,40 +5489,40 @@ var ns = {
   },
   onChannelRedirect: function(oldChan, newChan, flags) {
     const uri = newChan.URI;
-    
+
     if (flags === Ci.nsIChannelEventSink.REDIRECT_INTERNAL && oldChan.URI.spec === uri.spec)
-      return;    
-  
-    const rw = this.requestWatchdog;    
+      return;
+
+    const rw = this.requestWatchdog;
 
     IOUtil.attachToChannel(newChan, "noscript.redirectFrom", oldChan.URI);
-    
+
     ABE.updateRedirectChain(oldChan, newChan);
-    
+
     const ph = PolicyState.detach(oldChan);
 
     if (ph) {
       // 0: aContentType, 1: aContentLocation, 2: aRequestOrigin, 3: aContext, 4: aMimeTypeGuess, 5: aInternalCall
-      
+
       ph.contentLocation = uri;
-      
+
       var ctx = ph.context;
       var type = ph.contentType;
-         
-      if (type != 11 && !this.isJSEnabled(oldChan.URI.spec)) 
+
+      if (type != 11 && !this.isJSEnabled(oldChan.URI.spec))
         ph.requestOrigin = oldChan.URI;
-      
+
       try {
         ph.mimeType = newChan.contentType || oldChan.contentType || ph.mimeType;
       } catch(e) {}
-      
+
       var browser, win;
-   
+
       switch(type) {
         case 2: case 9: // script redirection? cache site for menu
           try {
             var site = this.getSite(uri.spec);
-            win = IOUtil.findWindow(newChan) || ctx && ((ctx instanceof Ci.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView); 
+            win = IOUtil.findWindow(newChan) || ctx && ((ctx instanceof Ci.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView);
             browser = win && DOM.findBrowserForNode(win);
             if (browser) {
               this.getRedirCache(browser, win.top.document.documentURI)
@@ -5593,7 +5534,7 @@ var ns = {
             if (this.consoleDump) this.dump(e);
           }
           break;
-        
+
         case 7: // frame
 
           ph.extra = CP_FRAMECHECK;
@@ -5604,7 +5545,7 @@ var ns = {
           }
           break;
       }
-      
+
       if (this.shouldLoad.apply(this, ph.toArray()) != CP_OK) {
         if (this.consoleDump) {
           this.dump("Blocked " + oldChan.URI.spec + " -> " + uri.spec + " redirection of type " + type);
@@ -5612,34 +5553,34 @@ var ns = {
         throw "NoScript aborted redirection to " + uri.spec;
       }
     }
-  
-    
+
+
     // Document transitions
-  
+
     if ((oldChan.loadFlags & rw.DOCUMENT_LOAD_FLAGS) || (newChan.loadFlags & rw.DOCUMENT_LOAD_FLAGS) && oldChan.URI.prePath != uri.prePath) {
       if (newChan instanceof Ci.nsIHttpChannel)
         HTTPS.onCrossSiteRequest(newChan, oldChan.URI.spec,
                                browser || DOM.findBrowserForNode(IOUtil.findWindow(oldChan)), rw);
 
     }
-    
+
   },
-  
+
   getRedirCache: function(browser, uri) {
     var redirCache = this.getExpando(browser, "redirCache", {});
     return redirCache[uri] || (redirCache[uri] = []);
   },
-  
+
   _recentlyBlockedMax: 40,
   recordBlocked: function(win, site, origin) {
     if (!(win && this.getPref("showRecentlyBlocked"))) return;
     let overlay = DOM.getChromeWindow(win).noscriptOverlay;
     if (!overlay) return;
-    
+
     const l = overlay.recentlyBlocked;
     let pos = l.length;
     while (pos-- > 0) if (l[pos].site === site) break;
-    
+
     let entry;
     if (pos > -1) {
       entry = l[pos];
@@ -5648,7 +5589,7 @@ var ns = {
       if (pos == l.length - 1) return;
       l.splice(pos, 1);
     } else entry = { site: site, origins: [origin] };
-    
+
     l.push(entry);
     if (l.length > this._recentlyBlockedMax) {
       overlay.recentlyBlocked = l.slice(- this._recentlyBlockedMax / 2);
@@ -5656,12 +5597,12 @@ var ns = {
   },
 
   cleanupRequest: DUMMY_FUNC,
-  
+
   get _inclusionTypeInternalExceptions() {
     delete this._inclusionTypeInternalExceptions;
     return this._inclusionTypeInternalExceptions = new AddressMatcher("https://*.ebaystatic.com/*");
   },
-  
+
   hasNoSniffHeader: function(channel) {
     for (let x = true, header = "X-Content-Type-Options";;) {
       try {
@@ -5676,12 +5617,12 @@ var ns = {
       }
     }
   },
-  
+
   get noBuiltInFrameOpt() {
     delete this.noBuiltInFrameOpt;
     return this.noBuiltInFrameOpt = this.geckoVersionCheck('1.9.2.10') < 0;
   },
-  
+
   checkInclusionType: function(channel) {
     try {
       if (channel instanceof Ci.nsIHttpChannel &&
@@ -5694,14 +5635,14 @@ var ns = {
           if (!(ctype === 2 || ctype === 4)) return true;
 
           let nosniff = ns.nosniff && ctype === 2;
-          
+
           if (nosniff) nosniff = this.hasNoSniffHeader(channel);
-          
+
           if (!(nosniff || ns.inclusionTypeChecking))
             return true;
-          
+
           let origin = ABE.getOriginalOrigin(channel) || ph.requestOrigin;
-          
+
           if (nosniff || origin && this.getBaseDomain(this.getDomain(origin)) !== this.getBaseDomain(channel.URI.host)) {
 
             var mime;
@@ -5720,21 +5661,21 @@ var ns = {
                     : /(?:script|\b(?:js(?:on)?)|css)\b/i) // allow css mime on js
                 : (PolicyUtil.isXSL(ph.context) || ph.mimeType.indexOf("/x") > 0) ? /\bx[ms]l/i : /\bcss\b/i
               ).test(mime);
-            
+
             if (okMime) return true;
-            
-            let uri = channel.URI; 
+
+            let uri = channel.URI;
             let url = uri.spec;
-            
+
 
             let disposition;
             try {
               disposition = channel.getResponseHeader("Content-disposition");
             } catch(e) {}
 
-            
+
             if (!disposition) {
-             
+
               let ext;
               if (uri instanceof Ci.nsIURL) {
                 ext = uri.fileExtension;
@@ -5749,13 +5690,13 @@ var ns = {
                    ctype === 4 && (ext == "css" || ext == "xsl" && (PolicyUtil.isXSL(ph.context) || ph.mimeType.indexOf("/x") > 0)))
                 ) {
                 // extension matches and not an attachment, likely OK
-                return true; 
+                return true;
               }
-              
+
               // extension doesn't match, let's check the mime
-              
-             
-             if ((/^text\/.*ml$|unknown/i.test(mime) || 
+
+
+             if ((/^text\/.*ml$|unknown/i.test(mime) ||
                     mime === "text/plain" && !(ext && /^(?:asc|log|te?xt)$/.test(ext)) // see Apache's magic file, turning any unkown ext file containing JS style comments into text/plain
                   ) && !this.getPref("inclusionTypeChecking.checkDynamic", false)) {
                 // text/html or xml or text/plain with non-text ext, let's assume a misconfigured dynamically served script/css
@@ -5766,13 +5707,13 @@ var ns = {
                 return true;
               }
             } else mime = mime + ", " + disposition;
-            
+
             if (this._inclusionTypeInternalExceptions.test(url) ||
               new AddressMatcher(this.getPref("inclusionTypeChecking.exceptions", "")).test(url))
             return true;
-            
+
             // every check failed, this is a fishy cross-site mistyped inclusion
-           
+
             this.log("[NoScript] Blocking " + (nosniff ? "nosniff " : "cross-site ") +
                      (ctype === 2 ? "Javascript" : ctype === 3 ? "image" : "CSS") +
                      " served from " +
@@ -5811,9 +5752,9 @@ var ns = {
           ns.dump(e);
         }
       }
-      
+
       var isObject;
-      
+
       const domWindow = IOUtil.findWindow(req);
       var ph = PolicyState.extract(req);
       if (ph) {
@@ -5825,16 +5766,16 @@ var ns = {
                 default:
                     return; // e.g. plugin content or XHR
             }
-        } 
+        }
       } else isObject = false;
-      
+
       if (domWindow && domWindow == domWindow.top && !isObject)
         return;
 
       var status = req.responseStatus;
       if (status >= 300 && status < 400) // redirect, wait for ultimate destination, see http://forums.informaction.com/viewtopic.php?f=7&t=2630
         return;
-      
+
       // X-Frame-Options
       if (this.noBuiltInFrameOpt &&
           ((req.loadFlags & req.LOAD_DOCUMENT_URI) || // must be a subdocument
@@ -5848,29 +5789,29 @@ var ns = {
         this.showFrameOptError(domWindow, req.URI.spec);
         return; // canceled by frame options
       }
-      
+
       if (!isObject) this.onBeforeLoad(req, domWindow, req.URI);
-      
+
     } catch(e) {
       if (this.consoleDump) this.dump(e);
     }
   },
-  
+
   loadErrorPage: function(w, errPageURL) {
     DOM.getDocShellForWindow(w).loadURI(errPageURL,
       ((this.geckoVersionCheck("1.9.1") < 0 ? 0x8000 : 0x0001) << 16) | 1,
       null, null, null);
   },
-  
+
   showFrameOptError: function(w, url) {
     this.log("X-FRAME-OPTIONS: blocked " + url, true);
     var f = w && w.frameElement;
     if (!f) return;
-    
+
     var browser = DOM.findBrowserForNode(w);
     if (browser)
       this.getRedirCache(browser, w.top.document.documentURI).push({site: this.getSite(url), type: 7});
-    
+
     const errPageURL = this.contentBase + "frameOptErr.xhtml";
     f.addEventListener("load", function(ev) {
       f.removeEventListener(ev.type, arguments.callee, false);
@@ -5878,47 +5819,47 @@ var ns = {
         f.contentWindow.document.getElementById("link")
           .setAttribute("href", url);
     }, false);
-    
+
     this.loadErrorPage(w, errPageURL);
   },
 
-  
+
   onBeforeLoad: function(req, domWindow, location) {
-    
+
     if (!domWindow) return;
-    
+
     const uri = location;
-    
+
     var docShell = null;
-    
-     
+
+
     var contentType;
     try {
       contentType = req.contentType;
     } catch(e) {
       contentType = "";
     }
-    
+
     var contentDisposition = "";
-    
+
     var isHTTP = req instanceof Ci.nsIHttpChannel;
     if (isHTTP) {
       try {
         contentDisposition = req.getResponseHeader("Content-disposition");
       } catch(e) {}
     }
-    
+
     const topWin = domWindow == domWindow.top;
 
     var browser = null;
     var overlay = null;
     var xssInfo = null;
-    
+
 
     if (topWin) {
-      
+
       if (domWindow instanceof Ci.nsIDOMChromeWindow) return;
-    
+
       browser = DOM.findBrowserForNode(domWindow);
       overlay = this.findOverlay(browser);
       if (overlay) {
@@ -5932,49 +5873,49 @@ var ns = {
             this.clearClickHandler.install(browser);
           }
         }
-        
+
       }
     }
-    
+
     if (IOUtil.extractFromChannel(req, "noscript.checkWindowName")) {
       this.requestWatchdog.checkWindowName(domWindow, req.URI.spec);
     }
-    
+
     if (this.onWindowSwitch && docShell &&
         (topWin || !this.executeEarlyScripts))
       this.onWindowSwitch(uri.spec, domWindow, docShell);
-      
-    
-    
+
+
+
 
     if (!/^attachment\b/i.test(contentDisposition) &&
         this.shouldLoad(7, uri, uri, domWindow.frameElement || domWindow, contentType,
                         domWindow.frameElement ? CP_FRAMECHECK : CP_SHOULDPROCESS) != CP_OK) {
-      
+
       req.loadFlags |= req.INHIBIT_CACHING;
-      
+
       if (this.consoleDump & LOG_CONTENT_INTERCEPT)
         this.dump("Media document content type detected");
 
       if(!topWin) {
         // check if this is an iframe
-        
+
         if (domWindow.frameElement && !(domWindow.frameElement instanceof Ci.nsIDOMHTMLFrameElement)
             && this.shouldLoad(5, uri, IOS.newURI(domWindow.parent.location.href, null, null),
                 domWindow.frameElement, contentType, CP_SHOULDPROCESS) == CP_OK)
             return;
-        
-        if (this.consoleDump & LOG_CONTENT_BLOCK) 
+
+        if (this.consoleDump & LOG_CONTENT_BLOCK)
           this.dump("Deferring framed media document");
-        
+
         var url = uri.spec;
-        
+
         browser = browser || DOM.findBrowserForNode(domWindow);
         this.getRedirCache(browser, domWindow.top.document.documentURI).push({site: this.getSite(url), type: 7});
         // defer separate embed processing for frames
-        
-        
-       
+
+
+
         docShell = docShell || DOM.getDocShellForWindow(domWindow);
         docShell.loadURI("data:" + req.contentType + ",",
                              Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
@@ -5990,13 +5931,13 @@ var ns = {
                              null, null, null);
           }
         });
-        
+
         return;
       }
-      
-      if (this.consoleDump & LOG_CONTENT_BLOCK) 
+
+      if (this.consoleDump & LOG_CONTENT_BLOCK)
         this.dump("Blocking top-level plugin document");
-      
+
       for each (let tag in ["embed", "video", "audio"]) {
         let embeds = domWindow.document.getElementsByTagName(tag);
         if (embeds.length > 0 && (tag !== "embed" || this._abortPluginDocLoads)) {
@@ -6011,9 +5952,9 @@ var ns = {
           }
         }
       }
-      
+
       if (xssInfo) overlay.notifyXSS(xssInfo);
-      
+
       return;
 
     } else {
@@ -6022,33 +5963,33 @@ var ns = {
       }
     }
   },
-  
+
   get _abortPluginDocLoads() {
     delete this._abortPluginDocLoads;
     return this._abortPluginDocLoads = this.geckoVersionCheck("18.0.1") < 0;
   },
-  
+
   hasClearClickHandler: false,
   get clearClickHandler() {
       delete this.clearClickHandler;
       this.hasClearClickHandler = true;
       return this.clearClickHandler = new ClearClickHandler(this);
   },
-  
-  DOC_JS_STATUS_KEY: "noscript.dsjsBlocked", 
+
+  DOC_JS_STATUS_KEY: "noscript.dsjsBlocked",
   _handleDocJS: function(win, req, requireNetwork) {
     const abeSandboxed = req instanceof Ci.nsIHttpChannel && ABE.isSandboxed(req);
     const docShellJSBlocking = this.docShellJSBlocking || abeSandboxed;
-        
+
     if (!docShellJSBlocking || (win instanceof Ci.nsIDOMChromeWindow)) return;
     const dump = this.consoleDump & LOG_JS;
     try {
-      
+
       let docShell = DOM.getDocShellForWindow(win) ||
                      DOM.getDocShellForWindow(IOUtil.findWindow(req));
-      
+
       if (requireNetwork == docShell.restoringDocument) return;
-      
+
       let url = req.URI.spec;
       if (!/^https?:/.test(url)) url = req.originalURI.spec;
 
@@ -6056,12 +5997,12 @@ var ns = {
         if (this.consoleDump) this.dump("DocShell not found for JS switching in " + url);
         return;
       }
-      
+
       if (abeSandboxed) {
         ABE.sandbox(docShell, true);
         return;
       }
-      
+
       let jsEnabled;
       if (docShellJSBlocking & 2) { // block not whitelisted
         jsEnabled = url && this.isJSEnabled(this.getSite(url)) || /^about:/.test(url);
@@ -6069,28 +6010,28 @@ var ns = {
         let site = this.getSite(url);
         jsEnabled = !(this.isUntrusted(site) || this.isForbiddenByHttpsStatus(site));
       } else return;
-      
+
       const prevStatus = docShell.allowJavascript;
       const BLOCKED_KEY = this.DOC_JS_STATUS_KEY;
       // Trying to be kind with other docShell-level blocking apps (such as Tab Mix Plus), we
       // check if we're the ones who actually blocked this docShell, or if this channel is out of our control
-      
+
       if (dump) this.dump("About to retrieve previously blocked info...");
       let prevBlocked = requireNetwork && (req.loadFlags & req.LOAD_REPLACE)
                             && IOUtil.extractFromChannel(req, BLOCKED_KEY, true) ||
                       this.getExpando(win, BLOCKED_KEY);
-                            
-      
+
+
       prevBlocked = prevBlocked ? prevBlocked.value : "?";
 
       if (dump)
         this.dump("DocShell JS Switch: " + url + " - " + jsEnabled + "/" + prevStatus + "/" + prevBlocked);
-      
+
       if (jsEnabled && !prevStatus) {
-        
+
         // be nice with other blockers
         if (!prevBlocked) return;
-        
+
         // purge body events
         try {
           var aa = win.document.body && win.document.body.attributes;
@@ -6112,8 +6053,8 @@ var ns = {
                 };
       dsjsBlocked.wrappedJSObject = dsjsBlocked;
       IOUtil.attachToChannel(req, BLOCKED_KEY, dsjsBlocked);
-      
-      
+
+
       ABE.sandbox(docShell, false);
       docShell.allowJavascript = jsEnabled;
     } catch(e2) {
@@ -6121,38 +6062,38 @@ var ns = {
         this.dump("Error switching docShell JS: " + e2 + e2.stack);
     }
   },
-  
+
   _pageModMaskRx: /^(?:chrome|resource|view-source):/,
   onWindowSwitch: function(url, win, docShell) {
     let channel = docShell.currentDocumentChannel;
-    
+
     if (IOUtil.extractFromChannel(channel, "noscript.xssChecked", true) &&
         this.filterBadCharsets(docShell)) return;
-    
+
     const doc = docShell.document;
     const flag = "__noScriptEarlyScripts__";
     if (flag in doc && doc[flag] === url) return;
     doc[flag] = url;
-   
+
     const site = this.getSite(url);
     var jsBlocked = !(docShell.allowJavascript && (this.jsEnabled || this.isJSEnabled(site, doc.defaultView)));
-    
-    
-    
+
+
+
     if (!((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument)) {
       // likely a document.open() page
       url = "wyciwyg:"; // don't execute on document.open() pages with a misleading URL
       jsBlocked = false;
     }
-    
-    if (this._pageModMaskRx.test(url)) return; 
-    
+
+    if (this._pageModMaskRx.test(url)) return;
+
     var scripts;
-    
+
     if (jsBlocked) {
-      
+
       this.blockEvents(doc.defaultView);
-      
+
       if (this.getPref("fixLinks")) {
         let newWin = doc.defaultView;
         newWin.addEventListener("click", this.bind(this.onContentClick), true);
@@ -6164,12 +6105,12 @@ var ns = {
         scripts = [this._toStaticHTMLDef];
         doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
       }
-      
+
       let dntPatch = DoNotTrack.getDOMPatch(docShell);
       if (dntPatch) {
         (scripts || (scripts = [])).push(dntPatch);
       }
-      
+
       if (this.forbidWebGL &&
           !(this.isAllowedObject(site, "WebGL", site, site) || this.isAllowedMime("WebGL", site))
         ) {
@@ -6180,7 +6121,7 @@ var ns = {
           this._webGLRecord(doc, site);
         }
       }
-        
+
       if (this.contentBlocker) {
         if (this.liveConnectInterception && this.forbidJava &&
             !this.isAllowedObject(site, "application/x-java-vm", site, site)) {
@@ -6191,44 +6132,42 @@ var ns = {
             !this.isAllowedObject(site, "audio/ogg", site, site))
           (scripts || (scripts = [])).push(this._audioApiInterceptionDef);
       }
-      
-      if (this.forbidFlash && this.flashPatch) 
+
+      if (this.forbidFlash && this.flashPatch)
         (scripts || (scripts = [])).push(this._flashPatch);
-      
+
       if (this.forbidSilverlight && this.silverlightPatch)
         (scripts || (scripts = [])).push(this._silverlightPatch);
 
       if( this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url))
           (scripts || (scripts = [])).push(this.jsHack);
-          
+
       if (IOUtil.extractFromChannel(channel, "noscript.protectName") && this.getPref("protectWindowNameXAssignment")) {
         (scripts || (scripts = [])).push(this._protectNamePatch);
       }
     }
-    
+
     ScriptSurrogate.apply(doc, url, url, jsBlocked, scripts);
   },
-  
+
   onWindowCreated: function(window, site) {
     this.beforeScripting(window, site);
     (this.onWindowCreated = this._onWindowCreatedReal).apply(this, arguments);
   },
-  
+
   isBrowserOrigin: function(origin) /^(?:\[System Principal\]$|moz-safe-about:)/.test(origin),
-  
-  _onWindowCreatedReal: function(window, site) {
+
+  mustBlockJS(window, site, blocker) {
     let document = window.document;
     let origin = this.getPrincipalOrigin(document);
-    if (this.isBrowserOrigin(origin)) return;
+    if (this.isBrowserOrigin(origin)) return false;
     let blockIt;
-    let blocker = WinScript.supported ? WinScript : DocShellScript;
-    
-    if (this.consoleDump) ns.dump("Window created, origin: " + origin + ", site: " + site + ", URL: " + document.URL + ", location: " + window.location.href);
-    
+    if (this.consoleDump) this.dump("Window created, origin: " + origin + ", site: " + site + ", URL: " + document.URL + ", location: " + window.location.href);
+
     site = this.getSite(origin || site);
     if (site === 'moz-nullprincipal:') {
       site = this.getSite(document.URL);
-      
+
       if (!site) {
         // "special" URI (e.g. data:), let's use opener
         let docShell = DOM.getDocShellForWindow(window);
@@ -6239,9 +6178,9 @@ var ns = {
         }
       }
     }
-    
+
     window._NoScriptSite = site;
-     
+
     if (this.globalHttpsWhitelist && this.isGlobalHttps(window)) {
       blockIt = false;
     } else {
@@ -6257,45 +6196,28 @@ var ns = {
         }
       }
     }
-    
+
     if (typeof blockIt === "undefined")
       blockIt = !site || (this.usingCAPS && !this.restrictSubdocScripting ? this.isUntrusted(site) : !this.isJSEnabled(site));
-    
-    if (blockIt) {
+
+    return blockIt;
+  },
+
+  _onWindowCreatedReal: function(window, site) {
+    const blocker = WinScript.supported ? WinScript : DocShellScript;
+    if (this.mustBlockJS(window, site, blocker)) {
       blocker.block(window);
-      this._patchStyle(document);
     } else {
       blocker.unblock(window);
     }
   },
-  
-  _domUtils: Cc["@mozilla.org/inspector/dom-utils;1"].getService(Ci.inIDOMUtils),
-  _patchStyle: function(doc) {
-    let ss = this._domUtils.getAllStyleSheets(doc);
-    // reverse loop because the preference stylesheet is almost always the last one
-    for (let j = ss.length; j-- > 0;) { 
-      let s = ss[j];
-      if(s.href === "about:PreferenceStyleSheet") {
-          let rules = s.cssRules;
-          // skip 1st & 2nd, as they are HTML & SVG namespaces
-          for (let j = 2, len = rules.length; j < len; j++) {
-              let r = rules[j];
-              if (r.cssText === "noscript { display: none ! important; }") {
-                  s.deleteRule(j);
-                  break;
-              }
-          }
-          break;
-      }
-    }
- },
-  
+
   beforeScripting: function(subj, url) { // early stub
     INCLUDE("ScriptlessBGThumbs");
     if (!this.httpStarted) {
-      
+
       let url = subj.location || subj.documentURI;
-      
+
       if (/^(?:about|resource|chrome|file|moz-nullprincipal):/.test(url)) {
         if (/^file|moz-/.test(url))
           this.initContentPolicy(true);
@@ -6303,7 +6225,7 @@ var ns = {
       }
       if (this.consoleDump) ns.dump(url);
       this.requestWatchdog; // kickstart networking stuff
-      
+
     }
     this.executeEarlyScripts = this.onWindowSwitch;
     // replace legacy code paths
@@ -6321,16 +6243,16 @@ var ns = {
       this.executeEarlyScripts(docShell.document.documentURI, win, docShell);
     }
   },
-  
+
   blockEvents: function(window) {
     let et = ["start", "finish", "bounce"],
         eh = function(e) {  e.preventDefault(); e.stopPropagation(); };
-    
+
     return (this.blockEvents = function(window) {
       for each(let t in et) window.addEventListener(t, eh, true);
     })(window);
   },
-  
+
   get sanitizeHTML() {
     delete this.sanitizeHTML;
     return this.sanitizeHTML = ("nsIParserUtils" in Ci)
@@ -6390,7 +6312,7 @@ var ns = {
       }
     ).toString();
   },
-  
+
   _webGLSites: {},
   _webGLHandler: function(ev) {
     ns._webGLRecord(ev.target, ns.getSite(ev.target.documentURI || ev.target.ownerDocument.documentURI), true);
@@ -6400,7 +6322,7 @@ var ns = {
       url: site,
       site: site,
       originSite: site,
-      mime: "WebGL"            
+      mime: "WebGL"
     });
     let doc = ctx.ownerDocument || ctx;
     if (fromDOM) {
@@ -6419,7 +6341,7 @@ var ns = {
       var proto = HTMLCanvasElement.prototype;
       var getContext = proto.getContext;
       proto.getContext = function(type) {
-        
+
         if (type && type.toString().indexOf("webgl") !== -1) {
           var ev = this.ownerDocument.createEvent("Events");
           ev.initEvent("NoScript:WebGL", true, false);
@@ -6431,7 +6353,7 @@ var ns = {
       }
     }.toSource() + "()";
   },
-  
+
   liveConnectInterception: true,
   get _liveConnectInterceptionDef() {
     delete this._liveConnectInterceptionDef;
@@ -6450,7 +6372,7 @@ var ns = {
         w.__defineGetter__("java", k);
         w.__defineGetter__("Packages", k);
       }
-      
+
       try {
         dp(true);
         w.__defineGetter__("java", g);
@@ -6469,42 +6391,40 @@ var ns = {
   _disablePlugins: function(b) {
     ns.plugins.disabled = b;
   },
-  
+
   get plugins() {
     delete this.plugins;
     INCLUDE("Plugins");
     return this.plugins = Plugins;
   },
-  
+
   beforeManualAllow: function(win) {
     // reset prevBlock info, to forcibly allow docShell JS
     this.setExpando(win.document, "prevBlocked", { value: "m" });
   },
-  
+
   handleErrorPage: function(win, uri) {
     win = win && win.contentWindow || win;
     if (!win) return;
     var docShell = DOM.getDocShellForWindow(win);
     if (!docShell) return;
-    
+
     docShell.allowJavascript = true;
-    
-    if (!this.getPref("STS.expertErrorUI"))
-      STS.patchErrorPage(docShell, uri);
+
   },
-  
-  
+
+
   // start nsIWebProgressListener
-  
+
 
   onLinkIconAvailable: DUMMY_FUNC,
   onStateChange: function(wp, req, stateFlags, status) {
     var ph;
-    
+
     if (stateFlags & WP_STATE_START) {
       if (req instanceof Ci.nsIChannel) {
         // handle docshell JS switching and other early duties
-        
+
         if (PolicyState.isChecking(req.URI)) {
           // ContentPolicy couldn't complete! DOS attack?
           PolicyState.removeCheck(req.URI);
@@ -6512,9 +6432,9 @@ var ns = {
           this.log("Aborted " + req.URI.spec + " on start, possible DOS attack against content policy.");
           return;
         }
-        
+
         PolicyState.attach(req); // this is needed after bug 797684 fix, because http observers are notified later
-        
+
         if ((stateFlags & WP_STATE_START_DOC) == WP_STATE_START_DOC) {
           if (!(req instanceof Ci.nsIHttpChannel) && (
                 // prevent about:newTab breakage
@@ -6523,10 +6443,10 @@ var ns = {
                 req.URI.equals(DOM.browserWinURI)
               )
             ) return;
-          
+
           let w = wp.DOMWindow;
           if (w) {
-           
+
             if (w != w.top && w.frameElement) {
               ph = ph || PolicyState.extract(req);
               if (ph && this.shouldLoad(7, req.URI, ph.requestOrigin, w.frameElement, ph.mimeType, CP_FRAMECHECK) != CP_OK) { // late frame/iframe check
@@ -6536,13 +6456,13 @@ var ns = {
             }
             this._handleDocJS(w, req, false);
           }
-        } 
+        }
       }
     } else if ((stateFlags & WP_STATE_STOP))  {
       // STOP REQUEST
       if (req instanceof Ci.nsIHttpChannel) {
         this.cleanupRequest(req);
-      
+
         if (status === NS_ERROR_CONNECTION_REFUSED || status === NS_ERROR_NOT_AVAILABLE ||
             status === NS_ERROR_UNKNOWN_HOST) { // evict host from DNS cache to prevent DNS rebinding
           try {
@@ -6559,14 +6479,14 @@ var ns = {
       }
     }
   },
-  
+
   onLocationChange: function(wp, req, location) {
     if (req && (req instanceof Ci.nsIChannel)) try {
       let w = wp.DOMWindow;
       if (this.consoleDump & LOG_JS)
         this.dump("Location Change - req.URI: " + req.URI.spec + ", window.location: " +
                 (w && w.location.href) + ", location: " + location.spec);
-       
+
       this.setExpando(w, this.DOC_JS_STATUS_KEY, IOUtil.extractFromChannel(req, this.DOC_JS_STATUS_KEY, false));
       this.onBeforeLoad(req, w, location);
     } catch(e) {
@@ -6576,7 +6496,7 @@ var ns = {
   onLocationChange2: function(wp, req, location, flags) {
     this.onLocationChange(wp, req, location);
   },
-  
+
   onStatusChange: function(wp, req, status, msg) {
     if (status == 0x804b0003 && (req instanceof Ci.nsIChannel) && !ABE.isDeferred(req)) { // DNS resolving, check if we need to clear the cache
       try {
@@ -6593,18 +6513,18 @@ var ns = {
       } catch (e) {}
     }
   },
-  onSecurityChange: DUMMY_FUNC, 
+  onSecurityChange: DUMMY_FUNC,
   onProgressChange: DUMMY_FUNC,
   onRefreshAttempted: function(wp, uri, delay, sameURI) {
     if (delay == 0 && !sameURI)
       return true; // poor man's redirection
-    
+
     var pref = this.getPref("forbidBGRefresh");
     try {
       if (!pref || this.prefService.getBoolPref("accessibility.blockautorefresh"))
         return true; // let the browser do its thing
     } catch(e) {}
-    
+
     var win = wp.DOMWindow;
     var currentURL = win.location.href;
     if (!this.appliesHere(pref, currentURL))
@@ -6613,19 +6533,19 @@ var ns = {
     var browserWin = DOM.mostRecentBrowserWindow;
     if (!(browserWin && "noscriptOverlay" in browserWin))
       return true; // not a regular browser window
-    
+
     var exceptions = new AddressMatcher(this.getPref("forbidBGRefresh.exceptions"));
     if (exceptions && exceptions.test(currentURL))
       return true;
-    
+
     var browser = DOM.findBrowserForNode(win);
     var currentBrowser = browserWin.noscriptOverlay.currentBrowser;
     var docShell = DOM.getDocShellForWindow(win);
-        
+
     var uiArgs = Array.slice(arguments);
-    
+
     var ts = Date.now();
-    
+
     if (browser == currentBrowser) {
       win.addEventListener("blur", function(ev) {
         ev.currentTarget.removeEventListener(ev.type, arguments.callee, false);
@@ -6634,8 +6554,8 @@ var ns = {
       }, false);
       return true; // OK, this is the foreground tab
     }
-    
-    
+
+
      function hookFocus(bg) {
       ns.log("[NoScript] Blocking refresh on unfocused tab, " + currentURL + "->" + uri.spec, false);
       win.addEventListener("focus", function(ev) {
@@ -6651,9 +6571,9 @@ var ns = {
     }
     hookFocus(true);
     return false;
-  },  
+  },
   // end nsIWebProgressListener
-  
+
   _badCharsetRx: /\bUTF-?7\$|^armscii-8$/i,
   _goodCharsetRx: /^UTF-?8$/i,
   filterBadCharsets: function(docShell) {
@@ -6665,9 +6585,9 @@ var ns = {
       } catch (e) {
         cs = docShell.document.characterSet;
       }
-      
+
       if (this._goodCharsetRx.test(cs)) return false;
-      
+
       if(this._badCharsetRx.test(cs)) {
         this.log("[NoScript XSS] Neutralizing bad charset " + cs);
       } else {
@@ -6678,11 +6598,11 @@ var ns = {
           let exceptions = this.getPref("xss.checkCharset.exceptions");
           if (exceptions && AddressMatcher.create(exceptions).test(url)) return false;
         } catch (e) {}
-        
+
         let ic = this.injectionChecker;
         let unicode = /^UTF-?16/i.test(cs) && url.indexOf("\0") !== -1;
         let le = unicode && /LE$/i.test(cs);
-        
+
         function decode(u) {
           if (unicode) {
             let pos = u.indexOf("\0");
@@ -6693,14 +6613,14 @@ var ns = {
           }
           return ic.toUnicode(u, cs);
         }
-        
+
         function check(original, decoded) original === decoded || !ic.checkRecursive(decoded, 1);
-        
+
         let [filePath, query, ref] = ["filePath", "query", "ref"].map(function(p) unescape(uri[p]));
-        
+
         if ( // check...
             // ...whole URL
-            check(url, decode(url)) && 
+            check(url, decode(url)) &&
             // ...whole path
             check(filePath, decode(filePath)) &&
             // ...path parts
@@ -6712,7 +6632,7 @@ var ns = {
             // ... fragment
             check(ref, decode(ref))
           ) return false;
-            
+
         this.log("[NoScript XSS] Potential XSS with charset " + cs + ", aborting request");
       }
       /*
@@ -6730,11 +6650,11 @@ var ns = {
     }
     return false;
   },
-  
+
   _attemptNavigationInternal: function(doc, destURL, callback) {
     var cs = doc.characterSet;
     var uri = IOS.newURI(destURL, cs, IOS.newURI(doc.documentURI, cs, null));
-    
+
     if (/^https?:\/\//i.test(destURL)) callback(doc, uri);
     else {
       var done = false;
@@ -6755,21 +6675,21 @@ var ns = {
     // delay is needed on Gecko < 1.9 to detach browser context
     this.delayExec(this._attemptNavigationInternal, 0, doc, destURL, callback);
   },
-  
+
   // simulate onchange on selects if options look like URLs
   onContentChange: function(ev) {
     var s = ev.originalTarget;
     if (!(s instanceof Ci.nsIDOMHTMLSelectElement) ||
         s.hasAttribute("multiple") ||
         !/open|nav|location|\bgo|load/i.test(s.getAttribute("onchange"))) return;
-    
+
     var doc = s.ownerDocument;
     var url = doc.documentURI;
     if (this.isJSEnabled(this.getSite(url), doc.defaultView)) return;
-    
+
     var opt = s.options[s.selectedIndex];
     if (!opt) return;
-    
+
     if (/[\/\.]/.test(opt.value) && opt.value.indexOf("@") < 0) {
       this.attemptNavigation(doc, opt.value, function(doc, uri) {
         doc.defaultView.location.href = uri.spec;
@@ -6777,26 +6697,26 @@ var ns = {
       ev.preventDefault();
     }
   },
-  
+
   onContentClick: function(ev) {
-    
+
     if (ev.button == 2) return;
-    
+
     var a = ev.originalTarget;
-    
+
     if (a.__noscriptFixed) return;
-    
+
     var doc = a.ownerDocument;
     var url = doc.documentURI;
     if (this.isJSEnabled(this.getSite(url))) return;
-    
+
     var onclick;
-    
+
     while (!(a instanceof Ci.nsIDOMHTMLAnchorElement || a instanceof Ci.nsIDOMHTMLAreaElement)) {
       if (typeof(a.getAttribute) == "function" && (onclick = a.getAttribute("onclick"))) break;
       if (!(a = a.parentNode)) return;
     }
-    
+
     const href = a.getAttribute("href");
     // fix JavaScript links
     var jsURL;
@@ -6806,19 +6726,19 @@ var ns = {
     } else {
       jsURL = "";
     }
-    
+
     onclick = onclick || a.getAttribute("onclick");
-    var fixedHref = (onclick && this.extractJSLink(onclick)) || 
+    var fixedHref = (onclick && this.extractJSLink(onclick)) ||
                      (jsURL && this.extractJSLink(href)) || "";
-    
+
     onclick = onclick || href;
-    
+
     if (/\bsubmit\s*\(\s*\)/.test(onclick)) {
       var form;
       if (fixedHref) {
         form = doc.getElementById(fixedHref); // youtube
         if (!(form instanceof Ci.nsIDOMHTMLFormElement)) {
-          form = doc.forms.namedItem(fixedHref);   
+          form = doc.forms.namedItem(fixedHref);
         }
       }
       if (!form) {
@@ -6834,25 +6754,25 @@ var ns = {
       }
       return;
     }
-    
+
     if (fixedHref) {
       var callback;
       if (/^(?:button|input)$/i.test(a.tagName)) { // JS button
         if (a.type == "button" || (a.type == "submit" && !a.form)) {
-          callback = function(doc, uri) { doc.defaultView.location.href = uri.spec; }; 
+          callback = function(doc, uri) { doc.defaultView.location.href = uri.spec; };
         } else return;
       } else {
         var evClone = doc.createEvent("MouseEvents");
-        evClone.initMouseEvent("click",ev.canBubble, ev.cancelable, 
-                           ev.view, ev.detail, ev.screenX, ev.screenY, 
-                           ev.clientX, ev.clientY, 
+        evClone.initMouseEvent("click",ev.canBubble, ev.cancelable,
+                           ev.view, ev.detail, ev.screenX, ev.screenY,
+                           ev.clientX, ev.clientY,
                            ev.ctrlKey, ev.altKey, ev.shiftKey, ev.metaKey,
                            ev.button, ev.relatedTarget);
         callback =
           function(doc, uri) {
             a.setAttribute("href", fixedHref);
             var title = a.getAttribute("title");
-            a.setAttribute("title", title ? "[js] " + title : 
+            a.setAttribute("title", title ? "[js] " + title :
               (onclick || "") + " " + href
             );
             a.dispatchEvent(ev = evClone); // do not remove "ev = " -- for some reason, it works this way only :/
@@ -6865,9 +6785,9 @@ var ns = {
       }
     } else { // try processing history.go(n) //
       if(!onclick) return;
-      
+
       jsURL = onclick.match(/history\s*\.\s*(?:go\s*\(\s*(-?\d+)\s*\)|(back|forward)\s*\(\s*)/);
-      jsURL = jsURL && (jsURL = jsURL[1] || jsURL[2]) && (jsURL == "back" ? -1 : jsURL == "forward" ? 1 : jsURL); 
+      jsURL = jsURL && (jsURL = jsURL[1] || jsURL[2]) && (jsURL == "back" ? -1 : jsURL == "forward" ? 1 : jsURL);
 
       if (!jsURL) return;
       // jsURL now has our relative history index, let's navigate
@@ -6876,14 +6796,14 @@ var ns = {
       if (!docShell) return;
       var sh = docShell.sessionHistory;
       if (!sh) return;
-      
+
       var idx = sh.index + jsURL;
-      if (idx < 0 || idx >= sh.count) return; // out of history bounds 
+      if (idx < 0 || idx >= sh.count) return; // out of history bounds
       docShell.gotoIndex(idx);
       ev.preventDefault(); // probably not needed
     }
   },
-  
+
   extractJSLink: function(js) {
     const findLink = /(['"])(.*?)\1/g;
     const badURIChar = /[^\/\w-\?\.#%=&:@]/;
@@ -6903,39 +6823,39 @@ var ns = {
     }
     return href || "";
   },
-  
-  
+
+
   checkLocalLink: function(url, principal, fromPolicy) {
-    
+
     if (!this.allowLocalLinks || this.supportsCAPS && !fromPolicy)
       return fromPolicy;
-    
+
     if (url instanceof Ci.nsIURI) {
       if (!url.schemeIs("file")) return fromPolicy;
       url = url.spec;
     } else if (typeof url !== "string" || url.indexOf("file:///") !== 0) return fromPolicy;
     let site = principal.URI ? principal.URI.spec : principal.origin;
-    
+
     if (!/^(ht|f)tps?:/.test(site)) return fromPolicy;
-    
+
     let [to, from] = [ AddressMatcher.create(this.getPref("allowLocalLinks." + n, ""))
                         for each (n in ["to", "from"]) ];
-    
+
     return ((from
               ? from.test(site)
               : this.isJSEnabled(this.getSite(principal.origin)))
         && (!to || to.test(url))
       );
   },
-  
+
   createXSanitizer: function() {
     return new XSanitizer(this.filterXGetRx, this.filterXGetUserRx);
   },
-  
+
   get externalFilters() {
     delete this.externalFilters;
     if (("nsIProcess2" in Ci || // Fx 3.5
-         "runAsync" in Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess) // Fx >= 3.6 
+         "runAsync" in Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess) // Fx >= 3.6
         )) {
       INCLUDE("ExternalFilters");
       this.externalFilters = ExternalFilters;
@@ -6943,7 +6863,7 @@ var ns = {
     } else this.externalFilters = { enabled: false, supported: false };
     return this.externalFilters;
   },
-  
+
   callExternalFilters: function(ch, cached) {
     var ph = PolicyState.extract(ch);
     if (ph) {
@@ -6953,11 +6873,11 @@ var ns = {
       }
     }
   },
-  
+
   switchExternalFilter: function(filterName, domain, enabled) {
     var f = this.externalFilters.byName(filterName);
     if (!f) return;
-    
+
     var done;
     if (enabled) {
       done = f.removeDomainException(domain);
@@ -6965,12 +6885,12 @@ var ns = {
       done = f.addDomainException(domain);
     }
     if (!done) return;
-    
+
     this.delayExec(this.traverseObjects, 0,
       function(p) {
         const info = this.externalFilters.getObjFilterInfo(p);
         if (!info) return;
-        
+
         if (this.getBaseDomain(this.getDomain(info.url)) == domain) {
           this.externalFilters.log("Reloading object " + info.url);
           var anchor = p.nextSibling;
@@ -6979,7 +6899,7 @@ var ns = {
         }
       }, this);
   },
-  
+
   get compatEvernote() {
     delete this.compatEvernote;
     return this.compatEvernote = ("IWebClipper3" in Ci) && this.getPref("compat.evernote") && {
@@ -6994,21 +6914,21 @@ var ns = {
       }
     }
   },
-  
+
   get compatGNotes() {
     delete this.compatGNotes;
     return this.compatGNotes = ("@google.com/gnotes/app-context;1" in Cc) && this.getPref("compat.gnotes") &&
       "http://www.google.com/notebook/static_files/blank.html";
   },
-  
+
   consoleService: Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService),
-  
+
   log: function(msg, dump) {
     if (msg.stack) msg += msg.stack;
     this.consoleService.logStringMessage(msg);
     if (dump) this.dump(msg, true);
   },
-  
+
   logError: function(e, dump, cat) {
     var se = Cc["@mozilla.org/scripterror;1"].createInstance(Ci.nsIScriptError);
     se.init(e.message, e.fileName, /^javascript:/i.test(e.fileName) ? e.fileName : null,
@@ -7016,7 +6936,7 @@ var ns = {
     if (dump && this.consoleDump) this.dump(e.message, true);
     this.consoleService.logMessage(se);
   },
- 
+
   dump: function(msg, noConsole) {
     if (!this.consoleDump) return;
     if (msg.stack) msg += msg.stack;
@@ -7024,30 +6944,30 @@ var ns = {
     dump(msg + "\n");
     if(this.consoleLog && !noConsole) this.log(msg);
   },
-  
+
   ensureUIVisibility: function() {
     const window =  DOM.mostRecentBrowserWindow;
     try {
       const document = window.document;
       const addonBar = document.getElementById("addon-bar");
       if (!addonBar) return false;
-      
+
       const tbbId = "noscript-tbb";
       let tbb = document.getElementById(tbbId);
       if (tbb) return false;
-      
+
       let navBar = document.getElementById("nav-bar");
-      
+
       let [bar, refId] =
         addonBar.collapsed && navBar && !navBar.collapsed || !this.getPref("statusIcon", true)
         ? [navBar, "urlbar-container"]
         : [addonBar, "status-bar"];
-      
+
       set = bar.currentSet.split(/\s*,\s*/);
       if (set.indexOf(tbbId) > -1) return false;
-      
+
       set.splice(set.indexOf(refId), 0, tbbId);
-      
+
       bar.setAttribute("currentset", bar.currentSet = set.join(","));
       document.persist(bar.id, "currentset");
       try {
@@ -7062,19 +6982,19 @@ var ns = {
       return false;
     }
   },
-  
+
   firstRun: false,
   versionChecked: false,
   checkVersion: function() {
     if (this.versionChecked) return;
     this.versionChecked = true;
-    
+
     if (!this.getPref("visibleUIChecked", false) && this.ensureUIVisibility())
       this.setPref("visibleUIChecked", true);
 
     const ver =  this.VERSION;
     const prevVer = this.getPref("version", "");
-    
+
     if ((this.firstRun = prevVer != ver)) {
       if (prevVer) try {
         this.onVersionChanged(prevVer);
@@ -7097,11 +7017,11 @@ var ns = {
                 ns.savePrefs();
                 return;
               }
-              
+
               var browser = DOM.mostRecentBrowserWindow.getBrowser();
               if (typeof(browser.addTab) != "function") return;
-             
-              
+
+
               var url = "https://" + domain + "/?ver=" + ver;
               var hh = "X-IA-Post-Install: " + name + " " + ver;
               if (prevVer) {
@@ -7109,15 +7029,15 @@ var ns = {
                 hh += "; updatedFrom=" + prevVer;
               }
               hh += "\r\n";
-              
+
               var hs = Cc["@mozilla.org/io/string-input-stream;1"] .createInstance(Ci.nsIStringInputStream);
-              hs.setData(hh, hh.length); 
-              
-              
+              hs.setData(hh, hh.length);
+
+
               var b = (browser.selectedTab = browser.addTab()).linkedBrowser;
               b.stop();
               b.webNavigation.loadURI(url, Ci.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, hs);
-              
+
             },
             onDataAvailable: function() {}
           }, {});
@@ -7125,7 +7045,7 @@ var ns = {
       }
     }
   },
-  
+
   checkSubscriptions: function() {
     var lastCheck = this.getPref("subscription.last_check");
     var checkInterval = this.getPref("subscription.checkInterval", 24) * 60000;
@@ -7134,7 +7054,7 @@ var ns = {
       this.delayExec(checkSubscriptions, lastCheck + checkInterval - now + 1000);
       return;
     }
-    
+
     function load(list, process, goOn) {
       var url = ns.getPref("subscription." + list + "URL");
       if (!url) {
@@ -7157,7 +7077,7 @@ var ns = {
       });
       xhr.send(null);
     }
-    
+
     load("untrusted",
       function(trusted, untrusted) {
         ns.untrustedSites.sitesString += " " + untrusted;
@@ -7181,5 +7101,5 @@ var ns = {
 ns.wrappedJSObject = ns;
 ns.__global__ = this; // debugging helper necessary on Gecko >= 13
 ns._e = function(f) {
-  return eval("(" + f + ")()"); 
+  return eval("(" + f + ")()");
 }

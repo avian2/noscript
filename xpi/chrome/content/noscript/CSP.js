@@ -1,7 +1,7 @@
 var CSP = {
   HEADER_NAME: "Content-Security-Policy",
   HEADER_VALUE: "script-src 'none'",
-  
+
   block: function(window) {
     window._blockedByCSP = true;
     let doc = window.document;

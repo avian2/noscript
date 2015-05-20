@@ -2,7 +2,7 @@
 <!ENTITY noscriptOptions.accesskey "а">
 <!ENTITY noscriptOptionsLong "Настройки NoScript">
 <!ENTITY noscriptAbout "О расширении">
-<!ENTITY noscriptPermissionsText "Вы можете устанавливать каким веб-сайтам будет разрешено выполнять код JavaScript. Введите адрес или домен (например «http://www.site.com» или «site.com») сайта которому вы желаете разрешить исполнение JavaScript в текстовом поле ниже, а затем нажмите «Разрешить».">
+<!ENTITY noscriptPermissionsText "Вы можете устанавливать каким веб-сайтам будет разрешено выполнять код JavaScript. Введите адрес или домен (например «http://www.site.com» или «site.com») сайта, которому вы желаете разрешить исполнение JavaScript в текстовом поле ниже, а затем нажмите «Разрешить».">
 <!ENTITY noscriptWebAddress "Адрес веб-сайта:">
 <!ENTITY noscriptAllow "Разрешить">
 <!ENTITY noscriptAllow.accesskey "е">
@@ -30,7 +30,7 @@
 <!ENTITY noscriptExport "Экспорт">
 <!ENTITY noscriptExport.accesskey "к">
 <!ENTITY noscriptNotify "Отображать сообщения о заблокированных скриптах">
-<!ENTITY noscriptNotify.bottom "Располагать сообщения снизу экрана">
+<!ENTITY noscriptNotify.bottom "Располагать сообщения внизу экрана">
 <!ENTITY noscriptSound.choose "Обзор">
 <!ENTITY noscriptSound.choose.accesskey "о">
 <!ENTITY noscriptSound.play "Прослушать">
@@ -38,7 +38,7 @@
 <!ENTITY noscriptSound.reset "Сброс">
 <!ENTITY noscriptSound.reset.accesskey "б">
 <!ENTITY noscriptAdvanced "Дополнительно">
-<!ENTITY noscriptAdditionalPermissions "Дополнительные возможности для доверяемых сайтов">
+<!ENTITY noscriptAdditionalPermissions "Дополнительные возможности для доверенных сайтов">
 <!ENTITY noscriptAllowClipboard "Расширенные копирование/вставка из внешнего буфера обмена">
 <!ENTITY noscriptAdditionalRestrictions "Дополнительные ограничения для ненадёжных сайтов">
 <!ENTITY noscriptPlugins "Плагины">
@@ -47,7 +47,7 @@
 <!ENTITY noscriptForbidXSLT "Запретить отображение элементов XSLT">
 <!ENTITY noscriptForbidSilverlight "Запретить отображение элементов Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Запретить отображение элементов &lt;IFRAME&gt;">
-<!ENTITY noscriptForbidFrames "Запретить отображение элементов &lt;FRAMES&gt;">
+<!ENTITY noscriptForbidFrames "Запретить отображение элементов &lt;FRAME&gt;">
 <!ENTITY noscriptForbidFonts "Запретить @font-face">
 <!ENTITY noscriptForbidWebGL "Запретить WebGL">
 <!ENTITY noscriptForbidMedia "Запретить &lt;AUDIO&gt; / &lt;VIDEO&gt;">
@@ -60,12 +60,12 @@
 <!ENTITY noscriptShowPlaceholder "Выделять заблокированные элементы значком с рамкой">
 <!ENTITY noscriptTruncateTitle "Отсекать слишком длинные заголовки веб-сайтов">
 <!ENTITY noscriptFixLinks "Применять алгоритм исправления JavaScript-ссылок">
-<!ENTITY noscriptAllowBookmarks "Разрешать выполнение JavaScript всем веб-сайтам из закладок">
-<!ENTITY noscriptAllowViaBookmarks "Разрешать выполнение JavaScript всем веб-сайтам из закладок">
+<!ENTITY noscriptAllowBookmarks "Разрешать JavaScript документам верхнего уровня сайтов, открываемых через закладки">
+<!ENTITY noscriptAllowViaBookmarks "Разрешать JavaScript документам верхнего уровня сайтов, открываемых через закладки">
 <!ENTITY noscriptAllowPing "Разрешить веб-сайту использовать параметр &lt;A PING…&gt;">
 <!ENTITY noscriptAllowLocalLinks "Разрешить локальные ссылки">
 <!ENTITY noscriptForbidPing "Запретить веб-сайту использовать параметр  &lt;A PING…&gt;">
-<!ENTITY noscriptForbidMetaRefresh "Запретить META перенаправления внутри элементов &lt;noscript&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Запретить META перенаправления внутри элементов &lt;NOSCRIPT&gt;">
 <!ENTITY noscriptForbidMetaRefresh.accesskey "а">
 <!ENTITY noscriptNotifyMeta "Показывать сообщения о заблокированных META перенаправлениях">
 <!ENTITY noscriptNotifyMeta.accesskey "ы">
@@ -85,10 +85,10 @@
 <!ENTITY noscriptPolicies "Политики">
 <!ENTITY noscriptDefaultPolicies "Политики по умолчанию">
 <!ENTITY noscriptSitePolicies "Специальные политики для сайтов">
-<!ENTITY noscriptNselNever "Скрывать элементы &lt;noscript&gt;">
-<!ENTITY noscriptNselForce "Показывать элемент &lt;noscript&gt; который следует за заблокированным &lt;SCRIPT&gt;">
-<!ENTITY noscriptAutoAllowTopLevel "Временно разрешать базовым доменам 2-го уровня по умолчанию">
-<!ENTITY noscriptDescription "Экстра защита для Firefox: NoScript позволяет разрешать исполнение JavaScript, Java (и других плагинов) только доменам, которым доверяете (например, ваш веб-сайт). Белый список, основанный на принципе упреждающего блокирования, позволяет предотвратить использование уязвимостей (известных и ещё неизвестных!) без потери функциональности… Эксперты соглашаются: Firefox действительно безопаснее с NoScript :-)">
+<!ENTITY noscriptNselNever "Скрывать элементы &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Показывать элемент &lt;NOSCRIPT&gt; который следует за заблокированным &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Временно разрешать документам верхнего уровня по умолчанию">
+<!ENTITY noscriptDescription "Дополнительная защита для Firefox: NoScript позволяет разрешать исполнение JavaScript, Java (и других плагинов) только доменам, которым доверяете (например, ваш веб-сайт). Белый список, основанный на принципе упреждающего блокирования, позволяет предотвратить использование уязвимостей (известных и ещё не известных!) без потери функциональности… Эксперты соглашаются: Firefox действительно безопаснее с NoScript :-)">
 <!ENTITY noscriptOptBlockCssScanners "Блокировать CSS-сканеры">
 <!ENTITY noscriptOptFilterXGet "Фильтровать запросы, подозреваемые в XSS">
 <!ENTITY noscriptOptFilterXPost "Заменять XSS POST-запросы на GET-запросы без данных">
@@ -101,7 +101,7 @@
 <!ENTITY noscriptUnsafeReload "Небезопасное обновление">
 <!ENTITY noscriptUnsafeReload.accesskey "е">
 <!ENTITY noscriptXssExceptions "Исключения анти-XSS защиты">
-<!ENTITY noscriptXssExceptions.description "Объекты, которые соответствуют этим маскам, НЕ будет защищаться против XSS.">
+<!ENTITY noscriptXssExceptions.description "Объекты, которые соответствуют этим маскам, НЕ будут защищаться против XSS.">
 <!ENTITY noscriptMatchSample "Пример шаблона:">
 <!ENTITY noscriptReset "Сброс">
 <!ENTITY noscriptReset.accesskey "о">
@@ -115,9 +115,9 @@
 <!ENTITY noscriptExceptions "Исключения…">
 <!ENTITY noscriptBlockedObjects "Заблокированные объекты">
 <!ENTITY noscriptAlwaysBlockUntrustedContent "Блокировать любой объект с недоверенных сайтов">
-<!ENTITY noscriptTempAllowPage "Временно разрешить на этой странице">
+<!ENTITY noscriptTempAllowPage "Временно разрешить все скрипты на этой странице">
 <!ENTITY noscriptTempAllowPage.accesskey "о">
-<!ENTITY noscriptAllowPage "Разрешить всё на этой странице">
+<!ENTITY noscriptAllowPage "Разрешить все скрипты на этой странице">
 <!ENTITY noscriptAllowPage.accesskey "а">
 <!ENTITY noscriptTempToPerm "Сохранить установленные разрешения">
 <!ENTITY noscriptTempToPerm.accesskey "о">
@@ -126,15 +126,15 @@
 <!ENTITY noscriptHttpsFaq.accesskey "а">
 <!ENTITY noscriptHttps.behavior "Поведение">
 <!ENTITY noscriptHttps.cookies "Cookies">
-<!ENTITY noscriptHttps.description "Запрещать активное веб-содержимое за исключением защищённых (HTTPS) соединений:">
+<!ENTITY noscriptHttps.description "Запрещать активное веб-содержимое, за исключением защищённых (HTTPS) соединений:">
 <!ENTITY noscriptHttps.never "Никогда">
 <!ENTITY noscriptHttps.proxy "При использовании прокси (рекомендуется Tor)">
 <!ENTITY noscriptHttps.always "Всегда">
-<!ENTITY noscriptHttpsForced "Заставлять указанным сайтам использовать защищённое (HTTPS) соединение:">
+<!ENTITY noscriptHttpsForced "Заставлять указанные сайты использовать защищённое (HTTPS) соединение:">
 <!ENTITY noscriptHttpsForcedExceptions "Не принуждать использовать защищённое (HTTPS) соединение для сайтов:">
 <!ENTITY noscriptSecureCookies "Автоматическая система управления безопасностью cookies">
-<!ENTITY noscriptSecureCookiesForced "Использовать шифрование для всех cookies устанавливаемых через HTTPS со следующих сайтов:">
-<!ENTITY noscriptSecureCookiesExceptions "Игнорировать небезопасные cookies устанавливаемые через HTTPS со следующих сайтов:">
+<!ENTITY noscriptSecureCookiesForced "Использовать шифрование для всех cookies, устанавливаемых через HTTPS со следующих сайтов:">
+<!ENTITY noscriptSecureCookiesExceptions "Игнорировать небезопасные cookies, устанавливаемые через HTTPS со следующих сайтов:">
 <!ENTITY noscriptClearClickTitle "Предупреждения ClearClick">
 <!ENTITY noscriptClearClickHeader "Возможно Clickjacking / Попытка изменения UI">
 <!ENTITY noscriptClearClickDescription "NoScript пресёк выполнение операции с частично скрытым элементом. Нажмите на изображения чтобы увидеть разницу.">
@@ -148,8 +148,8 @@
 <!ENTITY noscriptEmbeddings "Встроенные объекты">
 <!ENTITY noscriptPrev "Предыдущий">
 <!ENTITY noscriptNext "Следующий">
-<!ENTITY noscriptFrameOptErr.title "Это содержимое не может быть отображено в фрейме">
-<!ENTITY noscriptFrameOptErr.desc "Для защиты вашей безопасности, владелец этого содержимого не разрешил отображение во фрейме">
+<!ENTITY noscriptFrameOptErr.title "Это содержимое не может быть отображено во фрейме">
+<!ENTITY noscriptFrameOptErr.desc "Для вашей безопасности владелец этого содержимого не разрешил отображение во фрейме">
 <!ENTITY noscriptFrameOptErr.link "Щёлкните для открытия содержимого в новом окне">
 <!ENTITY noscriptBookmarkSync "Создать резервную копию настроек в закладках для лёгкой синхронизации">
 <!ENTITY noscriptShowReleaseNotes "Показывать примечания к релизу при обновлениях">
@@ -173,7 +173,7 @@
 <!ENTITY noscriptEF.add "Новый фильтр…">
 <!ENTITY noscriptEF.executable "Исполняемый файл:">
 <!ENTITY noscriptEF.browse "Обзор…">
-<!ENTITY noscriptEF.contentType "Content type (MIME) подлежащий фильтрации (точное совпадение или регулярное выражение):">
+<!ENTITY noscriptEF.contentType "Content type (MIME), подлежащий фильтрации (точное совпадение или регулярное выражение):">
 <!ENTITY noscriptEF.exceptions "Не фильтровать объекты с этих сайтов:">
 <!ENTITY noscriptEF.remove "Удалить">
 <!ENTITY noscriptPreset "Уровень защиты">
@@ -181,11 +181,11 @@
 <!ENTITY noscriptPreset.low "Легкое начало (чёрный список + веб-защита)">
 <!ENTITY noscriptPreset.medium "Стандартный (белый список + веб-защита)">
 <!ENTITY noscriptPreset.high "Осадный (на полную катушку)">
-<!ENTITY noscript.hoverUI "Открывать меню разрешению при наведении мыши на значок">
+<!ENTITY noscript.hoverUI "Открывать меню разрешений при наведении мыши на значок">
 <!ENTITY noscriptDonate "Пожертвовать">
 <!ENTITY noscriptDonate.accesskey "в">
-<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
-<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
-<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
-<!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">
-<!ENTITY noscriptPermanentInPrivate "Permanent &quot;Allow&quot; commands in private windows">
+<!ENTITY noscriptAutoReload.currentTab "Обновлять только активную вкладку">
+<!ENTITY noscriptCascadePermissions "Каскадное разрешение скриптов третьей стороны">
+<!ENTITY noscriptRestrictSubdocScripting "Запретить скрипты из белого списка в субдокументах не из белого списка">
+<!ENTITY noscriptGlobalHttpsWhitelist "Разрешить все HTTPS скрипты в HTTPS документах">
+<!ENTITY noscriptPermanentInPrivate "&quot;Разрешить [...]&quot; (постоянно) в приватном режиме">

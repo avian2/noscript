@@ -2,7 +2,7 @@ LAZY_INCLUDE('Cookie');
 
 const HTTPS = {
   ready: false,
-  
+
   secureCookies: false,
   secureCookiesExceptions: null,
   secureCookiesForced: null,
@@ -17,33 +17,33 @@ const HTTPS = {
       HTTPS.log("redirectTo " + uri.spec);
       channel.redirectTo(uri);
     } catch(e) {
-      HTTPS.log(e);   
+      HTTPS.log(e);
     }
     ChannelReplacement.runWhenPending(channel, function() {
-    
+
       new ChannelReplacement(channel, uri).replace(true);
       HTTPS.log("Forced Channel " + uri.spec);
     });
     return true;
-    
+
   },
-  
+
   forceURI: function(uri, fallback, ctx) {
     if (this.mustForce(uri)) {
       try {
-        
+
         uri.scheme = "https";
-        
+
         this.log("Forced URI " + uri.spec);
         return true;
-        
+
       } catch(e) {
-        
+
         if (ctx && ctx instanceof Ci.nsIDOMHTMLImageElement || ctx instanceof Ci.nsIDOMHTMLInputElement ||
             ctx instanceof Ci.nsIObjectLoadingContent) {
           uri = uri.clone();
           uri.scheme = "https";
-          
+
           var type, attr;
           if (ctx instanceof Ci.nsIObjectLoadingContent) {
             type = "Object";
@@ -53,41 +53,37 @@ const HTTPS = {
             attr = "src";
           }
           Thread.asap(function() { ctx.setAttribute(attr, uri.spec); });
-          
+
           var msg = type + " HTTP->HTTPS redirection to " + uri.spec;
-          this.log(msg);  
+          this.log(msg);
           throw msg;
         }
-        
+
         if (fallback && fallback()) {
            this.log("Channel redirection fallback on " + uri.spec);
            return true;
         }
-        
+
         this.log("Error trying to force https on " + uri.spec + ": " + e);
       }
     }
     return false;
   },
-  
+
   mustForce: function(uri) {
-    return (uri.schemeIs("http") &&
+    return uri.schemeIs("http") &&
         (this.httpsForced && this.httpsForced.test(uri.spec) ||
-         this.httpsForcedBuiltIn && this.httpsForcedBuiltIn.test(uri.spec) ||
-         STS.isSTSURI(uri)) &&
-          !(this.httpsForcedExceptions &&
-            this.httpsForcedExceptions.test(uri.spec)
-        ));
+         this.httpsForcedBuiltIn && this.httpsForcedBuiltIn.test(uri.spec));
   },
-  
+
   log: function(msg) {
     this.log = ns.getPref("https.showInConsole", true)
       ? function(msg) { ns.log("[NoScript HTTPS] " + msg); }
       : function(msg) {}
-      
+
     return this.log(msg);
   },
-  
+
   onCrossSiteRequest: function(channel, origin, browser, rw) {
     try {
       this.handleCrossSiteCookies(channel, origin, browser);
@@ -95,7 +91,7 @@ const HTTPS = {
       this.log(e + " --- " + e.stack);
     }
   },
-  
+
   registered: false,
   handleSecureCookies: function(req) {
   /*
@@ -111,11 +107,11 @@ const HTTPS = {
        ensure compatibility (ref: mail.yahoo.com and hotmail.com unsafe
        behavior on 11 Sep 2008)
   */
-    
+
     if (!this.secureCookies) return;
-    
+
     var uri = req.URI;
-    
+
     if (uri.schemeIs("https") &&
         !(this.secureCookiesExceptions && this.secureCookiesExceptions.test(uri.spec)) &&
         (req instanceof Ci.nsIHttpChannel)) {
@@ -130,14 +126,14 @@ const HTTPS = {
           var forced = this.secureCookiesForced && this.secureCookiesForced.test(uri.spec);
           var secureFound = false;
           var unsafe = null;
-         
+
           const rw = ns.requestWatchdog;
           var browser = rw.findBrowser(req);
-          
+
           if (!browser) {
             if (ns.consoleDump) ns.dump("Browser not found for " + uri.spec);
           }
-          
+
           var unsafeMap = this.getUnsafeCookies(browser) || {};
           var c;
           for each (var cs in cookies.split("\n")) {
@@ -151,8 +147,8 @@ const HTTPS = {
               unsafe.push(c);
             }
           }
-        
-          
+
+
           if (unsafe && !(forced || secureFound)) {
             // this page did not set any secure cookie, let's check if we already have one
             secureFound = Cookie.find(function(c) {
@@ -163,12 +159,12 @@ const HTTPS = {
               this.log("Secure cookie found for this host: " + Cookie.prototype.toString.apply(secureFound));
             }
           }
-          
+
           if (secureFound && !forced) {
             this.cookiesCleanup(secureFound);
             return;
           }
-          
+
           if (!unsafe) return;
 
           var msg;
@@ -179,12 +175,12 @@ const HTTPS = {
           } else {
             msg = "DETECTED INSECURE";
           }
-          
+
           if (!this.registered) {
             this.registered = true;
             rw.addCrossSiteListener(this);
           }
-          
+
           this.setUnsafeCookies(browser, unsafeMap);
           msg += " on https://" + host + ": ";
           for each (c in unsafe) {
@@ -195,42 +191,42 @@ const HTTPS = {
             }
             this.log(msg + c);
           }
-          
+
         }
       } catch(e) {
         if (ns.consoleDump) ns.dump(e);
       }
     }
   },
-  
+
   handleCrossSiteCookies: function(req, origin, browser) {
-     
+
     var unsafeCookies = this.getUnsafeCookies(browser);
     if (!unsafeCookies) return;
-    
+
     var uri = req.URI;
     var dscheme = uri.scheme;
-    
+
     var oparts = origin && origin.match(/^(https?):\/\/([^\/:]+).*?(\/.*)/);
-    if (!(oparts && /https?/.test(dscheme))) return; 
-    
+    if (!(oparts && /https?/.test(dscheme))) return;
+
     var oscheme = oparts[1];
     if (oscheme == dscheme) return; // we want to check only cross-scheme requests
-    
+
     var dsecure = dscheme == "https";
-    
+
     if (dsecure && !ns.getPref("secureCookies.recycle", false)) return;
-   
+
     var dhost = uri.host;
     var dpath = uri.path;
-    
+
     var ohost = oparts[2];
     var opath = oparts[3];
-    
+
     var ocookieCount = 0, totCount = 0;
     var dcookies = [];
     var c;
-    
+
     for (var k in unsafeCookies) {
       c = unsafeCookies[k];
       if (!c.exists()) {
@@ -245,27 +241,27 @@ const HTTPS = {
         }
       }
     }
-    
+
     if (!totCount) {
       this.setUnsafeCookies(browser, null);
       return;
     }
-    
+
     // We want to "desecurify" cookies only if cross-navigation to unsafe
     // destination originates from a site sharing some secured cookies
 
-    if (ocookieCount == 0 && !dsecure || !dcookies.length) return; 
-    
+    if (ocookieCount == 0 && !dsecure || !dcookies.length) return;
+
     if (dsecure) {
       this.log("Detected cross-site navigation with secured cookies: " + origin + " -> " + uri.spec);
-      
+
     } else {
       this.log("Detected unsafe navigation with NoScript-secured cookies: " + origin + " -> " + uri.spec);
       this.log(uri.prePath + " cannot support secure cookies because it does not use HTTPS. Consider forcing HTTPS for " + uri.host + " in NoScript's Advanced HTTPS options panel.")
     }
-    
+
     var cs = Cc['@mozilla.org/cookieService;1'].getService(Ci.nsICookieService).getCookieString(uri, req);
-      
+
     for each (c in dcookies) {
       c.secure = dsecure;
       c.save();
@@ -284,8 +280,8 @@ const HTTPS = {
     this.log("Sending Cookie for " + dhost + ": " + cs);
     req.setRequestHeader("Cookie", cs, false); // "false" because merge syntax breaks Cookie header
   },
-  
-  
+
+
   cookiesCleanup: function(refCookie) {
     var downgraded = [];
 
@@ -314,13 +310,13 @@ const HTTPS = {
       if (!this.cookiesPerTab) break;
     }
   },
-  
+
   get cookiesPerTab() {
     return ns.getPref("secureCookies.perTab", false);
   },
-  
+
   _globalUnsafeCookies: {},
-  getUnsafeCookies: function(browser) { 
+  getUnsafeCookies: function(browser) {
     return this.cookiesPerTab
       ? browser && ns.getExpando(browser, "unsafeCookies")
       : this._globalUnsafeCookies;
@@ -334,7 +330,7 @@ const HTTPS = {
   _getParent: function(req, w) {
     return  w && w.frameElement || DOM.findBrowserForNode(w || IOUtil.findWindow(req));
   }
-  
+
 };
 
 
@@ -353,7 +349,7 @@ const HTTPS = {
 
 ["secureCookies", "secureCookiesExceptions", "secureCookiesForced",
   "httpsForcedBuiltIn", "httpsForced", "httpsForcedExceptions",
-  "STS.enabled"]
+  ]
     .forEach(function(p) {
   try {
     ns.syncPrefs(ns.prefs, p);

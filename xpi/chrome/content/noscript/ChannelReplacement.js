@@ -16,6 +16,46 @@ CtxCapturingListener.prototype = {
   QueryInterface: xpcom_generateQI([Ci.nsIStreamListener])
 }
 
+function RedirectCallback(channelReplacement) {
+  this.channelReplacement = channelReplacement;
+}
+
+RedirectCallback.prototype = {
+  references: 0,
+  async: false,
+  vetoed: false,
+  _autoPending: false,
+  QueryInterface: xpcom_generateQI([Ci.nsIAsyncVerifyRedirectCallback]),
+  notifySink: function(sink) {
+    let { oldChannel: oldChan, channel: newChan, REDIRECT_FLAGS: flags } = this.channelReplacement;
+    this._notifying = true;
+    this.references++;
+    try {
+      sink.asyncOnChannelRedirect(oldChan, newChan, flags, this);
+    } catch (e) {
+      this.vetoed = true;
+    } finally {
+      this._notifying = false;
+      if (this.references > 0) this.async = true;
+      else if (!this._autoPending) {
+        Thread.asap(this._autoCallback, this);
+        this._autoPending = true;
+      }
+    }
+  },
+  onRedirectVerifyCallback: function(result) {
+    if (!Components.isSuccessCode(result)) this.vetoed = true;
+    if (--this.references === 0 && this.async)
+      this._callback();
+  },
+  _autoCallback: function() {
+    if (!this.async) this._callback();
+  },
+  _callback: function() {
+    if (!this.vetoed) this.channelReplacement.openNew();
+  }
+};
+
 function ChannelReplacement(chan, newURI, newMethod) {
   return this._init(chan, newURI, newMethod);
 }
@@ -38,16 +78,20 @@ ChannelReplacement.prototype = {
   channel: null,
   window: null,
   suspended: false,
-  
+  REDIRECT_FLAGS: Ci.nsIChannelEventSink.REDIRECT_INTERNAL,
+
+  _redirectCallback: null,
+  _ctxCapturingListener: null,
+
   get _unsupportedError() {
     return new Error("Can't replace channels without nsITraceableChannel!");
   },
-  
+
   get _classifierClass() {
     delete this.__proto__._classifierClass;
     return this.__proto__._classifierClass = Cc["@mozilla.org/channelclassifier"];
   },
-  
+
   _autoHeadersRx: /^(?:Host|Cookie|Authorization)$|Cache|^If-/,
   visitHeader: function(key, val) {
     try {
@@ -57,38 +101,44 @@ ChannelReplacement.prototype = {
       dump(e + "\n");
     }
   },
-  
+
   _init: function(chan, newURI, newMethod) {
     if (!(chan instanceof Ci.nsITraceableChannel))
       throw this._unsupportedError;
-  
+
+    let self = this;
+
+    if ("nsIAsyncVerifyRedirectCallback" in Ci) {
+      this._redirectCallback = new RedirectCallback(this);
+    }
+
     newURI = newURI || chan.URI;
-    
+
     var newChan = IOS.newChannelFromURI(newURI);
-    
+
     this.oldChannel = chan;
     this.channel = newChan;
-    
+
     // porting of http://lxr.mozilla.org/mozilla-central/source/netwerk/base/src/nsBaseChannel.cpp#69
-    
+
     var loadFlags = chan.loadFlags;
-    
+
     if (chan.URI.schemeIs("https"))
       loadFlags &= ~chan.INHIBIT_PERSISTENT_CACHING;
-    
-    
+
+
     newChan.loadGroup = chan.loadGroup;
     newChan.notificationCallbacks = chan.notificationCallbacks;
     newChan.loadFlags = loadFlags | newChan.LOAD_REPLACE;
-    
+
     if ("nsIPrivateBrowsingService" in Ci &&
          chan instanceof Ci.nsIPrivateBrowsingService && chan.isChannelPrivate &&
          newChan instanceof Ci.nsIPrivateBrowsingService && !newChan.isChannelPrivate)
       newChan.setPrivate(true);
-    
+
     if (!(newChan instanceof Ci.nsIHttpChannel))
       return this;
-    
+
     // copy headers
     chan.visitRequestHeaders(this);
 
@@ -98,7 +148,7 @@ ChannelReplacement.prototype = {
         if (stream instanceof Ci.nsISeekableStream) {
           stream.seek(stream.NS_SEEK_SET, 0);
         }
-        
+
         try {
           let ctype = chan.getRequestHeader("Content-type");
           let clen = chan.getRequestHeader("Content-length");
@@ -113,7 +163,7 @@ ChannelReplacement.prototype = {
     } else {
       newChan.requestMethod = newMethod;
     }
-    
+
     if (chan.referrer) newChan.referrer = chan.referrer;
     newChan.allowPipelining = chan.allowPipelining;
     newChan.redirectionLimit = chan.redirectionLimit - 1;
@@ -128,21 +178,21 @@ ChannelReplacement.prototype = {
       if ("allowSpdy" in newChan)
         newChan.allowSpdy = chan.allowSpdy;
     }
-    
+
     if (chan instanceof Ci.nsIEncodedChannel && newChan instanceof Ci.nsIEncodedChannel) {
       newChan.applyConversion = chan.applyConversion;
     }
-    
+
     // we can't transfer resume information because we can't access mStartPos and mEntityID :(
     // http://mxr.mozilla.org/mozilla-central/source/netwerk/protocol/http/src/nsHttpChannel.cpp#2826
-    
+
     if ("nsIApplicationCacheChannel" in Ci &&
       chan instanceof Ci.nsIApplicationCacheChannel && newChan instanceof Ci.nsIApplicationCacheChannel) {
       newChan.applicationCache = chan.applicationCache;
       newChan.inheritApplicationCache = chan.inheritApplicationCache;
     }
-    
-    if (chan instanceof Ci.nsIPropertyBag && newChan instanceof Ci.nsIWritablePropertyBag) 
+
+    if (chan instanceof Ci.nsIPropertyBag && newChan instanceof Ci.nsIWritablePropertyBag)
       for (var properties = chan.enumerator, p; properties.hasMoreElements();)
         if ((p = properties.getNext()) instanceof Ci.nsIProperty)
           newChan.setProperty(p.name, p.value);
@@ -150,56 +200,59 @@ ChannelReplacement.prototype = {
     if (chan.loadFlags & chan.LOAD_DOCUMENT_URI) {
       this.window = IOUtil.findWindow(chan);
     }
-    
+
     return this;
   },
-  
+
   _onChannelRedirect: function() {
     var oldChan = this.oldChannel;
     var newChan = this.channel;
-    
+
     if (this.realRedirect) {
       if (oldChan.redirectionLimit === 0) {
         oldChan.cancel(NS_ERROR_REDIRECT_LOOP);
         throw NS_ERROR_REDIRECT_LOOP;
       }
     } else newChan.redirectionLimit += 1;
-    
-    
-    
+
+
+
     // nsHttpHandler::OnChannelRedirect()
 
     const CES = Ci.nsIChannelEventSink;
-    const flags = CES.REDIRECT_INTERNAL;
-    this._callSink(
-      Cc["@mozilla.org/netwerk/global-channel-event-sink;1"].getService(CES),
-      oldChan, newChan, flags);
+
+    this._notifySink(Cc["@mozilla.org/netwerk/global-channel-event-sink;1"].getService(CES));
     var sink;
-    
+
     for (let cess = ns.categoryManager.enumerateCategory("net-channel-event-sinks");
           cess.hasMoreElements();
         ) {
       sink = cess.getNext();
       if (sink instanceof CES)
-        this._callSink(sink, oldChan, newChan, flags);
+        this._notifySink(sink);
     }
     sink = IOUtil.queryNotificationCallbacks(oldChan, CES);
-    if (sink) this._callSink(sink, oldChan, newChan, flags);
-    
+    if (sink) this._notifySink(sink);
+
     // ----------------------------------
-    
+
     newChan.originalURI = oldChan.originalURI;
-    
+
     sink = IOUtil.queryNotificationCallbacks(oldChan, Ci.nsIHttpEventSink);
     if (sink) sink.onRedirect(oldChan, newChan);
   },
-  
-  _callSink: function(sink, oldChan, newChan, flags) {
+
+  _notifySink: function(sink, oldChan, newChan) {
+    const flags = this.REDIRECT_FLAGS;
     try {
       sink instanceof Ci.nsISupports;
       if ("onChannelRedirect" in sink) sink.onChannelRedirect(oldChan, newChan, flags);
       else if ("asyncOnChannelRedirect" in sink) {
-        sink.asyncOnChannelRedirect(oldChan, newChan, flags, this._redirectCallback);
+        if (this._redirectCallback) {
+          this._redirectCallback.notifySink(sink);
+        } else {
+          sink.asyncOnChannelRedirect(oldChan, newChan, flags, null);
+        }
       } else {
         ABE.log("Unexpected: asyncOnChannelRedirect not found, instanceof nsIChannelEventSink = " + (sink instanceof Ci.nsIChannelEventSink) + "\n" +
                 sink + "\n" + (new Error().stack));
@@ -209,7 +262,7 @@ ChannelReplacement.prototype = {
         let oldURL = oldChan.URI.spec;
         try {
           oldChan.URI.spec = newChan.URI.spec;
-          this._callSink(sink, oldChan, newChan, flags);
+          this._notifySink(sink, oldChan, newChan, flags);
         } catch(e1) {
           throw e;
         } finally {
@@ -218,15 +271,8 @@ ChannelReplacement.prototype = {
       } else if (e.message.indexOf("(NS_ERROR_NOT_AVAILABLE)") === -1) throw e;
     }
   },
-  
-  _redirectCallback: ("nsIAsyncVerifyRedirectCallback" in Ci)
-    ? {
-        QueryInterface: xpcom_generateQI([Ci.nsIAsyncVerifyRedirectCallback]),
-        onRedirectVerifyCallback: function(result) {}
-      }
-    : null
-  ,
-  
+
+
   replace: function(realRedirect, callback) {
     let self = this;
     let oldChan = this.oldChannel;
@@ -236,35 +282,37 @@ ChannelReplacement.prototype = {
     }
     ChannelReplacement.runWhenPending(oldChan, function() {
       if (oldChan.status) return; // channel's doom had been already defined
-     
-      let ccl = new CtxCapturingListener(oldChan, self);
+
+      self._ctxCapturingListener = new CtxCapturingListener(oldChan, self);
       self.loadGroup = oldChan.loadGroup;
-     
+
       oldChan.loadGroup = null; // prevents the wheel from stopping spinning
-      
-    
+
+
       if (self._redirectCallback) { // Gecko >= 2
         // this calls asyncAbort, which calls onStartRequest on our listener
-        oldChan.cancel(NS_BINDING_REDIRECTED); 
-        self.suspend(); // believe it or not, this will defer asyncAbort() notifications until resume()
-        callback(self);
-      } else {
-        // legacy (Gecko < 2)
-        self.observeCapture = function(req, ccl) {
-          self.open = function() { self._redirect(ccl) }
+        oldChan.cancel(NS_BINDING_REDIRECTED);
+        if (!self._redirectCallback.vetoed) {
+          self.suspend(); // believe it or not, this will defer asyncAbort() notifications until resume()
           callback(self);
         }
-        oldChan.cancel(NS_BINDING_REDIRECTED); 
+      } else {
+        // legacy (Gecko < 2)
+        self.observeCapture = function() {
+          self.open = self._redirect;
+          callback(self);
+        }
+        oldChan.cancel(NS_BINDING_REDIRECTED);
       }
-      
+
 
     });
   },
-  
-  observeCapture: function(req, ccl) {
-    this._redirect(ccl);
+
+  observeCapture: function() {
+    this._redirect();
   },
-  
+
   _defaultCallback: function(replacement) {
     replacement.open();
   },
@@ -272,7 +320,7 @@ ChannelReplacement.prototype = {
   open: function() {
     this.resume(); // this triggers asyncAbort and the listeners in cascade
   },
-  _redirect: function(ccl) {
+  _redirect: function() {
     let oldChan = this.oldChannel,
       newChan = this.channel,
       overlap;
@@ -282,21 +330,14 @@ ChannelReplacement.prototype = {
         if (ABE.consoleDump && this.window) {
           ABE.log("Opening delayed channel: " + oldChan.name + " - (current loading channel for this window " + (overlap && overlap.name) + ")");
         }
-        
+
         oldChan.loadGroup = this.loadGroup;
-    
+
         this._onChannelRedirect();
-        newChan.asyncOpen(ccl.originalListener, ccl.originalCtx);
-        
-        if (this.window && this.window != IOUtil.findWindow(newChan)) { 
-          // late diverted load, unwanted artifact, abort
-          IOUtil.abort(newChan);
-        } else {
-          // safe browsing hook
-          if (this._classifierClass)
-            this._classifierClass.createInstance(Ci.nsIChannelClassifier).start(newChan, true);
+        if (!this._redirectCallback) {
+          this.openNew();
         }
-        
+
       } catch (e) {
         ABE.log(e);
       }
@@ -305,10 +346,38 @@ ChannelReplacement.prototype = {
         ABE.log("Detected double load on the same window: " + oldChan.name + " - " + (overlap && overlap.name));
       }
     }
-    
+
     this.dispose();
   },
-  
+
+
+  openNew: function() {
+    let newChan = this.channel;
+    let ccl = this._ctxCapturingListener;
+
+    newChan.asyncOpen(ccl.originalListener, ccl.originalCtx);
+
+    if ("nsIRedirectResultListener" in Ci) {
+      // Bug 1153256
+      let vetoHook = IOUtil.queryNotificationCallbacks(
+                      this.oldChannel,
+                      Ci.nsIRedirectResultListener);
+      if (vetoHook) vetoHook.onRedirectResult(true);
+    }
+
+    if (this.window && this.window != IOUtil.findWindow(newChan)) {
+      // late diverted load, unwanted artifact, abort
+      IOUtil.abort(newChan);
+    } else {
+      // safe browsing hook
+      if (this._classifierClass)
+        this._classifierClass.createInstance(Ci.nsIChannelClassifier).start(newChan, true);
+    }
+
+
+
+  },
+
   suspend: function() {
     if (!this.suspended) {
       this.oldChannel.suspend();
@@ -323,7 +392,7 @@ ChannelReplacement.prototype = {
       } catch (e) {}
     }
   },
-  
+
   dispose: function() {
     this.resume();
     if (this.loadGroup) {
@@ -344,7 +413,7 @@ function LoadGroupWrapper(channel, callback) {
 }
 LoadGroupWrapper.prototype = {
   QueryInterface: xpcom_generateQI([Ci.nsILoadGroup]),
-  
+
   get activeCount() {
     return this._inner ? this._inner.activeCount : 0;
   },
@@ -369,7 +438,7 @@ LoadGroupWrapper.prototype = {
   get requests() {
     return this._inner ? this._inner.requests : this._emptyEnum;
   },
-  
+
   addRequest: function(r, ctx) {
     this.detach();
     if (this._inner) try {
@@ -386,7 +455,7 @@ LoadGroupWrapper.prototype = {
     this.detach();
     if (this._inner) this._inner.removeRequest(r, ctx, status);
   },
-  
+
   detach: function() {
     if (this._channel.loadGroup) this._channel.loadGroup = this._inner;
   },

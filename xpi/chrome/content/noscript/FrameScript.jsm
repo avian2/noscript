@@ -8,5 +8,5 @@ function FrameScript(ctx) {
 }
 
 FrameScript.prototype = {
-  
+
 }
