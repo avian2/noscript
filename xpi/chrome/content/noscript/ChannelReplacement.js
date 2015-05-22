@@ -44,7 +44,7 @@ RedirectCallback.prototype = {
     }
   },
   onRedirectVerifyCallback: function(result) {
-    if (!Components.isSuccessCode(result)) this.vetoed = true;
+    if (!Components.isSuccessCode(result)) this.vetoed = this.channelReplacement.realRedirect;
     if (--this.references === 0 && this.async)
       this._callback();
   },

@@ -4,7 +4,7 @@ const ABE = {
   RULES_CHANGED_TOPIC: "abe:rules-changed",
   FLAG_CALLED: 0x01,
   FLAG_CHECKED: 0x02,
-  
+
   SITE_RULESET_LIFETIME: 12 * 60 * 60000, // 12 hours
   maxSiteRulesetSize: 8192,
   maxSiteRulesetTime: 16000,
@@ -12,7 +12,7 @@ const ABE = {
   siteEnabled: false,
   allowRulesetRedir: false,
   skipBrowserRequests: true,
-  
+
   BROWSER_URI: IOS.newURI("chrome://browser/content/", null, null),
   LOAD_BACKGROUND: Ci.nsIChannel.LOAD_BACKGROUND,
   LOAD_INITIAL_DOCUMENT_URI: Ci.nsIChannel.LOAD_INITIAL_DOCUMENT_URI,
@@ -20,16 +20,16 @@ const ABE = {
   localRulesets: [],
   _localMap: null,
   _siteRulesets: null,
-  
+
   init: function(prefParent) {
     const ps = this.prefService = Cc["@mozilla.org/preferences-service;1"]
       .getService(Ci.nsIPrefService).QueryInterface(Ci.nsIPrefBranch);
     ABEStorage.init(ps.getBranch(prefParent+ "ABE.").QueryInterface(Ci.nsIPrefBranch2));
     DoNotTrack.init(ps.getBranch(prefParent+ "doNotTrack.").QueryInterface(Ci.nsIPrefBranch2));
   },
-  
+
   siteMap: {__proto__: null},
-  
+
   get disabledRulesetNames() {
     return this.rulesets.filter(function(rs) { return rs.disabled; })
       .map(function(rs) { return rs.name; }).join(" ");
@@ -40,13 +40,13 @@ const ABE = {
     if (names) try {
       for each (var name in names.split(/\s+/)) {
         rs = this.localMap[name] || this.siteMap[name];
-        if (rs) rs.disabled = true; 
+        if (rs) rs.disabled = true;
       }
     } catch(e) {}
-    
+
     return names;
   },
-  
+
   get localMap() {
     if (this._localMap) return this._localMap;
     this._localMap = {__proto__: null};
@@ -55,7 +55,7 @@ const ABE = {
     }
     return this._localMap;
   },
-  
+
   get siteRulesets() {
     if (this._siteRulesets) return this._siteRulesets;
     this._siteRulesets = [];
@@ -67,11 +67,11 @@ const ABE = {
     this._siteRulesets.sort(function(r1, r2) { return r1.name > r2.name; });
     return this._siteRulesets;
   },
-  
+
   get rulesets() {
     return this.localRulesets.concat(this.siteRulesets);
   },
-  
+
   checkFrameOpt: function(w, chan) {
     try {
       if (!w) {
@@ -88,19 +88,19 @@ const ABE = {
     } catch(e) {}
     return false;
   },
-  
+
   clear: function() {
     this.localRulesets = [];
     this.refresh();
   },
-  
+
   refresh: function() {
     this.siteMap = {__proto__: null};
     this._siteRulesets = null;
   },
-  
+
   createRuleset: function(name, source, timestamp) new ABERuleset(name, source, timestamp || Date.now()),
-  
+
   parse: function(name, source, timestamp) {
     try {
       var rs = typeof name === "string" ? this.createRuleset(name, source, timestamp) : name;
@@ -115,7 +115,7 @@ const ABE = {
     }
     return false;
   },
-  
+
   storeRuleset: function(name, source) {
     if (this.localMap[name] === source) return false;
     ABEStorage.saveRuleset(name, source);
@@ -123,12 +123,12 @@ const ABE = {
     ABEStorage.loadRules();
     return true;
   },
-  
+
   addLocalRuleset: function(rs) {
      this.localRulesets.push(rs);
      this._localMap = null;
   },
-  
+
   putSiteRuleset: function(rs) {
     this.siteMap[rs.name] = rs;
     this._siteRulesets = null;
@@ -136,7 +136,7 @@ const ABE = {
 
   restoreJSONRules: function(data) {
     if (!data.length) return;
-    
+
     var f, change;
     try {
       ABEStorage.clear();
@@ -145,13 +145,13 @@ const ABE = {
       ABE.log("Failed to restore configuration: " + e);
     }
   },
-  
+
   resetDefaults: function() {
     ABEStorage.clear();
     this.clear();
   },
-  
-  
+
+
   checkPolicy: function(origin, destination, type) {
     try {
       return this.checkRequest(new ABERequest(new ABEPolicyChannel(origin, destination, type)));
@@ -160,16 +160,16 @@ const ABE = {
       return false;
     }
   },
-  
+
   checkRequest: function(req) {
     if (!this.enabled)
       return false;
-  
+
     const channel = req.channel;
     const loadFlags = channel.loadFlags;
-    
+
     var browserReq =  req.originURI.schemeIs("chrome") && !req.external;
-    
+
     if (browserReq &&
         (
           this.skipBrowserRequests &&
@@ -180,28 +180,28 @@ const ABE = {
       if (this.consoleDump) this.log("Skipping low-level browser request for " + req.destination);
       return false;
     }
-  
+
     if (this.localRulesets.length == 0 && !this.siteEnabled)
       return null;
-    
+
     if (this.deferIfNeeded(req))
       return false;
-    
+
     if (DoNotTrack.enabled) DoNotTrack.apply(req);
-    
+
     var t;
     if (this.consoleDump) {
       this.log("Checking #" + req.serial + ": " + req.destination + " from " + req.origin + " - " + loadFlags);
       t = Date.now();
     }
-    
+
     try {
       var res = new ABERes(req);
       var rs;
       for each (rs in this.localRulesets) {
         if (this._check(rs, res)) break;
       }
-      
+
       if (!(browserReq || res.fatal) &&
           this.siteEnabled && channel instanceof Ci.nsIHttpChannel &&
           !IOUtil.extractFromChannel(channel, "ABE.preflight", true) &&
@@ -209,17 +209,17 @@ const ABE = {
           req.destinationURI.prePath != req.originURI.prePath &&
           !(this.skipBrowserRequests && req.originURI.schemeIs("chrome") && !req.window) // skip preflight for window-less browser requests
       ) {
-        
+
         var name = this._host2name(req.destinationURI.host);
         if (!(name in this.siteMap)) {
           ABE.log("Preflight for " + req.origin + ", " + req.destination + ", " + loadFlags);
           this.downloadRuleset(name, req.destinationURI);
         }
-        
+
         rs = this.siteMap[name];
         if (rs && Date.now() - rs.timestamp > this.SITE_RULESET_LIFETIME)
           rs = this.downloadRuleset(name, req.destinationURI);
-        
+
         if (rs) this._check(rs, res);
       }
     } finally {
@@ -228,7 +228,7 @@ const ABE = {
     }
     return res.lastRuleset && res;
   },
-  
+
   _check: function(rs, res) {
     var action = rs.check(res.request);
     if (action) {
@@ -247,87 +247,87 @@ const ABE = {
     }
     return false;
   },
-  
+
   deferIfNeeded: function(req) {
     var host = req.destinationURI.host;
     if (!(req.canDoDNS && req.deferredDNS) ||
         DNS.isIP(host) ||
-        DNS.isCached(host) || 
+        DNS.isCached(host) ||
         req.channel.redirectionLimit == 0 || req.channel.status != 0 ||
         req.channel.notificationCallbacks instanceof Ci.nsIObjectLoadingContent // OBJECT elements can't be channel-replaced :(
-        ) 
+        )
       return false;
 
     IOUtil.attachToChannel(req.channel, "ABE.deferred", DUMMY_OBJ);
-    
+
     if (ChannelReplacement.runWhenPending(req.channel, function() {
       try {
-        
+
         if (req.channel.status != 0) return;
-        
+
         if ((req.channel instanceof Ci.nsITransportEventSink)
             && req.isDoc && !(req.subdoc || req.dnsNotified)) try {
           Thread.asap(function() {
             if (!req.dnsNotified) {
               ABE.log("DNS notification for " + req.destination);
-              req.dnsNotified = true; // unexplicable recursions have been reported... 
+              req.dnsNotified = true; // unexplicable recursions have been reported...
               req.channel.onTransportStatus(null, 0x804b0003, 0, 0); // notify STATUS_RESOLVING
             }
           });
         } catch(e) {}
-        
-        req.replace(false, null, function(replacement) {      
+
+        req.replace(false, null, function(replacement) {
           ABE.log(host + " not cached in DNS, deferring ABE checks after DNS resolution for request " + req.serial);
-          
+
           DNS.resolve(host, 0, function(dnsRecord) {
             req.dnsNotified = true; // prevents spurious notifications
             replacement.open();
           });
         });
-        
+
       } catch(e) {
         ABE.log("Deferred ABE checks failed: " + e);
       }
     })) {
       ABE.log(req.serial + " not pending yet, will check later.")
     }
-    
+
     return true;
   },
-  
+
   isDeferred: function(chan) {
     return !!IOUtil.extractFromChannel(chan, "ABE.deferred", true);
   },
-  
+
   hasSiteRulesFor: function(host) {
     return this._host2Name(host) in this.siteMap;
   },
-  
- 
+
+
   _host2name: function(host) {
     return "." + host;
   },
-  
+
   isSubdomain: function(parentHost, childHost) {
     if (parentHost.length > childHost.length) return false;
     parentHost = "." + parentHost;
     childHost = "." + childHost;
     return parentHost == childHost.substring(childHost.length - parentHost.length);
   },
-  
+
   _downloading: {},
   _abeContentTypeRx: /^application\/|\babe\b|^text\/plain$/i,
   downloadRuleset: function(name, uri) {
     var host = uri.host;
-  
+
     var downloading = this._downloading;
 
     if (host in downloading) {
       ABE.log("Already fetching rulesets for " + host);
     }
-    
+
     var ts = Date.now();
-    
+
     var ctrl = {
       _r: true,
       set running(v) { if (!v) delete downloading[host]; return this._r = v; },
@@ -335,32 +335,32 @@ const ABE = {
       startTime: ts,
       maxTime: ABE.maxSiteRulesetTime
     };
-    
+
     var elapsed;
-    
+
     try {
       downloading[host] = true;
-      
+
       this.log("Trying to fetch rules for " + host);
-      
+
       uri = uri.clone();
       uri.scheme = "https";
       uri.path = "/rules.abe";
-        
+
       var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
       xhr.mozBackgroundRequest = true;
       xhr.open("GET", uri.spec, true); // async if we can spin our own event loop
-      
+
       var channel = xhr.channel; // need to cast
       IOUtil.attachToChannel(channel, "ABE.preflight", DUMMY_OBJ);
-      
+
       if (channel instanceof Ci.nsIHttpChannel && !this.allowRulesetRedir)
         channel.redirectionLimit = 0;
-      
+
       if (channel instanceof Ci.nsICachingChannel)
         channel.loadFlags |= channel.LOAD_BYPASS_LOCAL_CACHE_IF_BUSY; // see bug 309424
-      
-      
+
+
       xhr.addEventListener("readystatechange", function() {
         switch(xhr.readyState) {
           case 2:
@@ -386,13 +386,13 @@ const ABE = {
         xhr.abort();
         ctrl.running = false;
       }, false);
-      
-  
+
+
       var send = function() {
         xhr.send(null);
         return Thread.spin(ctrl);
       };
-      
+
       if (send()) {
         var size = 0;
         try {
@@ -402,21 +402,21 @@ const ABE = {
         xhr.abort();
         return false;
       }
- 
+
       if (xhr.channel != channel && xhr.channel) // shouldn't happen, see updateRedirectChain()...
-        this._handleDownloadRedirection(channel, xhr.channel); 
+        this._handleDownloadRedirection(channel, xhr.channel);
 
       if (xhr.status != 200)
         throw new Error("Status: " + xhr.status);
-      
+
       if (!this._abeContentTypeRx.test(xhr.channel.contentType))
         throw new Error("Content-type: " + xhr.channel.contentType);
-      
+
       var source = xhr.responseText || '';
-      
+
       elapsed = Date.now() - ts;
       if (source) ABE.log("Fetched ruleset for "+ host + " in " + elapsed + "ms");
-      
+
       return this.parse(name, source);
     } catch(e) {
       elapsed = elapsed || Date.now() - ts;
@@ -427,11 +427,11 @@ const ABE = {
       else this.siteMap[name].timestamp = ts;
       ctrl.running = false;
     }
-    
+
     return false;
   },
-  
-  
+
+
   isSandboxed: function(channel) {
     return IOUtil.extractFromChannel(channel, ABE.SANDBOX_KEY, true);
   },
@@ -442,16 +442,16 @@ const ABE = {
     docShell.allowJavascript = docShell.allowPlugins =
         docShell.allowMetaRedirects= docShell.allowSubframes = !sandboxed;
   },
-  
-  
+
+
   updateRedirectChain: function(oldChannel, newChannel) {
     this._handleDownloadRedirection(oldChannel, newChannel);
-    
+
     var redirectChain = this.getRedirectChain(oldChannel);
     redirectChain.push(oldChannel.URI);
     IOUtil.attachToChannel(newChannel, "ABE.redirectChain", redirectChain);
   },
-  
+
   getRedirectChain: function(channel) {
     var rc = IOUtil.extractFromChannel(channel, "ABE.redirectChain", true);
     if (!rc) {
@@ -461,20 +461,20 @@ const ABE = {
     };
     return rc;
   },
-  
+
   getOriginalOrigin: function(channel) {
     var rc = this.getRedirectChain(channel);
     return rc.length && rc[0] || null;
   },
-  
+
   _handleDownloadRedirection: function(oldChannel, newChannel) {
     if (!IOUtil.extractFromChannel(oldChannel, "ABE.preflight", true)) return;
-    
+
     var uri = oldChannel.URI;
     var newURI = newChannel.URI;
-        
+
     if (uri.spec != newURI.spec && // redirected, check if it same path and same domain or upper
-        (uri.path != newURI.path || 
+        (uri.path != newURI.path ||
           !(newURI.schemeIs("https") && this.isSubdomain(newURI.host, uri.host))
         )
       ) {
@@ -483,11 +483,11 @@ const ABE = {
       oldChannel.cancel(NS_BINDING_ABORTED);
       throw new Error(msg);
     }
-    
+
     IOUtil.attachToChannel(oldChannel, "ABE.preflight", DUMMY_OBJ);
   },
-  
-  
+
+
   consoleDump: false,
   log: function(msg) {
     if (this.consoleDump) {
@@ -512,18 +512,18 @@ ABERes.prototype = {
 
 var ABEActions = {
   accept: function(req) {
-    return ABERes.DONE;  
+    return ABERes.DONE;
   },
   deny: function(req) {
     IOUtil.abort(req.channel, true);
     return ABERes.FATAL;
   },
-  
+
   _idempotentMethodsRx: /^(?:GET|HEAD|OPTIONS)$/i,
   anonymize: function(req) {
     var channel = req.channel;
     const ANON_KEY = "abe.anonymized";
-    
+
     let cookie;
     try {
       cookie = channel.getRequestHeader("Cookie");
@@ -544,7 +544,7 @@ var ABEActions = {
         && IOUtil.extractFromChannel(channel, ANON_KEY, true)) {// already anonymous
       return ABERes.SKIPPED;
     }
-    
+
     req.replace(
       idempotent ? null : "GET",
       anonURI,
@@ -555,12 +555,13 @@ var ABEActions = {
         IOUtil.attachToChannel(channel, ANON_KEY, DUMMY_OBJ);
         channel.loadFlags |= channel.LOAD_ANONYMOUS;
         replacement.open();
-      }
+      },
+      true
     );
 
     return ABERes.DONE;
   },
-  
+
   sandbox: function(req) {
     ABE.setSandboxed(req.channel);
     if (req.isDoc) {
@@ -588,7 +589,7 @@ function ABERuleset(name, source, timestamp) {
         if (m) throw new Error(msg, parseInt(m[1]), self.name); // TODO: error console reporting w/ line num
         throw new Error(msg)
       };
-      
+
       this._init(new ABEParser(new org.antlr.runtime.CommonTokenStream(
         new ABELexer(new org.antlr.runtime.ANTLRStringStream(source))))
             .ruleset().getTree());
@@ -606,20 +607,20 @@ ABERuleset.prototype = {
   disabled: false,
   rules: [],
   expires: 0,
-  
+
   _init: function(tree) {
     var rule = null,
         predicate = null,
         accumulator = null,
         history  = [],
         rules = [];
-    
+
     walk(tree);
-    
+
     if (!this.errors) this.rules = rules;
     rule = predicate = accumulator = history = null;
-  
-    
+
+
     function walk(tree) {
       var node, t;
       for (var j = 0, l = tree.getChildCount(); j < l; j++) {
@@ -628,17 +629,17 @@ ABERuleset.prototype = {
         walk(node.getTree());
       }
     }
-    
+
     function examine(node) {
       var t = node.getToken();
-      
+
       switch(t.type) {
         case ABEParser.T_SITE:
         case ABEParser.EOF:
           if (rule) commit();
           if (t.type == ABEParser.T_SITE) {
             rule = { destinations: [], predicates: [] };
-            accumulator = rule.destinations;		
+            accumulator = rule.destinations;
           }
           break;
         case ABEParser.T_ACTION:
@@ -668,17 +669,17 @@ ABERuleset.prototype = {
           if (accumulator) accumulator.push(node.getText());
       }
     }
-    
+
     function commit() {
       rules.push(new ABERule(rule.destinations, rule.predicates));
       rule = null;
     }
   },
-  
+
   lastMatch: null,
 	check: function(req) {
     if (this.disabled) return '';
-    
+
 		var res;
 		for each (var r in this.rules) {
 			res = r.check(req);
@@ -699,7 +700,7 @@ function ABERule(destinations, predicates) {
 
 ABERule.prototype = {
   local: false,
-  
+
 	allDestinations: false,
   lastMatch: null,
 	_destinationFilter: function(s) {
@@ -713,7 +714,7 @@ ABERule.prototype = {
 		}
 		return true;
 	},
-	
+
   check: function(req) {
     if (!req.failed &&
         (this.allDestinations ||
@@ -730,7 +731,7 @@ ABERule.prototype = {
     }
     return '';
   },
-  
+
   toString: function() {
     var s = "Site " + this.destinations + "\n" + this.predicates.join("\n");
     this.toString = function() { return s; };
@@ -740,7 +741,7 @@ ABERule.prototype = {
 
 function ABEPredicate(p) {
   this.action = p.actions[0];
- 
+
   switch(this.action) {
     case "Accept":
       this.permissive = true;
@@ -749,12 +750,12 @@ function ABEPredicate(p) {
       this.action = 'Anonymize';
       break;
   }
-  
+
   var methods = p.methods;
-  
+
   if ("inclusions" in p) {
     this.inclusion = true;
-    
+
     // rebuild method string for cosmetic reasons
     let incMethod = "INCLUSION";
     let ii = p.inclusions;
@@ -775,12 +776,12 @@ function ABEPredicate(p) {
     } else {
       this.inclusionTypes = this.ANY_TYPE;
     }
-    
+
     methods = p.methods.concat(incMethod);
   }
-  
+
   this.methods = methods.join(" ");
-  
+
   if (this.methods.length) {
     this.allMethods = false;
     var mm = p.methods.filter(this._methodFilter, this);
@@ -789,7 +790,7 @@ function ABEPredicate(p) {
   this.origins = p.origins.join(" ");
   if (p.origins.length) {
     this.allOrigins = false;
-    if (this.permissive) { // if Accept any, accept browser URLs 
+    if (this.permissive) { // if Accept any, accept browser URLs
       p.origins.push("^(?:chrome|resource):");
     }
     this.origin = new AddressMatcher(p.origins.filter(this._originFilter, this).join(" "));
@@ -798,19 +799,19 @@ function ABEPredicate(p) {
 ABEPredicate.create = function(p) { return new ABEPredicate(p); };
 ABEPredicate.prototype = {
   permissive: false,
-  
+
   subdoc: false,
   self: false,
   sameDomain: false,
   sameBaseDomain: false,
   local: false,
-  
+
   allMethods: true,
   allOrigins: true,
-  
+
   methodRx: null,
   origin: null,
-  
+
   inclusion: false,
   inlcusionTypes: [],
   get ANY_TYPE() {
@@ -827,7 +828,7 @@ ABEPredicate.prototype = {
   get _inclusionTypesMap() {
     delete this.__proto__._inclusionTypesMap;
     const CP = Ci.nsIContentPolicy;
-    return this.__proto__._inclusionTypesMap = 
+    return this.__proto__._inclusionTypesMap =
     {
       "OTHER": CP.TYPE_OTHER,
       "FONT": CP.TYPE_FONT,
@@ -844,7 +845,7 @@ ABEPredicate.prototype = {
       "DTD": CP.TYPE_DTD
     };
   },
- 
+
   _methodFilter: function(m) {
     switch(m) {
       case "SUB":
@@ -854,7 +855,7 @@ ABEPredicate.prototype = {
     }
     return true;
   },
-  
+
   _originFilter: function(s) {
     switch(s) {
       case "SELF":
@@ -870,7 +871,7 @@ ABEPredicate.prototype = {
     }
     return true;
   },
-	
+
   match: function(req) {
     return (this.allMethods || this.subdoc && req.isSubdoc ||
             this.inclusion && req.isOfType(this.inclusionTypes) ||
@@ -884,7 +885,7 @@ ABEPredicate.prototype = {
                   : req.matchSomeOrigins(this.origin)) || this.local && req.localOrigin
 		);
   },
-  
+
   toString: function() {
     var s = this.action;
     if (this.methods) s += " " + this.methods;
@@ -940,7 +941,7 @@ ABERequest.prototype = Lang.memoize({
   deferredDNS: true,
   replaced: false,
   dnsNotified: false,
-  
+
   _init: function(channel) {
     this.serial = ABERequest.serial++;
     this.channel = channel;
@@ -948,17 +949,17 @@ ABERequest.prototype = Lang.memoize({
     this.destinationURI = IOUtil.unwrapURL(channel.URI);
     this.destination = this.destinationURI.spec;
     this.destinationDomain = this.destinationURI.host;
-    
+
     this.early = channel instanceof ABEPolicyChannel;
     this.isDoc = !!(channel.loadFlags & channel.LOAD_DOCUMENT_URI);
-    
+
     if (this.isDoc) {
       var w = this.window;
       if (w) try {
         w.__loadingChannel__ = channel;
       } catch (e) {}
     }
-    
+
     var ou = ABERequest.getOrigin(channel);
     if (ou) {
       this.originURI = ou;
@@ -969,53 +970,53 @@ ABERequest.prototype = Lang.memoize({
       else {
         let ph = PolicyState.extract(channel);
         ou = ph && ph.requestOrigin ||
-            ((IOUtil.unwrapURL(channel.originalURI).spec != this.destination) 
-              ? channel.originalURI 
+            ((IOUtil.unwrapURL(channel.originalURI).spec != this.destination)
+              ? channel.originalURI
               : IOUtil.extractInternalReferrer(channel)
             ) || null;
       }
-      
+
       if (!ou) {
         if (channel instanceof Ci.nsIHttpChannelInternal) {
           ou = channel.documentURI;
           if (!ou || IOUtil.unwrapURL(ou).spec === this.destination) ou = null;
         }
       }
-      
+
       if (this.isDoc && ou && (ou.schemeIs("javascript") || ou.schemeIs("data"))) {
         ou = this.traceBack;
         if (ou) ou = IOS.newURI(ou, null, null);
       }
-      
+
       ou = ou ? IOUtil.unwrapURL(ou) : ABE.BROWSER_URI;
-      
+
       this.origin = ou.spec;
-    
+
       ABERequest.storeOrigin(channel, this.originURI = ou);
     }
   },
-   
-  replace: function(newMethod, newURI, callback) {
+
+  replace: function(newMethod, newURI, callback, forceInternal) {
     new ChannelReplacement(this.channel, newURI, newMethod)
-        .replace(newMethod || newURI, callback);
-    return true; 
+        .replace(!forceInternal && (newMethod || newURI), callback);
+    return true;
   },
-  
+
   isBrowserURI: function(uri) {
     return uri.schemeIs("chrome") || uri.schemeIs("resource") || uri.spec === "about:newtab";
   },
-  
+
   isLocal: function(uri, all) {
     return DNS.isLocalURI(uri, all);
   },
-  
+
   isOfType: function(types) {
     if (!types) return false;
     return (typeof types === "number")
       ? this.type === types
       : types.indexOf(this.type) !== -1;
   },
-  
+
   _checkLocalOrigin: function(uri) {
     try {
       return !this.failed && uri && (this.isBrowserURI(uri) || this.isLocal(uri, true)); // we cache external origins to mitigate DNS rebinding
@@ -1031,41 +1032,41 @@ ABERequest.prototype = Lang.memoize({
       return false;
     }
   },
-  
+
   _checkSelf: function(originURI) {
     return originURI && (this.isBrowserURI(originURI) || originURI.prePath == this.destinationURI.prePath);
   },
-  
+
   _checkSameDomain: function(originURI) {
     try {
       return originURI && this.isBrowserURI(originURI) || originURI.host == this.destinationDomain;
     } catch(e) {}
     return false;
   },
-  
+
   _checkSameBaseDomain: function(originURI) {
     try {
       return originURI && this.isBrowserURI(originURI) || IOUtil.TLDService.getBaseDomainFromHost(originURI.host) == this.destinationBaseDomain;
     } catch(e) {}
     return false;
   },
-  
+
   matchAllOrigins: function(matcher) {
     var canDoDNS = this.canDoDNS;
-    return (canDoDNS && matcher.netMatching) 
+    return (canDoDNS && matcher.netMatching)
       ? this.redirectChain.every(function(uri) matcher.testURI(uri, canDoDNS, true))
       : this.redirectChain.every(matcher.testURI, matcher)
       ;
   },
-  
+
   matchSomeOrigins: function(matcher) {
     var canDoDNS = this.canDoDNS;
-    return (canDoDNS && matcher.netMatching) 
+    return (canDoDNS && matcher.netMatching)
       ? this.redirectChain.some(function(uri) matcher.testURI(uri, canDoDNS, false))
       : this.redirectChain.some(matcher.testURI, matcher)
       ;
   },
-  
+
   toString: function() {
     var s = "{" + this.method + " " + this.destination + " <<< " +
       this.redirectChain.reverse().map(function(uri) { return uri.spec; })
@@ -1110,14 +1111,14 @@ ABERequest.prototype = Lang.memoize({
   isSameBaseDomain: function() {
     return this.isSameDomain || this.redirectChain.every(this._checkSameBaseDomain, this);
   },
-  
+
   destinationBaseDomain: function() {
     try {
       return IOUtil.TLDService.getBaseDomainFromHost(this.destinationDomain);
     } catch(e) {}
     return this.destinationDomain;
   },
-  
+
   isSubdoc: function() {
     if (this.isDoc) {
       var w = this.window;
@@ -1129,11 +1130,11 @@ ABERequest.prototype = Lang.memoize({
   redirectChain: function() {
     return ABE.getRedirectChain(this.channel);
   },
-  
+
   window: function() {
     return IOUtil.findWindow(this.channel);
   },
-  
+
   type: function() {
     try {
       return this.early ? this.channel.type : PolicyState.extract(this.channel).contentType;
@@ -1142,7 +1143,7 @@ ABERequest.prototype = Lang.memoize({
     }
     return Ci.nsIContentPolicy.TYPE_OTHER;
   }
-  
+
 }
 ); // end memoize
 
@@ -1188,7 +1189,7 @@ var ABEStorage = {
         }
     }
   },
-    
+
   get _rulesetPrefs() this.prefs.getChildList("rulesets", {}),
   clear: function() {
     const prefs = this.prefs;
@@ -1203,12 +1204,12 @@ var ABEStorage = {
       }
     }
   },
-  
+
   loadRules: function() {
     this._updating = false;
     if (!this._dirty) return;
     this._dirty = false;
-        
+
     const keys = this._rulesetPrefs;
     keys.sort();
     const prefs = this.prefs;
@@ -1221,18 +1222,18 @@ var ABEStorage = {
     ABE.disabledRulesetNames = disabled;
     OS.notifyObservers(ABE, ABE.RULES_CHANGED_TOPIC, null);
   },
-  
+
   saveRuleset: function(name, source) {
     var str = Cc["@mozilla.org/supports-string;1"]
       .createInstance(Ci.nsISupportsString);
     str.data = source;
     this.prefs.setComplexValue("rulesets." + name, Ci.nsISupportsString, str);
   },
-  
+
   persist: function() {
     ABE.prefService.savePrefFile(null);
   },
-   
+
   _migrateLegacyFiles: function() {
     var ret = 0;
     try {
@@ -1240,11 +1241,11 @@ var ABEStorage = {
         .getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
       dir.append("ABE");
       dir.append("rules");
-      
+
       if (dir.exists()) {
-      
+
         dump("Migrating legacy ABE ruleset files... ")
-        
+
         var entries = dir.directoryEntries;
         while(entries.hasMoreElements()) {
           let f = entries.getNext();
@@ -1288,11 +1289,11 @@ var OriginTracer = {
     }
     return null;
   },
-  
+
   traceBackHistory: function(sh, window, breadCrumbs) {
     var wantsBreadCrumbs = !breadCrumbs;
     breadCrumbs = breadCrumbs || [window.document.documentURI];
-    
+
     var he;
     var uri = null;
     var site = '';
@@ -1302,9 +1303,9 @@ var OriginTracer = {
        if (he.isSubFrame && j > 0) {
          uri = this.detectBackFrame(sh.getEntryAtIndex(j - 1), h,
            DOM.getDocShellForWindow(window)
-         );  
+         );
        } else {
-        // not a subframe navigation 
+        // not a subframe navigation
         if (window == window.top) {
           uri = he.URI.spec; // top frame, return history entry
         } else {
@@ -1322,7 +1323,7 @@ var OriginTracer = {
     }
     return wantsBreadCrumbs ? breadCrumbs : site;
   },
-  
+
   traceBack: function(req, breadCrumbs) {
     var res = '';
         try {
@@ -1332,12 +1333,12 @@ var OriginTracer = {
         var webNav = window.getInterface(Ci.nsIWebNavigation);
         var current = webNav.currentURI;
         var isSameURI = current && current.equals(req.destinationURI);
-        if (isSameURI && (req.channel.loadFlags & req.channel.VALIDATE_ALWAYS)) 
+        if (isSameURI && (req.channel.loadFlags & req.channel.VALIDATE_ALWAYS))
           return req.destination; // RELOAD
- 
+
         const sh = webNav.sessionHistory;
-        res = sh ? this.traceBackHistory(sh, window, breadCrumbs || null) 
-                  : (!isSameURI && current) 
+        res = sh ? this.traceBackHistory(sh, window, breadCrumbs || null)
+                  : (!isSameURI && current)
                     ? req.destination
                     : '';
        if (res == "about:blank") {
@@ -1382,7 +1383,7 @@ var DoNotTrack = {
 
   apply: function(/* ABEReq */ req) {
     let url = req.destination;
-      
+
     try {
       if (
           (this.exceptions && this.exceptions.test(url) ||
@@ -1393,17 +1394,17 @@ var DoNotTrack = {
            // TODO: find a way to check whether this request is gonna be WWW-authenticated
         )
         return;
-       
+
       let channel = req.channel;
       channel.setRequestHeader("DNT", "1", false);
-      
+
       // reorder headers to mirror Firefox 4's behavior
       let conn = channel.getRequestHeader("Connection");
       channel.setRequestHeader("Connection", "", false);
       channel.setRequestHeader("Connection", conn, false);
     } catch(e) {}
   },
-  
+
   getDOMPatch: function(docShell) {
     try {
       if (docShell.document.defaultView.navigator.doNotTrack !== "yes" &&
@@ -1420,7 +1421,7 @@ const WAN = {
   ip: null,
   ipMatcher: null,
   fingerprint: '',
-  findMaxInterval: 86400000, // 1 day 
+  findMaxInterval: 86400000, // 1 day
   checkInterval: 14400000, // 4 hours
   fingerInterval: 900000, // 1/4 hour
   checkURL: "https://secure.informaction.com/ipecho/",
@@ -1433,15 +1434,15 @@ const WAN = {
   fingerprintUA: "Mozilla/5.0 (ABE, https://noscript.net/abe/wan)",
   fingerprintHeader: "X-ABE-Fingerprint",
   QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
-  
+
   log: function(msg) {
     var cs = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
     return (this.log = function(msg) {
       if (this.logging) cs.logStringMessage("[ABE WAN] " + msg);
     })(msg);
-    
+
   },
-  
+
   _enabled: false,
   _timer: null,
   _observing: false,
@@ -1469,10 +1470,10 @@ const WAN = {
     return this._enabled = b;
   },
   _observingHTTP: false,
-  
+
   observe: function(subject, topic, data) {
     if (!this.enabled) return;
-    
+
     switch(topic) {
       case "wake_notification":
         if (!this._observingHTTP) OS.addObserver(this, "http-on-examine-response", true);
@@ -1490,21 +1491,21 @@ const WAN = {
 
     this._periodic(true);
   },
-  
+
   _periodic: function(forceFind) {
     if (forceFind) this.lastFound = 0;
-    
+
     var t = Date.now();
     if (forceFind ||
         t - this.lastFound > this.findMaxInterval ||
-        t - this.lastCheck > this.checkInterval) {  
+        t - this.lastCheck > this.checkInterval) {
       this.findIP(this._findCallback);
     } else if (this.fingerprint) {
       this._takeFingerprint(this.ip, this._fingerprintCallback);
     }
     this.lastCheck = t;
   },
-  
+
   _findCallback: function(ip) {
     WAN._takeFingerprint(ip);
   },
@@ -1514,7 +1515,7 @@ const WAN = {
       if (ip == WAN.ip) WAN._periodic(true);
     }
   },
-  
+
   _takeFingerprint: function(ip, callback) {
     if (!ip) {
       this.log("Can't fingerprint a null IP");
@@ -1540,14 +1541,14 @@ const WAN = {
             .replace(/\d/g, '').replace(/\b[a-f]+\b/gi, ''); // remove decimal and hex noise
         } catch(e) {
           self.log(e);
-        }   
+        }
 
         if (self.fingerprintLogging)
           self.log("Fingerprint for " + url + " = " + fingerprint);
-        
+
         if (fingerprint && /^\s*Off\s*/i.test(xhr.getResponseHeader(self.fingerprintHeader)))
           fingerprint = '';
-        
+
         if (callback) callback(fingerprint, ip);
         self.fingerprint = fingerprint;
       }
@@ -1555,7 +1556,7 @@ const WAN = {
     xhr.send(null);
 
   },
-    
+
   _createAnonXHR: function(url, noproxy) {
     var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
     xhr.mozBackgroundRequest = true;
@@ -1573,7 +1574,7 @@ const WAN = {
     } else xhr = null;
     return xhr;
   },
-  
+
   _callbacks: null,
   _finding: false,
   findIP: function(callback) {
@@ -1610,7 +1611,7 @@ const WAN = {
       if (!sent) this._findIPDone(null);
     }
   },
-  
+
   _findIPDone: function(ip) {
     let ipMatcher = AddressMatcher.create(ip);
     if (!ipMatcher) ip = null;
@@ -1623,26 +1624,26 @@ const WAN = {
       } catch(e) {
         this.log(e);
       }
-      
+
       if (ip != this.ip) {
         OS.notifyObservers(this, this.IP_CHANGE_TOPIC, ip);
       }
-      
+
       this.ip = ip;
       this.ipMatcher = ipMatcher;
       this.lastFound = Date.now();
-      
+
        this.log("Detected WAN IP " + ip);
     } else {
       this.lastFound = 0;
       this.fingerprint = '';
       this.log("WAN IP not detected!");
     }
-   
+
     this._finding = false;
   },
-  
-  
+
+
   _requestHeaders: function(ch) {
     var hh = [];
     if (ch instanceof Ci.nsIHttpChannel)
