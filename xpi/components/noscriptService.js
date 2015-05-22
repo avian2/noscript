@@ -1,10 +1,4 @@
 // const TIME0 = Date.now();
-
-const Ci = Components.interfaces;
-const Cc = Components.classes;
-const Cu = Components.utils;
-const Cr = Components.results;
-
 const VERSION = "@VERSION@";
 const SERVICE_CTRID = "@maone.net/noscript-service;1";
 const SERVICE_ID = "{31aec909-8e86-4397-9380-63a59e0c5ff5}";
@@ -13,10 +7,8 @@ const EXTENSION_ID = "{73a6fe31-595d-460b-a920-fcc0f8843232}";
 // categories which this component is registered in
 const SERVICE_CATS = ["app-startup"];
 
-const IOS = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-const OS = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
-const LOADER = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
-LOADER.loadSubScript("chrome://noscript/content/loader.js");
+Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader)
+  .loadSubScript("chrome://noscript/content/loader.js");
 
 const SERVICE_CONSTRUCTOR = function() {
 
@@ -6157,7 +6149,7 @@ var ns = {
 
   isBrowserOrigin: function(origin) /^(?:\[System Principal\]$|moz-safe-about:)/.test(origin),
 
-  mustBlockJS(window, site, blocker) {
+  mustBlockJS: function(window, site, blocker) {
     let document = window.document;
     let origin = this.getPrincipalOrigin(document);
     if (this.isBrowserOrigin(origin)) return false;
@@ -6213,7 +6205,11 @@ var ns = {
   },
 
   beforeScripting: function(subj, url) { // early stub
-    INCLUDE("ScriptlessBGThumbs");
+    try {
+      INCLUDE("ScriptlessBGThumbs");
+    } catch(e) {
+      Cu.reportError(e);
+    }
     if (!this.httpStarted) {
 
       let url = subj.location || subj.documentURI;

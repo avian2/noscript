@@ -4,7 +4,7 @@ IPC.parent = {
   globalMM: null,
   mm: null,
   init: function() {
-    if (! ("@mozilla.org/globalmessagemanager;1" in Cc)) return;
+    if (!("nsIMessageListenerManager" in Ci)) return;
     let globalMM = this.globalMM = Cc["@mozilla.org/globalmessagemanager;1"]
         .getService(Ci.nsIMessageListenerManager)
         .QueryInterface(Ci.nsIMessageBroadcaster)
@@ -16,7 +16,7 @@ IPC.parent = {
         .getService(Ci.nsIMessageListenerManager)
         .QueryInterface(Ci.nsIMessageBroadcaster)
         .QueryInterface(Ci.nsIProcessScriptLoader);
-      mm.loadProcessScript("chrome://noscript/content/childScript.js", true);
+      mm.loadProcessScript("chrome://noscript/content/processScript.js", true);
       mm.addWeakMessageListener("NoScript:mustBlockJS", this);
     }
   },
@@ -27,7 +27,7 @@ IPC.parent = {
       let mm = this.mm;
       if (mm) {
         mm.removeWeakMessageListener("NoScript:mustBlockJS");
-        mm.removeDelayedProcessScript("chrome://noscript/content/childScript.js");
+        mm.removeDelayedProcessScript("chrome://noscript/content/processScript.js");
       }
     }
   },

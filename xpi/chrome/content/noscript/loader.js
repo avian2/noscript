@@ -1,15 +1,12 @@
+const { interfaces: Ci, classes: Cc, utils: Cu, results: Cr } = Components;
+const IOS = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+const OS = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
+
+
+const LOADER = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
+
 const _INCLUDED = {};
 function IS_INCLUDED(name) name in _INCLUDED;
-
-if (!("LOADER" in this)) {
-  var { interfaces: Ci, classes: Cc, utils: Cu } = Components;
-  var LOADER = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
-  var ns = {};
-}
-
-
-
-
 
 function INCLUDE(name) {
   if (arguments.length > 1)
@@ -36,7 +33,7 @@ function LAZY_INCLUDE(name) {
   else if (!(name in this)) {
     __defineGetter__(name, function() {
       delete this[name];
-      if (ns.consoleDump) ns.dump(name + " kickstarted at " + (new Error().stack));
+      // dump(name + " kickstarted at " + (new Error().stack));
       INCLUDE(name);
       return this[name];
     });

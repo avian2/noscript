@@ -1,19 +1,13 @@
 
 const { interfaces: Ci, classes: Cc, utils: Cu } = Components;
-const ns = {};
-
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-var OS = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
+const ns = {};
+const OS = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
 
-const LOADER = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);
-//LOADER.loadSubScript("chrome://noscript/content/loader.js");
-// What's going on? Why do I need all this dance to export globals in subscripts?
-this.Cu = Cu;
-this.Cc = Cc;
-this.Ci = Ci;
-this.ns = ns;
-LOADER.loadSubScript("chrome://noscript/content/WinScript.js", this);
+Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader)
+  .loadSubScript("chrome://noscript/content/loader.js");
+LAZY_INCLUDE("WinScript");
 
 var IPC = {};
 IPC.child = {
@@ -59,7 +53,4 @@ IPC.child = {
     }
   }
 };
-
-
-//INCLUDE("WinScript");
 IPC.child.init();
