@@ -73,7 +73,8 @@ const HTTPS = {
   mustForce: function(uri) {
     return uri.schemeIs("http") &&
         (this.httpsForced && this.httpsForced.test(uri.spec) ||
-         this.httpsForcedBuiltIn && this.httpsForcedBuiltIn.test(uri.spec));
+         this.httpsForcedBuiltIn && this.httpsForcedBuiltIn.test(uri.spec)) &&
+         !(this.httpsForcedExceptions && this.httpsForcedExceptions.test(uri.spec));
   },
 
   log: function(msg) {

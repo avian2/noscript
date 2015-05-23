@@ -205,8 +205,8 @@ ChannelReplacement.prototype = {
   },
 
   _onChannelRedirect: function() {
-    var oldChan = this.oldChannel;
-    var newChan = this.channel;
+    const oldChan = this.oldChannel;
+    const newChan = this.channel;
 
     if (this.realRedirect) {
       if (oldChan.redirectionLimit === 0) {
@@ -242,8 +242,10 @@ ChannelReplacement.prototype = {
     if (sink) sink.onRedirect(oldChan, newChan);
   },
 
-  _notifySink: function(sink, oldChan, newChan) {
+  _notifySink: function(sink) {
     const flags = this.REDIRECT_FLAGS;
+    const oldChan = this.oldChannel;
+    const newChan = this.channel;
     try {
       sink instanceof Ci.nsISupports;
       if ("onChannelRedirect" in sink) sink.onChannelRedirect(oldChan, newChan, flags);
@@ -262,7 +264,7 @@ ChannelReplacement.prototype = {
         let oldURL = oldChan.URI.spec;
         try {
           oldChan.URI.spec = newChan.URI.spec;
-          this._notifySink(sink, oldChan, newChan, flags);
+          this._notifySink(sink);
         } catch(e1) {
           throw e;
         } finally {
