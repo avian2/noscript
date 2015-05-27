@@ -16,6 +16,7 @@ const HTTPS = {
     if ("redirectTo" in channel) try {
       HTTPS.log("redirectTo " + uri.spec);
       channel.redirectTo(uri);
+      return true;
     } catch(e) {
       HTTPS.log(e);
     }

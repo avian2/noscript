@@ -253,8 +253,8 @@ const ABE = {
     if (!(req.canDoDNS && req.deferredDNS) ||
         DNS.isIP(host) ||
         DNS.isCached(host) ||
-        req.channel.redirectionLimit == 0 || req.channel.status != 0 ||
-        req.channel.notificationCallbacks instanceof Ci.nsIObjectLoadingContent // OBJECT elements can't be channel-replaced :(
+        req.channel.redirectionLimit === 0 || req.channel.status !== 0 ||
+        !ChannelReplacement.useRedirectTo && req.channel.notificationCallbacks instanceof Ci.nsIObjectLoadingContent // OBJECT elements can't be channel-replaced :(
         )
       return false;
 
