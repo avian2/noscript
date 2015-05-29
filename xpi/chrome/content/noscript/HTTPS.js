@@ -13,13 +13,7 @@ const HTTPS = {
   replaceChannel: function(channel) {
     var uri = channel.URI.clone();
     uri.scheme = "https";
-    if ("redirectTo" in channel) try {
-      HTTPS.log("redirectTo " + uri.spec);
-      channel.redirectTo(uri);
-      return true;
-    } catch(e) {
-      HTTPS.log(e);
-    }
+
     ChannelReplacement.runWhenPending(channel, function() {
 
       new ChannelReplacement(channel, uri).replace(true);

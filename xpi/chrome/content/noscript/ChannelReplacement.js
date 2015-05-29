@@ -29,7 +29,32 @@ if ("REFERRER_POLICY_ORIGIN" in Ci.nsIHttpChannel) {
         chan.requestMethod = this.newMethod;
         realRedirect = true;
       }
-      if (!realRedirect) chan.redirectionLimit += 1;
+
+      let forceRedirect = !realRedirect;
+      if (forceRedirect) {
+        chan.redirectionLimit += 1;
+      } else {
+        let loadInfo = chan.loadInfo;
+        if (loadInfo) {
+          let type = loadInfo.contentPolicyType;
+          forceRedirect = type === 11 || type === 12;
+        }
+      }
+
+      if (forceRedirect) {
+        let ncb = chan.notificationCallbacks;
+        if (ncb) try {
+          let ces = ncb.getInterface(Ci.nsIChannelEventSink);
+          if (ces) {
+            INCLUDE("ForcedRedirectionCallback");
+            chan.notificationCallbacks = new NCBWrapper(ncb, new CESDelegate(ces));
+          }
+        } catch (e) {
+          ns.log(e);
+        }
+      }
+
+
       chan.redirectTo(this.newURI);
       chan.suspend();
       if (typeof callback === "function") callback(this);
