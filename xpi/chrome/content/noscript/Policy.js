@@ -557,11 +557,6 @@ const MainContentPolicy = {
                       return this.reject("Drop XSS", arguments);
                     }            
                   }
-                } else if (
-                  !(aContext.ownerDocument.URL === originURL // Addon-SDK panels
-                     || this.isJSEnabled(originSite = this.getSite(originURL)))
-                  ) {
-                  return this.reject("top level data: URI from forbidden origin", arguments);
                 }
               }
               return CP_OK; // JavaScript execution policies will take care of this
