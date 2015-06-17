@@ -5493,6 +5493,8 @@ var ns = {
 
     const ph = PolicyState.detach(oldChan);
 
+    var browser;
+
     if (ph) {
       // 0: aContentType, 1: aContentLocation, 2: aRequestOrigin, 3: aContext, 4: aMimeTypeGuess, 5: aInternalCall
 
@@ -5508,13 +5510,17 @@ var ns = {
         ph.mimeType = newChan.contentType || oldChan.contentType || ph.mimeType;
       } catch(e) {}
 
-      var browser, win;
+
+      let win;
+      try {
+        win = IOUtil.findWindow(newChan);
+      } catch (e) {}
 
       switch(type) {
         case 2: case 9: // script redirection? cache site for menu
           try {
             var site = this.getSite(uri.spec);
-            win = IOUtil.findWindow(newChan) || ctx && ((ctx instanceof Ci.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView);
+            if (!win) win = ctx && ((ctx instanceof Ci.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView);
             browser = win && DOM.findBrowserForNode(win);
             if (browser) {
               this.getRedirCache(browser, win.top.document.documentURI)

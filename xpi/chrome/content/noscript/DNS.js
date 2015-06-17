@@ -329,7 +329,10 @@ var DNS = {
   },
 
   _localIP6Rx: /^(?:::1?$|f(?:[cd]|e[c-f])[0-9a-f]*:)/i,
-  get _localIPMatcher() new AddressMatcher('0. 127. 10. 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 255.255.255.255'),
+  get _localIPMatcher() {
+    delete this._localIPMatcher;
+    return this._localIPMatcher = new AddressMatcher('0. 127. 10. 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 255.255.255.255');
+  },
   isLocalIP: function(addr) {
     // see https://bug354493.bugzilla.mozilla.org/attachment.cgi?id=329492 for a more verbose but incomplete (missing IPv6 ULA) implementation
     // Relevant RFCs linked at http://en.wikipedia.org/wiki/Private_network

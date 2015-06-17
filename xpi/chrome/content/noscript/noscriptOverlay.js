@@ -184,7 +184,7 @@ return noscriptUtil.service ? {
       return;
     }
 
-    if (ev.button === 1) {
+    if (ev.button === 1 && this.ns.getPref('middlemouse_temp_allow_main_site')) {
       this.allowPage();
       ev.preventDefault();
       return;

@@ -10,7 +10,7 @@ const Lang = {
   _memoizeMember: function(obj, prop, func) {
     obj.__defineGetter__(prop, function() {
       var r = func.apply(this);
-      this.__defineGetter__(prop, function() { return r; })
+      this.__defineGetter__(prop, function() { return r; });
 			return r;
 		});
   }
