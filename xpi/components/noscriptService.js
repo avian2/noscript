@@ -2019,9 +2019,8 @@ var ns = {
 
 
   onVersionChanged: function(prev) {
-    if (!this.getPref("allowWhitelistUpdates")) {
-      return;
-    }
+    let removalsOnly = !this.getPref("allowWhitelistUpdates");
+
     // update hacks
     var versions = {
       "2.1.1.2rc6": {
@@ -2054,7 +2053,10 @@ var ns = {
       },
       "2.6.9.22rc1": {
         "prototypejs.org": "bootstrapcdn.com" // Used by many sites, mostly for styles and fonts
-      }
+      },
+      "@VERSION@": {
+        "!vjs.zendcdn.net": "" // removal
+      },
     };
 
     for (let v in versions) {
@@ -2065,8 +2067,10 @@ var ns = {
           let replace = site[0] === "!";
           if (replace) site = site.substring(1);
           if (this.isJSEnabled(site)) {
-            this.jsPolicySites.remove(newSite, true, false);
-            this.setJSEnabled(newSite, true);
+            if (newSite[0]) {
+              this.jsPolicySites.remove(newSite, true, false);
+              this.setJSEnabled(newSite, true);
+            }
             if (replace) this.jsPolicySites.remove(site, true, false);
           }
         }
