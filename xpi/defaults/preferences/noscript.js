@@ -253,7 +253,7 @@ pref("noscript.sanitizePaste", true);
 pref("noscript.surrogate.enabled", true);
 pref("noscript.surrogate.debug", false);
 pref("noscript.surrogate.sandbox", true);
-pref("noscript.surrogate.2mdn.replacement", "if('Proxy' in window){let _f=function(){};google={};Object.defineProperty(google,'__noSuchMethod__',{configurable:true,enumerable:false,value:_f});let ima={};ima.AdsManagerLoadedEvent=ima.AdErrorEvent={Type:new Proxy({},{get:function(){return 0}}),};ima.AdsLoader=ima.AdsRequest=ima.AdDisplayContainer=function(){return new Proxy({},{get:function(){return _f}});};google.ima=ima;}");
+pref("noscript.surrogate.2mdn.replacement", "if('Proxy' in window){let _f=function(){}; google={}; Object.defineProperty(google,'__noSuchMethod__',{configurable:true,enumerable:false,value:_f});let ima={};ima.AdsManagerLoadedEvent=ima.AdErrorEvent={Type:new Proxy({},{get:function(){return 0}}),};ima.settings=new Proxy({},{get:function(){return _f}});ima.AdsLoader=ima.AdsRequest=ima.AdDisplayContainer=function(){return new Proxy({},{get:function(){return _f}});};google.ima=ima;}");
 pref("noscript.surrogate.2mdn.sources", ".2mdn.net");
 pref("noscript.surrogate.360Haven.sources", "@www.360haven.com");
 pref("noscript.surrogate.360Haven.replacement", "Object.defineProperty(window,'adblock',{get:function() false,set: function() false});Object.defineProperty(window,'google_ad_client',{get: function () { return {__noSuchMethod__: function() this}}});Object.defineProperty(window.HTMLBodyElement.prototype,'innerHTML',{get:function() ''});");
@@ -344,7 +344,7 @@ pref("noscript.surrogate.picsee.sources", "!^https?://picsee\\.net/2\\d.*\\.html
 pref("noscript.surrogate.picsee.replacement", "location.replace(location.href.replace(/(\\/2\\d{3}[^\\/]*)(.*)\\.html/, '/upload$1/$2'));");
 pref("noscript.surrogate.owasp_antiClickjack.sources", "!^https?://");
 pref("noscript.surrogate.owasp_antiClickjack.replacement", "if(window.top===window&&document.body.offsetWidth===0)['body','documentElement'].forEach(function(e){document[e].style.setProperty('display','unset','important')})");
-pref("noscript.surrogate.gigya.replacement", "gigya={__noSuchMethod__:function(){}, isGigya:true, __initialized:true};gigya.socialize={__noSuchMethod__:function(){}, addEventHandlers:function(){}}");
+pref("noscript.surrogate.gigya.replacement", "gigya={__noSuchMethod__:function(){}, isGigya:true, __initialized:true};gigya.socialize={__noSuchMethod__:function(){}, addEventHandlers:function(){}};gigya.accounts={__noSuchMethod__:function(){}}");
 pref("noscript.surrogate.gigya.sources", ".gigya.com");
 pref("noscript.surrogate.stripe.replacement", "Stripe={__noSuchMethod__:function(){}}");
 pref("noscript.surrogate.stripe.sources", "js.stripe.com");

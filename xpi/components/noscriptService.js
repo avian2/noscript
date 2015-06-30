@@ -2054,7 +2054,7 @@ var ns = {
       "2.6.9.22rc1": {
         "prototypejs.org": "bootstrapcdn.com" // Used by many sites, mostly for styles and fonts
       },
-      "@VERSION@": {
+      "2.6.9.27": {
         "!vjs.zendcdn.net": "" // removal
       },
     };
