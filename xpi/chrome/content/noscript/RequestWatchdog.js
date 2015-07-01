@@ -1580,7 +1580,7 @@ var InjectionChecker = {
 
   get invalidCharsRx() {
     delete this.invalidCharsRx;
-    return this.invalidCharsRx = new RegExp("^[^\"'/]*[" + this._createInvalidRanges() + "]");
+    return this.invalidCharsRx = new RegExp("^[^\"'`/<]*[" + this._createInvalidRanges() + "]");
   },
 
   checkJSBreak: function InjectionChecker_checkJSBreak(s) {

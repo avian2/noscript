@@ -2057,7 +2057,7 @@ var ns = {
       "2.6.9.27": {
         "!vjs.zendcdn.net": "" // removal
       },
-      "@VERSION@rc2": {
+      "2.6.9.28rc2": {
         "!googleapis.com": "ajax.googleapis.com" // storage.googleapis.com allows HTML files!
       },
     };
