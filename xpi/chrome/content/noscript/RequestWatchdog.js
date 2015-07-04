@@ -588,8 +588,8 @@ RequestWatchdog.prototype = {
         return;
       }
 
-      if (/^https?:\/\/(?:[^/]+\.)photobucket.com$/.test(originSite) &&
-          /^https?:\/\/(?:[^/]+\.)photobucket.com\/[^<]*$/.test(unescapedSpec) &&
+      if (/^https?:\/\/(?:[^/]+\.)photobucket\.com$/.test(originSite) &&
+          /^https?:\/\/(?:[^/]+\.)photobucket\.com\/[^<]*$/.test(unescapedSpec) &&
           url.scheme === abeReq.originURI.scheme &&
           ns.getBaseDomain(ns.getDomain(url)) === ns.getBaseDomain(ns.getDomain(abeReq.originURI)) &&
           ns.getPref("filterXException.photobucket")) {
@@ -611,7 +611,7 @@ RequestWatchdog.prototype = {
           return;
         }
 
-        if (originSite === "https://twitter.com" && /^https:\/\/.*\.twitter.com$/.test(targetSite)) {
+        if (originSite === "https://twitter.com" && /^https:\/\/.*\.twitter\.com$/.test(targetSite)) {
           return;
         }
 
@@ -742,7 +742,7 @@ RequestWatchdog.prototype = {
       if (origin &&
           (
           /^https?:\/\/(?:[^\/]+.)?facebook\.com\/[\w\.\-\/]+fbml\.php$/.test(originalSpec) && channel.requestMethod == "POST" ||
-          /^https?:\/\/www.facebook.com\/plugins\/serverfbml.php\?/.test(originalSpec) ||
+          /^https?:\/\/www\.facebook\.com\/plugins\/serverfbml.php\?/.test(originalSpec) ||
           /^https?:\/\/api\.connect\.facebook\.com$/.test(originSite)
 
           ) &&
@@ -795,7 +795,7 @@ RequestWatchdog.prototype = {
       } else if (url.ref && trustedOrigin &&
           (/^https?:\/\/api\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")
           || /^https:\/\/tbpl\.mozilla\.org\//.test(origin)  // work-around for hg reftest DOS
-          || /^https:\/\/[^\/]+.googleusercontent\.com\/gadgets\/ifr\?/.test(originalSpec) && ns.getPref("filterXExceptions.ggadgets") // Google gadgets
+          || /^https:\/\/[^\/]+\.googleusercontent\.com\/gadgets\/ifr\?/.test(originalSpec) && ns.getPref("filterXExceptions.ggadgets") // Google gadgets
           )) {
         skipRx = /#[^#]+$/; // remove receiver's hash
       } else if (/^https?:\/\/apps\.facebook\.com\//.test(origin) && ns.getPref("filterXExceptions.fbconnect")) {
@@ -805,7 +805,7 @@ RequestWatchdog.prototype = {
                 ns.getPref("filterXExceptions.yahoo")) {
         skipArr = ['e'];
         if (ns.consoleDump) this.dump(channel, "Yahoo exception");
-      } else if (/^https?:\/\/wpcomwidgets.com\/\?/.test(originalSpec)) {
+      } else if (/^https?:\/\/wpcomwidgets\.com\/\?/.test(originalSpec)) {
         skipArr = ["_data"];
       } else if (/^https:\/\/docs\.google\.com\/picker\?/.test(originalSpec)) {
         skipArr = ["nav", "pp"];
@@ -1427,7 +1427,7 @@ var InjectionChecker = {
     expr = // dotted URL components can lead to false positives, let's remove them
       expr.replace(this._removeDotsRx, this._removeDots)
         .replace(this._arrayAccessRx, '_ARRAY_ACCESS_')
-        .replace(/<([\w:]+)>[^<]+<\/\1>/g, '<$1/>') // reduce XML text nodes
+        .replace(/<([\w:]+)>[^</(="'`]+<\/\1>/g, '<$1/>') // reduce XML text nodes
         .replace(/<!--/g, '') // remove HTML comments preamble (see next line)
         .replace(/(^|[=;.+-])\s*[\[(]+/g, '$1') // remove leading parens and braces
         .replace(this._openIdRx, '_OPENID_SCOPE_=XYZ')
@@ -1580,7 +1580,7 @@ var InjectionChecker = {
 
   get invalidCharsRx() {
     delete this.invalidCharsRx;
-    return this.invalidCharsRx = new RegExp("^[^\"'`/<]*[" + this._createInvalidRanges() + "]");
+    return this.invalidCharsRx = new RegExp("^[^\"'`/<>]*[" + this._createInvalidRanges() + "]");
   },
 
   checkJSBreak: function InjectionChecker_checkJSBreak(s) {

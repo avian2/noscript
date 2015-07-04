@@ -2060,9 +2060,13 @@ var ns = {
       "2.6.9.28rc2": {
         "!googleapis.com": "ajax.googleapis.com" // storage.googleapis.com allows HTML files!
       },
-      "@VERSION@": {
-        "!mootools.net": "",
+      "2.6.9.30rc1": {
+        "!mootools.net": ""
+      },
+      "2.6.9.30rc2": {
+        "!cdnjs.cloudflare.com": "",
         "!prototypejs.org": "",
+        "ajax.googleapis.com": "maps.googleapis.com"
       },
     };
 
