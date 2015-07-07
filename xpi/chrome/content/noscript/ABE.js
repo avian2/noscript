@@ -774,7 +774,7 @@ function ABEPredicate(p) {
       }
       this.inclusionTypes = its;
     } else {
-      this.inclusionTypes = this.ANY_TYPE;
+      this.inclusionTypes = null;
     }
 
     methods = p.methods.concat(incMethod);
@@ -813,18 +813,8 @@ ABEPredicate.prototype = {
   origin: null,
 
   inclusion: false,
-  inlcusionTypes: [],
-  get ANY_TYPE() {
-    delete this.__proto__.ANY_TYPE;
-    var its = [];
-    var map = this._inclusionTypesMap;
-    for (var k in map) {
-      let v = map[k];
-      if (typeof v === "number") its.push(v);
-      else its.push.apply(its, v);
-    }
-    return this.__proto__.ANY_TYPE = its;
-  },
+  inclusionTypes: null,
+
   get _inclusionTypesMap() {
     delete this.__proto__._inclusionTypesMap;
     const CP = Ci.nsIContentPolicy;
@@ -833,7 +823,7 @@ ABEPredicate.prototype = {
       "OTHER": CP.TYPE_OTHER,
       "FONT": CP.TYPE_FONT,
       "SCRIPT": CP.TYPE_SCRIPT,
-      "IMAGE": CP.TYPE_IMAGE,
+      "IMAGE": [CP.TYPE_IMAGE, CP.TYPE_IMAGESET],
       "CSS": CP.TYPE_STYLESHEET,
       "OBJ": [CP.TYPE_OBJECT, CP.TYPE_OBJECT_SUBREQUEST],
       "MEDIA": CP.TYPE_MEDIA,
@@ -1011,7 +1001,7 @@ ABERequest.prototype = Lang.memoize({
   },
 
   isOfType: function(types) {
-    if (!types) return false;
+    if (types === null) return this.type !== Ci.nsIContentPolicy.TYPE_DOCUMENT;
     return (typeof types === "number")
       ? this.type === types
       : types.indexOf(this.type) !== -1;

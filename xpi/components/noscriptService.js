@@ -2068,6 +2068,9 @@ var ns = {
         "!prototypejs.org": "",
         "ajax.googleapis.com": "maps.googleapis.com"
       },
+      "@VERSION@": {
+        "about:blank": "about:pocket-signup about:packet-save"
+      }
     };
 
     for (let v in versions) {
