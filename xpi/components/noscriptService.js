@@ -2068,8 +2068,13 @@ var ns = {
         "!prototypejs.org": "",
         "ajax.googleapis.com": "maps.googleapis.com"
       },
+      "2.6.9.30rc4": {
+        "about:blank": "about:pocket-signup about:pocket-save"
+      },
       "@VERSION@": {
-        "about:blank": "about:pocket-signup about:packet-save"
+        "!about:packet-save": "about:pocket-saved",
+        "!about:pocket-signup": "about:pocket-signup",
+        "google.com": "ajax.googleapis.com maps.googleapis.com"
       }
     };
 
@@ -2077,15 +2082,24 @@ var ns = {
       if (this.versionComparator.compare(prev, v) < 0) {
         let cascading = versions[v];
         for (let site in cascading) {
-          let newSite = cascading[site].split(/\s+/);
+          let newSites = !removalsOnly && cascading[site].split(/\s+/).filter(function(s) {
+            // check whether browser internal URIs are supported
+            if (/^(?:about|chrome|resource):\w/.test(s))
+              try {
+                IOS.newChannel(s, null, null);
+              } catch(e) {
+                return false;
+              }
+            return true;
+          });
           let replace = site[0] === "!";
           if (replace) site = site.substring(1);
           if (this.isJSEnabled(site)) {
-            if (newSite[0]) {
-              this.jsPolicySites.remove(newSite, true, false);
-              this.setJSEnabled(newSite, true);
-            }
             if (replace) this.jsPolicySites.remove(site, true, false);
+            if (!removalsOnly && newSites[0]) {
+              this.jsPolicySites.remove(newSites, true, false);
+              this.setJSEnabled(newSites, true);
+            }
           }
         }
       }
