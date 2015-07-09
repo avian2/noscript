@@ -2060,18 +2060,18 @@ var ns = {
       "2.6.9.28rc2": {
         "!googleapis.com": "ajax.googleapis.com" // storage.googleapis.com allows HTML files!
       },
-      "2.6.9.30rc1": {
+      "@VERSION@rc1": {
         "!mootools.net": ""
       },
-      "2.6.9.30rc2": {
+      "@VERSION@rc2": {
         "!cdnjs.cloudflare.com": "",
         "!prototypejs.org": "",
         "ajax.googleapis.com": "maps.googleapis.com"
       },
-      "2.6.9.30rc4": {
+      "@VERSION@rc4": {
         "about:blank": "about:pocket-signup about:pocket-save"
       },
-      "@VERSION@": {
+      "@VERSION@rc5": {
         "!about:packet-save": "about:pocket-saved",
         "!about:pocket-signup": "about:pocket-signup",
         "google.com": "ajax.googleapis.com maps.googleapis.com"
