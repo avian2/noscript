@@ -1380,7 +1380,7 @@ var InjectionChecker = {
 
   _maybeJSRx: new RegExp(
     // accessor followed by function call or assignment.
-    '(?:(?:\\[[\\s\\S]*\\]|\\.\\D)[\\s\\S]*(?:\\([\\s\\S]*\\)|=[\\s\\S]*\\S)' +
+    '(?:(?:\\[[\\s\\S]*\\]|\\.\\D)[\\s\\S]*(?:\\([\\s\\S]*\\)|`[\\s\\S]+`|=[\\s\\S]*\\S)' +
     // double function call
     '|\\([\\s\\S]*\\([\\s\\S]*\\)' +
     ')|(?:^|\\W)(?:' + IC_EVAL_PATTERN +
@@ -1909,7 +1909,7 @@ var InjectionChecker = {
   },
 
   AttributesChecker: new RegExp(
-    "(?:\\W|^)(?:javascript:(?:[\\s\\S]+[=\\\\\\(\\[\\.<]|[\\s\\S]*(?:\\bname\\b|\\\\[ux]\\d))|" +
+    "(?:\\W|^)(?:javascript:(?:[\\s\\S]+[=\\\\\\(`\\[\\.<]|[\\s\\S]*(?:\\bname\\b|\\\\[ux]\\d))|" +
     "data:(?:(?:[a-z]\\w+/\\w[\\w+-]+\\w)?[;,]|[\\s\\S]*;[\\s\\S]*\\b(?:base64|charset=)|[\\s\\S]*,[\\s\\S]*<[\\s\\S]*\\w[\\s\\S]*>))|@" +
     ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" +
       "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
@@ -1938,7 +1938,7 @@ var InjectionChecker = {
       for each (let l in links) {
         l = l.replace(/[^=]*=[\s\0]*/i, '');
         l = /^["']/.test(l) ? l.replace(/^(['"])([\s\S]*)\1/g, '$2') : l.replace(/[\s>][\s\S]*/, '');
-        if (/^(?:javascript|data):/.test(l) || this._checkRecursive(l, 3)) return true;
+        if (/^(?:javascript|data):/i.test(l) || this._checkRecursive(l, 3)) return true;
       }
     }
     return this._rxCheck("HTML", s);
