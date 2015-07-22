@@ -4049,7 +4049,7 @@ var ns = {
 
       scripts = null;
 
-      if (!sources[0]) return 0;
+      if (sources.length === 0) return 0;
 
       var follow = false;
       const findURL = /(?:(?:\b(?:open|replace)\s*\(|(?:\b(?:href|location|src|path|pathname|search)|(?:[Pp]ath|UR[IL]|[uU]r[il]))\s*=)\s*['"]|['"](?=https?:\/\/\w|\w*[\.\/\?]))([\?\/\.\w\-%\&][^\s'"]*)/g;
