@@ -16,7 +16,7 @@ function INCLUDE(name) {
     try {
       _INCLUDED[name] = true;
       let t = Date.now();
-      LOADER.loadSubScript("chrome://noscript/content/" + name + ".js");
+      LOADER.loadSubScript("chrome://noscript/content/" + name + ".js", this);
       // dump((t - TIME0) + " - loaded " + name + " in " + (Date.now() - t) + "\n")
     } catch(e) {
       let msg = "INCLUDE " + name + ": " + e + "\n" + e.stack;

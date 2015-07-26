@@ -5,11 +5,11 @@ var WinScript = ("blockScriptForGlobal" in Cu) ?
     if (window._blockScriptForGlobal) return;
     try {
       Cu.blockScriptForGlobal(window);
-      if (!("blockScriptForGlobal" in window)) {
+      if (!("_blockScriptForGlobal" in window)) {
         this.patchStyle(window.document);
       }
     } catch (e) {
-      if (!this._childDo("unblock", window)) throw e;
+      if (!this._childDo("block", window)) throw e;
     }
     window._blockScriptForGlobal = true;
   },
@@ -18,7 +18,7 @@ var WinScript = ("blockScriptForGlobal" in Cu) ?
     try {
       Cu.unblockScriptForGlobal(window);
     } catch (e) {
-       if (this._childDo("block", window)) throw e;
+       if (this._childDo("unblock", window)) throw e;
     }
     window._blockScriptForGlobal = false;
   },
@@ -54,17 +54,25 @@ WinScript.patchStyle = function(doc) {
   // reverse loop because the preference stylesheet is almost always the last one
   for (let j = ss.length; j-- > 0;) {
     let s = ss[j];
-    if(s.href === "about:PreferenceStyleSheet") {
-        let rules = s.cssRules;
-        // skip 1st & 2nd, as they are HTML & SVG namespaces
-        for (let j = 2, len = rules.length; j < len; j++) {
-            let r = rules[j];
-            if (r.cssText === "noscript { display: none ! important; }") {
-                s.deleteRule(j);
-                break;
-            }
+    switch(s.href) {
+      case "about:PreferenceStyleSheet":
+        {
+          let rules = s.cssRules;
+          // skip 1st & 2nd, as they are HTML & SVG namespaces
+          for (let j = 2, len = rules.length; j < len; j++) {
+              let r = rules[j];
+              if (r.cssText === "noscript { display: none ! important; }") {
+                  s.deleteRule(j);
+                  return;
+              }
+          }
         }
         break;
+      case "resource://gre-resources/noscript.css":
+        doc.defaultView.QueryInterface(Ci.nsIInterfaceRequestor)
+        .getInterface(Ci.nsIDOMWindowUtils)
+        .loadSheetUsingURIString("data:text/css,noscript { display: inline !important }", 0);
+        return;
     }
   }
 };

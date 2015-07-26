@@ -5,42 +5,42 @@ var ScriptSurrogate = {
   prefs: null,
   sandbox: true,
   sandboxInclusions: true,
-  
+
   get syntaxChecker() {
-    delete this.syntaxChecker   
+    delete this.syntaxChecker
     return this.syntaxChecker = new SyntaxChecker(this.JS_VERSION);
-  },  
+  },
   get mappings() {
     delete this.mappings;
     this._init();
     return this.mappings;
   },
-  
-  
+
+
   _init: function() {
     this.prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
       .getBranch("noscript.surrogate.").QueryInterface(Ci.nsIPrefBranch2);
     this._syncPrefs();
-   
+
   },
-  
+
   _observingPrefs: false,
   _syncPrefs: function() {
     const prefs = this.prefs;
-    
+
     for each(let p in ["enabled", "debug", "sandbox"]) this[p] = prefs.getBoolPref(p);
-    
+
     // inclusions don't work with sandbox on Gecko < 2, but may crash without on Gecko > 2
     this.sandboxInclusions = this.sandbox && (ns.geckoVersionCheck("2") >= 0);
-    
+
     const map = {__proto__: null};
     var key;
     for each(key in prefs.getChildList("", {})) {
       this._parseMapping(prefs, key, map);
     }
-    
+
     const mappings = {forPage: [], noScript: [], inclusion: [], before: [], after: [], all: map};
-    
+
     var mapping;
     for (key in map) {
       mapping = map[key];
@@ -54,15 +54,15 @@ var ScriptSurrogate = {
         }
       }
     }
-    
+
     this.mappings = mappings;
-    
+
     if (!this._observingPrefs) {
       prefs.addObserver("", this, true);
       this._observingPrefs = true;
     }
   },
-  
+
   _parseMapping: function(prefs, key, map) {
     var keyParts = key.split(".");
     var name = keyParts[0];
@@ -89,23 +89,23 @@ var ScriptSurrogate = {
             }
             if (prefix) value = value.substring(1);
           } while(prefix);
-          
+
         case "exceptions":
           value = new AddressMatcher(value);
           break;
-        
+
         // case "exceptions": case "replacement": // deferred, see SurrogateMapping.replacement
-          
+
         default:
           return;
       }
-      
-      mapping[member] = value; 
+
+      mapping[member] = value;
     } catch (e) {
       Cu.reportError(e);
     }
   },
-  
+
   initReplacement: function(m) {
     var r;
     try {
@@ -115,7 +115,7 @@ var ScriptSurrogate = {
         r = IO.readFile(IOS.newURI(this._resolveFile(r), null, null)
               .QueryInterface(Ci.nsIFileURL).file);
       }
-      
+
       if (r && !this.syntaxChecker.check(r)) {
         throw this.syntaxChecker.lastError;
       }
@@ -126,13 +126,13 @@ var ScriptSurrogate = {
     }
     return r;
   },
-  
+
   observe: function(prefs, topic, key) {
     this.prefs.removeObserver("", this, true);
     this._observingPrefs = false;
     Thread.asap(this._syncPrefs, this);
   },
-  
+
   _resolveFile: function(fileURI) {
     const profileURI = IOS.newFileURI(
       Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties)
@@ -141,7 +141,7 @@ var ScriptSurrogate = {
       return profileURI.resolve(fileURI);
     })(fileURI);
   },
-  
+
   getScripts: function(scriptURL, pageURL, noScript, scripts) {
 
     var isPage = scriptURL === pageURL;
@@ -155,14 +155,14 @@ var ScriptSurrogate = {
           : pageURL === '>'
             ? this.mappings.after
             : this.mappings.inclusion;
-    
+
     for (let j = list.length; j-- > 0;) {
       let mapping = list[j];
       if (mapping.sources && mapping.sources.test(scriptURL) &&
           !(mapping.exceptions && mapping.exceptions.test(pageURL)) &&
           mapping.replacement) {
         let code = mapping.replacement;
-       
+
         if (!noScript && mapping.noScript)
           code = 'window.addEventListener("DOMContentLoaded", function(event) {' +
                     code + '}, true)';
@@ -173,18 +173,18 @@ var ScriptSurrogate = {
     }
     return scripts;
   },
-  
-  
-  _errorListener: function(ev) { 
+
+
+  _errorListener: function(ev) {
     var s = ev.target;
     if (!(s instanceof Ci.nsIDOMHTMLScriptElement)) return;
     let url = s.src;
     if (!url) return;
-    
+
     let doc = s.ownerDocument;
     let hasSurrogate = ScriptSurrogate.apply(doc, url);
     if (hasSurrogate) {
-      
+
     }
     let fakeLoad = ns.fakeScriptLoadEvents;
     if ((hasSurrogate ||
@@ -206,21 +206,21 @@ var ScriptSurrogate = {
       ScriptSurrogate.apply(s.ownerDocument, s.src, ev.type[0] === 'b' ? "<" : ">", false);
     }
   },
-  
+
   replaceScript: function(scriptElement) {
     if (scriptElement._surrogated) return true;
-    
+
     let src = scriptElement.src;
     let doc = scriptElement.ownerDocument;
-    
+
     return (src && doc) && this.apply(doc, src, false, false) &&
        (ns.getExpando(doc, "surrogates", {})[src] =
         scriptElement._surrogated = true);
   },
-  
+
   apply: function(document, scriptURL, pageURL, noScript, scripts) {
     if (typeof(noScript) !== "boolean") noScript = !!noScript;
-    
+
     if (this.enabled) {
       scripts = this.getScripts(scriptURL, pageURL, noScript, scripts);
       if (pageURL && !noScript) {
@@ -229,7 +229,7 @@ var ScriptSurrogate = {
         if (this.mappings.before.length)
           w.addEventListener("beforescriptexecute", this._execListener, true);
         if (this.mappings.after.length)
-          w.addEventListener("afterscriptexecute", this._execListener, true); 
+          w.addEventListener("afterscriptexecute", this._execListener, true);
       }
     }
 
@@ -242,44 +242,62 @@ var ScriptSurrogate = {
             ? this.executeSandbox
             : (this.sandbox ? this.execute : this.executeDOM)
         : this.sandboxInclusions ? this.executeSandbox : this.executeDOM;
-    
+
     if (this.debug) {
       // we run each script separately and don't swallow exceptions
       scripts.forEach(function(s) {
-       runner.call(this, document, "{" + s + "}");
+       runner.call(this, document, "{" + this._preamble(s) + "}");
       }, this);
     } else {
-      runner.call(this, document,
+      runner.call(this, document,this._preamble(
         "try{" +
           scripts.join("}catch(e){}\ntry{") +
-          "}catch(e){}");
+          "}catch(e){}")
+        );
     }
     return true;
   },
-  
 
-  
+  _testAll: function(document) {
+    let scripts = [];
+    let all = this.mappings.all;
+    for (let k in  all) scripts.push(all[k].replacement);
+    scripts.forEach(function(s) {
+     this.executeSandbox(document, "{" + this._preamble(s) + "}");
+    }, this);
+  },
+
+  _preamble: function(s) {
+    delete this._preamble;
+    return (this._preamble = (typeof Proxy === "function"
+    ? function(s) s.indexOf("$S(") !== -1
+      ? "{let nsmHandler={get:function(t,n)function()t.__noSuchMethod__(n,Array.prototype.slice.call(arguments))};function $S(o)new Proxy(o||{},nsmHandler);}\n" + s
+      : s
+    : function(s) "function $S(o)o|{};\n" + s
+    ))(s);
+  },
+
   fallback: function(document, scriptBlock) {
     document.addEventListener("DOMContentLoaded", function(ev) {
       ScriptSurrogate.executeSandbox(ev.currentTarget, scriptBlock);
     }, false);
   },
-  
+
   execute: function(document, scriptBlock) {
     this.execute = ns.geckoVersionCheck("1.9.1") < 0 || ns.geckoVersionCheck("2") >= 0
       ? this.executeSandbox
       : this.executeDOM;
     this.execute(document, scriptBlock);
   },
-  
+
   _sandboxParams: {
     wantXrays: false,
     sandboxName: ""
   },
-  
+
   getPrincipal: ns.geckoVersionCheck("24") > 0 ? function(doc) doc.nodePrincipal : function(doc) doc.defaultView,
-  
-  
+
+
   executeSandbox: function(document, scriptBlock, env) {
     var w = document.defaultView;
     try {
@@ -297,7 +315,7 @@ var ScriptSurrogate = {
         env.__exposedProps__ = ep;
       }
       let code = "with(window){" + scriptBlock + "}delete this.env;";
-      if ("keys" in Object) code += "for each(let p in Object.keys(this))window[p]=this[p];";
+      if ("keys" in Object) code += "Object.keys(this).forEach(function(p) { window[p] = this[p] }, this);";
       Cu.evalInSandbox(code, s, this.JS_VERSION);
     } catch (e) {
       if (ns.consoleDump) {
@@ -309,7 +327,7 @@ var ScriptSurrogate = {
       delete this._sandboxParams.sandboxPrototype;
     }
   },
-  
+
   executeDOM: function(document, scriptBlock) {
     var de = document.documentElement;
     try {
@@ -317,7 +335,7 @@ var ScriptSurrogate = {
         this.executeSandbox(document, scriptBlock);
         return;
       }
-      
+
       var se = document.createElement("script");
       se.type = "application/javascript;version=" + ScriptSurrogate.JS_VERSION;
       se.appendChild(document.createTextNode(scriptBlock));
@@ -328,10 +346,10 @@ var ScriptSurrogate = {
       if (this.debug) Cu.reportError(e);
     }
   },
-  
-  
-  
-  
+
+
+
+
 }
 
 function SurrogateMapping(name) {
@@ -341,12 +359,12 @@ function SurrogateMapping(name) {
 SurrogateMapping.prototype = {
   sources: null,
   _replacement: function() {
-    delete this.replacement; 
+    delete this.replacement;
     return this.replacement = ScriptSurrogate.initReplacement(this);
   },
   exceptions: null,
   error: null,
-  
+
   forPage: false,
   noScript: false,
   before: false,
