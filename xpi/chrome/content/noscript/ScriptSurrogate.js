@@ -271,7 +271,7 @@ var ScriptSurrogate = {
     delete this._preamble;
     return (this._preamble = (typeof Proxy === "function"
     ? function(s) s.indexOf("$S(") !== -1
-      ? "{let nsmHandler={get:function(t,n)function()t.__noSuchMethod__(n,Array.prototype.slice.call(arguments))};function $S(o)new Proxy(o||{},nsmHandler);}\n" + s
+      ? "{let nsmHandler={get:function(t,n)n in t?t[n]:function()t.__noSuchMethod__(n,Array.prototype.slice.call(arguments))};function $S(o)new Proxy(o||{},nsmHandler);}\n" + s
       : s
     : function(s) "function $S(o)o|{};\n" + s
     ))(s);
