@@ -3105,16 +3105,20 @@ var ns = {
   get json() {
     delete this.json;
     try {
-      let json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-      return this.json = {
-        decode: (json.decodeLegacy && function(s) json.decodeLegacy(s)) || (json.decode && function(s) json.decode(s)) || function(s) JSON.parse(s),
-        encode: (json.encode && function(s) json.encode(s)) || function(s) JSON.stringify(s)
+      if (JSON.parse) {
+        return this.json = {
+          decode: function(s) JSON.parse(s),
+          encode: function(s) JSON.stringify(s)
+        };
       }
     } catch(e) {
-      return this.json = {
-        decode: function(s) JSON.parse(s),
-        encode: function(s) JSON.stringify(s)
-      }
+      try {
+        let json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+        return this.json = {
+          decode: (json.decodeLegacy && function(s) json.decodeLegacy(s)) || function(s) json.decode(s),
+          encode: function(s) json.encode(s)
+        }
+      } catch (e) {}
     }
   },
 
@@ -7066,7 +7070,7 @@ var ns = {
 
               var hs = Cc["@mozilla.org/io/string-input-stream;1"] .createInstance(Ci.nsIStringInputStream);
               hs.setData(hh, hh.length);
-
+              hs.seek(0, 0);
 
               var b = (browser.selectedTab = browser.addTab()).linkedBrowser;
               b.stop();

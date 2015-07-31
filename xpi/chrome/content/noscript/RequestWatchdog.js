@@ -1320,7 +1320,7 @@ var InjectionChecker = {
           if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(qred)) {
              this.log("Reducing pseudo-JSON " + expr);
              s = s.replace(expr, '{}');
-          } else if (!/[\(=\.]|[^:\s]\s*\[|:\s*(?:location|document|eval|open|show\w*Dialog)\b/.test(qred) &&
+          } else if (!!/[\(=\.]|[^:\s]\s*\[|:\s*(?:location|document|set(?:Timeout|Interval)|eval|open|show\w*Dialog|alert|confirm|prompt)\b|(?:\]|set)\s*:/.test(qred) &&
              this.checkJSSyntax("JSON = " + qred) // no-assignment JSON fails with "invalid label"
           ) {
             this.log("Reducing slow JSON " + expr);
@@ -1407,7 +1407,7 @@ var InjectionChecker = {
   ),
 
   _dotRx: /\./g,
-  _removeDotsRx: /^openid\.[\w.-]+(?==)|(?:[?&#\/]|^)[\w.-]+(?=[\/\?&#]|$)|[\w\.]*(?:\b[A-Z]+|\d|[a-z][$_])[\w.-]*|=[a-z.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&/]|$)/g,
+  _removeDotsRx: /^openid\.[\w.-]+(?==)|(?:[?&#\/]|^)[\w.-]+(?=[\/\?&#]|$)|[\w\.]*\.(?:\b[A-Z]+|\d|[a-z][$_])[\w.-]*|=[a-z.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&/]|$)/g,
   _removeDots: function(p) p.replace(InjectionChecker._dotRx, '|'),
   _arrayAccessRx: /\s*\[\d+\]/g,
   _riskyOperatorsRx: /[+-]{2}\s*(?:\/[*/][\s\S]+)?(?:\w+(?:\/[*/][\s\S]+)?[[.]|location)|(?:\]|\.\s*(?:\/[*/][\s\S]+)?\w+|location)\s*(?:\/[*/][\s\S]+)?([+-]{2}|[+*\/<>~-]+\s*(?:\/[*/][\s\S]+)?=)/, // inc/dec/self-modifying assignments on DOM props
