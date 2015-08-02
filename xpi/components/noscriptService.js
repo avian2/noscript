@@ -1085,7 +1085,7 @@ const IOUtil = {
     if ((hasCookies = !!cookie)) cookieNames = cookie.split(/\s*;\s*/).map(this._splitName)
 
     let parms = qs.split("&");
-    for (j = parms.length; j-- > 0;) {
+    for (let j = parms.length; j-- > 0;) {
       let nv = parms[j].split("=");
       let name = nv[0];
       if (this._anonRx.test(name) || cookie && cookieNames.indexOf(name) > -1)
