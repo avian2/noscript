@@ -2076,7 +2076,7 @@ var ns = {
         "!about:pocket-signup": "about:pocket-signup",
         "google.com": "ajax.googleapis.com maps.googleapis.com"
       },
-      "2.6.9.35rc1": {
+      "@VERSION@rc1": {
         "!about:pocket-save": "about:pocket-saved",
         "!about:pocket-signup": "about:pocket-signup",
         "google.com": "ajax.googleapis.com maps.googleapis.com"
