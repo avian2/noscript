@@ -269,11 +269,11 @@ var ScriptSurrogate = {
 
   _preamble: function(s) {
     delete this._preamble;
-    return (this._preamble = (typeof Proxy === "function"
+    return (this._preamble = (ns.geckoVersionCheck("37") >= 0
     ? function(s) s.indexOf("$S(") !== -1
       ?  "{let $S; {let nsmHandler={get:function(t,n)n in t?t[n]:function()t.__noSuchMethod__(n,Array.prototype.slice.call(arguments))};$S=function(o)new Proxy(o||{},nsmHandler);}\n" + s + "\n}"
       : s
-    : function(s) "function $S(o)o|{};\n" + s
+    : function(s) "{let $S = function(o){return o||{};};\n" + s + "\n}"
     ))(s);
   },
 

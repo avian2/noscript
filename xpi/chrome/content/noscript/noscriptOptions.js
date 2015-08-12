@@ -3,23 +3,23 @@
 var ns = noscriptUtil.service;
 
 var nsopt = {
-  
+
 
   dom2: /^(?:http[s]?|file):\/\/([^\.\?\/#,;:\\\@]+(:?\.[^\.\?\/#,;:\\\@]+$|$))/,
   utils: null,
   whitelistURLs: [],
   init: function() {
 
-    if(ns.uninstalling) { // this should never happen! 
+    if(ns.uninstalling) { // this should never happen!
       window.close();
       return;
     }
-    
+
     ns.optionsDialogRef = Components.utils.getWeakReference(window);
-    
+
     this.utils = new UIUtils(ns);
     this.utils.resumeTabSelections();
-    
+
     abeOpts.init();
 
     var locked = ns.locked;
@@ -29,12 +29,12 @@ var nsopt = {
     }
      // forbid <a ping>
     var pingCbx = $("mozopt-browser.send_pings");
-    if(pingCbx.getAttribute("label").indexOf("Allow ") == 0) { 
+    if(pingCbx.getAttribute("label").indexOf("Allow ") == 0) {
       pingCbx.setAttribute("label", noscriptUtil.getString("allowLocal", ["<a ping...>"]));
       $("opt-noping")
               .setAttribute("label", noscriptUtil.getString("forbidLocal", ["<a ping...>"]));
     }
-    
+
     this.trustedSites = ns.jsPolicySites.clone();
     this.untrustedSites = ns.untrustedSites.clone();
     this.tempSites = ns.tempSites.clone();
@@ -42,9 +42,9 @@ var nsopt = {
 
     this.urlListDisplay.boxObject.QueryInterface(Ci.nsITreeBoxObject);
     this.populateUrlList();
-    
+
     this.jsglobal.checked = ns.jsEnabled;
- 
+
     this.utils.visitCheckboxes(function(prefName, inverse, checkbox, mozilla) {
         try {
           var val = mozilla ? ns.prefService.getBoolPref(prefName) : ns.getPref(prefName);
@@ -55,29 +55,29 @@ var nsopt = {
         } catch(ex) {}
       }
     );
-    
+
     this.utils.visitTextboxes(function(prefName, box) {
-      box.value = ns.getPref(prefName);  
+      box.value = ns.getPref(prefName);
     });
-    
+
     $("opt-showPermanent").setAttribute("label", noscriptUtil.getString("allowLocal", ["[...]"]));
     $("opt-showTemp").setAttribute("label", noscriptUtil.getString("allowTemp", ["[...]"]));
     $("opt-showDistrust").setAttribute("label", noscriptUtil.getString("distrust", ["[...]"]));
     $("opt-showGlobal").setAttribute("label", noscriptUtil.getString("allowGlobal"));
-  
+
     var notifyHideLabels = noscriptUtil.getString("notifyHide").split("%S");
     $("opt-notify.hide").setAttribute("label", notifyHideLabels[0]);
     $("notifyDelayLabel").setAttribute("value", notifyHideLabels[1]);
     $("notifyDelay").value = ns.getPref("notify.hideDelay", 5);
-    
+
     this.soundChooser.setSample(ns.getPref("sound.block"));
-    
+
     this.autoAllowGroup = new ConditionalGroup(ns, "autoAllow", 1);
     this.toggleGroup = new ConditionalGroup(ns, "toolbarToggle", 3);
-    
+
     var val = ns.getPref("allowHttpsOnly", 0);
     $("sel-allowHttpsOnly").selectedIndex = (val < 0 || val > 2) ? 0 : val;
-    
+
     var shortcut = ns.getPref("keys.toggle");
     if(shortcut) {
       shortcut = shortcut.replace(/VK_([^\.]*).*/g, "$1").replace(/\s+/g, '+').replace(/_/g, ' ');
@@ -85,62 +85,65 @@ var nsopt = {
       shortcutLabel.value = "(" + shortcut + ")";
       shortcutLabel.removeAttribute("hidden");
     }
-    
+
     this.utils.syncGroup($("opt-secureCookies"));
-    
+
     this.xssEx = new RegExpController(
-        "xssEx", 
+        "xssEx",
         ns.rxParsers.multi,
         ns.getPref("filterXExceptions"));
-    
+
     // hide incompatible options
     let browserWin = ns.dom.mostRecentBrowserWindow;
-    
+
     if (browserWin) {
       if (!browserWin.document.getElementById("noscript-statusIcon"))
         $("opt-statusIcon").setAttribute("hidden", "true");
-    
+
       if(browserWin.noscriptOverlay && !browserWin.noscriptOverlay.getNotificationBox())
         $("fx-notifications").setAttribute("hidden", "true");
     }
-    
+
     ["clearClick"].forEach(function(c) {
       var pref = ns.getPref(c);
-      Array.forEach($(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {        
+      Array.forEach($(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {
         cbx.setAttribute("checked", !(pref & parseInt(cbx.getAttribute("value"))) ? "false" : "true");
       });
     });
-       
-    
+
+
     if (!ns.placesSupported)
       $("opt-placesPrefs").setAttribute("hidden", "true");
-    
+
     if (!ns.supportsCAPS) {
       $("opt-allowClipboard").setAttribute("collapsed", "true");
     }
-    
+
     this.initExtraButtons();
-    
+
     this.addButton.setAttribute("enabled", "false");
     this.removeButton.setAttribute("enabled", "false");
-    
+
     this.toggleHoverUI();
-    
-    
+
+
 
     window.sizeToContent();
   },
-  
+
+  dispose: function() {
+    abeOpts.dispose();
+  },
 
   initExtraButtons: function() {
     this.utils.moveButtonsDown("donateButton", "", "importConfButton", "exportConfButton");
   },
-  
-  
+
+
   donate: function() {
     noscriptUtil.openDonate("options");
   },
-  
+
   importConf: function() {
     this.chooseFile(
       this.buttonToTitle("importConfButton"),
@@ -158,20 +161,20 @@ var nsopt = {
       function(f) {
         ns.writeFile(f, ns.serializeConf(true));
       }
-    );  
+    );
   },
-  
+
   reset: function() {
-    
-    if(!noscriptUtil.prompter.confirm(window, 
+
+    if(!noscriptUtil.prompter.confirm(window,
           noscriptUtil.getString("reset.title"),
           noscriptUtil.getString("reset.warning"))
       ) return;
-    
+
     ns.resetDefaults();
     this.reload();
   },
-  
+
   reload: function() {
     this.utils.persistTabSelections();
     var op = top.opener;
@@ -182,7 +185,7 @@ var nsopt = {
     }
     window.close();
   },
-  
+
   save: function() {
     /*
     if (!$("abeRuleset-errors").hidden) {
@@ -194,7 +197,7 @@ var nsopt = {
             p.BUTTON_TITLE_DONT_SAVE * p.BUTTON_POS_1 +
             p.BUTTON_POS_1_DEFAULT,
           null, null, null, null, {}) === 1
-        ) 
+        )
       return false;
     }
     */
@@ -203,14 +206,14 @@ var nsopt = {
         if(checkbox.getAttribute("collapsed")!="true") {
           const checked = checkbox.getAttribute("checked") == "true";
           const requestedVal = inverse ? !checked : checked;
-          
+
           if(mozilla) {
             try {
               ns.prefService.setBoolPref(prefName, requestedVal);
             } catch(ex) {}
             return;
           }
-          
+
           const prevVal = ns.getPref(prefName);
           if(requestedVal != prevVal) {
             ns.setPref(prefName, requestedVal);
@@ -218,14 +221,14 @@ var nsopt = {
         }
       }
     );
-    
-    
+
+
     this.utils.visitTextboxes(function(prefName, box) {
       if (box.value != ns.getPref(prefName)) {
         ns.setPref(prefName, box.value);
       }
     });
-    
+
     ["clearClick"].forEach(function(c) {
       var pref = 0;
       Array.forEach($(c + "Opts").getElementsByTagName("checkbox"), function(cbx) {
@@ -233,35 +236,35 @@ var nsopt = {
       });
       ns.setPref(c, pref);
     });
-    
-    
-    ns.setPref("notify.hideDelay", parseInt($("notifyDelay").value) || 
+
+
+    ns.setPref("notify.hideDelay", parseInt($("notifyDelay").value) ||
               ns.getPref("notify.hideDelay", 5));
 
     ns.setPref("sound.block", this.soundChooser.getSample());
-    
+
     this.autoAllowGroup.persist();
-    
+
     if (!(ns.getPref("hoverUI.excludeToggling") && $("opt-hoverUI").checked)) {
       this.toggleGroup.persist();
     }
-    
+
     ns.setPref("allowHttpsOnly", $("sel-allowHttpsOnly").selectedIndex);
-    
+
     var exVal = this.xssEx.getValue();
-    if(this.xssEx.validate() || !/\S/.test(exVal)) 
+    if(this.xssEx.validate() || !/\S/.test(exVal))
       ns.setPref("filterXExceptions", exVal);
-    
+
     if (this.tempRevoked) {
       ns.resetAllowedObjects();
     }
-    
+
     var global = this.jsglobal.getAttribute("checked") == "true";
     var untrustedSites = this.untrustedSites;
     var trustedSites = this.trustedSites;
     var tempSites = this.tempSites;
     var gTempSites = this.gTempSites;
-    
+
     ns.safeCapsOp(function(ns) {
       if(ns.untrustedSites.sitesString != untrustedSites.sitesString
           || ns.jsPolicySites.sitesString != trustedSites.sitesString
@@ -282,7 +285,7 @@ var nsopt = {
     });
     return true;
   },
-  
+
   urlListChanged: function(dontUpdate) {
     const selectedItems = noscriptTreeCc.getSelectedItems(this.urlListDisplay, this.whitelistURLs);
     var removeDisabled = true;
@@ -291,15 +294,15 @@ var nsopt = {
         removeDisabled = false;
         break;
       }
-    }  
+    }
     this.removeButton.setAttribute("disabled", removeDisabled);
     $("revokeButton")
-      .setAttribute("disabled", this.tempRevoked || 
+      .setAttribute("disabled", this.tempRevoked ||
           !(this.tempSites.sitesString || this.gTempSites.sitesString || ns.objectWhitelistLen));
     if (!dontUpdate) nsWhitelistTreeView.updateTree();
     this.urlChanged();
   },
-  
+
   openInfo: function(ev) {
     if (ev.button === 1) {
       setTimeout(function() {
@@ -318,7 +321,7 @@ var nsopt = {
   copyUrlListSel: function() {
     noscriptTreeCc.doCopy(this.urlListDisplay, "", " ");
   },
-  
+
   urlChanged: function() {
     var url = this.urlText.value;
     if(url.match(/\s/)) url = this.urlText.value = url.replace(/\s/g,'');
@@ -333,7 +336,7 @@ var nsopt = {
     }
     this.addButton.setAttribute("disabled", !addEnabled);
   },
-  
+
   notifyHideDelay: {
     onInput: function(txt) {
       if(/\D/.test(txt.value)) txt.value = txt.value.replace(/\D/, "");
@@ -342,7 +345,7 @@ var nsopt = {
       txt.value = parseInt(txt.value) || ns.getPref("notify.hideDelay", 5);
     }
   },
-  
+
   ensureVisible: function(site) {
     for(var j = nsWhitelistTreeView.rowCount; j-- > 0;) {
       if(nsWhitelistTreeView.getCellText(j) == site) {
@@ -364,11 +367,11 @@ var nsopt = {
     for(j = 0, len = sites.length; j < len; j++) {
       site = sites[j];
       // skip protocol + 2nd level domain URLs
-      if((match = site.match(dom2)) && policy.matches(item = match[1])) 
+      if((match = site.match(dom2)) && policy.matches(item = match[1]))
         continue;
-      
+
       item = {value:site};
-      if(ns.isMandatory(site)) { 
+      if(ns.isMandatory(site)) {
         item.mandatory = true;
       }
       item.temp = site in tempMap;
@@ -383,22 +386,22 @@ var nsopt = {
     this.trustedSites.add(site);
     this.tempSites.remove(site, true, true); // see noscriptService#eraseTemp()
     this.gTempSites.remove(site, true, true);
-    
+
     this.untrustedSites.remove(site, false, !ns.mustCascadeTrust(site, false));
     this.populateUrlList();
     this.ensureVisible(site);
     this.addButton.setAttribute("disabled", "true");
   },
-  
+
   remove: function() {
     const ul = this.urlListDisplay;
     const selectedItems = noscriptTreeCc.getSelectedItems(ul, this.whitelistURLs);
     var visIdx = ul.boxObject.getFirstVisibleRow();
     var lastIdx = visIdx + ul.boxObject.getPageLength();
-    
-    
-    
-    
+
+
+
+
     var removed = [];
     for(var j = selectedItems.length; j-- > 0;) {
       if(!ns.isMandatory(site = selectedItems[j].value)) {
@@ -406,11 +409,11 @@ var nsopt = {
       }
     }
     if (!removed.length) return;
-    
+
     this.trustedSites.remove(removed, true); // keepUp
     this.tempSites.remove(removed, true, true); // see noscriptService#eraseTemp()
     this.gTempSites.remove(removed, true, true);
-      
+
     this.populateUrlList();
 
   },
@@ -430,28 +433,28 @@ var nsopt = {
     this.tempRevoked = true;
     this.populateUrlList();
   },
-  
+
   _soundChooser: null,
   get soundChooser() {
-    return this._soundChooser || 
-      (this._soundChooser = 
+    return this._soundChooser ||
+      (this._soundChooser =
         new SoundChooser(
-        "sampleURL", 
+        "sampleURL",
         this.buttonToTitle("sampleChooseButton"),
         ns,
         "chrome://noscript/skin/block.wav"
       ));
   },
-  
-  
+
+
   chooseFile: function(title, mode, callback) {
     try {
       const IFP = Ci.nsIFilePicker;
       const fp = Cc["@mozilla.org/filepicker;1"].createInstance(IFP);
-      
+
       fp.init(window, title, IFP["mode" + mode]);
-      
-      try {      
+
+      try {
         fp.displayDirectory = ns.prefs.getComplexValue("exportDir", Ci.nsILocalFile);
       } catch (e) {
         fp.displayDirectory = Cc["@mozilla.org/file/directory_service;1"]
@@ -460,7 +463,7 @@ var nsopt = {
       }
       fp.defaultExtension = "txt";
       const ret = fp.show();
-      if(ret == IFP.returnOK || 
+      if(ret == IFP.returnOK ||
           ret == IFP.returnReplace) {
         callback.call(nsopt, fp.file);
       }
@@ -471,8 +474,8 @@ var nsopt = {
       noscriptUtil.prompter.alert(window, title, ex.toString());
     }
   },
-  
-  
+
+
   importExport: function(op) {
     this.chooseFile(
       this.buttonToTitle(op + "Button"),
@@ -480,7 +483,7 @@ var nsopt = {
       this[op + "List"]
     );
   },
-  
+
   importList: function(file) {
     var all = ns.readFile(file).replace(/\s+/g, "\n");
     var untrustedPos = all.indexOf("[UNTRUSTED]");
@@ -494,21 +497,21 @@ var nsopt = {
     this.populateUrlList();
     return null;
   },
-  
+
   exportList: function(file) {
     var list = ns.getPermanentSites(this.trustedSites, this.tempSites);
     list.remove(ns.mandatorySites.sitesList, true, true);
-    ns.writeFile(file, list.sitesList.join("\n") + 
+    ns.writeFile(file, list.sitesList.join("\n") +
       "\n[UNTRUSTED]\n" +
       this.untrustedSites.sitesList.join("\n")
     );
     return null;
   },
-  
+
   buttonToTitle: function(btid) {
     return "NoScript - " + $(btid).getAttribute("label");
   },
-  
+
   toggleHoverUI: function(cbx) {
     if (ns.getPref("hoverUI.excludeToggling")) {
       let cbx = $("cbx-toolbarToggle");
@@ -527,7 +530,7 @@ var nsopt = {
       }
     }
   }
-  
+
 }
 
 var ABE = ns.ABE;
@@ -537,17 +540,23 @@ var abeOpts = {
   _map: {__proto__: null},
   errors: false,
   QueryInterface: ns.wan.QueryInterface, // dirty hack, we share the same observer ifaces
-  
+
   init: function() {
     this.list = $("abeRulesets-list");
     this.populate();
-    
+
     this.updateWAN(ns.wan.ip);
     const OS = ns.os;
     OS.addObserver(this, ns.wan.IP_CHANGE_TOPIC, true);
     OS.addObserver(this, ABE.RULES_CHANGED_TOPIC, true);
   },
-  
+
+  dispose: function() {
+    const OS = ns.os;
+    OS.removeObserver(this, ns.wan.IP_CHANGE_TOPIC);
+    OS.removeObserver(this, ABE.RULES_CHANGED_TOPIC);
+  },
+
   observe: function(subject, topic, data) {
     if (topic === ns.wan.IP_CHANGE_TOPIC) this.updateWAN(data);
     else if (topic === ABE.RULES_CHANGED_TOPIC) {
@@ -555,11 +564,11 @@ var abeOpts = {
       this.errors = false;
     }
   },
-  
+
   updateWAN: function(ip) {
     $("opt-ABE.wanIpAsLocal").label = ns.getString("ABE.wanIpAsLocal", [ip || "???"]);
   },
-  
+
   reset: function() {
     ABE.resetDefaults();
   },
@@ -568,9 +577,9 @@ var abeOpts = {
   },
   changed: function(i) {
     let current = i || this.list.selectedItem;
-   
+
     if (current && this.dirty) {
-      
+
       let name = current.value;
       let source = $("abeRuleset-text-container").selectedPanel.value;
       let ruleset = ABE.createRuleset(name, source);
@@ -593,7 +602,7 @@ var abeOpts = {
       ABE.storeRuleset(name, source);
     }
   },
-  
+
   _populating: false,
   populate: function() {
     if (this._populating) return;
@@ -639,14 +648,14 @@ var abeOpts = {
           $("abeRuleset-text-container").appendChild(textbox);
         }
       }
-      this._map = map; 
+      this._map = map;
       l.selectedItem = selItem;
       this.sync();
     } finally {
       this._populating = false;
     }
   },
-  
+
   selected: function(i) {
     if (this.dirty) {
       let selIndex = this.list.selectedIndex;
@@ -656,13 +665,13 @@ var abeOpts = {
     if (!this._populating) this.sync();
     this.dirty = null;
   },
-  
+
   select: function(rs) {
     var name = rs && rs.name || rs;
     if (!name) return;
     var l = this.list;
     if (l.selectedItem && l.selectedItem.value == name) return;
-    
+
     for(var j = l.getRowCount(), i; j-- > 0;) {
       i = l.getItemAtIndex(j);
       if (i.value == name) {
@@ -671,26 +680,26 @@ var abeOpts = {
       }
     }
   },
-  
+
   sync: function() {
     var selItem = this.list.selectedItem;
-   
+
     var rs = null;
     if (selItem) {
       this.selectedRS = rs = this._map[selItem.value];
     } else {
       this.selectedRS = null;
     }
-    
+
     $("abeEnable-button").disabled = ! ($("abeDisable-button").disabled = !rs || rs.disabled);
     $("abeRefresh-button").disabled = this.list.getRowCount() == 0;
     $("abeRuleset-text-container").setAttribute("selectedIndex", this.list.selectedIndex);
-    
+
     var text = $("abeRuleset-text-container").selectedPanel;
     text.className = selItem && selItem.className || '';
     text.disabled = !selItem || selItem.disabled;
     text.value = rs && rs.source;
-    
+
     text = $("abeRuleset-errors");
     if (rs && rs.errors) {
       this.ShowHideABEError(false);
@@ -701,17 +710,17 @@ var abeOpts = {
       text.value = "";
     }
   },
-  
+
   refresh: function() {
     ABE.refresh();
   },
- 
+
   ShowHideABEError: function(hidden) {
     for each (let n in document.getElementsByClassName("abe-error-element")) {
       n.hidden = hidden;
     }
   },
-  
+
   toggle: function(enabled) {
     var selItem = this.list.selectedItem;
     var rs = this.selectedRS;
@@ -724,7 +733,7 @@ var abeOpts = {
     ns.setPref("ABE.disabledRulesetNames", ABE.disabledRulesetNames);
     this.sync();
   }
-  
+
 }
 
 var nsWhitelistTreeView = {

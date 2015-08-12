@@ -26,7 +26,7 @@ IPC.parent = {
       globalMM.removeDelayedFrameScript("chrome://noscript/content/frameScript.js");
       let mm = this.mm;
       if (mm) {
-        mm.removeWeakMessageListener("NoScript:mustBlockJS");
+        mm.removeWeakMessageListener("NoScript:mustBlockJS", this);
         mm.removeDelayedProcessScript("chrome://noscript/content/processScript.js");
       }
     }
