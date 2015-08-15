@@ -799,16 +799,12 @@ const MainContentPolicy = {
           ? this.isJSEnabled(originSite, win)
           : jsRx.test(originURL); // if we've got such an origin, parent should be trusted
 
+        if (locationSite && this.checkShorthands(locationSite)) this.autoTemp(locationSite);
+
         let locationOK = locationSite
               ? this.isJSEnabled(locationSite, win)
               : jsRx.test(locationURL) && originOK // use origin for javascript: or data:
         ;
-
-        if (!locationOK && locationSite && this.ignorePorts && this.portRx.test(locationSite)) {
-          if (this.isJSEnabled(locationSite.replace(this.portRx, ''))) {
-            locationOK = this.autoTemp(locationSite);
-          }
-        }
 
         forbid = !(locationOK && (originOK ||
           !this.getPref(blockThisFrame

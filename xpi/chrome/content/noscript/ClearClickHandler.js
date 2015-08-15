@@ -6,9 +6,9 @@ function ClearClickHandler(ns) {
 }
 
 ClearClickHandler.prototype = {
-  
+
   uiEvents: ["mousedown", "mouseup", "click", "dblclick", "drop", "keydown", "keypress", "keyup", "blur"],
-  
+
   rapidFire: {
     events: ["keydown", "mousedown", "mouseover"],
     quarantine: 800,
@@ -16,10 +16,10 @@ ClearClickHandler.prototype = {
     ts: 0,
     mouse: false,
     lastOver: { x: 0, y: 0, site: '', ts: 0 },
-   
+
     check: function(ev, site, ts) {
       const type = ev.type;
-      
+
       let mouse = false, over = false;
       switch(type[0]) {
         case 'c': case 'm':
@@ -27,22 +27,22 @@ ClearClickHandler.prototype = {
           over = type === "mouseover";
         case 'k':
         break;
-      
+
         default:
           return false;
       }
-      
+
       // ns.log(ev.type + " " + ev.target + "@" + site + " <- " + this.site + " -- " + ev.timeStamp)
-      
+
       let lo = this.lastOver;
-        
+
       if (this.mouse === mouse) {
         if (site !== this.site) {
           let contentRx = /^(?:(?:ht|f)tps?|data|javascript|feed):/i;
           if (contentRx.test(this.site) &&
               (contentRx.test(site) || !contentRx.test(ev.target.ownerDocument.defaultView.top.location.href))
               ) {
-              
+
             if (lo.site && lo.site !== site && (ts - lo.ts) < this.quarantine) {
               let d = ev.target.ownerDocument;
               let w = d.defaultView;
@@ -58,22 +58,22 @@ ClearClickHandler.prototype = {
               }
               lo.site = '';
             }
-            
+
             if (over) {
                if (ts - lo.ts < this.quarantine) return false;
             } else {
                 if (ts - this.ts < this.quarantine) {
                   if (!lo.site) this.ts = ts - this.quarantine / 2;
                   return ns.getPref("clearClick.rapidFireCheck");
-                } 
+                }
             }
-            
+
           }
         }
       } else this.mouse = mouse;
-      
+
       this.site = site;
-      
+
       if (over) {
         if (!ev.target.contentWindow) {
           lo.site = site;
@@ -91,24 +91,24 @@ ClearClickHandler.prototype = {
       return false;
     }
   },
-  
+
   install: function(browser) {
-    
+
     var doc = browser.ownerDocument;
     if (!("__ClearClick__" in doc)) {
       doc.__ClearClick__ = true;
       for each(let et in this.rapidFire.events)
         doc.addEventListener(et, this, true);
     }
-    
+
     var ceh = browser.docShell.chromeEventHandler;
     var l = this._listener;
     for each(var et in this.uiEvents) ceh.addEventListener(et, this, true);
   },
- 
-  
+
+
   exceptions: null,
-  
+
   sameSiteParents: function(w) {
     const ns = this.ns;
     var site = ns.getSite(w.location.href);
@@ -125,21 +125,21 @@ ClearClickHandler.prototype = {
     if (ns.consoleDump & LOG_CLEARCLICK) ns.dump("ClearClick skipping, same site parents for " + site);
     return true;
   },
-  
+
   appliesHere: function(url) {
     const ns = this.ns;
     return ns.appliesHere(ns.clearClick, url) &&
       !(this.exceptions && this.exceptions.test(url));
   },
-  
+
   checkSubexception: function(url) {
     return this.subexceptions && this.subexceptions.test(url);
   },
-  
+
   _whitelist: {},
   whitelistLen: 0,
   isWhitelisted: function(w) {
-    
+
     var l = this._whitelist[w.location.href];
     if (!l) return false;
 
@@ -149,7 +149,7 @@ ClearClickHandler.prototype = {
     }
     return l.indexOf(pp.join(" ")) > -1;
   },
-  
+
   whitelist: function(w) {
     if (this.isWhitelisted(w)) return;
     var u = w.location.href;
@@ -158,63 +158,63 @@ ClearClickHandler.prototype = {
     for(var p = w.parent; p != w; w = p, p = w.parent) {
       pp.push(p.location.href);
     }
-    
+
     var l;
     if (u in this._whitelist) l = this._whitelist[u];
     else {
       l = this._whitelist[u] = [];
       this.whitelistLen++;
     }
-    
+
     l.push(pp.join(" "));
   },
   resetWhitelist: function() {
     this._whitelist = {};
     this.whitelistLen = 0;
   },
-  
+
   isEmbed: function(o) (o instanceof Ci.nsIDOMHTMLObjectElement || o instanceof Ci.nsIDOMHTMLEmbedElement)
                         && !o.contentDocument && ns.getExpando(o, "site") != ns.getSite(o.ownerDocument.documentURI),
-  
+
   swallowEvent: function(ev) {
     ev.cancelBubble = true;
     ev.stopPropagation();
     ev.preventDefault();
   },
-  
+
   _zoom: 1,
-  
-  
+
+
   getBox: function(o, d, w) {
     if (!d) d = o.ownerDocument;
     if (!w) w = d.defaultView;
     var c = o.getBoundingClientRect();
     var x = c.left, y = c.top; // this is relative to the view port, just like mozInnerScreen*
-    
+
     return {
       x: x + w.scrollX, y: y + w.scrollY, // add scroll* to make it absolute
       width: c.width, height: c.height,
       screenX: w.mozInnerScreenX + x, screenY: w.mozInnerScreenY + y
     }
   },
-  
-  
+
+
   getBG: function(w) {
     var bg = w.document.body && w.getComputedStyle(w.document.body, '').backgroundColor || "#fff";
     return bg == "transparent" ? w != w.parent && this.getBG(w.parent) || "#fff" : bg;
   },
-  
+
   _constrain: function(box, axys, dim, max, vp, center) {
     var d;
     var scr = "screen" + axys.toUpperCase();
     // trim bounds to take in account fancy overlay borders
     var l = box[dim];
     var n = box[axys];
-    
+
     if (vp.frame && center && l < vp[dim]) { // expand to viewport if possible
       l = vp[dim];
     }
-    
+
     if (l > 6) {
       var bStart = Math.floor(l * .1) // 20% border
       var bEnd = bStart;
@@ -222,11 +222,11 @@ ClearClickHandler.prototype = {
         bStart = center - n;
       } else if (l + n - center < bEnd) {
         bEnd = l + n - center;
-      } 
+      }
       box[dim] = (l -= (bStart + bEnd));
       box[axys] = (n += bStart);
       box[scr] += bStart;
-      
+
     }
 
     if (l > max) {
@@ -234,7 +234,7 @@ ClearClickHandler.prototype = {
       if (center) {
         var halfMax = Math.round(max / 2);
         var nn = center - halfMax;
-        if (nn > n && center + halfMax > n + l) nn = (n + l) - max;        
+        if (nn > n && center + halfMax > n + l) nn = (n + l) - max;
         box[axys] = nn;
         box[scr] += (nn - n);
         n = nn;
@@ -248,14 +248,14 @@ ClearClickHandler.prototype = {
         : (n + l) > (vpn + vp[dim])
           ? (vpn + vp[dim]) - (n + l)
           : 0;
-    
+
     if (d) {
       n = (box[axys] += d);
       box[scr] += d;
     }
 
   },
-  
+
   get canvas() {
     delete this.__proto__.canvas;
     const impl = Cc["@mozilla.org/xul/xul-document;1"].createInstance(Ci.nsIDOMDocument).implementation;
@@ -263,34 +263,24 @@ ClearClickHandler.prototype = {
       ? impl.createHTMLDocument("")
       : impl.createDocument(
         HTML_NS, "html", impl.createDocumentType(
-          "html", "-//W3C//DTD HTML 4.01 Transitional//EN", "http://www.w3.org/TR/html4/loose.dtd"  
+          "html", "-//W3C//DTD HTML 4.01 Transitional//EN", "http://www.w3.org/TR/html4/loose.dtd"
         ))
       ).createElementNS(HTML_NS, "canvas");
   },
-  
-  _semanticContainers: [Ci.nsIDOMHTMLParagraphElement, Ci.nsIDOMHTMLQuoteElement,
-                        Ci.nsIDOMHTMLUListElement, Ci.nsIDOMHTMLOListElement, Ci.nsIDOMHTMLDirectoryElement,
-                        Ci.nsIDOMHTMLPreElement, Ci.nsIDOMHTMLTableElement ]
-  ,
-  isSemanticContainer: function(o) {
-    let scc = this._semanticContainers;
-    for (let j = scc.length; j-- > 0;)
-     if (o instanceof scc[j]) 
-       return o.ownerDocument.URL.indexOf("view-source") !== 0;
-  
-    return false;
-  },
-  
+
+  _semanticContainersRx: /^(?:p|quote|ul|ol|dir|pre|table)$/i,
+  isSemanticContainer: function(o) this._semanticContainersRx.test(o.tagName) && o.ownerDocument.URL.indexOf("view-source") !== 0,
+
   forLog: function(o) {
     return o.tagName + "/" + (o.tabIndex || 0);
   },
-  
+
   handleEvent: function(ev) {
-    
+
     const o = ev.target;
     const d = o.ownerDocument;
     if (!d) return;
-    
+
     if (d === ev.currentTarget || // chrome source, see rapidFire installation
         ev.button || // right or middle click
         ev.keyCode && // special keys, e.g. for UI navigation
@@ -300,16 +290,16 @@ ClearClickHandler.prototype = {
       // this.ns.log("Reset global event tracking");
       if (d === ev.currentTarget || ev.keyCode) return;
     }
-    
-    
+
+
     const w = d.defaultView;
     if (!w) return;
-    
+
     const ns = this.ns;
-    
+
     const top = w.top;
     const topURL = top.document.documentURI;
-   
+
     var isEmbed;
     var ts = Date.now();
 
@@ -320,22 +310,22 @@ ClearClickHandler.prototype = {
              " in "  + (ts - this.rapidFire.ts) + "ms)", true);
       return;
     }
-    
+
     if (ev.type === "mouseover") return;
-    
-    if (!("__clearClickUnlocked" in top)) 
+
+    if (!("__clearClickUnlocked" in top))
       top.__clearClickUnlocked = !this.appliesHere(topURL);
-    
+
     if (top.__clearClickUnlocked) return;
-    
+
     if (!("__clearClickUnlocked" in o)) {
 
-      o.__clearClickUnlocked = 
+      o.__clearClickUnlocked =
         o === d.documentElement || o === d.body || // key event on empty region
         this.isSemanticContainer(o) ||
         !(isEmbed = this.isEmbed(o)) && // plugin embedding?
-          (w == top || 
-            ("__clearClickUnlocked" in w 
+          (w == top ||
+            ("__clearClickUnlocked" in w
               ? w.__clearClickUnlocked
               : (w.__clearClickUnlocked = this.isWhitelisted(w))
             ) ||
@@ -345,14 +335,14 @@ ClearClickHandler.prototype = {
           ns.getPluginExtras(o) && ns.getPref("confirmUnblock") || // Just enabled from NS placeholder after prompt?
            this.checkSubexception(isEmbed && (o.src || o.data) || w.location.href)
     }
-    
+
     if (o.__clearClickUnlocked || w.__clearClickUnlocked) return;
 
     var p = ns.getExpando(o, "clearClickProps", {});
     var verbose = ns.consoleDump & LOG_CLEARCLICK;
     var etype = ev.type;
     if (verbose) ns.dump(o.tagName + ", " + etype + ", " + p.toSource());
-    
+
     var obstructed, ctx, primaryEvent;
     try {
       if (etype == "blur") {
@@ -363,7 +353,7 @@ ClearClickHandler.prototype = {
         return;
       }
       if (p.unlocked) return;
-    
+
       ctx = /mouse|drop/.test(etype)
                 && { x: ev.pageX, y: ev.pageY, debug: ev.ctrlKey && ev.button == 1 && ns.getPref("clearClick.debug") }
                 || {};
@@ -376,10 +366,10 @@ ClearClickHandler.prototype = {
             ((ctx.box = this.getBox(ev.target, d, w)).screenX * ctx.box.screenY != 0) ||
           // allow infra-document drag operations and tabulations
           etype != "blur" && top.__clearClickDoc == d && (top.__clearClickProps.unlocked || top.__clearClickProps.lastEtype == "blur");
-    
+
       obstructed = (primaryEvent || !("obstructed" in p))
         ? p.obstructed = this.checkObstruction(o, ctx)
-        : p.obstructed; // cache for non-primary events       
+        : p.obstructed; // cache for non-primary events
     } catch(e) {
       ns.dump(e);
       obstructed = true;
@@ -388,21 +378,21 @@ ClearClickHandler.prototype = {
       top.__clearClickProps = p;
       top.__clearClickDoc = d;
     }
-    
+
     var quarantine = ts - (p.ts || 0);
-    
+
     if (verbose) ns.dump("ClearClick: " + ev.target.tagName + " " + etype +
-       "(s:{" + ev.screenX + "," + ev.screenY + "}, p:{" + ev.pageX + "," + ev.pageY + "}, c:{" + ev.clientX + "," + ev.clientY + 
+       "(s:{" + ev.screenX + "," + ev.screenY + "}, p:{" + ev.pageX + "," + ev.pageY + "}, c:{" + ev.clientX + "," + ev.clientY +
        ", w:" + ev.which + "}) - obstructed: " + obstructed + ", check time: " + (Date.now() - ts) + ", quarantine: " + quarantine +
        ", primary: " + primaryEvent + ", ccp:" + (top.__clearClickProps && top.__clearClickProps.toSource()));
-    
+
     var unlocked = !obstructed && primaryEvent && quarantine > 3000;
-    
+
     if (unlocked) {
       if (verbose) ns.dump("ClearClick: unlocking " + ev.target.tagName + " " + etype);
       p.unlocked = true;
     } else {
-      
+
       this.swallowEvent(ev);
       ns.log("[NoScript ClearClick] Swallowed event " + etype + " on " + this.forLog(o) + " at " + w.location.href, true);
       var docShell = DOM.getDocShellForWindow(w);
@@ -438,7 +428,7 @@ ClearClickHandler.prototype = {
       }
     }
   },
-  
+
   findParentForm: function(o) {
     var ftype = Ci.nsIDOMHTMLFormElement;
     while((o = o.parentNode)) {
@@ -446,14 +436,14 @@ ClearClickHandler.prototype = {
     }
     return null;
   },
-  
- 
+
+
   rndColor: function() {
     var c = Math.round(Math.random() * 0xffffff).toString(16);
-    return "#" + ("000000".substring(c.length)) + c; 
+    return "#" + ("000000".substring(c.length)) + c;
   },
-  
-   
+
+
   maxWidth: 350,
   maxHeight: 200,
   minWidth: 160,
@@ -461,20 +451,20 @@ ClearClickHandler.prototype = {
   _NO_SCROLLBARS: {w: 0, h: 0},
   computeScrollbarSizes: function(window, dElem, body) {
     var fw = window.innerWidth, fh = window.innerHeight;
-    
+
     if (body && body.ownerDocument.compatMode == "BackCompat") {
       dElem = body;
     }
-    
+
     var dw = dElem.clientWidth, dh = dElem.clientHeight;
     var w = Math.min(fw, dw), h = Math.min(fh, dh);
-    
+
     var zoom = window.QueryInterface(Ci.nsIInterfaceRequestor)
             .getInterface(Ci.nsIDOMWindowUtils).screenPixelsPerCSSPixel;
 
     return { w: (fw - w) * zoom, h: (fh - h) * zoom };
   },
-  
+
   checkObstruction: function(o, ctx) {
     var d = o.ownerDocument;
     var w = d.defaultView;
@@ -484,30 +474,30 @@ ClearClickHandler.prototype = {
       w = d.defaultView;
       ctx.isEmbed = true;
     }
- 
+
     var dElem = d.documentElement;
-    
+
     var top = w.top;
     var browser = DOM.findBrowserForNode(top);
-    
+
     if (!browser) return false; // some extensions, e.g. FoxTab, cause this
-    
+
     var c = this.canvas;
     var gfx = c.getContext("2d");
-    
+
     var bg = this.getBG(w);
 
     var bgStyle;
     var box, rootBox, curtain, woi;
-    
+
     var frame, frameClass, objClass;
-    
+
     var docPatcher = new DocPatcher(this.ns, o, w);
-    
+
     var sheet = null;
-    
+
     var img1 = null, img2 = null, tmpImg = null;
-    
+
     function Snapshot(w, x, y) {
       gfx.drawWindow(w, Math.round(x), Math.round(y), c.width, c.height, bg);
       if (woi && w == top && rootBox) {
@@ -517,12 +507,12 @@ ClearClickHandler.prototype = {
       }
       this.imageData = gfx.getImageData(0, 0, c.width, c.height);
     }
-    
+
     Snapshot.prototype = {
       THRESHOLD: ns.getPref("clearClick.threshold") / 100,
       resembles: function(other) {
         if (other === null) return false;
-        
+
         let buf1 = this.imageData.data;
         let buf2 = other.imageData.data;
         let diff = 0, eq = 0;
@@ -559,7 +549,7 @@ ClearClickHandler.prototype = {
         return c.toDataURL();
       }
     }
-    
+
     function compareSnapshots(x1, y1, x2, y2) {
       img1 = null;
       try {
@@ -580,22 +570,22 @@ ClearClickHandler.prototype = {
         docPatcher.clean(false);
       }
       img2 = tmpImg = new Snapshot(top, x2, y2);
-      return ret && !img1.resembles(img2); 
+      return ret && !img1.resembles(img2);
     }
 
     var sd = this._NO_SCROLLBARS;
 
     try {
-       
+
       docPatcher.linkAlertHack(true);
       docPatcher.fbPresenceHack(true);
       docPatcher.abpTabsHack(true);
       docPatcher.trafficLightHack(true);
       try {
         docPatcher.opaque(true);
-        
+
         var fbPresence; // hack for Facebooks's fixed positioned widget
-        
+
         if (ctx.isEmbed) { // objects and embeds
           if (this.ns.getPref("clearClick.plugins", true)) {
             objClass = new ClassyObj(o);
@@ -606,48 +596,48 @@ ClearClickHandler.prototype = {
             DOM.addClass(o, "__noscriptOpaqued__");
           }
         }
-        
+
         if ((frame = w.frameElement)) {
           frameClass = new ClassyObj(frame);
           DOM.removeClass(frame, "__noscriptScrolling__");
           sd = this.computeScrollbarSizes(w, dElem, d.body);
-          
+
         }
-        
+
         let clientHeight = w.innerHeight - sd.h;
         let clientWidth =  w.innerWidth - sd.w;
         // print(dElem.clientWidth + "," +  dElem.clientHeight + " - "  + w.innerWidth + "," + w.innerHeight);
-        
+
         if (!ctx.isEmbed) {
           curtain = d.createElementNS(HTML_NS, "div");
           with (curtain.style) {
             top = left = "0px";
-            
+
             width = (clientWidth + w.scrollX) + "px";
             height = (clientHeight + w.scrollY) + "px";
-  
+
             padding = margin = borderWidth = MozOutlineWidth = "0px";
             position = "absolute";
             zIndex = DOM.maxZIndex;
-            
+
             background = this.rndColor();
           }
-        }     
-        
+        }
+
         let maxWidth = Math.max(Math.min(this.maxWidth, clientWidth), sd.w ? 0 : Math.min(this.minWidth, dElem.offsetWidth), 8);
         let maxHeight = Math.max(Math.min(this.maxHeight, clientHeight), sd.h ? 0 : Math.min(this.minHeight, dElem.offsetHeight, 8));
-  
+
         for (;;) {
             box = this.getBox(o, d, w);
             if (box.width > 0 && box.height > 0) break;
             o = o.parentNode;
             if (!o) return false;
         }
-        
+
         // expand to parent form if needed
         var form = o.form;
         if (frame && !ctx.isEmbed && (form || (form = this.findParentForm(o)))) {
-  
+
           let formBox = this.getBox(form, d, w);
           if (!(formBox.width && formBox.height)) { // some idiots put <form> as first child of <table> :(
             formBox = this.getBox(form.offsetParent || form.parentNode, d, w);
@@ -655,16 +645,16 @@ ClearClickHandler.prototype = {
               formBox = this.getBox(form.parentNode.offsetParent || o.offsetParent, d, w);
             }
           }
-    
+
           if (formBox.width && formBox.height) {
             // form has layout, recenter to show as much as possible
             ctx.x = ctx.x || box.x + box.width;   // use mouse coordinates or
-            ctx.y = ctx.y || box.y + box.height; // rightmost widget position 
-            
+            ctx.y = ctx.y || box.y + box.height; // rightmost widget position
+
             box = formBox; // the form is our new reference
-            
+
             var delta;
-            
+
             // move inside the viewport if needed
             if (box.x < 0) {
               box.screenX -= box.x;
@@ -674,14 +664,14 @@ ClearClickHandler.prototype = {
               box.screenY -= box.y;
               box.y = 0;
             }
-            
+
             // is our center out of the form?
-            if (box.x + Math.min(box.width, maxWidth) < ctx.x) { 
+            if (box.x + Math.min(box.width, maxWidth) < ctx.x) {
               box.width = Math.min(box.width, maxWidth);
               delta = ctx.x + 4 - box.width - box.x;
               box.x += delta;
               box.screenX += delta;
-             
+
             }
             if (box.y + Math.min(box.height, maxHeight) < ctx.y) {
               box.height = Math.min(box.height, maxHeight);
@@ -689,51 +679,51 @@ ClearClickHandler.prototype = {
               box.y += delta;
               box.screenY += delta;
             }
-            
+
             // recenter to the form
             ctx.x = box.x + box.width / 2;
             ctx.y = box.y + box.height / 2;
-            
+
             o = form;
           }
         }
-  
+
         bgStyle = dElem.style.background;
         dElem.style.background = bg;
-        
+
         // clip, slide in viewport and trim
-        
-        var vp = { 
-          x: w.scrollX, 
-          y: w.scrollY + 3, // 3 pixels grace for box shadows cast from above a frame, like in the FB header 
-          width: Math.max(w.innerWidth - sd.w, 32), 
+
+        var vp = {
+          x: w.scrollX,
+          y: w.scrollY + 3, // 3 pixels grace for box shadows cast from above a frame, like in the FB header
+          width: Math.max(w.innerWidth - sd.w, 32),
           height: Math.max(w.innerHeight - sd.h - 3, 16), // Facebook like buttons are 20 pixel high
           frame: frame
         };
-        
+
         var rtlOffset = 0;
-        
+
         if (ctx.isEmbed) { // check in-page vieport
           vp.frame = null;
           vp.x = Math.max(vp.x, box.x);
           vp.y = Math.max(vp.y, box.y);
           vp.width = Math.min(vp.width, box.width);
           vp.height = Math.min(vp.height, box.height);
-          
+
           for(let ancestor = o; ancestor = ancestor.parentNode;) {
-  
+
             if ((ancestor.offsetWidth < box.width || ancestor.offsetHeight < box.height) &&
                 w.getComputedStyle(ancestor, '').overflow != "visible") {
-              
+
               // check if we're being fooled by some super-zoomed applet
               if (box.width / 4 <= ancestor.offsetWidth && box.height / 4 <= ancestor.offsetHeight) {
                 let ancestorBox = this.getBox(ancestor, d, w);
-                
+
                 if (box.x < ancestorBox.x) {
                   box.x = ancestorBox.x;
                   box.screenX = ancestorBox.screenX;
                 }
-                if (box.y < ancestorBox.y) { 
+                if (box.y < ancestorBox.y) {
                   box.y = ancestorBox.y;
                   box.screenY = ancestorBox.screenY;
                 }
@@ -744,15 +734,15 @@ ClearClickHandler.prototype = {
             }
           }
         } else {
-          
+
           // correct x offsets according to left scrollbars if needed
           try {
             var adaptiveScrollerSide = false;
-            switch(this.ns.prefService.getIntPref("layout.scrollbar.side")) {  
+            switch(this.ns.prefService.getIntPref("layout.scrollbar.side")) {
               case 1:
                 adaptiveScrollerSide = true;
               case 0:
-                if (!adaptiveScrollerSide && this.ns.prefService.getIntPref("bidi.direction") != 2) 
+                if (!adaptiveScrollerSide && this.ns.prefService.getIntPref("bidi.direction") != 2)
                   break;
               case 3:
                 vp.x += this._scrollerCorrect(w, adaptiveScrollerSide);
@@ -761,11 +751,11 @@ ClearClickHandler.prototype = {
           } catch(e) {
             if (ns.consoleDump & LOG_CLEARCLICK) ns.dump(e);
           }
-          
+
         }
-        
+
         // clip viewport intersecting with scrolling parents
-        
+
         const CLIP_MIN = 64;
         var clip = this._clip(o.parentNode, frame ? this.getBox(frame) : box);
         if (clip.h != 0) {
@@ -782,50 +772,50 @@ ClearClickHandler.prototype = {
         }
         vp.x += clip.x;
         vp.y += clip.y;
-        
+
         // Fit in viewport
-        
+
         box.oX = box.x;
         box.oY = box.y;
         box.oW = box.width;
         box.oH = box.height;
-        
+
         // print("Fitting " + box.toSource() + " in " + vp.toSource() + " - ctx " + ctx.x + ", " + ctx.y + " - max " + maxWidth + ", " + maxHeight);
-  
+
         this._constrain(box, "x", "width", maxWidth, vp, ctx.x);
         this._constrain(box, "y", "height", maxHeight, vp, ctx.y);
-        // print(box.toSource());     
-        
-        
-         
+        // print(box.toSource());
+
+
+
         c.width = box.width;
         c.height = box.height;
-        
+
         woi = this.findWindowedRects(ctx.isEmbed ? o : w.frameElement);
-        
+
         if (this.ns.consoleDump & LOG_CLEARCLICK) this.ns.dump("Snapshot at " + box.toSource() + " + " + w.pageXOffset + ", " + w.pageYOffset);
-          
+
         if (curtain && frame) {
           dElem.appendChild(curtain);
         }
 
         img1 = new Snapshot(w, box.x, box.y);
-      
+
       } finally {
         docPatcher.clean(false);
       }
-    
+
 
       var rootElement = top.document.documentElement;
       rootBox = this.getBox(rootElement, top.document, top);
-      
-      
+
+
       var offsetY = (box.screenY - rootBox.screenY);
       var offsetX = (box.screenX - rootBox.screenX) + rtlOffset;
-      
+
       var ret = true;
       var tmpImg;
-      
+
       const offs = ctx.isEmbed ? [0] : [0, -1, 1, -2, 2, -3, -3];
 
       checkImage:
@@ -839,7 +829,7 @@ ClearClickHandler.prototype = {
           if (!img2) img2 = tmpImg;
         }
       }
-      
+
       if (ret && !curtain && ctx.isEmbed) {
         curtain = d.createElementNS(HTML_NS, "div");
         if (docPatcher) curtain.className = docPatcher.shownCS;
@@ -856,7 +846,7 @@ ClearClickHandler.prototype = {
 
         ret = compareSnapshots(box.x, box.y, offsetX, offsetY);
       }
-      
+
       if (ret && ctx.isEmbed && ("x" in ctx) && c.width > this.minWidth && c.height > this.minHeight) {
         c.width = this.minWidth;
         c.height = this.minHeight;
@@ -874,32 +864,32 @@ ClearClickHandler.prototype = {
           if (!ret) break;
         }
       }
-      
+
       if (ctx.debug || this.checkCursor(ctx.isEmbed ? o : frame)) {
         ret = true;
         img2 = tmpImg;
       }
-      
+
       if (ret) {
-        
+
         if (curtain) {
 
           if (ctx.debug) {
-            
+
             if (docPatcher.cleanSheet) {
               curtain.id = "curtain_" + DOM.rndId();
               docPatcher.cleanSheet += " #" + curtain.id + " { opacity: .4 !important }";
             }
-            
+
             curtain.style.opacity = ".4"
-            
+
           } else {
             curtain.parentNode.removeChild(curtain);
             curtain = null;
           }
           compareSnapshots(box.x, box.y, offsetX, offsetY);
         }
-        
+
         ctx.img =
         {
           src: img1.toURL(),
@@ -908,28 +898,28 @@ ClearClickHandler.prototype = {
           height: c.height
         }
       }
-    
+
     } finally {
       if (ctx.isEmbed) docPatcher.blankPositioned(false);
-      
-      
+
+
       if (curtain && curtain.parentNode) curtain.parentNode.removeChild(curtain);
       if (typeof(bgStyle) == "string") dElem.style.background = bgStyle;
-     
+
       docPatcher.opaque(false);
       docPatcher.trafficLightHack(false);
       docPatcher.abpTabsHack(false);
       docPatcher.fbPresenceHack(false);
       docPatcher.linkAlertHack(false);
-      
+
       if (objClass) objClass.reset();
       if (frameClass) frameClass.reset();
     }
-    
+
     return ret;
- 
+
   },
-  
+
   checkCursor: function(o) {
     let w = o.ownerDocument.defaultView;
     for(; o && o instanceof Ci.nsIDOMHTMLElement; o = o.parentNode) {
@@ -938,14 +928,14 @@ ClearClickHandler.prototype = {
         if (cursor === "none" || cursor.indexOf("url(") !== -1) return true;
       } catch (e) {}
     }
-    return w.frameElement && this.checkCursor(w.frameElement); 
-  },  
-  
+    return w.frameElement && this.checkCursor(w.frameElement);
+  },
+
   _clip: function(parent, box) {
     const MIN = 64;
-    
+
     // backtrack all the overflow~="auto|scroll" parent elements and clip
-        
+
     var pw = parent.ownerDocument.defaultView;
 
     var current, cbox;
@@ -955,16 +945,16 @@ ClearClickHandler.prototype = {
     var by = box.screenY;
     var bw = box.width;
     var bh = box.height;
-    
+
     const ELEMENT = Ci.nsIDOMElement;
-    
+
     while(parent) {
-   
-      current = parent; 
+
+      current = parent;
       switch (pw.getComputedStyle(current, '').overflow) {
         case "auto" : case "scroll":
         cbox = this.getBox(current);
-        
+
         d = cbox.screenY - by;
         if (d > 0) {
           dy += d;
@@ -978,7 +968,7 @@ ClearClickHandler.prototype = {
           dw -= d;
           bx += d;
           bw -= d;
-          
+
         }
         d = by + bh - (cbox.screenY + current.clientHeight);
         if (d > 0) {
@@ -1000,22 +990,22 @@ ClearClickHandler.prototype = {
       parent = pw.frameElement;
       if (parent) pw = parent.ownerDocument.defaultView;
     }
-    
+
     return { x: dx, y: dy, w: dw, h: dh };
   },
-  
+
   _scrollerCorrect: function(w, adaptive) {
     return (adaptive && w.getComputedStyle(w.document.body || w.document.documentElement, '').direction != 'rtl')
       ? 0
       : w.innerWidth - w.document.documentElement.clientWidth;
   },
-  
+
   _offsetParents: function(p) {
     let pp = [];
     for (; p; p = p.offsetParent) pp.push(p);
     return pp;
   },
-  
+
   get _ignoreWindowedZ() {
     delete this.__proto__._ignoreWindowedZ;
     return this.__proto__._ignoreWindowedZ = ns.geckoVersionCheck("10.0") < 0;
@@ -1023,7 +1013,7 @@ ClearClickHandler.prototype = {
   findWindowedRects: function(el) {
     const tags = ["object", "embed"];
     var woi = null;
-    
+
     while(el) {
       let d = el.ownerDocument;
       let w = d.defaultView;
@@ -1040,11 +1030,11 @@ ClearClickHandler.prototype = {
                 if (p1 != p2) {
                   let s1 = w.getComputedStyle(p1, '');
                   let s2 = w.getComputedStyle(p2, '');
-                  
+
                   if (s2.display != 'none' && s2.visibility != 'hidden' &&
                       (this._ignoreWindowedZ ||
                         (s2.position != 'static' &&
-                         (s1.position == 'static'  || 
+                         (s1.position == 'static'  ||
                             (parseInt(s1.zIndex, 10) || 0) <= (parseInt(s2.zIndex, 10) || 0)))
                       )
                     ) {
@@ -1099,7 +1089,7 @@ DocPatcher.prototype = {
     for(; o && o.hasAttribute; o = o.parentNode) res.push(new ClassyObj(o));
     return res;
   },
-  
+
   getRect: function(o, d) {
     return (this.getRect = ("getBoundingClientRect" in o)
      ? function(o) { return o.getBoundingClientRect() }
@@ -1110,11 +1100,11 @@ DocPatcher.prototype = {
         left: x,
         top: y,
         right: x + o.width,
-        bottom: y + o.height 
+        bottom: y + o.height
       };
      })(o, d)
   },
-  
+
   collectPositioned: function(d) {
     var t = Date.now();
     const w = d.defaultView;
@@ -1126,54 +1116,54 @@ DocPatcher.prototype = {
     const bottom = r.bottom;
     const left = r.left;
     const right = r.right;
-    
+
     var c = '', b = null;
     var hasPos = false;
     const posn = [];
-    
+
     const tw = d.createTreeWalker(d, Ci.nsIDOMNodeFilter.SHOW_ELEMENT, null, false);
     for (var n = null; (n = tw.nextNode());) {
       b = n.getBoundingClientRect();
       if (b.bottom < top || b.top > bottom ||
           b.right < left || b.left > right)
         continue;
-      
+
       s = w.getComputedStyle(n, '');
       p = s.position;
       if (p == "absolute" || p == "fixed") {
         c = " __noscriptPositioned__";
         n.__noscriptPos = hasPos = true;
         posn.push(n);
-      } else { 
+      } else {
         hasPos = hasPos && n.parentNode.__noscriptPos;
         if (!hasPos) continue;
         c = '';
         n.__noscriptPos = true;
         posn.push(n);
       }
-      
+
       if (s.backgroundImage != "none" || s.backgroundColor != "transparent") {
         c += " __noscriptBlank__";
       };
-      
-      
+
+
       if (c) {
         res.push(n = new ClassyObj(n));
         n.append(c);
       }
     }
-    
+
     for each(n in posn) n.__noscriptPos = false;
-    
+
     if(ns.consoleDump & LOG_CLEARCLICK) ns.dump("DocPatcher.collectPositioned(): " + (Date.now() - t));
     return res;
   },
-  
+
   collectOpaqued: function(o, oo) {
     if (!oo) oo = { opacity: 1, res: [] };
-    
+
     var w = o.ownerDocument.defaultView;
-    
+
     var opacity;
     var co = null;
     for(; o && o.hasAttribute; o = o.parentNode) {
@@ -1183,23 +1173,23 @@ DocPatcher.prototype = {
         oo.res.push(new ClassyObj(o));
       }
     }
-       
+
     o = w.frameElement;
     return o ? this.collectOpaqued(o, oo) : oo.res;
   },
-  
+
   forceVisible: function(co) { // TODO: I cause too much reflow, please CHECK ME!
-    co.append(this.shownCS); 
+    co.append(this.shownCS);
   },
-  
+
   forceOpaque: function(co) {
     co.append(" __noscriptJustOpaqued__");
   },
-  
+
   resetClass: function(co) {
     co.reset();
   },
-  
+
   _ancestors: null,
   _cleanSheetHandle: null,
   clean: function(toggle) {
@@ -1215,7 +1205,7 @@ DocPatcher.prototype = {
       this.removeSheet(this._cleanSheetHandle);
     }
   },
-  
+
   _positioned: null,
   _blankSheetHandle: null,
   blankSheet: ".__noscriptPositioned__ * { color: white !important; border-color: white !important; }",
@@ -1228,7 +1218,7 @@ DocPatcher.prototype = {
       this.removeSheet(this._blankSheetHandle);
     }
   },
-  
+
   _opaqued: null,
   opaque: function(toggle) {
     if (toggle) {
@@ -1238,7 +1228,7 @@ DocPatcher.prototype = {
       this._opaqued.forEach(this.resetClass);
     }
   },
-  
+
 
   applySheet: function(sheetHandle) {
     this.ns.updateStyleSheet(sheetHandle, true);
@@ -1247,11 +1237,11 @@ DocPatcher.prototype = {
   removeSheet: function(sheetHandle) {
     this.ns.updateStyleSheet(sheetHandle, false);
   },
-  
+
   trafficLightHack: function(toggle) {
     const ID = "tll_hui_container";
     if (!(toggle && this.top.document.getElementById(ID))) return;
-    
+
     delete this.__proto__.trafficLightHack;
     try {
       Cc["@mozilla.org/chrome/chrome-registry;1"]
@@ -1274,16 +1264,16 @@ DocPatcher.prototype = {
         return;
       }
       if (w.getComputedStyle(c, '').visibility !== "visible") return;
-      
+
       for each(let n in Array.push(c, c.getElementsByTagName("*"))) {
         if (n.getBoundingClientRect().bottom > 50) return;
       }
       c.style.visibility = "hidden";
-      this._trafficLightHackToggle = true;    
+      this._trafficLightHackToggle = true;
     }
     this.trafficLightHack(toggle);
   },
-  
+
   _linkAlertBox: null,
   linkAlertHack: function(toggle) {
     try {
@@ -1309,7 +1299,7 @@ DocPatcher.prototype = {
       }
     } catch (e) {}
   },
-  
+
   _fbPresence: null,
   fbPresenceHack: function(toggle) {
     if (toggle) {
@@ -1319,7 +1309,7 @@ DocPatcher.prototype = {
           if (fbPresence) {
             fbPresence._ccVisibility = fbPresence.style.visibility;
             fbPresence.style.visibility = "hidden";
-            this._fbPresence = fbPresence; 
+            this._fbPresence = fbPresence;
           }
         }
       } catch(e) {}
@@ -1327,7 +1317,7 @@ DocPatcher.prototype = {
       this._fbPresence.style.visibility = this._fbPresence._ccVisibility;
     }
   },
-  
+
   _abpTabs: null,
   get _abpTabsObj() {
     delete this.__proto__._abpTabsObj;
@@ -1346,7 +1336,7 @@ DocPatcher.prototype = {
     }
     return this.__proto__._abpTabsObj = tobj;
   },
-  
+
   abpTabsHack: function(toggle) {
     let visibleClass, hiddenClass;
     try {
@@ -1367,7 +1357,7 @@ DocPatcher.prototype = {
             if (toggle) {
               let tabs = [];
               for each(let c in visibleClasses) {
-                
+
                 Array.forEach(document.getElementsByClassName(c), function(t) {
                   let co = new ClassyObj(t);
                   t.className = hiddenClass;
@@ -1385,7 +1375,7 @@ DocPatcher.prototype = {
           }
         }
       : DUMMY_FUNC;
-    this.abpTabsHack(toggle); 
+    this.abpTabsHack(toggle);
   }
 };
 

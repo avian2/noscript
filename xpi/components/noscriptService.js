@@ -2076,10 +2076,13 @@ var ns = {
         "!about:pocket-signup": "about:pocket-signup",
         "google.com": "ajax.googleapis.com maps.googleapis.com"
       },
-      "@VERSION@rc1": {
+      "2.6.9.35rc1": {
         "!about:pocket-save": "about:pocket-saved",
         "!about:pocket-signup": "about:pocket-signup",
         "google.com": "ajax.googleapis.com maps.googleapis.com"
+      },
+      "@VERSION@": {
+        "netflix.com": "https://*.nflxvideo.net"
       }
     };
 
@@ -2437,26 +2440,28 @@ var ns = {
 
     if (!policy) policy = this.jsPolicySites;
 
+    if (this.ignorePorts && policy.matches(site.replace(/:\d+$/, '')))
+      return true;
+
     let map = policy.sitesMap;
+    let portRx = this.portRx;
+    let hasPort = portRx.test(site);
 
-    if (this.portRx.test(site)) {
-      let portRx = this.portRx;
-      if (this.ignorePorts && policy.matches(site.replace(/:\d+$/, '')))
-        return true;
-
-      // port matching, with "0" as port wildcard  and * as nth level host wildcard
-      let key = site.replace(portRx, ":0");
-      if (key in map || site in map) return true;
-      var keys = site.split(".");
-      if (keys.length > 1) {
-        let prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
-        while (keys.length > 2) {
-          keys.shift();
-          key = prefix + keys.join(".");
-          if (key in map || key.replace(portRx, ":0") in map) return true;
-        }
+    // port matching, with "0" as port wildcard  and * as nth level host wildcard
+    let key = hasPort ? site.replace(portRx, ":0") : site;
+    if (key in map || site in map) return true;
+    var keys = site.split(".");
+    if (keys.length > 1) {
+      let prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
+      ns.log("Keys: " + keys.toSource())
+      while (keys.length > 2) {
+        keys.shift();
+        key = prefix + keys.join(".");
+        ns.log(key)
+        if (key in map || hasPort && key.replace(portRx, ":0") in map) return true;
       }
     }
+
     // check IP leftmost portion up to 2nd byte (e.g. [http://]192.168 or [http://]10.0.0)
     let m = site.match(this._ipShorthandRx);
     return m && (m[2] in map || m[3] in map || (m[1] + m[2]) in map || (m[1] + m[3]) in map);
