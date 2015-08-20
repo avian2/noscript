@@ -487,7 +487,7 @@ RequestWatchdog.prototype = {
     if(!trustedTarget) {
       window = window || abeReq.window;
       if(ns.autoAllow) {
-        if (window && window == window.top) {
+        if (window && window == window.top || channel.loadInfo && channel.loadInfo.contentPolicyType === 6) {
           targetSite = ns.getQuickSite(originalSpec, ns.autoAllow);
           if(targetSite && !ns.isJSEnabled(targetSite, window)) {
             ns.autoTemp(targetSite);

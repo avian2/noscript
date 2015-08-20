@@ -33,6 +33,11 @@ IPC.parent = {
   },
 
   receiveMessage: function(m) {
+    ns.onContentInit();
+    this.receiveMessage = this._receiveMessageReal;
+    return this.receiveMessage(m);
+  },
+  _receiveMessageReal: function(m) {
     switch(m.name) {
       case "NoScript:mustBlockJS":
         return ns.mustBlockJS(m.objects.window, m.data.site, WinScript);

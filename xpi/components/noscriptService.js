@@ -1722,6 +1722,9 @@ var ns = {
 
 
   updateExtraPerm: function(prefName, baseName, names) {
+    if (prefName === "allowLocalLinks") {
+      ns.log("allowLocalLinks: " + new Error().stack)
+    }
     var cpName;
     var enabled = this.getPref(prefName, false);
     this[prefName] = enabled;
@@ -1890,7 +1893,6 @@ var ns = {
     this._batchPrefs = true;
     for each(var p in [
       "autoAllow",
-      "allowClipboard", "allowLocalLinks",
       "allowedMimeRegExp", "hideOnUnloadRegExp", "requireReloadRegExp",
       "consoleDump", "consoleLog", "contentBlocker", "alwaysShowObjectSources",
       "docShellJSBlocking",
@@ -1929,9 +1931,6 @@ var ns = {
       }
     }
     this._batchPrefs = false;
-
-
-
 
     this.setupJSCaps();
 
@@ -1977,13 +1976,19 @@ var ns = {
   },
 
 
+  onContentInit: function() {
+    this._batchPrefs = true;
+    ["allowClipboard", "allowLocalLinks"].forEach(function(p) this.syncPrefs(this.pref, p), this);
+    this._batchPrefs = false;
+    this.setupJSCaps();
+  },
+
   _initE10s: function() {
     INCLUDE("parentProcess");
   },
   _disposeE10s: function() {
     if (IPC.parent) IPC.parent.dispose();
   },
-
 
   dispose: function() {
     try {
@@ -2081,7 +2086,7 @@ var ns = {
         "!about:pocket-signup": "about:pocket-signup",
         "google.com": "ajax.googleapis.com maps.googleapis.com"
       },
-      "@VERSION@": {
+      "2.6.9.36rc1": {
         "netflix.com": "https://*.nflxvideo.net"
       }
     };
@@ -2453,11 +2458,9 @@ var ns = {
     var keys = site.split(".");
     if (keys.length > 1) {
       let prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
-      ns.log("Keys: " + keys.toSource())
       while (keys.length > 2) {
         keys.shift();
         key = prefix + keys.join(".");
-        ns.log(key)
         if (key in map || hasPort && key.replace(portRx, ":0") in map) return true;
       }
     }
@@ -3016,6 +3019,7 @@ var ns = {
           }
         }
         prefString = prefString.replace(/,/g, ' ').replace(/\s+/g, ' ').replace(/^\s+/, '').replace(/\s+$/, '');
+
       } catch(ex) {
         prefString = POLICY_NAME;
       }
@@ -3461,9 +3465,8 @@ var ns = {
           ) return false;
 
     let locationSite = this.getSite(locationURL);
-    if (this.ignorePorts && this.portRx.test(locationSite) &&
-        this.isJSEnabled(locationSite.replace(this.portRx, '')) && this.autoTemp(locationSite))
-      return false;
+    if (!this.isJSEnabled(locationSite) && this.checkShorthands(locationSite))
+        this.autoTemp(locationSite);
 
     var win = aContext && aContext.defaultView;
     if(win) this.getExpando(win.top.document, "codeSites", []).push(locationSite);
@@ -7099,7 +7102,7 @@ var ns = {
     var checkInterval = this.getPref("subscription.checkInterval", 24) * 60000;
     var now = Date.now();
     if (lastCheck + checkInterval > now) {
-      this.delayExec(checkSubscriptions, lastCheck + checkInterval - now + 1000);
+      this.delayExec(this.checkSubscriptions, lastCheck + checkInterval - now + 1000);
       return;
     }
 
