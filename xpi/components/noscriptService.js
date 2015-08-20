@@ -2086,7 +2086,7 @@ var ns = {
         "!about:pocket-signup": "about:pocket-signup",
         "google.com": "ajax.googleapis.com maps.googleapis.com"
       },
-      "2.6.9.36rc1": {
+      "@VERSION@rc1": {
         "netflix.com": "https://*.nflxvideo.net"
       }
     };
