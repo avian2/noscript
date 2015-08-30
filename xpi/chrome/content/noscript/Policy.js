@@ -48,7 +48,7 @@ var PolicyState = {
         !(uri.schemeIs("http") || uri.schemeIs("https")))
       return;
 
-    let hints = this.hintsForURI(uri, true);
+    let hints = this.hintsForURI(uri, true) || uri !== channel.originalURI && this.hintsForURI(channel.originalURI, true);
     if (hints) {
       hints._attached = true;
       if (hints.contentType === 6) {
@@ -886,7 +886,7 @@ const MainContentPolicy = {
 
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
 
-      if (isHTTP) PolicyState.save(unwrappedLocation, arguments);
+      if (isHTTP) PolicyState.save(aContentLocation, arguments);
 
     }
     return CP_OK;

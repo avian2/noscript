@@ -2086,7 +2086,7 @@ var ns = {
         "!about:pocket-signup": "about:pocket-signup",
         "google.com": "ajax.googleapis.com maps.googleapis.com"
       },
-      "@VERSION@rc1": {
+      "2.6.9.36rc1": {
         "netflix.com": "https://*.nflxvideo.net"
       }
     };
@@ -5876,6 +5876,7 @@ var ns = {
     if (!domWindow) return;
 
     const uri = location;
+    const originURI = ABE.getOriginalOrigin(req);
 
     var docShell = null;
 
@@ -5936,7 +5937,7 @@ var ns = {
 
 
     if (!/^attachment\b/i.test(contentDisposition) &&
-        this.shouldLoad(7, uri, uri, domWindow.frameElement || domWindow, contentType,
+        this.shouldLoad(7, uri, originURI || uri, domWindow.frameElement || domWindow, contentType,
                         domWindow.frameElement ? CP_FRAMECHECK : CP_SHOULDPROCESS) != CP_OK) {
 
       req.loadFlags |= req.INHIBIT_CACHING;
@@ -5948,7 +5949,7 @@ var ns = {
         // check if this is an iframe
 
         if (domWindow.frameElement && !(domWindow.frameElement instanceof Ci.nsIDOMHTMLFrameElement)
-            && this.shouldLoad(5, uri, IOS.newURI(domWindow.parent.location.href, null, null),
+            && this.shouldLoad(5, uri, originURI || IOS.newURI(domWindow.parent.location.href, null, null),
                 domWindow.frameElement, contentType, CP_SHOULDPROCESS) == CP_OK)
             return;
 
