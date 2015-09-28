@@ -9,6 +9,12 @@ var WinScript = ("blockScriptForGlobal" in Cu) ?
         this.patchStyle(window.document);
       }
     } catch (e) {
+      if (e.message === "Script may not be disabled for system globals") {
+        try {
+          window.console.log("NoScript could not disable scripts for system global " + window.document.nodePrincipal.origin);
+        } catch(e) {}
+        return;
+      }
       if (!this._childDo("block", window)) throw e;
     }
     window._blockScriptForGlobal = true;
@@ -29,7 +35,6 @@ var WinScript = ("blockScriptForGlobal" in Cu) ?
     return "_blockScriptForGlobal" in window;
   },
   get _childDo() {
-    delete this._childDo;
     return (this._childDo = IPC.parent && IPC.parent.mm && ("isCrossProcessWrapper" in Cu) ?
       function(verb, window) {
         if (Cu.isCrossProcessWrapper(window)) {
@@ -55,6 +60,7 @@ WinScript.patchStyle = function(doc) {
   for (let j = ss.length; j-- > 0;) {
     let s = ss[j];
     switch(s.href) {
+
       case "about:PreferenceStyleSheet":
         {
           let rules = s.cssRules;
@@ -68,10 +74,11 @@ WinScript.patchStyle = function(doc) {
           }
         }
         break;
+      case "data:text/css,noscript%20{%20display%3A%20none%20!important%3B%20}":
       case "resource://gre-resources/noscript.css":
         doc.defaultView.QueryInterface(Ci.nsIInterfaceRequestor)
         .getInterface(Ci.nsIDOMWindowUtils)
-        .loadSheetUsingURIString("data:text/css,noscript { display: inline !important }", 0);
+        .loadSheetUsingURIString("data:text/css,noscript { display: initial !important }", 0);
         return;
     }
   }

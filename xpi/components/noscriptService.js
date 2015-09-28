@@ -2687,7 +2687,11 @@ var ns = {
           this.traverseDocShells(function(docShell) {
             let site = this.getSite(docShell.currentURI.spec);
             if (!(this.isJSEnabled(site) || this.checkShorthands(site))) {
-              WinScript.block(docShell.document.defaultView)
+              try {
+                WinScript.block(docShell.document.defaultView);
+              } catch(e) {
+                ns.log("Failed blocking " + site + ": " + e);
+              }
             }
             return false;
           }, this, browser);
@@ -4528,7 +4532,11 @@ var ns = {
 
         return true;
       } finally {
-        if (!siteJSEnabled) WinScript.block(window);
+        if (!siteJSEnabled) try {
+          WinScript.block(window);
+        } catch (e) {
+          ns.log(e);
+        }
         this.setExpando(browser, "jsSite", site);
         if (!docShell.isLoadingDocument && docShell.currentURI &&
             this.getSite(docShell.currentURI.spec) == site)

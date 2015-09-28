@@ -364,7 +364,7 @@ var nsopt = {
     var tempSites = this.gTempSites.clone();
     tempSites.add(this.tempSites.sitesList);
     var tempMap = this.tempSites.sitesMap;
-    for(j = 0, len = sites.length; j < len; j++) {
+    for(let j = 0, len = sites.length; j < len; j++) {
       site = sites[j];
       // skip protocol + 2nd level domain URLs
       if((match = site.match(dom2)) && policy.matches(item = match[1]))

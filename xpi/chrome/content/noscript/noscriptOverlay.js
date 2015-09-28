@@ -1465,19 +1465,24 @@ return noscriptUtil.service ? {
   }, // we entirely skip on startup
   _syncUIReal: function(w) {
     if (this._syncTimeout) {
+     return;
+   }
+   try {
+     if (w && w.QueryInterface(Ci.nsIInterfaceRequestor)
+                      .getInterface(Ci.nsIDOMWindowUtils).currentInnerWinowID
+           != content.QueryInterface(Ci.nsIInterfaceRequestor)
+                      .getInterface(Ci.nsIDOMWindowUtils).currentInnerWinowID)
       return;
-    }
-    if (w) {
-      if (w != content) return;
-    } else {
-      w = content;
-    }
+     console.log("Syncing...");
+   } catch (e) {
+     console.log(e);
+   }
 
 
-    this._syncTimeout = window.setTimeout(function() {
-      noscriptOverlay._syncTimeout = 0;
-      noscriptOverlay._syncUINow();
-    }, 400);
+   this._syncTimeout = window.setTimeout(function() {
+     noscriptOverlay._syncTimeout = 0;
+     noscriptOverlay._syncUINow();
+   }, 400);
   },
 
 
@@ -2442,7 +2447,7 @@ return noscriptUtil.service ? {
       QueryInterface: noscriptUtil.service.generateQI([Ci.nsIWebProgressListener]),
       STATE_STOP: Ci.nsIWebProgressListener.STATE_STOP,
       onLocationChange: function(aWebProgress, aRequest, aLocation) {
-        const domWindow = aWebProgress.DOMWindow;
+        const domWindow = aWebProgress && aWebProgress.DOMWindow;
         if (domWindow) {
           noscriptOverlay.syncUI(domWindow);
         }
