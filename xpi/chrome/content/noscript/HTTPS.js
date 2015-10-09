@@ -1,6 +1,6 @@
 LAZY_INCLUDE('Cookie');
 
-const HTTPS = {
+var HTTPS = {
   ready: false,
 
   secureCookies: false,

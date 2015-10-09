@@ -163,7 +163,7 @@ PolicyHints.prototype = (function() {
    return proto;
 })();
 
-const NOPContentPolicy = {
+var NOPContentPolicy = {
   shouldLoad: CP_NOP,
   shouldProcess: CP_NOP
 };
@@ -193,7 +193,7 @@ const NOPContentPolicy = {
 // ACCEPT = 1
 
 
-const MainContentPolicy = {
+var MainContentPolicy = {
   shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, principal) {
     if (!aContentLocation) {
       if (aContentType === 5 && aInternalCall === CP_SHOULDPROCESS && aMimeTypeGuess === "application/x-shockwave-flash")

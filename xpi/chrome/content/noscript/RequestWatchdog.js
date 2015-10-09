@@ -2677,7 +2677,7 @@ XSanitizer.prototype = {
 
 // we need this because of https://bugzilla.mozilla.org/show_bug.cgi?id=439276
 
-const Base64 = {
+var Base64 = {
 
   purify: function(input) {
     return input.replace(/[^A-Za-z0-9\+\/=]+/g, '');

@@ -259,7 +259,7 @@ pref("noscript.surrogate.360Haven.sources", "@www.360haven.com");
 pref("noscript.surrogate.360Haven.replacement", "Object.defineProperty(window,'adblock',{get:function() false,set: function() false});Object.defineProperty(window,'google_ad_client',{get: function () { return $S({__noSuchMethod__: function() this})}});Object.defineProperty(window.HTMLBodyElement.prototype,'innerHTML',{get:function() ''});");
 pref("noscript.surrogate.adagionet.sources", ".adagionet.com");
 pref("noscript.surrogate.adagionet.replacement", "adagioWriteTag=adagioWriteBanner=function(){}");
-pref("noscript.surrogate.addthis.sources", "s7.addthis.com/*addthis_widget.js");
+pref("noscript.surrogate.addthis.sources", "^https?://(?:[^/:]+\\.)?addthis\\.com/.*addthis_widget\\.js");
 pref("noscript.surrogate.addthis.replacement", "addthis=(function(){var f=$S(arguments.callee);return f.__noSuchMethod__=f.data=f.bar=f.dynamic=f.login=f.ad=f.util=f.user=f.session=f})();");
 pref("noscript.surrogate.adfly.sources", "!@^https?://adf.ly/\\w+/?$");
 pref("noscript.surrogate.adfly.replacement", "for(var a=/ysmm = \'(.*?)\';/gi.exec(document.documentElement.innerHTML)[1],b='',c='',d=0;d<a.length;d++)0==d%2?b+=a.charAt(d):c=a.charAt(d)+c;window.location=atob(b+c).substring(2)");

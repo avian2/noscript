@@ -1469,11 +1469,10 @@ return noscriptUtil.service ? {
    }
    try {
      if (w && w.QueryInterface(Ci.nsIInterfaceRequestor)
-                      .getInterface(Ci.nsIDOMWindowUtils).currentInnerWinowID
+                      .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID
            != content.QueryInterface(Ci.nsIInterfaceRequestor)
-                      .getInterface(Ci.nsIDOMWindowUtils).currentInnerWinowID)
+                      .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID)
       return;
-     console.log("Syncing...");
    } catch (e) {
      console.log(e);
    }

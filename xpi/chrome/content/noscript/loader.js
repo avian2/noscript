@@ -1,6 +1,6 @@
-const { interfaces: Ci, classes: Cc, utils: Cu, results: Cr } = Components;
-const IOS = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-const OS = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
+var { interfaces: Ci, classes: Cc, utils: Cu, results: Cr } = Components;
+var IOS = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+var OS = Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService);
 
 
 const LOADER = Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader);

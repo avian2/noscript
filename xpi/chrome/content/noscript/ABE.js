@@ -1,6 +1,6 @@
 INCLUDE('antlr', 'ABEParser', 'ABELexer', 'Lang');
 
-const ABE = {
+var ABE = {
   RULES_CHANGED_TOPIC: "abe:rules-changed",
   FLAG_CALLED: 0x01,
   FLAG_CHECKED: 0x02,
@@ -1406,7 +1406,7 @@ var DoNotTrack = {
   },
 }
 
-const WAN = {
+var WAN = {
   IP_CHANGE_TOPIC: "abe:wan-iface-ip-changed",
   ip: null,
   ipMatcher: null,
