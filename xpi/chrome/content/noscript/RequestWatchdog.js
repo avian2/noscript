@@ -727,12 +727,7 @@ RequestWatchdog.prototype = {
       }
     }
 
-
-    if (!/^(?:https:\/\/.*\.nwolb\.com){2}$/.test(originSite + targetSite)) {
-      IOUtil.attachToChannel(channel, "noscript.checkWindowName", DUMMY_OBJ);
-    } else {
-      this.dump(channel, "nwolb.com window.name check exception.");
-    }
+    IOUtil.attachToChannel(channel, "noscript.checkWindowName", DUMMY_OBJ);
 
     let focusedBrowserWin = DOM.mostRecentBrowserWindow;
     let trustedOrigin = globalJS || ns.isJSEnabled(originSite, focusedBrowserWin && focusedBrowserWin.content) ||
