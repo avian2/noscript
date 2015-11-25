@@ -656,7 +656,7 @@ var MainContentPolicy = {
         let scriptElement;
         if (aContentType === 2) { // "real" JavaScript include
           if (!(this.cascadePermissions || this.globalHttpsWhitelist) &&
-              originSite && !this.isJSEnabled(originSite, contentDocument.window) &&
+              originSite && !this.isJSEnabled(originSite, contentDocument && contentDocument.window) &&
               isHTTP && httpOrigin) {
             // JavaScript-disabled page with script inclusion
             this.syncUI(contentDocument);
@@ -691,7 +691,7 @@ var MainContentPolicy = {
         } else isScript = scriptElement = false;
 
         if (forbid) {
-          let doc = aContext.ownerDocument || aContext;
+          let doc = aContext && aContext.ownerDocument || aContext;
           let win = doc && doc.defaultView;
           forbid = !this.isJSEnabled(locationSite, win);
           if (forbid && this.ignorePorts && /:\d+$/.test(locationSite))

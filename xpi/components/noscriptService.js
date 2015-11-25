@@ -1396,8 +1396,6 @@ var ns = {
   forbidSomeContent: true,
   contentBlocker: false,
 
-  forbidData: true,
-
   forbidJava: true,
   forbidFlash: true,
   forbidPlugins: true,
@@ -1543,7 +1541,6 @@ var ns = {
       case "collapseObject":
       case "truncateTitle":
       case "truncateTitleLen":
-      case "forbidData":
       case "forbidMetaRefresh":
       case "forbidIFramesContext":
       case "forbidXBL":
@@ -1900,7 +1897,7 @@ var ns = {
       "filterXGetRx", "filterXGetUserRx",
       "filterXExceptions",
       "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts", "forbidWebGL",
-      "forbidIFrames", "forbidIFramesContext", "forbidFrames", "forbidData",
+      "forbidIFrames", "forbidIFramesContext", "forbidFrames",
       "forbidMetaRefresh",
       "forbidXBL", "forbidXHR",
       "liveConnectInterception", "audioApiInterception",
@@ -2457,7 +2454,7 @@ var ns = {
     if (key in map || site in map) return true;
     var keys = site.split(".");
     if (keys.length > 1) {
-      let prefix = keys[0].match(/^https?:\/\//i)[0] + "*.";
+      let prefix = keys[0].match(/^(?:ht|f)tps?:\/\//i)[0] + "*.";
       while (keys.length > 2) {
         keys.shift();
         key = prefix + keys.join(".");

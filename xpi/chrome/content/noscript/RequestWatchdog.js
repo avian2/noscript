@@ -788,6 +788,8 @@ RequestWatchdog.prototype = {
         stripPost = false;
         // Paypal buttons encrypted parameter causes a DOS, strip it out
         skipArr = ['encrypted'];
+      } else if ("https://secure.przelewy24.pl/" === targetSite)  {
+        stripPost = true;
       } else if (/\.adnxs\.com$/.test(originSite) && /\.adnxs\.com$/.test(targetSite)) {
         skipArr = ['udj'];
       } else if (/^https?:\/\/www\.mendeley\.com\/import\/bookmarklet\/$/.test(originalSpec)) {
