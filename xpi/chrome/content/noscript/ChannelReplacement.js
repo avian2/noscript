@@ -36,7 +36,7 @@ if ("REFERRER_POLICY_ORIGIN" in Ci.nsIHttpChannel) {
       } else {
         let loadInfo = chan.loadInfo;
         if (loadInfo) {
-          let type = loadInfo.contentPolicyType;
+          let type = loadInfo.externalContentPolicyType || loadInfo.contentPolicyType;
           forceRedirect = type === 11 || type === 12;
         }
       }

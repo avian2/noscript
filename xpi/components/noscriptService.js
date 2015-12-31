@@ -986,6 +986,15 @@ const IOUtil = {
     return null;
   },
 
+  findBrowser: function(channel) {
+    try {
+      let b = channel.notificationCallbacks.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsILoadContext).topFrameElement;
+      if (b) return b;
+    } catch (e) {
+    }
+    return DOM.findBrowserForNode(this.findWindow(channel));
+  },
+
   _protocols: {}, // caching them we gain a 33% speed boost in URI creation :)
   newURI: function(url) {
     try {

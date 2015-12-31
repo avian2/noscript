@@ -42,7 +42,7 @@ CESDelegate.prototype = {
   asyncOnChannelRedirect: function(oldChan, newChan, flags, callback) {
     let label = "plugin forced redirection";
     try {
-     label = oldChan.loadInfo.contentPolicyType + ": " + oldChan.name + " -> " + newChan.name + " - " + flags;
+     label = (oldChan.loadInfo.externalContentPolicyType || oldChan.loadInfo.contentPolicyType)+ ": " + oldChan.name + " -> " + newChan.name + " - " + flags;
     } catch (e) {
       ns.log(e);
     }

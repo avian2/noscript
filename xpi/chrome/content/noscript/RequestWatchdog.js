@@ -487,7 +487,7 @@ RequestWatchdog.prototype = {
     if(!trustedTarget) {
       window = window || abeReq.window;
       if(ns.autoAllow) {
-        if (window && window == window.top || channel.loadInfo && channel.loadInfo.contentPolicyType === 6) {
+        if (window && window == window.top || channel.loadInfo && (channel.loadInfo.externalContentPolicyType || channel.loadInfo.contentPolicyType) === 6) {
           targetSite = ns.getQuickSite(originalSpec, ns.autoAllow);
           if(targetSite && !ns.isJSEnabled(targetSite, window)) {
             ns.autoTemp(targetSite);
@@ -1027,8 +1027,7 @@ RequestWatchdog.prototype = {
   addXssInfo: function(requestInfo, xssInfo) {
     try {
       requestInfo.window = requestInfo.window || IOUtil.findWindow(requestInfo.channel);
-      requestInfo.browser = requestInfo.browser || (requestInfo.window &&
-                            DOM.findBrowserForNode(requestInfo.window));
+      requestInfo.browser = requestInfo.browser || IOUtil.findBrowser(requestInfo.channel);
     } catch(e) {}
     requestInfo.xssMaybe = true;
     return this.mergeDefaults(xssInfo, requestInfo);
@@ -1045,9 +1044,14 @@ RequestWatchdog.prototype = {
 
     try {
       let sync = requestInfo.channel.status !== 0;
-      if (requestInfo.silent || !requestInfo.window || !ns.getPref("xss.notify", true))
+      let loadInfo = requestInfo.channel.loadInfo;
+      let cpType = loadInfo && (loadInfo.externalContentPolicyType || loadInfo.contentPolicyType);
+      if (!cpType && requestInfo.window) {
+        cpType = requestInfo.window === requestInfo.window.top ? 6 : 7;
+      }
+      if (requestInfo.silent || !(cpType === 6 || cpType === 7) || !ns.getPref("xss.notify", true))
         return;
-      if(requestInfo.window != requestInfo.window.top) {
+      if(cpType !== 6) {
         // subframe
 
         var cur = this.getUnsafeRequest(requestInfo.browser);
@@ -1085,7 +1089,7 @@ RequestWatchdog.prototype = {
 
 
   findBrowser: function(channel, window) {
-    return DOM.findBrowserForNode(window || IOUtil.findWindow(channel));
+    return IOUtil.findBrowser(channel);
   },
 
   dump: function(channel, msg) {
@@ -1101,7 +1105,7 @@ RequestWatchdog.prototype = {
   }
 
 
-}
+};
 
 
 var Entities = {

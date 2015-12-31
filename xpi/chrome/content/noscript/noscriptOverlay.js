@@ -2254,7 +2254,7 @@ return noscriptUtil.service ? {
       ns.caps.addObserver("", this, true);
       const initPrefs = [
         "statusIcon", "statusLabel", "preset",
-        "keys.ui", "keys.toggle", "keys.tempAllowPage",
+        "keys.ui", "keys.toggle", "keys.tempAllowPage", "keys.revokeTemp",
         "notify", "notify.bottom",
         "notify.hide", "notify.hidePermanent", "notify.hideDelay",
         "stickyUI.liveReload",
