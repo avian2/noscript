@@ -2040,7 +2040,7 @@ var ns = {
         "addons.mozilla.org": "paypal.com paypalobjects.com" // required for the "Contribute" AMO feature not to break badly with no warning
       },
 
-      "2.2.9rc2": {
+      "2.@VERSION@rc2": {
         "addons.mozilla.org": "persona.org"
       },
 
