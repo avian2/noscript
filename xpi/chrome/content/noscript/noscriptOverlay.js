@@ -2766,7 +2766,7 @@ return noscriptUtil.service ? {
   },
 
 
-  wrapBrowserAccess: function() { // called onload
+  wrapBrowserAccess: function(retryCount) { // called onload
     if (!window.nsBrowserAccess) {
       noscriptOverlay.ns.log("[NoScript] nsBrowserAccess not found?!");
       return;
@@ -2777,13 +2777,13 @@ return noscriptUtil.service ? {
     }
 
     if (!(window.browserDOMWindow && browserDOMWindow.wrappedJSObject && (browserDOMWindow.wrappedJSObject instanceof nsBrowserAccess))) {
-      if (!'retryCount' in arguments.callee) {
-        arguments.callee.retryCount = 10;
-      } else if (arguments.callee.retryCount) {
-        noscriptOverlay.ns.log("[NoScript] browserDOMWindow not found or not set up, retrying " + arguments.callee.retryCount + " times");
-        arguments.callee.retryCount--;
+      if (!retryCount) {
+        retryCount = 0;
+      } else if (retryCount >= 10) {
+        noscriptOverlay.ns.log("[NoScript] browserDOMWindow not found in 10 attempts, giving up.");
+        return;
       }
-      window.setTimeout(arguments.callee, 0);
+      window.setTimeout(noscriptOverlay.wrapBrowserAccess, 0, ++retryCount);
       return;
     }
 
