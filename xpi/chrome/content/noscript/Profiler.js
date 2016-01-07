@@ -47,7 +47,7 @@ Profiler = {
     }
     function cmp(a,b) a > b ? - 1: a < b ? 1 : 0;
     ar.sort(function(a, b) cmp(a.data.time, b.data.time));
-    for each(let l in ar) {
+    for (let l  of ar) {
       dump(l.call + ": " + l.data.toSource() + "\n");
       if (count-- <= 0) break;
     }

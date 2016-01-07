@@ -69,7 +69,7 @@ var noscriptBM = {
     pu.__ns = noscriptUtil.service;
     pu.checkURLSecurity = pu.__ns.placesCheckURLSecurity;
     
-    for each (var method in ["openNodeIn", "openSelectedNodeWithEvent"]) 
+    for (var method  of ["openNodeIn", "openSelectedNodeWithEvent"]) 
       if (method in pu) pu[method].__noscriptPatched = true;
   },
   
@@ -99,7 +99,7 @@ var noscriptBM = {
     window.setTimeout(noscriptBM.delayedInit, 50);
   },
   delayedInit: function() {
-    for each (let f in ["getShortcutOrURIAndPostData" /* Fx >= 25 */, "getShortcutOrURI"]) {
+    for (let f  of ["getShortcutOrURIAndPostData" /* Fx >= 25 */, "getShortcutOrURI"]) {
       if (f in window) {
         let getShortcut = window[f];
         let replacement = function(aURL) {

@@ -132,7 +132,7 @@ var HTTPS = {
 
           var unsafeMap = this.getUnsafeCookies(browser) || {};
           var c;
-          for each (var cs in cookies.split("\n")) {
+          for (var cs  of cookies.split("\n")) {
             c = new Cookie(cs, host);
             if (c.secure && c.belongsTo(host)) {
               this.log("Secure cookie set by " + host + ": " + c);
@@ -179,7 +179,7 @@ var HTTPS = {
 
           this.setUnsafeCookies(browser, unsafeMap);
           msg += " on https://" + host + ": ";
-          for each (c in unsafe) {
+          for (c  of unsafe) {
             if (forced) {
               c.secure = true;
               req.setResponseHeader("Set-Cookie", c.source + ";Secure", true);
@@ -258,7 +258,7 @@ var HTTPS = {
 
     var cs = Cc['@mozilla.org/cookieService;1'].getService(Ci.nsICookieService).getCookieString(uri, req);
 
-    for each (c in dcookies) {
+    for (c  of dcookies) {
       c.secure = dsecure;
       c.save();
       this.log("Toggled secure flag on " + c);

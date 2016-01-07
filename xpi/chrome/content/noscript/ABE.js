@@ -36,9 +36,9 @@ var ABE = {
   },
   set disabledRulesetNames(names) {
     var rs;
-    for each (rs in this.rulesets) rs.disabled = false;
+    for (rs  of this.rulesets) rs.disabled = false;
     if (names) try {
-      for each (var name in names.split(/\s+/)) {
+      for (var name  of names.split(/\s+/)) {
         rs = this.localMap[name] || this.siteMap[name];
         if (rs) rs.disabled = true;
       }
@@ -50,7 +50,7 @@ var ABE = {
   get localMap() {
     if (this._localMap) return this._localMap;
     this._localMap = {__proto__: null};
-    for each (var rs in this.localRulesets) {
+    for (var rs  of this.localRulesets) {
       this._localMap[rs.name] = rs;
     }
     return this._localMap;
@@ -140,7 +140,7 @@ var ABE = {
     var f, change;
     try {
       ABEStorage.clear();
-      for each(var rs in data) ABEStorage.saveRuleset(rs.name, rs.source);
+      for (var rs  of data) ABEStorage.saveRuleset(rs.name, rs.source);
     } catch(e) {
       ABE.log("Failed to restore configuration: " + e);
     }
@@ -198,7 +198,7 @@ var ABE = {
     try {
       var res = new ABERes(req);
       var rs;
-      for each (rs in this.localRulesets) {
+      for (rs  of this.localRulesets) {
         if (this._check(rs, res)) break;
       }
 
@@ -681,7 +681,7 @@ ABERuleset.prototype = {
     if (this.disabled) return '';
 
 		var res;
-		for each (var r in this.rules) {
+		for (var r  of this.rules) {
 			res = r.check(req);
 			if (res) {
         this.lastMatch = r;
@@ -721,7 +721,7 @@ ABERule.prototype = {
           this.destination && this.destination.test(req.destination, req.canDoDNS, false) ||
           this.local && req.localDestination)
         ) {
-      for each (var p in this.predicates) {
+      for (var p  of this.predicates) {
         if (p.match(req)) {
           this.lastMatch = p;
           return p.action;
@@ -1148,7 +1148,7 @@ var ABEStorage = {
       this._migrateLegacyFiles();
     }
     this.loadRules();
-    for each (let k in prefs.getChildList("", {})) this.observe(prefs, null, k);
+    for (let k  of prefs.getChildList("", {})) this.observe(prefs, null, k);
     prefs.addObserver("", this, true);
   },
   QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
@@ -1353,7 +1353,7 @@ var DoNotTrack = {
 
   init: function(prefs) {
     this.prefs = prefs;
-    for each (let k in prefs.getChildList("", {})) {
+    for (let k  of prefs.getChildList("", {})) {
       this.observe(prefs, null, k);
     }
     prefs.addObserver("", this, true);
@@ -1608,7 +1608,7 @@ var WAN = {
     if (ip) {
       try {
         if (this._callbacks) {
-          for each (let cb in this._callbacks) cb(ip);
+          for (let cb  of this._callbacks) cb(ip);
           this._callbacks = null;
         }
       } catch(e) {

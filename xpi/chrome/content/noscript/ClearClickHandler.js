@@ -97,13 +97,13 @@ ClearClickHandler.prototype = {
     var doc = browser.ownerDocument;
     if (!("__ClearClick__" in doc)) {
       doc.__ClearClick__ = true;
-      for each(let et in this.rapidFire.events)
+      for (let et  of this.rapidFire.events)
         doc.addEventListener(et, this, true);
     }
 
     var ceh = browser.docShell.chromeEventHandler;
     var l = this._listener;
-    for each(var et in this.uiEvents) ceh.addEventListener(et, this, true);
+    for (var et  of this.uiEvents) ceh.addEventListener(et, this, true);
   },
 
 
@@ -502,7 +502,7 @@ ClearClickHandler.prototype = {
       gfx.drawWindow(w, Math.round(x), Math.round(y), c.width, c.height, bg);
       if (woi && w == top && rootBox) {
         gfx.fillStyle = bg;
-        for each (let b in woi)
+        for (let b  of woi)
           gfx.fillRect(b.screenX - rootBox.screenX - x, b.screenY - rootBox.screenY - y, b.width, b.height);
       }
       this.imageData = gfx.getImageData(0, 0, c.width, c.height);
@@ -819,8 +819,8 @@ ClearClickHandler.prototype = {
       const offs = ctx.isEmbed ? [0] : [0, -1, 1, -2, 2, -3, -3];
 
       checkImage:
-      for each(let x in offs) {
-        for each(let y in offs) {
+      for (let x  of offs) {
+        for (let y  of offs) {
           tmpImg = new Snapshot(top, offsetX + x, offsetY + y);
           if (img1.resembles(tmpImg)) {
             ret = false;
@@ -850,8 +850,8 @@ ClearClickHandler.prototype = {
       if (ret && ctx.isEmbed && ("x" in ctx) && c.width > this.minWidth && c.height > this.minHeight) {
         c.width = this.minWidth;
         c.height = this.minHeight;
-        for each(x in [Math.max(ctx.x - this.minWidth, box.oX), Math.min(ctx.x, box.oX + box.oW - this.minWidth)]) {
-          for each(y in [Math.max(ctx.y - this.minHeight, box.oY), Math.min(ctx.y, box.oY + box.oH - this.minHeight)]) {
+        for (x  of [Math.max(ctx.x - this.minWidth, box.oX), Math.min(ctx.x, box.oX + box.oW - this.minWidth)]) {
+          for (y  of [Math.max(ctx.y - this.minHeight, box.oY), Math.min(ctx.y, box.oY + box.oH - this.minHeight)]) {
             ret = compareSnapshots(x, y, offsetX + (x - box.x), offsetY + (y - box.y));
             if (!ret) {
               offsetX += (x - box.x);
@@ -1019,7 +1019,7 @@ ClearClickHandler.prototype = {
       let w = d.defaultView;
       let elPP = this._offsetParents(el);
       try {
-        for each (let t in tags) {
+        for (let t  of tags) {
           let oo = d.getElementsByTagName(t);
           for (let i = oo.length; i-- > 0;) {
             let o = oo[i];
@@ -1153,7 +1153,7 @@ DocPatcher.prototype = {
       }
     }
 
-    for each(n in posn) n.__noscriptPos = false;
+    for (n  of posn) n.__noscriptPos = false;
 
     if(ns.consoleDump & LOG_CLEARCLICK) ns.dump("DocPatcher.collectPositioned(): " + (Date.now() - t));
     return res;
@@ -1265,7 +1265,7 @@ DocPatcher.prototype = {
       }
       if (w.getComputedStyle(c, '').visibility !== "visible") return;
 
-      for each(let n in Array.push(c, c.getElementsByTagName("*"))) {
+      for (let n  of Array.push(c, c.getElementsByTagName("*"))) {
         if (n.getBoundingClientRect().bottom > 50) return;
       }
       c.style.visibility = "hidden";
@@ -1356,7 +1356,7 @@ DocPatcher.prototype = {
             let document = this.top.document;
             if (toggle) {
               let tabs = [];
-              for each(let c in visibleClasses) {
+              for (let c  of visibleClasses) {
 
                 Array.forEach(document.getElementsByClassName(c), function(t) {
                   let co = new ClassyObj(t);
@@ -1366,7 +1366,7 @@ DocPatcher.prototype = {
               }
               this._abpTabs = tabs;
             } else {
-              for each(let co in this._abpTabs) {
+              for (let co  of this._abpTabs) {
                 co.reset();
               }
             }

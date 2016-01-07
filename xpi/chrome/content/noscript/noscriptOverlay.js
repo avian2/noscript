@@ -431,7 +431,7 @@ return noscriptUtil.service ? {
         buttons.push(statusIcon);
       }
       // copy status bar menus
-      for each(let button in buttons) {
+      for (let button  of buttons) {
         if (!button) continue;
         let localPopup = button.firstChild;
         if (!(localPopup && /popup/.test(localPopup.tagName))) {
@@ -610,7 +610,7 @@ return noscriptUtil.service ? {
 
       with (seps.untrusted) {
         if ((extraNode = nextSibling) != pluginsMenu) {
-          for each(node in [pluginsMenu, recentMenu, untrustedMenu]) {
+          for (node  of [pluginsMenu, recentMenu, untrustedMenu]) {
             parentNode.insertBefore(node, extraNode);
           }
         }
@@ -620,7 +620,7 @@ return noscriptUtil.service ? {
 
       extraNode = $("noscript-mi-recent-blocked-reset"); // save reset command
       // descend from menus to popups and clear children
-      for each(node in [pluginsMenu = pluginsMenu.firstChild, recentMenu = recentMenu.firstChild, untrustedMenu = untrustedMenu.firstChild])
+      for (node  of [pluginsMenu = pluginsMenu.firstChild, recentMenu = recentMenu.firstChild, untrustedMenu = untrustedMenu.firstChild])
         while(node.firstChild) node.removeChild(node.firstChild);
 
       recentMenu.appendChild(extraNode);
@@ -1009,7 +1009,7 @@ return noscriptUtil.service ? {
     // "allow page" accelerators
     {
       let accel = ns.getPref("menuAccelerators");
-      for each(let el in [node, allowPageMenuItem])
+      for (let el  of [node, allowPageMenuItem])
         if (accel)
           el.setAttribute("accesskey", el.getAttribute("noaccesskey"));
         else
@@ -1038,7 +1038,7 @@ return noscriptUtil.service ? {
     while((mi = m.lastChild)) {
       a.push(m.removeChild(mi));
     }
-    for each(mi in a) {
+    for (mi  of a) {
       m.appendChild(mi);
     }
   },
@@ -1092,7 +1092,7 @@ return noscriptUtil.service ? {
 
     var df = document.createDocumentFragment();
     var node;
-    for each(var filterName in filterNames) {
+    for (var filterName  of filterNames) {
       menu = menus[filterName];
       menu.items.sort(function(a, b) { return a.domain > b.domain ? 1 : a.domain < b.domain ? -1 : 0; })
       node = df.appendChild(document.createElement("menu"));
@@ -1101,7 +1101,7 @@ return noscriptUtil.service ? {
 
       parent = node.appendChild(document.createElement("menupopup"));
       parent.__ef__ = menu.filter;
-      for each(item in menu.items) {
+      for (item  of menu.items) {
         node = parent.appendChild(document.createElement("menuitem"));
         node.setAttribute("label", ns.getString("ef.activate", [item.domain]));
         node.setAttribute("type", "checkbox");
@@ -1146,7 +1146,7 @@ return noscriptUtil.service ? {
     var pluginExtras = [],
         seen = [];
     var i = 0;
-    for each(let egroup in extras) {
+    for (let egroup  of extras) {
       for (let j = egroup.length; j-- > 0;) {
         let e = egroup[j];
 
@@ -1180,7 +1180,7 @@ return noscriptUtil.service ? {
       noscriptOverlay.menuPluginExtras = pluginExtras;
       let pluginSites = {};
       seen = [];
-      for each(let e in pluginExtras) {
+      for (let e  of pluginExtras) {
         if(!(e.site && e.mime) || ns.isAllowedObject(e.site, e.mime, e.site, e.originSite))
           continue;
 
@@ -1205,7 +1205,7 @@ return noscriptUtil.service ? {
         i = 0;
         for (let site in pluginSites) {
           menu.appendChild(document.createElement("menuseparator"));
-          for each(let e in pluginSites[site]) {
+          for (let e  of pluginSites[site]) {
             let where = e.site;
             if (e.originSite) where += " (" + e.originSite + ")";
             let mime = e.mime;
@@ -2247,7 +2247,7 @@ return noscriptUtil.service ? {
     register: function() {
       const ns = this.ns;
       const os = ns.os;
-      for each (let t in this._topics){
+      for (let t  of this._topics){
         os.addObserver(this, t, true);
       }
       ns.prefs.addObserver("", this, true);
@@ -2260,7 +2260,7 @@ return noscriptUtil.service ? {
         "stickyUI.liveReload",
         "hoverUI"
         ];
-      for each (let p in initPrefs) {
+      for (let p  of initPrefs) {
         this.observe(null, null, p);
       }
       this._registered = true;
@@ -2268,7 +2268,7 @@ return noscriptUtil.service ? {
     remove: function() {
       const ns = this.ns;
       const os = ns.os;
-      for each (let t in this._topics){
+      for (let t  of this._topics){
         os.removeObserver(this, t);
       }
       ns.prefs.removeObserver("", this);
@@ -2410,7 +2410,7 @@ return noscriptUtil.service ? {
     };
     var aa = null;
     var j;
-    for each(var t in this._tags) {
+    for (var t  of this._tags) {
       var oo = d.getElementsByTagName(t);
       j = oo.length;
       if (j) {
@@ -2592,7 +2592,7 @@ return noscriptUtil.service ? {
 
     customizableUIListener: {
       onWidgetAfterDOMChange: function(aWidget) {
-        for each(let b in ['noscript-tbb', 'noscript-statusLabel']) {
+        for (let b  of ['noscript-tbb', 'noscript-statusLabel']) {
           if(b == aWidget.id) {
             window.setTimeout(function() { noscriptOverlay.initPopups(); }, 0);
             return;
@@ -2902,7 +2902,7 @@ return noscriptUtil.service ? {
       window.addEventListener("load", function(ev) {
         ev.currentTarget.removeEventListener("load", arguments.callee, false);
         var node = null;
-        for each(var id in ["noscript-context-menu", "noscript-tbb", "noscript-statusIcon"]) {
+        for (var id  of ["noscript-context-menu", "noscript-tbb", "noscript-statusIcon"]) {
           node = $(id);
           if (node) node.hidden = true;
         }

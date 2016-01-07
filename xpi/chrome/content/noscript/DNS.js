@@ -235,7 +235,7 @@ var DNS = {
             }
 
             if (callbacks && callbacks.length)
-              for each(var cb in callbacks)
+              for (var cb  of callbacks)
                 cb(dnsRecord);
 
           }), Thread.currentQueue);

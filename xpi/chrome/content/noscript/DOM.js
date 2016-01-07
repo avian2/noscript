@@ -110,7 +110,7 @@ var DOM = {
     var wm = this.windowMediator;
     var w = null;
     var aa = Array.slice(arguments, 0);
-    for each(var type in ['navigator:browser', 'emusic:window', 'Songbird:Main']) {
+    for (var type  of ['navigator:browser', 'emusic:window', 'Songbird:Main']) {
       aa[0] = type;
       w = delegate.apply(wm, aa);
       if (w) {

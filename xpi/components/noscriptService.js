@@ -969,7 +969,7 @@ const IOUtil = {
   },
 
   findWindow: function(channel) {
-    for each(var cb in [channel.notificationCallbacks,
+    for (var cb  of [channel.notificationCallbacks,
                        channel.loadGroup && channel.loadGroup.notificationCallbacks]) {
       if (cb instanceof Ci.nsIInterfaceRequestor) {
         if (Ci.nsILoadContext) try {
@@ -1857,7 +1857,7 @@ var ns = {
     const ios = IOS;
     var resProt = ios.getProtocolHandler("resource").QueryInterface(Ci.nsIResProtocolHandler);
     var base;
-    for each(var r in ["skin", "content"]) {
+    for (var r  of ["skin", "content"]) {
       base = "noscript_" + Math.random();
       resProt.setSubstitution(base, ios.newURI("chrome:noscript/" + r + "/", null, null));
       this[r + "Base"] = "resource://" + base + "/";
@@ -1897,7 +1897,7 @@ var ns = {
     this.captureExternalProtocols();
 
     this._batchPrefs = true;
-    for each(var p in [
+    for (var p  of [
       "autoAllow",
       "allowedMimeRegExp", "hideOnUnloadRegExp", "requireReloadRegExp",
       "consoleDump", "consoleLog", "contentBlocker", "alwaysShowObjectSources",
@@ -2166,7 +2166,7 @@ var ns = {
           pb.setBoolPref("expose-all", true);
         } catch(e1) {}
         var prots = [];
-        for each(var key in pb.getChildList("expose.", {})) {
+        for (var key  of pb.getChildList("expose.", {})) {
           try {
             pb.setBoolPref(key, true);
             prots.push(key.replace("expose.", ""));
@@ -2886,7 +2886,7 @@ var ns = {
 
     var sites = this.getSites(browser);
     var egroup, j, e;
-    for each (egroup in sites.pluginExtras) {
+    for (egroup  of sites.pluginExtras) {
       for (j = egroup.length; j-- > 0;) {
         e = egroup[j];
         if (this.isAllowedObject(e.url, e.mime, e.site, e.originSite)) {
@@ -2913,14 +2913,14 @@ var ns = {
       let s = this.getSite(url);
       if (!(s in snapshot)) snapshot[s] = snapshot[url];
     }
-    for each (let s in sites.pluginSites) {
+    for (let s  of sites.pluginSites) {
       s = this.objectKey(s);
       if ((s in snapshot) && !(s in this.objectWhitelist)) {
         return true;
       }
     }
 
-     for each (let egroup in sites.pluginExtras) {
+     for (let egroup  of sites.pluginExtras) {
       for (let j = 0, len = egroup.length; j < len; j++) {
         let e = egroup[j];
         let url;
@@ -3174,7 +3174,7 @@ var ns = {
 
     try {
       let branch = this.prefService.getDefaultBranch("services.sync.prefs.sync.noscript.");
-      for each (let key in this.prefs.getChildList("", {})) {
+      for (let key  of this.prefs.getChildList("", {})) {
         switch (key) {
           case "version":
           case "preset":
@@ -3215,7 +3215,7 @@ var ns = {
 
     const exclude = this._dontSerialize;
     const prefs = {};
-    for each (let key in this.prefs.getChildList("", {})) {
+    for (let key  of this.prefs.getChildList("", {})) {
       if (exclude.indexOf(key) === -1) {
         prefs[key] = this.getPref(key);
       }
@@ -4509,7 +4509,7 @@ var ns = {
           focusListener = function(ev) {
             ns.jsEnabled = DOM.mostRecentBrowserWindow.content == window;
           };
-          for each(let et in ["focus", "blur"])
+          for (let et  of ["focus", "blur"])
             browserWindow.addEventListener(et, focusListener, true);
         }
 
@@ -4558,7 +4558,7 @@ var ns = {
           } catch (e) {} // the document could be dead, e.g. after a javascript: non-void expression evaluation
 
           if (focusListener)
-            for each(let et in ["focus", "blur"])
+            for (let et  of ["focus", "blur"])
               browserWindow.removeEventListener(et, focusListener, true);
 
           if (this.jsEnabled != snapshots.globalJS)
@@ -4970,7 +4970,7 @@ var ns = {
   },
 
   createPlaceholders: function(replacements, pluginExtras, document) {
-    for each (let r in replacements) {
+    for (let r  of replacements) {
       try {
         if (r.extras.pluginDocument) {
           this.setPluginExtras(r.object, null);
@@ -5386,8 +5386,8 @@ var ns = {
     return this.traverseDocShells(function(docShell) {
       let document = docShell.document;
       if (document) {
-        for each (let t in ["object", "embed"]) {
-          for each (let node in Array.slice(document.getElementsByTagName(t), 0)) {
+        for (let t  of ["object", "embed"]) {
+          for (let node  of Array.slice(document.getElementsByTagName(t), 0)) {
             if (callback.call(self, node, browser))
               return true;
           }
@@ -5469,7 +5469,7 @@ var ns = {
         sites.docSites.push(url);
         sites.push(url);
 
-        for each(let redir in this.getRedirCache(browser, docURI)) {
+        for (let redir  of this.getRedirCache(browser, docURI)) {
           sites.push(redir.site);
         }
       }
@@ -6000,7 +6000,7 @@ var ns = {
       if (this.consoleDump & LOG_CONTENT_BLOCK)
         this.dump("Blocking top-level plugin document");
 
-      for each (let tag in ["embed", "video", "audio"]) {
+      for (let tag  of ["embed", "video", "audio"]) {
         let embeds = domWindow.document.getElementsByTagName(tag);
         if (embeds.length > 0 && (tag !== "embed" || this._abortPluginDocLoads)) {
           let eType = "application/x-noscript-blocked";
@@ -6315,7 +6315,7 @@ var ns = {
         eh = function(e) {  e.preventDefault(); e.stopPropagation(); };
 
     return (this.blockEvents = function(window) {
-      for each(let t in et) window.addEventListener(t, eh, true);
+      for (let t  of et) window.addEventListener(t, eh, true);
     })(window);
   },
 
@@ -6336,14 +6336,14 @@ var ns = {
   },
   sanitizeStaticDOM: function(el) {
      // remove attributes from forms
-    for each (let f in Array.slice(el.getElementsByTagName("form"))) {
-      for each(let a in Array.slice(f.attributes)) {
+    for (let f  of Array.slice(el.getElementsByTagName("form"))) {
+      for (let a  of Array.slice(f.attributes)) {
         f.removeAttribute(a.name);
       }
     }
     let doc = el.ownerDocument;
     // remove dangerous URLs (e.g. javascript: or data: or reflected XSS URLs)
-    for each(let a in ['href', 'to', 'from', 'by', 'values']) {
+    for (let a  of ['href', 'to', 'from', 'by', 'values']) {
       let res = doc.evaluate('//@' + a, el, null, Ci.nsIDOMXPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
       for (let j = res.snapshotLength; j-- > 0;) {
         let attr = res.snapshotItem(j);
@@ -6904,8 +6904,7 @@ var ns = {
 
     if (!/^(ht|f)tps?:/.test(site)) return fromPolicy;
 
-    let [to, from] = [ AddressMatcher.create(this.getPref("allowLocalLinks." + n, ""))
-                        for each (n in ["to", "from"]) ];
+    let [to, from] = ["to", "from"].map(function(n) AddressMatcher.create(ns.getPref("allowLocalLinks." + n, "")));
 
     return ((from
               ? from.test(site)

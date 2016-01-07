@@ -50,10 +50,10 @@ RequestWatchdog.prototype = {
   OBSERVED_TOPICS: ["http-on-examine-response", "http-on-examine-merged-response", "http-on-examine-cached-response"],
 
   init: function() {
-    for each (var topic in this.OBSERVED_TOPICS) OS.addObserver(this, topic, true);
+    for (var topic  of this.OBSERVED_TOPICS) OS.addObserver(this, topic, true);
   },
   dispose: function() {
-    for each (var topic in this.OBSERVED_TOPICS) OS.removeObserver(this, topic);
+    for (var topic  of this.OBSERVED_TOPICS) OS.removeObserver(this, topic);
   },
 
   callback: null,
@@ -314,7 +314,7 @@ RequestWatchdog.prototype = {
   },
 
   onCrossSiteRequest: function(channel, origin, browser) {
-    for each (var l in this._listeners) {
+    for (var l  of this._listeners) {
       l.onCrossSiteRequest(channel, origin, browser, this);
     }
   },
@@ -1315,7 +1315,7 @@ var InjectionChecker = {
       while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
         let prev = s;
 
-        for each(expr in m) {
+        for (expr  of m) {
           if (json) try {
             if (!toStringRx.test(json.decode(expr).toString))
               continue;
@@ -1946,7 +1946,7 @@ var InjectionChecker = {
   checkHTML: function(s) {
      let links = s.match(/\b(?:href|src|(?:form)?action)[\s\0]*=[\s\0]*(?:(["'])[\s\S]*?\1|[^'"<>][^>\s]*)/ig);
      if (links) {
-      for each (let l in links) {
+      for (let l  of links) {
         l = l.replace(/[^=]*=[\s\0]*/i, '');
         l = /^["']/.test(l) ? l.replace(/^(['"])([\s\S]*)\1/g, '$2') : l.replace(/[\s>][\s\S]*/, '');
         if (/^(?:javascript|data):/i.test(l) || this._checkRecursive(l, 3)) return true;

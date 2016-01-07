@@ -31,7 +31,7 @@ var URIValidator = {
     this.validators = {};
     this.prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
       .getBranch("noscript.urivalid.").QueryInterface(Ci.nsIPrefBranch2);
-    for each(var key in this.prefs.getChildList("", {})) {
+    for (var key  of this.prefs.getChildList("", {})) {
       this.parseValidator(key);
     }
     this.prefs.addObserver("", this, true);

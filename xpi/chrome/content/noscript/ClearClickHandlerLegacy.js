@@ -392,8 +392,8 @@
         const offs = ctx.isEmbed ? [0] : [0, -1, 1, -2, 2, -3, -3];
   
         checkImage:
-        for each(var x in offs) {
-          for each(var y in offs) {
+        for (var x  of offs) {
+          for (var y  of offs) {
             tmpImg = snapshot(top, offsetX + x * zoom, offsetY + y * zoom);
             if (img1 == tmpImg) {
               ret = false;
@@ -429,8 +429,8 @@
         if (ret && ctx.isEmbed && ("x" in ctx) && c.width > this.minWidth && c.height > this.minHeight) {
           c.width = this.minWidth;
           c.height = this.minHeight;
-          for each(x in [Math.max(ctx.x - this.minWidth, box.oX), Math.min(ctx.x, box.oX + box.oW - this.minWidth)]) {
-            for each(y in [Math.max(ctx.y - this.minHeight, box.oY), Math.min(ctx.y, box.oY + box.oH - this.minHeight)]) {
+          for (x  of [Math.max(ctx.x - this.minWidth, box.oX), Math.min(ctx.x, box.oX + box.oW - this.minWidth)]) {
+            for (y  of [Math.max(ctx.y - this.minHeight, box.oY), Math.min(ctx.y, box.oY + box.oH - this.minHeight)]) {
               ret = snapshots(x, y, offsetX + (x - box.x), offsetY + (y - box.y));
               if (!ret) {
                 offsetX += (x - box.x);

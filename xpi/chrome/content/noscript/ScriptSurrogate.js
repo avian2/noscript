@@ -28,14 +28,14 @@ var ScriptSurrogate = {
   _syncPrefs: function() {
     const prefs = this.prefs;
 
-    for each(let p in ["enabled", "debug", "sandbox"]) this[p] = prefs.getBoolPref(p);
+    for (let p  of ["enabled", "debug", "sandbox"]) this[p] = prefs.getBoolPref(p);
 
     // inclusions don't work with sandbox on Gecko < 2, but may crash without on Gecko > 2
     this.sandboxInclusions = this.sandbox && (ns.geckoVersionCheck("2") >= 0);
 
     const map = {__proto__: null};
     var key;
-    for each(key in prefs.getChildList("", {})) {
+    for (key  of prefs.getChildList("", {})) {
       this._parseMapping(prefs, key, map);
     }
 

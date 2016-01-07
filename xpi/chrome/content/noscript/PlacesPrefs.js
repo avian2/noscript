@@ -15,7 +15,7 @@ var PlacesPrefs = {
   get uri() {
     delete this.uri;
     var tpl = '<h1>%title%</h1><p>%message%</p>';
-    for each(var l in ["title", "message"]) {
+    for (var l  of ["title", "message"]) {
       tpl = tpl.replace('%' + l + '%', ns.getString("bookmarkSync." + l).replace(/</g, '&lt;').replace(/>/g, '&gt;'));
     }
     return this.uri = IOS.newURI(
@@ -103,7 +103,7 @@ var PlacesPrefs = {
         // legacy querystring + hash parsing, see 1.9.2
         var qs = uri.query.replace(/^\?/, '').split("&");
         var couple;
-        for each (var parm in qs) {
+        for (var parm  of qs) {
           couple = parm.split("=");
           ns.setPref(couple[0], decodeURIComponent(couple[1]));
         }

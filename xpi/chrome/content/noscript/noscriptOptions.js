@@ -23,7 +23,7 @@ var nsopt = {
     abeOpts.init();
 
     var locked = ns.locked;
-    for each (var widget in ["urlText","urlListDisplay", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
+    for (var widget  of ["urlText","urlListDisplay", "jsglobal", "addButton", "removeButton", "importButton", "exportButton"]) {
       this[widget] = $(widget);
       if(locked) this[widget].disabled = true;
     }
@@ -625,7 +625,7 @@ var abeOpts = {
         var sel = this.selectedRS && this.selectedRS.name || "USER";
         this.selectedRS = null;
         var i, name;
-        for each (var rs in rulesets) {
+        for (var rs  of rulesets) {
           name = rs.name;
           map[name] = rs;
           i = l.appendItem(name, name);
@@ -716,7 +716,7 @@ var abeOpts = {
   },
 
   ShowHideABEError: function(hidden) {
-    for each (let n in document.getElementsByClassName("abe-error-element")) {
+    for (let n  of document.getElementsByClassName("abe-error-element")) {
       n.hidden = hidden;
     }
   },
@@ -760,7 +760,7 @@ var nsWhitelistTreeView = {
     if (psl.length == 0) return;
     if (props) {
       let aserv=Cc["@mozilla.org/atom-service;1"].getService(Ci.nsIAtomService);
-      for each (let s in psl) props.AppendElement(aserv.getAtom(s));
+      for (let s  of psl) props.AppendElement(aserv.getAtom(s));
     }
     else { return psl.join(" ") }
   },

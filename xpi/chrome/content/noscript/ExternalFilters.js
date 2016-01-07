@@ -27,7 +27,7 @@ var ExternalFilters = {
     if (filters) this._filters = filters; // filters.filter(function(f) f.valid);
     
     const prefs = this.prefs;
-    for each(let key in prefs.getChildList("", {})) {
+    for (let key  of prefs.getChildList("", {})) {
       try {
         prefs.clearUserPref(key);
       } catch(e) {}
@@ -37,7 +37,7 @@ var ExternalFilters = {
     const props = ["name", "exe", "contentType", "whitelist"];
     
     this._filters.forEach(function(f) {
-      for each(let p in props) {   
+      for (let p  of props) {   
         prefs.setCharPref(f.name + "." + p,
           p == "exe" ? f[p] && f[p].path || '' :
             p == "whitelist" ? f[p] && f[p].source || '' :
@@ -51,7 +51,7 @@ var ExternalFilters = {
     if (!("_whitelists" in this)) {
       let wl = {}, some = false;
       if (this._filters.length) {
-        for each(let f in this._filters) {
+        for (let f  of this._filters) {
           if (f.whitelist) wl[f.name] = f.whitelist;
           some = true;
         }
@@ -113,7 +113,7 @@ var ExternalFilters = {
       
       if (contentType || extraType) {
         contentType = extraType || contentType;
-        for each (let f in this._filters) {
+        for (let f  of this._filters) {
           if (f.handle(channel, contentType, ctx, cached)) {
             this.storeFilterInfo(ctx, f, channel.name);
             return f;
@@ -168,7 +168,7 @@ var ExternalFilters = {
       var args,
           name, member
           map = {};
-      for each(let key in prefs.getChildList("", {})) {
+      for (let key  of prefs.getChildList("", {})) {
         [name, member] = key.split(".");
         if (!(name && member)) continue;
         
@@ -544,7 +544,7 @@ function EFFilePassthru(handler) {
     this.request = handler.channel;
     this.originalListener = handler.originalListener;
     
-    for each(let ce in [handler.cacheEntry, handler.offlineCacheEntry]) {
+    for (let ce  of [handler.cacheEntry, handler.offlineCacheEntry]) {
       if (ce) {
         let tee = Cc["@mozilla.org/network/stream-listener-tee;1"].
           createInstance(Ci.nsIStreamListenerTee);
