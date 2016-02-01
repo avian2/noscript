@@ -1331,7 +1331,7 @@ var InjectionChecker = {
           if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(qred)) {
              this.log("Reducing pseudo-JSON " + expr);
              s = s.replace(expr, '{}');
-          } else if (!!/[\(=\.]|[^:\s]\s*\[|:\s*(?:location|document|set(?:Timeout|Interval)|eval|open|show\w*Dialog|alert|confirm|prompt)\b|(?:\]|set)\s*:/.test(qred) &&
+          } else if (!/[(=.]|[^:\s]\s*\[|:\s*(?:location|document|set(?:Timeout|Interval)|eval|open|show\w*Dialog|alert|confirm|prompt)\b|(?:\]|set)\s*:/.test(qred) &&
              this.checkJSSyntax("JSON = " + qred) // no-assignment JSON fails with "invalid label"
           ) {
             this.log("Reducing slow JSON " + expr);
