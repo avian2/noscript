@@ -1683,6 +1683,7 @@ var ns = {
       case "secureCookiesForced":
       case "httpsForced":
       case "httpsForcedExceptions":
+      case "httpsForcedBuiltIn":
         HTTPS[name] = AddressMatcher.create(this.getPref(name, ''));
       break;
 

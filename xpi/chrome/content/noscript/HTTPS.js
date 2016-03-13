@@ -8,17 +8,23 @@ var HTTPS = {
   secureCookiesForced: null,
   httpsForced: null,
   httpsForcedExceptions: null,
+  httpsDefWhitelist: true,
 
   forceChannel: function(channel) this.mustForce(channel.URI) && this.replaceChannel(channel),
   replaceChannel: function(channel) {
     var uri = channel.URI.clone();
     uri.scheme = "https";
 
-    ChannelReplacement.runWhenPending(channel, function() {
+    if (channel.redirectTo) {
+      channel.redirectTo(uri);
+      HTTPS.log("Redirected Channel " + uri.spec);
+    } else {
+      ChannelReplacement.runWhenPending(channel, function() {
 
-      new ChannelReplacement(channel, uri).replace(true);
-      HTTPS.log("Forced Channel " + uri.spec);
-    });
+        new ChannelReplacement(channel, uri).replace(true);
+        HTTPS.log("Forced Channel " + uri.spec);
+      });
+    }
     return true;
 
   },
@@ -65,11 +71,22 @@ var HTTPS = {
     return false;
   },
 
+  get defWhitelist() {
+    delete this.defWhitelist;
+    return this.defWhitelist = new RegExp("\\b(?:" + ns.getPref("default").replace(/\./g, "\\.").split(/\s+/).join("|") + ")$");
+  },
+
   mustForce: function(uri) {
-    return uri.schemeIs("http") &&
-        (this.httpsForced && this.httpsForced.test(uri.spec) ||
-         this.httpsForcedBuiltIn && this.httpsForcedBuiltIn.test(uri.spec)) &&
-         !(this.httpsForcedExceptions && this.httpsForcedExceptions.test(uri.spec));
+    if (!uri.schemeIs("http")) return false;
+
+    let url = uri.spec;
+    if (this.httpsDefWhitelist) {
+      let site = ns.getSite(url);
+      if (this.defWhitelist.test(site) && ns.isJSEnabled(site)) return true;
+    }
+    return this.httpsForced && this.httpsForced.test(url) ||
+       this.httpsForcedBuiltIn && this.httpsForcedBuiltIn.test(url) &&
+       !(this.httpsForcedExceptions && this.httpsForcedExceptions.test(url));
   },
 
   log: function(msg) {
@@ -345,6 +362,7 @@ var HTTPS = {
 
 ["secureCookies", "secureCookiesExceptions", "secureCookiesForced",
   "httpsForcedBuiltIn", "httpsForced", "httpsForcedExceptions",
+  "httpsDefWhitelist",
   ]
     .forEach(function(p) {
   try {

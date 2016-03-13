@@ -2663,7 +2663,7 @@ XSanitizer.prototype = {
         .replace(/\bdata:/ig, "nodata:")
         .replace(/['\(\)\=\[\]<\r\n`]/g, " ")
         .replace(/0x[0-9a-f]{16,}|0b[01]{64,}/gi, " ")
-        .replace(this._brutalReplRx, String.toUpperCase)
+        .replace(this._dangerousWordsRx, this._dangerousWordsReplace)
         .replace(/Q[\da-fA-Fa]{2}/g, "Q20") // Ebay-style escaping
         .replace(/%[\n\r\t]*[0-9a-f][\n\r\t]*[0-9a-f]/gi, " ")
         // .replace(/percnt/, 'percent')
@@ -2678,11 +2678,12 @@ XSanitizer.prototype = {
       fuzzify('-moz-binding|@import'),
     "ig"
   ),
-  _brutalReplRx: new RegExp(
+  _dangerousWordsRx: new RegExp(
     '(?:' + fuzzify('setter|location|innerHTML|outerHTML|cookie|name|document|toString|') +
     IC_EVAL_PATTERN + '|' + IC_EVENT_PATTERN + ')',
     "g"
-  )
+  ),
+  _dangerousWordsReplace: function(s) s.replace(/\S/g, "$&\u2063")
 
 };
 
