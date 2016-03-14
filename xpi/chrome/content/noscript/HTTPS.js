@@ -80,13 +80,15 @@ var HTTPS = {
     if (!uri.schemeIs("http")) return false;
 
     let url = uri.spec;
+    if (this.httpsForcedExceptions && this.httpsForcedExceptions.test(url)) return false;
+
     if (this.httpsDefWhitelist) {
       let site = ns.getSite(url);
       if (this.defWhitelist.test(site) && ns.isJSEnabled(site)) return true;
     }
+
     return this.httpsForced && this.httpsForced.test(url) ||
-       this.httpsForcedBuiltIn && this.httpsForcedBuiltIn.test(url) &&
-       !(this.httpsForcedExceptions && this.httpsForcedExceptions.test(url));
+       this.httpsForcedBuiltIn && this.httpsForcedBuiltIn.test(url);
   },
 
   log: function(msg) {

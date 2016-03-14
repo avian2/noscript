@@ -1227,7 +1227,7 @@ LAZY_INCLUDE(
   "JSURL"
 );
 
-__defineGetter__("ABE", function() {
+this.__defineGetter__("ABE", function() {
   if (ns.consoleDump) ns.dump("ABE kickstart at " + (new Error().stack));
   delete this.ABE;
   INCLUDE("ABE");

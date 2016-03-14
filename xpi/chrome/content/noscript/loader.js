@@ -29,9 +29,9 @@ function INCLUDE(name) {
 function LAZY_INCLUDE(name) {
   if (arguments.length > 1)
     for (var j = 0, len = arguments.length; j < len; j++)
-      arguments.callee(arguments[j]);
+      LAZY_INCLUDE(arguments[j]);
   else if (!(name in this)) {
-    __defineGetter__(name, function() {
+    this.__defineGetter__(name, function() {
       delete this[name];
       // dump(name + " kickstarted at " + (new Error().stack));
       INCLUDE(name);
