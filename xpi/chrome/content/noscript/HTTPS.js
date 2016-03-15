@@ -10,10 +10,23 @@ var HTTPS = {
   httpsForcedExceptions: null,
   httpsDefWhitelist: true,
 
-  forceChannel: function(channel) this.mustForce(channel.URI) && this.replaceChannel(channel),
-  replaceChannel: function(channel) {
-    var uri = channel.URI.clone();
+  replacements: [
+    [/^http:\/\/yui\.yahooapis\.com\//i, "https://yui-s.yahooapis.com/"]
+  ],
+  modifyURI: function(uri) {
+    let spec = uri.spec;
+    for (let replacement of this.replacements) {
+      if (replacement[0].test(spec)) uri.spec = spec.replace(replacement[0], replacement[1]);
+    }
     uri.scheme = "https";
+    return uri;
+  },
+
+  forceChannel: function(channel) {
+    return this.mustForce(channel.URI, channel) && this.replaceChannel(channel)
+  },
+  replaceChannel: function(channel) {
+    var uri = this.modifyURI(channel.URI.clone());
 
     if (channel.redirectTo) {
       channel.redirectTo(uri);
@@ -33,7 +46,7 @@ var HTTPS = {
     if (this.mustForce(uri)) {
       try {
 
-        uri.scheme = "https";
+        this.modifyURI(uri);
 
         this.log("Forced URI " + uri.spec);
         return true;
@@ -76,15 +89,17 @@ var HTTPS = {
     return this.defWhitelist = new RegExp("\\b(?:" + ns.getPref("default").replace(/\./g, "\\.").split(/\s+/).join("|") + ")$");
   },
 
-  mustForce: function(uri) {
+  mustForce: function(uri, channel) {
     if (!uri.schemeIs("http")) return false;
 
     let url = uri.spec;
     if (this.httpsForcedExceptions && this.httpsForcedExceptions.test(url)) return false;
 
-    if (this.httpsDefWhitelist) {
+    if (channel && this.httpsDefWhitelist && !(channel instanceof Ci.nsIHttpChannelInternal && !channel.allowSTS)) {
       let site = ns.getSite(url);
-      if (this.defWhitelist.test(site) && ns.isJSEnabled(site)) return true;
+      if (this.defWhitelist.test(site) && ns.isJSEnabled(site)) {
+        return true;
+      }
     }
 
     return this.httpsForced && this.httpsForced.test(url) ||

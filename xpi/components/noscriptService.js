@@ -1677,6 +1677,7 @@ var ns = {
       break;
 
       case "secureCookies":
+      case "httpsDefWhitelist":
         HTTPS[name] = this.getPref(name, HTTPS[name]);
       break;
       case "secureCookiesExceptions":
