@@ -1253,9 +1253,10 @@ var InjectionChecker = {
       s = s.replace(/^\/[^\/\n\r]+\//, '_RX_').replace(/^\/\/[^\r\n]*/, '//_COMMENT_');
     }
 
-    if (/\/\*/.test(s)) // C-style comments, would make everything really tricky
+    if (/\/\*/.test(s) || // C-style comments, would make everything really tricky
+      /\w\s*(\/\/[\s\S]*)?\[[\s\S]*\w[\s\S]*\]/.test(s)) { // property accessors, risky
       return s;
-
+    }
 
     if (/['"\/]/.test(s)) {
 
