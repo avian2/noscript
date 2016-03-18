@@ -95,7 +95,9 @@ var HTTPS = {
     let url = uri.spec;
     if (this.httpsForcedExceptions && this.httpsForcedExceptions.test(url)) return false;
 
-    if (channel && this.httpsDefWhitelist && !(channel instanceof Ci.nsIHttpChannelInternal && !channel.allowSTS)) {
+    if (channel && this.httpsDefWhitelist &&
+        (channel.loadFlags & (Ci.nsIChannel.LOAD_DOCUMENT_URI | Ci.nsIChannel.LOAD_CALL_CONTENT_SNIFFERS)) &&
+        !(channel instanceof Ci.nsIHttpChannelInternal && !channel.allowSTS)) {
       let site = ns.getSite(url);
       if (this.defWhitelist.test(site) && ns.isJSEnabled(site)) {
         return true;
