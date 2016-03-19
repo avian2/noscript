@@ -43,6 +43,14 @@ var HTTPS = {
   },
 
   forceURI: function(uri, fallback, ctx) {
+    if (!uri.schemeIs("http")) return false;
+    if (IOUtil.newChannel(uri.spec).nsIHttpChannel.redirectTo) {
+      this.forceURI = DUMMY_FUNC;
+      return false;
+    }
+    return (this.forceURI = this._forceURI).apply(this, arguments);
+  },
+  _forceURI: function(uri, fallback, ctx) {
     if (this.mustForce(uri)) {
       try {
 

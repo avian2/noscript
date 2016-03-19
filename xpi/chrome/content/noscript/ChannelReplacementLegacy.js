@@ -111,7 +111,7 @@ ChannelReplacement.prototype = {
 
     newURI = newURI || chan.URI;
 
-    var newChan = IOS.newChannelFromURI(newURI);
+    var newChan = IOUtil.newChannelFromURI(newURI);
 
     this.oldChannel = chan;
     this.channel = newChan;

@@ -555,7 +555,7 @@ function EFFilePassthru(handler) {
     
     // TODO: rewrite http://mxr.mozilla.org/mozilla-central/source/netwerk/cache/public/nsICacheEntryDescriptor.idl#86
     this.bytes = 0;
-    var ch = IOS.newChannelFromURI(IOS.newFileURI(handler.cleanFile));
+    var ch = IOUtil.newChannelFromURI(IOS.newFileURI(handler.cleanFile));
     ch.asyncOpen(this, handler.ctx);
 }
 

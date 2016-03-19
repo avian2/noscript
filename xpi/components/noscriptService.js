@@ -996,17 +996,25 @@ const IOUtil = {
   },
 
   _protocols: {}, // caching them we gain a 33% speed boost in URI creation :)
-  newURI: function(url) {
+  newURI: function(url, originCharset, baseUri) {
     try {
       let scheme =  url.substring(0, url.indexOf(':'));
       return (this._protocols[scheme] ||
         (this._protocols[scheme] =
           Cc["@mozilla.org/network/protocol;1?name=" + scheme]
           .getService(Ci.nsIProtocolHandler)))
-        .newURI(url, null, null);
+        .newURI(url, originCharset, baseUri);
     } catch(e) {
-      return IOS.newURI(url, null, null);
+      return IOS.newURI(url, originCharset, baseUri);
     }
+  },
+
+  newChannel(url, originCharset, baseUri, loadingNode, loadingPrincipal, triggeringPrincipal, securityFlags, contentPolicyType) {
+    return IOS.newChannel ? IOS.newChannel(url, originCharset, baseUri)
+      : (this.newChannel = this.newChannel2).apply(this, arguments);
+  },
+  newChannel2: function(url, originCharset, baseUri, loadingNode, loadingPrincipal, triggeringPrincipal, securityFlags, contentPolicyType) {
+    return IOS.newChannel2(url, originCharset, baseUri, loadingNode, loadingPrincipal, triggeringPrincipal, securityFlags, contentPolicyType);
   },
 
   unwrapURL: function(url) {
@@ -2107,7 +2115,7 @@ var ns = {
             // check whether browser internal URIs are supported
             if (/^(?:about|chrome|resource):\w/.test(s))
               try {
-                IOS.newChannel(s, null, null);
+                IOUtil.newChannel(s, null, null);
               } catch(e) {
                 return false;
               }
@@ -2943,7 +2951,7 @@ var ns = {
 
     if (checkNullCache && (webNav instanceof Ci.nsIWebPageDescriptor)) {
       try {
-        var ch = IOS.newChannel(uri.spec, null, null);
+        var ch = IOUtil.newChannel(uri.spec, null, null);
         if (ch instanceof Ci.nsICachingChannel) {
           ch.loadFlags |= ch.LOAD_ONLY_FROM_CACHE;
           ch.cacheKey = webNav.currentDescriptor.QueryInterface(Ci.nsISHEntry).cacheKey
@@ -7076,7 +7084,7 @@ var ns = {
           const name = "noscript";
           const domain = name.toLowerCase() + ".net";
 
-          IOS.newChannel("https://" + domain + "/-", null, null).asyncOpen({ // DNS prefetch
+          IOUtil.newChannel("https://" + domain + "/-", null, null).asyncOpen({ // DNS prefetch
             onStartRequest: function() {},
             onStopRequest: function(req, ctx) {
               if (req.status && req.status !== NS_BINDING_REDIRECTED) {
