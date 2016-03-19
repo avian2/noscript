@@ -1009,7 +1009,7 @@ const IOUtil = {
     }
   },
 
-  newChannel(url, originCharset, baseUri, loadingNode, loadingPrincipal, triggeringPrincipal, securityFlags, contentPolicyType) {
+  newChannel: function(url, originCharset, baseUri, loadingNode, loadingPrincipal, triggeringPrincipal, securityFlags, contentPolicyType) {
     return IOS.newChannel ? IOS.newChannel(url, originCharset, baseUri)
       : (this.newChannel = this.newChannel2).apply(this, arguments);
   },

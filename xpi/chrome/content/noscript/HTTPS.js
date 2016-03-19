@@ -19,6 +19,7 @@ var HTTPS = {
       if (replacement[0].test(spec)) uri.spec = spec.replace(replacement[0], replacement[1]);
     }
     uri.scheme = "https";
+    uri.port = -1;
     return uri;
   },
 
