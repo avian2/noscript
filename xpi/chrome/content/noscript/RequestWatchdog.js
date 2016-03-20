@@ -694,6 +694,12 @@ RequestWatchdog.prototype = {
           return;
         }
 
+        if (/^https?:\/\/pdf\.printfriendly\.com\/pdfs\/make$/.test(originalSpec) &&
+            ns.getPref("filterXExceptions.printfriendly")) {
+          if (ns.consoleDump) this.dump(channel, "Printfriendly exception");
+          return;
+        }
+
       }
 
     } else { // maybe data or javascript URL?
