@@ -5030,7 +5030,9 @@ var ns = {
     var s = Components.stack.caller;
     var f = s.filename.replace(/ line .*/, '');
     while((s = s.caller)) {
-      if (s.filename && f != s.filename.replace(/ line .*/, '')) return false;
+      if (s.filename && !(/^(?:resource|chrome):/.test(s.filename) || f === s.filename.replace(/ line .*/, ''))) {
+        return false;
+      }
     }
     return true;
   },
