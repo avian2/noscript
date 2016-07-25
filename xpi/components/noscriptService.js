@@ -2400,7 +2400,7 @@ var ns = {
   _buggyIPV6rx: /^[^/:]+:\/\/[^[](?:[0-9a-f]*:){2}/,
   getPrincipalOrigin: function(node) {
     let p = node.nodePrincipal;
-    let origin = p.origin;
+    let origin = p.originNoSuffix || p.origin;
     if (this._buggyIPV6rx.test(origin)) try {
       let uri = p.URI;
       let hostPort = uri.hostPort;
@@ -3952,7 +3952,7 @@ var ns = {
 
   getExpando: function(domObject, key, defValue) {
     return domObject && domObject.__noscriptStorage && domObject.__noscriptStorage[key] ||
-           (defValue ? this.setExpando(domObject, key, defValue) : null);
+           (defValue ? this.setExpando(domObject, key, defValue) || defValue : null);
   },
   setExpando: function(domObject, key, value) {
     if (!domObject) return null;
@@ -4845,7 +4845,7 @@ var ns = {
 
         let anchor = document.createElementNS(HTML_NS, "a");
         anchor.id = object.id;
-        anchor.href = extras.url;
+        anchor.href = /^(?:https?|ftp):/i.test(extras.url) ? extras.url : "#";
         anchor.setAttribute("title", extras.title);
 
         this.setPluginExtras(anchor, extras);
@@ -4861,9 +4861,8 @@ var ns = {
           anchor.addEventListener("click", this.bind(this.onPlaceholderClick), true);
           anchor.className = "__noscriptPlaceholder__ __noscriptObjectPatchMe__";
         } else {
-          anchor.className = "";
-          if(collapse) anchor.style.display = "none";
-          else anchor.style.visibility = "hidden";
+          anchor.className = "__noscriptHidden__";
+          if (collapse) anchor.style.display = "none";
           continue;
         }
 
@@ -5038,11 +5037,14 @@ var ns = {
   },
 
   onPlaceholderClick: function(ev, anchor) {
-    if (ev.button || !this.stackIsMine()) return;
+    if (ev.button) return;
     anchor = anchor || ev.currentTarget;
     const object = this.getExpando(anchor, "removedNode");
 
     if (object) try {
+      if("isTrusted" in ev && !ev.isTrusted || !this.stackIsMine()) {
+        return;
+      }
       let shift = ev.shiftKey;
       let closeButton = ev.target.className === "closeButton";
       if (closeButton ? !shift : shift) {
@@ -6274,6 +6276,22 @@ var ns = {
     if (typeof blockIt === "undefined")
       blockIt = !site || (this.usingCAPS && !this.restrictSubdocScripting ? this.isUntrusted(site) : !this.isJSEnabled(site));
 
+    if (blockIt) try {
+      // If the original content-type was */json but we morphed to text/html, JSON viewer kicked in
+      let docShell = DOM.getDocShellForWindow(window);
+      let channel = docShell.currentDocumentChannel;
+      if (channel instanceof Ci.nsIHttpChannel) {
+        let originalContentType = channel.getResponseHeader("Content-Type");
+        if (/\/json(?:;|^)/i.test(originalContentType) && channel.contentType === "text/html") blockIt = false;
+      }
+    } catch (e) {
+      this.log(e)
+    }
+
+    if (!blockIt && site.substring(0, 3) === "ftp") {
+      blockIt = InjectionChecker.checkURL(document.URL);
+    }
+
     return blockIt;
   },
 
@@ -6912,15 +6930,15 @@ var ns = {
       if (!url.schemeIs("file")) return fromPolicy;
       url = url.spec;
     } else if (typeof url !== "string" || url.indexOf("file:///") !== 0) return fromPolicy;
-    let site = principal.URI ? principal.URI.spec : principal.origin;
+    let site = principal.URI ? principal.URI.spec : this.getPrincipalOrigin(principal);
 
     if (!/^(ht|f)tps?:/.test(site)) return fromPolicy;
 
-    let [to, from] = ["to", "from"].map(function(n) AddressMatcher.create(ns.getPref("allowLocalLinks." + n, "")));
+    let [to, from] = ["to", "from"].map(function(n) { return AddressMatcher.create(ns.getPref("allowLocalLinks." + n, "")) });
 
     return ((from
               ? from.test(site)
-              : this.isJSEnabled(this.getSite(principal.origin)))
+              : this.isJSEnabled(this.getSite(site)))
         && (!to || to.test(url))
       );
   },

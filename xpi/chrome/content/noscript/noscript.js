@@ -18,7 +18,7 @@ var noscriptUtil = {
     delete this.service;
     return this.service = ns;
   },
-  
+
   get prompter() {
     delete this.prompter;
     return this.prompter =
@@ -27,7 +27,7 @@ var noscriptUtil = {
   }
 ,
   confirm: function(msg, persistPref, title) {
-    const ns = this.service; 
+    const ns = this.service;
     var alwaysAsk = { value: ns.getPref(persistPref) };
     if(!alwaysAsk.value &&  ns.prefs.prefHasUserValue(persistPref) ||
         noscriptUtil.prompter.confirmCheck(window, title || "NoScript",
@@ -49,18 +49,18 @@ var noscriptUtil = {
     let od;
     try {
       od = odRef && odRef.get();
+      if (od && !od.closed) {
+        od.focus();
+        return;
+      }
     } catch (e) {}
-    if (od && !od.closed) {
-      od.focus();
-      return;
-    }
     window.openDialog(
-        this.chromeBase + this.chromeName + "Options.xul", 
+        this.chromeBase + this.chromeName + "Options.xul",
         this.chromeName + "Options",
         "chrome, dialog=no, centerscreen, resizable=no, alwaysraised=no",
         params);
   },
-  
+
   openXssOptions: function() {
     this.openOptionsDialog({tabselIndexes: [5, 2]});
   },
@@ -77,10 +77,10 @@ var noscriptUtil = {
     }
     this.openOptionsDialog({tabselIndexes: [5, 5]});
   }
-, 
+,
   openAboutDialog: function(params) {
     window.open(
-      this.chromeBase + "about.xul", 
+      this.chromeBase + "about.xul",
       this.chromeName + "About",
       "chrome,dialog,centerscreen");
   }
@@ -89,7 +89,7 @@ var noscriptUtil = {
     if ("HUDService" in window && HUDService.getBrowserConsole && HUDService.toggleBrowserConsole) {
       let bc = HUDService.getBrowserConsole();
       function showJS(bc) { bc.setFilterState("jslog", true); }
-      if (bc) { 
+      if (bc) {
         showJS(bc);
         let w = bc.chromeWindow;
         if (w.windowState === w.STATE_MINIMIZED) {
@@ -98,7 +98,7 @@ var noscriptUtil = {
         w.focus();
       }
       else HUDService.toggleBrowserConsole().then(showJS);
-      
+
     } else if ("toErrorConsole" in window) {
         toErrorConsole();
     }
@@ -108,32 +108,32 @@ var noscriptUtil = {
         window.openDialog("chrome://global/content/console.xul", "", "chrome,all,dialog=no");
     }
   },
-  
+
   openFaq: function(which) {
     this.browse("https://noscript.net/faq#" + which);
   },
-  
+
   openHelp: function(section) {
     this.browse("https://noscript.net/help/" + section);
   },
-  
+
   openDonate: function(src) {
     this.browse("https://secure.informaction.com/donate/?id=noscript&src=" + src);
   },
-  
+
   openInfo: function(about) {
     const ns = this.service;
-    
+
     let url = ns.getPref("siteInfoProvider");
     if (!url) return false;
-  
+
     let domain = ns.getSite(about);
     if (!domain) return false;
-    
+
     if (domain.indexOf('@') > -1) domain = domain.split('@')[1]; // Blocked objects entries
     if (domain.indexOf(':') > -1) domain = ns.getDomain(domain) || domain;
     if (!domain) return false;
-    
+
     let ace;
     try {
       ace = Cc["@mozilla.org/network/idn-service;1"]
@@ -141,10 +141,10 @@ var noscriptUtil = {
     } catch(e) {
       ace = '';
     }
-    
+
     url = url.replace(/%utf8%/g, encodeURI(domain))
             .replace(/%ace%/g, encodeURI(ace));
-        
+
     if (this.confirm(
        this.getString("siteInfo.confirm", [domain, ns.getSite(url) || "?", url]),
         "confirmSiteInfo", "NoScript"
@@ -158,22 +158,22 @@ var noscriptUtil = {
             if (d.URL !== url) return;
             let button = d.getElementById("allow-button");
             if (!button) return;
-            
+
             let ns = noscriptOverlay.ns;
             let enabled = ns.isJSEnabled(domain);
-            
+
             button.firstChild.textContent = noscriptOverlay.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]);
             button.style.display = "";
             button.className = enabled ? "forbid" : "allow";
-            
+
             function complete(enable) {
               noscriptOverlay.safeAllow(domain, enable, false, ns.RELOAD_ALL);
               d.defaultView.close();
               if (currentTab) gBrowser.selectedTab = currentTab;
             }
-            
+
             button.addEventListener("click", function(e) complete(!enabled), false);
-            
+
             if (!(enabled || ns.isUntrusted(domain))) {
               button = d.getElementById("distrust-button");
               if (!button) return;
@@ -186,15 +186,15 @@ var noscriptUtil = {
             }
           };
           w.addEventListener(et, eh, true);
-         
+
           w.setTimeout(function() w.removeEventListener(et, eh, true), 20000);
       }
       return true;
     }
-    
+
     return false;
   },
-  
+
   browse: function(url, features) {
     var w = this.service.dom.mostRecentBrowserWindow;
     if(w && !w.closed && w.gBrowser) {
@@ -204,5 +204,5 @@ var noscriptUtil = {
     }
     return w;
   }
-  
+
 };

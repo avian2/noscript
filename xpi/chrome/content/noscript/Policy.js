@@ -819,7 +819,7 @@ var MainContentPolicy = {
 
       if (forbid && this.cascadePermissions && !this.contentBlocker) {
         let principal = aContext.ownerDocument && aContext.ownerDocument.defaultView.top.document.nodePrincipal;
-        forbid = untrusted || !this.isJSEnabled(this.getSite(principal.origin), aContext.ownerDocument.defaultView);
+        forbid = untrusted || !this.isJSEnabled(this.getSite(this.getPrincipalOrigin(principal), aContext.ownerDocument.defaultView));
       }
 
       if (forbid) {

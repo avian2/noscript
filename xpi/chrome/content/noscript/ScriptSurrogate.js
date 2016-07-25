@@ -183,21 +183,20 @@ var ScriptSurrogate = {
 
     let doc = s.ownerDocument;
     let hasSurrogate = ScriptSurrogate.apply(doc, url);
-    if (hasSurrogate) {
+    if (!hasSurrogate) return;
 
-    }
     let fakeLoad = ns.fakeScriptLoadEvents;
-    if ((hasSurrogate ||
-         fakeLoad.enabled &&
-         !(fakeLoad.onlyRequireJS && !s.hasAttribute("data-requiremodule"))
-         ) &&
-        !(fakeLoad.exceptions && fakeLoad.exceptions.test(url) ||
-          fakeLoad.docExceptions && fakeLoad.docExceptions.test(doc.URL))) {
+    if (fakeLoad.enabled &&
+        !(fakeLoad.onlyRequireJS && !s.hasAttribute("data-requiremodule") ||
+          fakeLoad.exceptions && fakeLoad.exceptions.test(url) ||
+          fakeLoad.docExceptions && fakeLoad.docExceptions.test(doc.URL)
+         )
+      ) {
       ev.preventDefault();
       ev.stopPropagation();
       ev = s.ownerDocument.createEvent('HTMLEvents');
       ev.initEvent('load', false, true);
-      s.dispatchEvent(ev)
+      s.dispatchEvent(ev);
     }
   },
   _execListener: function(ev) {
@@ -350,7 +349,7 @@ var ScriptSurrogate = {
 
 
 
-}
+};
 
 function SurrogateMapping(name) {
   this.name = name;

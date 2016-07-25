@@ -615,6 +615,13 @@ RequestWatchdog.prototype = {
           return;
         }
 
+        {
+          let rx = /^https:\/\/(?:[a-z]+\.)?unionbank\.com$/;
+          if (rx.test(originSite) && rx.test(targetSite)) {
+            return;
+          }
+        }
+
         if (/^https?:\/\/csr\.ebay\.(?:\w{2,3}|co\.uk)\/cse\/start\.jsf$/.test(origin) &&
             /^https?:\/\/msa-lfn\.ebay\.(?:\w{2,3}|co\.uk)\/ws\/eBayISAPI\.dll\?[^<'"%]*$/.test(unescapedSpec) &&
             url.scheme === abeReq.originURI.scheme &&

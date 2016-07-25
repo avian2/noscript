@@ -1397,9 +1397,9 @@ var DoNotTrack = {
 
   getDOMPatch: function(docShell) {
     try {
-      if (docShell.document.defaultView.navigator.doNotTrack !== "yes" &&
+      if (docShell.document.defaultView.navigator.doNotTrack !== "1" &&
           docShell.currentDocumentChannel.getRequestHeader("DNT") === "1") {
-        return 'Object.defineProperty(window.navigator, "doNotTrack", { configurable: true, enumerable: true, value: "yes" });';
+        return 'Object.defineProperty(window.navigator, "doNotTrack", { configurable: true, enumerable: true, value: "1" });';
       }
     } catch (e) {}
     return "";
