@@ -1010,8 +1010,9 @@ const IOUtil = {
   },
 
   newChannel: function(url, originCharset, baseUri, loadingNode, loadingPrincipal, triggeringPrincipal, securityFlags, contentPolicyType) {
-    return IOS.newChannel ? IOS.newChannel(url, originCharset, baseUri)
-      : (this.newChannel = this.newChannel2).apply(this, arguments);
+    return ("newChannel2" in IOS)
+      ? (this.newChannel = this.newChannel2).apply(this, arguments)
+      : IOS.newChannel(url, originCharset, baseUri);
   },
   newChannel2: function(url, originCharset, baseUri, loadingNode, loadingPrincipal, triggeringPrincipal, securityFlags, contentPolicyType) {
     return IOS.newChannel2(url, originCharset, baseUri, loadingNode, loadingPrincipal, triggeringPrincipal, securityFlags, contentPolicyType);
@@ -3713,6 +3714,11 @@ var ns = {
   },
 
   forbiddenXHRContext: function(originURL, locationURL, window) {
+    if (!window) {
+      // live bookmarks
+      return false;
+    }
+
     var locationSite = this.getSite(locationURL);
     // var originSite = this.getSite(originURL);
     switch (this.forbidXHR) {

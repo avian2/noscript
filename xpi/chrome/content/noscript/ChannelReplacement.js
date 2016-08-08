@@ -50,7 +50,7 @@ if ("REFERRER_POLICY_ORIGIN" in Ci.nsIHttpChannel) {
             chan.notificationCallbacks = new NCBWrapper(ncb, new CESDelegate(ces));
           }
         } catch (e) {
-          ns.log(e);
+          // notificationCallbacks might not implement nsIChannelEventSink, e.g. in live bookmarks
         }
       }
 
