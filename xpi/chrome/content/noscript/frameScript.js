@@ -1,2 +1,2 @@
-Components.utils.import("chrome://noscript/content/FrameScript.jsm");
+ Components.utils.import("chrome://noscript/content/FrameScript.jsm");
 new FrameScript(this);

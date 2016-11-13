@@ -6,7 +6,7 @@ var PolicyState = {
       this.checking = new Map(),
       this.addCheck = function(url) { this.checking.set(url, true); }
       this.removeCheck = function(url) { this.checking.delete(url); }
-      PolicyState.isChecking = function(url) this.checking.has(url);
+      PolicyState.isChecking = (url) => this.checking.has(url);
     } else {
       this.addCheck = function(url) {
         if (this.checking.indexOf(url) === -1)
@@ -68,8 +68,7 @@ var PolicyState = {
     }
   }
 ,
-  extract: function(channel, detach) IOUtil.extractFromChannel(channel, "noscript.policyHints", !detach)
-,
+  extract: (channel, detach) => IOUtil.extractFromChannel(channel, "noscript.policyHints", !detach),
   detach: function(channel) {
     let uri = channel.URI;
     if (!(uri.schemeIs("http") || uri.schemeIs("https"))) return null;
@@ -113,7 +112,7 @@ var PolicyState = {
   },
 
   toString: function() {
-    return "PolicyState: " + this.hintsList.map(function(h) h.URISpec + " - " + h.URIRef.get()).toSource()
+    return "PolicyState: " + this.hintsList.map((h) => h.URISpec + " - " + h.URIRef.get()).toSource()
   }
 }
 
@@ -133,34 +132,34 @@ function PolicyHints(uri, hints) {
 PolicyHints.prototype = (function() {
   const props = ["contentType", "contentLocation", "requestOrigin", "context", "mimeType", "extra", "owner"];
   const proto = {
-    get wrappedJSObject() this,
-    toArray: function() props.map(function(p) this[p], this),
+    get wrappedJSObject() { return this; },
+    toArray: function() { return props.map(p => this[p]); },
     toSource: Object.prototype.toSource,
-    toString:  Object.prototype.toSource
+    toString:  Object.prototype.toSource,
   };
+
   props.forEach(function(p, i) {
-    this.__defineGetter__(p, function() this.args[i]);
-    switch(p) {
-      case "context":
-        this.__defineSetter__(p,
-        function(v) {
-          try {
-            v =  v ? Cu.getWeakReference(v) : null;
-          } catch (e) {
-            v = null;
-          }
-          if (v) {
-            this.__defineGetter__(i, function() { try { return v.get() } catch (e) {} return null } );
-          } else {
-            this.args[i] = v;
-          }
-        });
-        break;
-      default:
-        this.__defineSetter__(p, function(v) this.args[i] = v);
-    }
-   }, proto);
-   return proto;
+    let setter = p === "context" ?
+      function(v) {
+        try {
+          v =  v ? Cu.getWeakReference(v) : null;
+        } catch (e) {
+          v = null;
+        }
+        if (v) {
+          this.__defineGetter__(i, function() { try { return v.get(); } catch (e) {} return null; } );
+        } else {
+          this.args[i] = v;
+        }
+        return this[p];
+      }
+      : function(v) { return (this.args[i] = v); };
+
+    proto.__defineGetter__(p, function() { return this.args[i]; });
+    proto.__defineSetter__(p, setter);
+  });
+ 
+  return proto;
 })();
 
 var NOPContentPolicy = {
@@ -590,19 +589,14 @@ var MainContentPolicy = {
           if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) ||
                 !blockThisFrame && (
                   aContext instanceof Ci.nsIDOMXULElement ||
-                  !aMimeTypeGuess
-                  || aMimeTypeGuess.substring(0, 5) == "text/"
-                  || aMimeTypeGuess == "application/xml"
-                  || aMimeTypeGuess == "application/xhtml+xml"
-                  || aMimeTypeGuess.substring(0, 6) == "image/"
-                  || !(this.isMediaType(aMimeTypeGuess) || this.pluginForMime(aMimeTypeGuess))
+                  !aMimeTypeGuess ||
+                  aMimeTypeGuess.substring(0, 5) === "text/" ||
+                  aMimeTypeGuess === "application/xml" ||
+                  aMimeTypeGuess === "application/xhtml+xml" ||
+                  aMimeTypeGuess.substring(0, 6) === "image/" ||
+                  !(this.isMediaType(aMimeTypeGuess) || this.pluginForMime(aMimeTypeGuess))
                 )
             ) {
-
-            if (aContext instanceof Ci.nsIDOMElement) {
-              // this is alternate to what we do in countObject, since we can't get there
-              // this.delayExec(this.opaqueIfNeeded, 0, aContext); // TODO uncomment
-            }
 
             if (logBlock)
               this.dump("Document OK: " + aMimeTypeGuess + "@" + (locationURL || aContentLocation.spec) +
@@ -883,6 +877,15 @@ var MainContentPolicy = {
       if (aContentType === 5) this.setExpando(aContext, "site", locationSite);
 
       if (mustCountObject) this.countObject(aContext, locationSite);
+
+      if (aContext) {
+        let doc = aContext.ownerDocument || aContext.document;
+        if (doc) {
+          let ev = doc.createEvent("Events");
+          ev.initEvent("NoScript:contentLoad", true, false);
+          aContext.dispatchEvent(ev);
+        }
+      }
 
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
 

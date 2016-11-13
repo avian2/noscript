@@ -21,10 +21,6 @@ style chrome://global/content/customizeToolbar.xul chrome://noscript/skin/browse
 # Work around for breakages caused by the .NET Framework Assistant
 override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<lame/>
 
-# Mobile tweaks
-override chrome://noscript/content/noscriptOptions.xul chrome://noscript/content/options-mobile.xul application={a23983c0-fd0e-11dc-95ff-0800200c9a66}
-override chrome://noscript/content/noscriptOverlay.xul chrome://noscript/content/overlay-mobile.xul application={a23983c0-fd0e-11dc-95ff-0800200c9a66}
-
 # Gecko 2 component registration
 component {31aec909-8e86-4397-9380-63a59e0c5ff5} components/noscriptService.js
 contract @maone.net/noscript-service;1 {31aec909-8e86-4397-9380-63a59e0c5ff5}

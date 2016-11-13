@@ -1,6 +1,6 @@
 var URIValidator = {
 
-  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
   // returns false if absolute URI is not valid, undefined if it cannot be validated (i.e. no validator is found for this scheme)
   validate: function(uriSpec) {

@@ -6,12 +6,12 @@
   let bpt = scope.BackgroundPageThumbs;
   if (!bpt._NoScript_capture) {
     bpt._NoScript_capture = bpt.capture;
-    bpt.capture = function(url, options) {
+    bpt.capture = function() {
       Cu.import("resource://gre/modules/PageThumbs.jsm", scope);
       let PageThumbs = scope.PageThumbs;
       let e = PageThumbs._prefEnabled;
       if (!ns.getPref("bgThumbs.allowed")) {
-        PageThumbs._prefEnabled = function() false;
+        PageThumbs._prefEnabled = () => false;
       }
       try {
         bpt._NoScript_capture.apply(bpt, arguments);
@@ -30,6 +30,6 @@
           this._thumbBrowser.messageManager.loadFrameScript(
             "data:text/javascript,docShell.allowJavascript = false", false);
       }
-    }
+    };
   }
 }

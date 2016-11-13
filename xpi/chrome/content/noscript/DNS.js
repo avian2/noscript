@@ -348,21 +348,21 @@ var DNS = {
   ip6to4: function(addr) {
     let m = addr.match(this._ip6to4Rx);
     return m ? (m[1]
-          ? m.slice(1).map(function(h) parseInt(h, 16)).join(".")
+          ? m.slice(1).map((h) => parseInt(h, 16)).join(".")
           : m[0].substring(1)
        )
       : addr;
   },
   _ipRx: /^(?:0|[1-9]\d{0,2}\.){3}(?:0|[1-9]\d{0,2})$|:.*:/i, // very restrictive, rejects IPv4 hex, octal and int32
   _ipRx_permissive: /^(?:(?:\d+|0x[a-f0-9]+)\.){0,3}(?:\d+|0x[a-f0-9]+)$|:.*:/i,
-  isIP: function(host) this._ipRx.test(host)
+  isIP: function(host) { return this._ipRx.test(host); }
 };
 
 function DNSListener(callback) {
   if (callback) this.callback = callback;
 };
 DNSListener.prototype = {
-  QueryInterface: xpcom_generateQI([Ci.nsIDNSListener]),
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIDNSListener]),
   record: null,
   status: 0,
   callback: null,

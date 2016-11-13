@@ -1,5 +1,5 @@
-FlashIdiocy.purgeBadEncodings = function(s) s.replace(/%(?:[0-9a-f]?(?:[^0-9a-f]|$))/ig, "");
-FlashIdiocy.platformDecode = function(s) s.replace(/%[8-9a-f][0-9a-f]/ig, function(s) FlashIdiocy.map[s.substring(1).toLowerCase()]);
+FlashIdiocy.purgeBadEncodings = s => s.replace(/%(?:[0-9a-f]?(?:[^0-9a-f]|$))/ig, "");
+FlashIdiocy.platformDecode = s => s.replace(/%[8-9a-f][0-9a-f]/ig, s => FlashIdiocy.map[s.substring(1).toLowerCase()]);
 
 FlashIdiocy.map = {
    "80": "?",

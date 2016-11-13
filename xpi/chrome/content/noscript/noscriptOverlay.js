@@ -1,6 +1,6 @@
 var noscriptOverlay = (function() {
 
-var $ = function(id) { return document.getElementById(id) };
+var $ = (id) => document.getElementById(id);
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
@@ -9,16 +9,14 @@ return noscriptUtil.service ? {
   ns: noscriptUtil.service,
   recentlyBlocked: [],
 
-  getString: function(key, parms) {
-    return noscriptUtil.getString(key, parms);
-  }
-,
+  getString: (key, parms) => noscriptUtil.getString(key, parms),
+
   toggleCurrentPage: function(forceLevel) {
     const ns = this.ns;
     var level = ns.getPref("toolbarToggle", 3) || forceLevel;
     if (!level) return false;
 
-    const url = ns.getQuickSite(content.document.documentURI, level);
+    const url = ns.getQuickSite(this.currentURL, level);
     if (url)
       this.safeAllow(url, !ns.isJSEnabled(url), ns.getPref("toggle.temp"));
 
@@ -28,11 +26,6 @@ return noscriptUtil.service ? {
 
   getSites: function() {
     return this.ns.getSites(this.currentBrowser);
-  },
-
-  get prompter() {
-    delete this.prompter;
-    return this.prompter = noscriptUtil.prompter;
   },
 
   openPopup: function(popup, anchor) {
@@ -244,7 +237,7 @@ return noscriptUtil.service ? {
       popup._hovering = 0;
 
     if (noscriptOverlay._reloadDirty && !noscriptOverlay.liveReload) {
-      noscriptOverlay.ns.reloadWhereNeeded();
+      noscriptOverlay.reloadCurrent();
       noscriptOverlay.ns.savePrefs();
     }
 
@@ -392,7 +385,6 @@ return noscriptUtil.service ? {
 
     try {
 
-
       const sticky = this.stickyUI; // early init
 
       const popup = $("noscript-status-popup");
@@ -473,7 +465,7 @@ return noscriptUtil.service ? {
       }
       const ns = noscriptOverlay.ns;
       txt = sites.map(
-        function(s) (ns.isJSEnabled(s) ? "+" : ns.isUntrusted(s) ? "!" : "-") + s
+        (s) => (ns.isJSEnabled(s) ? "+" : ns.isUntrusted(s) ? "!" : "-") + s
       ).join("\n");
     }
     if (txt) {
@@ -637,15 +629,15 @@ return noscriptUtil.service ? {
     }
 
     sites = sites || this.getSites();
-
+    let all = sites.all;
     const topSite = sites.topSite;
     {
-      let topIdx = sites.indexOf(topSite);
+      let topIdx =  all.indexOf(topSite);
       let topDown = !/-sep-stop\b/.test(mainMenu.lastChild.className);
-      if (topIdx > -1 && topIdx != (topDown ? sites.length - 1 : 0)) {
-        sites.splice(topIdx, 1);
-        if (topDown) sites.push(topSite);
-        else sites.unshift(topSite);
+      if (topIdx > -1 && topIdx != (topDown ? all.length - 1 : 0)) {
+        all.splice(topIdx, 1);
+        if (topDown) all.push(topSite);
+        else all.unshift(topSite);
       }
     }
 
@@ -667,7 +659,7 @@ return noscriptUtil.service ? {
 
     const dupeChecker = {
       sites: {},
-      check: function(s) (s in this.sites) || (this.sites[s] = false)
+      check: function(s) { return (s in this.sites) || (this.sites[s] = false); }
     };
 
     const locked = ns.locked;
@@ -699,14 +691,14 @@ return noscriptUtil.service ? {
         sites.pluginSites.length) {
       // add untrusted plugin sites if placeholders are not shown for untrusted sources
       embedOnlySites = sites.pluginSites.filter(function(s) {
-        return sites.indexOf(s) === -1;
+        return all.indexOf(s) === -1;
       });
-      sites.push.apply(sites, embedOnlySites);
+      all.push.apply(all, embedOnlySites);
     }
 
     menuGroups = [];
-    for (let j = 0; j < sites.length; j++) {
-      site = sites[j];
+    for (let j = 0; j < all.length; j++) {
+      site = all[j];
 
       matchingSite = jsPSs.matches(site);
       untrusted = untrustedSites.matches(site);
@@ -738,7 +730,7 @@ return noscriptUtil.service ? {
       let showInMain = embedOnlySites
         ? embedOnlySites.indexOf(site) === -1 || hideUntrustedPlaceholder && enabled : true;
 
-      docJSBlocked = enabled && isTop && !ns.dom.getDocShellForWindow(content).allowJavascript;
+      docJSBlocked = enabled && isTop && sites.docJSBlocked;
       if (docJSBlocked) enabled = false;
 
       if (enabled && !global || (matchingSite = untrusted)) {
@@ -831,7 +823,7 @@ return noscriptUtil.service ? {
         let r = recent[j];
         let s = r.site;
 
-        if (!s || sites.indexOf(s) > -1) continue;
+        if (!s || all.indexOf(s) > -1) continue;
 
         let ghEnabled = globalHttps && ns.isGlobalHttps(content, s);
         let jsEnabled = ghEnabled || ns.isJSEnabled(s);
@@ -1029,7 +1021,7 @@ return noscriptUtil.service ? {
     this.normalizeMenu(mainMenu, false);
 
     if (mustReverse) this.reverse(popup);
-    window.setTimeout(function() site = sites.pluginExtras = sites.pluginSites = null, 0);
+    window.setTimeout(() => site = sites.pluginExtras = sites.pluginSites = null, 0);
   },
 
   reverse: function(m) {
@@ -1150,8 +1142,12 @@ return noscriptUtil.service ? {
       for (let j = egroup.length; j-- > 0;) {
         let e = egroup[j];
 
-        if (ns.isAllowedObject(e.url, e.mime, e.site, e.originSite) && !(e.placeholder && e.placeholder.parentNode) ||
-            typeof(e) != "object" || (e.tag && !e.placeholder)
+        if (ns.isAllowedObject(e.url, e.mime, e.site, e.originSite)
+            // TODO: e10s removal check
+            /*
+            && !(e.placeholder && e.placeholder.parentNode) ||
+            typeof(e) !== "object" || (e.tag && !e.placeholder)
+            */
           )
           continue;
 
@@ -1237,15 +1233,16 @@ return noscriptUtil.service ? {
 
     const topSite = sites.topSite;
     const cascade = topSite && ns.cascadePermissions;
+    let all = sites.all;
 
-    for (let j = sites.length; j-- > 0;) {
-      let site = sites[j];
+    for (let j = all.length; j-- > 0;) {
+      let site = all[j];
       if (cascade && topSite !== site)  continue;
       if (tempToPerm) {
-        site = trusted.matches(sites[j]);
+        site = trusted.matches(site);
         if (!(site && ns.isTemp(site)) || ns.isUntrusted(site)) continue;
       } else {
-        site = ns.getQuickSite(sites[j], level);
+        site = ns.getQuickSite(site, level);
         if (ns.isJSEnabled(site) || ns.isUntrusted(site)) continue;
       }
       unknown.push(site);
@@ -1253,7 +1250,7 @@ return noscriptUtil.service ? {
     if (!justTell) {
       if (unknown.length) {
         var browser = this.currentBrowser;
-        ns.setExpando(browser, "allowPageURL", content.document.URL);
+        ns.setExpando(browser, "allowPageURL", this.currentURL);
         this.safeAllow(unknown, true, !permanent);
       }
     }
@@ -1334,7 +1331,7 @@ return noscriptUtil.service ? {
     if (/-glb\b/.test(cl)) {
       // global allow/forbid
       if (enabled && ns.getPref("globalwarning", true) &&
-          !this.prompter.confirm(window, this.getString("global.warning.title"),
+          !Services.prompt.confirm(window, this.getString("global.warning.title"),
                                 this.getString("global.warning.text"))
         ) return;
     } else {
@@ -1369,12 +1366,7 @@ return noscriptUtil.service ? {
 ,
   safeAllow: function(site, enabled, temp, reloadPolicy) {
     const ns = this.ns;
-    var docShell = ns.dom.getDocShellForWindow(content);
 
-    if (!reloadPolicy && (site instanceof Array) &&
-          !ns.getPref("autoReload.allTabsOnPageAction", true)) {
-      reloadPolicy = 1 // current tab only, for multiple items
-    }
     var allowTemp = enabled && temp;
 
 
@@ -1382,24 +1374,12 @@ return noscriptUtil.service ? {
       if (site) {
         ns.setTemp(site, allowTemp);
         ns.setJSEnabled(site, enabled, false, ns.mustCascadeTrust(site, temp));
-
-        if (enabled && !docShell.allowJavascript) {
-          var curSite = ns.getSite(docShell.currentURI.spec);
-          if (ns.isJSEnabled(curSite)) {
-            // force reload
-            if (ns.jsEnabled) {
-              ns._lastSnapshot.trusted.add(curSite);
-            } else {
-              ns._lastSnapshot.trusted.remove(curSite);
-            }
-          }
-          docShell.allowJavascript = true;
-        }
       } else {
         ns.jsEnabled = enabled;
       }
 
-      if (reloadPolicy == ns.RELOAD_NO) {
+      if (reloadPolicy === ns.RELOAD_NO) {
+        ns.updateSnapshot();
         noscriptOverlay._syncUINow();
         if (!allowTemp) ns.savePrefs();
       }
@@ -1407,16 +1387,18 @@ return noscriptUtil.service ? {
 
     }
 
-    if (reloadPolicy == ns.RELOAD_NO) {
+    if (reloadPolicy === ns.RELOAD_NO) {
       op(ns);
     } else {
       window.clearInterval(noscriptOverlay._savePrefsTimeout);
-      ns.setExpando(content.document, "contentLoaded", false);
+      if (content) ns.setExpando(content.document, "domLoaded", false); // [IPC CHECK ME]
       ns.safeCapsOp(op, reloadPolicy, allowTemp);
     }
 
   },
-
+  reloadCurrent() {
+    this.ns.quickReload(this.currentBrowser.webNavigation);
+  },
   _savePrefsTimeout: 0,
   savePrefs: function(now) {
     if (now) {
@@ -1461,27 +1443,17 @@ return noscriptUtil.service ? {
         noscriptOverlay.syncUI();
       }
     }, true);
-    this.sincUI = function() {};
-  }, // we entirely skip on startup
-  _syncUIReal: function(w) {
-    if (this._syncTimeout) {
-     return;
-   }
-   try {
-     if (w && w.QueryInterface(Ci.nsIInterfaceRequestor)
-                      .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID
-           != content.QueryInterface(Ci.nsIInterfaceRequestor)
-                      .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID)
-      return;
-   } catch (e) {
-     console.log(e);
-   }
-
-
-   this._syncTimeout = window.setTimeout(function() {
-     noscriptOverlay._syncTimeout = 0;
-     noscriptOverlay._syncUINow();
-   }, 400);
+    this.syncUI = () =>  {};
+  }, // we entirely skip on startup...
+  _syncUIReal: function(browser) {
+    if (!browser) browser = this.currentBrowser;
+    // ... and cap to 400ms
+    this._syncTimeout = window.setTimeout(() => {
+      this._syncTimeout = 0;
+      if (this.currentBrowser === browser) {
+        this._syncUINow();
+      }
+     }, 400);
   },
 
 
@@ -1773,11 +1745,8 @@ return noscriptUtil.service ? {
       );
   },
 
-  notifyMetaRefreshCallback: function(info) {
-    noscriptOverlay.notifyMetaRefresh(info);
-  },
   notifyMetaRefresh: function(info) {
-    var browser = this.ns.dom.findBrowser(window, info.document.defaultView);
+    var browser = info.browser;
     if (!browser) return;
 
     const notificationValue = "noscript-metaRefresh-notification";
@@ -1805,7 +1774,7 @@ return noscriptUtil.service ? {
         );
 
       browser.addEventListener("beforeunload", function(ev) {
-        if (ev.originalTarget == info.document || ev.originalTarget == browser) {
+        if (ev.originalTarget === info.document || ev.originalTarget === browser) {
           browser.removeEventListener(ev.type, arguments.callee, false);
           if (notification && notification == box.currentNotification) {
             box.removeCurrentNotification();
@@ -1845,7 +1814,7 @@ return noscriptUtil.service ? {
 
     if (!(box && box.appendNotification)) {
       if (!this.supportsNotifications && this.ns.getPref("ABE.legacyPrompt")) {
-        var prompter = noscriptUtil.prompter;
+        let prompter = Services.prompt;
         if (prompter.confirmEx(
           window,
           "NoScript - Application Boundary Enforcer",
@@ -1903,17 +1872,14 @@ return noscriptUtil.service ? {
     const browser = this.currentBrowser;
     const ns = this.ns;
     const rw = ns.requestWatchdog;
-    var unsafeRequest = rw.getUnsafeRequest(browser);
-    var method;
+    let unsafeRequest = rw.getUnsafeRequest(browser);
+    let removeNotification = () => getBrowser().getNotificationBox(browser).removeAllNotifications(true);
     if (!unsafeRequest) {
-      unsafeRequest = {
-        URI: browser.webNavigation.currentURI,
-        origin: ns.OriginTracer.traceBackHistory(browser.webNavigation.sessionHistory, browser.contentWindow).join(">>>")
-      };
-      method = "URL";
-    } else {
-      method = (unsafeRequest.postData ? "POST" : "GET");
+      removeNotification();
+      return;
     }
+
+    let method = (unsafeRequest.postData ? "POST" : "GET");
     var msg = noscriptUtil.getString("unsafeReload.warning",
       [ method,
         ns.siteUtils.crop(unsafeRequest.URI.spec),
@@ -2013,22 +1979,28 @@ return noscriptUtil.service ? {
           let pe = pes[j];
           for (let k = pe.length; k-- > 0;) {
             let e = pe[k];
-            if (e && (e.placeholder && (e.placeholder.parentNode || !ns.isAllowedObject(e.url, e.mime, e.site, e.originSite))
+
+            if (e &&
+               // TODO: e10s removal check
+              /*
+              (e.placeholder && (e.placeholder.parentNode || !ns.isAllowedObject(e.url, e.mime, e.site, e.originSite))
                       || e.document)
+              */
+              !ns.isAllowedObject(e.url, e.mime, e.site, e.originSite)
               ) blockedObjects++;
           }
         }
       }
-
-      let s = sites.length;
+      let all = sites.all;
+      let s = all.length;
       total = s + blockedObjects;
       while (s-- > 0) {
-        let url = sites[s];
+        let url = all[s];
         let isUntrusted = untrustedSites.matches(url);
         let site = !isUntrusted && (global || globalHttps && ns.isGlobalHttps(win, url) ? url : jsPSs.matches(url));
 
         if (url == sites.topSite) {
-          if (site && (!ns.httpStarted || ns.dom.getDocShellForWindow(win).allowJavascript)) topTrusted = true;
+          if (site && (!ns.httpStarted || !sites.docJSBlocked)) topTrusted = true;
           else {
             site = null;
             if (isUntrusted) topUntrusted = true;
@@ -2055,7 +2027,7 @@ return noscriptUtil.service ? {
       }
 
       allowed = allowedSites.length;
-      lev = (allowed === total && sites.length > 0 && !untrusted) ? (global ? "glb" : "yes")
+      lev = (allowed === total && all.length > 0 && !untrusted) ? (global ? "glb" : "yes")
             : (allowed === 0 || active === 0) ? (global
                                               ? "untrusted-glb" :
                                                 topUntrusted
@@ -2116,9 +2088,9 @@ return noscriptUtil.service ? {
       } else {
         this.notificationHide();
       }
-      if (!ns.getExpando(win, "soundPlayed")) {
-        ns.soundNotify(content.location.href);
-        ns.setExpando(win, "soundPlayed");
+      if (!ns.getExpando(this.currentBrowser, "soundPlayed")) {
+        ns.soundNotify(this.currentURL);
+        ns.setExpando(this.currentBrowser, "soundPlayed");
       }
     } else {
       this.notificationHide();
@@ -2157,24 +2129,13 @@ return noscriptUtil.service ? {
     window.addEventListener("pagehide", this.listeners.onPageHide, true);
   },
 
-  cleanupDocument: function(doc, browser) {
-
-    if (!(doc.defaultView && doc.defaultView == doc.defaultView.top)) return;
-
-    const ns = this.ns;
-    browser = browser || ns.dom.findBrowserForNode(doc);
-    if (browser) {
-      ns.setExpando(browser, "pe", null);
-    }
-  },
-
   presetChanged: function(menulist) {
     this.ns.applyPreset(menulist.selectedItem.value);
   },
 
   observer: {
     ns: noscriptUtil.service,
-    QueryInterface: noscriptUtil.service.generateQI([
+    QueryInterface: XPCOMUtils.generateQI([
         Ci.nsIObserver,
         Ci.nsISupportsWeakReference])
   ,
@@ -2373,60 +2334,6 @@ return noscriptUtil.service ? {
     }
   },
 
-  hideObject: function(p, o) {
-    if (!p.mimeRx.test(o.type)) return;
-
-    var r = p.document.createElement("object");
-    r.style.width = o.offsetWidth + "px";
-    r.style.height = o.offsetHeight + "px";
-    r.style.display = "inline-block";
-    o.className += " " + p.className;
-    o.parentNode.insertBefore(r, o);
-  },
-
-  showObject: function(p, o) {
-    var cs = o.className;
-    cs = cs.replace(p.classRx, '');
-    if (cs != o.className) {
-      o.className = cs;
-      var r = o.previousSibling;
-      if (r instanceof HTMLObjectElement) {
-        r.parentNode.removeChild(r);
-      }
-    }
-  },
-
-  _tags: ["object", "embed"],
-  toggleObjectsVisibility: function(d, v) {
-    var ns = noscriptOverlay.ns;
-    var rx = ns.hideOnUnloadRegExp;
-    if (!rx) return;
-    var callback = v ? noscriptOverlay.showObject : noscriptOverlay.hideObject;
-    var params = {
-      document: d,
-      mimeRx: rx,
-      classRx: noscriptOverlay.ns.hideObjClassNameRx,
-      className: ns.hideObjClassName
-    };
-    var aa = null;
-    var j;
-    for (var t  of this._tags) {
-      var oo = d.getElementsByTagName(t);
-      j = oo.length;
-      if (j) {
-        aa = aa || [oo[--j]];
-        while(j-- > 0) {
-          aa.push(oo[j]);
-        }
-      }
-    }
-    if (aa) {
-      for (j = aa.length; j-- > 0;) {
-        callback(params, aa[j]);
-      }
-    }
-  },
-
   listeners: {
 
     onTabClose: function(ev) {
@@ -2443,87 +2350,19 @@ return noscriptUtil.service ? {
     },
 
     webProgressListener: {
-      QueryInterface: noscriptUtil.service.generateQI([Ci.nsIWebProgressListener]),
+      QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener]),
       STATE_STOP: Ci.nsIWebProgressListener.STATE_STOP,
       onLocationChange: function(aWebProgress, aRequest, aLocation) {
-        const domWindow = aWebProgress && aWebProgress.DOMWindow;
-        if (domWindow) {
-          noscriptOverlay.syncUI(domWindow);
-        }
+        noscriptOverlay.syncUI();
       },
       onStatusChange: function() {},
       onStateChange: function(aWebProgress, aRequest, stateFlags, status) {
-        if (stateFlags & this.STATE_STOP) {
-          const domWindow = aWebProgress.DOMWindow;
-          if (domWindow == domWindow.top) {
-            noscriptOverlay.syncUI(domWindow);
-          }
+        if (aWebProgress.isTopLevel && stateFlags & this.STATE_STOP) {
+          noscriptOverlay.syncUI();
         }
       },
       onSecurityChange: function() {},
       onProgressChange: function() {}
-    },
-
-    onContentLoad: function(ev) {
-
-      var doc = ev.originalTarget;
-
-      if (doc instanceof HTMLDocument) {
-        let w = doc.defaultView;
-        if (w) {
-          const ns = noscriptOverlay.ns;
-
-
-          ns.setExpando(doc, "contentLoaded", true);
-          if (w == w.top) {
-            let url = doc.URL;
-            let jsBlocked = /^https?:/.test(url) && !ns.isJSEnabled(ns.getSite(url), w);
-            if (jsBlocked) {
-              ns.doRemoveSMILKeySniffers(doc);
-              ns.processMetaRefresh(doc, noscriptOverlay.notifyMetaRefreshCallback);
-              w.addEventListener("load", noscriptOverlay.listeners.onDocumentLoad, false);
-            }
-
-            if (w == content) {
-              noscriptOverlay.syncUI(w);
-            } else {
-              let browser = ns.dom.findBrowserForNode(w);
-              if (browser) ns.getSites(browser); // force placeholders
-            }
-          } else {
-            ns.frameContentLoaded(w);
-            noscriptOverlay.syncUI(w.top);
-          }
-        }
-      }
-
-    },
-    onDocumentLoad: function(ev) {
-      if (ev.originalTarget instanceof HTMLDocument) {
-        let w = ev.currentTarget;
-        w.removeEventListener("load", arguments.callee, false);
-        window.setTimeout(function() {
-          noscriptOverlay.ns.detectJSRedirects(w.document);
-        }, 50);
-      }
-    },
-
-    onPageShow: function(ev) {
-      try {
-        if (ev.persisted && (ev.target instanceof HTMLDocument)) {
-          var d = ev.target;
-          noscriptOverlay.toggleObjectsVisibility(d, true);
-        }
-      } catch(e) {}
-      noscriptOverlay._syncUIReal();
-    },
-
-    onPageHide: function(ev) {
-      var d = ev.target;
-      if (d instanceof HTMLDocument) {
-        var ns = noscriptOverlay.ns;
-        noscriptOverlay.toggleObjectsVisibility(d, false);
-      }
     },
 
     onMainContextMenu:  function(ev) { noscriptOverlay.prepareContextMenu(ev) },
@@ -2544,15 +2383,11 @@ return noscriptUtil.service ? {
         hacks.allowLocalLinks();
         window.setTimeout(function() {
           hacks.pdfDownload();
-          Cc["@mozilla.org/moz/jssubscript-loader;1"].getService(Ci.mozIJSSubScriptLoader)
-            .loadSubScript("chrome://noscript/content/noscriptBM.js");
+          Services.scriptloader.loadSubScript("chrome://noscript/content/noscriptBM.js");
           noscriptBM.init();
         }, 1500);
 
-
-        if (window.messageManager) {
-          window.messageManager.loadFrameScript("chrome://noscript/content/fs/pasteHandler.js", true);
-        }
+        noscriptOverlay.ns.clearClickHandler.chromeInstall(window);
       } catch(e) {
         let msg = "[NoScript] Error initializing new window " + e + "\n" + e.stack;
         noscriptOverlay.ns.log(msg);
@@ -2602,15 +2437,9 @@ return noscriptUtil.service ? {
     },
 
     setup: function(delayed) {
-
-      if (!delayed) {
-        window.addEventListener("pageshow", this.onPageShow, true);
-        window.addEventListener("pagehide", this.onPageHide, true);
-      }
-
       var b = getBrowser();
       if (!b) {
-        setTimeout(function() noscriptOverlay.listeners.setup(true), 100);
+        setTimeout(() => noscriptOverlay.listeners.setup(true), 100);
         return;
       }
       var tabs = $("tabs") || b.tabContainer;
@@ -2618,23 +2447,12 @@ return noscriptUtil.service ? {
         tabs.addEventListener("TabClose", this.onTabClose, false);
       }
 
-      var addonsList = $("addons-list");
-      if (addonsList) {
-        // Fennec
-        addonsList.addEventListener("AddonOptionsLoad", this.onAddonOptionsLoad, false);
-        $("browsers").addEventListener("load", this.onContentLoad, true);
-        tabs.addEventListener("TabSelect", this.onActivation, true);
-      } else {
+      let context = $("contentAreaContextMenu");
+      if (!context) return; // not a browser window?
 
-        var context = $("contentAreaContextMenu");
-        if (!context) return; // not a browser window?
-
-        context.addEventListener("popupshowing", this.onMainContextMenu, false);
-        window.addEventListener("DOMContentLoaded", this.onContentLoad, false);
-        b.addProgressListener(this.webProgressListener);
-
-      }
-
+      context.addEventListener("popupshowing", this.onMainContextMenu, false);
+      
+      b.addProgressListener(this.webProgressListener);
 
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.observer.register();
@@ -2711,7 +2529,6 @@ return noscriptUtil.service ? {
 
       window.removeEventListener("pagehide", this.onPageHide, true);
       window.removeEventListener("pageshow", this.onPageShow, true);
-      window.removeEventListener("DOMContentLoaded", this.onContentLoad, false);
 
       noscriptOverlay.observer.remove();
       noscriptOverlay.shortcutKeys.remove();
@@ -2739,6 +2556,13 @@ return noscriptUtil.service ? {
     return this.currentBrowser;
   },
 
+  get currentURI() {
+    return this.currentBrowser.currentURI;
+  },
+  get currentURL() {
+    let uri = this.currentURI;
+    return uri && uri.spec || "";
+  },
   get fennec() {
     if (!this._browserReady) return false;
     delete this.fennec;
@@ -2762,7 +2586,7 @@ return noscriptUtil.service ? {
 
   isBrowserEnabled: function(browser) {
     browser = browser || this.currentBrowser;
-    return browser.docShell.allowJavascript;
+    return browser.docShell ? browser.docShell.allowJavascript : !this.getSites(browser).docJSBlocked;
   },
 
 
@@ -2885,16 +2709,9 @@ return noscriptUtil.service ? {
   },
 
   dispose: function() {
-
     for (var bb = this.browsers, j = bb.length; j-- > 0;) if (bb[j]) {
-      try {
-        this.cleanupDocument(bb[j].contentWindow.document, bb);
-      } catch(e) {
-        this.ns.dump(e);
-      }
       this.ns.cleanupBrowser(bb[j]);
     }
-    // this.ns.dump("*** OVERLAY DISPOSE ***\n");
   }
 }
 : {
@@ -2925,3 +2742,4 @@ return noscriptUtil.service ? {
 }})()
 
 noscriptOverlay.install();
+

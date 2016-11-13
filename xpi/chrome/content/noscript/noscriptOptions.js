@@ -112,12 +112,8 @@ var nsopt = {
     });
 
 
-    if (!ns.placesSupported)
-      $("opt-placesPrefs").setAttribute("hidden", "true");
-
-    if (!ns.supportsCAPS) {
-      $("opt-allowClipboard").setAttribute("collapsed", "true");
-    }
+   
+    $("opt-allowClipboard").setAttribute("collapsed", "true");
 
     this.initExtraButtons();
 
@@ -166,9 +162,9 @@ var nsopt = {
 
   reset: function() {
 
-    if(!noscriptUtil.prompter.confirm(window,
-          noscriptUtil.getString("reset.title"),
-          noscriptUtil.getString("reset.warning"))
+    if(!ns.prompter.confirm(window,
+          ns.getString("reset.title"),
+          ns.getString("reset.warning"))
       ) return;
 
     ns.resetDefaults();
@@ -187,20 +183,6 @@ var nsopt = {
   },
 
   save: function() {
-    /*
-    if (!$("abeRuleset-errors").hidden) {
-      let p = noscriptUtil.prompter;
-      if (p.confirmEx(window,
-          noscriptUtil.getString("ABE.syntaxError"),
-          $("abeRuleset-errors").value,
-          p.BUTTON_TITLE_SAVE * p.BUTTON_POS_0 +
-            p.BUTTON_TITLE_DONT_SAVE * p.BUTTON_POS_1 +
-            p.BUTTON_POS_1_DEFAULT,
-          null, null, null, null, {}) === 1
-        )
-      return false;
-    }
-    */
     this.utils.visitCheckboxes(
       function(prefName, inverse, checkbox, mozilla) {
         if(checkbox.getAttribute("collapsed")!="true") {
@@ -256,7 +238,7 @@ var nsopt = {
       ns.setPref("filterXExceptions", exVal);
 
     if (this.tempRevoked) {
-      ns.resetAllowedObjects();
+      ns.eraseTemp();
     }
 
     var global = this.jsglobal.getAttribute("checked") == "true";
@@ -272,13 +254,8 @@ var nsopt = {
           || ns.gTempSites.sitesString != gTempSites.sitesString) {
         ns.untrustedSites.sitesString = untrustedSites.sitesString;
         ns.persistUntrusted();
-        if (ns.usingCAPS) {
-          ns.setPref("temp", tempSites.sitesString);
-          ns.setPref("gtemp", gTempSites.sitesString);
-        } else {
-          ns.tempSites.sitesString = tempSites.sitesString
-          ns.gTempSites.sitesString = gTempSites.sitesString
-        }
+        ns.tempSites.sitesString = tempSites.sitesString
+        ns.gTempSites.sitesString = gTempSites.sitesString
         ns.setJSEnabled(trustedSites.sitesList, true, true);
       }
       ns.jsEnabled = global;
@@ -471,7 +448,7 @@ var nsopt = {
         ns.prefs.setComplexValue("exportDir", Ci.nsILocalFile, fp.displayDirectory);
       } catch (e) {}
     } catch(ex) {
-      noscriptUtil.prompter.alert(window, title, ex.toString());
+      ns.prompter.alert(window, title, ex.toString());
     }
   },
 
@@ -585,9 +562,9 @@ var abeOpts = {
       let ruleset = ABE.createRuleset(name, source);
       if (ruleset.errors && this.dirty) {
         this.dirty = null;
-        let p = noscriptUtil.prompter;
+        let p = ns.prompter;
         if (p.confirmEx(window,
-            noscriptUtil.getString("ABE.syntaxError"),
+            ns.getString("ABE.syntaxError"),
             ruleset.errors.join("\n"),
             p.BUTTON_TITLE_SAVE * p.BUTTON_POS_0 +
               p.BUTTON_TITLE_DONT_SAVE * p.BUTTON_POS_1 +
@@ -775,3 +752,4 @@ var nsWhitelistTreeView = {
     nsopt.urlListDisplay.boxObject.scrollToRow(r);
   },
 };
+

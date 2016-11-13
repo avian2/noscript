@@ -19,25 +19,8 @@ var noscriptUtil = {
     return this.service = ns;
   },
 
-  get prompter() {
-    delete this.prompter;
-    return this.prompter =
-      Components.classes["@mozilla.org/embedcomp/prompt-service;1"
-          ].getService(Components.interfaces.nsIPromptService);
-  }
-,
-  confirm: function(msg, persistPref, title) {
-    const ns = this.service;
-    var alwaysAsk = { value: ns.getPref(persistPref) };
-    if(!alwaysAsk.value &&  ns.prefs.prefHasUserValue(persistPref) ||
-        noscriptUtil.prompter.confirmCheck(window, title || "NoScript",
-          msg,
-          noscriptUtil.getString("alwaysAsk"), alwaysAsk)
-     ) {
-      ns.setPref(persistPref, alwaysAsk.value);
-      return true;
-    }
-    return false;
+  confirm: function(msg, persistPref, title = "NoScript") {
+    return this.service.confirm(msg, persistPref, title, window);
   },
 
   getString: function(key, parms) {
@@ -172,7 +155,7 @@ var noscriptUtil = {
               if (currentTab) gBrowser.selectedTab = currentTab;
             }
 
-            button.addEventListener("click", function(e) complete(!enabled), false);
+            button.addEventListener("click", (e) => complete(!enabled), false);
 
             if (!(enabled || ns.isUntrusted(domain))) {
               button = d.getElementById("distrust-button");
@@ -187,7 +170,7 @@ var noscriptUtil = {
           };
           w.addEventListener(et, eh, true);
 
-          w.setTimeout(function() w.removeEventListener(et, eh, true), 20000);
+          w.setTimeout(() => w.removeEventListener(et, eh, true), 20000);
       }
       return true;
     }

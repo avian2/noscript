@@ -2,7 +2,7 @@ Profiler = {
   watchlist: { NoScript: ns, requestWatchdog: RequestWatchdog.prototype,
       InjectionChecker: InjectionChecker, ABE: ABE, IOUtil: IOUtil, DNS: DNS},
   data: {},
-  reset: function() this.data = {},
+  reset: function() { return this.data = {} },
   
   instrument: function(b) {
     const oo = this.watchlist;
@@ -45,8 +45,8 @@ Profiler = {
       data.avg = Math.round(data.time / data.count * 1000) / 1000;
       ar.push({call: call, data: data});
     }
-    function cmp(a,b) a > b ? - 1: a < b ? 1 : 0;
-    ar.sort(function(a, b) cmp(a.data.time, b.data.time));
+    let cmp = (a,b) => a > b ? - 1: a < b ? 1 : 0;
+    ar.sort((a, b) => cmp(a.data.time, b.data.time));
     for (let l  of ar) {
       dump(l.call + ": " + l.data.toSource() + "\n");
       if (count-- <= 0) break;

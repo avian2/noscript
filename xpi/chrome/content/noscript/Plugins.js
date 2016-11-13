@@ -1,6 +1,6 @@
 var Plugins = {
   _disabled: false,
-  get disabled() this._disabled,
+  get disabled() { return this._disabled; },
 
   _registrar: Components.manager.nsIComponentRegistrar,
   _CTRID: "@mozilla.org/plugin/host;1",

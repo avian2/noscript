@@ -1,5 +1,5 @@
 var ScriptSurrogate = {
-  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   JS_VERSION: "1.8",
   enabled: true,
   prefs: null,
@@ -269,10 +269,10 @@ var ScriptSurrogate = {
   _preamble: function(s) {
     delete this._preamble;
     return (this._preamble = (ns.geckoVersionCheck("37") >= 0
-    ? function(s) s.indexOf("$S(") !== -1
-      ?  "{let $S; {let nsmHandler={get:function(t,n)n in t?t[n]:function()t.__noSuchMethod__(n,Array.prototype.slice.call(arguments))};$S=function(o)new Proxy(o||{},nsmHandler);}\n" + s + "\n}"
+    ? (s) => s.indexOf("$S(") !== -1
+      ?  "{let $S; {let nsmHandler={get:(t,n)=>n in t?t[n]:(...x)=>t.__noSuchMethod__(n,...x)};$S=(o)=>new Proxy(o||{},nsmHandler);}\n" + s + "\n}"
       : s
-    : function(s) "{let $S = function(o){return o||{};};\n" + s + "\n}"
+    : s => `{let $S=o=>o||{};\n${s}\n}`
     ))(s);
   },
 
@@ -294,8 +294,7 @@ var ScriptSurrogate = {
     sandboxName: ""
   },
 
-  getPrincipal: ns.geckoVersionCheck("24") > 0 ? function(doc) doc.nodePrincipal : function(doc) doc.defaultView,
-
+  getPrincipal: (doc) => doc.nodePrincipal,
 
   executeSandbox: function(document, scriptBlock, env) {
     var w = document.defaultView;

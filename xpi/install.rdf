@@ -5,7 +5,7 @@
 
    <em:id>{73a6fe31-595d-460b-a920-fcc0f8843232}</em:id>
    <em:name>NoScript</em:name>
-   <em:version>2.9.0.14</em:version>
+   <em:version>2.9.5rc21</em:version>
    <em:description>Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)</em:description>
    <em:creator>Giorgio Maone</em:creator>
    <em:type>2</em:type>
@@ -64,77 +64,25 @@
    <em:iconURL>chrome://noscript/skin/icon32.png</em:iconURL>
    <em:icon64URL>chrome://noscript/skin/icon64.png</em:icon64URL>
    <em:aboutURL>chrome://noscript/content/about.xul</em:aboutURL>
+   <em:multiprocessCompatible>true</em:multiprocessCompatible>
    <!-- Firefox -->
    <em:targetApplication>
      <Description>
      <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-     <em:minVersion>13.0</em:minVersion>
+     <em:minVersion>51.0a2</em:minVersion>
      <em:maxVersion>*</em:maxVersion>
      </Description>
    </em:targetApplication>
 
-    <!-- Flock -->
-   <em:targetApplication>
-      <Description>
-        <em:id>{a463f10c-3994-11da-9945-000d60ca027b}</em:id>
-        <em:minVersion>0.4</em:minVersion>
-        <em:maxVersion>2.0.*</em:maxVersion>
-      </Description>
-   </em:targetApplication>
 
    <!-- SeaMonkey -->
    <em:targetApplication>
       <Description>
         <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
-        <em:minVersion>2.10</em:minVersion>
+        <em:minVersion>2.48</em:minVersion>
         <em:maxVersion>*</em:maxVersion>
       </Description>
    </em:targetApplication>
-
-   <!-- MidBrowser -->
-   <em:targetApplication>
-      <Description>
-        <em:id>{aa5ca914-c309-495d-91cf-3141bbb04115}</em:id>
-        <em:minVersion>0.2</em:minVersion>
-        <em:maxVersion>3.1.*</em:maxVersion>
-      </Description>
-   </em:targetApplication>
-
-   <!-- E Music -->
-   <em:targetApplication> <!-- eMusic -->
-			<Description>
-				<em:id>dlm@emusic.com</em:id>
-				<em:minVersion>1.0a4</em:minVersion>
-				<em:maxVersion>1.0.0.*</em:maxVersion>
-			</Description>
-		</em:targetApplication>
-
-    <!-- Toolkit -->
-    <em:targetApplication>
-    <Description>
-      <em:id>toolkit@mozilla.org</em:id>
-      <em:minVersion>1.9a2</em:minVersion>
-      <em:maxVersion>1.9.6</em:maxVersion>
-    </Description>
-    </em:targetApplication>
-
-    <!-- Songbird -->
-    <em:targetApplication>
-    <Description>
-      <em:id>songbird@songbirdnest.com</em:id>
-      <em:minVersion>0.7</em:minVersion>
-      <em:maxVersion>1.2.0</em:maxVersion>
-    </Description>
-    </em:targetApplication>
-
-    <!-- Fennec -->
-    <em:targetApplication>
-      <Description>
-        <em:id>{a23983c0-fd0e-11dc-95ff-0800200c9a66}</em:id>
-        <em:minVersion>1.0</em:minVersion>
-        <em:maxVersion>2.0a1pre</em:maxVersion>
-      </Description>
-    </em:targetApplication>
 
  </Description>
 

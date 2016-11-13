@@ -23,7 +23,7 @@ function RCBDelegate(redirectCallback, label) {
   this.label = label;
 }
 RCBDelegate.prototype = {
-  QueryInterface: xpcom_generateQI([Ci.sIAsyncVerifyRedirectCallback]),
+  QueryInterface: XPCOMUtils.generateQI([Ci.sIAsyncVerifyRedirectCallback]),
   onRedirectVerifyCallback: function(result) {
     try {
       if (result !== 0) ns.log("Overriding failed (" + result + ") redirect callback for " + this.label); // plugin failure is 2147500037
@@ -38,7 +38,7 @@ function CESDelegate(ces) {
   this.delegator = ces;
 }
 CESDelegate.prototype = {
-  QueryInterface: xpcom_generateQI([Ci.nsIChannelEventSink]),
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIChannelEventSink]),
   asyncOnChannelRedirect: function(oldChan, newChan, flags, callback) {
     let label = "plugin forced redirection";
     try {

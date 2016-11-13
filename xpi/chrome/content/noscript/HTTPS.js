@@ -194,7 +194,7 @@ var HTTPS = {
             // this page did not set any secure cookie, let's check if we already have one
             secureFound = Cookie.find(function(c) {
               return (c instanceof Ci.nsICookie) && (c instanceof Ci.nsICookie2)
-                && c.secure && !unsafe.find(function(x) { return x.sameAs(c); })
+                && c.isSecure && !unsafe.find(function(x) { return x.sameAs(c); })
             });
             if (secureFound) {
               this.log("Secure cookie found for this host: " + Cookie.prototype.toString.apply(secureFound));
@@ -274,7 +274,7 @@ var HTTPS = {
         delete unsafeCookies[k];
       } else {
         totCount++;
-        if (c.belongsTo(dhost, dpath) && c.secure != dsecure) { // either secure on http or not secure on https
+        if (c.belongsTo(dhost, dpath) && c.isSecure != dsecure) { // either secure on http or not secure on https
           dcookies.push(c);
         }
         if (c.belongsTo(ohost, opath)) {

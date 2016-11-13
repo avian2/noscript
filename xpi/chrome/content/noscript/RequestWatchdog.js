@@ -47,7 +47,7 @@ ns.cleanupRequest = function(channel) {
 
 RequestWatchdog.prototype = {
 
-  OBSERVED_TOPICS: ["http-on-examine-response", "http-on-examine-merged-response", "http-on-examine-cached-response"],
+  OBSERVED_TOPICS: ns.childProcess ? [] : ["http-on-examine-response", "http-on-examine-merged-response", "http-on-examine-cached-response"],
 
   init: function() {
     for (var topic  of this.OBSERVED_TOPICS) OS.addObserver(this, topic, true);
@@ -62,7 +62,7 @@ RequestWatchdog.prototype = {
   DOCUMENT_LOAD_FLAGS: Ci.nsIChannel.LOAD_DOCUMENT_URI
     | Ci.nsIChannel.LOAD_CALL_CONTENT_SNIFFERS, // this for OBJECT subdocs
 
-  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
   observe: function(channel, topic, data) {
 
@@ -108,18 +108,6 @@ RequestWatchdog.prototype = {
 
     if (HTTPS.forceChannel(channel)) return null;
 
-    if (isDoc) {
-      let ph = PolicyState.extract(channel);
-      let context = ph && ph.context;
-      if (context) {
-        isDoc = !(context instanceof Ci.nsIDOMHTMLEmbedElement || /^application\/x-/i.test(ph.mimeType));
-        if (isDoc && Bug.$677050 && !(loadFlags & channel.LOAD_REPLACE) && (context instanceof Ci.nsIDOMHTMLObjectElement)) {
-          (new ChannelReplacement(channel)).replace();
-          return null;
-        }
-      }
-    }
-
     try {
 
       if (this.externalLoad && this.externalLoad === abeReq.destination) {
@@ -143,7 +131,7 @@ RequestWatchdog.prototype = {
           } else if (url.indexOf(qs) === -1) {
             newURL = url.replace(/(?:\?_escaped_fragment_=[^&#]*)|(?=#!)/, qs);
           }
-          if (newURL && newURL != url && abeReq.redirectChain.map(function(u) u.spec).indexOf(newURL) === -1) {
+          if (newURL && newURL != url && abeReq.redirectChain.map((u) => u.spec).indexOf(newURL) === -1) {
             let requestWatchdog = this;
             abeReq.replace(null, IOUtil.newURI(newURL), function(replacement) {
               if (isReload) requestWatchdog.noscriptReload = newURL;
@@ -218,8 +206,7 @@ RequestWatchdog.prototype = {
               return;
         }
 
-        var w = req.window;
-        var browser = this.findBrowser(req.channel, w);
+        let browser = this.findBrowser(req.channel);
         if (browser)
           browser.ownerDocument.defaultView.noscriptOverlay
             .notifyABE({
@@ -229,7 +216,6 @@ RequestWatchdog.prototype = {
               lastRule: lastRule,
               lastPredicate: lastPredicate,
               browser: browser,
-              window: w
             });
       }, this);
   },
@@ -248,10 +234,7 @@ RequestWatchdog.prototype = {
     return ns.setExpando(browser, "unsafeRequest", request);
   },
   attachUnsafeRequest: function(requestInfo) {
-    if (requestInfo.window &&
-        (requestInfo.window == requestInfo.window.top ||
-        requestInfo.window == requestInfo.unsafeRequest.window)
-      ) {
+    if (requestInfo.browser && !requestInfo.silent) {
       this.setUnsafeRequest(requestInfo.browser, requestInfo.unsafeRequest);
     }
   },
@@ -350,7 +333,7 @@ RequestWatchdog.prototype = {
 
        if (/\s*{[\s\S]+}\s*/.test(originalAttempt)) {
          try {
-           ns.json.decode(originalAttempt); // fast track for crazy JSON in name like on NYT
+           JSON.parse(originalAttempt); // fast track for crazy JSON in name like on NYT
            return;
          } catch(e) {}
        }
@@ -416,32 +399,21 @@ RequestWatchdog.prototype = {
 
     let origin = abeReq.origin,
       originSite = null,
-      browser = null,
+      browser = this.findBrowser(channel),
       window = null,
       untrustedReload = false;
 
     if (!origin) {
       if ((channel instanceof Ci.nsIHttpChannelInternal) && channel.documentURI) {
         if (originalSpec === channel.documentURI.spec) {
-           originSite = ns.getSite(abeReq.traceBack);
-           if (originSite && abeReq.traceBack !== originalSpec) {
-              origin = abeReq.breadCrumbs.join(">>>");
-              if (ns.consoleDump) this.dump(channel, "TRACEBACK ORIGIN: " + originSite + " FROM " + origin);
-              if ((channel instanceof Ci.nsIUploadChannel) && channel.uploadStream) {
-                if (ns.consoleDump) this.dump(channel, "Traceable upload with no origin, probably extension. Resetting origin!");
-                origin = originSite = "";
-              }
-           } else {
-             // check untrusted reload
-             browser = this.findBrowser(channel, abeReq.window);
-             if (!this.getUntrustedReloadInfo(browser)) {
-               if (ns.consoleDump) this.dump(channel, "Trusted reload");
-               return;
-             }
-             origin = originSite = "";
-             untrustedReload = true;
-             if (ns.consoleDump) this.dump(channel, "Untrusted reload");
-           }
+          // check untrusted reload
+          if (!this.getUntrustedReloadInfo(browser)) {
+            if (ns.consoleDump) this.dump(channel, "Trusted reload");
+            return;
+          }
+          origin = originSite = "";
+          untrustedReload = true;
+          if (ns.consoleDump) this.dump(channel, "Untrusted reload");
         } else {
           origin = channel.documentURI.spec;
           if (ns.consoleDump) this.dump(channel, "ORIGIN (from channel.documentURI): " + origin);
@@ -456,7 +428,6 @@ RequestWatchdog.prototype = {
           ) {
         // clean up after user action
         window = window || abeReq.window;
-        browser = browser || this.findBrowser(channel, window);
         this.resetUntrustedReloadInfo(browser, channel);
         var unsafeRequest = this.getUnsafeRequest(browser);
         if (unsafeRequest && unsafeRequest.URI.spec != channel.originalURI.spec &&
@@ -529,11 +500,13 @@ RequestWatchdog.prototype = {
     if (originSite == targetSite) {
       if (injectionCheck < 3) return; // same origin, fast return
     } else {
-      this.onCrossSiteRequest(channel, origin, browser = browser || this.findBrowser(channel, abeReq.window));
+      this.onCrossSiteRequest(channel, origin, browser);
     }
 
     if (this.callback && this.callback(channel, origin)) return;
 
+    /*
+    // uncomment me if you want the "old" behavior of checking only script-enabled targets
     if (!trustedTarget) {
       if (InjectionChecker.checkNoscript(InjectionChecker.urlUnescape(originalSpec)) && ns.getPref("injectionCheckHTML", true)) {
         if (ns.consoleDump) this.dump(channel, "JavaScript disabled target positive to HTML injection check!");
@@ -542,11 +515,12 @@ RequestWatchdog.prototype = {
         return;
       }
     }
-
+    */
+    
      // fast return if nothing to do here
     if (!(ns.filterXPost || ns.filterXGet)) return;
 
-    if (!abeReq.external && this.isUnsafeReload(browser = browser || this.findBrowser(channel, abeReq.window))) {
+    if (!abeReq.external && this.isUnsafeReload(browser)) {
       if (ns.consoleDump) this.dump(channel, "UNSAFE RELOAD of [" + originalSpec +"] from [" + origin + "], SKIP");
       return;
     }
@@ -709,15 +683,6 @@ RequestWatchdog.prototype = {
 
       }
 
-    } else { // maybe data or javascript URL?
-
-      if (/^(?:javascript|data):/i.test(origin) && ns.getPref("xss.trustData", true)) {
-        originSite = ns.getSite(abeReq.traceBack);
-        if (originSite) {
-          origin = abeReq.breadCrumbs.join(">>>");
-        }
-      }
-
     }
 
 
@@ -770,7 +735,7 @@ RequestWatchdog.prototype = {
       }
 
 
-      this.resetUntrustedReloadInfo(browser = browser || this.findBrowser(channel, window), channel);
+      this.resetUntrustedReloadInfo(browser, channel);
 
       // here we exceptionally consider same site also https->http with same domain
 
@@ -1054,9 +1019,9 @@ RequestWatchdog.prototype = {
       ]);
     this.dump(requestInfo.channel, "Notifying " + msg + "\n\n\n");
     ns.log(msg);
-
+    let sync;
     try {
-      let sync = requestInfo.channel.status !== 0;
+      sync = requestInfo.channel.status !== 0;
       let loadInfo = requestInfo.channel.loadInfo;
       let cpType = loadInfo && (loadInfo.externalContentPolicyType || loadInfo.contentPolicyType);
       if (!cpType && requestInfo.window) {
@@ -1101,7 +1066,7 @@ RequestWatchdog.prototype = {
   },
 
 
-  findBrowser: function(channel, window) {
+  findBrowser: function(channel) {
     return IOUtil.findBrowser(channel);
   },
 
@@ -1169,7 +1134,7 @@ const IC_WINDOW_OPENER_PATTERN = fuzzify("alert|confirm|prompt|open(?:URL)?|prin
 const IC_EVAL_PATTERN = "\\b(?:" +
   fuzzify('eval|set(?:Timeout|Interval)|(?:f|F)unction|Script|toString|Worker|document|constructor|generateCRMFRequest|jQuery|fetch|write(?:ln)?|__(?:define(?:S|G)etter|noSuchMethod)__|definePropert(?:y|ies)') +
    "|\\$|" + IC_WINDOW_OPENER_PATTERN + ")\\b";
-const IC_EVENT_PATTERN = "on(?:c(?:o(?:n(?:nect(?:i(?:on(?:statechanged|available)|ng)|ed)?|t(?:rol(?:lerchange|select)|extmenu)|figurationchange)|m(?:p(?:osition(?:update|start|end)|lete)|mand(?:update)?)|py)|h(?:a(?:r(?:ging(?:time)?change|acteristicchanged)|nge)|ecking)|a(?:n(?:play(?:through)?|cel)|(?:llschang|ch)ed|rdstatechange)|u(?:rrent(?:channel|source)changed|echange|t)|l(?:i(?:rmodechange|ck)|ose)|(?:fstate|ell)change)|p(?:o(?:inter(?:(?:lea|mo)ve|o(?:ver|ut)|cancel|enter|down|up)|p(?:up(?:hid(?:den|ing)|show(?:ing|n))|state)|ster)|a(?:i(?:ring(?:con(?:firmation|sent)req|aborted)|nt)|ge(?:hide|show)|(?:st|us)e)|u(?:ll(?:vcard(?:listing|entry)|phonebook)req|sh(?:subscriptionchange)?)|r(?:o(?:pertychange|gress)|eviewstatechange)|(?:(?:ending|ty|s)chang|ic(?:hang|tur))e|lay(?:ing)?|hoto)|m(?:o(?:z(?:browser(?:beforekey(?:down|up)|afterkey(?:down|up))|pointerlock(?:change|error)|(?:orientation|time)change|fullscreen(?:change|error)|interrupt(?:begin|end)|network(?:down|up)load)|use(?:(?:lea|mo)ve|o(?:ver|ut)|enter|wheel|down|up)|ve(?:start|end)?)|a(?:p(?:se(?:tmessagestatus|ndmessage)|message(?:slisting|update)|folderlisting|getmessage)req|rk)|essage)|d(?:e(?:vice(?:p(?:roximity|aired)|(?:orienta|mo)tion|(?:unpaire|foun)d|light)|l(?:ivery(?:success|error)|eted)|activate)|i(?:s(?:c(?:hargingtimechange|onnect(?:ing|ed)?)|playpasskeyreq|abled)|aling)|r(?:a(?:g(?:e(?:n(?:ter|d)|xit)|(?:gestur|leav)e|start|drop|over)?|in)|op)|ata(?:setc(?:omplete|hanged)|(?:availabl|chang)e|error)?|urationchange|ownloading|blclick)|r(?:e(?:s(?:ourcetimingbufferfull|u(?:m(?:ing|e)|lt)|ize|et)|ad(?:y(?:statechange)?|success|error)|mo(?:te(?:resume|hel)d|vetrack)|c(?:orderstatechange|eived)|questmediaplaystatus|pea(?:tEven)?t|loadpage|trieving)|ow(?:s(?:inserted|delete)|e(?:nter|xit))|(?:(?:adiost)?ate|t)change|ds(?:dis|en)abled)|s(?:t(?:a(?:t(?:uschanged|echange)|lled|rt)|o(?:rage(?:areachanged)?|p)|k(?:sessione|comma)nd)|e(?:lect(?:ionchange|start)?|ek(?:ing|ed)|n(?:ding|t)|t)|c(?:(?:anningstate|ostatus)changed|roll)|pe(?:akerforcedchange|ech(?:start|end))|u(?:ccess|spend|bmit)|ound(?:start|end)|h(?:utter|ow))|a(?:n(?:imation(?:iteration|start|end)|tennaavailablechange)|ttribute(?:(?:write|read)req|changed)|fter(?:(?:scriptexecu|upda)te|print)|b(?:solutedeviceorientation|ort)|d(?:apter(?:remov|add)ed|dtrack)|ctiv(?:estatechanged|ate)|udio(?:process|start|end)|2dpstatuschanged|lerting)|Moz(?:S(?:wipeGesture(?:(?:May)?Start|Update|End)?|crolledAreaChanged)|M(?:agnifyGesture(?:Update|Start)?|ouse(?:PixelScroll|Hittest))|EdgeUI(?:C(?:omplet|ancel)|Start)ed|RotateGesture(?:Update|Start)?|(?:Press)?TapGesture|AfterPaint)|b(?:e(?:for(?:e(?:(?:scriptexecu|activa)te|e(?:ditfocus|victed)|u(?:nload|pdate)|p(?:aste|rint)|c(?:opy|ut))|deactivate)|gin(?:Event)?)|u(?:fferedamountlow|sy)|oun(?:dary|ce)|l(?:ocked|ur)|roadcast)|DOM(?:Node(?:Inserted(?:IntoDocument)?|Removed(?:FromDocument)?)|(?:CharacterData|Subtree)Modified|A(?:ttrModified|ctivate)|Focus(?:Out|In)|MouseScroll)|e(?:n(?:ter(?:pincodereq)?|(?:crypt|abl)ed|d(?:Event|ed)?)|m(?:ergencycbmodechange|ptied)|(?:itbroadcas|vic)ted|rror(?:update)?|xit)|f(?:o(?:rm(?:change|input)|cus(?:out|in)?)|ullscreen(?:change|error)|i(?:lterchange|nish)|a(?:cesdetect|il)ed|requencychange|etch)|l(?:o(?:ad(?:e(?:d(?:meta)?data|nd)|ing(?:error|done)?|start)?|s(?:tpointer|e)capture)|(?:anguage|evel)change|y)|o(?:(?:(?:rientation|tastatus)chang|(?:ff|n)lin)e|b(?:expasswordreq|solete)|verflow(?:changed)?|pen)|g(?:amepad(?:(?:dis)?connected|button(?:down|up)|axismove)|(?:otpointercaptur|roupchang)e|et)|t(?:o(?:uch(?:cancel|start|move|end)|ggle)|ime(?:update|out)|ransitionend|ypechange|ext)|u(?:p(?:date(?:found|ready)|gradeneeded)|s(?:erproximity|sdreceived)|n(?:derflow|load))|w(?:ebkit(?:Animation(?:Iteration|Start|End)|TransitionEnd)|a(?:it|rn)ing|heel)|h(?:e(?:adphoneschange|l[dp])|(?:fp|id)statuschanged|ashchange|olding)|i(?:cc(?:(?:info)?change|(?:un)?detected)|n(?:coming|stall|valid|put))|v(?:o(?:ice(?:schanged|change)|lumechange)|ersionchange)|n(?:o(?:tificationclick|update|match)|ewrdsgroup)|SVG(?:(?:Unl|L)oad|Resize|Scroll|Zoom)|key(?:press|down|up)|(?:AppComman|Loa)d|Request|zoom)"
+const IC_EVENT_PATTERN = "on(?:m(?:o(?:z(?:browser(?:beforekey(?:down|up)|afterkey(?:down|up))|(?:network(?:down|up)loa|accesskeynotfoun)d|pointerlock(?:change|error)|(?:orientation|time)change|fullscreen(?:change|error)|interrupt(?:begin|end)|key(?:down|up)onplugin)|use(?:(?:lea|mo)ve|o(?:ver|ut)|enter|wheel|down|up)|ve(?:start|end)?)|a(?:p(?:se(?:tmessagestatus|ndmessage)|message(?:slisting|update)|folderlisting|getmessage)req|rk)|essage)|c(?:o(?:n(?:nect(?:i(?:on(?:statechanged|available)|ng)|ed)?|t(?:rol(?:lerchange|select)|extmenu)|figurationchange)|m(?:p(?:osition(?:update|start|end)|lete)|mand(?:update)?)|py)|h(?:a(?:r(?:ging(?:time)?change|acteristicchanged)|nge)|ecking)|a(?:n(?:play(?:through)?|cel)|(?:llschang|ch)ed|rdstatechange)|u(?:rrent(?:channel|source)changed|echange|t)|l(?:i(?:rmodechange|ck)|ose)|(?:fstate|ell)change)|p(?:o(?:inter(?:l(?:ock(?:change|error)|eave)|o(?:ver|ut)|cancel|enter|down|move|up)|p(?:up(?:hid(?:den|ing)|show(?:ing|n))|state)|ster)|a(?:i(?:ring(?:con(?:firmation|sent)req|aborted)|nt)|ge(?:hide|show)|(?:st|us)e)|u(?:ll(?:vcard(?:listing|entry)|phonebook)req|sh(?:subscriptionchange)?)|r(?:o(?:pertychange|gress)|eviewstatechange)|(?:(?:ending|ty|s)chang|ic(?:hang|tur))e|lay(?:ing)?|hoto)|d(?:e(?:vice(?:p(?:roximity|aired)|(?:orienta|mo)tion|(?:unpaire|foun)d|change|light)|l(?:ivery(?:success|error)|eted)|activate)|i(?:s(?:c(?:hargingtimechange|onnect(?:ing|ed)?)|playpasskeyreq|abled)|aling)|r(?:a(?:g(?:e(?:n(?:ter|d)|xit)|(?:gestur|leav)e|start|drop|over)?|in)|op)|ata(?:setc(?:omplete|hanged)|(?:availabl|chang)e|error)?|urationchange|ownloading|blclick)|s(?:t(?:a(?:t(?:uschanged|echange)|lled|rt)|o(?:rage(?:areachanged)?|p)|k(?:sessione|comma)nd)|e(?:lect(?:ionchange|start)?|ek(?:ing|ed)|n(?:ding|t)|t)|ou(?:rce(?:(?:clos|end)ed|open)|nd(?:start|end))|c(?:(?:anningstate|ostatus)changed|roll)|pe(?:akerforcedchange|ech(?:start|end))|u(?:ccess|spend|bmit)|h(?:utter|ow))|r(?:e(?:s(?:ourcetimingbufferfull|u(?:m(?:ing|e)|lt)|ize|et)|mo(?:ve(?:sourcebuffer|track)|te(?:resume|hel)d)|ad(?:y(?:statechange)?|success|error)|c(?:orderstatechange|eived)|questmediaplaystatus|pea(?:tEven)?t|loadpage|trieving)|ow(?:s(?:inserted|delete)|e(?:nter|xit))|(?:(?:adiost)?ate|t)change|ds(?:dis|en)abled)|a(?:n(?:imation(?:iteration|start|end)|tennaavailablechange)|d(?:d(?:sourcebuffer|track)|apter(?:remov|add)ed)|ttribute(?:(?:write|read)req|changed)|fter(?:(?:scriptexecu|upda)te|print)|b(?:solutedeviceorientation|ort)|ctiv(?:estatechanged|ate)|udio(?:process|start|end)|2dpstatuschanged|lerting)|Moz(?:S(?:wipeGesture(?:(?:May)?Start|Update|End)?|crolledAreaChanged)|M(?:agnifyGesture(?:Update|Start)?|ouse(?:PixelScroll|Hittest))|EdgeUI(?:C(?:omplet|ancel)|Start)ed|RotateGesture(?:Update|Start)?|(?:Press)?TapGesture|AfterPaint)|b(?:e(?:for(?:e(?:(?:scriptexecu|activa)te|e(?:ditfocus|victed)|u(?:nload|pdate)|p(?:aste|rint)|c(?:opy|ut))|deactivate)|gin(?:Event)?)|u(?:fferedamountlow|sy)|oun(?:dary|ce)|l(?:ocked|ur)|roadcast)|DOM(?:Node(?:Inserted(?:IntoDocument)?|Removed(?:FromDocument)?)|(?:CharacterData|Subtree)Modified|A(?:ttrModified|ctivate)|Focus(?:Out|In)|MouseScroll)|w(?:eb(?:kit(?:Animation(?:Iteration|Start|End)|animation(?:iteration|start|end)|(?:TransitionE|transitione)nd)|socket)|a(?:it|rn)ing|heel)|e(?:n(?:ter(?:pincodereq)?|(?:crypt|abl)ed|d(?:Event|ed)?)|m(?:ergencycbmodechange|ptied)|(?:itbroadcas|vic)ted|rror(?:update)?|xit)|f(?:o(?:rm(?:change|input)|cus(?:out|in)?)|ullscreen(?:change|error)|i(?:lterchange|nish)|a(?:cesdetect|il)ed|requencychange|etch)|l(?:o(?:ad(?:e(?:d(?:meta)?data|nd)|ing(?:error|done)?|start)?|s(?:tpointer|e)capture)|(?:anguage|evel)change|y)|o(?:(?:(?:rientation|tastatus)chang|(?:ff|n)lin)e|b(?:expasswordreq|solete)|verflow(?:changed)?|pen)|t(?:o(?:uch(?:cancel|start|move|end)|ggle)|ime(?:update|out)|e(?:rminate|xt)|ransitionend|ypechange)|u(?:p(?:date(?:(?:fou|e)nd|ready|start)?|gradeneeded)|s(?:erproximity|sdreceived)|n(?:derflow|load))|v(?:rdisplay(?:(?:dis)?connect|presentchange)|o(?:ice(?:schanged|change)|lumechange)|ersionchange)|g(?:amepad(?:(?:dis)?connected|button(?:down|up)|axismove)|(?:otpointercaptur|roupchang)e|et)|h(?:e(?:adphoneschange|l[dp])|(?:fp|id)statuschanged|ashchange|olding)|i(?:cc(?:(?:info)?change|(?:un)?detected)|n(?:coming|stall|valid|put))|n(?:o(?:tificationcl(?:ick|ose)|update|match)|ewrdsgroup)|SVG(?:(?:Unl|L)oad|Resize|Scroll|Zoom)|key(?:press|down|up)|(?:AppComman|Loa)d|Request|zoom)"
   // autogenerated from nsHtml5AtomList.h and nsGkAtomList.h
   ;
 const IC_EVENT_DOS_PATTERN =
@@ -1254,12 +1219,10 @@ var InjectionChecker = {
     return this.breakStops = bs;
   },
 
-  collapseChars: function(s)
-      s.replace(/\;+/g, ';').replace(/\/{4,}/g, '////')
-        .replace(/\s+/g, function(s) /\n/g.test(s) ? '\n' : ' ')
-  ,
+  collapseChars: (s) => s.replace(/\;+/g, ';').replace(/\/{4,}/g, '////')
+        .replace(/\s+/g, (s) => /\n/g.test(s) ? '\n' : ' '),
 
-  _reduceBackslashes: function(bs) bs.length % 2 ? "\\" : "",
+  _reduceBackslashes: (bs) => bs.length % 2 ? "\\" : "",
 
   reduceQuotes: function(s) {
     if (s[0] == '/') {
@@ -1315,16 +1278,15 @@ var InjectionChecker = {
 
       let whole = s;
       let expr = m[0];
-      let json = ns.json;
-      if (json) {
-        try {
-          if (!toStringRx.test(json.decode(expr).toString))
-            return s;
+      
+      try {
+        if (!toStringRx.test(JSON.parse(expr).toString))
+          return s;
 
-          this.log("Reducing big JSON " + expr);
-          return s.replace(expr, '{}');
-        } catch(e) {}
-      }
+        this.log("Reducing big JSON " + expr);
+        return s.replace(expr, '{}');
+      } catch(e) {}
+
 
       // heavier duty, scattered JSON blocks
       while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
@@ -1332,7 +1294,7 @@ var InjectionChecker = {
 
         for (expr  of m) {
           if (json) try {
-            if (!toStringRx.test(json.decode(expr).toString))
+            if (!toStringRx.test(JSON.parse(expr).toString))
               continue;
 
             this.log("Reducing JSON " + expr);
@@ -1437,7 +1399,7 @@ var InjectionChecker = {
 
   _dotRx: /\./g,
   _removeDotsRx: /^openid\.[\w.-]+(?==)|(?:[?&#\/]|^)[\w.-]+(?=[\/\?&#]|$)|[\w\.]*\.(?:\b[A-Z]+|\w*\d|[a-z][$_])[\w.-]*|=[a-z.-]+\.(?:com|net|org|biz|info|xxx|[a-z]{2})(?:[;&/]|$)/g,
-  _removeDots: function(p) p.replace(InjectionChecker._dotRx, '|'),
+  _removeDots: (p) => p.replace(InjectionChecker._dotRx, '|'),
   _arrayAccessRx: /\s*\[\d+\]/g,
   _riskyOperatorsRx: /[+-]{2}\s*(?:\/[*/][\s\S]+)?(?:\w+(?:\/[*/][\s\S]+)?[[.]|location)|(?:\]|\.\s*(?:\/[*/][\s\S]+)?\w+|location)\s*(?:\/[*/][\s\S]+)?([+-]{2}|[+*\/<>~-]+\s*(?:\/[*/][\s\S]+)?=)/, // inc/dec/self-modifying assignments on DOM props
   _assignmentRx: /^(?:[^()="'\s]+=(?:[^(='"\[+]+|[?a-zA-Z_0-9;,&=/]+|[\d.|]+))$/,
@@ -1481,7 +1443,7 @@ var InjectionChecker = {
   },
 
 
-  wantsExpression: function(s) /(?:^[+-]|[!%&(,*/:;<=>?\[^|]|[^-]-|[^+]\+)\s*$/.test(s),
+  wantsExpression: (s) => /(?:^[+-]|[!%&(,*/:;<=>?\[^|]|[^-]-|[^+]\+)\s*$/.test(s),
 
   stripLiteralsAndComments: function(s) {
     "use strict";
@@ -1984,14 +1946,14 @@ var InjectionChecker = {
   },
 
   HeadersChecker: /[\r\n]\s*(?:content-(?:type|encoding))\s*:/i,
-  checkHeaders: function(s) this._rxCheck("Headers", s),
+  checkHeaders: function(s) { return this._rxCheck("Headers", s); },
   SQLIChecker: /(?:(?:(?:\b|[^a-z])union[^a-z]|\()[\w\W]*(?:\b|[^a-z])select[^a-z]|(?:updatexml|extractvalue)(?:\b|[^a-z])[\w\W]*\()[\w\W]+(?:(?:0x|x')[0-9a-f]{16}|(?:0b|b')[01]{64}|\(|\|\||\+)/i
   ,
-  checkSQLI: function(s) this._rxCheck("SQLI", s),
+  checkSQLI: function(s) { return this._rxCheck("SQLI", s); },
 
   base64: false,
   base64tested: [],
-  get base64Decoder() { return Base64 }, // exposed here just for debugging purposes
+  get base64Decoder() { return Base64; }, // exposed here just for debugging purposes
 
 
   checkBase64: function(url) {
@@ -2704,7 +2666,7 @@ XSanitizer.prototype = {
     IC_EVAL_PATTERN + '|' + IC_EVENT_PATTERN + ')\\b',
     "g"
   ),
-  _dangerousWordsReplace: function(s) s.replace(/\S/g, "$&\u2063")
+  _dangerousWordsReplace: (s) => s.replace(/\S/g, "$&\u2063")
 
 };
 
@@ -2850,14 +2812,14 @@ var ASPIdiocy = {
   _affectsRx: /%u[0-9a-fA-F]{4}/,
   _badPercentRx: /%(?!u[0-9a-fA-F]{4}|[0-9a-fA-F]{2})|%(?:00|u0000)[^&=]*/g,
 
-  hasBadPercents: function(s) this._badPercentRx.test(s),
-  removeBadPercents: function(s) s.replace(this._badPercentRx, ''),
-  affects: function(s) this._affectsRx.test(s),
+  hasBadPercents: function(s) { return this._badPercentRx.test(s) },
+  removeBadPercents: function(s) { return s.replace(this._badPercentRx, ''); },
+  affects: function(s) { return this._affectsRx.test(s); },
   process: function(s) {
     s = this.filter(s);
     return /[\uff5f-\uffff]/.test(s) ? s + '&' + s.replace(/[\uff5f-\uffff]/g, '?') : s;
   },
-  filter: function(s) this.removeBadPercents(s).replace(this._replaceRx, this._replace),
+  filter: function(s) { return this.removeBadPercents(s).replace(this._replaceRx, this._replace) },
 
   coalesceQuery: function(s) { // HPP protection, see https://www.owasp.org/images/b/ba/AppsecEU09_CarettoniDiPaola_v0.8.pdf
     let qm = s.indexOf("?");
@@ -2893,7 +2855,7 @@ var ASPIdiocy = {
         }
       }
       return (emptyParams && !(unchanged || joinNames))
-        ? pairs.concat(rearrange(true).filter(function(p) pairs.indexOf(p) === -1))
+        ? pairs.concat(rearrange(true).filter(p => pairs.indexOf(p) === -1))
         : pairs;
     })();
 
@@ -2911,7 +2873,7 @@ var ASPIdiocy = {
 
 var FlashIdiocy = {
   _affectsRx: /%(?:[8-9a-f]|[0-7]?[^0-9a-f])/i, // high (non-ASCII) percent encoding or invalid second digit
-  affects: function(s) this._affectsRx.test(s),
+  affects: function(s) { return this._affectsRx.test(s); },
 
   purgeBadEncodings: function(s) {
     INCLUDE("FlashIdiocy");

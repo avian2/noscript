@@ -74,8 +74,7 @@
 		</vbox>
 		<separator class="thin"/>
     <checkbox id="opt-allowBookmarks" label="&noscriptAllowViaBookmarks;" />
-    <checkbox id="opt-placesPrefs" label="&noscriptBookmarkSync;" />
-
+   
     <spacer flex="1" />
     <button id="importConfButton" label="&noscriptImport;" hidden="true" oncommand="nsopt.importConf()" />
     <button id="exportConfButton" label="&noscriptExport;" hidden="true" oncommand="nsopt.exportConf()" />
@@ -467,3 +466,4 @@
   </tabbox>
   </vbox>
 </dialog>
+

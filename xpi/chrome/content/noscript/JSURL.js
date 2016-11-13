@@ -62,12 +62,12 @@ var JSURL = {
   _run: function(document, code) {
     var w = document.defaultView;
     var p = document.nodePrincipal;
-    var s =  new Cu.Sandbox(CSP.isBlocked(w) ? [p] : p, {
+    var s =  new Cu.Sandbox(p, {
         sandboxName: "NoScript::JSURL@" + document.documentURI,
         sandboxPrototype: w,
         wantXrays: false,
       });
-    var e = function(script)  Cu.evalInSandbox("with(window) {" + script + "}", s, JSURL.JS_VERSION);
+    var e = (script) =>  Cu.evalInSandbox("with(window) {" + script + "}", s, JSURL.JS_VERSION);
     e(this._patch);
     var ret;
     try {

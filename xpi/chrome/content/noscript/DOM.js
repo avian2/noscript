@@ -73,6 +73,15 @@ var DOM = {
     }
   },
 
+  getFrameMM(windowOrNode) {
+    if (windowOrNode.ownerDocument) windowOrNode = windowOrNode.ownerDocument;
+    if (windowOrNode.defaultView) windowOrNode = windowOrNode.defaultView;
+    return windowOrNode.top.QueryInterface(Ci.nsIInterfaceRequestor)
+                         .getInterface(Ci.nsIDocShell)
+                         .QueryInterface(Ci.nsIInterfaceRequestor)
+                         .getInterface(Ci.nsIContentFrameMessageManager);
+  },
+
   getChromeWindow: function(window) {
     try {
       return this.getDocShellForWindow(window.top)
@@ -121,12 +130,15 @@ var DOM = {
     return w;
   },
 
-  get mostRecentBrowserWindow() this.windowMediator.getMostRecentWindow(this.browserWinType, true) ||
-      this.perWinType(this.windowMediator.getMostRecentWindow, true),
-  get windowEnumerator()  this.windowMediator.getZOrderDOMWindowEnumerator(this.browserWinType, true) ||
-    this.perWinType(this.windowMediator.getZOrderDOMWindowEnumerator, true),
-
-  createBrowserIterator: function(initialWin) new BrowserIterator(initialWin),
+  get mostRecentBrowserWindow() {
+    return this.windowMediator.getMostRecentWindow(this.browserWinType, true) ||
+      this.perWinType(this.windowMediator.getMostRecentWindow, true);
+  },
+  get windowEnumerator() {
+    return this.windowMediator.getZOrderDOMWindowEnumerator(this.browserWinType, true) ||
+      this.perWinType(this.windowMediator.getZOrderDOMWindowEnumerator, true);
+  },
+  createBrowserIterator: (initialWin) => new BrowserIterator(initialWin),
 
   addClass: function(e, c) {
     var cur = e.className;

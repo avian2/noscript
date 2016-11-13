@@ -1,5 +1,4 @@
-var WinScript = ("blockScriptForGlobal" in Cu) ?
-{
+var WinScript = {
   supported: true,
   block: function(window) {
     if (window._blockScriptForGlobal) return;
@@ -45,41 +44,35 @@ var WinScript = ("blockScriptForGlobal" in Cu) ?
       }
     : function() { return false; }
     );
-  }
-}
-:
-{
-  supported: false,
-  __noSuchMethod__: function() {},
-};
-
-WinScript._domUtils = Cc["@mozilla.org/inspector/dom-utils;1"].getService(Ci.inIDOMUtils);
-WinScript.patchStyle = function(doc) {
-  let ss = this._domUtils.getAllStyleSheets(doc);
-  // reverse loop because the preference stylesheet is almost always the last one
-  for (let j = ss.length; j-- > 0;) {
-    let s = ss[j];
-    switch(s.href) {
-
-      case "about:PreferenceStyleSheet":
-        {
-          let rules = s.cssRules;
-          // skip 1st & 2nd, as they are HTML & SVG namespaces
-          for (let j = 2, len = rules.length; j < len; j++) {
-              let r = rules[j];
-              if (r.cssText === "noscript { display: none ! important; }") {
-                  s.deleteRule(j);
-                  return;
-              }
+  },
+  _domUtils: Cc["@mozilla.org/inspector/dom-utils;1"].getService(Ci.inIDOMUtils),
+  patchStyle: function(doc) {
+    let ss = this._domUtils.getAllStyleSheets(doc);
+    // reverse loop because the preference stylesheet is almost always the last one
+    for (let j = ss.length; j-- > 0;) {
+      let s = ss[j];
+      switch(s.href) {
+  
+        case "about:PreferenceStyleSheet":
+          {
+            let rules = s.cssRules;
+            // skip 1st & 2nd, as they are HTML & SVG namespaces
+            for (let j = 2, len = rules.length; j < len; j++) {
+                let r = rules[j];
+                if (r.cssText === "noscript { display: none ! important; }") {
+                    s.deleteRule(j);
+                    return;
+                }
+            }
           }
-        }
-        break;
-      case "data:text/css,noscript%20{%20display%3A%20none%20!important%3B%20}":
-      case "resource://gre-resources/noscript.css":
-        doc.defaultView.QueryInterface(Ci.nsIInterfaceRequestor)
-        .getInterface(Ci.nsIDOMWindowUtils)
-        .loadSheetUsingURIString("data:text/css,noscript { display: initial !important }", 0);
-        return;
+          break;
+        case "data:text/css,noscript%20{%20display%3A%20none%20!important%3B%20}":
+        case "resource://gre-resources/noscript.css":
+          doc.defaultView.QueryInterface(Ci.nsIInterfaceRequestor)
+          .getInterface(Ci.nsIDOMWindowUtils)
+          .loadSheetUsingURIString("data:text/css,noscript { display: initial !important }", 0);
+          return;
+      }
     }
   }
 };

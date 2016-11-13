@@ -143,7 +143,8 @@ SoundChooser.prototype = {
         this.play();
       }
     } catch(ex) {
-      noscriptUtil.prompter.alert(window, this.title, ex.toString());
+      Components.utils.import("resource://gre/modules/Services.jsm");
+      Services.prompt.alert(window, this.title, ex.toString());
     }
   },
   setSample: function(url) {

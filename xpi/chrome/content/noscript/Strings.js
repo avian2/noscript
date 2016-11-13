@@ -2,7 +2,7 @@ function Strings(chromeName) {
   this.chromeName = chromeName;
 }
 
-Strings.wrap = function(s, count) s.replace(new RegExp("\\w{" + (parseInt(count) || 20) + "}", 'g'), "$&\u200B");
+Strings.wrap = (s, count) => s.replace(new RegExp("\\w{" + (parseInt(count) || 20) + "}", 'g'), "$&\u200B");
 
 Strings.prototype = {
   bundles: {},

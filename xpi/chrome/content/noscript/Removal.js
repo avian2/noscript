@@ -35,7 +35,6 @@ var Removal = {
           case 2: // NO (globally allow instead)
             ns.jsEnabled = true;
             ns.savePrefs();
-            ns.reloadWhereNeeded();
             break;
           default: // CANCEL
             alwaysAsk.value = true;

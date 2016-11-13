@@ -7,9 +7,7 @@ let scope = {
   }
 }
 if (Services.appinfo.processType == Services.appinfo.PROCESS_TYPE_CONTENT) {
-  Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-    .getService(Components.interfaces.mozIJSSubScriptLoader)
-    .loadSubScript("chrome://noscript/content/childScript.js", scope);
+  Services.scriptloader.loadSubScript("chrome://noscript/content/e10sChild.js", scope);
 
 } else {
   // nothing to do exclusively in the parent process yet...

@@ -1,6 +1,6 @@
 var EXPORTED_SYMBOLS = ["PasteHandler"];
 
-
+const Cu = Components.utils;
 
 function PasteHandler(ctx) {
   ctx.addEventListener("paste", pasteEventHandler, true);
@@ -8,17 +8,17 @@ function PasteHandler(ctx) {
 
 
 function pasteEventHandler(e) {
-  Components.utils.import("resource://gre/modules/Services.jsm");
+  Cu.import("resource://gre/modules/Services.jsm");
   if (!Services.prefs.getBoolPref("noscript.sanitizePaste")) {
     return;
   }
   let data = e.clipboardData;
-  let html =  data.getData("text/html")
+  let html =  data.getData("text/html");
   let t = e.target;
   if (t.nodeType !== 1) t = t.parentElement;
     
   let console = t.ownerDocument.defaultView.console;
-
+s
   try {
     let node = t.cloneNode();
 
@@ -26,16 +26,16 @@ function pasteEventHandler(e) {
     
     if (sanitizeExtras(node)) {
       let sanitized = node.innerHTML;
-      Components.utils.import("chrome://noscript/content/defer.jsm");
+      Cu.import("chrome://noscript/content/defer.jsm");
       defer(function() { try {
         sanitizeExtras(t);
         console.log("[NoScript] Sanitized\n<PASTE>\n" + html + "\n</PASTE>to\n<PASTE>\n" + sanitized + "</PASTE>");
       } catch(ex) {
-       console.log(ex)
+       console.log(ex);
       }}, 0);
     }
   } catch(ex) {
-    console.log(ex)
+    console.log(ex);
   }
 }
 
@@ -65,4 +65,4 @@ function sanitizeExtras(el) {
   }
   return ret;
 }
-  
+

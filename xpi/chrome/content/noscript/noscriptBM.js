@@ -37,7 +37,7 @@ var noscriptBM = {
             callback();
         }, 0);
       } else {
-        noscriptUtil.prompter.alert(window, "NoScript",
+        ns.prompter.alert(window, "NoScript",
             "javascript: and data: URIs typed or pasted in the address bar are disabled to prevent social engineering attacks.\nDevelopers can enable them for testing purposes by toggling the \"noscript.allowURLBarJS\" preference.");
       }
       return;
@@ -92,7 +92,7 @@ var noscriptBM = {
         gBrowser.loadURIWithFlags = noscriptBM.loadURIWithFlags;
       }
       if (patch)
-        noscriptBM.handleURLBarCommandOriginal = function(args) patch.func.apply(patch.obj, args);
+        noscriptBM.handleURLBarCommandOriginal = (args) => patch.func.apply(patch.obj, args);
     }
     
     // delay bookmark stuff
@@ -107,10 +107,11 @@ var noscriptBM = {
             window.gURLBar.originalShortcut = aURL;
           }
           return getShortcut.apply(window, arguments);
-        }
+        };
         window[f] = getShortcut.length === 2
-          ? function(aURL, callback) replacement.apply(window, arguments)
-          : function(aURL) replacement.apply(window, arguments);
+          ? function(aURL, callback) { return replacement.apply(window, arguments); }
+          : function(aURL) { return replacement.apply(window, arguments); }
+          ;
         break;
       }
     }

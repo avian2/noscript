@@ -1,8 +1,5 @@
 function ClearClickHandler(ns) {
   this.ns = ns;
-  if (ns.geckoVersionCheck("1.9.2") < 0) {
-    INCLUDE("ClearClickHandlerLegacy");
-  }
 }
 
 ClearClickHandler.prototype = {
@@ -92,20 +89,18 @@ ClearClickHandler.prototype = {
     }
   },
 
-  install: function(browser) {
-
-    var doc = browser.ownerDocument;
-    if (!("__ClearClick__" in doc)) {
-      doc.__ClearClick__ = true;
-      for (let et  of this.rapidFire.events)
-        doc.addEventListener(et, this, true);
+  chromeInstall(chromeWindow) {
+    let target = chromeWindow.document;
+    for (let et of this.rapidFire.events) {
+      target.addEventListener(et, this, true);
     }
-
-    var ceh = browser.docShell.chromeEventHandler;
-    var l = this._listener;
-    for (var et  of this.uiEvents) ceh.addEventListener(et, this, true);
   },
 
+  install(target) {
+    for (let et  of this.uiEvents) {
+      target.addEventListener(et, this, true);
+    }
+  },
 
   exceptions: null,
 
@@ -173,8 +168,8 @@ ClearClickHandler.prototype = {
     this.whitelistLen = 0;
   },
 
-  isEmbed: function(o) (o instanceof Ci.nsIDOMHTMLObjectElement || o instanceof Ci.nsIDOMHTMLEmbedElement)
-                        && !o.contentDocument && ns.getExpando(o, "site") != ns.getSite(o.ownerDocument.documentURI),
+  isEmbed: (o) => (o instanceof Ci.nsIDOMHTMLObjectElement || o instanceof Ci.nsIDOMHTMLEmbedElement) &&
+                    !o.contentDocument && ns.getExpando(o, "site") != ns.getSite(o.ownerDocument.documentURI),
 
   swallowEvent: function(ev) {
     ev.cancelBubble = true;
@@ -269,7 +264,7 @@ ClearClickHandler.prototype = {
   },
 
   _semanticContainersRx: /^(?:p|quote|ul|ol|dir|pre|table)$/i,
-  isSemanticContainer: function(o) this._semanticContainersRx.test(o.tagName) && o.ownerDocument.URL.indexOf("view-source") !== 0,
+  isSemanticContainer: function(o) { return this._semanticContainersRx.test(o.tagName) && o.ownerDocument.URL.indexOf("view-source") !== 0; },
 
   forLog: function(o) {
     return o.tagName + "/" + (o.tabIndex || 0);
@@ -333,7 +328,7 @@ ClearClickHandler.prototype = {
           ) ||
           isEmbed && ns.isClickToPlay(o) ||
           ns.getPluginExtras(o) && ns.getPref("confirmUnblock") || // Just enabled from NS placeholder after prompt?
-           this.checkSubexception(isEmbed && (o.src || o.data) || w.location.href)
+           this.checkSubexception(isEmbed && (o.src || o.data) || w.location.href);
     }
 
     if (o.__clearClickUnlocked || w.__clearClickUnlocked) return;
@@ -402,7 +397,7 @@ ClearClickHandler.prototype = {
         if (primaryEvent && ctx.img && ns.getPref("clearClick.prompt") && !this.prompting) {
           try {
             this.prompting = true;
-            var params = {
+            let params = {
               url: ctx.isEmbed && (o.src || o.data) || o.ownerDocument.URL,
               pageURL: w.location.href,
               topURL: topURL,
@@ -412,11 +407,8 @@ ClearClickHandler.prototype = {
               pageY: ev.pageY,
               zoom: this._zoom
             };
-            DOM.findBrowserForNode(w).ownerDocument.defaultView.openDialog(
-              "chrome://noscript/content/clearClick.xul",
-              "noscriptClearClick",
-              "chrome, dialog, dependent, centerscreen, modal",
-              params);
+            params = this.showWarning(w, params);
+            if (ns.dump & LOG_CLEARCLICK) ns.dump(`ClearClick UI response: ${JSON.stringify(params)}`);
             if (!params.locked) {
               w.__clearClickUnlocked = o.__clearClickUnlocked = true
               this.whitelist(w);
@@ -427,6 +419,18 @@ ClearClickHandler.prototype = {
         }
       }
     }
+  },
+
+  showWarningParent(window, params) {
+    window.openDialog(
+              "chrome://noscript/content/clearClick.xul",
+              "noscriptClearClick",
+              "chrome, dialog, dependent, centerscreen, modal",
+              params);
+    return params;
+  },
+  showWarning(window, params) {
+    return DOM.getFrameMM(window).sendSyncMessage("NoScript:clearClickWarning", params);
   },
 
   findParentForm: function(o) {
@@ -478,9 +482,8 @@ ClearClickHandler.prototype = {
     var dElem = d.documentElement;
 
     var top = w.top;
-    var browser = DOM.findBrowserForNode(top);
 
-    if (!browser) return false; // some extensions, e.g. FoxTab, cause this
+    if (!DOM.getFrameMM(top)) return false; // some extensions, e.g. FoxTab, cause this
 
     var c = this.canvas;
     var gfx = c.getContext("2d");

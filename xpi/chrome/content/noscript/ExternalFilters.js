@@ -18,13 +18,13 @@ var ExternalFilters = {
   
   cloneFilters: function() {
     return this._filters.concat(
-        this._builtIns.filter(function(bif) !this._filters.some(bif.same, bif), this )
-      ).map(function(f) new ExternalFilter(f.name, f.exe, f.contentType, f.whitelist)
+        this._builtIns.filter((bif) => !this._filters.some(bif.same, bif), this )
+      ).map((f) => new ExternalFilter(f.name, f.exe, f.contentType, f.whitelist)
     );
   },
   
   save: function(filters) {
-    if (filters) this._filters = filters; // filters.filter(function(f) f.valid);
+    if (filters) this._filters = filters;
     
     const prefs = this.prefs;
     for (let key  of prefs.getChildList("", {})) {
@@ -91,7 +91,8 @@ var ExternalFilters = {
     const clazz = Cc["@mozilla.org/process/util;1"];
     const iface = "nsIProcess2" in Ci ? Ci.nsIProcess2 : Ci.nsIProcess;
     delete this.createProcess;
-    return (this.createProcess = function() clazz.createInstance(iface))()
+    this.createProcess = () => clazz.createInstance(iface);
+    return this.createProcess();
   },
   
   createTempFile: function() {
@@ -214,7 +215,7 @@ var ExternalFilters = {
                         );
   },
   
-  QueryInterface: xpcom_generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference])
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference])
 }
 
 
@@ -534,7 +535,7 @@ EFHandler.prototype = {
     }
   },
   
-  QueryInterface: xpcom_generateQI(
+  QueryInterface: XPCOMUtils.generateQI(
       [Ci.nsITraceableChannel, Ci.nsICacheListener,
        Ci.nsIObserver, Ci.nsISupportsWeakReference])
 }
@@ -575,7 +576,7 @@ EFFilePassthru.prototype = {
     handler.cleanup();    
   },
   
-  QueryInterface: xpcom_generateQI([Ci.nsIStreamListener])
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIStreamListener])
 }
 
 
@@ -627,7 +628,7 @@ EFCacheHandler.prototype = {
     }
   },
 
-  QueryInterface: xpcom_generateQI([Ci.nsICacheListener, Ci.nsICacheMetaDataVisitor])
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsICacheListener, Ci.nsICacheMetaDataVisitor])
 }
 
 
@@ -723,5 +724,5 @@ var EFCacheSessions = {
     }
   },
   
-  QueryInterface: xpcom_generateQI([Ci.nsICacheListener, Ci.nsICacheVisitor])
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsICacheListener, Ci.nsICacheVisitor])
 }
