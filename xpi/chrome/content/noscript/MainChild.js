@@ -23,7 +23,7 @@ var MainChild = {
     }
   },
 
-  reload: function(browser, reloadPolicy, snapshots) {
+  reload: function(browser, snapshots, innerWindowID) {
     let { previous, current } = snapshots;
     let { lastTrusted, lastUntrusted, lastGlobal, lastObjects, mustReload } = previous;
     this.jsPolicySites.sitesString = current.lastTrusted;
@@ -49,6 +49,15 @@ var MainChild = {
       }
       return false;
     }, this, browser);
+    
+    
+    if (!mustReload ||
+        innerWindowID &&
+        innerWindowID != browser.content.QueryInterface(Ci.nsIInterfaceRequestor)
+                     .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID) {
+      return;
+    }
+    
 
     let sites = this.getSites(browser);
     let allSites = sites.all;
@@ -94,18 +103,17 @@ var MainChild = {
       }
     }
 
-    if (mustReload) {
-      // check plugin objects
-      if (this.consoleDump & LOG_CONTENT_BLOCK) {
-        this.dump("Checking object permission changes...");
-        try {
-          this.dump(sites.toSource() + ", " + lastObjects.toSource());
-        } catch(e) {}
-      }
-      if (this.checkObjectPermissionsChange(sites, lastObjects)) {
-         this.quickReload(webNav);
-      }
+    // check plugin objects
+    if (this.consoleDump & LOG_CONTENT_BLOCK) {
+      this.dump("Checking object permission changes...");
+      try {
+        this.dump(sites.toSource() + ", " + lastObjects.toSource());
+      } catch(e) {}
     }
+    if (this.checkObjectPermissionsChange(sites, lastObjects)) {
+       this.quickReload(webNav);
+    }
+  
   },
 
 

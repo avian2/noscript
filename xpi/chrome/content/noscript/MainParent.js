@@ -420,9 +420,9 @@ var MainParent = {
     };
     if (currentTabOnly) {
       let browser = DOM.mostRecentBrowserWindow.noscriptOverlay.currentBrowser;
-      browser.messageManager.sendAsyncMessage("NoScript:reload", payload);
-    } else {
-      Services.mm.broadcastAsyncMessage("NoScript:reload", payload);
+      payload.innerWindowID = browser.innerWindowID;
     }
+    Services.mm.broadcastAsyncMessage("NoScript:reload", payload);
+
   },
 };

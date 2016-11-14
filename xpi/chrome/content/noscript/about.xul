@@ -99,7 +99,7 @@ function about_open(url, features) {
 <spacer flex="1"/>
 <hbox id="creatorBox">
 <label id="extensionCreatorLabel" value="Author:"/>
-<label id="extensionCreator" class="text-link" tooltiptext="Visit Author Home Page" onclick="about_open('http://maone.net')" value="Giorgio Maone" flex="1"/>
+<label id="extensionCreator" class="text-link" tooltiptext="Visit Author Home Page" onclick="about_open('http://maone.CHA')" value="Giorgio Maone" flex="1"/>
 </hbox>
 </vbox>
 </hbox>

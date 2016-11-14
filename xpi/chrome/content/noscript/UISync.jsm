@@ -44,8 +44,8 @@ UISync.prototype = {
     let ctx = this.ctx;
     switch(msg.name) {
       case "NoScript:reload":
-        let { reloadPolicy, snapshots } = msg.data;
-        ctx.ns.reload(msg.target, reloadPolicy, snapshots);
+        let { innerWindowID, snapshots } = msg.data;
+        ctx.ns.reload(msg.target, snapshots, innerWindowID);
       break;
       case "NoScript:reloadAllowedObjects":
         ctx.ns.reloadAllowedObjects(msg.target, msg.data.mime);

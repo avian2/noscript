@@ -1005,7 +1005,7 @@ const ns = {
     return b;
   },
   persistUntrusted: function(snapshot) {
-    if (typeof(snaposhot) == "string") {
+    if (typeof(snapshot) === "string") {
       this.untrustedSites.sitesString = snapshot;
     }
     this.untrustedSites.toPref(this.prefs, "untrusted");

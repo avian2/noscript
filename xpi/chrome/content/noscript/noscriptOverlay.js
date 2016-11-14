@@ -1343,7 +1343,7 @@ return noscriptUtil.service ? {
         ns.setUntrusted(site, true);
       }
 
-      if (menuItem.getAttribute("closemenu") == "none") {
+      if (menuItem.getAttribute("closemenu") === "none") {
         menuItem.removeAttribute("statustext"); // prevent double-firing
         // sticky UI feedback
         if (this._currentPopup) {
@@ -2381,11 +2381,14 @@ return noscriptUtil.service ? {
         let hacks = noscriptOverlay.Hacks;
         hacks.torButton();
         hacks.allowLocalLinks();
-        window.setTimeout(function() {
-          hacks.pdfDownload();
-          Services.scriptloader.loadSubScript("chrome://noscript/content/noscriptBM.js");
-          noscriptBM.init();
-        }, 1500);
+        setTimeout(() => {
+          noscriptOverlay._syncUINow();
+          setTimeout(() => {
+            hacks.pdfDownload();
+            Services.scriptloader.loadSubScript("chrome://noscript/content/noscriptBM.js");
+            noscriptBM.init();
+          }, 1400);
+        }, 100);
 
         noscriptOverlay.ns.clearClickHandler.chromeInstall(window);
       } catch(e) {
