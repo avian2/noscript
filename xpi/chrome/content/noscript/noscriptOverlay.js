@@ -1435,16 +1435,12 @@ return noscriptUtil.service ? {
   }
 ,
   _syncTimeout: 0,
-  syncUI: function() {
-    window.addEventListener("DOMContentLoaded", function(ev) {
-      if (ev.originalTarget instanceof HTMLDocument) {
-        window.removeEventListener(ev.type, arguments.callee, true);
-        noscriptOverlay.syncUI = noscriptOverlay._syncUIReal;
-        noscriptOverlay.syncUI();
-      }
-    }, true);
-    this.syncUI = () =>  {};
-  }, // we entirely skip on startup...
+  syncUI(forceReal = false) {
+    if (forceReal) { // we entirely skip on startup...
+      this.syncUI = this._syncUIReal;
+      this.syncUI();
+    }
+  },
   _syncUIReal: function(browser) {
     if (!browser) browser = this.currentBrowser;
     // ... and cap to 400ms
@@ -2382,7 +2378,7 @@ return noscriptUtil.service ? {
         hacks.torButton();
         hacks.allowLocalLinks();
         setTimeout(() => {
-          noscriptOverlay._syncUINow();
+          noscriptOverlay.syncUI(true); // force real syncUI to start working
           setTimeout(() => {
             hacks.pdfDownload();
             Services.scriptloader.loadSubScript("chrome://noscript/content/noscriptBM.js");

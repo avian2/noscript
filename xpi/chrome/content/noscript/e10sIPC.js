@@ -8,10 +8,11 @@ var IPC = {
       methods: new Set(methods),
     });
 
-    for (let method of methods) {
+    for (let m of methods) {
       if (!(method in obj)) {
         ns.log(`method ${method} not found in ${objName}\n`);
       }
+      let method = m; // hack needed in Fx < 50
       let func = obj[method];
       if (func._autoSynced) continue;
       (obj[method] = (...args) => {

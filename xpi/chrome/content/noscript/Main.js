@@ -545,9 +545,6 @@ const ns = {
 
 
   updateExtraPerm: function(prefName, baseName, names) {
-    if (prefName === "allowLocalLinks") {
-      ns.log("allowLocalLinks: " + new Error().stack)
-    }
     var cpName;
     var enabled = this.getPref(prefName, false);
     this[prefName] = enabled;

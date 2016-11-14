@@ -28,11 +28,7 @@ IPC.child = {
 };
 
 try {
-  log("Child: Including NoScript Main");
-
   Main.bootstrap(true);
-  
-  log("Child: Including NoScript Main\n");
   IPC.child.init();
 } catch (e) {
   Cu.reportError(e);

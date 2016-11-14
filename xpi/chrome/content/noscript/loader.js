@@ -21,12 +21,13 @@ function INCLUDE(...objectNames) {
 
 function LAZY_INCLUDE(...objectNames) {
   for (let objectName of objectNames) {
-    if (!(objectName in this)) {
-      this.__defineGetter__(objectName, () => {
-        delete this[objectName];
+    if (!(objectName in _INCLUDED)) {
+      let key = objectName; // hack needed in Fx < 50
+      this.__defineGetter__(key, function() {
+        delete this[key];
         // dump(objectName + " kickstarted at " + (new Error().stack));
-        INCLUDE(objectName);
-        return this[objectName];
+        INCLUDE(key);
+        return this[key];
       });
     }
   }
@@ -38,7 +39,8 @@ function INCLUDE_MIXIN(target, ...objectNames) {
 }
 
 function MIXIN(target, ...objects) {
- for (let object of objects) {
+ for (let o of objects) {
+    let object = o; // hack needed in Fx < 50
     Object.defineProperties(target, Object.keys(object).reduce((descriptors, key) => {
       descriptors[key] = Object.getOwnPropertyDescriptor(object, key);
       return descriptors;
