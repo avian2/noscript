@@ -407,9 +407,7 @@ ClearClickHandler.prototype = {
               pageY: ev.pageY,
               zoom: this._zoom
             };
-            params = this.showWarning(w, params);
-            if (ns.dump & LOG_CLEARCLICK) ns.dump(`ClearClick UI response: ${JSON.stringify(params)}`);
-            if (!params.locked) {
+            if (!this.showWarning(w, params)) {
               w.__clearClickUnlocked = o.__clearClickUnlocked = true
               this.whitelist(w);
             }
@@ -430,7 +428,7 @@ ClearClickHandler.prototype = {
     return params;
   },
   showWarning(window, params) {
-    return DOM.getFrameMM(window).sendSyncMessage("NoScript:clearClickWarning", params);
+    return DOM.getFrameMM(window).sendSyncMessage(IPC_MSG.CLEARCLICK_WARNING, params)[0];
   },
 
   findParentForm: function(o) {

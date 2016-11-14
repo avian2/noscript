@@ -1,5 +1,14 @@
+var IPC_MSG = {
+  CALL: "NoScript:remoteCall",
+  SYNC: "NoScript:syncUI",
+  NOTIFY_META: "NoScript:notifyMetaRefresh",
+  CLEARCLICK_WARNING: "NoScript:clearClickWarning",
+},
+IPC_P_MSG = {
+  LOAD_SURROGATE: "NoScript:loadSurrogate",
+}
+
 var IPC = {
-  MSG_CALL: "NoScript:remoteCall",
   registry: null,
   autoSync(obj, objName, methods) {
     if (!this.registry) this.registry = new Map();
@@ -9,10 +18,10 @@ var IPC = {
     });
 
     for (let m of methods) {
+      let method = m; // hack needed in Fx < 50
       if (!(method in obj)) {
         ns.log(`method ${method} not found in ${objName}\n`);
       }
-      let method = m; // hack needed in Fx < 50
       let func = obj[method];
       if (func._autoSynced) continue;
       (obj[method] = (...args) => {
@@ -36,7 +45,7 @@ var IPC = {
 
   receiveMessage(m) {
     switch(m.name) {
-      case IPC.MSG_CALL:
+      case IPC_MSG.CALL:
         // ns.log(`Received ${m.name}, ${JSON.stringify(m.data)}`);
         let { objName, method, args } = m.data;
         IPC.call(objName, method, args);

@@ -52,7 +52,7 @@ UISync.prototype = {
         ctx.ns.reloadAllowedObjects(msg.target, msg.data.mime);
       break;
       case "NoScript:resetClearClickTimeout":
-        ctx.ns.clearClickHandler.re
+        ctx.ns.clearClickHandler.rapidFire.ts = 0;
     }
   },
 

@@ -105,15 +105,20 @@ var ScriptSurrogate = {
       Cu.reportError(e);
     }
   },
-
+  loadReplacementFile(path) {
+    return IO.readFile(IOS.newURI(this._resolveFile(path), null, null)
+              .QueryInterface(Ci.nsIFileURL).file);
+  },
+  getReplacement(name) {
+    return this.prefs.getComplexValue(name + ".replacement",
+                         Ci.nsISupportsString).data;
+  },
   initReplacement: function(m) {
     var r;
     try {
-      r = this.prefs.getComplexValue(m.name + ".replacement",
-                         Ci.nsISupportsString).data;
+      r = this.getReplacement(m.name);
       if (/^(?:file:\/\/|\.\.?\/)/.test(r)) {
-        r = IO.readFile(IOS.newURI(this._resolveFile(r), null, null)
-              .QueryInterface(Ci.nsIFileURL).file);
+        r = Services.cpmm.sendSyncMessage(IPC_P_MSG.LOAD_SURROGATE, m.name)[0];
       }
 
       if (r && !this.syntaxChecker.check(r)) {
