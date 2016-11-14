@@ -237,8 +237,9 @@ return noscriptUtil.service ? {
       popup._hovering = 0;
 
     if (noscriptOverlay._reloadDirty && !noscriptOverlay.liveReload) {
-      noscriptOverlay.reloadCurrent();
-      noscriptOverlay.ns.savePrefs();
+      let ns = noscriptOverlay.ns;
+      ns.savePrefs();
+      ns.reloadWhereNeeded();
     }
 
 
@@ -1362,43 +1363,22 @@ return noscriptUtil.service ? {
 
     }
     this.safeAllow(site, enabled, temp, reloadPolicy);
-  }
-,
+  },
+
   safeAllow: function(site, enabled, temp, reloadPolicy) {
-    const ns = this.ns;
-
-    var allowTemp = enabled && temp;
-
-
-    function op(ns) {
+    let allowTemp = enabled && temp;
+    window.clearInterval(noscriptOverlay._savePrefsTimeout);
+    noscriptOverlay.ns.safeCapsOp(ns => {
       if (site) {
         ns.setTemp(site, allowTemp);
         ns.setJSEnabled(site, enabled, false, ns.mustCascadeTrust(site, temp));
       } else {
         ns.jsEnabled = enabled;
       }
-
-      if (reloadPolicy === ns.RELOAD_NO) {
-        ns.updateSnapshot();
-        noscriptOverlay._syncUINow();
-        if (!allowTemp) ns.savePrefs();
-      }
-      else noscriptOverlay.syncUI();
-
-    }
-
-    if (reloadPolicy === ns.RELOAD_NO) {
-      op(ns);
-    } else {
-      window.clearInterval(noscriptOverlay._savePrefsTimeout);
-      if (content) ns.setExpando(content.document, "domLoaded", false); // [IPC CHECK ME]
-      ns.safeCapsOp(op, reloadPolicy, allowTemp);
-    }
-
+      noscriptOverlay.syncUI();
+    }, reloadPolicy, allowTemp);
   },
-  reloadCurrent() {
-    this.ns.quickReload(this.currentBrowser.webNavigation);
-  },
+
   _savePrefsTimeout: 0,
   savePrefs: function(now) {
     if (now) {
@@ -1417,7 +1397,7 @@ return noscriptUtil.service ? {
     var statusIcon = $("noscript-statusIcon") || $("noscript-tbb");
     if (!statusIcon) return null; // avoid mess with early calls
     delete this.statusIcon;
-    return this.statusIcon = statusIcon;
+    return (this.statusIcon = statusIcon);
   },
 
   getIcon: function(node) {

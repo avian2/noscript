@@ -29,7 +29,7 @@ var MainParent = {
 
     this._updateSync();
 
-    this.reloadWhereNeeded(this.RELOAD_NONE); // init snapshots
+    this.reloadWhereNeeded(this.RELOAD_NO); // init snapshots
   },
 
    _initE10s: function() {
