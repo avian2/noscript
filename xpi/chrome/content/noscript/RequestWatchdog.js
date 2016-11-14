@@ -1278,15 +1278,16 @@ var InjectionChecker = {
 
       let whole = s;
       let expr = m[0];
-      
-      try {
-        if (!toStringRx.test(JSON.parse(expr).toString))
-          return s;
+      let json = ns.json;
+      if (json) {
+        try {
+          if (!toStringRx.test(JSON.parse(expr).toString))
+            return s;
 
-        this.log("Reducing big JSON " + expr);
-        return s.replace(expr, '{}');
-      } catch(e) {}
-
+          this.log("Reducing big JSON " + expr);
+          return s.replace(expr, '{}');
+        } catch(e) {}
+      }
 
       // heavier duty, scattered JSON blocks
       while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
