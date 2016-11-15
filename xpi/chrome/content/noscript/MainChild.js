@@ -23,21 +23,7 @@ var MainChild = {
     }
   },
 
-  reload: function(browser, snapshots, mustReload, innerWindowID) {
-    let { previous, current } = snapshots;
-    let { lastTrusted, lastUntrusted, lastGlobal, lastObjects } = previous;
-    this.jsPolicySites.sitesString = current.lastTrusted;
-    this.untrustedSites.sitesString = current.lastUntrusted;
-    this.globalJS = current.global;
-
-    let lastTrustedSites = new PolicySites(lastTrusted);
-    let lastUntrustedSites = new PolicySites(lastUntrusted);
-
-
-    this.initContentPolicy();
-
-    let webNav = browser.webNavigation || browser.docShell.QueryInterface(Ci.nsIWebNavigation);
-
+  blockWhereNeeded(browser) {
     this.traverseDocShells(function(docShell) {
       let site = this.getSite(docShell.currentURI.spec);
       if (!(this.isJSEnabled(site) || this.checkShorthands(site))) {
@@ -49,16 +35,47 @@ var MainChild = {
       }
       return false;
     }, this, browser);
-    
+  },
+
+  _lastSnapshot: {
+    timestamp: 0,
+    lastUntrustedSites: null,
+    lastTrustedSites: null,
+  },
+  reload(browser, snapshots, mustReload, reloadPolicy, innerWindowID = 0) {
+    let isCurrentFrame = innerWindowID && innerWindowID == browser.content.QueryInterface(Ci.nsIInterfaceRequestor)
+                     .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID;
+    if (!isCurrentFrame && innerWindowID && reloadPolicy === this.RELOAD_ALL) {
+      Thread.delay(() => this.reload(browser, snapshots, mustReload, reloadPolicy), 50);
+      return;
+    }
+
+    this.blockWhereNeeded(browser);
+
+    let { previous, current, timestamp } = snapshots;
+    let { lastTrusted, lastUntrusted, lastGlobal, lastObjects } = previous;
+    if (timestamp !== this._lastSnapshot.timestamp) {
+      this.jsPolicySites.sitesString = current.lastTrusted;
+      this.untrustedSites.sitesString = current.lastUntrusted;
+      this.objectWhitelist = JSON.parse(current.lastObjects);
+      this.globalJS = current.global;
+      this._lastSnapshot = {
+        timestamp,
+        lastTrustedSites: new PolicySites(lastTrusted),
+        lastUntrustedSites: new PolicySites(lastUntrusted)
+      };
+      this.initContentPolicy();
+    }
     
     if (!mustReload ||
-        innerWindowID &&
-        innerWindowID != browser.content.QueryInterface(Ci.nsIInterfaceRequestor)
-                     .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID) {
+         !isCurrentFrame && reloadPolicy === this.RELOAD_CURRENT
+        ) {
       return;
     }
     
+    let { lastTrustedSites, lastUntrustedSites } = this._lastSnapshot;
 
+    let webNav = browser.webNavigation || browser.docShell.QueryInterface(Ci.nsIWebNavigation);
     let sites = this.getSites(browser);
     let allSites = sites.all;
     let noFrames = sites.docSites.length === 1;
@@ -107,17 +124,17 @@ var MainChild = {
     if (this.consoleDump & LOG_CONTENT_BLOCK) {
       this.dump("Checking object permission changes...");
       try {
-        this.dump(sites.toSource() + ", " + lastObjects.toSource());
+        this.dump(sites.toSource() + ", " + lastObjects);
       } catch(e) {}
     }
-    if (this.checkObjectPermissionsChange(sites, lastObjects)) {
+    if (this.checkObjectPermissionsChange(sites, JSON.parse(lastObjects))) {
        this.quickReload(webNav);
     }
   
   },
 
 
-  reloadAllowedObjects: function(browser, mime) {
+  reloadAllowedObjectsChild: function(browser, mime) {
     let docShell = browser.docShell.QueryInterface(Ci.nsIWebNavigation);
     if (mime === "WebGL") {
       let curURL = docShell.currentURI.spec;
@@ -267,6 +284,22 @@ var MainChild = {
       }
     }
     return false;
+  },
+
+  knownFrames: {
+    _history: {},
+    add: function(url, parentSite) {
+      var f = this._history[url] || (this._history[url] = []);
+      if (f.indexOf(parentSite) > -1) return;
+      f.push(parentSite);
+    },
+    isKnown: function(url, parentSite) {
+      var f = this._history[url];
+      return f && f.indexOf(parentSite) > -1;
+    },
+    reset: function() {
+      this._history = {};
+    }
   },
 
   frameContentLoaded: function(w) {

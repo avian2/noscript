@@ -41,18 +41,19 @@ UISync.prototype = {
   },
 
   receiveMessage: function(msg) {
-    this.ctx.ns.log(`Received message ${msg.name} ${msg.data.toSource()}`);
     let ctx = this.ctx;
+    let ns = ctx.ns;
+    if (ns.consoleDump) ns.dump(`Received message ${msg.name} ${msg.data.toSource()}`);
     switch(msg.name) {
       case "NoScript:reload":
-        let { innerWindowID, snapshots, mustReload } = msg.data;
-        ctx.ns.reload(msg.target, snapshots, mustReload, innerWindowID);
+        let { innerWindowID, snapshots, reloadPolicy, mustReload } = msg.data;
+        ns.reload(msg.target, snapshots, mustReload, reloadPolicy, innerWindowID);
       break;
       case "NoScript:reloadAllowedObjects":
-        ctx.ns.reloadAllowedObjects(msg.target, msg.data.mime);
+        ns.reloadAllowedObjectsChild(msg.target, msg.data.mime);
       break;
       case "NoScript:resetClearClickTimeout":
-        ctx.ns.clearClickHandler.rapidFire.ts = 0;
+        ns.clearClickHandler.rapidFire.ts = 0;
     }
   },
 

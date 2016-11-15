@@ -364,28 +364,28 @@ var MainParent = {
   },
 
   _snapshot: {
-    lastTrusted: null,
-    lastUntrusted: null,
-    lastGlobal: false,
-    lastObjects: null
+    lastTrusted: "",
+    lastUntrusted: "",
+    lastGlobal: "",
+    lastObjects: "",
   },
 
   updateSnapshot() {
     const trusted = this.jsPolicySites.sitesString;
     const untrusted = this.untrustedSites.sitesString;
     const global = this.jsEnabled;
-
+    const objects = JSON.stringify(this.objectWhitelist);
     let snapshot = this._snapshot;
     this._snapshot = {
       lastGlobal: global,
       lastTrusted: trusted,
       lastUntrusted: untrusted,
-      lastObjects: snapshot.lastObjects || this.objectWhitelist
+      lastObjects: objects,
     };
 
     snapshot.changed = !(!snapshot.lastTrusted ||
         global === snapshot.lastGlobal &&
-        snapshot.lastObjects === this.objectWhitelist &&
+        snapshot.lastObjects === objects &&
         trusted === snapshot.lastTrusted &&
         untrusted === snapshot.lastUntrusted
        );
@@ -402,14 +402,16 @@ var MainParent = {
       return;
     }
 
-    const currentTabOnly = reloadPolicy === this.RELOAD_CURRENT ||
-      !this.getPref("autoReload.allTabs") ||
+    const currentTabOnly = !this.getPref("autoReload.allTabs") ||
         this.jsEnabled != snapshot.lastGlobal && !this.getPref("autoReload.allTabsOnGlobal");
-
+    if (currentTabOnly && reloadPolicy === this.RELOAD_ALL) {
+      reloadPolicy = this.RELOAD_CURRENT;
+    }
     let payload = {
       snapshots: {
         previous: snapshot,
-        current: this._snapshot
+        current: this._snapshot,
+        timestamp: Date.now(),
       },
       reloadPolicy,
       mustReload: !(
@@ -418,10 +420,11 @@ var MainParent = {
         snapshot.lastGlobal !== this._snapshot.lastGlobal && !this.getPref("autoReload.global")
       ),
     };
-    if (currentTabOnly) {
+    try {
       let browser = DOM.mostRecentBrowserWindow.noscriptOverlay.currentBrowser;
       payload.innerWindowID = browser.innerWindowID;
-    }
+    } catch (e) {}
+    
     Services.mm.broadcastAsyncMessage("NoScript:reload", payload);
 
   },

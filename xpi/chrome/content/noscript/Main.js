@@ -185,7 +185,7 @@ const ns = {
     }
 
     try {
-      IPC.autoSync(this, "Main", ["setJSEnabled", "eraseTemp", "setAllowedObject", "resetAllowedObjects"]);
+      IPC.autoSync(this, "Main", ["setJSEnabled", "eraseTemp", "allowObject", "resetAllowedObjects"]);
     } catch (e) {
       log(e);
     }
@@ -2542,7 +2542,7 @@ const ns = {
           o.parentNode.insertBefore(p, o);
           o._display = o.style.display;
           o.style.display = "none";
-          if (p.style.position === "absolute") {Quer
+          if (p.style.position === "absolute") {
             let b = p.getBoundingClientRect();
             let el;
             if (b.width && b.height &&
