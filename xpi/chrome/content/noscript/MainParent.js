@@ -402,12 +402,6 @@ var MainParent = {
       return;
     }
 
-    snapshot.mustReload = !(
-        reloadPolicy === this.RELOAD_NO ||
-        !this.getPref("autoReload") ||
-        snapshot.lastGlobal !== this._snapshot.lastGlobal && !this.getPref("autoReload.global")
-      );
-
     const currentTabOnly = reloadPolicy === this.RELOAD_CURRENT ||
       !this.getPref("autoReload.allTabs") ||
         this.jsEnabled != snapshot.lastGlobal && !this.getPref("autoReload.allTabsOnGlobal");
@@ -417,7 +411,12 @@ var MainParent = {
         previous: snapshot,
         current: this._snapshot
       },
-      reloadPolicy
+      reloadPolicy,
+      mustReload: !(
+        reloadPolicy === this.RELOAD_NO ||
+        !this.getPref("autoReload") ||
+        snapshot.lastGlobal !== this._snapshot.lastGlobal && !this.getPref("autoReload.global")
+      ),
     };
     if (currentTabOnly) {
       let browser = DOM.mostRecentBrowserWindow.noscriptOverlay.currentBrowser;

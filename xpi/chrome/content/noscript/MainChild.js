@@ -23,9 +23,9 @@ var MainChild = {
     }
   },
 
-  reload: function(browser, snapshots, innerWindowID) {
+  reload: function(browser, snapshots, mustReload, innerWindowID) {
     let { previous, current } = snapshots;
-    let { lastTrusted, lastUntrusted, lastGlobal, lastObjects, mustReload } = previous;
+    let { lastTrusted, lastUntrusted, lastGlobal, lastObjects } = previous;
     this.jsPolicySites.sitesString = current.lastTrusted;
     this.untrustedSites.sitesString = current.lastUntrusted;
     this.globalJS = current.global;

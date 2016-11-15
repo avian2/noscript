@@ -4353,7 +4353,7 @@ const ns = {
                 // prevent about:newTab breakage
                 req.URI.spec == "about:blank" && !IOUtil.extractInternalReferrer(req) && Bug.$771655 ||
                 req.URI.schemeIs("data") &&  Bug.$789773 ||
-                req.URI.equals(DOM.browserWinURI)
+                DOM.browserWinURI && req.URI.equals(DOM.browserWinURI)
               )
             ) return;
 

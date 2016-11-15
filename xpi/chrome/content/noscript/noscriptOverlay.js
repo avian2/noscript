@@ -1366,9 +1366,10 @@ return noscriptUtil.service ? {
   },
 
   safeAllow: function(site, enabled, temp, reloadPolicy) {
+    let ns = noscriptOverlay.ns;
     let allowTemp = enabled && temp;
     window.clearInterval(noscriptOverlay._savePrefsTimeout);
-    noscriptOverlay.ns.safeCapsOp(ns => {
+    let op = ns => {
       if (site) {
         ns.setTemp(site, allowTemp);
         ns.setJSEnabled(site, enabled, false, ns.mustCascadeTrust(site, temp));
@@ -1376,7 +1377,12 @@ return noscriptUtil.service ? {
         ns.jsEnabled = enabled;
       }
       noscriptOverlay.syncUI();
-    }, reloadPolicy, allowTemp);
+    };
+    if (reloadPolicy === ns.RELOAD_NO) {
+      op(ns);
+    } else {
+      ns.safeCapsOp(op, reloadPolicy, allowTemp);
+    }
   },
 
   _savePrefsTimeout: 0,
