@@ -4,27 +4,28 @@ IPC.parent = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIMessageListener, Ci.nsISupportsWeakReference]),
   init() {
     let globalMM = Services.mm;
-    for (let m of Object.values(IPC_MSG)) {
-      globalMM.addWeakMessageListener(m, this);
+    for (let m of Object.keys(IPC_MSG)) {
+      globalMM.addWeakMessageListener(IPC_MSG[m], this);
     }
     globalMM.loadFrameScript(this.FRAME_SCRIPT, true);
     let processMM = Services.ppmm;
-    for (let m of Object.values(IPC_P_MSG)) {
-      processMM.addWeakMessageListener(m, this);
+    for (let m of Object.keys(IPC_P_MSG)) {
+      processMM.addWeakMessageListener(IPC_P_MSG[m], this);
     }
     processMM.loadProcessScript(this.PROCESS_SCRIPT, true);
   },
   dispose() {
     let globalMM = Services.mm;
-    for (let m of Object.values(IPC_MSG)) {
-      globalMM.removeWeakMessageListener(m, this);
+    for (let m of Object.keys(IPC_MSG)) {
+      globalMM.removeWeakMessageListener(IPC_MSG[m], this);
     }
     let processMM = Services.ppmm;
-    for (let m of Object.values(IPC_P_MSG)) {
-      processMM.removeWeakMessageListener(m, this);
+    for (let m of Object.keys(IPC_P_MSG)) {
+      processMM.removeWeakMessageListener(IPC_P_MSG[m], this);
     }
     processMM.removeDelayedProcessScript(this.PROCESS_SCRIPT);
   },
+  
 
   receiveMessage(m) {
     ns.onContentInit();
@@ -59,3 +60,4 @@ IPC.parent = {
 };
 
 IPC.parent.init();
+

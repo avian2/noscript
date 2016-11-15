@@ -1,5 +1,6 @@
 Main.OBSERVED_TOPICS.push("http-on-opening-request", "http-on-modify-request");
 LAZY_INCLUDE("IO");
+
 var MainParent = {
   beforeInit: function() {
     this._initE10s();
@@ -426,3 +427,4 @@ var MainParent = {
 
   },
 };
+
