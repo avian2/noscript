@@ -18,7 +18,7 @@ function pasteEventHandler(e) {
   if (t.nodeType !== 1) t = t.parentElement;
     
   let console = t.ownerDocument.defaultView.console;
-s
+
   try {
     let node = t.cloneNode();
 

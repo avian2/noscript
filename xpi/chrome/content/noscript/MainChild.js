@@ -64,7 +64,7 @@ var MainChild = {
     let noFrames = sites.docSites.length === 1;
 
     for (let j = 0, len = allSites.length; j < allSites.length; j++) {
-      let site =allSites[j];
+      let site = allSites[j];
 
       let checkTop;
 
@@ -514,6 +514,315 @@ var MainChild = {
       this.dump(e.message + " while processing JS redirects");
       return 0;
     }
-  }
+  },
+
+  cpConsoleFilter: [2, 5, 6, 7, 15],
+  cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, aPrincipal) {
+    this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) +
+      ", requestOrigin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " +
+        ((aContext instanceof Ci.nsIDOMHTMLElement) ? "<HTML " + aContext.tagName + ">" // try not to cause side effects of toString() during load
+          : aContext)  +
+        ", mime: " + aMimeTypeGuess + ", Internal: " + aInternalCall +
+        ", principal.origin: " + (aPrincipal && aPrincipal.origin));
+  },
+  reject: function(what, args /* [aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, [aPrincipal] ] */) {
+
+    if (this.consoleDump) {
+      if(this.consoleDump & LOG_CONTENT_BLOCK && args.length >= 6) {
+        this.cpDump("BLOCKED " + what, args[0], args[1], args[2], args[3], args[4], args[5], args[6] && args[6]);
+      }
+      if(this.consoleDump & LOG_CONTENT_CALL) {
+        this.dump(new Error().stack);
+      }
+    }
+    switch(args[0]) {
+      case 9:
+        // our take on https://bugzilla.mozilla.org/show_bug.cgi?id=387971
+        args[1].spec = this.nopXBL;
+        return CP_OK;
+      case 5:
+        if (args[3]) args[3].__noscriptBlocked = true;
+    }
+
+    PolicyState.cancel(args);
+
+
+    if (args[1]) {
+      let win = DOM.findWindow(args[3]);
+      let focusedWin = win;
+      if (!focusedWin) {
+        focusedWin = DOM.mostRecentBrowserWindow;
+        focusedWin = focusedWin && focusedWin.content;
+      }
+      if (focusedWin) {
+        this.recordBlocked(focusedWin, this.getSite(args[1].spec) || "", this.getSite(win && win.location.href || args[2] && args[2].spec));
+      }
+    }
+
+    return CP_REJECT;
+  },
+
+  nopXBL: "chrome://global/content/bindings/general.xml#basecontrol",
+
+  forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
+    let originURL, locationURL;
+    if (aContentLocation.schemeIs("chrome") || !aRequestOrigin ||
+         // GreaseMonkey Ajax comes from resource: hidden window
+         // Google Toolbar Ajax from about:blank
+           aRequestOrigin.schemeIs("chrome") || aRequestOrigin.schemeIs("resource") ||
+           aRequestOrigin.schemeIs("about") ||
+           // Web Developer extension "appears" to XHR towards about:blank
+           (locationURL = aContentLocation.spec) == "about:blank"
+          ) return false;
+
+    let locationSite = this.getSite(locationURL);
+    if (!this.isJSEnabled(locationSite) && this.checkShorthands(locationSite))
+        this.autoTemp(locationSite);
+
+    var win = aContext && aContext.defaultView;
+    if(win) this.getExpando(win.top.document, "codeSites", []).push(locationSite);
+
+    return forbidDelegate.call(this, originURL, locationURL, win);
+  },
+
+
+  addFlashVars: function(url, embed) {
+    // add flashvars to have a better URL ID
+    if (embed instanceof Ci.nsIDOMElement) try {
+      var flashvars = embed.getAttribute("flashvars");
+      if (!flashvars) {
+        let params = embed.getElementsByTagName("param");
+        for (let j = 0, p; (p = params[j]); j++)
+          if (p.name && p.name.toLowerCase() === "flashvars")
+            flashvars = p.value;
+      }
+      if (flashvars) {
+        let yahooRx = /\bYUIBridgeCallback=[^&]+/;
+        if (yahooRx.test(flashvars)) {
+          let d = embed.ownerDocument;
+          let m = d && d.URL.match(/(\d+)\.html\b/);
+          flashvars = flashvars.replace(yahooRx, m ? "_YUIvid_=" + m[1] : "");
+        }
+        let videoId = flashvars.match(/video_?id=[^&]+/);
+        url += "#!flashvars#" + encodeURI(videoId && videoId[0] || flashvars);
+      }
+    } catch(e) {
+      if (this.consoleDump) this.dump("Couldn't add flashvars to " + url + ":" + e);
+    }
+    return url;
+  },
+
+  addObjectParams: function(url, embed) {
+    if (embed instanceof Ci.nsIDOMElement) try {
+      var params = embed.getElementsByTagName("param");
+      if (!params.length) return url;
+
+      var pp = [];
+      for(let j = params.length; j-- > 0;) {
+        pp.push(encodeURIComponent(params[j].name) + "=" + encodeURIComponent(params[j].value));
+      }
+      url += "#!objparams#" + pp.join("&");
+    } catch (e) {
+      if (this.consoleDump) this.dump("Couldn't add object params to " + url + ":" + e);
+    }
+    return url;
+  },
+
+  tagWindowlessObject: function(o) {
+    const rx = /^(?:opaque|transparent)$/i;
+    var b;
+    try {
+      if (o instanceof Ci.nsIDOMHTMLEmbedElement) {
+        b = rx.test(o.getAttribute("wmode"));
+      } else if (o instanceof Ci.nsIDOMHTMLObjectElement) {
+        var params = o.getElementsByTagName("param");
+        const wmodeRx = /^wmode$/i;
+        for(var j = params.length; j-- > 0 &&
+            !(b = wmodeRx.test(params[j].name && rx.test(params[j].value)));
+        );
+      }
+      if (b) this.setExpando(o, "windowless", true);
+    } catch (e) {
+      if (this.consoleDump) this.dump("Couldn't tag object for window mode.");
+    }
+  },
+
+  isWindowlessObject: function(o) {
+    return this.getExpando(o, "windowless") || o.settings && o.settings.windowless;
+  },
+
+  resolveSilverlightURL: function(uri, embed) {
+    if(!uri) return "";
+
+
+    if (embed instanceof Ci.nsIDOMElement) try {
+
+      var url = "";
+      var params = embed.getElementsByTagName("param");
+      if (!params.length) return uri.spec;
+
+      var name, value, pp = [];
+      for (var j = params.length; j-- > 0;) { // iteration inverse order is important for "source"!
+        name = params[j].name;
+        value = params[j].value;
+        if(!(name && value)) continue;
+
+        if (!url && name.toLowerCase() == "source") {
+          try {
+             url = uri.resolve(value);
+             continue;
+          } catch(e) {
+            if (this.consoleDump)
+              this.dump("Couldn't resolve Silverlight URL " + uri.spec + " + " + value + ":" + e);
+            url = uri.spec;
+          }
+        }
+        pp.push(encodeURIComponent(name) + "=" + encodeURIComponent(value));
+      }
+      return (url || uri.spec) + "#!objparams#" + pp.join("&");
+    } catch(e1) {
+      if (this.consoleDump)  this.dump("Couldn't resolve Silverlight URL " + uri.spec + ":" + e1);
+    }
+    return uri.spec;
+  },
+
+  tagForReplacement: function(embed, pluginExtras) {
+    try {
+      var doc = embed.ownerDocument;
+      if(!doc) {
+        if (embed instanceof Ci.nsIDOMDocument) {
+          pluginExtras.document = (doc = embed);
+          pluginExtras.url = this.getSite(pluginExtras.url);
+          this._collectPluginExtras(this.findPluginExtras(doc), pluginExtras);
+        }
+      } else {
+        var node = embed;
+        while((node = node.parentNode))
+          if (node.__noScriptBlocked)
+            return;
+
+        var pe = this.getExpando(doc, "pe");
+        if (pe === null) this.setExpando(doc, "pe", pe = []);
+        pe.push({embed: embed, pluginExtras: pluginExtras});
+      }
+      try {
+        this.syncUI();
+      } catch(noUIex) {
+        if(this.consoleDump) this.dump(noUIex);
+      }
+    } catch(ex) {
+      if(this.consoleDump) this.dump(
+        "Error tagging object [" + pluginExtras.mime + " from " + pluginExtras.url +
+        " - top window " + win + ", embed " + embed +
+        "] for replacement: " + ex);
+    }
+  },
+
+  blockLegacyFrame: function(frame, uri, sync) {
+
+    var verbose = this.consoleDump & LOG_CONTENT_BLOCK;
+    if(verbose) {
+      this.dump("Redirecting blocked legacy frame " + uri.spec + ", sync=" + sync);
+    }
+
+
+    var url = this.createPluginDocumentURL(uri.spec, "iframe");
+
+    if(sync) {
+      if (verbose) dump("Legacy frame SYNC, setting to " + url + "\n");
+      frame.contentWindow.location = url;
+    } else {
+      frame.ownerDocument.defaultView.addEventListener("load", function(ev) {
+          if(verbose) dump("Legacy frame ON PARENT LOAD, setting to " + url + "\n");
+          ev.currentTarget.removeEventListener("load", arguments.callee, false);
+          frame.contentWindow.location = url;
+      }, false);
+    }
+    return true;
+
+  },
+
+
+  isPluginDocumentURL: function(url, tag) {
+    try {
+      return url.replace(/(src%3D%22).*?%22/i, '$1%22') == this.createPluginDocumentURL('', tag)
+    } catch(e) {}
+    return false;
+  },
+
+  createPluginDocumentURL: function(url, tag) {
+    tag = tag ? tag.toLowerCase() : "embed";
+    return 'data:text/html;charset=utf-8,' +
+        encodeURIComponent('<html><head></head><body style="padding: 0px; margin: 0px"><' +
+          tag + ' src="' + url + '" width="100%" height="100%"></' +
+          tag + '></body></html>');
+  },
+
+  forbiddenIFrameContext: function(originURL, locationURL) {
+    if (this.isForbiddenByHttpsStatus(originURL)) return false;
+    var domain = this.getDomain(locationURL, true);
+    if (!domain) return false;
+    switch (this.forbidIFramesContext) {
+      case 0: // all IFRAMES
+        return true;
+      case 3: // different 2nd level domain or either untrusted parent or origin
+        if (!(this.untrustedSites.matches(this.getSite(locationURL)) ||
+            this.untrustedSites.matches(this.getSite(originURL))))
+          return this.getBaseDomain(this.getDomain(originURL, true)) !=
+            this.getBaseDomain(domain);
+      case 2: // different domain (unless forbidden by HTTPS status)
+        if (this.getDomain(originURL, true) != domain) return true;
+        // if we trust only HTTPS both sites must have the same scheme
+        if (!this.isForbiddenByHttpsStatus(locationURL.replace(/^https:/, 'http:'))) return false;
+      case 1: // different site
+        return this.getSite(originURL) != this.getSite(locationURL);
+     }
+     return false;
+  },
+
+  forbiddenXBLContext: function(originURL, locationURL, window) {
+    if (locationURL == this.nopXBL) return false; // always allow our nop binding
+
+    var locationSite = this.getSite(locationURL);
+    var originSite = this.getSite(originURL);
+
+    switch (this.forbidXBL) {
+      case 4: // allow only XBL from the same trusted site or chrome (default)
+        if (locationSite != originSite) return true; // chrome is checked by the caller checkXML
+      case 3: // allow only trusted XBL on trusted sites
+        if (!locationSite) return true;
+      case 2: // allow trusted and data: (Fx 3) XBL on trusted sites
+        if (!(this.isJSEnabled(originSite, window) ||
+            locationSite.indexOf("file:") === 0 // we trust local files to allow Linux theming
+             )) return true;
+      case 1: // allow trusted and data: (Fx 3) XBL on any site
+        if (!(this.isJSEnabled(locationSite, window) || /^(?:data|file|resource):/.test(locationURL))) return true;
+      case 0: // allow all XBL
+        return false;
+    }
+    return true;
+  },
+
+  forbiddenXHRContext: function(originURL, locationURL, window) {
+    if (!window) {
+      // live bookmarks
+      return false;
+    }
+
+    var locationSite = this.getSite(locationURL);
+    // var originSite = this.getSite(originURL);
+    switch (this.forbidXHR) {
+      case 3: // forbid all XHR
+        return true;
+      case 2: // allow same-site XHR only
+        if (locationSite && locationSite != originSite) return true;
+      case 1: // allow trusted XHR targets only
+        if (locationSite && locationSite !== "moz-nullprincipal:" && !this.isJSEnabled(locationSite, window))
+          return true;
+      case 0: // allow all XBL
+        return false;
+    }
+    return true;
+  },
 };
 
