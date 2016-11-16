@@ -1288,9 +1288,12 @@ const ns = {
   }
 ,
   set jsEnabled(enabled) {
-    if (this.locked || this.prefs.prefIsLocked("global")) {
-      enabled = false;
-    }
+    try {
+      if (this.locked || this.prefs.prefIsLocked("global")) {
+        enabled = false;
+      }
+    } catch (e) {}
+    this.globalJS = enabled;
     const prefName = "default.javascript.enabled";
     try {
       this.caps.clearUserPref(prefName);
@@ -1298,7 +1301,9 @@ const ns = {
     
     this.setPref("global", enabled);
     if (enabled) {
-      this.mozJSPref.setBoolPref("enabled", true);
+      try {
+        this.mozJSPref.setBoolPref("enabled", true);
+      } catch (e) {}
     }
     return enabled;
   }
@@ -2048,7 +2053,7 @@ const ns = {
       let docShell = DOM.getDocShellForWindow(window);
 
       let snapshots = {
-        globalJS: this.jsEnabled,
+        globalJS: this.globalJS,
         docJS: docShell.allowJavascript,
         siteJS: this.jsPolicySites.sitesString,
         untrusted: this.untrustedSites.sitesString

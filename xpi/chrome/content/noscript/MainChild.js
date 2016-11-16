@@ -58,7 +58,7 @@ var MainChild = {
       this.jsPolicySites.sitesString = current.lastTrusted;
       this.untrustedSites.sitesString = current.lastUntrusted;
       this.objectWhitelist = JSON.parse(current.lastObjects);
-      this.globalJS = current.global;
+      this.jsEnabled = current.lastGlobal;
       this._lastSnapshot = {
         timestamp,
         lastTrustedSites: new PolicySites(lastTrusted),

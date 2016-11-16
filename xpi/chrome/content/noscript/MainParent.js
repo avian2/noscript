@@ -366,8 +366,8 @@ var MainParent = {
   _snapshot: {
     lastTrusted: "",
     lastUntrusted: "",
-    lastGlobal: "",
-    lastObjects: "",
+    lastGlobal: false,
+    lastObjects: "{}",
   },
 
   updateSnapshot() {
