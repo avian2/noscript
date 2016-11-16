@@ -42,6 +42,7 @@ const LOG_LEAKS = 1024;
 const LOG_SNIFF = 2048;
 const LOG_CLEARCLICK = 4096;
 const LOG_ABE = 8192;
+const LOG_IPC = 16384;
 
 const HTML_NS = "http://www.w3.org/1999/xhtml";
 
@@ -427,6 +428,7 @@ const ns = {
           this.injectionChecker.logEnabled = !!(this.consoleDump & LOG_INJECTION_CHECK);
           ABE.consoleDump = !!(this.consoleDump & LOG_ABE);
         }
+        IPC.logger = (this.consoleDump & LOG_IPC) ? (...args) => ns.log(...args) : null;
       break;
       case "global":
         this.globalJS = this.getPref(name, false);
@@ -711,7 +713,7 @@ const ns = {
     this.mozJSPref = prefSrv.getBranch("javascript.").QueryInterface(PBI);
     this.mozJSPref.addObserver("enabled", this, true);
 
-    this.mandatorySites.sitesString = this.getPref("mandatory", "chrome: about: resource:");
+    this.mandatorySites.sitesString = this.getPref("mandatory", "chrome: about: resource: [System Principal]");
 
     this.captureExternalProtocols();
 

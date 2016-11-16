@@ -8,11 +8,11 @@ INCLUDE("Main");
 IPC.child = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIMessageListener, Ci.nsISupportsWeakReference]),
   init: function() {
-    Services.cpmm.addWeakMessageListener(IPC_MSG.CALL, this);
+    Services.cpmm.addWeakMessageListener(IPC_P_MSG.CALL, this);
     Main.init();
   },
   dispose: function() {
-    Services.cpmm.removeWeakMessageListener(IPC_MSG.CALL, this);
+    Services.cpmm.removeWeakMessageListener(IPC_P_MSG.CALL, this);
   },
 
   receiveMessage: function(m) {
@@ -22,7 +22,7 @@ IPC.child = {
   },
 
   remote(objName, method, args) {
-    Services.cpmm.sendAsyncMessage(IPC_MSG.CALL, {objName, method, args});
+    Services.cpmm.sendAsyncMessage(IPC_P_MSG.CALL, {objName, method, args});
   }
 
 };

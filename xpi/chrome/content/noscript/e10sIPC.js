@@ -1,14 +1,21 @@
 var IPC_MSG = {
-  CALL: "NoScript:remoteCall",
   SYNC: "NoScript:syncUI",
   NOTIFY_META: "NoScript:notifyMetaRefresh",
   CLEARCLICK_WARNING: "NoScript:clearClickWarning",
 },
 IPC_P_MSG = {
   LOAD_SURROGATE: "NoScript:loadSurrogate",
+  CALL: "NoScript:remoteCall",
 }
 
 var IPC = {
+  logger: null,
+  log(...args) {
+    if (this.logger) {
+      args[0] = `[${this.parent ? 'P' : 'C'}] ${args[0]}`;
+      this.logger(...args);
+    }
+  },
   registry: null,
   autoSync(obj, objName, methods) {
     if (!this.registry) this.registry = new Map();
@@ -44,9 +51,9 @@ var IPC = {
   },
 
   receiveMessage(m) {
+    if (this.logger) this.log(`Received message ${m.name} - ${JSON.stringify(m.data)}`);
     switch(m.name) {
-      case IPC_MSG.CALL:
-        // ns.log(`Received ${m.name}, ${JSON.stringify(m.data)}`);
+      case IPC_P_MSG.CALL:
         let { objName, method, args } = m.data;
         IPC.call(objName, method, args);
         return true;

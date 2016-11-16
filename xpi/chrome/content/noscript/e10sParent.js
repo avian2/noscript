@@ -33,7 +33,6 @@ IPC.parent = {
     return this.receiveMessage(m);
   },
   _receiveMessageReal(m) {
-    // ns.log(`Received ${m.name}: ${JSON.strigify(m.data)}`);
     if (IPC.receiveMessage(m)) {
       return;
     }
@@ -55,7 +54,7 @@ IPC.parent = {
   },
 
   remote(objName, method, args) {
-    Services.ppmm.broadcastAsyncMessage(IPC_MSG.CALL, {objName, method, args});
+    Services.ppmm.broadcastAsyncMessage(IPC_P_MSG.CALL, {objName, method, args});
   },
 };
 

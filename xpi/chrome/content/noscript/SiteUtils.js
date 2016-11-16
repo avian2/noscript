@@ -24,6 +24,11 @@ var SiteUtils = new function() {
       return "";
     }
 
+    if (url[0] === '[' && /^\[\w.*\]$/.test(url)) {
+      // special principal
+      return url.replace(/\s+/g, '+');
+    }
+
     if (url.indexOf(":") == -1) {
       return this.domainMatch(url);
     }
