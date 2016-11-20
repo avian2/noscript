@@ -90,7 +90,11 @@ LAZY_INCLUDE(
   "Thread",
   "SyntaxChecker",
   "RequestWatchdog",
-  "DoNotTrack"
+  "InjectionChecker",
+  "Entities",
+  "DoNotTrack",
+  "WebGLInterception",
+  "MSEInterception"
 );
 
 this.__defineGetter__("ABE", function() {
@@ -207,9 +211,8 @@ const ns = {
       try {
         OS.removeObserver(this[topic] || this, topic);
       } catch (e) {}
-    };
-  }
-,
+    }
+  },
 
   // Preference driven properties
   autoAllow: false,
@@ -289,7 +292,9 @@ const ns = {
           dump("Resetting " + root + k + "\n");
           try {
             prefs.clearUserPref(k);
-          } catch(e) { dump(e + "\n") }
+          } catch(e) {
+            dump(`${e}\n`);
+          }
         }
       }
     }
@@ -457,7 +462,7 @@ const ns = {
 
       // multiple rx autoanchored
       case "hideOnUnloadRegExp":
-        this.updateStyleSheet("." + this.hideObjClassName + " {display: none !important}", true);
+        this.updateStyleSheet(`.${this.hideObjClassName} {display: none !important}`, true);
       case "requireReloadRegExp":
       case "whitelistRegExp":
         this.updateRxPref(name, "", "^", this.rxParsers.multi);
@@ -520,11 +525,8 @@ const ns = {
     },
     multi: function(s, flags) {
       var anchor = /\^/.test(flags);
-      var lines = s.split(anchor ? /\s+/ : /[\n\r]+/)
-          .filter(function(l) { return /\S/.test(l) });
-      return new RegExp(
-        (anchor ? lines.map(ns.rxParsers.anchor) : lines).join('|')
-        ,
+      var lines = s.split(anchor ? /\s+/ : /[\n\r]+/).filter(l => /\S/.test(l));
+      return new RegExp((anchor ? lines.map(ns.rxParsers.anchor) : lines).join('|'),
         anchor ? flags.replace(/\^/g, '') : flags);
     }
   },
@@ -590,7 +592,7 @@ const ns = {
                 bim + "0,25%,100%,0) !important; width: 16px !important; height: 16px !important; opacity: .8 !important}" +
                 '.__noscriptPlaceholder__1 > .closeButton:hover {' + bim + '0,50%,100%,25%) !important; opacity: 1 !important}' +
                 '.__noscriptPlaceholder__1 > .closeButton:hover:active {' + bim + '0,75%,100%,50%) !important; opacity: 1 !important}' +
-                '.__noscriptPlaceholder__1 > .msg { text-align: center !important; bottom: 0 !important; left: 0 !important; width: 100% !important; position: absolute !important; font-size: 12px !important; font-weight: bold !important; font-family: sans-serif !important; }'
+                '.__noscriptPlaceholder__1 > .msg { text-align: center !important; bottom: 0 !important; left: 0 !important; width: 100% !important; position: absolute !important; font-size: 12px !important; font-weight: bold !important; font-family: sans-serif !important; }';
       break;
       case "clearClick":
         sheet = "body:not([id]) { cursor: auto !important } " +
@@ -606,17 +608,17 @@ const ns = {
       break;
       default:
         return;
-    };
+    }
     this.updateStyleSheet(sheet, value);
   },
 
   get sss() {
     delete this.sss;
     try {
-      return this.sss = Cc["@mozilla.org/content/style-sheet-service;1"]
-                        .getService(Ci.nsIStyleSheetService);
+      return (this.sss = Cc["@mozilla.org/content/style-sheet-service;1"]
+                        .getService(Ci.nsIStyleSheetService));
     } catch(e) {
-      return this.sss = null;
+      return (this.sss = null);
     }
   },
 
@@ -638,13 +640,13 @@ const ns = {
   get getString() {
     delete this.getString;
     const ss = new this.Strings("noscript");
-    return this.getString = function(name, parms) { return ss.getString(name, parms) };
+    return (this.getString = (name, parms) => ss.getString(name, parms));
   },
 
   get Strings() {
     delete this.Strings;
     INCLUDE('Strings');
-    return this.Strings = Strings;
+    return (this.Strings = Strings);
   },
 
   _inited: false,
@@ -656,8 +658,8 @@ const ns = {
   prefs: null,
   mozJSPref: null,
   mozJSEnabled: true,
-  disabled: false
-,
+  disabled: false,
+
   // random resource aliases
   contentBase: null,
   skinBase: null,
@@ -927,7 +929,7 @@ const ns = {
   get profiler() {
     delete this.profiler;
     INCLUDE("Profiler");
-    return this.profiler = Profiler;
+    return (this.profiler = Profiler);
   },
 
   httpStarted: false,
@@ -939,7 +941,7 @@ const ns = {
     this.categoryManager.addCategoryEntry("net-channel-event-sinks", this.contractID, this.contractID, false, true);
 
     delete this.requestWatchdog;
-    return this.requestWatchdog = new RequestWatchdog();
+    return (this.requestWatchdog = new RequestWatchdog());
   },
 
   captureExternalProtocols: function() {
@@ -967,14 +969,13 @@ const ns = {
   mandatorySites: new PolicySites(),
   isMandatory: function(s) {
     return s && this.mandatorySites.matches(s);
-  }
-,
+  },
+  
   tempSites: new PolicySites(),
   gTempSites: new PolicySites(),
   isTemp: function(s) {
     return s in (this.globalJS ? this.gTempSites : this.tempSites).sitesMap;
-  }
-,
+  },
   setTemp: function(s, b) {
     const sites = {
       "temp": this.tempSites,
@@ -1031,7 +1032,7 @@ const ns = {
           "$1"
         );
       } catch(e) {
-        this.manualSites.remove(ss)
+        this.manualSites.remove(ss);
       }
     }
     return b;
@@ -1044,8 +1045,8 @@ const ns = {
       return true;
     }
     return false;
-  }
-,
+  },
+
   mustCascadeTrust: function(sites, temp) {
     var untrustedGranularity = this.getPref("untrustedGranularity", 3);
     /*  noscript.untrustedGranularity  controls how manually whitelisting
@@ -1058,10 +1059,10 @@ const ns = {
         All these values can be put in OR (the 3 default is actually 2 | 1)
     */
     var single = !(typeof(site) == "object" && ("push" in site)); // not an array
-    return !((untrustedGranularity & 1) && !temp || (untrustedGranularity & 2) && temp)
-      || (untrustedGranularity & 4) && single && this.isUntrusted(site);
-  }
-,
+    return !((untrustedGranularity & 1) && !temp || (untrustedGranularity & 2) && temp) ||
+      (untrustedGranularity & 4) && single && this.isUntrusted(site);
+  },
+
   _unsafeSchemeRx: /^(?:ht|f)tp:\/\//,
   isForbiddenByHttpsStatus: function(site) {
     switch(this.allowHttpsOnly) {
@@ -1092,12 +1093,11 @@ const ns = {
   },
   get proxyService() {
     delete this.proxyService;
-    return this.proxyService = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService);
+    return (this.proxyService = Cc["@mozilla.org/network/protocol-proxy-service;1"].getService(Ci.nsIProtocolProxyService));
   },
 
   isProxied: function(site) {
-    this.isProxied = "proxyConfigType" in this.proxyService
-      ? this._isProxied : this._isProxiedSite;
+    this.isProxied = "proxyConfigType" in this.proxyService ? this._isProxied : this._isProxiedSite;
     return this.isProxied();
   },
   _isProxied: function() {
@@ -1179,12 +1179,14 @@ const ns = {
   getPrincipalOrigin: function(node) {
     let p = node.nodePrincipal;
     let origin = p.originNoSuffix || p.origin;
-    if (this._buggyIPV6rx.test(origin)) try {
-      let uri = p.URI;
-      let hostPort = uri.hostPort;
-      if (hostPort && hostPort[0] === '[') origin = uri.scheme + "://" + hostPort;
-    } catch (e) {
-      ns.log(e);
+    if (this._buggyIPV6rx.test(origin)) {
+      try {
+        let uri = p.URI;
+        let hostPort = uri.hostPort;
+        if (hostPort && hostPort[0] === '[') origin = uri.scheme + "://" + hostPort;
+      } catch (e) {
+        ns.log(e);
+      }
     }
     return origin;
   },
@@ -1228,11 +1230,13 @@ const ns = {
 
   get forbidImpliesUntrust() {
     return this.globalJS || this.autoAllow || this.getPref("forbidImpliesUntrust", false);
-  }
-,
+  },
+
   portRx: /:\d+$/,
   _ipShorthandRx: /^(https?:\/\/)((\d+\.\d+)\.\d+)\.\d+(?::\d|$)/,
   checkShorthands: function(site, policy) {
+    if (!site) return false;
+
     if (this.whitelistRegExp && this.whitelistRegExp.test(site)) {
       return true;
     }
@@ -1287,8 +1291,8 @@ const ns = {
   globalJS: false,
   get jsEnabled() {
     return this.mozJSEnabled && this.globalJS;
-  }
-,
+  },
+
   set jsEnabled(enabled) {
     try {
       if (this.locked || this.prefs.prefIsLocked("global")) {
@@ -1308,8 +1312,8 @@ const ns = {
       } catch (e) {}
     }
     return enabled;
-  }
-,
+  },
+
   getSite: function(url) {
     return SiteUtils.getSite(url);
   },
@@ -1333,18 +1337,22 @@ const ns = {
 
   getDomain: function(site, force) {
     try {
-      const url = (site instanceof Ci.nsIURL) ? site : IOUtil.newURI(site);
+      let url = site;
+      if (typeof site === "string") {
+        if (site.endsWith(":")) return "";
+        url = IOUtil.newURI(site);
+      }
       const host = url.host;
       return force || (this.ignorePorts || url.port === -1) && host[host.length - 1] != "." &&
             (host.lastIndexOf(".") > 0 || host == "localhost") ? host : '';
     } catch(e) {
-      return '';
+      return "";
     }
   },
 
   get _tldService() {
     delete this._tldService;
-    return this._tldService = IOUtil.TLDService;
+    return (this._tldService = IOUtil.TLDService);
   },
 
   getBaseDomain: function(domain) {
@@ -1365,12 +1373,12 @@ const ns = {
       return this._tldService.getPublicSuffixFromHost(domain);
     } catch(e) {}
     return "";
-  }
-,
+  },
+
   delayExec: function(callback, time) {
     Thread.delay(callback, time, this, Array.slice(arguments, 2));
-  }
-,
+  },
+
   RELOAD_NO: -1,
   RELOAD_CURRENT: 1,
   RELOAD_ALL: 0,
@@ -1384,8 +1392,8 @@ const ns = {
         this.dump("FAILED TO SAVE PERMISSIONS! " + e + "," + e.stack);
       }
      }, 0);
-  }
-,
+  },
+
 
   getPermanentSites: function(whitelist, templist) {
     whitelist = (whitelist || this.jsPolicySites).clone();
@@ -1411,9 +1419,8 @@ const ns = {
     this.setJSEnabled(this.mandatorySites.sitesList, true); // add mandatory
     this.resetAllowedObjects();
     if (this.hasClearClickHandler) this.clearClickHandler.resetWhitelist();
-  }
+  },
 
-,
   _observingPolicies: false,
   _editingPolicies: false,
   setupJSCaps: function() {
@@ -1431,8 +1438,7 @@ const ns = {
       try {
 
         prefArray = this.splitList(prefString = originalPrefString =
-          (this.caps.prefHasUserValue("policynames")
-            ? this.caps.getCharPref("policynames")
+          (this.caps.prefHasUserValue("policynames") ? this.caps.getCharPref("policynames")
             : this.getPref("policynames") // saved value from dirty exit
           )
         );
@@ -1493,8 +1499,8 @@ const ns = {
         } catch(ex) {}
       }
     } catch(ex) {}
-  }
-,
+  },
+
   getPref: function(name, def) {
     const PREFS = Ci.nsIPrefBranch;
     const prefs = this.prefs;
@@ -1509,8 +1515,8 @@ const ns = {
       }
     } catch(e) {}
     return def || "";
-  }
-,
+  },
+
   setPref: function(name, value) {
     const prefs = this.prefs;
     try {
@@ -1549,16 +1555,16 @@ const ns = {
     let url = SiteUtils.crop(extras.url).replace(/\S{80}/g, "$&\n");
     let details = extras.mime + " " + (extras.tag || (extras.mime === "WebGL" ? "<CANVAS>" : "<OBJECT>")) + " / " + extras.originSite;
     return this.getString("allowTemp", [url + "\n(" + details + ")\n"]);
-  }
-,
+  },
+
   get dom() {
     delete this.dom;
-    return this.dom = DOM;
+    return (this.dom = DOM);
   },
   get wan() {
     delete this.wan;
     ABE; // kickstart
-    return this.wan = WAN;
+    return (this.wan = WAN);
   },
 
   os: OS,
@@ -1591,8 +1597,7 @@ const ns = {
     if (this.httpStarted || force) {
       cpMixin = this.disabled ||
         (this.globalJS &&
-          !(this.alwaysBlockUntrustedContent || this.contentBlocker || HTTPS.httpsForced))
-      ? NOPContentPolicy
+          !(this.alwaysBlockUntrustedContent || this.contentBlocker || HTTPS.httpsForced)) ? NOPContentPolicy
       : MainContentPolicy;
       MIXIN(this, cpMixin);
     } else cpMixin = null;
@@ -1615,8 +1620,10 @@ const ns = {
 
   guessMime: function(uriOrExt) {
     try {
-      var ext = (uriOrExt instanceof Ci.nsIURL) ? uriOrExt.fileExtension : uriOrExt;
-      return ext && this.mimeService.getTypeFromExtension(ext) || "";
+      let ext = (uriOrExt instanceof Ci.nsIURL) ? uriOrExt.fileExtension
+        : (uriOrExt instanceof Ci.nsIURI) ? ((ext = uriOrExt.path).includes(".") ? ext.split(".").pop() : "")
+        : uriOrExt;
+      return typeof ext === "string" && this.mimeService.getTypeFromExtension(ext) || "";
     } catch(e) {
       return "";
     }
@@ -1709,12 +1716,17 @@ const ns = {
     return true;
   },
 
-  syncUI: function(browser) {
-    this.os.notifyObservers(browser, "noscript:sync-ui", null);
+  syncUI: function(aContext) {
+    let doc = aContext && (aContext instanceof Ci.nsIDOMDocument ? aContext : aContext.ownerDocument || aContext.document);
+    if (doc) {
+      let ev = doc.createEvent("Events");
+      ev.initEvent("NoScript:syncUI", true, false);
+      aContext.dispatchEvent(ev);
+    }
   },
 
   objectWhitelist: {},
-  ALL_TYPES: ["*"],
+  ALL_TYPES: "*",
   objectWhitelistLen: 0,
   _objectKeyRx: /^((?:\w+:\/\/)?[^\.\/\d]+)\d+(\.[^\.\/]+\.)/,
   objectKey: function(url, originSite) {
@@ -1738,7 +1750,7 @@ const ns = {
   },
   isAllowedObject: function(url, mime, site, originSite) {
     let types = this.objectWhitelist[this.objectKey(url, originSite)] || this.objectWhitelist[this.objectKey(url)];
-    if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1))
+    if (types && (types === this.ALL_TYPES || types.indexOf(mime) > -1))
       return true;
 
 
@@ -1746,7 +1758,7 @@ const ns = {
 
     for (;site;) {
       types = this.objectWhitelist[this.objectKey(site, originSite)] || this.objectWhitelist[this.objectKey(site)];
-      if (types && (types == this.ALL_TYPES || types.indexOf(mime) > -1))
+      if (types && (types === this.ALL_TYPES || types.indexOf(mime) > -1))
         return true;
 
       if (!this._moreURLPartsRx.test(site)) break;
@@ -1769,15 +1781,15 @@ const ns = {
     let key = this.objectKey(url, originSite);
     if (key in this.objectWhitelist) {
       let types = this.objectWhitelist[key];
+      if (types === this.ALL_TYPES) return;
       if(mime === "*") {
-        if(types === this.ALL_TYPES) return;
         types = this.ALL_TYPES;
       } else {
         if (types.indexOf(mime) > -1) return;
         types.push(mime);
       }
     } else {
-      this.objectWhitelist[key] = mime == "*" ? this.ALL_TYPES : [mime];
+      this.objectWhitelist[key] = mime === "*" ? this.ALL_TYPES : [mime];
     }
     this.objectWhitelistLen++;
   },
@@ -2258,6 +2270,8 @@ const ns = {
     return s.replace(/[#\?].*/g, '').replace(/(.*?\w\/).+?(\/[^\/]+)$/, '$1...$2');
   },
   cssMimeIcon: function(mime, size) {
+    if (!mime) return;
+    [mime] = mime.split(/[;\s]/);
     return mime == "application/x-shockwave-flash"
     ? // work around for Windows not associating a sane icon to Flash
       'url("' + this.skinBase + "flash" + size + '.png")'
@@ -2577,7 +2591,7 @@ const ns = {
         this.dump(e);
       }
     }
-    this.syncUI();
+    this.syncUI(document);
   },
 
   bind: function(f) {
@@ -2754,9 +2768,10 @@ const ns = {
                /#!flashvars#.*\b_YUIvid_=/.test(url)) {
       this.quickReload(doc.defaultView);
       return;
-    } else if (mime === "WebGL" || this.getExpando(ctx, "silverlight")) {
+    } else if (mime === "WebGL" || mime && mime.endsWith(" (MSE)") || this.getExpando(ctx, "silverlight")) {
       this.allowObject(doc.documentURI, mime);
-      if (mime === "WebGL") delete this._webGLSites[this.getSite(doc.documentURI)];
+      if (mime === "WebGL") delete WebGLInterception.sites[this.getSite(doc.documentURI)];
+      if (mime && mime.endsWith(" (MSE)")) delete MSEInterception.sites[this.getSite(doc.documentURI)];
       this.quickReload(doc.defaultView);
       return;
     }
@@ -2866,7 +2881,7 @@ const ns = {
               if (obj.offsetWidth < 2 || obj.offsetHeight < 2) reload();
             }, 500); // warning, asap() or timeout=0 won't always work!
         }
-        ns.syncUI();
+        ns.syncUI(doc);
       } else {
         reload();
       }
@@ -3179,7 +3194,7 @@ const ns = {
           try {
             var site = this.getSite(uri.spec);
             if (!win) win = ctx && ((ctx instanceof Ci.nsIDOMWindow) ? ctx : ctx.ownerDocument.defaultView);
-            browser = win && DOM.findBrowserForNode(win);
+            browser = win && (DOM.findBrowserForNode(win) || DOM.getFrameMM(win));
             if (browser) {
               this.getRedirCache(browser, win.top.document.documentURI)
                   .push({ site: site, type: type });
@@ -3383,151 +3398,142 @@ const ns = {
 
   onContentSniffed: function(req) {
     try {
+      let contentType;
       let nosniff = this.nosniff && this.hasNoSniffHeader(req);
       try {
-        if (!req.contentType || req.contentType === "application/x-unknown-content-type") {
-          if (nosniff) nosniff = !req.getResponseHeader("Content-type");
-        } else nosniff = false;
-
-        if (this.consoleDump & LOG_SNIFF)
-          this.dump("OCS: " + req.name + ", " + req.contentType);
+        contentType = req.contentType;
+        if (!contentType || contentType === "application/x-unknown-content-type") {
+          contentType = req.getResponseHeader("Content-type");
+          if (nosniff) {
+            nosniff = !contentType;
+          }
+        } else {
+          nosniff = false;
+        }
+        if (this.consoleDump & LOG_SNIFF) {
+          this.dump("OCS: " + req.name + ", " + contentType);
+        }
       } catch(e) {
         this.dump("OCS: " + req.name + ", CONTENT TYPE UNAVAILABLE YET");
         if (!nosniff) return;  // we'll check later in http-on-examine-merged-response
       }
       if (nosniff) {
         try {
-          req.contentType = "text/plain";
+          contentType = req.contentType = "text/plain";
           ns.log("[NoScript] Force text/plain for missing content-type on " + req.name);
         } catch(e) {
           ns.dump(e);
         }
       }
-
+      if (IOUtil.isMediaDocumentLoad(req, contentType)) {
+        IOUtil.suspendChannel(req);
+      }
       this.processXSSInfo(req);
     } catch(e) {
       if (this.consoleDump) this.dump(e);
     }
   },
-
-  onBeforeLoad: function(req, domWindow, location) {
-
-    if (!domWindow) return;
-
-    const uri = location;
+ 
+  onBeforeLoad: function(req, win, docShell) {
+    const uri = req.URI;
     const originURI = ABE.getOriginalOrigin(req);
 
-    var docShell = null;
-
-
-    var contentType;
+    let contentType;
     try {
       contentType = req.contentType;
     } catch(e) {
       contentType = "";
     }
 
-    var contentDisposition = "";
-
-    var isHTTP = req instanceof Ci.nsIHttpChannel;
-    if (isHTTP) {
-      try {
-        contentDisposition = req.getResponseHeader("Content-disposition");
-      } catch(e) {}
-    }
-
-    const topWin = domWindow == domWindow.top;
-
-    var browser = null;
-    var overlay = null;
-    if (topWin) {
-      if (domWindow instanceof Ci.nsIDOMChromeWindow) return;
-    }
+    const topWin = win == win.top;
 
     if (IOUtil.extractFromChannel(req, "noscript.checkWindowName")) {
-      this.requestWatchdog.checkWindowName(domWindow, req.URI.spec);
+      InjectionChecker.checkWindowName(win, req.URI.spec);
     }
+    
+    if (!(contentType && IOUtil.isMediaDocumentLoad(req, contentType))) {
+      return;
+    }
+    
+    try {
+      if (this.shouldLoad(7, uri, originURI || uri, win.frameElement || win, contentType,
+                          win.frameElement ? CP_FRAMECHECK : CP_SHOULDPROCESS) !== CP_OK) {
 
-    if (this.onWindowSwitch && docShell &&
-        (topWin || !this.executeEarlyScripts))
-      this.onWindowSwitch(uri.spec, domWindow, docShell);
+        req.loadFlags |= req.INHIBIT_CACHING;
+
+        if (this.consoleDump & LOG_CONTENT_INTERCEPT)
+          this.dump("Media document content type detected");
+
+        if(!topWin) {
+          // check if this is an iframe
+
+          if (win.frameElement && !(win.frameElement instanceof Ci.nsIDOMHTMLFrameElement) &&
+              this.shouldLoad(5, uri, originURI || IOS.newURI(win.parent.location.href, null, null),
+                  win.frameElement, contentType, CP_SHOULDPROCESS) == CP_OK)
+              return;
+
+          if (this.consoleDump & LOG_CONTENT_BLOCK)
+            this.dump("Deferring framed media document");
+
+          var url = uri.spec;
+
+          let browser = browser || DOM.findBrowserForNode(win) || DOM.getFrameMM(win);
+          this.getRedirCache(browser, win.top.document.documentURI).push({site: this.getSite(url), type: 7});
+          // defer separate embed processing for frames
 
 
 
+          docShell = docShell || DOM.getDocShellForWindow(win);
+          docShell.loadURI("data:" + req.contentType + ",",
+                               Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
+                               null, null, null);
 
-    if (!/^attachment\b/i.test(contentDisposition) &&
-        this.shouldLoad(7, uri, originURI || uri, domWindow.frameElement || domWindow, contentType,
-                        domWindow.frameElement ? CP_FRAMECHECK : CP_SHOULDPROCESS) != CP_OK) {
+          IOUtil.abort(req);
+          docShell.stop(0);
+          Thread.asap(function() {
 
-      req.loadFlags |= req.INHIBIT_CACHING;
+            if (docShell) {
+              var doc = docShell.document;
 
-      if (this.consoleDump & LOG_CONTENT_INTERCEPT)
-        this.dump("Media document content type detected");
+              docShell.loadURI(ns.createPluginDocumentURL(url,
+                doc.body && doc.body.firstChild && doc.body.firstChild.tagName),
+                               Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
+                               null, null, null);
+            }
+          });
 
-      if(!topWin) {
-        // check if this is an iframe
-
-        if (domWindow.frameElement && !(domWindow.frameElement instanceof Ci.nsIDOMHTMLFrameElement)
-            && this.shouldLoad(5, uri, originURI || IOS.newURI(domWindow.parent.location.href, null, null),
-                domWindow.frameElement, contentType, CP_SHOULDPROCESS) == CP_OK)
-            return;
+          return;
+        }
 
         if (this.consoleDump & LOG_CONTENT_BLOCK)
-          this.dump("Deferring framed media document");
-
-        var url = uri.spec;
-
-        browser = browser || DOM.findBrowserForNode(domWindow);
-        this.getRedirCache(browser, domWindow.top.document.documentURI).push({site: this.getSite(url), type: 7});
-        // defer separate embed processing for frames
-
-
-
-        docShell = docShell || DOM.getDocShellForWindow(domWindow);
-        docShell.loadURI("data:" + req.contentType + ",",
-                             Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
-                             null, null, null);
-        Thread.asap(function() {
-          IOUtil.abort(req);
-          if (docShell) {
-            var doc = docShell.document;
-            docShell.stop(0);
-            docShell.loadURI(ns.createPluginDocumentURL(url,
-              doc.body && doc.body.firstChild && doc.body.firstChild.tagName),
-                             Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
-                             null, null, null);
-          }
-        });
-
-        return;
-      }
-
-      if (this.consoleDump & LOG_CONTENT_BLOCK)
-        this.dump("Blocking top-level plugin document");
-
-      for (let tag  of ["embed", "video", "audio"]) {
-        let embeds = domWindow.document.getElementsByTagName(tag);
-        if (embeds.length > 0 && (tag !== "embed" || this._abortPluginDocLoads)) {
-          let eType = "application/x-noscript-blocked";
-          let eURL = "data:" + eType + ",";
-          for (let j = embeds.length; j-- > 0;) {
-            let e = embeds.item(j);
-            if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) !== CP_OK) {
-              e.src = eURL;
-              e.type = eType;
+          this.dump("Blocking top-level plugin document");
+        
+        IOUtil.abort(req);
+        for (let tag  of ["embed", "video", "audio"]) {
+          let embeds = win.document.getElementsByTagName(tag);
+          if (embeds.length > 0 && (tag !== "embed" || this._abortPluginDocLoads)) {
+            let eType = "application/x-noscript-blocked";
+            let eURL = "data:" + eType + ",";
+            for (let j = embeds.length; j-- > 0;) {
+              let e = embeds.item(j);
+              if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) !== CP_OK) {
+                e.src = eURL;
+                e.type = eType;
+              }
             }
           }
         }
+
+        return;
       }
-
-      return;
-
+    } finally {
+      IOUtil.resumeParentChannel(req);
     }
   },
 
   get _abortPluginDocLoads() {
     delete this._abortPluginDocLoads;
-    return this._abortPluginDocLoads = this.geckoVersionCheck("18.0.1") < 0;
+    return (this._abortPluginDocLoads = this.geckoVersionCheck("18.0.1") < 0);
   },
   
   processXSSInfo(req) {
@@ -3662,7 +3668,11 @@ const ns = {
       url = "wyciwyg:"; // don't execute on document.open() pages with a misleading URL
       jsBlocked = false;
     }
-
+    
+    if (channel) {
+      this.setExpando(win, this.DOC_JS_STATUS_KEY, IOUtil.extractFromChannel(channel, this.DOC_JS_STATUS_KEY, false));
+      this.onBeforeLoad(channel, win, url);
+    }
     if (this._pageModMaskRx.test(url)) return;
 
     var scripts;
@@ -3688,15 +3698,9 @@ const ns = {
         (scripts || (scripts = [])).push(dntPatch);
       }
 
-      if (this.forbidWebGL &&
-          !(this.isAllowedObject(site, "WebGL", site, site) || this.isAllowedMime("WebGL", site))
-        ) {
-        (scripts || (scripts = [])).push(this._webGLInterceptionDef);
-        doc.addEventListener("NoScript:WebGL", this._webGLHandler, false, true);
-        let sites = this._webGLSites;
-        if (site in sites) {
-          this._webGLRecord(doc, site);
-        }
+      if (this.forbidWebGL) {
+        let script = WebGLInterception.hook(doc, site);
+        if (script)  (scripts || (scripts = [])).push(script);
       }
 
       if (this.contentBlocker) {
@@ -3708,6 +3712,11 @@ const ns = {
         if (this.audioApiInterception && this.forbidMedia &&
             !this.isAllowedObject(site, "audio/ogg", site, site))
           (scripts || (scripts = [])).push(this._audioApiInterceptionDef);
+
+        if (this.forbidMedia && this.contentBlocker) {
+          let script = MSEInterception.hook(doc, site);
+          if (script)  (scripts || (scripts = [])).push(script);
+        }
       }
 
       if (this.forbidFlash && this.flashPatch)
@@ -3922,47 +3931,6 @@ const ns = {
     ).toString();
   },
 
-  _webGLSites: {},
-  _webGLHandler: function(ev) {
-    ns._webGLRecord(ev.target, ns.getSite(ev.target.documentURI || ev.target.ownerDocument.documentURI), true);
-  },
-  _webGLRecord: function(ctx, site, fromDOM) {
-    this.tagForReplacement(ctx, {
-      url: site,
-      site: site,
-      originSite: site,
-      mime: "WebGL"
-    });
-    let doc = ctx.ownerDocument || ctx;
-    if (fromDOM) {
-      let ds = DOM.getDocShellForWindow(doc.defaultView);
-      if (ds.isLoadingDocument) { // prevent fallback redirection from hiding us
-        let sites = this._webGLSites;
-        sites[site] = doc.documentURI;
-        doc.defaultView.addEventListener("load", (ev) => delete sites[site], false);
-      }
-    }
-    this.recordBlocked(doc.defaultView, site, site);
-  },
-  get _webGLInterceptionDef() {
-    delete this._webGLInterceptionDef;
-    return this._webGLInterceptionDef = function() {
-      var proto = HTMLCanvasElement.prototype;
-      var getContext = proto.getContext;
-      proto.getContext = function(type) {
-
-        if (type && type.toString().indexOf("webgl") !== -1) {
-          var ev = this.ownerDocument.createEvent("Events");
-          ev.initEvent("NoScript:WebGL", true, false);
-          (this.parentNode ? this : this.ownerDocument)
-            .dispatchEvent(ev);
-          return null;
-        }
-        return getContext.call(this, "2d");
-      }
-    }.toSource() + "()";
-  },
-
   liveConnectInterception: true,
   get _liveConnectInterceptionDef() {
     delete this._liveConnectInterceptionDef;
@@ -4089,22 +4057,8 @@ const ns = {
     }
   },
 
-  onLocationChange: function(wp, req, location) {
-    if (req && (req instanceof Ci.nsIChannel)) try {
-      let w = wp.DOMWindow;
-      if (this.consoleDump & LOG_JS)
-        this.dump("Location Change - req.URI: " + req.URI.spec + ", window.location: " +
-                (w && w.location.href) + ", location: " + location.spec);
-
-      this.setExpando(w, this.DOC_JS_STATUS_KEY, IOUtil.extractFromChannel(req, this.DOC_JS_STATUS_KEY, false));
-      this.onBeforeLoad(req, w, location);
-    } catch(e) {
-      if (this.consoleDump) this.dump(e);
-    }
-  },
-  onLocationChange2: function(wp, req, location, flags) {
-    this.onLocationChange(wp, req, location);
-  },
+  onLocationChange(wp, req, location) {},
+  onLocationChange2(wp, req, location, flags) {},
 
   onStatusChange: function(wp, req, status, msg) {
     if (status == 0x804b0003 && (req instanceof Ci.nsIChannel) && !ABE.isDeferred(req)) { // DNS resolving, check if we need to clear the cache

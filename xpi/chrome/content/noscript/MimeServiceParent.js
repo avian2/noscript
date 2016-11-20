@@ -8,7 +8,7 @@ var MimeService = {
   receiveMessage(m) {
     if (m.name === "NoScript:getMime") {
       try {
-       return this.getTypeFromExtension(m.data);
+       return this.getTypeFromExtension(m.data.ext);
       } catch (e) {
         ns.log(e);
       }

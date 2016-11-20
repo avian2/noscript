@@ -878,14 +878,7 @@ var MainContentPolicy = {
 
       if (mustCountObject) this.countObject(aContext, locationSite);
 
-      if (aContext) {
-        let doc = aContext.ownerDocument || aContext.document;
-        if (doc) {
-          let ev = doc.createEvent("Events");
-          ev.initEvent("NoScript:contentLoad", true, false);
-          aContext.dispatchEvent(ev);
-        }
-      }
+      ns.syncUI(aContext);
 
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
 

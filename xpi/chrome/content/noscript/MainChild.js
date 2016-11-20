@@ -136,18 +136,9 @@ var MainChild = {
 
   reloadAllowedObjectsChild: function(browser, mime) {
     let docShell = browser.docShell.QueryInterface(Ci.nsIWebNavigation);
-    if (mime === "WebGL") {
-      let curURL = docShell.currentURI.spec;
-      let site = this.getSite(curURL);
-      if (site in this._webGLSites) {
-        let url = this._webGLSites[site];
-        delete this._webGLSites[site];
-        if (url !== curURL) {
-          docShell.loadURI(url, Ci.nsIWebNavigation.LOAD_FLAGS_NONE, null, null, null);
-          return;
-        }
-      }
-    }
+
+    if (mime === "WebGL" && WebGLInterception.reloadAllowed(docShell))
+      return;
 
     if (this.getPref("autoReload.onMultiContent", false)) {
       this.quickReload(docShell);
@@ -733,20 +724,22 @@ var MainChild = {
         while((node = node.parentNode))
           if (node.__noScriptBlocked)
             return;
-
+        if (!pluginExtras.document) {
+          pluginExtras.document = doc;
+        }
         var pe = this.getExpando(doc, "pe");
         if (pe === null) this.setExpando(doc, "pe", pe = []);
         pe.push({embed: embed, pluginExtras: pluginExtras});
       }
       try {
-        this.syncUI();
+        this.syncUI(doc);
       } catch(noUIex) {
         if(this.consoleDump) this.dump(noUIex);
       }
     } catch(ex) {
       if(this.consoleDump) this.dump(
         "Error tagging object [" + pluginExtras.mime + " from " + pluginExtras.url +
-        " - top window " + win + ", embed " + embed +
+        " - embed " + embed +
         "] for replacement: " + ex);
     }
   },

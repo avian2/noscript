@@ -16,7 +16,7 @@ UISync.prototype = {
   wire: function() {
     let ctx = this.ctx;
     ctx.addEventListener("DOMWindowCreated", () => this.sync());
-    ctx.addEventListener("NoScript:contentLoad", ev => {
+    ctx.addEventListener("NoScript:syncUI", ev => {
        ev.stopPropagation();
        this.sync();
     }, true);

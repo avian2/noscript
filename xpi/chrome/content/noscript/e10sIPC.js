@@ -6,6 +6,7 @@ var IPC_MSG = {
 IPC_P_MSG = {
   LOAD_SURROGATE: "NoScript:loadSurrogate",
   CALL: "NoScript:remoteCall",
+  RESUME: "NoScript:resume",
 }
 
 var IPC = {

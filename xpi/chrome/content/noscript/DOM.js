@@ -6,25 +6,6 @@ var DOM = {
     return this.mostRecentBrowserWindow.confirm(s);
   },
 
-  findBrowser: function(chrome, win) {
-
-    var overlay = chrome.noscriptOverlay;
-    if (!overlay) return null;
-
-    var browser = overlay.currentBrowser;
-    if (browser.contentWindow == win) return browser;
-
-    var browsers = overlay.browsers;
-    if (!browsers) return null;
-
-    for (var j = browsers.length; j-- > 0;) {
-      browser = browsers[j];
-      if (browser.contentWindow == win) return browser;
-    }
-
-    return null;
-  },
-
   findWindow: function(ctx) {
     if (!(ctx instanceof Ci.nsIDOMWindow)) {
       if (ctx instanceof Ci.nsIDOMDocument) {
@@ -37,6 +18,9 @@ var DOM = {
   },
 
   findBrowserForNode: function(ctx) {
+    try {
+    } catch (e) {
+    }
     if (!ctx) return null;
     var bi = null;
     try {

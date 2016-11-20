@@ -58,9 +58,62 @@ var IOUtil = {
 
   },
 
-  abort: function(channel, noNetwork) {
+  abort: function(channel) {
     if (ns.consoleDump) ns.dump("Aborting " + channel.name + " @ " + new Error().stack);
     channel.cancel(Cr.NS_ERROR_ABORT);
+    this.resumeParentChannel(channel.loadInfo.innerWindowID, true);
+  },
+
+  _suspendedChannelsMap: new Map(),
+  _suspendedChannelId: 1,
+  _CHANNEL_ID_KEY: "NoScript:channelID",
+  resumeParentChannel(channelOrID, abort = false) {
+    let id = channelOrID instanceof Ci.nsIChannel ? IOUtil.extractFromChannel(channelOrID, this._CHANNEL_ID_KEY, true) : channelOrID;
+    if (IPC.parent) {
+      let map = this._suspendedChannelsMap;
+      if (map.has(id)) {
+        let channel = map.get(id).get();
+        map.delete(id);
+        if (channel) {
+          try {
+            if (abort) {
+              this.abort(channel);
+            }
+            channel.resume();
+          } catch(e) {
+            ns.dump(e);
+          }
+        }
+      }
+    } else {
+      Services.cpmm.sendSyncMessage(IPC_P_MSG.RESUME, {id, abort });
+    }
+  },
+  suspendChannel(channel) {
+    let map = this._suspendedChannelsMap;
+    let id = IOUtil.extractFromChannel(channelOrID, this._CHANNEL_ID_KEY, true);
+    if (!id) {
+      id = (this._suspendedChannelId++).toString();
+      IOUtil.attachToChannel(channel, this._CHANNEL_ID_KEY, id);
+    }
+    map.set(id, Cu.getWeakReference(channel));
+    channel.suspend();
+  },
+
+  isMediaDocumentLoad(channel, contentType) {
+    try {
+      let cpType = channel.loadInfo.externalContentPolicyType;
+      if ((cpType === 6 || cpType === 7) &&
+          /^(?:video|audio|application)\//i.test(contentType === undefined ? req.contentType : contentType)) {
+        try {
+          return !/^attachment\b/i.test(req.getResponseHeader("Content-disposition"));
+        } catch(e) {
+        }
+        return true;
+      }
+    } catch (e) {
+    }
+    return false;
   },
 
   findWindow: function(channel) {
@@ -209,7 +262,7 @@ var IOUtil = {
 
   get TLDService() {
     delete this.TLDService;
-    return this.TLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Ci.nsIEffectiveTLDService);
+    return (this.TLDService = Cc["@mozilla.org/network/effective-tld-service;1"].getService(Ci.nsIEffectiveTLDService));
   }
 
 };

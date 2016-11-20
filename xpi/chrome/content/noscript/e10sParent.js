@@ -50,6 +50,8 @@ IPC.parent = {
         return ClearClickHandler.prototype.showWarningParent(m.target.ownerDocument.defaultView, m.data).locked;
       case IPC_P_MSG.LOAD_SURROGATE:
         return ScriptSurrogate.loadReplacementFile(ScriptSurrogate.getReplacement(m.data));
+      case IPC_P_MSG.RESUME:
+        return IOUtil.resumeParentChannel(m.data.id, m.data.abort);
     }
   },
 
