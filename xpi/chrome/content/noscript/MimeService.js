@@ -9,9 +9,10 @@ var MimeService = {
       if (cache.has(ext)) {
         return cache.get(ext);
       }
-      let res = Services.cpmm.sendSyncMessage("NoScript:getMime", {ext});
+      let res = Services.cpmm.sendSyncMessage("NoScript:getMime", {ext})[0];
       cache.set(ext, res);
       return res;
     }
   }
 };
+
