@@ -10,7 +10,7 @@ var MimeService = {
       try {
        return this.getTypeFromExtension(m.data.ext);
       } catch (e) {
-        ns.log(e);
+        ns.dump(`Could not guess mime type for ${m.data.ext}`);
       }
     }
     return '';

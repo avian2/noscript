@@ -463,7 +463,11 @@ var nsopt = {
 
   importList: function(file) {
     var all = ns.readFile(file).replace(/\s+/g, "\n");
-    var untrustedPos = all.indexOf("[UNTRUSTED]");
+    if (/[,\{]/.test(all)) {
+      ns.log("Wrong format");
+      return null;
+    }
+    let untrustedPos = all.indexOf("[UNTRUSTED]");
     if(untrustedPos < 0) {
       this.trustedSites.sitesString += "\n" + all;
     } else {

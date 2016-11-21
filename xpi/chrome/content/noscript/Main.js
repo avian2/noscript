@@ -320,7 +320,10 @@ const ns = {
     switch (name) {
       case "sites":
         if (this.jsPolicySites.settingPref) return;
-        if (this.locked) this.defaultCaps.lockPref(this.POLICY_NAME + ".sites");
+        if (this.locked) try {
+          this.defaultCaps.lockPref(this.POLICY_NAME + ".sites");
+        } catch (e) {
+        }
         if (!this.jsPolicySites.fromPref(this.policyPB)) {
           this.resetDefaultSitePrefs();
         }
@@ -330,12 +333,14 @@ const ns = {
         this.untrustedSites.fromPref(branch, name);
       break;
       case "default.javascript.enabled":
+        if (IPC.parent) {
           let dc = this.defaultCaps;
           if (dc.getCharPref(name) != "noAccess") {
             dc.unlockPref(name);
             dc.setCharPref(name, "noAccess");
           }
-         dc.lockPref(name);
+          dc.lockPref(name);
+        }
          break;
       case "enabled":
         try {
@@ -1344,7 +1349,7 @@ const ns = {
       }
       const host = url.host;
       return force || (this.ignorePorts || url.port === -1) && host[host.length - 1] != "." &&
-            (host.lastIndexOf(".") > 0 || host == "localhost") ? host : '';
+            (host.lastIndexOf(".") > 0 || host === "localhost") ? host : '';
     } catch(e) {
       return "";
     }

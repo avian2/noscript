@@ -203,12 +203,13 @@ PolicySites.prototype = {
     return this._sitesMap = sm;
   }
 ,
-  fromPref: function(pref, name) {
+  fromPref: function(pref, name = "sites") {
     if (!this.settingPref) {
       try {
         this.sitesString = pref.getCharPref(name || "sites")
           .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
       } catch(e) {
+        ns.dump(e);
         this.sitesString = "";
         return false;
       }

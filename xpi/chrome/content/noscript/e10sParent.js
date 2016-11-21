@@ -52,6 +52,16 @@ IPC.parent = {
         return ScriptSurrogate.loadReplacementFile(ScriptSurrogate.getReplacement(m.data));
       case IPC_P_MSG.RESUME:
         return IOUtil.resumeParentChannel(m.data.id, m.data.abort);
+      case IPC_P_MSG.GET_PREF:
+        let {method, name} = m.data;
+        if (method in Services.prefs && method.startsWith("get")) {
+          try {
+            return Services.prefs[method](name);
+          } catch (e) {
+            Cu.reportError(e);
+          }
+        }
+        return null;
     }
   },
 

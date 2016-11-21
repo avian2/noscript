@@ -7,6 +7,7 @@ IPC_P_MSG = {
   LOAD_SURROGATE: "NoScript:loadSurrogate",
   CALL: "NoScript:remoteCall",
   RESUME: "NoScript:resume",
+  GET_PREF: "NoScript:getPref",
 }
 
 var IPC = {
