@@ -1088,7 +1088,7 @@ const ns = {
     if (s && !this._isHttpsAndNotUntrusted(s)) return false;
 
     for (;; win = win.parent) {
-      let site = this.getSite(this.getPrincipalOrigin(win.document));
+      let site = this.getSite(this.getPrincipalOrigin(this.getPrincipal(win.document)));
       if (!(allow = s && site === s || this._isHttpsAndNotUntrusted(site)) || win === win.parent)
         break;
       s = site;
@@ -1139,7 +1139,7 @@ const ns = {
       enabled = enabled ||
                this.globalHttpsWhitelist && s.indexOf("https:") === 0 && (window === top || this.isGlobalHttps(window));
       if (enabled ? this.restrictSubdocScripting : this.cascadePermissions) {
-        let topOrigin = this.getPrincipalOrigin(top.document);
+        let topOrigin = this.getPrincipalOrigin(this.getPrincipal(top.document));
         if (this.isBrowserOrigin(topOrigin)) {
           enabled = true;
         } else {
@@ -1181,8 +1181,12 @@ const ns = {
   },
 
   _buggyIPV6rx: /^[^/:]+:\/\/[^[](?:[0-9a-f]*:){2}/,
-  getPrincipalOrigin: function(node) {
-    let p = node.nodePrincipal;
+  getPrincipal(nodeOrWindow) {
+    return nodeOrWindow &&
+      (nodeOrWindow.nodePrincipal || nodeOrWindow.document && nodeOrWindow.document.nodePrincipal) ||
+      null;
+  },
+  getPrincipalOrigin(p) {
     let origin = p.originNoSuffix || p.origin;
     if (this._buggyIPV6rx.test(origin)) {
       try {
@@ -3755,7 +3759,7 @@ const ns = {
 
   mustBlockJS: function(window, site, blocker) {
     let document = window.document;
-    let origin = this.getPrincipalOrigin(document);
+    let origin = this.getPrincipalOrigin(this.getPrincipal(document));
     if (this.isBrowserOrigin(origin)) return false;
     let blockIt;
     if (this.consoleDump) this.dump("Window created, origin: " + origin + ", site: " + site + ", URL: " + document.URL + ", location: " + window.location.href);

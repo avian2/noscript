@@ -298,8 +298,7 @@ var MainContentPolicy = {
       scheme = unwrappedLocation.scheme;
 
       if (scheme === "file") {
-         principal = principal || aContext && (aContext.nodePrincipal ||
-                                      aContext.document && aContext.document.nodePrincipal);
+         let principal = ns.getPrincipal(aContext);
         if (!ns.checkLocalLink(unwrappedLocation, principal, true)) {
           return this.reject("Local File Link", arguments);
         }

@@ -205,6 +205,7 @@ pref("noscript.docShellJSBlocking", 1);
 
 pref("noscript.hideOnUnloadRegExp", "video/.*");
 
+pref("noscript.untrusted", "");
 pref("noscript.untrustedGranularity", 3);
 pref("noscript.requireReloadRegExp", "application/x-vnd\\.moveplayer\\b.*");
 

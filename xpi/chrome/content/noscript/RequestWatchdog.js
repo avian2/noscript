@@ -682,6 +682,9 @@ RequestWatchdog.prototype = {
         // work. For dangerous edge cases we should have moz-null-principal: now, anyway.
         origin.substring(0, 5) == "file:";
 
+    let originDomain = ns.getDomain(originSite),
+        targetDomain = ns.getDomain(url);
+
     if (trustedOrigin) {
 
       if (origin &&
@@ -702,8 +705,8 @@ RequestWatchdog.prototype = {
       // here we exceptionally consider same site also https->http with same domain
 
       if (injectionCheck < 3 && originSite && abeReq.originURI.schemeIs("https")) {
-        let originDomain = ns.getDomain(originSite), targetDomain = ns.getDomain(url);
-        if (targetDomain == originDomain) {
+        
+        if (targetDomain === originDomain) {
           this.dump(channel, "Same domain with HTTPS origin");
           return;
         }
@@ -711,7 +714,8 @@ RequestWatchdog.prototype = {
 
     }
 
-    let stripPost = !trustedOrigin && ns.filterXPost;
+    let stripPost = trustedTarget && originDomain && !trustedOrigin && ns.filterXPost &&
+      ns.getBaseDomain(originDomain) === ns.getBaseDomain(targetDomain);
 
     // check for injections
 
