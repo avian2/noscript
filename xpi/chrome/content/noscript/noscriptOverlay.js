@@ -1376,7 +1376,7 @@ return noscriptUtil.service ? {
       } else {
         ns.jsEnabled = enabled;
       }
-      noscriptOverlay.syncUI();
+      noscriptOverlay._syncUINow();
     };
     if (reloadPolicy === ns.RELOAD_NO) {
       op(ns);
@@ -1430,6 +1430,7 @@ return noscriptUtil.service ? {
   _syncUIReal: function(browser) {
     if (!browser) browser = this.currentBrowser;
     // ... and cap to 400ms
+    if (this._syncTimeout) return;
     this._syncTimeout = window.setTimeout(() => {
       this._syncTimeout = 0;
       if (this.currentBrowser === browser) {

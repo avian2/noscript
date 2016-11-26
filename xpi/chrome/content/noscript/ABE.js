@@ -944,7 +944,7 @@ ABERequest.prototype = Lang.memoize({
         let loadInfo = channel.loadInfo;
         if (loadInfo) {
           let principal = loadInfo.triggeringPrincipal || loadInfo.loadingPrincipal;
-          ou = principal.URI || principal.origin;
+          ou = principal && (principal.URI || principal.origin);
         } else {
           ns.dump(`loadInfo is null for channel ${channel.name}`);
         }

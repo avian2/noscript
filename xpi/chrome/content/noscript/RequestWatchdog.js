@@ -358,9 +358,15 @@ RequestWatchdog.prototype = {
         ns.dump(e);
       }
     }
+    
 
-    let origin = abeReq.origin,
-      originSite = null,
+    let origin = abeReq.origin;
+    if (origin === "[System Principal]" &&
+        !(channel.loadFlags & (channel.VALIDATE_ALWAYS | channel.LOAD_BYPASS_SERVICE_WORKER))) {
+      return; // System principal but this is not a reload or a navbar load
+    }
+
+    let originSite = null,
       browser = this.findBrowser(channel),
       window = null,
       untrustedReload = false;

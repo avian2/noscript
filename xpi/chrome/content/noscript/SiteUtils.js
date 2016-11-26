@@ -206,7 +206,7 @@ PolicySites.prototype = {
   fromPref: function(pref, name = "sites") {
     if (!this.settingPref) {
       try {
-        this.sitesString = pref.getCharPref(name || "sites")
+        this.sitesString = pref.getCharPref(name)
           .replace(/[^\u0000-\u007f]+/g, function($0) { return decodeURIComponent(escape($0)) });
       } catch(e) {
         ns.dump(e);
