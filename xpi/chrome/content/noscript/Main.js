@@ -1627,6 +1627,10 @@ const ns = {
   },
 
 
+  reqData(req, remove = false) {
+    return IOUtil.reqData(req, "net.noscript.channelData", remove);
+  },
+
   guessMime: function(uriOrExt) {
     try {
       let ext = (uriOrExt instanceof Ci.nsIURL) ? uriOrExt.fileExtension
@@ -2242,10 +2246,10 @@ const ns = {
   },
 
   isCheckedChannel: function(c) {
-    return IOUtil.extractFromChannel(c, "noscript.checkedChannel", true);
+    return ns.reqData(c).checked;
   },
   setCheckedChannel: function(c, v) {
-    IOUtil.attachToChannel(c, "noscript.checkedChannel", v ? DUMMY_OBJ : null);
+    ns.reqData(c).checked = v;
   },
 
   createCheckedXHR: function(method, url, async, window) {
@@ -3169,8 +3173,8 @@ const ns = {
 
     const rw = this.requestWatchdog;
 
-    IOUtil.attachToChannel(newChan, "noscript.redirectFrom", oldChan.URI);
-
+    ns.reqData(newChan).redirectFrom = oldChan.URI;
+    this.reqData(newChan).redirectFrom = oldChan.URI;
     ABE.updateRedirectChain(oldChan, newChan);
 
     const ph = PolicyState.detach(oldChan);
@@ -3434,8 +3438,9 @@ const ns = {
           ns.dump(e);
         }
       }
-      if (IOUtil.isMediaDocumentLoad(req, contentType)) {
+      if (IOUtil.isMediaDocOrFrame(req, contentType)) {
         IOUtil.suspendChannel(req);
+        Thread.delay(() => IOUtil.resumeParentChannel(req), 100);
       }
       this.processXSSInfo(req);
     } catch(e) {
@@ -3443,32 +3448,37 @@ const ns = {
     }
   },
  
-  onBeforeLoad: function(req, win, docShell) {
-    const uri = req.URI;
-    const originURI = ABE.getOriginalOrigin(req);
+  onBeforeLoad: function(win) {
+    let docShell = DOM.getDocShellForWindow(win);
+    if (!docShell) return;
+    let channel = docShell.currentDocumentChannel;
+    if (!channel) return;
+
+    const uri = channel.URI;
+    const originURI = ABE.getOriginalOrigin(channel);
 
     let contentType;
     try {
-      contentType = req.contentType;
+      contentType = channel.contentType;
     } catch(e) {
       contentType = "";
     }
 
     const topWin = win == win.top;
 
-    if (IOUtil.extractFromChannel(req, "noscript.checkWindowName")) {
-      InjectionChecker.checkWindowName(win, req.URI.spec);
+    if (ns.reqData(channel).checkWindowName) {
+      InjectionChecker.checkWindowName(win, channel.URI.spec);
     }
     
-    if (!(contentType && IOUtil.isMediaDocumentLoad(req, contentType))) {
+    if (!IOUtil.isMediaDocOrFrame(channel, contentType)) {
       return;
     }
     
     try {
-      if (this.shouldLoad(7, uri, originURI || uri, win.frameElement || win, contentType,
+      if (this.shouldLoad(7, uri, topWin ? uri : originURI || uri, win.frameElement || win, contentType,
                           win.frameElement ? CP_FRAMECHECK : CP_SHOULDPROCESS) !== CP_OK) {
 
-        req.loadFlags |= req.INHIBIT_CACHING;
+        channel.loadFlags |= channel.INHIBIT_CACHING;
 
         if (this.consoleDump & LOG_CONTENT_INTERCEPT)
           this.dump("Media document content type detected");
@@ -3478,66 +3488,63 @@ const ns = {
 
           if (win.frameElement && !(win.frameElement instanceof Ci.nsIDOMHTMLFrameElement) &&
               this.shouldLoad(5, uri, originURI || IOS.newURI(win.parent.location.href, null, null),
-                  win.frameElement, contentType, CP_SHOULDPROCESS) == CP_OK)
-              return;
+                  win.frameElement, contentType, CP_SHOULDPROCESS) === CP_OK) {
+            IOUtil.resumeParentChannel(channel);
+            return;
+          }
 
           if (this.consoleDump & LOG_CONTENT_BLOCK)
             this.dump("Deferring framed media document");
 
           var url = uri.spec;
 
-          let browser = browser || DOM.findBrowserForNode(win) || DOM.getFrameMM(win);
+          let browser = DOM.findBrowserForNode(win) || DOM.getFrameMM(win);
           this.getRedirCache(browser, win.top.document.documentURI).push({site: this.getSite(url), type: 7});
-          // defer separate embed processing for frames
+        
 
-
-
-          docShell = docShell || DOM.getDocShellForWindow(win);
-          docShell.loadURI("data:" + req.contentType + ",",
-                               Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
-                               null, null, null);
-
-          IOUtil.abort(req);
-          docShell.stop(0);
           Thread.asap(function() {
-
+            IOUtil.abort(channel);
             if (docShell) {
               var doc = docShell.document;
-
-              docShell.loadURI(ns.createPluginDocumentURL(url,
-                doc.body && doc.body.firstChild && doc.body.firstChild.tagName),
-                               Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
-                               null, null, null);
+              let tag = doc.body && doc.body.firstChild && doc.body.firstChild.tagName;
+              if (tag) {
+                docShell.loadURI(ns.createPluginDocumentURL(url,
+                  tag ),
+                                 Ci.nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
+                                 null, null, null);
+              }
             }
           });
 
           return;
         }
 
-        if (this.consoleDump & LOG_CONTENT_BLOCK)
-          this.dump("Blocking top-level plugin document");
-        
-        IOUtil.abort(req);
-        for (let tag  of ["embed", "video", "audio"]) {
-          let embeds = win.document.getElementsByTagName(tag);
-          if (embeds.length > 0 && (tag !== "embed" || this._abortPluginDocLoads)) {
-            let eType = "application/x-noscript-blocked";
-            let eURL = "data:" + eType + ",";
-            for (let j = embeds.length; j-- > 0;) {
-              let e = embeds.item(j);
-              if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) !== CP_OK) {
-                e.src = eURL;
-                e.type = eType;
+        this.dump("Blocking top-level plugin document");
+        Thread.asap(() => {
+          IOUtil.abort(channel);
+          for (let tag  of ["embed", "video", "audio"]) {
+            let embeds = win.document.getElementsByTagName(tag);
+            if (embeds.length > 0 && (tag !== "embed" || this._abortPluginDocLoads)) {
+              let eType = "application/x-noscript-blocked";
+              let eURL = "data:" + eType + ",";
+              for (let j = embeds.length; j-- > 0;) {
+                let e = embeds.item(j);
+                if (this.shouldLoad(5, uri, null, e, contentType, CP_SHOULDPROCESS) !== CP_OK) {
+                  e.src = eURL;
+                  e.type = eType;
+                }
               }
             }
           }
-        }
+        }, true);
 
         return;
       }
-    } finally {
-      IOUtil.resumeParentChannel(req);
+    } catch (e) {
+      Cu.reportError(e);
+      IOUtil.abort(channel);
     }
+    IOUtil.resumeParentChannel(channel);
   },
 
   get _abortPluginDocLoads() {
@@ -3551,7 +3558,7 @@ const ns = {
       let overlay = this.findOverlay(browser);
       if (overlay) {
         overlay.setMetaRefreshInfo(null, browser);
-        let xssInfo = IOUtil.extractFromChannel(req, "noscript.XSS");
+        let xssInfo = ns.reqData(req).XSS;
         if (xssInfo) xssInfo.browser = browser;
         this.requestWatchdog.unsafeReload(browser, false);
         if (xssInfo) {
@@ -3604,17 +3611,13 @@ const ns = {
       } else return;
 
       const prevStatus = docShell.allowJavascript;
-      const BLOCKED_KEY = this.DOC_JS_STATUS_KEY;
       // Trying to be kind with other docShell-level blocking apps (such as Tab Mix Plus), we
       // check if we're the ones who actually blocked this docShell, or if this channel is out of our control
 
       if (dump) this.dump("About to retrieve previously blocked info...");
-      let prevBlocked = requireNetwork && (req.loadFlags & req.LOAD_REPLACE)
-                            && IOUtil.extractFromChannel(req, BLOCKED_KEY, true) ||
-                      this.getExpando(win, BLOCKED_KEY);
-
-
-      prevBlocked = prevBlocked ? prevBlocked.value : "?";
+      let prevBlocked = requireNetwork && (req.loadFlags & req.LOAD_REPLACE) &&
+                      this.reqData(req).docJSBlocked ||
+                      this.getExpando(win, "docJSBlocked");
 
       if (dump)
         this.dump("DocShell JS Switch: " + url + " - " + jsEnabled + "/" + prevStatus + "/" + prevBlocked);
@@ -3635,16 +3638,16 @@ const ns = {
             this.dump("Error purging body attributes: " + e2);
         }
       }
-      let dsjsBlocked = { value: // !jsEnabled && (prevBlocked || prevStatus)
+      let dsjsBlocked = // !jsEnabled && (prevBlocked || prevStatus)
                         // we're the cause of the current disablement if
                         // we're disabling and (was already blocked by us or was not blocked)
                         !(jsEnabled || !(prevBlocked || prevStatus)) // De Morgan for the above, i.e.
                         // we're the cause of the current disablement unless
                         // we're enabling or (was already blocked by someone else = was not (blocked by us or enabled))
                         // we prefer the latter because it coerces to boolean
-                };
-      dsjsBlocked.wrappedJSObject = dsjsBlocked;
-      IOUtil.attachToChannel(req, BLOCKED_KEY, dsjsBlocked);
+                        ;
+
+      this.reqData(req).docJSBlocked = dsjsBlocked;
 
 
       ABE.sandbox(docShell, false);
@@ -3659,7 +3662,7 @@ const ns = {
   onWindowSwitch: function(url, win, docShell) {
     let channel = docShell.currentDocumentChannel;
 
-    if (IOUtil.extractFromChannel(channel, "noscript.xssChecked", true) &&
+    if (ns.reqData(channel).xssChecked &&
         this.filterBadCharsets(docShell)) return;
 
     const doc = docShell.document;
@@ -3679,9 +3682,9 @@ const ns = {
     }
     
     if (channel) {
-      this.setExpando(win, this.DOC_JS_STATUS_KEY, IOUtil.extractFromChannel(channel, this.DOC_JS_STATUS_KEY, false));
-      this.onBeforeLoad(channel, win, url);
+      this.setExpando(win, "docJSBlocked", ns.reqData(channel).docJBlocked);
     }
+
     if (this._pageModMaskRx.test(url)) return;
 
     var scripts;
@@ -3737,7 +3740,7 @@ const ns = {
       if( this.jsHackRegExp && this.jsHack && this.jsHackRegExp.test(url))
           (scripts || (scripts = [])).push(this.jsHack);
 
-      if (IOUtil.extractFromChannel(channel, "noscript.protectName") && this.getPref("protectWindowNameXAssignment")) {
+      if (ns.reqData(channel).protectName && this.getPref("protectWindowNameXAssignment")) {
         (scripts || (scripts = [])).push(this._protectNamePatch);
       }
     }
@@ -3823,6 +3826,7 @@ const ns = {
   },
 
   _onWindowCreatedReal: function(window, site) {
+    this.onBeforeLoad(window);
     try {
       let mustBlock = this.mustBlockJS(window, site, WinScript);
       if (this.consoleDump) this.dump(`${mustBlock ? "Forbidding" : "Allowing"} ${site}`);

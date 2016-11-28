@@ -2,21 +2,33 @@ var IOUtil = {
   asyncNetworking: true,
   proxiedDNS: 0,
 
-  attachToChannel: function(channel, key, requestInfo) {
-    if (channel instanceof Ci.nsIWritablePropertyBag2)
-      channel.setPropertyAsInterface(key, requestInfo);
+  attachToChannel(channel, key, data) {
+    if (channel instanceof Ci.nsIWritablePropertyBag2) {
+      channel.setPropertyAsInterface(key, data);
+    }
+    return data;
   },
-  extractFromChannel: function(channel, key, preserve) {
+  extractFromChannel(channel, key, remove = false) {
     if (channel instanceof Ci.nsIPropertyBag2) {
       let p = channel.get(key);
       if (p) {
-        if (!preserve && (channel instanceof Ci.nsIWritablePropertyBag)) channel.deleteProperty(key);
+        if (remove && (channel instanceof Ci.nsIWritablePropertyBag)) channel.deleteProperty(key);
         if (p.wrappedJSObject) return p.wrappedJSObject;
         p instanceof Ci.nsIURL || p instanceof Ci.nsIURI;
         return p;
       }
     }
     return null;
+  },
+
+  reqData(req, key, remove = false) {
+    let data = IOUtil.extractFromChannel(req, key, remove);
+    if (data) return data.wrappedJSObject;
+    if (remove) return null;
+    
+    data = {};
+    data.wrappedJSObject = data;
+    return IOUtil.attachToChannel(req, key, data);
   },
 
   extractInternalReferrer: function(channel) {
@@ -61,50 +73,56 @@ var IOUtil = {
   abort: function(channel) {
     if (ns.consoleDump) ns.dump("Aborting " + channel.name + " @ " + new Error().stack);
     channel.cancel(Cr.NS_ERROR_ABORT);
-    this.resumeParentChannel(channel.loadInfo.innerWindowID, true);
+    this.resumeParentChannel(channel, true);
   },
 
   _suspendedChannelsMap: new Map(),
   _suspendedChannelId: 1,
-  _CHANNEL_ID_KEY: "NoScript:channelID",
   resumeParentChannel(channelOrID, abort = false) {
-    let id = channelOrID instanceof Ci.nsIChannel ? IOUtil.extractFromChannel(channelOrID, this._CHANNEL_ID_KEY, true) : channelOrID;
-    if (IPC.parent) {
-      let map = this._suspendedChannelsMap;
-      if (map.has(id)) {
-        let channel = map.get(id).get();
-        map.delete(id);
-        if (channel) {
-          try {
-            if (abort) {
-              this.abort(channel);
+    let id;
+    if (channelOrID instanceof Ci.nsIChannel) {
+      id = ns.reqData(channelOrID).requestID;
+    } else {
+      id = channelOrID;
+    }
+    if (id) {
+      if (IPC.parent) {
+        let map = this._suspendedChannelsMap;
+        if (map.has(id)) {
+          let channel = map.get(id).get();
+          map.delete(id);
+          if (channel) {
+            try {
+              if (abort) {
+                this.abort(channel);
+              }
+              channel.resume();
+            } catch(e) {
+              ns.dump(e);
             }
-            channel.resume();
-          } catch(e) {
-            ns.dump(e);
           }
         }
+      } else {
+        Services.cpmm.sendSyncMessage(IPC_P_MSG.RESUME, {id, abort });
       }
-    } else {
-      Services.cpmm.sendSyncMessage(IPC_P_MSG.RESUME, {id, abort });
     }
   },
   suspendChannel(channel) {
     let map = this._suspendedChannelsMap;
-    let id = IOUtil.extractFromChannel(channelOrID, this._CHANNEL_ID_KEY, true);
+    let reqData = ns.reqData(channel);
+    let id = reqData.requestID;
     if (!id) {
-      id = (this._suspendedChannelId++).toString();
-      IOUtil.attachToChannel(channel, this._CHANNEL_ID_KEY, id);
+      id = reqData.requestID = this._suspendedChannelId++;
     }
     map.set(id, Cu.getWeakReference(channel));
     channel.suspend();
   },
 
-  isMediaDocumentLoad(channel, contentType) {
+  isMediaDocOrFrame(channel, contentType) {
     try {
       let cpType = channel.loadInfo.externalContentPolicyType;
-      if ((cpType === 6 || cpType === 7) &&
-          /^(?:video|audio|application)\//i.test(contentType === undefined ? req.contentType : contentType)) {
+      if (cpType === 7 || (cpType === 6 &&
+          /^(?:video|audio|application)\//i.test(contentType === undefined ? channel.contentType : contentType))) {
         try {
           return !/^attachment\b/i.test(req.getResponseHeader("Content-disposition"));
         } catch(e) {

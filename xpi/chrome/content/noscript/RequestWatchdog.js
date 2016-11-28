@@ -329,7 +329,8 @@ RequestWatchdog.prototype = {
 
     const channel = abeReq.channel;
 
-    IOUtil.extractFromChannel(channel, "noscript.xssChecked"); // remove redirected info
+    let reqData = ns.reqData(channel);
+    delete reqData.xssChecked; // remove redirected info
 
     const url = abeReq.destinationURI;
     const originalSpec = abeReq.destination;
@@ -392,8 +393,7 @@ RequestWatchdog.prototype = {
     } else {
       if (channel.loadFlags & channel.LOAD_INITIAL_DOCUMENT_URI &&
           channel.originalURI.spec == url.spec &&
-          !IOUtil.extractFromChannel(channel, "noscript.XSS", true)
-          ) {
+          !reqData.XSS) {
         // clean up after user action
         window = window || abeReq.window;
         this.resetUntrustedReloadInfo(browser, channel);
@@ -675,7 +675,7 @@ RequestWatchdog.prototype = {
 
 
     if (!/^(?:https:\/\/.*\.nwolb\.com){2}$/.test(originSite + targetSite)) {
-      IOUtil.attachToChannel(channel, "noscript.checkWindowName", DUMMY_OBJ);
+      reqData.checkWindowName = true;
     } else {
       this.dump(channel, "nwolb.com window.name check exception.");
     }
@@ -789,10 +789,7 @@ RequestWatchdog.prototype = {
       injectionAttempt = ns.filterXGet && injectionChecker.checkURL(
         skipRx ? originalSpec.replace(skipRx, '') : originalSpec);
 
-      if ((protectName = (protectName || injectionChecker.nameAssignment)))
-        IOUtil.attachToChannel(channel, "noscript.protectName", DUMMY_OBJ); // remove redirected info
-
-
+      reqData.protectName = (protectName = (protectName || injectionChecker.nameAssignment));
 
       if (ns.consoleDump) {
         if (injectionAttempt) this.dump(channel, "Detected injection attempt at level " + injectionCheck);
@@ -801,7 +798,7 @@ RequestWatchdog.prototype = {
       }
     }
 
-    IOUtil.attachToChannel(channel, "noscript.xssChecked", DUMMY_OBJ); // remove redirected info
+    reqData.xssChecked = true;
 
     if (trustedOrigin && !(injectionAttempt || stripPost))
       return;
@@ -1021,7 +1018,7 @@ RequestWatchdog.prototype = {
       }
 
       requestInfo.wrappedJSObject = requestInfo;
-      IOUtil.attachToChannel(requestInfo.channel, "noscript.XSS", requestInfo);
+      ns.reqData(requestInfo.channel).XSS = requestInfo;
     } catch(e) {
       dump(e + "\n");
     }

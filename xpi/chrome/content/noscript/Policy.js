@@ -62,14 +62,19 @@ var PolicyState = {
           }
         }
       }
-      IOUtil.attachToChannel(channel, "noscript.policyHints", hints);
+      ns.reqData(channel).policyHints = hints;
     } else {
       // if (!this.extract(channel)) ns.log("Missing hints for " + channel.name + ", " + channel.status + ", " + channel.loadFlags);
     }
   }
 ,
-  extract: (channel, detach) => IOUtil.extractFromChannel(channel, "noscript.policyHints", !detach),
-  detach: function(channel) {
+  extract(channel, detach) {
+    let data = ns.reqData(channel);
+    let ph = data.policyHints;
+    if (detach) delete data.policyHints;
+    return ph;
+  },
+  detach(channel) {
     let uri = channel.URI;
     if (!(uri.schemeIs("http") || uri.schemeIs("https"))) return null;
     let hints = this.extract(channel, true);
@@ -240,7 +245,7 @@ var MainContentPolicy = {
         if (archive) {
           let prePaths;
           let base = aContentLocation;
-          let jars = archive.split(/[\s,]+/)
+          let jars = archive.split(/[\s,]+/);
           for (let j = jars.length; j-- > 0;) {
             try {
               let jar = jars[j];
@@ -284,15 +289,16 @@ var MainContentPolicy = {
     if (!aInternalCall) {
       PolicyState.addCheck(aContentLocation);
     }
-
-    try {
-
-      var originURL, locationURL, originSite, locationSite, scheme,
+    
+    var originURL, locationURL, originSite, locationSite, scheme,
           forbid, isScript, isJava, isFlash, isSilverlight,
           isLegacyFrame, blockThisFrame, contentDocument,
           unwrappedLocation, mimeKey,
+          isHTTP,
           mustCountObject = false;
 
+    
+    try {
 
       unwrappedLocation = IOUtil.unwrapURL(aContentLocation);
       scheme = unwrappedLocation.scheme;
@@ -303,7 +309,7 @@ var MainContentPolicy = {
         }
       }
 
-      var isHTTP = scheme === "http" || scheme === "https";
+      isHTTP = scheme === "http" || scheme === "https";
 
       if (isHTTP) {
 
@@ -871,8 +877,9 @@ var MainContentPolicy = {
     } catch(e) {
       return this.reject("Content (Fatal Error, " + e  + " - " + e.stack + ")", arguments);
     } finally {
-
-      if (aContentType === 5) this.setExpando(aContext, "site", locationSite);
+      if (aContentType === 5) {
+        this.setExpando(aContext, "site", locationSite);
+      }
 
       if (mustCountObject) this.countObject(aContext, locationSite);
 

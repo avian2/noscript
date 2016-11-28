@@ -188,7 +188,7 @@ var ABE = {
 
       if (!(browserReq || res.fatal) &&
           this.siteEnabled && channel instanceof Ci.nsIHttpChannel &&
-          !IOUtil.extractFromChannel(channel, "ABE.preflight", true) &&
+          !ABE.reqData(channel).preflght &&
           req.destinationURI.schemeIs("https") &&
           req.destinationURI.prePath != req.originURI.prePath &&
           !(this.skipBrowserRequests && req.originURI.schemeIs("chrome") && !req.window) // skip preflight for window-less browser requests
@@ -241,7 +241,7 @@ var ABE = {
         )
       return false;
 
-    IOUtil.attachToChannel(req.channel, "ABE.deferred", DUMMY_OBJ);
+    ABE.reqData(req.channel).deferred = true;
 
     if (ChannelReplacement.runWhenPending(req.channel, function() {
       try {
@@ -278,8 +278,12 @@ var ABE = {
     return true;
   },
 
+  reqData(req, remove = false) {
+    return IOUtil.reqData(req, "net.noscript/ABE.channelData", remove);
+  },
+
   isDeferred: function(chan) {
-    return !!IOUtil.extractFromChannel(chan, "ABE.deferred", true);
+    return !!ABE.reqData(chan).deferred;
   },
 
   hasSiteRulesFor: function(host) {
@@ -335,7 +339,7 @@ var ABE = {
       xhr.open("GET", uri.spec, true); // async if we can spin our own event loop
 
       var channel = xhr.channel; // need to cast
-      IOUtil.attachToChannel(channel, "ABE.preflight", DUMMY_OBJ);
+      ABE.reqData(channel).preflight = true;
 
       if (channel instanceof Ci.nsIHttpChannel && !this.allowRulesetRedir)
         channel.redirectionLimit = 0;
@@ -415,11 +419,11 @@ var ABE = {
   },
 
 
-  isSandboxed: function(channel) {
-    return IOUtil.extractFromChannel(channel, ABE.SANDBOX_KEY, true);
+  isSandboxed(channel) {
+    return ABE.reqData(channel).sandboxed;
   },
-  setSandboxed: function(channel) {
-    IOUtil.attachToChannel(channel, ABE.SANDBOX_KEY, DUMMY_OBJ);
+  setSandboxed(channel, sandboxed = true) {
+    ABE.reqData(channel).sandboxed = sandboxed;
   },
   sandbox: function(docShell, sandboxed) {
     docShell.allowJavascript = docShell.allowPlugins =
@@ -432,11 +436,11 @@ var ABE = {
 
     var redirectChain = this.getRedirectChain(oldChannel);
     redirectChain.push(oldChannel.URI);
-    IOUtil.attachToChannel(newChannel, "ABE.redirectChain", redirectChain);
+    ABE.reqData(newChannel).redirectChain = redirectChain;
   },
 
   getRedirectChain: function(channel) {
-    var rc = IOUtil.extractFromChannel(channel, "ABE.redirectChain", true);
+    var rc = ABE.reqData(channel).redirectChain;
     if (!rc) {
       var origin = ABERequest.getOrigin(channel);
       rc = origin ? [origin] : [];
@@ -451,7 +455,7 @@ var ABE = {
   },
 
   _handleDownloadRedirection: function(oldChannel, newChannel) {
-    if (!IOUtil.extractFromChannel(oldChannel, "ABE.preflight", true)) return;
+    if (!ABE.reqData(oldChannel).preflight) return;
 
     var uri = oldChannel.URI;
     var newURI = newChannel.URI;
@@ -467,7 +471,7 @@ var ABE = {
       throw new Error(msg);
     }
 
-    IOUtil.attachToChannel(oldChannel, "ABE.preflight", DUMMY_OBJ);
+    ABE.reqData(oldChannel).preflight = true;
   },
 
 
@@ -505,8 +509,6 @@ var ABEActions = {
   _idempotentMethodsRx: /^(?:GET|HEAD|OPTIONS)$/i,
   anonymize: function(req) {
     var channel = req.channel;
-    const ANON_KEY = "abe.anonymized";
-
     let cookie;
     try {
       cookie = channel.getRequestHeader("Cookie");
@@ -523,8 +525,8 @@ var ABEActions = {
     let idempotent = this._idempotentMethodsRx.test(channel.requestMethod);
 
     if (idempotent && (channel.loadFlags & channel.LOAD_ANONYMOUS) &&
-        !(auth || cookie || anonURI.spec != req.destinationURI.spec)
-        && IOUtil.extractFromChannel(channel, ANON_KEY, true)) {// already anonymous
+        !(auth || cookie || anonURI.spec != req.destinationURI.spec) &&
+        ABE.reqData(channel).anon) {// already anonymous
       return ABERes.SKIPPED;
     }
 
@@ -535,7 +537,7 @@ var ABEActions = {
         let channel = replacement.channel;
         channel.setRequestHeader("Cookie", '', false);
         channel.setRequestHeader("Authorization", '', false);
-        IOUtil.attachToChannel(channel, ANON_KEY, DUMMY_OBJ);
+        ABE.reqData(channel).anon = true;
         channel.loadFlags |= channel.LOAD_ANONYMOUS;
         replacement.open();
       },
@@ -546,7 +548,7 @@ var ABEActions = {
   },
 
   sandbox: function(req) {
-    ABE.setSandboxed(req.channel);
+    ABE.reqData(req).sandboxed = true;
     if (req.isDoc) {
       var docShell = DOM.getDocShellForWindow(req.window);
       if (docShell) ABE.sandbox(docShell);
@@ -889,7 +891,7 @@ function ABERequest(channel) {
 ABERequest.serial = 0;
 
 ABERequest.getOrigin = function(channel) {
-  let u = IOUtil.extractFromChannel(channel, "ABE.origin", true);
+  let u = ABE.reqData(channel).origin;
   return (u instanceof Ci.nsIURI) ? u : null;
 },
 ABERequest.getLoadingChannel = function(window) {
@@ -897,11 +899,11 @@ ABERequest.getLoadingChannel = function(window) {
 },
 
 ABERequest.storeOrigin = function(channel, originURI) {
-  IOUtil.attachToChannel(channel, "ABE.origin", originURI);
+  ABE.reqData(channel).origin = originURI;
 },
 
 ABERequest.clear = function(channel, window) {
-  IOUtil.extractFromChannel(channel, "ABE.origin");
+  // fille me as needed
 }
 
 ABERequest.count = 0;
@@ -944,9 +946,9 @@ ABERequest.prototype = Lang.memoize({
         let loadInfo = channel.loadInfo;
         if (loadInfo) {
           let principal = loadInfo.triggeringPrincipal || loadInfo.loadingPrincipal;
-          ou = principal && (principal.URI || principal.origin);
+          ou = principal && (principal.URI || principal.originNoSuffix || principal.origin);
         } else {
-          ns.dump(`loadInfo is null for channel ${channel.name}`);
+          dump(`loadInfo is null for channel ${channel.name}\n`);
         }
       }
       
@@ -977,7 +979,7 @@ ABERequest.prototype = Lang.memoize({
   },
 
   isBrowserURI: function(uri) {
-    return uri.schemeIs("chrome") || uri.schemeIs("resource") || uri.spec === "about:newtab";
+    return uri.schemeIs("chrome") || uri.schemeIs("resource") || uri.schemeIs("about");
   },
 
   isLocal: function(uri, all) {
