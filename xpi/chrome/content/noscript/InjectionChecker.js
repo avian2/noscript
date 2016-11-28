@@ -1126,7 +1126,7 @@ var InjectionChecker = {
 
     var clen = -1;
     try {
-      clen = chan.getRequestHeader("Content-length");
+      clen = channel.getRequestHeader("Content-length");
     } catch(e) {}
     MaxRunTime.increase(clen < 0 || clen > 300000 ? 60 : Math.ceil(20 * clen / 100000));
 

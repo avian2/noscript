@@ -885,8 +885,10 @@ var MainContentPolicy = {
 
       if (mustCountObject) this.countObject(aContext, locationSite);
 
-      ns.syncUI(aContext);
-
+      if (!(aContext instanceof Ci.nsIDOMXULElement)) {
+        // skip XUL elements as a work around for Stylish incompatibility on Gecko < 52
+        ns.syncUI(aContext);
+      }
       if (!aInternalCall) PolicyState.removeCheck(aContentLocation);
 
       if (isHTTP) PolicyState.save(aContentLocation, arguments);

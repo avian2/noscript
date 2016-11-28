@@ -721,7 +721,7 @@ RequestWatchdog.prototype = {
     }
 
     let stripPost = trustedTarget && originDomain && !trustedOrigin && ns.filterXPost &&
-      ns.getBaseDomain(originDomain) === ns.getBaseDomain(targetDomain);
+      ns.getBaseDomain(originDomain) !== ns.getBaseDomain(targetDomain);
 
     // check for injections
 
