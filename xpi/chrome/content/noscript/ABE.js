@@ -979,7 +979,7 @@ ABERequest.prototype = Lang.memoize({
   },
 
   isBrowserURI: function(uri) {
-    return uri.schemeIs("chrome") || uri.schemeIs("resource") || uri.schemeIs("about");
+    return uri.schemeIs("chrome") || uri.schemeIs("resource") || uri.schemeIs("about") || uri.schemeIs("moz-extension");
   },
 
   isLocal: function(uri, all) {

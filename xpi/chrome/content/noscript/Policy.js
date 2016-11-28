@@ -769,6 +769,8 @@ var MainContentPolicy = {
               }
             } else if ((forbid = this.forbidPlugins && !(isJava || isFlash || isSilverlight))) {
               locationURL = this.addObjectParams(locationURL, aContext);
+            } else {
+              forbid = this.forbidMedia && /^(?:audio|video)\//i.test(aMimeTypeGuess);
             }
           }
         } else if (blockThisFrame &&
