@@ -425,11 +425,48 @@ var ABE = {
   setSandboxed(channel, sandboxed = true) {
     ABE.reqData(channel).sandboxed = sandboxed;
   },
-  sandbox: function(docShell, sandboxed) {
-    docShell.allowJavascript = docShell.allowPlugins =
-        docShell.allowMetaRedirects= docShell.allowSubframes = !sandboxed;
-  },
 
+  get cspHeaderValue() {
+    delete this.cspHeaderValue;
+    let prefs = ABEStorage.prefs;
+    let delim;
+    try {
+      delim = prefs.getCharPref("cspHeaderDelim") || "ABE";
+    } catch (e) {
+      delim = `ABE${Math.random().toString().replace(".", "-")}`;
+      prefs.setCharPref("cspHeaderDelim", delim);
+    }
+    let value = `${delim}; sandbox; ${delim};`;
+    return (this.cspHeaderValue = value);
+  },
+  enforceSandbox(channel, enforcing) {
+    const CSP = "Content-Security-Policy";
+    let value = this.cspHeaderValue;
+    try {
+      let currentPolicy = channel.getResponseHeader(CSP);
+      if (currentPolicy.includes(value)) {
+        if (enforcing) {
+          return true;
+        }
+        channel.setResponseHeader(CSP, currentPolicy.replace(value, ''), false);
+        return false;
+      }
+    } catch (e) {
+      Cu.reportError(e);
+    }
+    if (enforcing) {
+       try {
+         channel.setResponseHeader(CSP, value, true);
+         return true;
+       }catch(e) {
+         Cu.reportError(e);
+       }
+    }
+    return false;
+  },
+  handleSandbox(channel) {
+    this.enforceSandbox(channel, this.isSandboxed(channel));
+  },
 
   updateRedirectChain: function(oldChannel, newChannel) {
     this._handleDownloadRedirection(oldChannel, newChannel);
@@ -548,11 +585,7 @@ var ABEActions = {
   },
 
   sandbox: function(req) {
-    ABE.reqData(req).sandboxed = true;
-    if (req.isDoc) {
-      var docShell = DOM.getDocShellForWindow(req.window);
-      if (docShell) ABE.sandbox(docShell);
-    }
+    ABE.setSandboxed(req.channel);
     return ABERes.DONE;
   }
 }

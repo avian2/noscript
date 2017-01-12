@@ -244,7 +244,6 @@ const ns = {
   forbidFrames: false,
 
   alwaysBlockUntrustedContent: true,
-  docShellJSBlocking: 1, // 0 - don't touch docShells, 1 - block untrusted, 2 - block not whitelisted
 
   forbidXBL: 4,
   forbidXHR: 1,
@@ -365,7 +364,6 @@ const ns = {
           this.forbidIFrames || this.forbidFrames;
       break;
 
-      case "docShellJSBlocking":
       case "emulateFrameBreak":
       case "filterXPost":
       case "filterXGet":
@@ -729,7 +727,6 @@ const ns = {
       "autoAllow",
       "allowedMimeRegExp", "hideOnUnloadRegExp", "requireReloadRegExp",
       "consoleDump", "consoleLog", "contentBlocker", "alwaysShowObjectSources",
-      "docShellJSBlocking",
       "filterXPost", "filterXGet",
       "filterXGetRx", "filterXGetUserRx",
       "filterXExceptions",
@@ -3057,7 +3054,17 @@ const ns = {
 
     let top;
     let all = sites.all;
-    sites.docJSBlocked = !browser.docShell.allowJavascript;
+    let docShell = browser.docShell;
+
+    sites.docJSBlocked = !docShell.allowJavascript;
+    try {
+      sites.cspBlocked = /\b(?:sandbox|(?:script|default)-src\s+'none')\s*(?:[,;]|$)/
+        .test(docShell.currentDocumentChannel.QueryInterface(Ci.nsIHttpChannel)
+              .getResponseHeader("Content-Security-Policy"));
+    } catch (e) {
+      sites.cspBlocked = false;
+    }
+
     this.traverseDocShells(function(docShell) {
 
       let document = docShell.document;
@@ -3575,89 +3582,6 @@ const ns = {
       return this.clearClickHandler = new ClearClickHandler(this);
   },
 
-  DOC_JS_STATUS_KEY: "noscript.dsjsBlocked",
-  _handleDocJS: function(win, req, requireNetwork) {
-    const abeSandboxed = req instanceof Ci.nsIHttpChannel && ABE.isSandboxed(req);
-    const docShellJSBlocking = this.docShellJSBlocking || abeSandboxed;
-
-    if (!docShellJSBlocking || (win instanceof Ci.nsIDOMChromeWindow)) return;
-    const dump = this.consoleDump & LOG_JS;
-    try {
-
-      let docShell = DOM.getDocShellForWindow(win) ||
-                     DOM.getDocShellForWindow(IOUtil.findWindow(req));
-
-      if (requireNetwork == docShell.restoringDocument) return;
-
-      let url = req.URI.spec;
-      if (!/^https?:/.test(url)) url = req.originalURI.spec;
-
-      if (!docShell) {
-        if (this.consoleDump) this.dump("DocShell not found for JS switching in " + url);
-        return;
-      }
-
-      if (abeSandboxed) {
-        ABE.sandbox(docShell, true);
-        return;
-      }
-
-      let jsEnabled;
-      if (docShellJSBlocking & 2) { // block not whitelisted
-        jsEnabled = url && this.isJSEnabled(this.getSite(url)) || /^about:/.test(url);
-      } else if (docShellJSBlocking & 1) { // block untrusted only
-        let site = this.getSite(url);
-        jsEnabled = !(this.isUntrusted(site) || this.isForbiddenByHttpsStatus(site));
-      } else return;
-
-      const prevStatus = docShell.allowJavascript;
-      // Trying to be kind with other docShell-level blocking apps (such as Tab Mix Plus), we
-      // check if we're the ones who actually blocked this docShell, or if this channel is out of our control
-
-      if (dump) this.dump("About to retrieve previously blocked info...");
-      let prevBlocked = requireNetwork && (req.loadFlags & req.LOAD_REPLACE) &&
-                      this.reqData(req).docJSBlocked ||
-                      this.getExpando(win, "docJSBlocked");
-
-      if (dump)
-        this.dump("DocShell JS Switch: " + url + " - " + jsEnabled + "/" + prevStatus + "/" + prevBlocked);
-
-      if (jsEnabled && !prevStatus) {
-
-        // be nice with other blockers
-        if (!prevBlocked) return;
-
-        // purge body events
-        try {
-          var aa = win.document.body && win.document.body.attributes;
-          if (aa) for (var j = aa.length; j-- > 0;) {
-            if(/^on/i.test(aa[j].name)) aa[j].value = "";
-          }
-        } catch(e1) {
-          if (dump)
-            this.dump("Error purging body attributes: " + e2);
-        }
-      }
-      let dsjsBlocked = // !jsEnabled && (prevBlocked || prevStatus)
-                        // we're the cause of the current disablement if
-                        // we're disabling and (was already blocked by us or was not blocked)
-                        !(jsEnabled || !(prevBlocked || prevStatus)) // De Morgan for the above, i.e.
-                        // we're the cause of the current disablement unless
-                        // we're enabling or (was already blocked by someone else = was not (blocked by us or enabled))
-                        // we prefer the latter because it coerces to boolean
-                        ;
-
-      this.reqData(req).docJSBlocked = dsjsBlocked;
-
-
-      ABE.sandbox(docShell, false);
-      docShell.allowJavascript = jsEnabled;
-    } catch(e2) {
-      if (dump)
-        this.dump("Error switching docShell JS: " + e2 + e2.stack);
-    }
-  },
-
   _pageModMaskRx: /^(?:chrome|resource|view-source):/,
   onWindowSwitch: function(url, win, docShell) {
     let channel = docShell.currentDocumentChannel;
@@ -4044,7 +3968,6 @@ const ns = {
                 return;
               }
             }
-            this._handleDocJS(w, req, false);
           }
         }
       }

@@ -76,8 +76,6 @@ var MainParent = {
           }
 
           let abeReq = ns.requestWatchdog.onHttpStart(channel);
-
-          if (abeReq && abeReq.isDoc) ns._handleDocJS(abeReq.window, channel, true);
         }
 
       } catch (e) {

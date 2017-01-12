@@ -88,6 +88,7 @@ RequestWatchdog.prototype = {
           ns.callExternalFilters(channel, cached);
 
         if (channel.loadFlags & this.DOCUMENT_LOAD_FLAGS) {
+          ABE.handleSandbox(channel);
           ns.onContentSniffed(channel);
         } else {
           if (!((ns.inclusionTypeChecking || ns.nosniff) && ns.checkInclusionType(channel)))

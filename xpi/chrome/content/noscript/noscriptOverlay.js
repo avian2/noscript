@@ -681,7 +681,7 @@ return noscriptUtil.service ? {
     var parent = null, extraNode = null;
     var untrustedCount = 0, unknownCount = 0, tempCount = 0;
     const untrustedSites = ns.untrustedSites;
-    var docJSBlocked = false;
+    var externalJSBlocked = false;
 
     const ignorePorts = ns.ignorePorts;
     const portRx = /:\d+$/;
@@ -731,8 +731,8 @@ return noscriptUtil.service ? {
       let showInMain = embedOnlySites
         ? embedOnlySites.indexOf(site) === -1 || hideUntrustedPlaceholder && enabled : true;
 
-      docJSBlocked = enabled && isTop && sites.docJSBlocked;
-      if (docJSBlocked) enabled = false;
+      externalJSBlocked = enabled && isTop && (sites.docJSBlocked || sites.cspBlocked);
+      if (externalJSBlocked) enabled = false;
 
       if (enabled && !global || (matchingSite = untrusted)) {
         if (ignorePorts && hasPort) {
@@ -913,7 +913,7 @@ return noscriptUtil.service ? {
         parent = showUntrusted && untrusted ? untrustedFrag : mainFrag;
         if (!parent) continue;
 
-        domain = isTop && docJSBlocked ? "[ " + menuSite + " ]" : menuSite;
+        domain = isTop && externalJSBlocked ? "[ " + menuSite + " ]" : menuSite;
 
         node = refMI.cloneNode(false);
         if (isTop) {
@@ -924,7 +924,7 @@ return noscriptUtil.service ? {
 
 
         let blurred = false;
-        let disabled = locked || (enabled ? ns.isMandatory(menuSite) : blurred = ns.isForbiddenByHttpsStatus(menuSite));
+        let disabled = locked || (enabled ? ns.isMandatory(menuSite) : blurred = externalJSBlocked || ns.isForbiddenByHttpsStatus(menuSite));
         if (disabled) {
           node.setAttribute("disabled", "true");
         } else {
@@ -1983,7 +1983,7 @@ return noscriptUtil.service ? {
         let site = !isUntrusted && (global || globalHttps && ns.isGlobalHttps(win, url) ? url : jsPSs.matches(url));
 
         if (url == sites.topSite) {
-          if (site && (!ns.httpStarted || !sites.docJSBlocked)) topTrusted = true;
+          if (site && (!ns.httpStarted || !(sites.docJSBlocked || sites.cspBlocked))) topTrusted = true;
           else {
             site = null;
             if (isUntrusted) topUntrusted = true;
@@ -2022,7 +2022,7 @@ return noscriptUtil.service ? {
                   ? allowed === total - blockedObjects
                       ? (global ? "glb-emb" : "emb")
                       : (cascadePermissions ? "yes" : "prt")
-                  : ns.docShellJSBlocking === 2 || cascadePermissions || ns.restrictSubdocScripting
+                  : cascadePermissions || ns.restrictSubdocScripting
                       ? "no"
                       : "subprt"
               );
