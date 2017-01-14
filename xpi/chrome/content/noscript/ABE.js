@@ -436,7 +436,7 @@ var ABE = {
       delim = `ABE${Math.random().toString().replace(".", "-")}`;
       prefs.setCharPref("cspHeaderDelim", delim);
     }
-    let value = `${delim}; sandbox; ${delim};`;
+    let value = `${delim}; child-src 'self'; object-src 'none'; script-src 'none'; sandbox; ${delim};`;
     return (this.cspHeaderValue = value);
   },
   enforceSandbox(channel, enforcing) {
@@ -451,9 +451,7 @@ var ABE = {
         channel.setResponseHeader(CSP, currentPolicy.replace(value, ''), false);
         return false;
       }
-    } catch (e) {
-      Cu.reportError(e);
-    }
+    } catch (e) {}
     if (enforcing) {
        try {
          channel.setResponseHeader(CSP, value, true);

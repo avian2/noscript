@@ -713,12 +713,11 @@ RequestWatchdog.prototype = {
 
       if (injectionCheck < 3 && originSite && abeReq.originURI.schemeIs("https")) {
         
-        if (targetDomain === originDomain) {
-          this.dump(channel, "Same domain with HTTPS origin");
+        if (targetDomain === originDomain || ns.getBaseDomain(originDomain) === ns.getBaseDomain(targetDomain)) {
+          this.dump(channel, "Same base domain with HTTPS origin");
           return;
         }
       }
-
     }
 
     let stripPost = trustedTarget && originDomain && !trustedOrigin && ns.filterXPost &&
