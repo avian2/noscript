@@ -436,7 +436,7 @@ var ABE = {
       delim = `ABE${Math.random().toString().replace(".", "-")}`;
       prefs.setCharPref("cspHeaderDelim", delim);
     }
-    let value = `${delim}; child-src 'self'; object-src 'none'; script-src 'none'; sandbox; ${delim};`;
+    let value = `${delim}; child-src 'self'; object-src 'none'; script-src 'none'; ${delim};`;
     return (this.cspHeaderValue = value);
   },
   enforceSandbox(channel, enforcing) {
