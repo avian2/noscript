@@ -3058,7 +3058,7 @@ const ns = {
 
     sites.docJSBlocked = !docShell.allowJavascript;
     try {
-      sites.cspBlocked = /\b(?:sandbox|(?:script|default)-src\s+'none')\s*(?:[,;]|$)/
+      sites.cspBlocked = /\b(?:sandbox|script-src\s+'none')\s*(?:[,;]|$)/
         .test(docShell.currentDocumentChannel.QueryInterface(Ci.nsIHttpChannel)
               .getResponseHeader("Content-Security-Policy"));
     } catch (e) {
