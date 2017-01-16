@@ -204,6 +204,10 @@ var MainContentPolicy = {
         return this.reject("Empty Flash object", arguments);
       aContentLocation = aRequestOrigin;
     }
+
+    var locationURL =aContentLocation.spec;
+    if (locationURL === "about:blank") return CP_OK;
+
     if (aContentType === 5 && /^application\/x-java\b/i.test(aMimeTypeGuess) &&
         aInternalCall !== CP_OBJECTARC) {
       try {
@@ -290,7 +294,7 @@ var MainContentPolicy = {
       PolicyState.addCheck(aContentLocation);
     }
     
-    var originURL, locationURL, originSite, locationSite, scheme,
+    var originURL, originSite, locationSite, scheme,
           forbid, isScript, isJava, isFlash, isSilverlight,
           isLegacyFrame, blockThisFrame, contentDocument,
           unwrappedLocation, mimeKey,
