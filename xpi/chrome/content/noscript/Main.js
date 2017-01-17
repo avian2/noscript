@@ -776,6 +776,10 @@ const ns = {
 
     this.afterInit();
 
+    Cc['@mozilla.org/docloaderservice;1'].getService(nsIWebProgress).addProgressListener(this,
+      nsIWebProgress.NOTIFY_LOCATION | nsIWebProgress.NOTIFY_STATE_REQUEST | nsIWebProgress.NOTIFY_STATUS |
+      ("NOTIFY_REFRESH" in nsIWebProgress ? nsIWebProgress.NOTIFY_REFRESH : 0));
+
     if (this.consoleDump) this.dump(`Init done in ${Date.now() - t}`);
     return true;
   },
@@ -1134,7 +1138,7 @@ const ns = {
     if (window) {
       let top = window.top;
       enabled = enabled ||
-               this.globalHttpsWhitelist && s.indexOf("https:") === 0 && (window === top || this.isGlobalHttps(window));
+               this.globalHttpsWhitelist && s.startsWith("https:") && (window === top || this.isGlobalHttps(window));
       if (enabled ? this.restrictSubdocScripting : this.cascadePermissions) {
         let topOrigin = this.getPrincipalOrigin(this.getPrincipal(top.document));
         if (this.isBrowserOrigin(topOrigin)) {

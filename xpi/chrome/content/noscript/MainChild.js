@@ -20,9 +20,6 @@ var MainChild = {
   },
   afterInit: function() {
     this.initContentPolicy(true);
-    Cc['@mozilla.org/docloaderservice;1'].getService(nsIWebProgress).addProgressListener(this,
-      nsIWebProgress.NOTIFY_LOCATION | nsIWebProgress.NOTIFY_STATE_REQUEST | nsIWebProgress.NOTIFY_STATUS |
-      ("NOTIFY_REFRESH" in nsIWebProgress ? nsIWebProgress.NOTIFY_REFRESH : 0));
   },
 
   "http-on-opening-request": {

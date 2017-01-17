@@ -566,7 +566,7 @@ var MainContentPolicy = {
                   }
                 } else if (
                   !(aContext.ownerDocument.URL === originURL // Addon-SDK panels
-                     || this.isJSEnabled(originSite = this.getSite(originURL)))
+                     || this.isJSEnabled(originSite = this.getSite(originURL), aContext.ownerDocument.defaultView))
                   ) {
                   return this.reject("top level data: URI from forbidden origin", arguments);
                 }
