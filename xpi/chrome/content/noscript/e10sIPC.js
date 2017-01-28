@@ -8,6 +8,7 @@ IPC_P_MSG = {
   CALL: "NoScript:remoteCall",
   RESUME: "NoScript:resume",
   GET_PREF: "NoScript:getPref",
+  GET_SNAPSHOT: "NoScript:getSnapshot",
 }
 
 var IPC = {

@@ -31,6 +31,8 @@ var MainParent = {
     this._updateSync();
 
     this.reloadWhereNeeded(this.RELOAD_NO); // init snapshots
+
+    INCLUDE("WebExt");
   },
 
    _initE10s: function() {

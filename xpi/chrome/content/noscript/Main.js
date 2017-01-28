@@ -776,10 +776,6 @@ const ns = {
 
     this.afterInit();
 
-    Cc['@mozilla.org/docloaderservice;1'].getService(nsIWebProgress).addProgressListener(this,
-      nsIWebProgress.NOTIFY_LOCATION | nsIWebProgress.NOTIFY_STATE_REQUEST | nsIWebProgress.NOTIFY_STATUS |
-      ("NOTIFY_REFRESH" in nsIWebProgress ? nsIWebProgress.NOTIFY_REFRESH : 0));
-
     if (this.consoleDump) this.dump(`Init done in ${Date.now() - t}`);
     return true;
   },

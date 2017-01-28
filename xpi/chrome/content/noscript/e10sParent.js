@@ -62,6 +62,13 @@ IPC.parent = {
           }
         }
         return null;
+      case IPC_P_MSG.GET_SNAPSHOT:
+        return {
+          trusted: ns.jsPolicySites.sitesString,
+          untrusted: ns.untrustedSites.sitesString,
+          manual: ns.manualSites.sitesString,
+          objectWhitelist: ns.objectWhitelist,
+        };
     }
   },
 

@@ -1,3 +1,7 @@
+Cc['@mozilla.org/docloaderservice;1'].getService(nsIWebProgress).addProgressListener(ns,
+      nsIWebProgress.NOTIFY_LOCATION | nsIWebProgress.NOTIFY_STATE_REQUEST | nsIWebProgress.NOTIFY_STATUS |
+      ("NOTIFY_REFRESH" in nsIWebProgress ? nsIWebProgress.NOTIFY_REFRESH : 0));
+
 var PolicyState = {
   hintsList: [],
   checking: [],

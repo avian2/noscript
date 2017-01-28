@@ -1,0 +1,10 @@
+{
+  "manifest_version": 2,
+  "name": "NoScript",
+  "version": "5.0.0",
+  "description": "NoScript Security Suite",
+
+  "background": {
+    "scripts": ["background.js"]
+  }
+}
