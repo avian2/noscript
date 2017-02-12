@@ -1728,7 +1728,7 @@ const ns = {
 
   syncUI: function(aContext) {
     let doc = aContext && (aContext instanceof Ci.nsIDOMDocument ? aContext : aContext.ownerDocument || aContext.document);
-    if (doc) {
+    if (doc && doc.defaultView) {
       let ev = doc.createEvent("Events");
       ev.initEvent("NoScript:syncUI", true, false);
       aContext.dispatchEvent(ev);

@@ -4,6 +4,10 @@
   "version": "5.0.0",
   "description": "NoScript Security Suite",
 
+  "permissions": [
+    "webRequest", "webRequestBlocking", "<all_urls>"
+  ],
+
   "background": {
     "scripts": ["background.js"]
   }

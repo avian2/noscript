@@ -18,7 +18,7 @@ UISync.prototype = {
     ctx.addEventListener("DOMWindowCreated", () => this.sync());
     ctx.addEventListener("NoScript:syncUI", ev => {
        ev.stopPropagation();
-       this.sync();
+       this.scheduleSync();
     }, true);
     ctx.addEventListener("DOMContentLoaded", ev => {
       this.onContentLoad(ev);
@@ -57,6 +57,13 @@ UISync.prototype = {
     }
   },
 
+  _syncScheduled: false,
+  scheduleSync() {
+    if (this._syncScheduled) return;
+    let self = this;
+    this.ctx.ns.delayExec(() => self.sync(), 500);
+    this._syncScheduled = true;
+  },
   sync() {
     let ctx = this.ctx;
     let sites = ctx.ns.getSites(this.ctx);
