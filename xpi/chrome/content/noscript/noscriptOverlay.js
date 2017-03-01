@@ -589,9 +589,7 @@ return noscriptUtil.service ? {
 
     this.prepareOptItems(popup);
 
-    var untrustedMenu = null,
-        recentMenu = null,
-        pluginsMenu = null;
+    var untrustedMenu, recentMenu, pluginsMenu;
 
     if (seps.untrusted) {
 
@@ -653,7 +651,7 @@ return noscriptUtil.service ? {
     var site, enabled, isTop, lev;
 
     var matchingSite;
-    var menuGroups, menuSites, menuSite, scount;
+    var menuGroups, menuSites;
     var domain, pos, baseLen;
     var untrusted;
     var cssClass;
@@ -678,7 +676,6 @@ return noscriptUtil.service ? {
     const showTemp = !locked && (ns.getPref("showTemp", true) || volatileOnly && showPermanent);
     if (volatileOnly) showPermanent = false;
 
-    var parent = null, extraNode = null;
     var untrustedCount = 0, unknownCount = 0, tempCount = 0;
     const untrustedSites = ns.untrustedSites;
     var externalJSBlocked = false;
@@ -800,15 +797,13 @@ return noscriptUtil.service ? {
     const mainFrag = document.createDocumentFragment();
     const sep = document.createElement("menuseparator");
 
-    let mgCount = menuGroups.length;
-
-    var refMI = document.createElement("menuitem");
-    refMI.setAttribute("oncommand", "noscriptOverlay.menuCmd(event)");
-    if (sticky && (this.liveReload || mgCount > 1 || enabled)) {
-      refMI.setAttribute("closemenu", "none");
+    var refMenuItem = document.createElement("menuitem");
+    refMenuItem.setAttribute("oncommand", "noscriptOverlay.menuCmd(event)");
+    if (sticky && (this.liveReload || menuGroups.length > 1 || enabled)) {
+      refMenuItem.setAttribute("closemenu", "none");
     }
 
-    recentMenu.parentNode.hidden = true;
+    recentMenu && recentMenu.parentNode && (recentMenu.parentNode.hidden = true);
     if (recentMenu && ns.getPref("showRecentlyBlocked")) {
       let level = ns.getPref("recentlyBlockedLevel") || ns.preferredSiteLevel;
       let max = ns.getPref("recentlyBlockedCount");
@@ -840,7 +835,7 @@ return noscriptUtil.service ? {
 
         recentMenu.appendChild(sep.cloneNode(false));
 
-        let node = refMI.cloneNode(false);
+        let node = refMenuItem.cloneNode(false);
         let cssClass = "noscript-cmd menuitem-iconic noscript-allow-from";
 
         node.setAttribute("tooltiptext", tooltip);
@@ -874,29 +869,30 @@ return noscriptUtil.service ? {
       }
     }
 
-    if (mgCount > 0 && seps.stop.previousSibling.nodeName != "menuseparator")
+    if (menuGroups.length > 0 && seps.stop.previousSibling.nodeName != "menuseparator")
       mainFrag.appendChild(sep.cloneNode(false));
 
     const fullTip = !!ns.getPref("siteInfoProvider");
 
-    while (mgCount-- > 0) {
+    let menuGroupI = menuGroups.length;
+    while (--menuGroupI > -1) {
 
-      menuSites = menuGroups[mgCount];
+      menuSites = menuGroups[menuGroupI];
       isTop = menuSites.isTop;
       enabled = menuSites.enabled;
 
       let showInMain = menuSites.showInMain;
 
-      if (untrustedFrag && untrustedFrag.firstChild) {
+      /* if (untrustedFrag && untrustedFrag.firstChild) {
         untrustedFrag.appendChild(sep.cloneNode(false));
-      }
+      } /**/
 
-      scount = menuSites.length;
-      if (scount > 0 && mainFrag.lastChild && mainFrag.lastChild.tagName != "menuseparator")
-        mainFrag.appendChild(sep.cloneNode(false));
+      let sitesI = menuSites.length;
+      /* if (sitesI > 0 && mainFrag.lastChild && mainFrag.lastChild.tagName != "menuseparator")
+        mainFrag.appendChild(sep.cloneNode(false)); */
 
-      while (scount-- > 0) {
-        menuSite = menuSites[scount];
+      while (--sitesI > -1) {
+        let menuSite = menuSites[sitesI];
         let ghEnabled = globalHttps && ns.isGlobalHttps(content, menuSite);
 
         untrusted = !enabled && (blockUntrusted || ns.isUntrusted(menuSite));
@@ -910,23 +906,21 @@ return noscriptUtil.service ? {
         else if (!enabled)
           unknownCount++;
 
-        parent = showUntrusted && untrusted ? untrustedFrag : mainFrag;
-        if (!parent) continue;
+        let parentFrag = showUntrusted && untrusted ? untrustedFrag : mainFrag;
+        if (!parentFrag) continue;
 
-        domain = isTop && externalJSBlocked ? "[ " + menuSite + " ]" : menuSite;
-
-        node = refMI.cloneNode(false);
+        let menuFrag = document.createDocumentFragment();
+        let mnuBlock = refMenuItem.cloneNode(false);
+        cssClass = "noscript-cmd ";
         if (isTop) {
-          cssClass = "noscript-toplevel noscript-cmd";
+          cssClass += " noscript-toplevel";
           // can we make it default here?
         }
-        else cssClass = "noscript-cmd";
-
 
         let blurred = false;
         let disabled = locked || (enabled ? ns.isMandatory(menuSite) : blurred = externalJSBlocked || ns.isForbiddenByHttpsStatus(menuSite));
         if (disabled) {
-          node.setAttribute("disabled", "true");
+          mnuBlock.setAttribute("disabled", "true");
         } else {
           cssClass += " menuitem-iconic ";
           if (enabled && ns.isTemp(menuSite)) {
@@ -935,37 +929,84 @@ return noscriptUtil.service ? {
           }
         }
 
+        domain = isTop && externalJSBlocked ? "[ " + menuSite + " ]" : menuSite;
 
-        node.setAttribute("label", this.getString((enabled ? "forbidLocal" : "allowLocal"), [domain]));
-        node.setAttribute("statustext", menuSite);
-        node.setAttribute("tooltiptext", this.getSiteTooltip(enabled, fullTip));
-
-        node.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
-
-        if ((showPermanent || enabled) && !((global || cascaded || ghEnabled) && enabled) &&
-            showInMain && !(cascaded && parent !== untrustedFrag))
-          parent.appendChild(node);
+        mnuBlock.setAttribute("class", cssClass + (enabled ? " noscript-forbid" : " noscript-allow"));
+        mnuBlock.setAttribute("style", "display: inline-block; ");
+        mnuBlock.setAttribute("label", this.getString(enabled ? "forbid" : "allow"));
+        mnuBlock.setAttribute("statustext", menuSite);
+        mnuBlock.setAttribute("tooltiptext", this.getSiteTooltip(enabled, fullTip));
+        menuFrag.appendChild(mnuBlock);
 
         if (!disabled) {
           if (showTemp && !(enabled || blurred || cascaded) && showInMain) {
-            extraNode = node.cloneNode(false);
-            extraNode.setAttribute("label", this.getString("allowTemp", [domain]));
-            extraNode.setAttribute("class", cssClass + " noscript-temp noscript-allow");
-            parent.appendChild(extraNode);
+            let mnuTempBlock = mnuBlock.cloneNode(false);
+            mnuTempBlock.setAttribute("label", this.getString("allowTemporary"));
+            mnuTempBlock.setAttribute("class", cssClass + " noscript-temp noscript-allow");
+            menuFrag.insertBefore(mnuTempBlock, mnuBlock);
           }
           if (((showUntrusted && untrustedMenu || showDistrust) &&
                 (cascaded || ghEnabled || !(domain in jsPSs.sitesMap)) ||
                 blockUntrusted && (showUntrusted || showDistrust)
                 ) && !untrusted) {
-            parent = (showUntrusted && !blockUntrusted ? untrustedFrag : mainFrag);
+            let untrustedParentFrag = (showUntrusted && !blockUntrusted ? untrustedFrag : mainFrag);
 
-            extraNode = refMI.cloneNode(false);
-            extraNode.setAttribute("label", this.getString("distrust", [menuSite]));
-            extraNode.setAttribute("statustext", menuSite);
-            extraNode.setAttribute("class", cssClass + " noscript-distrust");
-            extraNode.setAttribute("tooltiptext", node.getAttribute("tooltiptext"));
-            parent.appendChild(extraNode);
+            let mnuUntrusted = refMenuItem.cloneNode(false);
+            mnuUntrusted.setAttribute("label", this.getString("distrust1"));
+            mnuUntrusted.setAttribute("statustext", menuSite);
+            mnuUntrusted.setAttribute("class", cssClass + " noscript-distrust");
+            mnuUntrusted.setAttribute("tooltiptext", mnuBlock.getAttribute("tooltiptext"));
+
+            let menuItemUntrusted = document.createElement("div");
+            menuItemUntrusted.setAttribute("style", "display: table-row; ");
+            let menuItemUntrusted_cssClass = "";
+            if (isTop) menuItemUntrusted_cssClass += " noscript-toplevel";
+            menuItemUntrusted.setAttribute("class", menuItemUntrusted_cssClass);
+
+            let menuItemUntrustedName = document.createElement("div");
+            menuItemUntrustedName.setAttribute("class", "noscript-domain-name");
+            menuItemUntrustedName.setAttribute("style", "display: table-cell; vertical-align: middle; ");
+            menuItemUntrustedName.appendChild(document.createTextNode(domain));
+            menuItemUntrusted.appendChild(menuItemUntrustedName);
+
+            let menuItemUntrustedCommands = document.createElement("div");
+            menuItemUntrustedCommands.setAttribute("style", "display: table-cell; vertical-align: middle; ");
+            menuItemUntrustedCommands.setAttribute("class", "noscript-domain-commands");
+            menuItemUntrustedCommands.appendChild( mnuUntrusted );
+            menuItemUntrusted.appendChild(menuItemUntrustedCommands);
+
+            if (isTop && untrustedParentFrag.firstChild)
+              untrustedParentFrag.insertBefore(menuItemUntrusted, untrustedParentFrag.firstChild);
+            else
+              untrustedParentFrag.appendChild(menuItemUntrusted);
           }
+        }
+
+        let menuItem = document.createElement("div");
+        menuItem.setAttribute("style", "display: table-row; ");
+        let menuItem_cssClass = "";
+        if (isTop) menuItem_cssClass += " noscript-toplevel";
+        menuItem.setAttribute("class", menuItem_cssClass);
+
+        let menuItemName = document.createElement("div");
+        menuItemName.setAttribute("class", "noscript-domain-name");
+        menuItemName.setAttribute("style", "display: table-cell; vertical-align: middle; ");
+        menuItemName.appendChild(document.createTextNode(domain));
+        menuItem.appendChild(menuItemName);
+
+        let menuItemCommands = document.createElement("div");
+        menuItemCommands.setAttribute("style", "display: table-cell; vertical-align: middle; ");
+        menuItemCommands.setAttribute("class", "noscript-domain-commands");
+        menuItemCommands.appendChild( menuFrag );
+        menuItem.appendChild(menuItemCommands);
+
+        if ((showPermanent || enabled) && !((global || cascaded || ghEnabled) && enabled) &&
+            showInMain && !(cascaded && parentFrag !== untrustedFrag)) {
+
+          if (isTop && parentFrag.firstChild)
+            parentFrag.insertBefore(menuItem, parentFrag.firstChild);
+          else 
+            parentFrag.appendChild(menuItem);
         }
       }
     }
@@ -975,10 +1016,16 @@ return noscriptUtil.service ? {
           setAttribute("label", getAttribute("label") +
             " (" + untrustedCount + ")"); // see above for cleanup
 
-      untrustedMenu.appendChild(untrustedFrag);
+      let untrustedTable = document.createElement("div");
+      untrustedTable.setAttribute("style", "display: table; width: 100%; ");
+      untrustedTable.appendChild(untrustedFrag);
+      untrustedMenu.appendChild(untrustedTable);
     }
 
-    mainMenu.insertBefore(mainFrag, seps.stop);
+    let mainTable = document.createElement("div");
+    mainTable.setAttribute("style", "display: table; width: 100%; ");
+    mainTable.appendChild(mainFrag);
+    mainMenu.insertBefore(mainTable, seps.stop);
 
     // temp allow all this page
     if (!(allowPageMenuItem.hidden = !(unknownCount && ns.getPref("showTempAllowPage", true)))) {
