@@ -32,7 +32,9 @@ var MainParent = {
 
     this.reloadWhereNeeded(this.RELOAD_NO); // init snapshots
 
-    INCLUDE("WebExt");
+    if (ns.VERSION.includes("rc")) { // experimental, only in dev builds for now
+      INCLUDE("WebExt");
+    }
   },
 
    _initE10s: function() {
