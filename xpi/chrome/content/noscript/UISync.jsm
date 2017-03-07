@@ -3,7 +3,7 @@ var EXPORTED_SYMBOLS = ["UISync"];
 let { interfaces: Ci, classes: Cc, utils: Cu, results: Cr } = Components;
 
 const HTMLDocument = Ci.nsIDOMHTMLDocument;
-const messages = ["NoScript:reload", "NoScript:reloadAllowedObjects"];
+const messages = ["NoScript:reload", "NoScript:reloadAllowedObjects", "NoScript:purgeRecent", "NoScript:forceSync"];
 
 function UISync(ctx) {
   this.ctx = ctx;
@@ -43,7 +43,7 @@ UISync.prototype = {
   receiveMessage: function(msg) {
     let ctx = this.ctx;
     let ns = ctx.ns;
-    if (ns.consoleDump) ns.dump(`Received message ${msg.name} ${msg.data.toSource()}`);
+    if (ns.consoleDump) ns.dump(`Received message ${msg.name} ${uneval(msg.data)}`);
     switch(msg.name) {
       case "NoScript:reload":
         let { innerWindowID, snapshots, reloadPolicy, mustReload } = msg.data;
@@ -54,17 +54,23 @@ UISync.prototype = {
       break;
       case "NoScript:resetClearClickTimeout":
         ns.clearClickHandler.rapidFire.ts = 0;
+      break;
+      case "NoScript:purgeRecent":
+        ns.recentlyBlocked = [];
+      case "NoScript:forceSync":
+        this.sync();
+      break;
     }
   },
 
   _syncScheduled: false,
   scheduleSync() {
     if (this._syncScheduled) return;
-    let self = this;
-    this.ctx.ns.delayExec(() => self.sync(), 500);
+    this.ctx.ns.delayExec(() => this.sync(), 500);
     this._syncScheduled = true;
   },
   sync() {
+    this._syncScheduled = false;
     let ctx = this.ctx;
     let sites = ctx.ns.getSites(this.ctx);
     if (sites.pluginExtras && sites.pluginExtras.length) {

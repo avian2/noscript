@@ -442,8 +442,8 @@ RequestWatchdog.prototype = {
           if (ns.checkShorthands(targetSite)) {
             ns.autoTemp(targetSite);
             trustedTarget = true;
-          } else if (window) {
-            ns.recordBlocked(window, targetSite, originSite);
+          } else {
+            ns.recordBlocked(targetSite, originSite);
           }
         }
       }

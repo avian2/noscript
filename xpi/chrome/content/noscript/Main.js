@@ -3082,7 +3082,7 @@ const ns = {
 
       if (url) {
         try {
-          let domain = document.domain
+          let domain = document.domain;
           if (domain && domain != this.getDomain(url, true) && url != "chrome:" && url != "about:blank") {
            // temporary allow changed document.domain on allow page
             if (this.getExpando(browser, "allowPageURL") == browser.docShell.currentURI.spec &&
@@ -3131,13 +3131,13 @@ const ns = {
         }
       }
       if (!this.contentBlocker || this.alwaysShowObjectSources)
-        all.push.apply(sites.all, cache);
+        all.push.apply(all, cache);
 
       all.push.apply(sites.pluginSites, cache);
     }
 
-    cache = this.getExpando(document, "codeSites");
-    if (cache) all.push.apply(sites.all, cache);
+    cache = this.getExpando(top, "codeSites");
+    if (cache) all.push.apply(all, [...cache]);
 
     const removeBlank = !(this.showBlankSources || sites.topSite == "about:blank");
 
@@ -3156,6 +3156,7 @@ const ns = {
       }
     }
 
+    sites.recentlyBlocked = this.recentlyBlocked;
 
     if (!sites.topSite) sites.topSite = all[0] || '';
     sites.all = this.sortedSiteSet(all);
@@ -3263,12 +3264,10 @@ const ns = {
   },
 
   _recentlyBlockedMax: 40,
-  recordBlocked: function(win, site, origin) {
-    if (!(win && this.getPref("showRecentlyBlocked"))) return;
-    let overlay = DOM.getChromeWindow(win).noscriptOverlay;
-    if (!overlay) return;
-
-    const l = overlay.recentlyBlocked;
+  recentlyBlocked: [],
+  recordBlocked: function(site, origin) {
+    if (!this.getPref("showRecentlyBlocked")) return;
+    let l = this.recentlyBlocked;
     let pos = l.length;
     while (pos-- > 0) if (l[pos].site === site) break;
 
@@ -3283,7 +3282,7 @@ const ns = {
 
     l.push(entry);
     if (l.length > this._recentlyBlockedMax) {
-      overlay.recentlyBlocked = l.slice(- this._recentlyBlockedMax / 2);
+      this.recentlyBlocked = l.slice(- this._recentlyBlockedMax / 2);
     }
   },
 

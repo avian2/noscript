@@ -7,7 +7,6 @@ const Ci = Components.interfaces;
 return noscriptUtil.service ? {
 
   ns: noscriptUtil.service,
-  recentlyBlocked: [],
 
   getString: (key, parms) => noscriptUtil.getString(key, parms),
 
@@ -814,7 +813,7 @@ return noscriptUtil.service ? {
       let max = ns.getPref("recentlyBlockedCount");
       let dejaVu = [],
           count = 0,
-          recent = this.recentlyBlocked,
+          recent = sites.recentlyBlocked,
           current = false;
 
       let tooltip = this.getSiteTooltip(false, !!ns.getPref("siteInfoProvider"));
@@ -2133,7 +2132,7 @@ return noscriptUtil.service ? {
           noscriptOverlay.syncUI(subject);
           return;
         case "browser:purge-session-history":
-          noscriptOverlay.recentlyBlocked = [];
+          noscriptOverlay.ns.purgeRecent();
           return;
       }
 

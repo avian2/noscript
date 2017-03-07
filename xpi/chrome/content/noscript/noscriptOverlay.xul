@@ -157,7 +157,7 @@
               label="&noscriptReset;"
               class="menuitem-iconic"
               accesskey="&noscriptReset.accesskey;"
-              oncommand="noscriptOverlay.recentlyBlocked = []"
+              oncommand="noscriptOverlay.ns.purgeRecent()"
              />
           </menupopup>
        </menu>

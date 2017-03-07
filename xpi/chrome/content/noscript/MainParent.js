@@ -430,5 +430,10 @@ var MainParent = {
     Services.mm.broadcastAsyncMessage("NoScript:reload", payload);
 
   },
+
+  purgeRecent() {
+    this.recentlyBlocked = [];
+    Services.mm.broadcastAsyncMessage("NoScript:purgeRecent", null);
+  },
 };
 

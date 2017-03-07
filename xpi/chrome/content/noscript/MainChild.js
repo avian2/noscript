@@ -589,14 +589,7 @@ var MainChild = {
 
     if (args[1]) {
       let win = DOM.findWindow(args[3]);
-      let focusedWin = win;
-      if (!focusedWin) {
-        focusedWin = DOM.mostRecentBrowserWindow;
-        focusedWin = focusedWin && focusedWin.content;
-      }
-      if (focusedWin) {
-        this.recordBlocked(focusedWin, this.getSite(args[1].spec) || "", this.getSite(win && win.location.href || args[2] && args[2].spec));
-      }
+      this.recordBlocked(this.getSite(args[1].spec) || "", this.getSite(win && win.location.href || args[2] && args[2].spec));
     }
 
     return CP_REJECT;
@@ -620,9 +613,18 @@ var MainChild = {
         this.autoTemp(locationSite);
 
     var win = aContext && aContext.defaultView;
-    if(win) this.getExpando(win.top.document, "codeSites", []).push(locationSite);
-
+    if(win) {
+      this.cacheCodeSite(win, locationSite);
+    }
     return forbidDelegate.call(this, originURL, locationURL, win);
+  },
+
+  cacheCodeSite(win, site) {
+    let cache = this.getExpando(win, "codeSites");
+    if (!cache) {
+      cache = this.setExpando(win, "codeSites", new Set());
+    }
+    cache.add(site);
   },
 
 

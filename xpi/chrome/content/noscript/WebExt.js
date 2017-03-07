@@ -3,7 +3,8 @@ var WebExt = {
   started: false,
   running: false,
   port: null,
-}
+};
+
 try {
 
   const addonId = EXTENSION_ID;
@@ -13,7 +14,6 @@ try {
 
   AddonManager.getAddonByID(addonId, addon => {
     const baseURI = addon.getResourceURI("/");
-return;
     const {
       LegacyExtensionsUtils,
     } = Components.utils.import("resource://gre/modules/LegacyExtensionsUtils.jsm");

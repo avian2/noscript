@@ -1285,7 +1285,7 @@ var WAN = {
   noResource: false,
   logging: true,
   fingerprintLogging: false,
-  fingerprintUA: "Mozilla/@VERSION@ (ABE, https://noscript.net/abe/wan)",
+  fingerprintUA: "Mozilla/5.0 (ABE, https://noscript.net/abe/wan)",
   fingerprintHeader: "X-ABE-Fingerprint",
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 

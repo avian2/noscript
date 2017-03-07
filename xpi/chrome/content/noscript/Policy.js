@@ -650,7 +650,7 @@ var MainContentPolicy = {
         // we get the embedding document URL explicitly,
         // otherwise on redirection we would get the previous redirected URL
         if (contentDocument) { // XSLT comes with no context sometimes...
-          this.getExpando(contentDocument.defaultView.top.document, "codeSites", []).push(locationSite);
+          this.cacheCodeSite(contentDocument.defaultView, locationSite);
           originURL = contentDocument.URL;
         } else {
           originURL = aRequestOrigin && aRequestOrigin.spec;

@@ -31,7 +31,7 @@ var MSEInterception = {
         doc.defaultView.addEventListener("load", () => delete sites[site], false);
       }
     }
-    ns.recordBlocked(doc.defaultView, url, site);
+    ns.recordBlocked(url, site);
   },
 
   get interceptionDef() {

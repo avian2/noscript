@@ -19,7 +19,7 @@ var WebGLInterception = {
         doc.defaultView.addEventListener("load", () => delete sites[site], false);
       }
     }
-    ns.recordBlocked(doc.defaultView, site, site);
+    ns.recordBlocked(site, site);
   },
   get interceptionDef() {
     delete this.interceptionDef;
