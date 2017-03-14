@@ -620,6 +620,7 @@ var MainChild = {
   },
 
   cacheCodeSite(win, site) {
+    win = win.top;
     let cache = this.getExpando(win, "codeSites");
     if (!cache) {
       cache = this.setExpando(win, "codeSites", new Set());
