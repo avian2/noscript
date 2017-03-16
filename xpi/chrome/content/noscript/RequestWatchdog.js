@@ -275,9 +275,12 @@ RequestWatchdog.prototype = {
   resetUntrustedReloadInfo: function(browser, channel) {
     if (!browser) return;
     var window = IOUtil.findWindow(channel);
-    if (browser.contentWindow == window) {
-      if (ns.consoleDump) this.dump(channel, "Top level document, resetting former untrusted browser info");
-      this.setUntrustedReloadInfo(browser, false);
+    try {
+      if (browser.contentWindow == window) {
+        if (ns.consoleDump) this.dump(channel, "Top level document, resetting former untrusted browser info");
+        this.setUntrustedReloadInfo(browser, false);
+      }
+    } catch (e) {
     }
   },
   setUntrustedReloadInfo: function(browser, status) {
