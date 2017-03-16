@@ -23,7 +23,7 @@ function FrameScript(ctx) {
 
   this.ctx = ctx;
   new PasteHandler(ctx);
-  new UISync(ctx);
+  ctx.uiSync = new UISync(ctx);
 }
 
 FrameScript.prototype = {

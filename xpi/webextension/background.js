@@ -16,7 +16,7 @@ const CSP = {
 };
 
 function isJSEnabled(urlString) {
-  if (policy && policy.enforced) {
+  if (!(policy && policy.enforced)) {
     return true;
   }
   let url = new URL(urlString);
@@ -25,7 +25,7 @@ function isJSEnabled(urlString) {
 
 function setCSP(e) {
   let header;
-  for (let h of e.requestHeaders) {
+  for (let h of e.responseHeaders) {
     if (h.name === CSP.name) {
       while(e.value.includes(CSP.value)) {
         h.value = h.value.replace(CSP.value, '');
@@ -40,16 +40,16 @@ function setCSP(e) {
     if (header) {
       header.value = CSP.value;
     } else {
-      e.requestHeaders.push(header = CSP);
+      e.responseHeaders.push(header = CSP);
     }
   }
-  return header ? {requestHeaders: e.requestHeaders} : null;
+  return header ? {responseHeaders: e.responseHeaders} : null;
 }
 
 
 browser.webRequest.onHeadersReceived.addListener(setCSP,
   {urls: ["<all_urls>"]},
-  ["blocking", "requestHeaders"]
+  ["blocking", "responseHeaders"]
 );
 
 

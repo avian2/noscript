@@ -1184,17 +1184,22 @@ const ns = {
       null;
   },
   getPrincipalOrigin(p) {
-    let origin = p.originNoSuffix || p.origin;
-    if (this._buggyIPV6rx.test(origin)) {
-      try {
-        let uri = p.URI;
-        let hostPort = uri.hostPort;
-        if (hostPort && hostPort[0] === '[') origin = uri.scheme + "://" + hostPort;
-      } catch (e) {
-        ns.log(e);
+    try {
+      let origin = p.originNoSuffix || p.origin;
+      if (this._buggyIPV6rx.test(origin)) {
+        try {
+          let uri = p.URI;
+          let hostPort = uri.hostPort;
+          if (hostPort && hostPort[0] === '[') origin = uri.scheme + "://" + hostPort;
+        } catch (e) {
+          ns.log(e);
+        }
       }
+      return origin;
+    } catch (e) {
+      if (ns.consoleDump) ns.dump(`${e} grabbing origin for ${p.URI.spec}, falling back to full URI`);
     }
-    return origin;
+    return p.URI.spec;
   },
 
   _removeAutoPorts: function(site) {

@@ -2442,52 +2442,6 @@ return noscriptUtil.service ? {
       noscriptOverlay.shortcutKeys.register();
       noscriptOverlay.observer.register();
 
-      let self = this;
-
-      window.addEventListener("keyup", function(ev) {
-        if (self.tapped && ev.keyCode === 46 &&
-            noscriptOverlay.ns.getPref("eraseFloatingElements")
-          ) {
-          let el = self.tapped;
-          self.tapped = null;
-          self.delKey = true;
-          let doc = el.ownerDocument;
-          let w = doc.defaultView;
-          if (w.top == content && !('' + w.getSelection())) {
-            let root = doc.body || doc.documentElement;
-            let posRx = /^(?:absolute|fixed)$/;
-            do {
-              if (posRx.test(w.getComputedStyle(el, '').position)) {
-                (self.tapped = el.parentNode).removeChild(el);
-                break;
-              }
-            } while ((el = el.parentNode) && el != root);
-          }
-        }
-      }, true);
-
-      window.addEventListener("mousedown", function(ev) {
-        if (ev.button === 0) {
-          let ns = noscriptOverlay.ns;
-          let el = ev.target;
-          self.tapped = ns.isJSEnabled(ns.getSite(el.ownerDocument.documentURI))
-            ? null
-            : (el.ownerDocument.defaultView.top == content) && el;
-          self.delKey = false;
-        }
-      }, true);
-
-      window.addEventListener("mouseup", function(ev) {
-        if (self.delKey) {
-          self.delKey = false;
-          if (ev.target.ownerDocument.defaultView.top == content) {
-            ev.preventDefault();
-            ev.stopPropagation();
-          }
-        }
-        self.tapped = null;
-      }, true);
-
       if ("CustomizableUI" in window) {
         CustomizableUI.addListener(this.customizableUIListener);
       }

@@ -13,8 +13,14 @@ function UISync(ctx) {
 }
 
 UISync.prototype = {
+  eraser: {
+    tapped: null,
+    delKey: false,
+  },
   wire: function() {
     let ctx = this.ctx;
+    let eraser = this.eraser;
+
     ctx.addEventListener("DOMWindowCreated", () => this.sync());
     ctx.addEventListener("NoScript:syncUI", ev => {
        ev.stopPropagation();
@@ -27,8 +33,51 @@ UISync.prototype = {
       this.onPageShow(ev);
     }, true);
     ctx.addEventListener("pagehide", ev => {
+      eraser.tapped = null;
+      eraser.delKey = false;
       this.onPageHide(ev);
     }, true);
+
+    
+    ctx.addEventListener("keyup", ev => {
+      let el = eraser.tapped;
+      if (el && ev.keyCode === 46 &&
+          ctx.ns.getPref("eraseFloatingElements")
+        ) {
+        eraser.tapped = null;
+        eraser.delKey = true;
+        let doc = el.ownerDocument;
+        let w = doc.defaultView;
+        if (w.getSelection().isCollapsed) {
+          let root = doc.body || doc.documentElement;
+          let posRx = /^(?:absolute|fixed)$/;
+          do {
+            if (posRx.test(w.getComputedStyle(el, '').position)) {
+              (eraser.tapped = el.parentNode).removeChild(el);
+              break;
+            }
+          } while ((el = el.parentNode) && el != root);
+        }
+      }
+    }, true);
+
+    ctx.addEventListener("mousedown", ev => {
+      if (ev.button === 0) {
+        eraser.tapped = ev.target;
+        eraser.delKey = false;
+      }
+    }, true);
+
+    ctx.addEventListener("mouseup", ev => {
+      if (eraser.delKey) {
+        eraser.delKey = false;
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+      eraser.tapped = null;
+    }, true);
+
+
     for (let m of messages) {
       ctx.addMessageListener(m, this);
     }
