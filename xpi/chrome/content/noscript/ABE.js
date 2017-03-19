@@ -152,7 +152,7 @@ var ABE = {
     const channel = req.channel;
     const loadFlags = channel.loadFlags;
 
-    var browserReq =  req.originURI.schemeIs("chrome") && !req.external;
+    var browserReq = req.originURI.schemeIs("chrome") && !req.external;
 
     if (browserReq &&
         (
