@@ -599,7 +599,7 @@ var MainChild = {
 
   forbiddenXMLRequest: function(aRequestOrigin, aContentLocation, aContext, forbidDelegate) {
     let originURL, locationURL;
-    if (aContentLocation.schemeIs("chrome") || ContentLocation.schemeIs("moz-extension") || !aRequestOrigin ||
+    if (aContentLocation.schemeIs("chrome") || aContentLocation.schemeIs("moz-extension") || !aRequestOrigin ||
          // GreaseMonkey Ajax comes from resource: hidden window
          // Google Toolbar Ajax from about:blank
            aRequestOrigin.schemeIs("chrome") || aRequestOrigin.schemeIs("resource") ||
