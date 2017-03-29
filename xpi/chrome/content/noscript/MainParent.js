@@ -32,7 +32,7 @@ var MainParent = {
 
     this.reloadWhereNeeded(this.RELOAD_NO); // init snapshots
 
-    if (ns.VERSION.includes("rc")) { // experimental, only in dev builds for now
+    if (this.VERSION.includes("rc") && this.getPref("webext.enabled")) { // experimental, only in dev builds for now
       INCLUDE("WebExt");
     }
   },

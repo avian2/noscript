@@ -431,3 +431,4 @@ pref("noscript.smartClickToPlay", true);
 
 pref("noscript.removalWarning", true);
 pref("noscript.middlemouse_temp_allow_main_site", true);
+pref("noscript.webext.enabled",false);
