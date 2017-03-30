@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "NoScript",
-  "version": "5.0.0",
+  "version": "10.1",
   "description": "NoScript Security Suite",
 
   "permissions": [
