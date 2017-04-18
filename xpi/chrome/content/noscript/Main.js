@@ -1083,7 +1083,7 @@ const ns = {
   isGlobalHttps: function(win, /*optional */ s) {
     let allow = false;
     if (s && !this._isHttpsAndNotUntrusted(s)) return false;
-
+    if (!win) return !!s;
     for (;; win = win.parent) {
       let site = this.getSite(this.getPrincipalOrigin(this.getPrincipal(win.document)));
       if (!(allow = s && site === s || this._isHttpsAndNotUntrusted(site)) || win === win.parent)
