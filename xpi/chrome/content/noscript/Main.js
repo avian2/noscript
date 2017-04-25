@@ -3740,7 +3740,7 @@ const ns = {
       let channel = docShell.currentDocumentChannel;
       if (channel instanceof Ci.nsIHttpChannel) {
         let originalContentType = channel.getResponseHeader("Content-Type");
-        if (/\/json(?:;|^)/i.test(originalContentType) && channel.contentType === "text/html") blockIt = false;
+        if (/\/json(?:;|$)/i.test(originalContentType) && channel.contentType === "text/html") blockIt = false;
       }
     } catch (e) {
       this.log(e)
@@ -4326,6 +4326,8 @@ const ns = {
 
     if (!this.allowLocalLinks)
       return fromPolicy;
+
+    if (!principal) return true;
 
     if (url instanceof Ci.nsIURI) {
       if (!url.schemeIs("file")) return fromPolicy;
