@@ -83,11 +83,12 @@ RequestWatchdog.prototype = {
         cached = false;
 
       case "http-on-examine-cached-response":
-
+        ns.serializeReqData(channel);
         if (ns.externalFilters.enabled)
           ns.callExternalFilters(channel, cached);
 
         if (channel.loadFlags & this.DOCUMENT_LOAD_FLAGS) {
+          ns.serializeReqData(channel);
           ABE.handleSandbox(channel);
           ns.onContentSniffed(channel);
         } else {

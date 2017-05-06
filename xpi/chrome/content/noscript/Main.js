@@ -1628,7 +1628,20 @@ const ns = {
     }
   },
 
-
+  REQDATA_HEADER: "X-NoScript-ReqData",
+  serializeReqData(req) {
+    req.setResponseHeader(this.REQDATA_HEADER, JSON.stringify(this.reqData(req), function(key, val) {
+      return (this[key] === this) ? undefined : val;
+    }), false);
+  },
+  unserializeReqData(req) {
+    try {
+      Object.assign(ns.reqData(req), JSON.parse(req.getResponseHeader(this.REQDATA_HEADER)));
+    } catch (e) {
+      Cu.reportError(e);
+      return;
+    }
+  },
   reqData(req, remove = false) {
     return IOUtil.reqData(req, "net.noscript.channelData", remove);
   },
@@ -3464,6 +3477,7 @@ const ns = {
     if (!docShell) return;
     let channel = docShell.currentDocumentChannel;
     if (!channel) return;
+    this.unserializeReqData(channel);
 
     const uri = channel.URI;
     const originURI = ABE.getOriginalOrigin(channel);
