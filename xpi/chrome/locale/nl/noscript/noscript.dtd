@@ -13,7 +13,7 @@
 <!ENTITY noscriptUntrust "Markeren als niet vertrouwd">
 <!ENTITY noscriptUntrust.accesskey "n">
 <!ENTITY noscriptRemoveSelected "Geselecteerde websites verwijderen">
-<!ENTITY noscriptGloballyEnabled "Scripts worden algemeen toegestaan (gevaarlijk)">
+<!ENTITY noscriptGloballyEnabled "Scripts worden overal toegestaan (gevaarlijk)">
 <!ENTITY noscriptAutoReload "Betrokken pagina’s automatisch vernieuwen als toestemmingen wijzigen">
 <!ENTITY noscriptAutoReload.currentTab "Alleen het huidige tabblad opnieuw laden">
 <!ENTITY noscriptGeneral "Algemeen">
@@ -187,5 +187,5 @@
 <!ENTITY noscriptDonate.accesskey "D">
 <!ENTITY noscriptCascadePermissions "Toestemmingen van bovenste document aan scripts van derden doorgeven">
 <!ENTITY noscriptRestrictSubdocScripting "Scripts in toegestane subdocumenten van niet-toegestane pagina’s blokkeren">
-<!ENTITY noscriptGlobalHttpsWhitelist "HTTPS-scripts op HTTPS-documenten algemeen toestaan">
+<!ENTITY noscriptGlobalHttpsWhitelist "HTTPS-scripts op HTTPS-documenten overal toestaan">
 <!ENTITY noscriptPermanentInPrivate "Permanente ‘Toestaan’-opdrachten in privévensters">

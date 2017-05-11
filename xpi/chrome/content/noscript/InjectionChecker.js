@@ -782,7 +782,7 @@ var InjectionChecker = {
     "(?:\\W|^)(?:javascript:(?:[\\s\\S]+[=\\\\\\(`\\[\\.<]|[\\s\\S]*(?:\\bname\\b|\\\\[ux]\\d))|" +
     "data:(?:(?:[a-z]\\w+/\\w[\\w+-]+\\w)?[;,]|[\\s\\S]*;[\\s\\S]*\\b(?:base64|charset=)|[\\s\\S]*,[\\s\\S]*<[\\s\\S]*\\w[\\s\\S]*>))|@" +
     ("import\\W*(?:\\/\\*[\\s\\S]*)?(?:[\"']|url[\\s\\S]*\\()" +
-      "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(")
+      "|-moz-binding[\\s\\S]*:[\\s\\S]*url[\\s\\S]*\\(|\\{\\{[\\s\\S]+\\}\\}")
       .replace(/[a-rt-z\-]/g, "\\W*$&"),
     "i"),
   checkAttributes: function(s) {
@@ -797,21 +797,23 @@ var InjectionChecker = {
     return false;
   },
 
+  GlobalsChecker: /https?:\/\/[\S\s]+["'\s\0](?:id|class|data-\w+)[\s\0]*=[\s\0]*("')?\w{3,}(?:[\s\0]|\1|$)|(?:id|class|data-\w+)[\s\0]*=[\s\0]*("')?\w{3,}(?:[\s\0]|\1)[\s\S]*["'\s\0]href[\s\0]*=[\s\0]*(?:"')?https?:\/\//i
+  ,
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
-   fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings|set|isindex|animate") +
-    ")[^>\\w])|['\"\\s\\0/](?:formaction|style|background|src|lowsrc|ping|" + IC_EVENT_PATTERN +
-     ")[\\s\\0]*=", "i"),
+   fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings|set|isindex|animate|template") +
+    ")[^>\\w])|['\"\\s\\0/](?:formaction|style|background|src|lowsrc|ping|innerhtml|data-bind|" + IC_EVENT_PATTERN +
+     ")[\\s\\0]*=|<%[\\s\\S]+[=(][\\s\\S]+%>", "i"),
 
   checkHTML: function(s) {
-     let links = s.match(/\b(?:href|src|(?:form)?action)[\s\0]*=[\s\0]*(?:(["'])[\s\S]*?\1|[^'"<>][^>\s]*)/ig);
-     if (links) {
-      for (let l  of links) {
-        l = l.replace(/[^=]*=[\s\0]*/i, '');
-        l = /^["']/.test(l) ? l.replace(/^(['"])([\s\S]*)\1/g, '$2') : l.replace(/[\s>][\s\S]*/, '');
-        if (/^(?:javascript|data):/i.test(l) || this._checkRecursive(l, 3)) return true;
+     let links = s.match(/\b(?:href|src|(?:form)?action|\w+-\w+)[\s\0]*=[\s\0]*(?:(["'])[\s\S]*?\1|[^'"<>][^>\s]*)/ig);
+      if (links) {
+        for (let l  of links) {
+          l = l.replace(/[^=]*=[\s\0]*/i, '');
+          l = /^["']/.test(l) ? l.replace(/^(['"])([\s\S]*)\1/g, '$2') : l.replace(/[\s>][\s\S]*/, '');
+          if (/^(?:javascript|data):/i.test(l) || this._checkRecursive(l, 3)) return true;
+        }
       }
-    }
-    return this._rxCheck("HTML", s);
+      return this._rxCheck("HTML", s) || this._rxCheck("Globals", s);
   },
 
   checkNoscript: function(s) {
