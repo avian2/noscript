@@ -237,6 +237,7 @@ const ns = {
   forbidFlash: true,
   forbidPlugins: true,
   forbidMedia: true,
+  forbidImages: false,
   forbidFonts: true,
   forbidWebGL: false,
   forbidIFrames: false,
@@ -353,6 +354,7 @@ const ns = {
       case "forbidSilverlight":
       case "forbidPlugins":
       case "forbidMedia":
+      case "forbidImages":
       case "forbidFonts":
       case "forbidWebGL":
       case "forbidIFrames":
@@ -360,7 +362,7 @@ const ns = {
         this[name]=this.getPref(name, this[name]);
         this.forbidSomeContent = this.forbidJava || this.forbidFlash ||
           this.forbidSilverlight || this.forbidPlugins ||
-          this.forbidMedia || this.forbidFonts ||
+          this.forbidMedia || this.forbidImages || this.forbidFonts ||
           this.forbidIFrames || this.forbidFrames;
       break;
 
@@ -730,7 +732,8 @@ const ns = {
       "filterXPost", "filterXGet",
       "filterXGetRx", "filterXGetUserRx",
       "filterXExceptions",
-      "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins", "forbidMedia", "forbidFonts", "forbidWebGL",
+      "forbidJava", "forbidFlash", "forbidSilverlight", "forbidPlugins",
+      "forbidMedia", "forbidImages", "forbidFonts", "forbidWebGL",
       "forbidIFrames", "forbidIFramesContext", "forbidFrames",
       "forbidMetaRefresh",
       "forbidXBL", "forbidXHR",
@@ -751,7 +754,8 @@ const ns = {
       "allowHttpsOnly",
       "truncateTitle", "truncateTitleLen",
       "whitelistRegExp", "proxiedDNS", "asyncNetworking",
-      "fakeScriptLoadEvents.enabled", "fakeScriptLoadEvents.onlyRequireJS", "fakeScriptLoadEvents.exceptions", "fakeScriptLoadEvents.docExceptions",
+      "fakeScriptLoadEvents.enabled", "fakeScriptLoadEvents.onlyRequireJS",
+      "fakeScriptLoadEvents.exceptions", "fakeScriptLoadEvents.docExceptions",
       "restrictSubdocScripting", "cascadePermissions", "globalHttpsWhitelist"
       ]) {
       try {

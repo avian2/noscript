@@ -16,13 +16,20 @@ toolbar[mode="full"] #noscript-tbb[type="menu"] {
   
 }
 
+
+.noscript-domain-name {
+  padding: 0 .6em;
+}
+
+.noscript-domain-commands { }
+
+
 .noscript-cmd {
   font-weight: normal;
 }
 
 .noscript-temp, .noscript-cmd.noscript-temp {
   font-style: italic;
-  font-weight: normal;
 }
 
 .noscript-toplevel, .noscript-toplevel.noscript-temp.noscript-forbid,
