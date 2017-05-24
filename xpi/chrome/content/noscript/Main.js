@@ -695,7 +695,7 @@ const ns = {
     Thread.hostRunning = true;
 
     this._inited = true;
-    
+
     this.beforeInit();
 
     this._initResources();
@@ -798,7 +798,7 @@ const ns = {
       this._inited = false;
 
       for (let t of this.disposalTasks) t();
-      
+
       this.shouldLoad = this.shouldProcess = CP_NOP;
 
       OS.removeObserver(this, "em-action-requested");
@@ -972,7 +972,7 @@ const ns = {
   isMandatory: function(s) {
     return s && this.mandatorySites.matches(s);
   },
-  
+
   tempSites: new PolicySites(),
   gTempSites: new PolicySites(),
   isTemp: function(s) {
@@ -1315,7 +1315,7 @@ const ns = {
     try {
       this.caps.clearUserPref(prefName);
     } catch(e) {}
-    
+
     this.setPref("global", enabled);
     if (enabled) {
       try {
@@ -1439,7 +1439,7 @@ const ns = {
 
     this.resetJSCaps();
     if (!(this.allowLocalLinks || this.allowClipboard)) return;
-    
+
     this._editingPolicies = true;
     try {
       const POLICY_NAME = this.POLICY_NAME;
@@ -1629,17 +1629,25 @@ const ns = {
   },
 
   REQDATA_HEADER: "X-NoScript-ReqData",
+  REQDATA_SERIALIZABLE: ["checkWindowName", "protectName"],
   serializeReqData(req) {
-    req.setResponseHeader(this.REQDATA_HEADER, JSON.stringify(this.reqData(req), function(key, val) {
-      return (this[key] === this) ? undefined : val;
-    }), false);
-  },
-  unserializeReqData(req) {
-    try {
-      Object.assign(ns.reqData(req), JSON.parse(req.getResponseHeader(this.REQDATA_HEADER)));
+    let reqData = this.reqData(req);
+    if (!reqData.policyHints) try {
+      req.setResponseHeader(this.REQDATA_HEADER,
+        JSON.stringify(reqData, (key, val) => this.REQDATA_SERIALIZABLE.includes(key) ? val : undefined),
+        false);
     } catch (e) {
-      Cu.reportError(e);
-      return;
+      this.log(`Cannot serialize reqData: ${uneval(reqData)}`);
+    }
+  },
+  unserializeReqData: IPC.parent ? function() {} : function(req) {
+    if (req instanceof Ci.nsIHttpChannel) {
+      try {
+        Object.assign(ns.reqData(req), JSON.parse(req.getResponseHeader(this.REQDATA_HEADER)));
+      } catch (e) {
+        //Cu.reportError(e);
+        return;
+      }
     }
   },
   reqData(req, remove = false) {
@@ -3070,10 +3078,10 @@ const ns = {
 
     const nsIDocShell = Ci.nsIDocShell;
 
-    let top;
     let all = sites.all;
     let docShell = browser.docShell;
-
+    let document = docShell.document;
+    let top = document.defaultView;
     sites.docJSBlocked = !docShell.allowJavascript;
     try {
       sites.cspBlocked = /\b(?:sandbox|script-src\s+'none')\s*(?:[,;]|$)/
@@ -3123,8 +3131,7 @@ const ns = {
       }
 
       let domLoaded = !!this.getExpando(document, "domLoaded");
-
-      if (win === (top || (top = win.top))) {
+      if (win === top) {
         sites.topSite = url;
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
       }
@@ -3138,7 +3145,6 @@ const ns = {
 
     }, this, browser);
 
-    let document = top.document;
     let cache = this.getExpando(document, "objectSites");
     if(cache) {
       if(this.consoleDump & LOG_CONTENT_INTERCEPT) {
@@ -3471,7 +3477,7 @@ const ns = {
       if (this.consoleDump) this.dump(e);
     }
   },
- 
+
   onBeforeLoad: function(win) {
     let docShell = DOM.getDocShellForWindow(win);
     if (!docShell) return;
@@ -3494,11 +3500,11 @@ const ns = {
     if (ns.reqData(channel).checkWindowName) {
       InjectionChecker.checkWindowName(win, channel.URI.spec);
     }
-    
+
     if (!IOUtil.isMediaDocOrFrame(channel, contentType)) {
       return;
     }
-    
+
     try {
       if (this.shouldLoad(7, uri, topWin ? uri : originURI || uri, win.frameElement || win, contentType,
                           win.frameElement ? CP_FRAMECHECK : CP_SHOULDPROCESS) !== CP_OK) {
@@ -3525,7 +3531,7 @@ const ns = {
 
           let browser = DOM.findBrowserForNode(win) || DOM.getFrameMM(win);
           this.getRedirCache(browser, win.top.document.documentURI).push({site: this.getSite(url), type: 7});
-        
+
 
           Thread.asap(function() {
             IOUtil.abort(channel);
@@ -3576,7 +3582,7 @@ const ns = {
     delete this._abortPluginDocLoads;
     return (this._abortPluginDocLoads = this.geckoVersionCheck("18.0.1") < 0);
   },
-  
+
   processXSSInfo(req) {
     let browser = IOUtil.findBrowser(req);
     if (browser) {
@@ -3592,7 +3598,7 @@ const ns = {
       }
     }
   },
-  
+
   hasClearClickHandler: false,
   get clearClickHandler() {
       delete this.clearClickHandler;
@@ -3622,7 +3628,7 @@ const ns = {
       url = "wyciwyg:"; // don't execute on document.open() pages with a misleading URL
       jsBlocked = false;
     }
-    
+
     if (channel) {
       this.setExpando(win, "docJSBlocked", ns.reqData(channel).docJBlocked);
     }

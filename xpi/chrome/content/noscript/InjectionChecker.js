@@ -9,7 +9,7 @@ const IC_WINDOW_OPENER_PATTERN = fuzzify("alert|confirm|prompt|open(?:URL)?|prin
 const IC_EVAL_PATTERN = "\\b(?:" +
   fuzzify('eval|set(?:Timeout|Interval)|(?:f|F)unction|Script|toString|Worker|document|constructor|generateCRMFRequest|jQuery|fetch|write(?:ln)?|__(?:define(?:S|G)etter|noSuchMethod)__|definePropert(?:y|ies)') +
    "|\\$|" + IC_WINDOW_OPENER_PATTERN + ")\\b";
-const IC_EVENT_PATTERN = "on(?:m(?:o(?:z(?:browser(?:beforekey(?:down|up)|afterkey(?:down|up))|(?:network(?:down|up)loa|accesskeynotfoun)d|pointerlock(?:change|error)|(?:orientation|time)change|fullscreen(?:change|error)|interrupt(?:begin|end)|key(?:down|up)onplugin)|use(?:(?:lea|mo)ve|o(?:ver|ut)|enter|wheel|down|up)|ve(?:start|end)?)|a(?:p(?:se(?:tmessagestatus|ndmessage)|message(?:slisting|update)|folderlisting|getmessage)req|rk)|essage)|c(?:o(?:n(?:nect(?:i(?:on(?:statechanged|available)|ng)|ed)?|t(?:rol(?:lerchange|select)|extmenu)|figurationchange)|m(?:p(?:osition(?:update|start|end)|lete)|mand(?:update)?)|py)|h(?:a(?:r(?:ging(?:time)?change|acteristicchanged)|nge)|ecking)|a(?:n(?:play(?:through)?|cel)|(?:llschang|ch)ed|rdstatechange)|u(?:rrent(?:channel|source)changed|echange|t)|l(?:i(?:rmodechange|ck)|ose)|(?:fstate|ell)change)|p(?:o(?:inter(?:l(?:ock(?:change|error)|eave)|o(?:ver|ut)|cancel|enter|down|move|up)|p(?:up(?:hid(?:den|ing)|show(?:ing|n))|state)|ster)|a(?:i(?:ring(?:con(?:firmation|sent)req|aborted)|nt)|ge(?:hide|show)|(?:st|us)e)|u(?:ll(?:vcard(?:listing|entry)|phonebook)req|sh(?:subscriptionchange)?)|r(?:o(?:pertychange|gress)|eviewstatechange)|(?:(?:ending|ty|s)chang|ic(?:hang|tur))e|lay(?:ing)?|hoto)|d(?:e(?:vice(?:p(?:roximity|aired)|(?:orienta|mo)tion|(?:unpaire|foun)d|change|light)|l(?:ivery(?:success|error)|eted)|activate)|i(?:s(?:c(?:hargingtimechange|onnect(?:ing|ed)?)|playpasskeyreq|abled)|aling)|r(?:a(?:g(?:e(?:n(?:ter|d)|xit)|(?:gestur|leav)e|start|drop|over)?|in)|op)|ata(?:setc(?:omplete|hanged)|(?:availabl|chang)e|error)?|urationchange|ownloading|blclick)|s(?:t(?:a(?:t(?:uschanged|echange)|lled|rt)|o(?:rage(?:areachanged)?|p)|k(?:sessione|comma)nd)|e(?:lect(?:ionchange|start)?|ek(?:ing|ed)|n(?:ding|t)|t)|ou(?:rce(?:(?:clos|end)ed|open)|nd(?:start|end))|c(?:(?:anningstate|ostatus)changed|roll)|pe(?:akerforcedchange|ech(?:start|end))|u(?:ccess|spend|bmit)|h(?:utter|ow))|r(?:e(?:s(?:ourcetimingbufferfull|u(?:m(?:ing|e)|lt)|ize|et)|mo(?:ve(?:sourcebuffer|track)|te(?:resume|hel)d)|ad(?:y(?:statechange)?|success|error)|c(?:orderstatechange|eived)|questmediaplaystatus|pea(?:tEven)?t|loadpage|trieving)|ow(?:s(?:inserted|delete)|e(?:nter|xit))|(?:(?:adiost)?ate|t)change|ds(?:dis|en)abled)|a(?:n(?:imation(?:iteration|start|end)|tennaavailablechange)|d(?:d(?:sourcebuffer|track)|apter(?:remov|add)ed)|ttribute(?:(?:write|read)req|changed)|fter(?:(?:scriptexecu|upda)te|print)|b(?:solutedeviceorientation|ort)|ctiv(?:estatechanged|ate)|udio(?:process|start|end)|2dpstatuschanged|lerting)|Moz(?:S(?:wipeGesture(?:(?:May)?Start|Update|End)?|crolledAreaChanged)|M(?:agnifyGesture(?:Update|Start)?|ouse(?:PixelScroll|Hittest))|EdgeUI(?:C(?:omplet|ancel)|Start)ed|RotateGesture(?:Update|Start)?|(?:Press)?TapGesture|AfterPaint)|b(?:e(?:for(?:e(?:(?:scriptexecu|activa)te|e(?:ditfocus|victed)|u(?:nload|pdate)|p(?:aste|rint)|c(?:opy|ut))|deactivate)|gin(?:Event)?)|u(?:fferedamountlow|sy)|oun(?:dary|ce)|l(?:ocked|ur)|roadcast)|DOM(?:Node(?:Inserted(?:IntoDocument)?|Removed(?:FromDocument)?)|(?:CharacterData|Subtree)Modified|A(?:ttrModified|ctivate)|Focus(?:Out|In)|MouseScroll)|w(?:eb(?:kit(?:Animation(?:Iteration|Start|End)|animation(?:iteration|start|end)|(?:TransitionE|transitione)nd)|socket)|a(?:it|rn)ing|heel)|e(?:n(?:ter(?:pincodereq)?|(?:crypt|abl)ed|d(?:Event|ed)?)|m(?:ergencycbmodechange|ptied)|(?:itbroadcas|vic)ted|rror(?:update)?|xit)|f(?:o(?:rm(?:change|input)|cus(?:out|in)?)|ullscreen(?:change|error)|i(?:lterchange|nish)|a(?:cesdetect|il)ed|requencychange|etch)|l(?:o(?:ad(?:e(?:d(?:meta)?data|nd)|ing(?:error|done)?|start)?|s(?:tpointer|e)capture)|(?:anguage|evel)change|y)|o(?:(?:(?:rientation|tastatus)chang|(?:ff|n)lin)e|b(?:expasswordreq|solete)|verflow(?:changed)?|pen)|t(?:o(?:uch(?:cancel|start|move|end)|ggle)|ime(?:update|out)|e(?:rminate|xt)|ransitionend|ypechange)|u(?:p(?:date(?:(?:fou|e)nd|ready|start)?|gradeneeded)|s(?:erproximity|sdreceived)|n(?:derflow|load))|v(?:rdisplay(?:(?:dis)?connect|presentchange)|o(?:ice(?:schanged|change)|lumechange)|ersionchange)|g(?:amepad(?:(?:dis)?connected|button(?:down|up)|axismove)|(?:otpointercaptur|roupchang)e|et)|h(?:e(?:adphoneschange|l[dp])|(?:fp|id)statuschanged|ashchange|olding)|i(?:cc(?:(?:info)?change|(?:un)?detected)|n(?:coming|stall|valid|put))|n(?:o(?:tificationcl(?:ick|ose)|update|match)|ewrdsgroup)|SVG(?:(?:Unl|L)oad|Resize|Scroll|Zoom)|key(?:press|down|up)|(?:AppComman|Loa)d|Request|zoom)"
+const IC_EVENT_PATTERN = "on(?:c(?:o(?:n(?:nect(?:i(?:on(?:statechanged|available)|ng)|ed)?|t(?:rollerchange|extmenu))|m(?:p(?:osition(?:update|start|end)|lete)|mand(?:update)?)|py)|h(?:a(?:r(?:ging(?:time)?change|acteristicchanged)|nge)|ecking)|a(?:n(?:play(?:through)?|cel)|(?:llschang|ch)ed|rdstatechange)|u(?:rrent(?:channel|source)changed|echange|t)|l(?:i(?:rmodechange|ck)|ose)|fstatechange)|p(?:o(?:inter(?:l(?:ock(?:change|error)|eave)|o(?:ver|ut)|cancel|enter|down|move|up)|p(?:up(?:hid(?:den|ing)|show(?:ing|n)|positioned)|state))|a(?:i(?:ring(?:con(?:firmation|sent)req|aborted)|nt)|ge(?:hide|show)|(?:st|us)e)|u(?:ll(?:vcard(?:listing|entry)|phonebook)req|sh(?:subscriptionchange)?)|(?:[is]|ending|ty)change|lay(?:ing)?|rogress|hoto)|d(?:e(?:vice(?:p(?:roximity|aired)|(?:orienta|mo)tion|(?:unpaire|foun)d|change|light)|l(?:ivery(?:success|error)|eted))|i(?:s(?:c(?:hargingtimechange|onnect(?:ing|ed)?)|playpasskeyreq|abled)|aling)|r(?:a(?:g(?:e(?:n(?:ter|d)|xit)|(?:gestur|leav)e|start|drop|over)?|in)|op)|ata(?:(?:availabl|chang)e|error)?|urationchange|ownloading|blclick)|m(?:o(?:z(?:(?:network(?:down|up)loa|accesskeynotfoun)d|pointerlock(?:change|error)|(?:orientation|time)change|fullscreen(?:change|error)|key(?:down|up)onplugin)|use(?:l(?:ongtap|eave)|o(?:ver|ut)|enter|wheel|down|move|up))|a(?:p(?:se(?:tmessagestatus|ndmessage)|message(?:slisting|update)|folderlisting|getmessage)req|rk)|essage)|a(?:n(?:imation(?:iteration|cancel|start|end)|tennaavailablechange)|d(?:d(?:sourcebuffer|track)|apter(?:remov|add)ed)|ttribute(?:(?:write|read)req|changed)|u(?:dio(?:process|start|end)|xclick)|b(?:solutedeviceorientation|ort)|(?:2dpstatuschang|ppinstall)ed|fter(?:scriptexecute|print)|ctiv(?:estatechanged|ate)|lerting)|s(?:t(?:a(?:t(?:uschanged|echange)|lled|rt)|o(?:rage(?:areachanged)?|p)|k(?:sessione|comma)nd)|e(?:lect(?:ionchange|start)?|ek(?:ing|ed)|n(?:ding|t)|t)|ou(?:rce(?:(?:clos|end)ed|open)|nd(?:start|end))|c(?:(?:anningstate|ostatus)changed|roll)|pe(?:akerforcedchange|ech(?:start|end))|u(?:ccess|spend|bmit)|how)|r(?:e(?:s(?:ourcetimingbufferfull|u(?:m(?:ing|e)|lt)|ponseprogress|ize|et)|mo(?:ve(?:sourcebuffer|track)|te(?:resume|hel)d)|ad(?:y(?:statechange)?|success|error)|quest(?:mediaplaystatu|progres)s|pea(?:tEven)?t|loadpage|trieving|ceived)|(?:(?:adiost)?ate|t)change|ds(?:dis|en)abled)|Moz(?:S(?:wipeGesture(?:(?:May)?Start|Update|End)?|crolledAreaChanged)|M(?:agnifyGesture(?:Update|Start)?|ouse(?:PixelScroll|Hittest))|EdgeUI(?:C(?:omplet|ancel)|Start)ed|RotateGesture(?:Update|Start)?|(?:Press)?TapGesture|AfterPaint)|w(?:eb(?:kit(?:Animation(?:Iteration|Start|End)|animation(?:iteration|start|end)|(?:TransitionE|transitione)nd)|socket)|a(?:iting(?:forkey)?|rning)|heel)|DOM(?:Node(?:Inserted(?:IntoDocument)?|Removed(?:FromDocument)?)|(?:CharacterData|Subtree)Modified|A(?:ttrModified|ctivate)|Focus(?:Out|In)|MouseScroll)|b(?:e(?:fore(?:(?:evicte|unloa)d|p(?:aste|rint)|scriptexecute|c(?:opy|ut))|gin(?:Event)?)|u(?:fferedamountlow|sy)|l(?:ocked|ur)|roadcast|oundary)|v(?:rdisplay(?:(?:presentchang|activat)e|d(?:eactivate|isconnect)|connect)|o(?:ice(?:schanged|change)|lumechange)|ersionchange)|e(?:n(?:ter(?:pincodereq)?|(?:crypt|abl)ed|d(?:Event|ed)?)|m(?:ergencycbmodechange|ptied)|(?:itbroadcas|vic)ted|rror|xit)|t(?:o(?:uch(?:cancel|start|move|end)|ggle)|ransition(?:cancel|start|end|run)|ime(?:update|out)|e(?:rminate|xt)|ypechange)|l(?:o(?:ad(?:e(?:d(?:meta)?data|nd)|ing(?:error|done)?|start)?|stpointercapture)|(?:anguage|evel)change|y)|o(?:(?:(?:rientation|tastatus)chang|(?:ff|n)lin)e|b(?:expasswordreq|solete)|verflow(?:changed)?|pen)|u(?:p(?:date(?:(?:fou|e)nd|ready|start)?|gradeneeded)|s(?:erproximity|sdreceived)|n(?:derflow|load))|g(?:amepad(?:(?:dis)?connected|button(?:down|up)|axismove)|(?:otpointercaptur|roupchang)e|et)|f(?:ullscreen(?:change|error)|ocus(?:out|in)?|requencychange|(?:inis|etc)h|ailed)|i(?:cc(?:(?:info)?change|(?:un)?detected)|n(?:coming|stall|valid|put))|h(?:(?:fp|id)statuschanged|e(?:adphoneschange|ld)|ashchange|olding)|n(?:o(?:tificationcl(?:ick|ose)|update|match)|ewrdsgroup)|SVG(?:(?:Unl|L)oad|Resize|Scroll|Zoom)|key(?:statuseschange|press|down|up)|(?:AppComman|Loa)d|Request|zoom)"
   // autogenerated from nsHtml5AtomList.h and nsGkAtomList.h
   ;
 const IC_EVENT_DOS_PATTERN =
@@ -69,19 +69,32 @@ var InjectionChecker = {
   },
 
   checkJSSyntax: function(s) {
-    // bracket balancing for micro injections like "''), e v a l (name,''"
+     // bracket balancing for micro injections like "''), e v a l (name,''"
     if (/^(?:''|"")?[^\('"]*\)/.test(s)) return this.bb("x(\n", s, "\n)");
     if (/^(?:''|"")?[^\['"]*\\]/.test(s)) return this.bb("y[\n", s, "\n]");
     if (/^(?:''|"")?[^\{'"]*\}/.test(s)) return this.bb("function z() {\n", s, "\n}");
 
+    let syntax = this.syntax;
     s += " /* COMMENT_TERMINATOR */\nDUMMY_EXPR";
-    if (this.syntax.check(s)) {
-      this.log("Valid fragment " + s);
-      return true;
-    }
-    return false;
-  },
+    if (!syntax.check(s)) {
+      //return false;
+      let templateExpressions = s.replace(/[[\]{}]/g, ";");
 
+      if (templateExpressions === s ||
+          !(this.maybeJS(templateExpressions) &&
+            (syntax.check(templateExpressions) ||
+              syntax.check(this.fromMavoScript(templateExpressions)))
+        )) {
+        return false;
+      }
+    }
+
+    this.log("Valid fragment " + s);
+    return true;
+  },
+  fromMavoScript(s) {
+    return s.replace(/\s+(and|or|mod)\s+/g, '%').replace(/\b$url\b/g, 'location');
+  },
   get breakStops() {
     var def = "\\/\\?&#;\\s\\x00}<>"; // we stop on URL, JS and HTML delimiters
     var bs = {
@@ -707,8 +720,8 @@ var InjectionChecker = {
       this.nameAssignment = true;
     }
 
-    var hasUnicodeEscapes = !unescapedUni && /\\u[0-9a-f]{4}/i.test(s);
-    if (hasUnicodeEscapes && /\\u00[0-7][0-9a-f]/i.test(s)) {
+    var hasUnicodeEscapes = !unescapedUni && /\\u(?:[0-9a-f]{4}|\{[0-9a-f]+\})/i.test(s);
+    if (hasUnicodeEscapes && /\\u(?:\{0*|00)[0-7][0-9a-f]/i.test(s)) {
       this.escalate("Unicode-escaped lower ASCII");
       return true;
     }
@@ -801,7 +814,7 @@ var InjectionChecker = {
   ,
   HTMLChecker: new RegExp("<[^\\w<>]*(?:[^<>\"'\\s]*:)?[^\\w<>]*(?:" + // take in account quirks and namespaces
    fuzzify("script|form|style|svg|marquee|(?:link|object|embed|applet|param|i?frame|base|body|meta|ima?ge?|video|audio|bindings|set|isindex|animate|template") +
-    ")[^>\\w])|['\"\\s\\0/](?:formaction|style|background|src|lowsrc|ping|innerhtml|data-bind|" + IC_EVENT_PATTERN +
+    ")[^>\\w])|['\"\\s\\0/](?:formaction|style|background|src|lowsrc|ping|innerhtml|data-bind|(?:data-)?mv-(?:\\w+[\\w-]*)|" + IC_EVENT_PATTERN +
      ")[\\s\\0]*=|<%[\\s\\S]+[=(][\\s\\S]+%>", "i"),
 
   checkHTML: function(s) {
@@ -809,8 +822,8 @@ var InjectionChecker = {
       if (links) {
         for (let l  of links) {
           l = l.replace(/[^=]*=[\s\0]*/i, '');
-          l = /^["']/.test(l) ? l.replace(/^(['"])([\s\S]*)\1/g, '$2') : l.replace(/[\s>][\s\S]*/, '');
-          if (/^(?:javascript|data):/i.test(l) || this._checkRecursive(l, 3)) return true;
+          l = /^["']/.test(l) ? l.replace(/^(['"])([^]*?)\1[^]*/g, '$2') : l.replace(/[\s>][^]*/, '');
+          if (/^(?:javascript|data):|\[[^]+&[^]+\]/i.test(l) || this._checkRecursive(l, 3)) return true;
         }
       }
       return this._rxCheck("HTML", s) || this._rxCheck("Globals", s);
