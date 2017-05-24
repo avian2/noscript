@@ -3080,8 +3080,7 @@ const ns = {
 
     let all = sites.all;
     let docShell = browser.docShell;
-    let document = docShell.document;
-    let top = document.defaultView;
+    var document, topWin;
     sites.docJSBlocked = !docShell.allowJavascript;
     try {
       sites.cspBlocked = /\b(?:sandbox|script-src\s+'none')\s*(?:[,;]|$)/
@@ -3131,7 +3130,8 @@ const ns = {
       }
 
       let domLoaded = !!this.getExpando(document, "domLoaded");
-      if (win === top) {
+      if (!topWin) topWin = win.top;
+      if (topWin) {
         sites.topSite = url;
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
       }
@@ -3144,7 +3144,8 @@ const ns = {
       this.processScriptElements(document, sites, url);
 
     }, this, browser);
-
+    
+    document = topWin.document;
     let cache = this.getExpando(document, "objectSites");
     if(cache) {
       if(this.consoleDump & LOG_CONTENT_INTERCEPT) {
@@ -3160,7 +3161,7 @@ const ns = {
       all.push.apply(sites.pluginSites, cache);
     }
 
-    cache = this.getExpando(top, "codeSites");
+    cache = this.getExpando(topWin, "codeSites");
     if (cache) all.push.apply(all, [...cache]);
 
     const removeBlank = !(this.showBlankSources || sites.topSite == "about:blank");
