@@ -93,7 +93,7 @@ var InjectionChecker = {
     return true;
   },
   fromMavoScript(s) {
-    return s.replace(/\s+(and|or|mod)\s+/g, '%').replace(/\b$url\b/g, 'location');
+    return s.replace(/\b(?:and|or|mod)(?=[\s\d])/g, '%').replace(/\b$url\b/g, 'location');
   },
   get breakStops() {
     var def = "\\/\\?&#;\\s\\x00}<>"; // we stop on URL, JS and HTML delimiters
