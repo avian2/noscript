@@ -68,7 +68,7 @@ var InjectionChecker = {
     return false;
   },
 
-  checkJSSyntax: function(s) {
+  checkJSSyntax(s) {
      // bracket balancing for micro injections like "''), e v a l (name,''"
     if (/^(?:''|"")?[^\('"]*\)/.test(s)) return this.bb("x(\n", s, "\n)");
     if (/^(?:''|"")?[^\['"]*\\]/.test(s)) return this.bb("y[\n", s, "\n]");
@@ -83,7 +83,7 @@ var InjectionChecker = {
       if (templateExpressions === s ||
           !(this.maybeJS(templateExpressions) &&
             (syntax.check(templateExpressions) ||
-              syntax.check(this.fromMavoScript(templateExpressions)))
+              this.maybeMavo(templateExpressions))
         )) {
         return false;
       }
@@ -92,8 +92,8 @@ var InjectionChecker = {
     this.log("Valid fragment " + s);
     return true;
   },
-  fromMavoScript(s) {
-    return s.replace(/\b(?:and|or|mod)(?=[\s\d])/g, '%').replace(/\b$url\b/g, 'location');
+  maybeMavo(s) {
+    return /\b(?:and|or|mod|$url\b)/.test(s);
   },
   get breakStops() {
     var def = "\\/\\?&#;\\s\\x00}<>"; // we stop on URL, JS and HTML delimiters
@@ -104,7 +104,7 @@ var InjectionChecker = {
       function(c) { bs[c] = new RegExp("[" + def + c + "]"); }
     );
     delete this.breakStops;
-    return this.breakStops = bs;
+    return (this.breakStops = bs);
   },
 
   collapseChars: (s) => s.replace(/\;+/g, ';').replace(/\/{4,}/g, '////')
