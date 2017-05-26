@@ -76,21 +76,11 @@ var InjectionChecker = {
 
     let syntax = this.syntax;
     s += " /* COMMENT_TERMINATOR */\nDUMMY_EXPR";
-    if (!syntax.check(s)) {
-      //return false;
-      let templateExpressions = s.replace(/[[\]{}]/g, ";");
-
-      if (templateExpressions === s ||
-          !(this.maybeJS(templateExpressions) &&
-            (syntax.check(templateExpressions) ||
-              this.maybeMavo(templateExpressions))
-        )) {
-        return false;
-      }
+    if (syntax.check(s)) {
+      this.log("Valid fragment " + s);
+      return true;
     }
-
-    this.log("Valid fragment " + s);
-    return true;
+    return false;
   },
   maybeMavo(s) {
     return /\b(?:and|or|mod|$url\b)/.test(s);
@@ -640,6 +630,19 @@ var InjectionChecker = {
             this.log("JS Break Injection detected", t, iterations);
             return true;
           }
+          {
+            let templateExpressions = script.replace(/[[\]{}]/g, ";");
+
+            if (templateExpressions !== script &&
+                  this.maybeJS(templateExpressions) &&
+                  (this.syntax.check(templateExpressions) ||
+                    this.maybeMavo(templateExpressions))
+               ) {
+              this.log("JS template expression injection detected", t, iterations);
+              return true;
+            }
+          }
+
           if (++iterations > MAX_LOOPS) {
             this.log("Too many syntax checks! Assuming DOS... " + s, t, iterations);
             return true;
