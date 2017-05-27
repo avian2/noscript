@@ -3130,8 +3130,8 @@ const ns = {
       }
 
       let domLoaded = !!this.getExpando(document, "domLoaded");
-      if (!topWin) topWin = win.top;
-      if (topWin) {
+      if (!topWin) {
+        topWin = win.top;
         sites.topSite = url;
         if (domLoaded) this.setExpando(browser, "allowPageURL", null);
       }
