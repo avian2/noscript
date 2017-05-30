@@ -86,16 +86,17 @@ var InjectionChecker = {
   checkTemplates(script) {
     let templateExpressions = script.replace(/[[\]{}]/g, ";");
     return templateExpressions !== script &&
-          this.maybeJS(templateExpressions) &&
-          (this.syntax.check(templateExpressions) ||
-            this.maybeMavo(templateExpressions) ||
-            /[^><=]=[^=]/.test(templateExpressions) && this.syntax.check(
-              templateExpressions.replace(/([^><=])=(?=[^=])/g, '$1=='))
-          );
+        this.maybeMavo(script) ||
+        (this.maybeJS(templateExpressions, true) &&
+        (this.syntax.check(templateExpressions) ||
+          /[^><=]=[^=]/.test(templateExpressions) && this.syntax.check(
+            templateExpressions.replace(/([^><=])=(?=[^=])/g, '$1=='))
+        ));
   },
 
   maybeMavo(s) {
-    return /\b(?:and|or|mod|$url\b)/.test(s);
+    return /\[[^.]+\([^.]+\)[^.]*\]/.test(s) && /\b(?:and|or|mod|\$url\b)/.test(s) &&
+      this.maybeJS(s.replace(/\b(?:and|or|mod|[[\]])/g, ',').replace(/\$url\b/g, 'location'), true);
   },
   get breakStops() {
     var def = "\\/\\?&#;\\s\\x00}<>"; // we stop on URL, JS and HTML delimiters
@@ -300,8 +301,8 @@ var InjectionChecker = {
   _openIdRx: /^scope=(?:\w+\+)\w/, // OpenID authentication scope parameter, see http://forums.informaction.com/viewtopic.php?p=69851#p69851
   _gmxRx: /\$\(clientName\)-\$\(dataCenter\)\.(\w+\.)+\w+/, // GMX webmail, see http://forums.informaction.com/viewtopic.php?p=69700#p69700
 
-  maybeJS: function(expr) {
-
+  maybeJS(expr, mavoChecked = false) {
+    if (!mavoChecked && this.maybeMavo(expr)) return true;
 
     if (/`[\s\S]*`/.test(expr) ||  // ES6 templates, extremely insidious!!!
         this._evalAliasingRx.test(expr) ||

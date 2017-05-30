@@ -1634,7 +1634,7 @@ const ns = {
     let reqData = this.reqData(req);
     if (!reqData.policyHints) try {
       req.setResponseHeader(this.REQDATA_HEADER,
-        JSON.stringify(reqData, (key, val) => this.REQDATA_SERIALIZABLE.includes(key) ? val : undefined),
+        JSON.stringify(reqData, this.REQDATA_SERIALIZABLE),
         false);
     } catch (e) {
       this.log(`Cannot serialize reqData: ${uneval(reqData)}`);
