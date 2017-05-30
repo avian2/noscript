@@ -82,6 +82,18 @@ var InjectionChecker = {
     }
     return false;
   },
+
+  checkTemplates(script) {
+    let templateExpressions = script.replace(/[[\]{}]/g, ";");
+    return templateExpressions !== script &&
+          this.maybeJS(templateExpressions) &&
+          (this.syntax.check(templateExpressions) ||
+            this.maybeMavo(templateExpressions) ||
+            /[^><=]=[^=]/.test(templateExpressions) && this.syntax.check(
+              templateExpressions.replace(/([^><=])=(?=[^=])/g, '$1=='))
+          );
+  },
+
   maybeMavo(s) {
     return /\b(?:and|or|mod|$url\b)/.test(s);
   },
@@ -630,17 +642,10 @@ var InjectionChecker = {
             this.log("JS Break Injection detected", t, iterations);
             return true;
           }
-          {
-            let templateExpressions = script.replace(/[[\]{}]/g, ";");
 
-            if (templateExpressions !== script &&
-                  this.maybeJS(templateExpressions) &&
-                  (this.syntax.check(templateExpressions) ||
-                    this.maybeMavo(templateExpressions))
-               ) {
-              this.log("JS template expression injection detected", t, iterations);
-              return true;
-            }
+          if (this.checkTemplates(script)) {
+            this.log("JS template expression injection detected", t, iterations);
+            return true;
           }
 
           if (++iterations > MAX_LOOPS) {
