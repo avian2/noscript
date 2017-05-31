@@ -95,7 +95,7 @@ var InjectionChecker = {
   },
 
   maybeMavo(s) {
-    return /\[[^.]+\([^.]+\)[^.]*\]/.test(s) && /\b(?:and|or|mod|\$url\b)/.test(s) &&
+    return /\[[^]*\([^]*\)[^]*\]/.test(s) && /\b(?:and|or|mod|\$url\b)/.test(s) &&
       this.maybeJS(s.replace(/\b(?:and|or|mod|[[\]])/g, ',').replace(/\$url\b/g, 'location'), true);
   },
   get breakStops() {
