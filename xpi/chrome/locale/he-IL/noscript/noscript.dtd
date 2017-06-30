@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "הגדרות...">
 <!ENTITY noscriptOptions.accesskey "">
 <!ENTITY noscriptOptionsLong "NoScript הגדרות של">
-<!ENTITY noscriptAbout "אודות NoScript @VERSION@">
+<!ENTITY noscriptAbout "אודות NoScript 5.0.6rc6">
 <!ENTITY noscriptPermissionsText "ציין אילו אתרים יכולים לקבל היתר להפעלת קבצי Script. הקלד את כתובת האתר או את שם התחום (כגון: &quot;http://www.site.com&quot; או &quot;site.com&quot;) ולאחר מכן לחץ על התר.">
 <!ENTITY noscriptWebAddress "כתובת/תחום:">
 <!ENTITY noscriptAllow "התר">
