@@ -108,7 +108,7 @@ this.__defineGetter__("ABE", function() {
 });
 
 const ns = {
-  VERSION: "@VERSION@",
+  VERSION: "5.0.6rc5",
   classDescription: CLASS_NAME,
 	classID: Components.ID(SERVICE_ID),
 	contractID: SERVICE_CTRID,
@@ -2933,7 +2933,8 @@ const ns = {
       pluginExtras: [],
       pluginSites: [],
       docSites: [],
-      all: []
+      recentlyBlocked: [],
+      all: [],
     };
     if (browser) {
       if (browser.content) {
@@ -3090,97 +3091,100 @@ const ns = {
       sites.cspBlocked = false;
     }
 
-    this.traverseDocShells(function(docShell) {
+    try {
+      this.traverseDocShells(function(docShell) {
 
-      let document = docShell.document;
-      if (!document) return;
+        let document = docShell.document;
+        if (!document) return;
 
-      // Truncate title as needed
-      if (this.truncateTitle && document.title.length > this.truncateTitleLen) {
-        document.title = document.title.substring(0, this.truncateTitleLen);
-      }
+        // Truncate title as needed
+        if (this.truncateTitle && document.title.length > this.truncateTitleLen) {
+          document.title = document.title.substring(0, this.truncateTitleLen);
+        }
 
-      // Collect document / cached plugin URLs
-      let win = document.defaultView;
-      let docURI = document.documentURI;
-      let url = this.getSite(docURI);
+        // Collect document / cached plugin URLs
+        let win = document.defaultView;
+        let docURI = document.documentURI;
+        let url = this.getSite(docURI);
 
-      if (url) {
-        try {
-          let domain = document.domain;
-          if (domain && domain != this.getDomain(url, true) && url != "chrome:" && url != "about:blank") {
-           // temporary allow changed document.domain on allow page
-            if (this.getExpando(browser, "allowPageURL") == browser.docShell.currentURI.spec &&
-                this.getBaseDomain(domain).length >= domain.length &&
-                !(this.isJSEnabled(domain) || this.isUntrusted(domain))) {
-             this.setTemp(domain, true);
-             this.setJSEnabled(domain, true);
-             this.quickReload(win);
-           }
-           all.unshift(domain);
+        if (url) {
+          try {
+            let domain = document.domain;
+            if (domain && domain != this.getDomain(url, true) && url != "chrome:" && url != "about:blank") {
+             // temporary allow changed document.domain on allow page
+              if (this.getExpando(browser, "allowPageURL") == browser.docShell.currentURI.spec &&
+                  this.getBaseDomain(domain).length >= domain.length &&
+                  !(this.isJSEnabled(domain) || this.isUntrusted(domain))) {
+               this.setTemp(domain, true);
+               this.setJSEnabled(domain, true);
+               this.quickReload(win);
+             }
+             all.unshift(domain);
+            }
+          } catch(e) {}
+
+          sites.docSites.push(url);
+          all.push(url);
+
+          for (let redir  of this.getRedirCache(browser, docURI)) {
+            all.push(redir.site);
           }
-        } catch(e) {}
+        }
 
-        sites.docSites.push(url);
-        all.push(url);
+        let domLoaded = !!this.getExpando(document, "domLoaded");
+        if (!topWin) {
+          topWin = win.top;
+          sites.topSite = url;
+          if (domLoaded) this.setExpando(browser, "allowPageURL", null);
+        }
 
-        for (let redir  of this.getRedirCache(browser, docURI)) {
-          all.push(redir.site);
+        let loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
+        if (!(domLoaded || loaded))
+          return;
+
+        this.processObjectElements(document, sites);
+        this.processScriptElements(document, sites, url);
+
+      }, this, browser);
+
+      document = topWin.document;
+      let cache = this.getExpando(document, "objectSites");
+      if(cache) {
+        if(this.consoleDump & LOG_CONTENT_INTERCEPT) {
+          try { // calling toSource() can throw unexpected exceptions
+            this.dump("Adding plugin sites: " + cache.toSource() + " to " + all.toSource());
+          } catch(e) {
+            this.dump("Adding " + cache.length + " cached plugin sites");
+          }
+        }
+        if (!this.contentBlocker || this.alwaysShowObjectSources)
+          all.push.apply(all, cache);
+
+        all.push.apply(sites.pluginSites, cache);
+      }
+
+      cache = this.getExpando(topWin, "codeSites");
+      if (cache) all.push.apply(all, [...cache]);
+
+      const removeBlank = !(this.showBlankSources || sites.topSite == "about:blank");
+
+      for (let j = all.length; j-- > 0;) {
+        let url = all[j];
+        if (/:/.test(url) &&
+            (removeBlank && url == "about:blank" ||
+              !(
+                /^(?:file:\/\/|[a-z]+:\/*[^\/\s]+)/.test(url) ||
+               // doesn't this URL type support host?
+                this.getSite(url + "x") == url
+              )
+            ) && url != "about:"
+          ) {
+          all.splice(j, 1); // reject scheme-only URLs
         }
       }
-
-      let domLoaded = !!this.getExpando(document, "domLoaded");
-      if (!topWin) {
-        topWin = win.top;
-        sites.topSite = url;
-        if (domLoaded) this.setExpando(browser, "allowPageURL", null);
-      }
-
-      let loaded = !((docShell instanceof nsIWebProgress) && docShell.isLoadingDocument);
-      if (!(domLoaded || loaded))
-        return;
-
-      this.processObjectElements(document, sites);
-      this.processScriptElements(document, sites, url);
-
-    }, this, browser);
-    
-    document = topWin.document;
-    let cache = this.getExpando(document, "objectSites");
-    if(cache) {
-      if(this.consoleDump & LOG_CONTENT_INTERCEPT) {
-        try { // calling toSource() can throw unexpected exceptions
-          this.dump("Adding plugin sites: " + cache.toSource() + " to " + all.toSource());
-        } catch(e) {
-          this.dump("Adding " + cache.length + " cached plugin sites");
-        }
-      }
-      if (!this.contentBlocker || this.alwaysShowObjectSources)
-        all.push.apply(all, cache);
-
-      all.push.apply(sites.pluginSites, cache);
+    } catch (e) {
+      Cu.reportError(e);
     }
-
-    cache = this.getExpando(topWin, "codeSites");
-    if (cache) all.push.apply(all, [...cache]);
-
-    const removeBlank = !(this.showBlankSources || sites.topSite == "about:blank");
-
-    for (let j = all.length; j-- > 0;) {
-      let url = all[j];
-      if (/:/.test(url) &&
-          (removeBlank && url == "about:blank" ||
-            !(
-              /^(?:file:\/\/|[a-z]+:\/*[^\/\s]+)/.test(url) ||
-             // doesn't this URL type support host?
-              this.getSite(url + "x") == url
-            )
-          ) && url != "about:"
-        ) {
-        all.splice(j, 1); // reject scheme-only URLs
-      }
-    }
-
     sites.recentlyBlocked = this.recentlyBlocked;
 
     if (!sites.topSite) sites.topSite = all[0] || '';

@@ -48,7 +48,7 @@ function about_onload() {
   
   var str = getString("aboutTitle",["NoScript"]);
   if(str) document.title = str;
-  str = getString("version", ["@VERSION@"]);
+  str = getString("version", ["5.0.6rc5"]);
   if(str) document.getElementById("extensionVersion").setAttribute("value", str);
   
   setString("extensionDescription",null,"extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description");
@@ -86,7 +86,7 @@ function about_open(url, features) {
 <hbox id="headBox" align="end">
 <vbox flex="1">
 <label value="NoScript" id="extensionName" crop="right"/>
-<label value="Version @VERSION@" id="extensionVersion" crop="right"/>
+<label value="Version 5.0.6rc5" id="extensionVersion" crop="right"/>
 </vbox>
 <vbox flex="1" align="end">
 <hbox align="end">
@@ -115,7 +115,7 @@ function about_open(url, features) {
 <description class="contributor">Asaf Bartov &amp; baryoni (Hebrew translation)</description>
 <description class="contributor">Alf and Liesbeth (Dutch translation)</description>
 <description class="contributor">Alexander Sokolov, Sergei Smirnov and negodnik (Russian translation)</description>
-<description class="contributor">Batuhan Çetin and eveterinary (Turkish translation)</description>
+<description class="contributor">Batuhan Çetin, Volkan Gezer and eveterinary (Turkish translation)</description>
 <description class="contributor">Baurzhan Muftakhidinov (Kazakh translation)</description>
 <description class="contributor">Beerboy &amp; Haebaru (Japanese translation)</description>
 <description class="contributor">Carsten Winkler (Danish translation)</description>
@@ -154,7 +154,7 @@ function about_open(url, features) {
 <description class="contributor">Stiepan A. Kovac (Croatian translation)</description>
 <description class="contributor">swarnava (Bengali translation)</description>
 <description class="contributor">Tomaz Macus (Slovenian translation)</description>
-<description class="contributor">Thomas Weber &amp; Volker Hable (German translation)</description>
+<description class="contributor">Thomas, milupo &amp; Volker Hable (German translation)</description>
 <description class="contributor">tonynguyen and loveleeyoungae (Vietnamese translation)</description>
 <description class="contributor">x10firefox and Ultravioletu (Romanian translation)</description>
 <description class="contributor">Xavier Robin &amp; BlackJack (French translation)</description>
@@ -164,7 +164,7 @@ function about_open(url, features) {
 <hbox>
 <label id="license" class="text-link" tooltiptext="Read end-user license" onclick="about_open('chrome://noscript/content/NoScript_License.txt')">License</label>
 <spacer flex="1"/>
-<label id="changelog" class="text-link" align="center" tooltiptext="See Changelog" onclick="about_open('https://noscript.net/changelog#@VERSION@')">Changelog</label>
+<label id="changelog" class="text-link" align="center" tooltiptext="See Changelog" onclick="about_open('https://noscript.net/changelog#5.0.6rc5')">Changelog</label>
 <spacer flex="1"/>
 <label id="extensionHomepage" class="text-link" tooltiptext="Visit Extension Home Page" onclick="about_open('https://noscript.net')">https://noscript.net</label>
 </hbox>

@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Einstellungen…">
 <!ENTITY noscriptOptions.accesskey "E">
 <!ENTITY noscriptOptionsLong "NoScript - Einstellungen">
-<!ENTITY noscriptAbout "Über NoScript @VERSION@…">
+<!ENTITY noscriptAbout "Über NoScript 5.0.6rc5…">
 <!ENTITY noscriptPermissionsText "Sie können festlegen, welchen Websites Sie das Ausführen von Skripten erlauben möchten. Geben Sie bitte die exakte Adresse oder die Domain der Website ein (z.B. &quot;http://www.site.com&quot; oder &quot;site.com&quot;), für die Sie dies zulassen möchten, und klicken Sie dann auf &quot;Erlauben&quot;.">
 <!ENTITY noscriptWebAddress "Adresse der Website:">
 <!ENTITY noscriptAllow "Erlauben">
@@ -184,8 +184,8 @@
 <!ENTITY noscript.hoverUI "Berechtigungen-Menü öffnen beim Überfahren des NoScript-Symbols mit dem Mauszeiger">
 <!ENTITY noscriptDonate "Spenden">
 <!ENTITY noscriptDonate.accesskey "S">
-<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
-<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
-<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
-<!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">
-<!ENTITY noscriptPermanentInPrivate "Permanent &quot;Allow&quot; commands in private windows">
+<!ENTITY noscriptAutoReload.currentTab "Nur den aktuellen Tab neu laden">
+<!ENTITY noscriptCascadePermissions "Rechte des Hauptdokuments auf alle Unterdokumente und Skripte Dritter anwenden">
+<!ENTITY noscriptRestrictSubdocScripting "Skripte in Unterdokumenten der Positivliste blockieren, die zu Seiten gehören, die nicht in der Positivliste sind">
+<!ENTITY noscriptGlobalHttpsWhitelist "HTTPS Skripte generell bei HTTPS Dokumenten erlauben">
+<!ENTITY noscriptPermanentInPrivate "Permanentes &quot;Zulassen&quot; von Befehle in privaten Fenstern">

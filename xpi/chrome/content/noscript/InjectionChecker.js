@@ -164,28 +164,26 @@ var InjectionChecker = {
     // optimistic case first, one big JSON block
     for (;;) {
 
-      let m = s.match(/{[\s\S]+}/);
+      let m = s.match(s.match(/{[^]*}|\[[^]*\{[^]*}[^]*\]/));
       if (!m) return s;
 
       let whole = s;
       let expr = m[0];
-      let json = ns.json;
-      if (json) {
-        try {
-          if (!toStringRx.test(JSON.parse(expr).toString))
-            return s;
+      try {
+        if (!toStringRx.test(JSON.parse(expr).toString))
+          return s;
 
-          this.log("Reducing big JSON " + expr);
-          return s.replace(expr, '{}');
-        } catch(e) {}
-      }
+        this.log("Reducing big JSON " + expr);
+        return s.replace(expr, '{}');
+      } catch(e) {}
+
 
       // heavier duty, scattered JSON blocks
       while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
         let prev = s;
 
         for (expr  of m) {
-          if (json) try {
+          try {
             if (!toStringRx.test(JSON.parse(expr).toString))
               continue;
 
@@ -208,10 +206,10 @@ var InjectionChecker = {
           }
         }
 
-        if (s == prev) break;
+        if (s === prev) break;
       }
 
-      if (s == whole) break;
+      if (s === whole) break;
     }
 
     return s;
