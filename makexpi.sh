@@ -45,7 +45,7 @@ else
 	XPI_NAME="$XPI_NAME~pre.xpi"
 fi
 
-../version.sh --add "$VERSION" xpi
+../version.py --add "$VERSION" xpi
 
 # Build the XPI!
 rm -f "../$XPI_NAME"
