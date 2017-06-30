@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Možnosti...">
 <!ENTITY noscriptOptions.accesskey "M">
 <!ENTITY noscriptOptionsLong "NoScript – Možnosti">
-<!ENTITY noscriptAbout "O rozšírení NoScript 5.0.6rc5">
+<!ENTITY noscriptAbout "O rozšírení NoScript @VERSION@">
 <!ENTITY noscriptPermissionsText "Môžete určiť, ktoré webové stránky majú povolené spúšťať JavaScript. Zadajte adresu alebo doménu (napríklad &quot;http://www.site.com&quot; alebo &quot;site.com&quot;) stránky, ktorú chcete povoliť, a potom kliknite na tlačidlo Povoliť.">
 <!ENTITY noscriptWebAddress "Adresa webovej stránky:">
 <!ENTITY noscriptAllow "Povoliť">
