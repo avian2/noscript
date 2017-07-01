@@ -34,7 +34,7 @@ def main():
 		patt = re.compile(b'@(X*)VERSION@')
 		func = partial(unescape, version)
 	elif args.strip and (not args.add):
-		patt = re.compile(b'%s|@(X*)VERSION@' % (re.escape(version),))
+		patt = re.compile(re.escape(version) + b'|@(X*)VERSION@')
 		func = escape
 	else:
 		print('Either --add or --strip must be specified')
