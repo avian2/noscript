@@ -108,7 +108,7 @@ this.__defineGetter__("ABE", function() {
 });
 
 const ns = {
-  VERSION: "5.0.6rc6",
+  VERSION: "@VERSION@",
   classDescription: CLASS_NAME,
 	classID: Components.ID(SERVICE_ID),
 	contractID: SERVICE_CTRID,

@@ -1,7 +1,7 @@
 <!ENTITY noscriptOptions "Seçenekler">
 <!ENTITY noscriptOptions.accesskey "S">
 <!ENTITY noscriptOptionsLong "NoScript Seçenekleri">
-<!ENTITY noscriptAbout "NoScript 5.0.6rc6 @VERSION@ Hakkında">
+<!ENTITY noscriptAbout "NoScript @VERSION@ @XVERSION@ Hakkında">
 <!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript'e izni vereceğinizi kolayca seçebilirsiniz. Lütfen adresi tam olarak girin (örn. &quot;http://www.site.com&quot; veya &quot;site.com&quot;) ve 'İzin ver' düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
 <!ENTITY noscriptWebAddress "Site adresi:">
 <!ENTITY noscriptAllow "İzin ver">
