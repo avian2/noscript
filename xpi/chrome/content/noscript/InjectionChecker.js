@@ -164,7 +164,7 @@ var InjectionChecker = {
     // optimistic case first, one big JSON block
     for (;;) {
 
-      let m = s.match(s.match(/{[^]*}|\[[^]*\{[^]*}[^]*\]/));
+      let m = s.match(/{[^]*}|\[[^]*{[^]*}[^]*\]/);
       if (!m) return s;
 
       let whole = s;
@@ -179,7 +179,7 @@ var InjectionChecker = {
 
 
       // heavier duty, scattered JSON blocks
-      while((m = s.match(/\{[^\{\}:]+:[^\{\}]+\}/g))) {
+      while((m = s.match(/{[^{}:]+:[^{}]+}/g))) {
         let prev = s;
 
         for (expr  of m) {
@@ -1731,3 +1731,4 @@ var FlashIdiocy = {
     return this.purgeBadEncodings(s);
   }
 }
+
