@@ -164,17 +164,16 @@ var InjectionChecker = {
     // optimistic case first, one big JSON block
     for (;;) {
 
-      let m = s.match(/{[^]*}|\[[^]*{[^]*}[^]*\]/);
+      let m = s.match(/{[^]+}|\[[^]*{[^]+}[^]*\]/);
       if (!m) return s;
 
       let whole = s;
       let expr = m[0];
       try {
-        if (!toStringRx.test(JSON.parse(expr).toString))
-          return s;
-
-        this.log("Reducing big JSON " + expr);
-        return s.replace(expr, '{}');
+        if (toStringRx.test(JSON.parse(expr).toString)) {
+          this.log("Reducing big JSON " + expr);
+          return this.reduceJSON(s.replace(expr, '{}'));
+        }
       } catch(e) {}
 
 

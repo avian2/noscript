@@ -940,8 +940,6 @@ const ns = {
     this.httpStarted = true;
     this.initContentPolicy(true);
 
-    this.categoryManager.addCategoryEntry("net-channel-event-sinks", this.contractID, this.contractID, false, true);
-
     delete this.requestWatchdog;
     return (this.requestWatchdog = new RequestWatchdog());
   },
@@ -1619,6 +1617,8 @@ const ns = {
       if (this.consoleDump) this.dump("Adding content policy.");
       catMan.addCategoryEntry(cat, this.contractID, this.contractID, false, true);
     } else this.dump("No category?!" + (cpMixin === NOPContentPolicy) + ", " + last + ", " + this.mimeService);
+    
+    catMan.addCategoryEntry("net-channel-event-sinks", this.contractID, this.contractID, false, true);
 
 
     if (!this.mimeService) {
@@ -3511,13 +3511,24 @@ const ns = {
     }
 
     try {
-      if (this.shouldLoad(7, uri, topWin ? uri : originURI || uri, win.frameElement || win, contentType,
+      let body = win.document.body;
+      let media = body && body.children.length === 1  && body.firstChild;
+      if (!(media instanceof win.HTMLMediaElement)) media = null;
+      if (this.shouldLoad(media ? 15 : 7, uri, topWin ? uri : originURI || uri, media || win.frameElement || win, contentType,
                           win.frameElement ? CP_FRAMECHECK : CP_SHOULDPROCESS) !== CP_OK) {
 
         channel.loadFlags |= channel.INHIBIT_CACHING;
 
         if (this.consoleDump & LOG_CONTENT_INTERCEPT)
           this.dump("Media document content type detected");
+
+        if (media) {
+          if (this.consoleDump & LOG_CONTENT_BLOCK)
+            this.dump("Aborting media " + contentType);
+          IOUtil.abort(channel);
+         return;
+        }
+
 
         if(!topWin) {
           // check if this is an iframe
