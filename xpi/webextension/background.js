@@ -1,11 +1,31 @@
 var policy;
+var webRequestInitialized = false;
 
+function initWebRequest() {
+  if (webRequestInitialized) return;
+  webRequestInitialized = true;
+  browser.webRequest.onHeadersReceived.addListener(setCSP,
+    {urls: ["<all_urls>"]},
+    ["blocking", "responseHeaders"]
+  );
+  console.log(`NoScript WebExt webRequest initialized`);
+}
 var legacyPort = browser.runtime.connect({name: "legacy"});
 legacyPort.onMessage.addListener(msg => {
-  console.log(`NoScript WebExt received message ${msg.toSource()}`);
+
   switch(msg.type) {
     case "configure":
+      initWebRequest();
       policy = msg.policy;
+    break;
+    case "saveData":
+      console.log(`browser.storage: ${browser.storage}, manifest: ${uneval(browser.runtime.getManifest())}`);
+      browser.permissions.getAll().then(p => console.log(`Permissions:  ${uneval(p.permissions)}`));
+      browser.storage.local.set(msg.data);
+    break;
+
+    case "dumpData":
+      browser.storage.local.get(null, items => console.log(items));
     break;
   }
 });
@@ -47,14 +67,6 @@ function setCSP(e) {
 }
 
 
-browser.webRequest.onHeadersReceived.addListener(setCSP,
-  {urls: ["<all_urls>"]},
-  ["blocking", "responseHeaders"]
-);
-
-
-setTimeout(() => {
-  browser.runtime.sendMessage("READY");
-  console.log("NoScript WebExt Ready");
-}, 10000);
+browser.runtime.sendMessage("READY");
+console.log("NoScript WebExt Ready");
 

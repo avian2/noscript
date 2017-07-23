@@ -32,10 +32,12 @@ var MainParent = {
 
     this.reloadWhereNeeded(this.RELOAD_NO); // init snapshots
 
-    if (this.VERSION.includes("rc") && this.getPref("webext.enabled")) { // experimental, only in dev builds for now
+    if (this.getPref("webext.enabled")) { // experimental, only in dev builds for now
       INCLUDE("WebExt");
+      this.webExt = WebExt;
     }
   },
+  webExt: null,
 
    _initE10s: function() {
     INCLUDE("e10sParent");
@@ -256,8 +258,9 @@ var MainParent = {
     }
   },
 
-  _dontSerialize: ["version", "temp", "preset", "placesPrefs.ts", "mandatory", "default"],
-  serializeConf: function(beauty) {
+   _dontSerialize: ["version", "temp", "preset", "placesPrefs.ts", "mandatory", "default"],
+
+  conf2JSON() {
     const exclude = this._dontSerialize;
     const prefs = {};
     for (let key  of this.prefs.getChildList("", {})) {
@@ -265,13 +268,15 @@ var MainParent = {
         prefs[key] = this.getPref(key);
       }
     }
-
-    const conf = JSON.stringify({
+    return {
       prefs: prefs,
       whitelist: this.getPermanentSites().sitesString,
       V: this.VERSION
-    });
+    };
+  },
 
+  serializeConf: function(beauty) {
+    const conf = JSON.stringify(this.conf2JSON());
     return beauty ? conf.replace(/([^\\]"[^"]*[,\{])"/g, "$1\r\n\"").replace(/},?(?:\n|$)/g, "\r\n$&") : conf;
   },
 

@@ -3,6 +3,11 @@ var WebExt = {
   started: false,
   running: false,
   port: null,
+  saveData(json = ns.conf2JSON()) {
+    if (this.port) {
+      this.port.postMessage({ type: "saveData", data: json });
+    }
+  }
 };
 
 try {
@@ -32,6 +37,7 @@ try {
       browser.runtime.onConnect.addListener(port => {
         ns.dump(`${addonId} - webext connected`);
         WebExt.port = port;
+        WebExt.saveData();
       });
     }).catch(err => {
       Components.utils.reportError(

@@ -1,10 +1,11 @@
 {
   "manifest_version": 2,
   "name": "NoScript",
-  "version": "10.1",
+  "version": "10.1.0",
   "description": "NoScript Security Suite",
 
   "permissions": [
+    "storage", "webNavigation",
     "webRequest", "webRequestBlocking", "<all_urls>"
   ],
 

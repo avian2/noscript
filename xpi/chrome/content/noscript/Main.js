@@ -1292,6 +1292,7 @@ const ns = {
   },
 
   savePrefs: function() {
+    if (this.webExt && this.webExt.started) this.webExt.saveData();
     var res = this.prefService.savePrefFile(null);
     return res;
   },
