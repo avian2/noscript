@@ -19,8 +19,6 @@ legacyPort.onMessage.addListener(msg => {
       policy = msg.policy;
     break;
     case "saveData":
-      console.log(`browser.storage: ${browser.storage}, manifest: ${uneval(browser.runtime.getManifest())}`);
-      browser.permissions.getAll().then(p => console.log(`Permissions:  ${uneval(p.permissions)}`));
       browser.storage.local.set(msg.data);
     break;
 
