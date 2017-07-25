@@ -1136,7 +1136,7 @@ ABERequest.prototype = Lang.memoize({
 
   type: function() {
     try {
-      return this.early ? this.channel.type : PolicyState.extract(this.channel).contentType;
+      return this.early ? this.channel.type : this.channel.loadInfo.externalContentPolicyType;
     } catch(e) {
       ABE.log("Error retrieving type of " + this.destination + ": " + e); // should happen for favicons only
     }
