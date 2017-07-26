@@ -1,4 +1,4 @@
-// $ANTLR 3.1.1 ABE.g 2017-07-26 00:23:25
+// $ANTLR 3.1.1 ABE.g 2017-07-26 00:44:40
 
 var ABEParser = function(input, state) {
     if (!state) {
@@ -251,7 +251,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
 
             // AST REWRITE
-            // elements: subject, predicate
+            // elements: predicate, subject
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -379,7 +379,7 @@ org.antlr.lang.augmentObject(ABEParser.prototype, {
 
 
             // AST REWRITE
-            // elements: origin, action, methods
+            // elements: action, methods, origin
             // token labels: 
             // rule labels: retval
             // token list labels: 
