@@ -24,7 +24,7 @@ oresource: resource | 'SELF' | 'SELF+' | 'SELF++' ;
 resource  : REGEXP | GLOB | URI | LOCATION ;
 action    : A_DENY | A_LOGOUT | A_SANDBOX  | A_ACCEPT ;
 
-T_SITE    : 'Site' ;
+T_SITE    : ('Site' | 'Request') ;
 T_FROM    : ('f' | 'F') 'rom' ;
 A_DENY    : 'Deny' ;
 A_LOGOUT  : 'Logout' | 'Anon' 'ymize'? ;
@@ -43,8 +43,9 @@ REGEXP    : '^' ~'\n'+ ;
 ALL       : 'ALL' ;
 SUB       : 'SUB' ;
 INC       : 'INC' 'LUSION'? ;
-INC_TYPE   : 'OTHER' | 'SCRIPT' | 'IMAGE' | 'CSS' | 'OBJ' | 'SUBDOC' | 'XBL' | 'PING' | 'XHR' | 'OBJSUB' | 'DTD' | 'FONT' | 'MEDIA' ;
-HTTPVERB  : 'A'..'Z' 'A'..'Z'+ ;
+HTTPVERB  : 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+INC_TYPE  : 'A'..'Z' ('A'..'Z' | 'A'..'Z' '_' 'A'..'Z')+ ;
+
 
 COMMA     : ',' ;
 LPAR      : '(' ;

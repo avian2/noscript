@@ -834,22 +834,22 @@ ABEPredicate.prototype = {
   get _inclusionTypesMap() {
     delete this.__proto__._inclusionTypesMap;
     const CP = Ci.nsIContentPolicy;
-    return this.__proto__._inclusionTypesMap =
-    {
-      "OTHER": CP.TYPE_OTHER,
-      "FONT": CP.TYPE_FONT,
-      "SCRIPT": CP.TYPE_SCRIPT,
-      "IMAGE": [CP.TYPE_IMAGE, CP.TYPE_IMAGESET],
+    let map = {
+      "OTHER": [CP.TYPE_OTHER, CP.TYPE_WEBSOCKET],
+      "UNKNOWN": CP.TYPE_OTHER,
       "CSS": CP.TYPE_STYLESHEET,
+      "IMAGE": [CP.TYPE_IMAGE, CP.TYPE_IMAGESET],
       "OBJ": [CP.TYPE_OBJECT, CP.TYPE_OBJECT_SUBREQUEST],
-      "MEDIA": CP.TYPE_MEDIA,
       "SUBDOC": CP.TYPE_SUBDOCUMENT,
-      "XBL": CP.TYPE_XBL,
-      "PING": CP.TYPE_PING,
       "XHR": CP.TYPE_XMLHTTPREQUEST,
       "OBJSUB": CP.TYPE_OBJECT_SUBREQUEST,
-      "DTD": CP.TYPE_DTD
     };
+    let cpTypes = Object.keys(CP).filter(k => k.startsWith("TYPE_") && !k.startsWith("TYPE_INTERNAL_"));
+    for (let key of cpTypes) {
+      let name = key.substring(5);
+      if (!(name in map)) map[name] = CP[key];
+    }
+    return (this.__proto__._inclusionTypesMap = map);
   },
 
   _methodFilter: function(m) {

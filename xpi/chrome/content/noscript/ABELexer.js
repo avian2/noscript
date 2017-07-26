@@ -1,4 +1,4 @@
-// $ANTLR 3.1.1 ABE.g 2011-03-21 12:45:42
+// $ANTLR 3.1.1 ABE.g 2017-07-26 00:23:25
 
 var ABELexer = function(input, state) {
 // alternate constructor @todo
@@ -11,8 +11,7 @@ var ABELexer = function(input, state) {
     (function(){
     }).call(this);
 
-    this.dfa7 = new ABELexer.DFA7(this);
-    this.dfa10 = new ABELexer.DFA10(this);
+    this.dfa11 = new ABELexer.DFA11(this);
     ABELexer.superclass.constructor.call(this, input, state);
 
 
@@ -149,9 +148,41 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
         try {
             var _type = this.T_SITE;
             var _channel = org.antlr.runtime.BaseRecognizer.DEFAULT_TOKEN_CHANNEL;
-            // ABE.g:27:11: ( 'Site' )
-            // ABE.g:27:13: 'Site'
-            this.match("Site"); 
+            // ABE.g:27:11: ( ( 'Site' | 'Request' ) )
+            // ABE.g:27:13: ( 'Site' | 'Request' )
+            // ABE.g:27:13: ( 'Site' | 'Request' )
+            var alt1=2;
+            var LA1_0 = this.input.LA(1);
+
+            if ( (LA1_0=='S') ) {
+                alt1=1;
+            }
+            else if ( (LA1_0=='R') ) {
+                alt1=2;
+            }
+            else {
+                var nvae =
+                    new org.antlr.runtime.NoViableAltException("", 1, 0, this.input);
+
+                throw nvae;
+            }
+            switch (alt1) {
+                case 1 :
+                    // ABE.g:27:14: 'Site'
+                    this.match("Site"); 
+
+
+
+                    break;
+                case 2 :
+                    // ABE.g:27:23: 'Request'
+                    this.match("Request"); 
+
+
+
+                    break;
+
+            }
 
 
 
@@ -219,22 +250,22 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
             var _type = this.A_LOGOUT;
             var _channel = org.antlr.runtime.BaseRecognizer.DEFAULT_TOKEN_CHANNEL;
             // ABE.g:30:11: ( 'Logout' | 'Anon' ( 'ymize' )? )
-            var alt2=2;
-            var LA2_0 = this.input.LA(1);
+            var alt3=2;
+            var LA3_0 = this.input.LA(1);
 
-            if ( (LA2_0=='L') ) {
-                alt2=1;
+            if ( (LA3_0=='L') ) {
+                alt3=1;
             }
-            else if ( (LA2_0=='A') ) {
-                alt2=2;
+            else if ( (LA3_0=='A') ) {
+                alt3=2;
             }
             else {
                 var nvae =
-                    new org.antlr.runtime.NoViableAltException("", 2, 0, this.input);
+                    new org.antlr.runtime.NoViableAltException("", 3, 0, this.input);
 
                 throw nvae;
             }
-            switch (alt2) {
+            switch (alt3) {
                 case 1 :
                     // ABE.g:30:13: 'Logout'
                     this.match("Logout"); 
@@ -247,13 +278,13 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
                     this.match("Anon"); 
 
                     // ABE.g:30:31: ( 'ymize' )?
-                    var alt1=2;
-                    var LA1_0 = this.input.LA(1);
+                    var alt2=2;
+                    var LA2_0 = this.input.LA(1);
 
-                    if ( (LA1_0=='y') ) {
-                        alt1=1;
+                    if ( (LA2_0=='y') ) {
+                        alt2=1;
                     }
-                    switch (alt1) {
+                    switch (alt2) {
                         case 1 :
                             // ABE.g:30:31: 'ymize'
                             this.match("ymize"); 
@@ -392,18 +423,18 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
             // ABE.g:39:13: URI_START ( URI_PART )+
             this.mURI_START(); 
             // ABE.g:39:23: ( URI_PART )+
-            var cnt3=0;
-            loop3:
+            var cnt4=0;
+            loop4:
             do {
-                var alt3=2;
-                var LA3_0 = this.input.LA(1);
+                var alt4=2;
+                var LA4_0 = this.input.LA(1);
 
-                if ( (LA3_0=='#'||(LA3_0>='%' && LA3_0<='&')||(LA3_0>=',' && LA3_0<=';')||LA3_0=='='||(LA3_0>='?' && LA3_0<='[')||LA3_0==']'||LA3_0=='_'||(LA3_0>='a' && LA3_0<='z')||LA3_0=='~') ) {
-                    alt3=1;
+                if ( (LA4_0=='#'||(LA4_0>='%' && LA4_0<='&')||(LA4_0>=',' && LA4_0<=';')||LA4_0=='='||(LA4_0>='?' && LA4_0<='[')||LA4_0==']'||LA4_0=='_'||(LA4_0>='a' && LA4_0<='z')||LA4_0=='~') ) {
+                    alt4=1;
                 }
 
 
-                switch (alt3) {
+                switch (alt4) {
                 case 1 :
                     // ABE.g:39:23: URI_PART
                     this.mURI_PART(); 
@@ -412,13 +443,13 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
                     break;
 
                 default :
-                    if ( cnt3 >= 1 ) {
-                        break loop3;
+                    if ( cnt4 >= 1 ) {
+                        break loop4;
                     }
-                        var eee = new org.antlr.runtime.EarlyExitException(3, this.input);
+                        var eee = new org.antlr.runtime.EarlyExitException(4, this.input);
                         throw eee;
                 }
-                cnt3++;
+                cnt4++;
             } while (true);
 
 
@@ -449,17 +480,17 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
                 throw mse;}
 
             // ABE.g:40:37: ( URI_PART | '*' )*
-            loop4:
+            loop5:
             do {
-                var alt4=2;
-                var LA4_0 = this.input.LA(1);
+                var alt5=2;
+                var LA5_0 = this.input.LA(1);
 
-                if ( (LA4_0=='#'||(LA4_0>='%' && LA4_0<='&')||LA4_0=='*'||(LA4_0>=',' && LA4_0<=';')||LA4_0=='='||(LA4_0>='?' && LA4_0<='[')||LA4_0==']'||LA4_0=='_'||(LA4_0>='a' && LA4_0<='z')||LA4_0=='~') ) {
-                    alt4=1;
+                if ( (LA5_0=='#'||(LA5_0>='%' && LA5_0<='&')||LA5_0=='*'||(LA5_0>=',' && LA5_0<=';')||LA5_0=='='||(LA5_0>='?' && LA5_0<='[')||LA5_0==']'||LA5_0=='_'||(LA5_0>='a' && LA5_0<='z')||LA5_0=='~') ) {
+                    alt5=1;
                 }
 
 
-                switch (alt4) {
+                switch (alt5) {
                 case 1 :
                     // ABE.g:
                     if ( this.input.LA(1)=='#'||(this.input.LA(1)>='%' && this.input.LA(1)<='&')||this.input.LA(1)=='*'||(this.input.LA(1)>=',' && this.input.LA(1)<=';')||this.input.LA(1)=='='||(this.input.LA(1)>='?' && this.input.LA(1)<='[')||this.input.LA(1)==']'||this.input.LA(1)=='_'||(this.input.LA(1)>='a' && this.input.LA(1)<='z')||this.input.LA(1)=='~' ) {
@@ -476,7 +507,7 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
                     break;
 
                 default :
-                    break loop4;
+                    break loop5;
                 }
             } while (true);
 
@@ -500,18 +531,18 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
             // ABE.g:41:13: '^' (~ '\\n' )+
             this.match('^'); 
             // ABE.g:41:17: (~ '\\n' )+
-            var cnt5=0;
-            loop5:
+            var cnt6=0;
+            loop6:
             do {
-                var alt5=2;
-                var LA5_0 = this.input.LA(1);
+                var alt6=2;
+                var LA6_0 = this.input.LA(1);
 
-                if ( ((LA5_0>='\u0000' && LA5_0<='\t')||(LA5_0>='\u000B' && LA5_0<='\uFFFF')) ) {
-                    alt5=1;
+                if ( ((LA6_0>='\u0000' && LA6_0<='\t')||(LA6_0>='\u000B' && LA6_0<='\uFFFF')) ) {
+                    alt6=1;
                 }
 
 
-                switch (alt5) {
+                switch (alt6) {
                 case 1 :
                     // ABE.g:41:17: ~ '\\n'
                     if ( (this.input.LA(1)>='\u0000' && this.input.LA(1)<='\t')||(this.input.LA(1)>='\u000B' && this.input.LA(1)<='\uFFFF') ) {
@@ -528,13 +559,13 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
                     break;
 
                 default :
-                    if ( cnt5 >= 1 ) {
-                        break loop5;
+                    if ( cnt6 >= 1 ) {
+                        break loop6;
                     }
-                        var eee = new org.antlr.runtime.EarlyExitException(5, this.input);
+                        var eee = new org.antlr.runtime.EarlyExitException(6, this.input);
                         throw eee;
                 }
-                cnt5++;
+                cnt6++;
             } while (true);
 
 
@@ -598,13 +629,13 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
             this.match("INC"); 
 
             // ABE.g:45:19: ( 'LUSION' )?
-            var alt6=2;
-            var LA6_0 = this.input.LA(1);
+            var alt7=2;
+            var LA7_0 = this.input.LA(1);
 
-            if ( (LA6_0=='L') ) {
-                alt6=1;
+            if ( (LA7_0=='L') ) {
+                alt7=1;
             }
-            switch (alt6) {
+            switch (alt7) {
                 case 1 :
                     // ABE.g:45:19: 'LUSION'
                     this.match("LUSION"); 
@@ -626,102 +657,78 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
     },
     // $ANTLR end "INC",
 
-    // $ANTLR start INC_TYPE
-    mINC_TYPE: function()  {
+    // $ANTLR start HTTPVERB
+    mHTTPVERB: function()  {
         try {
-            var _type = this.INC_TYPE;
+            var _type = this.HTTPVERB;
             var _channel = org.antlr.runtime.BaseRecognizer.DEFAULT_TOKEN_CHANNEL;
-            // ABE.g:46:12: ( 'OTHER' | 'SCRIPT' | 'IMAGE' | 'CSS' | 'OBJ' | 'SUBDOC' | 'XBL' | 'PING' | 'XHR' | 'OBJSUB' | 'DTD' | 'FONT' | 'MEDIA' )
-            var alt7=13;
-            alt7 = this.dfa7.predict(this.input);
-            switch (alt7) {
+            // ABE.g:46:11: ( 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' )
+            var alt8=5;
+            switch ( this.input.LA(1) ) {
+            case 'G':
+                alt8=1;
+                break;
+            case 'P':
+                switch ( this.input.LA(2) ) {
+                case 'O':
+                    alt8=2;
+                    break;
+                case 'U':
+                    alt8=3;
+                    break;
+                case 'A':
+                    alt8=4;
+                    break;
+                default:
+                    var nvae =
+                        new org.antlr.runtime.NoViableAltException("", 8, 2, this.input);
+
+                    throw nvae;
+                }
+
+                break;
+            case 'D':
+                alt8=5;
+                break;
+            default:
+                var nvae =
+                    new org.antlr.runtime.NoViableAltException("", 8, 0, this.input);
+
+                throw nvae;
+            }
+
+            switch (alt8) {
                 case 1 :
-                    // ABE.g:46:14: 'OTHER'
-                    this.match("OTHER"); 
+                    // ABE.g:46:13: 'GET'
+                    this.match("GET"); 
 
 
 
                     break;
                 case 2 :
-                    // ABE.g:46:24: 'SCRIPT'
-                    this.match("SCRIPT"); 
+                    // ABE.g:46:21: 'POST'
+                    this.match("POST"); 
 
 
 
                     break;
                 case 3 :
-                    // ABE.g:46:35: 'IMAGE'
-                    this.match("IMAGE"); 
+                    // ABE.g:46:30: 'PUT'
+                    this.match("PUT"); 
 
 
 
                     break;
                 case 4 :
-                    // ABE.g:46:45: 'CSS'
-                    this.match("CSS"); 
+                    // ABE.g:46:38: 'PATCH'
+                    this.match("PATCH"); 
 
 
 
                     break;
                 case 5 :
-                    // ABE.g:46:53: 'OBJ'
-                    this.match("OBJ"); 
-
-
-
-                    break;
-                case 6 :
-                    // ABE.g:46:61: 'SUBDOC'
-                    this.match("SUBDOC"); 
-
-
-
-                    break;
-                case 7 :
-                    // ABE.g:46:72: 'XBL'
-                    this.match("XBL"); 
-
-
-
-                    break;
-                case 8 :
-                    // ABE.g:46:80: 'PING'
-                    this.match("PING"); 
-
-
-
-                    break;
-                case 9 :
-                    // ABE.g:46:89: 'XHR'
-                    this.match("XHR"); 
-
-
-
-                    break;
-                case 10 :
-                    // ABE.g:46:97: 'OBJSUB'
-                    this.match("OBJSUB"); 
-
-
-
-                    break;
-                case 11 :
-                    // ABE.g:46:108: 'DTD'
-                    this.match("DTD"); 
-
-
-
-                    break;
-                case 12 :
-                    // ABE.g:46:116: 'FONT'
-                    this.match("FONT"); 
-
-
-
-                    break;
-                case 13 :
-                    // ABE.g:46:125: 'MEDIA'
-                    this.match("MEDIA"); 
+                    // ABE.g:46:48: 'DELETE'
+                    this.match("DELETE"); 
 
 
 
@@ -734,44 +741,61 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
         finally {
         }
     },
-    // $ANTLR end "INC_TYPE",
+    // $ANTLR end "HTTPVERB",
 
-    // $ANTLR start HTTPVERB
-    mHTTPVERB: function()  {
+    // $ANTLR start INC_TYPE
+    mINC_TYPE: function()  {
         try {
-            var _type = this.HTTPVERB;
+            var _type = this.INC_TYPE;
             var _channel = org.antlr.runtime.BaseRecognizer.DEFAULT_TOKEN_CHANNEL;
-            // ABE.g:47:11: ( 'A' .. 'Z' ( 'A' .. 'Z' )+ )
-            // ABE.g:47:13: 'A' .. 'Z' ( 'A' .. 'Z' )+
+            // ABE.g:47:11: ( 'A' .. 'Z' ( 'A' .. 'Z' | 'A' .. 'Z' '_' 'A' .. 'Z' )+ )
+            // ABE.g:47:13: 'A' .. 'Z' ( 'A' .. 'Z' | 'A' .. 'Z' '_' 'A' .. 'Z' )+
             this.matchRange('A','Z'); 
-            // ABE.g:47:22: ( 'A' .. 'Z' )+
-            var cnt8=0;
-            loop8:
+            // ABE.g:47:22: ( 'A' .. 'Z' | 'A' .. 'Z' '_' 'A' .. 'Z' )+
+            var cnt9=0;
+            loop9:
             do {
-                var alt8=2;
-                var LA8_0 = this.input.LA(1);
+                var alt9=3;
+                var LA9_0 = this.input.LA(1);
 
-                if ( ((LA8_0>='A' && LA8_0<='Z')) ) {
-                    alt8=1;
+                if ( ((LA9_0>='A' && LA9_0<='Z')) ) {
+                    var LA9_2 = this.input.LA(2);
+
+                    if ( (LA9_2=='_') ) {
+                        alt9=2;
+                    }
+
+                    else {
+                        alt9=1;
+                    }
+
                 }
 
 
-                switch (alt8) {
+                switch (alt9) {
                 case 1 :
-                    // ABE.g:47:22: 'A' .. 'Z'
+                    // ABE.g:47:23: 'A' .. 'Z'
+                    this.matchRange('A','Z'); 
+
+
+                    break;
+                case 2 :
+                    // ABE.g:47:34: 'A' .. 'Z' '_' 'A' .. 'Z'
+                    this.matchRange('A','Z'); 
+                    this.match('_'); 
                     this.matchRange('A','Z'); 
 
 
                     break;
 
                 default :
-                    if ( cnt8 >= 1 ) {
-                        break loop8;
+                    if ( cnt9 >= 1 ) {
+                        break loop9;
                     }
-                        var eee = new org.antlr.runtime.EarlyExitException(8, this.input);
+                        var eee = new org.antlr.runtime.EarlyExitException(9, this.input);
                         throw eee;
                 }
-                cnt8++;
+                cnt9++;
             } while (true);
 
 
@@ -783,15 +807,15 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
         finally {
         }
     },
-    // $ANTLR end "HTTPVERB",
+    // $ANTLR end "INC_TYPE",
 
     // $ANTLR start COMMA
     mCOMMA: function()  {
         try {
             var _type = this.COMMA;
             var _channel = org.antlr.runtime.BaseRecognizer.DEFAULT_TOKEN_CHANNEL;
-            // ABE.g:49:11: ( ',' )
-            // ABE.g:49:13: ','
+            // ABE.g:50:11: ( ',' )
+            // ABE.g:50:13: ','
             this.match(','); 
 
 
@@ -809,8 +833,8 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
         try {
             var _type = this.LPAR;
             var _channel = org.antlr.runtime.BaseRecognizer.DEFAULT_TOKEN_CHANNEL;
-            // ABE.g:50:11: ( '(' )
-            // ABE.g:50:13: '('
+            // ABE.g:51:11: ( '(' )
+            // ABE.g:51:13: '('
             this.match('('); 
 
 
@@ -828,8 +852,8 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
         try {
             var _type = this.RPAR;
             var _channel = org.antlr.runtime.BaseRecognizer.DEFAULT_TOKEN_CHANNEL;
-            // ABE.g:51:11: ( ')' )
-            // ABE.g:51:13: ')'
+            // ABE.g:52:11: ( ')' )
+            // ABE.g:52:13: ')'
             this.match(')'); 
 
 
@@ -847,8 +871,8 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
         try {
             var _type = this.WS;
             var _channel = org.antlr.runtime.BaseRecognizer.DEFAULT_TOKEN_CHANNEL;
-            // ABE.g:53:11: ( ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' ) )
-            // ABE.g:53:14: ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' )
+            // ABE.g:54:11: ( ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' ) )
+            // ABE.g:54:14: ( ' ' | '\\r' | '\\t' | '\\u000C' | '\\n' )
             if ( (this.input.LA(1)>='\t' && this.input.LA(1)<='\n')||(this.input.LA(1)>='\f' && this.input.LA(1)<='\r')||this.input.LA(1)==' ' ) {
                 this.input.consume();
 
@@ -875,23 +899,23 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
         try {
             var _type = this.COMMENT;
             var _channel = org.antlr.runtime.BaseRecognizer.DEFAULT_TOKEN_CHANNEL;
-            // ABE.g:54:9: ( '#' (~ '\\n' )* )
-            // ABE.g:54:11: '#' (~ '\\n' )*
+            // ABE.g:55:9: ( '#' (~ '\\n' )* )
+            // ABE.g:55:11: '#' (~ '\\n' )*
             this.match('#'); 
-            // ABE.g:54:15: (~ '\\n' )*
-            loop9:
+            // ABE.g:55:15: (~ '\\n' )*
+            loop10:
             do {
-                var alt9=2;
-                var LA9_0 = this.input.LA(1);
+                var alt10=2;
+                var LA10_0 = this.input.LA(1);
 
-                if ( ((LA9_0>='\u0000' && LA9_0<='\t')||(LA9_0>='\u000B' && LA9_0<='\uFFFF')) ) {
-                    alt9=1;
+                if ( ((LA10_0>='\u0000' && LA10_0<='\t')||(LA10_0>='\u000B' && LA10_0<='\uFFFF')) ) {
+                    alt10=1;
                 }
 
 
-                switch (alt9) {
+                switch (alt10) {
                 case 1 :
-                    // ABE.g:54:15: ~ '\\n'
+                    // ABE.g:55:15: ~ '\\n'
                     if ( (this.input.LA(1)>='\u0000' && this.input.LA(1)<='\t')||(this.input.LA(1)>='\u000B' && this.input.LA(1)<='\uFFFF') ) {
                         this.input.consume();
 
@@ -906,7 +930,7 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
                     break;
 
                 default :
-                    break loop9;
+                    break loop10;
                 }
             } while (true);
 
@@ -923,10 +947,10 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
     // $ANTLR end "COMMENT",
 
     mTokens: function() {
-        // ABE.g:1:8: ( T__28 | T__29 | T__30 | T_SITE | T_FROM | A_DENY | A_LOGOUT | A_SANDBOX | A_ACCEPT | LOCATION | URI | GLOB | REGEXP | ALL | SUB | INC | INC_TYPE | HTTPVERB | COMMA | LPAR | RPAR | WS | COMMENT )
-        var alt10=23;
-        alt10 = this.dfa10.predict(this.input);
-        switch (alt10) {
+        // ABE.g:1:8: ( T__28 | T__29 | T__30 | T_SITE | T_FROM | A_DENY | A_LOGOUT | A_SANDBOX | A_ACCEPT | LOCATION | URI | GLOB | REGEXP | ALL | SUB | INC | HTTPVERB | INC_TYPE | COMMA | LPAR | RPAR | WS | COMMENT )
+        var alt11=23;
+        alt11 = this.dfa11.predict(this.input);
+        switch (alt11) {
             case 1 :
                 // ABE.g:1:10: T__28
                 this.mT__28(); 
@@ -1024,14 +1048,14 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
 
                 break;
             case 17 :
-                // ABE.g:1:114: INC_TYPE
-                this.mINC_TYPE(); 
+                // ABE.g:1:114: HTTPVERB
+                this.mHTTPVERB(); 
 
 
                 break;
             case 18 :
-                // ABE.g:1:123: HTTPVERB
-                this.mHTTPVERB(); 
+                // ABE.g:1:123: INC_TYPE
+                this.mINC_TYPE(); 
 
 
                 break;
@@ -1073,316 +1097,198 @@ org.antlr.lang.augmentObject(ABELexer.prototype, {
 }, true); // important to pass true to overwrite default implementations
 
 org.antlr.lang.augmentObject(ABELexer, {
-    DFA7_eotS:
-        "\u0010\uffff\u0001\u0012\u0002\uffff",
-    DFA7_eofS:
-        "\u0013\uffff",
-    DFA7_minS:
-        "\u0001\u0043\u0001\u0042\u0001\u0043\u0002\uffff\u0001\u0042\u0005"+
-    "\uffff\u0001\u004a\u0004\uffff\u0001\u0053\u0002\uffff",
-    DFA7_maxS:
-        "\u0001\u0058\u0001\u0054\u0001\u0055\u0002\uffff\u0001\u0048\u0005"+
-    "\uffff\u0001\u004a\u0004\uffff\u0001\u0053\u0002\uffff",
-    DFA7_acceptS:
-        "\u0003\uffff\u0001\u0003\u0001\u0004\u0001\uffff\u0001\u0008\u0001"+
-    "\u000b\u0001\u000c\u0001\u000d\u0001\u0001\u0001\uffff\u0001\u0002\u0001"+
-    "\u0006\u0001\u0007\u0001\u0009\u0001\uffff\u0001\u000a\u0001\u0005",
-    DFA7_specialS:
-        "\u0013\uffff}>",
-    DFA7_transitionS: [
-            "\u0001\u0004\u0001\u0007\u0001\uffff\u0001\u0008\u0002\uffff"+
-            "\u0001\u0003\u0003\uffff\u0001\u0009\u0001\uffff\u0001\u0001"+
-            "\u0001\u0006\u0002\uffff\u0001\u0002\u0004\uffff\u0001\u0005",
-            "\u0001\u000b\u0011\uffff\u0001\u000a",
-            "\u0001\u000c\u0011\uffff\u0001\u000d",
-            "",
-            "",
-            "\u0001\u000e\u0005\uffff\u0001\u000f",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "\u0001\u0010",
-            "",
-            "",
-            "",
-            "",
-            "\u0001\u0011",
-            "",
-            ""
-    ]
-});
-
-org.antlr.lang.augmentObject(ABELexer, {
-    DFA7_eot:
-        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA7_eotS),
-    DFA7_eof:
-        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA7_eofS),
-    DFA7_min:
-        org.antlr.runtime.DFA.unpackEncodedStringToUnsignedChars(ABELexer.DFA7_minS),
-    DFA7_max:
-        org.antlr.runtime.DFA.unpackEncodedStringToUnsignedChars(ABELexer.DFA7_maxS),
-    DFA7_accept:
-        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA7_acceptS),
-    DFA7_special:
-        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA7_specialS),
-    DFA7_transition: (function() {
-        var a = [],
-            i,
-            numStates = ABELexer.DFA7_transitionS.length;
-        for (i=0; i<numStates; i++) {
-            a.push(org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA7_transitionS[i]));
-        }
-        return a;
-    })()
-});
-
-ABELexer.DFA7 = function(recognizer) {
-    this.recognizer = recognizer;
-    this.decisionNumber = 7;
-    this.eot = ABELexer.DFA7_eot;
-    this.eof = ABELexer.DFA7_eof;
-    this.min = ABELexer.DFA7_min;
-    this.max = ABELexer.DFA7_max;
-    this.accept = ABELexer.DFA7_accept;
-    this.special = ABELexer.DFA7_special;
-    this.transition = ABELexer.DFA7_transition;
-};
-
-org.antlr.lang.extend(ABELexer.DFA7, org.antlr.runtime.DFA, {
-    getDescription: function() {
-        return "46:1: INC_TYPE : ( 'OTHER' | 'SCRIPT' | 'IMAGE' | 'CSS' | 'OBJ' | 'SUBDOC' | 'XBL' | 'PING' | 'XHR' | 'OBJSUB' | 'DTD' | 'FONT' | 'MEDIA' );";
-    },
-    dummy: null
-});
-org.antlr.lang.augmentObject(ABELexer, {
-    DFA10_eotS:
-        "\u0002\uffff\u0001\u0008\u0004\uffff\u0001\u0008\u000e\uffff\u0001"+
-    "\u0010\u0002\uffff\u0002\u0010\u0002\u0032\u0001\uffff\u0001\u0010\u0001"+
-    "\uffff\u0001\u0010\u0001\uffff\u0001\u0010\u0001\uffff\u000b\u0010\u0001"+
-    "\u0042\u0001\u0010\u0001\u0032\u0001\uffff\u0001\u0045\u0001\u0010\u0001"+
-    "\u0047\u0001\u0010\u0001\u0049\u0002\u0010\u0004\u0045\u0002\u0010\u0001"+
-    "\u0051\u0001\u0010\u0001\uffff\u0001\u0010\u0001\u0023\u0001\uffff\u0001"+
-    "\u0010\u0001\uffff\u0001\u0045\u0001\uffff\u0004\u0010\u0001\u0045\u0001"+
-    "\u0010\u0001\u005b\u0001\uffff\u0002\u0010\u0001\u005e\u0001\u0010\u0002"+
-    "\u0045\u0001\u0010\u0001\u0045\u0002\uffff\u0002\u0045\u0001\uffff\u0001"+
-    "\u0010\u0001\u0045\u0002\u0010\u0001\u0049",
-    DFA10_eofS:
-        "\u0064\uffff",
-    DFA10_minS:
-        "\u0001\u0009\u0001\u0041\u0001\u0023\u0004\u0041\u0001\u0023\u0002"+
-    "\uffff\u0006\u0041\u0006\uffff\u0001\u004c\u0002\uffff\u0001\u0042\u0001"+
-    "\u0052\u0002\u0023\u0001\uffff\u0001\u0044\u0001\uffff\u0001\u0043\u0001"+
-    "\uffff\u0001\u004c\u0001\uffff\u0001\u004e\u0001\u0043\u0001\u0041\u0001"+
-    "\u0048\u0001\u004a\u0001\u0053\u0001\u004c\u0001\u0052\u0001\u004e\u0001"+
-    "\u0044\u0001\u0046\u0001\u0041\u0001\u0049\u0001\u0023\u0001\uffff\u0003"+
-    "\u0041\u0001\u0054\u0001\u0041\u0001\u0047\u0001\u0045\u0004\u0041\u0001"+
-    "\u0047\u0001\u0049\u0001\u002b\u0001\u004f\u0001\uffff\u0001\u0050\u0001"+
-    "\u0023\u0001\uffff\u0001\u004c\u0001\uffff\u0001\u0041\u0001\uffff\u0001"+
-    "\u0055\u0001\u0045\u0001\u0052\u0001\u0055\u0002\u0041\u0001\u002b\u0001"+
-    "\uffff\u0001\u0043\u0001\u0054\u0001\u0041\u0001\u0053\u0002\u0041\u0001"+
-    "\u0042\u0001\u0041\u0002\uffff\u0002\u0041\u0001\uffff\u0001\u0049\u0001"+
-    "\u0041\u0001\u004f\u0001\u004e\u0001\u0041",
-    DFA10_maxS:
-        "\u0001\u007a\u0001\u0069\u0001\u007e\u0001\u0065\u0001\u006f\u0001"+
-    "\u006e\u0001\u0072\u0001\u007e\u0002\uffff\u0006\u005a\u0006\uffff\u0001"+
-    "\u004c\u0002\uffff\u0001\u0042\u0001\u0052\u0002\u007e\u0001\uffff\u0001"+
-    "\u0044\u0001\uffff\u0001\u0043\u0001\uffff\u0001\u004c\u0001\uffff\u0001"+
-    "\u004e\u0001\u0043\u0001\u0041\u0001\u0048\u0001\u004a\u0001\u0053\u0001"+
-    "\u004c\u0001\u0052\u0001\u004e\u0001\u0044\u0001\u0046\u0001\u005a\u0001"+
-    "\u0049\u0001\u007e\u0001\uffff\u0001\u005a\u0001\u0041\u0001\u005a\u0001"+
-    "\u0054\u0001\u005a\u0001\u0047\u0001\u0045\u0004\u005a\u0001\u0047\u0001"+
-    "\u0049\u0001\u005a\u0001\u004f\u0001\uffff\u0001\u0050\u0001\u007e\u0001"+
-    "\uffff\u0001\u004c\u0001\uffff\u0001\u005a\u0001\uffff\u0001\u0055\u0001"+
-    "\u0045\u0001\u0052\u0001\u0055\u0001\u005a\u0001\u0041\u0001\u002b\u0001"+
-    "\uffff\u0001\u0043\u0001\u0054\u0001\u005a\u0001\u0053\u0002\u005a\u0001"+
-    "\u0042\u0001\u005a\u0002\uffff\u0002\u005a\u0001\uffff\u0001\u0049\u0001"+
-    "\u005a\u0001\u004f\u0001\u004e\u0001\u005a",
-    DFA10_acceptS:
-        "\u0008\uffff\u0001\u000c\u0001\u000d\u0006\uffff\u0001\u0012\u0001"+
+    DFA11_eotS:
+        "\u0003\uffff\u0001\u0009\u0004\uffff\u0001\u0009\u000b\uffff\u0001"+
+    "\u000e\u0002\uffff\u0001\u000e\u0002\u0029\u0001\uffff\u0001\u000e\u0001"+
+    "\uffff\u0001\u000e\u0001\uffff\u0001\u000e\u0001\uffff\u0006\u000e\u0001"+
+    "\u0033\u0001\u0029\u0001\uffff\u0002\u000e\u0001\u0037\u0001\u0038\u0001"+
+    "\u003a\u0001\u000e\u0001\u003a\u0001\u000e\u0001\u003e\u0001\uffff\u0001"+
+    "\u0020\u0002\u000e\u0002\uffff\u0001\u000e\u0001\uffff\u0001\u003a\u0001"+
+    "\u000e\u0001\u0044\u0001\uffff\u0001\u000e\u0001\u0046\u0001\u000e\u0001"+
+    "\u003a\u0002\uffff\u0001\u003a\u0001\uffff\u0003\u000e\u0001\u0038",
+    DFA11_eofS:
+        "\u004b\uffff",
+    DFA11_minS:
+        "\u0001\u0009\u0002\u0041\u0001\u0023\u0004\u0041\u0001\u0023\u0002"+
+    "\uffff\u0003\u0041\u0006\uffff\u0001\u004c\u0002\uffff\u0001\u0042\u0002"+
+    "\u0023\u0001\uffff\u0001\u004c\u0001\uffff\u0001\u0043\u0001\uffff\u0001"+
+    "\u004c\u0001\uffff\u0001\u0043\u0001\u0054\u0001\u0053\u0002\u0054\u0001"+
+    "\u0046\u0001\u0041\u0001\u0023\u0001\uffff\u0001\u0045\u0004\u0041\u0001"+
+    "\u0054\u0001\u0041\u0001\u0043\u0001\u002b\u0001\uffff\u0001\u0023\u0001"+
+    "\u0054\u0001\u004c\u0002\uffff\u0001\u0055\u0001\uffff\u0001\u0041\u0001"+
+    "\u0048\u0001\u002b\u0001\uffff\u0001\u0045\u0001\u0041\u0001\u0053\u0001"+
+    "\u0041\u0002\uffff\u0001\u0041\u0001\uffff\u0001\u0049\u0001\u004f\u0001"+
+    "\u004e\u0001\u0041",
+    DFA11_maxS:
+        "\u0001\u007a\u0001\u0069\u0001\u0065\u0001\u007e\u0001\u0065\u0001"+
+    "\u006f\u0001\u006e\u0001\u0072\u0001\u007e\u0002\uffff\u0003\u005a\u0006"+
+    "\uffff\u0001\u004c\u0002\uffff\u0001\u0042\u0002\u007e\u0001\uffff\u0001"+
+    "\u004c\u0001\uffff\u0001\u0043\u0001\uffff\u0001\u004c\u0001\uffff\u0001"+
+    "\u0043\u0001\u0054\u0001\u0053\u0002\u0054\u0001\u0046\u0001\u005f\u0001"+
+    "\u007e\u0001\uffff\u0001\u0045\u0001\u0041\u0003\u005f\u0001\u0054\u0001"+
+    "\u005f\u0001\u0043\u0001\u005f\u0001\uffff\u0001\u007e\u0001\u0054\u0001"+
+    "\u004c\u0002\uffff\u0001\u0055\u0001\uffff\u0001\u005f\u0001\u0048\u0001"+
+    "\u002b\u0001\uffff\u0001\u0045\u0001\u005f\u0001\u0053\u0001\u005f\u0002"+
+    "\uffff\u0001\u005f\u0001\uffff\u0001\u0049\u0001\u004f\u0001\u004e\u0001"+
+    "\u005f",
+    DFA11_acceptS:
+        "\u0009\uffff\u0001\u000c\u0001\u000d\u0003\uffff\u0001\u0012\u0001"+
     "\u0013\u0001\u0014\u0001\u0015\u0001\u0016\u0001\u0017\u0001\uffff\u0001"+
-    "\u0004\u0001\u0008\u0004\uffff\u0001\u0006\u0001\uffff\u0001\u0007\u0001"+
-    "\uffff\u0001\u0009\u0001\uffff\u0001\u0005\u000e\uffff\u0001\u000b\u000f"+
-    "\uffff\u0001\u000f\u0002\uffff\u0001\u0011\u0001\uffff\u0001\u000e\u0001"+
-    "\uffff\u0001\u0010\u0007\uffff\u0001\u0001\u0008\uffff\u0001\u0003\u0001"+
-    "\u0002\u0002\uffff\u0001\u000a\u0005\uffff",
-    DFA10_specialS:
-        "\u0064\uffff}>",
-    DFA10_transitionS: [
-            "\u0002\u0014\u0001\uffff\u0002\u0014\u0012\uffff\u0001\u0014"+
-            "\u0002\uffff\u0001\u0015\u0004\uffff\u0001\u0012\u0001\u0013"+
-            "\u0001\u0008\u0001\uffff\u0001\u0011\u0001\uffff\u0001\u0008"+
-            "\u0001\uffff\u000a\u0007\u0007\uffff\u0001\u0005\u0001\u0010"+
-            "\u0001\u000c\u0001\u0003\u0001\u0010\u0001\u0006\u0002\u0010"+
-            "\u0001\u000a\u0002\u0010\u0001\u0004\u0001\u000f\u0001\u0010"+
-            "\u0001\u000b\u0001\u000e\u0002\u0010\u0001\u0001\u0004\u0010"+
-            "\u0001\u000d\u0002\u0010\u0003\uffff\u0001\u0009\u0002\uffff"+
-            "\u0005\u0007\u0001\u0002\u0014\u0007",
-            "\u0002\u0010\u0001\u001a\u0001\u0010\u0001\u0016\u000f\u0010"+
-            "\u0001\u0019\u0005\u0010\u0006\uffff\u0001\u0018\u0007\uffff"+
-            "\u0001\u0017",
-            "\u0001\u001c\u0001\uffff\u0002\u001c\u0005\uffff\u0010\u001c"+
-            "\u0001\uffff\u0001\u001c\u0001\uffff\u001d\u001c\u0001\uffff"+
-            "\u0001\u001c\u0001\uffff\u0001\u001c\u0001\uffff\u0011\u001c"+
-            "\u0001\u001b\u0008\u001c\u0003\uffff\u0001\u001c",
-            "\u0013\u0010\u0001\u001e\u0006\u0010\u000a\uffff\u0001\u001d",
-            "\u000e\u0010\u0001\u0020\u000b\u0010\u0014\uffff\u0001\u001f",
-            "\u000b\u0010\u0001\u0022\u000e\u0010\u0008\uffff\u0001\u0021"+
-            "\u000a\uffff\u0001\u001f",
-            "\u000e\u0010\u0001\u0024\u000b\u0010\u0017\uffff\u0001\u0023",
-            "\u0001\u001c\u0001\uffff\u0002\u001c\u0005\uffff\u0010\u001c"+
-            "\u0001\uffff\u0001\u001c\u0001\uffff\u001d\u001c\u0001\uffff"+
-            "\u0001\u001c\u0001\uffff\u0001\u001c\u0001\uffff\u001a\u001c"+
-            "\u0003\uffff\u0001\u001c",
+    "\u0004\u0001\u0008\u0003\uffff\u0001\u0006\u0001\uffff\u0001\u0007\u0001"+
+    "\uffff\u0001\u0009\u0001\uffff\u0001\u0005\u0008\uffff\u0001\u000b\u0009"+
+    "\uffff\u0001\u000f\u0003\uffff\u0001\u000e\u0001\u0010\u0001\uffff\u0001"+
+    "\u0011\u0003\uffff\u0001\u0001\u0004\uffff\u0001\u0003\u0001\u0002\u0001"+
+    "\uffff\u0001\u000a\u0004\uffff",
+    DFA11_specialS:
+        "\u004b\uffff}>",
+    DFA11_transitionS: [
+            "\u0002\u0012\u0001\uffff\u0002\u0012\u0012\uffff\u0001\u0012"+
+            "\u0002\uffff\u0001\u0013\u0004\uffff\u0001\u0010\u0001\u0011"+
+            "\u0001\u0009\u0001\uffff\u0001\u000f\u0001\uffff\u0001\u0009"+
+            "\u0001\uffff\u000a\u0008\u0007\uffff\u0001\u0006\u0002\u000e"+
+            "\u0001\u0004\u0001\u000e\u0001\u0007\u0001\u000c\u0001\u000e"+
+            "\u0001\u000b\u0002\u000e\u0001\u0005\u0003\u000e\u0001\u000d"+
+            "\u0001\u000e\u0001\u0002\u0001\u0001\u0007\u000e\u0003\uffff"+
+            "\u0001\u000a\u0002\uffff\u0005\u0008\u0001\u0003\u0014\u0008",
+            "\u0004\u000e\u0001\u0014\u000f\u000e\u0001\u0017\u0005\u000e"+
+            "\u0006\uffff\u0001\u0016\u0007\uffff\u0001\u0015",
+            "\u001a\u000e\u000a\uffff\u0001\u0015",
+            "\u0001\u0019\u0001\uffff\u0002\u0019\u0005\uffff\u0010\u0019"+
+            "\u0001\uffff\u0001\u0019\u0001\uffff\u001d\u0019\u0001\uffff"+
+            "\u0001\u0019\u0001\uffff\u0001\u0019\u0001\uffff\u0011\u0019"+
+            "\u0001\u0018\u0008\u0019\u0003\uffff\u0001\u0019",
+            "\u0004\u000e\u0001\u001b\u0015\u000e\u000a\uffff\u0001\u001a",
+            "\u000e\u000e\u0001\u001d\u000b\u000e\u0014\uffff\u0001\u001c",
+            "\u000b\u000e\u0001\u001f\u000e\u000e\u0008\uffff\u0001\u001e"+
+            "\u000a\uffff\u0001\u001c",
+            "\u001a\u000e\u0017\uffff\u0001\u0020",
+            "\u0001\u0019\u0001\uffff\u0002\u0019\u0005\uffff\u0010\u0019"+
+            "\u0001\uffff\u0001\u0019\u0001\uffff\u001d\u0019\u0001\uffff"+
+            "\u0001\u0019\u0001\uffff\u0001\u0019\u0001\uffff\u001a\u0019"+
+            "\u0003\uffff\u0001\u0019",
             "",
             "",
-            "\u000c\u0010\u0001\u0026\u0001\u0025\u000c\u0010",
-            "\u0001\u0010\u0001\u0028\u0011\u0010\u0001\u0027\u0006\u0010",
-            "\u0012\u0010\u0001\u0029\u0007\u0010",
-            "\u0001\u0010\u0001\u002a\u0005\u0010\u0001\u002b\u0012\u0010",
-            "\u0008\u0010\u0001\u002c\u0011\u0010",
-            "\u0004\u0010\u0001\u002d\u0015\u0010",
+            "\u000d\u000e\u0001\u0021\u000c\u000e",
+            "\u0004\u000e\u0001\u0022\u0015\u000e",
+            "\u0001\u0025\u000d\u000e\u0001\u0023\u0005\u000e\u0001\u0024"+
+            "\u0005\u000e",
             "",
             "",
             "",
             "",
             "",
             "",
+            "\u0001\u0026",
+            "",
+            "",
+            "\u0001\u0027",
+            "\u0001\u0019\u0001\uffff\u0002\u0019\u0003\uffff\u0001\u0009"+
+            "\u0001\uffff\u0010\u0019\u0001\uffff\u0001\u0019\u0001\uffff"+
+            "\u001d\u0019\u0001\uffff\u0001\u0019\u0001\uffff\u0001\u0019"+
+            "\u0001\uffff\u000e\u0019\u0001\u0028\u000b\u0019\u0003\uffff"+
+            "\u0001\u0019",
+            "\u0001\u0019\u0001\uffff\u0002\u0019\u0003\uffff\u0001\u0009"+
+            "\u0001\uffff\u0010\u0019\u0001\uffff\u0001\u0019\u0001\uffff"+
+            "\u001d\u0019\u0001\uffff\u0001\u0019\u0001\uffff\u0001\u0019"+
+            "\u0001\uffff\u001a\u0019\u0003\uffff\u0001\u0019",
+            "",
+            "\u0001\u002a",
+            "",
+            "\u0001\u002b",
+            "",
+            "\u0001\u002c",
+            "",
+            "\u0001\u002d",
             "\u0001\u002e",
-            "",
-            "",
             "\u0001\u002f",
             "\u0001\u0030",
-            "\u0001\u001c\u0001\uffff\u0002\u001c\u0003\uffff\u0001\u0008"+
-            "\u0001\uffff\u0010\u001c\u0001\uffff\u0001\u001c\u0001\uffff"+
-            "\u001d\u001c\u0001\uffff\u0001\u001c\u0001\uffff\u0001\u001c"+
-            "\u0001\uffff\u000e\u001c\u0001\u0031\u000b\u001c\u0003\uffff"+
-            "\u0001\u001c",
-            "\u0001\u001c\u0001\uffff\u0002\u001c\u0003\uffff\u0001\u0008"+
-            "\u0001\uffff\u0010\u001c\u0001\uffff\u0001\u001c\u0001\uffff"+
-            "\u001d\u001c\u0001\uffff\u0001\u001c\u0001\uffff\u0001\u001c"+
-            "\u0001\uffff\u001a\u001c\u0003\uffff\u0001\u001c",
-            "",
-            "\u0001\u0033",
-            "",
-            "\u0001\u0034",
+            "\u0001\u0031",
+            "\u0001\u0032",
+            "\u001a\u000e\u0004\uffff\u0001\u000e",
+            "\u0001\u0019\u0001\uffff\u0002\u0019\u0003\uffff\u0001\u0009"+
+            "\u0001\uffff\u0010\u0019\u0001\uffff\u0001\u0019\u0001\uffff"+
+            "\u001d\u0019\u0001\uffff\u0001\u0019\u0001\uffff\u0001\u0019"+
+            "\u0001\uffff\u000c\u0019\u0001\u0034\u000d\u0019\u0003\uffff"+
+            "\u0001\u0019",
             "",
             "\u0001\u0035",
-            "",
             "\u0001\u0036",
-            "\u0001\u0037",
-            "\u0001\u0038",
-            "\u0001\u0039",
-            "\u0001\u003a",
+            "\u001a\u000e\u0004\uffff\u0001\u000e",
+            "\u000b\u000e\u0001\u0039\u000e\u000e\u0004\uffff\u0001\u000e",
+            "\u001a\u000e\u0004\uffff\u0001\u000e",
             "\u0001\u003b",
+            "\u001a\u000e\u0004\uffff\u0001\u000e",
             "\u0001\u003c",
-            "\u0001\u003d",
-            "\u0001\u003e",
+            "\u0001\u003d\u0015\uffff\u001a\u000e\u0004\uffff\u0001\u000e",
+            "",
+            "\u0001\u0019\u0001\uffff\u0002\u0019\u0003\uffff\u0001\u0009"+
+            "\u0001\uffff\u0010\u0019\u0001\uffff\u0001\u0019\u0001\uffff"+
+            "\u001d\u0019\u0001\uffff\u0001\u0019\u0001\uffff\u0001\u0019"+
+            "\u0001\uffff\u001a\u0019\u0003\uffff\u0001\u0019",
             "\u0001\u003f",
             "\u0001\u0040",
-            "\u0003\u0010\u0001\u0041\u0016\u0010",
+            "",
+            "",
+            "\u0001\u0041",
+            "",
+            "\u001a\u000e\u0004\uffff\u0001\u000e",
+            "\u0001\u0042",
             "\u0001\u0043",
-            "\u0001\u001c\u0001\uffff\u0002\u001c\u0003\uffff\u0001\u0008"+
-            "\u0001\uffff\u0010\u001c\u0001\uffff\u0001\u001c\u0001\uffff"+
-            "\u001d\u001c\u0001\uffff\u0001\u001c\u0001\uffff\u0001\u001c"+
-            "\u0001\uffff\u000c\u001c\u0001\u0044\u000d\u001c\u0003\uffff"+
-            "\u0001\u001c",
             "",
-            "\u001a\u0010",
-            "\u0001\u0046",
-            "\u001a\u0010",
+            "\u0001\u0045",
+            "\u001a\u000e\u0004\uffff\u0001\u000e",
+            "\u0001\u0047",
+            "\u001a\u000e\u0004\uffff\u0001\u000e",
+            "",
+            "",
+            "\u001a\u000e\u0004\uffff\u0001\u000e",
+            "",
             "\u0001\u0048",
-            "\u000b\u0010\u0001\u004a\u000e\u0010",
-            "\u0001\u004b",
-            "\u0001\u004c",
-            "\u0012\u0010\u0001\u004d\u0007\u0010",
-            "\u001a\u0010",
-            "\u001a\u0010",
-            "\u001a\u0010",
-            "\u0001\u004e",
-            "\u0001\u004f",
-            "\u0001\u0050\u0015\uffff\u001a\u0010",
-            "\u0001\u0052",
-            "",
-            "\u0001\u0053",
-            "\u0001\u001c\u0001\uffff\u0002\u001c\u0003\uffff\u0001\u0008"+
-            "\u0001\uffff\u0010\u001c\u0001\uffff\u0001\u001c\u0001\uffff"+
-            "\u001d\u001c\u0001\uffff\u0001\u001c\u0001\uffff\u0001\u001c"+
-            "\u0001\uffff\u001a\u001c\u0003\uffff\u0001\u001c",
-            "",
-            "\u0001\u0054",
-            "",
-            "\u001a\u0010",
-            "",
-            "\u0001\u0055",
-            "\u0001\u0056",
-            "\u0001\u0057",
-            "\u0001\u0058",
-            "\u001a\u0010",
-            "\u0001\u0059",
-            "\u0001\u005a",
-            "",
-            "\u0001\u005c",
-            "\u0001\u005d",
-            "\u001a\u0010",
-            "\u0001\u005f",
-            "\u001a\u0010",
-            "\u001a\u0010",
-            "\u0001\u0060",
-            "\u001a\u0010",
-            "",
-            "",
-            "\u001a\u0010",
-            "\u001a\u0010",
-            "",
-            "\u0001\u0061",
-            "\u001a\u0010",
-            "\u0001\u0062",
-            "\u0001\u0063",
-            "\u001a\u0010"
+            "\u0001\u0049",
+            "\u0001\u004a",
+            "\u001a\u000e\u0004\uffff\u0001\u000e"
     ]
 });
 
 org.antlr.lang.augmentObject(ABELexer, {
-    DFA10_eot:
-        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA10_eotS),
-    DFA10_eof:
-        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA10_eofS),
-    DFA10_min:
-        org.antlr.runtime.DFA.unpackEncodedStringToUnsignedChars(ABELexer.DFA10_minS),
-    DFA10_max:
-        org.antlr.runtime.DFA.unpackEncodedStringToUnsignedChars(ABELexer.DFA10_maxS),
-    DFA10_accept:
-        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA10_acceptS),
-    DFA10_special:
-        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA10_specialS),
-    DFA10_transition: (function() {
+    DFA11_eot:
+        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA11_eotS),
+    DFA11_eof:
+        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA11_eofS),
+    DFA11_min:
+        org.antlr.runtime.DFA.unpackEncodedStringToUnsignedChars(ABELexer.DFA11_minS),
+    DFA11_max:
+        org.antlr.runtime.DFA.unpackEncodedStringToUnsignedChars(ABELexer.DFA11_maxS),
+    DFA11_accept:
+        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA11_acceptS),
+    DFA11_special:
+        org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA11_specialS),
+    DFA11_transition: (function() {
         var a = [],
             i,
-            numStates = ABELexer.DFA10_transitionS.length;
+            numStates = ABELexer.DFA11_transitionS.length;
         for (i=0; i<numStates; i++) {
-            a.push(org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA10_transitionS[i]));
+            a.push(org.antlr.runtime.DFA.unpackEncodedString(ABELexer.DFA11_transitionS[i]));
         }
         return a;
     })()
 });
 
-ABELexer.DFA10 = function(recognizer) {
+ABELexer.DFA11 = function(recognizer) {
     this.recognizer = recognizer;
-    this.decisionNumber = 10;
-    this.eot = ABELexer.DFA10_eot;
-    this.eof = ABELexer.DFA10_eof;
-    this.min = ABELexer.DFA10_min;
-    this.max = ABELexer.DFA10_max;
-    this.accept = ABELexer.DFA10_accept;
-    this.special = ABELexer.DFA10_special;
-    this.transition = ABELexer.DFA10_transition;
+    this.decisionNumber = 11;
+    this.eot = ABELexer.DFA11_eot;
+    this.eof = ABELexer.DFA11_eof;
+    this.min = ABELexer.DFA11_min;
+    this.max = ABELexer.DFA11_max;
+    this.accept = ABELexer.DFA11_accept;
+    this.special = ABELexer.DFA11_special;
+    this.transition = ABELexer.DFA11_transition;
 };
 
-org.antlr.lang.extend(ABELexer.DFA10, org.antlr.runtime.DFA, {
+org.antlr.lang.extend(ABELexer.DFA11, org.antlr.runtime.DFA, {
     getDescription: function() {
-        return "1:1: Tokens : ( T__28 | T__29 | T__30 | T_SITE | T_FROM | A_DENY | A_LOGOUT | A_SANDBOX | A_ACCEPT | LOCATION | URI | GLOB | REGEXP | ALL | SUB | INC | INC_TYPE | HTTPVERB | COMMA | LPAR | RPAR | WS | COMMENT );";
+        return "1:1: Tokens : ( T__28 | T__29 | T__30 | T_SITE | T_FROM | A_DENY | A_LOGOUT | A_SANDBOX | A_ACCEPT | LOCATION | URI | GLOB | REGEXP | ALL | SUB | INC | HTTPVERB | INC_TYPE | COMMA | LPAR | RPAR | WS | COMMENT );";
     },
     dummy: null
 });
