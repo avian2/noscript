@@ -835,16 +835,19 @@ ABEPredicate.prototype = {
     delete this.__proto__._inclusionTypesMap;
     const CP = Ci.nsIContentPolicy;
     let map = {
-      "CSS": CP.TYPE_STYLESHEET,
-      "DOCUMENT": CP.TYPE_DOCUMENT, // placeholder, should never happen for inclusions
-      "IMAGE": [CP.TYPE_IMAGE, CP.TYPE_IMAGESET],
-      "OBJ": [CP.TYPE_OBJECT, CP.TYPE_OBJECT_SUBREQUEST],
-      "OBJSUB": CP.TYPE_OBJECT_SUBREQUEST,
-      "OTHER": [CP.TYPE_OTHER],
-      "SCRIPT": CP.TYPE_SCRIPT,
-      "SUBDOC": CP.TYPE_SUBDOCUMENT,
-      "UNKNOWN": CP.TYPE_OTHER,
-      "XHR": [CP.TYPE_XMLHTTPREQUEST, CP.TYPE_FETCH],
+      CSS: CP.TYPE_STYLESHEET,
+      DOCUMENT: CP.TYPE_DOCUMENT, // placeholder, should never happen for inclusions
+      DTD: CP.TYPE_DTD,
+      FONT: CP.TYPE_FONT,
+      IMAGE: [CP.TYPE_IMAGE, CP.TYPE_IMAGESET],
+      MEDIA: CP.TYPE_MEDIA,
+      OBJ: [CP.TYPE_OBJECT, CP.TYPE_OBJECT_SUBREQUEST],
+      OBJSUB: CP.TYPE_OBJECT_SUBREQUEST,
+      OTHER: [CP.TYPE_OTHER],
+      SCRIPT: CP.TYPE_SCRIPT,
+      SUBDOC: CP.TYPE_SUBDOCUMENT,
+      UNKNOWN: CP.TYPE_OTHER,
+      XHR: [CP.TYPE_XMLHTTPREQUEST, CP.TYPE_FETCH],
     };
     let mappedTypes = new Set();
     for (let k in map) {
@@ -855,7 +858,7 @@ ABEPredicate.prototype = {
         mappedTypes.add(v);
       }
     }
-    let other = [];
+
     let cpTypes = Object.keys(CP).filter(k => k.startsWith("TYPE_") && !k.startsWith("TYPE_INTERNAL_"));
     for (let key of cpTypes) {
       let name = key.substring(5);
