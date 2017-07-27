@@ -829,7 +829,7 @@ var InjectionChecker = {
        for (let l  of links) {
          l = l.replace(/[^=]*=[\s\0]*/i, '');
          l = /^["']/.test(l) ? l.replace(/^(['"])([^]*?)\1[^]*/g, '$2') : l.replace(/[\s>][^]*/, '');
-         if (/^(?:javascript|data):|\[[^]+\]/i.test(l) || /[<'"]/.test(decodeURIComponent(l))) return true;
+         if (/^(?:javascript|data):|\[[^]+\]/i.test(l) || /[<'"(]/.test(decodeURIComponent(l))) return true;
        }
      }
      return this._rxCheck("HTML", s) || this._rxCheck("Globals", s);
