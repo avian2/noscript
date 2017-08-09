@@ -135,7 +135,7 @@ const ns = {
         return;
     }
 
-    if (subject instanceof Ci.nsIPrefBranch2) {
+    if (subject instanceof Ci.nsIPrefBranch) {
       this.syncPrefs(subject, data);
     } else {
       switch (topic) {
@@ -705,17 +705,16 @@ const ns = {
     const prefSrv = this.prefService = Cc["@mozilla.org/preferences-service;1"]
       .getService(Ci.nsIPrefService).QueryInterface(Ci.nsIPrefBranch);
 
-    const PBI = Ci.nsIPrefBranch2;
-    this.caps = prefSrv.getBranch("capability.policy.").QueryInterface(PBI);
+    this.caps = prefSrv.getBranch("capability.policy.");
     this.defaultCaps = prefSrv.getDefaultBranch(this.caps.root);
 
-    this.policyPB = prefSrv.getBranch("capability.policy." + this.POLICY_NAME + ".").QueryInterface(PBI);
-    this.prefs = prefSrv.getBranch("noscript.").QueryInterface(PBI);
+    this.policyPB = prefSrv.getBranch("capability.policy." + this.POLICY_NAME + ".");
+    this.prefs = prefSrv.getBranch("noscript.");
 
     this.policyPB.addObserver("sites", this, true);
 
     this.prefs.addObserver("", this, true);
-    this.mozJSPref = prefSrv.getBranch("javascript.").QueryInterface(PBI);
+    this.mozJSPref = prefSrv.getBranch("javascript.");
     this.mozJSPref.addObserver("enabled", this, true);
 
     this.mandatorySites.sitesString = this.getPref("mandatory", "chrome: about: resource: [System Principal]");

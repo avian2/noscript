@@ -26,8 +26,8 @@ var ABE = {
   init: function(prefParent) {
     const ps = this.prefService = Cc["@mozilla.org/preferences-service;1"]
       .getService(Ci.nsIPrefService).QueryInterface(Ci.nsIPrefBranch);
-    ABEStorage.init(ps.getBranch(prefParent+ "ABE.").QueryInterface(Ci.nsIPrefBranch2));
-    DoNotTrack.init(ps.getBranch(prefParent+ "doNotTrack.").QueryInterface(Ci.nsIPrefBranch2));
+    ABEStorage.init(ps.getBranch(prefParent+ "ABE."));
+    DoNotTrack.init(ps.getBranch(prefParent+ "doNotTrack."));
   },
 
   siteMap: Object.create(null),

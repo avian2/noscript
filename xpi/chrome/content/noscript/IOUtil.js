@@ -191,7 +191,7 @@ var IOUtil = {
 
       switch (url.scheme) {
         case "view-source":
-          return this.unwrapURL(url.path);
+          return this.unwrapURL(url.spec.replace(/^.*?:/, ''));
         case "feed":
         case "pcast":
           let u = url.spec.substring(url.scheme.length + 1);

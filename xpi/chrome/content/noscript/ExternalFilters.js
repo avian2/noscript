@@ -156,7 +156,7 @@ var ExternalFilters = {
   
   initFromPrefs: function(prefRoot) {
     this.prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
-      .getBranch(prefRoot).QueryInterface(Ci.nsIPrefBranch2);
+      .getBranch(prefRoot).QueryInterface(Ci.nsIPrefBranch);
     this._syncPrefs();
     
   },
