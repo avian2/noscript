@@ -5,11 +5,17 @@
   "description": "NoScript Security Suite",
 
   "permissions": [
-    "storage", "webNavigation",
-    "webRequest", "webRequestBlocking", "<all_urls>"
+      "contextMenus",
+      "privacy",
+      "storage",
+      "tabs",
+      "webNavigation",
+      "webRequest",
+      "webRequestBlocking",
+      "<all_urls>"
   ],
 
   "background": {
-    "scripts": ["background.js"]
+    "page": "background.html"
   }
 }

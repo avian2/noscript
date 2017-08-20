@@ -43,7 +43,7 @@ REGEXP    : '^' ~'\n'+ ;
 ALL       : 'ALL' ;
 SUB       : 'SUB' ;
 INC       : 'INC' 'LUSION'? ;
-HTTPVERB  : 'GET' | 'POST' | 'PUT' | 'HEAD' | 'PATCH' | 'DELETE' | 'TRACE' | 'OPTIONS';
+HTTPVERB  : 'GET' | 'POST' | 'PUT' | 'HEAD' | 'PATCH' | 'DELETE' | 'TRACE' | 'OPTIONS';nsI
 INC_TYPE  : 'A'..'Z' ('A'..'Z' | 'A'..'Z' '_' 'A'..'Z')+ ;
 
 

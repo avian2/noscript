@@ -4,8 +4,17 @@ var WebExt = {
   running: false,
   port: null,
   saveData(json = ns.conf2JSON()) {
+    this.tell("saveData", json);
+  },
+  start(policy = null) {
+    this.tell("start", policy);
+  },
+  stop() {
+    this.tell("stop");
+  },
+  tell(type, data) {
     if (this.port) {
-      this.port.postMessage({ type: "saveData", data: json });
+      this.port.postMessage({ type, data });
     }
   }
 };
@@ -31,13 +40,21 @@ try {
       WebExt.started = true;
       ns.dump(`${addonId} - embedded webext started`);
       browser.runtime.onMessage.addListener(msg => {
-        WebExt.running = true;
+        switch(msg) {
+          case "STARTED":
+            WebExt.running = true;
+            break;
+          case "STOPPED":
+            WebExt.running = false;
+            break;
+        }
         ns.dump(`${addonId} - received message from embedded webext ${msg}`);
       });
       browser.runtime.onConnect.addListener(port => {
         ns.dump(`${addonId} - webext connected`);
         WebExt.port = port;
         WebExt.saveData();
+        WebExt.stop();
       });
     }).catch(err => {
       Components.utils.reportError(
