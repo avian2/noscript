@@ -1,6 +1,7 @@
-{
-  let legacyPort = browser.runtime.connect({name: "legacy"});
-  if (legacyPort) legacyPort.onMessage.addListener(msg => {
+var legacyPort;
+try {
+  legacyPort = browser.runtime.connect({name: "legacy"});
+  legacyPort.onMessage.addListener(msg => {
     switch(msg.type) {
 
       case "start":
@@ -13,6 +14,7 @@
 
       case "saveData":
         browser.storage.local.set(msg.data);
+        console.log("NoScript preferences backed on the WebExtension side");
       break;
 
       case "dumpData":
@@ -20,4 +22,7 @@
       break;
     }
   });
+} catch(e) {
+  legacyPort = null;
 }
+

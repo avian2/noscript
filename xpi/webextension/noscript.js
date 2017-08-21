@@ -32,7 +32,13 @@
   };
 }
 
-ns.start();
+if (legacyPort) {
+  browser.runtime.sendMessage("LEGACY MODE");
+} else {
+  browser.storage.local.get(null, items => console.log(`NoScript imported preferences: ${JSON.stringify(items)}`));
+  ns.start();
+}
+
 browser.runtime.sendMessage("READY");
 console.log("NoScript WebExt Ready");
 
