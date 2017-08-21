@@ -319,7 +319,7 @@ var ScriptSurrogate = {
       }
       let code = "with(window){" + scriptBlock + "}delete this.env;";
       if ("keys" in Object) code += "Object.keys(this).forEach(function(p) { window[p] = this[p] }, this);";
-      Cu.evalInSandbox(code, s, this.JS_VERSION);
+      Cu.evalInSandbox(code, s);
     } catch (e) {
       if (ns.consoleDump) {
         ns.dump(e);

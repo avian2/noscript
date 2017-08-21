@@ -26,6 +26,6 @@ SyntaxChecker.prototype = {
     return null;
   },
   ev: function(s) {
-    return Cu.evalInSandbox(s, this.sandbox, this.version);
+    return Cu.evalInSandbox(s, this.sandbox);
   }
 };

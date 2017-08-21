@@ -2358,7 +2358,7 @@ const ns = {
         if (this.getExpando(embed, "processed")) continue;
         this.setExpando(embed, "processed", true);
 
-        if (embed instanceof OBJECT || embed instanceof EMBED) {
+        if (embed instanceof OBJECT || EMBED && embed instanceof EMBED) {
           let node = embed;
           while ((node = node.parentNode) && !node.__noscriptBlocked)
             //  if (node instanceof OBJECT) o.embed = embed = node
@@ -2790,7 +2790,7 @@ const ns = {
     if (isLegacyFrame || (mime == doc.contentType && doc.body &&
         (a === doc.body.firstChild &&
          a === doc.body.lastChild ||
-         (ctx.object instanceof Ci.nsIDOMHTMLEmbedElement) && ctx.object.src != url))
+         (Ci.nsIDOMHTMLEmbedElement && ctx.object instanceof Ci.nsIDOMHTMLEmbedElement) && ctx.object.src != url))
       ) { // stand-alone plugin or frame
         doc.body.removeChild(a); // TODO: add a throbber
         if (isLegacyFrame) {
@@ -4479,43 +4479,6 @@ const ns = {
     if(this.consoleLog && !noConsole) this.log(msg);
   },
 
-  ensureUIVisibility: function() {
-    const window =  DOM.mostRecentBrowserWindow;
-    try {
-      const document = window.document;
-      const addonBar = document.getElementById("addon-bar");
-      if (!addonBar) return false;
-
-      const tbbId = "noscript-tbb";
-      let tbb = document.getElementById(tbbId);
-      if (tbb) return false;
-
-      let navBar = document.getElementById("nav-bar");
-
-      let [bar, refId] =
-        addonBar.collapsed && navBar && !navBar.collapsed || !this.getPref("statusIcon", true)
-        ? [navBar, "urlbar-container"]
-        : [addonBar, "status-bar"];
-
-      set = bar.currentSet.split(/\s*,\s*/);
-      if (set.indexOf(tbbId) > -1) return false;
-
-      set.splice(set.indexOf(refId), 0, tbbId);
-
-      bar.setAttribute("currentset", bar.currentSet = set.join(","));
-      document.persist(bar.id, "currentset");
-      try {
-        window.BrowserToolboxCustomizeDone(true);
-      } catch (e) {}
-      try {
-        window.noscriptOverlay.initPopups();
-      } catch(e) {}
-      return true;
-    } catch(e) {
-      this.dump(e);
-      return false;
-    }
-  },
 
 
 }

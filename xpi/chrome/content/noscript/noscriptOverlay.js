@@ -1400,7 +1400,9 @@ return noscriptUtil.service ? {
 
   get statusIcon() {
     var statusIcon = $("noscript-statusIcon") || $("noscript-tbb");
-    if (!statusIcon) return null; // avoid mess with early calls
+    if (!statusIcon) {
+      return this._fakeIcon || (this._fakeIcon = document.createElement("toolbar-button")); // ugly hack for Firefox 57
+    }
     delete this.statusIcon;
     return (this.statusIcon = statusIcon);
   },

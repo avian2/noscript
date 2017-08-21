@@ -153,6 +153,50 @@ var MainParent = {
     }
   },
 
+  ensureUIVisibility: function() {
+
+    try {
+      let window =  DOM.mostRecentBrowserWindow;
+      let document = window.document;
+      const tbbId = "noscript-tbb";
+      let tbb = document.getElementById(tbbId);
+      if (tbb) return false;
+
+       try {
+        let cui = window.CustomizableUI;
+        if (cui) cui.addWidgetToArea(tbbId, cui.AREA_NAVBAR);
+      } catch (e) { // super-legacy
+        let addonBar = document.getElementById("addon-bar");
+        if (!addonBar) return false;
+
+        let navBar = document.getElementById("nav-bar");
+
+        let [bar, refId] =
+          addonBar.collapsed && navBar && !navBar.collapsed || !this.getPref("statusIcon", true)
+          ? [navBar, "urlbar-container"]
+          : [addonBar, "status-bar"];
+
+        let set = bar.currentSet.split(/\s*,\s*/);
+        if (set.indexOf(tbbId) > -1) return false;
+
+        set.splice(set.indexOf(refId), 0, tbbId);
+
+        bar.setAttribute("currentset", bar.currentSet = set.join(","));
+        document.persist(bar.id, "currentset");
+      }
+      try {
+        window.BrowserToolboxCustomizeDone(true);
+      } catch (e) {}
+      try {
+        window.noscriptOverlay.initPopups();
+      } catch(e) {}
+      return true;
+    } catch(e) {
+      this.dump(e);
+      return false;
+    }
+  },
+
   checkSubscriptions: function() {
     var lastCheck = this.getPref("subscription.last_check");
     var checkInterval = this.getPref("subscription.checkInterval", 24) * 60000;

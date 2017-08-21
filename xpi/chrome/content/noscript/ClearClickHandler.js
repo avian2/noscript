@@ -167,8 +167,8 @@ ClearClickHandler.prototype = {
     this._whitelist = {};
     this.whitelistLen = 0;
   },
-
-  isEmbed: (o) => (o instanceof Ci.nsIDOMHTMLObjectElement || o instanceof Ci.nsIDOMHTMLEmbedElement) &&
+  isEmbed: (o) => (o instanceof Ci.nsIDOMHTMLObjectElement ||
+                   (Ci.nsIDOMHTMLEmbedElement && o instanceof Ci.nsIDOMHTMLEmbedElement)) &&
                     !o.contentDocument && ns.getExpando(o, "site") != ns.getSite(o.ownerDocument.documentURI),
 
   swallowEvent: function(ev) {

@@ -22,10 +22,10 @@
   persist="screenX screenY"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript;version=1.8" src="noscript.js" />
-  <script type="application/x-javascript;version=1.8" src="iaUI.js" />
-  <script type="application/x-javascript;version=1.8" src="tree-copy.js" />
-  <script type="application/x-javascript;version=1.8" src="noscriptOptions.js" />
+  <script type="application/x-javascript" src="noscript.js" />
+  <script type="application/x-javascript" src="iaUI.js" />
+  <script type="application/x-javascript" src="tree-copy.js" />
+  <script type="application/x-javascript" src="noscriptOptions.js" />
 
   <vbox style="width: &noscriptOptionsWidth;">
   <tabbox id="nsopt-tabsMain">

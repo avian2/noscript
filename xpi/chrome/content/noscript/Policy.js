@@ -244,7 +244,7 @@ var MainContentPolicy = {
           aContentLocation = IOS.newURI(codeBase, cs, aRequestOrigin);
         } catch (e) {}
 
-        if (aContext instanceof Ci.nsIDOMHTMLEmbedElement) {
+        if (Ci.nsIDOMHTMLEmbedElement && aContext instanceof Ci.nsIDOMHTMLEmbedElement) {
           code = aContext.getAttribute("code");
           if (code && /\bjava\b/.test(aMimeTypeGuess)) {
             archive = archive ? code + " " + archive : code;
@@ -439,7 +439,7 @@ var MainContentPolicy = {
               (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) &&
               aMimeTypeGuess) {
 
-            if ((aContext instanceof Ci.nsIDOMHTMLEmbedElement) &&
+            if (Ci.nsIDOMHTMLEmbedElement && (aContext instanceof Ci.nsIDOMHTMLEmbedElement) &&
               this.isAllowedObject(locationURL, aMimeTypeGuess)
               ) {
               if (logIntercept) this.dump("Plugin document " + locationURL);
