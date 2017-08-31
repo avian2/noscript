@@ -259,7 +259,7 @@ var HTTPS = {
     if (dsecure && !ns.getPref("secureCookies.recycle", false)) return;
 
     var dhost = uri.host;
-    var dpath = uri.path;
+    var dpath = uri.filePath;
 
     var ohost = oparts[2];
     var opath = oparts[3];

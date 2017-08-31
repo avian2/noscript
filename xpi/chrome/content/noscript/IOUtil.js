@@ -198,7 +198,7 @@ var IOUtil = {
           if (u.substring(0, 2) == '//') u = "http:" + u;
           return this.unwrapURL(u);
         case "wyciwyg":
-          return this.unwrapURL(url.path.replace(/^\/\/\d+\//, ""));
+          return this.unwrapURL(url["path" in url ? "path" : "pathQueryRef"].replace(/^\/\/\d+\//, ""));
         case "jar":
           if (url instanceof Ci.nsIJARURI)
             return this.unwrapURL(url.JARFile);

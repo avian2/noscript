@@ -272,7 +272,7 @@
      
   </popupset>
 
-
+<toolbox id="navigator-toolbox">
 <statusbar id="status-bar">
   <statusbarpanel id="noscript-statusLabel"
     insertbefore="statusbar-updates"
@@ -314,5 +314,5 @@
     />
   
 </statusbar>
-
+</toolbox>
 </overlay>

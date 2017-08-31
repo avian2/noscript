@@ -823,7 +823,7 @@ var InjectionChecker = {
      ")[\\s\\0]*=|<%[^]+[=(][^]+%>", "i"),
 
   checkHTML: function(s) {
-    let links = s.match(/\b(?:href|src|(?:form)?action|\w+-\w+)[\s\0]*=[\s\0]*(?:(["'])[\s\S]*?\1|[^'"<>][^>\s]*)/ig);
+    let links = s.match(/\b(?:href|src|(?:form)?action|\w+-\w+)[\s\0]*=[\s\0]*(?:(["'])[\s\S]*?\1|(?:[^'">][^>\s]*)?[?\/#][^>\s]*)/ig);
      if (links) {
        for (let l  of links) {
          l = l.replace(/[^=]*=[\s\0]*/i, '');
@@ -1378,12 +1378,13 @@ XSanitizer.prototype = {
     if (url.username) url.username = this.sanitizeEnc(url.username);
     if (url.password) url.password = this.sanitizeEnc(url.password);
     url.host = this.sanitizeEnc(url.host);
-
+    let pathProp = ["path" in url ? "path" : "pathQueryRef"];
+    let urlPath = url[pathProp];
     if (url instanceof Ci.nsIURL) {
       // sanitize path
 
       if (url.param) {
-        url.path = this.sanitizeURIComponent(url.path); // param is the URL part after filePath and a semicolon ?!
+        urlPath = url[pathProp] = this.sanitizeURIComponent(urlPath); // param is the URL part after filePath and a semicolon ?!
       } else if(url.filePath) {
         url.filePath = this.sanitizeURIComponent(url.filePath); // true == lenient == allow ()=
       }
@@ -1395,17 +1396,17 @@ XSanitizer.prototype = {
         }
       }
       // sanitize fragment
-      var fragPos = url.path.indexOf("#");
+      var fragPos = urlPath.indexOf("#");
       if (url.ref || fragPos > -1) {
         if (fragPos >= url.filePath.length + url.query.length) {
-          url.path = url.path.substring(0, fragPos) + "#" + this.sanitizeEnc(url.path.substring(fragPos + 1));
+          urlPath = url[pathProp] = urlPath.substring(0, fragPos) + "#" + this.sanitizeEnc(urlPath.substring(fragPos + 1));
         } else {
           url.ref = this.sanitizeEnc(url.ref);
         }
       }
     } else {
       // fallback for non-URL URIs, we should never get here anyway
-      if (url.path) url.path = this.sanitizeURIComponent(url.path);
+      if (urlPath)  urlPath = url[pathProp] = this.sanitizeURIComponent(urlPath);
     }
 
     var urlSpec = url.spec;

@@ -1657,7 +1657,7 @@ const ns = {
   guessMime: function(uriOrExt) {
     try {
       let ext = (uriOrExt instanceof Ci.nsIURL) ? uriOrExt.fileExtension
-        : (uriOrExt instanceof Ci.nsIURI) ? ((ext = uriOrExt.path).includes(".") ? ext.split(".").pop() : "")
+        : (uriOrExt instanceof Ci.nsIURI) ? ((ext = uriOrExt["path" in uriOrExt ? "path" : "pathQueryRef"]).includes(".") ? ext.split(".").pop() : "")
         : uriOrExt;
       return typeof ext === "string" && this.mimeService.getTypeFromExtension(ext) || "";
     } catch(e) {

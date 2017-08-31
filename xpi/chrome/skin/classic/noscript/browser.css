@@ -318,3 +318,5 @@ notification {
 .menuitem-iconic[class*="noscript-"] > .menu-iconic-left {
   visibility: visible !important;
 }
+
+#navigator-toolbox > #status-bar { display: none }

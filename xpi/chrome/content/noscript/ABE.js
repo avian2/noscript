@@ -332,7 +332,7 @@ var ABE = {
 
       uri = uri.clone();
       uri.scheme = "https";
-      uri.path = "/rules.abe";
+      uri["path" in uri ? "path" : "pathQueryRef"] = "/rules.abe";
 
       var xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
       xhr.mozBackgroundRequest = true;
@@ -495,8 +495,8 @@ var ABE = {
     var uri = oldChannel.URI;
     var newURI = newChannel.URI;
 
-    if (uri.spec != newURI.spec && // redirected, check if it same path and same domain or upper
-        (uri.path != newURI.path ||
+    if (uri.spec !== newURI.spec && // redirected, check if it same path and same domain or upper
+        (uri.filePath !== newURI.filePath ||
           !(newURI.schemeIs("https") && this.isSubdomain(newURI.host, uri.host))
         )
       ) {

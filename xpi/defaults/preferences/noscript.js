@@ -263,6 +263,8 @@ pref("noscript.surrogate.addthis.sources", "^https?://(?:[^/:]+\\.)?addthis\\.co
 pref("noscript.surrogate.addthis.replacement", "addthis=(function(){var f=$S(arguments.callee);return f.__noSuchMethod__=f.data=f.bar=f.dynamic=f.login=f.ad=f.util=f.user=f.session=f})();");
 pref("noscript.surrogate.adfly.sources", "!@^https?://adf.ly/\\w+/?$");
 pref("noscript.surrogate.adfly.replacement", "for(var a=/ysmm = '(.*?)';/gi.exec(document.documentElement.innerHTML)[1],b='',c='',d=0;d<a.length;d++)0==d%2?b+=a.charAt(d):c=a.charAt(d)+c;window.location=atob(b+c).substring(2)");
+pref("noscript.surrogate.ampush.sources", ".ampush.io");
+pref("noscript.surrogate.ampush.replacement", "window.ampt=$S({__noSuchMethod__:function(){}});");
 pref("noscript.surrogate.digg.sources", "!@digg.com/newsbar/*");
 pref("noscript.surrogate.digg.replacement", "window.location.href=document.querySelector('link[rel=canonical]').href");
 pref("noscript.surrogate.dimtus.sources", "!@^http://(?:dimtus|imageteam)\\.(?:com|org)/img-");

@@ -1,3 +1,5 @@
+'use strict';
+
 var EXPORTED_SYMBOLS = ["UISync"];
 
 let { interfaces: Ci, classes: Cc, utils: Cu, results: Cr } = Components;

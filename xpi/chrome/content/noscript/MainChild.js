@@ -675,7 +675,7 @@ var MainChild = {
     const rx = /^(?:opaque|transparent)$/i;
     var b;
     try {
-      if (o instanceof Ci.nsIDOMHTMLEmbedElement) {
+      if (Ci.nsIDOMHTMLEmbedElement && o instanceof Ci.nsIDOMHTMLEmbedElement) {
         b = rx.test(o.getAttribute("wmode"));
       } else if (o instanceof Ci.nsIDOMHTMLObjectElement) {
         var params = o.getElementsByTagName("param");
