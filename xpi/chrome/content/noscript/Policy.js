@@ -198,6 +198,8 @@ var NOPContentPolicy = {
 // TYPE_CSP_REPORT = 17
 // TYPE_XSLT = 18
 // TYPE_BEACON = 19
+// TYPE_FETCH = 20
+// TYPE_IMAGESET = 21
 // ACCEPT = 1
 
 
@@ -209,7 +211,7 @@ var MainContentPolicy = {
       aContentLocation = aRequestOrigin;
     }
 
-    var locationURL =aContentLocation.spec;
+    var locationURL = aContentLocation.spec;
     if (locationURL === "about:blank") return CP_OK;
 
     if (aContentType === 5 && /^application\/x-java\b/i.test(aMimeTypeGuess) &&
@@ -298,11 +300,12 @@ var MainContentPolicy = {
       PolicyState.addCheck(aContentLocation);
     }
     
+    var forbid = this.globalJS;
     var originURL, originSite, locationSite, scheme,
-          forbid, isScript, isJava, isFlash, isSilverlight,
+          isScript, isJava, isFlash, isSilverlight,
           isLegacyFrame, blockThisFrame, contentDocument,
           unwrappedLocation, mimeKey,
-          isHTTP,
+          isHTTP, 
           mustCountObject = false;
 
     
@@ -357,7 +360,7 @@ var MainContentPolicy = {
                     !this.pluginForMime(aMimeTypeGuess) &&
                     (aMimeTypeGuess.indexOf("css") > 0 || this.isJSEnabled(this.getSite(aContentLocation.spec), win))
                    ) {
-                  return CP_OK;
+                  return this.allow("CSS", arguments);
                 }
               }
               if (aContentType === 7 || aInternalCall) break;
@@ -372,30 +375,31 @@ var MainContentPolicy = {
           }
         }
 
-        if (logIntercept && this.cpConsoleFilter.indexOf(aContentType) > -1) {
+        /* if (logIntercept && this.cpConsoleFilter.indexOf(aContentType) > -1) {
           this.cpDump("processing", aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall);
           if (this.consoleDump & LOG_CONTENT_CALL)
              this.dump(new Error().stack);
-        }
-
+        } /**/
       }
+
+      // CP PASS 1: for HTML, CSS, FONT, Media ...
 
       switch (aContentType) {
         case 9: // XBL - warning, in 1.8.x could also be XMLHttpRequest...
           return this.forbidXBL &&
             this.forbiddenXMLRequest(aRequestOrigin, aContentLocation, aContext, this.forbiddenXBLContext)
-            ? this.reject("XBL", arguments) : CP_OK;
+            ? this.reject("XBL", arguments) : this.allow("XBL", arguments);
 
         case 11: // in Firefox 3 we check for cross-site XHR
           return this.forbidXHR &&
             this.forbiddenXMLRequest(aRequestOrigin, aContentLocation, aContext, this.forbiddenXHRContext)
-             ? this.reject("XHR", arguments) : CP_OK;
+             ? this.reject("XHR", arguments) : this.allow("XHR", arguments);
 
         case 10: // TYPE_PING
           if (this.jsEnabled || !this.getPref("noping", true) ||
               aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec))
             )
-            return CP_OK;
+            return this.allow("Ping", arguments);
 
           return this.reject("Ping", arguments);
 
@@ -404,38 +408,33 @@ var MainContentPolicy = {
               this.isJSEnabled(this.getSite(aContentLocation.spec)) &&
               aRequestOrigin && this.isJSEnabled(this.getSite(aRequestOrigin.spec))
             )
-            return CP_OK;
+            return this.allow("CSP report", arguments);
 
           return this.reject("CSP report", arguments);
 
-        case 2:
+        case 2:  // TYPE_SCRIPT
           forbid = isScript = true;
           break;
 
-        case 4: // STYLESHEETS
-          if (PolicyUtil.supportsXSL ||
-              !(PolicyUtil.isXSL(aContext) && /\/x[ms]l/.test(aMimeTypeGuess))
-             ) return CP_OK;
-        case 18: // XSL
-          if (!/^(?:chrome|resource)$/.test(aContentLocation.scheme) &&
-                this.getPref("forbidXSLT", true)) {
-            forbid = isScript = true; // we treat XSLT like scripts
-            break;
+        case 4:  // TYPE_STYLESHEET
+          if (aContentType === 4) {
+            if (PolicyUtil.supportsXSL ||
+                !(PolicyUtil.isXSL(aContext) && /\/x[ms]l/.test(aMimeTypeGuess))
+               ) forbid = false; // return this.allow("CSS", arguments);
           }
-          return CP_OK;
 
-        case 14: // fonts
-          forbid = this.forbidFonts;
-          if (!forbid) return CP_OK;
-          mimeKey = "FONT";
-          if (aContentLocation && aRequestOrigin && aContentLocation.schemeIs("data"))
-            locationURL = this.getSite(aRequestOrigin.spec);
+        case 18:  // TYPE_XSLT
+          if (aContentType === 18) {
+            if (!/^(?:chrome|resource)$/.test(aContentLocation.scheme) &&
+                this.getPref("forbidXSLT", true)) {
+              forbid = isScript = true; // we treat XSLT like scripts
+              break;
+            }
+            forbid = false; // return this.allow("XSLT", arguments);
+          }
 
-          break;
-
-        case 5: // embeds
-
-          if (aContentLocation && aRequestOrigin &&
+        case 5: // TYPE_OBJECT, embeds
+          if (aContentType === 5 && aContentLocation && aRequestOrigin &&
               (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) &&
               aMimeTypeGuess) {
 
@@ -443,22 +442,32 @@ var MainContentPolicy = {
               this.isAllowedObject(locationURL, aMimeTypeGuess)
               ) {
               if (logIntercept) this.dump("Plugin document " + locationURL);
-              return CP_OK; // plugin document, we'll handle it in our webprogress listener
+              return this.allow("Plugin document", arguments); // plugin document, we'll handle it in our webprogress listener
             }
 
             if (!(aContext.getAttribute("data") || aContext.getAttribute("codebase") || aContext.getAttribute("archive") || aContext.getAttribute("src")
                   || aContext.firstChild) && aMimeTypeGuess == "application/x-shockwave-flash") {
               if (logIntercept) this.dump("Early Flash object manipulation with no source set yet.");
               if (this.anyAllowedObject(this.getSite(locationURL), aMimeTypeGuess))
-                return CP_OK;
+                return this.allow("Early Flash object", arguments);
 
               this.setExpando(aContext, "requiresReload", true);
             }
           }
 
-          case 15: // media
+        case 14: // fonts
+          if (aContentType === 14) {
+            forbid = this.forbidFonts || forbid;
+//            if (!forbid) return this.allow("Font", arguments);
+
+            mimeKey = "FONT";
+            if (aContentLocation && aRequestOrigin && aContentLocation.schemeIs("data"))
+              locationURL = this.getSite(aRequestOrigin.spec);
+          }
+
+        case 15: // media
           if (aContentType === 15) {
-              if (aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec), aContext.ownerDocument.defaultView)) {
+            if (aRequestOrigin && !this.isJSEnabled(this.getSite(aRequestOrigin.spec), aContext.ownerDocument.defaultView)) {
               // let's wire poor man's video/audio toggles if JS is disabled and therefore controls are not available
               this.delayExec(function() {
                 aContext.addEventListener("click", function(ev) {
@@ -469,14 +478,36 @@ var MainContentPolicy = {
               }, 0);
             }
 
-            forbid = this.forbidMedia;
-            if (!forbid && aMimeTypeGuess) return CP_OK;
+            forbid = this.forbidMedia || forbid;
+//            if (!forbid && aMimeTypeGuess) return this.allow("Media", arguments);
+
+//            if (aMimeTypeGuess) break;  // otherwise let's treat it as an iframe
           }
 
-          if (aMimeTypeGuess)  // otherwise let's treat it as an iframe
-            break;
+        case 12:
+          if (aContentType === 12) {
+            // Silverlight mindless activation scheme :(
+            if (!this.forbidSilverlight
+                || !this.getExpando(aContext, "silverlight") || this.getExpando(aContext, "allowed"))
+              forbid = false;
+              // return this.allow("Silverlight", arguments);
 
-        case 7:
+//            aMimeTypeGuess = "application/x-silverlight";
+//            break;
+          }
+
+        case 21:  // TYPE_IMAGESET
+        case 3:  // TYPE_IMAGE
+          if (aContentType === 21 || aContentType === 3) {
+            if (aContentLocation.scheme === "data" || aContentLocation.scheme === "blob") {
+              forbid = false;
+            }
+            else {
+              forbid = this.forbidImages || forbid;
+            }
+          }
+
+        case 7:  // TYPE_SUBDOCUMENT
 
           locationURL = aContentLocation.spec;
           originURL = aRequestOrigin && aRequestOrigin.spec || "";
@@ -491,19 +522,17 @@ var MainContentPolicy = {
 
           if (!aMimeTypeGuess) {
             aMimeTypeGuess = this.guessMime(aContentLocation);
-            if (logIntercept)
-              this.dump("Guessed MIME '" + aMimeTypeGuess + "' for location " + locationURL);
           }
 
-          if (aContentType === 15) {
+          /* if (aContentType === 15) {
             if (!aMimeTypeGuess) try {
               aMimeTypeGuess = aContext.tagName.toLowerCase() + "/ogg";
             } catch (e) {}
 
-            if (!forbid) return CP_OK;
+            // if (!forbid) return this.allow("Media", arguments);
 
-            break; // we just need to guess the Mime for video/audio
-          }
+            // break; // we just need to guess the Mime for video/audio
+          } /**/
 
           if (!(aContext instanceof Ci.nsIDOMXULElement)) {
 
@@ -530,9 +559,9 @@ var MainContentPolicy = {
                       (
                         originURL
                           ? ( /^(?:chrome|about|resource):/.test(originURL) && originURL !== "about:blank" ||
-                             /^(?:data|javascript):/.test(locationURL) &&
+                             /^(?:data|blob|javascript):/.test(locationURL) &&
                               (contentDocument && (originURL == contentDocument.URL
-                                                    || /^(?:data:|javascript:|about:blank$)/.test(contentDocument.URL)
+                                                    || /^(?:data:|blob:|javascript:|about:blank$)/.test(contentDocument.URL)
                               ) || this.isFirebugJSURL(locationURL)
                              )
                             )
@@ -542,7 +571,8 @@ var MainContentPolicy = {
                   ) && this.forbiddenIFrameContext(originURL || (originURL = aContext.ownerDocument.URL), locationURL);
             }
           }
-        case 6:
+
+        case 6:  // TYPE_DOCUMENT
 
           if (aRequestOrigin && aRequestOrigin != aContentLocation) {
 
@@ -554,7 +584,7 @@ var MainContentPolicy = {
                 this.requestWatchdog.externalLoad = aContentLocation.spec;
               }
 
-            } else if(scheme === "data" || scheme === "javascript") {
+            } else if (scheme === "blob" || scheme === "data" || scheme === "javascript") {
 
               if (aContext instanceof Ci.nsIDOMXULElement) {
                 originURL = originURL || aRequestOrigin.spec;
@@ -575,7 +605,7 @@ var MainContentPolicy = {
                   return this.reject("top level data: URI from forbidden origin", arguments);
                 }
               }
-              return CP_OK; // JavaScript execution policies will take care of this
+              return this.allow(scheme, arguments); // JavaScript execution policies will take care of this
             } else if(scheme !== aRequestOrigin.scheme &&
                 scheme !== "chrome" && // faster path for common case
                 this.isExternalScheme(scheme)) {
@@ -598,7 +628,17 @@ var MainContentPolicy = {
             }
           }
 
-          if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) ||
+          if (aContentType === 6) {
+            // Always allow TYPE_DOCUMENT
+            return this.allow(null, arguments)
+          }
+
+          if (aContext instanceof Ci.nsIDOMXULElement) {
+            // Always allow AddOns
+            return this.allow(null, arguments);
+          }
+
+/*          if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) ||
                 !blockThisFrame && (
                   aContext instanceof Ci.nsIDOMXULElement ||
                   !aMimeTypeGuess ||
@@ -608,40 +648,55 @@ var MainContentPolicy = {
                   aMimeTypeGuess.substring(0, 6) === "image/" ||
                   !(this.isMediaType(aMimeTypeGuess) || this.pluginForMime(aMimeTypeGuess))
                 )
-            ) {
-
-            if (logBlock)
-              this.dump("Document OK: " + aMimeTypeGuess + "@" + (locationURL || aContentLocation.spec) +
-                " --- PGFM: " + this.pluginForMime(aMimeTypeGuess));
+            ) { /**/
+          if (!(this.forbidSomeContent || this.alwaysBlockUntrustedContent) || !blockThisFrame) {
 
             if (aContentLocation.schemeIs("about") && /^about:(?:net|cert)error\?/.test(aContentLocation.spec)) {
               this.handleErrorPage(aContext, aContentLocation);
             }
 
-            return CP_OK;
+            locationURL = aContentLocation.spec;
+            locationSite = locationSite || this.getSite(locationURL);
+            let locationSiteDomain = this.getDomain(locationSite);
+            let locationSiteDomainBase = this.getBaseDomain(locationSiteDomain);
+
+            let isCrossDomain = false;
+            if (isHTTP && aRequestOrigin) {
+              originURL = aRequestOrigin.spec;
+              originSite = originSite || this.getSite(originURL);
+              let originSiteDomain = this.getDomain(originSite);
+              let originSiteDomainBase = this.getBaseDomain(originSiteDomain);
+
+              if (originSiteDomain !== locationSiteDomain) {
+                isCrossDomain = -1 === locationSiteDomain.indexOf(originSiteDomainBase);
+
+                if (isCrossDomain) mustCountObject = true;
+              }
+            }
+
+            if (!forbid) {
+              if (!isHTTP) {
+                return this.allow(null, arguments);
+              }
+              if (!isCrossDomain || this.isJSEnabled(locationSite)) {
+                return this.allow(null, arguments);
+              }
+            }
           }
-          break;
-
-        case 12:
-          // Silverlight mindless activation scheme :(
-          if (!this.forbidSilverlight
-              || !this.getExpando(aContext, "silverlight") || this.getExpando(aContext, "allowed"))
-            return CP_OK;
-
-          aMimeTypeGuess = "application/x-silverlight";
-          break;
-        default:
-          return CP_OK;
+          return this.reject(null, arguments);
+        
+        default:  // case 1: TYPE_OTHER
+          return this.allow("OTHER", arguments);
       }
 
+      // CP PASS 2: for Script, XSLT, Silverlight, Flash and Java
 
       locationURL = locationURL || aContentLocation.spec;
       locationSite = locationSite || this.getSite(locationURL);
 
       var untrusted = untrusted || this.isUntrusted(locationSite);
 
-      if(logBlock)
-        this.dump("[CP PASS 2] " + aMimeTypeGuess + "*" + locationURL + ", " + aContentType + ", " + aInternalCall);
+      if (logBlock) this.dump("[CP PASS 2] " + aMimeTypeGuess + "*" + locationURL + ", " + aContentType + ", " + aInternalCall);
 
       if (isScript) {
         // we must guess the right context here, see https://bugzilla.mozilla.org/show_bug.cgi?id=464754
@@ -724,16 +779,24 @@ var MainContentPolicy = {
 
           }
 
-          return CP_OK;
+          return this.allow(isScript ? "Script" : "XSLT", arguments);
         }
       }
 
       mimeKey = mimeKey || aMimeTypeGuess || "application/x-unknown";
 
-      if (!(forbid || locationSite === "chrome:")) {
+      if ((forbid || locationSite === "chrome:") && this.isAllowedMime(mimeKey, locationSite))
+        return this.allow("MIME " + mimeKey, arguments);
 
         forbid = blockThisFrame || untrusted && this.alwaysBlockUntrustedContent;
-        if (!forbid) {
+
+        if (forbid && blockThisFrame &&
+            this.isAllowedMime(mimeKey, locationSite) ||
+            this.isAllowedMime("FRAME", locationSite)
+        ) {
+          return this.allow("MIME " + (mimeKey || "FRAME"), arguments);
+        }
+
           if (this.forbidSomeContent && aMimeTypeGuess) {
 
             forbid =
@@ -753,7 +816,7 @@ var MainContentPolicy = {
 
             if (isFlash) this.tagWindowlessObject(aContext);
 
-            if (this.isAllowedMime(mimeKey, locationSite)) return CP_OK;
+            if (this.isAllowedMime(mimeKey, locationSite)) return this.allow("MIME " + mimeKey, arguments);
 
             if (forbid) {
 
@@ -770,7 +833,7 @@ var MainContentPolicy = {
                    this.isAllowedObjectByDOM(aContext, locationURL, originURL, mimeKey, locationSite)) {
                   if (logIntercept && forbid) this.dump("Silverlight " + locationURL + " is whitelisted, ALLOW");
                   this.handleClickToPlay(aContext);
-                  return CP_OK;
+                  return this.allow("Silverlight", arguments);
                 }
               } else if (isFlash) {
                 locationURL = this.addFlashVars(locationURL, aContext);
@@ -781,14 +844,6 @@ var MainContentPolicy = {
               forbid = this.forbidMedia && /^(?:audio|video)\//i.test(aMimeTypeGuess);
             }
           }
-        } else if (blockThisFrame &&
-                   this.isAllowedMime(mimeKey, locationSite) ||
-                   this.isAllowedMime("FRAME", locationSite)) {
-          return CP_OK;
-        }
-      } else {
-        if (this.isAllowedMime(mimeKey, locationSite)) return CP_OK;
-      }
 
       if (forbid && (!this.contentBlocker || /^resource:/.test(locationSite))) {
 
@@ -846,7 +901,7 @@ var MainContentPolicy = {
             ) {
             this.setExpando(aContext, "allowed", true);
             this.handleClickToPlay(aContext);
-            return CP_OK; // forceAllow
+            return this.allow("Java", arguments); // forceAllow
           }
         } catch(ex) {
           this.dump("Error checking plugin per-object permissions:" + ex);
@@ -876,12 +931,8 @@ var MainContentPolicy = {
         }
       } else {
 
-
         if (isSilverlight) {
           this.setExpando(aContext, "silverlight", aContentType != 12);
-        }
-        if (this.consoleDump & LOG_CONTENT_CALL) {
-          this.dump(locationURL + " Allowed, " + new Error().stack);
         }
       }
     } catch(e) {
@@ -902,7 +953,10 @@ var MainContentPolicy = {
       if (isHTTP) PolicyState.save(aContentLocation, arguments);
 
     }
-    return CP_OK;
+
+    return forbid
+      ? this.reject("UNKNOWN", arguments)
+      : this.allow("UNKNOWN", arguments);
   },
 
 

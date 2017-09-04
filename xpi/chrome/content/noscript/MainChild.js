@@ -558,18 +558,62 @@ var MainChild = {
 
   cpConsoleFilter: [2, 5, 6, 7, 15],
   cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, aPrincipal) {
-    this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) +
-      ", requestOrigin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " +
-        ((aContext instanceof Ci.nsIDOMHTMLElement) ? "<HTML " + aContext.tagName + ">" // try not to cause side effects of toString() during load
-          : aContext)  +
-        ", mime: " + aMimeTypeGuess + ", Internal: " + aInternalCall +
-        ", principal.origin: " + (aPrincipal && aPrincipal.origin));
+    var aContentTypeName = aContentType ? "TYPE(" + aContentType + ")" : "UNKNOWN";
+    switch (aContentType) {
+      case 1: aContentTypeName = "OTHER"; break;
+      case 2: aContentTypeName = "SCRIPT"; break;
+      case 3: aContentTypeName = "IMAGE"; break;
+      case 4: aContentTypeName = "STYLESHEET"; break;
+      case 5: aContentTypeName = "OBJECT"; break;
+      case 6: aContentTypeName = "DOCUMENT"; break;
+      case 7: aContentTypeName = "SUBDOCUMENT"; break;
+      case 8: aContentTypeName = "REFRESH"; break;
+      case 9: aContentTypeName = "XBL"; break;
+      case 10: aContentTypeName = "PING"; break;
+      case 11: aContentTypeName = "XMLHTTPREQUEST"; break;
+      case 12: aContentTypeName = "OBJECT_SUBREQUEST"; break;
+      case 13: aContentTypeName = "DTD"; break;
+      case 14: aContentTypeName = "FONT"; break;
+      case 15: aContentTypeName = "MEDIA"; break;
+      case 16: aContentTypeName = "WEBSOCKET"; break;
+      case 17: aContentTypeName = "CSP_REPORT"; break;
+      case 18: aContentTypeName = "XSLT"; break;
+      case 19: aContentTypeName = "BEACON"; break;
+      case 20: aContentTypeName = "FETCH"; break;
+      case 21: aContentTypeName = "IMAGESET"; break;
+    }
+    this.dump("Content " + msg 
+      + ": " + aContentTypeName
+      + ", location: " + (aContentLocation && aContentLocation.spec)
+      + ", ctx: " + ((aContext instanceof Ci.nsIDOMHTMLElement)
+         ? "<HTML " + aContext.tagName + ">" // try not to cause side effects of toString() during load
+         : aContext)
+      + (aInternalCall ? ", Internal: " + aInternalCall : "")
+      + (aMimeTypeGuess ? ", mime: " + aMimeTypeGuess : "")
+      + ", principal.origin: " + (aPrincipal && aPrincipal.origin)
+      + ", requestOrigin: " + (aRequestOrigin && aRequestOrigin.spec)
+    );
   },
+
+  allow: function(what, args /* [aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, [aPrincipal] ] */) {
+
+    if (this.consoleDump) {
+      if(this.consoleDump & LOG_CONTENT_BLOCK && args.length >= 6) {
+        this.cpDump("allowed" + (what ? " " + what : ""), args[0], args[1], args[2], args[3], args[4], args[5], args[6] && args[6]);
+      }
+      if(this.consoleDump & LOG_CONTENT_CALL) {
+        this.dump(new Error().stack);
+      }
+    }
+
+    return CP_OK;
+  },
+
   reject: function(what, args /* [aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, [aPrincipal] ] */) {
 
     if (this.consoleDump) {
       if(this.consoleDump & LOG_CONTENT_BLOCK && args.length >= 6) {
-        this.cpDump("BLOCKED " + what, args[0], args[1], args[2], args[3], args[4], args[5], args[6] && args[6]);
+        this.cpDump("BLOCKED" + (what ? " " + what : ""), args[0], args[1], args[2], args[3], args[4], args[5], args[6] && args[6]);
       }
       if(this.consoleDump & LOG_CONTENT_CALL) {
         this.dump(new Error().stack);
