@@ -1,7 +1,7 @@
 overlay	chrome://navigator/content/navigatorOverlay.xul	chrome://noscript/content/noscriptOverlay.xul
-overlay chrome://emusic/content/startup.xul chrome://noscript/content/noscriptOverlay.xul
-overlay	chrome://browser/content/browser.xul chrome://noscript/content/noscriptOverlay.xul
-overlay chrome://songbird/content/xul/mainScriptsOverlay.xul	chrome://noscript/content/noscriptOverlay.xul
+overlay	chrome://browser/content/browser.xul chrome://noscript/content/noscriptOverlay.xul appversion<56
+overlay	chrome://browser/content/browser.xul chrome://noscript/content/noscriptOverlayFx57.xul appversion>=56
+
 
 overlay chrome://browser/content/bookmarks/bookmarksManager.xul chrome://noscript/content/noscriptBMOverlay.xul
 overlay chrome://browser/content/bookmarks/bookmarksPanel.xul chrome://noscript/content/noscriptBMOverlay.xul
