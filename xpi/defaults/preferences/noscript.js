@@ -30,8 +30,6 @@ pref("noscript.showExternalFilters", true);
 pref("noscript.showTempAllowPage", true);
 pref("noscript.showAllowPage", true);
 pref("noscript.mandatory", "[System+Principal] chrome: blob: mediasource: moz-extension: moz-safe-about: about: about:addons about:blocked about:crashes about:feeds about:home about:config about:neterror about:certerror about:memory about:plugins about:preferences about:privatebrowsing about:sessionrestore about:support resource: about:srcdoc");
-pref("noscript.default", "about:blank about:pocket-signup about:pocket-saved addons.mozilla.org persona.org mozilla.net google.com gstatic.com ajax.googleapis.com  maps.googleapis.com paypal.com paypalobjects.com securecode.com securesuite.net firstdata.com firstdata.lv yahoo.com yimg.com yahooapis.com youtube.com ytimg.com googlevideo.com netflix.com nflxext.com nflximg.com nflxvideo.net noscript.net hotmail.com passport.com passport.net passportimages.com live.com live.net outlook.com afx.ms gfx.ms sfx.ms wlxrs.com ajax.aspnetcdn.com bootstrapcdn.com code.jquery.com yandex.st tinymce.cachefly.net");
-
 pref("noscript.allowWhitelistUpdates", true);
 pref("noscript.volatilePrivatePermissions", false);
 pref("noscript.showVolatilePrivatePermissionsToggle", true);
@@ -340,8 +338,6 @@ pref("noscript.surrogate.picbucks.sources", "!*.picbucks.com  http://www.imageba
 pref("noscript.surrogate.picbucks.replacement", "Array.forEach(document.getElementsByTagName('script'), function(s){let m = s.textContent.match(/(?:Lbjs\\.TargetUrl\\s*=\\s*|Array\\s*\\().*(\\bhttp[^'\"]*)/); if (m) { location.href = m[1]; throw 'break'; }})");
 pref("noscript.surrogate.imagebunk.sources", "!http://imagebunk.com/image/*");
 pref("noscript.surrogate.imagebunk.replacement", "document.body.insertBefore(document.getElementById('img_obj'), document.body.firstChild)");
-pref("noscript.surrogate.personaorg.sources", "login.persona.org");
-pref("noscript.surrogate.personaorg.replacement", "if(typeof navigator.id==='undefined'){navigator.id=$S({__noSuchMethod__:function(){},watch:function(){}})}");
 pref("noscript.surrogate.picsee.sources", "!^https?://picsee\\.net/2\\d.*\\.html");
 pref("noscript.surrogate.picsee.replacement", "location.replace(location.href.replace(/(\\/2\\d{3}[^\\/]*)(.*)\\.html/, '/upload$1/$2'));");
 pref("noscript.surrogate.owasp_antiClickjack.sources", "!^https?://");

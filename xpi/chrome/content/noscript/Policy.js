@@ -417,7 +417,7 @@ var MainContentPolicy = {
               !(PolicyUtil.isXSL(aContext) && /\/x[ms]l/.test(aMimeTypeGuess))
              ) return CP_OK;
         case 18: // XSL
-          if (!/^(?:chrome|resource)$/.test(aContentLocation.scheme) &&
+          if (!/^(?:chrome|resource|moz-extension)$/.test(aContentLocation.scheme) &&
                 this.getPref("forbidXSLT", true)) {
             forbid = isScript = true; // we treat XSLT like scripts
             break;
@@ -425,7 +425,7 @@ var MainContentPolicy = {
           return CP_OK;
 
         case 14: // fonts
-          forbid = this.forbidFonts;
+          forbid = this.forbidFonts && !/^(?:chrome|moz-extension)$/.test(aContentLocation.scheme);
           if (!forbid) return CP_OK;
           mimeKey = "FONT";
           if (aContentLocation && aRequestOrigin && aContentLocation.schemeIs("data"))
@@ -524,12 +524,12 @@ var MainContentPolicy = {
 
                 blockThisFrame = (aInternalCall === CP_FRAMECHECK) && !(
                         this.knownFrames.isKnown(locationURL, originSite = this.getSite(originURL)) ||
-                      /^(?:chrome|resource|wyciwyg):/.test(locationURL) ||
+                      /^(?:chrome|resource|wyciwyg|moz-extension):/.test(locationURL) ||
                       locationURL === this._silverlightInstalledHack ||
                       locationURL === this.compatGNotes ||
                       (
                         originURL
-                          ? ( /^(?:chrome|about|resource):/.test(originURL) && originURL !== "about:blank" ||
+                          ? ( /^(?:chrome|about|resource|moz-extension):/.test(originURL) && originURL !== "about:blank" ||
                              /^(?:data|javascript):/.test(locationURL) &&
                               (contentDocument && (originURL == contentDocument.URL
                                                     || /^(?:data:|javascript:|about:blank$)/.test(contentDocument.URL)
@@ -730,7 +730,7 @@ var MainContentPolicy = {
 
       mimeKey = mimeKey || aMimeTypeGuess || "application/x-unknown";
 
-      if (!(forbid || locationSite === "chrome:")) {
+      if (!(forbid || locationSite === "chrome:" || aContentLocaton.schemeIs("moz-extension"))) {
 
         forbid = blockThisFrame || untrusted && this.alwaysBlockUntrustedContent;
         if (!forbid) {
