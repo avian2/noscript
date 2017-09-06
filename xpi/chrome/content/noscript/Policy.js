@@ -730,7 +730,7 @@ var MainContentPolicy = {
 
       mimeKey = mimeKey || aMimeTypeGuess || "application/x-unknown";
 
-      if (!(forbid || locationSite === "chrome:" || aContentLocaton.schemeIs("moz-extension"))) {
+      if (!(forbid || locationSite === "chrome:" || aContentLocation.schemeIs("moz-extension"))) {
 
         forbid = blockThisFrame || untrusted && this.alwaysBlockUntrustedContent;
         if (!forbid) {
