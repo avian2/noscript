@@ -156,7 +156,7 @@ var MainParent = {
       "2.6.9.36rc1": {
         "netflix.com": "https://*.nflxvideo.net"
       },
-      "5.0.10rc3": {
+      "@VERSION@rc3": {
         "!persona.org": ""
       },
     };
