@@ -1,4 +1,4 @@
-var noscriptBM = {
+window.noscriptBM = {
   openOneBookmarkOriginal: null,
   openOneBookmark: function (aURI, aTargetBrowser, aDS) {
     var ncNS = typeof(gNC_NS) == "undefined" ? ( typeof(NC_NS) == "undefined" ?
@@ -69,14 +69,20 @@ var noscriptBM = {
     pu.__ns = noscriptUtil.service;
     pu.checkURLSecurity = pu.__ns.placesCheckURLSecurity;
     
-    for (var method  of ["openNodeIn", "openSelectedNodeWithEvent"]) 
-      if (method in pu) pu[method].__noscriptPatched = true;
+    noscriptBM.onDisposal(() => {
+      if ("__originalCheckURLSecurity" in pu) {
+        pu.checkURLSecurity = pu.__originalCheckURLSecurity;
+        delete pu.__originalCheckURLSecurity;
+      }
+      delete pu.__ns;
+    });
+
   },
-  
+
   onLoad: function(ev) {
     ev.currentTarget.removeEventListener("load", arguments.callee, false);
     if(!noscriptUtil.service) return;
-    
+    window.addEventListener("unload", noscriptBM.dispose, false);
     noscriptBM.init();
   },
   init: function() {
@@ -90,9 +96,13 @@ var noscriptBM = {
       } else if ("gBrowser" in window) { // Fx >= 3.5
         patch = { obj: gBrowser, func: gBrowser.loadURIWithFlags };
         gBrowser.loadURIWithFlags = noscriptBM.loadURIWithFlags;
+        noscriptBM.onDisposal(() => {
+          gBrowser.loadURIWithFlags = patch.func;
+        });
       }
-      if (patch)
+      if (patch) {
         noscriptBM.handleURLBarCommandOriginal = (args) => patch.func.apply(patch.obj, args);
+      }
     }
     
     // delay bookmark stuff
@@ -112,6 +122,9 @@ var noscriptBM = {
           ? function(aURL, callback) { return replacement.apply(window, arguments); }
           : function(aURL) { return replacement.apply(window, arguments); }
           ;
+        noscriptBM.onDisposal(() => {
+          window[f] = getShortcut;
+        });
         break;
       }
     }
@@ -128,6 +141,22 @@ var noscriptBM = {
       noscriptBM.placesUtils = pu; // hold a reference even if in Fx 4 it's a module
       noscriptBM.patchPlacesMethods(pu);
     }
+  },
+
+  _disposalTasks: [],
+  onDisposal(t) {
+    this._disposalTasks.push(t);
+  },
+  dispose() {
+    window.removeEventListener("unload", noscriptBM.dispose, false);
+    for (let t of noscriptBM._disposalTasks) {
+      try {
+        t();
+      } catch (e) {
+        Components.utils.reportError(e);
+      }
+    }
+    delete window.noscriptBM;
   }
 };
 

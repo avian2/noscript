@@ -28,10 +28,13 @@ try {
 
   AddonManager.getAddonByID(addonId, addon => {
     const baseURI = addon.getResourceURI("/");
-    const {
-      LegacyExtensionsUtils,
-    } = Components.utils.import("resource://gre/modules/LegacyExtensionsUtils.jsm");
-
+    try {
+      const {
+        LegacyExtensionsUtils,
+      } = Components.utils.import("resource://gre/modules/LegacyExtensionsUtils.jsm");
+    } catch (e) {
+      return; // Hybrid WebExtensions not supported here
+    }
     const embeddedWebExtension = LegacyExtensionsUtils.getEmbeddedExtensionFor({
       id: addonId, resourceURI: baseURI,
     });

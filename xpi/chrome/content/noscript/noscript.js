@@ -1,22 +1,24 @@
-var noscriptUtil = {
+window.noscriptUtil = {
   chromeBase: "chrome://noscript/content/",
   chromeName: "noscript",
-  get service() {
-    var ns = null;
-    for(var attempt=1; attempt <= 2 ;attempt++) {
-      try {
-        ns = Components.classes["@maone.net/noscript-service;1"].getService().wrappedJSObject;
-        break;
-      } catch(ex) {
-        dump(ex.message);
-        window.navigator.plugins.refresh();
+  getService(callback) {
+    let service;
+    try {
+        service = Components.classes["@maone.net/noscript-service;1"].getService().wrappedJSObject;
+        if (callback) callback(service);
+    } catch(ex) {
+      Cu.reportError(ex);
+      if (callback) {
+        window.setTimeout(() => callback(this.getService()), 100);
+      } else {
+        throw ex;
       }
     }
-    if(ns != null) {
-      ns.init();
-    }
+    return service;
+  },
+  get service() {
     delete this.service;
-    return this.service = ns;
+    return (this.service = this.getService());
   },
 
   confirm: function(msg, persistPref, title = "NoScript") {

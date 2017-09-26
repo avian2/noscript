@@ -5,13 +5,14 @@ var EXPORTED_SYMBOLS = ["UISync"];
 let { interfaces: Ci, classes: Cc, utils: Cu, results: Cr } = Components;
 
 const HTMLDocument = Ci.nsIDOMHTMLDocument;
-const messages = ["NoScript:reload", "NoScript:reloadAllowedObjects", "NoScript:purgeRecent", "NoScript:forceSync"];
+const messages = ["NoScript:reload", "NoScript:reloadAllowedObjects",
+                  "NoScript:purgeRecent", "NoScript:forceSync",
+                  "NoScript:unload"];
 
 function UISync(ctx) {
   this.ctx = ctx;
   this.wire();
-  let ns = ctx.ns;
-  ns.clearClickHandler.install(ctx);
+  this.scheduleSync();
 }
 
 UISync.prototype = {
@@ -19,29 +20,42 @@ UISync.prototype = {
     tapped: null,
     delKey: false,
   },
-  wire: function() {
+
+  listeners: [],
+  addListener(type, handler, opts) {
+    this.ctx.addEventListener(type, handler, opts);
+    this.listeners.push({type, handler, opts});
+  },
+  removeListeners() {
+    let ctx = this.ctx;
+    for(let {type, handler, opts} of this.listeners) {
+      ctx.removeEventListener(type, handler, opts);
+    }
+  },
+
+  wire() {
     let ctx = this.ctx;
     let eraser = this.eraser;
 
-    ctx.addEventListener("DOMWindowCreated", () => this.sync());
-    ctx.addEventListener("NoScript:syncUI", ev => {
+    this.addListener("DOMWindowCreated", () => this.sync());
+    this.addListener("NoScript:syncUI", ev => {
        ev.stopPropagation();
        this.scheduleSync();
     }, true);
-    ctx.addEventListener("DOMContentLoaded", ev => {
+    this.addListener("DOMContentLoaded", ev => {
       this.onContentLoad(ev);
     }, true);
-    ctx.addEventListener("pageshow", ev => {
+    this.addListener("pageshow", ev => {
       this.onPageShow(ev);
     }, true);
-    ctx.addEventListener("pagehide", ev => {
+    this.addListener("pagehide", ev => {
       eraser.tapped = null;
       eraser.delKey = false;
       this.onPageHide(ev);
     }, true);
 
     
-    ctx.addEventListener("keyup", ev => {
+    this.addListener("keyup", ev => {
       let el = eraser.tapped;
       if (el && ev.keyCode === 46 &&
           ctx.ns.getPref("eraseFloatingElements")
@@ -63,14 +77,14 @@ UISync.prototype = {
       }
     }, true);
 
-    ctx.addEventListener("mousedown", ev => {
+    this.addListener("mousedown", ev => {
       if (ev.button === 0) {
         eraser.tapped = ev.target;
         eraser.delKey = false;
       }
     }, true);
 
-    ctx.addEventListener("mouseup", ev => {
+    this.addListener("mouseup", ev => {
       if (eraser.delKey) {
         eraser.delKey = false;
         ev.preventDefault();
@@ -83,18 +97,27 @@ UISync.prototype = {
     for (let m of messages) {
       ctx.addMessageListener(m, this);
     }
+    this.messages = messages;
+    ctx.ns.clearClickHandler.install(ctx);
   },
 
-  unwire: function() {
-    for (let m of messages) {
+  unwire() {
+    let ctx = this.ctx;
+    let ns = ctx.ns;
+    ns.dump("Unwiring frame script");
+    ns.clearClickHandler.uninstall(ctx);
+    for (let m of this.messages) {
       ctx.removeMessageListener(m, this);
     }
+    this.removeListeners();
   },
 
   receiveMessage: function(msg) {
     let ctx = this.ctx;
     let ns = ctx.ns;
-    if (ns.consoleDump) ns.dump(`Received message ${msg.name} ${uneval(msg.data)}`);
+    if (ns.consoleDump) try {
+      ns.dump(`Received message ${msg.name} ${uneval(msg.data)}`);
+    } catch (e) {}
     switch(msg.name) {
       case "NoScript:reload":
         let { innerWindowID, snapshots, reloadPolicy, mustReload } = msg.data;
@@ -110,6 +133,9 @@ UISync.prototype = {
         ns.recentlyBlocked = [];
       case "NoScript:forceSync":
         this.sync();
+      break;
+      case "NoScript:unload":
+        this.unwire();
       break;
     }
   },

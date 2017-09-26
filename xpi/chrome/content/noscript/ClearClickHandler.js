@@ -90,15 +90,29 @@ ClearClickHandler.prototype = {
   },
 
   chromeInstall(chromeWindow) {
-    let target = chromeWindow.document;
-    for (let et of this.rapidFire.events) {
-      target.addEventListener(et, this, true);
-    }
+    this._install(chromeWindow.document, this.rapidFire.events);
   },
 
   install(target) {
-    for (let et  of this.uiEvents) {
+    this._install(target, this.uiEvents);
+  },
+
+  _install(target, events) {
+    for (let et of events) {
       target.addEventListener(et, this, true);
+    }
+    (target._clearClickEvents || (target._clearClickEvents = [])).push(...events);
+  },
+
+  uninstall(target) {
+    let events = target._clearClickEvents;
+    try {
+      for (let et of events) {
+        target.removeEventListener(et, this, true);
+      }
+      ns.dump(`Removed [${events.join(", ")}] listener.`);
+    } catch (e) {
+      if (Components) Components.utils.reportError(e);
     }
   },
 
@@ -167,9 +181,11 @@ ClearClickHandler.prototype = {
     this._whitelist = {};
     this.whitelistLen = 0;
   },
-  isEmbed: (o) => (o instanceof Ci.nsIDOMHTMLObjectElement ||
-                   (Ci.nsIDOMHTMLEmbedElement && o instanceof Ci.nsIDOMHTMLEmbedElement)) &&
-                    !o.contentDocument && ns.getExpando(o, "site") != ns.getSite(o.ownerDocument.documentURI),
+  _embedRx: /^(?:object|embed)$/i,
+  isEmbed(o) {
+    return this._embedRx.test(o.tagName) &&
+      !o.contentDocument && ns.getExpando(o, "site") != ns.getSite(o.ownerDocument.documentURI)
+  },
 
   swallowEvent: function(ev) {
     ev.cancelBubble = true;
@@ -190,7 +206,7 @@ ClearClickHandler.prototype = {
       x: x + w.scrollX, y: y + w.scrollY, // add scroll* to make it absolute
       width: c.width, height: c.height,
       screenX: w.mozInnerScreenX + x, screenY: w.mozInnerScreenY + y
-    }
+    };
   },
 
 
@@ -211,7 +227,7 @@ ClearClickHandler.prototype = {
     }
 
     if (l > 6) {
-      var bStart = Math.floor(l * .1) // 20% border
+      var bStart = Math.floor(l * 0.1) // 20% border
       var bEnd = bStart;
       if (bStart + n > center) {
         bStart = center - n;

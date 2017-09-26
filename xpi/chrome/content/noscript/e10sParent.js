@@ -1,18 +1,18 @@
 IPC.parent = {
-  FRAME_SCRIPT: "chrome://noscript/content/frameScript.js",
-  PROCESS_SCRIPT: "chrome://noscript/content/e10sProcessScript.js",
+  FRAME_SCRIPT: NO_CACHE("frameScript.js"),
+  PROCESS_SCRIPT: NO_CACHE("e10sProcessScript.js"),
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIMessageListener, Ci.nsISupportsWeakReference]),
   init() {
     let globalMM = Services.mm;
     for (let m of Object.keys(IPC_MSG)) {
       globalMM.addWeakMessageListener(IPC_MSG[m], this);
     }
-    globalMM.loadFrameScript(this.FRAME_SCRIPT, true);
     let processMM = Services.ppmm;
     for (let m of Object.keys(IPC_P_MSG)) {
       processMM.addWeakMessageListener(IPC_P_MSG[m], this);
     }
     processMM.loadProcessScript(this.PROCESS_SCRIPT, true);
+    globalMM.loadFrameScript(this.FRAME_SCRIPT, true);
   },
   dispose() {
     let globalMM = Services.mm;
@@ -23,6 +23,8 @@ IPC.parent = {
     for (let m of Object.keys(IPC_P_MSG)) {
       processMM.removeWeakMessageListener(IPC_P_MSG[m], this);
     }
+    globalMM.removeDelayedFrameScript(this.FRAME_SCRIPT);
+    globalMM.broadcastAsyncMessage("NoScript:unload");
     processMM.removeDelayedProcessScript(this.PROCESS_SCRIPT);
   },
   

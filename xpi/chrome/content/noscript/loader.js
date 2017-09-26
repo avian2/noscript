@@ -1,19 +1,25 @@
 // const TIME0 = Date.now();
-Components.utils.import("resource://gre/modules/Services.jsm");
+
 var { interfaces: Ci, classes: Cc, utils: Cu, results: Cr } = Components;
+
+Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import(`chrome://noscript/content/importer.jsm`);
+var IMPORT = IMPORT_FOR(this);
+
 var IOS = Services.io;
 var OS = Services.obs;
+var LOADER = Services.scriptloader;
 
 
-const LOADER = Services.scriptloader;
-const _INCLUDED = {};
+var _INCLUDED = new Set();
 
-function INCLUDE(...objectNames) {
+var INCLUDE = function (...objectNames) {
   for (let objectName of objectNames) {
-    if (!(objectName in _INCLUDED)) {
-      _INCLUDED[objectName] = true;
+    if (!(_INCLUDED.has(objectName))) {
+      _INCLUDED.add(objectName);
       // let t = Date.now();
-      LOADER.loadSubScript(`chrome://noscript/content/${objectName}.js`, this);
+      LOADER.loadSubScript(NO_CACHE(`${objectName}.js`), this);
       // dump((t - TIME0) + " - loaded " + objectName + " in " + (Date.now() - t) + "\n")
     }
   }
@@ -21,7 +27,7 @@ function INCLUDE(...objectNames) {
 
 function LAZY_INCLUDE(...objectNames) {
   for (let objectName of objectNames) {
-    if (!(objectName in _INCLUDED)) {
+     if (!(_INCLUDED.has(objectName))) {
       let key = objectName; // hack needed in Fx < 50
       this.__defineGetter__(key, function() {
         delete this[key];
@@ -48,3 +54,4 @@ function MIXIN(target, ...objects) {
   }
   return target;
 }
+

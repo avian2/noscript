@@ -4,6 +4,7 @@ var IPC_MSG = {
   CLEARCLICK_WARNING: "NoScript:clearClickWarning",
 },
 IPC_P_MSG = {
+  SERVICE_READY: "NoScript:ServiceReady",
   LOAD_SURROGATE: "NoScript:loadSurrogate",
   CALL: "NoScript:remoteCall",
   RESUME: "NoScript:resume",

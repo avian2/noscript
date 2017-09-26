@@ -145,7 +145,6 @@ const ns = {
           break;
 
         case "profile-before-change":
-          this._disposeE10s();
           this.dispose();
           break;
 
@@ -190,7 +189,7 @@ const ns = {
     }
 
     try {
-      IPC.autoSync(this, "Main", ["setJSEnabled", "eraseTemp", "allowObject", "resetAllowedObjects"]);
+      IPC.autoSync(this, "Main", ["setJSEnabled", "eraseTemp", "allowObject", "resetAllowedObjects", "shutdown"]);
     } catch (e) {
       log(e);
     }
@@ -200,18 +199,27 @@ const ns = {
   OBSERVED_TOPICS: ["profile-before-change", "xpcom-shutdown", "profile-after-change", "sessionstore-windows-restored",
                     "browser:purge-session-history", "private-browsing",
                     "content-document-global-created", "document-element-inserted"],
+  _started: false,
   startup: function() {
+    if (this._started) return;
+    this._started = true;
+    this.registerComponent();
     for (let topic of this.OBSERVED_TOPICS) {
       let observer = this[topic] || this;
       OS.addObserver(observer, topic, observer instanceof Ci.nsISupportsWeakReference);
     }
   },
   shutdown: function() {
+    if (!this._started) return;
+    this._started = false;
+    this.dump("NoScript shutting down");
+    this.dispose();
     for (let topic of this.OBSERVED_TOPICS) {
       try {
         OS.removeObserver(this[topic] || this, topic);
       } catch (e) {}
     }
+    this.dump("NoScript shutdown done");
   },
 
   // Preference driven properties
@@ -786,6 +794,49 @@ const ns = {
     this._batchPrefs = false;
     this.setupJSCaps();
   },
+  getService() {
+    try {
+      return Cc[this.contractID].getService().wrappedJSObject;
+    } catch(e) {
+    }
+    return null;
+  },
+  _registered: false,
+  registerComponent() {
+    if (this._registered) return;
+    this.dump("Registering NoScript Service");
+    let current = this.getService();
+    if (current) {
+      try {
+        current.unregisterComponent();
+      } catch (e)  {
+        Cu.reportError(e);
+      }
+    }
+    let registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+    try {
+      registrar.registerFactory(this.classID, this.classDescription, this.contractID, this);
+      this.onDisposal(() => this.unregisterComponent());
+    } catch(e) {
+      if (!registrar.isCIDRegistered(this.classID)) Cu.reportError(e);
+      return;
+    }
+    OS.notifyObservers(this, "NoScript.ServiceReady", null);
+    this._registered = true;
+  },
+  unregisterComponent() {
+    if (!this._registered) return;
+    this._registered = false;
+    let current = this.getService();
+    if (current !== this) {
+      Cu.reportError("Current NoScript service is different than this: live update?");
+      return;
+    }
+    let registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+    if (registrar.isCIDRegistered(this.classID)) {
+      registrar.unregisterFactory(this.classID, this);
+    }
+  },
 
   _disposalTasks: [],
   onDisposal: function(task) {
@@ -796,15 +847,26 @@ const ns = {
       if(!this._inited) return;
       this._inited = false;
 
-      for (let t of this.disposalTasks) t();
+      for (let t of this._disposalTasks) try {
+        ns.dump(`Executing disposal task ${t}`);
+        t();
+      } catch (e) {
+        Cu.reportError(e);
+      }
 
       this.shouldLoad = this.shouldProcess = CP_NOP;
+      let catMan = this.categoryManager;
+      try {
+        catMan.deleteCategoryEntry("content-policy", this.contractID, false);
+      } catch (e) {}
 
       OS.removeObserver(this, "em-action-requested");
 
       if (this.httpStarted) {
-        this.categoryManager.deleteCategoryEntry("net-channel-event-sinks", this.contractID, false);
         this.requestWatchdog.dispose();
+        try {
+          catMan.deleteCategoryEntry("net-channel-event-sinks", this.contractID, false);
+        } catch (e) {}
         Cc['@mozilla.org/docloaderservice;1'].getService(nsIWebProgress).removeProgressListener(this);
       }
 
@@ -2242,14 +2304,13 @@ const ns = {
   },
 
   _preprocessObjectInfo: function(doc) {
-    const EMBED = Ci.nsIDOMHTMLEmbedElement,
-          OBJECT = Ci.nsIDOMHTMLObjectElement;
 
     const pe = this.getExpando(doc, "pe");
     if (!pe) return null;
     this.setExpando(doc, "pe", null);
 
     var ret = [];
+    var embedRx = /^(?:object|embed)$/i;
     for (var j = pe.length; j-- > 0;) {
       let o = pe[j];
       try {
@@ -2262,7 +2323,7 @@ const ns = {
         if (this.getExpando(embed, "processed")) continue;
         this.setExpando(embed, "processed", true);
 
-        if (embed instanceof OBJECT || EMBED && embed instanceof EMBED) {
+        if (embedRx.test(embed.tagName)) {
           let node = embed;
           while ((node = node.parentNode) && !node.__noscriptBlocked)
             //  if (node instanceof OBJECT) o.embed = embed = node
@@ -2472,7 +2533,7 @@ const ns = {
     delete this._objectPatch;
     return this._objectPatch = function() {
       const els = document.getElementsByClassName("__noscriptObjectPatchMe__");
-      const DUMMY_FUNC = function() {};
+
       var el;
       for (var j = els.length; j-- > 0;) {
         el = els[j];
@@ -4379,8 +4440,12 @@ const ns = {
     if (!this.consoleDump) return;
     if (msg.stack) msg += msg.stack;
     msg = `[NoScript ${this.childProcess ? "C" : "P"}] ${msg}`;
-    dump(`${msg}\n`);
-    if(this.consoleLog && !noConsole) this.log(msg);
+    try {
+      dump(`${msg}\n`);
+      if(this.consoleLog && !noConsole) this.log(msg);
+    } catch (e) {
+      this.log(`Error ${e} while logging "${msg}"`);
+    }
   },
 
 

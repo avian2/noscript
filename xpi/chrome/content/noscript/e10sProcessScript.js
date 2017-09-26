@@ -1,14 +1,8 @@
 Components.utils.import("resource://gre/modules/Services.jsm");
-let console = Services.console;
 
-let scope = {
-  log: function(msg) {
-    console.logStringMessage(msg);
-  }
-}
 if (Services.appinfo.processType == Services.appinfo.PROCESS_TYPE_CONTENT) {
-  Services.scriptloader.loadSubScript("chrome://noscript/content/e10sChild.js", scope);
-
+  Components.utils.import(`chrome://noscript/content/importer.jsm`);
+  Services.scriptloader.loadSubScript(NO_CACHE(`e10sChild.js`), {});
 } else {
   // nothing to do exclusively in the parent process yet...
 }

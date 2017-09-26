@@ -1,22 +1,16 @@
 var MainChild = {
   beforeInit: function() {
-    // must register the service manually
-    let registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
-    registrar.registerFactory(this.classID, this.classDescription, this.contractID, this);
-    this.onDisposal(() => registrar.unregisterFactory(this.classID, this));
     // can't use big preference values in the child process
-    {
-      INCLUDE("Membrane");
-      let proto = PolicySites.prototype;
-      proto.toPref = () => {};
-      let fromPref = proto.fromPref;
-      let wrap = (target, propKey) => propKey === "getCharPref" ?
-        name => Services.cpmm.sendSyncMessage(IPC_P_MSG.GET_PREF, {method: propKey, name: target.root + name})[0]
-        : target[propKey];
-      proto.fromPref = function(pref, ...args) {
-        return fromPref.call(this, Membrane.create(pref, wrap), ...args);
-      };
-    }
+    INCLUDE("Membrane");
+    let proto = PolicySites.prototype;
+    proto.toPref = () => {};
+    let fromPref = proto.fromPref;
+    let wrap = (target, propKey) => propKey === "getCharPref" ?
+      name => Services.cpmm.sendSyncMessage(IPC_P_MSG.GET_PREF, {method: propKey, name: target.root + name})[0]
+      : target[propKey];
+    proto.fromPref = function(pref, ...args) {
+      return fromPref.call(this, Membrane.create(pref, wrap), ...args);
+    };
   },
   afterInit: function() {
     let snapshot = Services.cpmm.sendSyncMessage(IPC_P_MSG.GET_SNAPSHOT)[0];
@@ -675,9 +669,10 @@ var MainChild = {
     const rx = /^(?:opaque|transparent)$/i;
     var b;
     try {
-      if (Ci.nsIDOMHTMLEmbedElement && o instanceof Ci.nsIDOMHTMLEmbedElement) {
+      let tag = o.tagName && o.tagName.toLowerCase();
+      if (tag === "embed") {
         b = rx.test(o.getAttribute("wmode"));
-      } else if (o instanceof Ci.nsIDOMHTMLObjectElement) {
+      } else if (tag === "object") {
         var params = o.getElementsByTagName("param");
         const wmodeRx = /^wmode$/i;
         for(var j = params.length; j-- > 0 &&

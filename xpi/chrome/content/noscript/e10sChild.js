@@ -1,36 +1,51 @@
+var EXPORTED_SYMBOLS = [];
 Components.utils.import("resource://gre/modules/Services.jsm");
-Services.scriptloader.loadSubScript("chrome://noscript/content/loader.js", this);
+Components.utils.import(`chrome://noscript/content/importer.jsm`);
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Services.scriptloader.loadSubScript(NO_CACHE(`loader.js`), this);
 
-INCLUDE("Main");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
-IPC.child = {
-  QueryInterface: XPCOMUtils.generateQI([Ci.nsIMessageListener, Ci.nsISupportsWeakReference]),
-  init: function() {
-    Services.cpmm.addWeakMessageListener(IPC_P_MSG.CALL, this);
-    Main.init();
-  },
-  dispose: function() {
-    Services.cpmm.removeWeakMessageListener(IPC_P_MSG.CALL, this);
-  },
 
-  receiveMessage: function(m) {
-    if (IPC.receiveMessage(m)) {
-      return;
-    }
-  },
 
-  remote(objName, method, args) {
-    Services.cpmm.sendAsyncMessage(IPC_P_MSG.CALL, {objName, method, args});
+(function () {
+  try {
+    INCLUDE("Main");
+  } catch (e) {
+    Cu.reportError(`${e} ${LOADER}`);
   }
 
-};
+  IPC.child = {
+    QueryInterface: XPCOMUtils.generateQI([Ci.nsIMessageListener, Ci.nsISupportsWeakReference]),
+    init: function() {
+      Services.cpmm.addWeakMessageListener(IPC_P_MSG.CALL, this);
+      Main.init();
+    },
+    dispose: function() {
+      Services.cpmm.removeWeakMessageListener(IPC_P_MSG.CALL, this);
+      Main.shutdown();
+      UNLOAD_ALL();
+    },
 
-try {
-  Main.bootstrap(true);
-  IPC.child.init();
-} catch (e) {
-  Cu.reportError(e);
-}
+    receiveMessage: function(m) {
+      if (IPC.receiveMessage(m)) {
+        return;
+      }
+      if (m.name === "NoScript:unload") {
+        this.dispose();
+      }
+    },
 
+    remote(objName, method, args) {
+      Services.cpmm.sendAsyncMessage(IPC_P_MSG.CALL, {objName, method, args});
+    }
+
+  };
+  try {
+    Main.bootstrap(true);
+    IPC.child.init();
+    Services.cpmm.sendAsyncMessage(IPC_P_MSG.SERVICE_READY);
+  } catch (e) {
+    Components.utils.reportError(e);
+  }
+})();

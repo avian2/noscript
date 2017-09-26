@@ -4,6 +4,9 @@ var EXPORTED_SYMBOLS = ["PasteHandler"];
 
 const Cu = Components.utils;
 
+Cu.import("chrome://noscript/content/importer.jsm");
+let IMPORT = IMPORT_FOR(this);
+
 function PasteHandler(ctx) {
   ctx.addEventListener("paste", pasteEventHandler, true);
 }
@@ -28,7 +31,7 @@ function pasteEventHandler(e) {
     
     if (sanitizeExtras(node)) {
       let sanitized = node.innerHTML;
-      Cu.import("chrome://noscript/content/defer.jsm");
+      IMPORT("defer");
       defer(function() { try {
         sanitizeExtras(t);
         console.log("[NoScript] Sanitized\n<PASTE>\n" + html + "\n</PASTE>to\n<PASTE>\n" + sanitized + "</PASTE>");

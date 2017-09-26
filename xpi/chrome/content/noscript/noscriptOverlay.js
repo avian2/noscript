@@ -1,10 +1,20 @@
-var noscriptOverlay = (function() {
+window.noscriptOverlay = (function() {
 
 var $ = (id) => document.getElementById(id);
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-
-return noscriptUtil.service ? {
+function domCleanup() {
+  for (let node of document.querySelectorAll(
+    `toolbarbutton[id^="noscript-tbb"],
+     #mainPopupSet>menupopup[id^="noscript-"],
+     #noscript-context-menu,
+     #status-bar>[id^="noscript-"]`
+  )) {
+    node.hidden = true;
+    if (node.parentNode) node.parentNode.removeChild(node);
+  }
+}
+return {
 
   ns: noscriptUtil.service,
 
@@ -283,7 +293,6 @@ return noscriptUtil.service ? {
   prepareOptItems: function(popup) {
     const notifications = this.getNotificationBox();
     const opts = popup.getElementsByAttribute("type", "checkbox");
-    var k, j, node, id;
     for (let j = opts.length; j-- > 0;) {
       let node = opts[j];
       let opt = this.parseMenuOpt(node);
@@ -330,9 +339,9 @@ return noscriptUtil.service ? {
     const noFull = no + sep + info;
     const yes = this.getString("allowed.yes");
     const yesFull = yes + sep + info;
-    return (this.getSiteTooltip = function(enabled, full) {
+    return (this.getSiteTooltip = (function(enabled, full) {
       return enabled ? full && yesFull || yes : full && noFull || no;
-    })(enabled, full);
+    }))(enabled, full);
   },
 
   getRevokeTooltip: function(tempSites) {
@@ -417,7 +426,7 @@ return noscriptUtil.service ? {
           if (btcd) window.BrowserToolboxCustomizeDone = function(done) {
             btcd(done);
             if (done) noscriptOverlay.initPopups();
-          }
+          };
         }
 
         buttons.push(statusIcon);
@@ -434,8 +443,7 @@ return noscriptUtil.service ? {
         }
         if (!this._mustReverse(localPopup)) {
           localPopup.position = /(?:addon|status)/.test(button.parentNode.id)
-          ? "before_start"
-          : "after_start";
+          ? "before_start" : "after_start";
         }
       }
     } finally {
@@ -2117,6 +2125,18 @@ return noscriptUtil.service ? {
     this.ns.applyPreset(menulist.selectedItem.value);
   },
 
+   install: function() {
+    // this.ns.dump("*** OVERLAY INSTALL ***\n");
+    this.ns.setPref("badInstall", false);
+    window.addEventListener("load", this.listeners.onLoad, false);
+  },
+
+  dispose: function() {
+    for (var bb = this.browsers, j = bb.length; j-- > 0;) if (bb[j]) {
+      this.ns.cleanupBrowser(bb[j]);
+    }
+  },
+
   observer: {
     ns: noscriptUtil.service,
     QueryInterface: XPCOMUtils.generateQI([
@@ -2214,10 +2234,16 @@ return noscriptUtil.service ? {
       const ns = this.ns;
       const os = ns.os;
       for (let t  of this._topics){
-        os.removeObserver(this, t);
+        try {
+          os.removeObserver(this, t);
+        } catch (e) {}
       }
-      ns.prefs.removeObserver("", this);
-      ns.caps.removeObserver("", this);
+      try {
+        ns.prefs.removeObserver("", this);
+      } catch (e) {}
+      try {
+        ns.caps.removeObserver("", this);
+      } catch (e) {}
     }
   },
 
@@ -2351,12 +2377,14 @@ return noscriptUtil.service ? {
 
     onMainContextMenu:  function(ev) { noscriptOverlay.prepareContextMenu(ev) },
 
+    _loaded: false,
     onLoad: function(ev) {
-
+      if (this._loaded) return;
+      this._loaded = true;
       let winType = document.documentElement.getAttribute("windowtype");
       if (winType !== "navigator:browser") noscriptOverlay.ns.dom.browserWinType = winType;
 
-      window.removeEventListener("load", arguments.callee, false);
+      window.removeEventListener("load", noscriptOverlay.listeners.onLoad, false);
       window.addEventListener("unload", noscriptOverlay.listeners.onUnload, false);
 
       try {
@@ -2377,17 +2405,23 @@ return noscriptUtil.service ? {
         noscriptOverlay.ns.clearClickHandler.chromeInstall(window);
       } catch(e) {
         let msg = "[NoScript] Error initializing new window " + e + "\n" + e.stack;
-        noscriptOverlay.ns.log(msg);
         noscriptOverlay.ns.dump(msg);
       }
 
     },
     onUnload: function(ev) {
-      window.removeEventListener("unload", arguments.callee, false);
-
+      noscriptOverlay.ns.log(`Unloading from ${window.location}`);
+      window.removeEventListener("unload", noscriptOverlay.listeners.onUnload, false);
       noscriptOverlay.listeners.teardown();
-      window.browserDOMWindow = null;
+      let openURI = noscriptOverlay.browserAccess._originalOpenURI;
+      if (openURI && window.browserDOMWindow) {
+        browserDOMWindow.wrappedJSObject.openURI = openURI;
+      }
       noscriptOverlay.dispose();
+      if (window.noscriptBM) window.noscriptBM.dispose();
+      domCleanup();
+      delete window.noscriptOverlay;
+      delete window.noscriptUtil;
     },
 
     onAddonOptionsLoad: function(ev) {
@@ -2454,7 +2488,7 @@ return noscriptUtil.service ? {
 
     teardown: function() {
 
-      if ("CustomizableUI" in window) {
+      if (window.CustomizableUI) {
         CustomizableUI.removeListener(this.customizableUIListener);
       }
 
@@ -2551,7 +2585,7 @@ return noscriptUtil.service ? {
       window.setTimeout(noscriptOverlay.wrapBrowserAccess, 0, ++retryCount);
       return;
     }
-
+    noscriptOverlay.browserAccess._originalOpenURI = browserDOMWindow.wrappedJSObject.openURI;
     browserDOMWindow.wrappedJSObject.openURI = noscriptOverlay.browserAccess.openURI;
 
     if(noscriptOverlay.ns.consoleDump)
@@ -2642,45 +2676,8 @@ return noscriptUtil.service ? {
       }
     }
   },
-
-  install: function() {
-    // this.ns.dump("*** OVERLAY INSTALL ***\n");
-    this.ns.setPref("badInstall", false);
-    window.addEventListener("load", this.listeners.onLoad, false);
-  },
-
-  dispose: function() {
-    for (var bb = this.browsers, j = bb.length; j-- > 0;) if (bb[j]) {
-      this.ns.cleanupBrowser(bb[j]);
-    }
-  }
 }
-: {
-    install: function() {
-      window.addEventListener("load", function(ev) {
-        ev.currentTarget.removeEventListener("load", arguments.callee, false);
-        var node = null;
-        for (var id  of ["noscript-context-menu", "noscript-tbb", "noscript-statusIcon"]) {
-          node = $(id);
-          if (node) node.hidden = true;
-        }
-        node = null;
-        var prefs = this.prefService = Cc["@mozilla.org/preferences-service;1"]
-          .getService(Ci.nsIPrefService).getBranch("noscript.");
-        try {
-          if (prefs.getBoolPref("badInstall")) return;
-        } catch(e) {}
-        prefs.setBoolPref("badInstall", true);
-        prefs = null;
-        window.setTimeout(function() {
-          alert("NoScript is not properly installed and cannot operate correctly.\n" +
-                "Please install it again and check the Install FAQ section on http://noscript.net/faq if this problem persists.");
-          noscriptUtil.browse("https://noscript.net/faq#faqsec2", null);
-
-        },10);
-      }, false);
-  }
-}})()
+})()
 
 noscriptOverlay.install();
 

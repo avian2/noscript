@@ -10,15 +10,14 @@
       if (this.running) return;
       this.running = true;
       if (settings) policy = new Policy(settings);
-
-      browser.runtime.sendMessage("STARTED");
+      this.notify("STARTED");
     },
 
     stop() {
       if (!this.running) return;
       this.running= false;
       WebRequest.stop();
-      browser.runtime.sendMessage("STOPPED");
+      this.notify("STOPPED");
     },
 
     async retrievePolicy() {
@@ -29,16 +28,25 @@
       return this.retrievePolicy().isAllowed(urlString, "script");
     },
 
+    notify(msg) {
+      if (window.legacyPort) {
+        browser.runtime.sendMessage(msg);
+      }
+    },
+
+    log(msg) {
+      console.log(msg);
+    },
   };
 }
 
-if (legacyPort) {
-  browser.runtime.sendMessage("LEGACY MODE");
+if (window.legacyPort) {
+  ns.log("HYBRID WebExtension");
+  ns.notify("READY");
 } else {
+  ns.log("PURE WebExtension");
   browser.storage.local.get(null, items => console.log(`NoScript imported preferences: ${JSON.stringify(items)}`));
   ns.start();
 }
-
-browser.runtime.sendMessage("READY");
-console.log("NoScript WebExt Ready");
+ns.log("NoScript WebExt Ready");
 

@@ -16,8 +16,7 @@ var RequestGC = {
         }
       }
       if (reqs.length === 0) {
-        t.cancel();
-        this._running = false;
+        this.dispose();
       }
     } catch(e) {
       ns.dump(e);
@@ -28,6 +27,12 @@ var RequestGC = {
     if (!this._running) {
       this._running = true;
       this._timer.initWithCallback(this, this.INTERVAL, Ci.nsITimer.TYPE_REPEATING_SLACK);
+    }
+  },
+  dispose() {
+    if (this._running) {
+      this._timer.cancel();
+      this._running = false;
     }
   }
 };
@@ -54,6 +59,7 @@ RequestWatchdog.prototype = {
   },
   dispose: function() {
     for (var topic  of this.OBSERVED_TOPICS) OS.removeObserver(this, topic);
+    RequestGC.dispose();
   },
 
   callback: null,
@@ -65,8 +71,12 @@ RequestWatchdog.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
 
   observe(channel, topic) {
-
-    if (!(channel instanceof Ci.nsIHttpChannel)) return;
+    try {
+      if (!(channel instanceof Ci.nsIHttpChannel)) return;
+    } catch (e) {
+      ns.dump(`${topic} failed ${uneval(e)}`);
+      return;
+    }
 
     if(ns.consoleDump & LOG_SNIFF) {
       ns.dump(topic + ": " + channel.URI.spec + ", " + channel.loadFlags);
