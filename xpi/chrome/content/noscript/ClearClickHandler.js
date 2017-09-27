@@ -448,7 +448,8 @@ ClearClickHandler.prototype = {
   },
 
   findParentForm: function(o) {
-    var ftype = Ci.nsIDOMHTMLFormElement;
+    var ftype = Cu.getGlobalForObject(o).HTMLFormElement;
+    if (!ftype) return null;
     while((o = o.parentNode)) {
       if (o instanceof ftype) return o;
     }
@@ -486,7 +487,7 @@ ClearClickHandler.prototype = {
   checkObstruction: function(o, ctx) {
     var d = o.ownerDocument;
     var w = d.defaultView;
-    if (!(ctx.isEmbed || d instanceof Ci.nsIDOMHTMLDocument)) {
+    if (!(ctx.isEmbed || d instanceof w.HTMLDocument)) {
       o = w.frameElement;
       d = o.ownerDocument;
       w = d.defaultView;
@@ -939,7 +940,8 @@ ClearClickHandler.prototype = {
 
   checkCursor: function(o) {
     let w = o.ownerDocument.defaultView;
-    for(; o && o instanceof Ci.nsIDOMHTMLElement; o = o.parentNode) {
+    let HTMLElement = w.HTMLElement;
+    for(; o && o instanceof HTMLElement; o = o.parentNode) {
       try {
         let cursor = w.getComputedStyle(o, ':hover').cursor;
         if (cursor === "none" || cursor.indexOf("url(") !== -1) return true;

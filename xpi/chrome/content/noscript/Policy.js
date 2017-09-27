@@ -235,7 +235,7 @@ var MainContentPolicy = {
 
         if (!codeBase)
           codeBase = aContext.getAttribute("codebase") ||
-          (aContext instanceof Ci.nsIDOMHTMLAppletElement ? "/" : ".");
+          (aContext instanceof win.HTMLAppletElement ? "/" : ".");
 
         if (!archive)
           archive = aContext.getAttribute("archive");
@@ -244,7 +244,7 @@ var MainContentPolicy = {
           aContentLocation = IOS.newURI(codeBase, cs, aRequestOrigin);
         } catch (e) {}
 
-        if (Ci.nsIDOMHTMLEmbedElement && aContext instanceof Ci.nsIDOMHTMLEmbedElement) {
+        if (aContext instanceof win.HTMLEmbedElement) {
           code = aContext.getAttribute("code");
           if (code && /\bjava\b/.test(aMimeTypeGuess)) {
             archive = archive ? code + " " + archive : code;
@@ -308,6 +308,12 @@ var MainContentPolicy = {
     
     try {
 
+      let win = aContext && (
+          aContext.ownerDocument
+          ? aContext.ownerDocument.defaultView
+          : aContext.document ? aContext : aContext.defaultView
+        );
+
       unwrappedLocation = IOUtil.unwrapURL(aContentLocation);
       scheme = unwrappedLocation.scheme;
 
@@ -347,8 +353,7 @@ var MainContentPolicy = {
                 break;
 
             case 7:
-              if (aContext instanceof Ci.nsIDOMHTMLObjectElement) {
-                let win = aContext.ownerDocument.defaultView
+              if (aContext instanceof win.HTMLObjectElement) {
                 if (this.isCachedObjectMime(aMimeTypeGuess) &&
                     !(aContext.offsetWidth && aContext.offsetHeight) &&
                     this.getPref("allowCachingObjects") &&
@@ -439,7 +444,7 @@ var MainContentPolicy = {
               (locationURL = aContentLocation.spec) == (originURL = aRequestOrigin.spec) &&
               aMimeTypeGuess) {
 
-            if (Ci.nsIDOMHTMLEmbedElement && (aContext instanceof Ci.nsIDOMHTMLEmbedElement) &&
+            if (aContext instanceof win.HTMLEmbedElement &&
               this.isAllowedObject(locationURL, aMimeTypeGuess)
               ) {
               if (logIntercept) this.dump("Plugin document " + locationURL);
@@ -507,12 +512,12 @@ var MainContentPolicy = {
 
           if (!(aContext instanceof Ci.nsIDOMXULElement)) {
 
-            isLegacyFrame = aContext instanceof Ci.nsIDOMHTMLFrameElement;
+            isLegacyFrame = aContext instanceof win.HTMLFrameElement;
 
             if (isLegacyFrame
                 ? this.forbidFrames || // we shouldn't allow framesets nested inside iframes, because they're just as bad
                                        this.forbidIFrames &&
-                                       (aContext.ownerDocument.defaultView.frameElement instanceof Ci.nsIDOMHTMLIFrameElement) &&
+                                       (win.frameElement instanceof win.HTMLIFrameElement) &&
                                        this.getPref("forbidMixedFrames", true)
                 : this.forbidIFrames || // we use iframes to make placeholders for blocked legacy frames...
                                        this.forbidFrames &&
@@ -670,7 +675,7 @@ var MainContentPolicy = {
           }
 
           forbid = !(originSite && locationSite == originSite);
-          scriptElement = aContext instanceof Ci.nsIDOMHTMLScriptElement;
+          scriptElement = aContext instanceof win.HTMLScriptElement;
 
           if (forbid && httpOrigin && this.requestWatchdog /* lazy init */) {
             // XSSI protection
@@ -698,7 +703,6 @@ var MainContentPolicy = {
 
         if (forbid) {
           let doc = aContext && aContext.ownerDocument || aContext;
-          let win = doc && doc.defaultView;
           forbid = !this.isJSEnabled(locationSite, win);
           if (forbid && this.ignorePorts && /:\d+$/.test(locationSite))
             forbid = !(this.isJSEnabled(locationSite.replace(/:\d+$/, '')) && this.autoTemp(locationSite));
@@ -794,12 +798,6 @@ var MainContentPolicy = {
 
         originURL = originURL || (aRequestOrigin && aRequestOrigin.spec);
         originSite = originSite || this.getSite(originURL);
-
-        let win = aContext && (
-          aContext.ownerDocument
-          ? aContext.ownerDocument.defaultView
-          : aContext.document ? aContext : aContext.defaultView
-        );
 
         let jsRx = /^(?:javascript|data):/;
 
@@ -916,7 +914,9 @@ var MainContentPolicy = {
 var PolicyUtil = {
   supportsXSL: ("TYPE_XSLT" in Ci.nsIContentPolicy),
   isXSL: function(ctx) {
-    return ctx && !(ctx instanceof Ci.nsIDOMHTMLLinkElement || ctx instanceof Ci.nsIDOMHTMLStyleElement || ctx instanceof Ci.nsIDOMHTMLDocument);
+    if (!ctx) return false;
+    let g = Cu.getGlobalForObject(ctx);
+    return !(ctx instanceof g.HTMLLinkElement || ctx instanceof g.HTMLStyleElement || ctx instanceof g.HTMLDocument);
   },
 
 };

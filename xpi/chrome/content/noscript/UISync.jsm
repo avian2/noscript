@@ -4,7 +4,6 @@ var EXPORTED_SYMBOLS = ["UISync"];
 
 let { interfaces: Ci, classes: Cc, utils: Cu, results: Cr } = Components;
 
-const HTMLDocument = Ci.nsIDOMHTMLDocument;
 const messages = ["NoScript:reload", "NoScript:reloadAllowedObjects",
                   "NoScript:purgeRecent", "NoScript:forceSync",
                   "NoScript:unload"];
@@ -171,34 +170,33 @@ UISync.prototype = {
   },
 
   notifyMetaRefresh(info) {
-    ctx.sendAsyncMessage("NoScript:notifyMetaRefresh", info);
+    this.ctx.sendAsyncMessage("NoScript:notifyMetaRefresh", info);
   },
 
   onContentLoad(ev) {
     var doc = ev.originalTarget;
-    if (doc instanceof HTMLDocument) {
-      let w = doc.defaultView;
-      if (w) {
-        let ns = this.ctx.ns;
-        ns.setExpando(doc, "domLoaded", true);
-        if (w === w.top) {
-          let url = doc.URL;
-          let jsBlocked = /^https?:/.test(url) && !ns.isJSEnabled(ns.getSite(url), w);
-          if (jsBlocked) {
-            ns.processMetaRefresh(doc, this.notifyMetaRefresh);
-            w.addEventListener("pageshow", ev => this.onPageShowNS(ev), false);
-          }
-        } else {
-          ns.frameContentLoaded(w);
+    let w = doc.defaultView;
+    if (w) {
+
+      let ns = this.ctx.ns;
+      ns.setExpando(doc, "domLoaded", true);
+      if (w === w.top) {
+        let url = doc.URL;
+        let jsBlocked = /^https?:/.test(url) && !ns.isJSEnabled(ns.getSite(url), w);
+        if (jsBlocked) {
+          ns.processMetaRefresh(doc, this.notifyMetaRefresh);
+          w.addEventListener("pageshow", ev => this.onPageShowNS(ev), false);
         }
-        this.sync();
+      } else {
+        ns.frameContentLoaded(w);
       }
+      this.sync();
     }
   },
 
   onPageShow(ev) {
     let d = ev.originalTarget;
-    if (d instanceof HTMLDocument) {
+    if (d.defaultView) {
       try {
         if (ev.persisted) {
           this.toggleObjectsVisibility(d, true);
@@ -216,7 +214,7 @@ UISync.prototype = {
   },
   onPageHide(ev) {
     let d = ev.originalTarget;
-    if (d instanceof HTMLDocument) {
+    if (d.defaultView) {
       this.toggleObjectsVisibility(d, false);
     }
     this.sync();

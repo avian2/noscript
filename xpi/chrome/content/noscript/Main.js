@@ -1933,7 +1933,7 @@ const ns = {
     var surrogates = this.getExpando(document, "surrogates", {});
     if (scount) {
       let win = document.defaultView;
-      const HTMLElement = Ci.nsIDOMHTMLElement;
+      const HTMLElement = win.HTMLElement;
       sites.scriptCount += scount;
       let nselForce = this.nselForce && this.isJSEnabled(docSite, win);
       let isHTMLScript;
@@ -1969,8 +1969,10 @@ const ns = {
 
 
   showNextNoscriptElement: function(script) {
-    const HTMLElement = Ci.nsIDOMHTMLElement;
-    var child, el, j, doc, docShell;
+    let doc = script.ownerDocument;
+    let checkRefresh = true;
+    let docShell;
+    const HTMLElement = doc.defaultView.HTMLElement;
     try {
       for (var node = script; (node = node.nextSibling);) {
 
@@ -1986,11 +1988,12 @@ const ns = {
           if (tag != "NOSCRIPT")
             return;
 
-          child = node.firstChild;
+          let child = node.firstChild;
           if (!(child && child.nodeType === 3)) break;
 
-          if (!doc) {
-            doc = node.ownerDocument;
+          if (checkRefresh) {
+            this.setExpando(doc, "nselForce", true);
+            checkRefresh = false;
             docShell = this.dom.getDocShellForWindow(doc.defaultView);
             if (docShell.allowMetaRedirects) {
               docShell.allowMetaRedirects = false;
@@ -1998,8 +2001,8 @@ const ns = {
               docShell = null;
             }
           }
-          this.setExpando(doc, "nselForce", true);
-          el = doc.createElementNS(HTML_NS, "span");
+          
+          let el = doc.createElementNS(HTML_NS, "span");
           el.__nselForce = true;
 
           el.innerHTML = child.nodeValue;
@@ -2723,11 +2726,13 @@ const ns = {
   },
 
   isLegacyFrameDocument: function(doc) {
-    return (doc.defaultView.frameElement instanceof Ci.nsIDOMHTMLFrameElement) && this.isPluginDocumentURL(doc.URL, "iframe");
+    let w = doc.defaultView;
+    return (w.frameElement instanceof w.HTMLFrameElement) && this.isPluginDocumentURL(doc.URL, "iframe");
   },
   isLegacyFrameReplacement: function(obj) {
-     return (obj instanceof Ci.nsIDOMHTMLIFrameElement || obj instanceof Ci.nsIDOMHTMLAnchorElement) &&
-           (obj.ownerDocument.defaultView.frameElement instanceof Ci.nsIDOMHTMLFrameElement) &&
+    let g = Cu.getGlobalForObject(obj);
+     return (obj instanceof g.HTMLIFrameElement || obj instanceof g.HTMLAnchorElement) &&
+           (obj.ownerDocument.defaultView.frameElement instanceof g.HTMLFrameElement) &&
            obj.ownerDocument.URL == this.createPluginDocumentURL(obj.src || obj.href, "iframe");
   },
   isClickToPlay: (obj) => obj instanceof Ci.nsIObjectLoadingContent && ("playPlugin" in obj) && ("activated" in obj) && !obj.activated,
@@ -2739,6 +2744,7 @@ const ns = {
 
   checkAndEnableObject:  function(ctx) {
     var extras = ctx.extras;
+ 
     if (!this.confirmEnableObject(ctx.window, extras)) return;
 
 
@@ -2751,11 +2757,13 @@ const ns = {
 
 
     var isLegacyFrame = this.isLegacyFrameReplacement(ctx.object);
-
+    
+    let w = doc.defaultView;
+    
     if (isLegacyFrame || (mime == doc.contentType && doc.body &&
         (a === doc.body.firstChild &&
          a === doc.body.lastChild ||
-         (Ci.nsIDOMHTMLEmbedElement && ctx.object instanceof Ci.nsIDOMHTMLEmbedElement) && ctx.object.src != url))
+         ctx.object instanceof w.HTMLEmbedElement && ctx.object.src != url))
       ) { // stand-alone plugin or frame
         doc.body.removeChild(a); // TODO: add a throbber
         if (isLegacyFrame) {
@@ -3498,7 +3506,7 @@ const ns = {
         if(!topWin) {
           // check if this is an iframe
 
-          if (win.frameElement && !(win.frameElement instanceof Ci.nsIDOMHTMLFrameElement) &&
+          if (win.frameElement && !(win.frameElement instanceof win.HTMLFrameElement) &&
               this.shouldLoad(5, uri, originURI || IOS.newURI(win.parent.location.href, null, null),
                   win.frameElement, contentType, CP_SHOULDPROCESS) === CP_OK) {
             IOUtil.resumeParentChannel(channel);
@@ -4177,7 +4185,7 @@ const ns = {
   // simulate onchange on selects if options look like URLs
   onContentChange: function(ev) {
     var s = ev.originalTarget;
-    if (!(s instanceof Ci.nsIDOMHTMLSelectElement) ||
+    if (!(s instanceof s.ownerDocument.defaultView.HTMLSelectElement) ||
         s.hasAttribute("multiple") ||
         !/open|nav|location|\bgo|load/i.test(s.getAttribute("onchange"))) return;
 
@@ -4208,9 +4216,9 @@ const ns = {
     var url = doc.documentURI;
     if (this.isJSEnabled(this.getSite(url))) return;
 
-    var onclick;
-
-    while (!(a instanceof Ci.nsIDOMHTMLAnchorElement || a instanceof Ci.nsIDOMHTMLAreaElement)) {
+    let onclick;
+    let w = doc.defaultView;
+    while (!(a instanceof w.HTMLAnchorElement || a instanceof w.HTMLAreaElement)) {
       if (typeof(a.getAttribute) == "function" && (onclick = a.getAttribute("onclick"))) break;
       if (!(a = a.parentNode)) return;
     }
@@ -4235,18 +4243,18 @@ const ns = {
       var form;
       if (fixedHref) {
         form = doc.getElementById(fixedHref); // youtube
-        if (!(form instanceof Ci.nsIDOMHTMLFormElement)) {
+        if (!(form instanceof w.HTMLFormElement)) {
           form = doc.forms.namedItem(fixedHref);
         }
       }
       if (!form) {
         var m = onclick.match(/(?:(?:\$|document\.getElementById)\s*\(\s*["']#?([\w\-]+)[^;]+|\bdocument\s*\.\s*(?:forms)?\s*(?:\[\s*["']|\.)?([^\.\;\s"'\]]+).*)\.submit\s*\(\)/);
         form = m && (/\D/.test(m[1]) ? (doc.forms.namedItem(m[1]) || doc.getElementById(m[1])) : doc.forms.item(parseInt(m[1])));
-        if (!(form && (form instanceof Ci.nsIDOMHTMLFormElement))) {
-          while ((form = a.parentNode) && form != doc && !form instanceof Ci.nsIDOMHTMLFormElement);
+        if (!(form && (form instanceof w.HTMLFormElement))) {
+          while ((form = a.parentNode) && form != doc && !form instanceof w.HTMLFormElement);
         }
       }
-      if (form && (form instanceof Ci.nsIDOMHTMLFormElement)) {
+      if (form && (form instanceof w.HTMLFormElement)) {
         form.submit();
         ev.preventDefault();
       }

@@ -554,7 +554,7 @@ var MainChild = {
   cpDump: function(msg, aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall, aPrincipal) {
     this.dump("Content " + msg + " -- type: " + aContentType + ", location: " + (aContentLocation && aContentLocation.spec) +
       ", requestOrigin: " + (aRequestOrigin && aRequestOrigin.spec) + ", ctx: " +
-        ((aContext instanceof Ci.nsIDOMHTMLElement) ? "<HTML " + aContext.tagName + ">" // try not to cause side effects of toString() during load
+        (aContext.tagName ? "<HTML " + aContext.tagName + ">" // try not to cause side effects of toString() during load
           : aContext)  +
         ", mime: " + aMimeTypeGuess + ", Internal: " + aInternalCall +
         ", principal.origin: " + (aPrincipal && aPrincipal.origin));

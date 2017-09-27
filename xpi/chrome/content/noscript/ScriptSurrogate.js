@@ -182,7 +182,7 @@ var ScriptSurrogate = {
 
   _errorListener: function(ev) {
     var s = ev.target;
-    if (!(s instanceof Ci.nsIDOMHTMLScriptElement)) return;
+    if (s.localName !== "script") return;
     let url = s.src;
     if (!url) return;
 
@@ -206,7 +206,7 @@ var ScriptSurrogate = {
   },
   _execListener: function(ev) {
     let s = ev.target;
-    if (s instanceof Ci.nsIDOMHTMLScriptElement && s.src) {
+    if (s.localName === "script" && s.src) {
       ScriptSurrogate.apply(s.ownerDocument, s.src, ev.type[0] === 'b' ? "<" : ">", false);
     }
   },
