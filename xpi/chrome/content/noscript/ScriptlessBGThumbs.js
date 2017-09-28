@@ -28,7 +28,7 @@
 
     patch("_ensureBrowser", function() {
       if (!this._thumbBrowser) {
-        this._NoScript_._ensureBrowser();
+        this._NoScript_._ensureBrowser.apply(this, arguments);
         if (this._thumbBrowser && ns.getPref("bgThumbs.disableJS"))
           this._thumbBrowser.messageManager.loadFrameScript(
             "data:text/javascript,docShell.allowJavascript = false", false);

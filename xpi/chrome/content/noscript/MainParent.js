@@ -32,12 +32,11 @@ var MainParent = {
 
     this.reloadWhereNeeded(this.RELOAD_NO); // init snapshots
 
-    if (this.getPref("webext.enabled")) { // experimental, only in dev builds for now
+    if (this.getPref("webext.enabled")) {
       INCLUDE("WebExt");
       this.webExt = WebExt;
     }
-  },
-  webExt: null,
+   },
 
    _initE10s: function() {
     INCLUDE("e10sParent");
@@ -403,11 +402,11 @@ var MainParent = {
 
    _dontSerialize: ["version", "temp", "preset", "placesPrefs.ts", "mandatory", "default"],
 
-  conf2JSON() {
-    const exclude = this._dontSerialize;
+  conf2JSON(excludeDefault = false) {
+    const excluded = this._dontSerialize;
     const prefs = {};
-    for (let key  of this.prefs.getChildList("", {})) {
-      if (exclude.indexOf(key) === -1) {
+    for (let key of this.prefs.getChildList("", {})) {
+      if (!(excluded.includes(key) || excludeDefault && !this.prefs.prefHasUserValue(key))) {
         prefs[key] = this.getPref(key);
       }
     }

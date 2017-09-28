@@ -12,7 +12,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
   try {
     INCLUDE("Main");
   } catch (e) {
-    Cu.reportError(`${e} ${LOADER}`);
+    Cu.reportError(e);
   }
 
   IPC.child = {
@@ -42,7 +42,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
   };
   try {
-    Main.bootstrap(true);
+    Main.bootstrap();
     IPC.child.init();
     Services.cpmm.sendAsyncMessage(IPC_P_MSG.SERVICE_READY);
   } catch (e) {

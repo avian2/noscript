@@ -61,27 +61,28 @@ var HTTPS = {
         return true;
 
       } catch(e) {
+        if (ctx) {
+          let g = Cu.getGlobalForObject(ctx);
+          if (ctx instanceof g.HTMLImageElement || ctx instanceof g.HTMLInputElement ||
+              ctx instanceof Ci.nsIObjectLoadingContent) {
+            uri = uri.clone();
+            uri.scheme = "https";
 
-        if (ctx && ctx instanceof Ci.nsIDOMHTMLImageElement || ctx instanceof Ci.nsIDOMHTMLInputElement ||
-            ctx instanceof Ci.nsIObjectLoadingContent) {
-          uri = uri.clone();
-          uri.scheme = "https";
+            var type, attr;
+            if (ctx instanceof Ci.nsIObjectLoadingContent) {
+              type = "Object";
+              attr = "data";
+            } else {
+              type = "Image";
+              attr = "src";
+            }
+            Thread.asap(function() { ctx.setAttribute(attr, uri.spec); });
 
-          var type, attr;
-          if (ctx instanceof Ci.nsIObjectLoadingContent) {
-            type = "Object";
-            attr = "data";
-          } else {
-            type = "Image";
-            attr = "src";
+            var msg = type + " HTTP->HTTPS redirection to " + uri.spec;
+            this.log(msg);
+            throw msg;
           }
-          Thread.asap(function() { ctx.setAttribute(attr, uri.spec); });
-
-          var msg = type + " HTTP->HTTPS redirection to " + uri.spec;
-          this.log(msg);
-          throw msg;
         }
-
         if (fallback && fallback()) {
            this.log("Channel redirection fallback on " + uri.spec);
            return true;

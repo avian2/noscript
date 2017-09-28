@@ -1171,10 +1171,10 @@ var ABEStorage = {
   _dirty: true,
   init: function(prefs) {
     this.prefs = prefs;
-    if (!prefs.getIntPref("migration")) {
+    if (!prefs.getIntPref("migration")) try {
       prefs.setIntPref("migration", 1);
       this._migrateLegacyFiles();
-    }
+    } catch (e) {}
     this.loadRules();
     for (let k  of prefs.getChildList("", {})) this.observe(prefs, null, k);
     prefs.addObserver("", this, true);

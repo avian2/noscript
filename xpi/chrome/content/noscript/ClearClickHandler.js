@@ -89,8 +89,11 @@ ClearClickHandler.prototype = {
     }
   },
 
-  chromeInstall(chromeWindow) {
-    this._install(chromeWindow.document, this.rapidFire.events);
+  chromeInstall(window) {
+    this._install(window.document, this.rapidFire.events);
+  },
+  chromeUninstall(window) {
+    this.uninstall(window.document);
   },
 
   install(target) {

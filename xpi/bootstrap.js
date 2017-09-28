@@ -22,8 +22,10 @@ function shutdown(data, reason) {
     if (reason == APP_SHUTDOWN)
         return;
 
-    if (module.unloadFromWindow) forEachOpenWindow(module.unloadFromWindow);
     Services.wm.removeListener(WindowListener);
+
+    if (module.unloadFromWindow) forEachOpenWindow(module.unloadFromWindow);
+
 
     module.shutdown(data); 
 

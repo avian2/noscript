@@ -2410,8 +2410,9 @@ return {
 
     },
     onUnload: function(ev) {
-      noscriptOverlay.ns.log(`Unloading from ${window.location}`);
+      noscriptOverlay.ns.dump(`Unloading from ${window.location}`);
       window.removeEventListener("unload", noscriptOverlay.listeners.onUnload, false);
+      noscriptOverlay.ns.clearClickHandler.chromeUninstall(window);
       noscriptOverlay.listeners.teardown();
       let openURI = noscriptOverlay.browserAccess._originalOpenURI;
       if (openURI && window.browserDOMWindow) {

@@ -43,8 +43,12 @@ function startup(addonData) {
   loadDefaultPrefs(addonData.resourceURI, "noscript.js");
   INCLUDE("Main");
   Main.bootstrap();
-  Main.init();
+
   createWidgetTemplate();
+    Main.init();
+    if (Main.webExt && addonData.webExtension) {
+      Main.webExt.init(addonData.webExtension);
+    }
 }
 
 function shutdown(addonData) {
@@ -65,7 +69,8 @@ try {
   var CustomizableUI = null;
 }
 var widgetTemplate = null;
-const OVERLAY_URL = NO_CACHE("noscriptOverlayFx57.xul");
+let isSeamonkey = () => !CustomizableUI && Services.appinfo.ID === "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}";
+const OVERLAY_URL = NO_CACHE(`noscriptOverlay${isSeamonkey() ? "" : "Fx57"}.xul`);
 
 function createWidgetTemplate() {
   let xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
@@ -162,6 +167,7 @@ function loadIntoWindow(w, early = false) {
     });
   } catch (e) {
     Cu.reportError(e);
+    Cu.reportError(`Could not overlay ${w.location.href}`);
     overlayLoading = false;
   }
 

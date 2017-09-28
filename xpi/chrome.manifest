@@ -1,30 +1,9 @@
-overlay	chrome://navigator/content/navigatorOverlay.xul	chrome://noscript/content/noscriptOverlay.xul
-overlay	chrome://browser/content/browser.xul chrome://noscript/content/noscriptOverlay.xul appversion<56
-overlay	chrome://browser/content/browser.xul chrome://noscript/content/noscriptOverlayFx57.xul appversion>=56
-
-
-overlay chrome://browser/content/bookmarks/bookmarksManager.xul chrome://noscript/content/noscriptBMOverlay.xul
-overlay chrome://browser/content/bookmarks/bookmarksPanel.xul chrome://noscript/content/noscriptBMOverlay.xul
-
-overlay chrome://communicator/content/bookmarks/bookmarksManager.xul chrome://noscript/content/noscriptBMOverlay.xul
-overlay chrome://communicator/content/bookmarks/bm-panel.xul chrome://noscript/content/noscriptBMOverlay.xul
-
-overlay chrome://browser/content/places/places.xul chrome://noscript/content/noscriptBMOverlay.xul
-
 content noscript chrome/content/noscript/
 
 skin    noscript classic/1.0 chrome/skin/classic/noscript/
-style chrome://global/content/customizeToolbar.xul chrome://noscript/skin/browser.css
-
-# resource noscript-mod modules/
 
 # Work around for breakages caused by the .NET Framework Assistant
 override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<lame/>
-
-# Gecko 2 component registration
-component {31aec909-8e86-4397-9380-63a59e0c5ff5} components/noscriptService.js
-contract @maone.net/noscript-service;1 {31aec909-8e86-4397-9380-63a59e0c5ff5}
-category profile-after-change @maone.net/noscript-service;1 @maone.net/noscript-service;1
 
 # Localization
 locale noscript ar    chrome/locale/ar/noscript/

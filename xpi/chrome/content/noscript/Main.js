@@ -179,12 +179,12 @@ const ns = {
     }
   },
 
-  bootstrap: function(childProcess = false) {
-    this.childProcess = childProcess;
+  bootstrap: function() {
+    this.childProcess = (Services.appinfo.processType === Services.appinfo.PROCESS_TYPE_CONTENT);
 
     let log = msg => this.log(msg);
     INCLUDE_MIXIN(this, "MainChild");
-    if (!childProcess) {
+    if (!this.childProcess) {
       INCLUDE_MIXIN(this, "MainParent");
     }
 
@@ -633,19 +633,31 @@ const ns = {
     }
   },
 
+  _sheets: new Set(),
   updateStyleSheet: function(sheet, enabled) {
     const sss = this.sss;
     if (!sss) return;
+    const SHEET_TYPE = sss.AGENT_SHEET;
+    ns.dump(`${enabled ? "Adding" : "Removing"} CSS:\n${sheet}`);
     const uri = IOS.newURI("data:text/css;charset=utf8," + encodeURIComponent(sheet), null, null);
-    if (sss.sheetRegistered(uri, sss.USER_SHEET)) {
-      if (!enabled) sss.unregisterSheet(uri, sss.USER_SHEET);
+    if (sss.sheetRegistered(uri, SHEET_TYPE)) {
+      if (!enabled) {
+        sss.unregisterSheet(uri, SHEET_TYPE);
+        this._sheets.delete(sheet);
+      }
     } else {
       try {
-        if (enabled) sss.loadAndRegisterSheet(uri, sss.USER_SHEET);
+        if (enabled) {
+          sss.loadAndRegisterSheet(uri, SHEET_TYPE);
+          this._sheets.add(sheet);
+        }
       } catch(e) {
         this.log("[NoScript CSS] Can't register " + uri + ", " + e);
       }
     }
+  },
+  disposeStyleSheets() {
+    for (let sheet of this._sheets) this.updateStyleSheet(sheet, false);
   },
 
   get getString() {
@@ -731,9 +743,10 @@ const ns = {
 
     this._batchPrefs = true;
     for (var p  of [
+      "consoleDump", "consoleLog", // first, so we can log side effects
       "autoAllow",
       "allowedMimeRegExp", "hideOnUnloadRegExp", "requireReloadRegExp",
-      "consoleDump", "consoleLog", "contentBlocker", "alwaysShowObjectSources",
+      "contentBlocker", "alwaysShowObjectSources",
       "filterXPost", "filterXGet",
       "filterXGetRx", "filterXGetUserRx",
       "filterXExceptions",
@@ -874,10 +887,13 @@ const ns = {
       this.mozJSPref.removeObserver("enabled", this);
       this.resetJSCaps();
       this.eraseTemp();
-      if (typeof PolicyState === "object") PolicyState.reset();
+
       this.savePrefs();
+      this.disposeStyleSheets();
       if(this.consoleDump & LOG_LEAKS) this.reportLeaks();
+      if (typeof PolicyState === "object") PolicyState.reset();
     } catch(e) {
+      Cu.reportError(e);
       this.dump(e + " while disposing.");
     } finally {
       Thread.hostRunning = false;
@@ -1247,7 +1263,7 @@ const ns = {
     try {
       ps.toPref(this.policyPB);
     } catch (e) {
-      if (IPC.parent) throw e;
+      if (!this.childProcess) throw e;
     }
   },
   get injectionChecker() { return this. requestWatchdog.injectionChecker; },
@@ -1257,7 +1273,14 @@ const ns = {
   },
 
   savePrefs: function() {
-    if (this.webExt && this.webExt.started) this.webExt.saveData();
+    if (this.childProcess) return false;
+    if (this.webExt && this.webExt.started) {
+      try {
+        this.webExt.saveData();
+      } catch (e) {
+        Cu.reportError(e);
+      }
+    }
     var res = this.prefService.savePrefFile(null);
     return res;
   },

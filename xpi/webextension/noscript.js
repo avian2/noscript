@@ -45,7 +45,7 @@ if (window.legacyPort) {
   ns.notify("READY");
 } else {
   ns.log("PURE WebExtension");
-  browser.storage.local.get(null, items => console.log(`NoScript imported preferences: ${JSON.stringify(items)}`));
+  browser.storage.local.get("legacyBackup", items => console.log(`NoScript legacy imported data backup: ${JSON.stringify(items)}`));
   ns.start();
 }
 ns.log("NoScript WebExt Ready");
