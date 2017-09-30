@@ -7,15 +7,16 @@ var PolicyState = {
   checking: [],
   addCheck: function(url) {
     if (typeof Map === "function") {
-      this.checking = new Map(),
-      this.addCheck = function(url) { this.checking.set(url, true); }
-      this.removeCheck = function(url) { this.checking.delete(url); }
+      this.checking = new Map();
+      this.addCheck = function(url) { this.checking.set(url, true); };
+      this.removeCheck = function(url) { this.checking.delete(url); };
       PolicyState.isChecking = (url) => this.checking.has(url);
     } else {
       this.addCheck = function(url) {
-        if (this.checking.indexOf(url) === -1)
+        if (this.checking.indexOf(url) === -1) {
           this.checking.push(url);
-      }
+        }
+      };
     }
     this.addCheck(url);
   },
@@ -311,7 +312,7 @@ var MainContentPolicy = {
       let win = aContext && (
           aContext.ownerDocument
           ? aContext.ownerDocument.defaultView
-          : aContext.document ? aContext : aContext.defaultView
+          : aContext.document ? aContext : (aContext.defaultView || Cu.getGlobalForObject(aContext))
         );
 
       unwrappedLocation = IOUtil.unwrapURL(aContentLocation);
@@ -675,7 +676,7 @@ var MainContentPolicy = {
           }
 
           forbid = !(originSite && locationSite == originSite);
-          scriptElement = aContext instanceof win.HTMLScriptElement;
+          scriptElement = aContext && win && (aContext instanceof win.HTMLScriptElement);
 
           if (forbid && httpOrigin && this.requestWatchdog /* lazy init */) {
             // XSSI protection

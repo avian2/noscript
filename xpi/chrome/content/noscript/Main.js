@@ -2559,7 +2559,7 @@ const ns = {
     delete this._objectPatch;
     return this._objectPatch = function() {
       const els = document.getElementsByClassName("__noscriptObjectPatchMe__");
-
+      const DUMMY_FUNC = () => DUMMY_FUNC;
       var el;
       for (var j = els.length; j-- > 0;) {
         el = els[j];
