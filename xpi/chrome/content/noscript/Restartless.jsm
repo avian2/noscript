@@ -44,11 +44,11 @@ function startup(addonData) {
   INCLUDE("Main");
   Main.bootstrap();
 
-  createWidgetTemplate();
-    Main.init();
-    if (Main.webExt && addonData.webExtension) {
-      Main.webExt.init(addonData.webExtension);
-    }
+
+  Main.init();
+  if (Main.webExt && addonData.webExtension) {
+    Main.webExt.init(addonData.webExtension);
+  }
 }
 
 function shutdown(addonData) {
@@ -72,14 +72,32 @@ var widgetTemplate = null;
 let isSeamonkey = () => !CustomizableUI && Services.appinfo.ID === "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}";
 const OVERLAY_URL = NO_CACHE(`noscriptOverlay${isSeamonkey() ? "" : "Fx57"}.xul`);
 
-function createWidgetTemplate() {
-  let xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
-              .createInstance(Ci.nsIXMLHttpRequest);
+function createWidgetTemplate(window, callback) {
+  let xhr = window ? new window.XMLHttpRequest() : // Let's provide as much contextual info as possible, e.g. to Tor Browser
+              Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
   xhr.open("GET", OVERLAY_URL);
+
+  try {
+    // work around to resolve overlay's XML entities despite the Tor Browser
+    let TOR_PREF = "extensions.torbutton.resource_and_chrome_uri_fingerprinting";
+    let torPrefValue = Services.prefs.getBoolPref(TOR_PREF);
+    let restorePref = () => Services.prefs.setBoolPref(TOR_PREF, torPrefValue);
+    for (let e of ["progress", "loadend"]) { // restore as early as possible (almost sync)
+      xhr.addEventListener(e, restorePref);
+    }
+    xhr.addEventListener("loadstart", () => {
+      Services.prefs.setBoolPref(TOR_PREF, true);
+    });
+  } catch (e) {
+    // no pref value, it doesn't seem to be a Tor Browser :)
+  }
   
-  xhr.addEventListener("load", r => {
+  xhr.addEventListener("load", () => {
     createWidget(xhr.responseXML.getElementById("noscript-tbb"));
+    if (callback) callback();
   });
+
+  
   xhr.send(null);
 }
 
@@ -135,6 +153,15 @@ function loadIntoWindow(w, early = false) {
     return;
   }
   overlayLoading = true;
+  
+  if (!widgetTemplate) {
+    createWidgetTemplate(w, () => {
+      overlayLoading = false;
+      loadIntoWindow(w);
+    });
+    return;
+  }
+  
   try {
     w.document.loadOverlay(OVERLAY_URL, {
       observe() {
