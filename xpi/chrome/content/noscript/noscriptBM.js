@@ -93,6 +93,9 @@ window.noscriptBM = {
       if("handleURLBarCommand" in window) { // Fx 3.0
         patch = { obj: window, func: window.handleURLBarCommand };
         window.handleURLBarCommand = noscriptBM.handleURLBarCommand;
+        noscriptBM.onDisposal(() => {
+          window.handleURLBarCommand = patch.func;
+        });
       } else if ("gBrowser" in window) { // Fx >= 3.5
         patch = { obj: gBrowser, func: gBrowser.loadURIWithFlags };
         gBrowser.loadURIWithFlags = noscriptBM.loadURIWithFlags;

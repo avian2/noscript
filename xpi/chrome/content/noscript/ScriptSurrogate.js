@@ -179,14 +179,30 @@ var ScriptSurrogate = {
     return scripts;
   },
 
-
-  _errorListener: function(ev) {
-    var s = ev.target;
+  _listener(ev) {
+    if (!ScriptSurrogate) { // disabled / uninstalled
+      let f = arguments.callee;
+      let t = ev.currentTarget;
+      for (let et of ["error", "beforescriptexecute", "afterscriptexecute"]) {
+        t.removeEventListener(et, f, true);
+      }
+      return;
+    }
+    
+    let s = ev.target;
     if (s.localName !== "script") return;
     let url = s.src;
     if (!url) return;
 
     let doc = s.ownerDocument;
+    let et = ev.type;
+
+    if (et !== "error") { // onbefore/onafter script execution
+      ScriptSurrogate.apply(doc, url, et[0] === 'b' ? "<" : ">", false);
+      return;
+    }
+
+    // onerror
     let hasSurrogate = ScriptSurrogate.apply(doc, url);
     if (!hasSurrogate) return;
 
@@ -199,16 +215,13 @@ var ScriptSurrogate = {
       ) {
       ev.preventDefault();
       ev.stopPropagation();
-      ev = s.ownerDocument.createEvent('HTMLEvents');
+      ev = doc.createEvent('HTMLEvents');
       ev.initEvent('load', false, true);
       s.dispatchEvent(ev);
     }
-  },
-  _execListener: function(ev) {
-    let s = ev.target;
-    if (s.localName === "script" && s.src) {
-      ScriptSurrogate.apply(s.ownerDocument, s.src, ev.type[0] === 'b' ? "<" : ">", false);
-    }
+    
+    
+    
   },
 
   replaceScript: function(scriptElement) {
@@ -229,23 +242,24 @@ var ScriptSurrogate = {
       scripts = this.getScripts(scriptURL, pageURL, noScript, scripts);
       if (pageURL && !noScript) {
         let w = document.defaultView;
-        w.addEventListener("error", this._errorListener, true);
-        if (this.mappings.before.length)
-          w.addEventListener("beforescriptexecute", this._execListener, true);
-        if (this.mappings.after.length)
-          w.addEventListener("afterscriptexecute", this._execListener, true);
+        let events = ["error"];
+        for (let when of ["before", "after"]) {
+          if (this.mappings[when].length) events.push(`${when}scriptexecute`);
+        }
+        for (let e of events) {
+          w.addEventListener(e, this._listener, true);
+        }
       }
     }
 
     if (!scripts) return false;
 
-    const runner = noScript
-      ? this.fallback
-      : scriptURL === pageURL
-        ? document.defaultView !== document.defaultView.top
-            ? this.executeSandbox
+    const runner = noScript ? this.fallback :
+      scriptURL === pageURL ?
+        document.defaultView !== document.defaultView.top ?
+          this.executeSandbox
             : (this.sandbox ? this.execute : this.executeDOM)
-        : this.sandboxInclusions ? this.executeSandbox : this.executeDOM;
+          : this.sandboxInclusions ? this.executeSandbox : this.executeDOM;
 
     if (this.debug) {
       // we run each script separately and don't swallow exceptions

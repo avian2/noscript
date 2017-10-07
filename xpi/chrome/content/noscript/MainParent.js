@@ -190,27 +190,33 @@ var MainParent = {
 
   firstRun: false,
   versionChecked: false,
-  checkVersion: function() {
+  checkVersion: function(browserStartup = false) {
     if (this.versionChecked) return;
     this.versionChecked = true;
 
     if (!this.getPref("visibleUIChecked", false) && this.ensureUIVisibility())
       this.setPref("visibleUIChecked", true);
 
-    const ver =  this.VERSION;
-    const prevVer = this.getPref("version", "");
-
-    if ((this.firstRun = prevVer != ver)) {
-      if (prevVer) try {
+    let ver =  this.VERSION;
+    let prevVer = this.getPref("version", "");
+    this.firstRun = prevVer !== ver;
+    if (!this.firstRun) {
+      prevVer = this.getPref("firstRunRedirection.pending", ver);
+    }
+    ns.dump(`Checking version - browserStartup=${browserStartup}, ${prevVer} -> ${ver}`);
+    if (this.firstRun || prevVer !== ver) {
+      if (this.firstRun && prevVer) try {
         this.onVersionChanged(prevVer);
       } catch (ex) {
         Cu.reportError(ex);
       }
       this.setPref("version", ver);
-      this.savePrefs();
+      this.setPref("firstRunRedirection.pending", ver);
       const betaRx = /(?:a|alpha|b|beta|pre|rc)\d*$/; // see http://viewvc.svn.mozilla.org/vc/addons/trunk/site/app/config/constants.php?view=markup#l431
       if (prevVer.replace(betaRx, "") != ver.replace(betaRx, "")) {
-        if (this.getPref("firstRunRedirection", true)) {
+        if (!browserStartup) {
+          this.setPref("firstRunRedirection.pending", prevVer);
+        } else if (this.getPref("firstRunRedirection", true)) {
           const name = "noscript";
           const domain = name.toLowerCase() + ".net";
 
@@ -248,6 +254,7 @@ var MainParent = {
           }, {});
         }
       }
+      this.savePrefs();
     }
   },
 

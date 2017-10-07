@@ -8,10 +8,8 @@ let module = {};
 
 function startup(data, reason) {
     Cu.import(moduleURL, module);
-    module.startup(data);  // Do whatever initial startup stuff you need to do
-    if (module.upgrade && (reason === ADDON_INSTALL || reason === ADDON_UPGRADE)) {
-      module.upgrade(data);
-    }
+    module.startup(data, reason === APP_STARTUP);  // Do whatever initial startup stuff you need to do
+
     if (module.loadIntoWindow) {
       forEachOpenWindow(module.loadIntoWindow);
     }

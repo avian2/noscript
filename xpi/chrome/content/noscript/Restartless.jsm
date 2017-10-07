@@ -5,42 +5,70 @@ Cu.import(`chrome://noscript/content/importer.jsm`);
 
 Services.scriptloader.loadSubScript(NO_CACHE("loader.js"), this);
 
-function loadDefaultPrefs(xpiURI, fileName) {
-  try {
-      let prefURI = xpiURI.spec + "/defaults/preferences/" + fileName;
-      let branch = Services.prefs.getDefaultBranch("");
-      Services.scriptloader.loadSubScript(prefURI, {
-        Cc,
-        Ci,
-        pref(name, value) {
-            try {
-              switch (typeof value) {
-                  case "boolean":
-                      branch.setBoolPref(name, value);
-                      break;
+function loadPrefs(branch, uriOrFile, filter = null) {
+    try {
+      let setPref = (name, value) => {
+        try {
+          switch (typeof value) {
+            case "boolean":
+            branch.setBoolPref(name, value);
+            break;
 
-                  case "number":
-                      branch.setIntPref(name, value);
-                      break;
+            case "number":
+            branch.setIntPref(name, value);
+            break;
 
-                  case "string":
-                      var str = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
-                      str.data = value;
-                      branch.setComplexValue(name, Ci.nsISupportsString, str);
-                      break;
-              }
-            } catch (e) {
-                Cu.reportError(`NoScript could not set default pref value for ${name}: ${e}`);
-            }
+            case "string":
+            var str = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
+            str.data = value;
+            branch.setComplexValue(name, Ci.nsISupportsString, str);
+            break;
+          }
+        } catch (e) {
+            Cu.reportError(`NoScript could not set default pref value for ${name}: ${e}`);
         }
-      });
+      };
+      
+      if (typeof uriOrFile === "string") {
+        let uri = uriOrFile;
+        let pref = filter ? (name, value) => filter(name, value) && setPref(name, value)
+                        : setPref;
+        Services.scriptloader.loadSubScript(uri, { pref });
+      } else {
+        INCLUDE("IO");
+        let file = uriOrFile;
+        let prefJSON = JSON.parse(`[${IO.readFile(file).replace(/^[^p].*/mg, '')
+                    .replace(/^pref\((.*)\);$/mg, "[$1],")
+                    .replace(/,\s*$/, '')}]`);
+        if (filter) prefJSON = prefJSON.filter(([name, value]) => filter(name, value));
+        prefJSON.forEach(([name, value]) => setPref(name, value));
+      }
   } catch (err) {
-      Cu.reportError(err);
+    Cu.reportError(err);
   }
 }
 
-function startup(addonData) {
-  loadDefaultPrefs(addonData.resourceURI, "noscript.js");
+function loadDefaultPrefs(xpiURI) {
+  let branch = Services.prefs.getDefaultBranch("");
+  loadPrefs(branch, `${xpiURI}/defaults/preferences/noscript.js`);
+
+  let overrides = Cc["@mozilla.org/file/directory_service;1"]
+    .getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
+  overrides.append("preferences");
+  if (overrides.exists() && overrides.isDirectory()) {
+    let filter = name => name.startsWith("noscript.");
+    for (let entries = overrides.directoryEntries, file; (file = entries.getNext()) instanceof Ci.nsIFile;) {
+      if (file.path.endsWith(".js")) {
+        loadPrefs(branch, file, filter);
+      }
+    }
+  }
+}
+
+function startup(addonData, browserStartup) {
+
+  loadDefaultPrefs(addonData.resourceURI.spec);
+
   INCLUDE("Main");
   Main.bootstrap();
 
@@ -49,6 +77,7 @@ function startup(addonData) {
   if (Main.webExt && addonData.webExtension) {
     Main.webExt.init(addonData.webExtension);
   }
+  Main.checkVersion(browserStartup);
 }
 
 function shutdown(addonData) {
@@ -59,9 +88,6 @@ function shutdown(addonData) {
   UNLOAD_ALL();
 }
 
-function upgrade(addonData) {
-  Main.checkVersion();
-}
 
 try {
   Cu.import("resource:///modules/CustomizableUI.jsm");
@@ -69,13 +95,14 @@ try {
   var CustomizableUI = null;
 }
 var widgetTemplate = null;
-let isSeamonkey = () => !CustomizableUI && Services.appinfo.ID === "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}";
-const OVERLAY_URL = NO_CACHE(`noscriptOverlay${isSeamonkey() ? "" : "Fx57"}.xul`);
+var overlayURL  = NO_CACHE(`noscriptOverlay-noStatusBar.xul`);
 
 function createWidgetTemplate(window, callback) {
-  let xhr = window ? new window.XMLHttpRequest() : // Let's provide as much contextual info as possible, e.g. to Tor Browser
-              Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Ci.nsIXMLHttpRequest);
-  xhr.open("GET", OVERLAY_URL);
+  let xhr = new window.XMLHttpRequest();
+  if (window.document.getElementById("status-bar")) {
+    overlayURL = overlayURL.replace("-noStatusBar", "");
+  }
+  xhr.open("GET", overlayURL);
 
   try {
     // work around to resolve overlay's XML entities despite the Tor Browser
@@ -163,7 +190,7 @@ function loadIntoWindow(w, early = false) {
   }
   
   try {
-    w.document.loadOverlay(OVERLAY_URL, {
+    w.document.loadOverlay(overlayURL, {
       observe() {
         if (!early) {
           if (CustomizableUI) {
