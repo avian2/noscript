@@ -1181,6 +1181,10 @@ var ABEStorage = {
   },
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   observe: function(prefs, topic, name) {
+    if (typeof ABE === "undefined") {
+      prefs.removeObserver("", this, true);
+      return;
+    }
     switch(name) {
       case "wanIpAsLocal":
         WAN.enabled = prefs.getBoolPref(name);
@@ -1347,6 +1351,10 @@ var WAN = {
   _observingHTTP: false,
 
   observe: function(subject, topic, data) {
+    if (typeof WAN === "undefined") {
+      OS.removeObserver(this, topic);
+      return;
+    }
     if (!this.enabled) return;
 
     switch(topic) {

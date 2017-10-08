@@ -1442,7 +1442,7 @@ return {
     if (this._syncTimeout) return;
     this._syncTimeout = window.setTimeout(() => {
       this._syncTimeout = 0;
-      if (this.currentBrowser === browser) {
+      if (this.currentBrowser === browser && this === noscriptOverlay) {
         this._syncUINow();
       }
      }, 400);

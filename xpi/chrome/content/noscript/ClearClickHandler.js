@@ -290,7 +290,10 @@ ClearClickHandler.prototype = {
   },
 
   handleEvent: function(ev) {
-
+    if (typeof ClearClickHandler === "undefined") { // uninstalled
+      ev.currentTarget.removeEventListener(ev.type, arguments.callee, true);
+      return;
+    }
     const o = ev.target;
     const d = o.ownerDocument;
     if (!d) return;

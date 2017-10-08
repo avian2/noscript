@@ -180,7 +180,7 @@ var ScriptSurrogate = {
   },
 
   _listener(ev) {
-    if (!ScriptSurrogate) { // disabled / uninstalled
+    if (typeof ScriptSurrogate === "undefined") { // disabled / uninstalled
       let f = arguments.callee;
       let t = ev.currentTarget;
       for (let et of ["error", "beforescriptexecute", "afterscriptexecute"]) {

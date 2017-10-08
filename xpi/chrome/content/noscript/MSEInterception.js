@@ -1,6 +1,10 @@
 var MSEInterception = {
   sites: {},
   handler(ev) {
+    if (typeof ns === "undefined") {
+      ev.currentTarget.removeEventListener(ev.type, argument.callee, true);
+      return;
+    }
     let target = ev.target;
     let mime = ev.detail.mime;
     let doc = target.ownerDocument || target;

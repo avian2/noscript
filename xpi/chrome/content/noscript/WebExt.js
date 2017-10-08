@@ -13,8 +13,12 @@ var WebExt = {
     this.tell("stop");
   },
   tell(type, data) {
-    if (this.port) {
+    if (this.port) try {
       this.port.postMessage({ type, data });
+    } catch (e) {
+      if (typeof ns !== "undefined") {
+        Cu.reportError(e);
+      }
     }
   },
 

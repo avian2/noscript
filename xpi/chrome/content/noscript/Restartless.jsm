@@ -194,11 +194,11 @@ function loadIntoWindow(w, early = false) {
       observe() {
         if (!early) {
           if (CustomizableUI) {
-            CustomizableUI.ensureWidgetPlacedInWindow(widgetTemplate.id, w);
             let widget = w.document.getElementById(widgetTemplate.id);
             if (widget) widget.hidden = false;
             else {
               Main.log(`${widgetTemplate.id} not found!`);
+              CustomizableUI.ensureWidgetPlacedInWindow(widgetTemplate.id, w);
             }
           } else {
             placeWidgetNoAustralis(w.document);
