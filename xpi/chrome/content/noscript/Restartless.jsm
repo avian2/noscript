@@ -175,12 +175,18 @@ function placeWidgetNoAustralis(document) {
 
 var overlayLoading = false;
 var overlayQueue = [];
+var overlaid = new WeakSet();
+function overlayNext() {
+  overlayLoading = false;
+  if (overlayQueue.length) {
+    Thread.asap(() => loadIntoWindow(overlayQueue.shift()));
+  }
+}
 function loadIntoWindow(w, early = false) {
   if (w.noscriptOverlay) return;
+
   if (overlayLoading) {
-    if (!overlayQueue.includes(w)) {
-      overlayQueue.push(w);
-    }
+    overlayQueue.push(w);
     return;
   }
   overlayLoading = true;
@@ -194,6 +200,11 @@ function loadIntoWindow(w, early = false) {
   }
   
   try {
+    if (overlaid.has(w)) {
+      overlayNext();
+      return;
+    }
+    overlaid.add(w);  
     w.document.loadOverlay(overlayURL, {
       observe() {
         if (!early) {
@@ -217,16 +228,13 @@ function loadIntoWindow(w, early = false) {
           })();
         }
         Main.dump(`Overlay loaded ${early}, ${w.noscriptOverlay}`);
-        overlayLoading = false;
-        if (overlayQueue.length) {
-          Thread.asap(() => loadIntoWindow(overlayQueue.shift()));
-        }
+        overlayNext();
       }
     });
   } catch (e) {
     Cu.reportError(e);
     Cu.reportError(`Could not overlay ${w.location.href}`);
-    overlayLoading = false;
+    overlayNext();
   }
 
 }
