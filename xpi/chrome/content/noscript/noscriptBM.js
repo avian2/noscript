@@ -104,7 +104,7 @@ window.noscriptBM = {
         });
       }
       if (patch) {
-        noscriptBM.handleURLBarCommandOriginal = (...args) => patch.func.apply(patch.obj, [...args]);
+        noscriptBM.handleURLBarCommandOriginal = args => patch.func.apply(patch.obj, args);
       }
     }
     

@@ -79,7 +79,7 @@ function startup(addonData, browserStartup) {
   if (Main.webExt && addonData.webExtension) {
     Main.webExt.init(addonData.webExtension);
   }
-  Main.checkVersion(browserStartup);
+  Main.checkVersion();
 }
 
 function shutdown(addonData) {
@@ -212,7 +212,7 @@ function loadIntoWindow(w, early = false) {
             let widget = w.document.getElementById(widgetTemplate.id);
             if (widget) widget.hidden = false;
             else {
-              Main.log(`${widgetTemplate.id} not found!`);
+              Main.dump(`${widgetTemplate.id} not found!`);
               CustomizableUI.ensureWidgetPlacedInWindow(widgetTemplate.id, w);
             }
           } else {

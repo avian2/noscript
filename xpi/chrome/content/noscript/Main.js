@@ -156,7 +156,7 @@ const ns = {
           }
           break;
         case "sessionstore-windows-restored":
-          ns.checkVersion();
+          ns.checkVersion(true);
           INCLUDE("Removal");
           break;
 

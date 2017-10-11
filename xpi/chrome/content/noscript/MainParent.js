@@ -192,7 +192,7 @@ var MainParent = {
   versionChecked: false,
   checkVersion: function(browserStartup = false) {
     if (this.versionChecked) return;
-    this.versionChecked = true;
+    this.versionChecked = browserStartup;
 
     if (!this.getPref("visibleUIChecked", false) && this.ensureUIVisibility())
       this.setPref("visibleUIChecked", true);
