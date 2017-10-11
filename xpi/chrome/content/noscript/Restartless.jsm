@@ -25,7 +25,7 @@ function loadPrefs(branch, uriOrFile, filter = null) {
             break;
           }
         } catch (e) {
-            Cu.reportError(`NoScript could not set default pref value for ${name}: ${e}`);
+          Cu.reportError(`NoScript could not set default pref value for ${name}: ${e}`);
         }
       };
       
@@ -50,19 +50,21 @@ function loadPrefs(branch, uriOrFile, filter = null) {
 
 function loadDefaultPrefs(xpiURI) {
   let branch = Services.prefs.getDefaultBranch("");
-  loadPrefs(branch, `${xpiURI}/defaults/preferences/noscript.js`);
-
+  let seen = null;
   let overrides = Cc["@mozilla.org/file/directory_service;1"]
     .getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
   overrides.append("preferences");
   if (overrides.exists() && overrides.isDirectory()) {
-    let filter = name => name.startsWith("noscript.");
+    seen = new Set();
+    let filter = name => name.startsWith("noscript.") && seen.add(name);
     for (let entries = overrides.directoryEntries, file; (file = entries.getNext()) instanceof Ci.nsIFile;) {
       if (file.path.endsWith(".js")) {
         loadPrefs(branch, file, filter);
       }
     }
   }
+  let filter = seen && seen.size ? name => !seen.has(name) : null;
+  loadPrefs(branch, `${xpiURI}/defaults/preferences/noscript.js`, filter);
 }
 
 function startup(addonData, browserStartup) {
@@ -176,7 +178,9 @@ var overlayQueue = [];
 function loadIntoWindow(w, early = false) {
   if (w.noscriptOverlay) return;
   if (overlayLoading) {
-    overlayQueue.push(w);
+    if (!overlayQueue.includes(w)) {
+      overlayQueue.push(w);
+    }
     return;
   }
   overlayLoading = true;
@@ -215,7 +219,7 @@ function loadIntoWindow(w, early = false) {
         Main.dump(`Overlay loaded ${early}, ${w.noscriptOverlay}`);
         overlayLoading = false;
         if (overlayQueue.length) {
-          loadIntoWindow(overlayQueue.shift());
+          Thread.asap(() => loadIntoWindow(overlayQueue.shift()));
         }
       }
     });

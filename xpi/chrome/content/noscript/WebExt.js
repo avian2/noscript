@@ -16,7 +16,7 @@ var WebExt = {
     if (this.port) try {
       this.port.postMessage({ type, data });
     } catch (e) {
-      if (typeof ns !== "undefined") {
+      if (!/\bdead object\b/.test(e.message)) { // normal on uninstall
         Cu.reportError(e);
       }
     }

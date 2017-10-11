@@ -1,5 +1,3 @@
-'use strict';
-
 var EXPORTED_SYMBOLS = ["PasteHandler"];
 
 const Cu = Components.utils;
@@ -8,11 +6,23 @@ Cu.import("chrome://noscript/content/importer.jsm");
 let IMPORT = IMPORT_FOR(this);
 
 function PasteHandler(ctx) {
+  this.ctx = ctx;
   ctx.addEventListener("paste", pasteEventHandler, true);
 }
 
+PasteHandler.prototype = {
+  dispose() {
+    this.ctx.removeEventListener("paste", pasteEventHandler, true);
+  }
+}
+
+
 
 function pasteEventHandler(e) {
+  if (typeof Cu === "undefined") { // uninstalled
+    e.currentTarget.removeEventListener(e.type, arguments.callee, true);
+    return;
+  }
   Cu.import("resource://gre/modules/Services.jsm");
   if (!Services.prefs.getBoolPref("noscript.sanitizePaste")) {
     return;

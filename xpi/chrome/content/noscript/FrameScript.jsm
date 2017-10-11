@@ -47,7 +47,8 @@ FrameScript.prototype = {
     [Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   init() {
     let ctx = this.ctx;
-    new PasteHandler(ctx);
+    let pasteHandler = new PasteHandler(ctx);
+    ctx.ns.onDisposal(() => pasteHandler.dispose());
     ctx.uiSync = new UISync(ctx);
     ctx.ns.dump(`Framescript initialized in ${ctx.content.location.href}`);
   },
