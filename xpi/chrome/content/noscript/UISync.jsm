@@ -29,7 +29,7 @@ UISync.prototype = {
     let ctx = this.ctx;
     let ns = ctx.ns;
     for(let {type, handler, opts} of this.listeners) {
-      ns.dump(`Removing listener ${type}, ${uneval(handler)}, ${uneval(opts)}`);
+      if (ns.consoleDump) ns.dump(`Removing listener ${type}, ${uneval(handler)}, ${uneval(opts)}`);
       ctx.removeEventListener(type, handler, ...opts);
     }
   },

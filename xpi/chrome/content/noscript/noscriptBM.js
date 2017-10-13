@@ -159,7 +159,7 @@ window.noscriptBM = {
     let tasks = noscriptBM._disposalTasks; 
     for (let t of tasks) {
       try {
-        ns.dump(`Running noscriptBM disposal task ${uneval(t)}`);
+        if (ns.consoleDump) ns.dump(`Running noscriptBM disposal task ${uneval(t)}`);
         t();
       } catch (e) {
         Components.utils.reportError(e);
