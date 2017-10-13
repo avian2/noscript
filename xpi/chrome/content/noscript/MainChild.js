@@ -35,7 +35,7 @@ var MainChild = {
 
   blockWhereNeeded(browser) {
     this.traverseDocShells(function(docShell) {
-      let site = this.getSite(docShell.currentURI.spec);
+      let site = this.getSite(this.getPrincipalOrigin(this.getPrincipal(docShell.document)));
       if (!(this.isJSEnabled(site) || this.checkShorthands(site))) {
         try {
           WinScript.block(docShell.document.defaultView);

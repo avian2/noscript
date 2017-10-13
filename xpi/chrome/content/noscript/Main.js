@@ -219,6 +219,7 @@ const ns = {
         OS.removeObserver(this[topic] || this, topic);
       } catch (e) {}
     }
+    this.observe = () => {};
     this.dump("NoScript shutdown done");
   },
 
