@@ -63,13 +63,16 @@ window.noscriptBM = {
     return noscriptUtil.service.handleBookmark(url, openCallback);
   },
   
-  patchPlacesMethods: function(pu) {   
-    if ("__originalCheckURLSecurity" in pu) return; // already patched
-    pu.__originalCheckURLSecurity = pu.checkURLSecurity;
-    pu.__ns = noscriptUtil.service;
-    pu.checkURLSecurity = pu.__ns.placesCheckURLSecurity;
+  patchPlacesMethods: function(pu) {
+    let ns = noscriptUtil.service;
+    if (pu.__ns === ns) return; // already patched
+    pu.__ns = ns;
+    if (!pu.__originalCheckURLSecurity) {
+      pu.__originalCheckURLSecurity = pu.checkURLSecurity;
+    }
+    pu.checkURLSecurity = ns.placesCheckURLSecurity;
     
-    noscriptBM.onDisposal(() => {
+    ns.onDisposal(() => {
       if ("__originalCheckURLSecurity" in pu) {
         pu.checkURLSecurity = pu.__originalCheckURLSecurity;
         delete pu.__originalCheckURLSecurity;
@@ -152,8 +155,11 @@ window.noscriptBM = {
   },
   dispose() {
     window.removeEventListener("unload", noscriptBM.dispose, false);
-    for (let t of noscriptBM._disposalTasks) {
+    let ns = noscriptUtil.service;
+    let tasks = noscriptBM._disposalTasks; 
+    for (let t of tasks) {
       try {
+        ns.dump(`Running noscriptBM disposal task ${uneval(t)}`);
         t();
       } catch (e) {
         Components.utils.reportError(e);

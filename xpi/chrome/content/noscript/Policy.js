@@ -825,8 +825,9 @@ var MainContentPolicy = {
       if (forbid) forbid = !(aContentLocation.schemeIs("file") && aRequestOrigin && aRequestOrigin.schemeIs("resource")); // fire.fm work around
 
       if (forbid && this.cascadePermissions && !this.contentBlocker) {
-        let principal = aContext.ownerDocument && aContext.ownerDocument.defaultView.top.document.nodePrincipal;
-        forbid = untrusted || !this.isJSEnabled(this.getSite(this.getPrincipalOrigin(principal), aContext.ownerDocument.defaultView));
+        let win = aContext.ownerDocument && aContext.ownerDocument.defaultView;
+        let topDoc = win.top.document;
+        forbid = untrusted || !this.isJSEnabled(this.getDocSite(topDoc), win);
       }
 
       if (forbid) {

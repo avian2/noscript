@@ -1065,7 +1065,7 @@ const ns = {
     if (s && !this._isHttpsAndNotUntrusted(s)) return false;
     if (!win) return !!s;
     for (;; win = win.parent) {
-      let site = this.getSite(this.getPrincipalOrigin(this.getPrincipal(win.document)));
+      let site = this.getDocSite(win.document);
       if (!(allow = s && site === s || this._isHttpsAndNotUntrusted(site)) || win === win.parent)
         break;
       s = site;
@@ -1313,8 +1313,11 @@ const ns = {
     return enabled;
   },
 
-  getSite: function(url) {
+  getSite(url) {
     return SiteUtils.getSite(url);
+  },
+  getDocSite(doc) {
+    return this.getSite(this.getPrincipalOrigin(this.getPrincipal(doc)));
   },
 
   getQuickSite: function(url, level) {
@@ -3651,19 +3654,11 @@ const ns = {
     var scripts;
 
     if (jsBlocked) {
-
       this.blockEvents(doc.defaultView);
-
-      if (this.getPref("fixLinks")) {
-        let newWin = doc.defaultView;
-        newWin.addEventListener("click", this.bind(this.onContentClick), true);
-        newWin.addEventListener("change", this.bind(this.onContentChange), true);
-      }
     } else {
 
       if (this.implementToStaticHTML && !("toStaticHTML" in doc.defaultView)) {
         scripts = [this._toStaticHTMLDef];
-        doc.addEventListener("NoScript:toStaticHTML", this._toStaticHTMLHandler, false, true);
       }
 
       let dntPatch = DoNotTrack.getDOMPatch(docShell);
@@ -3878,7 +3873,7 @@ const ns = {
       }
     }
   },
-  _toStaticHTMLHandler:  function(ev) {
+  toStaticHTMLHandler:  function(ev) {
     try {
       var t = ev.target;
       var doc = t.ownerDocument;
@@ -4213,15 +4208,11 @@ const ns = {
         s.hasAttribute("multiple") ||
         !/open|nav|location|\bgo|load/i.test(s.getAttribute("onchange"))) return;
 
-    var doc = s.ownerDocument;
-    var url = doc.documentURI;
-    if (this.isJSEnabled(this.getSite(url), doc.defaultView)) return;
-
     var opt = s.options[s.selectedIndex];
     if (!opt) return;
 
     if (/[\/\.]/.test(opt.value) && opt.value.indexOf("@") < 0) {
-      this.attemptNavigation(doc, opt.value, function(doc, uri) {
+      this.attemptNavigation(s.ownerDocument, opt.value, function(doc, uri) {
         doc.defaultView.location.href = uri.spec;
       });
       ev.preventDefault();
@@ -4237,11 +4228,10 @@ const ns = {
     if (a.__noscriptFixed) return;
 
     var doc = a.ownerDocument;
-    var url = doc.documentURI;
-    if (this.isJSEnabled(this.getSite(url))) return;
-
-    let onclick;
     let w = doc.defaultView;
+    
+    let onclick;
+
     while (!(a instanceof w.HTMLAnchorElement || a instanceof w.HTMLAreaElement)) {
       if (typeof(a.getAttribute) == "function" && (onclick = a.getAttribute("onclick"))) break;
       if (!(a = a.parentNode)) return;

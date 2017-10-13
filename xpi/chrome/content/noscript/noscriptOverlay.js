@@ -2410,7 +2410,7 @@ return {
       }
 
     },
-    onUnload: function(ev) {
+    onUnload: function() {
       noscriptOverlay.ns.dump(`Unloading from ${window.location}`);
       window.removeEventListener("unload", noscriptOverlay.listeners.onUnload, false);
       noscriptOverlay.ns.clearClickHandler.chromeUninstall(window);

@@ -21,14 +21,16 @@ UISync.prototype = {
   },
 
   listeners: [],
-  addListener(type, handler, opts) {
-    this.ctx.addEventListener(type, handler, opts);
+  addListener(type, handler, ...opts) {
+    this.ctx.addEventListener(type, handler, ...opts);
     this.listeners.push({type, handler, opts});
   },
   removeListeners() {
     let ctx = this.ctx;
+    let ns = ctx.ns;
     for(let {type, handler, opts} of this.listeners) {
-      ctx.removeEventListener(type, handler, opts);
+      ns.dump(`Removing listener ${type}, ${uneval(handler)}, ${uneval(opts)}`);
+      ctx.removeEventListener(type, handler, ...opts);
     }
   },
 
@@ -92,7 +94,25 @@ UISync.prototype = {
       eraser.tapped = null;
     }, true);
 
-
+    let fixLinksHandler = ev => {
+      let ns = ctx.ns;
+      if (!ns.getPref("fixLinks")) return;
+      let doc = ev.target.ownerDocument;
+      if (ns.isJSEnabled(ns.getDocSite(doc), doc.defaultView)) return;
+      switch(ev.type) {
+        case "click":
+          ns.onContentClick(ev);
+          break;
+        case "change":
+          ns.onContentChange(ev);
+          break;
+      }
+    };
+    this.addListener("click",fixLinksHandler, true);
+    this.addListener("change", fixLinksHandler, true);
+    if (ctx.ns.implementToStaticHTML) {
+      this.addListener("NoScript:toStaticHTML", ctx.ns.toStaticHTMLHandler, false, true);
+    }
     for (let m of messages) {
       ctx.addMessageListener(m, this);
     }
