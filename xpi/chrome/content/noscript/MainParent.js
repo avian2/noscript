@@ -269,7 +269,7 @@ var MainParent = {
 
        try {
         let cui = window.CustomizableUI;
-        if (cui) cui.addWidgetToArea(tbbId, cui.AREA_NAVBAR);
+        cui.addWidgetToArea(tbbId, cui.AREA_NAVBAR);
       } catch (e) { // super-legacy
         let addonBar = document.getElementById("addon-bar");
         if (!addonBar) return false;

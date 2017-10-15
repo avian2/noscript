@@ -97,7 +97,7 @@ try {
   var CustomizableUI = null;
 }
 var widgetTemplate = null;
-var overlayURL  = NO_CACHE(`noscriptOverlay-noStatusBar.xul`);
+var overlayURL = NO_CACHE(`noscriptOverlay-noStatusBar.xul`);
 
 function createWidgetTemplate(window, callback) {
   let xhr = new window.XMLHttpRequest();
