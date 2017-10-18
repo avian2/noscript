@@ -15,7 +15,7 @@ window.noscriptBM = {
     if (isJS) {
       let allowJS = ns.getPref("allowURLBarJS", true);
       let isShortcut = ("originalShortcut" in gURLBar) && gURLBar.originalShortcut !== shortcut;
-      if (allowJS || isShortcut) {
+      if (allowJS || isShortcut || !/\bhandleCommand@/.test(new Error().stack)) {
         window.setTimeout(function() { // if we don't defer, errors are not logged in the console...
           if (!ns.executeJSURL(shortcut, callback, !isShortcut))
             callback();
