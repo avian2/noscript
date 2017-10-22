@@ -103,6 +103,7 @@ this.__defineGetter__("ABE", function() {
   INCLUDE("ABE");
   ABE.consoleDump = !!(ns.consoleDump & LOG_ABE);
   ABE.init("noscript.");
+  ns.onDisposal(() => ABE.dispose());
   DNS.logEnabled = ns.getPref("logDNS");
   return ABE;
 });
@@ -179,6 +180,8 @@ const ns = {
     }
   },
 
+
+  IPC: IPC,
   bootstrap: function() {
     this.childProcess = (Services.appinfo.processType === Services.appinfo.PROCESS_TYPE_CONTENT);
 
@@ -213,6 +216,15 @@ const ns = {
     if (!this._started) return;
     this._started = false;
     this.dump("NoScript shutting down");
+
+    if (!this.childProcess) {
+      try {
+        this.prefService.getDefaultBranch("noscript.").setCharPref("snapshot", JSON.stringify(this.getSnapshot()));
+      } catch (e) {
+        Cu.reportError(e);
+      }
+    }
+
     this.dispose();
     for (let topic of this.OBSERVED_TOPICS) {
       try {
@@ -860,7 +872,7 @@ const ns = {
     try {
       if(!this._inited) return;
       this._inited = false;
-
+      OS.notifyObservers(this, "NoScript.Dispose", null);
       for (let t of this._disposalTasks) try {
         ns.dump(`Executing disposal task ${t}`);
         t();
@@ -881,13 +893,15 @@ const ns = {
         try {
           catMan.deleteCategoryEntry("net-channel-event-sinks", this.contractID, false);
         } catch (e) {}
-        Cc['@mozilla.org/docloaderservice;1'].getService(nsIWebProgress).removeProgressListener(this);
+
       }
+      try {
+        Cc['@mozilla.org/docloaderservice;1'].getService(nsIWebProgress).removeProgressListener(this);
+      } catch (e) {}
 
       this.prefs.removeObserver("", this);
       this.mozJSPref.removeObserver("enabled", this);
       this.resetJSCaps();
-      this.eraseTemp();
 
       this.savePrefs();
       this.disposeStyleSheets();
@@ -1246,11 +1260,14 @@ const ns = {
     if (key in map || site in map) return true;
     var keys = site.split(".");
     if (keys.length > 1) {
-      let prefix = keys[0].match(/^(?:ht|f)tps?:\/\//i)[0] + "*.";
-      while (keys.length > 2) {
-        keys.shift();
-        key = prefix + keys.join(".");
-        if (key in map || hasPort && key.replace(portRx, ":0") in map) return true;
+      let prefixMatch = keys[0].match(/^(?:ht|f)tps?:\/\//i);
+      if (prefixMatch) {
+        let prefix = prefixMatch[0] + "*.";
+        while (keys.length > 2) {
+          keys.shift();
+          key = prefix + keys.join(".");
+          if (key in map || hasPort && key.replace(portRx, ":0") in map) return true;
+        }
       }
     }
 
@@ -1396,6 +1413,23 @@ const ns = {
      }, 0);
   },
 
+  getSnapshot() {
+    return {
+      trusted: this.jsPolicySites.sitesString,
+      untrusted: this.untrustedSites.sitesString,
+      manual: this.manualSites.sitesString,
+      temp: this.tempSites.sitesString,
+      objectWhitelist: this.objectWhitelist,
+    };
+  },
+  setSnapshot(snapshot) {
+    this.jsPolicySites.sitesString = snapshot.trusted;
+    this.untrustedSites.sitesString = snapshot.untrusted;
+    this.manualSites.sitesString = snapshot.manual;
+    this.tempSites.sitesString = snapshot.temp;
+    this.objectWhitelist = snapshot.objectWhitelist;
+    this.objectWhitelistLen = Object.keys(this.objectWhitelist).length;
+  },
 
   getPermanentSites: function(whitelist, templist) {
     whitelist = (whitelist || this.jsPolicySites).clone();
@@ -2090,13 +2124,23 @@ const ns = {
     if(!browser) return false;
 
     var window = browser.contentWindow;
-    if(!window) return false;
+    if(!window) {
+      let callbackId = IPC.parent.callback(openCallback);
+      browser.messageManager.sendAsyncMessage("NoScript:executeJSURL", {
+        url, callbackId, fromURLBar
+      });
+      return true;
+    }
+    return this.executeJSURLInContent(browser, window, url, openCallback, fromURLBar);
+  },
 
-    var site = this.getSite(window.document.documentURI) || this.getExpando(browser, "jsSite");
+  executeJSURLInContent(browser, window, url, openCallback, fromURLBar = false) {
+    var site = this.getDocSite(window.document) || this.getExpando(browser, "jsSite");
+
     if (this.mozJSEnabled && (!this.jsEnabled || this.isUntrusted(site))) {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
 
-      let docShell = DOM.getDocShellForWindow(window);
+      let docShell = browser.docShell;
 
       let snapshots = {
         globalJS: this.globalJS,
@@ -2116,14 +2160,15 @@ const ns = {
         docShell.allowJavascript = true;
         if (!(this.jsEnabled = doc.documentURI === "about:blank" || ns.getPref(fromURLBar ? "allowURLBarImports" : "allowBookmarkletImports"))) {
           if (site && !siteJSEnabled) {
-            this.setJSEnabled(site, true);
+            this.jsPolicySites.add(site);
+            this.untrustedSites.remove(site, false, true);
           }
         } else {
           focusListener = function(ev) {
-            ns.jsEnabled = DOM.mostRecentBrowserWindow.content == window;
+            ns.jsEnabled = docShell.isActive;
           };
           for (let et  of ["focus", "blur"])
-            browserWindow.addEventListener(et, focusListener, true);
+            browser.addEventListener(et, focusListener, true);
         }
 
         try {
@@ -2133,12 +2178,10 @@ const ns = {
             this._patchTimeouts(window, true);
           }
 
-          let gecko24 = this.geckoVersionCheck("24") >= 0;
-          if ((fromURLBar || noJS) && /^javascript:/i.test(url) && gecko24) {
+          if (noJS && /^javascript:/i.test(url)) {
             JSURL.load(url, doc);
           } else {
-            if (gecko24) openCallback();
-            else window.location.href = url;
+            window.location.href = url;
           }
           Thread.yieldAll();
           if (noJS) {
@@ -2172,7 +2215,7 @@ const ns = {
 
           if (focusListener)
             for (let et  of ["focus", "blur"])
-              browserWindow.removeEventListener(et, focusListener, true);
+              browser.removeEventListener(et, focusListener, true);
 
           if (this.jsEnabled != snapshots.globalJS)
             this.jsEnabled = snapshots.globalJS;
@@ -4029,7 +4072,7 @@ const ns = {
   onLocationChange2(wp, req, location, flags) {},
 
   onStatusChange: function(wp, req, status, msg) {
-    if (status == 0x804b0003 && (req instanceof Ci.nsIChannel) && !ABE.isDeferred(req)) { // DNS resolving, check if we need to clear the cache
+    if (status == 0x804b0003 && (req instanceof Ci.nsIChannel) && typeof ns === "object" && !ABE.isDeferred(req)) { // DNS resolving, check if we need to clear the cache
       try {
         var host = req.URI.host;
         if (host) {

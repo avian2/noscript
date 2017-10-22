@@ -6,6 +6,7 @@ var MainParent = {
     this._initE10s();
   },
   afterInit: function() {
+
     if ((this.locked = this.prefs.prefIsLocked("default"))) {
       try {
         const psKey = this.POLICY_NAME + ".sites";
@@ -24,18 +25,31 @@ var MainParent = {
       }
     }
     
-    this.eraseTemp();
-
     Thread.delay(this.checkSubscriptions, 10000, this);
 
     this._updateSync();
 
+    try {
+      let dp = this.prefService.getDefaultBranch("noscript.");
+      let snapshot = dp.getCharPref("snapshot");
+      this._afterInitSnapshot = snapshot;
+      this.setSnapshot(JSON.parse(snapshot));
+      this._afterInitTemp = this.tempSites.sitesString;
+      this._afterInitTrusted = this.jsPolicySites.sitesString;
+      dp.setCharPref("snapshot", "");
+    } catch (e) {
+      this._afterInitSnapshot = e;
+    }
+
     this.reloadWhereNeeded(this.RELOAD_NO); // init snapshots
+
+
 
     if (this.getPref("webext.enabled")) {
       INCLUDE("WebExt");
       this.webExt = WebExt;
     }
+    this._afterInited = true;
    },
 
    _initE10s: function() {

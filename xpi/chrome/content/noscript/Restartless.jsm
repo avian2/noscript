@@ -84,7 +84,10 @@ function startup(addonData, browserStartup) {
 
 function shutdown(addonData) {
   if (CustomizableUI && widgetTemplate) {
-    CustomizableUI.destroyWidget(widgetTemplate.id);
+    try {
+        CustomizableUI.destroyWidget(widgetTemplate.id);
+    } catch (e) {
+    }
   }
   Main.shutdown();
   UNLOAD_ALL();
@@ -183,7 +186,7 @@ function overlayNext() {
   }
 }
 function loadIntoWindow(w, early = false) {
-  if (w.noscriptOverlay) return;
+  if (w.noscriptOverlay || typeof overlayQueue === "undefined") return;
 
   if (overlayLoading) {
     overlayQueue.push(w);

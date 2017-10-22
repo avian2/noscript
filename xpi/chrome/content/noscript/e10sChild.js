@@ -38,9 +38,21 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
     remote(objName, method, args) {
       Services.cpmm.sendAsyncMessage(IPC_P_MSG.CALL, {objName, method, args});
-    }
+    },
+
+    callback(id, autoRemote = true) {
+      let cb = () => {
+        cb._executed = true;
+      };
+      cb._executed = false;
+      cb.remote = () => {
+        Services.cpmm.sendAsyncMessage(IPC_P_MSG.CALLBACK, {id, execute: cb._executed });
+      };
+      if (autoRemote) Thread.asap(cb.remote);
+    },
 
   };
+
   try {
     Main.bootstrap();
     IPC.child.init();

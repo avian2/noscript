@@ -5,6 +5,7 @@ var EXPORTED_SYMBOLS = ["UISync"];
 let { interfaces: Ci, classes: Cc, utils: Cu, results: Cr } = Components;
 
 const messages = ["NoScript:reload", "NoScript:reloadAllowedObjects",
+                  "NoScript:executeJSURL",
                   "NoScript:purgeRecent", "NoScript:forceSync",
                   "NoScript:unload"];
 
@@ -34,8 +35,11 @@ UISync.prototype = {
     }
   },
 
+  _wired: false,
   wire() {
+    this._wired = true;
     let ctx = this.ctx;
+    let ns = ctx.ns;
     let eraser = this.eraser;
 
     this.addListener("DOMWindowCreated", () => this.sync());
@@ -59,7 +63,7 @@ UISync.prototype = {
     this.addListener("keyup", ev => {
       let el = eraser.tapped;
       if (el && ev.keyCode === 46 &&
-          ctx.ns.getPref("eraseFloatingElements")
+          ns.getPref("eraseFloatingElements")
         ) {
         eraser.tapped = null;
         eraser.delKey = true;
@@ -95,7 +99,6 @@ UISync.prototype = {
     }, true);
 
     let fixLinksHandler = ev => {
-      let ns = ctx.ns;
       if (!ns.getPref("fixLinks")) return;
       let doc = ev.target.ownerDocument;
       if (ns.isJSEnabled(ns.getDocSite(doc), doc.defaultView)) return;
@@ -108,27 +111,36 @@ UISync.prototype = {
           break;
       }
     };
-    this.addListener("click",fixLinksHandler, true);
+    this.addListener("click", fixLinksHandler, true);
     this.addListener("change", fixLinksHandler, true);
-    if (ctx.ns.implementToStaticHTML) {
+    if (ns.implementToStaticHTML) {
       this.addListener("NoScript:toStaticHTML", ctx.ns.toStaticHTMLHandler, false, true);
     }
     for (let m of messages) {
       ctx.addMessageListener(m, this);
     }
     this.messages = messages;
-    ctx.ns.clearClickHandler.install(ctx);
+    ns.clearClickHandler.install(ctx);
+    if (ns.consoleDump && ctx.content && ctx.content.location)
+      ns.dump(`Wired frame script at ${ctx.content.location.href}`);
   },
 
   unwire() {
+    if (!this._wired) return;
+    this._wired = false;
     let ctx = this.ctx;
     let ns = ctx.ns;
-    ns.dump("Unwiring frame script");
+
     ns.clearClickHandler.uninstall(ctx);
     for (let m of this.messages) {
-      ctx.removeMessageListener(m, this);
+      try {
+        ctx.removeMessageListener(m, this);
+      } catch (e) {
+      }
     }
     this.removeListeners();
+    if (ns.consoleDump && ctx.content && ctx.content.location)
+      ns.dump(`Unwired frame script at ${ctx.content.location.href}`);
   },
 
   receiveMessage: function(msg) {
@@ -145,6 +157,14 @@ UISync.prototype = {
       case "NoScript:reloadAllowedObjects":
         ns.reloadAllowedObjectsChild(msg.target, msg.data.mime);
       break;
+      case "NoScript:executeJSURL":
+        {
+          let browser = msg.target;
+          let {url, callbackId, fromURLBar} = msg.data;
+          let openCallback = ns.IPC.child.callback(callbackId);
+          ns.executeJSURLInContent(browser, browser.content, url, openCallback, fromURLBar);
+        }
+        break;
       case "NoScript:resetClearClickTimeout":
         ns.clearClickHandler.rapidFire.ts = 0;
       break;

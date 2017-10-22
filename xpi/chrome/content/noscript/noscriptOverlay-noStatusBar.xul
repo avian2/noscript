@@ -15,6 +15,7 @@
       class="toolbarbutton-1 noscript-no"
       label="NoScript"
       type="menu-button"
+      removable="true"
       oncommand="noscriptOverlay.onUICommand(event)"
       oncontextmenu="noscriptOverlay.onContextMenu(event);"
       onmouseover="noscriptOverlay.onUIOver(event)"

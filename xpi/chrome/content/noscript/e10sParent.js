@@ -26,6 +26,7 @@ IPC.parent = {
     globalMM.removeDelayedFrameScript(this.FRAME_SCRIPT);
     globalMM.broadcastAsyncMessage("NoScript:unload");
     processMM.removeDelayedProcessScript(this.PROCESS_SCRIPT);
+    processMM.broadcastAsyncMessage("NoScript:unload");
   },
   
 
@@ -50,6 +51,10 @@ IPC.parent = {
         return;
       case IPC_MSG.CLEARCLICK_WARNING:
         return ClearClickHandler.prototype.showWarningParent(m.target.ownerDocument.defaultView, m.data).locked;
+      case IPC_P_MSG.CALLBACK:
+        let {id, execute} = m.data;
+        this._handleCallback(id, execute);
+        return;
       case IPC_P_MSG.LOAD_SURROGATE:
         return ScriptSurrogate.loadReplacementFile(ScriptSurrogate.getReplacement(m.data));
       case IPC_P_MSG.RESUME:
@@ -65,17 +70,30 @@ IPC.parent = {
         }
         return null;
       case IPC_P_MSG.GET_SNAPSHOT:
-        return {
-          trusted: ns.jsPolicySites.sitesString,
-          untrusted: ns.untrustedSites.sitesString,
-          manual: ns.manualSites.sitesString,
-          objectWhitelist: ns.objectWhitelist,
-        };
+        return ns.getSnapshot();
     }
   },
 
   remote(objName, method, args) {
     Services.ppmm.broadcastAsyncMessage(IPC_P_MSG.CALL, {objName, method, args});
+  },
+  
+  _callbacks: new Map(),
+  _callbackId: 0,
+  callback(f) {
+    this._callbacks.set(++this._callbackId, f);
+    return this._callbackId;
+  },
+  _handleCallback(id, execute) {
+    let callback = this._callbacks.get(id);
+    if (callback) this._callbacks.delete(id);
+    if (execute) {
+      try {
+        callback();
+      } catch (e) {
+        Cu.reportError(e);
+      }
+    }
   },
 };
 

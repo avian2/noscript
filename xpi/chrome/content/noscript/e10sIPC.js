@@ -10,6 +10,7 @@ IPC_P_MSG = {
   RESUME: "NoScript:resume",
   GET_PREF: "NoScript:getPref",
   GET_SNAPSHOT: "NoScript:getSnapshot",
+  CALLBACK: "NoScript:callback",
 }
 
 var IPC = {

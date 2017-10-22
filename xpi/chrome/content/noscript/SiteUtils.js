@@ -158,6 +158,7 @@ PolicySites.prototype = {
   },
   set sitesString(s) {
     if (s !== this._siteString) {
+
       s = SiteUtils.sanitizeString(s);
       if (s != this._sitesString) {
         this._sitesString = s;

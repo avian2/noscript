@@ -17,7 +17,7 @@ function startup(data, reason) {
 }
 
 function shutdown(data, reason) {
-    if (reason == APP_SHUTDOWN)
+    if (reason === APP_SHUTDOWN)
         return;
 
     Services.wm.removeListener(WindowListener);

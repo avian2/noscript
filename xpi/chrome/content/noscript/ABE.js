@@ -30,6 +30,11 @@ var ABE = {
     DoNotTrack.init(ps.getBranch(prefParent+ "doNotTrack."));
   },
 
+  dispose() {
+    ABEStorage.dispose();
+    WAN.enabled = false;
+  },
+
   siteMap: Object.create(null),
 
   get disabledRulesetNames() {
@@ -1179,6 +1184,12 @@ var ABEStorage = {
     for (let k  of prefs.getChildList("", {})) this.observe(prefs, null, k);
     prefs.addObserver("", this, true);
   },
+  dispose() {
+    try {
+      this.prefs.removeObserver("", this, true);
+    } catch (e) {
+    }
+  },
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver, Ci.nsISupportsWeakReference]),
   observe: function(prefs, topic, name) {
     if (typeof ABE === "undefined") {
@@ -1345,16 +1356,18 @@ var WAN = {
       }
     } else {
       this._timer = this.ip = this.ipMatcher = null;
+      if (this._observing) {
+        this._observing = false;
+        OS.removeObserver(this, "network:offline-status-changed");
+        OS.removeObserver(this, "wake_notification");
+      }
     }
-    return this._enabled = b;
+    return (this._enabled = b);
   },
   _observingHTTP: false,
 
   observe: function(subject, topic, data) {
-    if (typeof WAN === "undefined") {
-      OS.removeObserver(this, topic);
-      return;
-    }
+    
     if (!this.enabled) return;
 
     switch(topic) {

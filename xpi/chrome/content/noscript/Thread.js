@@ -2,7 +2,6 @@ var Thread = {
 
   hostRunning: true,
   activeLoops: 0,
-  _timers: [],
 
   spin: function(ctrl) {
     ctrl.startTime = ctrl.startTime || Date.now();
@@ -62,23 +61,22 @@ var Thread = {
     return this.currentQueue;
   },
 
-  delay: function(callback, time, self, args) {
+  delay: function(callback, time = 0, self = null, args = DUMMY_ARRAY) {
     var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
-    this._timers.push(timer);
     timer.initWithCallback({
       notify: this._delayRunner,
-      context: { callback: callback, args: args || DUMMY_ARRAY, self: self || null }
-    }, time || 1, 0);
+      context: { callback, args, self }
+    }, time, 0);
   },
 
   dispatch: function(runnable) {
     this.current.dispatch(runnable, Ci.nsIEventTarget.DISPATCH_NORMAL);
   },
 
-  asap: function(callback, self, args) {
+  asap: function(callback, self, args = DUMMY_ARRAY) {
     this.current.dispatch({
       run: function() {
-        callback.apply(self, args || DUMMY_ARRAY);
+        callback.apply(self, args);
       }
     }, Ci.nsIEventTarget.DISPATCH_NORMAL);
   },
@@ -86,12 +84,10 @@ var Thread = {
   _delayRunner: function(timer) {
     var ctx = this.context;
     try {
+      if (typeof Thread === "undefined") return;
       ctx.callback.apply(ctx.self, ctx.args);
     } finally {
       this.context = null;
-      var tt = Thread._timers;
-      var pos = tt.indexOf(timer);
-      if (pos > -1) tt.splice(pos, 1);
       timer.cancel();
     }
   }

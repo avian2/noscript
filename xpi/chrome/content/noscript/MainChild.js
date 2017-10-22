@@ -14,11 +14,7 @@ var MainChild = {
   },
   afterInit: function() {
     let snapshot = Services.cpmm.sendSyncMessage(IPC_P_MSG.GET_SNAPSHOT)[0];
-    this.jsPolicySites.sitesString = snapshot.trusted;
-    this.untrustedSites.sitesString = snapshot.untrusted;
-    this.manualSites.sitesString = snapshot.manual;
-    this.objectWhitelist = snapshot.objectWhitelist;
-    this.objectWhitelistLen = Object.keys(this.objectWhitelist).length;
+    this.setSnapshot(snapshot);
     this.initContentPolicy(true);
   },
 
