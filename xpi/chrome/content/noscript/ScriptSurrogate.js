@@ -18,10 +18,9 @@ var ScriptSurrogate = {
 
 
   _init: function() {
-    this.prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
-      .getBranch("noscript.surrogate.");
+    this.prefs = ns.prefService.getBranch("noscript.surrogate.");
     this._syncPrefs();
-
+    ns.onDisposal(() => { this.dispose(); });
   },
 
   _observingPrefs: false,
@@ -30,8 +29,7 @@ var ScriptSurrogate = {
 
     for (let p  of ["enabled", "debug", "sandbox"]) this[p] = prefs.getBoolPref(p);
 
-    // inclusions don't work with sandbox on Gecko < 2, but may crash without on Gecko > 2
-    this.sandboxInclusions = this.sandbox && (ns.geckoVersionCheck("2") >= 0);
+    this.sandboxInclusions = this.sandbox;
 
     const map = {__proto__: null};
     var key;
@@ -132,10 +130,56 @@ var ScriptSurrogate = {
     return r;
   },
 
-  observe: function(prefs, topic, key) {
-    this.prefs.removeObserver("", this, true);
-    this._observingPrefs = false;
-    Thread.asap(this._syncPrefs, this);
+  _sandboxes: null,
+  createSandboxForWindow(w, ...args) {
+    if (!this._sandboxes) {
+      this._sandboxes = new Map();
+      OS.addObserver(this, "inner-window-destroyed", true);
+    }
+    let s = new Cu.Sandbox(...args);
+    let weakRef = Cu.getWeakReference(s);
+    let windowId = w.QueryInterface(Ci.nsIInterfaceRequestor)
+                     .getInterface(Ci.nsIDOMWindowUtils).currentInnerWindowID;
+    let sandboxes = this._sandboxes.get(windowId);
+    if (!sandboxes) {
+      this._sandboxes.set(windowId, sandboxes = [weakRef]);
+    } else {
+      sandboxes.push(weakRef);
+    }
+    return s;
+  },
+  _: {Ci, Cu},
+  observe(subject, topic, key) {
+     let {Ci, Cu} = this._;
+
+    if (topic === "inner-window-destroyed") {
+      let windowId = subject.QueryInterface(Ci.nsISupportsPRUint64).data;
+      let sandboxes = this._sandboxes.get(windowId);
+      if (sandboxes) {
+        this._sandboxes.delete(windowId);
+        for (let weakRef of sandboxes) {
+          let s = weakRef.get();
+          if (s) {
+            try {
+              Cu.nukeSandbox(s);
+            } catch (e) {
+              Cu.reportError(e);
+            }
+          }
+        }
+      }
+      return;
+    }
+
+    if (subject instanceof Ci.nsIPrefBranch) {
+      this.prefs.removeObserver("", this, true);
+      this._observingPrefs = false;
+      if (typeof Thread !== "undefined") {
+        Thread.asap(this._syncPrefs, this);
+      }
+      return;
+    }
+    
   },
 
   _resolveFile: function(fileURI) {
@@ -317,11 +361,13 @@ var ScriptSurrogate = {
 
   executeSandbox: function(document, scriptBlock, env) {
     var w = document.defaultView;
+    var wrapper = w;
+    var s = null;
     try {
       if (typeof w.wrappedJSObject === "object") w = w.wrappedJSObject;
       this._sandboxParams.sandboxName = "NoScript::ScriptSurrogate@" + document.documentURI;
       this._sandboxParams.sandboxPrototype = w;
-      let s = new Cu.Sandbox(this.getPrincipal(document), this._sandboxParams);
+      s = this.createSandboxForWindow(wrapper, this.getPrincipal(document), this._sandboxParams);
       if (!("top" in s)) s.__proto__ = w;
       if (typeof env !== "undefined") {
         s.env = env;
@@ -364,6 +410,11 @@ var ScriptSurrogate = {
     }
   },
 
+  dispose() {
+    if (this._observingPrefs) {
+      this.prefs.removeObserver("", this, true);
+    }
+  }
 
 
 

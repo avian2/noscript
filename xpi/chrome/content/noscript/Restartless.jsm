@@ -182,7 +182,8 @@ var overlaid = new WeakSet();
 function overlayNext() {
   overlayLoading = false;
   if (overlayQueue.length) {
-    Thread.asap(() => loadIntoWindow(overlayQueue.shift()));
+    let next = overlayQueue.shift();
+    Thread.asap(() => loadIntoWindow(next));
   }
 }
 function loadIntoWindow(w, early = false) {

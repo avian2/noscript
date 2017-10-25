@@ -245,40 +245,44 @@ var MainChild = {
     if (url.indexOf("http") !== 0 || this.isJSEnabled(this.getSite(url), w)) return false;
     var ss = d.getElementsByTagName("script");
     var sc, m, code;
-    for (var j = 0, len = 5, s; j < len && (s = ss[j]); j++) {
-      code = s.textContent;
-      if (code && /\S/.test(code)) {
-        if (this._frameBreakNoCapture.test(code)) {
-          try {
-            sc = sc || new SyntaxChecker();
-            var m;
-            if (sc.check(code) &&
-                (m = sc.lastFunction.toSource().match(this._frameBreakCapture)) &&
-                (!m[1] || (m[1] == "top" || m[2] == "top") && m[1] != m[2])) {
-              var top = w.top;
+    try {
+      for (var j = 0, len = 5, s; j < len && (s = ss[j]); j++) {
+        code = s.textContent;
+        if (code && /\S/.test(code)) {
+          if (this._frameBreakNoCapture.test(code)) {
+            try {
+              sc = sc || new SyntaxChecker();
+              var m;
+              if (sc.check(code) &&
+                  (m = sc.lastFunction.toSource().match(this._frameBreakCapture)) &&
+                  (!m[1] || (m[1] == "top" || m[2] == "top") && m[1] != m[2])) {
+                var top = w.top;
 
-              var docShell = DOM.getDocShellForWindow(top);
-              var allowJavascript = docShell.allowJavascript;
-              var allowPlugins = docShell.allowPlugins;
-              if (allowJavascript) { // temporarily disable JS & plugins on the top frame to prevent counter-busting
-                docShell.allowJavascript = docShell.allowPlugins = false;
-                top.addEventListener("pagehide", function(ev) {
-                  ev.currentTarget.removeEventListener(ev.type, arguments.calle, false);
-                  docShell.allowJavascript = allowJavascript;
-                  docShell.allowPlugins = allowPlugins;
-                }, false);
+                var docShell = DOM.getDocShellForWindow(top);
+                var allowJavascript = docShell.allowJavascript;
+                var allowPlugins = docShell.allowPlugins;
+                if (allowJavascript) { // temporarily disable JS & plugins on the top frame to prevent counter-busting
+                  docShell.allowJavascript = docShell.allowPlugins = false;
+                  top.addEventListener("pagehide", function(ev) {
+                    ev.currentTarget.removeEventListener(ev.type, arguments.calle, false);
+                    docShell.allowJavascript = allowJavascript;
+                    docShell.allowPlugins = allowPlugins;
+                  }, false);
+                }
+                top.location.href = url;
+                var body = d.body;
+                if (body) while(body.firstChild) body.removeChild(body.firstChild);
+                return true;
               }
-              top.location.href = url;
-              var body = d.body;
-              if (body) while(body.firstChild) body.removeChild(body.firstChild);
-              return true;
+            } catch(e) {
+              this.dump("Error checking " + code + ": " + e.message);
             }
-          } catch(e) {
-            this.dump("Error checking " + code + ": " + e.message);
           }
+          break; // we want to check the first inline script only
         }
-        break; // we want to check the first inline script only
       }
+    } finally {
+      if (sc) Cu.nukeSandbox(sc.sandbox);
     }
     return false;
   },
@@ -512,6 +516,8 @@ var MainChild = {
               url = Cu.evalInSandbox('"' + url + '"', sandbox); // this is safe, since we've got no quotes...
             } catch(e) {
               // ...but a trailing backslash could cause a (harmless) syntax error anyway
+            } finally {
+              Cu.nukeSandbox(sandbox);
             }
           }
           let a = document.createElementNS(HTML_NS, "a");

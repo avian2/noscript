@@ -158,7 +158,6 @@ const ns = {
           break;
         case "sessionstore-windows-restored":
           ns.checkVersion(true);
-          INCLUDE("Removal");
           break;
 
         case "private-browsing":
@@ -733,8 +732,6 @@ const ns = {
 
     this._initResources();
 
-    OS.addObserver(this, "em-action-requested", true);
-
     const prefSrv = this.prefService = Cc["@mozilla.org/preferences-service;1"]
       .getService(Ci.nsIPrefService).QueryInterface(Ci.nsIPrefBranch);
 
@@ -885,9 +882,7 @@ const ns = {
       try {
         catMan.deleteCategoryEntry("content-policy", this.contractID, false);
       } catch (e) {}
-
-      OS.removeObserver(this, "em-action-requested");
-
+      
       if (this.httpStarted) {
         this.requestWatchdog.dispose();
         try {
@@ -2137,7 +2132,7 @@ const ns = {
   executeJSURLInContent(browser, window, url, openCallback, fromURLBar = false) {
     var site = this.getDocSite(window.document) || this.getExpando(browser, "jsSite");
 
-    if (this.mozJSEnabled && (!this.jsEnabled || this.isUntrusted(site))) {
+    if (this.mozJSEnabled) {
       if(this.consoleDump) this.dump("Executing JS URL " + url + " on site " + site);
 
       let docShell = browser.docShell;
@@ -2230,7 +2225,7 @@ const ns = {
         }, this);
       }
     }
-
+    if (openCallback) openCallback();
     return false;
   },
 

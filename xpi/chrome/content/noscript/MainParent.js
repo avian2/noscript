@@ -283,7 +283,10 @@ var MainParent = {
 
        try {
         let cui = window.CustomizableUI;
-        cui.addWidgetToArea(tbbId, cui.AREA_NAVBAR);
+        let widget = cui.getWidget(tbbId);
+        if (!(widget && widget.areaType)) {
+          cui.addWidgetToArea(tbbId, cui.AREA_NAVBAR);
+        }
       } catch (e) { // super-legacy
         let addonBar = document.getElementById("addon-bar");
         if (!addonBar) return false;
@@ -302,10 +305,11 @@ var MainParent = {
 
         bar.setAttribute("currentset", bar.currentSet = set.join(","));
         document.persist(bar.id, "currentset");
+        try {
+          window.BrowserToolboxCustomizeDone(true);
+        } catch (e) {}
       }
-      try {
-        window.BrowserToolboxCustomizeDone(true);
-      } catch (e) {}
+
       try {
         window.noscriptOverlay.initPopups();
       } catch(e) {}

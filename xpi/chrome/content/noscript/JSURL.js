@@ -62,17 +62,16 @@ var JSURL = {
   _run: function(document, code) {
     var w = document.defaultView;
     var p = document.nodePrincipal;
-    var s =  new Cu.Sandbox(p, {
+    var s = ScriptSurrogate.createSandboxForWindow(w, p, {
         sandboxName: "NoScript::JSURL@" + document.documentURI,
         sandboxPrototype: w,
         wantXrays: false,
       });
     var e = (script) =>  Cu.evalInSandbox("with(window) {" + script + "}", s);
-    e(this._patch);
-    var ret;
     try {
-        ret = e(code);   
-        if (typeof(ret) !== "undefined" &&
+        e(this._patch);
+        let ret = e(code);
+        if (typeof ret  !== "undefined" &&
             !DOM.getDocShellForWindow(w).isLoadingDocument) {
           s._ret_ = ret;
           e("window.location.href = 'javascript:' + JSON.stringify('' + this._ret_)");
