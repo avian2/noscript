@@ -425,31 +425,27 @@ var nsopt = {
 
 
   chooseFile: function(title, mode, callback) {
+    const IFP = Ci.nsIFilePicker;
+    const fp = Cc["@mozilla.org/filepicker;1"].createInstance(IFP);
+
+    fp.init(window, title, IFP["mode" + mode]);
+
     try {
-      const IFP = Ci.nsIFilePicker;
-      const fp = Cc["@mozilla.org/filepicker;1"].createInstance(IFP);
-
-      fp.init(window, title, IFP["mode" + mode]);
-
-      try {
-        fp.displayDirectory = ns.prefs.getComplexValue("exportDir", Ci.nsILocalFile);
-      } catch (e) {
-        fp.displayDirectory = Cc["@mozilla.org/file/directory_service;1"]
-                              .getService(Ci.nsIDirectoryServiceProvider)
-                              .getFile("Home", {});
-      }
-      fp.defaultExtension = "txt";
-      const ret = fp.show();
-      if(ret == IFP.returnOK ||
-          ret == IFP.returnReplace) {
-        callback.call(nsopt, fp.file);
-      }
-      try {
-        ns.prefs.setComplexValue("exportDir", Ci.nsILocalFile, fp.displayDirectory);
-      } catch (e) {}
-    } catch(ex) {
-      ns.prompter.alert(window, title, ex.toString());
+      fp.displayDirectory = ns.prefs.getComplexValue("exportDir", Ci.nsILocalFile);
+    } catch (e) {
+      fp.displayDirectory = Cc["@mozilla.org/file/directory_service;1"]
+        .getService(Ci.nsIDirectoryServiceProvider)
+        .getFile("Home", {});
     }
+    fp.defaultExtension = "txt";
+    let done = ret => {
+        if(ret == IFP.returnOK ||
+           ret == IFP.returnReplace) {
+          callback.call(nsopt, fp.file);
+        }
+      };
+    if (fp.show) done(fp.show());
+    else  fp.open({done});
   },
 
 

@@ -136,12 +136,15 @@ SoundChooser.prototype = {
       
       fp.init(window, this.title, ci.nsIFilePicker.modeOpen);
       fp.appendFilter(this.serv.getString("audio.samples"),"*.wav");
-      fp.filterIndex=0;
-      const ret = fp.show();
-      if (ret == ci.nsIFilePicker.returnOK || ret==ci.nsIFilePicker.returnReplace) {
-        this.setSample(fp.fileURL.spec);
-        this.play();
-      }
+      fp.filterIndex = 0;
+      let done = ret => {
+        if (ret == ci.nsIFilePicker.returnOK || ret == ci.nsIFilePicker.returnReplace) {
+          this.setSample(fp.fileURL.spec);
+          this.play();
+        }
+      };
+      if (fp.show) done(fp.show);
+      else fp.open({done});
     } catch(ex) {
       Components.utils.import("resource://gre/modules/Services.jsm");
       Services.prompt.alert(window, this.title, ex.toString());
