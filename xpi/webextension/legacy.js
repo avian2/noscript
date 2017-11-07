@@ -4,15 +4,6 @@ try {
   legacyPort = browser.runtime.connect({name: "legacy"});
   legacyPort.onMessage.addListener(msg => {
     switch(msg.type) {
-
-      case "start":
-        ns.start(msg.data);
-      break;
-
-      case "stop":
-        ns.stop();
-      break;
-
       case "saveData":
         let backup = msg.data;
         browser.storage.local.set({legacyBackup: backup}).then(() => {
@@ -33,11 +24,13 @@ try {
       break;
 
       case "dumpData":
-        browser.storage.local.get(null, items => console.log(items));
+        browser.storage.local.get(null, items => console.log(JSON.stringify(items)));
       break;
     }
   });
+  browser.runtime.sendMessage("Hybrid WebExtension NoScript Ready");
 } catch(e) {
   legacyPort = null;
+  console.error(e);
 }
 

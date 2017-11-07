@@ -23,6 +23,6 @@
   ],
 
   "background": {
-    "page": "background.html"
+    "scripts": ["legacy.js"]
   }
 }

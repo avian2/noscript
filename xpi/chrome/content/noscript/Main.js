@@ -142,7 +142,7 @@ const ns = {
       switch (topic) {
 
         case "xpcom-shutdown":
-          this.shutdown();
+          this.shutdown(true);
           break;
 
         case "profile-before-change":
@@ -211,9 +211,17 @@ const ns = {
       OS.addObserver(observer, topic, observer instanceof Ci.nsISupportsWeakReference);
     }
   },
-  shutdown: function() {
+  shutdown: function(exiting = false) {
     if (!this._started) return;
     this._started = false;
+
+
+    if (exiting) {
+      this.resetJSCaps();
+      this.savePrefs();
+      return;
+    }
+
     this.dump("NoScript shutting down");
 
     if (!this.childProcess) {

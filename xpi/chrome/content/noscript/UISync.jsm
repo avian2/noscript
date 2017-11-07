@@ -11,6 +11,7 @@ const messages = ["NoScript:reload", "NoScript:reloadAllowedObjects",
 
 function UISync(ctx) {
   this.ctx = ctx;
+  this.listeners = [];
   this.wire();
   this.scheduleSync();
 }
@@ -21,7 +22,6 @@ UISync.prototype = {
     delKey: false,
   },
 
-  listeners: [],
   addListener(type, handler, ...opts) {
     this.ctx.addEventListener(type, handler, ...opts);
     this.listeners.push({type, handler, opts});

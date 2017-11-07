@@ -6,11 +6,8 @@ var WebExt = {
   saveData(json = ns.conf2JSON(true)) {
     this.tell("saveData", json);
   },
-  start(policy = null) {
-    this.tell("start", policy);
-  },
-  stop() {
-    this.tell("stop");
+  dumpData() {
+    this.tell("dumpData");
   },
   tell(type, data) {
     if (this.port) try {
@@ -42,7 +39,6 @@ var WebExt = {
         ns.dump(`Webext connected`);
         WebExt.port = port;
         WebExt.saveData();
-        WebExt.stop();
       });
     }).catch(err => {
       Components.utils.reportError(
