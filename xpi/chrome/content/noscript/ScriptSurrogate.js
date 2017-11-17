@@ -108,8 +108,7 @@ var ScriptSurrogate = {
               .QueryInterface(Ci.nsIFileURL).file);
   },
   getReplacement(name) {
-    return COMPAT.getStringPref(this.prefs, name + ".replacement",
-                         Ci.nsISupportsString).data;
+    return COMPAT.getStringPref(this.prefs, name + ".replacement");
   },
   initReplacement: function(m) {
     var r;
