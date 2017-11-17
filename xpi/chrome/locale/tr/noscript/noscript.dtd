@@ -189,3 +189,4 @@
 <!ENTITY noscriptRestrictSubdocScripting "Beyaz listede olmayan sayfaların, beyaz listedeki alt sayfalarında bulunan betikleri engelle">
 <!ENTITY noscriptGlobalHttpsWhitelist "HTTPS belgelerinde HTTPS betiklerine genel olarak izin ver">
 <!ENTITY noscriptPermanentInPrivate "Özel pencerelerdeki komutlara kalıcı olarak &quot;İzin Ver&quot;">
+<!ENTITY noscriptCustom "Custom">

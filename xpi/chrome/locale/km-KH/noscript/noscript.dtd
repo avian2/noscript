@@ -153,6 +153,7 @@
 <!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
 <!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">
+<!ENTITY noscriptCustom "Custom">
 <!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
 <!ENTITY ABE "ABE">
 <!ENTITY ABE.accesskey "A">

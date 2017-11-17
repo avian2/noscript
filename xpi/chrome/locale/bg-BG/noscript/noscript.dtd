@@ -169,6 +169,7 @@
 <!ENTITY noscriptUninstall "Деинсталиране">
 <!ENTITY noscriptRecentBlocked "Наскоро блокирани сайтове">
 <!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
+<!ENTITY noscriptCustom "Custom">
 <!ENTITY noscriptExternalFilters "External Filters">
 <!ENTITY noscriptEF.enable "Enable external filters">
 <!ENTITY noscriptEF.add "New Filter…">

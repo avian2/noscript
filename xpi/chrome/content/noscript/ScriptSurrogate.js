@@ -108,7 +108,7 @@ var ScriptSurrogate = {
               .QueryInterface(Ci.nsIFileURL).file);
   },
   getReplacement(name) {
-    return this.prefs.getComplexValue(name + ".replacement",
+    return COMPAT.getStringPref(this.prefs, name + ".replacement",
                          Ci.nsISupportsString).data;
   },
   initReplacement: function(m) {

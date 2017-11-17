@@ -43,8 +43,9 @@
 <!ENTITY noscriptAdditionalRestrictions "Papildomi draudimai nepatikimoms svetainėms">
 <!ENTITY noscriptPlugins "Įskiepiai">
 <!ENTITY noscriptContentBlocker "Pritaikyti šiuos draudimus taip pat ir patikimoms svetainėms">
-<!ENTITY noscriptForbidJava "Uždrausti WebGL">
+<!ENTITY noscriptForbidJava "Uždrausti Java™">
 <!ENTITY noscriptForbidXSLT "Uždrausti XSLT">
+<!ENTITY noscriptForbidWebGL "Uždrausti WebGL">
 <!ENTITY noscriptForbidSilverlight "Uždrausti Microsoft® Silverlight™">
 <!ENTITY noscriptForbidIFrames "Uždrausti &lt;IFRAME&gt;">
 <!ENTITY noscriptForbidFrames "Uždrausti &lt;FRAME&gt;">
@@ -184,7 +185,7 @@
 <!ENTITY noscriptDonate "Paaukoti">
 <!ENTITY noscriptDonate.accesskey "o">
 <!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
-<!ENTITY noscriptForbidWebGL "Forbid WebGL">
+<!ENTITY noscriptCustom "Custom">
 <!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
 <!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
 <!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">

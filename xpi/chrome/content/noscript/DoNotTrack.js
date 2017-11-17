@@ -18,7 +18,7 @@ var DoNotTrack = {
        break;
       case "exceptions":
       case "forced":
-        this[name] = AddressMatcher.create(prefs.getComplexValue(name, Ci.nsISupportsString).data);
+        this[name] = AddressMatcher.create(prefs, COMPAT.getStringPref(prefs, name));
       break;
     }
   },

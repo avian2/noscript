@@ -189,3 +189,4 @@
 <!ENTITY noscriptRestrictSubdocScripting "Блокировать скрипты из белого списка в субдокументах не из белого списка">
 <!ENTITY noscriptGlobalHttpsWhitelist "Разрешить все HTTPS скрипты в HTTPS документах">
 <!ENTITY noscriptPermanentInPrivate "Пункты постоянных разрешений в приватном режиме">
+<!ENTITY noscriptCustom "Custom">

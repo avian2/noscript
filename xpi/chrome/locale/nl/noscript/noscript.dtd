@@ -189,3 +189,4 @@
 <!ENTITY noscriptRestrictSubdocScripting "Scripts in toegestane subdocumenten van niet-toegestane pagina’s blokkeren">
 <!ENTITY noscriptGlobalHttpsWhitelist "HTTPS-scripts op HTTPS-documenten overal toestaan">
 <!ENTITY noscriptPermanentInPrivate "Permanente ‘Toestaan’-opdrachten in privévensters">
+<!ENTITY noscriptCustom "Custom">

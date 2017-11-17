@@ -189,3 +189,4 @@
 <!ENTITY noscriptRestrictSubdocScripting "Skripte in Unterdokumenten der Positivliste blockieren, die zu Seiten gehören, die nicht in der Positivliste sind">
 <!ENTITY noscriptGlobalHttpsWhitelist "HTTPS Skripte generell bei HTTPS Dokumenten erlauben">
 <!ENTITY noscriptPermanentInPrivate "Permanentes &quot;Zulassen&quot; von Befehle in privaten Fenstern">
+<!ENTITY noscriptCustom "Custom">

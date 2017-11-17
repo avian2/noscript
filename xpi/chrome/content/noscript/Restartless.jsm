@@ -19,9 +19,7 @@ function loadPrefs(branch, uriOrFile, filter = null) {
             break;
 
             case "string":
-            var str = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
-            str.data = value;
-            branch.setComplexValue(name, Ci.nsISupportsString, str);
+            COMPAT.setStringPref(branch, name, value);
             break;
           }
         } catch (e) {

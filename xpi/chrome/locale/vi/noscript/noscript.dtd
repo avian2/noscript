@@ -169,6 +169,7 @@
 <!ENTITY noscriptUninstall "Gỡ bỏ">
 <!ENTITY noscriptRecentBlocked "Các trang bị chặn gần đây">
 <!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
+<!ENTITY noscriptCustom "Custom">
 <!ENTITY noscriptExternalFilters "External Filters">
 <!ENTITY noscriptEF.enable "Enable external filters">
 <!ENTITY noscriptEF.add "New Filter…">

@@ -189,3 +189,4 @@
 <!ENTITY noscriptGlobalHttpsWhitelist "Autoriser les scripts HTTPS globalement, dans les documents HTTPS">
 <!ENTITY noscriptAutoReload.currentTab "Recharger uniquement l'onglet actif">
 <!ENTITY noscriptPermanentInPrivate "Permanent &quot;Allow&quot; commands in private windows">
+<!ENTITY noscriptCustom "Custom">

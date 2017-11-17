@@ -1250,17 +1250,14 @@ var ABEStorage = {
     ABE.clear();
     for (let j = 0, len = keys.length; j < len; j++) {
       let k = keys[j];
-      ABE.parse(k.replace("rulesets.", ""), prefs.getComplexValue(k, Ci.nsISupportsString).data);
+      ABE.parse(k.replace("rulesets.", ""), COMPAT.getStringPref(prefs, k));
     }
     ABE.disabledRulesetNames = disabled;
     OS.notifyObservers(ABE, ABE.RULES_CHANGED_TOPIC, null);
   },
 
   saveRuleset: function(name, source) {
-    var str = Cc["@mozilla.org/supports-string;1"]
-      .createInstance(Ci.nsISupportsString);
-    str.data = source;
-    this.prefs.setComplexValue("rulesets." + name, Ci.nsISupportsString, str);
+    COMPAT.setStringPref(this.prefs, "rulesets." + name, str);
   },
 
   persist: function() {

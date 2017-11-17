@@ -23,7 +23,7 @@ var INCLUDE = function (...objectNames) {
       // dump((t - TIME0) + " - loaded " + objectName + " in " + (Date.now() - t) + "\n")
     }
   }
-}
+};
 
 function LAZY_INCLUDE(...objectNames) {
   for (let objectName of objectNames) {
@@ -55,3 +55,19 @@ function MIXIN(target, ...objects) {
   return target;
 }
 
+var COMPAT = {
+  setStringPref(branch, name, value) {
+    if (branch.setStringPref) {
+      branch.setStringPref(name, value);
+    } else {
+      let str = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
+      str.data = value;
+            branch.setComplexValue(name, Ci.nsISupportsString, str);
+    }
+  },
+
+  getStringPref(branch, name, value) {
+    return branch.getStringPref ? branch.getStringPref(name, value)
+      :  branch.getComplexValue(name, Ci.nsISupportsString).data;
+  }
+};

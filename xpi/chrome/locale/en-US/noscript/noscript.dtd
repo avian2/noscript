@@ -78,6 +78,7 @@
 <!ENTITY noscriptTrusted "Trusted">
 <!ENTITY noscriptUntrusted "Untrusted">
 <!ENTITY noscriptUnknown "Unknown">
+<!ENTITY noscriptCustom "Custom">
 <!ENTITY noscriptAdd "Add">
 <!ENTITY noscriptAdd.accesskey "A">
 <!ENTITY noscriptClose "Close">

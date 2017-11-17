@@ -189,3 +189,4 @@
 <!ENTITY noscriptRestrictSubdocScripting "Блакаваць скрыпты на ўключаных у белы спіс дакументах, змешчаных на старонак па-за белага спісу">
 <!ENTITY noscriptGlobalHttpsWhitelist "Дазваляць HTTPS-скрыпты глабальна на HTTPS-дакументах">
 <!ENTITY noscriptPermanentInPrivate "Пастаянна &quot;дазваляць&quot; каманды ў прыватных вокнах">
+<!ENTITY noscriptCustom "Custom">

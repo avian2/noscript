@@ -168,6 +168,7 @@
 <!ENTITY noscriptForbidMedia "Forbid &lt;AUDIO&gt; / &lt;VIDEO&gt;">
 <!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">
+<!ENTITY noscriptCustom "Custom">
 <!ENTITY noscriptRecentBlocked "Recently blocked sites">
 <!ENTITY noscriptExternalFilters "External Filters">
 <!ENTITY noscriptEF.enable "Enable external filters">

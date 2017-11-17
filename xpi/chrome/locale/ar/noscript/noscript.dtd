@@ -189,3 +189,4 @@
 <!ENTITY noscriptRestrictSubdocScripting "منع السكربتات في ملفات القائمة البيضاء المتواجدة في الصفحات الغير موجودة في القائمة البيضاء">
 <!ENTITY noscriptGlobalHttpsWhitelist "السماح لسكربتات اتش تي تي بي اس بشكل عام في مستدات اتش تي تي بي اس">
 <!ENTITY noscriptPermanentInPrivate "الدائم للأوامر في النوافذ الشخصية &quot;السماح&quot;">
+<!ENTITY noscriptCustom "Custom">

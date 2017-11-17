@@ -146,6 +146,7 @@
 <!ENTITY noscriptForbidXSLT "Forbid XSLT">
 <!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
 <!ENTITY noscriptNotifyMeta.accesskey "R">
+<!ENTITY noscriptCustom "Custom">
 <!ENTITY noscriptClearClickReport "Report">
 <!ENTITY noscriptClearClickReport.accesskey "R">
 <!ENTITY noscriptClearClickReportId "Report ID:">

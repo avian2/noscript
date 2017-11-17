@@ -78,6 +78,7 @@
 <!ENTITY noscriptTrusted "Fidato">
 <!ENTITY noscriptUntrusted "Non fidato">
 <!ENTITY noscriptUnknown "Sconosciuto">
+<!ENTITY noscriptCustom "Personalizzato">
 <!ENTITY noscriptAdd "Aggiungi">
 <!ENTITY noscriptAdd.accesskey "A">
 <!ENTITY noscriptClose "Chiudi">
@@ -146,7 +147,7 @@
 <!ENTITY noscriptTrustedPagesAdj "fidate">
 <!ENTITY noscriptUntrustedPagesAdj "non fidate">
 <!ENTITY noscriptKeepLocked "Mantieni bloccato questo elemento (consigliabile)">
-<!ENTITY noscriptEmbeddings "Oggetti importati">
+<!ENTITY noscriptEmbeddings "Oggetti incorporati">
 <!ENTITY noscriptPrev "Precedente">
 <!ENTITY noscriptNext "Successivo">
 <!ENTITY noscriptFrameOptErr.title "Questo contenuto non può essere caricato in un frame">
