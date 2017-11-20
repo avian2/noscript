@@ -1,0 +1,41 @@
+'use strict';
+var RequestUtil = {
+
+
+  async prependToScripts(request, preamble) {
+    let filter = browser.webRequest.filterResponseData(request.requestId);
+    let decoder = new TextDecoder("utf-8");
+    let encoder = new TextEncoder();
+    let buffer = "";
+
+    let write = data => filter.write(encoder.encode(data));
+    let flush = () => {
+      write(buffer);
+      filter.disconnect();
+    };
+
+    filter.ondata = event => {
+      buffer += decoder.decode(event.data, {stream: true});
+      if (/<\w+\S+\w+=/.test(buffer)) { // matches any tag with attributes
+        buffer = preamble + buffer;
+        flush();
+      } else {
+        let startPos = buffer.lastIndexOf("<");
+        let endPos = buffer.lastIndexOf(">");
+        if (startPos === -1 || endPos > startPos) {
+          write(buffer);
+          return;
+        }
+
+        if (startPos > 0) {
+          write(buffer.substring(0, startPos));
+          buffer = buffer.substring(startPos);
+        }
+      }
+    }
+
+    filter.onstop = event => {
+      flush();
+    }
+  }
+}

@@ -1,0 +1,716 @@
+{
+  "ABE": {
+    "message": "أيب"
+  },
+  "ABE.accesskey": {
+    "message": "أ"
+  },
+  "ABE.chooseEditor": {
+    "message": "الرجاء اختيار محرر نصوص لقواعد أيب"
+  },
+  "ABE.disable.accesskey": {
+    "message": "ق"
+  },
+  "ABE.disable.label": {
+    "message": "ايقاف"
+  },
+  "ABE.edit.accesskey": {
+    "message": "ت"
+  },
+  "ABE.edit.label": {
+    "message": "تحرير"
+  },
+  "ABE.enable.accesskey": {
+    "message": "ف"
+  },
+  "ABE.enable.label": {
+    "message": "تفعيل"
+  },
+  "ABE.enabled.label": {
+    "message": "تفعيل أيب (منفّذ حدود البرامج)"
+  },
+  "ABE.notify": {
+    "message": "الطلب  $1 تمت تصفيته من قبل أيب <$2> $3"
+  },
+  "ABE.refresh.accesskey": {
+    "message": "ج"
+  },
+  "ABE.refresh.label": {
+    "message": "تجديد"
+  },
+  "ABE.rulesets.label": {
+    "message": "القواعد"
+  },
+  "ABE.siteEnabled.label": {
+    "message": "السماح للمواقع دفع قواعدهم الخاصة"
+  },
+  "ABE.syntaxError": {
+    "message": "خطأ في بناء الجملة في مجموعة أوامر آيب!"
+  },
+  "ABE.wanIpAsLocal": {
+    "message": "عنوان الشبكة الخارجي ($1) كداخلي"
+  },
+  "Add": {
+    "message": "أضافة"
+  },
+  "Add.accesskey": {
+    "message": "ض"
+  },
+  "AdditionalPermissions": {
+    "message": "صلاحيات إضافية للمواقع الموثوقة"
+  },
+  "AdditionalRestrictions": {
+    "message": "قيود إضافية على المواقع غير الموثوق بها"
+  },
+  "Advanced": {
+    "message": "متقدمة"
+  },
+  "Allow": {
+    "message": "السماح"
+  },
+  "Allow.accesskey": {
+    "message": "س"
+  },
+  "AllowBookmarks": {
+    "message": "السماح للمواقع التي تفتح من علامات"
+  },
+  "AllowClipboard": {
+    "message": "السماح بنسخ ولصق النص الغني من حافظة القصاصات الخارجية"
+  },
+  "AllowLocalLinks": {
+    "message": "السماح بالروابط المحلية"
+  },
+  "AllowPage": {
+    "message": "السماح لهذه الصفحة"
+  },
+  "AllowPage.accesskey": {
+    "message": "ح"
+  },
+  "AllowPing": {
+    "message": "السماح ل <A PING…>"
+  },
+  "AllowViaBookmarks": {
+    "message": "السماح للمواقع التي تفتح من علامات"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "اعتراض كل شيء آت من موقع محدّد كغير موثوق"
+  },
+  "Appearance": {
+    "message": "المظهر"
+  },
+  "AutoAllowTopLevel": {
+    "message": "مبدئيا السماح مؤقتا لمواقع المستوى الأعلى"
+  },
+  "AutoReload": {
+    "message": "أعادة  تحميل الصفحات المتأثرة عند تغيير الصلاحيات آلياً"
+  },
+  "AutoReload.currentTab": {
+    "message": "اعادة تحميل علام التبويب الحالية فقط"
+  },
+  "BaseDom": {
+    "message": "نطاقات المستوى الثاني (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "عناصر مُعتَرضة"
+  },
+  "BookmarkSync": {
+    "message": "عمل نسخة احتياطية للاعدادت مُؤَشِّر لتسهيل التزامن"
+  },
+  "ClearClickDescription": {
+    "message": "لقد منع نوسكربت تفاعل لللوحة أو الفأرة مع عنصر مُخَبَّأ.أضغط على الضورة في الاسفل لرؤية كلا النسخ"
+  },
+  "ClearClickHeader": {
+    "message": "محاولة قرصنة النقر أو تحويل للعنوان"
+  },
+  "ClearClickOpt": {
+    "message": "رفع الحماية عن الصفحات…"
+  },
+  "ClearClickReport": {
+    "message": "تقرير"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "ت"
+  },
+  "ClearClickReportId": {
+    "message": "رقم التقرير:"
+  },
+  "ClearClickTitle": {
+    "message": "مسح التحذير"
+  },
+  "Close": {
+    "message": "أغلاق"
+  },
+  "CollapseBlockedObjects": {
+    "message": "تقليص العناصر المُعتَرضة"
+  },
+  "ConfirmUnblock": {
+    "message": "طلب التوكيد قبل رفع المنع بشكل مؤقت عن عنصر ما"
+  },
+  "ContentBlocker": {
+    "message": "تطبيق هذه القيود على المواقع الموثوقة كذلك"
+  },
+  "CtxMenu": {
+    "message": "قائمة السياق"
+  },
+  "DefaultPolicies": {
+    "message": "السياسات المبدئية"
+  },
+  "Description": {
+    "message": "حماية إضافية لفيرفوكس: نوسكربت يسمح لجافاسكربت و جافا (و ملحقات أخرى) للعمل فقط من المواقع الموثوقة التي تختارها (مثلا:موقع مصرفك). هذه المقاربة التحفظية المبنية على القوائم البيضاء تمنع استغلال الثغرات الأمنية (حتى غير المعلومة منها) دون تقليل الكفاءة…سيؤكد المحترفون أن فيرفوكس أكثر أمناً مع نوسكربت.:-)"
+  },
+  "Donate": {
+    "message": "التبرع"
+  },
+  "Donate.accesskey": {
+    "message": "ت"
+  },
+  "Embeddings": {
+    "message": "عناصر مغروسة"
+  },
+  "Exceptions": {
+    "message": "استثناءات"
+  },
+  "Export": {
+    "message": "التصدير"
+  },
+  "Export.accesskey": {
+    "message": "ص"
+  },
+  "FixLinks": {
+    "message": "محاولة تصحيح روابط جافاسركبت"
+  },
+  "Forbid": {
+    "message": "المنع"
+  },
+  "Forbid.accesskey": {
+    "message": "م"
+  },
+  "ForbidBookmarklets": {
+    "message": "منع العلامات البرمجية"
+  },
+  "ForbidFlash": {
+    "message": "منع ماكروميديا فلاش"
+  },
+  "ForbidFonts": {
+    "message": "منع @font-face"
+  },
+  "ForbidFrames": {
+    "message": "منع <FRAME>"
+  },
+  "ForbidIFrames": {
+    "message": "منع <IFRAME>"
+  },
+  "ForbidJava": {
+    "message": "منع جافا"
+  },
+  "ForbidMedia": {
+    "message": "منع <AUDIO> / <VIDEO>"
+  },
+  "ForbidMetaRefresh": {
+    "message": "امنع تحويلات META من داخل عناصر <NOSCRIPT>"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "ت"
+  },
+  "ForbidPing": {
+    "message": "منع <A PING…>"
+  },
+  "ForbidPlugins": {
+    "message": "منع الملحقات الأُخرى"
+  },
+  "ForbidSilverlight": {
+    "message": "منع ميكروسوفت سِلفَرلَيت"
+  },
+  "ForbidWebGL": {
+    "message": "منع WebGL"
+  },
+  "ForbidXSLT": {
+    "message": "منع أكس أس أل تي"
+  },
+  "FrameOptErr.desc": {
+    "message": "لامانك, ناشر المحتويات لا يسمح باظهارها في صُفَيحة  frame"
+  },
+  "FrameOptErr.link": {
+    "message": "النقر هنا لفتح المحتويات في نافذة جديدة"
+  },
+  "FrameOptErr.title": {
+    "message": "لا يمكن اظهار المحتويات في صُفَيحةframe"
+  },
+  "FullAddr": {
+    "message": "مسارات كاملة (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "نطاقات كاملة (www.noscript.net)"
+  },
+  "General": {
+    "message": "عامة"
+  },
+  "GlobalHttpsWhitelist": {
+    "message": "السماح لسكربتات اتش تي تي بي اس بشكل عام في مستدات اتش تي تي بي اس"
+  },
+  "GloballyEnabled": {
+    "message": "السكربتات المسموح لها كليا (خطر)"
+  },
+  "Https": {
+    "message": "أتش تي تي بي الآمن"
+  },
+  "Https.always": {
+    "message": "دائمًا"
+  },
+  "Https.behavior": {
+    "message": "التصرّف"
+  },
+  "Https.cookies": {
+    "message": "الكعكات"
+  },
+  "Https.description": {
+    "message": "منع محتويات الشبكة الا اذا كانت عن طريق اتصال آمن"
+  },
+  "Https.never": {
+    "message": "أبدًا"
+  },
+  "Https.proxy": {
+    "message": "عند استعمال وسيط"
+  },
+  "HttpsFaq": {
+    "message": "الأسئلة المتكررة حول  أتش تي تي بي الآمن"
+  },
+  "HttpsFaq.accesskey": {
+    "message": "ش"
+  },
+  "HttpsForced": {
+    "message": "فرض استعمال اتصالات آمنة على هذه المواقع"
+  },
+  "HttpsForcedExceptions": {
+    "message": "لا تفرض استعمال اتصالات آمنة على هذه المواقع"
+  },
+  "Import": {
+    "message": "الاستيراد"
+  },
+  "Import.accesskey": {
+    "message": "س"
+  },
+  "KeepLocked": {
+    "message": "ترك هذا العنصر موصدا (مفضّل)"
+  },
+  "MatchSample": {
+    "message": "عينة مطابقة للنمط"
+  },
+  "Next": {
+    "message": "التالي"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "لا توجد حوافظ مكان لعناصر قادمة من مواقع محددة كغير آمنة"
+  },
+  "Notifications": {
+    "message": "تنويهات"
+  },
+  "Notify": {
+    "message": "اعرض رسالة عن السكربتات المعترضة"
+  },
+  "Notify.bottom": {
+    "message": "أظهار الرسالة في الاسفل"
+  },
+  "NotifyMeta": {
+    "message": "اظهار الرسائل من ميتا محجوبة متغيرة الهدف"
+  },
+  "NotifyMeta.accesskey": {
+    "message": "م"
+  },
+  "NselForce": {
+    "message": "أظهار محتويات عنصر <NOSCRIPT> الذي يلي <SCRIPT> معترض"
+  },
+  "NselNever": {
+    "message": "أخفاء محتويات عناصر <NOSCRIPT>"
+  },
+  "OptBlockCssScanners": {
+    "message": "اعتراض الماسحات المبنية على تقنية XSS"
+  },
+  "OptFilterXGet": {
+    "message": "تطهير الطلبات المشبوهة عابرة المواقع"
+  },
+  "OptFilterXPost": {
+    "message": "تحويل الطلبات العابرة للمواقع من النوع POST إلى طلبات من GET خالية من البيانات"
+  },
+  "Options": {
+    "message": "خيارات…"
+  },
+  "Options.accesskey": {
+    "message": "خ"
+  },
+  "OptionsLong": {
+    "message": "خيارات نوسكربت"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "PermanentInPrivate": {
+    "message": "الدائم للأوامر في النوافذ الشخصية \"السماح\""
+  },
+  "Permissions": {
+    "message": "الصلاحيات"
+  },
+  "PermissionsText": {
+    "message": "يمكنك تعيين المواقع المسموح لها تنفيذ سكربتات. أدخل مسار أو نطاق (مثل \"http://www.example.com\" أو \"example.com\") الموقع الذي تود السماح له ومن ثم اختر \"اسمح\"."
+  },
+  "Plugins": {
+    "message": "الملحقات"
+  },
+  "Policies": {
+    "message": "السياسات"
+  },
+  "Preset": {
+    "message": "مستوى الأمن"
+  },
+  "Preset.high": {
+    "message": "الحصن (أمن تام)"
+  },
+  "Preset.low": {
+    "message": "الوضع السهل (القائمة السوداء + أمن الويب)"
+  },
+  "Preset.medium": {
+    "message": "كلاسيكي (القائمة البيضاء+أمن الويب)"
+  },
+  "Preset.off": {
+    "message": "إيقاف (هل أنت متأكد؟!)"
+  },
+  "Prev": {
+    "message": "السابق"
+  },
+  "RecentBlocked": {
+    "message": "مواقع معترضة مأخراً"
+  },
+  "Refresh": {
+    "message": "أنعاش"
+  },
+  "ReloadWarn": {
+    "message": "سيتم تفعيل هذه الخيارات في الصفحات الجديدة أو الصفحات المعاد تحميلها (يدوياً)"
+  },
+  "RemoveSelected": {
+    "message": "أزالة المواقع المختارة"
+  },
+  "Reset": {
+    "message": "تصفير"
+  },
+  "Reset.accesskey": {
+    "message": "ص"
+  },
+  "ResetDef": {
+    "message": "تصفير للمبدئية"
+  },
+  "ResetDef.accesskey": {
+    "message": "ف"
+  },
+  "RestrictSubdocScripting": {
+    "message": "منع السكربتات في ملفات القائمة البيضاء المتواجدة في الصفحات الغير موجودة في القائمة البيضاء"
+  },
+  "RevokeTemp": {
+    "message": "ألغاء الصلاحيات المؤقتة"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "م"
+  },
+  "SecureCookies": {
+    "message": "تفعيل الادارة الآلية للكعكات الآمنة"
+  },
+  "SecureCookiesExceptions": {
+    "message": "أهمال الكعكات غير الآمنة عبر اتصال آمن للمواقع التالية:"
+  },
+  "SecureCookiesForced": {
+    "message": "فرض تعمية كل الكعكات المحددة عبر اتصال آمن للمواقع التالية:"
+  },
+  "SecurityManager": {
+    "message": "مدير الأمن"
+  },
+  "Show": {
+    "message": "أظهر"
+  },
+  "ShowConsole": {
+    "message": "أظهار وحدة التحكم"
+  },
+  "ShowConsole.accesskey": {
+    "message": "ك"
+  },
+  "ShowPlaceholder": {
+    "message": "أظهار أيقونة شاغلة للحيز"
+  },
+  "ShowReleaseNotes": {
+    "message": "اظهار ملاحظات الاصدار في التحديثات"
+  },
+  "SiteManager": {
+    "message": "مدير المواقع"
+  },
+  "SitePolicies": {
+    "message": "سياسات مواقع معينة"
+  },
+  "StatusIcon": {
+    "message": "أيقونة شريط الحالة"
+  },
+  "StatusLabel": {
+    "message": "عنوان شريط الحالة"
+  },
+  "TempAllowPage": {
+    "message": "السماح مؤقتا للكل في الصفحة الحالية"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "س"
+  },
+  "TempCmd": {
+    "message": "السماح المؤقت […]"
+  },
+  "TempToPerm": {
+    "message": "جعل صلاحيات الصفحة دائمة"
+  },
+  "TempToPerm.accesskey": {
+    "message": "ص"
+  },
+  "ToolbarToggle": {
+    "message": "النقر باليسار على أيقونة نوسكربت في شريط نوسكربت يعكس حالة السماح للمواقع  في المستوى الأعلى"
+  },
+  "TruncateTitle": {
+    "message": "اختصار عناوين الوثائق"
+  },
+  "Trust": {
+    "message": "التأشير كغير موثوق به"
+  },
+  "Trust.accesskey": {
+    "message": "ث"
+  },
+  "Trusted": {
+    "message": "موثوق"
+  },
+  "TrustedPagesAdj": {
+    "message": "موثوق"
+  },
+  "Uninstall": {
+    "message": "ازالة"
+  },
+  "Unknown": {
+    "message": "غير معروف"
+  },
+  "UnsafeReload": {
+    "message": "إعادة تحميل غير آمنة"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "د"
+  },
+  "Untrust.accesskey": {
+    "message": "غ"
+  },
+  "Untrusted": {
+    "message": "غير موثوق"
+  },
+  "UntrustedPagesAdj": {
+    "message": "غير موثوق"
+  },
+  "WebAddress": {
+    "message": "مسار موقع وب:"
+  },
+  "Whitelist": {
+    "message": "القائمة البيضاء"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "إستثناءات من الحماية ضد أكس أس"
+  },
+  "XssExceptions.description": {
+    "message": "المواقع المطابقة لهذه العبارات الاعتيادية لن تكون محمية ضد أكس أس"
+  },
+  "XssFaq": {
+    "message": "أسئلة شائعة عن ‮ ‪XSS"
+  },
+  "XssFaq.accesskey": {
+    "message": "ع"
+  },
+  "about": {
+    "message": "عن $1"
+  },
+  "allowFrom": {
+    "message": "السماح للكل من  $1"
+  },
+  "allowGlobal": {
+    "message": "السماح للسكربتات بشكل شامل (غير آمن)"
+  },
+  "allowLocal": {
+    "message": "السماح من $1"
+  },
+  "allowTemp": {
+    "message": "السماح من $1 مؤقتا"
+  },
+  "allowTempFrom": {
+    "message": "السماح مؤقتاً للكل من  $1"
+  },
+  "allowed.glb": {
+    "message": "خطر! السكربتات مسموحة كلياً"
+  },
+  "allowed.glb-emb": {
+    "message": "السكربتات مسموحة كلياً ولكن بعض الامور الضمنية ممنوعة"
+  },
+  "allowed.no": {
+    "message": "السكربتات ممنوعة حاليًا"
+  },
+  "allowed.prt": {
+    "message": "السكربتات مسموحة جزئيًا"
+  },
+  "allowed.yes": {
+    "message": "السكربتات مسموحة حاليًا"
+  },
+  "alwaysAsk": {
+    "message": "إسأل دائما للتوكيد"
+  },
+  "audio.samples": {
+    "message": "عينات صوتية"
+  },
+  "bookmarkSync.confirm": {
+    "message": "وجد نوسكربت اعداد مؤشر محفوظ في   \n$1, هل تريد حقاً تغيير اعدادات نوسكربت المحلية بمحتويات هذا المؤشر"
+  },
+  "bookmarkSync.message": {
+    "message": "علامة التبويب هذه ليست للفتح وانما لتزامنها باستخدام خدمة مثل Weave  أوا Xmarks او XMarks Extension"
+  },
+  "bookmarkSync.title": {
+    "message": "علامة تبويب ضبط نوسكربت"
+  },
+  "changelog": {
+    "message": "سجل التغييرات"
+  },
+  "changelog.tip": {
+    "message": "استعرض سجلل التغييرات"
+  },
+  "confirm": {
+    "message": "هل أنت متأكد؟"
+  },
+  "disable": {
+    "message": "تعطيل ال $1"
+  },
+  "disable.accessKey": {
+    "message": "ط"
+  },
+  "distrust": {
+    "message": "ألتأشير $1 كغير موثوق"
+  },
+  "extensionContributors": {
+    "message": "المساهمون:"
+  },
+  "extensionContributors.tip": {
+    "message": "أشخاص يستحقون الشكر لهذا الامتداد"
+  },
+  "extensionCreator.tip": {
+    "message": "زيارة موقع المؤلف"
+  },
+  "extensionCreatorLabel": {
+    "message": "المؤلف:"
+  },
+  "extensionHomepage.tip": {
+    "message": "زيارة موقع الامتدادة"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "حمايةاضافية لفيرفوكس : نوسكربت يسمح لجافاسكربت و جافا وتقنيات اخرى فقظ للمجالات التي تثق بها."
+  },
+  "forbidGlobal": {
+    "message": "منع السكربتات نهائيا (محبذ)"
+  },
+  "forbidLocal": {
+    "message": "المنع من $1"
+  },
+  "global.warning.text": {
+    "message": "سيسمح للسكربتات كلياً (لكل المواقع).\nيمكن أن يكون هذا خطيرا.\nأمتأكد أنك تريد المواصلة؟"
+  },
+  "global.warning.title": {
+    "message": "تحذير!"
+  },
+  "incompatibleOptions": {
+    "message": "\"$1\"\nغير متوافق مع \"$2\".\\b هل تريد تفعيل الاول وتعطيل الاخِر؟"
+  },
+  "incompatibleOptions.title": {
+    "message": "خيارات تحذير غير متوافقة"
+  },
+  "informaction.tip": {
+    "message": "زيارة موقع إنفورماكشن"
+  },
+  "license": {
+    "message": "الترخيص"
+  },
+  "license.tip": {
+    "message": "اقرأ رخصة المستخدم"
+  },
+  "logo.tip": {
+    "message": "زيارة موقع الامتدادة"
+  },
+  "metaRefresh.notify": {
+    "message": "نوسكربت اعترض تحويلا باستخدام <META> داخل عنصر <NOSCRIPT>: $1 بعد $2 ثانية"
+  },
+  "metaRefresh.notify.follow": {
+    "message": "اتباع التحويل"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "ت"
+  },
+  "notify.options": {
+    "message": "خيارات"
+  },
+  "notify.options.accessKey": {
+    "message": "خ"
+  },
+  "notifyHide": {
+    "message": "أخفِ بعد $1 ثانية"
+  },
+  "removal.message": {
+    "message": "الغاء نوسكربت او ازالته تتنازل عن كل الحماية المتوفرة من البنرنامج.\n\nاذا تعبت من تفعيل اوامر السكربتات كل مرة اذا هنالك خيار آخر: \n\n يمكنك نوسكربت من الغاء توقيف السكربتات الا تلك التي تعينها كغير آمنة وهكذا تبقى محمياً بتدابير الامان المتقدمة مثل اكس اس اس, خطف النقر, سي اس ار اف وتهديدات ويب الاخرى. \n\n هل انت متأكد انك تريد كل حماية نوسكربت؟\n"
+  },
+  "removal.no": {
+    "message": "لا, فقط ايقاف صد السكربتات"
+  },
+  "removal.title": {
+    "message": "تحذير تنزيل المستوى الامني"
+  },
+  "removal.yes": {
+    "message": "نعم, ازالة كل وسائل الحماية"
+  },
+  "reset.title": {
+    "message": "تصفير نوسكربت"
+  },
+  "reset.warning": {
+    "message": "ستعاد كل تخصيصات نوسكربت و صلاحيات المواقع إلى القيم المبدئية فورا.\nهذا العمل لا يمكن استدراكه.\nأمتأكد أنك تريد المواصلة؟"
+  },
+  "siteInfo.confirm": {
+    "message": "أنت بصدد السؤال عن الموقع \"$1\" \n يمجرد التقدم بأسفسار ل  $2. \n هل تريد المواصلة؟"
+  },
+  "siteInfo.tooltip": {
+    "message": "النقر بالماوس المتوسط أو النقر+شفت للحصول على معلومات موقع…"
+  },
+  "sponsor.tip": {
+    "message": "زيارة موقع الراعي"
+  },
+  "trust": {
+    "message": "ثق في $1"
+  },
+  "unsafeReload.warning": {
+    "message": "تجري إعادة تحميل غير آمنة\n\n[$1] [$2]\n\nمن[$3]\n\nلن يحمي نوسكربت هذا الطلب\n"
+  },
+  "untrustedOrigin": {
+    "message": "مصدر غير موثوق"
+  },
+  "xss.notify.generic": {
+    "message": "منع نوسكربت محاولة لتشغيل سركيبتات عبر المواقع من $1.  تم تسجيل التفاصيل التقنية في المرقاب-الكونسول."
+  },
+  "xss.notify.showConsole": {
+    "message": "أظهار المرقاب-الكونسول…"
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "ر"
+  },
+  "xss.reason.filterXGet": {
+    "message": "تم تطهير طلب مشبوه. المسار الأصلي [$1] طُلب من [$2]. المسار المطهر هو: [$3]"
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "تم تطهير محيل طلب مشبوه. المسار الأصلي [$1] طُلب من [$2]. المسار المطهر هو: [$3]"
+  },
+  "xss.reason.filterXPost": {
+    "message": "تم تطهير تحميل مشبوه إلى [$1] من [$2]: تم تحويله إلى تنزيل فقط بالفعل GET."
+  }
+}

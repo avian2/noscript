@@ -1,0 +1,581 @@
+{
+  "Add": {
+    "message": "Přidat"
+  },
+  "Add.accesskey": {
+    "message": "P"
+  },
+  "AdditionalPermissions": {
+    "message": "Dodatečná povolení pro důvěryhodné stránky"
+  },
+  "AdditionalRestrictions": {
+    "message": "Dodatečná omezení pro nedůvěryhodné stránky"
+  },
+  "Advanced": {
+    "message": "Pokročilé"
+  },
+  "Allow": {
+    "message": "Povolit"
+  },
+  "Allow.accesskey": {
+    "message": "P"
+  },
+  "AllowBookmarks": {
+    "message": "Povolit stránky otevřené ze záložek"
+  },
+  "AllowClipboard": {
+    "message": "Povolit kopírování a vkládání textu z vnější schránky"
+  },
+  "AllowLocalLinks": {
+    "message": "Povolit místní odkazy"
+  },
+  "AllowPage": {
+    "message": "Povolit pro celou stránku"
+  },
+  "AllowPage.accesskey": {
+    "message": "s"
+  },
+  "AllowPing": {
+    "message": "Povolit <A PING...>"
+  },
+  "AllowViaBookmarks": {
+    "message": "Povolit stránky otevřené ze záložek"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "Blokovat každý objekt pocházející z nedůvěryhodné stránky"
+  },
+  "Appearance": {
+    "message": "Zobrazení"
+  },
+  "AutoAllowTopLevel": {
+    "message": "Dočasně povolit stránky domény nejvyšší úrovně"
+  },
+  "AutoReload": {
+    "message": "Automaticky aktualizovat stránky při změně povolení"
+  },
+  "BaseDom": {
+    "message": "Domény druhého řádu (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "Blokované objekty"
+  },
+  "BookmarkSync": {
+    "message": "Backup NoScript configuration in a bookmark for easy synchronization"
+  },
+  "ClearClickDescription": {
+    "message": "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version."
+  },
+  "ClearClickHeader": {
+    "message": "Potential Clickjacking / UI Redressing Attempt!"
+  },
+  "ClearClickOpt": {
+    "message": "ClearClick protection on pages…"
+  },
+  "ClearClickReport": {
+    "message": "Report"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "R"
+  },
+  "ClearClickReportId": {
+    "message": "Report ID:"
+  },
+  "ClearClickTitle": {
+    "message": "ClearClick Warning"
+  },
+  "Close": {
+    "message": "Zavřít"
+  },
+  "CollapseBlockedObjects": {
+    "message": "Skrýt zablokované objekty"
+  },
+  "ConfirmUnblock": {
+    "message": "Požadovat potvrzení při dočasném povolení objektu"
+  },
+  "ContentBlocker": {
+    "message": "Použít tato omezení i pro důvěryhodné stránky"
+  },
+  "CtxMenu": {
+    "message": "Místní nabídka"
+  },
+  "DefaultPolicies": {
+    "message": "Výchozí politika"
+  },
+  "Description": {
+    "message": "Mimořádná ochrana pro váš Firefox: NoScript povoluje JavaScript, Javu (a další zásuvné moduly) pouze pro důvěryhodné servery dle vašeho výběru (např. vaše stránka pro home-banking). Tento seznam důvěryhodných serverů založený na preventivním blokování přístupu předchází zneužití bezpečnostních děr (známých a dokonce i neznámých!) bez jakékoli ztráty na funkčnosti... Odborníci budou souhlasit: Firefox je skutečně bezpečnější s rozšířením NoScript :-)"
+  },
+  "Embeddings": {
+    "message": "Embedded Objects"
+  },
+  "Exceptions": {
+    "message": "Výjimky"
+  },
+  "Export": {
+    "message": "Uložit"
+  },
+  "Export.accesskey": {
+    "message": "U"
+  },
+  "FixLinks": {
+    "message": "Pokusit se opravit odkazy tvořené JavaScriptem"
+  },
+  "Forbid": {
+    "message": "Zakázat"
+  },
+  "Forbid.accesskey": {
+    "message": "Z"
+  },
+  "ForbidBookmarklets": {
+    "message": "Zakázat bookmarklety"
+  },
+  "ForbidFlash": {
+    "message": "Zakázat Adobe® Flash®"
+  },
+  "ForbidFonts": {
+    "message": "Zakázat @font-face"
+  },
+  "ForbidFrames": {
+    "message": "Zakázat <FRAME>"
+  },
+  "ForbidIFrames": {
+    "message": "Zakázat <IFRAME>"
+  },
+  "ForbidJava": {
+    "message": "Zakázat Java™"
+  },
+  "ForbidMedia": {
+    "message": "Zakázat <AUDIO> / <VIDEO>"
+  },
+  "ForbidMetaRefresh": {
+    "message": "Zakázat META přesměrování uvnitř elementů <NOSCRIPT>"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "M"
+  },
+  "ForbidPing": {
+    "message": "Zakázat <A PING...>"
+  },
+  "ForbidPlugins": {
+    "message": "Zakázat ostatní zásuvné moduly"
+  },
+  "ForbidSilverlight": {
+    "message": "Zakázat Microsoft® Silverlight™"
+  },
+  "ForbidWebGL": {
+    "message": "Zakázat WebGL"
+  },
+  "ForbidXSLT": {
+    "message": "Zakázat XSLT"
+  },
+  "FrameOptErr.desc": {
+    "message": "To protect your security, the publisher of this content does not allow it to be displayed in a frame."
+  },
+  "FrameOptErr.link": {
+    "message": "Click here to open this content in a new window"
+  },
+  "FrameOptErr.title": {
+    "message": "This content cannot be displayed in a frame"
+  },
+  "FullAddr": {
+    "message": "Úplné adresy (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "Úplné domény (www.noscript.net)"
+  },
+  "General": {
+    "message": "Obecné"
+  },
+  "GloballyEnabled": {
+    "message": "JavaScript celkově povolit (nebezpečné)"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "Always"
+  },
+  "Https.behavior": {
+    "message": "Behavior"
+  },
+  "Https.cookies": {
+    "message": "Cookies"
+  },
+  "Https.description": {
+    "message": "Forbid active web content unless it comes from a secure (HTTPS) connection:"
+  },
+  "Https.never": {
+    "message": "Never"
+  },
+  "Https.proxy": {
+    "message": "When using a proxy (recommended with Tor)"
+  },
+  "HttpsFaq": {
+    "message": "HTTPS FAQ…"
+  },
+  "HttpsFaq.accesskey": {
+    "message": "Q"
+  },
+  "HttpsForced": {
+    "message": "Force the following sites to use secure (HTTPS) connections:"
+  },
+  "HttpsForcedExceptions": {
+    "message": "Never force secure (HTTPS) connections for the following sites:"
+  },
+  "Import": {
+    "message": "Otevřít"
+  },
+  "Import.accesskey": {
+    "message": "O"
+  },
+  "KeepLocked": {
+    "message": "Keep this element locked (recommended)"
+  },
+  "MatchSample": {
+    "message": "Ukázka vyhovující vzoru:"
+  },
+  "Next": {
+    "message": "Next"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "Nezobrazovat zástupnou ikonu pro objekty pocházející z nedůvěryhodných stránek"
+  },
+  "Notifications": {
+    "message": "Oznámení"
+  },
+  "Notify": {
+    "message": "Zobrazovat zprávu o blokovaných skriptech"
+  },
+  "Notify.bottom": {
+    "message": "Umístit zprávu do spodní části"
+  },
+  "NselForce": {
+    "message": "Zobrazit prvek <NOSCRIPT> následující po zablokovaném prvku <SCRIPT>"
+  },
+  "NselNever": {
+    "message": "Zakázat prvky <NOSCRIPT>"
+  },
+  "OptBlockCssScanners": {
+    "message": "Blokovat skenery založené na CSS"
+  },
+  "OptFilterXGet": {
+    "message": "Zajistit podezřelé původce požadavku"
+  },
+  "OptFilterXPost": {
+    "message": "Převést požadavky POST napříč stránkou na požadavky GET neobsahující data."
+  },
+  "Options": {
+    "message": "Nastavení..."
+  },
+  "Options.accesskey": {
+    "message": "N"
+  },
+  "OptionsLong": {
+    "message": "Nastavení NoScript"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "Permissions": {
+    "message": "Povolení"
+  },
+  "PermissionsText": {
+    "message": "Můžete si zvolit, které webové stránky mají povoleno spouštět skripty. Zadejte adresu (např. http://www.site.com nebo site.com) na které se nachází stránka, pro kterou chcete skripty povolit a klepněte na Povolit."
+  },
+  "Plugins": {
+    "message": "Zásuvné moduly"
+  },
+  "Policies": {
+    "message": "Politika"
+  },
+  "Prev": {
+    "message": "Previuous"
+  },
+  "Refresh": {
+    "message": "Obnovení"
+  },
+  "ReloadWarn": {
+    "message": "Tato nastavení se projeví u nově otevřených nebo (manuálně) aktualizovaných stránkách"
+  },
+  "RemoveSelected": {
+    "message": "Odstranit vybrané stránky"
+  },
+  "Reset": {
+    "message": "Vynulovat"
+  },
+  "Reset.accesskey": {
+    "message": "V"
+  },
+  "ResetDef": {
+    "message": "Výchozí nastavení"
+  },
+  "ResetDef.accesskey": {
+    "message": "z"
+  },
+  "RevokeTemp": {
+    "message": "Zrušit dočasná povolení"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "č"
+  },
+  "SecureCookies": {
+    "message": "Enable Automatic Secure Cookies Management"
+  },
+  "SecureCookiesExceptions": {
+    "message": "Ignore unsafe cookies set over HTTPS by the following sites:"
+  },
+  "SecureCookiesForced": {
+    "message": "Force encryption for all the cookies set over HTTPS by the following sites:"
+  },
+  "SecurityManager": {
+    "message": "Správce zabezpečení"
+  },
+  "Show": {
+    "message": "Zobrazit..."
+  },
+  "ShowConsole": {
+    "message": "Zobrazit konzolu..."
+  },
+  "ShowConsole.accesskey": {
+    "message": "k"
+  },
+  "ShowPlaceholder": {
+    "message": "Zobrazovat zástupnou ikonu"
+  },
+  "SiteManager": {
+    "message": "Správce stránek"
+  },
+  "SitePolicies": {
+    "message": "Politika pro specifické stránky"
+  },
+  "StatusIcon": {
+    "message": "Ikona ve stavovém řádku"
+  },
+  "StatusLabel": {
+    "message": "Zobrazovat popisek ve stavovém řádku"
+  },
+  "TempAllowPage": {
+    "message": "Dočasně povolit celou stránku"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "D"
+  },
+  "TempCmd": {
+    "message": "Dočasně povolit [...]"
+  },
+  "TempToPerm": {
+    "message": "Udělit trvale povolení pro tuto stránku"
+  },
+  "TempToPerm.accesskey": {
+    "message": "t"
+  },
+  "ToolbarToggle": {
+    "message": "Klepnutí levým tlačítkem myši na ikonku Noscriptu ve stavovém řádku přepíná povolení pro doménu nejvyšší úrovně aktuální stránky"
+  },
+  "TruncateTitle": {
+    "message": "Zkrátit titulek stránky"
+  },
+  "Trust": {
+    "message": "Označit jako důvěryhodný"
+  },
+  "Trust.accesskey": {
+    "message": "d"
+  },
+  "Trusted": {
+    "message": "Důvěryhodné"
+  },
+  "TrustedPagesAdj": {
+    "message": "trusted"
+  },
+  "Unknown": {
+    "message": "Neznámé"
+  },
+  "UnsafeReload": {
+    "message": "Riskantní aktualizace"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "a"
+  },
+  "Untrust": {
+    "message": "Označit jako nedůvěryhodný"
+  },
+  "Untrust.accesskey": {
+    "message": "n"
+  },
+  "Untrusted": {
+    "message": "Nedůvěryhodné"
+  },
+  "UntrustedPagesAdj": {
+    "message": "untrusted"
+  },
+  "WebAddress": {
+    "message": "Adresa webové stránky:"
+  },
+  "Whitelist": {
+    "message": "Výjimky"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "Ochrana proti XSS - výjimky"
+  },
+  "XssExceptions.description": {
+    "message": "Cíle vyhovující těmto regulárním výrazům NEBUDOU CHRÁNĚNY proti XSS"
+  },
+  "XssFaq": {
+    "message": "XSS - často kladené otázky"
+  },
+  "XssFaq.accesskey": {
+    "message": "o"
+  },
+  "about": {
+    "message": "O $1"
+  },
+  "allowGlobal": {
+    "message": "JavaScript celkově povolit (nebezpečné)"
+  },
+  "allowLocal": {
+    "message": "Povolit $1"
+  },
+  "allowTemp": {
+    "message": "Dočasně povolit $1"
+  },
+  "allowed.glb": {
+    "message": "Nebezpečí! JavaScript je celkově povolen"
+  },
+  "allowed.no": {
+    "message": "JavaScript je aktuálně zakázán"
+  },
+  "allowed.prt": {
+    "message": "JavaScript je částečně povolen"
+  },
+  "allowed.yes": {
+    "message": "JavaScript je aktuálně povolen"
+  },
+  "alwaysAsk": {
+    "message": "Vždy požadovat potvrzení"
+  },
+  "audio.samples": {
+    "message": "Zvukové soubory"
+  },
+  "bookmarkSync.message": {
+    "message": "This bookmark is NOT meant to be opened, but to be synchronized using a service such as Weave or the XMarks extension."
+  },
+  "bookmarkSync.title": {
+    "message": "NoScript Configuration Bookmark"
+  },
+  "changelog": {
+    "message": "Seznam změn"
+  },
+  "changelog.tip": {
+    "message": "Zobrazit seznam změn"
+  },
+  "confirm": {
+    "message": "Jste si jist(a)?"
+  },
+  "distrust": {
+    "message": "Přidat $1 mezi nedůvěryhodné"
+  },
+  "extensionContributors": {
+    "message": "Spolupracovníci:"
+  },
+  "extensionContributors.tip": {
+    "message": "Lidé, kterým vděčíme za toto rozšíření"
+  },
+  "extensionCreator.tip": {
+    "message": "Navštívit domovskou stránku autora"
+  },
+  "extensionCreatorLabel": {
+    "message": "Autor:"
+  },
+  "extensionHomepage.tip": {
+    "message": "Navštívit domovskou stránku rozšíření"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "Mimořádná ochrana pro váš Firefox: NoScript povoluje JavaScript, Javu (a další zásuvné moduly) pouze pro důvěryhodné servery dle vašeho výběru (např. vaše stránka pro home-banking). Tento seznam důvěryhodných serverů založený na preventivním blokování přístupu předchází zneužití bezpečnostních děr (známých a dokonce i neznámých!) bez jakékoli ztráty na funkčnosti... Odborníci budou souhlasit: Firefox je skutečně bezpečnější s rozšířením NoScript :-)"
+  },
+  "forbidGlobal": {
+    "message": "JavaScript celkově zakázat (doporučeno)"
+  },
+  "forbidLocal": {
+    "message": "Zakázat $1"
+  },
+  "global.warning.text": {
+    "message": "JavaScript bude nyní celkově povolen (pro všechny stránky).\n Toto je potenciálně nebezpečné jednání.\nOpravdu chcete pokračovat?"
+  },
+  "global.warning.title": {
+    "message": "Upozornění!"
+  },
+  "informaction.tip": {
+    "message": "Navštívit domovskou stránku InformAction"
+  },
+  "license": {
+    "message": "Licence"
+  },
+  "license.tip": {
+    "message": "Přečíst licenci pro koncové uživatele"
+  },
+  "logo.tip": {
+    "message": "Navštívit domovskou stránku rozšíření"
+  },
+  "metaRefresh.notify": {
+    "message": "NoScript zablokoval <META> přesměrování uvnitř elementu <NOSCRIPT> $1 během $2 sekund."
+  },
+  "metaRefresh.notify.follow": {
+    "message": "Uskutečnit přesměrování"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "U"
+  },
+  "notify.options": {
+    "message": "Nastavení"
+  },
+  "notify.options.accessKey": {
+    "message": "N"
+  },
+  "notifyHide": {
+    "message": "Skrýt po $1 vteřinách"
+  },
+  "reset.title": {
+    "message": "NoScript - výchozí nastavení"
+  },
+  "reset.warning": {
+    "message": "Veškerá nastavení a výjimky stránek NoScriptu budou nyní nastavena na výchozí hodnoty.\nPotvrzení této volby nemůže být vráceno zpět.\nChcete pokračovat?"
+  },
+  "sponsor.tip": {
+    "message": "Navštívit domovskou stránku sponzora"
+  },
+  "trust": {
+    "message": "Přidat $1 mezi důvěryhodné"
+  },
+  "unsafeReload.warning": {
+    "message": "RISKANTNÍ aktualizování podezřelého\n\n$1 [$2]\n\nZ [$3]\n\nNoScript NEBUDE BLOKOVAT tento požadavek!"
+  },
+  "untrustedOrigin": {
+    "message": "nedůvěryhodný původ"
+  },
+  "version": {
+    "message": "Verze $1"
+  },
+  "xss.notify.generic": {
+    "message": "NoScript zachytil možný pokus o narušení webové stránky (tzv. cross-site scripting) od $1. Technické podrobnosti byly zaznamenány do chybové konzoly."
+  },
+  "xss.notify.showConsole": {
+    "message": "Zobrazit konzolu..."
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "k"
+  },
+  "xss.reason.filterXGet": {
+    "message": "Zajištěn podezřelý požadavek. Původní URL [$1] bylo vyžádáno od [$2]. Zajištěné URL: [$3].)"
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "Zajištěn podezřelý původce požadavku. URL [$1] bylo vyžádáno od [$2]. Zajištěný požadavek: [$3].)"
+  },
+  "xss.reason.filterXPost": {
+    "message": "Zajištěn podezřelý upload na [$1] z [$2]: převeden na požadavek GET pouze pro download."
+  }
+}

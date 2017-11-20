@@ -1,0 +1,614 @@
+{
+  "ABE.chooseEditor": {
+    "message": "Please choose a text editor for ABE rulesets"
+  },
+  "ABE.notify": {
+    "message": "Request $1 filtered by ABE: <$2> $3"
+  },
+  "ABE.syntaxError": {
+    "message": "Syntax error in ABE ruleset!"
+  },
+  "ABE.wanIpAsLocal": {
+    "message": "WAN IP ($1) ∈ LOCAL "
+  },
+  "Add": {
+    "message": "Add"
+  },
+  "Add.accesskey": {
+    "message": "A"
+  },
+  "AdditionalPermissions": {
+    "message": "Additional permissions for trusted sites"
+  },
+  "AdditionalRestrictions": {
+    "message": "Additional restrictions for untrusted sites"
+  },
+  "Advanced": {
+    "message": "Advanced"
+  },
+  "Allow": {
+    "message": "Allow"
+  },
+  "Allow.accesskey": {
+    "message": "A"
+  },
+  "AllowBookmarks": {
+    "message": "Allow sites opened through bookmarks"
+  },
+  "AllowClipboard": {
+    "message": "Allow rich text copy and paste from external clipboard"
+  },
+  "AllowLocalLinks": {
+    "message": "Allow local links"
+  },
+  "AllowPage": {
+    "message": "Allow all this page"
+  },
+  "AllowPage.accesskey": {
+    "message": "A"
+  },
+  "AllowPing": {
+    "message": "Allow <A PING...>"
+  },
+  "AllowViaBookmarks": {
+    "message": "Allow sites opened through bookmarks"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "Block every object coming from a site marked as untrusted"
+  },
+  "Appearance": {
+    "message": "Appearance"
+  },
+  "AutoAllowTopLevel": {
+    "message": "Temporarily allow top-level sites by default"
+  },
+  "AutoReload": {
+    "message": "Automatically reload affected pages when permissions change"
+  },
+  "BaseDom": {
+    "message": "Base 2nd level Domains (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "Blocked Objects"
+  },
+  "BookmarkSync": {
+    "message": "Backup NoScript configuration in a bookmark for easy synchronization"
+  },
+  "ClearClickDescription": {
+    "message": "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version."
+  },
+  "ClearClickHeader": {
+    "message": "Potential Clickjacking / UI Redressing Attempt!"
+  },
+  "ClearClickOpt": {
+    "message": "ClearClick protection on pages…"
+  },
+  "ClearClickReport": {
+    "message": "Report"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "R"
+  },
+  "ClearClickReportId": {
+    "message": "Report ID:"
+  },
+  "ClearClickTitle": {
+    "message": "ClearClick Warning"
+  },
+  "Close": {
+    "message": "Close"
+  },
+  "CollapseBlockedObjects": {
+    "message": "Collapse blocked objects"
+  },
+  "ConfirmUnblock": {
+    "message": "Ask for confirmation before temporarily unblocking an object"
+  },
+  "ContentBlocker": {
+    "message": "Apply these restrictions to trusted sites too"
+  },
+  "CtxMenu": {
+    "message": "Contextual menu"
+  },
+  "DefaultPolicies": {
+    "message": "Default Policies"
+  },
+  "Description": {
+    "message": "Extra protection for your Firefox: NoScript allows JavaScript, Flash (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)"
+  },
+  "Embeddings": {
+    "message": "Embedded Objects"
+  },
+  "Exceptions": {
+    "message": "Exceptions..."
+  },
+  "Export": {
+    "message": "Export"
+  },
+  "Export.accesskey": {
+    "message": "E"
+  },
+  "FixLinks": {
+    "message": "Attempt to fix JavaScript links"
+  },
+  "Forbid": {
+    "message": "Forbid"
+  },
+  "Forbid.accesskey": {
+    "message": "F"
+  },
+  "ForbidBookmarklets": {
+    "message": "Forbid bookmarklets"
+  },
+  "ForbidFlash": {
+    "message": "Forbid Adobe® Flash®"
+  },
+  "ForbidFonts": {
+    "message": "Forbid @font-face"
+  },
+  "ForbidFrames": {
+    "message": "Forbid <FRAME>"
+  },
+  "ForbidIFrames": {
+    "message": "Forbid <IFRAME>"
+  },
+  "ForbidJava": {
+    "message": "Forbid Java™"
+  },
+  "ForbidMedia": {
+    "message": "Forbid <AUDIO> / <VIDEO>"
+  },
+  "ForbidMetaRefresh": {
+    "message": "Forbid META redirections inside <NOSCRIPT> elements"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "R"
+  },
+  "ForbidPing": {
+    "message": "Forbid <A PING...>"
+  },
+  "ForbidPlugins": {
+    "message": "Forbid other plugins"
+  },
+  "ForbidSilverlight": {
+    "message": "Forbid Microsoft® Silverlight™"
+  },
+  "ForbidWebGL": {
+    "message": "Forbid WebGL"
+  },
+  "ForbidXSLT": {
+    "message": "Forbid XSLT"
+  },
+  "FrameOptErr.desc": {
+    "message": "To protect your security, the publisher of this content does not allow it to be displayed in a frame."
+  },
+  "FrameOptErr.link": {
+    "message": "Click here to open this content in a new window"
+  },
+  "FrameOptErr.title": {
+    "message": "This content cannot be displayed in a frame"
+  },
+  "FullAddr": {
+    "message": "Full Addresses (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "Full Domains (www.noscript.net)"
+  },
+  "General": {
+    "message": "General"
+  },
+  "GloballyEnabled": {
+    "message": "Scripts Globally Allowed (dangerous)"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "Always"
+  },
+  "Https.behavior": {
+    "message": "Behavior"
+  },
+  "Https.cookies": {
+    "message": "Cookies"
+  },
+  "Https.description": {
+    "message": "Forbid active web content unless it comes from a secure (HTTPS) connection:"
+  },
+  "Https.never": {
+    "message": "Never"
+  },
+  "Https.proxy": {
+    "message": "When using a proxy (recommended with Tor)"
+  },
+  "HttpsFaq": {
+    "message": "HTTPS FAQ…"
+  },
+  "HttpsFaq.accesskey": {
+    "message": "Q"
+  },
+  "HttpsForced": {
+    "message": "Force the following sites to use secure (HTTPS) connections:"
+  },
+  "HttpsForcedExceptions": {
+    "message": "Never force secure (HTTPS) connections for the following sites:"
+  },
+  "Import": {
+    "message": "Import"
+  },
+  "Import.accesskey": {
+    "message": "I"
+  },
+  "KeepLocked": {
+    "message": "Keep this element locked (recommended)"
+  },
+  "MatchSample": {
+    "message": "Pattern matching sample:"
+  },
+  "Next": {
+    "message": "Next"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "No placeholder for objects coming from sites marked as untrusted"
+  },
+  "Notifications": {
+    "message": "Notifications"
+  },
+  "Notify": {
+    "message": "Show message about blocked scripts"
+  },
+  "Notify.bottom": {
+    "message": "Place message at the bottom"
+  },
+  "NselForce": {
+    "message": "Show the <NOSCRIPT> element which follows a blocked <SCRIPT>"
+  },
+  "NselNever": {
+    "message": "Hide <NOSCRIPT> elements"
+  },
+  "OptBlockCssScanners": {
+    "message": "Block CSS-based scanners"
+  },
+  "OptFilterXGet": {
+    "message": "Sanitize cross-site suspicious requests"
+  },
+  "OptFilterXPost": {
+    "message": "Turn cross-site POST requests into data-less GET requests"
+  },
+  "Options": {
+    "message": "Options..."
+  },
+  "Options.accesskey": {
+    "message": "O"
+  },
+  "OptionsLong": {
+    "message": "NoScript Options"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "Permissions": {
+    "message": "Permissions"
+  },
+  "PermissionsText": {
+    "message": "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. \"http://www.site.com\" or \"site.com\") of the site you want to allow and then click Allow."
+  },
+  "Plugins": {
+    "message": "Plugins"
+  },
+  "Policies": {
+    "message": "Policies"
+  },
+  "Prev": {
+    "message": "Previuous"
+  },
+  "Refresh": {
+    "message": "Refresh"
+  },
+  "ReloadWarn": {
+    "message": "These options will take effect on new or (manually) reloaded pages"
+  },
+  "RemoveSelected": {
+    "message": "Remove Selected Sites"
+  },
+  "Reset": {
+    "message": "Reset"
+  },
+  "Reset.accesskey": {
+    "message": "R"
+  },
+  "ResetDef": {
+    "message": "Reset to defaults"
+  },
+  "ResetDef.accesskey": {
+    "message": "d"
+  },
+  "RevokeTemp": {
+    "message": "Revoke Temporary Permissions"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "T"
+  },
+  "SecureCookies": {
+    "message": "Enable Automatic Secure Cookies Management"
+  },
+  "SecureCookiesExceptions": {
+    "message": "Ignore unsafe cookies set over HTTPS by the following sites:"
+  },
+  "SecureCookiesForced": {
+    "message": "Force encryption for all the cookies set over HTTPS by the following sites:"
+  },
+  "SecurityManager": {
+    "message": "Security Manager"
+  },
+  "Show": {
+    "message": "Show..."
+  },
+  "ShowConsole": {
+    "message": "Show Console..."
+  },
+  "ShowConsole.accesskey": {
+    "message": "S"
+  },
+  "ShowPlaceholder": {
+    "message": "Show placeholder icon"
+  },
+  "SiteManager": {
+    "message": "Site Manager"
+  },
+  "SitePolicies": {
+    "message": "Site Specific Policies"
+  },
+  "StatusIcon": {
+    "message": "Status bar icon"
+  },
+  "StatusLabel": {
+    "message": "Status bar label"
+  },
+  "TempAllowPage": {
+    "message": "Temporarily allow all this page"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "P"
+  },
+  "TempCmd": {
+    "message": "Temporarily allow [...]"
+  },
+  "TempToPerm": {
+    "message": "Make page permissions permanent"
+  },
+  "TempToPerm.accesskey": {
+    "message": "m"
+  },
+  "ToolbarToggle": {
+    "message": "Left clicking on NoScript toolbar button toggles permissions for current top-level site"
+  },
+  "TruncateTitle": {
+    "message": "Truncate document titles"
+  },
+  "Trust": {
+    "message": "Mark as Trusted"
+  },
+  "Trust.accesskey": {
+    "message": "T"
+  },
+  "Trusted": {
+    "message": "Trusted"
+  },
+  "TrustedPagesAdj": {
+    "message": "trusted"
+  },
+  "Unknown": {
+    "message": "Unknwon"
+  },
+  "UnsafeReload": {
+    "message": "Unsafe Reload"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "R"
+  },
+  "Untrust": {
+    "message": "Mark as Untrusted"
+  },
+  "Untrust.accesskey": {
+    "message": "U"
+  },
+  "Untrusted": {
+    "message": "Untrusted"
+  },
+  "UntrustedPagesAdj": {
+    "message": "untrusted"
+  },
+  "WebAddress": {
+    "message": "Address of web site:"
+  },
+  "Whitelist": {
+    "message": "Whitelist"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "Anti-XSS Protection Exceptions"
+  },
+  "XssExceptions.description": {
+    "message": "Destinations matching these regular expressions will NOT be protected against XSS"
+  },
+  "XssFaq": {
+    "message": "XSS FAQ..."
+  },
+  "XssFaq.accesskey": {
+    "message": "Q"
+  },
+  "about": {
+    "message": "About $1"
+  },
+  "allowFrom": {
+    "message": "Allow all from $1"
+  },
+  "allowGlobal": {
+    "message": "Allow Scripts Globally (dangerous)"
+  },
+  "allowLocal": {
+    "message": "Allow $1"
+  },
+  "allowTemp": {
+    "message": "Temporarily allow $1"
+  },
+  "allowTempFrom": {
+    "message": "Temporarily allow all from $1"
+  },
+  "allowed.glb": {
+    "message": "Danger! Scripts Globally Allowed"
+  },
+  "allowed.no": {
+    "message": "Scripts Currently Forbidden"
+  },
+  "allowed.prt": {
+    "message": "Scripts Partially Allowed"
+  },
+  "allowed.yes": {
+    "message": "Scripts Currently Allowed"
+  },
+  "alwaysAsk": {
+    "message": "Always ask for confirmation"
+  },
+  "audio.samples": {
+    "message": "Audio samples"
+  },
+  "bookmarkSync.confirm": {
+    "message": "NoScript has found a configuration bookmark seemingly saved on\n$1.\nDo you really want to overwrite your local NoScript configuration with this bookmark\\'s content?"
+  },
+  "bookmarkSync.message": {
+    "message": "This bookmark is NOT meant to be opened, but to be synchronized using a service such as Weave or the XMarks extension."
+  },
+  "bookmarkSync.title": {
+    "message": "NoScript Configuration Bookmark"
+  },
+  "changelog": {
+    "message": "Changelog"
+  },
+  "changelog.tip": {
+    "message": "Show changelog"
+  },
+  "confirm": {
+    "message": "Are you sure?"
+  },
+  "disable": {
+    "message": "Disable $1"
+  },
+  "disable.accessKey": {
+    "message": "D"
+  },
+  "distrust": {
+    "message": "Mark $1 as Untrusted"
+  },
+  "extensionContributors": {
+    "message": "Contributors:"
+  },
+  "extensionContributors.tip": {
+    "message": "People you should thank for this extension"
+  },
+  "extensionCreator.tip": {
+    "message": "Visit author home page"
+  },
+  "extensionCreatorLabel": {
+    "message": "Author:"
+  },
+  "extensionHomepage.tip": {
+    "message": "Visit extension home page"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)"
+  },
+  "forbidGlobal": {
+    "message": "Forbid Scripts Globally (advised)"
+  },
+  "forbidLocal": {
+    "message": "Forbid $1"
+  },
+  "global.warning.text": {
+    "message": "Scripts are going to be allowed globally (for every site).\nThis is a potentially dangerous action.\nDo you really want to proceed?"
+  },
+  "global.warning.title": {
+    "message": "Warning!"
+  },
+  "informaction.tip": {
+    "message": "Visit InformAction home page"
+  },
+  "license": {
+    "message": "License"
+  },
+  "license.tip": {
+    "message": "Read end-user license"
+  },
+  "logo.tip": {
+    "message": "Visit extension home page"
+  },
+  "metaRefresh.notify": {
+    "message": "NoScript blocked a <META> redirection inside a <NOSCRIPT> element: $1 in $2 seconds."
+  },
+  "metaRefresh.notify.follow": {
+    "message": "Follow Redirection"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "F"
+  },
+  "notify.options": {
+    "message": "Options"
+  },
+  "notify.options.accessKey": {
+    "message": "O"
+  },
+  "notifyHide": {
+    "message": "Hide after $1 seconds"
+  },
+  "reset.title": {
+    "message": "NoScript Reset"
+  },
+  "reset.warning": {
+    "message": "ALL the NoScript preferences and site permissions will be reset to their default values immediately.\nThis action cannot be reverted.\nDo you want to continue?"
+  },
+  "siteInfo.confirm": {
+    "message": "You\\'re about to ask for information about the \\\"$1\\\" site\nby submitting a query to $2.\nDo you want to continue?"
+  },
+  "siteInfo.tooltip": {
+    "message": "Middle-click or shift+click for site info..."
+  },
+  "sponsor.tip": {
+    "message": "Visit sponsor home page"
+  },
+  "trust": {
+    "message": "Trust $1"
+  },
+  "unsafeReload.warning": {
+    "message": "UNSAFELY reloading a suspicious\n\n$1 [$2]\n\nFROM [$3]\n\nNoScript will NOT protect this request!\n"
+  },
+  "untrustedOrigin": {
+    "message": "an untrusted origin"
+  },
+  "version": {
+    "message": "Version $1"
+  },
+  "xss.notify.generic": {
+    "message": "NoScript filtered a potential cross-site scripting (XSS) attempt from $1. Technical details have been logged to the Console."
+  },
+  "xss.notify.showConsole": {
+    "message": "Show Console…"
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "S"
+  },
+  "xss.reason.filterXGet": {
+    "message": "Sanitized suspicious request. Original URL [$1] requested from [$2]. Sanitized URL: [$3]."
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "Sanitized suspicious request referer. URL [$1] requested from [$2]. Sanitized Referrer: [$3]."
+  },
+  "xss.reason.filterXPost": {
+    "message": "Sanitized suspicious upload to [$1] from [$2]: transformed into a download-only GET request."
+  }
+}

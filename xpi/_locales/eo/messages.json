@@ -1,0 +1,701 @@
+{
+  "ABE": {
+    "message": "ABE"
+  },
+  "ABE.accesskey": {
+    "message": "A"
+  },
+  "ABE.chooseEditor": {
+    "message": "Bonvolu elekti tekstredaktilon por ABE-a regularo"
+  },
+  "ABE.disable.accesskey": {
+    "message": "M"
+  },
+  "ABE.disable.label": {
+    "message": "Malŝalti"
+  },
+  "ABE.edit.accesskey": {
+    "message": "R"
+  },
+  "ABE.edit.label": {
+    "message": "Redakti…"
+  },
+  "ABE.enable.accesskey": {
+    "message": "a"
+  },
+  "ABE.enable.label": {
+    "message": "Ŝalti"
+  },
+  "ABE.enabled.label": {
+    "message": "Ŝalti ABE-on (obeigilon de interpaĝaraj limoj)"
+  },
+  "ABE.notify": {
+    "message": "Peto $1 filtritas de ABE: 〈$2〉 $3"
+  },
+  "ABE.refresh.accesskey": {
+    "message": "e"
+  },
+  "ABE.refresh.label": {
+    "message": "Reŝargi"
+  },
+  "ABE.rulesets.label": {
+    "message": "Regularo:"
+  },
+  "ABE.siteEnabled.label": {
+    "message": "Rajtigi ttt-ejojn puŝi siajn regularojn"
+  },
+  "ABE.syntaxError": {
+    "message": "Sintaksa eraro en regularo de ABE!"
+  },
+  "ABE.wanIpAsLocal": {
+    "message": "WAN IP ($1) ∈ LOCAL"
+  },
+  "Add": {
+    "message": "Aldoni"
+  },
+  "Add.accesskey": {
+    "message": "A"
+  },
+  "AdditionalPermissions": {
+    "message": "Pliaj permesoj por fidataj retejoj"
+  },
+  "AdditionalRestrictions": {
+    "message": "Pliaj limigoj por nefidataj retejoj"
+  },
+  "Advanced": {
+    "message": "Spertulaj"
+  },
+  "Allow": {
+    "message": "Rajtigi"
+  },
+  "Allow.accesskey": {
+    "message": "R"
+  },
+  "AllowBookmarks": {
+    "message": "Rajtigi retejojn ŝargatajn per paĝosignoj"
+  },
+  "AllowClipboard": {
+    "message": "Permesi kopiadon kaj enmetadon de aranĝita (\"riĉa\") teksto je la ekstera tondujo"
+  },
+  "AllowLocalLinks": {
+    "message": "Permesi lokajn ligojn"
+  },
+  "AllowPage": {
+    "message": "Rajtigi la tutan tiun ĉi paĝon"
+  },
+  "AllowPage.accesskey": {
+    "message": "A"
+  },
+  "AllowPing": {
+    "message": "Permesi 〈A PING…〉"
+  },
+  "AllowViaBookmarks": {
+    "message": "Rajtigi retejojn ŝargitajn per paĝosignoj"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "Bloki ĉiujn objektojn venantajn de retejoj markitaj kiel Nefidataj"
+  },
+  "Appearance": {
+    "message": "Aspekto"
+  },
+  "AutoAllowTopLevel": {
+    "message": "Provizore rajtigi ĉiujn senpere (ne en kadro ks) vizitatajn retejojn"
+  },
+  "AutoReload": {
+    "message": "Aŭtomate reŝargi koncernatajn paĝojn ĉe ŝanĝo de permesoj"
+  },
+  "BaseDom": {
+    "message": "Bazaj duanivelaj domajnoj (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "Blokitaj objektoj"
+  },
+  "BookmarkSync": {
+    "message": "Kopii NoScript-ajn agordojn en paĝosignon por facila sinkronigo"
+  },
+  "ClearClickDescription": {
+    "message": "NoScript haltigis musan aŭ klavan agon kun parte kaŝita elemento. Alklaku la bildon sube por ŝanĝi inter montro de la kaŝita kaj la malkaŝita aspektoj."
+  },
+  "ClearClickHeader": {
+    "message": "Ebla provo misklakigi per trompa ŝanĝo de aspekto!"
+  },
+  "ClearClickOpt": {
+    "message": "ClearClick-a protekto sur paĝoj…"
+  },
+  "ClearClickReport": {
+    "message": "Raporti"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "R"
+  },
+  "ClearClickReportId": {
+    "message": "Identigilo de la raporto:"
+  },
+  "ClearClickTitle": {
+    "message": "ClearClick-a averto"
+  },
+  "Close": {
+    "message": "Fermi"
+  },
+  "CollapseBlockedObjects": {
+    "message": "Maletendi blokitajn objektojn"
+  },
+  "ConfirmUnblock": {
+    "message": "Peti konfirmon antaŭ ol provizore malbloki objekton"
+  },
+  "ContentBlocker": {
+    "message": "Apliki ĉi tiujn limigojn ankaŭ al fidataj retejoj"
+  },
+  "CtxMenu": {
+    "message": "Kunteksta menuo"
+  },
+  "DefaultPolicies": {
+    "message": "Default Policies"
+  },
+  "Description": {
+    "message": "Plia protekto por via Firefox: NoScript permesas uzon de JavaSkripto, Javo kc nur al fidataj retejoj de vi elektitaj (ekzemple via retbankejo). Tiu ĉi laŭblanklista anticipa blokado malhelpas misuzadon de malsekuroj (konataj kaj eĉ nekonataj!) sen funkcikripligo… Kompetentuloj jesos: Firefox vere estas pli sekura kun NoScript :-)"
+  },
+  "Donate": {
+    "message": "Donaci"
+  },
+  "Donate.accesskey": {
+    "message": "o"
+  },
+  "Embeddings": {
+    "message": "Enkonstruaĵoj"
+  },
+  "Exceptions": {
+    "message": "Esceptoj…"
+  },
+  "Export": {
+    "message": "Eksporti"
+  },
+  "Export.accesskey": {
+    "message": "E"
+  },
+  "FixLinks": {
+    "message": "Provi normaligi JavaSkriptajn ligilojn"
+  },
+  "Forbid": {
+    "message": "Malrajtigi"
+  },
+  "Forbid.accesskey": {
+    "message": "M"
+  },
+  "ForbidBookmarklets": {
+    "message": "Malpermesi skriptajn “paĝosignojn” (bookmarklets)"
+  },
+  "ForbidFlash": {
+    "message": "Malpermesi Adobe® Flash®"
+  },
+  "ForbidFonts": {
+    "message": "Malpermesi @font-face"
+  },
+  "ForbidFrames": {
+    "message": "Malpermesi 〈FRAME〉"
+  },
+  "ForbidIFrames": {
+    "message": "Malpermesi 〈IFRAME〉"
+  },
+  "ForbidJava": {
+    "message": "Malpermesi Ĝavon (Java™)"
+  },
+  "ForbidMedia": {
+    "message": "Malpermesi 〈AUDIO〉 / 〈VIDEO〉"
+  },
+  "ForbidMetaRefresh": {
+    "message": "Malpermesi META-alidirektojn ene de elementoj 〈NOSCRIPT〉"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "R"
+  },
+  "ForbidPing": {
+    "message": "Malpermesi 〈A PING…〉"
+  },
+  "ForbidPlugins": {
+    "message": "Malpermesi aliajn kromaĵojn"
+  },
+  "ForbidSilverlight": {
+    "message": "Malpermesi Microsoft® Silverlight™"
+  },
+  "ForbidWebGL": {
+    "message": "Malpermesi WebGL"
+  },
+  "ForbidXSLT": {
+    "message": "Malpermesi XSLT-on"
+  },
+  "FrameOptErr.desc": {
+    "message": "Por protekti vian sekurecon, la eldonisto de tiu ĉi enhavo malpermesas vidigi ĝin enkadre."
+  },
+  "FrameOptErr.link": {
+    "message": "Klaku ĉi tie por malfermi enhavon en nova fenestro"
+  },
+  "FrameOptErr.title": {
+    "message": "Ne videbla enkadre"
+  },
+  "FullAddr": {
+    "message": "Tutaj adresoj (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "Tutaj domajnoj (www.noscript.net)"
+  },
+  "General": {
+    "message": "Ĝeneralaj"
+  },
+  "GloballyEnabled": {
+    "message": "Defaŭlte rajtigi ĉiujn retejojn (danĝere)"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "Ĉiam"
+  },
+  "Https.behavior": {
+    "message": "Konduto"
+  },
+  "Https.cookies": {
+    "message": "Cookies"
+  },
+  "Https.description": {
+    "message": "Malpermesi aktivan TTT-enhavon venantan ne tra sekura (HTTPS) konekto:"
+  },
+  "Https.never": {
+    "message": "Neniam"
+  },
+  "Https.proxy": {
+    "message": "Dum uzado de prokura servilo (rekomendita kun Tor)"
+  },
+  "HttpsFaq": {
+    "message": "HTTPS FAQ…"
+  },
+  "HttpsFaq.accesskey": {
+    "message": "Q"
+  },
+  "HttpsForced": {
+    "message": "Devigi la sekvantajn retejojn uzi sekurajn (HTTPS) konektojn:"
+  },
+  "HttpsForcedExceptions": {
+    "message": "Neniam postuli sekurajn (HTTPS) konektojn por la sekvantaj retejoj:"
+  },
+  "Import": {
+    "message": "Importi"
+  },
+  "Import.accesskey": {
+    "message": "I"
+  },
+  "KeepLocked": {
+    "message": "Teni tiun eron ŝlosita (admonata)"
+  },
+  "MatchSample": {
+    "message": "Ekzempla ŝablono:"
+  },
+  "Next": {
+    "message": "Sekve"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "Ne montri lokokupilojn por objektoj el Nefidataj retejoj"
+  },
+  "Notifications": {
+    "message": "Sciigoj"
+  },
+  "Notify": {
+    "message": "Montri mesaĝon pri blokitaj skriptoj"
+  },
+  "Notify.bottom": {
+    "message": "Meti la mesaĝon malsupren"
+  },
+  "NotifyMeta": {
+    "message": "Montri mesaĝon pri blokitaj META-alidirektoj"
+  },
+  "NotifyMeta.accesskey": {
+    "message": "R"
+  },
+  "NselForce": {
+    "message": "Vidigi la eron 〈NOSCRIPT〉, kiu sekvas baritan 〈SCRIPT〉"
+  },
+  "NselNever": {
+    "message": "Kaŝi erojn 〈NOSCRIPT〉"
+  },
+  "OptBlockCssScanners": {
+    "message": "Bloki per-CSS-ajn skanilojn"
+  },
+  "OptFilterXGet": {
+    "message": "Purigi suspektajn interretejajn petojn"
+  },
+  "OptFilterXPost": {
+    "message": "Transformu inter-retejajn POST-petojn en sendatenajn GET-petojn."
+  },
+  "Options": {
+    "message": "Opcioj…"
+  },
+  "Options.accesskey": {
+    "message": "O"
+  },
+  "OptionsLong": {
+    "message": "Opcioj de NoScript"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "Permissions": {
+    "message": "Rajtoj"
+  },
+  "PermissionsText": {
+    "message": "Vi povas specifi, kiuj ttt-ejoj rajtu plenumigi skriptojn. Entajpu la adreson aŭ la domajnonomon (ekz. “http://www.retejo.org” aŭ “retejo.org”) de la ttt-ejo, kiun vi volas rajtigi, kaj poste alklaku “Rajtigi”."
+  },
+  "Plugins": {
+    "message": "Kromaĵoj"
+  },
+  "Policies": {
+    "message": "Policies"
+  },
+  "Preset": {
+    "message": "Protektonivelo"
+  },
+  "Preset.high": {
+    "message": "Fortikaĵo (Maksimuma protekto)"
+  },
+  "Preset.low": {
+    "message": "Facila (Nigra listo + TTT-sekurigo)"
+  },
+  "Preset.medium": {
+    "message": "Klasika (Blanka listo + TTT-sekurigo)"
+  },
+  "Preset.off": {
+    "message": "Malŝaltita (ĉu serioze?!)"
+  },
+  "Prev": {
+    "message": "Antaŭe"
+  },
+  "RecentBlocked": {
+    "message": "Freŝe baritaj ttt-ejoj"
+  },
+  "Refresh": {
+    "message": "Reŝargi"
+  },
+  "ReloadWarn": {
+    "message": "Tiuj ĉi agordoj efikos nur por paĝoj novŝargotaj aŭ reŝargotaj de vi"
+  },
+  "RemoveSelected": {
+    "message": "Forigi la elektitajn ttt-ejojn"
+  },
+  "Reset": {
+    "message": "Reŝargi"
+  },
+  "Reset.accesskey": {
+    "message": "s"
+  },
+  "ResetDef": {
+    "message": "Defaŭltigi"
+  },
+  "ResetDef.accesskey": {
+    "message": "D"
+  },
+  "RevokeTemp": {
+    "message": "Retiri la provizorajn permesojn"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "R"
+  },
+  "SecureCookies": {
+    "message": "Ŝalti aŭtomatan plisekurigan traktadon de kuketoj"
+  },
+  "SecureCookiesExceptions": {
+    "message": "Ignori nesekurajn kuketojn difinitajn tra HTTPS de la jenaj retejoj:"
+  },
+  "SecureCookiesForced": {
+    "message": "Devigi ĉifradon de ĉiuj kuketoj difinitaj tra HTTPS de la jenaj retejoj:"
+  },
+  "SecurityManager": {
+    "message": "Security Manager"
+  },
+  "Show": {
+    "message": "Vidigi…"
+  },
+  "ShowConsole": {
+    "message": "Vidigi konzolon…"
+  },
+  "ShowConsole.accesskey": {
+    "message": "K"
+  },
+  "ShowPlaceholder": {
+    "message": "Montri lokokupan bildeton"
+  },
+  "ShowReleaseNotes": {
+    "message": "Vidigi eldonajn notojn ĉe ĝisdatigo"
+  },
+  "SiteManager": {
+    "message": "Site Manager"
+  },
+  "SitePolicies": {
+    "message": "Site Specific Policies"
+  },
+  "StatusIcon": {
+    "message": "Statstrian bildeton"
+  },
+  "StatusLabel": {
+    "message": "Statstrian tekston"
+  },
+  "TempAllowPage": {
+    "message": "Dumtempe rajtigi tutan ĉi tiun paĝon"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "T"
+  },
+  "TempCmd": {
+    "message": "Dumtempe rajtigi […]"
+  },
+  "TempToPerm": {
+    "message": "Konservi la provizorajn permesojn por la paĝo"
+  },
+  "TempToPerm.accesskey": {
+    "message": "M"
+  },
+  "ToolbarToggle": {
+    "message": "Maldekstr-alklako de la ilarstria bildo de NoScript baskuligu rajtigon de la montrata senpere ŝargita retejo."
+  },
+  "TruncateTitle": {
+    "message": "Truncate document titles"
+  },
+  "Trust": {
+    "message": "Marki kiel fidata"
+  },
+  "Trust.accesskey": {
+    "message": "F"
+  },
+  "Trusted": {
+    "message": "Fidataj"
+  },
+  "TrustedPagesAdj": {
+    "message": "fidataj"
+  },
+  "Uninstall": {
+    "message": "Malinstali"
+  },
+  "Unknown": {
+    "message": "Nekonata"
+  },
+  "UnsafeReload": {
+    "message": "Nesekura reŝargo"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "N"
+  },
+  "Untrust": {
+    "message": "Marki kiel nefidata"
+  },
+  "Untrust.accesskey": {
+    "message": "N"
+  },
+  "Untrusted": {
+    "message": "Nefidataj"
+  },
+  "UntrustedPagesAdj": {
+    "message": "nefidataj"
+  },
+  "WebAddress": {
+    "message": "Adreso de retpaĝaro:"
+  },
+  "Whitelist": {
+    "message": "Blanklisto"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "Esceptoj el kontraŭ-XSS-a protekto"
+  },
+  "XssExceptions.description": {
+    "message": "Celadresoj konformaj al ĉi tiuj regulesprimoj NE protektatos kontraŭ XSS."
+  },
+  "XssFaq": {
+    "message": "Respondaro pri XSS (angle)…"
+  },
+  "XssFaq.accesskey": {
+    "message": "R"
+  },
+  "about": {
+    "message": "Pri $1"
+  },
+  "allowFrom": {
+    "message": "Rajtigi ĉion de $1"
+  },
+  "allowGlobal": {
+    "message": "Defaŭlte rajtigi ĉiujn retejojn (danĝere)"
+  },
+  "allowLocal": {
+    "message": "Rajtigi $1"
+  },
+  "allowTemp": {
+    "message": "Dumtempe rajtigi $1"
+  },
+  "allowTempFrom": {
+    "message": "Dumtempe rajtigi ĉion de $1"
+  },
+  "allowed.glb": {
+    "message": "Danĝero! Ĉiuj retejoj estas defaŭlte rajtigataj!"
+  },
+  "allowed.no": {
+    "message": "Skriptoj aktuale malpermesitas"
+  },
+  "allowed.prt": {
+    "message": "Skriptoj parte permesitas"
+  },
+  "allowed.yes": {
+    "message": "Skriptoj aktuale permesitas"
+  },
+  "alwaysAsk": {
+    "message": "Ĉiam peti konfirmon"
+  },
+  "audio.samples": {
+    "message": "Sonaĵetoj"
+  },
+  "bookmarkSync.confirm": {
+    "message": "NoScript trovis agordan paĝosignon verŝajne konservitan en\n$1.\nĈu vi volas superskribi viajn lokajn NoScript-ajn agordojn per la enhavo de tiu paĝosigno ?"
+  },
+  "bookmarkSync.message": {
+    "message": "Tiu ĉi paĝosigno estas NE por malfermi ĝin, sed por sinkronigi ĝin per servo kiel Weave aŭ la etendoprogramo XMarks."
+  },
+  "bookmarkSync.title": {
+    "message": "Agorda paĝosigno de NoScript"
+  },
+  "changelog": {
+    "message": "Ŝanĝoprotokolo"
+  },
+  "changelog.tip": {
+    "message": "Vidigi ŝanĝoprotokolon"
+  },
+  "confirm": {
+    "message": "Ĉu vi certigas ?"
+  },
+  "disable": {
+    "message": "Malebligi $1"
+  },
+  "disable.accessKey": {
+    "message": "M"
+  },
+  "distrust": {
+    "message": "Marki $1 kiel nefidatan"
+  },
+  "extensionContributors": {
+    "message": "Kontribuantoj:"
+  },
+  "extensionContributors.tip": {
+    "message": "Tiuj, kiujn vi devus danki por ĉi-tiu etendoprogramo"
+  },
+  "extensionCreator.tip": {
+    "message": "Vizitu la retejon de la aŭtoro"
+  },
+  "extensionCreatorLabel": {
+    "message": "Aŭtoro:"
+  },
+  "extensionHomepage.tip": {
+    "message": "Vizitu la retejon de la etendoprogramo"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "Plia protekto por via Firefox: NoScript permesas uzon de JavaSkripto, Javo kc nur al fidataj retejoj de vi elektitaj (ekzemple via retbankejo). Tiu ĉi laŭblanklista anticipa blokado malhelpas misuzadon de malsekuroj (konataj kaj eĉ nekonataj!) sen funkcikripligo… Kompetentuloj jesos: Firefox vere estas pli sekura kun NoScript :-)"
+  },
+  "forbidGlobal": {
+    "message": "Defaŭlte malrajtigi ĉiujn retejojn (rekomendate)"
+  },
+  "forbidLocal": {
+    "message": "Malrajtigi $1"
+  },
+  "global.warning.text": {
+    "message": "Skriptoj estos defaŭlte permesitaj (por ĉiuj ttt-ejoj).\nTio estas eble danĝera ago.\nĈu vi vere daŭrigas ?"
+  },
+  "global.warning.title": {
+    "message": "Averto!"
+  },
+  "informaction.tip": {
+    "message": "Vizitu la retejon de InformAction"
+  },
+  "license": {
+    "message": "Permesilo"
+  },
+  "license.tip": {
+    "message": "Legu la permesilon por la uzanto"
+  },
+  "logo.tip": {
+    "message": "Vizitu la retejon de la etendoprogramo"
+  },
+  "metaRefresh.notify": {
+    "message": "NoScript baris 〈META〉-alidirekton ene de 〈NOSCRIPT〉-elemento: $1 en $2 sekundoj."
+  },
+  "metaRefresh.notify.follow": {
+    "message": "Sekvi alidirekton"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "A"
+  },
+  "notify.options": {
+    "message": "Opcioj"
+  },
+  "notify.options.accessKey": {
+    "message": "O"
+  },
+  "notifyHide": {
+    "message": "Kaŝi post $1 sekundoj"
+  },
+  "removal.message": {
+    "message": "Malebligante aŭ malinstalante NoScript, vi rezignas pri la TUTA protekto, kiun NoScript disponigas.\n\nSe vi nur estas tedita de la manipulado de skriptaj permesoj retejo post retejo, estas pli sekura ebleco.\n\nNoScript povas ĉesigi bloki skriptojn, escepte de tiuj, kiujn vi markas kiel nefidindajn, dum ĝi ankoraŭ protektas vin per la plej progresintaj sekurecaj kontraŭrimedoj kontraŭ XSS, Clickjacking, CSRF kaj aliaj retminacoj.\n\nĈu vi vere volas forigi la TUTAN protekton per NoScript?\n"
+  },
+  "removal.no": {
+    "message": "Ne, ĉesu nur bloki skriptojn"
+  },
+  "removal.title": {
+    "message": "Averto pri malpromociado de sekureco"
+  },
+  "removal.yes": {
+    "message": "Jes, forigu la TUTAN protekton"
+  },
+  "reset.title": {
+    "message": "Restarigi agordojn de NoScript"
+  },
+  "reset.warning": {
+    "message": "ĈIUJ NoScript-aj agordoj kaj ttt-ejaj rajtoj tuj anstataŭiĝos per la defaŭltaj.\nTio ne malfareblas.\nĈu vi daŭrigas?"
+  },
+  "siteInfo.confirm": {
+    "message": "Vi estas petonta informojn pri la retejo «$1»\nper sendo de peto al $2.\nĈu vi volas fari tion?"
+  },
+  "siteInfo.tooltip": {
+    "message": "Mez-alklaku aŭ shift+alklaku por ricevi informojn pri la retejo…"
+  },
+  "sponsor.tip": {
+    "message": "Vizitu la mecenatan retejon"
+  },
+  "trust": {
+    "message": "Fidi $1"
+  },
+  "unsafeReload.warning": {
+    "message": "DANĜERE reŝargas suspektan\n\n$1 [$2]\n\nDE [$3]\n\nNoScript NE protektos tiun peton !\n"
+  },
+  "untrustedOrigin": {
+    "message": "nefidata origino"
+  },
+  "version": {
+    "message": "Versio $1"
+  },
+  "xss.notify.generic": {
+    "message": "NoScript filtris eblan inter-ttt-ejan skriptan (XSS) provon de $1. Teknikaj informoj estas enprotokolitaj en la konzolo."
+  },
+  "xss.notify.showConsole": {
+    "message": "Vidigi konzolon..."
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "K"
+  },
+  "xss.reason.filterXGet": {
+    "message": "Purigis suspektan peton. Originala URL [$1] petis de [$2]. Purigita URL : [$3]."
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "Purigis suspektan petanton. URL [$1] petis de [$2]. Purigita petanto : [$3]."
+  },
+  "xss.reason.filterXPost": {
+    "message": "Purigis suspektan alŝuton al [$1] de [$2]: transformis al nur-elŝuta GET peto."
+  }
+}

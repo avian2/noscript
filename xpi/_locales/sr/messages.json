@@ -1,0 +1,689 @@
+{
+  "ABE": {
+    "message": "ABE"
+  },
+  "ABE.accesskey": {
+    "message": "A"
+  },
+  "ABE.chooseEditor": {
+    "message": "Изаберите уређивач текста за скуп правила ABE"
+  },
+  "ABE.disable.accesskey": {
+    "message": "н"
+  },
+  "ABE.disable.label": {
+    "message": "Онемогући"
+  },
+  "ABE.edit.accesskey": {
+    "message": "У"
+  },
+  "ABE.edit.label": {
+    "message": "Уреди…"
+  },
+  "ABE.enable.accesskey": {
+    "message": "м"
+  },
+  "ABE.enable.label": {
+    "message": "Омогући"
+  },
+  "ABE.enabled.label": {
+    "message": "Омогући ABE (Application Boundaries Enforcer)"
+  },
+  "ABE.notify": {
+    "message": "Затражи $1 филтрирано од ABE: <$2> $3"
+  },
+  "ABE.refresh.accesskey": {
+    "message": "О"
+  },
+  "ABE.refresh.label": {
+    "message": "Освежи"
+  },
+  "ABE.rulesets.label": {
+    "message": "Скупови правила:"
+  },
+  "ABE.siteEnabled.label": {
+    "message": "Дозволи сајтовима да поставе свој скуп правила"
+  },
+  "ABE.syntaxError": {
+    "message": "Синтаксна грешка у скупу правила ABE!"
+  },
+  "ABE.wanIpAsLocal": {
+    "message": "WAN IP ($1) ∈ LOCAL"
+  },
+  "Add": {
+    "message": "Додај"
+  },
+  "Add.accesskey": {
+    "message": "Д"
+  },
+  "AdditionalPermissions": {
+    "message": "Додатне дозволе за поверљиве сајтове"
+  },
+  "AdditionalRestrictions": {
+    "message": "Додатна ограничења за неповерљиве сајтове"
+  },
+  "Advanced": {
+    "message": "Напредно"
+  },
+  "Allow": {
+    "message": "Дозволи"
+  },
+  "Allow.accesskey": {
+    "message": "Д"
+  },
+  "AllowBookmarks": {
+    "message": "Дозволи сајтове отворене преко забелешки"
+  },
+  "AllowClipboard": {
+    "message": "Дозволи умножавање и убацивање текста из спољне оставе"
+  },
+  "AllowLocalLinks": {
+    "message": "Дозволи локалне везе"
+  },
+  "AllowPage": {
+    "message": "Дозволи све на овој страници"
+  },
+  "AllowPage.accesskey": {
+    "message": "Д"
+  },
+  "AllowPing": {
+    "message": "Дозволи <A PING…>"
+  },
+  "AllowViaBookmarks": {
+    "message": "Дозволи сајтове отворене преко забелешки"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "Забрани сваки објекат који долази из неповерљивог сајта"
+  },
+  "Appearance": {
+    "message": "Изглед"
+  },
+  "AutoAllowTopLevel": {
+    "message": "Привремено дозволи домене првог нивоа"
+  },
+  "AutoReload": {
+    "message": "Самостално учитај странице при измени дозвола"
+  },
+  "BaseDom": {
+    "message": "Домени другог нивоа (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "Забрањени објекти"
+  },
+  "BookmarkSync": {
+    "message": "Направи резервни примерак подешавања у забелешци ради лакшег усклађивања"
+  },
+  "ClearClickDescription": {
+    "message": "Носкрипт је пресретнуо интеракцију миша или тастатуре с делимично сакривеним елементом. Кликните на слику испод да промените између започетог и чистог издања."
+  },
+  "ClearClickHeader": {
+    "message": "Покушај кликџекинга / UI реадресирања!"
+  },
+  "ClearClickOpt": {
+    "message": "Клирклик заштита на страницама…"
+  },
+  "ClearClickReport": {
+    "message": "Пријави"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "П"
+  },
+  "ClearClickReportId": {
+    "message": "ID пријаве:"
+  },
+  "ClearClickTitle": {
+    "message": "Клирклик ворнинг"
+  },
+  "Close": {
+    "message": "Затвори"
+  },
+  "CollapseBlockedObjects": {
+    "message": "Скупи забрањене објекте"
+  },
+  "ConfirmUnblock": {
+    "message": "Питај ме за потврду пре привременог деблокирања објекта"
+  },
+  "ContentBlocker": {
+    "message": "Примени ова ограничења и на сајтове у белој листи"
+  },
+  "CtxMenu": {
+    "message": "Приручни мени"
+  },
+  "DefaultPolicies": {
+    "message": "Подразумеване полисе"
+  },
+  "Description": {
+    "message": "Додатна заштита за фајерфокс. Носкрипт омогућава јаваскрипт, јаву и друге прикључке само за поверљиве сајтове. Ова бела листа заснована је на превентивном забрањивању приступа ради спречавања искоришћавања сигурносних рањивости без губљења функционалности. Стручњаци ће се сложити — фајерфокс је безбеднији уз носкрипт."
+  },
+  "Donate": {
+    "message": "Донирај"
+  },
+  "Donate.accesskey": {
+    "message": "Д"
+  },
+  "Embeddings": {
+    "message": "Уграђивања"
+  },
+  "Exceptions": {
+    "message": "Изузеци…"
+  },
+  "Export": {
+    "message": "Извези"
+  },
+  "Export.accesskey": {
+    "message": "И"
+  },
+  "FixLinks": {
+    "message": "Поправи везе јаваскрипте"
+  },
+  "Forbid": {
+    "message": "Забрани"
+  },
+  "Forbid.accesskey": {
+    "message": "З"
+  },
+  "ForbidBookmarklets": {
+    "message": "Забрани маркерчиће"
+  },
+  "ForbidFlash": {
+    "message": "Забрани адоуб флеш"
+  },
+  "ForbidFonts": {
+    "message": "Забрани @font-face"
+  },
+  "ForbidFrames": {
+    "message": "Забрани <FRAME>"
+  },
+  "ForbidIFrames": {
+    "message": "Забрани <IFRAME>"
+  },
+  "ForbidJava": {
+    "message": "Забрани јаву"
+  },
+  "ForbidMedia": {
+    "message": "Забрани <AUDIO>/<VIDEO>"
+  },
+  "ForbidMetaRefresh": {
+    "message": "Забрани мета преусмерења унутар елемента <NOSCRIPT>"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "м"
+  },
+  "ForbidPing": {
+    "message": "Забрани <A PING…>"
+  },
+  "ForbidPlugins": {
+    "message": "Забрани остале прикључке"
+  },
+  "ForbidSilverlight": {
+    "message": "Забрани Мајкрософт силверлајт"
+  },
+  "ForbidWebGL": {
+    "message": "Забрани WebGL"
+  },
+  "ForbidXSLT": {
+    "message": "Забрани XSLT"
+  },
+  "FrameOptErr.desc": {
+    "message": "Да би вас задржао/ла безбедним, издавач овог садржаја не дозвољава његово приказивање у оквиру."
+  },
+  "FrameOptErr.link": {
+    "message": "Кликните овде да отворите садржај у новом прозору"
+  },
+  "FrameOptErr.title": {
+    "message": "Овај садржај не може бити приказан у оквиру"
+  },
+  "FullAddr": {
+    "message": "Целе адресе (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "Цели домени (www.noscript.net)"
+  },
+  "General": {
+    "message": "Опште"
+  },
+  "GloballyEnabled": {
+    "message": "Скриптови су глобално дозвољени"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "Увек"
+  },
+  "Https.behavior": {
+    "message": "Понашање"
+  },
+  "Https.cookies": {
+    "message": "Колачићи"
+  },
+  "Https.description": {
+    "message": "Забрани активни садржај осим ако долази из безбедне (HTTPS) везе:"
+  },
+  "Https.never": {
+    "message": "Никада"
+  },
+  "Https.proxy": {
+    "message": "При коришћењу посредника (препоручује се тор)"
+  },
+  "HttpsFaq": {
+    "message": "HTTPS ЧПП…"
+  },
+  "HttpsFaq.accesskey": {
+    "message": "Ч"
+  },
+  "HttpsForced": {
+    "message": "Приморај следеће сајтове да користе безбедну (HTTPS) везу:"
+  },
+  "HttpsForcedExceptions": {
+    "message": "Не приморавај коришћење безбедне (HTTPS) везе за следеће сајтове:"
+  },
+  "Import": {
+    "message": "Увези"
+  },
+  "Import.accesskey": {
+    "message": "У"
+  },
+  "KeepLocked": {
+    "message": "Задржи овај елемент закључаним (препоручено)"
+  },
+  "MatchSample": {
+    "message": "Обрасци:"
+  },
+  "Next": {
+    "message": "Следеће"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "Ниједан местодржач за објекте не долази из неповерљивих сајтова"
+  },
+  "Notifications": {
+    "message": "Обавештења"
+  },
+  "Notify": {
+    "message": "Прикажи поруку о забрањеним скриптовима"
+  },
+  "Notify.bottom": {
+    "message": "Постави поруку на дно"
+  },
+  "NotifyMeta": {
+    "message": "Прикажи поруку о забрањеним мета преусмерењима"
+  },
+  "NotifyMeta.accesskey": {
+    "message": "р"
+  },
+  "NselForce": {
+    "message": "Прикажи елемент <NOSCRIPT> који прати забрањен <SCRIPT>"
+  },
+  "NselNever": {
+    "message": "Сакриј елементе <NOSCRIPT>"
+  },
+  "OptBlockCssScanners": {
+    "message": "Забрани скенере засноване на  CSS-у"
+  },
+  "OptFilterXGet": {
+    "message": "Уклони сумњиве захтеве међусајтовне скрипте"
+  },
+  "OptFilterXPost": {
+    "message": "Пребаци међусајтовне POST захтеве у безподатковне GET захтеве"
+  },
+  "Options": {
+    "message": "Поставке…"
+  },
+  "Options.accesskey": {
+    "message": "П"
+  },
+  "OptionsLong": {
+    "message": "Поставке"
+  },
+  "OptionsWidth": {
+    "message": "40 em"
+  },
+  "Permissions": {
+    "message": "Дозволе"
+  },
+  "PermissionsText": {
+    "message": "Можете изабрати којим сајтовима је дозвољено извршавање скриптова. Унесите адресу или домен сајта и кликните на „Дозволи“."
+  },
+  "Plugins": {
+    "message": "Прикључци"
+  },
+  "Policies": {
+    "message": "Полисе"
+  },
+  "Preset": {
+    "message": "Ниво безбедности"
+  },
+  "Preset.high": {
+    "message": "Тврђава (пуно закључавање)"
+  },
+  "Preset.low": {
+    "message": "Једноставно (црна листа и веб безбедност)"
+  },
+  "Preset.medium": {
+    "message": "Класично (бела листа и веб безбедност)"
+  },
+  "Preset.off": {
+    "message": "Искључено"
+  },
+  "Prev": {
+    "message": "Претходно"
+  },
+  "RecentBlocked": {
+    "message": "Забрањени сајтови"
+  },
+  "Refresh": {
+    "message": "Освежи"
+  },
+  "ReloadWarn": {
+    "message": "Ове поставке утицаће на нове или поновно отворене странице"
+  },
+  "RemoveSelected": {
+    "message": "Уклони изабране сајтове"
+  },
+  "Reset": {
+    "message": "Поништи"
+  },
+  "Reset.accesskey": {
+    "message": "П"
+  },
+  "ResetDef": {
+    "message": "Постави на подразумевано"
+  },
+  "ResetDef.accesskey": {
+    "message": "с"
+  },
+  "RevokeTemp": {
+    "message": "Опозови привремене дозволе"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "з"
+  },
+  "SecureCookies": {
+    "message": "Омогући Безбедно управљање колачићима"
+  },
+  "SecureCookiesExceptions": {
+    "message": "Занемари небезбедне колачиће HTTPS-а за следеће сајтове:"
+  },
+  "SecureCookiesForced": {
+    "message": "Приморај шифровање за све колачиће HTTPS-а за следеће сајтове:"
+  },
+  "SecurityManager": {
+    "message": "Управљач сигурности"
+  },
+  "Show": {
+    "message": "Прикажи…"
+  },
+  "ShowConsole": {
+    "message": "Прикажи конзолу…"
+  },
+  "ShowConsole.accesskey": {
+    "message": "к"
+  },
+  "ShowPlaceholder": {
+    "message": "Прикажи иконицу местодржача"
+  },
+  "ShowReleaseNotes": {
+    "message": "Прикажи белешке издавача при доградњи"
+  },
+  "SiteManager": {
+    "message": "Управљач сајтовима"
+  },
+  "SitePolicies": {
+    "message": "Полисе одређених сајтова"
+  },
+  "StatusIcon": {
+    "message": "Иконица на линији стања"
+  },
+  "StatusLabel": {
+    "message": "Ознака линије стања"
+  },
+  "TempAllowPage": {
+    "message": "Привремено дозволи све на овој страници"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "р"
+  },
+  "TempCmd": {
+    "message": "Привремено дозволи […]"
+  },
+  "TempToPerm": {
+    "message": "Начини дозволе на страници као трајне"
+  },
+  "TempToPerm.accesskey": {
+    "message": "Н"
+  },
+  "ToolbarToggle": {
+    "message": "Левим кликом на алатницу носкрипт мења дозволе за текући домен првог нивоа"
+  },
+  "TruncateTitle": {
+    "message": "Одсеци наслове докумената"
+  },
+  "Trust": {
+    "message": "Означи као поверљиво"
+  },
+  "Trust.accesskey": {
+    "message": "п"
+  },
+  "Trusted": {
+    "message": "Поверљиво"
+  },
+  "TrustedPagesAdj": {
+    "message": "поверљиво"
+  },
+  "Uninstall": {
+    "message": "Уклони"
+  },
+  "Unknown": {
+    "message": "Непознато"
+  },
+  "UnsafeReload": {
+    "message": "Небезбедно поновно учитавање"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "б"
+  },
+  "Untrust": {
+    "message": "Означи као неповерљиво"
+  },
+  "Untrust.accesskey": {
+    "message": "з"
+  },
+  "Untrusted": {
+    "message": "Неповерљиво"
+  },
+  "UntrustedPagesAdj": {
+    "message": "неповерљиво"
+  },
+  "WebAddress": {
+    "message": "Адреса сајта:"
+  },
+  "Whitelist": {
+    "message": "Бела листа"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "Анти-XSS изузеци заштите"
+  },
+  "XssExceptions.description": {
+    "message": "Одредишта која се поклапају с регуларним изразима неће бити заштићена против XSS-а."
+  },
+  "XssFaq": {
+    "message": "XSS ЧПП…"
+  },
+  "XssFaq.accesskey": {
+    "message": "Ч"
+  },
+  "about": {
+    "message": "О додатку $1"
+  },
+  "allowFrom": {
+    "message": "Дозволи све са $1"
+  },
+  "allowGlobal": {
+    "message": "Дозволи скриптове глобално"
+  },
+  "allowLocal": {
+    "message": "Дозволи $1"
+  },
+  "allowTemp": {
+    "message": "Привремено дозволи $1"
+  },
+  "allowTempFrom": {
+    "message": "Привремено дозволи све са $1"
+  },
+  "allowed.glb": {
+    "message": "Упозорење! Скриптови су дозвољени глобално"
+  },
+  "allowed.no": {
+    "message": "Скриптови су тренутно забрањени"
+  },
+  "allowed.prt": {
+    "message": "Скриптови су делимично дозвољени"
+  },
+  "allowed.yes": {
+    "message": "Скриптови су тренутно дозвољени"
+  },
+  "alwaysAsk": {
+    "message": "Увек ме питај за потврду"
+  },
+  "audio.samples": {
+    "message": "Звучни примерци"
+  },
+  "bookmarkSync.confirm": {
+    "message": "Носкрипт је пронашао забелешку подешавања која је сачувана у\n$1.\nЖелите ли да замените текуће поставке са поставкама из забелешке?"
+  },
+  "bookmarkSync.message": {
+    "message": "Ова забелешка није намењена за отварање, већ за усклађивање користећи додатке као што су Weave или XMarks."
+  },
+  "bookmarkSync.title": {
+    "message": "Забелешка подешавања"
+  },
+  "changelog": {
+    "message": "Попис измена"
+  },
+  "changelog.tip": {
+    "message": "Прикажи попис измена"
+  },
+  "confirm": {
+    "message": "Јесте ли сигурни?"
+  },
+  "disable": {
+    "message": "Онемогући $1"
+  },
+  "disable.accessKey": {
+    "message": "О"
+  },
+  "distrust": {
+    "message": "Означи $1 као неповерљиво"
+  },
+  "extensionContributors": {
+    "message": "Доприносиоци:"
+  },
+  "extensionContributors.tip": {
+    "message": "Људи заслужни за овај додатак"
+  },
+  "extensionCreator.tip": {
+    "message": "Посетите страницу аутора"
+  },
+  "extensionCreatorLabel": {
+    "message": "Аутор:"
+  },
+  "extensionHomepage.tip": {
+    "message": "Посетите страницу додатка"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "Додатна заштита за фајерфокс. Носкрипт омогућава јаваскрипт, јаву и друге прикључке само за поверљиве сајтове. Ова бела листа заснована је на превентивном забрањивању приступа ради спречавања искоришћавања сигурносних рањивости без губљења функционалности. Стручњаци ће се сложити – фајерфокс је безбеднији уз носкрипт."
+  },
+  "forbidGlobal": {
+    "message": "Забрани скриптове глобално"
+  },
+  "forbidLocal": {
+    "message": "Забрани $1"
+  },
+  "global.warning.text": {
+    "message": "Скриптови ће бити дозвољени глобално (за сваки сајт).\nОва радња може бити опасна. Желите ли да наставите?"
+  },
+  "global.warning.title": {
+    "message": "Упозорење!"
+  },
+  "informaction.tip": {
+    "message": "Посетите страницу Информекшен"
+  },
+  "license": {
+    "message": "Лиценца"
+  },
+  "license.tip": {
+    "message": "Прочитајте лиценцу крајњег корисника"
+  },
+  "logo.tip": {
+    "message": "Посетите страницу додатка"
+  },
+  "metaRefresh.notify": {
+    "message": "Носкрипт је блокирао преусмерење <META> унутар елемента <NOSCRIPT>: $1 у $2 секунде/и."
+  },
+  "metaRefresh.notify.follow": {
+    "message": "Прати преусмерење"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "П"
+  },
+  "notify.options": {
+    "message": "Поставке"
+  },
+  "notify.options.accessKey": {
+    "message": "с"
+  },
+  "notifyHide": {
+    "message": "Сакриј после $1 секунде/и"
+  },
+  "reset.title": {
+    "message": "Поништавање"
+  },
+  "reset.warning": {
+    "message": "Сва подешавања додатка и дозволе сајтова биће поништени на подразумеване вредности.\nОва радња се не може вратити.\nЖелите ли да наставите?"
+  },
+  "siteInfo.confirm": {
+    "message": "Управо ћете питати за податке о сајту „$1“\nслањем упита на $2.\nЖелите ли да наставите?"
+  },
+  "siteInfo.tooltip": {
+    "message": "Притисните средњи клик или шифт и клик за податке о страници…"
+  },
+  "sponsor.tip": {
+    "message": "Посетите страницу спонзора"
+  },
+  "trust": {
+    "message": "Означи $1 као поверљиво"
+  },
+  "unsafeReload.warning": {
+    "message": "Небезбедно учитавање сумњивих\n\n$1 [$2]\n\nFROM [$3]\n\nНоскрипт неће заштитити овај захтев!\n"
+  },
+  "untrustedOrigin": {
+    "message": "неповерљив извор"
+  },
+  "version": {
+    "message": "Издање $1"
+  },
+  "xss.notify.generic": {
+    "message": "Носкрипт је филтрирао покушај међусајтовног скриптовања (XSS) из $1. Технички детаљи су забележени у конзоли."
+  },
+  "xss.notify.showConsole": {
+    "message": "Прикажи конзолу…"
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "к"
+  },
+  "xss.reason.filterXGet": {
+    "message": "Саниран је сумњив захтев. Изворна адреса [$1] је затражена из [$2]. Санирана адреса: [$3]."
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "Саниран је сумњив упућивач захтева. Адреса [$1] је затражена из [$2]. Саниран упућивач: [$3]."
+  },
+  "xss.reason.filterXPost": {
+    "message": "Санирано је сумњиво слање на [$1] из [$2]: претворено у GET захтев доступан само за преузимање."
+  }
+}

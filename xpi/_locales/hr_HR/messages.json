@@ -1,0 +1,689 @@
+{
+  "ABE": {
+    "message": "ABE"
+  },
+  "ABE.accesskey": {
+    "message": "A"
+  },
+  "ABE.chooseEditor": {
+    "message": "Molimo birajte ureðivac teksta za ABE skupine pravila (rulesets)"
+  },
+  "ABE.disable.accesskey": {
+    "message": "I"
+  },
+  "ABE.disable.label": {
+    "message": "Izkljuciti"
+  },
+  "ABE.edit.accesskey": {
+    "message": "M"
+  },
+  "ABE.edit.label": {
+    "message": "Modificirati..."
+  },
+  "ABE.enable.accesskey": {
+    "message": "u"
+  },
+  "ABE.enable.label": {
+    "message": "Ukljuciti"
+  },
+  "ABE.enabled.label": {
+    "message": "Ukljuciti ABE (Application Boundaries Enforcer)"
+  },
+  "ABE.notify": {
+    "message": "Zahtjev $1 filtriran od ABE: <$2> $3"
+  },
+  "ABE.refresh.accesskey": {
+    "message": "O"
+  },
+  "ABE.refresh.label": {
+    "message": "Osvjeziti"
+  },
+  "ABE.rulesets.label": {
+    "message": "Skupovi pravila (rulesets):"
+  },
+  "ABE.siteEnabled.label": {
+    "message": "Dozvoljiti sajtovima koristenje njihovih rulesets-a (skupovi pravila)"
+  },
+  "ABE.syntaxError": {
+    "message": "Sintaksni error u ABE pravilama (rulesets)"
+  },
+  "ABE.wanIpAsLocal": {
+    "message": "WAN IP ($1) ∈ LOCAL"
+  },
+  "Add": {
+    "message": "Dodaj"
+  },
+  "Add.accesskey": {
+    "message": "D"
+  },
+  "AdditionalPermissions": {
+    "message": "Dodatna dopuštenja za provjerene stranice"
+  },
+  "AdditionalRestrictions": {
+    "message": "Dodatna ograničenja za neprovjerene stranice"
+  },
+  "Advanced": {
+    "message": "Napredno"
+  },
+  "Allow": {
+    "message": "Dopusti"
+  },
+  "Allow.accesskey": {
+    "message": "D"
+  },
+  "AllowBookmarks": {
+    "message": "Dopusti stranice koje su otvorene putem zabilješki"
+  },
+  "AllowClipboard": {
+    "message": "Dopusti kopiranje i lijepljenje obogaćenog teksta iz vanjskog međuspremnika"
+  },
+  "AllowLocalLinks": {
+    "message": "Dopusti lokalne poveznice"
+  },
+  "AllowPage": {
+    "message": "Allow all this page"
+  },
+  "AllowPage.accesskey": {
+    "message": "A"
+  },
+  "AllowPing": {
+    "message": "Dopusti <A PING...>"
+  },
+  "AllowViaBookmarks": {
+    "message": "Dopusti stranice koje su otvorene putem zabilješki"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "Block every object coming from a site marked as untrusted"
+  },
+  "Appearance": {
+    "message": "Izgled"
+  },
+  "AutoAllowTopLevel": {
+    "message": "Privremeno kao zadano dopusti vršne stranice"
+  },
+  "AutoReload": {
+    "message": "Automatski ponovno učitaj obuhvaćene stranice nakon promjene dopuštenja"
+  },
+  "BaseDom": {
+    "message": "Osnovne domene drugog nivoa (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "Blocked Objects"
+  },
+  "BookmarkSync": {
+    "message": "Backup NoScript configuration in a bookmark for easy synchronization"
+  },
+  "ClearClickDescription": {
+    "message": "NoScript je primjetio interakciju miša ili tastatura sa djelomićno sakrivenim elementom. Klikni na gornju sliku kako bi promjenio između zaklonjene i jasne verzije"
+  },
+  "ClearClickHeader": {
+    "message": "Mogući Clickjacking/UI Redressing napad"
+  },
+  "ClearClickOpt": {
+    "message": "ClearClick-zaštita na stranicama..."
+  },
+  "ClearClickReport": {
+    "message": "Report"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "R"
+  },
+  "ClearClickReportId": {
+    "message": "Report ID:"
+  },
+  "ClearClickTitle": {
+    "message": "ClearClick-upozorenje"
+  },
+  "Close": {
+    "message": "Zatvori"
+  },
+  "CollapseBlockedObjects": {
+    "message": "Collapse blocked objects"
+  },
+  "ConfirmUnblock": {
+    "message": "Pitaj za potvrdu prije privremenog deblokiranja objekta"
+  },
+  "ContentBlocker": {
+    "message": "Apply these restrictions to trusted sites too"
+  },
+  "CtxMenu": {
+    "message": "Kontekstni izbornik"
+  },
+  "DefaultPolicies": {
+    "message": "Zadane police"
+  },
+  "Description": {
+    "message": "Dodatna zaštita za Vaš Firefox: NoScript dopušta JavaScript, Flash (i druge dodatke) samo za provjerene domene Vašeg izbora (npr. Vaša stranica Intenet bankarstva) . Ovaj pristup preventivnog blokiranja zasnovan na popisu dopuštenih spriječava iskorištavanje sigurnosnih slabosti (znanih i neznanih) bez ikakvog gubitka funkcionalnosti... Stručnjaci će se složiti: Firefox je zbilja sigurniji s NoScript :-)"
+  },
+  "Donate": {
+    "message": "Donacija"
+  },
+  "Donate.accesskey": {
+    "message": "d"
+  },
+  "Embeddings": {
+    "message": "Ugrađeni objekti"
+  },
+  "Exceptions": {
+    "message": "Exceptions..."
+  },
+  "Export": {
+    "message": "Izvezi"
+  },
+  "Export.accesskey": {
+    "message": "I"
+  },
+  "FixLinks": {
+    "message": "Pokušaj popraviti poveznice JavaScripta"
+  },
+  "Forbid": {
+    "message": "Zabrani"
+  },
+  "Forbid.accesskey": {
+    "message": "b"
+  },
+  "ForbidBookmarklets": {
+    "message": "Zabrani bookmarklete"
+  },
+  "ForbidFlash": {
+    "message": "Zabrani Adobe® Flash®"
+  },
+  "ForbidFonts": {
+    "message": "Zabraniti @font-face"
+  },
+  "ForbidFrames": {
+    "message": "Zabrani <FRAMES>"
+  },
+  "ForbidIFrames": {
+    "message": "Zabrani <IFRAME>"
+  },
+  "ForbidJava": {
+    "message": "Zabrani Java™"
+  },
+  "ForbidMedia": {
+    "message": "Zabraniti <AUDIO> / <VIDEO>"
+  },
+  "ForbidMetaRefresh": {
+    "message": "Forbid META redirections inside <NOSCRIPT> elements"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "R"
+  },
+  "ForbidPing": {
+    "message": "Zabrani <A PING...>"
+  },
+  "ForbidPlugins": {
+    "message": "Zabrani druge dodatke"
+  },
+  "ForbidSilverlight": {
+    "message": "Zabrani Microsoft® Silverlight™"
+  },
+  "ForbidWebGL": {
+    "message": "Zabraniti WebGL"
+  },
+  "ForbidXSLT": {
+    "message": "Zabrani XSLT"
+  },
+  "FrameOptErr.desc": {
+    "message": "To protect your security, the publisher of this content does not allow it to be displayed in a frame."
+  },
+  "FrameOptErr.link": {
+    "message": "Click here to open this content in a new window"
+  },
+  "FrameOptErr.title": {
+    "message": "This content cannot be displayed in a frame"
+  },
+  "FullAddr": {
+    "message": "Puna adresa (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "Puna domena (www.noscript.net)"
+  },
+  "General": {
+    "message": "Općenito"
+  },
+  "GloballyEnabled": {
+    "message": "Skripte su općenito dopuštene (opasno)"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "Uvijek"
+  },
+  "Https.behavior": {
+    "message": "Ponašanje"
+  },
+  "Https.cookies": {
+    "message": "Kolačiće"
+  },
+  "Https.description": {
+    "message": "Zabraniti aktivni web-sadržaj ukoliko ne potječe iz sigurne (HTTPS) konekcije"
+  },
+  "Https.never": {
+    "message": "Nikada"
+  },
+  "Https.proxy": {
+    "message": "Kada se koristi proxy (preporučeno sa Tor-om)"
+  },
+  "HttpsFaq": {
+    "message": "Često postavljena pitanja u vezi HTTPS-a"
+  },
+  "HttpsFaq.accesskey": {
+    "message": "Q"
+  },
+  "HttpsForced": {
+    "message": "Prisiliti sljedeće sajtove da koriste sigurnu (HTTPS) konekciju"
+  },
+  "HttpsForcedExceptions": {
+    "message": "Nikada ne prisiliti korištenje sigurne (HTTPS) konekcije za sljedeće sajtove"
+  },
+  "Import": {
+    "message": "Uvezi"
+  },
+  "Import.accesskey": {
+    "message": "U"
+  },
+  "KeepLocked": {
+    "message": "Držati zaključan ovaj elemenat (preporučeno)"
+  },
+  "MatchSample": {
+    "message": "Pattern matching sample:"
+  },
+  "Next": {
+    "message": "Sljedeći"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "No placeholder for objects coming from sites marked as untrusted"
+  },
+  "Notifications": {
+    "message": "Obavijesti"
+  },
+  "Notify": {
+    "message": "Prikaži poruku o blokiranim skriptama"
+  },
+  "Notify.bottom": {
+    "message": "Prikaži poruku pri dnu"
+  },
+  "NotifyMeta": {
+    "message": "Pokazati poruku u vezi s blokiranim META-redirections"
+  },
+  "NotifyMeta.accesskey": {
+    "message": "R"
+  },
+  "NselForce": {
+    "message": "Prikaži <NOSCRIPT> elemente koji slijede blokirane <SCRIPT>"
+  },
+  "NselNever": {
+    "message": "Sakrij <NOSCRIPT> elemente"
+  },
+  "OptBlockCssScanners": {
+    "message": "Block CSS-based scanners"
+  },
+  "OptFilterXGet": {
+    "message": "Sanitize cross-site suspicious requests"
+  },
+  "OptFilterXPost": {
+    "message": "Turn cross-site POST requests into data-less GET requests"
+  },
+  "Options": {
+    "message": "Opcije..."
+  },
+  "Options.accesskey": {
+    "message": "O"
+  },
+  "OptionsLong": {
+    "message": "NoScript Opcije"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "Permissions": {
+    "message": "Dopuštenja"
+  },
+  "PermissionsText": {
+    "message": "Možete odrediti koje web stranice imaju dopuštenje za izvođenje skripti. Upišite adresu ili domenu (npr. \"http://www.stranica.hr\" ili \"stranica.hr\") stranice kojoj želite dopustiti i kliknite na Dopusti."
+  },
+  "Plugins": {
+    "message": "Plugins"
+  },
+  "Policies": {
+    "message": "Police"
+  },
+  "Preset": {
+    "message": "Razina sigurnosti"
+  },
+  "Preset.high": {
+    "message": "Tvrðava (Kompletno blokiranje)"
+  },
+  "Preset.low": {
+    "message": "Easy going (Crna lista + web sigurnost)"
+  },
+  "Preset.medium": {
+    "message": "Classic (Bijela lista + web sigurnost)"
+  },
+  "Preset.off": {
+    "message": "Izkljuciti (ozbiljno???)"
+  },
+  "Prev": {
+    "message": "Prethodni"
+  },
+  "RecentBlocked": {
+    "message": "Nedavno blokirane web stranice"
+  },
+  "Refresh": {
+    "message": "Osvježi"
+  },
+  "ReloadWarn": {
+    "message": "Ove postavke će imati učinka na novim ili (ručno) ponovno učitanim stranicama"
+  },
+  "RemoveSelected": {
+    "message": "Ukloni označene stranice"
+  },
+  "Reset": {
+    "message": "Reset"
+  },
+  "Reset.accesskey": {
+    "message": "R"
+  },
+  "ResetDef": {
+    "message": "Reset to defaults"
+  },
+  "ResetDef.accesskey": {
+    "message": "d"
+  },
+  "RevokeTemp": {
+    "message": "Revoke Temporary Permissions"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "T"
+  },
+  "SecureCookies": {
+    "message": "Dozvoliti automatičnu upravu sigurnih kolačića"
+  },
+  "SecureCookiesExceptions": {
+    "message": "Ignorirati nesigurne kolačiće podešene preko HTTPS-a kod sljedećih sajta:"
+  },
+  "SecureCookiesForced": {
+    "message": "Prisiliti enkripciju za sve kolačiće podešene preko HTTPS-a kod sljedećih sajta:"
+  },
+  "SecurityManager": {
+    "message": "Upravitelj sigurnosti"
+  },
+  "Show": {
+    "message": "Prikaži..."
+  },
+  "ShowConsole": {
+    "message": "Show Console..."
+  },
+  "ShowConsole.accesskey": {
+    "message": "S"
+  },
+  "ShowPlaceholder": {
+    "message": "Prikaži ikonu za držanje položaja"
+  },
+  "ShowReleaseNotes": {
+    "message": "Pokazati informacije vezane za novo izdanje u slucaju azuriranja"
+  },
+  "SiteManager": {
+    "message": "Upravitelj stranicom"
+  },
+  "SitePolicies": {
+    "message": "Specifične police stranice"
+  },
+  "StatusIcon": {
+    "message": "Ikonu u statusnoj traci"
+  },
+  "StatusLabel": {
+    "message": "Naziv u statusnoj traci"
+  },
+  "TempAllowPage": {
+    "message": "Temporarily allow all this page"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "P"
+  },
+  "TempCmd": {
+    "message": "Privremeno dopusti [...]"
+  },
+  "TempToPerm": {
+    "message": "Make page permissions permanent"
+  },
+  "TempToPerm.accesskey": {
+    "message": "m"
+  },
+  "ToolbarToggle": {
+    "message": "Lijevom klikom na NoScript gumb alatne trake mijenjate dopuštenja za trenutnu vršnu stranicu"
+  },
+  "TruncateTitle": {
+    "message": "Odsijeci naslove dokumenta"
+  },
+  "Trust": {
+    "message": "Označi kao provjereno"
+  },
+  "Trust.accesskey": {
+    "message": "v"
+  },
+  "Trusted": {
+    "message": "Pouzdane"
+  },
+  "TrustedPagesAdj": {
+    "message": "pouzdane"
+  },
+  "Uninstall": {
+    "message": "Dezinstalirati"
+  },
+  "Unknown": {
+    "message": "Nepoznato"
+  },
+  "UnsafeReload": {
+    "message": "Unsafe Reload"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "R"
+  },
+  "Untrust": {
+    "message": "Označi kao neprovjereno"
+  },
+  "Untrust.accesskey": {
+    "message": "e"
+  },
+  "Untrusted": {
+    "message": "Nepouzdane"
+  },
+  "UntrustedPagesAdj": {
+    "message": "nepouzdane"
+  },
+  "WebAddress": {
+    "message": "Adresa web stranice:"
+  },
+  "Whitelist": {
+    "message": "Popis dopuštenih"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "Anti-XSS Protection Exceptions"
+  },
+  "XssExceptions.description": {
+    "message": "Destinations matching these regular expressions will NOT be protected against XSS"
+  },
+  "XssFaq": {
+    "message": "XSS FAQ..."
+  },
+  "XssFaq.accesskey": {
+    "message": "Q"
+  },
+  "about": {
+    "message": "O $1"
+  },
+  "allowFrom": {
+    "message": "Dopustiti sve iz $1"
+  },
+  "allowGlobal": {
+    "message": "Općenito dopusti skripte (opasno)"
+  },
+  "allowLocal": {
+    "message": "Dopusti: $1"
+  },
+  "allowTemp": {
+    "message": "Privremeno dopusti: $1"
+  },
+  "allowTempFrom": {
+    "message": "Privremeno sve dopustiti iz $1"
+  },
+  "allowed.glb": {
+    "message": "Opasnost! Skripte su općenito dopuštene"
+  },
+  "allowed.no": {
+    "message": "Skripte su trenutno zabranjene"
+  },
+  "allowed.prt": {
+    "message": "Skripte su djelomično dopuštene"
+  },
+  "allowed.yes": {
+    "message": "Skripte su trenutno dopuštene"
+  },
+  "alwaysAsk": {
+    "message": "Uvijek pitaj za potvrdu"
+  },
+  "audio.samples": {
+    "message": "Zvučni primjeri"
+  },
+  "bookmarkSync.confirm": {
+    "message": "NoScript je nasao configuracijski obiljezivac na\n$1.\nHocete li stvarno prepisati preko lokalne NoScript configuracije s sadrzajem ovog obiljezivaca?"
+  },
+  "bookmarkSync.message": {
+    "message": "This bookmark is NOT meant to be opened, but to be synchronized using a service such as Weave or the XMarks extension."
+  },
+  "bookmarkSync.title": {
+    "message": "NoScript Configuration Bookmark"
+  },
+  "changelog": {
+    "message": "Popis promjena"
+  },
+  "changelog.tip": {
+    "message": "Prikaži popis promjena"
+  },
+  "confirm": {
+    "message": "Sigurni ste?"
+  },
+  "disable": {
+    "message": "Izkljuciti $1"
+  },
+  "disable.accessKey": {
+    "message": "D"
+  },
+  "distrust": {
+    "message": "Označi $1 kao nepouzdane"
+  },
+  "extensionContributors": {
+    "message": "Oni koji su doprinjeli:"
+  },
+  "extensionContributors.tip": {
+    "message": "Ljudi kojima trebate zahvaliti na ovom proširenju"
+  },
+  "extensionCreator.tip": {
+    "message": "Posjetite autorovu početnu stranicu"
+  },
+  "extensionCreatorLabel": {
+    "message": "Autor:"
+  },
+  "extensionHomepage.tip": {
+    "message": "Posjetite početnu stranicu proširenja"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "Dodatna zaštita za Vaš Firefox: NoScript dopušta JavaScript, Java (i druge dodatke) samo za provjerene domene Vašeg izbora (npr. Vaša stranica Intenet bankarstva) . Ovaj pristup preventivnog blokiranja zasnovan na popisu dopuštenih spriječava iskorištavanje sigurnosnih slabosti (znanih i neznanih) bez ikakvog gubitka funkcionalnosti... Stručnjaci će se složiti: Firefox je zbilja sigurniji s NoScript :-)"
+  },
+  "forbidGlobal": {
+    "message": "Općenito zabrani skripte (preporučljivo)"
+  },
+  "forbidLocal": {
+    "message": "Zabrani: $1"
+  },
+  "global.warning.text": {
+    "message": "Skripte će biti općenito dopuštene (za svaku stranicu).\n Ovo je potencijalno opasna radnja.\nŽelite li doista nastaviti?"
+  },
+  "global.warning.title": {
+    "message": "Upozorenje!"
+  },
+  "informaction.tip": {
+    "message": "Posjetite početnu stranicu InformAction-a"
+  },
+  "license": {
+    "message": "Licenca"
+  },
+  "license.tip": {
+    "message": "Pročitajte licencu za krajnjeg korisnika"
+  },
+  "logo.tip": {
+    "message": "Posjetite početnu stranicu proširenja"
+  },
+  "metaRefresh.notify": {
+    "message": "NoScript blocked a <META> redirection inside a <NOSCRIPT> element: $1 in $2 seconds."
+  },
+  "metaRefresh.notify.follow": {
+    "message": "Follow Redirection"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "F"
+  },
+  "notify.options": {
+    "message": "Options"
+  },
+  "notify.options.accessKey": {
+    "message": "O"
+  },
+  "notifyHide": {
+    "message": "Sakrij nakon $1 sek"
+  },
+  "reset.title": {
+    "message": "NoScript Reset"
+  },
+  "reset.warning": {
+    "message": "ALL the NoScript preferences and site permissions will be reset to their default values immediately.\nThis action cannot be reverted.\nDo you want to continue?"
+  },
+  "siteInfo.confirm": {
+    "message": "Hocete li stvarno raspitati se za informaciju o sajtu \\\"$1\\\" \n predajuci zahtjev $2. -u?"
+  },
+  "siteInfo.tooltip": {
+    "message": "Srednji-klik ili shift+klik za informaciju o web stranici..."
+  },
+  "sponsor.tip": {
+    "message": "Posjetite pokroviteljevu početnu stranicu"
+  },
+  "trust": {
+    "message": "Dodaj u pouzdane $1"
+  },
+  "unsafeReload.warning": {
+    "message": "UNSAFELY reloading a suspicious\n\n$1 [$2]\n\nFROM [$3]\n\nNoScript will NOT protect this request!\n"
+  },
+  "untrustedOrigin": {
+    "message": "an untrusted origin"
+  },
+  "version": {
+    "message": "Version $1"
+  },
+  "xss.notify.generic": {
+    "message": "NoScript filtered a potential cross-site scripting (XSS) attempt from $1. Technical details have been logged to the Console."
+  },
+  "xss.notify.showConsole": {
+    "message": "Show Console..."
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "S"
+  },
+  "xss.reason.filterXGet": {
+    "message": "Sanitized suspicious request. Original URL [$1] requested from [$2]. Sanitized URL: [$3]."
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "Sanitized suspicious request referer. URL [$1] requested from [$2]. Sanitized Referrer: [$3]."
+  },
+  "xss.reason.filterXPost": {
+    "message": "Sanitized suspicious upload to [$1] from [$2]: transformed into a download-only GET request."
+  }
+}

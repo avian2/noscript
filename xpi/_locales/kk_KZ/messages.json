@@ -1,0 +1,689 @@
+{
+  "ABE": {
+    "message": "ABE"
+  },
+  "ABE.accesskey": {
+    "message": "А"
+  },
+  "ABE.chooseEditor": {
+    "message": "ABE ережелер жинақтары үшін мәтіндік редакторын таңдаңыз"
+  },
+  "ABE.disable.accesskey": {
+    "message": "р"
+  },
+  "ABE.disable.label": {
+    "message": "Сөндіру"
+  },
+  "ABE.edit.accesskey": {
+    "message": "е"
+  },
+  "ABE.edit.label": {
+    "message": "Тузету..."
+  },
+  "ABE.enable.accesskey": {
+    "message": "с"
+  },
+  "ABE.enable.label": {
+    "message": "Қосу"
+  },
+  "ABE.enabled.label": {
+    "message": "ABE іске қосу (Application Boundaries Enforcer)"
+  },
+  "ABE.notify": {
+    "message": "$1 сұранымын ABE болдырмаған: <$2> $3"
+  },
+  "ABE.refresh.accesskey": {
+    "message": "т"
+  },
+  "ABE.refresh.label": {
+    "message": "Жаңарту"
+  },
+  "ABE.rulesets.label": {
+    "message": "Ережелер жинақтары:"
+  },
+  "ABE.siteEnabled.label": {
+    "message": "Сайттарға өздерінің ережелерін қолдануға рұқсат беру"
+  },
+  "ABE.syntaxError": {
+    "message": "ABE ережесінде синтаксис қатесі!"
+  },
+  "ABE.wanIpAsLocal": {
+    "message": "WAN IP ($1) ∈ LOCAL"
+  },
+  "Add": {
+    "message": "Қосу"
+  },
+  "Add.accesskey": {
+    "message": "с"
+  },
+  "AdditionalPermissions": {
+    "message": "Сенімді сайттар үшін кеңейтілген баптаулар"
+  },
+  "AdditionalRestrictions": {
+    "message": "Сенімсіз сайттар үшін кеңейтілген баптаулар"
+  },
+  "Advanced": {
+    "message": "Кеңейтілген"
+  },
+  "Allow": {
+    "message": "Рұқсат ету"
+  },
+  "Allow.accesskey": {
+    "message": "Р"
+  },
+  "AllowBookmarks": {
+    "message": "Бетбелгілерден ашылған сайтқа рұқсат ету"
+  },
+  "AllowClipboard": {
+    "message": "Сыртқы алмасу буферінен көшіру/кірістіруді рұқсат ету"
+  },
+  "AllowLocalLinks": {
+    "message": "Жергілікті сілтемелерді рұқсат ету"
+  },
+  "AllowPage": {
+    "message": "Бұл парақтағы бар құрамасына рұқсат ету"
+  },
+  "AllowPage.accesskey": {
+    "message": "е"
+  },
+  "AllowPing": {
+    "message": "<A PING…> рұқсат ету"
+  },
+  "AllowViaBookmarks": {
+    "message": "Бетбелгілерден ашылған сайтқа рұқсат ету"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "Сенімсіз деп белгіленген сайттан келген әр объектті блоктау"
+  },
+  "Appearance": {
+    "message": "Түрі"
+  },
+  "AutoAllowTopLevel": {
+    "message": "Уақытша жоғарғы деңгейлі сайттарға рұқсат беру"
+  },
+  "AutoReload": {
+    "message": "Ережелер өзгергенде оған қатысты парақтарды жаңарту"
+  },
+  "BaseDom": {
+    "message": "Базалық 2-ші деңгейлі домендер (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "Блокталған объектілер"
+  },
+  "BookmarkSync": {
+    "message": "NoScript баптауларын жеңіл синхронизация үшін кеңейту ішінде сақтау"
+  },
+  "ClearClickDescription": {
+    "message": "NoScript жартылай жасырын элементпен әрекетті шектеді. Айырмашылыған көру үшін суреттерге шертіңіз."
+  },
+  "ClearClickHeader": {
+    "message": "Clickjacking мүмкін/UI өзгерту талабы"
+  },
+  "ClearClickOpt": {
+    "message": "Парақтардағы ClearClick-қорғанысы..."
+  },
+  "ClearClickReport": {
+    "message": "Хабарлау"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "р"
+  },
+  "ClearClickReportId": {
+    "message": "Хабарлау нөмірі:"
+  },
+  "ClearClickTitle": {
+    "message": "ClearClick ескертулері"
+  },
+  "Close": {
+    "message": "Жабу"
+  },
+  "CollapseBlockedObjects": {
+    "message": "Блокталған объектілерді жинау"
+  },
+  "ConfirmUnblock": {
+    "message": "Объектті уақытша рұқсат ету алдында растауды сұрау"
+  },
+  "ContentBlocker": {
+    "message": "Бұл шектеулерді сенімді сайттар үшін де қолдану"
+  },
+  "CtxMenu": {
+    "message": "Контекст мәзірінде көрсету"
+  },
+  "DefaultPolicies": {
+    "message": "Бастапқы ережелер"
+  },
+  "Description": {
+    "message": "Firefox үшін экстра қорғаныс: NoScript көмегімен сіз JavaScript, Flash (және басқа плагиндер) орындалуын тек өзіңіз көрсеткен домендер үшін рұқсат ете аласыз (мысалы, өзіңіздің веб-сайтыңыз). Рұқсат етілген тізім, алдын-ала блоктауға негізделіп, мүмкіндіктерге әсер етпей-ақ, осалдылықтардың алдын алуға көмектеседі (белгілі және белгісіз!)… Мамандар келіседі: NoScript қолдану Firefox жұмысын қауіпсіз етеді:-)"
+  },
+  "Donate": {
+    "message": "Ақшалай көмектесу"
+  },
+  "Donate.accesskey": {
+    "message": "ш"
+  },
+  "Embeddings": {
+    "message": "Құрамдас объекттер"
+  },
+  "Exceptions": {
+    "message": "Ерекше ережелер..."
+  },
+  "Export": {
+    "message": "Экспорт"
+  },
+  "Export.accesskey": {
+    "message": "к"
+  },
+  "FixLinks": {
+    "message": "JavaScript сілтемелерін өндеуді қолдану"
+  },
+  "Forbid": {
+    "message": "Тыйым салу"
+  },
+  "Forbid.accesskey": {
+    "message": "ы"
+  },
+  "ForbidBookmarklets": {
+    "message": "Bookmarklets қолдануға тыйым салу"
+  },
+  "ForbidFlash": {
+    "message": "Adobe® Flash® тыйым салу"
+  },
+  "ForbidFonts": {
+    "message": "@font-face тыйым салу"
+  },
+  "ForbidFrames": {
+    "message": "<FRAME> тыйым салу"
+  },
+  "ForbidIFrames": {
+    "message": "<IFRAME> тыйым салу"
+  },
+  "ForbidJava": {
+    "message": "Java™-ға тыйым салу"
+  },
+  "ForbidMedia": {
+    "message": "<AUDIO> / <VIDEO> тыйым салу"
+  },
+  "ForbidMetaRefresh": {
+    "message": "<NOSCRIPT> элементінің ішінде META бағдарлауды оқшаулау"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "ш"
+  },
+  "ForbidPing": {
+    "message": "<A PING…> тыйым салу"
+  },
+  "ForbidPlugins": {
+    "message": "Басқа плагиндерге тыйым салу"
+  },
+  "ForbidSilverlight": {
+    "message": "Microsoft® Silverlight™-қа тыйым салу"
+  },
+  "ForbidWebGL": {
+    "message": "WebGL тыйым салу"
+  },
+  "ForbidXSLT": {
+    "message": "XSLT үшін тыйым салу"
+  },
+  "FrameOptErr.desc": {
+    "message": "Сіздің қауіпсіздігіңізді ескере отырып, құраманы жариялаушы фреймде көрсетілуді рұқсат етпейді."
+  },
+  "FrameOptErr.link": {
+    "message": "Бұл құраманы жаңа терезеде ашу үшін, осында шертіңіз"
+  },
+  "FrameOptErr.title": {
+    "message": "Бұл қарама фрейм ішінде көрсетілмейді"
+  },
+  "FullAddr": {
+    "message": "Адрестер толығымен (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "Домендер толығымен (www.noscript.net)"
+  },
+  "General": {
+    "message": "Жалпы"
+  },
+  "GloballyEnabled": {
+    "message": "JavaScript толық рұқсат етілген (қауіпті)"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "Әрқашан"
+  },
+  "Https.behavior": {
+    "message": "Әрекеттері"
+  },
+  "Https.cookies": {
+    "message": "Cookies"
+  },
+  "Https.description": {
+    "message": "Қорғалған байланыс (HTTPS) болмаса, активті веб-құраманы оқшаулау:"
+  },
+  "Https.never": {
+    "message": "Ешқашан"
+  },
+  "Https.proxy": {
+    "message": "Прокси қолданған кезде (Tor ұсынылады)"
+  },
+  "HttpsFaq": {
+    "message": "HTTPS жиі қойылатын сұрақтары..."
+  },
+  "HttpsFaq.accesskey": {
+    "message": "и"
+  },
+  "HttpsForced": {
+    "message": "Келесі сайттар үшін қорғалған байланыс (HTTPS) талап ету:"
+  },
+  "HttpsForcedExceptions": {
+    "message": "Келесі сайттар үшін қорғалған байланыс (HTTPS) талап етпеу:"
+  },
+  "Import": {
+    "message": "Импорт"
+  },
+  "Import.accesskey": {
+    "message": "м"
+  },
+  "KeepLocked": {
+    "message": "Бұл элементті блокталған күйінде қалдыру (ұсынылады)"
+  },
+  "MatchSample": {
+    "message": "Шаблон мысалы:"
+  },
+  "Next": {
+    "message": "Келесі"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "Сенімсіз деп белгіленген сайттан келген объектілер үшін қоршау жоқ"
+  },
+  "Notifications": {
+    "message": "Хабарламалар"
+  },
+  "Notify": {
+    "message": "Блокталған скриптер туралы хабарлама көрсету"
+  },
+  "Notify.bottom": {
+    "message": "Терезенің астынан хабарлама көрсету"
+  },
+  "NotifyMeta": {
+    "message": "Блокталған META бағдарлаулар жөнінде хабарлау"
+  },
+  "NotifyMeta.accesskey": {
+    "message": "о"
+  },
+  "NselForce": {
+    "message": "Блокталған <SCRIPT> соңынан келген <NOSCRIPT> элементін көрсету"
+  },
+  "NselNever": {
+    "message": "<NOSCRIPT> элементтерін жасыру"
+  },
+  "OptBlockCssScanners": {
+    "message": "CSS-негізделген сканерлерді оқшаулау"
+  },
+  "OptFilterXGet": {
+    "message": "CSS сұранымдарын оқшаулау"
+  },
+  "OptFilterXPost": {
+    "message": "Сайт аралық POST сұранымдарын мәліметі жоқ GET сұранымдарына айналдыру"
+  },
+  "Options": {
+    "message": "Баптаулары"
+  },
+  "Options.accesskey": {
+    "message": "Б"
+  },
+  "OptionsLong": {
+    "message": "NoScript баптаулары"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "Permissions": {
+    "message": "Рұқсаттар"
+  },
+  "PermissionsText": {
+    "message": "Қай сайттарға JavaScript орындауға рұқсат екенін көрсете аласыз. Рұқсат етілетін сайттың домен адресін енгізіңіз (мысалы, \"http://www.site.com\" немесе \"site.com\"), содан кейін Рұқсат ету басыңыз."
+  },
+  "Plugins": {
+    "message": "Плагиндер"
+  },
+  "Policies": {
+    "message": "Ережелер"
+  },
+  "Preset": {
+    "message": "Қауіпсіздік деңгейі"
+  },
+  "Preset.high": {
+    "message": "Қамал (Қатаң)"
+  },
+  "Preset.low": {
+    "message": "Жеңіл (Блоктізім + Веб қауіпсіздігі)"
+  },
+  "Preset.medium": {
+    "message": "Қалыпты (Рұқсат тізімі + Веб қауіпсіздігі)"
+  },
+  "Preset.off": {
+    "message": "Сөндіру (Шынымен ба?!)"
+  },
+  "Prev": {
+    "message": "Алдыңғысы"
+  },
+  "RecentBlocked": {
+    "message": "Соңғы блокталған сайттар"
+  },
+  "Refresh": {
+    "message": "Жаңарту"
+  },
+  "ReloadWarn": {
+    "message": "Бұл баптаулар тек жаңа ашылған немесе қайта жүктелген (қолмен) парақтар үшін істейді"
+  },
+  "RemoveSelected": {
+    "message": "Ерекшеленген сайттарды өшіру"
+  },
+  "Reset": {
+    "message": "Тастау"
+  },
+  "Reset.accesskey": {
+    "message": "с"
+  },
+  "ResetDef": {
+    "message": "Бастапқы түріне келтіру"
+  },
+  "ResetDef.accesskey": {
+    "message": "н"
+  },
+  "RevokeTemp": {
+    "message": "Уақытша рұқсаттарды қайта шақыру"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "р"
+  },
+  "SecureCookies": {
+    "message": "Automatic Secure Cookies Management қосу"
+  },
+  "SecureCookiesExceptions": {
+    "message": "Келесі сайттардан HTTPS арқылы алынатын қауіпсіз емесе cookies елемеу:"
+  },
+  "SecureCookiesForced": {
+    "message": "Келесі сайттардан HTTPS арқылы алынатын cookies үшін шифрлеуді талап ету:"
+  },
+  "SecurityManager": {
+    "message": "Қауіпсіздік менджері"
+  },
+  "Show": {
+    "message": "Көрсету..."
+  },
+  "ShowConsole": {
+    "message": "Консольді көрсету..."
+  },
+  "ShowConsole.accesskey": {
+    "message": "у"
+  },
+  "ShowPlaceholder": {
+    "message": "Блокталған элементтің орнын қоршаумен көрсету"
+  },
+  "ShowReleaseNotes": {
+    "message": "Жаңарту кезінде тарихын көрсету"
+  },
+  "SiteManager": {
+    "message": "Сайт менеджері"
+  },
+  "SitePolicies": {
+    "message": "Сайтқа қатысты ережелер"
+  },
+  "StatusIcon": {
+    "message": "Қалып-күй жолағында көрсету"
+  },
+  "StatusLabel": {
+    "message": "Қалып-күй жолағындағы хабарламалар"
+  },
+  "TempAllowPage": {
+    "message": "Бұл парақтағы барлығына рұқсат ету"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "т"
+  },
+  "TempCmd": {
+    "message": "Уақытша рұқсат ету […]"
+  },
+  "TempToPerm": {
+    "message": "Орнатылған рұқсаттарды сақтау"
+  },
+  "TempToPerm.accesskey": {
+    "message": "у"
+  },
+  "ToolbarToggle": {
+    "message": "NoScript таңбашасына шерту арқылы сайт үшін рұқсаттарды ауыстыру"
+  },
+  "TruncateTitle": {
+    "message": "Құжаттың тым ұзын атын қысқарту"
+  },
+  "Trust": {
+    "message": "Рұқсат етілген деп белгілеу"
+  },
+  "Trust.accesskey": {
+    "message": "с"
+  },
+  "Trusted": {
+    "message": "Сенімді"
+  },
+  "TrustedPagesAdj": {
+    "message": "сенімді"
+  },
+  "Uninstall": {
+    "message": "Өшіру"
+  },
+  "Unknown": {
+    "message": "Белгісіз"
+  },
+  "UnsafeReload": {
+    "message": "Қауіпсіз емес қайта жүктелу"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "з"
+  },
+  "Untrust": {
+    "message": "Тыйым салынған деп белгілеу"
+  },
+  "Untrust.accesskey": {
+    "message": "н"
+  },
+  "Untrusted": {
+    "message": "Сенімсіз"
+  },
+  "UntrustedPagesAdj": {
+    "message": "сенімсіз"
+  },
+  "WebAddress": {
+    "message": "Веб-сайт адресі:"
+  },
+  "Whitelist": {
+    "message": "Рұқсат етілген тізім"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "Х"
+  },
+  "XssExceptions": {
+    "message": "Анти-XSS қорғаудың ерекше ережелері"
+  },
+  "XssExceptions.description": {
+    "message": "Бұл маскаларға сәйкес келетін объектілер XSS қарсы ҚОРҒАЛМАЙДЫ."
+  },
+  "XssFaq": {
+    "message": "XSS жиі қойылатын сұрақтары..."
+  },
+  "XssFaq.accesskey": {
+    "message": "й"
+  },
+  "about": {
+    "message": "$1 туралы"
+  },
+  "allowFrom": {
+    "message": "$1 үшін барлығына рұқсат ету"
+  },
+  "allowGlobal": {
+    "message": "JavaScript толық рұқсат ету (қауіпті)"
+  },
+  "allowLocal": {
+    "message": "$1 рұқсат ету"
+  },
+  "allowTemp": {
+    "message": "$1 уақытша рұқсат ету"
+  },
+  "allowTempFrom": {
+    "message": "$1 үшін барлығына уақытша рұқсат ету"
+  },
+  "allowed.glb": {
+    "message": "Назар аудырыңыз! JavaScript толық рұқсат етілген"
+  },
+  "allowed.no": {
+    "message": "JavaScript осы парақта тыйым салынған"
+  },
+  "allowed.prt": {
+    "message": "JavaScript жартылай рұқсат етілген"
+  },
+  "allowed.yes": {
+    "message": "JavaScript осы парақта рұқсат етілген"
+  },
+  "alwaysAsk": {
+    "message": "Әрқашан рұқсат сұрау"
+  },
+  "audio.samples": {
+    "message": "Аудио мысалы"
+  },
+  "bookmarkSync.confirm": {
+    "message": "NoScript келесі жерде сақталған бапталар бетбелгісін тапты\n$1.\nБұл бетбелгінің ұүрамамен өзіңіздің NoScript баптауларыңызды алмастыруды шынымен қалайсыз ба?"
+  },
+  "bookmarkSync.message": {
+    "message": "Бұл бетбелгі ашылуды ЕМЕС, бірақ Weave немесе XMarks кеңейтулері көмегімен синхрондауды белгілейді."
+  },
+  "bookmarkSync.title": {
+    "message": "NoScript баптау бетбелгісі"
+  },
+  "changelog": {
+    "message": "Нұсқалар тарихы"
+  },
+  "changelog.tip": {
+    "message": "Нұсқалар тарихын көрсету"
+  },
+  "confirm": {
+    "message": "Осыны шынымен қалайсыз ба?"
+  },
+  "disable": {
+    "message": "$1 сөндіру"
+  },
+  "disable.accessKey": {
+    "message": "д"
+  },
+  "distrust": {
+    "message": "$1 рұқсат етілмеген деп белгілеу"
+  },
+  "extensionContributors": {
+    "message": "Үлесін қосқандар:"
+  },
+  "extensionContributors.tip": {
+    "message": "Осы кеңейтуді жасауға көмектескендер"
+  },
+  "extensionCreator.tip": {
+    "message": "Автордың үй парағы"
+  },
+  "extensionCreatorLabel": {
+    "message": "Авторы:"
+  },
+  "extensionHomepage.tip": {
+    "message": "Кеңейтудің үй парағы"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "Firefox үшін экстра қорғаныс: NoScript көмегімен сіз JavaScript, Java (және басқа плагиндер) орындалуын тек өзіңіз көрсеткен домендер үшін рұқсат ете аласыз (мысалы, өзіңіздің веб-сайтыңыз). Рұқсат етілген тізім, алдын-ала блоктауға негізделіп, функционалдылыққа әсер етпей-ақ осалдылықтардың алдын алуға көмектеседі (белгілі және белгісіз!)… Мамандар келіседі: NoScript қолдану Firefox жұмысын қауіпсіз етеді:-)"
+  },
+  "forbidGlobal": {
+    "message": "JavaScript толық тыйым салу (ұсынылады)"
+  },
+  "forbidLocal": {
+    "message": "$1 тыйым салу"
+  },
+  "global.warning.text": {
+    "message": "JavaScript толығымен рұқсат етіледі (барлық веб-сайттар үшін).\n Бұл - қауіпті әрекет.\nШынымен жалғастыруды қалайсыз ба?"
+  },
+  "global.warning.title": {
+    "message": "Назар аударыңыз!"
+  },
+  "informaction.tip": {
+    "message": "InformAction үй парағы"
+  },
+  "license": {
+    "message": "Лицензиясы"
+  },
+  "license.tip": {
+    "message": "Пайдаланушы лицензиясын оқу"
+  },
+  "logo.tip": {
+    "message": "Кеңейтудің үй парағы"
+  },
+  "metaRefresh.notify": {
+    "message": "NoScript <NOSCRIPT> элементінің ішінде <META>-бағдарлауды оқшаулады: $1, $2 сек ішінде."
+  },
+  "metaRefresh.notify.follow": {
+    "message": "Бағдарлауға өту"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "т"
+  },
+  "notify.options": {
+    "message": "Баптаулар"
+  },
+  "notify.options.accessKey": {
+    "message": "Б"
+  },
+  "notifyHide": {
+    "message": "$1 секундтан кейін жасыру"
+  },
+  "reset.title": {
+    "message": "NoScript тастау"
+  },
+  "reset.warning": {
+    "message": "БАРЛЫҚ NoScript баптаулары мен сайттар үшін рұқсаттар бастапқы түріне келеді.\nБұл әрекетті қайтаруға болмайды.\nЖалғастыру керек пе?"
+  },
+  "siteInfo.confirm": {
+    "message": "Сіз \"$1\" сайты туралы $2 үшін сұранымды\nжіберуді қалағансыз. Жалғастырамыз ба?"
+  },
+  "siteInfo.tooltip": {
+    "message": "Сайт ақпаратын қарау үшін ортамен не shift ұстап шертіңіз..."
+  },
+  "sponsor.tip": {
+    "message": "Демеушілердің үй парағы"
+  },
+  "trust": {
+    "message": "$1 рүқсат етілген деп белгілеу"
+  },
+  "unsafeReload.warning": {
+    "message": "Қауіпсіз емес қайта жүктеу талабы \n\n$1 [$2]\n\nКелесіден [$3]\n\nNoScript бұл сұранымды қорғай АЛМАЙДЫ!\n"
+  },
+  "untrustedOrigin": {
+    "message": "сенімсіз көзі ретінде"
+  },
+  "version": {
+    "message": "$1 нұсқасы"
+  },
+  "xss.notify.generic": {
+    "message": "NoScript мүмкін болған XSS-шабуылын (сайтаралық скриптинг) $1 адресінен оқшаулады. Техникалық ақпарат консольге жазылды."
+  },
+  "xss.notify.showConsole": {
+    "message": "Консольді көрсету..."
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "К"
+  },
+  "xss.reason.filterXGet": {
+    "message": "Күдікті сұраным оқшауланды. URL: [$1]. Сұраным келесі парақтан түсті: [$2]. Фильтрленген адрес: [$3]"
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "Күдікті сұраным көзі оқшауланды («referer»): URL: [$1] келесі парақтан [$2]. Фильтрленген адрес: [$3]"
+  },
+  "xss.reason.filterXPost": {
+    "message": "[$2] адресінен [$1] адресіне түскен күдікті жүктеме оқшауланды: жүктелетін GET сұранымына ауыстырылды."
+  }
+}

@@ -1,0 +1,689 @@
+{
+  "ABE": {
+    "message": "ABE"
+  },
+  "ABE.accesskey": {
+    "message": "A"
+  },
+  "ABE.chooseEditor": {
+    "message": "Vali ABE reeglite jaoks tekstiredaktor"
+  },
+  "ABE.disable.accesskey": {
+    "message": "K"
+  },
+  "ABE.disable.label": {
+    "message": "Keela"
+  },
+  "ABE.edit.accesskey": {
+    "message": "M"
+  },
+  "ABE.edit.label": {
+    "message": "Muuda..."
+  },
+  "ABE.enable.accesskey": {
+    "message": "L"
+  },
+  "ABE.enable.label": {
+    "message": "Luba"
+  },
+  "ABE.enabled.label": {
+    "message": "Luba ABE (Application Boundaries Enforcer)"
+  },
+  "ABE.notify": {
+    "message": "Päring $1 filtreeriti ABE poolt: <$2> $3"
+  },
+  "ABE.refresh.accesskey": {
+    "message": "V"
+  },
+  "ABE.refresh.label": {
+    "message": "Värskenda"
+  },
+  "ABE.rulesets.label": {
+    "message": "Reeglid:"
+  },
+  "ABE.siteEnabled.label": {
+    "message": "Luba veebilehtedel kehtestada enda reegleid"
+  },
+  "ABE.syntaxError": {
+    "message": "Süntaksi viga ABE reeglites."
+  },
+  "ABE.wanIpAsLocal": {
+    "message": "WAN IP ($1) ∈ LOCAL"
+  },
+  "Add": {
+    "message": "Lisa"
+  },
+  "Add.accesskey": {
+    "message": "L"
+  },
+  "AdditionalPermissions": {
+    "message": "Lisaõigused usaldusväärsetele veebilehtedele"
+  },
+  "AdditionalRestrictions": {
+    "message": "Lisapiirangud ebausaldusväärsetele veebilehtedele"
+  },
+  "Advanced": {
+    "message": "Muud"
+  },
+  "Allow": {
+    "message": "Luba"
+  },
+  "Allow.accesskey": {
+    "message": "L"
+  },
+  "AllowBookmarks": {
+    "message": "Luba veebilehed, mis on avatud järjehoidjate kaudu"
+  },
+  "AllowClipboard": {
+    "message": "Luba vormindatud teksti kopeerimist ja asetamist välisest lõikepuhvrist"
+  },
+  "AllowLocalLinks": {
+    "message": "Luba kohalikke linke"
+  },
+  "AllowPage": {
+    "message": "Luba kõik sellel lehel"
+  },
+  "AllowPage.accesskey": {
+    "message": "K"
+  },
+  "AllowPing": {
+    "message": "Luba <A PING…>"
+  },
+  "AllowViaBookmarks": {
+    "message": "Luba veebilehed, mis on avatud järjehoidjate kaudu"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "Blokeeri kõik ebausaldusväärsetelt veebilehtedelt pärinevad objektid"
+  },
+  "Appearance": {
+    "message": "Välimus"
+  },
+  "AutoAllowTopLevel": {
+    "message": "Luba ajutiselt vaikimisi tipptaseme veebilehed"
+  },
+  "AutoReload": {
+    "message": "Õiguste muutumisel laetakse mõjustatud lehed automaatselt uuesti"
+  },
+  "BaseDom": {
+    "message": "Teise taseme domeenid (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "Blokeeritud objektid"
+  },
+  "BookmarkSync": {
+    "message": "Varunda NoScript'i sätted järjehoidjana, et hõlbustada sünkroniseerimist"
+  },
+  "ClearClickDescription": {
+    "message": "NoScript pidas kinni hiire või klaviatuuri interaktsiooni osaliselt varjatud elemendiga. Hiireklõps alloleval pildil lülitab ümber tõkestatud ja puhastatud versiooni vahel"
+  },
+  "ClearClickHeader": {
+    "message": "Võimalik kliki röövimise/kasutajaliidese muutmise katse!"
+  },
+  "ClearClickOpt": {
+    "message": "ClearClick kaitse lehtedel..."
+  },
+  "ClearClickReport": {
+    "message": "Aruanne"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "A"
+  },
+  "ClearClickReportId": {
+    "message": "Aruande ID:"
+  },
+  "ClearClickTitle": {
+    "message": "ClearClick hoiatus"
+  },
+  "Close": {
+    "message": "Sulge"
+  },
+  "CollapseBlockedObjects": {
+    "message": "Blokeeritud objektid ahendatakse"
+  },
+  "ConfirmUnblock": {
+    "message": "Küsi kinnitust enne objekti ajutist blokeerimist"
+  },
+  "ContentBlocker": {
+    "message": "Kehtesta antud piirangud ka usaldusväärsete veebilehtede jaoks"
+  },
+  "CtxMenu": {
+    "message": "Kontekstimenüü"
+  },
+  "DefaultPolicies": {
+    "message": "Vaikereeglid"
+  },
+  "Description": {
+    "message": "Lisakaitse Firefoxile: NoScript lubab JavaSkripti, Javat (ja teisi pluginaid) ainult usaldusväärsetest domeenidest sinu valikul (nt kodupanga veebilehel). Antud nn valgel nimekirjal põhinev blokeerimine hoiab ära tuntud ja isegi tundmatute turvaaukude kuritahtlikku ärakasutamist ilma funktsionaalsust kaotamata… Eksperdid nõustuvad, et Firefox on turvalisem koos NoScriptiga :-)"
+  },
+  "Donate": {
+    "message": "Anneta"
+  },
+  "Donate.accesskey": {
+    "message": "n"
+  },
+  "Embeddings": {
+    "message": "Manusobjektid"
+  },
+  "Exceptions": {
+    "message": "Erandid…"
+  },
+  "Export": {
+    "message": "Ekspordi"
+  },
+  "Export.accesskey": {
+    "message": "E"
+  },
+  "FixLinks": {
+    "message": "Ürita parandada JavaScripti linke"
+  },
+  "Forbid": {
+    "message": "Keela"
+  },
+  "Forbid.accesskey": {
+    "message": "K"
+  },
+  "ForbidBookmarklets": {
+    "message": "Keela funktsionaaljärjehoidjad"
+  },
+  "ForbidFlash": {
+    "message": "Keela Adobe® Flash®"
+  },
+  "ForbidFonts": {
+    "message": "Keela @font-face"
+  },
+  "ForbidFrames": {
+    "message": "Keela <FRAME>"
+  },
+  "ForbidIFrames": {
+    "message": "Keela <IFRAME>"
+  },
+  "ForbidJava": {
+    "message": "Keela Java™"
+  },
+  "ForbidMedia": {
+    "message": "Keela <AUDIO> / <VIDEO>"
+  },
+  "ForbidMetaRefresh": {
+    "message": "Keela META ümbersuunamised <NOSCRIPT> elementide sees"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "m"
+  },
+  "ForbidPing": {
+    "message": "Keela <A PING…>"
+  },
+  "ForbidPlugins": {
+    "message": "Keela teised pluginad"
+  },
+  "ForbidSilverlight": {
+    "message": "Keela Microsoft® Silverlight™"
+  },
+  "ForbidWebGL": {
+    "message": "Keela WebGL"
+  },
+  "ForbidXSLT": {
+    "message": "Keela XSLT"
+  },
+  "FrameOptErr.desc": {
+    "message": "Sinu turvalisuse huvides ei luba antud sisu avaldaja seda esitada raami sees"
+  },
+  "FrameOptErr.link": {
+    "message": "Kliki siia, et avada antud sisu uues aknas"
+  },
+  "FrameOptErr.title": {
+    "message": "Antud sisu ei saa esitada raami sees"
+  },
+  "FullAddr": {
+    "message": "Täisaadressid (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "Täisdomeenid (www.noscript.net)"
+  },
+  "General": {
+    "message": "Üldine"
+  },
+  "GloballyEnabled": {
+    "message": "Skriptid on lubatud (ohtlik)"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "Alati"
+  },
+  "Https.behavior": {
+    "message": "Käitumine"
+  },
+  "Https.cookies": {
+    "message": "Küpsised"
+  },
+  "Https.description": {
+    "message": "Aktiivse veebilehe sisu keelatakse kui see ei tule turvalise (HTTPS) ühenduse kaudu:"
+  },
+  "Https.never": {
+    "message": "Mitte kunagi"
+  },
+  "Https.proxy": {
+    "message": "Puhverserverit kasutades (soovitatav torrenti puhul)"
+  },
+  "HttpsFaq": {
+    "message": "HTTPS KKK"
+  },
+  "HttpsFaq.accesskey": {
+    "message": "K"
+  },
+  "HttpsForced": {
+    "message": "Sunni järgnevaid veebilehti kasutama turvalist (HTTPS) ühendust:"
+  },
+  "HttpsForcedExceptions": {
+    "message": "Turvalist (HTTPS) ühendust ei sunnita kunagi järgnevate veebilehtede korral:"
+  },
+  "Import": {
+    "message": "Impordi"
+  },
+  "Import.accesskey": {
+    "message": "I"
+  },
+  "KeepLocked": {
+    "message": "Lukusta antud element (soovitatav)"
+  },
+  "MatchSample": {
+    "message": "Mallvõrdluse näide"
+  },
+  "Next": {
+    "message": "Järgmine"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "Kohatäitjaid ei näidata objektidel, mis tulevad ebausaldusväärsetelt veebilehtedelt"
+  },
+  "Notifications": {
+    "message": "Märguanded"
+  },
+  "Notify": {
+    "message": "Näita teadet blokeeritud skriptide kohta"
+  },
+  "Notify.bottom": {
+    "message": "Aseta sõnum allserva"
+  },
+  "NotifyMeta": {
+    "message": "Teata META ümbersuunamiste blokeerimistest"
+  },
+  "NotifyMeta.accesskey": {
+    "message": "T"
+  },
+  "NselForce": {
+    "message": "Näita <NOSCRIPT> elementi, mis järgneb blokeeritud <SCRIPT> elemendile"
+  },
+  "NselNever": {
+    "message": "Peida <NOSCRIPT> elemendid"
+  },
+  "OptBlockCssScanners": {
+    "message": "Blokeeri CSS-põhinevad skannerid"
+  },
+  "OptFilterXGet": {
+    "message": "Puhasta kahtlased päringud teistelt veebilehtedelt"
+  },
+  "OptFilterXPost": {
+    "message": "Muuda POST-päringud teistelt veebilehtedelt andmevabadeks GET-päringuteks"
+  },
+  "Options": {
+    "message": "Sätted…"
+  },
+  "Options.accesskey": {
+    "message": "S"
+  },
+  "OptionsLong": {
+    "message": "NoScripti sätted"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "Permissions": {
+    "message": "Õigused"
+  },
+  "PermissionsText": {
+    "message": "Sa saad määrata, millistel veebilehtedel lubatakse skripte käivitada. Kirjuta veebilehe aadress või domeeni, mida soovid lubada (nt \"http://www.site.com\" või \"site.com\") ja klõpsa Luba nuppu"
+  },
+  "Plugins": {
+    "message": "Pluginad"
+  },
+  "Policies": {
+    "message": "Reeglid"
+  },
+  "Preset": {
+    "message": "Turvalisuse tase"
+  },
+  "Preset.high": {
+    "message": "Kindlus (Täiskaitse)"
+  },
+  "Preset.low": {
+    "message": "Pingevaba (Must nimekiri + Veebi turvalisus)"
+  },
+  "Preset.medium": {
+    "message": "Klassikaline (Valge nimekiri + Veebi turvalisus)"
+  },
+  "Preset.off": {
+    "message": "Väljas (Kas oled kindel?)"
+  },
+  "Prev": {
+    "message": "Eelmine"
+  },
+  "RecentBlocked": {
+    "message": "Viimati blokeeritud veebilehed"
+  },
+  "Refresh": {
+    "message": "Värskenda"
+  },
+  "ReloadWarn": {
+    "message": "Need valikud jõustuvad uutel või (käsitsi) uuesti laetud lehtedel"
+  },
+  "RemoveSelected": {
+    "message": "Kustuta valitud veebilehed"
+  },
+  "Reset": {
+    "message": "Lähtesta"
+  },
+  "Reset.accesskey": {
+    "message": "L"
+  },
+  "ResetDef": {
+    "message": "Taasta algsätted"
+  },
+  "ResetDef.accesskey": {
+    "message": "a"
+  },
+  "RevokeTemp": {
+    "message": "Tühista ajutised õigused"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "T"
+  },
+  "SecureCookies": {
+    "message": "Automaatne turvaküpsiste haldamine lubatud"
+  },
+  "SecureCookiesExceptions": {
+    "message": "Kõiki järgnevate veebilehtede poolt HTTPS kaudu loodud mitteturvalisi küpsiseid eiratakse"
+  },
+  "SecureCookiesForced": {
+    "message": "Kõik järgnevate veebilehtede poolt HTTPS kaudu loodud küpsised krüpteeritakse"
+  },
+  "SecurityManager": {
+    "message": "Turvalisuse haldur"
+  },
+  "Show": {
+    "message": "Näita…"
+  },
+  "ShowConsole": {
+    "message": "Näita konsooli…"
+  },
+  "ShowConsole.accesskey": {
+    "message": "k"
+  },
+  "ShowPlaceholder": {
+    "message": "Näita kohatäitja ikooni"
+  },
+  "ShowReleaseNotes": {
+    "message": "Näita uuenduste väljalaske märkmeid"
+  },
+  "SiteManager": {
+    "message": "Veebilehtede haldur"
+  },
+  "SitePolicies": {
+    "message": "Veebilehe-spetsiifilised reeglid"
+  },
+  "StatusIcon": {
+    "message": "Ikoon olekuribal"
+  },
+  "StatusLabel": {
+    "message": "Pealdis olekuribal"
+  },
+  "TempAllowPage": {
+    "message": "Luba ajutiselt kõik sellel lehel"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "a"
+  },
+  "TempCmd": {
+    "message": "Luba ajutiselt […]"
+  },
+  "TempToPerm": {
+    "message": "Sea lehe õigused püsivaks"
+  },
+  "TempToPerm.accesskey": {
+    "message": "p"
+  },
+  "ToolbarToggle": {
+    "message": "Vasak hiireklõps NoScript tööriistaribal lülitab ümber praeguse tipptaseme veebilehe õigused"
+  },
+  "TruncateTitle": {
+    "message": "Lühenda dokumendi päiseid"
+  },
+  "Trust": {
+    "message": "Märgi usaldusväärseks"
+  },
+  "Trust.accesskey": {
+    "message": "u"
+  },
+  "Trusted": {
+    "message": "Usaldusväärsed"
+  },
+  "TrustedPagesAdj": {
+    "message": "usaldatavad"
+  },
+  "Uninstall": {
+    "message": "Eemalda"
+  },
+  "Unknown": {
+    "message": "Teadmata"
+  },
+  "UnsafeReload": {
+    "message": "Mitteturvaline uuestilaadimine"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "M"
+  },
+  "Untrust": {
+    "message": "Märgi ebausaldusväärseks"
+  },
+  "Untrust.accesskey": {
+    "message": "m"
+  },
+  "Untrusted": {
+    "message": "Ebausaldusväärsed"
+  },
+  "UntrustedPagesAdj": {
+    "message": "mitteusaldatavad"
+  },
+  "WebAddress": {
+    "message": "Veebilehe aadress:"
+  },
+  "Whitelist": {
+    "message": "Valge nimekiri"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "Erandid murdskriptimise vastases kaitses"
+  },
+  "XssExceptions.description": {
+    "message": "Sihtkohti, mis sobivad järgnevate regulaaravaldistega, ei kaitsta murdskriptimise suhtes"
+  },
+  "XssFaq": {
+    "message": "Murdskriptimise KKK"
+  },
+  "XssFaq.accesskey": {
+    "message": "K"
+  },
+  "about": {
+    "message": "Täpsemalt lisast $1"
+  },
+  "allowFrom": {
+    "message": "Luba kõik veebilehel $1"
+  },
+  "allowGlobal": {
+    "message": "Skriptid lubatud (ohtlik)"
+  },
+  "allowLocal": {
+    "message": "Luba $1"
+  },
+  "allowTemp": {
+    "message": "Luba ajutiselt $1"
+  },
+  "allowTempFrom": {
+    "message": "Luba ajutiselt kõik veebilehel $1"
+  },
+  "allowed.glb": {
+    "message": "Tähelepanu! Skriptid on lubatud"
+  },
+  "allowed.no": {
+    "message": "Skriptid praegu keelatud"
+  },
+  "allowed.prt": {
+    "message": "Skriptid osaliselt lubatud"
+  },
+  "allowed.yes": {
+    "message": "Skriptid praegu lubatud"
+  },
+  "alwaysAsk": {
+    "message": "Küsi alati kinnitust"
+  },
+  "audio.samples": {
+    "message": "Helisämplid"
+  },
+  "bookmarkSync.confirm": {
+    "message": "NoScript leidis sätete järjehoidja\n$1.\nKas soovid NoScript kohalikud sätted üle kirjutada antud järjehoidja sisuga?"
+  },
+  "bookmarkSync.message": {
+    "message": "See järjehoidja ei ole mõeldud avamiseks vaid sünkroniseerimiseks, kasutades Weave või XMarks laiendust."
+  },
+  "bookmarkSync.title": {
+    "message": "NoScript sätete järjehoidja"
+  },
+  "changelog": {
+    "message": "Muutuste logi"
+  },
+  "changelog.tip": {
+    "message": "Näita muutuste logi"
+  },
+  "confirm": {
+    "message": "Oled kindel?"
+  },
+  "disable": {
+    "message": "Keela $1"
+  },
+  "disable.accessKey": {
+    "message": "K"
+  },
+  "distrust": {
+    "message": "Märgista $1 ebausaldusväärseks"
+  },
+  "extensionContributors": {
+    "message": "Kaasaaitajad:"
+  },
+  "extensionContributors.tip": {
+    "message": "Keda peaksid tänama antud laienduse eest"
+  },
+  "extensionCreator.tip": {
+    "message": "Külasta autori kodulehte"
+  },
+  "extensionCreatorLabel": {
+    "message": "Autor:"
+  },
+  "extensionHomepage.tip": {
+    "message": "Külasta laienduse kodulehte"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "Lisakaitse Firefoxile: NoScript lubab JavaSkripti, Javat (ja teisi pluginaid) ainult usaldusväärsetest domeenidest sinu valikul (nt kodupanga veebilehel). Antud nn valgel nimekirjal põhinev blokeerimine hoiab ära tuntud ja isegi tundmatute turvaaukude kuritahtlikku ärakasutamist ilma funktsionaalsust kaotamata… Eksperdid nõustuvad, et Firefox on turvalisem koos NoScriptiga :-)"
+  },
+  "forbidGlobal": {
+    "message": "Skriptid keelatud (soovitatav)"
+  },
+  "forbidLocal": {
+    "message": "Keela $1"
+  },
+  "global.warning.text": {
+    "message": "Skriptid lubatakse kõikjal (kõikide veebilehtede puhul).\nSee võib olla ohtlik.\nKas soovid tõesti seda teha?"
+  },
+  "global.warning.title": {
+    "message": "Hoiatus!"
+  },
+  "informaction.tip": {
+    "message": "Külasta InformActioni kodulehte"
+  },
+  "license": {
+    "message": "Litsents"
+  },
+  "license.tip": {
+    "message": "Loe lõppkasutaja litsentsi"
+  },
+  "logo.tip": {
+    "message": "Külasta laienduse kodulehte"
+  },
+  "metaRefresh.notify": {
+    "message": "NoScript blokeeris <META> ümbersuunamise <NOSCRIPT> elemendi sees: $1 peale $2 sekundit."
+  },
+  "metaRefresh.notify.follow": {
+    "message": "Järgi ümbersuunamist"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "J"
+  },
+  "notify.options": {
+    "message": "Sätted"
+  },
+  "notify.options.accessKey": {
+    "message": "S"
+  },
+  "notifyHide": {
+    "message": "Peida peale $1 sekundit"
+  },
+  "reset.title": {
+    "message": "Lähtesta NoScript"
+  },
+  "reset.warning": {
+    "message": "KÕIK NoScripti eelistused ja saitide õigused lähtestatakse kohe vaikeväärtustele.\nAntud tegevust ei saa tagasi võtta.\nKas soovid jätkata?"
+  },
+  "siteInfo.confirm": {
+    "message": "Oled küsimas informatsiooni \"$1\" saidi kohta,\n esitades päringu $2.\nKas soovid jätkata?"
+  },
+  "siteInfo.tooltip": {
+    "message": "Saidi infot näeb hiire keskmist klahvi vajutades või vajutades shift+paremklõps..."
+  },
+  "sponsor.tip": {
+    "message": "Külasta sponsori kodulehte"
+  },
+  "trust": {
+    "message": "Usalda $1"
+  },
+  "unsafeReload.warning": {
+    "message": "MITTETURVALINE uuestilaadmine\n\n$1 [$2]\n\nAsukohast [$3]\n\nNoScript EI KAITSE seda päringut!\n"
+  },
+  "untrustedOrigin": {
+    "message": "ebausaldusväärne lähtekoht"
+  },
+  "version": {
+    "message": "Versioon $1"
+  },
+  "xss.notify.generic": {
+    "message": "NoScript filtreeris võimaliku murdskriptimise (XSS) katse asukohast $1. Tehnilised üksikasjad on näha konsoolil."
+  },
+  "xss.notify.showConsole": {
+    "message": "Näita konsooli…"
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "N"
+  },
+  "xss.reason.filterXGet": {
+    "message": "Puhastati kahtlane päring. Algset aadressi [$1] küsiti kohast [$2]. Puhastatud aadress: [$3]."
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "Puhastati kahtlane päringu suunang. Aadressi [$1] küsiti kohast [$2]. Puhastatud suunang: [$3]."
+  },
+  "xss.reason.filterXPost": {
+    "message": "Puhastati kahtlane üleslaadimine aadressile [$1] kohast [$2]: muudeti ainult allalaetavaks GET-päringuks."
+  }
+}

@@ -1,0 +1,581 @@
+{
+  "Add": {
+    "message": "افزودن"
+  },
+  "Add.accesskey": {
+    "message": "ز"
+  },
+  "AdditionalPermissions": {
+    "message": "مجوزهای اضافی برای سایت های مورد اطمینان"
+  },
+  "AdditionalRestrictions": {
+    "message": "محدودیت بیشتر برای سایت های غیر مطمئن"
+  },
+  "Advanced": {
+    "message": "پیشرفته"
+  },
+  "Allow": {
+    "message": "اجازه دادن"
+  },
+  "Allow.accesskey": {
+    "message": "ا"
+  },
+  "AllowBookmarks": {
+    "message": "دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند."
+  },
+  "AllowClipboard": {
+    "message": "دادن مجوز برای کپی کردن و چسباندن متن سطح بالا"
+  },
+  "AllowLocalLinks": {
+    "message": "اجازه دادن به لینک های محلی"
+  },
+  "AllowPage": {
+    "message": "Allow all this page"
+  },
+  "AllowPage.accesskey": {
+    "message": "A"
+  },
+  "AllowPing": {
+    "message": "اجازه دادن به <A PING...>"
+  },
+  "AllowViaBookmarks": {
+    "message": "دادن مجوز به سایت هایی که از نشانه گذاری ها باز می شوند."
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "Block every object coming from a site marked as untrusted"
+  },
+  "Appearance": {
+    "message": "تنظیمات ظاهری"
+  },
+  "AutoAllowTopLevel": {
+    "message": "اجازه دادن به سایت های رده بالا به صورت موقت و پیشفرض"
+  },
+  "AutoReload": {
+    "message": "بارگذاری مجدد به صورت خودکار هنگام تغییر مجوزها"
+  },
+  "BaseDom": {
+    "message": "سطح دوم نام دامنه ها (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "Blocked Objects"
+  },
+  "BookmarkSync": {
+    "message": "Backup NoScript configuration in a bookmark for easy synchronization"
+  },
+  "ClearClickDescription": {
+    "message": "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version."
+  },
+  "ClearClickHeader": {
+    "message": "Potential Clickjacking / UI Redressing Attempt!"
+  },
+  "ClearClickOpt": {
+    "message": "ClearClick protection on pages…"
+  },
+  "ClearClickReport": {
+    "message": "Report"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "R"
+  },
+  "ClearClickReportId": {
+    "message": "Report ID:"
+  },
+  "ClearClickTitle": {
+    "message": "ClearClick Warning"
+  },
+  "Close": {
+    "message": "بستن"
+  },
+  "CollapseBlockedObjects": {
+    "message": "Collapse blocked objects"
+  },
+  "ConfirmUnblock": {
+    "message": "پرسیدن سوال قبل مجوز دادن به اسکریپت های یک سایت"
+  },
+  "ContentBlocker": {
+    "message": "اعمال این محدودیت ها روی سایت های مورد اطمینان"
+  },
+  "CtxMenu": {
+    "message": "نمایش در منوی کلیک راست"
+  },
+  "DefaultPolicies": {
+    "message": "راهنماهای پیشفرض"
+  },
+  "Description": {
+    "message": "Extra protection for your Firefox: NoScript allows JavaScript, Flash (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality... Experts will agree: Firefox is really safer with NoScript :-)"
+  },
+  "Embeddings": {
+    "message": "Embedded Objects"
+  },
+  "Exceptions": {
+    "message": "Exceptions..."
+  },
+  "Export": {
+    "message": "اکسپورت"
+  },
+  "Export.accesskey": {
+    "message": "ک"
+  },
+  "FixLinks": {
+    "message": "اجازه دادن به لینک های جاوا اسکریپت"
+  },
+  "Forbid": {
+    "message": "ممنوع"
+  },
+  "Forbid.accesskey": {
+    "message": "م"
+  },
+  "ForbidBookmarklets": {
+    "message": "ممنوع کردن سایت هایی که از نشانه گذاری ها باز می شوند."
+  },
+  "ForbidFlash": {
+    "message": "ممنوع کردن Adobe Flash"
+  },
+  "ForbidFonts": {
+    "message": "ممنوع کردن @font-face"
+  },
+  "ForbidFrames": {
+    "message": "ممنوع کردن <FRAME>"
+  },
+  "ForbidIFrames": {
+    "message": "ممنوع کردن <IFRAME>"
+  },
+  "ForbidJava": {
+    "message": "Java ممنوع کردن"
+  },
+  "ForbidMedia": {
+    "message": "ممنوع کردن <AUDIO> / <VIDEO>"
+  },
+  "ForbidMetaRefresh": {
+    "message": "ممنوع کردن تفییر مسیرهای META  در عناصر <NOSCRIPT>"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "ر"
+  },
+  "ForbidPing": {
+    "message": "ممنوع کردن <A PING...>"
+  },
+  "ForbidPlugins": {
+    "message": "ممنوع کردن سایر پلاگین ها"
+  },
+  "ForbidSilverlight": {
+    "message": "ممنوع کردن Microsoft® Silverlight"
+  },
+  "ForbidWebGL": {
+    "message": "ممنوع کردن WebGL"
+  },
+  "ForbidXSLT": {
+    "message": "Forbid XSLT"
+  },
+  "FrameOptErr.desc": {
+    "message": "To protect your security, the publisher of this content does not allow it to be displayed in a frame."
+  },
+  "FrameOptErr.link": {
+    "message": "Click here to open this content in a new window"
+  },
+  "FrameOptErr.title": {
+    "message": "This content cannot be displayed in a frame"
+  },
+  "FullAddr": {
+    "message": "آدرس کامل (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "نام کامل دامنه (http://www.noscript.net)"
+  },
+  "General": {
+    "message": "عمومی"
+  },
+  "GloballyEnabled": {
+    "message": "تمام اسکریپت ها مجوز دارند (خطرناک)"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "Always"
+  },
+  "Https.behavior": {
+    "message": "Behavior"
+  },
+  "Https.cookies": {
+    "message": "Cookies"
+  },
+  "Https.description": {
+    "message": "Forbid active web content unless it comes from a secure (HTTPS) connection:"
+  },
+  "Https.never": {
+    "message": "Never"
+  },
+  "Https.proxy": {
+    "message": "When using a proxy (recommended with Tor)"
+  },
+  "HttpsFaq": {
+    "message": "HTTPS FAQ…"
+  },
+  "HttpsFaq.accesskey": {
+    "message": "Q"
+  },
+  "HttpsForced": {
+    "message": "Force the following sites to use secure (HTTPS) connections:"
+  },
+  "HttpsForcedExceptions": {
+    "message": "Never force secure (HTTPS) connections for the following sites:"
+  },
+  "Import": {
+    "message": "ایمپورت"
+  },
+  "Import.accesskey": {
+    "message": "ی"
+  },
+  "KeepLocked": {
+    "message": "Keep this element locked (recommended)"
+  },
+  "MatchSample": {
+    "message": "مثال تطابق الگو :"
+  },
+  "Next": {
+    "message": "Next"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "No placeholder for objects coming from sites marked as untrusted"
+  },
+  "Notifications": {
+    "message": "هشدارها"
+  },
+  "Notify": {
+    "message": "نمایش پیام هنگام متوقف شدن اسکریپت ها"
+  },
+  "Notify.bottom": {
+    "message": "نمایش پیام در پایین صفحه"
+  },
+  "NselForce": {
+    "message": "نمایش عناصر <NOSCRIPT>"
+  },
+  "NselNever": {
+    "message": "مخفی کردن عناصر <NOSCRIPT>"
+  },
+  "OptBlockCssScanners": {
+    "message": "سد کردن اسکنرهای بر پایه CSS"
+  },
+  "OptFilterXGet": {
+    "message": "Sanitize cross-site suspicious requests"
+  },
+  "OptFilterXPost": {
+    "message": "Turn cross-site POST requests into data-less GET requests"
+  },
+  "Options": {
+    "message": "تنظیمات..."
+  },
+  "Options.accesskey": {
+    "message": "ت"
+  },
+  "OptionsLong": {
+    "message": "تنظیمات NoScript"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "Permissions": {
+    "message": "مجوزها"
+  },
+  "PermissionsText": {
+    "message": "شما می توانید سایت هایی را که اجازه اجرای اسکریپت دارند را مشخص کنید.آدرس سایت یا نام دامنه را وارد کنید.(به عنوان مثال \"http://www.site.com\" یا \"site.com\")"
+  },
+  "Plugins": {
+    "message": "افزودنی ها"
+  },
+  "Policies": {
+    "message": "راهنماها"
+  },
+  "Prev": {
+    "message": "Previuous"
+  },
+  "Refresh": {
+    "message": "بارگذاری مجدد"
+  },
+  "ReloadWarn": {
+    "message": "این تنظیمات روی پنجره های جدید اعمال خواهند شد."
+  },
+  "RemoveSelected": {
+    "message": "پاک کردن سایت های انتخاب شده"
+  },
+  "Reset": {
+    "message": "ریست"
+  },
+  "Reset.accesskey": {
+    "message": "ت"
+  },
+  "ResetDef": {
+    "message": "بازگردانی به تنظیمات اولیه"
+  },
+  "ResetDef.accesskey": {
+    "message": "د"
+  },
+  "RevokeTemp": {
+    "message": "Revoke Temporary Permissions"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "T"
+  },
+  "SecureCookies": {
+    "message": "Enable Automatic Secure Cookies Management"
+  },
+  "SecureCookiesExceptions": {
+    "message": "Ignore unsafe cookies set over HTTPS by the following sites:"
+  },
+  "SecureCookiesForced": {
+    "message": "Force encryption for all the cookies set over HTTPS by the following sites:"
+  },
+  "SecurityManager": {
+    "message": "مدیریت امنیت"
+  },
+  "Show": {
+    "message": "نمایش..."
+  },
+  "ShowConsole": {
+    "message": "نمایش کنسول..."
+  },
+  "ShowConsole.accesskey": {
+    "message": "g"
+  },
+  "ShowPlaceholder": {
+    "message": "نمایش آیکون"
+  },
+  "SiteManager": {
+    "message": "مدیریت سایت"
+  },
+  "SitePolicies": {
+    "message": "راهنمای مخصوص سایت"
+  },
+  "StatusIcon": {
+    "message": "آیکون برنامه در نوار وضعیت"
+  },
+  "StatusLabel": {
+    "message": "برچسب نوار وضعیت"
+  },
+  "TempAllowPage": {
+    "message": "Temporarily allow all this page"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "p"
+  },
+  "TempCmd": {
+    "message": "دادن مجوز موقت به [...]"
+  },
+  "TempToPerm": {
+    "message": "Make page permissions permanent"
+  },
+  "TempToPerm.accesskey": {
+    "message": "m"
+  },
+  "ToolbarToggle": {
+    "message": "کلیک چپ روی کلید نوار ابزار برنامه مجوز های سایت فعلی را باز می کند."
+  },
+  "TruncateTitle": {
+    "message": "کوتاه کردن عنوان پرونده"
+  },
+  "Trust": {
+    "message": "علامت گدازی به عنوان تایید شده"
+  },
+  "Trust.accesskey": {
+    "message": "ع"
+  },
+  "Trusted": {
+    "message": "مورد تایید"
+  },
+  "TrustedPagesAdj": {
+    "message": "trusted"
+  },
+  "Unknown": {
+    "message": "ناشناس"
+  },
+  "UnsafeReload": {
+    "message": "بازآوری ناامن"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "ب"
+  },
+  "Untrust": {
+    "message": "علامت گدازی به عنوان مشکوک"
+  },
+  "Untrust.accesskey": {
+    "message": "ل"
+  },
+  "Untrusted": {
+    "message": "مشکوک"
+  },
+  "UntrustedPagesAdj": {
+    "message": "untrusted"
+  },
+  "WebAddress": {
+    "message": "آدرس وب سایت :"
+  },
+  "Whitelist": {
+    "message": "لیست سفید"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "Anti-XSS Protection Exceptions"
+  },
+  "XssExceptions.description": {
+    "message": "Destinations matching these regular expressions will NOT be protected against XSS"
+  },
+  "XssFaq": {
+    "message": "XSS سوالات"
+  },
+  "XssFaq.accesskey": {
+    "message": "X"
+  },
+  "about": {
+    "message": "درباره $1"
+  },
+  "allowGlobal": {
+    "message": "دادن مجوز به تمام اسکریپت‌ها (توصیه نمی‌شود)"
+  },
+  "allowLocal": {
+    "message": "اجازه دادن به $1"
+  },
+  "allowTemp": {
+    "message": "دادن مجوز موقت به $1"
+  },
+  "allowed.glb": {
+    "message": "خطر!به تمام اسکریپت‌ها مجوز فعالیت داده شده"
+  },
+  "allowed.no": {
+    "message": "اسکریپت‌ها مجوز اجرا ندارند"
+  },
+  "allowed.prt": {
+    "message": "اسکریپت‌ها مجوز موقت فعالیت دارند"
+  },
+  "allowed.yes": {
+    "message": "هم اکنون اسکریپت‌ها مجوز اجرا دارند"
+  },
+  "alwaysAsk": {
+    "message": "همیشه بپرس"
+  },
+  "audio.samples": {
+    "message": "نمونه‌های صوتی"
+  },
+  "bookmarkSync.message": {
+    "message": "This bookmark is NOT meant to be opened, but to be synchronized using a service such as Weave or the XMarks extension."
+  },
+  "bookmarkSync.title": {
+    "message": "NoScript Configuration Bookmark"
+  },
+  "changelog": {
+    "message": "تغییرات برنامه"
+  },
+  "changelog.tip": {
+    "message": "نمایش تغییرات ایجاد شده در هر نسخه"
+  },
+  "confirm": {
+    "message": "آیا مطمئن هستید؟"
+  },
+  "distrust": {
+    "message": "نشانه گذاری $1 به عنوان سایت مشکوک"
+  },
+  "extensionContributors": {
+    "message": "همکاران"
+  },
+  "extensionContributors.tip": {
+    "message": "کسانی که برای این افزونه زحمت کشیده اند"
+  },
+  "extensionCreator.tip": {
+    "message": "بازدید از سایت نویسنده"
+  },
+  "extensionCreatorLabel": {
+    "message": "نویسنده :"
+  },
+  "extensionHomepage.tip": {
+    "message": "بازدید از سایت برنامه"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "محافظت از فایرفاکس شما:این برنامه از اجرا شدن اسکریپت ها در سایت های مختلف جلوگیری می کند.البته شما می توانید به اسکریپت های سایت های مورد اعتماد خود اجازه فعالیت بدهید."
+  },
+  "forbidGlobal": {
+    "message": "جلوگیری از فعالیت همه اسکریپت‌ها"
+  },
+  "forbidLocal": {
+    "message": "ممنوع کردن $1"
+  },
+  "global.warning.text": {
+    "message": "به اسکریپت‌های تمام سایت‌ها اجازه فعالیت داده خواهد شد.ادامه؟"
+  },
+  "global.warning.title": {
+    "message": "هشدار!"
+  },
+  "informaction.tip": {
+    "message": "بازدید از سایت InformAction"
+  },
+  "license": {
+    "message": "مجوز"
+  },
+  "license.tip": {
+    "message": "مجوز استفاده کاربر از برنامه"
+  },
+  "logo.tip": {
+    "message": "بازدید از سایت برنامه"
+  },
+  "metaRefresh.notify": {
+    "message": "NoScript یک تغییر مسیر <META> را در یک عنصر <NOSCRIPT>  متوقف کرد : $1 در $2 ثانیه"
+  },
+  "metaRefresh.notify.follow": {
+    "message": "ادامه تغییر مسیر"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "د"
+  },
+  "notify.options": {
+    "message": "تنظیمات"
+  },
+  "notify.options.accessKey": {
+    "message": "ت"
+  },
+  "notifyHide": {
+    "message": "پنهان شدن پس از $1 ثانیه"
+  },
+  "reset.title": {
+    "message": "راه اندازی دوباره NoScript"
+  },
+  "reset.warning": {
+    "message": "تمام تنظیم ها و سایت های دارای مجوز به حالت پیش فرض باز می گردد."
+  },
+  "sponsor.tip": {
+    "message": "بازدید از سایت اسپانسر"
+  },
+  "trust": {
+    "message": "تایید $1"
+  },
+  "unsafeReload.warning": {
+    "message": "UNSAFELY reloading a suspicious\n\n$1 [$2]\n\nFROM [$3]\n\nNoScript will NOT protect this request!\n"
+  },
+  "untrustedOrigin": {
+    "message": "منبع نامطمئن"
+  },
+  "version": {
+    "message": "نسخه $1"
+  },
+  "xss.notify.generic": {
+    "message": "یک درخواست XSS از $1 فیلتر شد.اطلاعات بیشتر در کنسول ذخیره شده است."
+  },
+  "xss.notify.showConsole": {
+    "message": "نمایش کنسول..."
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "S"
+  },
+  "xss.reason.filterXGet": {
+    "message": "Sanitized suspicious request. Original URL [$1] requested from [$2]. Sanitized URL: [$3].)"
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "Sanitized suspicious request referer. URL [$1] requested from [$2]. Sanitized Referer: [$3].)"
+  },
+  "xss.reason.filterXPost": {
+    "message": "Sanitized suspicious upload to [$1] from [$2]: transformed into a download-only GET request."
+  }
+}

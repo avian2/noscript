@@ -1,0 +1,66 @@
+@import url("chrome://browser/content/extension.css");
+body {
+  background: url("/img/noscript-options.png") no-repeat fixed top right;
+  background-size: 128px;
+  padding: 0 64px 0 0;
+  margin: 8px 8px 8px 8px;
+}
+#header {
+  padding: 0 64px 0 0;
+  margin: 0;
+
+}
+#header h1 {
+  color: #048;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+text-align: right;
+  font-size: 32px;
+  padding: 0;
+  margin: 0;
+}
+#version {
+  color: #048;
+  font-size: 12px;
+  padding: 0;
+  margin: 0;
+  text-align: right;
+  display: block;
+}
+
+#policy {
+  display: block;
+  margin-top: .5em;
+  min-height: 20em;
+  width: 90%;
+}
+.hide, div.debug {
+  display: none;
+}
+
+body.debug div.debug {
+  display: initial;
+}
+
+.error {
+  background: #ff8;
+  color: red;
+}
+
+input#newsite {
+  margin: 8px;
+  min-width: 300px;
+}
+
+button.add {
+  font-weight: bold;
+}
+
+.opt-group {
+  padding: 8px 0;
+}
+#xssFaq {
+  padding: 8px 1em;
+}
+#clearclick-options {
+  display: none;
+}

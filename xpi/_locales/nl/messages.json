@@ -1,0 +1,725 @@
+{
+  "ABE": {
+    "message": "ABE"
+  },
+  "ABE.accesskey": {
+    "message": "A"
+  },
+  "ABE.chooseEditor": {
+    "message": "Kies een teksteditor voor ABE-regelsets"
+  },
+  "ABE.disable.accesskey": {
+    "message": "U"
+  },
+  "ABE.disable.label": {
+    "message": "Uitschakelen"
+  },
+  "ABE.edit.accesskey": {
+    "message": "W"
+  },
+  "ABE.edit.label": {
+    "message": "Wijzigen…"
+  },
+  "ABE.enable.accesskey": {
+    "message": "I"
+  },
+  "ABE.enable.label": {
+    "message": "Inschakelen"
+  },
+  "ABE.enabled.label": {
+    "message": "ABE (Application Boundaries Enforcer) inschakelen"
+  },
+  "ABE.notify": {
+    "message": "Aanvraag $1 gefilterd door ABE: <$2> $3"
+  },
+  "ABE.refresh.accesskey": {
+    "message": "V"
+  },
+  "ABE.refresh.label": {
+    "message": "Vernieuwen"
+  },
+  "ABE.rulesets.label": {
+    "message": "Regels:"
+  },
+  "ABE.siteEnabled.label": {
+    "message": "Websites toestaan eigen regels door te geven"
+  },
+  "ABE.syntaxError": {
+    "message": "Syntaxisfout in ABE-regelset!"
+  },
+  "ABE.wanIpAsLocal": {
+    "message": "WAN-IP ($1) ∈ LOKAAL"
+  },
+  "Add": {
+    "message": "Toevoegen"
+  },
+  "Add.accesskey": {
+    "message": "T"
+  },
+  "AdditionalPermissions": {
+    "message": "Aanvullende toestemmingen voor vertrouwde websites"
+  },
+  "AdditionalRestrictions": {
+    "message": "Aanvullende beperkingen voor niet-vertrouwde websites"
+  },
+  "Advanced": {
+    "message": "Geavanceerd"
+  },
+  "Allow": {
+    "message": "Toestaan"
+  },
+  "Allow.accesskey": {
+    "message": "T"
+  },
+  "AllowBookmarks": {
+    "message": "Via bladwijzers geopende websites toestaan"
+  },
+  "AllowClipboard": {
+    "message": "Kopiëren en plakken van tekst met opmaakcodes vanaf extern klembord toestaan"
+  },
+  "AllowLocalLinks": {
+    "message": "Lokale koppelingen toestaan"
+  },
+  "AllowPage": {
+    "message": "Alles op deze pagina toestaan"
+  },
+  "AllowPage.accesskey": {
+    "message": "A"
+  },
+  "AllowPing": {
+    "message": "<A PING…> toestaan"
+  },
+  "AllowViaBookmarks": {
+    "message": "Via bladwijzers geopende websites toestaan"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "Elk object afkomstig van een als niet vertrouwd gemarkeerde website blokkeren"
+  },
+  "Appearance": {
+    "message": "Vormgeving"
+  },
+  "AutoAllowTopLevel": {
+    "message": "Top-levelwebsites standaard tijdelijk toestaan"
+  },
+  "AutoReload": {
+    "message": "Betrokken pagina’s automatisch vernieuwen als toestemmingen wijzigen"
+  },
+  "AutoReload.currentTab": {
+    "message": "Alleen het huidige tabblad opnieuw laden"
+  },
+  "BaseDom": {
+    "message": "Basisdomeinen op 2e niveau (noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "Geblokkeerde objecten"
+  },
+  "BookmarkSync": {
+    "message": "NoScript-configuratie in een bladwijzer opslaan voor eenvoudige synchronisatie"
+  },
+  "CascadePermissions": {
+    "message": "Toestemmingen van bovenste document aan scripts van derden doorgeven"
+  },
+  "ClearClickDescription": {
+    "message": "NoScript heeft een muis- of toetsenbordinteractie met een gedeeltelijk verborgen element onderschept. Klik op de onderstaande afbeelding om tussen de belemmerde en de zichtbare versie om te schakelen."
+  },
+  "ClearClickHeader": {
+    "message": "Potentiële poging tot ‘Clickjacking’ / aanpassing van gebruikersinterface!"
+  },
+  "ClearClickOpt": {
+    "message": "‘ClearClick’-bescherming op pagina’s…"
+  },
+  "ClearClickReport": {
+    "message": "Rapport"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "R"
+  },
+  "ClearClickReportId": {
+    "message": "Rapport-ID:"
+  },
+  "ClearClickTitle": {
+    "message": "‘ClearClick’-waarschuwing"
+  },
+  "Close": {
+    "message": "Sluiten"
+  },
+  "CollapseBlockedObjects": {
+    "message": "Geblokkeerde objecten samenvouwen"
+  },
+  "ConfirmUnblock": {
+    "message": "Om bevestiging vragen voordat een objectblokkering tijdelijk wordt opgeheven"
+  },
+  "ContentBlocker": {
+    "message": "Deze beperkingen ook op vertrouwde websites toepassen"
+  },
+  "CtxMenu": {
+    "message": "Contextmenu"
+  },
+  "DefaultPolicies": {
+    "message": "Standaardbeleid"
+  },
+  "Description": {
+    "message": "Extra bescherming voor Firefox: NoScript staat JavaScript, Flash (en andere plug-ins) alleen toe voor zelf gekozen vertrouwde domeinen (zoals uw website voor internetbankieren). Deze op toestemmingslijsten gebaseerde blokkering voorkomt exploitatie van beveiligingskwetsbaarheden (bekende en zelfs onbekende!) zonder verlies aan functionaliteit… Experts zullen het bevestigen: Firefox is echt veiliger met NoScript :-)"
+  },
+  "Donate": {
+    "message": "Doneren"
+  },
+  "Donate.accesskey": {
+    "message": "D"
+  },
+  "Embeddings": {
+    "message": "Ingebouwde objecten"
+  },
+  "Exceptions": {
+    "message": "Uitzonderingen…"
+  },
+  "Export": {
+    "message": "Exporteren"
+  },
+  "Export.accesskey": {
+    "message": "E"
+  },
+  "FixLinks": {
+    "message": "JavaScript-koppelingen proberen te herstellen"
+  },
+  "Forbid": {
+    "message": "Verbieden"
+  },
+  "Forbid.accesskey": {
+    "message": "V"
+  },
+  "ForbidBookmarklets": {
+    "message": "Bookmarklets verbieden"
+  },
+  "ForbidFlash": {
+    "message": "Adobe® Flash® verbieden"
+  },
+  "ForbidFonts": {
+    "message": "@font-face verbieden"
+  },
+  "ForbidFrames": {
+    "message": "<FRAME> verbieden"
+  },
+  "ForbidIFrames": {
+    "message": "<IFRAME> verbieden"
+  },
+  "ForbidJava": {
+    "message": "Java™ verbieden"
+  },
+  "ForbidMedia": {
+    "message": "<AUDIO> / <VIDEO> verbieden"
+  },
+  "ForbidMetaRefresh": {
+    "message": "META-omleidingen in <NOSCRIPT>-elementen verbieden"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "V"
+  },
+  "ForbidPing": {
+    "message": "<A PING…> verbieden"
+  },
+  "ForbidPlugins": {
+    "message": "Andere plug-ins verbieden"
+  },
+  "ForbidSilverlight": {
+    "message": "Microsoft® Silverlight™ verbieden"
+  },
+  "ForbidWebGL": {
+    "message": "WebGL verbieden"
+  },
+  "ForbidXSLT": {
+    "message": "XSLT verbieden"
+  },
+  "FrameOptErr.desc": {
+    "message": "Om uw veiligheid te beschermen, staat de uitgever van deze inhoud niet toe deze in een deelvenster weer te geven."
+  },
+  "FrameOptErr.link": {
+    "message": "Klik hier om deze inhoud in een nieuw venster weer te geven"
+  },
+  "FrameOptErr.title": {
+    "message": "Deze inhoud kan niet in een deelvenster worden weergegeven"
+  },
+  "FullAddr": {
+    "message": "Volledige adressen (http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "Volledige domeinen (www.noscript.net)"
+  },
+  "General": {
+    "message": "Algemeen"
+  },
+  "GlobalHttpsWhitelist": {
+    "message": "HTTPS-scripts op HTTPS-documenten overal toestaan"
+  },
+  "GloballyEnabled": {
+    "message": "Scripts worden overal toegestaan (gevaarlijk)"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "Altijd"
+  },
+  "Https.behavior": {
+    "message": "Gedrag"
+  },
+  "Https.cookies": {
+    "message": "Cookies"
+  },
+  "Https.description": {
+    "message": "Actieve webinhoud verbieden, tenzij afkomstig van een beveiligde (HTTPS-)verbinding:"
+  },
+  "Https.never": {
+    "message": "Nooit"
+  },
+  "Https.proxy": {
+    "message": "Bij gebruik van een proxy (aanbevolen voor Tor)"
+  },
+  "HttpsFaq": {
+    "message": "HTTPS-FAQ…"
+  },
+  "HttpsFaq.accesskey": {
+    "message": "Q"
+  },
+  "HttpsForced": {
+    "message": "Onderstaande websites dwingen beveiligde (HTTPS-)verbindingen te gebruiken:"
+  },
+  "HttpsForcedExceptions": {
+    "message": "Onderstaande websites NOOIT dwingen beveiligde (HTTPS-)verbindingen te gebruiken:"
+  },
+  "Import": {
+    "message": "Importeren"
+  },
+  "Import.accesskey": {
+    "message": "I"
+  },
+  "KeepLocked": {
+    "message": "Dit element geblokkeerd houden (aanbevolen)"
+  },
+  "MatchSample": {
+    "message": "Voorbeeld van patroonovereenkomst:"
+  },
+  "Next": {
+    "message": "Volgende"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "Geen vervangend pictogram voor objecten afkomstig van als niet vertrouwd gemarkeerde websites"
+  },
+  "Notifications": {
+    "message": "Meldingen"
+  },
+  "Notify": {
+    "message": "Bericht over geblokkeerde scripts tonen"
+  },
+  "Notify.bottom": {
+    "message": "Bericht onder in het scherm plaatsen"
+  },
+  "NotifyMeta": {
+    "message": "Bericht over geblokkeerde META-omleidingen tonen"
+  },
+  "NotifyMeta.accesskey": {
+    "message": "r"
+  },
+  "NselForce": {
+    "message": "Het <NOSCRIPT>-element dat na een geblokkeerd <SCRIPT> volgt tonen"
+  },
+  "NselNever": {
+    "message": "<NOSCRIPT>-elementen verbergen"
+  },
+  "OptBlockCssScanners": {
+    "message": "Op cross-site scripting (CSS) gebaseerde scanners blokkeren"
+  },
+  "OptFilterXGet": {
+    "message": "Verdachte cross-site-aanvragen zuiveren"
+  },
+  "OptFilterXPost": {
+    "message": "Cross-site POST-aanvragen omzetten naar gegevensarme GET-aanvragen"
+  },
+  "Options": {
+    "message": "Opties…"
+  },
+  "Options.accesskey": {
+    "message": "O"
+  },
+  "OptionsLong": {
+    "message": "NoScript-opties"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "PermanentInPrivate": {
+    "message": "Permanente ‘Toestaan’-opdrachten in privévensters"
+  },
+  "Permissions": {
+    "message": "Toestemmingen"
+  },
+  "PermissionsText": {
+    "message": "U kunt opgeven welke websites scripts mogen gebruiken. Typ het adres of domein (bv. ‘http://www.website.com’ of ‘website.com’) van de website die u wilt toestaan, en klik daarna op Toestaan."
+  },
+  "Plugins": {
+    "message": "Plug-ins"
+  },
+  "Policies": {
+    "message": "Beleid"
+  },
+  "Preset": {
+    "message": "Beveiligingsniveau"
+  },
+  "Preset.high": {
+    "message": "Zwaar (volledige afsluiting)"
+  },
+  "Preset.low": {
+    "message": "Eenvoudig (Blokkeerlijst en webbeveiliging)"
+  },
+  "Preset.medium": {
+    "message": "Klassiek (Toestemmingenlijst + webbeveiliging)"
+  },
+  "Preset.off": {
+    "message": "Uit (sterk afgeraden!)"
+  },
+  "Prev": {
+    "message": "Vorige"
+  },
+  "RecentBlocked": {
+    "message": "Onlangs geblokkeerde websites"
+  },
+  "Refresh": {
+    "message": "Vernieuwen"
+  },
+  "ReloadWarn": {
+    "message": "Deze opties worden van kracht op nieuwe of (handmatig) vernieuwde pagina’s"
+  },
+  "RemoveSelected": {
+    "message": "Geselecteerde websites verwijderen"
+  },
+  "Reset": {
+    "message": "Herstellen"
+  },
+  "Reset.accesskey": {
+    "message": "H"
+  },
+  "ResetDef": {
+    "message": "Standaardwaarden terugzetten"
+  },
+  "ResetDef.accesskey": {
+    "message": "S"
+  },
+  "RestrictSubdocScripting": {
+    "message": "Scripts in toegestane subdocumenten van niet-toegestane pagina’s blokkeren"
+  },
+  "RevokeTemp": {
+    "message": "Tijdelijke toestemmingen intrekken"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "s"
+  },
+  "SecureCookies": {
+    "message": "Automatisch beheer van beveiligde cookies inschakelen"
+  },
+  "SecureCookiesExceptions": {
+    "message": "Door onderstaande websites via HTTPS ingestelde onveilige cookies negeren:"
+  },
+  "SecureCookiesForced": {
+    "message": "Alle cookies ingesteld via HTTPS door onderstaande websites dwingen versleuteling te gebruiken:"
+  },
+  "SecurityManager": {
+    "message": "Beveiligingsbeheerder"
+  },
+  "Show": {
+    "message": "Tonen…"
+  },
+  "ShowConsole": {
+    "message": "Console tonen…"
+  },
+  "ShowConsole.accesskey": {
+    "message": "t"
+  },
+  "ShowPlaceholder": {
+    "message": "Vervangend pictogram tonen"
+  },
+  "ShowReleaseNotes": {
+    "message": "Uitgaveopmerkingen weergeven na bijwerken"
+  },
+  "SiteManager": {
+    "message": "Websitebeheerder"
+  },
+  "SitePolicies": {
+    "message": "Website-specifiek beleid"
+  },
+  "StatusIcon": {
+    "message": "Statusbalkpictogram"
+  },
+  "StatusLabel": {
+    "message": "Statusbalklabel"
+  },
+  "TempAllowPage": {
+    "message": "Alles op deze pagina tijdelijk toestaan"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "t"
+  },
+  "TempCmd": {
+    "message": "[…] tijdelijk toestaan"
+  },
+  "TempToPerm": {
+    "message": "Paginatoestemmingen definitief maken"
+  },
+  "TempToPerm.accesskey": {
+    "message": "m"
+  },
+  "ToolbarToggle": {
+    "message": "Met de linkermuisknop op de NoScript-werkbalkknop klikken schakelt toestemmingen voor huidige top-levelwebsite in/uit"
+  },
+  "TruncateTitle": {
+    "message": "Documenttitels inkorten"
+  },
+  "Trust": {
+    "message": "Markeren als vertrouwd"
+  },
+  "Trust.accesskey": {
+    "message": "M"
+  },
+  "Trusted": {
+    "message": "Vertrouwd"
+  },
+  "TrustedPagesAdj": {
+    "message": "vertrouwd"
+  },
+  "Uninstall": {
+    "message": "De-installeren"
+  },
+  "Unknown": {
+    "message": "Onbekend"
+  },
+  "UnsafeReload": {
+    "message": "Onveilig herladen"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "h"
+  },
+  "Untrust": {
+    "message": "Markeren als niet vertrouwd"
+  },
+  "Untrust.accesskey": {
+    "message": "n"
+  },
+  "Untrusted": {
+    "message": "Niet vertrouwd"
+  },
+  "UntrustedPagesAdj": {
+    "message": "niet vertrouwd"
+  },
+  "WebAddress": {
+    "message": "Adres van website:"
+  },
+  "Whitelist": {
+    "message": "Toestemmingenlijst"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "Uitzonderingen voor Anti-XSS-bescherming"
+  },
+  "XssExceptions.description": {
+    "message": "Bestemmingen die aan deze reguliere expressies voldoen, zullen NIET tegen XSS worden beschermd."
+  },
+  "XssFaq": {
+    "message": "XSS-FAQ…"
+  },
+  "XssFaq.accesskey": {
+    "message": "Q"
+  },
+  "about": {
+    "message": "Over $1"
+  },
+  "allowFrom": {
+    "message": "Alles van $1 toestaan"
+  },
+  "allowGlobal": {
+    "message": "Scripts overal toestaan (gevaarlijk)"
+  },
+  "allowLocal": {
+    "message": "$1 toestaan"
+  },
+  "allowTemp": {
+    "message": "$1 tijdelijk toestaan"
+  },
+  "allowTempFrom": {
+    "message": "Tijdelijk alles van $1 toestaan"
+  },
+  "allowed.glb": {
+    "message": "Gevaar! Scripts worden overal toegestaan"
+  },
+  "allowed.glb-emb": {
+    "message": "Scripts worden overal toegestaan, maar sommige insluitingen geblokkeerd"
+  },
+  "allowed.no": {
+    "message": "Scripts worden momenteel niet toegestaan"
+  },
+  "allowed.prt": {
+    "message": "Scripts worden gedeeltelijk toegestaan"
+  },
+  "allowed.yes": {
+    "message": "Scripts worden momenteel toegestaan"
+  },
+  "alwaysAsk": {
+    "message": "Altijd om bevestiging vragen"
+  },
+  "audio.samples": {
+    "message": "Geluidsvoorbeelden"
+  },
+  "bookmarkSync.confirm": {
+    "message": "NoScript heeft een configuratiebladwijzer gevonden die lijkt te zijn opgeslagen op\n$1.\nWilt u echt uw lokale NoScript-configuratie met de inhoud van deze bladwijzer overschrijven?"
+  },
+  "bookmarkSync.message": {
+    "message": "Deze bladwijzer is NIET bedoeld om te worden geopend, maar om te worden gesynchroniseerd via een service zoals Weave of de XMarks-extensie."
+  },
+  "bookmarkSync.title": {
+    "message": "NoScript-configuratiebladwijzer"
+  },
+  "changelog": {
+    "message": "Changelog"
+  },
+  "changelog.tip": {
+    "message": "Changelog tonen"
+  },
+  "confirm": {
+    "message": "Weet u het zeker?"
+  },
+  "disable": {
+    "message": "$1 uitschakelen"
+  },
+  "disable.accessKey": {
+    "message": "u"
+  },
+  "distrust": {
+    "message": "$1 markeren als niet vertrouwd"
+  },
+  "extensionContributors": {
+    "message": "Medewerkers:"
+  },
+  "extensionContributors.tip": {
+    "message": "Personen die een bedankje voor deze extensie verdienen"
+  },
+  "extensionCreator.tip": {
+    "message": "Startpagina van auteur bezoeken"
+  },
+  "extensionCreatorLabel": {
+    "message": "Auteur:"
+  },
+  "extensionHomepage.tip": {
+    "message": "Startpagina van extensie bezoeken"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "Extra bescherming voor uw Firefox: NoScript staat JavaScript, Java (en andere plug-ins) alleen toe voor zelf gekozen vertrouwde domeinen (zoals uw website voor internetbankieren). Deze op toestemmingslijsten gebaseerde benadering van blokkering voorkomt exploitatie van beveiligingskwetsbaarheden (bekende en zelfs onbekende!) zonder verlies van functionaliteit… Experts zullen het bevestigen: Firefox is echt veiliger met NoScript :-)"
+  },
+  "forbidGlobal": {
+    "message": "Scripts overal verbieden (geadviseerd)"
+  },
+  "forbidLocal": {
+    "message": "$1 verbieden"
+  },
+  "global.warning.text": {
+    "message": "Scripts zullen overal worden toegestaan (voor alle websites).\nDit is een potentieel gevaarlijke actie.\nWilt u echt doorgaan?"
+  },
+  "global.warning.title": {
+    "message": "Waarschuwing!"
+  },
+  "incompatibleOptions": {
+    "message": "‘$1’\nis niet compatibel met ‘$2’.\\bWilt u het vorige inschakelen en het laatste uitschakelen?"
+  },
+  "incompatibleOptions.title": {
+    "message": "Waarschuwing voor incompatibele opties"
+  },
+  "informaction.tip": {
+    "message": "Startpagina van InformAction bezoeken"
+  },
+  "license": {
+    "message": "Licentie"
+  },
+  "license.tip": {
+    "message": "Eindgebruikerslicentie lezen"
+  },
+  "logo.tip": {
+    "message": "Startpagina van extensie bezoeken"
+  },
+  "metaRefresh.notify": {
+    "message": "NoScript heeft een <META>-omleiding binnen een <NOSCRIPT>-element geblokkeerd: $1 in $2 seconden."
+  },
+  "metaRefresh.notify.follow": {
+    "message": "Omleiding volgen"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "V"
+  },
+  "notify.options": {
+    "message": "Opties"
+  },
+  "notify.options.accessKey": {
+    "message": "O"
+  },
+  "notifyHide": {
+    "message": "Verbergen na $1 seconden"
+  },
+  "removal.message": {
+    "message": "Door NoScript uit te schakelen of te verwijderen, worden ALLE door NoScript geboden beschermingen stopgezet.\n\nAls u alleen het per website verwerken van alle scripttoestemmingen vervelend vindt, bestaat er een veiligere keuze.\n\nNoScript kan het blokkeren van scripts stoppen, behalve die welke u als niet vertrouwd markeert, terwijl het u toch via de meest geavanceerde beveiligingsmaatregelen beschermt tegen XSS, Clickjacking, CSRF en andere internetdreigingen.\n\nWilt u echt ALLE beschermingen van NoScript verwijderen?\n"
+  },
+  "removal.no": {
+    "message": "Nee, alleen het blokkeren van scripts stoppen"
+  },
+  "removal.title": {
+    "message": "Waarschuwing voor beveiligingsdowngrade"
+  },
+  "removal.yes": {
+    "message": "Ja, ALLE beschermingen verwijderen"
+  },
+  "reset.title": {
+    "message": "NoScript-herinitialisatie"
+  },
+  "reset.warning": {
+    "message": "ALLE NoScript-voorkeuren en toestemmingen voor websites zullen onmiddellijk naar hun standaardwaarden worden teruggezet.\nDeze actie kan niet ongedaan worden gemaakt.\nWilt u doorgaan?"
+  },
+  "siteInfo.confirm": {
+    "message": "U gaat om informatie vragen over de website ‘$1’\ndoor een aanvraag naar $2 te verzenden.\nWilt u doorgaan?"
+  },
+  "siteInfo.tooltip": {
+    "message": "Klik met de middelste muisknop of druk op shift en klik voor website-informatie..."
+  },
+  "sponsor.tip": {
+    "message": "Startpagina van sponsor bezoeken"
+  },
+  "trust": {
+    "message": "$1 vertrouwen"
+  },
+  "unsafeReload.warning": {
+    "message": "ONVEILIG opnieuw laden van een verdachte\n\n$1 [$2]\n\nVANAF [$3]\n\nNoScript zal deze aanvraag NIET blokkeren!\n"
+  },
+  "untrustedOrigin": {
+    "message": "een niet-vertrouwde oorsprong"
+  },
+  "version": {
+    "message": "Versie $1"
+  },
+  "xss.notify.generic": {
+    "message": "NoScript heeft een potentiële poging tot cross-site scripting (XSS) van $1 geblokkeerd. Technische details zijn in de Console vastgelegd."
+  },
+  "xss.notify.showConsole": {
+    "message": "Console tonen…"
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "t"
+  },
+  "xss.reason.filterXGet": {
+    "message": "Verdachte aanvraag opgeschoond. Oorspronkelijke URL [$1] opgevraagd vanaf [$2]. Opgeschoonde URL: [$3]."
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "Verdachte aanvraagverwijzer opgeschoond. URL [$1] opgevraagd vanaf [$2]. Opgeschoonde verwijzer: [$3]."
+  },
+  "xss.reason.filterXPost": {
+    "message": "Verdachte upload naar [$1] vanaf [$2] opgeschoond: omgezet naar een alleen downloadbare GET-aanvraag."
+  }
+}

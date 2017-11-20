@@ -1,0 +1,581 @@
+{
+  "Add": {
+    "message": "추가"
+  },
+  "Add.accesskey": {
+    "message": "A"
+  },
+  "AdditionalPermissions": {
+    "message": "신뢰할 수 있는 사이트에 대해서 다음을 추가적으로 허용"
+  },
+  "AdditionalRestrictions": {
+    "message": "신뢰할 수 없는 사이트에 대한 추가적인 제한 조치"
+  },
+  "Advanced": {
+    "message": "고급"
+  },
+  "Allow": {
+    "message": "허용"
+  },
+  "Allow.accesskey": {
+    "message": "l"
+  },
+  "AllowBookmarks": {
+    "message": "북마크를 이용한 사이트 열기 허용"
+  },
+  "AllowClipboard": {
+    "message": "외부 클립보드로부터 리치 텍스트 복사 및 붙여넣기 허용"
+  },
+  "AllowLocalLinks": {
+    "message": "로컬 링크 허용"
+  },
+  "AllowPage": {
+    "message": "이 페이지 모두 허용"
+  },
+  "AllowPage.accesskey": {
+    "message": "A"
+  },
+  "AllowPing": {
+    "message": "<A PING...> 허용"
+  },
+  "AllowViaBookmarks": {
+    "message": "북마크를 이용한 사이트 열기 허용"
+  },
+  "AlwaysBlockUntrustedContent": {
+    "message": "신뢰할 수 없음으로 표시된 사이트의 모든 개체를 차단"
+  },
+  "Appearance": {
+    "message": "모양"
+  },
+  "AutoAllowTopLevel": {
+    "message": "일시적으로 최상위 사이트를 허용"
+  },
+  "AutoReload": {
+    "message": "허용 정책이 변경되면 해당 페이지를 자동으로 다시 읽기"
+  },
+  "BaseDom": {
+    "message": "2수준 도메인(noscript.net)"
+  },
+  "BlockedObjects": {
+    "message": "차단된 개체들"
+  },
+  "BookmarkSync": {
+    "message": "Backup NoScript configuration in a bookmark for easy synchronization"
+  },
+  "ClearClickDescription": {
+    "message": "NoScript가 숨겨진 요소에서 처리하는 마우스나 키보드 작동을 가로챘습니다. 상단에 있는 이미지를 클릭하여 차단된 버전과 그렇지 않은 버전간에 전환할 수 있습니다."
+  },
+  "ClearClickHeader": {
+    "message": "잠재적인 클릭재킹(Clickjacking) 또는 UI 변경 시도!"
+  },
+  "ClearClickOpt": {
+    "message": "페이지에 대해서 ClearClick 보호 수행..."
+  },
+  "ClearClickReport": {
+    "message": "Report"
+  },
+  "ClearClickReport.accesskey": {
+    "message": "R"
+  },
+  "ClearClickReportId": {
+    "message": "Report ID:"
+  },
+  "ClearClickTitle": {
+    "message": "ClearClick 경고"
+  },
+  "Close": {
+    "message": "닫기"
+  },
+  "CollapseBlockedObjects": {
+    "message": "차단된 개체는 사용하지 않음"
+  },
+  "ConfirmUnblock": {
+    "message": "일시적으로 개체를 허용할 것인지를 확인합니다."
+  },
+  "ContentBlocker": {
+    "message": "이 제한 조치를 신뢰할 수 있는 사이트에도 적용"
+  },
+  "CtxMenu": {
+    "message": "상황에 따른 메뉴"
+  },
+  "DefaultPolicies": {
+    "message": "기본 정책"
+  },
+  "Description": {
+    "message": "FireFox(불여우)를 위한 한층 강화된 보안 기능: NoScript를 사용하면 여러분이 선택한 신뢰할 수 있는 도메인(예를 들면, 인터넷 뱅킹 웹 사이트)에 대해서만 JavaScript와 Flash(또한 그 밖의 플러그인들 포함)를 허용합니다. 사용자 지정 목록(whitelist)에 기반을 둔 선점형 차단 접근 방식을 통해 기능에 제약을 받지 않고 보안 위협 요소들(알려진 위협 요소 뿐만 아니라 알려지지 않은 위협 요소까지도!)을 사전에 차단합니다. 전문가들 역시 \"NoScript를 사용하면 FireFox가 좀더 안전해집니다!\"라고 말하고 있습니다. :-)"
+  },
+  "Embeddings": {
+    "message": "포함된 객체들"
+  },
+  "Exceptions": {
+    "message": "예외..."
+  },
+  "Export": {
+    "message": "내보내기"
+  },
+  "Export.accesskey": {
+    "message": "E"
+  },
+  "FixLinks": {
+    "message": "JavaScript 링크 수정 시도"
+  },
+  "Forbid": {
+    "message": "금지"
+  },
+  "Forbid.accesskey": {
+    "message": "F"
+  },
+  "ForbidBookmarklets": {
+    "message": "북마크릿(bookmarklets) 금지"
+  },
+  "ForbidFlash": {
+    "message": "Adobe® Flash® 금지"
+  },
+  "ForbidFonts": {
+    "message": "@font-face 금지"
+  },
+  "ForbidFrames": {
+    "message": "<FRAME> 금지"
+  },
+  "ForbidIFrames": {
+    "message": "<IFRAME> 금지"
+  },
+  "ForbidJava": {
+    "message": "Java™ 금지"
+  },
+  "ForbidMedia": {
+    "message": "<AUDIO> / <VIDEO> 금지"
+  },
+  "ForbidMetaRefresh": {
+    "message": "<NOSCRIPT> 요소 내에 있는 META 리디렉션 제거"
+  },
+  "ForbidMetaRefresh.accesskey": {
+    "message": "R"
+  },
+  "ForbidPing": {
+    "message": "<A PING...> 금지"
+  },
+  "ForbidPlugins": {
+    "message": "다른 플러그인 금지"
+  },
+  "ForbidSilverlight": {
+    "message": "Microsoft® Silverlight™ 금지"
+  },
+  "ForbidWebGL": {
+    "message": "WebGL 금지"
+  },
+  "ForbidXSLT": {
+    "message": "XSLT 금지"
+  },
+  "FrameOptErr.desc": {
+    "message": "To protect your security, the publisher of this content does not allow it to be displayed in a frame."
+  },
+  "FrameOptErr.link": {
+    "message": "Click here to open this content in a new window"
+  },
+  "FrameOptErr.title": {
+    "message": "This content cannot be displayed in a frame"
+  },
+  "FullAddr": {
+    "message": "전체 주소(http://www.noscript.net)"
+  },
+  "FullDom": {
+    "message": "전체 도메인(www.noscript.net)"
+  },
+  "General": {
+    "message": "일반"
+  },
+  "GloballyEnabled": {
+    "message": "스크립트 전면 허용(위험)"
+  },
+  "Https": {
+    "message": "HTTPS"
+  },
+  "Https.always": {
+    "message": "항상"
+  },
+  "Https.behavior": {
+    "message": "행위"
+  },
+  "Https.cookies": {
+    "message": "쿠키"
+  },
+  "Https.description": {
+    "message": "안전한(HTTPS) 연결에 대해서만 웹 컨텐츠 활성화 허용:"
+  },
+  "Https.never": {
+    "message": "항상 아님"
+  },
+  "Https.proxy": {
+    "message": "프락시를 사용할 때(Tor 추천)"
+  },
+  "HttpsFaq": {
+    "message": "HTTPS 자주묻는질문..."
+  },
+  "HttpsFaq.accesskey": {
+    "message": "Q"
+  },
+  "HttpsForced": {
+    "message": "다음 사이트에 대해서 강제로 안전한(HTTPS) 연결 시도:"
+  },
+  "HttpsForcedExceptions": {
+    "message": "다음 사이트에 대해서는 안전한(HTTPS) 연결 시도 안함:"
+  },
+  "Import": {
+    "message": "가져오기"
+  },
+  "Import.accesskey": {
+    "message": "I"
+  },
+  "KeepLocked": {
+    "message": "이 요소를 잠금니다(추천)"
+  },
+  "MatchSample": {
+    "message": "패턴 매칭 예제:"
+  },
+  "Next": {
+    "message": "Next"
+  },
+  "NoUntrustedPlaceholder": {
+    "message": "신뢰할 수 없는 사이트로 등록된 사이트의 개체에 대해서는 플레이스홀더 표시하지 않음"
+  },
+  "Notifications": {
+    "message": "알림"
+  },
+  "Notify": {
+    "message": "차단된 스크립트에 대한 정보 보여주기"
+  },
+  "Notify.bottom": {
+    "message": "하단에 메시지 표시"
+  },
+  "NselForce": {
+    "message": "차단된 <SCRIPT> 다음에 오는 <NOSCRIPT> 요소 표시"
+  },
+  "NselNever": {
+    "message": "<NOSCRIPT> 요소를 숨김"
+  },
+  "OptBlockCssScanners": {
+    "message": "CSS 기반의 스캐너 차단"
+  },
+  "OptFilterXGet": {
+    "message": "의심스러운 크로스-사이트 요청 차단"
+  },
+  "OptFilterXPost": {
+    "message": "크로스-사이트 POST 요청을 데이터 손실이 없는 GET 요청으로 변환"
+  },
+  "Options": {
+    "message": "옵션..."
+  },
+  "Options.accesskey": {
+    "message": "O"
+  },
+  "OptionsLong": {
+    "message": "NoScript 옵션"
+  },
+  "OptionsWidth": {
+    "message": "40em"
+  },
+  "Permissions": {
+    "message": "허용"
+  },
+  "PermissionsText": {
+    "message": "스크립트 실행을 허용할 웹 사이트를 지정할 수 있습니다. 스크립트를 허용할 사이트의 주소나 도메인 (예를 들면, \"http://www.site.com\" 또는 \"site.com\")을 입력한 후 [허용] 버튼을 클릭합니다."
+  },
+  "Plugins": {
+    "message": "플러그인"
+  },
+  "Policies": {
+    "message": "정책"
+  },
+  "Prev": {
+    "message": "Previuous"
+  },
+  "Refresh": {
+    "message": "새로고침"
+  },
+  "ReloadWarn": {
+    "message": "이 옵션은 새로운 페이지 또는 (수동으로) 페이지를 다시 읽어들일 때 적용됩니다."
+  },
+  "RemoveSelected": {
+    "message": "선택된 사이트 삭제"
+  },
+  "Reset": {
+    "message": "설정 복원"
+  },
+  "Reset.accesskey": {
+    "message": "R"
+  },
+  "ResetDef": {
+    "message": "기본 설정으로 복원"
+  },
+  "ResetDef.accesskey": {
+    "message": "d"
+  },
+  "RevokeTemp": {
+    "message": "일시적인 허용 취소"
+  },
+  "RevokeTemp.accesskey": {
+    "message": "T"
+  },
+  "SecureCookies": {
+    "message": "자동 보안 쿠기 관리자 활성화"
+  },
+  "SecureCookiesExceptions": {
+    "message": "다음 사이트에 대해서는 HTTPS 상의 안전하지 않은 쿠키를 무시:"
+  },
+  "SecureCookiesForced": {
+    "message": "다음 사이트에 대해서는 HTTPS 상의 모든 쿠키를 강제로 암호화:"
+  },
+  "SecurityManager": {
+    "message": "보안 관리자"
+  },
+  "Show": {
+    "message": "다음 기능들을 보여줍니다..."
+  },
+  "ShowConsole": {
+    "message": "콘솔 보기..."
+  },
+  "ShowConsole.accesskey": {
+    "message": "S"
+  },
+  "ShowPlaceholder": {
+    "message": "플레이스홀더 아이콘 표시"
+  },
+  "SiteManager": {
+    "message": "사이트 관리자"
+  },
+  "SitePolicies": {
+    "message": "사이트별 정책"
+  },
+  "StatusIcon": {
+    "message": "상태표시줄 아이콘"
+  },
+  "StatusLabel": {
+    "message": "상태바 레이블"
+  },
+  "TempAllowPage": {
+    "message": "일시적으로 허용"
+  },
+  "TempAllowPage.accesskey": {
+    "message": "P"
+  },
+  "TempCmd": {
+    "message": "임시 허용[...]"
+  },
+  "TempToPerm": {
+    "message": "페이지 권한을 영구적으로 저장하기"
+  },
+  "TempToPerm.accesskey": {
+    "message": "m"
+  },
+  "ToolbarToggle": {
+    "message": "NoScript 툴바 버튼을 마우스 왼쪽버튼으로 클릭하면 현재 최상위 사이트에 대한 허용 상태를 허용/비허용으로 변경합니다."
+  },
+  "TruncateTitle": {
+    "message": "문서 제목에서 양쪽끝에 있는 공백을 제거"
+  },
+  "Trust": {
+    "message": "신뢰할 수 있는 사이트로 지정"
+  },
+  "Trust.accesskey": {
+    "message": "T"
+  },
+  "Trusted": {
+    "message": "신뢰할 수 있는 사이트"
+  },
+  "TrustedPagesAdj": {
+    "message": "신뢰된 페이지"
+  },
+  "Unknown": {
+    "message": "알려지지 않음"
+  },
+  "UnsafeReload": {
+    "message": "안전하지 않은 상태로 다시 읽기"
+  },
+  "UnsafeReload.accesskey": {
+    "message": "R"
+  },
+  "Untrust": {
+    "message": "신뢰할 수 없는 사이트로 지정"
+  },
+  "Untrust.accesskey": {
+    "message": "U"
+  },
+  "Untrusted": {
+    "message": "신뢰할 수 없는 사이트"
+  },
+  "UntrustedPagesAdj": {
+    "message": "신뢰되지 않은 페이지"
+  },
+  "WebAddress": {
+    "message": "웹 사이트 주소"
+  },
+  "Whitelist": {
+    "message": "사용자 지정 목록"
+  },
+  "Xss": {
+    "message": "XSS"
+  },
+  "Xss.accesskey": {
+    "message": "X"
+  },
+  "XssExceptions": {
+    "message": "안티-XSS 보호 예외 적용"
+  },
+  "XssExceptions.description": {
+    "message": "다음 정규 표현식과 일치하는 대상은 XSS로부터 보호하지 않습니다"
+  },
+  "XssFaq": {
+    "message": "XSS FAQ…"
+  },
+  "XssFaq.accesskey": {
+    "message": "Q"
+  },
+  "about": {
+    "message": "$1 정보"
+  },
+  "allowGlobal": {
+    "message": "스크립트 전면 허용(위험)"
+  },
+  "allowLocal": {
+    "message": "$1 허용"
+  },
+  "allowTemp": {
+    "message": "$1 임시 허용"
+  },
+  "allowed.glb": {
+    "message": "위험합니다! 스크립트가 전면적으로 허용되었습니다."
+  },
+  "allowed.no": {
+    "message": "스크립트가 금지되었습니다."
+  },
+  "allowed.prt": {
+    "message": "스크립트가 부분적으로 허용되었습니다."
+  },
+  "allowed.yes": {
+    "message": "스크립트가 허용되었습니다."
+  },
+  "alwaysAsk": {
+    "message": "항상 확인"
+  },
+  "audio.samples": {
+    "message": "오디오 샘플"
+  },
+  "bookmarkSync.message": {
+    "message": "This bookmark is NOT meant to be opened, but to be synchronized using a service such as Weave or the XMarks extension."
+  },
+  "bookmarkSync.title": {
+    "message": "NoScript Configuration Bookmark"
+  },
+  "changelog": {
+    "message": "변경기록"
+  },
+  "changelog.tip": {
+    "message": "변경기록 보기"
+  },
+  "confirm": {
+    "message": "확실합니까?"
+  },
+  "distrust": {
+    "message": "$1를 신뢰할 수 없는 사이트로 지정"
+  },
+  "extensionContributors": {
+    "message": "도움을 주신 분들:"
+  },
+  "extensionContributors.tip": {
+    "message": "확장 기능을 만든 사람들"
+  },
+  "extensionCreator.tip": {
+    "message": "작성자 홈페이지 방문"
+  },
+  "extensionCreatorLabel": {
+    "message": "작성자:"
+  },
+  "extensionHomepage.tip": {
+    "message": "확장기능 홈페이지 방문"
+  },
+  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
+    "message": "FireFox(불여우)를 위한 한층 강화된 보안 기능: NoScript를 사용하면 여러분이 선택한 신뢰할 수 있는 도메인(예를 들면, 인터넷 뱅킹 웹 사이트)에 대해서만 JavaScript와 Java(또한 그 밖의 플러그인들 포함)를 허용합니다. 사용자 지정 목록(whitelist)에 기반을 둔 선점형 차단 접근 방식을 통해 기능에 제약을 받지 않고 보안 위협 요소들(알려진 위협 요소 뿐만 아니라 알려지지 않은 위협 요소까지도!)을 사전에 차단합니다. 전문가들 역시 \"NoScript를 사용하면 FireFox가 좀더 안전해집니다!\"라고 말하고 있습니다. :-)"
+  },
+  "forbidGlobal": {
+    "message": "스크립트 전면 금지(권장 사항)"
+  },
+  "forbidLocal": {
+    "message": "$1 금지"
+  },
+  "global.warning.text": {
+    "message": "스크립트가 전면적으로(모든 사이트에 대해서) 허용될 예정입니다.\n이로인해 잠재적인 위험이 발생할 수 있습니다.\n진행하시겠습니까?"
+  },
+  "global.warning.title": {
+    "message": "경고!"
+  },
+  "informaction.tip": {
+    "message": "InformAction 홈페이지 방문"
+  },
+  "license": {
+    "message": "라이센스"
+  },
+  "license.tip": {
+    "message": "사용자 라이센스 읽기"
+  },
+  "logo.tip": {
+    "message": "확장 기능 홈페이지 방문"
+  },
+  "metaRefresh.notify": {
+    "message": "NoScript가 <NOSCRIPT>에 있는 <META> 리디렉션을 차단했습니다. $1($2초)."
+  },
+  "metaRefresh.notify.follow": {
+    "message": "리디렉션 따라가기"
+  },
+  "metaRefresh.notify.follow.accessKey": {
+    "message": "F"
+  },
+  "notify.options": {
+    "message": "옵션"
+  },
+  "notify.options.accessKey": {
+    "message": "O"
+  },
+  "notifyHide": {
+    "message": "$1초 후 숨김"
+  },
+  "reset.title": {
+    "message": "NoScript 설정 복원"
+  },
+  "reset.warning": {
+    "message": "이제 NoScript의 모든 설정과 사이트 허용 정보가 기본 값으로 복원됩니다.\n이 작업은 취소할 수 없습니다.\n계속 하시겠습니까?"
+  },
+  "sponsor.tip": {
+    "message": "스폰서 홈페이지 방문"
+  },
+  "trust": {
+    "message": "$1를 신뢰합니다."
+  },
+  "unsafeReload.warning": {
+    "message": "[$3]에서\n\n의심스로운 $1 [$2]를 다시 읽고 있습니다.\n\nNoScript는 이 요청을 보호하지 않을 것입니다!\n"
+  },
+  "untrustedOrigin": {
+    "message": "신뢰할 수 없는 출처"
+  },
+  "version": {
+    "message": "버전 $1"
+  },
+  "xss.notify.generic": {
+    "message": "NoScript가 $1에서 시도된 크로스-사이트 스크립팅 (CSS)를 필터링했습니다. 기술적인 세부 사항은 콘솔에서 확인할 수 있습니다."
+  },
+  "xss.notify.showConsole": {
+    "message": "콘솔 보기..."
+  },
+  "xss.notify.showConsole.accessKey": {
+    "message": "S"
+  },
+  "xss.reason.filterXGet": {
+    "message": "의심스러운 요청을 처리했습니다. [$2]에서 요청된 원본 URL은 [$1] , 처리된 URL: [$3]"
+  },
+  "xss.reason.filterXGetRef": {
+    "message": "의심스러운 레퍼러 요청을 처리했습니다. [$2]에서 요청된 URL: [$1] , 처리된 레퍼러: [$3]"
+  },
+  "xss.reason.filterXPost": {
+    "message": "[$2]에서 [$1]로 업로드하는 것을 처리했습니다. 다운로드만 가능한 GET 요청으로 변형되었습니다."
+  }
+}
