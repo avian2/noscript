@@ -36,8 +36,8 @@ else
 	cd "$BUILDDIR"
 fi
 
-# The name/version of the XPI we're building comes from src/install.rdf
-VERSION=`grep em:version xpi/install.rdf | sed -e 's/[<>]/	/g' | cut -f3`
+# The name/version of the XPI we're building comes from manifest.json
+VERSION=`sed -ne '/"version":/{s/^.*: *"\(.*\)" *,.*$/\1/;p}' xpi/manifest.json`
 XPI_NAME="$APP_NAME-$VERSION"
 if [ "$1" ]; then
 	XPI_NAME="$XPI_NAME.xpi"
@@ -49,5 +49,4 @@ fi
 
 # Build the XPI!
 rm -f "../$XPI_NAME"
-(cd xpi/chrome && zip -q -r -m "noscript.jar" *)
 (cd xpi && zip -q -r "../../$XPI_NAME" .)
