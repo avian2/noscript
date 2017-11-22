@@ -390,7 +390,7 @@ var UI = (() => {
       let changed = 0;
       for (let row of this.allSiteRows()) {
         if (row._preset === "DEFAULT") {
-          policy.set(row.siteMatch, policy.TRUSTED.tempTwin);
+          policy.set(row._site, policy.TRUSTED.tempTwin);
           changed++;
         }
       }
