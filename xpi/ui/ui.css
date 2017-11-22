@@ -1,9 +1,14 @@
+body {
+  font-family: dialog, segoe-ui, helvetica, sans-serif;
+}
+
 .sites {
   border: 0;
   background: transparent;
   border-collapse: collapse;
   border-spacing: 0;
-  width: 100%
+  width: 100%;
+
 }
 .sites tr, .sites td { margin: 0; padding: 0; border: none}
 .sites > tr.site:hover, .sites > tr.sites:active {
@@ -75,8 +80,13 @@ label.https-only {
   display: none;
 }
 
+[data-preset="UNTRUSTED"] .https-only, [data-preset="DEFAULT"] .https-only {
+  visibility: hidden;
+}
+
+
 td.presets {
-  width: 176px;
+  /* width: 176px; */
 }
 
 span.preset {
@@ -107,7 +117,7 @@ span.preset {
 .presets input.preset:checked {
   opacity: 1;
   transform: none;
-  width: 96px;
+  min-width: 150px;
   background-color: rgba(0,0,0, .1);
   border-radius: 8px;
 }
@@ -115,14 +125,17 @@ span.preset {
 .presets input.preset:focus {
   transform: none;
 }
+.sites input + label {
+  font-size: 12px;
+  line-height: 24px;
+  vertical-align: top;
+}
 .presets label.preset {
   padding: 0;
-  font-size: 12px;
   letter-spacing: -1px;
-  line-height: 24px;
   width: 0px;
   overflow: hidden;
-  vertical-align: top;
+
   text-transform: uppercase;
   color: #000;
   opacity: .6;
@@ -143,7 +156,7 @@ button.options {
   -moz-appearance: none;
   border: none;
   background: none transparent;
-  font-family: fantasy;
+  font-family: fantasy dialog sans-serif;
   font-weight: bold;
   color: #048;
   text-shadow: -1px -1px 1px #fff, 2px 2px 2px #000;
@@ -203,6 +216,10 @@ input.temp {
   right: 0;
   top: 0;
   pointer-events: none;
+}
+
+input.temp + label {
+  display: none;
 }
 
 input.preset:checked ~ input.temp {

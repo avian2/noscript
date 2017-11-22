@@ -20,8 +20,6 @@ ns.local = (async () => {
     v.storage = k;
   }
 
-
-
   Object.assign(ns, defaults);
 
   // dynamic settings

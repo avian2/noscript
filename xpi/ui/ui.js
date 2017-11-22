@@ -1,6 +1,74 @@
 'use strict';
 var UI = (() => {
 
+  var UI = {
+    presets: {
+      "DEFAULT": "Default",
+      "TRUSTED": "Trusted",
+      "UNTRUSTED": "Untrusted",
+      "CUSTOM": "Custom",
+    },
+    async init(tabId = -1) {
+      await include([
+        "/ui/ui.css",
+        "/lib/punycode.js",
+        "/lib/tld.js",
+        "/common/Policy.js",
+      ]);
+
+      detectHighContrast();
+
+      let inited = new Promise(resolve => {
+        let listener = m => {
+          if (m.type === "settings") {
+            UI.policy = new Policy(m.policy);
+            UI.seen = m.seen;
+            UI.xssWhitelist = m.xssWhitelist;
+            UI.local = m.local;
+            UI.sync = m.sync;
+            browser.runtime.onMessage.removeListener(listener);
+            resolve();
+          }
+        };
+        browser.runtime.onMessage.addListener(listener);
+        browser.runtime.sendMessage({type: "NoScript.broadcastSettings", tabId});
+      });
+
+      await inited;
+      debug("Imported", Policy);
+    },
+
+    async updateSettings({policy, xssWhitelist, local, sync}) {
+      if (policy) policy = policy.dry(true);
+      return await browser.runtime.sendMessage({type: "NoScript.updateSettings",
+        policy,
+        xssWhitelist,
+        local,
+        sync
+      });
+    },
+
+  };
+
+  function detectHighContrast() {
+    // detect high contrast
+    let canary = document.createElement("input");
+    canary.className="https-only";
+    canary.style.display = "none";
+    document.body.appendChild(canary);
+    if (UI.highContrast = window.getComputedStyle(canary).backgroundImage === "none") {
+      include("/ui/ui-hc.css");
+      document.documentElement.classList.toggle("hc");
+    }
+    canary.parentNode.removeChild(canary);
+  }
+
+  function fireOnChange(ui, data) {
+    if (ui.onChange) {
+      ui.onChange(data, this);
+    }
+  }
+
   const TEMPLATE = `
     <table class="sites">
     <tr class="site">
@@ -9,7 +77,7 @@ var UI = (() => {
     <span class="preset">
       <input id="preset" class="preset" type="radio" name="preset"><label for="preset" class="preset">PRESET</label>
       <button class="options tiny">⚙</button>
-      <input class="temp" type="checkbox">
+      <input id="temp" class="temp" type="checkbox"><label for="temp">Temporary</input>
     </span>
     </td>
 
@@ -55,7 +123,9 @@ var UI = (() => {
         let temp = clone.querySelector(".temp");
         if (TEMP_PRESETS.includes(preset)) {
           temp.title = _("allowTemp", `(${label.title.toUpperCase()})`);
+          temp.nextElementSibling.textContent = _("allowTemp", ""); // label;
         } else {
+          temp.parentNode.removeChild(temp.nextElementSibling);
           temp.parentNode.removeChild(temp);
         }
         presets.appendChild(clone);
@@ -88,27 +158,6 @@ var UI = (() => {
 
     debug(table.outerHTML);
     return row;
-  }
-
-  var UI = {
-    presets: {
-      "DEFAULT": "Default",
-      "TRUSTED": "Trusted",
-      "UNTRUSTED": "Untrusted",
-      "CUSTOM": "Custom",
-    },
-    async init() {
-      await include("/ui/ui.css");
-      window.bg = await browser.runtime.getBackgroundPage();
-      ["Policy", "Sites", "Permissions", "tld", "ns"]
-        .forEach(p => window[p] = bg[p]);
-    }
-  };
-
-  function fireOnChange(ui, data) {
-    if (ui.onChange) {
-      ui.onChange(data, this);
-    }
   }
 
   UI.Sites = class {
@@ -175,6 +224,7 @@ var UI = (() => {
 
 
       let isCap = customizer && target.matches("input.cap");
+      let tempToggle = preset.parentNode.querySelector("input.temp");
 
       if (ev.type === "change") {
         if (preset.checked) {
@@ -183,7 +233,7 @@ var UI = (() => {
         if (isCap) {
           perms.set(target.value, target.checked);
         } else if (policyPreset) {
-          if (isTemp && target.checked) {
+          if (tempToggle && tempToggle.checked) {
             policyPreset = policyPreset.tempTwin;
           }
           policy.set(siteMatch, policyPreset);
@@ -196,7 +246,7 @@ var UI = (() => {
           } else {
             let temp = preset.parentNode.querySelector("input.temp").checked;
             let perms = row._customPerms ||
-              (row._customPerms = new Permissions(row.perms.capabilities, temp));
+              (row._customPerms = new Permissions(new Set(row.perms.capabilities), temp));
             row.perms = perms;
             policy.set(siteMatch, perms);
             this.customize(perms, preset, row);
@@ -301,7 +351,22 @@ var UI = (() => {
     }
 
     sort(sorter = this.sorter) {
-      let rows = [...this.allSiteRows()].sort(this.sorter);
+      if (this.mainDomain) {
+        let md = this.mainDomain;
+        let wrappedCompare = sorter;
+        sorter = (a, b) => {
+          let x = a.domain, y = b.domain;
+          if (x === md) {
+            if (y !== md) {
+              return -1;
+            }
+          } else if (y === md) {
+            return 1;
+          }
+          return wrappedCompare(a, b);
+        }
+      }
+      let rows = [...this.allSiteRows()].sort(sorter);
       if (this.mainSite) {
         let topIdx = rows.findIndex(r => r._site === this.mainSite);
         if (topIdx !== -1) {
@@ -318,6 +383,25 @@ var UI = (() => {
     sorter(a, b) {
       let x = a.domain, y = b.domain;
       return x > y ? 1 : x < y ? -1 : 0;
+    }
+
+    async tempAllowAll() {
+      let {policy} = this;
+      let changed = 0;
+      for (let row of this.allSiteRows()) {
+        if (row._preset === "DEFAULT") {
+          policy.set(row.siteMatch, policy.TRUSTED.tempTwin);
+          changed++;
+        }
+      }
+      await UI.updateSettings({policy});
+      return changed;
+    }
+
+    async revokeTemp() {
+      let policy = this.policy;
+      Policy.hydrate(policy.dry(), policy);
+      await UI.updateSettings({policy});
     }
 
     createSiteRow(site, siteMatch, perms, contextMatch = null, sitesCount = this.sitesCount++) {
@@ -367,9 +451,16 @@ var UI = (() => {
 
       let presets = row.querySelectorAll("input.preset");
       for (let p of presets) {
-        p.name = `preset${sitesCount}`;
         p.id = `${p.value}${sitesCount}`;
-        p.nextElementSibling.setAttribute("for", p.id);
+        p.name = `preset${sitesCount}`;
+        let label = p.nextElementSibling;
+        label.setAttribute("for", p.id);
+        let temp = p.parentNode.querySelector("input.temp");
+        if (temp) {
+          temp.id = `temp-${p.id}`;
+          label = temp.nextElementSibling;
+          label.setAttribute("for", temp.id);
+        }
       }
       let policy = this.policy;
 
@@ -388,7 +479,7 @@ var UI = (() => {
         debug(`Preset %s not found in %s!`, presetName, row.innerHTML);
       } else {
         preset.checked = true;
-        row.dataset.preset = presetName;
+        row.dataset.preset = row._preset = presetName;
         if (TEMP_PRESETS.includes(presetName)) {
           let temp = preset.parentNode.querySelector("input.temp");
           if (temp) {
@@ -411,8 +502,8 @@ var UI = (() => {
         site = Sites.toggleSecureDomainKey(site, secure);
       }
       if (site !== row.siteMatch) {
-        this.policy.set(row.siteMatch, this.policy.DEFAULT, row.contextMatch);
-        this.policy.set(site, row.perms, row.contextMatch);
+        this.policy.set(row.siteMatch, this.policy.DEFAULT);
+        this.policy.set(site, row.perms);
         for(let r of this.allSiteRows()) {
           if (r !== row && r.siteMatch === site && r.contextMatch === row.contextMatch) {
             r.parentNode.removeChild(r);

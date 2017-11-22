@@ -235,10 +235,14 @@ var {Permissions, Policy, Sites} = (() => {
     }
 
     if (typeof dry.sites === "object" && !(dry.sites instanceof Sites)) {
-      let {trusted, untrusted, custom} = dry.sites;
+      let {trusted, untrusted, temp, custom} = dry.sites;
       let sites = Sites.hydrate(custom);
       for (let key of trusted) sites.set(key, options.TRUSTED);
       for (let key of untrusted) sites.set(key, options.UNTRUSTED);
+      if (temp) {
+        let tempPreset = options.TRUSTED.tempTwin;
+        for (let key of temp) sites.set(key, tempPreset);
+      }
       options.sites = sites;
     }
     return options;
@@ -257,6 +261,7 @@ var {Permissions, Policy, Sites} = (() => {
 
     dry(includeTemp = false) {
       let trusted = [],
+        temp = [],
         untrusted = [],
         custom = Object.create(null);
 
@@ -269,6 +274,8 @@ var {Permissions, Policy, Sites} = (() => {
           case TRUSTED:
             trusted.push(key);
             break;
+          case TRUSTED.tempTwin:
+            temp.push(key);
           case UNTRUSTED:
             untrusted.push(key);
             break;
@@ -278,15 +285,20 @@ var {Permissions, Policy, Sites} = (() => {
             custom[key] = perms.dry();
         }
       }
+
+      let sites = {
+        trusted,
+        untrusted,
+        custom
+      };
+      if (includeTemp) {
+        sites.temp = temp;
+      }
       return {
         DEFAULT: DEFAULT.dry(),
         TRUSTED: TRUSTED.dry(),
         UNTRUSTED: UNTRUSTED.dry(),
-        sites: {
-          trusted,
-          untrusted,
-          custom
-        },
+        sites,
         enforced: this.enforced,
       };
     }
@@ -305,6 +317,11 @@ var {Permissions, Policy, Sites} = (() => {
       let {url, siteKey} = Sites.parse(site);
 
       sites.delete(siteKey);
+
+      if (perms === this.UNTRUSTED) {
+        cascade = true;
+        Sites.toggleSecureDomainKey(siteKey, false);
+      }
       if (cascade && !url) {
         for (let subMatch; (subMatch = sites.match(siteKey));) {
           sites.delete(subMatch);

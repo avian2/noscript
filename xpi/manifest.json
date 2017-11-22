@@ -8,7 +8,7 @@
       "strict_min_version": "57.0"
     }
   },
-  "version": "10.1.1",
+  "version": "10.1.2rc1",
   "description": "__MSG_Description__",
 
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'none'; default-src 'self'",
@@ -78,7 +78,7 @@
   },
 
   "browser_action": {
-    "browser_style": true,
+    "browser_style": false,
     "default_area": "navbar",
     "default_title": "NoScript",
     "default_icon": {

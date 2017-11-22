@@ -1,10 +1,9 @@
 'use strict';
- (async () => {
+(async () => {
   await UI.init();
   browser.browserAction.disable((await browser.tabs.getCurrent()).id);
-  let {local, sync} = browser.storage;
-  let policy = ns.policy;
 
+  let policy = UI.policy;
 
   let version = browser.runtime.getManifest().version;
   document.querySelector("#version").textContent = _("Version", version);
@@ -12,7 +11,7 @@
   opt("global", o => {
     if (o) {
       policy.enforced = !o.checked;
-      ns.savePolicy();
+      UI.updateSettings({policy});
     }
     return !policy.enforced;
   });
@@ -22,34 +21,33 @@
     let a = document.querySelector("#xssFaq a");
     a.onclick = e => {
       e.preventDefault();
-      browser.tabs.create({url: a.href});
+      browser.tabs.create({
+        url: a.href
+      });
     }
     let button = document.querySelector("#btn-delete-xss-whitelist");
-    let {Exceptions} = bg.XSS;
-    try {
-      let whitelist = await Exceptions.getWhitelist();
-      button.disabled = Object.keys(whitelist).length === 0;
-      button.onclick = () => { Exceptions.setWhitelist({}); button.disabled = true };
-    } catch(e) {
-      alert(e);
-    }
+    let whitelist = UI.xssWhitelist;
+    button.disabled = Object.keys(whitelist).length === 0;
+    button.onclick = () => {
+      UI.updateSettings({
+        xssWhitelist: {}
+      });
+      button.disabled = true
+    };
+
   }
 
   opt("clearclick");
   opt("debug", "local", b => {
     document.body.classList.toggle("debug", b);
     if (b) updateRawPolicyEditor();
-    if (!b) {
-      bg.include("/lib/log.js"); // reinit debugging output
-    }
   });
 
   // SITE UI
-  let sitesUI = new UI.Sites(policy);
-  {
+  let sitesUI = new UI.Sites(policy); {
     sitesUI.onChange = () => {
-      ns.savePolicy();
-      if (ns.local.debug) {
+      UI.updateSettings({policy});
+      if (UI.local.debug) {
         updateRawPolicyEditor();
       }
     };
@@ -96,12 +94,12 @@
       input.onchange = e => storage(input);
       input.checked = storage(null);
     } else {
-      let obj = ns[storage];
+      let obj = UI[storage];
       input.checked = obj[name];
       if (onchange) onchange(input.checked);
       input.onchange = async () => {
         obj[name] = input.checked;
-        await ns.save(obj);
+        await UI.updateSettings({storage: obj});
         if (onchange) onchange(obj[name]);
       }
     }
@@ -109,7 +107,7 @@
 
 
   function updateRawPolicyEditor() {
-    if (!ns.local.debug) return;
+    if (!UI.local.debug) return;
 
     // RAW POLICY EDITING (debug only)
     let policyEditor = document.getElementById("policy");
@@ -117,8 +115,8 @@
     if (!policyEditor.onchange) policyEditor.onchange = (e) => {
       try {
         let ed = e.currentTarget
-        ns.policy = new Policy(JSON.parse(ed.value));
-        ns.savePolicy();
+        policy = new Policy(JSON.parse(ed.value));
+        UI.updateSettings({policy});
         siteUI.populate(policy.sites);
         ed.className = "";
       } catch (e) {

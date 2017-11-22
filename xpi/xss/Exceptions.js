@@ -45,6 +45,10 @@ XSS.Exceptions = (() => {
         return true;
       }
 
+      if (/^(?:chrome|resource|moz-extension|about):/.test(srcOrigin)) {
+        debug("Privileged origin", srcOrigin);
+      }
+
       let whitelist = await this.getWhitelist();
       let allowedSources = whitelist[destOrigin]
       if (allowedSources && allowedSources.includes(srcOrigin)) {

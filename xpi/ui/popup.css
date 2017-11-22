@@ -1,6 +1,7 @@
 body {
   min-height: 50px;
   min-width: 600px;
+  background: white;
 }
 #top {
   position: relative;
@@ -20,7 +21,7 @@ body {
   font-family: dialog sans-serif;
   font-weight: bold;
   color: black;
-  background: transparent no-repeat center;
+  background: white no-repeat center;
   background-size: 100%;
   transform: unset;
   transition: 0.3s all;
@@ -39,13 +40,24 @@ body {
   transform: scale(1.2);
 }
 
-#top #options {
+#top button.icon {
   text-indent: -5000px;
   color: transparent;
-  background-image: url(/img/noscript-options.png);
-  right: 0;
 }
 
+#top #temp-allow-page {
+  background-image: url(/img/ui-temp-all64.png);
+  right: 0px;
+}
+#top #revoke-temp {
+  background-image: url(/img/ui-revoke-temp64.png);
+  right: 40px;
+}
+
+#top #options {
+  background-image: url(/img/noscript-options.png);
+  right: 100px;
+}
 #top #close {
   left: 0;
   color: #800;

@@ -43,7 +43,6 @@ var RequestGuard = (() => {
       ping: "ping",
       beacon: "ping",
       media: "media",
-      websocket: "fetch",
       other: "",
   };
 
@@ -258,7 +257,16 @@ var RequestGuard = (() => {
         if (policy.enforced) {
           let policyType = policyTypesMap[request.type];
           if (policyType) {
-            let allowed = policy.can(request.url, policyType, request.originUrl);
+            let {url, originUrl, documentUrl} = request;
+            if (("fetch" === policyType || "frame" === policyType) &&
+              (url === originUrl && originUrl === documentUrl ||
+                /^(?:chrome|resource|moz-extension|about):/.test(originUrl))
+            ) {
+              // livemark request or similar browser-internal, always allow;
+              return null;
+            }
+
+            let allowed = policy.can(url, policyType, originUrl);
             Content.reportTo(request, allowed, policyType);
             let cancel = !allowed;
             if (cancel) {
