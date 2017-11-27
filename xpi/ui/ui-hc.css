@@ -46,3 +46,18 @@ input.temp {
 tr.site {
   border-top: 1px solid #888;
 }
+
+#top {
+  display:flex;
+  flex-flow: row;
+  justify-content: space-around;
+
+}
+#top button  {
+  position: static;
+  width: auto;
+}
+#top button.icon {
+  font-size: 12px !important;
+  font-family: arial sans-serif !important;
+}

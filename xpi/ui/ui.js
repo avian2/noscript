@@ -2,13 +2,18 @@
 var UI = (() => {
 
   var UI = {
+    initialized: false,
+
     presets: {
       "DEFAULT": "Default",
       "TRUSTED": "Trusted",
       "UNTRUSTED": "Untrusted",
       "CUSTOM": "Custom",
     },
+
     async init(tabId = -1) {
+      UI.tabId = tabId;
+
       await include([
         "/ui/ui.css",
         "/lib/punycode.js",
@@ -22,32 +27,45 @@ var UI = (() => {
         let listener = m => {
           if (m.type === "settings") {
             UI.policy = new Policy(m.policy);
+            UI.snapshot = UI.policy.snapshot;
             UI.seen = m.seen;
             UI.xssWhitelist = m.xssWhitelist;
             UI.local = m.local;
             UI.sync = m.sync;
-            browser.runtime.onMessage.removeListener(listener);
             resolve();
+            if (UI.onSettings) UI.onSettings();
           }
         };
         browser.runtime.onMessage.addListener(listener);
-        browser.runtime.sendMessage({type: "NoScript.broadcastSettings", tabId});
+        UI.pullSettings();
       });
 
       await inited;
+
+      this.initialized = true;
       debug("Imported", Policy);
     },
-
-    async updateSettings({policy, xssWhitelist, local, sync}) {
+    async pullSettings() {
+      browser.runtime.sendMessage({type: "NoScript.broadcastSettings", tabId: UI.tabId});
+    },
+    async updateSettings({policy, xssWhitelist, local, sync, reloadAffected}) {
       if (policy) policy = policy.dry(true);
       return await browser.runtime.sendMessage({type: "NoScript.updateSettings",
         policy,
         xssWhitelist,
         local,
-        sync
+        sync,
+        reloadAffected,
+        tabId: UI.tabId,
       });
     },
 
+    isDirty(reset = false) {
+      let currentSnapshot = this.policy.snapshot;
+      let dirty = currentSnapshot != this.snapshot;
+      if (reset) this.snapshot = currentSnapshot;
+      return dirty;
+    },
   };
 
   function detectHighContrast() {
@@ -63,9 +81,10 @@ var UI = (() => {
     canary.parentNode.removeChild(canary);
   }
 
-  function fireOnChange(ui, data) {
-    if (ui.onChange) {
-      ui.onChange(data, this);
+  function fireOnChange(sitesUI, data) {
+    if (UI.isDirty(true)) {
+      UI.updateSettings({policy: UI.policy});
+      if (sitesUI.onChange) sitesUI.onChange(data, this);
     }
   }
 
@@ -161,10 +180,9 @@ var UI = (() => {
   }
 
   UI.Sites = class {
-    constructor(policy) {
-      this.policy = policy;
+    constructor() {
+      let policy = UI.policy;
       this.sites = policy.sites;
-      this.snapshot = policy.snapshot;
       this.template = document.createElement("template");
       this.template.innerHTML = TEMPLATE;
       this.fragment = this.template.content;
@@ -213,7 +231,7 @@ var UI = (() => {
         return;
       }
 
-      let policy = this.policy;
+      let policy = UI.policy;
       let {siteMatch, contextMatch, perms} = row;  // policy.get(row.siteMatch, row.contextMatch);
       let policyPreset = policy[preset.value];
       if (policyPreset) {
@@ -256,10 +274,6 @@ var UI = (() => {
       } else if (!(isCap || isTemp) && ev.type === "click") {
           this.customize(row.perms, preset, row);
       }
-    }
-
-    get dirty() {
-      return this.policy.snapshot != this.snapshot;
     }
 
     customize(perms, preset, row) {
@@ -336,7 +350,7 @@ var UI = (() => {
             site = site.site;
             context = site.context;
           }
-          let {siteMatch, perms, contextMatch} = this.policy.get(site, context);
+          let {siteMatch, perms, contextMatch} = UI.policy.get(site, context);
           this.append(site, siteMatch, perms, contextMatch);
         }
         this.sites = sites;
@@ -386,7 +400,7 @@ var UI = (() => {
     }
 
     async tempAllowAll() {
-      let {policy} = this;
+      let {policy} = UI;
       let changed = 0;
       for (let row of this.allSiteRows()) {
         if (row._preset === "DEFAULT") {
@@ -394,14 +408,18 @@ var UI = (() => {
           changed++;
         }
       }
-      await UI.updateSettings({policy});
+      if (changed && UI.isDirty(true)) {
+        await UI.updateSettings({policy, reloadAffected: true});
+      }
       return changed;
     }
 
     async revokeTemp() {
-      let policy = this.policy;
+      let policy = UI.policy;
       Policy.hydrate(policy.dry(), policy);
-      await UI.updateSettings({policy});
+      if (UI.isDirty(true)) {
+        await UI.updateSettings({policy, reloadAffected: true});
+      }
     }
 
     createSiteRow(site, siteMatch, perms, contextMatch = null, sitesCount = this.sitesCount++) {
@@ -413,14 +431,16 @@ var UI = (() => {
       try {
         url = new URL(site);
       } catch (e) {
-        url = {protocol: "https:", hostname: site, pathname: "/"};
-        url.origin = `https://${site}`;
+        let protocol = Sites.isSecureDomainKey(site) ? "https:" : "http:";
+        let hostname = Sites.toggleSecureDomainKey(site, false);
+        url = {protocol, hostname, origin: `${protocol}://${site}`, pathname: "/"};
       }
 
       let hostname = Sites.toExternal(url.hostname);
       let domain = tld.getDomain(hostname);
       if (!siteMatch) {
-        siteMatch = url.protocol === "https:" ? Sites.secureDomainKey(domain) : site;
+        // siteMatch = url.protocol === "https:" ? Sites.secureDomainKey(domain) : site;
+        siteMatch = site;
       }
       let secure = Sites.isSecureDomainKey(siteMatch);
       let keyStyle = secure ? "secure"
@@ -437,7 +457,9 @@ var UI = (() => {
       row.domain = domain || siteMatch;
       if (domain) { // "normal" URL
         row.querySelector(".protocol").textContent = `${url.protocol}//`;
-        row.querySelector(".sub").textContent =   hostname === domain ? "…"
+        row.querySelector(".sub").textContent = hostname === domain ?
+          (keyStyle === "full" || keyStyle == "unsafe"
+            ? "" : "…")
             : hostname.substring(0, hostname.length - domain.length);
 
         row.querySelector(".domain").textContent = domain;
@@ -447,7 +469,6 @@ var UI = (() => {
       } else {
         urlContainer.querySelector(".full-address").textContent = siteMatch;
       }
-
 
       let presets = row.querySelectorAll("input.preset");
       for (let p of presets) {
@@ -462,7 +483,7 @@ var UI = (() => {
           label.setAttribute("for", temp.id);
         }
       }
-      let policy = this.policy;
+      let policy = UI.policy;
 
       let presetName = "CUSTOM";
       for (let p of ["TRUSTED", "UNTRUSTED", "DEFAULT"]) {
@@ -502,8 +523,9 @@ var UI = (() => {
         site = Sites.toggleSecureDomainKey(site, secure);
       }
       if (site !== row.siteMatch) {
-        this.policy.set(row.siteMatch, this.policy.DEFAULT);
-        this.policy.set(site, row.perms);
+        let {policy} = UI;
+        policy.set(row.siteMatch, policy.DEFAULT);
+        policy.set(site, row.perms);
         for(let r of this.allSiteRows()) {
           if (r !== row && r.siteMatch === site && r.contextMatch === row.contextMatch) {
             r.parentNode.removeChild(r);

@@ -30,7 +30,7 @@ var Prompts = (() => {
     async focus() {
       if (this.currentWindow) {
         try {
-          browser.window.update(this.currentWindow.id,
+          await browser.window.update(this.currentWindow.id,
             {
               focused: true,
             }

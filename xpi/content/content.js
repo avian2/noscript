@@ -1,4 +1,7 @@
 'use strict';
+
+debug = () => {}; 
+
 var _ = browser.i18n.getMessage;
 var bgToken;
 
@@ -7,7 +10,15 @@ var embeddingDocument = false;
 try {
   window.eval("");
   canScript = true;
-} catch(e) {}
+} catch(e) {
+  addEventListener("DOMContentLoaded", () => {
+    for (let noscript of document.querySelectorAll("noscript")) {
+      let replacement = document.createElement("div");
+      replacement.innerHTML = noscript.innerHTML;
+      noscript.parentNode.replaceChild(replacement, noscript);
+    }
+  });
+}
 
 var seen = [{
   request: {

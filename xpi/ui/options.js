@@ -44,9 +44,9 @@
   });
 
   // SITE UI
-  let sitesUI = new UI.Sites(policy); {
+  let sitesUI = new UI.Sites();
+  {
     sitesUI.onChange = () => {
-      UI.updateSettings({policy});
       if (UI.local.debug) {
         updateRawPolicyEditor();
       }

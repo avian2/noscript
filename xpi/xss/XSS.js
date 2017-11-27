@@ -73,7 +73,10 @@ var XSS = (() => {
     },
 
     dispose() {
-      browser.webRequest.onBeforeRequest.removeListener(requestListener);
+      let {onBeforeRequest} = browser.webRequest;
+      if (onBeforeRequest.hasListener(requestListener)) {
+        onBeforeRequest.removeListener(requestListener);
+      }
     },
 
 

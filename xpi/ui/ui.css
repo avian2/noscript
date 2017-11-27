@@ -22,6 +22,7 @@ body {
     padding: 0 0 0 8px;
     color: #ccc;
     vertical-align: middle;
+    font-size: 14px;
 }
 .site .url .protocol { display: none }
 
@@ -56,6 +57,7 @@ body {
 .site .url[data-key="full"] span,
 .site .url[data-key="unsafe"] span {
   display: initial;
+  font-size: 12px;
 }
 
 .site .url .domain {

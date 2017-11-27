@@ -1,8 +1,10 @@
 
 XSS.InjectionChecker = (async () => {
-  await include("/lib/Base64.js");
-  await include("/xss/FlashIdiocy.js");
-  await include("/xss/ASPIdiocy.js");
+  await include([
+    "/lib/Base64.js",
+    "/xss/FlashIdiocy.js",
+    "/xss/ASPIdiocy.js"]
+  );
 
 
   var {FlashIdiocy, ASPIdiocy} = XSS;

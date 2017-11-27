@@ -360,6 +360,10 @@ var {Permissions, Policy, Sites} = (() => {
     get snapshot() {
       return JSON.stringify(this.dry(true));
     }
+
+    equals(other) {
+      this.snapshot === other.snapshot;
+    }
   }
 
   return {Permissions, Policy, Sites};

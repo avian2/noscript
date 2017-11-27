@@ -8,7 +8,7 @@
       "strict_min_version": "57.0"
     }
   },
-  "version": "10.1.2",
+  "version": "10.1.3c1",
   "description": "__MSG_Description__",
 
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'none'; default-src 'self'",
@@ -67,10 +67,6 @@
     }
   ],
 
-  "web_accessible_resources": [
-    "/img/icon*.png"
-  ],
-
   "options_ui": {
     "page": "ui/options.html",
     "browser_style": true,
@@ -93,7 +89,7 @@
         "default": "Alt+Shift+N"
       }
     },
-    "toggle-permissions": {
+    "togglePermissions": {
       "suggested_key": {
         "default": "Ctrl+Shift+T"
       }

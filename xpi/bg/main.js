@@ -1,8 +1,25 @@
  var ns = (() => {
   'use strict';
 
+  async function safeSyncGet(keys) {
+    try {
+      return await browser.storage.sync.get(keys);
+    } catch (e) {
+      debug(e, "Sync disabled? Falling back to local storage");
+    }
+    return await browser.storage.local.get(keys);
+  }
+  async function safeSyncSet(obj) {
+    try {
+      return await browser.storage.sync.set(obj);
+    } catch (e) {
+      debug(e, "Sync disabled? Falling back to local storage");
+    }
+    return await browser.storage.local.set(obj);
+  }
+
   async function init() {
-    let policyData = (await browser.storage.sync.get("policy")).policy;
+    let policyData = (await safeSyncGet("policy")).policy;
     if (policyData && policyData.DEFAULT) {
       ns.policy = new Policy(policyData);
     } else {
@@ -15,31 +32,61 @@
     await ns.local;
     await include("/bg/RequestGuard.js");
     await RequestGuard.start();
-    await XSS.init();
+    if (ns.sync.xss) await XSS.init();
+    Commands.install();
   };
 
+  var Commands = {
+    async openPageUI() {
+      let win = await browser.windows.getCurrent();
+      if (win.type === "normal") {
+        browser.browserAction.openPopup();
+        return;
+      }
+      browser.windows.create({
+        url: await browser.browserAction.getPopup({}),
+          width: 800, height: 600, type: "panel"
+      });
+    },
+
+    togglePermissions() {
+    },
+    install() {
+      browser.commands.onCommand.addListener(cmd => {
+        if (cmd in Commands) {
+          Commands[cmd]();
+        }
+      });
+    }
+  }
 
   var MessageHandler = {
     responders: {
-      async fetchPolicy() {
-        return ns.policy.dry(true);
-      },
-      async updateSettings(settings) {
+
+      async updateSettings(settings, sender) {
         let {policy, xssWhitelist} = settings;
         if (xssWhitelist) await XSS.Exceptions.setXssWhitelist(policy.XSSWhitelist);
         if (policy) {
           ns.policy = new Policy(policy);
           await ns.savePolicy();
+          if (settings.reloadAffected) {
+            browser.tabs.reload(settings.tabId);
+          }
         }
         let oldDebug = ns.local.debug;
         for (let storage of ["local", "sync"]) {
           if (settings[storage]) {
-            ns.save(ns[storage] = setting[storage])
+            await ns.save(ns[storage] = setting[storage]);
           }
         }
         if (ns.local.debug !== oldDebug) {
           await include("/lib/log.js");
           if (oldDebug) debug = () => {};
+        }
+        if (ns.sync.xss) {
+          XSS.init();
+        } else {
+          XSS.dispose();
         }
       },
       async broadcastSettings({tabId = -1}) {
@@ -53,6 +100,24 @@
           local: ns.local,
           sync: ns.sync,
         });
+      },
+
+      async openStandalonePopup() {
+        let win = await browser.windows.getLastFocused({windowTypes: ["normal"]});
+        let tab = (await browser.tabs.query({
+          windowId: win.id,
+          active: true
+        }))[0];
+
+        if (!tab || tab.id === -1) {
+          log("No tab found to open the UI for");
+          return;
+        }
+        browser.windows.create({
+          url: await browser.browserAction.getPopup({}) + "?tabId=" + tab.id,
+          width: 800, height: 600,
+          top: win.top + 48, left: win.left + 48,
+          type: "panel"});
       }
     },
     onMessage(m, sender, sendResponse) {
@@ -124,7 +189,7 @@
 
     async savePolicy() {
       if (this.policy) {
-        await browser.storage.sync.set({policy: this.policy.dry()});
+        await safeSyncSet({policy: this.policy.dry()});
         await browser.webRequest.handlerBehaviorChanged()
       }
       return this.policy;
@@ -134,7 +199,12 @@
 
     async save(obj) {
       if (obj && obj.storage) {
-        await browser.storage[obj.storage].set({[obj.storage]: obj});
+        let toBeSaved = {[obj.storage]: obj};
+        if (obj.storage === "sync") {
+          await safeSyncSet(toBeSaved);
+        } else {
+          await browser.storage.local.set(toBeSaved);
+        }
       }
       return obj;
     },
@@ -147,6 +217,7 @@
         return seen;
       } catch (e) {
         // probably a page where content scripts cannot run, let's open the options instead
+        error(e, "Cannot collect noscript activity data");
       }
 
       return null;
