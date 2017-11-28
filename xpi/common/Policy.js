@@ -245,7 +245,18 @@ var {Permissions, Policy, Sites} = (() => {
       }
       options.sites = sites;
     }
+    enforceImmutable(options);
     return options;
+  }
+
+  function enforceImmutable(policy) {
+    for (let [preset, filter] of Object.entries(Permissions.IMMUTABLE)) {
+      let presetCaps = policy[preset].capabilities;
+      for (let [cap, value] of Object.entries(filter)) {
+        if (value) presetCaps.add(cap);
+        else presetCaps.delete(cap);
+      }
+    }
   }
 
   class Policy {
@@ -294,17 +305,14 @@ var {Permissions, Policy, Sites} = (() => {
       if (includeTemp) {
         sites.temp = temp;
       }
-      let dry = {
+      enforceImmutable(this);
+      return {
         DEFAULT: DEFAULT.dry(),
         TRUSTED: TRUSTED.dry(),
         UNTRUSTED: UNTRUSTED.dry(),
         sites,
         enforced: this.enforced,
       };
-      for (let [preset, filter] of Object.entries(Permissions.IMMUTABLE)) {
-        dry[preset].capabilities = dry[preset].capabilities.filter(capability => filter[capability]);
-      }
-      return dry;
     }
 
     static requestKey(url, type, documentUrl) {

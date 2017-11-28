@@ -12,10 +12,10 @@ XSS.Exceptions = (() => {
     },
 
     async getWhitelist() {
-      return (await browser.storage.sync.get("xssWhitelist")).xssWhitelist || {};
+      return (await SafeSync.get("xssWhitelist")).xssWhitelist || {};
     },
     async setWhitelist(xssWhitelist) {
-      await browser.storage.sync.set({xssWhitelist});
+      await SafeSync.set({xssWhitelist});
     },
 
     async shouldIgnore(xssReq) {

@@ -8,7 +8,7 @@
       "strict_min_version": "57.0"
     }
   },
-  "version": "10.1.3c2",
+  "version": "10.1.3c3",
   "description": "__MSG_Description__",
 
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'none'; default-src 'self'",
@@ -43,6 +43,7 @@
       "common/locale.js",
       "common/Entities.js",
       "common/SyntaxChecker.js",
+      "common/SafeSync.js",
       "ui/Prompts.js",
       "xss/XSS.js",
       "bg/main.js"
