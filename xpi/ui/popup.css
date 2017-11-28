@@ -56,16 +56,18 @@ body {
 
 #top #options {
   background-image: url(/img/noscript-options.png);
-  right: 100px;
+  left: 80px;
 }
 #top #close {
   left: 0;
   color: #800;
+  background-image: url(/img/ui-close64.png);
 }
 
 #top #reload {
   left: 40px;
   color: #080;
+  background-image: url(/img/ui-reload64.png);
 }
 
 #sites {

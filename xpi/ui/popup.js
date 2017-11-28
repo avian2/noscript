@@ -140,8 +140,9 @@ addEventListener("unload", e => {
       }
     };
     onCompleted.addListener(onCompletedListener, {url: [{hostContains: sitesUI.mainDomain}]});
-    addEventListener("beforeunload", e => {
+    addEventListener("unload", e => {
       onCompleted.removeListener(onCompletedListener);
+      debug("pendingReload", pendingReload);
       if (pendingReload) {
          UI.updateSettings({
           policy: UI.policy, reloadAffected: true,

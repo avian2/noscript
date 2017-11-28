@@ -489,10 +489,15 @@ var UI = (() => {
       for (let p of ["TRUSTED", "UNTRUSTED", "DEFAULT"]) {
         if (perms === policy[p] || perms === policy[p].tempTwin) presetName = p;
       }
-      if (presetName === "DEFAULT" && keyStyle !== "secure" && keyStyle !== "full") {
+      let tempFirst = true; // TODO: make it a preference
+      let unsafeMatch = keyStyle !== "secure" && keyStyle !== "full";
+      if (presetName === "DEFAULT" && (tempFirst || unsafeMatch)) {
+        // prioritize temporary privileges over permanent
         for (let p of ["TRUSTED", "CUSTOM"]) {
-          row.querySelector(`.presets input[value="${p}"]`).parentNode.querySelector("input.temp").checked = true;
-          perms = policy.DEFAULT.tempTwin;
+          if (unsafeMatch || tempFirst && p === "TRUSTED") {
+            row.querySelector(`.presets input[value="${p}"]`).parentNode.querySelector("input.temp").checked = true;
+            perms = policy.DEFAULT.tempTwin;
+          }
         }
       }
       let preset = row.querySelector(`.presets input[value="${presetName}"]`);

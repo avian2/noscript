@@ -149,13 +149,13 @@ var {Permissions, Policy, Sites} = (() => {
     }
 
     dry() {
-      return {capabilities: [...this.capabilities], contextual: this.contextual.dry()};
+      return {capabilities: [...this.capabilities], contextual: this.contextual.dry(), temp: this.temp};
     }
 
     static hydrate(dry = {}, obj = null) {
       let capabilities = new Set(dry.capabilities);
       let contextual = Sites.hydrate(dry.contextual);
-      let temp = false;
+      let temp = dry.temp;
       return obj ? Object.assign(obj, {capabilities, temp, contextual, _tempTwin: undefined})
                  : new Permissions(capabilities, temp, contextual);
     }
@@ -294,13 +294,17 @@ var {Permissions, Policy, Sites} = (() => {
       if (includeTemp) {
         sites.temp = temp;
       }
-      return {
+      let dry = {
         DEFAULT: DEFAULT.dry(),
         TRUSTED: TRUSTED.dry(),
         UNTRUSTED: UNTRUSTED.dry(),
         sites,
         enforced: this.enforced,
       };
+      for (let [preset, filter] of Object.entries(Permissions.IMMUTABLE)) {
+        dry[preset].capabilities = dry[preset].capabilities.filter(capability => filter[capability]);
+      }
+      return dry;
     }
 
     static requestKey(url, type, documentUrl) {

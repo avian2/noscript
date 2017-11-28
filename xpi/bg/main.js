@@ -76,7 +76,7 @@
         let oldDebug = ns.local.debug;
         for (let storage of ["local", "sync"]) {
           if (settings[storage]) {
-            await ns.save(ns[storage] = setting[storage]);
+            await ns.save(ns[storage] = settings[storage]);
           }
         }
         if (ns.local.debug !== oldDebug) {

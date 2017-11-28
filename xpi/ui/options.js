@@ -99,7 +99,7 @@
       if (onchange) onchange(input.checked);
       input.onchange = async () => {
         obj[name] = input.checked;
-        await UI.updateSettings({storage: obj});
+        await UI.updateSettings({[storage]: obj});
         if (onchange) onchange(obj[name]);
       }
     }

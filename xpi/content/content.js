@@ -13,9 +13,28 @@ try {
 } catch(e) {
   addEventListener("DOMContentLoaded", () => {
     for (let noscript of document.querySelectorAll("noscript")) {
+      // force show NOSCRIPT elements content
       let replacement = document.createElement("div");
       replacement.innerHTML = noscript.innerHTML;
       noscript.parentNode.replaceChild(replacement, noscript);
+      // emulate meta-refresh
+      let meta = replacement.querySelector('meta[http-equiv="refresh"]');
+      if (meta) {
+        let content = meta.getAttribute("content");
+        if (content) {
+          let [secs, url] = content.split(/\s*;\s*url\s*=\s*/i);
+          if (url) {
+            try {
+              let urlObj = new URL(url);
+              if (!/^https?:/.test(urlObj.protocol)) {
+                continue;
+              }
+            } catch (e) {
+            }
+            window.setTimeout(() => location.href = url, (parseInt(secs) || 0) * 1000);
+          }
+        }
+      }
     }
   });
 }

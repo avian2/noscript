@@ -726,7 +726,7 @@
   "notifyHide": {
     "message": "Hide after $1 seconds"
   },
-  "reload": {
+  "Reload": {
     "message": "Reload"
   },
   "removal.message": {
