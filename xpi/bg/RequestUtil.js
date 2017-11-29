@@ -21,7 +21,7 @@ var RequestUtil = {
         done();
         return;
       }
-      
+
       let startPos = buffer.lastIndexOf("<");
       let endPos = buffer.lastIndexOf(">");
       if (startPos === -1 || endPos > startPos) {
@@ -37,7 +37,7 @@ var RequestUtil = {
     }
 
     filter.onstop = event => {
-      flush();
+      done();
     }
   }
 }

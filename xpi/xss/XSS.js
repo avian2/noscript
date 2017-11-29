@@ -59,7 +59,7 @@ var XSS = (() => {
   };
 
   return {
-    async init() {
+    async start() {
       let {onBeforeRequest} = browser.webRequest;
       if (onBeforeRequest.hasListener(requestListener)) return;
 
@@ -72,7 +72,7 @@ var XSS = (() => {
       }, ["blocking", "requestBody"]);
     },
 
-    dispose() {
+    stop() {
       let {onBeforeRequest} = browser.webRequest;
       if (onBeforeRequest.hasListener(requestListener)) {
         onBeforeRequest.removeListener(requestListener);

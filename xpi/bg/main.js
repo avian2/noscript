@@ -5,6 +5,14 @@
      let policyData = (await SafeSync.get("policy")).policy;
      if (policyData && policyData.DEFAULT) {
        ns.policy = new Policy(policyData);
+       // Temporary fix for @VERSION@rc2 breakage
+       {
+         let trustedCaps = ns.policy.TRUSTED.capabilities;
+         if (trustedCaps.size < 2) {
+           for(let cap of Permissions.ALL) trustedCaps.add(cap);
+           await ns.savePolicy();
+         }
+       }
      } else {
        await include("/legacy/Legacy.js");
        ns.policy = await Legacy.createOrMigratePolicy();
@@ -15,7 +23,10 @@
      await ns.local;
      await include("/bg/RequestGuard.js");
      await RequestGuard.start();
-     if (ns.sync.xss) await XSS.init();
+     await XSS.start(); // we must start it anyway to initialize sub-objects
+     if (!ns.sync.xss) {
+       XSS.stop();
+     }
      Commands.install();
    };
 
@@ -71,9 +82,9 @@
            if (oldDebug) debug = () => {};
          }
          if (ns.sync.xss) {
-           XSS.init();
+           XSS.start();
          } else {
-           XSS.dispose();
+           XSS.stop();
          }
        },
        async broadcastSettings({
