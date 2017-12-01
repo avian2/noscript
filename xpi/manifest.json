@@ -8,7 +8,7 @@
       "strict_min_version": "57.0"
     }
   },
-  "version": "10.1.3",
+  "version": "10.1.4",
   "description": "__MSG_Description__",
 
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'none'; default-src 'self'",
@@ -58,12 +58,20 @@
       "all_frames": true,
       "js": [
         "lib/log.js",
-        "content/media.js",
-        "content/content.js",
-        "content/PlaceHolder.js"
+        "content/media.js"
       ],
       "css": [
         "/content/content.css"
+      ]
+    },
+    {
+      "run_at": "document_end",
+      "matches": ["<all_urls>"],
+      "match_about_blank": true,
+      "all_frames": true,
+      "js": [
+        "content/content.js",
+        "content/PlaceHolder.js"
       ]
     }
   ],

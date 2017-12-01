@@ -73,3 +73,23 @@ body {
 #sites {
   margin: 8px 4px;
 }
+
+#content {
+  text-align: center;
+}
+#buttons {
+  text-align: center;
+  margin: 8px;
+  display: flex;
+  justify-content: space-around;
+
+}
+#buttons button {
+  flex-grow: 1;
+  margin: .5em 2em;
+}
+
+.disabled #temp-allow-page, .disabled #revoke-temp {
+  opacity: .2;
+  pointer-events: none;
+}

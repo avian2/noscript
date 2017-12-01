@@ -10,11 +10,13 @@ var RequestGuard = (() => {
              "max-age": 10886400 }),
   };
   const CSP = {
-    name: "Content-Security-Policy",
+    name: "content-security-policy",
     start: `report-uri ${REPORT_URI};`,
     end: `;report-to ${REPORT_URI};`,
     isMine(header) {
-      return header.startsWith(this.start) && header.endsWith(this.end);
+      let {name, value} = header;
+      return name.toLowerCase() === CSP.name &&
+        value.startsWith(this.start) && value.endsWith(this.end);
     },
     create(...directives) {
       return `${this.start}${directives.join(';')}${this.end}`;
@@ -23,7 +25,7 @@ var RequestGuard = (() => {
         return this.create(...(types.map(type => `${type}-src 'none'`)));
     },
     blocks(header, type) {
-      return header.includes(`${type}-sr 'none';`)
+      return header.includes(`;${type}-src 'none';`)
     },
     types: ["script", "object", "media"],
   };
@@ -49,15 +51,25 @@ var RequestGuard = (() => {
   const TabStatus = {
     map: new Map(),
     types: ["script", "object", "media", "frame", "font"],
+    Records: class {
+      constructor() {
+        this.clear();
+      }
 
-    initTab(tabId, records = {allowed: {}, blocked: {}}) {
+      clear() {
+        this.allowed = {};
+        this.blocked = {};
+        this.noscriptFrames = [];
+      }
+    },
+    initTab(tabId, records = new TabStatus.Records()) {
       this.map.set(tabId, records);
       browser.tabs.onRemoved.addListener(tabId => this.map.delete(tabId));
       return records;
     },
 
-    record(request, cancelled) {
-      let {tabId, type, url, documentUrl} = request;
+    record(request, what) {
+      let {tabId, frameId, type, url, documentUrl} = request;
       let policyType = policyTypesMap[type] || type;
       let requestKey = Policy.requestKey(url, documentUrl, policyType);
       let map = this.map;
@@ -65,14 +77,17 @@ var RequestGuard = (() => {
       if (map.has(tabId)) {
         records = map.get(tabId);
         if (type === "main_frame") {
-          records.allowed = {};
-          records.blocked = {};
+          records.clear();
         }
       } else {
         records = this.initTab(tabId);
       }
 
-      let collection = cancelled ? records.blocked : records.allowed;
+      if (what === "noscriptFrames") {
+        records.noscriptFrames.push(frameId);
+        what = "blocked";
+      }
+      let collection = records[what];
       if (type in collection) {
         collection[type].push(requestKey);
       } else {
@@ -153,7 +168,7 @@ var RequestGuard = (() => {
       if (seen) {
         for (let thing of seen) {
           thing.request.tabId = tabId;
-          TabStatus.record(thing.request, !thing.allowed);
+          TabStatus.record(thing.request, thing.allowed ? "allowed" : "blocked");
         }
       }
     },
@@ -168,14 +183,15 @@ var RequestGuard = (() => {
   browser.tabs.onActivated.addListener(TabStatus.onActivatedTab);
 
   const Content = {
+
+
     async hearFrom(message, sender) {
       debug("Received message from content", message, sender);
       switch (message.type) {
         case "pageshow":
           TabStatus.recordAll(sender.tab.id, message.seen);
-          return;
+          return true;
         case "enable":
-
           let {url, documentUrl, policyType} = message;
           let TAG = `<${policyType.toUpperCase()}>`;
           let origin = Sites.origin(url);
@@ -208,8 +224,11 @@ var RequestGuard = (() => {
             ns.policy.set(key, perms);
             ns.savePolicy();
           }
-
           return true;
+          case "canScript":
+            let records = TabStatus.map.get(sender.tab.id);
+            debug("Records.noscriptFrames %o, canScript: %s", records && records.noscriptFrames, !(records && records.noscriptFrames.includes(sender.frameId)));
+            return !(records && records.noscriptFrames.includes(sender.frameId));
       }
     },
 
@@ -250,7 +269,7 @@ var RequestGuard = (() => {
   }
 
   const listeners = {
-    async onBeforeRequest(request) {
+    onBeforeRequest(request) {
       try {
         initPendingRequest(request);
         let policy = ns.policy;
@@ -271,7 +290,7 @@ var RequestGuard = (() => {
             let cancel = !allowed;
             if (cancel) {
               debug(`Blocking ${policyType}`, request);
-              TabStatus.record(request, cancel);
+              TabStatus.record(request, cancel ? "blocked" : "allowed");
               return {cancel};
             }
           }
@@ -283,15 +302,16 @@ var RequestGuard = (() => {
       return null;
     },
 
-    async onHeadersReceived(request) {
+    onHeadersReceived(request) {
       // called for main_frame, sub_frame and object
       debug("onHeadersReceived", request);
+
       try {
         let header, blocker;
         let responseHeaders = request.responseHeaders;
         let content = {}
         for (let h of responseHeaders) {
-          if (h.name === CSP.name && CSP.isMine(h.value)) {
+          if (CSP.isMine(h)) {
             header = h;
             h.value = "";
           } else if (/^\s*Content-(Type|Disposition)\s*$/i.test(h.name)) {
@@ -317,13 +337,6 @@ var RequestGuard = (() => {
           if (blockedTypes && blockedTypes.length) {
             blocker = CSP.createBlocker(...blockedTypes);
           }
-
-          if (!capabilities.has("script")) {
-            TabStatus.record(request, false);
-          } else if (!capabilities.has("media")) {
-            pendingRequests.get(request.requestId).mediaBlocked = true;
-          }
-
         }
 
         if (blocker) {
@@ -342,7 +355,19 @@ var RequestGuard = (() => {
       return null;
     },
 
-    async onCompleted(request) {
+    onResponseStarted(request) {
+      if (request.responseHeaders.find(
+          h => CSP.isMine(h) && CSP.blocks(h.value, "script")
+        )) {
+        debug("NoScripted %s", request.url, request.tabId, request.frameId);
+        TabStatus.record(request, "noscriptFrames");
+        pendingRequests.get(request.requestId).scriptBlocked = true;
+      } else if (request.type === "main_frame") {
+        TabStatus.record(request, "allowed");
+      }
+    },
+
+    onCompleted(request) {
       let {requestId} = request;
       if (pendingRequests.has(requestId)) {
         let r = pendingRequests.get(requestId);
@@ -379,7 +404,7 @@ var RequestGuard = (() => {
         if (r.type === "frame") r.type = "sub_frame";
         r.url = report["blocked-uri"];
         Content.reportTo(r, false, policyTypesMap[r.type]);
-        TabStatus.record(r, true);
+        TabStatus.record(r, "blocked");
       }
     } catch(e) {
       error(e);
@@ -404,12 +429,17 @@ var RequestGuard = (() => {
         {urls: allUrls, types: docTypes},
         ["blocking", "responseHeaders"]
       );
+      listen("onResponseStarted",
+        {urls: allUrls, types: docTypes},
+        ["responseHeaders"]
+      );
       listen("onCompleted",
         {urls: allUrls, types: allTypes},
       );
       listen("onErrorOccurred",
         {urls: allUrls, types: allTypes},
       );
+
 
       wr.onBeforeRequest.addListener(onViolationReport,
         {urls: [REPORT_URI], types: ["csp_report"]}, ["blocking", "requestBody"]);

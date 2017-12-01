@@ -684,6 +684,9 @@
   "forbidLocal": {
     "message": "Forbid $1"
   },
+  "freshInstallReload": {
+    "message": "In order to operate on this tab, NoScript needs to reload it.\nProceed?"
+  },
   "global.warning.text": {
     "message": "Scripts are going to be allowed globally (for every site).\n This is a potentially dangerous action.\nDo you really want to proceed?"
   },

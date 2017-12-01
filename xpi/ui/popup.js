@@ -8,6 +8,8 @@ addEventListener("unload", e => {
 (async () => {
   try {
     let tabId;
+    let sitesUI;
+    let pendingReload = false;
     let isBrowserAction = true;
     let tab = (await browser.tabs.query({
       windowId: (await browser.windows.getLastFocused({windowTypes: ["normal"]})).id,
@@ -29,19 +31,6 @@ addEventListener("unload", e => {
     } else tabId = tab.id;
 
     await UI.init(tabId);
-    debug("tabId: %s - %o", tabId, UI);
-    if (!UI.seen) {
-      browser.runtime.openOptionsPage();
-      close();
-      return;
-    }
-
-    let justDomains = false; // true;
-    let sitesUI = new UI.Sites();
-    let pendingReload = false;
-    sitesUI.onChange = () => { pendingReload = true };
-    initSitesUI();
-    UI.onSettings = initSitesUI;
 
     let optionsButton = document.querySelector("#options");
     optionsButton.onclick = () => {
@@ -68,6 +57,38 @@ addEventListener("unload", e => {
       close();
     }
 
+    if (!UI.seen) {
+      if (/^https?:/.test(tab.url) && !tab.url.startsWith("https://addons.mozilla.org/")) {
+        document.body.classList.add("disabled");
+        document.querySelector("#content").textContent = _("freshInstallReload");
+        let buttons = document.querySelector("#buttons");
+        let b = document.createElement("button");
+        b.textContent = _("OK");
+        b.onclick = reloadButton.onclick = () => {
+          reload();
+          close();
+        }
+        buttons.appendChild(b);
+        b = document.createElement("button");
+        b.textContent = _("Cancel");
+        b.onclick = () => close();
+        buttons.appendChild(b);
+        return;
+      }
+      browser.runtime.openOptionsPage();
+      close();
+      return;
+    }
+
+    let justDomains = false; // true;
+    sitesUI = new UI.Sites();
+
+    sitesUI.onChange = () => { pendingReload = true };
+    initSitesUI();
+    UI.onSettings = initSitesUI;
+
+
+
     function initSitesUI() {
       pendingReload = false;
       let {typesMap} = sitesUI;
@@ -76,7 +97,7 @@ addEventListener("unload", e => {
       let domains = new Map();
       function urlToLabel(url) {
         let {origin} = url;
-        let match = policySites.match(origin);
+        let match = policySites.match(url);
         if (match) return match;
         if (domains.has(origin)) {
           if (justDomains) return domains.get(origin);
@@ -118,7 +139,7 @@ addEventListener("unload", e => {
     }
 
     function reload() {
-      sitesUI.clear();
+      if (sitesUI) sitesUI.clear();
       browser.tabs.reload(tabId);
       pendingReload = false;
     }

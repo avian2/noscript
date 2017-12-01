@@ -5,7 +5,7 @@
      let policyData = (await SafeSync.get("policy")).policy;
      if (policyData && policyData.DEFAULT) {
        ns.policy = new Policy(policyData);
-       // Temporary fix for @VERSION@rc2 breakage
+       // Temporary fix for 10.1.3rc2 breakage
        {
          let trustedCaps = ns.policy.TRUSTED.capabilities;
          if (trustedCaps.size < 2) {
