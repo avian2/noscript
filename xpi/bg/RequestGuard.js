@@ -1,7 +1,7 @@
 var RequestGuard = (() => {
   'use strict';
 
-  const REPORT_URI = "https://fake-domain.noscript.net/__NoScript_Probe__/";
+  const REPORT_URI = "https://noscript-csp.invalid/__NoScript_Probe__/";
   const REPORT_GROUP = "NoScript-Endpoint";
   const REPORT_TO = {
     name: "Report-To",
@@ -51,24 +51,20 @@ var RequestGuard = (() => {
   const TabStatus = {
     map: new Map(),
     types: ["script", "object", "media", "frame", "font"],
-    Records: class {
-      constructor() {
-        this.clear();
-      }
-
-      clear() {
-        this.allowed = {};
-        this.blocked = {};
-        this.noscriptFrames = [];
+    newRecords() {
+      return {
+        allowed: {},
+        blocked: {},
+        noscriptFrames: {},
       }
     },
-    initTab(tabId, records = new TabStatus.Records()) {
+
+    initTab(tabId, records = this.newRecords()) {
       this.map.set(tabId, records);
-      browser.tabs.onRemoved.addListener(tabId => this.map.delete(tabId));
       return records;
     },
 
-    record(request, what) {
+    record(request, what, optValue) {
       let {tabId, frameId, type, url, documentUrl} = request;
       let policyType = policyTypesMap[type] || type;
       let requestKey = Policy.requestKey(url, documentUrl, policyType);
@@ -76,16 +72,15 @@ var RequestGuard = (() => {
       let records;
       if (map.has(tabId)) {
         records = map.get(tabId);
-        if (type === "main_frame") {
-          records.clear();
-        }
       } else {
         records = this.initTab(tabId);
       }
 
-      if (what === "noscriptFrames") {
-        records.noscriptFrames.push(frameId);
-        what = "blocked";
+      if (what === "noscriptFrame") {
+        let nsf = records.noscriptFrames;
+        nsf[frameId] = optValue;
+        what = optValue ? "blocked" : "allowed";
+        if (type !== "main_frame") type = "script";
       }
       let collection = records[what];
       if (type in collection) {
@@ -97,7 +92,7 @@ var RequestGuard = (() => {
       this.updateTab(tabId, records);
     },
 
-    updateTab(tabId, records = this.map.get(tabId)) {
+    updateTab(tabId, records = this.map.get(tabId) || this.initTab(tabId)) {
       let topAllowed = records.allowed.main_frame;
 
       let {allowed, blocked} = records;
@@ -166,6 +161,11 @@ var RequestGuard = (() => {
 
     recordAll(tabId, seen) {
       if (seen) {
+        let records = TabStatus.map.get(tabId);
+        if (records) {
+          records.allowed = {};
+          records.blocked = {};
+        }
         for (let thing of seen) {
           thing.request.tabId = tabId;
           TabStatus.record(thing.request, thing.allowed ? "allowed" : "blocked");
@@ -174,13 +174,17 @@ var RequestGuard = (() => {
     },
 
     async onActivatedTab(info) {
-      let tabId = info.tabId;
+      let {tabId} = info;
       let seen = await ns.collectSeen(tabId);
 
       TabStatus.recordAll(tabId, seen);
-    }
+    },
+    onRemovedTab(tabId) {
+      TabStatus.map.delete(tabId);
+    },
   }
   browser.tabs.onActivated.addListener(TabStatus.onActivatedTab);
+  browser.tabs.onRemoved.addListener(TabStatus.onRemovedTab);
 
   const Content = {
 
@@ -227,8 +231,8 @@ var RequestGuard = (() => {
           return true;
           case "canScript":
             let records = TabStatus.map.get(sender.tab.id);
-            debug("Records.noscriptFrames %o, canScript: %s", records && records.noscriptFrames, !(records && records.noscriptFrames.includes(sender.frameId)));
-            return !(records && records.noscriptFrames.includes(sender.frameId));
+            debug("Records.noscriptFrames %o, canScript: %s", records && records.noscriptFrames, !(records && records.noscriptFrames[sender.frameId]));
+            return !(records && records.noscriptFrames[sender.frameId]);
       }
     },
 
@@ -356,15 +360,15 @@ var RequestGuard = (() => {
     },
 
     onResponseStarted(request) {
-      if (request.responseHeaders.find(
-          h => CSP.isMine(h) && CSP.blocks(h.value, "script")
-        )) {
-        debug("NoScripted %s", request.url, request.tabId, request.frameId);
-        TabStatus.record(request, "noscriptFrames");
-        pendingRequests.get(request.requestId).scriptBlocked = true;
-      } else if (request.type === "main_frame") {
-        TabStatus.record(request, "allowed");
+      if (request.type === "main_frame") {
+        TabStatus.initTab(request.tabId);
       }
+      let scriptBlocked = !!request.responseHeaders.find(
+        h => CSP.isMine(h) && CSP.blocks(h.value, "script")
+      );
+      debug("%s scriptBlocked=%s setting noscriptFrame on ", request.url, scriptBlocked, request.tabId, request.frameId);
+      TabStatus.record(request, "noscriptFrame", scriptBlocked);
+      pendingRequests.get(request.requestId).scriptBlocked = scriptBlocked;
     },
 
     onCompleted(request) {
@@ -392,6 +396,15 @@ var RequestGuard = (() => {
   };
 
 
+  function fakeRequestFromCSP(report, request) {
+    let type = report["violated-directive"].split("-", 1)[0]; // e.g. script-src 'none' => script
+    if (type === "frame") type = "sub_frame";
+    return Object.assign(Object.create(null), request, {
+      url: report['blocked-uri'],
+      type,
+    });
+  }
+
   async function onViolationReport(request) {
     try {
       let decoder = new TextDecoder("UTF-8");
@@ -399,12 +412,12 @@ var RequestGuard = (() => {
       let csp = report["original-policy"]
       debug("CSP report", report);
       if (report['blocked-uri'] !== 'self') {
-        let r = Object.assign(Object.create(null), request);
-        r.type = report["violated-directive"].split("-", 1)[0]; // e.g. script-src 'none' => script
-        if (r.type === "frame") r.type = "sub_frame";
-        r.url = report["blocked-uri"];
+        let r = fakeRequestFromCSP(report, request);
         Content.reportTo(r, false, policyTypesMap[r.type]);
         TabStatus.record(r, "blocked");
+      } else if (report["violated-directive"] === "script-src 'none'") {
+        let r =  fakeRequestFromCSP(report, request);
+        TabStatus.record(r, "noscriptFrame", true);
       }
     } catch(e) {
       error(e);

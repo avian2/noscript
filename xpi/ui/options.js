@@ -25,12 +25,12 @@
         url: a.href
       });
     }
-    let button = document.querySelector("#btn-delete-xss-whitelist");
-    let whitelist = UI.xssWhitelist;
-    button.disabled = Object.keys(whitelist).length === 0;
+    let button = document.querySelector("#btn-delete-xss-choices");
+    let choices = UI.xssUserChoices;
+    button.disabled = Object.keys(choices).length === 0;
     button.onclick = () => {
       UI.updateSettings({
-        xssWhitelist: {}
+        xssUserChoices: {}
       });
       button.disabled = true
     };

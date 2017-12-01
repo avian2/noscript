@@ -57,7 +57,8 @@ addEventListener("unload", e => {
       close();
     }
 
-    if (!UI.seen) {
+    let mainFrame = UI.seen && UI.seen.find(thing => thing.request.type === "main_frame");
+    if (!mainFrame) {
       if (/^https?:/.test(tab.url) && !tab.url.startsWith("https://addons.mozilla.org/")) {
         document.body.classList.add("disabled");
         document.querySelector("#content").textContent = _("freshInstallReload");
@@ -79,7 +80,7 @@ addEventListener("unload", e => {
       close();
       return;
     }
-
+    debug("Seen: %o", UI.seen);
     let justDomains = false; // true;
     sitesUI = new UI.Sites();
 
@@ -131,7 +132,7 @@ addEventListener("unload", e => {
         });
       }
 
-      sitesUI.mainUrl = new URL(seen.find(thing => thing.request.type === "main_frame").request.url)
+      sitesUI.mainUrl = new URL(mainFrame.request.url)
       sitesUI.mainSite = urlToLabel(sitesUI.mainUrl);
       sitesUI.mainDomain = tld.getDomain(sitesUI.mainUrl.hostname);
 

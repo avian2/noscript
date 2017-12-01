@@ -11,7 +11,7 @@ XSS.FlashIdiocy = {
  },
 
  platformDecode(s) {
-   s.replace(/%[8-9a-f][0-9a-f]/ig, s => this.map[s.substring(1).toLowerCase()]);
+   return s.replace(/%[8-9a-f][0-9a-f]/ig, s => this.map[s.substring(1).toLowerCase()]);
  },
 
  map: {

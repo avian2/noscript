@@ -531,8 +531,8 @@
   "Whitelist": {
     "message": "Whitelist"
   },
-  "XSS.clearWhitelist": {
-    "message": "Clear XSS whitelist"
+  "XSS.clearUserChoices": {
+    "message": "Clear XSS user choices"
   },
   "XSS.promptTitle": {
     "message": "NoScript XSS Warning"
@@ -550,7 +550,10 @@
     "message": "Allow this request"
   },
   "XSS.optAlwaysAllow": {
-    "message": "Always allow requests from $1 to $2"
+    "message": "Always allow document requests from $1 to $2"
+  },
+  "XSS.optAlwaysBlock": {
+    "message": "Always block document requests from $1 to $2"
   },
   "Xss": {
     "message": "XSS"

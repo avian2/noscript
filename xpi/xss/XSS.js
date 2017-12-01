@@ -10,14 +10,29 @@ var XSS = (() => {
   const ABORT = {cancel: true}, ALLOW = {};
 
   async function requestListener(request) {
+
     let xssReq = XSS.parseRequest(request);
     if (!xssReq) return null;
-    let reasons = await XSS.maybe(xssReq);
-    if (!reasons) return ALLOW;
+    let data;
+    let reasons;
+    try {
+      reasons = await XSS.maybe(xssReq);
+      if (!reasons) return ALLOW;
+      if (reasons.user) {
+        log("Blocking request from %s to %s by previous XSS prompt user choice",
+          xssReq.srcUrl, xssReq.destUrl);
+        return ABORT;
+      }
+      data = [];
+    } catch (e) {
+      error(e, "XSS filter processing %o", xssReq);
+      reasons = { urlInjection: true };
+      data = [e.toString()];
+    }
 
     let {srcOrigin, destOrigin, unescapedDest} = xssReq;
     let block = !!(reasons.urlInjection || reasons.postInjection)
-    let data = [];
+
     if (reasons.protectName) data.push("window.name");
     if (reasons.urlInjection) data.push(`(URL) ${unescapedDest}`);
     if (reasons.postInjection) data.push(`(POST) ${reasons.postInjection}`);
@@ -29,8 +44,9 @@ var XSS = (() => {
       message: _("XSS.promptMessage", [source, destOrigin, data.join(",")]),
       options: [
         {label: _(`XSS.opt${block ? 'Block' : 'Sanitize'}`), checked: true}, // 0
-        {label: _("XSS.optAllow")}, // 1
-        {label: _("XSS.optAlwaysAllow", [source, destOrigin])}, // 2
+        {label: _("XSS.optAlwaysBlock", [source, destOrigin])}, // 1
+        {label: _("XSS.optAllow")}, // 2
+        {label: _("XSS.optAlwaysAllow", [source, destOrigin])}, // 3
       ],
 
       buttons: [_("Ok")],
@@ -39,15 +55,15 @@ var XSS = (() => {
       height: 480,
     });
 
-    if (button === 0 && option > 0) {
-      if (option === 2) { // remeber origin and destination
-        let whitelist = await XSS.Exceptions.getWhitelist();
-        let allowedSources = new Set(whitelist[destOrigin] || []);
-        allowedSources.add(srcOrigin);
-        whitelist[destOrigin] = [...allowedSources];
-        await XSS.Exceptions.setWhitelist(whitelist);
+    if (button === 0 && option >= 2) {
+      if (option === 3) { // always allow
+        await XSS.setUserChoice(xssReq.originKey, "allow");
       }
       return ALLOW;
+    }
+    if (option === 1) { // always block
+      block = true;
+      await XSS.setUserChoice(xssReq.originKey, "block");
     }
     if (block) {
       return ABORT;
@@ -65,6 +81,19 @@ var XSS = (() => {
 
       await include("/legacy/Legacy.js");
       await include("/xss/Exceptions.js");
+
+      this._userChoices = await SafeSync.get("xssUserChoices").xssUserChoices || {};
+
+      // conver old style whitelist if stored
+      let oldWhitelist = await XSS.Exceptions.getWhitelist();
+      if (oldWhitelist) {
+        for (let [destOrigin, sources] of Object.entries(oldWhitelist)) {
+          for (let srcOrigin of sources) {
+            this._userChoices[`${srcOrigin}>${destOrigin}`] = "allow";
+          }
+        }
+        XSS.Exceptions.setWhitelist(null);
+      }
 
       onBeforeRequest.addListener(requestListener, {
         urls: ["*://*/*"],
@@ -123,15 +152,40 @@ var XSS = (() => {
           delete this.destDomain;
           return this.destDomain = tld.getDomain(destObj.hostname);
         },
+        get originKey() {
+          delete this.key;
+          return `${srcOrigin}>${destOrigin}`;
+        },
         unescapedDest,
         isGet,
         isPost: !isGet && method === "POST",
       }
     },
 
+    async saveUserChoices(xssUserChoices = this._userChoices || {}) {
+      this._userChoices = xssUserChoices;
+      SafeSync.set({xssUserChoices});
+    },
+    getUserChoices() {
+      return this._userChoices;
+    },
+    setUserChoice(originKey, choice) {
+      this._userChoices[originKey] = choice;
+    },
+    getUserChoice(originKey) {
+      return this._userChoices[originKey];
+    },
+
     async maybe(request) { // return reason or null if everything seems fine
       let xssReq = request.xssUnparsed ? request : this.parseRequest(request);
       request = xssReq.xssUnparsed;
+      switch (await this.getUserChoice(xssReq.originKey)) {
+        case "allow":
+          return null;
+        case "block":
+          return  {user: true};
+      }
+
       if (await this.Exceptions.shouldIgnore(xssReq)) {
         return null;
       }

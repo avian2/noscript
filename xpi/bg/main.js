@@ -61,9 +61,9 @@
        async updateSettings(settings, sender) {
          let {
            policy,
-           xssWhitelist
+           xssUserChoices
          } = settings;
-         if (xssWhitelist) await XSS.Exceptions.setWhitelist(xssWhitelist);
+         if (xssUserChoices) await XSS.saveUserChoices(xssUserChoices);
          if (policy) {
            ns.policy = new Policy(policy);
            await ns.savePolicy();
@@ -92,12 +92,12 @@
        }) {
          let policy = ns.policy.dry(true);
          let seen = tabId !== -1 ? await ns.collectSeen(tabId) : null;
-         let xssWhitelist = await XSS.Exceptions.getWhitelist();
+         let xssUserChoices = await XSS.getUserChoices();
          browser.runtime.sendMessage({
            type: "settings",
            policy,
            seen,
-           xssWhitelist,
+           xssUserChoices,
            local: ns.local,
            sync: ns.sync,
          });

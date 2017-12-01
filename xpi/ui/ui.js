@@ -29,7 +29,7 @@ var UI = (() => {
             UI.policy = new Policy(m.policy);
             UI.snapshot = UI.policy.snapshot;
             UI.seen = m.seen;
-            UI.xssWhitelist = m.xssWhitelist;
+            UI.xssUserChoices = m.xssUserChoices;
             UI.local = m.local;
             UI.sync = m.sync;
             resolve();
@@ -48,11 +48,11 @@ var UI = (() => {
     async pullSettings() {
       browser.runtime.sendMessage({type: "NoScript.broadcastSettings", tabId: UI.tabId});
     },
-    async updateSettings({policy, xssWhitelist, local, sync, reloadAffected}) {
+    async updateSettings({policy, xssUserChoices, local, sync, reloadAffected}) {
       if (policy) policy = policy.dry(true);
       return await browser.runtime.sendMessage({type: "NoScript.updateSettings",
         policy,
-        xssWhitelist,
+        xssUserChoices,
         local,
         sync,
         reloadAffected,

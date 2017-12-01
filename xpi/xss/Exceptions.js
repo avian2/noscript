@@ -12,7 +12,7 @@ XSS.Exceptions = (() => {
     },
 
     async getWhitelist() {
-      return (await SafeSync.get("xssWhitelist")).xssWhitelist || {};
+      return (await SafeSync.get("xssWhitelist")).xssWhitelist;
     },
     async setWhitelist(xssWhitelist) {
       await SafeSync.set({xssWhitelist});
@@ -47,13 +47,6 @@ XSS.Exceptions = (() => {
 
       if (/^(?:chrome|resource|moz-extension|about):/.test(srcOrigin)) {
         debug("Privileged origin", srcOrigin);
-      }
-
-      let whitelist = await this.getWhitelist();
-      let allowedSources = whitelist[destOrigin]
-      if (allowedSources && allowedSources.includes(srcOrigin)) {
-        logEx(xssReq, `User whitelisted ${srcOrigin}->${destOrigin}`);
-        return true;
       }
 
       // destination or @source matching legacy regexp
