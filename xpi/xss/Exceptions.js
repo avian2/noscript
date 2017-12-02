@@ -51,7 +51,7 @@ XSS.Exceptions = (() => {
 
       // destination or @source matching legacy regexp
       if (this.legacyExceptions.test(unescapedDest) &&
-        !this.isBadException(destUrl.hostname) ||
+        !this.isBadException(destObj.hostname) ||
         this.legacyExceptions.test("@" + unescape(srcUrl))) {
         logEx("Legacy exception", this.legacyExceptions);
         return true;
@@ -179,6 +179,12 @@ XSS.Exceptions = (() => {
           }
         }
       }
+    },
+
+    isBadException(host) {
+      // TLD check for Google search
+      let m = host.match(/\bgoogle\.((?:[a-z]{1,3}\.)?[a-z]+)$/i);
+      return m && tld.getPublicSuffix(host) != m[1];
     },
 
     partial(xssReq) {
