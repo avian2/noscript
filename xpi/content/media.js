@@ -19,7 +19,7 @@ try {
       return url;
     });
 
-    patch( window.MediaSource.prototype, "addSourceBuffer", function(mime, ...args) {
+    patch(window.MediaSource.prototype, "addSourceBuffer", function(mime, ...args) {
       let ms = this;
       let urls = urlMap.get(ms);
       let me = Array.from(document.querySelectorAll("video,audio"))

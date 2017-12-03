@@ -153,8 +153,8 @@ var XSS = (() => {
           return this.destDomain = tld.getDomain(destObj.hostname);
         },
         get originKey() {
-          delete this.key;
-          return `${srcOrigin}>${destOrigin}`;
+          delete this.originKey;
+          return this.originKey = `${srcOrigin}>${destOrigin}`;
         },
         unescapedDest,
         isGet,
@@ -201,7 +201,10 @@ var XSS = (() => {
       let ic = await this.InjectionChecker;
       ic.reset();
 
-      let postInjection = xssReq.isPost && ic.checkPost(request.requestBody.formData, skipParams);
+      let postInjection = xssReq.isPost &&
+        request.requestBody && request.requestBody.formData &&
+        ic.checkPost(request.requestBody.formData, skipParams);
+
       let protectName = ic.nameAssignment;
       let urlInjection = ic.checkUrl(destUrl, skipRx);
       protectName = protectName || ic.nameAssignment;

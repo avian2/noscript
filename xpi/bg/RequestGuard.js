@@ -119,13 +119,6 @@ var RequestGuard = (() => {
           : _("GloballyEnabled")
       });
       browserAction.enable(tabId);
-
-      if (!topAllowed) this.persistToDOM(tabId, 0, records);
-    },
-
-    persistToDOM(tabId, frameId, records) {
-      if (frameId === 0 && !records) records = this.map.get(tabId);
-      browser.tabs.sendMessage(tabId, {type: "noscript", token: ns.local.uuid, records}, {frameId});
     },
 
     totalize(sum, value) {
@@ -136,21 +129,6 @@ var RequestGuard = (() => {
       if (tabId === undefined) {
         (await browser.tabs.query({})).forEach(tab => TabStatus.probe(tab.id));
       } else {
-        let records;
-        try {
-          records = await browser.tabs.sendMessage(tabId,
-                            {type: "probe",
-                              REPORT_URI,
-                              token: ns.local.uuid,
-                              debug: ns.local.debug,
-                            },
-                            {frameId: 0});
-       } catch (e) {
-       }
-       if (records && !this.map.has(tabId)) {
-          this.initTab(tabId, records);
-          this.updateTab(tabId);
-        }
         try {
           TabStatus.recordAll(tabId, await ns.collectSeen(tabId));
         } catch (e) {
@@ -363,7 +341,7 @@ var RequestGuard = (() => {
       if (request.type === "main_frame") {
         TabStatus.initTab(request.tabId);
       }
-      let scriptBlocked = !!request.responseHeaders.find(
+      let scriptBlocked = request.responseHeaders.some(
         h => CSP.isMine(h) && CSP.blocks(h.value, "script")
       );
       debug("%s scriptBlocked=%s setting noscriptFrame on ", request.url, scriptBlocked, request.tabId, request.frameId);
@@ -383,10 +361,6 @@ var RequestGuard = (() => {
             error(e);
           }
         }
-
-        if (r.scriptBlocked) {
-          TabStatus.persistToDOM(request.tabId, request.frameId);
-        }
       }
     },
 
@@ -394,7 +368,6 @@ var RequestGuard = (() => {
       pendingRequests.delete(request.requestId);
     }
   };
-
 
   function fakeRequestFromCSP(report, request) {
     let type = report["violated-directive"].split("-", 1)[0]; // e.g. script-src 'none' => script

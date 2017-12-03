@@ -4,17 +4,12 @@ debug = () => {};
 
 var _ = browser.i18n.getMessage;
 
-var bgToken;
 var canScript = true;
 var embeddingDocument = false;
 
 var seen = [];
 
 var handlers = {
-  probe(event) {
-    let noscript = getPersistent(event.token);
-    return noscript && noscript.records;
-  },
 
   seen(event) {
     let {allowed, policyType, request, ownFrame} = event;
@@ -26,15 +21,6 @@ var handlers = {
         PlaceHolder.create(policyType, request);
       }
     }
-  },
-
-  noscript(event) {
-    // this page can't do scripting, let's mark it and cope with that
-    let {token, records} = event;
-    if (token) bgToken = token;
-    let tag = document.createComment(JSON.stringify({token, records}));
-    let root = document.documentElement;
-    root.insertBefore(tag, root.firstChild);
   },
 
   collect(event) {
@@ -51,23 +37,6 @@ browser.runtime.onMessage.addListener(async event => {
 });
 
 
-function getPersistent(token = bgToken) {
-  let node = document.documentElement.firstChild;
-  if (node.nodeType === 8 && token) { // comment
-    let text = node.textContent;
-    if (text.includes(token)) {
-      try {
-        let persistent = JSON.parse(text);
-        if (persistent.token === token) {
-          return persistent;
-        }
-      } catch (e) {
-        error(e);
-      }
-    }
-  }
-  return null;
-}
 
 try {
   window.eval("");
@@ -76,7 +45,11 @@ try {
 }
 
 if (document.readyState !== "complete") {
-  window.addEventListener("pageshow", init);
+  let pageshown = e => {
+    removeEventListener("pageshow", pageshown);
+    init();
+  };
+  addEventListener("pageshow", pageshown);
 } else init();
 
 async function init() {

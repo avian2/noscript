@@ -13,7 +13,7 @@ body {
 .sites tr, .sites td { margin: 0; padding: 0; border: none}
 .sites > tr.site:hover, .sites > tr.sites:active {
   background: rgba(160, 180, 255, .9) !important;
-  transition: .3s linear all;
+  /* transition: .3s linear all; */
 }
 .sites > tr:nth-child(even) {background: rgba(255, 255, 255, .8)}
 .sites > tr:nth-child(odd) {background: rgba(240, 240, 240, .8)}
@@ -113,7 +113,7 @@ span.preset {
 
   opacity: .5;
   transform: rotateY(40deg) rotateX(-20deg);
-  transition: 0.5s all;
+  /* transition: 0.5s all; */
   margin: 0 0 -2px 2px;
 }
 .presets input.preset:checked {
@@ -141,7 +141,7 @@ span.preset {
   text-transform: uppercase;
   color: #000;
   opacity: .6;
-  transition: 0.5s all;
+  /* transition: 0.5s all; */
   position: absolute;
   left: 0px;
   padding-left: 32px;
@@ -182,7 +182,7 @@ button.options {
   left: 18px;
 
   pointer-events: none;
-  transition: 0.4s all;
+  /* transition: 0.4s all; */
 }
 
 .preset:hover input.preset:checked ~ .options {
