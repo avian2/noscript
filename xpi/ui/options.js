@@ -74,9 +74,11 @@
       let valid = Sites.isValid(site);
       if (valid && canAdd(site)) {
         policy.set(site, policy.TRUSTED);
+        UI.updateSettings({policy});
         newSiteInput.value = "";
         sitesUI.populate(policy.sites);
         sitesUI.highlight(site);
+        SitesUI.onChange();
       }
     }, true);
   }
