@@ -66,6 +66,20 @@ var UI = (() => {
       if (reset) this.snapshot = currentSnapshot;
       return dirty;
     },
+
+    async openSiteInfo(domain) {
+      await include('/common/SafeSync.js');
+      let {siteInfoConsent} = await SafeSync.get("siteInfoConsent");
+      if (!siteInfoConsent) {
+        siteInfoConsent = confirm(_("siteInfo.confirm", [domain, "https://noscript.net/"]));
+        if (siteInfoConsent) {
+          await SafeSync.set({siteInfoConsent});
+        }
+      }
+      let ace  = punycode.toASCII(domain);
+      let url = `https://noscript.net/about/${domain};${ace}`;
+      browser.tabs.create({url});
+    }
   };
 
   function detectHighContrast() {
@@ -227,6 +241,8 @@ var UI = (() => {
         if (target.matches("input.https-only") && ev.type === "change") {
           this.toggleSecure(row, target.checked);
           fireOnChange(this, row);
+        } else if (target.matches(".domain")) {
+          UI.openSiteInfo(row.domain);
         }
         return;
       }

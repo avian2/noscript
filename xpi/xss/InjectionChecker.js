@@ -839,8 +839,8 @@ XSS.InjectionChecker = (async () => {
       ")[^>\\w])|['\"\\s\\0/](?:formaction|style|background|src|lowsrc|ping|innerhtml|data-bind|(?:data-)?mv-(?:\\w+[\\w-]*)|" + IC_EVENT_PATTERN +
       ")[\\s\\0]*=|<%[^]+[=(][^]+%>", "i"),
 
-    checkHTML: function(s) {
-      let links = s.match(/\b(?:href|src|(?:form)?action|\w+-\w+)[\s\0]*=[\s\0]*(?:(["'])[\s\S]*?\1|(?:[^'">][^>\s]*)?[?\/#][^>\s]*)/ig);
+    checkHTML(s) {
+      let links = s.match(/\b(?:href|src|base|(?:form)?action|\w+-\w+)[\s\0]*=[\s\0]*(?:(["'])[\s\S]*?\1|(?:[^'">][^>\s]*)?[?\/#][^>\s]*)/ig);
       if (links) {
         for (let l of links) {
           l = l.replace(/[^=]*=[\s\0]*/i, '');

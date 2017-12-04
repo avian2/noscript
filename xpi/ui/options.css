@@ -8,23 +8,35 @@ body {
 #header {
   padding: 0 64px 0 0;
   margin: 0;
-
+  text-align: right;
 }
 #header h1 {
   color: #048;
   text-shadow: 1px 1px 1px rgba(0,0,0,.5);
-text-align: right;
   font-size: 32px;
   padding: 0;
   margin: 0;
+  text-align: right;
 }
 #version {
   color: #048;
   font-size: 12px;
   padding: 0;
-  margin: 0;
-  text-align: right;
+  margin: 0 0 8px;
   display: block;
+  text-align: right;
+}
+
+#sect-general {
+  margin-right: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.opt-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 #policy {

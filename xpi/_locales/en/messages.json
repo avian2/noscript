@@ -415,10 +415,10 @@
     "message": "s"
   },
   "ResetDef": {
-    "message": "Reset to defaults"
+    "message": "Reset to Default"
   },
   "ResetDef.accesskey": {
-    "message": "d"
+    "message": "D"
   },
   "RestrictSubdocScripting": {
     "message": "Block scripting in whitelisted subdocuments of non-whitelisted pages"
@@ -526,13 +526,13 @@
     "message": "untrusted"
   },
   "WebAddress": {
-    "message": "Address of web site:"
+    "message": "Search or add a web site:"
   },
   "Whitelist": {
     "message": "Whitelist"
   },
   "XSS.clearUserChoices": {
-    "message": "Clear XSS user choices"
+    "message": "Clear XSS Choices"
   },
   "XSS.promptTitle": {
     "message": "NoScript XSS Warning"

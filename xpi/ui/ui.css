@@ -26,6 +26,7 @@ body {
 }
 .site .url .protocol { display: none }
 
+.site .url .domain { cursor: help }
 
 [data-key="domain"] .full-address .host,
 [data-key="domain"] .full-address .sub,

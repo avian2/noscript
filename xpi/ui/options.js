@@ -18,6 +18,17 @@
   opt("xss");
 
   {
+      let button = document.querySelector("#btn-reset");
+      button.onclick = async () => {
+        if (confirm(_("reset.warning"))) {
+          policy = new Policy();
+          await UI.updateSettings({policy});
+          window.reload();
+        }
+      }
+  }
+
+  {
     let a = document.querySelector("#xssFaq a");
     a.onclick = e => {
       e.preventDefault();

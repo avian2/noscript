@@ -53,8 +53,15 @@ if (document.readyState !== "complete") {
 } else init();
 
 async function init() {
+  try {
+    canScript = await browser.runtime.sendMessage({type: "canScript"});
+  } catch (e) {
+    // background script not initialized yet?
+    setTimeout(init, 100);
+    return;
+  }
   init = () => {};
-  canScript = await browser.runtime.sendMessage({type: "canScript"});
+
 
   seen.push({
       request: {
@@ -108,6 +115,8 @@ async function init() {
   }
 
   let notifyPage = () => browser.runtime.sendMessage({type: "pageshow", seen, canScript});
-  if (document.readyState === "complete") notifyPage();
-  else addEventListener("pageshow", notifyPage);
+  if (document.readyState === "complete") {
+    notifyPage();
+  }
+  addEventListener("pageshow", notifyPage);
 };
