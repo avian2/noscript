@@ -58,12 +58,14 @@ var XSS = (() => {
     if (button === 0 && option >= 2) {
       if (option === 3) { // always allow
         await XSS.setUserChoice(xssReq.originKey, "allow");
+        await XSS.saveUserChoices();
       }
       return ALLOW;
     }
     if (option === 1) { // always block
       block = true;
       await XSS.setUserChoice(xssReq.originKey, "block");
+      await XSS.saveUserChoices();
     }
     if (block) {
       return ABORT;
@@ -82,7 +84,7 @@ var XSS = (() => {
       await include("/legacy/Legacy.js");
       await include("/xss/Exceptions.js");
 
-      this._userChoices = await SafeSync.get("xssUserChoices").xssUserChoices || {};
+      this._userChoices = (await SafeSync.get("xssUserChoices")).xssUserChoices || {};
 
       // conver old style whitelist if stored
       let oldWhitelist = await XSS.Exceptions.getWhitelist();

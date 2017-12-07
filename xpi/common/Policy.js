@@ -40,6 +40,12 @@ var {Permissions, Policy, Sites} = (() => {
       return {url, siteKey};
     }
 
+    static optimalKey(site) {
+      let {url, siteKey} = Sites.parse(site);
+      if (url && url.protocol === "https:") return Sites.secureDomainKey(tld.getDomain(url.hostname));
+      return url && url.origin || siteKey;
+    }
+
     static origin(site) {
       try {
         return new URL(site).origin;
@@ -225,6 +231,7 @@ var {Permissions, Policy, Sites} = (() => {
       TRUSTED: new Permissions(Permissions.ALL),
       UNTRUSTED: new Permissions(),
       enforced: true,
+      autoAllowTop: false,
     };
   }
 
@@ -312,6 +319,7 @@ var {Permissions, Policy, Sites} = (() => {
         UNTRUSTED: UNTRUSTED.dry(),
         sites,
         enforced: this.enforced,
+        autoAllowTop: this.autoAllowTop,
       };
     }
 

@@ -15,6 +15,15 @@
     }
     return !policy.enforced;
   });
+
+  opt("auto", o => {
+    if (o) {
+      policy.autoAllowTop = o.checked;
+      UI.updateSettings({policy});
+    }
+    return policy.autoAllowTop;
+  });
+
   opt("xss");
 
   {

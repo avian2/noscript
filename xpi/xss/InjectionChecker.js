@@ -840,10 +840,10 @@ XSS.InjectionChecker = (async () => {
       ")[\\s\\0]*=|<%[^]+[=(][^]+%>", "i"),
 
     checkHTML(s) {
-      let links = s.match(/\b(?:href|src|base|(?:form)?action|\w+-\w+)[\s\0]*=[\s\0]*(?:(["'])[\s\S]*?\1|(?:[^'">][^>\s]*)?[:?\/#][^>\s]*)/ig);
+      let links = s.match(/\b(?:href|src|base|(?:form)?action|\w+-\w+)[\s\u0000-\u001f]*=[\s\u0000-\u001f]*(?:(["'])[\s\S]*?\1|(?:[^'">][^>\s]*)?[:?\/#][^>\s]*)/ig);
       if (links) {
         for (let l of links) {
-          l = l.replace(/[^=]*=[\s\0]*/i, '');
+          l = l.replace(/[^=]*=[\s\u0000-\u001f]*/i, '');
           l = /^["']/.test(l) ? l.replace(/^(['"])([^]*?)\1[^]*/g, '$2') : l.replace(/[\s>][^]*/, '');
           if (/^(?:javascript|data):|\[[^]+\]/i.test(l) || /[<'"(]/.test(decodeURIComponent(l))) return true;
         }

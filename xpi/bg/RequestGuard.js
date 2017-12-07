@@ -64,7 +64,7 @@ var RequestGuard = (() => {
       return records;
     },
 
-    record(request, what, optValue) {
+    _record(request, what, optValue) {
       let {tabId, frameId, type, url, documentUrl} = request;
       let policyType = policyTypesMap[type] || type;
       let requestKey = Policy.requestKey(url, documentUrl, policyType);
@@ -78,9 +78,15 @@ var RequestGuard = (() => {
 
       if (what === "noscriptFrame") {
         let nsf = records.noscriptFrames;
+        if (frameId in nsf) {
+          return null;
+        }
         nsf[frameId] = optValue;
         what = optValue ? "blocked" : "allowed";
-        if (type !== "main_frame") type = "script";
+        if (frameId === 0) {
+          request.type = type = "main_frame";
+          Content.reportTo(request, type, type);
+        }
       }
       let collection = records[what];
       if (type in collection) {
@@ -88,14 +94,34 @@ var RequestGuard = (() => {
       } else {
         collection[type] = [requestKey];
       }
-
-      this.updateTab(tabId, records);
+      return records;
     },
 
-    updateTab(tabId, records = this.map.get(tabId) || this.initTab(tabId)) {
-      let topAllowed = records.allowed.main_frame;
+    record(request, what, optValue) {
+      let records = this._record(request, what, optValue);
+      if (records) {
+        this.updateTab(request.tabId);
+      }
+    },
 
+    _pendingTabs: new Set(),
+
+    updateTab(tabId) {
+      if (this._pendingTabs.size === 0) {
+        window.setTimeout(() => { // clamp UI updates
+          for (let tabId of this._pendingTabs) {
+            this._updateTabNow(tabId);
+          }
+          this._pendingTabs.clear();
+        }, 200);
+      }
+      this._pendingTabs.add(tabId);
+    },
+    _updateTabNow(tabId) {
+      this._pendingTabs.delete(tabId);
+      let records = this.map.get(tabId) || this.initTab(tabId);
       let {allowed, blocked} = records;
+      let topAllowed = allowed.main_frame;
 
       let numAllowed = 0, numBlocked = 0, sum = 0;
       let report = this.types.map(t => {
@@ -146,8 +172,9 @@ var RequestGuard = (() => {
         }
         for (let thing of seen) {
           thing.request.tabId = tabId;
-          TabStatus.record(thing.request, thing.allowed ? "allowed" : "blocked");
+          TabStatus._record(thing.request, thing.allowed ? "allowed" : "blocked");
         }
+        this._updateTabNow(tabId);
       }
     },
 
@@ -303,8 +330,12 @@ var RequestGuard = (() => {
 
         let policy = ns.policy;
         if (policy.enforced) {
+          let perms = policy.get(request.url, request.documentUrl).perms;
+          if (policy.autoAllowTop && request.frameId === 0 && perms === policy.DEFAULT) {
+            policy.set(Sites.optimalKey(request.url), perms = policy.TRUSTED.tempTwin);
+          }
 
-          let {capabilities} = policy.get(request.url, request.documentUrl).perms;
+          let {capabilities} = perms;
           let canScript = capabilities.has("script");
 
           let blockedTypes;

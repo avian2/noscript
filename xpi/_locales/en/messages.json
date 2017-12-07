@@ -99,7 +99,7 @@
     "message": "Appearance"
   },
   "AutoAllowTopLevel": {
-    "message": "Temporarily allow top-level sites by default"
+    "message": "Temporarily set top-level sites to TRUSTED"
   },
   "AutoReload": {
     "message": "Automatically reload affected pages when permissions change"
