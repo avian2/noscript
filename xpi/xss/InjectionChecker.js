@@ -845,11 +845,11 @@ XSS.InjectionChecker = (async () => {
       if (s !== unescaped && this.checkHTML(unescaped)) {
         return true;
       }
+
       s = s.replace(/[\u0000-\u001f]+/g, '');
+  
       if (s.includes("&")) s = Entities.convertAll(s);
       let links = s.match(/\b(?:href|src|base|(?:form)?action|\w+-\w+)\s*=\s*(?:(["'])[\s\S]*?\1|(?:[^'">][^>\s]*)?[:?\/#][^>\s]*)/ig);
-
-      console.log(`%s %o`, s, links);
       if (links) {
         for (let l of links) {
           l = l.replace(/[^=]*=\s*/i, '').replace(/[\u0000-\u001f]/g, '');
@@ -1055,11 +1055,10 @@ XSS.InjectionChecker = (async () => {
       if (this._checkOverDecoding(s, unescaped))
         return true;
 
-      if (/[\n\r\t]|&#/.test(unescaped)) {
-        let unent = Entities.convertAll(unescaped).replace(/[\n\r\t]/g, '');
+      if (/[\u0000-\u001f]|&#/.test(unescaped)) {
+        let unent = Entities.convertAll(unescaped).replace(/[\u0000-\u001f]+/g, '');
         if (unescaped != unent && this._checkRecursive(unent, depth)) {
-          this.log("Trash-stripped nested URL match!"); // http://mxr.mozilla.org/mozilla-central/source/netwerk/base/src/nsURLParsers.cpp#100
-          return true;
+          this.log("Trash-stripped nested URL match!");
         }
       }
 

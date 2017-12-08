@@ -2,17 +2,22 @@
 
 addEventListener("unload", e => {
   if (!UI.initialized) {
-    browser.runtime.sendMessage({type: "openStandalonePopup"});
+    browser.runtime.sendMessage({
+      type: "openStandalonePopup"
+    });
   }
 });
 (async () => {
+
   try {
     let tabId;
     let sitesUI;
     let pendingReload = false;
     let isBrowserAction = true;
     let tab = (await browser.tabs.query({
-      windowId: (await browser.windows.getLastFocused({windowTypes: ["normal"]})).id,
+      windowId: (await browser.windows.getLastFocused({
+        windowTypes: ["normal"]
+      })).id,
       active: true
     }))[0];
 
@@ -28,8 +33,10 @@ addEventListener("unload", e => {
         close();
       }
       addEventListener("blur", close);
-    } else tabId = tab.id;
-
+    } else {
+      tabId = tab.id;
+      include("/ui/fixDPI.js");
+    }
     await UI.init(tabId);
 
     let optionsButton = document.querySelector("#options");
@@ -84,7 +91,9 @@ addEventListener("unload", e => {
     let justDomains = false; // true;
     sitesUI = new UI.Sites();
 
-    sitesUI.onChange = () => { pendingReload = true };
+    sitesUI.onChange = () => {
+      pendingReload = true
+    };
     initSitesUI();
     UI.onSettings = initSitesUI;
 
@@ -92,12 +101,17 @@ addEventListener("unload", e => {
 
     function initSitesUI() {
       pendingReload = false;
-      let {typesMap} = sitesUI;
+      let {
+        typesMap
+      } = sitesUI;
       typesMap.clear();
       let policySites = UI.policy.sites;
       let domains = new Map();
+
       function urlToLabel(url) {
-        let {origin} = url;
+        let {
+          origin
+        } = url;
         let match = policySites.match(url);
         if (match) return match;
         if (domains.has(origin)) {
@@ -112,7 +126,7 @@ addEventListener("unload", e => {
       }
       let seen = UI.seen;
 
-      let sitesSet  = new Set(
+      let sitesSet = new Set(
         seen.map(thing => Object.assign({
           type: thing.policyType
         }, Sites.parse(thing.request.url)))
@@ -153,7 +167,9 @@ addEventListener("unload", e => {
       }
     }
 
-    let {onCompleted} = browser.webNavigation;
+    let {
+      onCompleted
+    } = browser.webNavigation;
 
     let loadSnapshot = sitesUI.snapshot;
     let onCompletedListener = navigated => {
@@ -161,13 +177,18 @@ addEventListener("unload", e => {
         UI.pullSettings();
       }
     };
-    onCompleted.addListener(onCompletedListener, {url: [{hostContains: sitesUI.mainDomain}]});
+    onCompleted.addListener(onCompletedListener, {
+      url: [{
+        hostContains: sitesUI.mainDomain
+      }]
+    });
     addEventListener("unload", e => {
       onCompleted.removeListener(onCompletedListener);
       debug("pendingReload", pendingReload);
       if (pendingReload) {
-         UI.updateSettings({
-          policy: UI.policy, reloadAffected: true,
+        UI.updateSettings({
+          policy: UI.policy,
+          reloadAffected: true,
         });
       }
     }, true);
