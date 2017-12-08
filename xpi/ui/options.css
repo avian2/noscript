@@ -58,6 +58,16 @@ body.debug div.debug {
   color: red;
 }
 
+#policy-error {
+  background: red;
+  color: #ff8;
+  padding: 0;
+  margin: 0;
+  font-weight: bold;
+}
+
+
+
 input#newsite {
   margin: 8px;
   min-width: 300px;

@@ -135,15 +135,17 @@
     let policyEditor = document.getElementById("policy");
     policyEditor.value = JSON.stringify(policy.dry(true), null, 2);
     if (!policyEditor.onchange) policyEditor.onchange = (e) => {
+      let ed = e.currentTarget
       try {
-        let ed = e.currentTarget
         policy = new Policy(JSON.parse(ed.value));
         UI.updateSettings({policy});
-        siteUI.populate(policy.sites);
+        sitesUI.populate(policy.sites);
         ed.className = "";
+        document.getElementById("policy-error").textContent = "";
       } catch (e) {
         error(e);
         ed.className = "error";
+        document.getElementById("policy-error").textContent = e.message;
       }
     }
   }
