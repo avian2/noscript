@@ -222,7 +222,6 @@ var {Permissions, Policy, Sites} = (() => {
           securecode.com securesuite.net sfx.ms tinymce.cachefly.net
           wlxrs.com
           yahoo.com yahooapis.com
-          yandex.st
           yimg.com youtube.com ytimg.com`.split(/\s+/).map(Sites.secureDomainKey),
         untrusted: [],
         custom: {},

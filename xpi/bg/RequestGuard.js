@@ -120,8 +120,8 @@ var RequestGuard = (() => {
     _updateTabNow(tabId) {
       this._pendingTabs.delete(tabId);
       let records = this.map.get(tabId) || this.initTab(tabId);
-      let {allowed, blocked} = records;
-      let topAllowed = allowed.main_frame;
+      let {allowed, blocked, noscriptFrames} = records;
+      let topAllowed = !(noscriptFrames && noscriptFrames[0]);
 
       let numAllowed = 0, numBlocked = 0, sum = 0;
       let report = this.types.map(t => {

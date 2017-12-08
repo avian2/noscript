@@ -33,7 +33,7 @@ Legacy.migrated.prefs = Object.assign(
   "showTempAllowPage": true,
   "showAllowPage": true,
   "mandatory": "[System+Principal] about: about:addons about:blocked about:certerror about:config about:crashes about:feeds about:home about:memory about:neterror about:plugins about:preferences about:privatebrowsing about:sessionrestore about:srcdoc about:support about:tabcrashed blob: chrome: mediasource: moz-extension: moz-safe-about: resource:",
-  "default": "about:blank about:pocket-saved about:pocket-signup addons.mozilla.org afx.ms ajax.aspnetcdn.com ajax.googleapis.com bootstrapcdn.com code.jquery.com firstdata.com firstdata.lv gfx.ms google.com googlevideo.com gstatic.com hotmail.com live.com live.net maps.googleapis.com mozilla.net netflix.com nflxext.com nflximg.com nflxvideo.net noscript.net outlook.com passport.com passport.net passportimages.com paypal.com paypalobjects.com securecode.com securesuite.net sfx.ms tinymce.cachefly.net wlxrs.com yahoo.com yahooapis.com yandex.st yimg.com youtube.com ytimg.com",
+  "default": "about:blank about:pocket-saved about:pocket-signup addons.mozilla.org afx.ms ajax.aspnetcdn.com ajax.googleapis.com bootstrapcdn.com code.jquery.com firstdata.com firstdata.lv gfx.ms google.com googlevideo.com gstatic.com hotmail.com live.com live.net maps.googleapis.com mozilla.net netflix.com nflxext.com nflximg.com nflxvideo.net noscript.net outlook.com passport.com passport.net passportimages.com paypal.com paypalobjects.com securecode.com securesuite.net sfx.ms tinymce.cachefly.net wlxrs.com yahoo.com yahooapis.com yimg.com youtube.com ytimg.com",
   "allowWhitelistUpdates": true,
   "volatilePrivatePermissions": false,
   "showVolatilePrivatePermissionsToggle": true,

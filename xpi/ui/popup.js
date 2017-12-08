@@ -35,7 +35,6 @@ addEventListener("unload", e => {
       addEventListener("blur", close);
     } else {
       tabId = tab.id;
-      include("/ui/fixDPI.js");
     }
 
     await UI.init(tabId);
