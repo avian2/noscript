@@ -37,6 +37,7 @@ addEventListener("unload", e => {
       tabId = tab.id;
       include("/ui/fixDPI.js");
     }
+
     await UI.init(tabId);
 
     let optionsButton = document.querySelector("#options");

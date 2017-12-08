@@ -3,14 +3,17 @@ var Test = (() => {
   return {
     passed: 0,
     failed: 0,
-    async include(...args) {
-      for(let test of args) {
+    async include(tests) {
+      for(let test of tests) {
         let src = `/test/${test}_test.js`;
         log(`Testing ${test}`);
         this.passed = this.failed = 0;
-        await include(src);
-        let {passed, failed} = this;
-        log(`FAILED: ${failed}, PASSED: ${passed}, TOTAL ${passed + failed}.`);
+        try {
+          await include(src);
+        } catch (e) {
+          log("Missing test ", test);
+          continue;
+        }
       }
     },
     async run(test, msg = "", callback = null) {
@@ -27,6 +30,12 @@ var Test = (() => {
       } catch(e) {
         error(e);
       }
+    },
+
+    report() {
+      let {passed, failed} = this;
+      log(`FAILED: ${failed}, PASSED: ${passed}, TOTAL ${passed + failed}.`);
     }
   };
+
 })();

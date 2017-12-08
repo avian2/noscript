@@ -8,8 +8,9 @@
   p1.set("http://flashgot.net", p1.UNTRUSTED);
   p1.set("perchè.com", p1.TRUSTED);
   let p2 = new Policy(p1.dry());
-debug("p1", JSON.stringify(p1.dry()));
-debug("p2", JSON.stringify(p2.dry()));
+  debug("p1", JSON.stringify(p1.dry()));
+  debug("p2", JSON.stringify(p2.dry()));
+
   for(let t of [
     () => p2.can("https://noscript.net"),
     () => !p2.can("http://noscript.net"),
@@ -23,4 +24,6 @@ debug("p2", JSON.stringify(p2.dry()));
     () => p1.can("https://secure.informaction.com"),
     () => p1.can("https://www.secure.informaction.com"),
   ]) Test.run(t);
+  
+  Test.report();
 }

@@ -840,15 +840,6 @@ XSS.InjectionChecker = (async () => {
       ")[\\s\\0]*=|<%[^]+[=(][^]+%>", "i"),
 
     checkHTML(s) {
-
-      let unescaped = unescape(s);
-      if (s !== unescaped && this.checkHTML(unescaped)) {
-        return true;
-      }
-
-      s = s.replace(/[\u0000-\u001f]+/g, '');
-  
-      if (s.includes("&")) s = Entities.convertAll(s);
       let links = s.match(/\b(?:href|src|base|(?:form)?action|\w+-\w+)\s*=\s*(?:(["'])[\s\S]*?\1|(?:[^'">][^>\s]*)?[:?\/#][^>\s]*)/ig);
       if (links) {
         for (let l of links) {
@@ -1056,7 +1047,7 @@ XSS.InjectionChecker = (async () => {
         return true;
 
       if (/[\u0000-\u001f]|&#/.test(unescaped)) {
-        let unent = Entities.convertAll(unescaped).replace(/[\u0000-\u001f]+/g, '');
+        let unent = Entities.convertAll(unescaped.replace(/[\u0000-\u001f]+/g, ''));
         if (unescaped != unent && this._checkRecursive(unent, depth)) {
           this.log("Trash-stripped nested URL match!");
         }
@@ -1072,15 +1063,19 @@ XSS.InjectionChecker = (async () => {
 
       if (unescaped.indexOf("\x1b(J") !== -1 && this._checkRecursive(unescaped.replace(/\x1b\(J/g, ''), depth) || // ignored in iso-2022-jp
         unescaped.indexOf("\x7e\x0a") !== -1 && this._checkRecursive(unescaped.replace(/\x7e\x0a/g, '')) // ignored in hz-gb-2312
-      )
+      ) {
         return true;
+      }
 
-      if (unescaped !== s) {
-        if (badUTF8) try {
+      if (badUTF8) {
+        try {
           let legacyEscaped = unescape(unescaped);
           if (legacyEscaped !== unescaped && this._checkRecursive(unescape(unescaped))) return true;
         } catch (e) {}
-        if (this._checkRecursive(unescaped, depth)) return true;
+      }
+      
+      if (unescaped !== s && this._checkRecursive(unescaped, depth)) {
+        return true;
       }
 
       s = this.ebayUnescape(unescaped);
