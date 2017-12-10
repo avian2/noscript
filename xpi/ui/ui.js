@@ -60,6 +60,13 @@ var UI = (() => {
       });
     },
 
+    async exportSettings() {
+      return await browser.runtime.sendMessage({type: "NoScript.exportSettings"});
+    },
+    async importSettings(data) {
+      return await browser.runtime.sendMessage({type: "NoScript.importSettings", data});
+    },
+
     isDirty(reset = false) {
       let currentSnapshot = this.policy.snapshot;
       let dirty = currentSnapshot != this.snapshot;

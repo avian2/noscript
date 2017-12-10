@@ -77,6 +77,10 @@ button.add {
   font-weight: bold;
 }
 
+input[type="file"] {
+  display: none;
+}
+
 .opt-group {
   padding: 8px 0;
 }
@@ -85,4 +89,9 @@ button.add {
 }
 #clearclick-options {
   display: none;
+}
+
+.buttons {
+  display: flex;
+  align-items: flex-end;
 }

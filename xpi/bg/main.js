@@ -59,33 +59,7 @@
      responders: {
 
        async updateSettings(settings, sender) {
-         let {
-           policy,
-           xssUserChoices
-         } = settings;
-         if (xssUserChoices) await XSS.saveUserChoices(xssUserChoices);
-         if (policy) {
-           ns.policy = new Policy(policy);
-           await ns.savePolicy();
-           if (settings.reloadAffected) {
-             browser.tabs.reload(settings.tabId);
-           }
-         }
-         let oldDebug = ns.local.debug;
-         for (let storage of ["local", "sync"]) {
-           if (settings[storage]) {
-             await ns.save(ns[storage] = settings[storage]);
-           }
-         }
-         if (ns.local.debug !== oldDebug) {
-           await include("/lib/log.js");
-           if (oldDebug) debug = () => {};
-         }
-         if (ns.sync.xss) {
-           XSS.start();
-         } else {
-           XSS.stop();
-         }
+         Settings.update(settings);
        },
        async broadcastSettings({
          tabId = -1
@@ -101,6 +75,14 @@
            local: ns.local,
            sync: ns.sync,
          });
+       },
+
+       async exportSettings() {
+         return await Settings.exportToFile();
+       },
+
+       async importSettings({data}) {
+         return await Settings.import(data);
        },
 
        async openStandalonePopup() {
@@ -175,6 +157,7 @@
        await initializing;
        wr.onBeforeRequest.removeListener(waitForPolicy);
 
+       await include("/bg/Settings.js");
        MessageHandler.listen();
 
        log("STARTED");

@@ -32,9 +32,28 @@
         if (confirm(_("reset.warning"))) {
           policy = new Policy();
           await UI.updateSettings({policy});
-          window.reload();
+          window.location.reload();
         }
       }
+
+      let fileInput = document.querySelector("#file-import");
+      fileInput.onchange = () => {
+        let fr = new FileReader();
+        fr.onload = async () => {
+          try {
+            await UI.importSettings(fr.result);
+          } catch (e) {
+            error(e, "Importing settings %s", fr.result);
+          }
+          location.reload();
+        }
+        fr.readAsText(fileInput.files[0]);
+      }
+
+      button = document.querySelector("#btn-import");
+      button.onclick = () => fileInput.click();
+
+      document.querySelector("#btn-export").onclick = () => UI.exportSettings();
   }
 
   {

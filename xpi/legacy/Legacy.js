@@ -4,10 +4,20 @@ var Legacy = {
 
   async init() {
     let migrated = (await browser.storage.local.get("legacyBackup")).legacyBackup;
+    let real = await this.import(migrated);
+    this.init = async () => real;
+    return real;
+  },
+
+  async import(migrated) {
+    if (this.migrated) this.undo = this.migrated;
     this.migrated = (migrated && migrated.prefs) ? migrated : {prefs: {}};
     await include("/legacy/defaults.js");
-    this.init = async () => true;
-    return !!this.migrated.whitelist; // "real" migration with custom policy
+    return 'whitelist' in this.migrated; // "real" migration with custom policy
+  },
+
+  async persist() {
+    await browser.storage.local.set({legacyBackup: this.migrated});
   },
 
   getPref(name, def) {
@@ -36,15 +46,29 @@ var Legacy = {
   },
 
   async createOrMigratePolicy() {
-    if (!(this.migrated || await this.init())) return new Policy();
+    try {
+      if (await this.init()) {
+        return this.migratePolicy();
+      }
+    } catch (e) {
+      error(e);
+    }
+    return new Policy();
+  },
 
+  extractLists(lists) {
+    return lists.map(listString => listString.split(/\s+/))
+    .map(sites => sites.filter(s => !(s.includes(":") &&
+                                sites.includes(s.replace(/.*:\/*(?=\w)/g, ""))
+                              )));
+  },
+
+  migratePolicy() {
     // here we normalize both NS whitelist and blacklist, getting finally rid of
     // the legacy of CAPS mandating protocols for top-level domains
-    let [trusted, untrusted] = [this.migrated.whitelist, this.getPref("untrusted", "")]
-      .map(listString => listString.split(/\s+/))
-      .map(sites => sites.filter(s => !(s.includes(":") &&
-                                  sites.includes(s.replace(/.*:\/*(?=\w)/g, ""))
-                                )));
+    let [trusted, untrusted] = this.extractLists(
+        [this.migrated.whitelist, this.getPref("untrusted", "")]);
+
     // securify default whitelist domain items
     if (this.getPref("httpsDefWhitelist")) {
       this.getPref("default", "").

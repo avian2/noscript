@@ -1050,6 +1050,7 @@ XSS.InjectionChecker = (async () => {
         let unent = Entities.convertAll(unescaped.replace(/[\u0000-\u001f]+/g, ''));
         if (unescaped != unent && this._checkRecursive(unent, depth)) {
           this.log("Trash-stripped nested URL match!");
+          return true;
         }
       }
 
@@ -1073,7 +1074,7 @@ XSS.InjectionChecker = (async () => {
           if (legacyEscaped !== unescaped && this._checkRecursive(unescape(unescaped))) return true;
         } catch (e) {}
       }
-      
+
       if (unescaped !== s && this._checkRecursive(unescaped, depth)) {
         return true;
       }

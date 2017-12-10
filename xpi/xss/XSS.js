@@ -10,7 +10,16 @@ var XSS = (() => {
   const ABORT = {cancel: true}, ALLOW = {};
 
   async function requestListener(request) {
-
+    let policy = ns.policy;
+    if (policy.enforced) {
+      let {type} = request;
+      if (type !== "main_frame") {
+        if (type === "sub_frame") type = "frame";
+        if (!policy.can(request.url, type, request.originUrl)) {
+          return ALLOW; // it will be blocked by RequestGuard
+        }
+      }
+    }
     let xssReq = XSS.parseRequest(request);
     if (!xssReq) return null;
     let data;

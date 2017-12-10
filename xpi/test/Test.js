@@ -11,6 +11,8 @@ var Test = (() => {
         try {
           await include(src);
         } catch (e) {
+          // we might omit some tests in publicly available code for Security
+          // reasons, e.g. XSS_test.js
           log("Missing test ", test);
           continue;
         }

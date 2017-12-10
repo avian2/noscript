@@ -277,6 +277,8 @@ var RequestGuard = (() => {
     });
   }
 
+
+  const ABORT = {cancel: true}, ALLOW = {};
   const listeners = {
     onBeforeRequest(request) {
       try {
@@ -291,16 +293,16 @@ var RequestGuard = (() => {
                 /^(?:chrome|resource|moz-extension|about):/.test(originUrl))
             ) {
               // livemark request or similar browser-internal, always allow;
-              return null;
+              return ALLOW;
             }
 
             let allowed = policy.can(url, policyType, originUrl);
             Content.reportTo(request, allowed, policyType);
-            let cancel = !allowed;
-            if (cancel) {
+
+            if (!allowed) {
               debug(`Blocking ${policyType}`, request);
-              TabStatus.record(request, cancel ? "blocked" : "allowed");
-              return {cancel};
+              TabStatus.record(request, "blocked");
+              return ABORT;
             }
           }
         }
@@ -308,7 +310,7 @@ var RequestGuard = (() => {
         error(e);
       }
 
-      return null;
+      return ALLOW;
     },
 
     onHeadersReceived(request) {
@@ -365,7 +367,7 @@ var RequestGuard = (() => {
       } catch (e) {
         error(e, "Error in onHeadersReceived", uneval(request));
       }
-      return null;
+      return ALLOW;
     },
 
     onResponseStarted(request) {
@@ -403,8 +405,10 @@ var RequestGuard = (() => {
   function fakeRequestFromCSP(report, request) {
     let type = report["violated-directive"].split("-", 1)[0]; // e.g. script-src 'none' => script
     if (type === "frame") type = "sub_frame";
-    return Object.assign(Object.create(null), request, {
-      url: report['blocked-uri'],
+    let url = report['blocked-uri'];
+    if (url === 'self') url = request.documentUrl;
+    return Object.assign({}, request, {
+      url,
       type,
     });
   }
@@ -426,7 +430,7 @@ var RequestGuard = (() => {
     } catch(e) {
       error(e);
     }
-    return {cancel: true}
+    return ABORT;
   }
 
   const RequestGuard = {
