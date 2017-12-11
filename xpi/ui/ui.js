@@ -109,6 +109,11 @@ var UI = (() => {
     }
   }
 
+  function compareBy(prop, a, b) {
+    let x = a[prop], y = b[prop];
+    return x > y ? 1 : x < y ? -1 : 0;
+  }
+
   const TEMPLATE = `
     <table class="sites">
     <tr class="site">
@@ -405,7 +410,9 @@ var UI = (() => {
       }
       let rows = [...this.allSiteRows()].sort(sorter);
       if (this.mainSite) {
-        let topIdx = rows.findIndex(r => r._site === this.mainSite);
+        let mainLabel = "." + this.mainDomain;
+        let topIdx = rows.findIndex(r => r._label === mainLabel);
+        if (topIdx === -1) rows.findIndex(r => r._site === this.mainSite);
         if (topIdx !== -1) {
           // move the row to the top
           let topRow = rows.splice(topIdx, 1)[0];
@@ -418,8 +425,7 @@ var UI = (() => {
     }
 
     sorter(a, b) {
-      let x = a.domain, y = b.domain;
-      return x > y ? 1 : x < y ? -1 : 0;
+      return compareBy("domain", a, b) ||  compareBy("_label", a, b);
     }
 
     async tempAllowAll() {
@@ -461,6 +467,7 @@ var UI = (() => {
 
       let hostname = Sites.toExternal(url.hostname);
       let domain = tld.getDomain(hostname);
+
       if (!siteMatch) {
         // siteMatch = url.protocol === "https:" ? Sites.secureDomainKey(domain) : site;
         siteMatch = site;
@@ -474,13 +481,17 @@ var UI = (() => {
       let urlContainer = row.querySelector(".url");
       urlContainer.dataset.key = keyStyle;
       row._site = site;
+
       row.siteMatch = siteMatch;
       row.contextMatch = contextMatch;
       row.perms = perms;
       row.domain = domain || siteMatch;
       if (domain) { // "normal" URL
+        let justDomain = hostname === domain;
+        let domainEntry = secure || domain === site;
+        row._label =  domainEntry ? "." + domain : site;
         row.querySelector(".protocol").textContent = `${url.protocol}//`;
-        row.querySelector(".sub").textContent = hostname === domain ?
+        row.querySelector(".sub").textContent = justDomain ?
           (keyStyle === "full" || keyStyle == "unsafe"
             ? "" : "…")
             : hostname.substring(0, hostname.length - domain.length);
@@ -490,6 +501,7 @@ var UI = (() => {
         let httpsOnly = row.querySelector("input.https-only");
         httpsOnly.checked = keyStyle === "full" || keyStyle === "secure";
       } else {
+        row._label = siteMatch;
         urlContainer.querySelector(".full-address").textContent = siteMatch;
       }
 

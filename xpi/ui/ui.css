@@ -4,7 +4,7 @@ body {
 
 .sites {
   border: 0;
-  background: transparent;
+  background: white;
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
@@ -12,11 +12,10 @@ body {
 }
 .sites tr, .sites td { margin: 0; padding: 0; border: none}
 .sites > tr.site:hover, .sites > tr.sites:active {
-  background: rgba(160, 180, 255, .9) !important;
-  /* transition: .3s linear all; */
+  background: #abf;
 }
-.sites > tr:nth-child(even) {background: rgba(255, 255, 255, .8)}
-.sites > tr:nth-child(odd) {background: rgba(240, 240, 240, .8)}
+.sites > tr:nth-child(even) {background: #fff}
+.sites > tr:nth-child(odd) {background: #eee}
 
 .site .url {
     padding: 0 0 0 8px;
@@ -114,14 +113,13 @@ span.preset {
 
   opacity: .5;
   transform: rotateY(40deg) rotateX(-20deg);
-  /* transition: 0.5s all; */
-  margin: 0 0 -2px 2px;
+  margin: 0 0 0 2px;
 }
 .presets input.preset:checked {
   opacity: 1;
   transform: none;
   min-width: 150px;
-  background-color: rgba(0,0,0, .1);
+  background-color: #ddd;
   border-radius: 8px;
 }
 
@@ -142,7 +140,6 @@ span.preset {
   text-transform: uppercase;
   color: #000;
   opacity: .6;
-  /* transition: 0.5s all; */
   position: absolute;
   left: 0px;
   padding-left: 32px;
@@ -183,7 +180,7 @@ button.options {
   left: 18px;
 
   pointer-events: none;
-  /* transition: 0.4s all; */
+
 }
 
 .preset:hover input.preset:checked ~ .options {
@@ -236,12 +233,19 @@ input.preset:checked ~ input.temp {
 }
 
 tr.customizing input.preset:checked, input.preset.checked + label.preset, tr.customizer fieldset {
-  background-color: rgba(255, 255, 200, .9) !important;
+  background-color: #ffb !important;
+  border-radius: 8px;
   border-radius: 8px 8px 0 0;
+  margin: 0 1px 1px 1px;
+}
+tr.customizing input.preset:checked {
+    margin-bottom: -2px;
+    margin: 0 0 -2px 2px;
+
 }
 
 tr.customizing, tr.customizer {
-  background-color: rgba(180, 180, 150, .8) !important;
+  background-color: #cca !important;
 }
 
 tr.customizer > td {
