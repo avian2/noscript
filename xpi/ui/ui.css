@@ -95,8 +95,8 @@ label.https-only {
 
 
 td.presets {
-  /* width: 11em; */
   font-size: 1em;
+  white-space: nowrap;
 }
 
 span.preset {
