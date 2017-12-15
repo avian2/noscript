@@ -136,6 +136,7 @@ var RequestGuard = (() => {
           : ns.policy.enforced ? "yes" : "global")
         : (numAllowed ? "sub" : "no");
       let browserAction = browser.browserAction;
+
       browserAction.setIcon({tabId, path: {64: `/img/ui-${icon}64.png`}});
       browserAction.setBadgeText({tabId, text: numBlocked > 0 ? numBlocked.toString() : ""});
       browserAction.setBadgeBackgroundColor({tabId, color: [255, 0, 0, 128]});
@@ -144,7 +145,6 @@ var RequestGuard = (() => {
           `NoScript (${numBlocked}/${numAllowed + numBlocked})\n${report}`
           : _("GloballyEnabled")
       });
-      browserAction.enable(tabId);
     },
 
     totalize(sum, value) {
@@ -190,6 +190,10 @@ var RequestGuard = (() => {
   }
   browser.tabs.onActivated.addListener(TabStatus.onActivatedTab);
   browser.tabs.onRemoved.addListener(TabStatus.onRemovedTab);
+
+  if (!("setIcon" in browser.browserAction)) { // unsupported on Android
+    TabStatus._updateTabNow = TabStatus.updateTab = () => {};
+  }
 
   const Content = {
 

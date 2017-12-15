@@ -8,7 +8,7 @@
       "strict_min_version": "57.0"
     }
   },
-  "version": "10.1.5.8rc1",
+  "version": "10.1.5.8rc2",
   "description": "__MSG_Description__",
 
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'none'; default-src 'self'",
@@ -20,8 +20,8 @@
   },
 
   "permissions": [
-      "downloads",
       "contextMenus",
+      "downloads",
       "privacy",
       "storage",
       "tabs",
@@ -80,8 +80,7 @@
     "default_title": "NoScript",
     "default_icon": {
       "64": "img/ui-maybe64.png"
-    },
-    "default_popup": "/ui/popup.html"
+    }
   },
 
   "commands": {

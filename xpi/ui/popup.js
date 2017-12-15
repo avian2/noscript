@@ -15,9 +15,9 @@ addEventListener("unload", e => {
     let pendingReload = false;
     let isBrowserAction = true;
     let tab = (await browser.tabs.query({
-      windowId: (await browser.windows.getLastFocused({
-        windowTypes: ["normal"]
-      })).id,
+      windowId: browser.windows ?
+        (await browser.windows.getLastFocused({windowTypes: ["normal"]})).id
+        : null,
       active: true
     }))[0];
 
@@ -28,7 +28,7 @@ addEventListener("unload", e => {
     if (tab.url === document.URL) {
       isBrowserAction = false;
       try {
-        tabId = parseInt(new URL(document.URL).searchParams.get("tabId"))
+        tabId = parseInt(document.URL.match(/#.*\btab(\d+)/)[1]);
       } catch (e) {
         close();
       }
@@ -163,7 +163,8 @@ addEventListener("unload", e => {
       if (isBrowserAction) {
         window.close();
       } else {
-        browser.windows.remove(tab.windowId);
+        //browser.windows.remove(tab.windowId);
+        browser.tabs.remove(tab.id);
       }
     }
 

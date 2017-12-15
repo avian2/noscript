@@ -1,6 +1,9 @@
  var ns = (() => {
    'use strict';
 
+   const popupURL = browser.extension.getURL("/ui/popup.html");
+   let popupFor = tabId => `${popupURL}#tab${tabId}`;
+
    async function init() {
      let policyData = (await SafeSync.get("policy")).policy;
      if (policyData && policyData.DEFAULT) {
@@ -38,7 +41,7 @@
          return;
        }
        browser.windows.create({
-         url: await browser.browserAction.getPopup({}),
+         url: popupURL,
          width: 800,
          height: 600,
          type: "panel"
@@ -47,11 +50,32 @@
 
      togglePermissions() {},
      install() {
-       browser.commands.onCommand.addListener(cmd => {
-         if (cmd in Commands) {
-           Commands[cmd]();
-         }
-       });
+
+
+       if ("command" in browser) {
+         // keyboard shortcuts
+         browser.commands.onCommand.addListener(cmd => {
+           if (cmd in Commands) {
+             Commands[cmd]();
+           }
+         });
+       }
+
+       // wiring main UI
+       let ba = browser.browserAction;
+       if ("setIcon" in ba) {
+        //desktop
+         ba.setPopup({popup: popupURL});
+       } else {
+         // mobile
+         ba.onClicked.addListener(async tab => {
+           try {
+             await browser.tabs.remove(await browser.tabs.query({url: popupURL}));
+           } catch (e) {
+           }
+           await browser.tabs.create({url: popupFor(tab.id)});
+         });
+       }
      }
    }
 
@@ -89,17 +113,17 @@
          let win = await browser.windows.getLastFocused({
            windowTypes: ["normal"]
          });
-         let tab = (await browser.tabs.query({
-           windowId: win.id,
+         let [tab] = (await browser.tabs.query({
+           lastFocusedWindow: true,
            active: true
-         }))[0];
+         }));
 
          if (!tab || tab.id === -1) {
            log("No tab found to open the UI for");
            return;
          }
          browser.windows.create({
-           url: await browser.browserAction.getPopup({}) + "?tabId=" + tab.id,
+           url: popupFor(tab.id),
            width: 800,
            height: 600,
            top: win.top + 48,

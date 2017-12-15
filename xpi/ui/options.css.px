@@ -1,39 +1,37 @@
-
-/* @import url("chrome://browser/content/extension.css"); */
+@import url("chrome://browser/content/extension.css");
 body {
   background: url("/img/noscript-options.png") no-repeat fixed top right;
-  background-size: 8em;
-  padding: 0 4em 0 0;
-  margin: 0.5em 0.5em 0.5em 0.5em;
+  background-size: 128px;
+  padding: 0 64px 0 0;
+  margin: 8px 8px 8px 8px;
 }
 #header {
-  padding: 0 4em 0 0;
+  padding: 0 64px 0 0;
   margin: 0;
   text-align: right;
 }
 #header h1 {
   color: #048;
-  text-shadow: 0.06em 0.06em 0.06em rgba(0,0,0,.5);
-  font-size: 2em;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+  font-size: 32px;
   padding: 0;
   margin: 0;
   text-align: right;
 }
 #version {
   color: #048;
-  font-size: 0.75em;
+  font-size: 12px;
   padding: 0;
-  margin: 0 0 0.5em;
+  margin: 0 0 8px;
   display: block;
   text-align: right;
 }
 
 #sect-general {
-  margin-right: 4em;
+  margin-right: 64px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  font-size: 1em;
 }
 .opt-group {
   display: flex;
@@ -71,12 +69,8 @@ body.debug div.debug {
 
 
 input#newsite {
-  margin: 0.5em;
-  min-width: 18.75em;
-}
-
-input, button {
-  font-size: 1em;
+  margin: 8px;
+  min-width: 300px;
 }
 
 button.add {
@@ -88,10 +82,10 @@ input[type="file"] {
 }
 
 .opt-group {
-  padding: 0.5em 0;
+  padding: 8px 0;
 }
 #xssFaq {
-  padding: 0.5em 1em;
+  padding: 8px 1em;
 }
 #clearclick-options {
   display: none;
@@ -101,3 +95,10 @@ input[type="file"] {
   display: flex;
   align-items: flex-end;
 }
+/*
+#sites {
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+*/

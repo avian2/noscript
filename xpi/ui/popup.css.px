@@ -4,21 +4,20 @@ body {
   background: white;
 }
 #top {
-  font-size: 1em;
   position: relative;
   margin: 0;
-  height: 2.4em;
-  min-width: 18.75em;
-  border-bottom: 0.06em solid #eee;
+  height: 2.2em;
+  min-width: 300px;
+  border-bottom: 1px solid #eee;
 }
 #top button {
   appearance: none !important;
   -moz-appearance: none !important;
-  width: 2em;
-  height: 2em;
-  margin: 0.25em;
+  width: 32px;
+  height: 32px;
+  margin: 4px;
   cursor: pointer;
-  font-size: 1em;
+  font-size: 24px;
   font-family: dialog sans-serif;
   font-weight: bold;
   color: black;
@@ -30,10 +29,10 @@ body {
   display: block;
   position: absolute;
   top: 0;
-  padding: -0.25em 0;
+  padding: -4px 0;
   text-align: left;
   vertical-align: center;
-  line-height: 1em;
+  line-height: 24px;
 
 }
 
@@ -42,22 +41,22 @@ body {
 }
 
 #top button.icon {
-  text-indent: -500em;
+  text-indent: -5000px;
   color: transparent;
 }
 
 #top #temp-allow-page {
   background-image: url(/img/ui-temp-all64.png);
-  right: 0em;
+  right: 0px;
 }
 #top #revoke-temp {
   background-image: url(/img/ui-revoke-temp64.png);
-  right: 2.5em;
+  right: 40px;
 }
 
 #top #options {
   background-image: url(/img/noscript-options.png);
-  left: 5em;
+  left: 80px;
 }
 #top #close {
   left: 0;
@@ -66,13 +65,13 @@ body {
 }
 
 #top #reload {
-  left: 2.5em;
+  left: 40px;
   color: #080;
   background-image: url(/img/ui-reload64.png);
 }
 
 #sites {
-  margin: 0.5em 0.25em;
+  margin: 8px 4px;
 }
 
 #content {
@@ -80,7 +79,7 @@ body {
 }
 #buttons {
   text-align: center;
-  margin: 0.5em;
+  margin: 8px;
   display: flex;
   justify-content: space-around;
 
