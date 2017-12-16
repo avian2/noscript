@@ -1,7 +1,7 @@
 
 body {
   font-family: dialog, segoe-ui, helvetica, sans-serif;
-  font-size: 16px;
+  font-size: 4mm;
 }
 
 .sites {
@@ -96,13 +96,11 @@ label.https-only {
 
 td.presets {
   font-size: 1em;
-  white-space: nowrap;
 }
 
 span.preset {
   position: relative;
   display: inline-block;
-  perspective: 6.25em;
   top: 0.13em;
   font-size: 1em;
 }
@@ -161,6 +159,7 @@ input.preset:active, input.preset:focus, input.preset:hover {
   left: 0em;
   padding-left: 2.1em;
   display: inline-block;
+  transition: 0.2s all;
 }
 
 .presets input.preset:checked + label {
@@ -275,6 +274,7 @@ tr.customizer > td {
 
 span.cap {
   white-space: nowrap;
+  display: inline-block;
 }
 
 tr.customizer.closed > td  {
@@ -305,11 +305,4 @@ legend {
   position: absolute;
   top: 0.25em;
   left: 1em;
-}
-
-
-@media (min-resolution: 150dpi) {
-  body {
-    font-size: 32px;
-  }
 }
