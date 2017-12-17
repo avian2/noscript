@@ -46,7 +46,7 @@ a.__NoScript_PlaceHolder__ > span {
   display: block;
   color: #800;
   font-size: 16px;
-  font-family: dialog, sans-serif;
+  font-family: sans-serif;
   padding: 0 4px;
   margin: 0;
   background: none;
@@ -65,7 +65,7 @@ a.__NoScript_PlaceHolder__ > span {
   border-radius: 8px;
   padding: 8px;
   margin: 0;
-  font-family: dialog, segoe-ui, sans-serif;
+  font-family: sans-serif;
   overflow-wrap: break-word;
   word-break: break-all;
 }
