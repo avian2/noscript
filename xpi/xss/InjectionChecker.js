@@ -176,56 +176,64 @@ XSS.InjectionChecker = (async () => {
         s;
     },
 
-    reduceJSON: function(s) {
+    reduceJSON(s) {
+      const REPL = 'J';
       const toStringRx = /^function\s*toString\(\)\s*{\s*\[native code\]\s*\}$/;
+
       // optimistic case first, one big JSON block
+      let m = s.match(/{[^]+}|\[[^]*{[^]+}[^]*\]/);
+      if (!m) return s;
+
+      let [expr] = m;
+
+      try {
+        if (toStringRx.test(JSON.parse(expr).toString)) {
+          this.log("Reducing big JSON " + expr);
+          return this.reduceJSON(s.replace(expr, REPL));
+        }
+      } catch (e) {}
+
       for (;;) {
-
-        let m = s.match(/{[^]+}|\[[^]*{[^]+}[^]*\]/);
-        if (!m) return s;
-
-        let whole = s;
-        let expr = m[0];
-        try {
-          if (toStringRx.test(JSON.parse(expr).toString)) {
-            this.log("Reducing big JSON " + expr);
-            return this.reduceJSON(s.replace(expr, '{}'));
+        let prev = s;
+        let start = s.indexOf("{");
+        let end = s.lastIndexOf("}");
+        while (start > -1 && end - start > 1) {
+          expr = s.substring(start, end + 1);
+          end = s.lastIndexOf("}", end - 1);
+          if (end === -1) {
+            start = s.indexOf("{", start + 1);
+            end = s.lastIndexOf("}");
           }
-        } catch (e) {}
-
-
-        // heavier duty, scattered JSON blocks
-        while ((m = s.match(/{[^{}:]+:[^{}]+}/g))) {
-          let prev = s;
-
-          for (expr of m) {
-            try {
-              if (!toStringRx.test(JSON.parse(expr).toString))
-                continue;
-
-              this.log("Reducing JSON " + expr);
-              s = s.replace(expr, '{}');
+          try {
+            if (!toStringRx.test(JSON.parse(expr).toString))
               continue;
-            } catch (e) {}
 
-            if (/\btoString\b[\s\S]*:/.test(expr)) continue;
+            this.log("Reducing JSON " + expr);
+            s = s.replace(expr, REPL);
+            break;
+          } catch (e) {}
 
-            let qred = this.reduceQuotes(expr);
-            if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(qred)) {
-              this.log("Reducing pseudo-JSON " + expr);
-              s = s.replace(expr, '{}');
-            } else if (!/[(=.]|[^:\s]\s*\[|:\s*(?:location|document|set(?:Timeout|Interval)|eval|open|show\w*Dialog|alert|confirm|prompt)\b|(?:\]|set)\s*:/.test(qred) &&
-              this.checkJSSyntax("JSON = " + qred) // no-assignment JSON fails with "invalid label"
-            ) {
-              this.log("Reducing slow JSON " + expr);
-              s = s.replace(expr, '{}');
-            }
+          if (/\btoString\b[\s\S]*:/.test(expr)) {
+            continue;
+          }
+          let qred = this.reduceQuotes(expr);
+          if (/\{(?:\s*(?:(?:\w+:)+\w+)+;\s*)+\}/.test(qred)) {
+            this.log("Reducing pseudo-JSON " + expr);
+            s = s.replace(expr, REPL);
+            break;
           }
 
-          if (s === prev) break;
+          if (!/[(=.]|[^:\s]\s*\[|:\s*(?:location|document|set(?:Timeout|Interval)|eval|open|show\w*Dialog|alert|confirm|prompt)\b|(?:\]|set)\s*:/.test(qred) &&
+            this.checkJSSyntax("JSON = " + qred) // no-assignment JSON fails with "invalid label"
+          ) {
+            this.log("Reducing slow JSON " + expr);
+            s = s.replace(expr, REPL);
+            break;
+          }
+
         }
 
-        if (s === whole) break;
+        if (s === prev) break;
       }
 
       return s;
@@ -846,7 +854,7 @@ XSS.InjectionChecker = (async () => {
           l = l.replace(/[^=]*=\s*/i, '').replace(/[\u0000-\u001f]/g, '');
           l = /^["']/.test(l) ? l.replace(/^(['"])([^]*?)\1[^]*/g, '$2') : l.replace(/[\s>][^]*/, '');
 
-          if (/^(?:javascript|data):|\[[^]+\]/i.test(l) || /[<'"(]/.test(decodeURIComponent(l))) return true;
+          if (/^(?:javascript|data):|\[[^]+\]/i.test(l) || /[<'"(]/.test(decodeURIComponent(l)) && this.checkUrl(l)) return true;
         }
       }
       return this._rxCheck("HTML", s) || this._rxCheck("Globals", s);
@@ -970,7 +978,7 @@ XSS.InjectionChecker = (async () => {
 
     checkPost(formData, skipParams = null) {
       let keys = Object.keys(formData);
-      if (Array.isArray(skipParams)) keys = keys.filter(k => !skipParams.include(k))
+      if (Array.isArray(skipParams)) keys = keys.filter(k => !skipParams.includes(k))
       for (let key of keys) {
         let chunk = `${key}=${formData[key].join(`;`)}`;
         if (this.checkRecursive(chunk, 2, true)) {
@@ -1169,7 +1177,7 @@ XSS.InjectionChecker = (async () => {
           } catch (e) {}
         }
 
-        if (/[%=\(\\<]/.test(originalAttempt) && InjectionChecker.checkURL(originalAttempt)) {
+        if (/[%=\(\\<]/.test(originalAttempt) && InjectionChecker.checkUrl(originalAttempt)) {
           window.name = originalAttempt.replace(/[%=\(\\<]/g, " ");
         }
 
@@ -1177,7 +1185,7 @@ XSS.InjectionChecker = (async () => {
           try {
             if ((originalAttempt.length % 4 === 0)) {
               var bin = window.atob(window.name);
-              if (/[%=\(\\]/.test(bin) && InjectionChecker.checkURL(bin)) {
+              if (/[%=\(\\]/.test(bin) && InjectionChecker.checkUrl(bin)) {
                 window.name = "BASE_64_XSS";
               }
             }

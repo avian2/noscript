@@ -101,8 +101,9 @@
          });
        },
 
-       async exportSettings() {
-         return await Settings.exportToFile();
+       exportSettings(m, sender, sendResponse) {
+         sendResponse(Settings.export());
+         return false;
        },
 
        async importSettings({data}) {
@@ -132,7 +133,7 @@
          });
        }
      },
-     onMessage(m, sender, sendResponse) {
+      onMessage(m, sender, sendResponse) {
        let {
          type
        } = m;
@@ -142,7 +143,7 @@
 
 
        if (type && (type = type.replace(/^NoScript\./, '')) in responders) {
-         return responders[type](m, sender);
+         return responders[type](m, sender, sendResponse);
        } else {
          debug("Received unkown message", m, sender);
        }

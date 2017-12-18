@@ -5,7 +5,7 @@
   if ("disable" in browser.browserAction) {
     browser.browserAction.disable((await browser.tabs.getCurrent()).id);
   }
-  
+
   let policy = UI.policy;
 
   let version = browser.runtime.getManifest().version;
@@ -30,33 +30,44 @@
   opt("xss");
 
   {
-      let button = document.querySelector("#btn-reset");
-      button.onclick = async () => {
-        if (confirm(_("reset.warning"))) {
-          policy = new Policy();
-          await UI.updateSettings({policy});
-          window.location.reload();
-        }
+    let button = document.querySelector("#btn-reset");
+    button.onclick = async () => {
+      if (confirm(_("reset.warning"))) {
+        policy = new Policy();
+        await UI.updateSettings({policy});
+        window.location.reload();
       }
+    }
 
-      let fileInput = document.querySelector("#file-import");
-      fileInput.onchange = () => {
-        let fr = new FileReader();
-        fr.onload = async () => {
-          try {
-            await UI.importSettings(fr.result);
-          } catch (e) {
-            error(e, "Importing settings %s", fr.result);
-          }
-          location.reload();
+    let fileInput = document.querySelector("#file-import");
+    fileInput.onchange = () => {
+      let fr = new FileReader();
+      fr.onload = async () => {
+        try {
+          await UI.importSettings(fr.result);
+        } catch (e) {
+          error(e, "Importing settings %s", fr.result);
         }
-        fr.readAsText(fileInput.files[0]);
+        location.reload();
       }
+      fr.readAsText(fileInput.files[0]);
+    }
 
-      button = document.querySelector("#btn-import");
-      button.onclick = () => fileInput.click();
+    button = document.querySelector("#btn-import");
+    button.onclick = () => fileInput.click();
 
-      document.querySelector("#btn-export").onclick = () => UI.exportSettings();
+    document.querySelector("#btn-export").onclick = async () => {
+      let a = document.createElement("a");
+      a.download = "noscript_data.txt";
+      a.href = URL.createObjectURL(new Blob([await UI.exportSettings()], {
+        type: "text/plain"
+      }));
+      
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => a.parentNode.removeChild(a));
+    }
   }
 
   {

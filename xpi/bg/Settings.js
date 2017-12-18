@@ -111,17 +111,4 @@ var Settings = {
     }, null, 2);
   },
 
-  async exportToFile() {
-    if (!await browser.permissions.request({permissions: ["downloads"]})) {
-      return false;
-    }
-    browser.downloads.download({
-      url: URL.createObjectURL(new Blob([this.export()], {
-        type: "application/json"
-      })),
-      saveAs: true,
-      filename: "noscript.json"
-    });
-    return true;
-  },
 }

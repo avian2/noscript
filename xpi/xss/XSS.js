@@ -130,7 +130,7 @@ var XSS = (() => {
       try {
         destObj = new URL(destUrl);
       } catch (e) {
-        error(e, "Cannot create URL object for %s", url);
+        error(e, "Cannot create URL object for %s", destUrl);
         return null;
       }
       let srcObj = null;

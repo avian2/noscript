@@ -20,7 +20,9 @@ var UI = (() => {
         "/lib/tld.js",
         "/common/Policy.js",
       ]);
-
+      if ("windows" in browser) {
+        await include("/ui/ui-desktop.css");
+      }
       detectHighContrast();
 
       let inited = new Promise(resolve => {
