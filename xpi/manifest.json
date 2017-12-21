@@ -8,10 +8,10 @@
       "strict_min_version": "57.0"
     }
   },
-  "version": "10.1.6",
+  "version": "10.1.6.1rc1",
   "description": "__MSG_Description__",
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'none'; default-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'none'",
 
   "icons": {
     "48": "img/icon48.png",
@@ -69,12 +69,10 @@
 
   "options_ui": {
     "page": "ui/options.html",
-    "browser_style": true,
     "open_in_tab": true
   },
 
   "browser_action": {
-    "browser_style": false,
     "default_area": "navbar",
     "default_title": "NoScript",
     "default_icon": {

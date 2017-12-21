@@ -20,8 +20,8 @@ var UI = (() => {
         "/lib/tld.js",
         "/common/Policy.js",
       ]);
-      if ("windows" in browser) {
-        await include("/ui/ui-desktop.css");
+      if (!("windows" in browser)) {
+        document.documentElement.classList.toggle("mobile", true);
       }
       detectHighContrast();
 
@@ -140,12 +140,14 @@ var UI = (() => {
     </tr>
     <tr class="customizer closed">
     <td colspan="2">
+    <div>
     <fieldset><legend></legend>
     <span class="cap">
       <input class="cap" type="checkbox" value="script" />
       <label class="cap">script</label>
     </span>
     </fieldset>
+    </div>
     </td>
     </tr>
     </table>
@@ -203,7 +205,7 @@ var UI = (() => {
       }
     }
 
-    debug(table.outerHTML);
+    // debug(table.outerHTML);
     return row;
   }
 
@@ -313,9 +315,11 @@ var UI = (() => {
       }
       let customizer = this.rowTemplate._customizer;
       customizer.classList.toggle("closed", true);
+      /*
       if (customizer.parentNode) {
         customizer.parentNode.removeChild(customizer);
       }
+      */
       if (!(perms && row && preset &&
         row.dataset.preset === preset.value &&
         preset !== customizer._preset)) {
@@ -424,6 +428,7 @@ var UI = (() => {
       }
       this.clear();
       for (let row of rows) this.table.appendChild(row);
+      this.table.appendChild(this.rowTemplate._customizer);
     }
 
     sorter(a, b) {

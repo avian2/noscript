@@ -56,18 +56,30 @@
     button = document.querySelector("#btn-import");
     button.onclick = () => fileInput.click();
 
-    document.querySelector("#btn-export").onclick = async () => {
-      let a = document.createElement("a");
-      a.download = "noscript_data.txt";
-      a.href = URL.createObjectURL(new Blob([await UI.exportSettings()], {
-        type: "text/plain"
-      }));
-      
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => a.parentNode.removeChild(a));
-    }
+    document.querySelector("#btn-export").addEventListener("click", async e => {
+      let button = e.target;
+      button.disabled = true;
+      let settings = await UI.exportSettings();
+      let f = document.createElement("iframe");
+      f.srcdoc = `<a download="noscript_data.txt" target="_blank">NoScript Export</a>`;
+      f.style.position = "fixed";
+      f.style.top = "-999px";
+      f.style.height = "1px";
+      f.onload = () => {
+        let w = f.contentWindow;
+        let a = w.document.querySelector("a");
+        a.href = w.URL.createObjectURL(new w.Blob([settings], {
+          type: "text/plain"
+        }));
+        a.click();
+        setTimeout(() => {
+          f.remove();
+          button.disabled = false;
+        }, 1000);
+
+      };
+      document.body.appendChild(f);
+    });
   }
 
   {

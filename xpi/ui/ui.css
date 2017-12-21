@@ -1,7 +1,12 @@
 
 body {
   font-family: sans-serif;
+  font: -moz-use-system-font;
+  font-size: 12px;
+}
+.mobile > body {
   font-size: 4mm;
+  min-width: auto;
 }
 
 .sites {
@@ -96,6 +101,11 @@ label.https-only {
 
 td.presets {
   font-size: 1em;
+  white-space: nowrap;
+}
+
+.mobile td.presets {
+  white-space: normal;
 }
 
 span.preset {
@@ -133,9 +143,6 @@ input.preset:active, input.preset:focus, input.preset:hover {
   min-width: 9.38em;
   background-color: #ddd;
   border-radius: 0.5em;
-  border: 1px solid white;
-  padding: 1px;
-  box-shadow: 1px 2px #444;
 }
 
 .presets input.preset:focus {
@@ -164,7 +171,7 @@ input.preset:active, input.preset:focus, input.preset:hover {
 
 .presets input.preset:checked + label {
   opacity: 1;
-  width: 7em;
+  width: 100%;
 }
 
 button.options {
@@ -277,7 +284,7 @@ span.cap {
   display: inline-block;
 }
 
-tr.customizer.closed > td  {
+tr.customizer.closed div   {
   height: 0;
   overflow: hidden;
 }
