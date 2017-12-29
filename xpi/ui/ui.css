@@ -9,6 +9,48 @@ body {
   min-width: auto;
 }
 
+ @media (max-width: 100mm) {
+   .presets{
+     width: 0;
+   }
+   .mobile .presets input.preset:checked {
+     min-width: 0;
+     background-color: none !important;
+     margin-bottom: 0;
+     margin-top: 1mm;
+   }
+  .mobile .presets input.temp {
+    position: static;
+  }
+  .mobile .presets label.preset {
+    font-size: 50%;
+    top: -1mm;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    text-shadow: 0 0 4px #ff8;
+    position: absolute;
+    overflow: visible;
+  }
+
+    .mobile td.presets {
+      white-space: nowrap !important;
+      vertical-align: bottom;
+    }
+   .mobile .url {
+     white-space: wrap;
+     word-break: break-all;
+     font-size: 75%;
+     letter-spacing: -0.2mm;
+
+   }
+
+ }
+
+.presets {
+  -moz-user-select: none;
+}
 .sites {
   border: 0;
   background: white;
@@ -158,14 +200,14 @@ input.preset:active, input.preset:focus, input.preset:hover {
   letter-spacing: -0.06em;
   width: 0em;
   overflow: hidden;
-
+  display: none;
   text-transform: uppercase;
   color: #000;
   opacity: .6;
   position: absolute;
   left: 0em;
   padding-left: 2.1em;
-  display: inline-block;
+
   transition: 0.2s all;
 }
 
@@ -176,6 +218,7 @@ input.preset:active, input.preset:focus, input.preset:hover {
 .presets input.preset:checked + label {
   opacity: 1;
   width: 100%;
+  display: inline-block;
 }
 
 button.options {
@@ -240,13 +283,13 @@ input.temp {
   opacity: 0;
   background: url(/img/ui-clock64.png) no-repeat center;
   background-size: 60%;
-  width: 1.2em;
-  height: 1.2em;
+  width: 1.5em;
+  height: 1.5em;
   transition: 0.2s all;
-  position: absolute;
   right: .3em;
   top: 0.1em;
   pointer-events: none;
+  position: absolute;
 }
 
 input.temp + label {

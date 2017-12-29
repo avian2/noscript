@@ -14,16 +14,19 @@ var UI = (() => {
 
     async init(tabId = -1) {
       UI.tabId = tabId;
-
-      await include([
+      let scripts = [
         "/ui/ui.css",
         "/lib/punycode.js",
         "/lib/tld.js",
         "/common/Policy.js",
-      ]);
-      if (!("windows" in browser)) {
+      ];
+      this.mobile = !("windows" in browser);
+      if (this.mobile) {
         document.documentElement.classList.toggle("mobile", true);
+        scripts.push("/lib/fastclick.js");
       }
+      await include(scripts);
+
       detectHighContrast();
 
       let inited = new Promise(resolve => {
@@ -40,6 +43,8 @@ var UI = (() => {
           }
         };
         browser.runtime.onMessage.addListener(listener);
+
+        if (this.mobile) FastClick.attach(document.body);
         UI.pullSettings();
       });
 
@@ -84,6 +89,8 @@ var UI = (() => {
         siteInfoConsent = confirm(_("siteInfo.confirm", [domain, "https://noscript.net/"]));
         if (siteInfoConsent) {
           await SafeSync.set({siteInfoConsent});
+        } else {
+          return;
         }
       }
       let ace  = punycode.toASCII(domain);
@@ -194,7 +201,7 @@ var UI = (() => {
             temp.remove();
           }
           if (!this.customizable.includes(preset)) {
-            options.remove();
+            clone.querySelector(".options").remove();
           }
           presets.appendChild(clone);
         }

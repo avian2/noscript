@@ -22,6 +22,7 @@ var include = (() =>
       return await Promise.all(src.map(s => include(s)));
     }
     debug("Including", src);
+    _inclusions.add(src);
     return await new Promise((resolve, reject) => {
       let inc = src.endsWith(".css") ? styleLoader(src) : scriptLoader(src);
       inc.onload = () => resolve(inc);

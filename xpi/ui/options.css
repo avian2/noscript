@@ -35,10 +35,29 @@ body {
   justify-content: space-around;
   font-size: 1em;
 }
+
+#sect-general label, #sect-general button, #sect-general span {
+  white-space: nowrap;
+}
+
 .opt-group {
   display: flex;
-  flex-direction: row;
+  flex-flow: row wrap;
   justify-content: space-between;
+}
+
+.sect-sites form {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.sect-sites form > label {
+  white-space: nowrap;
+}
+#newsite {
+  flex: 2 2;
 }
 
 #policy {
@@ -70,10 +89,7 @@ body.debug div.debug {
 
 
 
-input#newsite {
-  margin: 0.5em;
-  min-width: 18.75em;
-}
+
 
 input, button {
   font-size: 1em;
