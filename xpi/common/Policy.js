@@ -293,6 +293,7 @@ var {Permissions, Policy, Sites} = (() => {
             break;
           case TRUSTED.tempTwin:
             temp.push(key);
+            break;
           case UNTRUSTED:
             untrusted.push(key);
             break;

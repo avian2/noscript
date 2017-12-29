@@ -89,7 +89,7 @@ addEventListener("unload", e => {
     }
     debug("Seen: %o", UI.seen);
     let justDomains = false; // true;
-    sitesUI = new UI.Sites();
+    sitesUI = new UI.Sites(["CUSTOM"]);
 
     sitesUI.onChange = () => {
       pendingReload = true

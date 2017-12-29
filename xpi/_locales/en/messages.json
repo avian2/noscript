@@ -498,6 +498,12 @@
   "Trusted": {
     "message": "Trusted"
   },
+  "Trusted.temporary": {
+    "message": "Temp. TRUSTED"
+  },
+  "Trusted.permanent": {
+    "message": "TRUSTED"
+  },
   "TrustedPagesAdj": {
     "message": "trusted"
   },

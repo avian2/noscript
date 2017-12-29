@@ -169,6 +169,10 @@ input.preset:active, input.preset:focus, input.preset:hover {
   transition: 0.2s all;
 }
 
+.presets input.preset[value^="T"] + label {
+  text-transform: none;
+}
+
 .presets input.preset:checked + label {
   opacity: 1;
   width: 100%;
@@ -211,6 +215,9 @@ button.options {
   opacity: 1;
   bottom: 0.38em;
 
+}
+input.preset[value="T_TRUSTED"] {
+  background-image: url(/img/ui-temp64.png);
 }
 
 input.preset[value="TRUSTED"] {
@@ -256,7 +263,7 @@ input.preset:checked ~ input.temp {
   right: -0.13em;
 }
 
-tr.customizing input.preset:checked, input.preset.checked + label.preset, tr.customizer fieldset {
+tr.customizing input.preset:checked, input.preset.checked + label.preset, .customizer fieldset {
   background-color: #ffb !important;
   border-radius: 0.5em;
   border-radius: 0.5em 0.5em 0 0;
@@ -268,13 +275,12 @@ tr.customizing input.preset:checked {
 
 }
 
-tr.customizing, tr.customizer {
+tr.customizing, .customizer {
   background-color: #cca !important;
 }
 
-tr.customizer > td {
-  height: 0;
-  transition: 0.2s all;
+.customizer div {
+  transition: 0.2s height;
   padding: 0;
   margin: 0;
 }
@@ -284,7 +290,7 @@ span.cap {
   display: inline-block;
 }
 
-tr.customizer.closed div   {
+.customizer.closed .customizer-controls   {
   height: 0;
   overflow: hidden;
 }

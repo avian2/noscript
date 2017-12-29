@@ -6,7 +6,8 @@ var UI = (() => {
 
     presets: {
       "DEFAULT": "Default",
-      "TRUSTED": "Trusted",
+      "T_TRUSTED": "Trusted.temporary",
+      "TRUSTED": "Trusted.permanent",
       "UNTRUSTED": "Untrusted",
       "CUSTOM": "Custom",
     },
@@ -138,9 +139,9 @@ var UI = (() => {
 
 
     </tr>
-    <tr class="customizer closed">
+    <tr class="customizer">
     <td colspan="2">
-    <div>
+    <div class="customizer-controls">
     <fieldset><legend></legend>
     <span class="cap">
       <input class="cap" type="checkbox" value="script" />
@@ -153,74 +154,78 @@ var UI = (() => {
     </table>
   `;
 
-  const TEMP_PRESETS = ["TRUSTED", "CUSTOM"];
-
-  function initRow(table) {
-    let row = table.querySelector("tr.site");
-
-    // PRESETS
-    {
-      let presets = row.querySelector(".presets");
-      let [span, input, label, options] = presets.querySelectorAll("span.preset, input.preset, label.preset, .options");
-      presets.removeChild(span);
-      options.title = _("Options");
-      for (let [preset, messageKey] of Object.entries(UI.presets)) {
-        input.value = preset;
-        label.textContent = label.title = input.title = _(messageKey);
-        let clone = span.cloneNode(true);
-        clone.classList.add(preset);
-        let temp = clone.querySelector(".temp");
-        if (TEMP_PRESETS.includes(preset)) {
-          temp.title = _("allowTemp", `(${label.title.toUpperCase()})`);
-          temp.nextElementSibling.textContent = _("allowTemp", ""); // label;
-        } else {
-          temp.parentNode.removeChild(temp.nextElementSibling);
-          temp.parentNode.removeChild(temp);
-        }
-        presets.appendChild(clone);
-      }
-    }
-
-    // URL
-    {
-      let [input, label] = row.querySelectorAll("input.https-only, label.https-only");
-      input.title = label.title = label.textContent = _("httpsOnly");
-    }
-
-    // CUSTOMIZER ROW
-    {
-      let [customizer, legend, cap, capInput, capLabel] = table.querySelectorAll("tr.customizer, legend, span.cap, input.cap, label.cap");
-      row._customizer = customizer;
-      customizer.parentNode.removeChild(customizer);
-      let capParent = cap.parentNode;
-      capParent.removeChild(cap);
-      legend.textContent = _("allow");
-      for (let capability of Permissions.ALL) {
-        capInput.id = `capability-${capability}`
-        capLabel.setAttribute("for", capInput.id);
-        capInput.value = capability;
-        capInput.title = capLabel.textContent = _(`cap.${capability}`);
-        let clone = capParent.appendChild(cap.cloneNode(true));
-        clone.classList.add(capability);
-      }
-    }
-
-    // debug(table.outerHTML);
-    return row;
-  }
+  const TEMP_PRESETS = ["CUSTOM"];
 
   UI.Sites = class {
-    constructor() {
+    constructor(customizable = Object.keys(UI.presets)) {
       let policy = UI.policy;
       this.sites = policy.sites;
       this.template = document.createElement("template");
       this.template.innerHTML = TEMPLATE;
       this.fragment = this.template.content;
       this.table = this.fragment.querySelector("table.sites");
-      this.rowTemplate = initRow(this.table);
+      this.customizable = customizable;
+      this.rowTemplate = this.initRow();
       this.customizing = null;
       this.typesMap = new Map();
       this.clear();
+    }
+
+    initRow(table = this.table) {
+      let row = table.querySelector("tr.site");
+
+      // PRESETS
+      {
+        let presets = row.querySelector(".presets");
+        let [span, input, label, options] = presets.querySelectorAll("span.preset, input.preset, label.preset, .options");
+        span.remove();
+        options.title = _("Options");
+        for (let [preset, messageKey] of Object.entries(UI.presets)) {
+          input.value = preset;
+          label.textContent = label.title = input.title = _(messageKey);
+          let clone = span.cloneNode(true);
+          clone.classList.add(preset);
+          let temp = clone.querySelector(".temp");
+          if (TEMP_PRESETS.includes(preset)) {
+            temp.title = _("allowTemp", `(${label.title.toUpperCase()})`);
+            temp.nextElementSibling.textContent = _("allowTemp", ""); // label;
+          } else {
+            temp.nextElementSibling.remove();
+            temp.remove();
+          }
+          if (!this.customizable.includes(preset)) {
+            options.remove();
+          }
+          presets.appendChild(clone);
+        }
+      }
+
+      // URL
+      {
+        let [input, label] = row.querySelectorAll("input.https-only, label.https-only");
+        input.title = label.title = label.textContent = _("httpsOnly");
+      }
+
+      // CUSTOMIZER ROW
+      {
+        let [customizer, legend, cap, capInput, capLabel] = table.querySelectorAll(".customizer, legend, span.cap, input.cap, label.cap");
+        row._customizer = customizer;
+        customizer.remove();
+        let capParent = cap.parentNode;
+        capParent.removeChild(cap);
+        legend.textContent = _("allow");
+        for (let capability of Permissions.ALL) {
+          capInput.id = `capability-${capability}`
+          capLabel.setAttribute("for", capInput.id);
+          capInput.value = capability;
+          capInput.title = capLabel.textContent = _(`cap.${capability}`);
+          let clone = capParent.appendChild(cap.cloneNode(true));
+          clone.classList.add(capability);
+        }
+      }
+
+      // debug(table.outerHTML);
+      return row;
     }
 
     allSiteRows() {
@@ -241,7 +246,7 @@ var UI = (() => {
 
     handleEvent(ev) {
       let target = ev.target;
-      let customizer = target.closest("tr.customizer");
+      let customizer = target.closest(".customizer");
       let row = customizer ? customizer.parentNode.querySelector("tr.customizing") : target.closest("tr.site");
       if (!row) return;
       let isTemp = target.matches("input.temp");
@@ -265,7 +270,8 @@ var UI = (() => {
 
       let policy = UI.policy;
       let {siteMatch, contextMatch, perms} = row;  // policy.get(row.siteMatch, row.contextMatch);
-      let policyPreset = policy[preset.value];
+      let presetValue = preset.value;
+      let policyPreset = presetValue.startsWith("T_") ? policy[presetValue.substring(2)].tempTwin : policy[presetValue];
       if (policyPreset) {
         if (row.perms !== policyPreset) {
           row.perms = policyPreset;
@@ -315,13 +321,10 @@ var UI = (() => {
       }
       let customizer = this.rowTemplate._customizer;
       customizer.classList.toggle("closed", true);
-      /*
-      if (customizer.parentNode) {
-        customizer.parentNode.removeChild(customizer);
-      }
-      */
+
       if (!(perms && row && preset &&
         row.dataset.preset === preset.value &&
+        this.customizable.includes(preset.value) &&
         preset !== customizer._preset)) {
            delete customizer._preset;
            return;
@@ -529,16 +532,27 @@ var UI = (() => {
 
       let presetName = "CUSTOM";
       for (let p of ["TRUSTED", "UNTRUSTED", "DEFAULT"]) {
-        if (perms === policy[p] || perms === policy[p].tempTwin) presetName = p;
+        let preset = policy[p];
+        switch (perms) {
+          case preset:
+            presetName = p;
+            break;
+          case preset.tempTwin:
+            presetName = `T_${p}`;
+            if (!presetName in UI.presets) {
+              presetName = p;
+            }
+            break;
+          }
       }
       let tempFirst = true; // TODO: make it a preference
       let unsafeMatch = keyStyle !== "secure" && keyStyle !== "full";
       if (presetName === "DEFAULT" && (tempFirst || unsafeMatch)) {
         // prioritize temporary privileges over permanent
-        for (let p of ["TRUSTED", "CUSTOM"]) {
+        for (let p of TEMP_PRESETS) {
           if (unsafeMatch || tempFirst && p === "TRUSTED") {
             row.querySelector(`.presets input[value="${p}"]`).parentNode.querySelector("input.temp").checked = true;
-            perms = policy.DEFAULT.tempTwin;
+            perms = policy.TRUSTED.tempTwin;
           }
         }
       }

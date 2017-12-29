@@ -2,10 +2,6 @@
 (async () => {
   await UI.init();
 
-  if ("disable" in browser.browserAction) {
-    browser.browserAction.disable((await browser.tabs.getCurrent()).id);
-  }
-
   let policy = UI.policy;
 
   let version = browser.runtime.getManifest().version;
