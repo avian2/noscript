@@ -102,7 +102,6 @@ var {Permissions, Policy, Sites} = (() => {
       if (!hostname) return null;
 
       let secure = protocol === "https:";
-      let baseDomain = tld.getDomain(hostname);
       for (let domain = hostname;;) {
         if (this.has(domain)) {
           return domain;
@@ -113,14 +112,9 @@ var {Permissions, Policy, Sites} = (() => {
             return ssDomain;
           }
         }
-        if (domain === baseDomain) {
-          break;
-        }
-        let sub = domain.substring(domain.indexOf(".") + 1);
-        if (sub === domain) {
-          break;
-        }
-        domain = sub;
+        let dotPos = domain.indexOf(".");
+        if (dotPos === -1) break;
+        domain = domain.substring(dotPos + 1); // sub
       }
       return null;
     }
