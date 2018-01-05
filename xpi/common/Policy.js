@@ -18,7 +18,7 @@ var {Permissions, Policy, Sites} = (() => {
     }
 
     static isValid(site) {
-      return /^(?:https?:(?:\/\/)?)?[\w\u0100-\uf000.-]+(?::\d+)?$/.test(site);
+      return /^(?:https?:(?:\/\/)?)?([\w\u0100-\uf000][\w\u0100-\uf000.-]*)?[\w\u0100-\uf000](?::\d+)?$/.test(site);
     }
 
     static parse(site) {
@@ -113,8 +113,13 @@ var {Permissions, Policy, Sites} = (() => {
           }
         }
         let dotPos = domain.indexOf(".");
-        if (dotPos === -1) break;
+        if (dotPos === -1) {
+          break;
+        }
         domain = domain.substring(dotPos + 1); // sub
+        if (!domain) {
+          break;
+        }
       }
       return null;
     }

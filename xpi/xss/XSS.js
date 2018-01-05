@@ -9,6 +9,8 @@ var XSS = (() => {
    </script>`
   const ABORT = {cancel: true}, ALLOW = {};
 
+  var noPrompt = true;
+
   async function requestListener(request) {
     let policy = ns.policy;
     if (policy.enforced) {
@@ -25,6 +27,7 @@ var XSS = (() => {
     let data;
     let reasons;
     try {
+      await noPrompt;
       reasons = await XSS.maybe(xssReq);
       if (!reasons) return ALLOW;
       if (reasons.user) {
@@ -39,50 +42,55 @@ var XSS = (() => {
       data = [e.toString()];
     }
 
-    let {srcOrigin, destOrigin, unescapedDest} = xssReq;
-    let block = !!(reasons.urlInjection || reasons.postInjection)
 
-    if (reasons.protectName) data.push("window.name");
-    if (reasons.urlInjection) data.push(`(URL) ${unescapedDest}`);
-    if (reasons.postInjection) data.push(`(POST) ${reasons.postInjection}`);
+    noPrompt = (async () => {
+      let {srcOrigin, destOrigin, unescapedDest} = xssReq;
+      let block = !!(reasons.urlInjection || reasons.postInjection)
 
-    let source = srcOrigin && srcOrigin !== "null" ? srcOrigin : "[...]";
+      if (reasons.protectName) data.push("window.name");
+      if (reasons.urlInjection) data.push(`(URL) ${unescapedDest}`);
+      if (reasons.postInjection) data.push(`(POST) ${reasons.postInjection}`);
 
-    let {button, option} = await Prompts.prompt({
-      title: _("XSS.promptTitle"),
-      message: _("XSS.promptMessage", [source, destOrigin, data.join(",")]),
-      options: [
-        {label: _(`XSS.opt${block ? 'Block' : 'Sanitize'}`), checked: true}, // 0
-        {label: _("XSS.optAlwaysBlock", [source, destOrigin])}, // 1
-        {label: _("XSS.optAllow")}, // 2
-        {label: _("XSS.optAlwaysAllow", [source, destOrigin])}, // 3
-      ],
+      let source = srcOrigin && srcOrigin !== "null" ? srcOrigin : "[...]";
 
-      buttons: [_("Ok")],
-      multiple: "focus",
-      width: 600,
-      height: 480,
-    });
+      let {button, option} = await Prompts.prompt({
+        title: _("XSS.promptTitle"),
+        message: _("XSS.promptMessage", [source, destOrigin, data.join(",")]),
+        options: [
+          {label: _(`XSS.opt${block ? 'Block' : 'Sanitize'}`), checked: true}, // 0
+          {label: _("XSS.optAlwaysBlock", [source, destOrigin])}, // 1
+          {label: _("XSS.optAllow")}, // 2
+          {label: _("XSS.optAlwaysAllow", [source, destOrigin])}, // 3
+        ],
 
-    if (button === 0 && option >= 2) {
-      if (option === 3) { // always allow
-        await XSS.setUserChoice(xssReq.originKey, "allow");
+        buttons: [_("Ok")],
+        multiple: "focus",
+        width: 600,
+        height: 480,
+      });
+
+      if (button === 0 && option >= 2) {
+        if (option === 3) { // always allow
+          await XSS.setUserChoice(xssReq.originKey, "allow");
+          await XSS.saveUserChoices();
+        }
+        return ALLOW;
+      }
+      if (option === 1) { // always block
+        block = true;
+        await XSS.setUserChoice(xssReq.originKey, "block");
         await XSS.saveUserChoices();
       }
+      if (block) {
+        return ABORT;
+      }
+      if (reasons.protectName) {
+        await include('/bg/RequestUtil.js');
+        RequestUtil.prependToScripts(request, NUKE_WINDOW_NAME);
+      }
       return ALLOW;
-    }
-    if (option === 1) { // always block
-      block = true;
-      await XSS.setUserChoice(xssReq.originKey, "block");
-      await XSS.saveUserChoices();
-    }
-    if (block) {
-      return ABORT;
-    }
-    if (reasons.protectName) {
-      RequestUtil.prependToScripts(request, NUKE_WINDOW_NAME);
-    }
-    return ALLOW;
+    })();
+    return await noPrompt;
   };
 
   return {

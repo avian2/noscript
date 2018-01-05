@@ -161,6 +161,9 @@
   "Custom": {
     "message": "Custom"
   },
+  "CustomizePresets": {
+    "message": "Preset customization (permissions apply globally to all the sites sharing a preset)"
+  },
   "Default": {
     "message": "Default"
   },
@@ -533,6 +536,9 @@
   },
   "WebAddress": {
     "message": "Search or add a web site:"
+  },
+  "WebAddress.accesskey": {
+    "message": "S"
   },
   "Whitelist": {
     "message": "Whitelist"

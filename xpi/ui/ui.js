@@ -162,16 +162,25 @@ var UI = (() => {
   `;
 
   const TEMP_PRESETS = ["CUSTOM"];
+  const DEF_PRESETS =  {
+    // name: customizable,
+    "DEFAULT": false,
+    "T_TRUSTED": false,
+    "TRUSTED": false,
+    "UNTRUSTED": false,
+    "CUSTOM": true,
+  };
 
   UI.Sites = class {
-    constructor(customizable = Object.keys(UI.presets)) {
+    constructor(presets = DEF_PRESETS) {
       let policy = UI.policy;
+      this.uiCount =  UI.Sites.count = (UI.Sites.count || 0) + 1;
       this.sites = policy.sites;
       this.template = document.createElement("template");
       this.template.innerHTML = TEMPLATE;
       this.fragment = this.template.content;
       this.table = this.fragment.querySelector("table.sites");
-      this.customizable = customizable;
+      this.presets = presets;
       this.rowTemplate = this.initRow();
       this.customizing = null;
       this.typesMap = new Map();
@@ -187,7 +196,8 @@ var UI = (() => {
         let [span, input, label, options] = presets.querySelectorAll("span.preset, input.preset, label.preset, .options");
         span.remove();
         options.title = _("Options");
-        for (let [preset, messageKey] of Object.entries(UI.presets)) {
+        for (let [preset, customizable] of Object.entries(this.presets)) {
+          let messageKey = UI.presets[preset];
           input.value = preset;
           label.textContent = label.title = input.title = _(messageKey);
           let clone = span.cloneNode(true);
@@ -200,7 +210,7 @@ var UI = (() => {
             temp.nextElementSibling.remove();
             temp.remove();
           }
-          if (!this.customizable.includes(preset)) {
+          if (customizable) {
             clone.querySelector(".options").remove();
           }
           presets.appendChild(clone);
@@ -299,10 +309,16 @@ var UI = (() => {
           if (tempToggle && tempToggle.checked) {
             policyPreset = policyPreset.tempTwin;
           }
-          policy.set(siteMatch, policyPreset);
           row.contextMatch = null;
           row.perms = policyPreset;
           delete row._customPerms;
+          debug("Site match", siteMatch);
+          if (siteMatch) {
+            policy.set(siteMatch, policyPreset);
+          } else {
+            this.customize(policyPreset, preset, row);
+          }
+
         } else if (preset.value === "CUSTOM") {
           if (isTemp) {
             row.perms.temp = target.checked;
@@ -323,7 +339,7 @@ var UI = (() => {
 
     customize(perms, preset, row) {
       debug("Customize preset %s (%o) - Dirty: %s", preset && preset.value, perms, this.dirty);
-      for(let r of document.querySelectorAll("tr.customizing")) {
+      for(let r of this.table.querySelectorAll("tr.customizing")) {
         r.classList.toggle("customizing", false);
       }
       let customizer = this.rowTemplate._customizer;
@@ -331,7 +347,7 @@ var UI = (() => {
 
       if (!(perms && row && preset &&
         row.dataset.preset === preset.value &&
-        this.customizable.includes(preset.value) &&
+        this.presets[preset.value] &&
         preset !== customizer._preset)) {
            delete customizer._preset;
            return;
@@ -349,7 +365,7 @@ var UI = (() => {
           input.checked = perms.allowing(type);
           input.disabled = false;
         }
-        input.parentNode.classList.toggle("needed", this.siteNeeds(row.siteMatch, type));
+        input.parentNode.classList.toggle("needed", this.siteNeeds(row._site, type));
         row.parentNode.insertBefore(customizer, row.nextElementSibling);
         customizer.classList.toggle("closed", false);
         customizer.onkeydown = e => {
@@ -523,9 +539,10 @@ var UI = (() => {
       }
 
       let presets = row.querySelectorAll("input.preset");
+      let idSuffix = `-${this.uiCount}-${sitesCount}`;
       for (let p of presets) {
-        p.id = `${p.value}${sitesCount}`;
-        p.name = `preset${sitesCount}`;
+        p.id = `${p.value}${idSuffix}`;
+        p.name = `preset${idSuffix}`;
         let label = p.nextElementSibling;
         label.setAttribute("for", p.id);
         let temp = p.parentNode.querySelector("input.temp");
@@ -557,7 +574,7 @@ var UI = (() => {
       if (presetName === "DEFAULT" && (tempFirst || unsafeMatch)) {
         // prioritize temporary privileges over permanent
         for (let p of TEMP_PRESETS) {
-          if (unsafeMatch || tempFirst && p === "TRUSTED") {
+          if (p in this.presets && (unsafeMatch || tempFirst && p === "TRUSTED")) {
             row.querySelector(`.presets input[value="${p}"]`).parentNode.querySelector("input.temp").checked = true;
             perms = policy.TRUSTED.tempTwin;
           }

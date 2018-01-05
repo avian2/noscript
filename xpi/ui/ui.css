@@ -48,6 +48,14 @@ body {
 
  }
 
+input[type="text"] {
+  border: 1px solid;
+}
+input[type="checkbox"] {
+  width: 1em;
+  height: 1em;
+}
+
 .presets {
   -moz-user-select: none;
 }
@@ -179,7 +187,7 @@ input.preset:active, input.preset:focus, input.preset:hover {
   border-radius: .5em;
 }
 
-.presets input.preset:checked {
+.presets input.preset:checked, #presets input.preset {
   opacity: 1;
   transform: none;
   min-width: 9.38em;
@@ -206,7 +214,7 @@ input.preset:active, input.preset:focus, input.preset:hover {
   opacity: .6;
   position: absolute;
   left: 0em;
-  padding-left: 2.1em;
+  padding-left: 2.5em;
 
   transition: 0.2s all;
 }
@@ -215,7 +223,7 @@ input.preset:active, input.preset:focus, input.preset:hover {
   text-transform: none;
 }
 
-.presets input.preset:checked + label {
+.presets input.preset:checked + label, #presets .presets label {
   opacity: 1;
   width: 100%;
   display: inline-block;
@@ -286,8 +294,8 @@ input.temp {
   width: 1.5em;
   height: 1.5em;
   transition: 0.2s all;
-  right: .3em;
-  top: 0.1em;
+  right: 0;
+  top: 0;
   pointer-events: none;
   position: absolute;
 }
@@ -298,27 +306,30 @@ input.temp + label {
 
 input.preset:checked ~ input.temp {
   opacity: .5;
+  right: .5em;
   pointer-events: all;
 }
 .presets input.preset:checked ~ input.temp:checked {
   opacity: 1 !important;
   background-size: 100%;
-  right: -0.13em;
+
 }
 
-tr.customizing input.preset:checked, input.preset.checked + label.preset, .customizer fieldset {
+.customizing input.preset:checked, #presets input.preset:checked, .customizer fieldset {
   background-color: #ffb !important;
-  border-radius: 0.5em;
   border-radius: 0.5em 0.5em 0 0;
   margin: 0 0.06em 0.06em 0.06em;
 }
-tr.customizing input.preset:checked {
-    margin-bottom: -0.13em;
-    margin: 0 0 -0.13em 0.13em;
-
+.customizing input.preset:checked, #presets input.preset, #presets input.preset:checked  {
+  margin: 0 1em -0.2em 1em;
+  border-radius: 0.5em 0.5em 0 0;
 }
 
-tr.customizing, .customizer {
+.customizing input.preset:checked + label.preset {
+  padding-left: 3em;
+}
+
+.customizing, .customizer {
   background-color: #cca !important;
 }
 
@@ -354,11 +365,19 @@ fieldset {
   margin: 0;
   position: relative;
 }
+
 legend {
   font-weight: bold;
-  font-size: 0.75em;
   display: inline;
   position: absolute;
   top: 0.25em;
   left: 1em;
+}
+.customizer legend {
+  font-weight: bold;
+  font-size: 0.75em;
+}
+
+#presets .https-only {
+  display: none;
 }

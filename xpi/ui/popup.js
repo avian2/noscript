@@ -89,7 +89,8 @@ addEventListener("unload", e => {
     }
     debug("Seen: %o", UI.seen);
     let justDomains = false; // true;
-    sitesUI = new UI.Sites(["CUSTOM"]);
+
+    sitesUI = new UI.Sites();
 
     sitesUI.onChange = () => {
       pendingReload = true
@@ -125,24 +126,23 @@ addEventListener("unload", e => {
         return origin;
       }
       let seen = UI.seen;
-
-      let sitesSet = new Set(
-        seen.map(thing => Object.assign({
+      let parsedSeen = seen.map(thing => Object.assign({
           type: thing.policyType
         }, Sites.parse(thing.request.url)))
-        .filter(parsed => parsed.url && parsed.url.origin !== "null")
-        .map(parsed => urlToLabel(parsed.url))
+        .filter(parsed => parsed.url && parsed.url.origin !== "null");
+
+      let sitesSet = new Set(
+        parsedSeen.map(parsed => parsed.label = urlToLabel(parsed.url))
       );
       if (!justDomains) {
         for (let domain of domains.values()) sitesSet.add(domain);
       }
       let sites = [...sitesSet];
-      for (let thing of seen) {
-        let url = thing.request.url;
-        sites.filter(s => url === s || url.startsWith(`${s}/`)).forEach(m => {
+      for (let parsed of parsedSeen) {
+        sites.filter(s => parsed.label === s || domains.get(parsed.url.origin) === s).forEach(m => {
           let siteTypes = typesMap.get(m);
           if (!siteTypes) typesMap.set(m, siteTypes = new Set());
-          siteTypes.add(thing.policyType);
+          siteTypes.add(parsed.type);
         });
       }
 

@@ -103,8 +103,19 @@
     document.body.classList.toggle("debug", b);
     if (b) updateRawPolicyEditor();
   });
+  // PRESET CUSTOMIZER
+  {
+    let presetsUI = new UI.Sites({"DEFAULT": true, "TRUSTED": true, "UNTRUSTED": true});
+    let parent = document.getElementById("presets");
+    presetsUI.render(parent, [""]);
+    window.setTimeout(() => {
+      let def = parent.querySelector('input.preset[value="DEFAULT"]');
+      def.checked = true;
+      def.click();
+    }, 10);
+  }
 
-  // SITE UI
+  // SITES UI
   let sitesUI = new UI.Sites();
   {
     sitesUI.onChange = () => {
