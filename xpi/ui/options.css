@@ -6,6 +6,11 @@ body {
   padding: 0 4em 0 0;
   margin: 0.5em 0.5em 0.5em 0.5em;
 }
+.mobile body {
+  background-size: 4em;
+  padding-right: 0;
+}
+
 #header {
   padding: 0 4em 0 0;
   margin: 0;
@@ -86,10 +91,6 @@ body.debug div.debug {
   margin: 0;
   font-weight: bold;
 }
-
-
-
-
 
 input, button {
   font-size: 1em;

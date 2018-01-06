@@ -162,7 +162,7 @@
     "message": "Custom"
   },
   "CustomizePresets": {
-    "message": "Preset customization (permissions apply globally to all the sites sharing a preset)"
+    "message": "Preset customization (for all the sites sharing a preset)"
   },
   "Default": {
     "message": "Default"
@@ -459,8 +459,11 @@
   "ShowReleaseNotes": {
     "message": "Display the release notes on updates"
   },
-  "SiteManager": {
-    "message": "Site Manager"
+  "SitePermissions": {
+    "message": "Site Permissions"
+  },
+  "SitePermissions.accessKey": {
+    "message": "S"
   },
   "SitePolicies": {
     "message": "Site Specific Policies"
@@ -538,10 +541,13 @@
     "message": "Search or add a web site:"
   },
   "WebAddress.accesskey": {
-    "message": "S"
+    "message": "w"
   },
   "Whitelist": {
     "message": "Whitelist"
+  },
+  "XSS.notify": {
+    "message": "Show XSS notifications"
   },
   "XSS.clearUserChoices": {
     "message": "Clear XSS Choices"

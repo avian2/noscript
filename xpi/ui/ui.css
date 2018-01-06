@@ -10,19 +10,26 @@ body {
 }
 
  @media (max-width: 100mm) {
-   .presets{
+   body {
+     background-size: 4em !important;
+     padding-right: 0 !important;
+    }
+
+   .presets {
      width: 0;
    }
-   .mobile .presets input.preset:checked {
-     min-width: 0;
+
+   .presets input.preset {
+     min-width: 0 !important;
      background-color: none !important;
      margin-bottom: 0;
      margin-top: 1mm;
+     font-weight: bold;
    }
-  .mobile .presets input.temp {
+   .presets input.temp {
     position: static;
   }
-  .mobile .presets label.preset {
+  .presets label.preset {
     font-size: 50%;
     top: -1mm;
     left: 0;
@@ -34,11 +41,11 @@ body {
     overflow: visible;
   }
 
-    .mobile td.presets {
+  td.presets {
       white-space: nowrap !important;
       vertical-align: bottom;
     }
-   .mobile .url {
+   .url {
      white-space: wrap;
      word-break: break-all;
      font-size: 75%;
@@ -372,6 +379,7 @@ legend {
   position: absolute;
   top: 0.25em;
   left: 1em;
+  white-space: nowrap;
 }
 .customizer legend {
   font-weight: bold;
