@@ -38,6 +38,9 @@ var UI = (() => {
             UI.xssUserChoices = m.xssUserChoices;
             UI.local = m.local;
             UI.sync = m.sync;
+            if (UI.local && !UI.local.debug) {
+              debug = () => {}; // be quiet!
+            }
             resolve();
             if (UI.onSettings) UI.onSettings();
           }
@@ -83,12 +86,12 @@ var UI = (() => {
     },
 
     async openSiteInfo(domain) {
-      await include('/common/SafeSync.js');
-      let {siteInfoConsent} = await SafeSync.get("siteInfoConsent");
+      await include('/common/Storage.js');
+      let {siteInfoConsent} = await Storage.get("sync", "siteInfoConsent");
       if (!siteInfoConsent) {
         siteInfoConsent = confirm(_("siteInfo.confirm", [domain, "https://noscript.net/"]));
         if (siteInfoConsent) {
-          await SafeSync.set({siteInfoConsent});
+          await Storage.set("sync", {siteInfoConsent});
         } else {
           return;
         }

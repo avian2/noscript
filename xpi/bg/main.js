@@ -5,7 +5,7 @@
    let popupFor = tabId => `${popupURL}#tab${tabId}`;
 
    async function init() {
-     let policyData = (await SafeSync.get("policy")).policy;
+     let policyData = (await Storage.get("sync", "policy")).policy;
      if (policyData && policyData.DEFAULT) {
        ns.policy = new Policy(policyData);
        // Temporary fix for 10.1.3rc2 breakage
@@ -206,7 +206,7 @@
 
      async savePolicy() {
        if (this.policy) {
-         await SafeSync.set({
+         await Storage.set("sync", {
            policy: this.policy.dry()
          });
          await browser.webRequest.handlerBehaviorChanged()
@@ -221,11 +221,7 @@
          let toBeSaved = {
            [obj.storage]: obj
          };
-         if (obj.storage === "sync") {
-           await SafeSync.set(toBeSaved);
-         } else {
-           await browser.storage.local.set(toBeSaved);
-         }
+         Storage.set(obj.storage, toBeSaved);
        }
        return obj;
      },

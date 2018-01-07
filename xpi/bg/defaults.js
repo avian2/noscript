@@ -13,7 +13,7 @@ ns.local = (async () => {
   }
 
   for (let [k, v] of Object.entries(defaults)) {
-    let store = await browser.storage[k].get(k);
+    let store = await Storage.get(k, k);
     if (k in store) {
       Object.assign(v, store[k]);
     }

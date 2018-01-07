@@ -101,7 +101,7 @@ var XSS = (() => {
       await include("/legacy/Legacy.js");
       await include("/xss/Exceptions.js");
 
-      this._userChoices = (await SafeSync.get("xssUserChoices")).xssUserChoices || {};
+      this._userChoices = (await Storage.get("sync", "xssUserChoices")).xssUserChoices || {};
 
       // conver old style whitelist if stored
       let oldWhitelist = await XSS.Exceptions.getWhitelist();
@@ -183,7 +183,7 @@ var XSS = (() => {
 
     async saveUserChoices(xssUserChoices = this._userChoices || {}) {
       this._userChoices = xssUserChoices;
-      SafeSync.set({xssUserChoices});
+      Storage.set("sync", {xssUserChoices});
     },
     getUserChoices() {
       return this._userChoices;
