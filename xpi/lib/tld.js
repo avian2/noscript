@@ -4,13 +4,16 @@ var tld = {
   getDomain(domain) {
     domain = this.normalize(domain);
     var pos = domain.search(this._tldEx);
-    if(pos < 0) {
+    if(pos === -1 ) {
       pos = domain.search(this._tldRx);
-      if(pos >= 0) {
-        pos = domain.lastIndexOf(".", pos - 1) + 1;
-      } else {
-        pos = domain.lastIndexOf(".") + 1;
+      if (pos === -1) {
+        // TLD not in the public suffix list, fall back to the "one-dot rule"
+        pos = domain.lastIndexOf(".");
+        if (pos === -1) {
+          return "";
+        }
       }
+      pos = domain.lastIndexOf(".", pos - 1) + 1;
     } else if(domain[pos] == ".") {
       ++pos;
     }
