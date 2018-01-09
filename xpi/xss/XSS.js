@@ -9,7 +9,22 @@ var XSS = (() => {
    </script>`
   const ABORT = {cancel: true}, ALLOW = {};
 
-  var noPrompt = true;
+  let promptsMap = new Map();
+
+  async function getUserResponse(xssReq) {
+    let {originKey} = xssReq;
+    await promptsMap.get(originKey);
+    // promptsMap.delete(originKey);
+    switch (await XSS.getUserChoice(originKey)) {
+      case "allow":
+        return ALLOW;
+      case "block":
+        log("Blocking request from %s to %s by previous XSS prompt user choice",
+        xssReq.srcUrl, xssReq.destUrl);
+        return ABORT;
+    }
+    return null;
+  }
 
   async function requestListener(request) {
     let policy = ns.policy;
@@ -24,17 +39,15 @@ var XSS = (() => {
     }
     let xssReq = XSS.parseRequest(request);
     if (!xssReq) return null;
+    let userResponse = await getUserResponse(xssReq);
+    if (userResponse) return userResponse;
+
     let data;
     let reasons;
     try {
-      await noPrompt;
       reasons = await XSS.maybe(xssReq);
       if (!reasons) return ALLOW;
-      if (reasons.user) {
-        log("Blocking request from %s to %s by previous XSS prompt user choice",
-          xssReq.srcUrl, xssReq.destUrl);
-        return ABORT;
-      }
+
       data = [];
     } catch (e) {
       error(e, "XSS filter processing %o", xssReq);
@@ -43,7 +56,11 @@ var XSS = (() => {
     }
 
 
-    noPrompt = (async () => {
+
+    let prompting = (async () => {
+      userResponse = await getUserResponse(xssReq);
+      if (userResponse) return userResponse;
+      
       let {srcOrigin, destOrigin, unescapedDest} = xssReq;
       let block = !!(reasons.urlInjection || reasons.postInjection)
 
@@ -86,11 +103,17 @@ var XSS = (() => {
       }
       if (reasons.protectName) {
         await include('/bg/RequestUtil.js');
-        RequestUtil.prependToScripts(request, NUKE_WINDOW_NAME);
+        RequestUtil.prependToScripts(request, SANITIZE_WINDOW_NAME);
       }
       return ALLOW;
     })();
-    return await noPrompt;
+    promptsMap.set(xssReq.originKey, prompting);
+    try {
+      return await prompting;
+    } catch (e) {
+      error(e);
+      return ABORT;
+    }
   };
 
   return {
@@ -183,7 +206,7 @@ var XSS = (() => {
 
     async saveUserChoices(xssUserChoices = this._userChoices || {}) {
       this._userChoices = xssUserChoices;
-      Storage.set("sync", {xssUserChoices});
+      await Storage.set("sync", {xssUserChoices});
     },
     getUserChoices() {
       return this._userChoices;
@@ -198,12 +221,6 @@ var XSS = (() => {
     async maybe(request) { // return reason or null if everything seems fine
       let xssReq = request.xssUnparsed ? request : this.parseRequest(request);
       request = xssReq.xssUnparsed;
-      switch (await this.getUserChoice(xssReq.originKey)) {
-        case "allow":
-          return null;
-        case "block":
-          return  {user: true};
-      }
 
       if (await this.Exceptions.shouldIgnore(xssReq)) {
         return null;

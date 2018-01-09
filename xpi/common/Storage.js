@@ -15,10 +15,10 @@ var Storage = {
   },
 
   async get(type, keys) {
-    return this.safeOp("get", type, keys);
+    return await this.safeOp("get", type, keys);
   },
 
-  async set(type, obj) {
+  async set(type, keys) {
     return await this.safeOp("set", type, keys);
   }
 }
