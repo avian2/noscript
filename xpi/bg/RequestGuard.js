@@ -1,6 +1,7 @@
 var RequestGuard = (() => {
   'use strict';
-
+  const VERSION_LABEL =  `NoScript ${browser.runtime.getManifest().version}`;
+  browser.browserAction.setTitle({title: VERSION_LABEL});
   const REPORT_URI = "https://noscript-csp.invalid/__NoScript_Probe__/";
   const REPORT_GROUP = "NoScript-Endpoint";
   const REPORT_TO = {
@@ -141,9 +142,9 @@ var RequestGuard = (() => {
       browserAction.setBadgeText({tabId, text: numBlocked > 0 ? numBlocked.toString() : ""});
       browserAction.setBadgeBackgroundColor({tabId, color: [255, 0, 0, 128]});
       browserAction.setTitle({tabId,
-        title: ns.policy.enforced ?
-          `NoScript (${numBlocked}/${numAllowed + numBlocked})\n${report}`
-          : _("GloballyEnabled")
+        title: `${VERSION_LABEL} \n${ns.policy.enforced ?
+            _("BlockedItems", [numBlocked, numAllowed + numBlocked]) + ` \n${report}`
+            : _("GloballyEnabled")}`
       });
     },
 

@@ -110,6 +110,9 @@
   "BaseDom": {
     "message": "Base 2nd level Domains (noscript.net)"
   },
+  "BlockedItems": {
+    "message": "Blocked $1 of $2 items."
+  },
   "BlockedObjects": {
     "message": "Blocked Objects"
   },
@@ -791,6 +794,9 @@
   },
   "version": {
     "message": "Version $1"
+  },
+  "versionShort": {
+    "message": "v $1"
   },
   "xss.notify.generic": {
     "message": "NoScript filtered a potential cross-site scripting (XSS) attempt from $1. Technical details have been logged to the Console."
