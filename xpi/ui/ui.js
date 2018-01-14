@@ -179,12 +179,7 @@ var UI = (() => {
       let policy = UI.policy;
       this.uiCount =  UI.Sites.count = (UI.Sites.count || 0) + 1;
       this.sites = policy.sites;
-      this.template = document.createElement("template");
-      this.template.innerHTML = TEMPLATE;
-      this.fragment = this.template.content;
-      this.table = this.fragment.querySelector("table.sites");
       this.presets = presets;
-      this.rowTemplate = this.initRow();
       this.customizing = null;
       this.typesMap = new Map();
       this.clear();
@@ -253,12 +248,20 @@ var UI = (() => {
     }
     clear() {
       debug("Clearing list", this.table);
+
+      this.template = document.createElement("template");
+      this.template.innerHTML = TEMPLATE;
+      this.fragment = this.template.content;
+      this.table = this.fragment.querySelector("table.sites");
+      this.rowTemplate = this.initRow();
+
       for (let r of this.allSiteRows()) {
         r.parentNode.removeChild(r);
       }
       this.customize(null);
       this.sitesCount = 0;
     }
+    
     siteNeeds(site, type) {
       let siteTypes = this.typesMap && this.typesMap.get(site);
       return !!siteTypes && siteTypes.has(type);
