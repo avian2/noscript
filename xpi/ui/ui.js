@@ -229,8 +229,9 @@ var UI = (() => {
         let capParent = cap.parentNode;
         capParent.removeChild(cap);
         legend.textContent = _("allow");
+        let idSuffix = UI.Sites.count;
         for (let capability of Permissions.ALL) {
-          capInput.id = `capability-${capability}`
+          capInput.id = `capability-${capability}-${idSuffix}`
           capLabel.setAttribute("for", capInput.id);
           capInput.value = capability;
           capInput.title = capLabel.textContent = _(`cap.${capability}`);
@@ -261,7 +262,7 @@ var UI = (() => {
       this.customize(null);
       this.sitesCount = 0;
     }
-    
+
     siteNeeds(site, type) {
       let siteTypes = this.typesMap && this.typesMap.get(site);
       return !!siteTypes && siteTypes.has(type);
@@ -302,7 +303,7 @@ var UI = (() => {
       }
 
 
-      let isCap = customizer && target.matches("input.cap");
+      let isCap = customizer && target.matches(".cap");
       let tempToggle = preset.parentNode.querySelector("input.temp");
 
       if (ev.type === "change") {
