@@ -393,6 +393,7 @@ var UI = (() => {
     render(parentNode, sites = null) {
       debug("Rendering %o inside %o", sites, parentNode);
       if (sites) this.populate(sites);
+      parentNode.innerHTML = "";
       parentNode.appendChild(this.fragment);
       let root = parentNode.querySelector("table.sites");
       debug("Wiring", root);
