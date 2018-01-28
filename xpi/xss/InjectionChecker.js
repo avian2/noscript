@@ -1,4 +1,4 @@
-
+debug("Initializing InjectionChecker");
 XSS.InjectionChecker = (async () => {
   await include([
     "/lib/Base64.js",

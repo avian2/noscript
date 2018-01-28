@@ -1,6 +1,6 @@
 var include = (() =>
 {
-  let  _inclusions = new Set();
+  let  _inclusions = new Map();
 
   function scriptLoader(src) {
     let script = document.createElement("script");
@@ -17,17 +17,19 @@ var include = (() =>
   }
 
   return async function include(src) {
-    if (_inclusions.has(src)) return;
+    if (_inclusions.has(src)) return await _inclusions.get(src);
     if (Array.isArray(src)) {
       return await Promise.all(src.map(s => include(s)));
     }
     debug("Including", src);
-    _inclusions.add(src);
-    return await new Promise((resolve, reject) => {
+
+    let loading = new Promise((resolve, reject) => {
       let inc = src.endsWith(".css") ? styleLoader(src) : scriptLoader(src);
       inc.onload = () => resolve(inc);
       inc.onerror = () => reject(new Error(`Failed to load ${src}`));
       document.head.appendChild(inc);
     });
+    _inclusions.set(src, loading);
+    return await (loading);
   }
 })();
