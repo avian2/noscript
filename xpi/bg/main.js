@@ -125,7 +125,7 @@
          });
        }
      },
-      onMessage(m, sender, sendResponse) {
+     onMessage(m, sender, sendResponse) {
        let {
          type
        } = m;

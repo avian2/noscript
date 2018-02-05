@@ -107,7 +107,7 @@ var Settings = {
       policy: ns.policy.dry(),
       local: ns.local,
       sync: ns.sync,
-      xssUserChoices: XSS.xssUserChoices,
+      xssUserChoices: XSS.getUserChoices(),
     }, null, 2);
   },
 
