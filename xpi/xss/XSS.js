@@ -2,11 +2,6 @@
 
 var XSS = (() => {
 
-  const SANITIZE_WINDOW_NAME =
-  `<script>
-    window.name = window.name.replace(/[<"'\`(=]/g, '');
-    document.currentScript.parentNode.removeChild(document.currentScript);
-   </script>`
   const ABORT = {cancel: true}, ALLOW = {};
 
   let promptsMap = new Map();
@@ -60,11 +55,17 @@ var XSS = (() => {
     let prompting = (async () => {
       userResponse = await getUserResponse(xssReq);
       if (userResponse) return userResponse;
-      
+
       let {srcOrigin, destOrigin, unescapedDest} = xssReq;
       let block = !!(reasons.urlInjection || reasons.postInjection)
 
-      if (reasons.protectName) data.push("window.name");
+      if (reasons.protectName) {
+        await include('/bg/RequestUtil.js');
+        RequestUtil.executeOnStart(request, {
+          file: "/xss/sanitizeName.js",
+        });
+        return ALLOW;
+      }
       if (reasons.urlInjection) data.push(`(URL) ${unescapedDest}`);
       if (reasons.postInjection) data.push(`(POST) ${reasons.postInjection}`);
 
@@ -98,14 +99,7 @@ var XSS = (() => {
         await XSS.setUserChoice(xssReq.originKey, "block");
         await XSS.saveUserChoices();
       }
-      if (block) {
-        return ABORT;
-      }
-      if (reasons.protectName) {
-        await include('/bg/RequestUtil.js');
-        RequestUtil.prependToScripts(request, SANITIZE_WINDOW_NAME);
-      }
-      return ALLOW;
+      return block ? ABORT : ALLOW;
     })();
     promptsMap.set(xssReq.originKey, prompting);
     try {

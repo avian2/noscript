@@ -1,7 +1,19 @@
 'use strict';
 var RequestUtil = {
 
-
+  async executeOnStart(request, details) {
+    let {requestId, tabId, frameId} = request;
+    details = Object.assign({
+      runAt: "document_start",
+      frameId,
+    }, details);
+    let filter = browser.webRequest.filterResponseData(requestId);
+    filter.ondata = event => {
+      filter.write(event.data);
+      filter.disconnect();
+      browser.tabs.executeScript(tabId, details);
+    }
+  },
   async prependToScripts(request, preamble) {
     let filter = browser.webRequest.filterResponseData(request.requestId);
     let decoder = new TextDecoder("utf-8");
