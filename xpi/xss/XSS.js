@@ -64,7 +64,7 @@ var XSS = (() => {
         RequestUtil.executeOnStart(request, {
           file: "/xss/sanitizeName.js",
         });
-        return ALLOW;
+        if (!block) return ALLOW;
       }
       if (reasons.urlInjection) data.push(`(URL) ${unescapedDest}`);
       if (reasons.postInjection) data.push(`(POST) ${reasons.postInjection}`);
