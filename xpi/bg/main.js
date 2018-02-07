@@ -26,11 +26,12 @@
    };
 
    var Commands = {
-     async openPageUI() {
-       let win = await browser.windows.getCurrent();
-       if (win.type === "normal") {
+     openPageUI() {
+       try {
          browser.browserAction.openPopup();
          return;
+       } catch (e) {
+         debug(e);
        }
        browser.windows.create({
          url: popupURL,
@@ -49,6 +50,20 @@
          browser.commands.onCommand.addListener(cmd => {
            if (cmd in Commands) {
              Commands[cmd]();
+           }
+         });
+       }
+
+       if ("contextMenus" in browser) {
+         let id = "noscript-ctx-menu";
+         browser.contextMenus.create({
+           id,
+           title: "NoScript",
+           contexts: ["all"]
+         });
+         browser.contextMenus.onClicked.addListener((info, tab) => {
+           if (info.menuItemId == id) {
+             this.openPageUI();
            }
          });
        }
