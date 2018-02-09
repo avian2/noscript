@@ -1,59 +1,8 @@
 {
-  "ABE": {
-    "message": "ABE"
-  },
-  "ABE.accesskey": {
-    "message": "A"
-  },
-  "ABE.chooseEditor": {
-    "message": "Please choose a text editor for ABE rulesets"
-  },
-  "ABE.disable.accesskey": {
-    "message": "D"
-  },
-  "ABE.disable.label": {
-    "message": "Disable"
-  },
-  "ABE.edit.accesskey": {
-    "message": "E"
-  },
-  "ABE.edit.label": {
-    "message": "Edit…"
-  },
-  "ABE.enable.accesskey": {
-    "message": "n"
-  },
-  "ABE.enable.label": {
-    "message": "Enable"
-  },
-  "ABE.enabled.label": {
-    "message": "Enable ABE (Application Boundaries Enforcer)"
-  },
-  "ABE.notify": {
-    "message": "Request $1 filtered by ABE: <$2> $3"
-  },
-  "ABE.refresh.accesskey": {
-    "message": "R"
-  },
-  "ABE.refresh.label": {
-    "message": "Refresh"
-  },
-  "ABE.rulesets.label": {
-    "message": "Rulesets:"
-  },
-  "ABE.siteEnabled.label": {
-    "message": "Allow sites to push their own rulesets"
-  },
-  "ABE.syntaxError": {
-    "message": "Syntax error in ABE ruleset!"
-  },
-  "ABE.wanIpAsLocal": {
-    "message": "WAN IP ($1) ∈ LOCAL"
-  },
   "Add": {
     "message": "Add"
   },
-  "Add.accesskey": {
+  "Add_accesskey": {
     "message": "A"
   },
   "AdditionalPermissions": {
@@ -68,7 +17,7 @@
   "Allow": {
     "message": "Allow"
   },
-  "Allow.accesskey": {
+  "Allow_accesskey": {
     "message": "l"
   },
   "AllowBookmarks": {
@@ -83,7 +32,7 @@
   "AllowPage": {
     "message": "Allow all this page"
   },
-  "AllowPage.accesskey": {
+  "AllowPage_accesskey": {
     "message": "A"
   },
   "AllowPing": {
@@ -104,7 +53,7 @@
   "AutoReload": {
     "message": "Automatically reload affected pages when permissions change"
   },
-  "AutoReload.currentTab": {
+  "AutoReload_currentTab": {
     "message": "Reload the current tab only"
   },
   "BaseDom": {
@@ -137,7 +86,7 @@
   "ClearClickReport": {
     "message": "Report"
   },
-  "ClearClickReport.accesskey": {
+  "ClearClickReport_accesskey": {
     "message": "R"
   },
   "ClearClickReportId": {
@@ -179,7 +128,7 @@
   "Donate": {
     "message": "Donate"
   },
-  "Donate.accesskey": {
+  "Donate_accesskey": {
     "message": "o"
   },
   "Embeddings": {
@@ -191,7 +140,7 @@
   "Export": {
     "message": "Export"
   },
-  "Export.accesskey": {
+  "Export_accesskey": {
     "message": "E"
   },
   "FixLinks": {
@@ -200,7 +149,7 @@
   "Forbid": {
     "message": "Forbid"
   },
-  "Forbid.accesskey": {
+  "Forbid_accesskey": {
     "message": "F"
   },
   "ForbidBookmarklets": {
@@ -227,7 +176,7 @@
   "ForbidMetaRefresh": {
     "message": "Forbid META redirections inside <NOSCRIPT> elements"
   },
-  "ForbidMetaRefresh.accesskey": {
+  "ForbidMetaRefresh_accesskey": {
     "message": "R"
   },
   "ForbidPing": {
@@ -245,13 +194,13 @@
   "ForbidXSLT": {
     "message": "Forbid XSLT"
   },
-  "FrameOptErr.desc": {
+  "FrameOptErr_desc": {
     "message": "To protect your security, the publisher of this content does not allow it to be displayed in a frame."
   },
-  "FrameOptErr.link": {
+  "FrameOptErr_link": {
     "message": "Click here to open this content in a new window"
   },
-  "FrameOptErr.title": {
+  "FrameOptErr_title": {
     "message": "This content cannot be displayed in a frame"
   },
   "FullAddr": {
@@ -275,28 +224,28 @@
   "Https": {
     "message": "HTTPS"
   },
-  "Https.always": {
+  "Https_always": {
     "message": "Always"
   },
-  "Https.behavior": {
+  "Https_behavior": {
     "message": "Behavior"
   },
-  "Https.cookies": {
+  "Https_cookies": {
     "message": "Cookies"
   },
-  "Https.description": {
+  "Https_description": {
     "message": "Forbid active web content unless it comes from a secure (HTTPS) connection:"
   },
-  "Https.never": {
+  "Https_never": {
     "message": "Never"
   },
-  "Https.proxy": {
+  "Https_proxy": {
     "message": "When using a proxy (recommended with Tor)"
   },
   "HttpsFaq": {
     "message": "HTTPS FAQ…"
   },
-  "HttpsFaq.accesskey": {
+  "HttpsFaq_accesskey": {
     "message": "Q"
   },
   "HttpsForced": {
@@ -308,7 +257,7 @@
   "Import": {
     "message": "Import"
   },
-  "Import.accesskey": {
+  "Import_accesskey": {
     "message": "I"
   },
   "KeepLocked": {
@@ -329,13 +278,13 @@
   "Notify": {
     "message": "Show message about blocked scripts"
   },
-  "Notify.bottom": {
+  "Notify_bottom": {
     "message": "Place message at the bottom"
   },
   "NotifyMeta": {
     "message": "Show message about blocked META redirections"
   },
-  "NotifyMeta.accesskey": {
+  "NotifyMeta_accesskey": {
     "message": "R"
   },
   "NselForce": {
@@ -359,7 +308,7 @@
   "Options": {
     "message": "Options…"
   },
-  "Options.accesskey": {
+  "Options_accesskey": {
     "message": "O"
   },
   "OptionsLong": {
@@ -386,16 +335,16 @@
   "Preset": {
     "message": "Security Level"
   },
-  "Preset.high": {
+  "Preset_high": {
     "message": "Fortress (Full lockdown)"
   },
-  "Preset.low": {
+  "Preset_low": {
     "message": "Easy going (Blacklist + Web Security)"
   },
-  "Preset.medium": {
+  "Preset_medium": {
     "message": "Classic (Whitelist + Web Security)"
   },
-  "Preset.off": {
+  "Preset_off": {
     "message": "Off (are you serious?!)"
   },
   "Prev": {
@@ -417,13 +366,13 @@
   "Reset": {
     "message": "Reset"
   },
-  "Reset.accesskey": {
+  "Reset_accesskey": {
     "message": "s"
   },
   "ResetDef": {
     "message": "Reset to Default"
   },
-  "ResetDef.accesskey": {
+  "ResetDef_accesskey": {
     "message": "D"
   },
   "RestrictSubdocScripting": {
@@ -432,7 +381,7 @@
   "RevokeTemp": {
     "message": "Revoke Temporary Permissions"
   },
-  "RevokeTemp.accesskey": {
+  "RevokeTemp_accesskey": {
     "message": "R"
   },
   "SecureCookies": {
@@ -453,7 +402,7 @@
   "ShowConsole": {
     "message": "Show Console…"
   },
-  "ShowConsole.accesskey": {
+  "ShowConsole_accesskey": {
     "message": "S"
   },
   "ShowPlaceholder": {
@@ -465,7 +414,7 @@
   "SitePermissions": {
     "message": "Site Permissions"
   },
-  "SitePermissions.accessKey": {
+  "SitePermissions_accessKey": {
     "message": "S"
   },
   "SitePolicies": {
@@ -480,7 +429,7 @@
   "TempAllowPage": {
     "message": "Temporarily allow all this page"
   },
-  "TempAllowPage.accesskey": {
+  "TempAllowPage_accesskey": {
     "message": "T"
   },
   "TempCmd": {
@@ -489,7 +438,7 @@
   "TempToPerm": {
     "message": "Make page permissions permanent"
   },
-  "TempToPerm.accesskey": {
+  "TempToPerm_accesskey": {
     "message": "M"
   },
   "ToolbarToggle": {
@@ -501,16 +450,16 @@
   "Trust": {
     "message": "Mark as Trusted"
   },
-  "Trust.accesskey": {
+  "Trust_accesskey": {
     "message": "T"
   },
   "Trusted": {
     "message": "Trusted"
   },
-  "Trusted.temporary": {
+  "Trusted_temporary": {
     "message": "Temp. TRUSTED"
   },
-  "Trusted.permanent": {
+  "Trusted_permanent": {
     "message": "TRUSTED"
   },
   "TrustedPagesAdj": {
@@ -525,13 +474,13 @@
   "UnsafeReload": {
     "message": "Unsafe Reload"
   },
-  "UnsafeReload.accesskey": {
+  "UnsafeReload_accesskey": {
     "message": "R"
   },
   "Untrust": {
     "message": "Mark as Untrusted"
   },
-  "Untrust.accesskey": {
+  "Untrust_accesskey": {
     "message": "U"
   },
   "Untrusted": {
@@ -543,55 +492,55 @@
   "WebAddress": {
     "message": "Search or add a web site:"
   },
-  "WebAddress.accesskey": {
+  "WebAddress_accesskey": {
     "message": "w"
   },
   "Whitelist": {
     "message": "Whitelist"
   },
-  "XSS.notify": {
+  "XSS_notify": {
     "message": "Show XSS notifications"
   },
-  "XSS.clearUserChoices": {
+  "XSS_clearUserChoices": {
     "message": "Clear XSS Choices"
   },
-  "XSS.promptTitle": {
+  "XSS_promptTitle": {
     "message": "NoScript XSS Warning"
   },
-  "XSS.promptMessage": {
+  "XSS_promptMessage": {
     "message": "NoScript detected a potential Cross-Site Scripting attack\nfrom $1 to $2.\nSuspicious data:\n$3"
   },
-  "XSS.optBlock": {
+  "XSS_optBlock": {
     "message": "Block this request"
   },
-   "XSS.optSanitize": {
+   "XSS_optSanitize": {
     "message": "Sanitize this request"
   },
-  "XSS.optAllow": {
+  "XSS_optAllow": {
     "message": "Allow this request"
   },
-  "XSS.optAlwaysAllow": {
+  "XSS_optAlwaysAllow": {
     "message": "Always allow document requests from $1 to $2"
   },
-  "XSS.optAlwaysBlock": {
+  "XSS_optAlwaysBlock": {
     "message": "Always block document requests from $1 to $2"
   },
   "Xss": {
     "message": "XSS"
   },
-  "Xss.accesskey": {
+  "Xss_accesskey": {
     "message": "X"
   },
   "XssExceptions": {
     "message": "Anti-XSS Protection Exceptions"
   },
-  "XssExceptions.description": {
+  "XssExceptions_description": {
     "message": "Destinations matching these regular expressions will NOT be protected against XSS."
   },
   "XssFaq": {
     "message": "XSS FAQ…"
   },
-  "XssFaq.accesskey": {
+  "XssFaq_accesskey": {
     "message": "Q"
   },
   "about": {
@@ -612,64 +561,59 @@
   "allowTempFrom": {
     "message": "Temporarily allow all from $1"
   },
-  "allowed.glb": {
-    "message": "Danger! Scripts Globally Allowed"
-  },
-  "allowed.glb-emb": {
-    "message": "Scripts Globally Allowed but Some Embeddings Blocked"
-  },
-  "allowed.no": {
+
+  "allowed_no": {
     "message": "Scripts Currently Forbidden"
   },
-  "allowed.prt": {
+  "allowed_prt": {
     "message": "Scripts Partially Allowed"
   },
-  "allowed.yes": {
+  "allowed_yes": {
     "message": "Scripts Currently Allowed"
   },
   "alwaysAsk": {
     "message": "Always ask for confirmation"
   },
-  "audio.samples": {
+  "audio_samples": {
     "message": "Audio samples"
   },
-  "bookmarkSync.confirm": {
+  "bookmarkSync_confirm": {
     "message": "NoScript has found a configuration bookmark seemingly saved on\n$1.\nDo you really want to overwrite your local NoScript configuration with this bookmark's content?"
   },
-  "bookmarkSync.message": {
+  "bookmarkSync_message": {
     "message": "This bookmark is NOT meant to be opened, but to be synchronized using a service such as Weave or the XMarks extension."
   },
-  "bookmarkSync.title": {
+  "bookmarkSync_title": {
     "message": "NoScript Configuration Bookmark"
   },
-  "cap.script": {
+  "cap_script": {
     "message": "script"
   },
-  "cap.frame": {
+  "cap_frame": {
     "message": "frame"
   },
-  "cap.object": {
+  "cap_object": {
     "message": "object"
   },
-  "cap.media": {
+  "cap_media": {
     "message": "media"
   },
-  "cap.font": {
+  "cap_font": {
     "message": "font"
   },
-  "cap.webgl": {
+  "cap_webgl": {
     "message": "webgl"
   },
-  "cap.fetch": {
+  "cap_fetch": {
     "message": "fetch"
   },
-  "cap.other": {
+  "cap_other": {
     "message": "other"
   },
   "changelog": {
     "message": "Changelog"
   },
-  "changelog.tip": {
+  "changelog_tip": {
     "message": "Show changelog"
   },
   "confirm": {
@@ -678,7 +622,7 @@
   "disable": {
     "message": "Disable $1"
   },
-  "disable.accessKey": {
+  "disable_accessKey": {
     "message": "D"
   },
   "distrust": {
@@ -687,20 +631,17 @@
   "extensionContributors": {
     "message": "Contributors:"
   },
-  "extensionContributors.tip": {
+  "extensionContributors_tip": {
     "message": "People you should thank for this extension"
   },
-  "extensionCreator.tip": {
+  "extensionCreator_tip": {
     "message": "Visit author home page"
   },
   "extensionCreatorLabel": {
     "message": "Author:"
   },
-  "extensionHomepage.tip": {
+  "extensionHomepage_tip": {
     "message": "Visit extension home page"
-  },
-  "extensions.{73a6fe31-595d-460b-a920-fcc0f8843232}.description": {
-    "message": "Extra protection for your Firefox: NoScript allows JavaScript, Java (and other plugins) only for trusted domains of your choice (e.g. your home-banking web site). This whitelist based pre-emptive blocking approach  prevents exploitation of security vulnerabilities (known and even unknown!) with no loss of functionality… Experts will agree: Firefox is really safer with NoScript :-)"
   },
   "forbidGlobal": {
     "message": "Forbid Scripts Globally (advised)"
@@ -711,82 +652,60 @@
   "freshInstallReload": {
     "message": "In order to operate on this tab, NoScript needs to reload it.\nProceed?"
   },
-  "global.warning.text": {
-    "message": "Scripts are going to be allowed globally (for every site).\n This is a potentially dangerous action.\nDo you really want to proceed?"
-  },
-  "global.warning.title": {
-    "message": "Warning!"
-  },
+
   "incompatibleOptions": {
     "message": "\"$1\"\nis incompatible with \"$2\".\nDo you want to enable the former and disable the latter?"
   },
-  "incompatibleOptions.title": {
+  "incompatibleOptions_title": {
     "message": "Incompatible Options Warning"
   },
-  "informaction.tip": {
+  "informaction_tip": {
     "message": "Visit InformAction home page"
   },
   "license": {
     "message": "License"
   },
-  "license.tip": {
+  "license_tip": {
     "message": "Read end-user license"
   },
-  "logo.tip": {
+  "logo_tip": {
     "message": "Visit extension home page"
   },
-  "metaRefresh.notify": {
+  "metaRefresh_notify": {
     "message": "NoScript blocked a <META> redirection inside a <NOSCRIPT> element: $1 in $2 seconds."
   },
-  "metaRefresh.notify.follow": {
-    "message": "Follow Redirection"
-  },
-  "metaRefresh.notify.follow.accessKey": {
-    "message": "F"
-  },
-  "notify.options": {
-    "message": "Options"
-  },
-  "notify.options.accessKey": {
-    "message": "O"
-  },
-  "notifyHide": {
-    "message": "Hide after $1 seconds"
-  },
+
   "Reload": {
     "message": "Reload"
   },
-  "removal.message": {
+  "removal_message": {
     "message": "By disabling or uninstalling NoScript, you give up ALL the protections provided by NoScript.\n\nIf you're just tired of handling script permissions site by site, there's a safer choice.\n\nNoScript can stop blocking scripts, except those you mark as untrusted, while still protecting you with the most advanced security countermeasures against XSS, Clickjacking, CSRF and other web threats.\n\nDo you really want to remove ALL the NoScript protections?\n"
   },
-  "removal.no": {
+  "removal_no": {
     "message": "No, just stop blocking scripts"
   },
-  "removal.title": {
+  "removal_title": {
     "message": "Security Downgrade Warning"
   },
-  "removal.yes": {
+  "removal_yes": {
     "message": "Yes, remove ALL protections"
   },
-  "reset.title": {
+  "reset_title": {
     "message": "NoScript Reset"
   },
-  "reset.warning": {
+  "reset_warning": {
     "message": "ALL the NoScript preferences and site permissions will be reset to their default values immediately.\nThis action cannot be reverted.\nDo you want to continue?"
   },
-  "siteInfo.confirm": {
+  "siteInfo_confirm": {
     "message": "You're about to ask for information about the \"$1\" site\nby submitting a query to $2.\nDo you want to continue?"
   },
-  "siteInfo.tooltip": {
+  "siteInfo_tooltip": {
     "message": "Middle-click or shift+click for site info..."
   },
-  "sponsor.tip": {
+  "sponsor_tip": {
     "message": "Visit sponsor home page"
   },
-  "trust": {
-    "message": "Trust $1"
-  },
-  "unsafeReload.warning": {
+  "unsafeReload_warning": {
     "message": "UNSAFELY reloading a suspicious\n\n$1 [$2]\n\nFROM [$3]\n\nNoScript will NOT protect this request!\n"
   },
   "untrustedOrigin": {
@@ -797,23 +716,5 @@
   },
   "versionShort": {
     "message": "v $1"
-  },
-  "xss.notify.generic": {
-    "message": "NoScript filtered a potential cross-site scripting (XSS) attempt from $1. Technical details have been logged to the Console."
-  },
-  "xss.notify.showConsole": {
-    "message": "Show Console…"
-  },
-  "xss.notify.showConsole.accessKey": {
-    "message": "S"
-  },
-  "xss.reason.filterXGet": {
-    "message": "Sanitized suspicious request. Original URL [$1] requested from [$2]. Sanitized URL: [$3]."
-  },
-  "xss.reason.filterXGetRef": {
-    "message": "Sanitized suspicious request referer. URL [$1] requested from [$2]. Sanitized Referrer: [$3]."
-  },
-  "xss.reason.filterXPost": {
-    "message": "Sanitized suspicious upload to [$1] from [$2]: transformed into a download-only GET request."
   }
 }

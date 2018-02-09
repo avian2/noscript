@@ -1,10 +1,7 @@
 body {
-  /*
-  min-height: 50px;
-  min-width: 600px;
-  */
   background: white;
 }
+
 #top {
   font-size: 1em;
   position: relative;

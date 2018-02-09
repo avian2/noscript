@@ -72,13 +72,13 @@ var XSS = (() => {
       let source = srcOrigin && srcOrigin !== "null" ? srcOrigin : "[...]";
 
       let {button, option} = await Prompts.prompt({
-        title: _("XSS.promptTitle"),
-        message: _("XSS.promptMessage", [source, destOrigin, data.join(",")]),
+        title: _("XSS_promptTitle"),
+        message: _("XSS_promptMessage", [source, destOrigin, data.join(",")]),
         options: [
-          {label: _(`XSS.opt${block ? 'Block' : 'Sanitize'}`), checked: true}, // 0
-          {label: _("XSS.optAlwaysBlock", [source, destOrigin])}, // 1
-          {label: _("XSS.optAllow")}, // 2
-          {label: _("XSS.optAlwaysAllow", [source, destOrigin])}, // 3
+          {label: _(`XSS_opt${block ? 'Block' : 'Sanitize'}`), checked: true}, // 0
+          {label: _("XSS_optAlwaysBlock", [source, destOrigin])}, // 1
+          {label: _("XSS_optAllow")}, // 2
+          {label: _("XSS_optAlwaysAllow", [source, destOrigin])}, // 3
         ],
 
         buttons: [_("Ok")],

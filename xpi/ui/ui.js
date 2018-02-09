@@ -6,8 +6,8 @@ var UI = (() => {
 
     presets: {
       "DEFAULT": "Default",
-      "T_TRUSTED": "Trusted.temporary",
-      "TRUSTED": "Trusted.permanent",
+      "T_TRUSTED": "Trusted_temporary",
+      "TRUSTED": "Trusted_permanent",
       "UNTRUSTED": "Untrusted",
       "CUSTOM": "Custom",
     },
@@ -89,7 +89,7 @@ var UI = (() => {
       await include('/common/Storage.js');
       let {siteInfoConsent} = await Storage.get("sync", "siteInfoConsent");
       if (!siteInfoConsent) {
-        siteInfoConsent = confirm(_("siteInfo.confirm", [domain, "https://noscript.net/"]));
+        siteInfoConsent = confirm(_("siteInfo_confirm", [domain, "https://noscript.net/"]));
         if (siteInfoConsent) {
           await Storage.set("sync", {siteInfoConsent});
         } else {
@@ -234,7 +234,7 @@ var UI = (() => {
           capInput.id = `capability-${capability}-${idSuffix}`
           capLabel.setAttribute("for", capInput.id);
           capInput.value = capability;
-          capInput.title = capLabel.textContent = _(`cap.${capability}`);
+          capInput.title = capLabel.textContent = _(`cap_${capability}`);
           let clone = capParent.appendChild(cap.cloneNode(true));
           clone.classList.add(capability);
         }

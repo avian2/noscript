@@ -28,7 +28,7 @@
   {
     let button = document.querySelector("#btn-reset");
     button.onclick = async () => {
-      if (confirm(_("reset.warning"))) {
+      if (confirm(_("reset_warning"))) {
         policy = new Policy();
         await UI.updateSettings({policy});
         window.location.reload();
