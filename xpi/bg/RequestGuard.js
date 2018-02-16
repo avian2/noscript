@@ -136,10 +136,11 @@ var RequestGuard = (() => {
         (numBlocked ? "part"
           : ns.policy.enforced ? "yes" : "global")
         : (numAllowed ? "sub" : "no");
-      let browserAction = browser.browserAction;
+      let showBadge = ns.local.showCountBadge && numBlocked > 0;
 
+      let browserAction = browser.browserAction;
       browserAction.setIcon({tabId, path: {64: `/img/ui-${icon}64.png`}});
-      browserAction.setBadgeText({tabId, text: numBlocked > 0 ? numBlocked.toString() : ""});
+      browserAction.setBadgeText({tabId, text: showBadge ? numBlocked.toString() : ""});
       browserAction.setBadgeBackgroundColor({tabId, color: [255, 0, 0, 128]});
       browserAction.setTitle({tabId,
         title: `${VERSION_LABEL} \n${ns.policy.enforced ?
@@ -225,14 +226,14 @@ var RequestGuard = (() => {
           let {siteMatch, contextMatch, perms} = ns.policy.get(key, documentUrl);
           let {capabilities} = perms;
           if (!capabilities.has(policyType)) {
-            perms = new Permissions(capabilities, false);
+            perms = new Permissions(new Set(capabilities), false);
             perms.capabilities.add(policyType);
 
             /* TODO: handle contextual permissions
             if (documentUrl) {
               let context = new URL(documentUrl).origin;
               let contextualSites = new Sites([context, perms]);
-              perms = new Permissions(capabilities, false, contextualSites);
+              perms = new Permissions(new Set(capabilities), false, contextualSites);
             }
             */
             ns.policy.set(key, perms);

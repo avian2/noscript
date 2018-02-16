@@ -4,6 +4,24 @@
    const popupURL = browser.extension.getURL("/ui/popup.html");
    let popupFor = tabId => `${popupURL}#tab${tabId}`;
 
+   let ctxMenuId = "noscript-ctx-menu";
+
+   async function toggleCtxMenuItem(show = ns.local.showCtxMenuItem) {
+     if (!"contextMenus" in browser) return;
+     let id = ctxMenuId;
+     try {
+         await browser.contextMenus.remove(id);
+     } catch (e) {}
+   
+     if (show) {
+       browser.contextMenus.create({
+         id,
+         title: "NoScript",
+         contexts: ["all"]
+       });
+     }
+   }
+
    async function init() {
      let policyData = (await Storage.get("sync", "policy")).policy;
      if (policyData && policyData.DEFAULT) {
@@ -55,14 +73,9 @@
        }
 
        if ("contextMenus" in browser) {
-         let id = "noscript-ctx-menu";
-         browser.contextMenus.create({
-           id,
-           title: "NoScript",
-           contexts: ["all"]
-         });
+         toggleCtxMenuItem();
          browser.contextMenus.onClicked.addListener((info, tab) => {
-           if (info.menuItemId == id) {
+           if (info.menuItemId == ctxMenuId) {
              this.openPageUI();
            }
          });
@@ -71,16 +84,21 @@
        // wiring main UI
        let ba = browser.browserAction;
        if ("setIcon" in ba) {
-        //desktop
-         ba.setPopup({popup: popupURL});
+         //desktop
+         ba.setPopup({
+           popup: popupURL
+         });
        } else {
          // mobile
          ba.onClicked.addListener(async tab => {
            try {
-             await browser.tabs.remove(await browser.tabs.query({url: popupURL}));
-           } catch (e) {
-           }
-           await browser.tabs.create({url: popupFor(tab.id)});
+             await browser.tabs.remove(await browser.tabs.query({
+               url: popupURL
+             }));
+           } catch (e) {}
+           await browser.tabs.create({
+             url: popupFor(tab.id)
+           });
          });
        }
      }
@@ -90,7 +108,8 @@
      responders: {
 
        async updateSettings(settings, sender) {
-         Settings.update(settings);
+         await Settings.update(settings);
+         toggleCtxMenuItem();
        },
        async broadcastSettings({
          tabId = -1
@@ -113,7 +132,9 @@
          return false;
        },
 
-       async importSettings({data}) {
+       async importSettings({
+         data
+       }) {
          return await Settings.import(data);
        },
 

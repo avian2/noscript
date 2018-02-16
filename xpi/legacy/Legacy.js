@@ -99,10 +99,10 @@ var Legacy = {
       "WebGL": "webgl",
     };
     for (let [legacy, current] of Object.entries(prefMap)) {
-      if (!this.getPref(legacy)) capabilities.add(current);
+      if (!this.getPref(`forbid${legacy}`, true)) capabilities.add(current);
     }
 
-    let TRUSTED = new Permissions(this.getPref("contentBlocker") ? capabilities : Permissions.ALL);
+    let TRUSTED = new Permissions(new Set(this.getPref("contentBlocker") ? capabilities : Permissions.ALL));
     TRUSTED.capabilities.add("script").add("fetch");
 
     let UNTRUSTED = new Permissions();

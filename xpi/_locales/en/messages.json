@@ -11,7 +11,7 @@
   "AdditionalRestrictions": {
     "message": "Additional restrictions for untrusted sites"
   },
-  "Advanced": {
+  "SectionAdvanced": {
     "message": "Advanced"
   },
   "Allow": {
@@ -44,7 +44,7 @@
   "AlwaysBlockUntrustedContent": {
     "message": "Block every object coming from a site marked as untrusted"
   },
-  "Appearance": {
+  "SectionAppearance": {
     "message": "Appearance"
   },
   "AutoAllowTopLevel": {
@@ -209,7 +209,7 @@
   "FullDom": {
     "message": "Full Domains (www.noscript.net)"
   },
-  "General": {
+  "SectionGeneral": {
     "message": "General"
   },
   "GlobalHttpsWhitelist": {
@@ -320,8 +320,8 @@
   "PermanentInPrivate": {
     "message": "Permanent \"Allow\" commands in private windows"
   },
-  "Permissions": {
-    "message": "Permissions"
+  "SectionSitePermissions": {
+    "message": "Per-site Permissions"
   },
   "PermissionsText": {
     "message": "You can specify which web sites are allowed to execute scripts. Type the address or the domain (e.g. \"http://www.site.com\" or \"site.com\") of the site you want to allow and then click Allow."
@@ -410,6 +410,12 @@
   },
   "ShowReleaseNotes": {
     "message": "Display the release notes on updates"
+  },
+  "ShowCtxMenuItem": {
+    "message": "Show NoScript contextual menu item"
+  },
+  "ShowCountBadge": {
+    "message": "Display script count badge"
   },
   "SitePermissions": {
     "message": "Site Permissions"

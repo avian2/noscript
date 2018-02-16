@@ -3,7 +3,9 @@
 ns.local = (async () => {
   let defaults = {
     local: {
-      debug: false
+      debug: false,
+      showCtxMenuItem: true,
+      showCountBadge: true,
     },
     sync: {
       "global": false,

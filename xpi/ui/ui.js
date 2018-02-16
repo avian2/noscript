@@ -24,6 +24,10 @@ var UI = (() => {
       if (this.mobile) {
         document.documentElement.classList.toggle("mobile", true);
         scripts.push("/lib/fastclick.js");
+
+        for (let e of document.querySelectorAll(".appearance_tab")) {
+          e.remove();
+        };
       }
       await include(scripts);
 

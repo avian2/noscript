@@ -1,9 +1,9 @@
 
 /* @import url("chrome://browser/content/extension.css"); */
 body {
-  background: url("/img/noscript-options.png") no-repeat fixed top right;
+  background: #eee url("/img/noscript-options.png") no-repeat fixed top right;
   background-size: 8em;
-  padding: 0 4em 0 0;
+  padding: 0 2em 0 0;
   margin: 0.5em 0.5em 0.5em 0.5em;
 }
 .mobile body {
@@ -11,9 +11,12 @@ body {
   padding-right: 0;
 }
 
+
 #header {
-  padding: 0 4em 0 0;
-  margin: 0;
+  display: flex;
+  flex-flow: column;
+  padding: 0;
+  margin: 0 6em 0 0;
   text-align: right;
 }
 #header h1 {
@@ -33,8 +36,15 @@ body {
   text-align: right;
 }
 
+.buttons {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  width: 100%;
+  text-align: right;
+}
+
 #sect-general {
-  margin-right: 4em;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -114,7 +124,45 @@ input[type="file"] {
   display: none;
 }
 
-.buttons {
-  display: flex;
-  align-items: flex-end;
+
+.flextabs__tab {
+  /* shift all tabs to appear before content */
+  order: -1;
+  /* let tabs scale to fit multiple on each row */
+  width: auto;
+  margin: 0;
+}
+.flextabs__content--active {
+  /* ignore states activated for multi (accordion) toggle view */
+  display: none;
+}
+.flextabs__content--active--last {
+  /* show the last activated item */
+  display: block;
+}
+
+.flextabs__content, .flextabs__toggle[aria-expanded="true"] {
+  background-color: rgba(200, 200, 200, .5) !important;
+  border: 0 solid #888;
+}
+
+.flextabs__toggle {
+  -moz-appearance: none;
+  border-width: 0 1px 0 0 !important;
+  margin: 0 4px 0 0;
+  background: #ccc;
+  outline-width: 1px 0 0 0 !important;
+}
+
+
+
+.flextabs__content {
+  border-width: 0 1px 1px 0;
+  border-radius: 0 .5em 0 0;
+  padding: .5em;
+}
+
+.flextabs__toggle {
+  border-radius: .2em .2em 0 0;
+  padding: .2em .4em;
 }

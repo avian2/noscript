@@ -1,5 +1,8 @@
 'use strict';
 (async () => {
+  Array.forEach(document.querySelectorAll(".flextabs"),
+    el => flextabs(el).init());
+
   await UI.init();
 
   let policy = UI.policy;
@@ -103,6 +106,12 @@
     document.body.classList.toggle("debug", b);
     if (b) updateRawPolicyEditor();
   });
+
+  // Appearance
+
+  opt("showCountBadge", "local");
+  opt("showCtxMenuItem", "local");
+
   // PRESET CUSTOMIZER
   {
     let presetsUI = new UI.Sites({"DEFAULT": true, "TRUSTED": true, "UNTRUSTED": true});
