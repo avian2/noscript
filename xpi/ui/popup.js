@@ -14,6 +14,7 @@ addEventListener("unload", e => {
     let sitesUI;
     let pendingReload = false;
     let isBrowserAction = true;
+    let optionsClosed = false;
     let tab = (await browser.tabs.query({
       windowId: browser.windows ?
         (await browser.windows.getLastFocused({windowTypes: ["normal"]})).id
@@ -90,10 +91,16 @@ addEventListener("unload", e => {
     debug("Seen: %o", UI.seen);
     let justDomains = false; // true;
 
-    sitesUI = new UI.Sites();
+    sitesUI = new UI.Sites(document.getElementById("sites"));
 
     sitesUI.onChange = () => {
-      pendingReload = true
+      pendingReload = true;
+      if (optionsClosed) return;
+      browser.tabs.query({url: browser.runtime.getManifest().options_ui.page })
+        .then(tabs => {
+          browser.tabs.remove(tabs.map(t => t.id));
+      });
+      optionsClosed = true;
     };
     initSitesUI();
     UI.onSettings = initSitesUI;
@@ -150,7 +157,7 @@ addEventListener("unload", e => {
       sitesUI.mainSite = urlToLabel(sitesUI.mainUrl);
       sitesUI.mainDomain = tld.getDomain(sitesUI.mainUrl.hostname);
 
-      sitesUI.render(document.getElementById("sites"), sites);
+      sitesUI.render(sites);
     }
 
     function reload() {

@@ -179,7 +179,8 @@ var UI = (() => {
   };
 
   UI.Sites = class {
-    constructor(presets = DEF_PRESETS) {
+    constructor(parentNode, presets = DEF_PRESETS) {
+      this.parentNode = parentNode;
       let policy = UI.policy;
       this.uiCount =  UI.Sites.count = (UI.Sites.count || 0) + 1;
       this.sites = policy.sites;
@@ -394,9 +395,10 @@ var UI = (() => {
       }
     }
 
-    render(parentNode, sites = null) {
+    render(sites = this.sites, sorter = this.sorter) {
+      let parentNode = this.parentNode;
       debug("Rendering %o inside %o", sites, parentNode);
-      if (sites) this.populate(sites);
+      if (sites) this._populate(sites, sorter);
       parentNode.innerHTML = "";
       parentNode.appendChild(this.fragment);
       let root = parentNode.querySelector("table.sites");
@@ -409,7 +411,7 @@ var UI = (() => {
       return root;
     }
 
-    populate(sites = this.sites, sorter = this.sorter) {
+    _populate(sites, sorter) {
       this.clear();
       if (sites instanceof Sites) {
         for (let [site, perms] of sites) {

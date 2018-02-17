@@ -1,7 +1,5 @@
 'use strict';
 (async () => {
-  Array.forEach(document.querySelectorAll(".flextabs"),
-    el => flextabs(el).init());
 
   await UI.init();
 
@@ -114,9 +112,11 @@
 
   // PRESET CUSTOMIZER
   {
-    let presetsUI = new UI.Sites({"DEFAULT": true, "TRUSTED": true, "UNTRUSTED": true});
     let parent = document.getElementById("presets");
-    presetsUI.render(parent, [""]);
+    let presetsUI = new UI.Sites(parent,
+      {"DEFAULT": true, "TRUSTED": true, "UNTRUSTED": true});
+
+    presetsUI.render([""]);
     window.setTimeout(() => {
       let def = parent.querySelector('input.preset[value="DEFAULT"]');
       def.checked = true;
@@ -125,7 +125,7 @@
   }
 
   // SITES UI
-  let sitesUI = new UI.Sites();
+  let sitesUI = new UI.Sites(document.getElementById("sites"));
   {
     sitesUI.onChange = () => {
       if (UI.local.debug) {
@@ -133,7 +133,7 @@
       }
     };
     let sites = policy.sites;
-    sitesUI.render(document.getElementById("sites"), sites);
+    sitesUI.render(sites);
 
     let newSiteForm = document.querySelector("#form-newsite");
     let newSiteInput = newSiteForm.newsite;
@@ -157,9 +157,9 @@
         policy.set(site, policy.TRUSTED);
         UI.updateSettings({policy});
         newSiteInput.value = "";
-        sitesUI.populate(policy.sites);
+        sitesUI.render(policy.sites);
         sitesUI.highlight(site);
-        SitesUI.onChange();
+        sitesUI.onChange();
       }
     }, true);
   }
@@ -200,7 +200,7 @@
       try {
         policy = new Policy(JSON.parse(ed.value));
         UI.updateSettings({policy});
-        sitesUI.populate(policy.sites);
+        sitesUI.render(policy.sites);
         ed.className = "";
         document.getElementById("policy-error").textContent = "";
       } catch (e) {
