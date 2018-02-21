@@ -1,0 +1,192 @@
+<!ENTITY noscriptOptions "Einstellungen…">
+<!ENTITY noscriptOptions.accesskey "E">
+<!ENTITY noscriptOptionsLong "NoScript - Einstellungen">
+<!ENTITY noscriptAbout "Über NoScript @VERSION@…">
+<!ENTITY noscriptPermissionsText "Sie können festlegen, welchen Websites Sie das Ausführen von Skripten erlauben möchten. Geben Sie bitte die exakte Adresse oder die Domain der Website ein (z.B. &quot;http://www.site.com&quot; oder &quot;site.com&quot;), für die Sie dies zulassen möchten, und klicken Sie dann auf &quot;Erlauben&quot;.">
+<!ENTITY noscriptWebAddress "Adresse der Website:">
+<!ENTITY noscriptAllow "Erlauben">
+<!ENTITY noscriptAllow.accesskey "E">
+<!ENTITY noscriptForbid "Verbieten">
+<!ENTITY noscriptForbid.accesskey "V">
+<!ENTITY noscriptTrust "Als vertrauenswürdig einstufen">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "Als nicht vertrauenswürdig einstufen">
+<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptRemoveSelected "Ausgewählte Websites entfernen">
+<!ENTITY noscriptGloballyEnabled "Skripte allgemein erlauben (nicht empfohlen)">
+<!ENTITY noscriptAutoReload "Betroffene Seiten beim Ändern der Berechtigungen automatisch neu laden">
+<!ENTITY noscriptGeneral "Allgemein">
+<!ENTITY noscriptAppearance "Aussehen">
+<!ENTITY noscriptShow "Folgende Menüeinträge anzeigen:">
+<!ENTITY noscriptCtxMenu "Auch im Seitenkontextmenü">
+<!ENTITY noscriptStatusIcon "Symbol in der Statusleiste">
+<!ENTITY noscriptFullAddr "Vollständige Adressen (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Vollständige Domains (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Second-Level-Domains (noscript.net)">
+<!ENTITY noscriptTempCmd "[…] temporär erlauben">
+<!ENTITY noscriptSound "Klang ausgeben, wenn Skripte blockiert werden">
+<!ENTITY noscriptImport "Importieren…">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exportieren…">
+<!ENTITY noscriptExport.accesskey "x">
+<!ENTITY noscriptNotify "Informationsleiste anzeigen, wenn Skripte blockiert werden">
+<!ENTITY noscriptNotify.bottom "Am unteren Rand anzeigen">
+<!ENTITY noscriptSound.choose "Durchsuchen…">
+<!ENTITY noscriptSound.choose.accesskey "D">
+<!ENTITY noscriptSound.play "Anhören">
+<!ENTITY noscriptSound.play.accesskey "A">
+<!ENTITY noscriptSound.reset "Standard wiederherstellen">
+<!ENTITY noscriptSound.reset.accesskey "S">
+<!ENTITY noscriptAdvanced "Erweitert">
+<!ENTITY noscriptAdditionalPermissions "Zusätzliche Berechtigungen für vertrauenswürdige Websites">
+<!ENTITY noscriptAllowClipboard "Kopieren und Einfügen über die Zwischenablage für Rich-Text-Editoren erlauben">
+<!ENTITY noscriptAdditionalRestrictions "Zusätzliche Einschränkungen für nicht vertrauenswürdige Websites">
+<!ENTITY noscriptPlugins "Plugins">
+<!ENTITY noscriptContentBlocker "Diese Einschränkungen auch auf vertrauenswürdige Websites anwenden">
+<!ENTITY noscriptForbidJava "Java™ verbieten">
+<!ENTITY noscriptForbidXSLT "XSLT verbieten">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieten">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieten">
+<!ENTITY noscriptForbidFrames "&lt;FRAME&gt; verbieten">
+<!ENTITY noscriptForbidFonts "Nachladen von Schriften mittels @font-face verbieten">
+<!ENTITY noscriptForbidWebGL "Nachladen von Schriften mittels WebGL verbieten">
+<!ENTITY noscriptForbidMedia "&lt;AUDIO&gt;/&lt;VIDEO&gt; verbieten">
+<!ENTITY noscriptForbidFlash "Adobe® Flash® verbieten">
+<!ENTITY noscriptForbidPlugins "Andere Plugins verbieten">
+<!ENTITY noscriptReloadWarn "Diese Einstellungen werden erst bei neuen oder (manuell) neu geladenen Seiten wirksam">
+<!ENTITY noscriptConfirmUnblock "Bestätigungsmeldung anzeigen, bevor ein Objekt temporär erlaubt wird">
+<!ENTITY noscriptStatusLabel "Informationstext in der Statusleiste">
+<!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieten">
+<!ENTITY noscriptShowPlaceholder "Platzhaltersymbol anzeigen">
+<!ENTITY noscriptTruncateTitle "Überlangen &quot;document.title&quot; kürzen (siehe Bug 319004)">
+<!ENTITY noscriptFixLinks "Versuchen, JavaScript-Links in normale Links umzuwandeln">
+<!ENTITY noscriptAllowBookmarks "Aus Lesezeichen geöffnete Websites erlauben">
+<!ENTITY noscriptAllowViaBookmarks "Aus Lesezeichen geöffnete Websites erlauben">
+<!ENTITY noscriptAllowPing "Klick-Verfolgung über das PING-Attribut für Links erlauben">
+<!ENTITY noscriptAllowLocalLinks "Links auf lokale Dateien erlauben">
+<!ENTITY noscriptForbidPing "Klick-Verfolgung über das PING-Attribut für Links verbieten">
+<!ENTITY noscriptForbidMetaRefresh "META-Weiterleitungen innerhalb von &lt;NOSCRIPT&gt;-Elementen verbieten">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "W">
+<!ENTITY noscriptNotifyMeta "Meldung bei blockierten META-Weiterleitungen anzeigen">
+<!ENTITY noscriptNotifyMeta.accesskey "W">
+<!ENTITY noscriptWhitelist "Positivliste">
+<!ENTITY noscriptPermissions "Berechtigungen">
+<!ENTITY noscriptRefresh "Aktualisierung">
+<!ENTITY noscriptNotifications "Benachrichtigungen">
+<!ENTITY noscriptToolbarToggle "Berechtigungen für aktuelle Top-Level-Site mit Links-Klick auf die Symbolleisten-Schaltfläche umschalten">
+<!ENTITY noscriptTrusted "Vertrauenswürdig">
+<!ENTITY noscriptUntrusted "Nicht vertrauenswürdig">
+<!ENTITY noscriptUnknown "Unbekannt">
+<!ENTITY noscriptAdd "Hinzufügen">
+<!ENTITY noscriptAdd.accesskey "H">
+<!ENTITY noscriptClose "Schließen">
+<!ENTITY noscriptSiteManager "Site-Manager">
+<!ENTITY noscriptSecurityManager "Sicherheits-Manager">
+<!ENTITY noscriptPolicies "Richtlinien">
+<!ENTITY noscriptDefaultPolicies "Standard-Richtlinien">
+<!ENTITY noscriptSitePolicies "Website-spezifische Richtlinien">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;-Elemente ausblenden">
+<!ENTITY noscriptNselForce "&lt;NOSCRIPT&gt;-Element, das einem blockierten &lt;SCRIPT&gt; folgt, anzeigen">
+<!ENTITY noscriptAutoAllowTopLevel "Jeweils aktuelle Top-Level-Site temporär erlauben">
+<!ENTITY noscriptDescription "Zusätzlicher Schutz für Ihren Browser: NoScript erlaubt das Ausführen von JavaScript, Java (und anderen Plugins) nur bei vertrauenswürdigen Domains Ihrer Wahl (z.B. Ihrer Homebanking-Website). Der auf einer Positivliste basierende präventive Ansatz zum Blockieren von Skripten verhindert das Ausnutzen von (bekannten und unbekannten!) Sicherheitslücken ohne Verlust an Funktionalität.">
+<!ENTITY noscriptOptBlockCssScanners "Auf Cross-Site Scripting basierende Scanner blockieren">
+<!ENTITY noscriptOptFilterXGet "Anfragen bei Verdacht auf Cross-Site Scripting bereinigen">
+<!ENTITY noscriptOptFilterXPost "Cross-Site-POST-Anfragen in datenlose GET-Anfragen umwandeln">
+<!ENTITY noscriptShowConsole "Konsole anzeigen…">
+<!ENTITY noscriptShowConsole.accesskey "z">
+<!ENTITY noscriptXss "Cross-Site Scripting (XSS)">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "FAQ (engl.) zu Cross-Site Scripting…">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Unsicheres Nachladen">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Ausnahmen vom XSS-Schutz">
+<!ENTITY noscriptXssExceptions.description "Zieladressen, die mit diesen regulären Ausdrücken übereinstimmen, werden vom XSS-Schutz ausgenommen">
+<!ENTITY noscriptMatchSample "Beispielmuster für Übereinstimmung:">
+<!ENTITY noscriptReset "Zurücksetzen">
+<!ENTITY noscriptReset.accesskey "Z">
+<!ENTITY noscriptResetDef "Auf Standardwerte zurücksetzen">
+<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptRevokeTemp "Temporäre Berechtigungen aufheben">
+<!ENTITY noscriptRevokeTemp.accesskey "T">
+<!ENTITY noscriptNoUntrustedPlaceholder "Keine Platzhalter anzeigen für Objekte von als nicht vertrauenswürdig eingestuften Sites">
+<!ENTITY noscriptCollapseBlockedObjects "Platz von geblockten Elementen freigeben">
+<!ENTITY noscriptExceptions "Ausnahmen…">
+<!ENTITY noscriptBlockedObjects "Blockierte Objekte">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Jedes Objekt von als nicht vertrauenswürdig eingestuften Sites blockieren">
+<!ENTITY noscriptTempAllowPage "Temporär alle Beschränkungen für diese Seite aufheben">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
+<!ENTITY noscriptAllowPage "Alle Beschränkungen für diese Seite aufheben">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Berechtigungen dieser Seite speichern">
+<!ENTITY noscriptTempToPerm.accesskey "b">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "FAQ (engl.) zu verschlüsselten Verbindungen (HTTPS)…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Verhalten">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Aktive Webinhalte verbieten, es sei denn, sie stammen aus einer verschlüsselten Verbindung (HTTPS):">
+<!ENTITY noscriptHttps.never "Niemals">
+<!ENTITY noscriptHttps.proxy "Bei Verwendung eines Proxy (empfohlen bei Anonymisierungsdiensten wie Tor)">
+<!ENTITY noscriptHttps.always "Immer">
+<!ENTITY noscriptHttpsForced "Verschlüsselte Verbindung (HTTPS) für folgende Adressen erzwingen:">
+<!ENTITY noscriptHttpsForcedExceptions "Für folgende Adressen niemals die Verwendung verschlüsselter Verbindung (HTTPS) erzwingen:">
+<!ENTITY noscriptSecureCookies "Automatisches sicheres Cookie-Management aktivieren">
+<!ENTITY noscriptSecureCookiesForced "Überprüfung der Cookies über verschlüsselte Verbindungen (HTTPS) für folgende Adressen erzwingen:">
+<!ENTITY noscriptSecureCookiesExceptions "Unsichere Cookies bei verschlüsselter Verbindung (HTTPS) bei folgenden Adressen ignorieren:">
+<!ENTITY noscriptClearClickTitle "ClearClick-Warnung">
+<!ENTITY noscriptClearClickHeader "Potentieller Clickjacking-Angriff / Versuch einer UI-Umadressierung!">
+<!ENTITY noscriptClearClickDescription "NoScript wehrte eine Maus- oder Tastatursteuerung durch ein teilweise verstecktes Element ab. Klicken Sie auf die nachfolgende Grafik, um zwischen der gesperrten und der ungesperrten Version zu wechseln.">
+<!ENTITY noscriptClearClickOpt "ClearClick-Schutz anwenden auf…">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report-ID:">
+<!ENTITY noscriptTrustedPagesAdj "vertrauenswürdigen Seiten">
+<!ENTITY noscriptUntrustedPagesAdj "nicht vertrauenswürdigen /">
+<!ENTITY noscriptKeepLocked "Element gesperrt halten (empfohlen)">
+<!ENTITY noscriptEmbeddings "Eingebettete Objekte">
+<!ENTITY noscriptPrev "Zurück">
+<!ENTITY noscriptNext "Weiter">
+<!ENTITY noscriptFrameOptErr.title "Der Inhalt kann nicht in einem Frame angezeigt werden">
+<!ENTITY noscriptFrameOptErr.desc "Um Ihre Sicherheit zu gewährleisten, hat der Herausgeber dieses Inhaltes festgelegt, dass er nicht in einem Frame angezeigt werden darf.">
+<!ENTITY noscriptFrameOptErr.link "Hier klicken, um den Inhalt in einem neuen Fenster zu öffnen">
+<!ENTITY noscriptBookmarkSync "Datensicherung der NoScript-Konfiguration in einem Lesezeichen speichern für eine einfache Synchronisation">
+<!ENTITY noscriptShowReleaseNotes "Versionshinweise nach einem Update anzeigen">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Regelsätze:">
+<!ENTITY ABE.enabled.label "ABE (Application Boundaries Enforcer) aktivieren">
+<!ENTITY ABE.siteEnabled.label "Websites das Verwenden ihrer eigenen Regelsätze erlauben">
+<!ENTITY ABE.edit.label "Bearbeiten…">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Aktivieren">
+<!ENTITY ABE.enable.accesskey "a">
+<!ENTITY ABE.disable.label "Deaktivieren">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Aktualisieren">
+<!ENTITY ABE.refresh.accesskey "k">
+<!ENTITY noscriptUninstall "Deinstallieren">
+<!ENTITY noscriptRecentBlocked "Kürzlich blockierte Websites">
+<!ENTITY noscriptExternalFilters "Externe Filter">
+<!ENTITY noscriptEF.enable "Externe Filter aktivieren">
+<!ENTITY noscriptEF.add "Neuer Filter…">
+<!ENTITY noscriptEF.executable "Ausführbare Datei:">
+<!ENTITY noscriptEF.browse "Durchsuchen…">
+<!ENTITY noscriptEF.contentType "Zu filternder Content-Type (MIME) (genaue Übereinstimmung oder Regulärer Ausdruck):">
+<!ENTITY noscriptEF.exceptions "Objekte von folgenden Seiten nicht filtern:">
+<!ENTITY noscriptEF.remove "Entfernen">
+<!ENTITY noscriptPreset "Sicherheitsstufe">
+<!ENTITY noscriptPreset.off "Deaktiviert (Ist das Ihr Ernst?!)">
+<!ENTITY noscriptPreset.low "Gelassen (Negativliste + Websicherheit)">
+<!ENTITY noscriptPreset.medium "Klassisch (Positivliste + Websicherheit)">
+<!ENTITY noscriptPreset.high "Festung (Vollständige Sperrung)">
+<!ENTITY noscript.hoverUI "Berechtigungen-Menü öffnen beim Überfahren des NoScript-Symbols mit dem Mauszeiger">
+<!ENTITY noscriptDonate "Spenden">
+<!ENTITY noscriptDonate.accesskey "S">
+<!ENTITY noscriptAutoReload.currentTab "Nur den aktuellen Tab neu laden">
+<!ENTITY noscriptCascadePermissions "Rechte des Hauptdokuments auf alle Unterdokumente und Skripte Dritter anwenden">
+<!ENTITY noscriptRestrictSubdocScripting "Skripte in Unterdokumenten der Positivliste blockieren, die zu Seiten gehören, die nicht in der Positivliste sind">
+<!ENTITY noscriptGlobalHttpsWhitelist "HTTPS Skripte generell bei HTTPS Dokumenten erlauben">
+<!ENTITY noscriptPermanentInPrivate "Permanentes &quot;Zulassen&quot; von Befehle in privaten Fenstern">
+<!ENTITY noscriptCustom "Custom">

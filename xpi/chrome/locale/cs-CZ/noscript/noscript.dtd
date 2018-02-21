@@ -1,0 +1,192 @@
+<!ENTITY noscriptOptions "Nastavení...">
+<!ENTITY noscriptOptions.accesskey "N">
+<!ENTITY noscriptOptionsLong "Nastavení NoScript">
+<!ENTITY noscriptAbout "O rozšíření NoScript @VERSION@">
+<!ENTITY noscriptPermissionsText "Můžete si zvolit, které webové stránky mají povoleno spouštět skripty. Zadejte adresu (např. http://www.site.com nebo site.com) na které se nachází stránka, pro kterou chcete skripty povolit a klepněte na Povolit.">
+<!ENTITY noscriptWebAddress "Adresa webové stránky:">
+<!ENTITY noscriptAllow "Povolit">
+<!ENTITY noscriptAllow.accesskey "P">
+<!ENTITY noscriptForbid "Zakázat">
+<!ENTITY noscriptForbid.accesskey "Z">
+<!ENTITY noscriptTrust "Označit jako důvěryhodný">
+<!ENTITY noscriptTrust.accesskey "d">
+<!ENTITY noscriptUntrust "Označit jako nedůvěryhodný">
+<!ENTITY noscriptUntrust.accesskey "n">
+<!ENTITY noscriptRemoveSelected "Odstranit vybrané stránky">
+<!ENTITY noscriptGloballyEnabled "JavaScript celkově povolit (nebezpečné)">
+<!ENTITY noscriptAutoReload "Automaticky aktualizovat stránky při změně povolení">
+<!ENTITY noscriptGeneral "Obecné">
+<!ENTITY noscriptAppearance "Zobrazení">
+<!ENTITY noscriptShow "Zobrazit...">
+<!ENTITY noscriptCtxMenu "Místní nabídka">
+<!ENTITY noscriptStatusIcon "Ikona ve stavovém řádku">
+<!ENTITY noscriptFullAddr "Úplné adresy (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Úplné domény (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Domény druhého řádu (noscript.net)">
+<!ENTITY noscriptTempCmd "Dočasně povolit [...]">
+<!ENTITY noscriptSound "Přehrát zvuk pokud jsou skripty zablokovány">
+<!ENTITY noscriptImport "Otevřít">
+<!ENTITY noscriptImport.accesskey "O">
+<!ENTITY noscriptExport "Uložit">
+<!ENTITY noscriptExport.accesskey "U">
+<!ENTITY noscriptNotify "Zobrazovat zprávu o blokovaných skriptech">
+<!ENTITY noscriptNotify.bottom "Umístit zprávu do spodní části">
+<!ENTITY noscriptSound.choose "Zvolit">
+<!ENTITY noscriptSound.choose.accesskey "Z">
+<!ENTITY noscriptSound.play "Přehrát">
+<!ENTITY noscriptSound.play.accesskey "h">
+<!ENTITY noscriptSound.reset "Nastavit výchozí">
+<!ENTITY noscriptSound.reset.accesskey "v">
+<!ENTITY noscriptAdvanced "Pokročilé">
+<!ENTITY noscriptAdditionalPermissions "Dodatečná povolení pro důvěryhodné stránky">
+<!ENTITY noscriptAllowClipboard "Povolit kopírování a vkládání textu z vnější schránky">
+<!ENTITY noscriptAdditionalRestrictions "Dodatečná omezení pro nedůvěryhodné stránky">
+<!ENTITY noscriptPlugins "Zásuvné moduly">
+<!ENTITY noscriptContentBlocker "Použít tato omezení i pro důvěryhodné stránky">
+<!ENTITY noscriptForbidJava "Zakázat Java™">
+<!ENTITY noscriptForbidXSLT "Zakázat XSLT">
+<!ENTITY noscriptForbidSilverlight "Zakázat Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Zakázat &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Zakázat &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Zakázat @font-face">
+<!ENTITY noscriptForbidWebGL "Zakázat WebGL">
+<!ENTITY noscriptForbidMedia "Zakázat &lt;AUDIO&gt; / &lt;VIDEO&gt;">
+<!ENTITY noscriptForbidFlash "Zakázat Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Zakázat ostatní zásuvné moduly">
+<!ENTITY noscriptReloadWarn "Tato nastavení se projeví u nově otevřených nebo (manuálně) aktualizovaných stránkách">
+<!ENTITY noscriptConfirmUnblock "Požadovat potvrzení při dočasném povolení objektu">
+<!ENTITY noscriptStatusLabel "Zobrazovat popisek ve stavovém řádku">
+<!ENTITY noscriptForbidBookmarklets "Zakázat bookmarklety">
+<!ENTITY noscriptShowPlaceholder "Zobrazovat zástupnou ikonu">
+<!ENTITY noscriptTruncateTitle "Zkrátit titulek stránky">
+<!ENTITY noscriptFixLinks "Pokusit se opravit odkazy tvořené JavaScriptem">
+<!ENTITY noscriptAllowBookmarks "Povolit stránky otevřené ze záložek">
+<!ENTITY noscriptAllowViaBookmarks "Povolit stránky otevřené ze záložek">
+<!ENTITY noscriptAllowPing "Povolit &lt;A PING...&gt;">
+<!ENTITY noscriptAllowLocalLinks "Povolit místní odkazy">
+<!ENTITY noscriptForbidPing "Zakázat &lt;A PING...&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Zakázat META přesměrování uvnitř elementů &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "M">
+<!ENTITY noscriptWhitelist "Výjimky">
+<!ENTITY noscriptPermissions "Povolení">
+<!ENTITY noscriptRefresh "Obnovení">
+<!ENTITY noscriptNotifications "Oznámení">
+<!ENTITY noscriptToolbarToggle "Klepnutí levým tlačítkem myši na ikonku Noscriptu ve stavovém řádku přepíná povolení pro doménu nejvyšší úrovně aktuální stránky">
+<!ENTITY noscriptTrusted "Důvěryhodné">
+<!ENTITY noscriptUntrusted "Nedůvěryhodné">
+<!ENTITY noscriptUnknown "Neznámé">
+<!ENTITY noscriptAdd "Přidat">
+<!ENTITY noscriptAdd.accesskey "P">
+<!ENTITY noscriptClose "Zavřít">
+<!ENTITY noscriptSiteManager "Správce stránek">
+<!ENTITY noscriptSecurityManager "Správce zabezpečení">
+<!ENTITY noscriptPolicies "Politika">
+<!ENTITY noscriptDefaultPolicies "Výchozí politika">
+<!ENTITY noscriptSitePolicies "Politika pro specifické stránky">
+<!ENTITY noscriptNselNever "Zakázat prvky &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "Zobrazit prvek &lt;NOSCRIPT&gt; následující po zablokovaném prvku &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Dočasně povolit stránky domény nejvyšší úrovně">
+<!ENTITY noscriptDescription "Mimořádná ochrana pro váš Firefox: NoScript povoluje JavaScript, Javu (a další zásuvné moduly) pouze pro důvěryhodné servery dle vašeho výběru (např. vaše stránka pro home-banking). Tento seznam důvěryhodných serverů založený na preventivním blokování přístupu předchází zneužití bezpečnostních děr (známých a dokonce i neznámých!) bez jakékoli ztráty na funkčnosti... Odborníci budou souhlasit: Firefox je skutečně bezpečnější s rozšířením NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Blokovat skenery založené na CSS">
+<!ENTITY noscriptOptFilterXGet "Zajistit podezřelé původce požadavku">
+<!ENTITY noscriptOptFilterXPost "Převést požadavky POST napříč stránkou na požadavky GET neobsahující data.">
+<!ENTITY noscriptShowConsole "Zobrazit konzolu...">
+<!ENTITY noscriptShowConsole.accesskey "k">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS - často kladené otázky">
+<!ENTITY noscriptXssFaq.accesskey "o">
+<!ENTITY noscriptUnsafeReload "Riskantní aktualizace">
+<!ENTITY noscriptUnsafeReload.accesskey "a">
+<!ENTITY noscriptXssExceptions "Ochrana proti XSS - výjimky">
+<!ENTITY noscriptXssExceptions.description "Cíle vyhovující těmto regulárním výrazům NEBUDOU CHRÁNĚNY proti XSS">
+<!ENTITY noscriptMatchSample "Ukázka vyhovující vzoru:">
+<!ENTITY noscriptReset "Vynulovat">
+<!ENTITY noscriptReset.accesskey "V">
+<!ENTITY noscriptResetDef "Výchozí nastavení">
+<!ENTITY noscriptResetDef.accesskey "z">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptRevokeTemp "Zrušit dočasná povolení">
+<!ENTITY noscriptRevokeTemp.accesskey "č">
+<!ENTITY noscriptNoUntrustedPlaceholder "Nezobrazovat zástupnou ikonu pro objekty pocházející z nedůvěryhodných stránek">
+<!ENTITY noscriptCollapseBlockedObjects "Skrýt zablokované objekty">
+<!ENTITY noscriptExceptions "Výjimky">
+<!ENTITY noscriptBlockedObjects "Blokované objekty">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Blokovat každý objekt pocházející z nedůvěryhodné stránky">
+<!ENTITY noscriptTempAllowPage "Dočasně povolit celou stránku">
+<!ENTITY noscriptTempAllowPage.accesskey "D">
+<!ENTITY noscriptAllowPage "Povolit pro celou stránku">
+<!ENTITY noscriptAllowPage.accesskey "s">
+<!ENTITY noscriptTempToPerm "Udělit trvale povolení pro tuto stránku">
+<!ENTITY noscriptTempToPerm.accesskey "t">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Behavior">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Forbid active web content unless it comes from a secure (HTTPS) connection:">
+<!ENTITY noscriptHttps.never "Never">
+<!ENTITY noscriptHttps.proxy "When using a proxy (recommended with Tor)">
+<!ENTITY noscriptHttps.always "Always">
+<!ENTITY noscriptHttpsForced "Force the following sites to use secure (HTTPS) connections:">
+<!ENTITY noscriptHttpsForcedExceptions "Never force secure (HTTPS) connections for the following sites:">
+<!ENTITY noscriptSecureCookies "Enable Automatic Secure Cookies Management">
+<!ENTITY noscriptSecureCookiesForced "Force encryption for all the cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignore unsafe cookies set over HTTPS by the following sites:">
+<!ENTITY noscriptClearClickTitle "ClearClick Warning">
+<!ENTITY noscriptClearClickHeader "Potential Clickjacking / UI Redressing Attempt!">
+<!ENTITY noscriptClearClickDescription "NoScript intercepted a mouse or keyboard interaction with a partially hidden element. Click on the image above to cycle beetween the obstructed and the clear version.">
+<!ENTITY noscriptClearClickOpt "ClearClick protection on pages…">
+<!ENTITY noscriptClearClickReport "Report">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Report ID:">
+<!ENTITY noscriptTrustedPagesAdj "trusted">
+<!ENTITY noscriptUntrustedPagesAdj "untrusted">
+<!ENTITY noscriptKeepLocked "Keep this element locked (recommended)">
+<!ENTITY noscriptEmbeddings "Embedded Objects">
+<!ENTITY noscriptPrev "Previuous">
+<!ENTITY noscriptNext "Next">
+<!ENTITY noscriptFrameOptErr.title "This content cannot be displayed in a frame">
+<!ENTITY noscriptFrameOptErr.desc "To protect your security, the publisher of this content does not allow it to be displayed in a frame.">
+<!ENTITY noscriptFrameOptErr.link "Click here to open this content in a new window">
+<!ENTITY noscriptBookmarkSync "Backup NoScript configuration in a bookmark for easy synchronization">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
+<!ENTITY noscriptNotifyMeta "Show message about blocked META redirections">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
+<!ENTITY noscriptCustom "Custom">
+<!ENTITY noscriptShowReleaseNotes "Display the release notes on updates">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Rulesets:">
+<!ENTITY ABE.enabled.label "Enable ABE (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Allow sites to push their own rulesets">
+<!ENTITY ABE.edit.label "Edit…">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "Enable">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "Disable">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "Refresh">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "Uninstall">
+<!ENTITY noscriptRecentBlocked "Recently blocked sites">
+<!ENTITY noscriptExternalFilters "External Filters">
+<!ENTITY noscriptEF.enable "Enable external filters">
+<!ENTITY noscriptEF.add "New Filter…">
+<!ENTITY noscriptEF.executable "Executable file:">
+<!ENTITY noscriptEF.browse "Browse…">
+<!ENTITY noscriptEF.contentType "Content type (MIME) to be filtered (exact match or regular expression):">
+<!ENTITY noscriptEF.exceptions "Do not filter objects coming from these sites:">
+<!ENTITY noscriptEF.remove "Remove">
+<!ENTITY noscriptPreset "Security Level">
+<!ENTITY noscriptPreset.off "Off (are you serious?!)">
+<!ENTITY noscriptPreset.low "Easy going (Blacklist + Web Security)">
+<!ENTITY noscriptPreset.medium "Classic (Whitelist + Web Security)">
+<!ENTITY noscriptPreset.high "Fortress (Full lockdown)">
+<!ENTITY noscript.hoverUI "Open permissions menu when mouse hovers over NoScript's icon">
+<!ENTITY noscriptDonate "Donate">
+<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
+<!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">
+<!ENTITY noscriptPermanentInPrivate "Permanent &quot;Allow&quot; commands in private windows">

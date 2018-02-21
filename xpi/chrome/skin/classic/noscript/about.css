@@ -1,0 +1,88 @@
+#genericAbout {
+  padding: 0px 0px 10px 0px;
+  background: #FFF none; 
+  background-image: none;
+}
+
+dialog, .dialog-content-box {
+  background: white none;
+  border: none;
+}
+
+#clientBox {
+  color: #000;
+  padding: 0px; margin: 0px;
+  background: white none;
+  border: none;
+}
+
+#clientBoxInternal {
+  padding: 0px; margin: 10px;
+  background: white none;
+}
+
+#headBox {
+  border: solid #448;
+  border-width: 0px 0px 1px 0px;
+  padding: 0px;
+  margin: 2px;
+  background-image: none;
+}
+
+#extensionName {
+  font-size: large;
+  font-weight: bold;
+  color: #448;
+}
+
+#extensionVersion {
+  color: #448;
+}
+
+.sponsorline {
+  color: #444;
+}
+
+#extensionDescription {
+  color: #444;
+  text-align: justify;
+  max-width: 550px;
+  overflow: auto;
+}
+
+#extensionHomepage {
+  
+}
+
+.text-link, .text-link:focus  {
+  color: #00f;
+  text-decoration: none;
+  cursor: pointer;
+  
+}
+.text-link:hover {
+  color: #00f;
+  text-decoration: underline ;
+}
+
+#contributorsBox {
+  overflow: auto;
+  border: 1px solid black;
+  padding: 4px;
+  margin: 0px 6px;
+  height: 150px;
+}
+
+.contributor {
+  margin: 0px;
+  color: #444;
+} 
+
+#extensionCreator, #extensionContributors, #extensionSponsor {
+  font-weight: bold;
+}
+
+text-link {
+  text-decoration: none;
+}
+

@@ -1,0 +1,46 @@
+.ia-indent {
+  padding-left: 24px;
+}
+
+.text-link {
+  text-decoration: none;
+}
+.text-link:hover {
+  text-decoration: underline;
+}
+
+tabbox#nsopt-tabsAdvanced > tab image.tab-icon {
+  width: 16px !important;
+  height: 16px !important;
+  max-height: 16px !important;
+  max-width: 16px !important;
+}
+
+tabbox#nsopt-tabsAdvanced > tab {
+  min-height: 16px;
+  marker-offset: 24px;
+}
+
+#imgs-stack {
+  -moz-user-focus: normal;
+}
+
+#imgs-stack:focus {
+  outline: 1px dotted #444;
+}
+.flexible-cbx {
+  white-space: normal;
+}
+
+#urlListDisplay treecols {
+  height: 0px;
+  overflow: hidden;
+}
+
+#urlListDisplay treechildren::-moz-tree-cell-text(temp) {
+  font-style: italic;
+}
+
+#urlListDisplay treechildren::-moz-tree-cell-text(mandatory) {
+  color: #999;
+}

@@ -1,0 +1,322 @@
+#palette-box #noscript-tbb {
+  list-style-image: url("icon24.png");
+}
+#noscript-tbb[type="menu"]:not([cui-areatype="menu-panel"]) {
+  -moz-box-orient: horizontal !important;
+}
+toolbar[mode="full"] #noscript-tbb[type="menu"] {
+  -moz-binding: url("chrome://global/content/bindings/toolbarbutton.xml#menu-vertical");
+}
+
+
+#noscript-statusIcon,
+#noscript-statusRedirect,
+#noscript-statusXss {
+  cursor: pointer;
+  
+}
+
+.noscript-cmd {
+  font-weight: normal;
+}
+
+.noscript-temp, .noscript-cmd.noscript-temp {
+  font-style: italic;
+  font-weight: normal;
+}
+
+.noscript-toplevel, .noscript-toplevel.noscript-temp.noscript-forbid,
+#noscript-menu-recent-blocked .noscript-embed.noscript-toplevel {
+  font-weight: bold;
+}
+
+.noscript-embed .noscript-temp, .noscript-embed.noscript-temp {
+  font-style: normal;
+}
+
+.noscript-unsafe-reload {
+  list-style-image: url(unsafe-reload16.png);
+}
+
+
+
+.noscript-console {
+  list-style-image: url(console16.png);
+}
+.noscript-faq {
+  list-style-image: url(faq16.png);
+}
+
+.noscript-redirect,
+#noscript-statusRedirect {
+  list-style-image: url(redirect16.png);
+}
+.noscript-xss,
+#noscript-statusXss {
+  list-style-image: url(xss16.png);
+}
+
+.noscript-yes,
+#noscript-tbb.noscript-yes,
+#noscript-statusIcon.noscript-yes,
+.noscript-allow,
+.noscript-allow-from {
+  list-style-image: url(yes16.png);
+}
+
+ 
+
+#noscript-tbb-temp-page,
+.noscript-temp.noscript-allow,
+.noscript-temp.noscript-allow-from {
+  list-style-image: url(temp16.png);
+}
+
+
+
+.noscript-no,
+#noscript-tbb.noscript-no,
+#noscript-statusIcon.noscript-no,
+.noscript-forbid {
+  list-style-image: url(no16.png);
+}
+.noscript-prt,
+#noscript-tbb.noscript-prt,
+#noscript-statusIcon.noscript-prt
+{
+  list-style-image: url(prt16.png);
+}
+.noscript-subprt,
+#noscript-tbb.noscript-subprt,
+#noscript-statusIcon.noscript-subprt
+{
+  list-style-image: url(subprt16.png);
+}
+
+.noscript-emb,
+#noscript-tbb.noscript-emb,
+#noscript-statusIcon.noscript-emb
+{
+  list-style-image: url(emb16.png);
+}
+
+.noscript-no-emb,
+#noscript-tbb.noscript-no-emb,
+#noscript-statusIcon.noscript-no-emb
+{
+  list-style-image: url(no-emb16.png);
+}
+
+.noscript-glb-emb,
+#noscript-tbb.noscript-glb-emb,
+#noscript-statusIcon.noscript-glb-emb,
+.noscript-inactive-glb-emb,
+#noscript-tbb.noscript-inactive-glb-emb,
+#noscript-statusIcon.noscript-inactive-glb-emb
+{
+  list-style-image: url(glb-emb16.png);
+}
+
+
+.noscript-inactive-subprt,
+#noscript-tbb.noscript-inactive-subprt,
+#noscript-statusIcon.noscript-inactive-subprt,
+.noscript-inactive-prt,
+#noscript-tbb.noscript-inactive-prt,
+#noscript-statusIcon.noscript-inactive-prt
+{
+  list-style-image: url(inactive-prt16.png);
+}
+
+.noscript-inactive-emb,
+#noscript-tbb.noscript-inactive-emb,
+#noscript-statusIcon.noscript-inactive-emb
+{
+  list-style-image: url(inactive-emb16.png);
+}
+
+.noscript-yu,
+#noscript-tbb.noscript-yu,
+#noscript-statusIcon.noscript-yu {
+  list-style-image: url(yu16.png);
+}
+
+
+.noscript-glb,
+#noscript-tbb.noscript-glb,
+#noscript-statusIcon.noscript-glb,
+.noscript-inactive-glb,
+#noscript-tbb.noscript-inactive-glb,
+#noscript-statusIcon.noscript-inactive-glb {
+  list-style-image: url(glb16.png);
+}
+
+.noscript-no.noscript-glb, .noscript-forbid.noscript-glb {
+  list-style-image: url(glb-no16.png);
+}
+
+.noscript-inactive-yes,
+#noscript-tbb.noscript-inactive-yes,
+#noscript-statusIcon.noscript-inactive-yes {
+  list-style-image: url(inactive-yes16.png);
+}
+.noscript-inactive-no,
+#noscript-tbb.noscript-inactive-no,
+#noscript-statusIcon.noscript-inactive-no,
+#noscript-menu-recent-blocked {
+  list-style-image: url(inactive-no16.png);
+}
+
+
+.noscript-inactive-no-emb,
+#noscript-tbb.noscript-inactive-no-emb,
+#noscript-statusIcon.noscript-inactive-no-emb,
+#noscript-menu-recent-blocked {
+  list-style-image: url(inactive-no-emb16.png);
+}
+
+.noscript-distrust,
+.noscript-untrusted,
+#noscript-tbb.noscript-untrusted,
+#noscript-tbb.noscript-inactive-untrusted,
+#noscript-statusIcon.noscript-untrusted
+#noscript-statusIcon.noscript-inactive-untrusted
+{
+  list-style-image: url(untrusted16.png);
+}
+
+
+
+
+.noscript-inactive-yu,
+#noscript-tbb.noscript-inactive-yu,
+#noscript-statusIcon.noscript-inactive-yu {
+  list-style-image: url(inactive-yu16.png);
+}
+
+.noscript-yu-emb, .noscript-inactive-yu-emb,
+#noscript-tbb.noscript-yu-emb, #noscript-tbb.noscript-inactive-yu-emb,
+#noscript-statusIcon.noscript-yu-emb, #noscript-statusIcon.noscript-inactive-yu-emb {
+  list-style-image: url(yu-emb16.png);
+}
+
+.noscript-yu-glb, .noscript-inactive-yu-glb,
+#noscript-tbb.noscript-yu-glb, #noscript-tbb.noscript-inactive-yu-glb,
+#noscript-statusIcon.noscript-yu-glb, #noscript-statusIcon.noscript-inactive-yu-glb {
+  list-style-image: url(yu-glb16.png);
+}
+
+.noscript-untrusted-glb, .noscript-inactive-untrusted-glb,
+#noscript-tbb.noscript-untrusted-glb, #noscript-tbb.noscript-inactive-untrusted-glb,
+#noscript-statusIcon.noscript-untrusted-glb, #noscript-statusIcon.noscript-inactive-untrusted-glb {
+  list-style-image: url(untrusted-glb16.png);
+}
+
+.noscript-https {
+  list-style-image: url(https16.png);
+}
+.noscript-abe {
+  list-style-image: url(abe16.png);
+}
+
+.noscript-clearclick {
+  list-style-image: url(clearclick16.png);
+}
+
+
+.noscript-error {
+  color: red !important;
+  background: #ffa !important;
+}
+.noscript-error[selected="true"] {
+  background: red !important;
+  color: #ffa !important;
+}
+
+#noscript-tbb-revoke-temp,
+.noscript-revoke-temp {
+  list-style-image: url(revtemp16.png);
+}
+
+.noscript-embed {
+  list-style-image: url(embed-no16.png);
+}
+
+.noscript-allow-from.noscript-embed {
+  list-style-image: url(embed16.png)
+}
+
+.noscript-ef {
+  list-style-image: url(ef16.png);
+}
+
+.noscript-ef.inactive {
+  list-style-image: url(ef-no16.png);
+}
+
+
+#noscript-sticky-ui {
+  cursor: pointer;
+  -moz-binding: url("chrome://noscript/content/noscript.xbl#scrollable-popup");
+}
+
+.noscript-menu, .noscript-menu menupopup {
+  background-color: menu !important;
+  opacity: 1.0;
+  color: menutext;
+  border: 1px solid #444;
+  padding: 2px;
+}
+
+menupopup[sticky="true"] {
+  border: 1px solid #444 !important;
+}
+
+menupopup[sticky="true"][disabled="true"] {
+  border: 1px solid #ccc;
+  cursor: wait;
+  background-color: #ccc;
+  color: #888;
+}
+
+#noscript-tbb-revoke-temp[disabled="true"], #noscript-tbb-temp-page[disabled="true"] {
+  opacity: .5;
+}
+#noscript-tbb-revoke-temp  > .toolbarbutton-icon, #noscript-tbb-temp-page  > .toolbarbutton-icon, #noscript-tbb .toolbarbutton-icon[label=NoScript] {
+  width: auto !important;
+  height: auto !important;
+}
+
+toolbar #noscript-tbb-revoke-temp, toolbar #noscript-tbb-temp-page, toolbar #noscript-tbb {
+  max-width: 48px;
+}
+#nav-bar-customization-target > #noscript-tbb {
+    max-width: none;
+}
+
+
+#addon-bar > #noscript-tbb .toolbarbutton-text,
+#addon-bar > #noscript-tbb-page  .toolbarbutton-text,
+#addon-bar > #noscript-tbb-revoke-temp .toolbarbutton-text
+{ display: none !important }
+#addon-bar > #noscript-tbb .toolbarbutton-icon,
+#addon-bar > #noscript-tbb-page  .toolbarbutton-icon,
+#addon-bar > #noscript-tbb-revoke-temp .toolbarbutton-icon,
+#addon-bar[mode="full"] > #noscript-tbb .toolbarbutton-menubutton-button,
+#addon-bar[mode="full"] > #noscript-tbb-page .toolbarbutton-menubutton-button,
+#addon-bar[mode="full"] > #noscript-tbb-revoke-temp .toolbarbutton-menubutton-button
+{ min-width: 16px; display: -moz-box }
+#addon-bar > #noscript-tbb, #addon-bar > #noscript-tbb-page, #addon-bar > #noscript-tbb-revoke-temp
+{ min-width: 16px !important }
+
+notification {
+  word-wrap: break-word !important;
+}
+
+.menu-iconic[id*="noscript-"] > .menu-iconic-left,
+.menu-iconic[class*="noscript-"] > .menu-iconic-left,
+.menuitem-iconic[class*="noscript-"] > .menu-iconic-left {
+  visibility: visible !important;
+}
+
+#navigator-toolbox > #status-bar { display: none }

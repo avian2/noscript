@@ -1,0 +1,67 @@
+#noscript-tbb.noscript-fennec, #noscript-statusXss.noscript-fennec {
+  -moz-appearance: none;
+	background: transparent !important;
+	-moz-box-orient: vertical;
+	width: 44px;
+  height: 44px;
+  -moz-user-focus: ignore;
+}
+
+.noscript-options {
+  display: none !important;
+}
+
+#noscriptPopupSet menu, #noscriptPopupSet menuitem {
+  font-size: 24px;
+  padding: 8px;
+  margin: 0;
+  border: none;
+  background: -moz-linear-gradient(#fff, #fff, #fff, #ddd);
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ccc;
+	min-height: 30px;
+}
+
+#noscriptPopupSet menu:hover, #noscriptPopupSet menuitem:hover,
+#noscriptPopupSet menu:focus, #noscriptPopupSet menuitem:focus,
+#noscriptPopupSet menu:active, #noscriptPopupSet menuitem:active,
+#noscriptPopupSet menu:active[active="true"], #noscriptPopupSet menuitem[active="true"]{
+  background: -moz-linear-gradient(#ddd, #444, #666, #ddd);
+  color: #fff;
+}
+
+#noscriptPopupSet menuseparator {
+  padding: 8px 0;
+  margin: 0;
+  background: #eee;
+  border: none;
+}
+
+menupopup[sticky="true"] {
+  margin: 0;
+}
+
+.scrollbutton-up, .scrollbutton-down {
+  height: 24px !important;
+  border: 1px solid #888;
+  -moz-image-region: auto;
+  background: -moz-linear-gradient(#ddd, #fff, #fff, #eee);
+}
+
+.scrollbutton-up {
+  list-style-image: url("chrome://browser/skin/images/arrowup-16.png");
+}
+
+.scrollbutton-down {
+  list-style-image: url("chrome://browser/skin/images/arrowdown-16.png");
+}
+
+.scrollbutton-up[disabled="true"] {
+  list-style-image: url("chrome://browser/skin/images/arrowupdark-16.png");
+  -moz-image-region: auto; /* cut off inheritance */
+}
+
+.scrollbutton-down[disabled="true"] {
+  list-style-image: url("chrome://browser/skin/images/arrowdowndark-16.png");
+  -moz-image-region: auto; /* cut off inheritance */
+}

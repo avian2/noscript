@@ -1,0 +1,192 @@
+<!ENTITY noscriptOptions "خيارات…">
+<!ENTITY noscriptOptions.accesskey "خ">
+<!ENTITY noscriptOptionsLong "خيارات نوسكربت">
+<!ENTITY noscriptAbout "حول نوسكربت…">
+<!ENTITY noscriptPermissionsText "يمكنك تعيين المواقع المسموح لها تنفيذ سكربتات. أدخل مسار أو نطاق (مثل &quot;http://www.example.com&quot; أو &quot;example.com&quot;) الموقع الذي تود السماح له ومن ثم اختر &quot;اسمح&quot;.">
+<!ENTITY noscriptWebAddress "مسار موقع وب:">
+<!ENTITY noscriptAllow "السماح">
+<!ENTITY noscriptAllow.accesskey "س">
+<!ENTITY noscriptForbid "المنع">
+<!ENTITY noscriptForbid.accesskey "م">
+<!ENTITY noscriptTrust "التأشير كغير موثوق به">
+<!ENTITY noscriptTrust.accesskey "ث">
+<!ENTITY noscriptUntrust "">
+<!ENTITY noscriptUntrust.accesskey "غ">
+<!ENTITY noscriptRemoveSelected "أزالة المواقع المختارة">
+<!ENTITY noscriptGloballyEnabled "السكربتات المسموح لها كليا (خطر)">
+<!ENTITY noscriptAutoReload "أعادة  تحميل الصفحات المتأثرة عند تغيير الصلاحيات آلياً">
+<!ENTITY noscriptGeneral "عامة">
+<!ENTITY noscriptAppearance "المظهر">
+<!ENTITY noscriptShow "أظهر">
+<!ENTITY noscriptCtxMenu "قائمة السياق">
+<!ENTITY noscriptStatusIcon "أيقونة شريط الحالة">
+<!ENTITY noscriptFullAddr "مسارات كاملة (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "نطاقات كاملة (www.noscript.net)">
+<!ENTITY noscriptBaseDom "نطاقات المستوى الثاني (noscript.net)">
+<!ENTITY noscriptTempCmd "السماح المؤقت […]">
+<!ENTITY noscriptSound "تنبيه صوتي عند اعتراض السكربتات">
+<!ENTITY noscriptImport "الاستيراد">
+<!ENTITY noscriptImport.accesskey "س">
+<!ENTITY noscriptExport "التصدير">
+<!ENTITY noscriptExport.accesskey "ص">
+<!ENTITY noscriptNotify "اعرض رسالة عن السكربتات المعترضة">
+<!ENTITY noscriptNotify.bottom "أظهار الرسالة في الاسفل">
+<!ENTITY noscriptSound.choose "اختيار">
+<!ENTITY noscriptSound.choose.accesskey "ت">
+<!ENTITY noscriptSound.play "تشغيل">
+<!ENTITY noscriptSound.play.accesskey "ش">
+<!ENTITY noscriptSound.reset "تصفير">
+<!ENTITY noscriptSound.reset.accesskey "ص">
+<!ENTITY noscriptAdvanced "متقدمة">
+<!ENTITY noscriptAdditionalPermissions "صلاحيات إضافية للمواقع الموثوقة">
+<!ENTITY noscriptAllowClipboard "السماح بنسخ ولصق النص الغني من حافظة القصاصات الخارجية">
+<!ENTITY noscriptAdditionalRestrictions "قيود إضافية على المواقع غير الموثوق بها">
+<!ENTITY noscriptPlugins "الملحقات">
+<!ENTITY noscriptContentBlocker "تطبيق هذه القيود على المواقع الموثوقة كذلك">
+<!ENTITY noscriptForbidJava "منع جافا">
+<!ENTITY noscriptForbidXSLT "منع أكس أس أل تي">
+<!ENTITY noscriptForbidSilverlight "منع ميكروسوفت سِلفَرلَيت">
+<!ENTITY noscriptForbidIFrames "منع &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "منع &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "منع @font-face">
+<!ENTITY noscriptForbidWebGL "منع WebGL">
+<!ENTITY noscriptForbidMedia "منع &lt;AUDIO&gt; / &lt;VIDEO&gt;">
+<!ENTITY noscriptForbidFlash "منع ماكروميديا فلاش">
+<!ENTITY noscriptForbidPlugins "منع الملحقات الأُخرى">
+<!ENTITY noscriptReloadWarn "سيتم تفعيل هذه الخيارات في الصفحات الجديدة أو الصفحات المعاد تحميلها (يدوياً)">
+<!ENTITY noscriptConfirmUnblock "طلب التوكيد قبل رفع المنع بشكل مؤقت عن عنصر ما">
+<!ENTITY noscriptStatusLabel "عنوان شريط الحالة">
+<!ENTITY noscriptForbidBookmarklets "منع العلامات البرمجية">
+<!ENTITY noscriptShowPlaceholder "أظهار أيقونة شاغلة للحيز">
+<!ENTITY noscriptTruncateTitle "اختصار عناوين الوثائق">
+<!ENTITY noscriptFixLinks "محاولة تصحيح روابط جافاسركبت">
+<!ENTITY noscriptAllowBookmarks "السماح للمواقع التي تفتح من علامات">
+<!ENTITY noscriptAllowViaBookmarks "السماح للمواقع التي تفتح من علامات">
+<!ENTITY noscriptAllowPing "السماح ل &lt;A PING…&gt;">
+<!ENTITY noscriptAllowLocalLinks "السماح بالروابط المحلية">
+<!ENTITY noscriptForbidPing "منع &lt;A PING…&gt;">
+<!ENTITY noscriptForbidMetaRefresh "امنع تحويلات META من داخل عناصر &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "ت">
+<!ENTITY noscriptNotifyMeta "اظهار الرسائل من ميتا محجوبة متغيرة الهدف">
+<!ENTITY noscriptNotifyMeta.accesskey "م">
+<!ENTITY noscriptWhitelist "القائمة البيضاء">
+<!ENTITY noscriptPermissions "الصلاحيات">
+<!ENTITY noscriptRefresh "أنعاش">
+<!ENTITY noscriptNotifications "تنويهات">
+<!ENTITY noscriptToolbarToggle "النقر باليسار على أيقونة نوسكربت في شريط نوسكربت يعكس حالة السماح للمواقع  في المستوى الأعلى">
+<!ENTITY noscriptTrusted "موثوق">
+<!ENTITY noscriptUntrusted "غير موثوق">
+<!ENTITY noscriptUnknown "غير معروف">
+<!ENTITY noscriptAdd "أضافة">
+<!ENTITY noscriptAdd.accesskey "ض">
+<!ENTITY noscriptClose "أغلاق">
+<!ENTITY noscriptSiteManager "مدير المواقع">
+<!ENTITY noscriptSecurityManager "مدير الأمن">
+<!ENTITY noscriptPolicies "السياسات">
+<!ENTITY noscriptDefaultPolicies "السياسات المبدئية">
+<!ENTITY noscriptSitePolicies "سياسات مواقع معينة">
+<!ENTITY noscriptNselNever "أخفاء محتويات عناصر &lt;NOSCRIPT&gt;">
+<!ENTITY noscriptNselForce "أظهار محتويات عنصر &lt;NOSCRIPT&gt; الذي يلي &lt;SCRIPT&gt; معترض">
+<!ENTITY noscriptAutoAllowTopLevel "مبدئيا السماح مؤقتا لمواقع المستوى الأعلى">
+<!ENTITY noscriptDescription "حماية إضافية لفيرفوكس: نوسكربت يسمح لجافاسكربت و جافا (و ملحقات أخرى) للعمل فقط من المواقع الموثوقة التي تختارها (مثلا:موقع مصرفك). هذه المقاربة التحفظية المبنية على القوائم البيضاء تمنع استغلال الثغرات الأمنية (حتى غير المعلومة منها) دون تقليل الكفاءة…سيؤكد المحترفون أن فيرفوكس أكثر أمناً مع نوسكربت.:-)">
+<!ENTITY noscriptOptBlockCssScanners "اعتراض الماسحات المبنية على تقنية XSS">
+<!ENTITY noscriptOptFilterXGet "تطهير الطلبات المشبوهة عابرة المواقع">
+<!ENTITY noscriptOptFilterXPost "تحويل الطلبات العابرة للمواقع من النوع POST إلى طلبات من GET خالية من البيانات">
+<!ENTITY noscriptShowConsole "أظهار وحدة التحكم">
+<!ENTITY noscriptShowConsole.accesskey "ك">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "أسئلة شائعة عن ‮ ‪XSS">
+<!ENTITY noscriptXssFaq.accesskey "ع">
+<!ENTITY noscriptUnsafeReload "إعادة تحميل غير آمنة">
+<!ENTITY noscriptUnsafeReload.accesskey "د">
+<!ENTITY noscriptXssExceptions "إستثناءات من الحماية ضد أكس أس">
+<!ENTITY noscriptXssExceptions.description "المواقع المطابقة لهذه العبارات الاعتيادية لن تكون محمية ضد أكس أس">
+<!ENTITY noscriptMatchSample "عينة مطابقة للنمط">
+<!ENTITY noscriptReset "تصفير">
+<!ENTITY noscriptReset.accesskey "ص">
+<!ENTITY noscriptResetDef "تصفير للمبدئية">
+<!ENTITY noscriptResetDef.accesskey "ف">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptRevokeTemp "ألغاء الصلاحيات المؤقتة">
+<!ENTITY noscriptRevokeTemp.accesskey "م">
+<!ENTITY noscriptNoUntrustedPlaceholder "لا توجد حوافظ مكان لعناصر قادمة من مواقع محددة كغير آمنة">
+<!ENTITY noscriptCollapseBlockedObjects "تقليص العناصر المُعتَرضة">
+<!ENTITY noscriptExceptions "استثناءات">
+<!ENTITY noscriptBlockedObjects "عناصر مُعتَرضة">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "اعتراض كل شيء آت من موقع محدّد كغير موثوق">
+<!ENTITY noscriptTempAllowPage "السماح مؤقتا للكل في الصفحة الحالية">
+<!ENTITY noscriptTempAllowPage.accesskey "س">
+<!ENTITY noscriptAllowPage "السماح لهذه الصفحة">
+<!ENTITY noscriptAllowPage.accesskey "ح">
+<!ENTITY noscriptTempToPerm "جعل صلاحيات الصفحة دائمة">
+<!ENTITY noscriptTempToPerm.accesskey "ص">
+<!ENTITY noscriptHttps "أتش تي تي بي الآمن">
+<!ENTITY noscriptHttpsFaq "الأسئلة المتكررة حول  أتش تي تي بي الآمن">
+<!ENTITY noscriptHttpsFaq.accesskey "ش">
+<!ENTITY noscriptHttps.behavior "التصرّف">
+<!ENTITY noscriptHttps.cookies "الكعكات">
+<!ENTITY noscriptHttps.description "منع محتويات الشبكة الا اذا كانت عن طريق اتصال آمن">
+<!ENTITY noscriptHttps.never "أبدًا">
+<!ENTITY noscriptHttps.proxy "عند استعمال وسيط">
+<!ENTITY noscriptHttps.always "دائمًا">
+<!ENTITY noscriptHttpsForced "فرض استعمال اتصالات آمنة على هذه المواقع">
+<!ENTITY noscriptHttpsForcedExceptions "لا تفرض استعمال اتصالات آمنة على هذه المواقع">
+<!ENTITY noscriptSecureCookies "تفعيل الادارة الآلية للكعكات الآمنة">
+<!ENTITY noscriptSecureCookiesForced "فرض تعمية كل الكعكات المحددة عبر اتصال آمن للمواقع التالية:">
+<!ENTITY noscriptSecureCookiesExceptions "أهمال الكعكات غير الآمنة عبر اتصال آمن للمواقع التالية:">
+<!ENTITY noscriptClearClickTitle "مسح التحذير">
+<!ENTITY noscriptClearClickHeader "محاولة قرصنة النقر أو تحويل للعنوان">
+<!ENTITY noscriptClearClickDescription "لقد منع نوسكربت تفاعل لللوحة أو الفأرة مع عنصر مُخَبَّأ.أضغط على الضورة في الاسفل لرؤية كلا النسخ">
+<!ENTITY noscriptClearClickOpt "رفع الحماية عن الصفحات…">
+<!ENTITY noscriptClearClickReport "تقرير">
+<!ENTITY noscriptClearClickReport.accesskey "ت">
+<!ENTITY noscriptClearClickReportId "رقم التقرير:">
+<!ENTITY noscriptTrustedPagesAdj "موثوق">
+<!ENTITY noscriptUntrustedPagesAdj "غير موثوق">
+<!ENTITY noscriptKeepLocked "ترك هذا العنصر موصدا (مفضّل)">
+<!ENTITY noscriptEmbeddings "عناصر مغروسة">
+<!ENTITY noscriptPrev "السابق">
+<!ENTITY noscriptNext "التالي">
+<!ENTITY noscriptFrameOptErr.title "لا يمكن اظهار المحتويات في صُفَيحةframe">
+<!ENTITY noscriptFrameOptErr.desc "لامانك, ناشر المحتويات لا يسمح باظهارها في صُفَيحة  frame">
+<!ENTITY noscriptFrameOptErr.link "النقر هنا لفتح المحتويات في نافذة جديدة">
+<!ENTITY noscriptBookmarkSync "عمل نسخة احتياطية للاعدادت مُؤَشِّر لتسهيل التزامن">
+<!ENTITY noscriptShowReleaseNotes "اظهار ملاحظات الاصدار في التحديثات">
+<!ENTITY ABE "أيب">
+<!ENTITY ABE.accesskey "أ">
+<!ENTITY ABE.rulesets.label "القواعد">
+<!ENTITY ABE.enabled.label "تفعيل أيب (منفّذ حدود البرامج)">
+<!ENTITY ABE.siteEnabled.label "السماح للمواقع دفع قواعدهم الخاصة">
+<!ENTITY ABE.edit.label "تحرير">
+<!ENTITY ABE.edit.accesskey "ت">
+<!ENTITY ABE.enable.label "تفعيل">
+<!ENTITY ABE.enable.accesskey "ف">
+<!ENTITY ABE.disable.label "ايقاف">
+<!ENTITY ABE.disable.accesskey "ق">
+<!ENTITY ABE.refresh.label "تجديد">
+<!ENTITY ABE.refresh.accesskey "ج">
+<!ENTITY noscriptUninstall "ازالة">
+<!ENTITY noscriptRecentBlocked "مواقع معترضة مأخراً">
+<!ENTITY noscriptExternalFilters "فلاتر خارجية">
+<!ENTITY noscriptEF.enable "تفعيل الفلاتر الخارجية">
+<!ENTITY noscriptEF.add "فلتر جديد…">
+<!ENTITY noscriptEF.executable "ملف تشغيل:">
+<!ENTITY noscriptEF.browse "التصفح…">
+<!ENTITY noscriptEF.contentType "نوع المحتوى(مايم) الذي سيتم فلترته (تطابق">
+<!ENTITY noscriptEF.exceptions "عدك تصفية كائنات قادمة من هذه المواقع :">
+<!ENTITY noscriptEF.remove "ازالة">
+<!ENTITY noscriptPreset "مستوى الأمن">
+<!ENTITY noscriptPreset.off "إيقاف (هل أنت متأكد؟!)">
+<!ENTITY noscriptPreset.low "الوضع السهل (القائمة السوداء + أمن الويب)">
+<!ENTITY noscriptPreset.medium "كلاسيكي (القائمة البيضاء+أمن الويب)">
+<!ENTITY noscriptPreset.high "الحصن (أمن تام)">
+<!ENTITY noscript.hoverUI "فتح قائمة الإذِن عندما يحوم المؤشّر فوق رمز نوسكريبت">
+<!ENTITY noscriptDonate "التبرع">
+<!ENTITY noscriptDonate.accesskey "ت">
+<!ENTITY noscriptAutoReload.currentTab "اعادة تحميل علام التبويب الحالية فقط">
+<!ENTITY noscriptCascadePermissions "">
+<!ENTITY noscriptRestrictSubdocScripting "منع السكربتات في ملفات القائمة البيضاء المتواجدة في الصفحات الغير موجودة في القائمة البيضاء">
+<!ENTITY noscriptGlobalHttpsWhitelist "السماح لسكربتات اتش تي تي بي اس بشكل عام في مستدات اتش تي تي بي اس">
+<!ENTITY noscriptPermanentInPrivate "الدائم للأوامر في النوافذ الشخصية &quot;السماح&quot;">
+<!ENTITY noscriptCustom "Custom">

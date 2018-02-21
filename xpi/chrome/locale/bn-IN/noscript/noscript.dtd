@@ -1,0 +1,192 @@
+<!ENTITY noscriptOptions "বিকল্প ...">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "নোস্ক্রিপট বিকল্প">
+<!ENTITY noscriptAbout "নোস্ক্রিপটের বিষয়">
+<!ENTITY noscriptPermissionsText "আপনি যে ওয়েব সাইট থেকে স্ক্রিপ্ট চালানো অনুমোদিত হয় উল্লেখ করা যাবে. ঠিকানা বা সাইটের ডোমেইন লিখুন (যেমন &quot;http://www.site.com&quot; অথবা &quot;site.com&quot;)এবং তারপর মঞ্জুরি ক্লিক করুন।">
+<!ENTITY noscriptWebAddress "ওয়েবসাইটের ঠিকানাঃ">
+<!ENTITY noscriptAllow "মঞ্জুর">
+<!ENTITY noscriptAllow.accesskey "l">
+<!ENTITY noscriptForbid "নিষেধ">
+<!ENTITY noscriptForbid.accesskey "F">
+<!ENTITY noscriptTrust "বিশ্বস্ত হিসাবে চিহ্নিত করুন">
+<!ENTITY noscriptTrust.accesskey "T">
+<!ENTITY noscriptUntrust "অনির্ভরযোগ্য হিসাবে চিহ্নিত করুন">
+<!ENTITY noscriptUntrust.accesskey "U">
+<!ENTITY noscriptRemoveSelected "নির্বাচিত সাইট অপসারন">
+<!ENTITY noscriptGloballyEnabled "স্ক্রিপ্ট সর্বত্র অনুমোদিত(বিপজ্জনক)">
+<!ENTITY noscriptAutoReload "অনুমতি পাওয়ার পর পাতাটি আবার খুলবে সয়ংক্রিয় হওয়ার জন্য">
+<!ENTITY noscriptGeneral "সাধারন">
+<!ENTITY noscriptAppearance "চেহারা">
+<!ENTITY noscriptShow "দেখান ...">
+<!ENTITY noscriptCtxMenu "বর্ণনাপ্রাসঙ্গিক মেনু">
+<!ENTITY noscriptStatusIcon "স্থিতি বার আইকন">
+<!ENTITY noscriptFullAddr "সম্পূর্ণ ঠিকানা (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "সম্পূর্ণ ডোমেইন (www.noscript.net)">
+<!ENTITY noscriptBaseDom "২য় লেভেল ভিত্তি ডোমেইন (noscript.net)...">
+<!ENTITY noscriptTempCmd "সাময়িকভাবে অনুমোদন [...]">
+<!ENTITY noscriptSound "অডিও ফিডব্যাক দেওয়া হবে যখন স্ক্রিপ্ট ব্লক করা হবে">
+<!ENTITY noscriptImport "আমদানি">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "রপ্তানি">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "ব্লক স্ক্রিপ্টের বার্তা দেখানো">
+<!ENTITY noscriptNotify.bottom "বার্তা নীচে আসবে">
+<!ENTITY noscriptSound.choose "বাছাই">
+<!ENTITY noscriptSound.choose.accesskey "C">
+<!ENTITY noscriptSound.play "খেলুন">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "আগের মত">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "অগ্রসর">
+<!ENTITY noscriptAdditionalPermissions "বিশ্বস্ত সাইটের জন্য অতিরিক্ত অনুমতি">
+<!ENTITY noscriptAllowClipboard "রিচ টেক্সট বহিরাগত ক্লিপবোর্ড থেকে কপি এবং পেস্ট করার অনুমতি প্রদান">
+<!ENTITY noscriptAdditionalRestrictions "অনির্ভরযোগ্য সাইটের জন্য অতিরিক্ত সীমাবদ্ধতা">
+<!ENTITY noscriptPlugins "প্লাগিন">
+<!ENTITY noscriptContentBlocker "বিশ্বাসযোগ্য সাইটেও এই সীমাবদ্ধতা প্রয়োগ">
+<!ENTITY noscriptForbidJava "নিষেধ Java™">
+<!ENTITY noscriptForbidXSLT "নিষেধ">
+<!ENTITY noscriptForbidSilverlight "নিষেধ Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "নিষেধ &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "নিষেধ &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "নিষেধ @font-face">
+<!ENTITY noscriptForbidMedia "নিষেধ &lt;AUDIO&gt; / &lt;VIDEO&gt;">
+<!ENTITY noscriptForbidFlash "নিষেধ">
+<!ENTITY noscriptForbidPlugins "নিষেধ অন্যান্য plugins">
+<!ENTITY noscriptReloadWarn "এই অপশনটি নতুন বা এই পাতাতেই প্রভাব পরবে">
+<!ENTITY noscriptConfirmUnblock "অস্থায়ীভাবে একটি বস্তু আনব্লক করার আগে জিজ্ঞেস করবে">
+<!ENTITY noscriptStatusLabel "স্থিতি বার লেবেল">
+<!ENTITY noscriptForbidBookmarklets "নিষেধ bookmarklets">
+<!ENTITY noscriptShowPlaceholder "স্থানধারক আইকন দেখাও">
+<!ENTITY noscriptFixLinks "জাভা স্ক্রিপ্ট লিঙ্ক ফিক্সের চেষ্টা">
+<!ENTITY noscriptAllowBookmarks "বুকমার্ক মাধ্যমে খোলা সাইটগুলির মঞ্জুরি দিন">
+<!ENTITY noscriptAllowViaBookmarks "বুকমার্ক মাধ্যমে খোলা সাইটগুলির মঞ্জুরি দিন">
+<!ENTITY noscriptAllowPing "&lt;A PING…&gt;কে মঞ্জুরি">
+<!ENTITY noscriptAllowLocalLinks "লোকাল লিঙ্ক মঞ্জুরি">
+<!ENTITY noscriptForbidPing "&lt;A PING…&gt; নিষেধ">
+<!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt; উপাদান ভিতরে মেটা redirections নিষেধ">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptNotifyMeta "মেটা রিডায়রেকশন ব্লকের বার্তা দেখান">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
+<!ENTITY noscriptWhitelist "বিশ্বাসীতালিকা">
+<!ENTITY noscriptPermissions "অনুমতি">
+<!ENTITY noscriptRefresh "পুনঃরায়">
+<!ENTITY noscriptNotifications "বিজ্ঞপ্তি">
+<!ENTITY noscriptToolbarToggle "নোস্ক্রিপ্ট টুলবার বাটন রেখে ক্লিক করে বর্তমান শীর্ষ স্তরের সাইটের জন্য অনুমতি টগল">
+<!ENTITY noscriptTrusted "নির্ভরযোগ্য">
+<!ENTITY noscriptUntrusted "অনির্ভরযোগ্য">
+<!ENTITY noscriptUnknown "অচেনা">
+<!ENTITY noscriptAdd "যোগ">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "বন্ধ">
+<!ENTITY noscriptSiteManager "সাইট ম্যানেজার">
+<!ENTITY noscriptSecurityManager "নিরাপত্তা ম্যানেজার">
+<!ENTITY noscriptPolicies "কর্মপন্থা">
+<!ENTITY noscriptDefaultPolicies "ডিফল্ট নীতি">
+<!ENTITY noscriptSitePolicies "সাইট সংক্রান্ত নীতি">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; আবহাওয়া লুকান">
+<!ENTITY noscriptNselForce "&lt;NOSCRIPT&gt; দেখান যেটি &lt;SCRIPT&gt; আটকেছে">
+<!ENTITY noscriptAutoAllowTopLevel "সাময়িকভাবে ডিফল্টরূপে উপরের স্তরের সাইট অনুমোদন">
+<!ENTITY noscriptDescription "ফায়ারফক্সের জন্য অতিরিক্ত সুরক্ষা: নোস্ক্রিপট শুধুমাত্র আপনার বিশ্বাসযোগ্য এলাকারই কাজ করবে (যেমন আপনার বাঙ্কের ওয়েবসাইট). বিশেষজ্ঞরা রাজি হবে: ফায়ারফক্সের সত্যিই নিরাপদ হয় নোস্ক্রিপটের সঙ্গে  :-)">
+<!ENTITY noscriptOptBlockCssScanners "ব্লক CSS ভিত্তিক স্ক্যানার">
+<!ENTITY noscriptOptFilterXGet "ক্রস সাইট সন্দেহজনক অনুরোধ মুছুন">
+<!ENTITY noscriptOptFilterXPost "ডাটা অ অনুরোধ পাবার মধ্যে ক্রস সাইটের অনুরোধ চালু">
+<!ENTITY noscriptShowConsole "কনসোল দেখান ...">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS প্রশ্ন">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "বিপজ্জনক রিলোড">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "XSSবিরোধী সুরক্ষা ব্যতীক্রম">
+<!ENTITY noscriptXssExceptions.description "Destinations matching these regular expressions will NOT be protected against XSS.">
+<!ENTITY noscriptMatchSample "প্যাটার্ন ম্যাচিং নমুনা:">
+<!ENTITY noscriptReset "পুনরায় বসান">
+<!ENTITY noscriptReset.accesskey "s">
+<!ENTITY noscriptResetDef "ডিফল্ট রিসেট">
+<!ENTITY noscriptResetDef.accesskey "d">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptRevokeTemp "অস্থায়ী অনুমতি প্রত্যাহার">
+<!ENTITY noscriptRevokeTemp.accesskey "R">
+<!ENTITY noscriptNoUntrustedPlaceholder "অনির্ভরযোগ্য হিসাবে চিহ্নিত সাইট থেকে আসছে অবজেক্টের জন্য কোন স্থানধারক">
+<!ENTITY noscriptCollapseBlockedObjects "সঙ্কুচিত ব্লক বস্তু">
+<!ENTITY noscriptExceptions "ব্যতিক্রমগুলি ...">
+<!ENTITY noscriptBlockedObjects "অবরুদ্ধ সামগ্রী">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "অনির্ভরযোগ্য সাইটগুলি থেকে আসা প্রতিটি সামগ্রী অবরুদ্ধ করা হবে">
+<!ENTITY noscriptTempAllowPage "সাময়িকভাবে এই সাইটের সব মঞ্জুর">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
+<!ENTITY noscriptAllowPage "এই সাইটের সব মঞ্জুর">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "পৃষ্ঠা অনুমতি স্থায়ী করা">
+<!ENTITY noscriptTempToPerm.accesskey "M">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS প্রশ্নাবলী...">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "আচরণ">
+<!ENTITY noscriptHttps.cookies "কুকি">
+<!ENTITY noscriptHttps.description "(HTTPS) সংযোগ ছাড়া সক্রিয় ওয়েবসাইটের বিষয়বস্তু নিষিদ্ধ">
+<!ENTITY noscriptHttps.never "কখনত্ত না">
+<!ENTITY noscriptHttps.proxy "যখন একটি প্রক্সি ব্যবহার">
+<!ENTITY noscriptHttps.always "সর্বদা">
+<!ENTITY noscriptHttpsForced "নিম্নলিখিত সাইটগুলি (HTTPS) সংযোগ ব্যাবহারের জন্য বাধ্য করা">
+<!ENTITY noscriptHttpsForcedExceptions "নিরাপদ নিম্নলিখিত সাইটগুলি জন্য (HTTPS) সংযোগে জোর করা হবেনাঃ">
+<!ENTITY noscriptSecureCookies "স্বয়ংক্রিয় নিরাপদ কুকি ম্যানেজমেন্ট সক্রিয়">
+<!ENTITY noscriptSecureCookiesForced "বিপজ্জনক নিম্নলিখিত সাইটগুলির মধ্যে HTTPS উপর সেট কুকি উপেক্ষা করুনঃ">
+<!ENTITY noscriptSecureCookiesExceptions "বিপজ্জনক নিম্নলিখিত সাইটগুলির মধ্যে HTTPS উপর সেট কুকি উপেক্ষা করুন:">
+<!ENTITY noscriptClearClickTitle "ক্লিয়ারক্লিক সতর্কবাণী">
+<!ENTITY noscriptClearClickHeader "সম্ভাব্য ক্লিকজাক / UI \'তে প্রচেষ্টা নিরাকরণ!">
+<!ENTITY noscriptClearClickDescription "নোস্ক্রিপ্ট একটি আংশিকভাবে গোপন উপাদান দিয়ে একটি মাউস বা কিবোর্ড যোগাযোগ রূদ্ধ. আটকান এবং স্পষ্ট সংস্করণের মধ্যে চক্র নীচের ইমেজে ক্লিক করুন.">
+<!ENTITY noscriptClearClickOpt "পৃষ্ঠা থেকে ক্লিয়ারক্লিক রক্ষা ...">
+<!ENTITY noscriptClearClickReport "প্রতিবেদন">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "প্রতিবেদন আইডিঃ">
+<!ENTITY noscriptTrustedPagesAdj "বিশ্বাসী">
+<!ENTITY noscriptUntrustedPagesAdj "অনির্ভরযোগ্য">
+<!ENTITY noscriptKeepLocked "এই উপাদানটি বদ্ধ রাখুন(প্রস্তাবিত)">
+<!ENTITY noscriptEmbeddings "শোয়ান">
+<!ENTITY noscriptPrev "পূর্ববর্তী">
+<!ENTITY noscriptNext "পরবর্তী">
+<!ENTITY noscriptFrameOptErr.title "এই সামগ্রী একটি ফ্রেমে দেখানো যাবে না">
+<!ENTITY noscriptFrameOptErr.desc "আপনার নিরাপত্তা রক্ষা, এই বিষয়বস্তুর প্রকাশক এটি একটি ফ্রেমে প্রদর্শন করা সম্ভব নয়.">
+<!ENTITY noscriptFrameOptErr.link "নতুম উইন্ডোতে খোলার জন এখানে ক্লিক করুন">
+<!ENTITY noscriptBookmarkSync "নোস্ক্রিপ্ট কনফিগারেশন জমা করুন বুকমার্কে সহজ সুসংগতির জন্য">
+<!ENTITY noscriptShowReleaseNotes "আপডেট রিলিজ নোট প্রদর্শন">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "নিয়ম সেটঃ">
+<!ENTITY ABE.enabled.label "সক্রিয় ABE">
+<!ENTITY ABE.siteEnabled.label "সাইট তাদের নিজস্ব বিধি সেট থেকে ধাক্কা মঞ্জুর">
+<!ENTITY ABE.edit.label "সম্পাদনা ...">
+<!ENTITY ABE.edit.accesskey "E">
+<!ENTITY ABE.enable.label "সক্রিয়">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "নিষ্ক্রিয়">
+<!ENTITY ABE.disable.accesskey "D">
+<!ENTITY ABE.refresh.label "ঝালান">
+<!ENTITY ABE.refresh.accesskey "R">
+<!ENTITY noscriptUninstall "মুছুন">
+<!ENTITY noscriptRecentBlocked "সম্প্রতি ব্লক সাইট">
+<!ENTITY noscriptExternalFilters "বাহ্যিক ফিল্টার">
+<!ENTITY noscriptEF.enable "বাহ্যিক ফিল্টার সক্রিয়">
+<!ENTITY noscriptEF.add "নতুন ফিল্টার...">
+<!ENTITY noscriptEF.executable "এক্সিকিউটেবল ফাইলঃ">
+<!ENTITY noscriptEF.browse "ব্রাউজ...">
+<!ENTITY noscriptEF.contentType "বিষয়বস্তু টাইপ (MIME) ফিল্টার করা হবে (সঠিক মিল বা রেগুলার এক্সপ্রেশন):">
+<!ENTITY noscriptEF.exceptions "এই সাইট থেকে আগত বস্তু ফিল্টার করবেন নাঃ">
+<!ENTITY noscriptEF.remove "অপসারণ">
+<!ENTITY noscriptPreset "নিরাপত্তার মাত্রা">
+<!ENTITY noscriptPreset.off "বন্ধ (আপনি কি গুরুতর?)">
+<!ENTITY noscriptPreset.low "সহজ যাচ্ছে (নিষিদ্ধ জিনিসের + ওয়েব নিরাপত্তা)">
+<!ENTITY noscriptPreset.medium "ক্লাসিক (বিশুদ্ধ + ওয়েব নিরাপত্তা)">
+<!ENTITY noscriptPreset.high "দুর্গ (সম্পূর্ণ লকডাউন)">
+<!ENTITY noscript.hoverUI "অনুমতি মেনু খুলবে যখন নোস্ক্রিপ্ট এর আইকনের উপর মাউস নিয়ে যাওয়া হবে">
+<!ENTITY noscriptDonate "সাহায্য করুন">
+<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptForbidWebGL "WebGL প্রতিষেধ করুন">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
+<!ENTITY noscriptTruncateTitle "Truncate document titles">
+<!ENTITY noscriptCustom "Custom">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
+<!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">
+<!ENTITY noscriptPermanentInPrivate "Permanent &quot;Allow&quot; commands in private windows">

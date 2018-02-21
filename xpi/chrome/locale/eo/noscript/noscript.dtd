@@ -1,0 +1,192 @@
+<!ENTITY noscriptOptions "Opcioj…">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "Opcioj de NoScript">
+<!ENTITY noscriptAbout "Pri NoScript @VERSION@…">
+<!ENTITY noscriptPermissionsText "Vi povas specifi, kiuj ttt-ejoj rajtu plenumigi skriptojn. Entajpu la adreson aŭ la domajnonomon (ekz. “http://www.retejo.org” aŭ “retejo.org”) de la ttt-ejo, kiun vi volas rajtigi, kaj poste alklaku “Rajtigi”.">
+<!ENTITY noscriptWebAddress "Adreso de retpaĝaro:">
+<!ENTITY noscriptAllow "Rajtigi">
+<!ENTITY noscriptAllow.accesskey "R">
+<!ENTITY noscriptForbid "Malrajtigi">
+<!ENTITY noscriptForbid.accesskey "M">
+<!ENTITY noscriptTrust "Marki kiel fidata">
+<!ENTITY noscriptTrust.accesskey "F">
+<!ENTITY noscriptUntrust "Marki kiel nefidata">
+<!ENTITY noscriptUntrust.accesskey "N">
+<!ENTITY noscriptRemoveSelected "Forigi la elektitajn ttt-ejojn">
+<!ENTITY noscriptGloballyEnabled "Defaŭlte rajtigi ĉiujn retejojn (danĝere)">
+<!ENTITY noscriptAutoReload "Aŭtomate reŝargi koncernatajn paĝojn ĉe ŝanĝo de permesoj">
+<!ENTITY noscriptGeneral "Ĝeneralaj">
+<!ENTITY noscriptAppearance "Aspekto">
+<!ENTITY noscriptShow "Vidigi…">
+<!ENTITY noscriptCtxMenu "Kunteksta menuo">
+<!ENTITY noscriptStatusIcon "Statstrian bildeton">
+<!ENTITY noscriptFullAddr "Tutaj adresoj (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Tutaj domajnoj (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Bazaj duanivelaj domajnoj (noscript.net)">
+<!ENTITY noscriptTempCmd "Dumtempe rajtigi […]">
+<!ENTITY noscriptSound "Sona atentigo pri blokateco de skriptoj">
+<!ENTITY noscriptImport "Importi">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Eksporti">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Montri mesaĝon pri blokitaj skriptoj">
+<!ENTITY noscriptNotify.bottom "Meti la mesaĝon malsupren">
+<!ENTITY noscriptSound.choose "Elekti">
+<!ENTITY noscriptSound.choose.accesskey "E">
+<!ENTITY noscriptSound.play "Ludi">
+<!ENTITY noscriptSound.play.accesskey "L">
+<!ENTITY noscriptSound.reset "Redefaŭltigi">
+<!ENTITY noscriptSound.reset.accesskey "D">
+<!ENTITY noscriptAdvanced "Spertulaj">
+<!ENTITY noscriptAdditionalPermissions "Pliaj permesoj por fidataj retejoj">
+<!ENTITY noscriptAllowClipboard "Permesi kopiadon kaj enmetadon de aranĝita (&quot;riĉa&quot;) teksto je la ekstera tondujo">
+<!ENTITY noscriptAdditionalRestrictions "Pliaj limigoj por nefidataj retejoj">
+<!ENTITY noscriptPlugins "Kromaĵoj">
+<!ENTITY noscriptContentBlocker "Apliki ĉi tiujn limigojn ankaŭ al fidataj retejoj">
+<!ENTITY noscriptForbidJava "Malpermesi Ĝavon (Java™)">
+<!ENTITY noscriptForbidXSLT "Malpermesi XSLT-on">
+<!ENTITY noscriptForbidSilverlight "Malpermesi Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Malpermesi 〈IFRAME〉">
+<!ENTITY noscriptForbidFrames "Malpermesi 〈FRAME〉">
+<!ENTITY noscriptForbidFonts "Malpermesi @font-face">
+<!ENTITY noscriptForbidWebGL "Malpermesi WebGL">
+<!ENTITY noscriptForbidMedia "Malpermesi 〈AUDIO〉 / 〈VIDEO〉">
+<!ENTITY noscriptForbidFlash "Malpermesi Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Malpermesi aliajn kromaĵojn">
+<!ENTITY noscriptReloadWarn "Tiuj ĉi agordoj efikos nur por paĝoj novŝargotaj aŭ reŝargotaj de vi">
+<!ENTITY noscriptConfirmUnblock "Peti konfirmon antaŭ ol provizore malbloki objekton">
+<!ENTITY noscriptStatusLabel "Statstrian tekston">
+<!ENTITY noscriptForbidBookmarklets "Malpermesi skriptajn “paĝosignojn” (bookmarklets)">
+<!ENTITY noscriptShowPlaceholder "Montri lokokupan bildeton">
+<!ENTITY noscriptTruncateTitle "Truncate document titles">
+<!ENTITY noscriptFixLinks "Provi normaligi JavaSkriptajn ligilojn">
+<!ENTITY noscriptAllowBookmarks "Rajtigi retejojn ŝargatajn per paĝosignoj">
+<!ENTITY noscriptAllowViaBookmarks "Rajtigi retejojn ŝargitajn per paĝosignoj">
+<!ENTITY noscriptAllowPing "Permesi 〈A PING…〉">
+<!ENTITY noscriptAllowLocalLinks "Permesi lokajn ligojn">
+<!ENTITY noscriptForbidPing "Malpermesi 〈A PING…〉">
+<!ENTITY noscriptForbidMetaRefresh "Malpermesi META-alidirektojn ene de elementoj 〈NOSCRIPT〉">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "R">
+<!ENTITY noscriptNotifyMeta "Montri mesaĝon pri blokitaj META-alidirektoj">
+<!ENTITY noscriptNotifyMeta.accesskey "R">
+<!ENTITY noscriptWhitelist "Blanklisto">
+<!ENTITY noscriptPermissions "Rajtoj">
+<!ENTITY noscriptRefresh "Reŝargi">
+<!ENTITY noscriptNotifications "Sciigoj">
+<!ENTITY noscriptToolbarToggle "Maldekstr-alklako de la ilarstria bildo de NoScript baskuligu rajtigon de la montrata senpere ŝargita retejo.">
+<!ENTITY noscriptTrusted "Fidataj">
+<!ENTITY noscriptUntrusted "Nefidataj">
+<!ENTITY noscriptUnknown "Nekonata">
+<!ENTITY noscriptAdd "Aldoni">
+<!ENTITY noscriptAdd.accesskey "A">
+<!ENTITY noscriptClose "Fermi">
+<!ENTITY noscriptSiteManager "Site Manager">
+<!ENTITY noscriptSecurityManager "Security Manager">
+<!ENTITY noscriptPolicies "Policies">
+<!ENTITY noscriptDefaultPolicies "Default Policies">
+<!ENTITY noscriptSitePolicies "Site Specific Policies">
+<!ENTITY noscriptNselNever "Kaŝi erojn 〈NOSCRIPT〉">
+<!ENTITY noscriptNselForce "Vidigi la eron 〈NOSCRIPT〉, kiu sekvas baritan 〈SCRIPT〉">
+<!ENTITY noscriptAutoAllowTopLevel "Provizore rajtigi ĉiujn senpere (ne en kadro ks) vizitatajn retejojn">
+<!ENTITY noscriptDescription "Plia protekto por via Firefox: NoScript permesas uzon de JavaSkripto, Javo kc nur al fidataj retejoj de vi elektitaj (ekzemple via retbankejo). Tiu ĉi laŭblanklista anticipa blokado malhelpas misuzadon de malsekuroj (konataj kaj eĉ nekonataj!) sen funkcikripligo… Kompetentuloj jesos: Firefox vere estas pli sekura kun NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Bloki per-CSS-ajn skanilojn">
+<!ENTITY noscriptOptFilterXGet "Purigi suspektajn interretejajn petojn">
+<!ENTITY noscriptOptFilterXPost "Transformu inter-retejajn POST-petojn en sendatenajn GET-petojn.">
+<!ENTITY noscriptShowConsole "Vidigi konzolon…">
+<!ENTITY noscriptShowConsole.accesskey "K">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "Respondaro pri XSS (angle)…">
+<!ENTITY noscriptXssFaq.accesskey "R">
+<!ENTITY noscriptUnsafeReload "Nesekura reŝargo">
+<!ENTITY noscriptUnsafeReload.accesskey "N">
+<!ENTITY noscriptXssExceptions "Esceptoj el kontraŭ-XSS-a protekto">
+<!ENTITY noscriptXssExceptions.description "Celadresoj konformaj al ĉi tiuj regulesprimoj NE protektatos kontraŭ XSS.">
+<!ENTITY noscriptMatchSample "Ekzempla ŝablono:">
+<!ENTITY noscriptReset "Reŝargi">
+<!ENTITY noscriptReset.accesskey "s">
+<!ENTITY noscriptResetDef "Defaŭltigi">
+<!ENTITY noscriptResetDef.accesskey "D">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptRevokeTemp "Retiri la provizorajn permesojn">
+<!ENTITY noscriptRevokeTemp.accesskey "R">
+<!ENTITY noscriptNoUntrustedPlaceholder "Ne montri lokokupilojn por objektoj el Nefidataj retejoj">
+<!ENTITY noscriptCollapseBlockedObjects "Maletendi blokitajn objektojn">
+<!ENTITY noscriptExceptions "Esceptoj…">
+<!ENTITY noscriptBlockedObjects "Blokitaj objektoj">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Bloki ĉiujn objektojn venantajn de retejoj markitaj kiel Nefidataj">
+<!ENTITY noscriptTempAllowPage "Dumtempe rajtigi tutan ĉi tiun paĝon">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
+<!ENTITY noscriptAllowPage "Rajtigi la tutan tiun ĉi paĝon">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Konservi la provizorajn permesojn por la paĝo">
+<!ENTITY noscriptTempToPerm.accesskey "M">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS FAQ…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Konduto">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Malpermesi aktivan TTT-enhavon venantan ne tra sekura (HTTPS) konekto:">
+<!ENTITY noscriptHttps.never "Neniam">
+<!ENTITY noscriptHttps.proxy "Dum uzado de prokura servilo (rekomendita kun Tor)">
+<!ENTITY noscriptHttps.always "Ĉiam">
+<!ENTITY noscriptHttpsForced "Devigi la sekvantajn retejojn uzi sekurajn (HTTPS) konektojn:">
+<!ENTITY noscriptHttpsForcedExceptions "Neniam postuli sekurajn (HTTPS) konektojn por la sekvantaj retejoj:">
+<!ENTITY noscriptSecureCookies "Ŝalti aŭtomatan plisekurigan traktadon de kuketoj">
+<!ENTITY noscriptSecureCookiesForced "Devigi ĉifradon de ĉiuj kuketoj difinitaj tra HTTPS de la jenaj retejoj:">
+<!ENTITY noscriptSecureCookiesExceptions "Ignori nesekurajn kuketojn difinitajn tra HTTPS de la jenaj retejoj:">
+<!ENTITY noscriptClearClickTitle "ClearClick-a averto">
+<!ENTITY noscriptClearClickHeader "Ebla provo misklakigi per trompa ŝanĝo de aspekto!">
+<!ENTITY noscriptClearClickDescription "NoScript haltigis musan aŭ klavan agon kun parte kaŝita elemento. Alklaku la bildon sube por ŝanĝi inter montro de la kaŝita kaj la malkaŝita aspektoj.">
+<!ENTITY noscriptClearClickOpt "ClearClick-a protekto sur paĝoj…">
+<!ENTITY noscriptClearClickReport "Raporti">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Identigilo de la raporto:">
+<!ENTITY noscriptTrustedPagesAdj "fidataj">
+<!ENTITY noscriptUntrustedPagesAdj "nefidataj">
+<!ENTITY noscriptKeepLocked "Teni tiun eron ŝlosita (admonata)">
+<!ENTITY noscriptEmbeddings "Enkonstruaĵoj">
+<!ENTITY noscriptPrev "Antaŭe">
+<!ENTITY noscriptNext "Sekve">
+<!ENTITY noscriptFrameOptErr.title "Ne videbla enkadre">
+<!ENTITY noscriptFrameOptErr.desc "Por protekti vian sekurecon, la eldonisto de tiu ĉi enhavo malpermesas vidigi ĝin enkadre.">
+<!ENTITY noscriptFrameOptErr.link "Klaku ĉi tie por malfermi enhavon en nova fenestro">
+<!ENTITY noscriptBookmarkSync "Kopii NoScript-ajn agordojn en paĝosignon por facila sinkronigo">
+<!ENTITY noscriptShowReleaseNotes "Vidigi eldonajn notojn ĉe ĝisdatigo">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Regularo:">
+<!ENTITY ABE.enabled.label "Ŝalti ABE-on (obeigilon de interpaĝaraj limoj)">
+<!ENTITY ABE.siteEnabled.label "Rajtigi ttt-ejojn puŝi siajn regularojn">
+<!ENTITY ABE.edit.label "Redakti…">
+<!ENTITY ABE.edit.accesskey "R">
+<!ENTITY ABE.enable.label "Ŝalti">
+<!ENTITY ABE.enable.accesskey "a">
+<!ENTITY ABE.disable.label "Malŝalti">
+<!ENTITY ABE.disable.accesskey "M">
+<!ENTITY ABE.refresh.label "Reŝargi">
+<!ENTITY ABE.refresh.accesskey "e">
+<!ENTITY noscriptUninstall "Malinstali">
+<!ENTITY noscriptRecentBlocked "Freŝe baritaj ttt-ejoj">
+<!ENTITY noscriptExternalFilters "Eksteraj filtriloj">
+<!ENTITY noscriptEF.enable "Ŝalti eksterajn filtrilojn">
+<!ENTITY noscriptEF.add "Nova filtrilo…">
+<!ENTITY noscriptEF.executable "Programdosiero:">
+<!ENTITY noscriptEF.browse "Elekti…">
+<!ENTITY noscriptEF.contentType "MIME-tipo de filtrotaĵoj (specifu ekzakte aŭ per regulesprimo):">
+<!ENTITY noscriptEF.exceptions "Ne filtri objektojn de la jenaj retejoj:">
+<!ENTITY noscriptEF.remove "Forigi">
+<!ENTITY noscriptPreset "Protektonivelo">
+<!ENTITY noscriptPreset.off "Malŝaltita (ĉu serioze?!)">
+<!ENTITY noscriptPreset.low "Facila (Nigra listo + TTT-sekurigo)">
+<!ENTITY noscriptPreset.medium "Klasika (Blanka listo + TTT-sekurigo)">
+<!ENTITY noscriptPreset.high "Fortikaĵo (Maksimuma protekto)">
+<!ENTITY noscript.hoverUI "Aperigi la rajtigmenuon kiam la musmontrilo estas sur bildsimbolo de NoScript">
+<!ENTITY noscriptDonate "Donaci">
+<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
+<!ENTITY noscriptCustom "Custom">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
+<!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">
+<!ENTITY noscriptPermanentInPrivate "Permanent &quot;Allow&quot; commands in private windows">

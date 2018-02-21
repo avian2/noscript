@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bindings id="noscriptBindings"
+ xmlns="http://www.mozilla.org/xbl"
+   xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+   xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="nop"></binding>
+  <binding id="scrollable-popup"
+      extends="chrome://global/content/bindings/popup.xml#popup-base">
+      
+    <content>
+      <xul:arrowscrollbox clicktoscroll="true"
+        class="popup-internal-box" flex="1" orient="vertical">
+        <children/>
+      </xul:arrowscrollbox>
+    </content>
+  </binding>
+</bindings>

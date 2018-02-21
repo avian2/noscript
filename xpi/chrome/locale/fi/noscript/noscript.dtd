@@ -1,0 +1,192 @@
+<!ENTITY noscriptOptions "Asetukset…">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript asetukset">
+<!ENTITY noscriptAbout "Tietoja NoScript @VERSION@istä…">
+<!ENTITY noscriptPermissionsText "Voit määrittää verkkosivut joiden sallitaan suorittaa scriptejä. Kirjoita verkko-osoite tai verkkonimi (esim. &quot;http://www.site.com&quot; tai &quot;site.com&quot;) jonka haluat sallia ja paina Salli.">
+<!ENTITY noscriptWebAddress "Verkkosivun osoite:">
+<!ENTITY noscriptAllow "Salli">
+<!ENTITY noscriptAllow.accesskey "l">
+<!ENTITY noscriptForbid "Kiellä">
+<!ENTITY noscriptForbid.accesskey "K">
+<!ENTITY noscriptTrust "Merkitse luotettavaksi">
+<!ENTITY noscriptTrust.accesskey "t">
+<!ENTITY noscriptUntrust "Merkitse epäluotettavaksi">
+<!ENTITY noscriptUntrust.accesskey "u">
+<!ENTITY noscriptRemoveSelected "Poista valitut sivut">
+<!ENTITY noscriptGloballyEnabled "Scriptit yleisesti sallittuja (turvaton)">
+<!ENTITY noscriptAutoReload "Lataa sivut automaattisesti uudelleen jos oikeudet muuttuvat">
+<!ENTITY noscriptGeneral "Yleistä">
+<!ENTITY noscriptAppearance "Ulkoasu">
+<!ENTITY noscriptShow "Näytä…">
+<!ENTITY noscriptCtxMenu "Hiiren 2. napin valikko">
+<!ENTITY noscriptStatusIcon "Tilapalkin kuvake">
+<!ENTITY noscriptFullAddr "Koko verkko-osoitteet (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Koko osoitenimet (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Tason 2 osoitenimet (noscript.net)">
+<!ENTITY noscriptTempCmd "Salli tilapäisesti […]">
+<!ENTITY noscriptSound "Äänimerkki kun scripti estetään">
+<!ENTITY noscriptImport "Tuo">
+<!ENTITY noscriptImport.accesskey "T">
+<!ENTITY noscriptExport "Vie">
+<!ENTITY noscriptExport.accesskey "V">
+<!ENTITY noscriptNotify "Näytä viesti estetyistä scripteistä">
+<!ENTITY noscriptNotify.bottom "Sijoita viesti alas">
+<!ENTITY noscriptSound.choose "Valitse">
+<!ENTITY noscriptSound.choose.accesskey "V">
+<!ENTITY noscriptSound.play "Toista">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Oletusarvot">
+<!ENTITY noscriptSound.reset.accesskey "O">
+<!ENTITY noscriptAdvanced "Lisäasetukset">
+<!ENTITY noscriptAdditionalPermissions "Lisäoikeudet luotetuille sivustoille">
+<!ENTITY noscriptAllowClipboard "Salli &quot;rich text&quot; kopiointi ja liittäminen ulkoiselta leikepöydältä">
+<!ENTITY noscriptAdditionalRestrictions "Lisäestot epäluotettaville sivustoille">
+<!ENTITY noscriptPlugins "Liitännäiset">
+<!ENTITY noscriptContentBlocker "Käytä näitä rajoituksia myös sallituille sivustoille">
+<!ENTITY noscriptForbidJava "Estä Java™">
+<!ENTITY noscriptForbidXSLT "Estä XSLT">
+<!ENTITY noscriptForbidSilverlight "Estä Microsoft® Silverlight™">
+<!ENTITY noscriptForbidIFrames "Estä &lt;IFRAME&gt;">
+<!ENTITY noscriptForbidFrames "Estä &lt;FRAME&gt;">
+<!ENTITY noscriptForbidFonts "Estä @font-face">
+<!ENTITY noscriptForbidMedia "Estä &lt;AUDIO&gt; / &lt;VIDEO&gt;">
+<!ENTITY noscriptForbidFlash "Estä Adobe® Flash®">
+<!ENTITY noscriptForbidPlugins "Estä muut lisäkkeet">
+<!ENTITY noscriptForbidWebGL "Estä WebGL">
+<!ENTITY noscriptReloadWarn "Nämä asetukset tulevat voimaan uusilla tai uudelleen ladatuilla sivuilla">
+<!ENTITY noscriptConfirmUnblock "Kysy hyväksyntä ennen tilapäistä kohteen vapauttamista">
+<!ENTITY noscriptStatusLabel "Tilarivin huomautukset">
+<!ENTITY noscriptForbidBookmarklets "Estä kirjanmerkki lisäkkeet">
+<!ENTITY noscriptShowPlaceholder "Näytä sijoitettu kuvake">
+<!ENTITY noscriptTruncateTitle "Katkaise dokumenttien otsikot">
+<!ENTITY noscriptFixLinks "Yritä korjata JavaScript linkit">
+<!ENTITY noscriptAllowBookmarks "Salli kirjanmerkkien kautta avatut sivustot">
+<!ENTITY noscriptAllowViaBookmarks "Salli kirjanmerkkien kautta avatut sivustot">
+<!ENTITY noscriptAllowPing "Salli &lt;A PING…&gt;">
+<!ENTITY noscriptAllowLocalLinks "Salli paikalliset linkit">
+<!ENTITY noscriptForbidPing "Estä &lt;A PING…&gt;">
+<!ENTITY noscriptForbidMetaRefresh "Estä META uudelleenohjaukset &lt;NOSCRIPT&gt; elementtien sisällä">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "U">
+<!ENTITY noscriptNotifyMeta "Näytä viesti estetyistä META uudelleenohjauksista">
+<!ENTITY noscriptNotifyMeta.accesskey "U">
+<!ENTITY noscriptWhitelist "Sallittujen lista">
+<!ENTITY noscriptPermissions "Käyttöoikeudet">
+<!ENTITY noscriptRefresh "Päivitä">
+<!ENTITY noscriptNotifications "Ilmoitukset">
+<!ENTITY noscriptToolbarToggle "Hiiren napsautus työkalurivin NoScript painikkeeseen vaihtaa oikeudet nykyiselle sivulle">
+<!ENTITY noscriptTrusted "Luotettu">
+<!ENTITY noscriptUntrusted "Epäluotettava">
+<!ENTITY noscriptUnknown "Tuntematon">
+<!ENTITY noscriptAdd "Lisää">
+<!ENTITY noscriptAdd.accesskey "L">
+<!ENTITY noscriptClose "Sulje">
+<!ENTITY noscriptSiteManager "Sivustojen hallinta">
+<!ENTITY noscriptSecurityManager "Suojausten hallinta">
+<!ENTITY noscriptPolicies "Käytännöt">
+<!ENTITY noscriptDefaultPolicies "Oletus käytännöt">
+<!ENTITY noscriptSitePolicies "Sivustokohtaiset käytännöt">
+<!ENTITY noscriptNselNever "Piilota &lt;NOSCRIPT&gt; elementit">
+<!ENTITY noscriptNselForce "Näytä &lt;NOSCRIPT&gt; elementit jotka seuraavat estettyä &lt;SCRIPT&gt;">
+<!ENTITY noscriptAutoAllowTopLevel "Tilapäisesti salli ylimmän tason sivustot oletusarvoisesti">
+<!ENTITY noscriptDescription "Lisäsuoja selaimelle Firefox: NoScript sallii JavaScript, Java (ja muut lisäkkeet) vain valitsemiltasi luotettavilta sivustoilta (esim. oman verkkopankin kotisivu). Tämä sallittujen listaan perustuva ennakoiva lähestymistapa estää tietoturva haavoittuvuuksien hyväksikäyttöä (tunnettujen ja jopa tuntemattomien!) ilman, että toimivuus heikentyy... Asiantuntijat ovat samaa mieltä: Firefox on oikeasti turvallisempi NoScript'in kanssa :-)">
+<!ENTITY noscriptOptBlockCssScanners "Estä CSS-pohjaiset skannerit">
+<!ENTITY noscriptOptFilterXGet "Siisti sivustojen väliset epäilyttävät pyynnöt">
+<!ENTITY noscriptOptFilterXPost "Muuta sivustojen väliset POST-pyynnöt vähemmän tietoja sis. GET pyynnöiksi">
+<!ENTITY noscriptShowConsole "Näytä konsoli…">
+<!ENTITY noscriptShowConsole.accesskey "S">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS usein kysytyt…">
+<!ENTITY noscriptXssFaq.accesskey "K">
+<!ENTITY noscriptUnsafeReload "Turvaton uudelleen lataus">
+<!ENTITY noscriptUnsafeReload.accesskey "R">
+<!ENTITY noscriptXssExceptions "Anti-XSS suojaus poikkeukset">
+<!ENTITY noscriptXssExceptions.description "Kohteet jotka sopivat näihin &quot;regular expression&quot; lausekkeisiin EIVÄT ole suojattuja XSS vastaan.">
+<!ENTITY noscriptMatchSample "Kaavan sopivuus näyte:">
+<!ENTITY noscriptReset "Nollaa">
+<!ENTITY noscriptReset.accesskey "o">
+<!ENTITY noscriptResetDef "Palauta oletukset">
+<!ENTITY noscriptResetDef.accesskey "o">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptRevokeTemp "Peruuta tilapäiset oikeudet">
+<!ENTITY noscriptRevokeTemp.accesskey "t">
+<!ENTITY noscriptNoUntrustedPlaceholder "Ei paikkamerkkiä kohteille jotka merkitty epäluotettaviksi">
+<!ENTITY noscriptCollapseBlockedObjects "Supista estetyt kohteet">
+<!ENTITY noscriptExceptions "Poikkeukset…">
+<!ENTITY noscriptBlockedObjects "Estetyt kohteet">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Estä jokainen kohde joka tulee epäluotettavalta sivulta">
+<!ENTITY noscriptTempAllowPage "Tilapäisesti salli kaikki tällä sivulla">
+<!ENTITY noscriptTempAllowPage.accesskey "T">
+<!ENTITY noscriptAllowPage "Salli kaikki tällä sivulla">
+<!ENTITY noscriptAllowPage.accesskey "S">
+<!ENTITY noscriptTempToPerm "Tee sivun oikeudet pysyviksi">
+<!ENTITY noscriptTempToPerm.accesskey "p">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS usein kysytyt…">
+<!ENTITY noscriptHttpsFaq.accesskey "U">
+<!ENTITY noscriptHttps.behavior "Käyttäytyminen">
+<!ENTITY noscriptHttps.cookies "Evästeet">
+<!ENTITY noscriptHttps.description "Estä aktiivinen web-sisältö ellei se tule suojatusta (HTTPS) yhteydestä:">
+<!ENTITY noscriptHttps.never "Ei koskaan">
+<!ENTITY noscriptHttps.proxy "Kun välityspalvelinta käytetään (suositeltavaa Tor käytössä)">
+<!ENTITY noscriptHttps.always "Aina">
+<!ENTITY noscriptHttpsForced "Pakota seuraavat sivustot käyttämään suojattua (HTTPS) yhteyttä:">
+<!ENTITY noscriptHttpsForcedExceptions "Älä koskaan pakota suojattua (HTTPS) yhteyttä seuraavista sivuista:">
+<!ENTITY noscriptSecureCookies "Ota käyttöön automaattinen suojattujen evästeiden hallinta">
+<!ENTITY noscriptSecureCookiesForced "Pakota salaus kaikkiin evästeisiin HTTPS yhteydessä seuraavista sivuista:">
+<!ENTITY noscriptSecureCookiesExceptions "Ohita suojaamattomat evästeet HTTPS yhteydessä seuraavista sivuista:">
+<!ENTITY noscriptClearClickTitle "ClearClick varoitus">
+<!ENTITY noscriptClearClickHeader "Mahdollinen klikkauksen kaappaus / käyttöliittym. naamiointi yritys!">
+<!ENTITY noscriptClearClickDescription "NoScript keskeytti hiiri- tai näppäimistö vuorovaikutuksen osittain piilotettuun kohteeseen. Klikkaa kuvaa alla vaihtaaksesi sumennetun ja selkeän version välillä.">
+<!ENTITY noscriptClearClickOpt "ClearClick suojaus sivuilla…">
+<!ENTITY noscriptClearClickReport "Raportoi">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Raportin ID:">
+<!ENTITY noscriptTrustedPagesAdj "luotettu">
+<!ENTITY noscriptUntrustedPagesAdj "epäluotettava">
+<!ENTITY noscriptKeepLocked "Pidä tämä elementti lukittuna (suositus)">
+<!ENTITY noscriptEmbeddings "Sulautetut">
+<!ENTITY noscriptPrev "Edellinen">
+<!ENTITY noscriptNext "Seuraava">
+<!ENTITY noscriptFrameOptErr.title "Tätä sisältöä ei voida näyttää kehyksessä">
+<!ENTITY noscriptFrameOptErr.desc "Tämän sisällön julkaisija ei turvallisuus syistä anna sen näkyä kehyksessä.">
+<!ENTITY noscriptFrameOptErr.link "Klikkaa tästä avataksesi tämän sisällön uuteen ikkunaan">
+<!ENTITY noscriptBookmarkSync "Varmuuskopioi NoScript asetukset kirjanmerkkiin helppoa synkronointia varten">
+<!ENTITY noscriptShowReleaseNotes "Näytä julkaisutiedot päivityksen yhteydessä">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Säännöt:">
+<!ENTITY ABE.enabled.label "Käytä ABE:tä (Application Boundaries Enforcer)">
+<!ENTITY ABE.siteEnabled.label "Sivustot voivat tarjota omia sääntöjään">
+<!ENTITY ABE.edit.label "Muokkaa…">
+<!ENTITY ABE.edit.accesskey "M">
+<!ENTITY ABE.enable.label "Käytä">
+<!ENTITY ABE.enable.accesskey "K">
+<!ENTITY ABE.disable.label "Poista käytöstä">
+<!ENTITY ABE.disable.accesskey "P">
+<!ENTITY ABE.refresh.label "Päivitä">
+<!ENTITY ABE.refresh.accesskey "P">
+<!ENTITY noscriptUninstall "Poista asennus">
+<!ENTITY noscriptRecentBlocked "Viimeksi estetyt sivustot">
+<!ENTITY noscriptExternalFilters "Ulkoiset suodattimet">
+<!ENTITY noscriptEF.enable "Käytä ulkoisia suodattimia">
+<!ENTITY noscriptEF.add "Uusi suodatin…">
+<!ENTITY noscriptEF.executable "Suoritettava tiedosto:">
+<!ENTITY noscriptEF.browse "Selaa…">
+<!ENTITY noscriptEF.contentType "Sisällön tyyppi (MIME) suodatettavaksi (täsmällinen tai &quot;regular expression&quot; lauseke):">
+<!ENTITY noscriptEF.exceptions "Älä suodata kohteita näiltä sivuilta:">
+<!ENTITY noscriptEF.remove "Poista">
+<!ENTITY noscriptPreset "Suojaustaso">
+<!ENTITY noscriptPreset.off "Pois (oletko tosissasi?!)">
+<!ENTITY noscriptPreset.low "Kevyt (estolista + Web Security)">
+<!ENTITY noscriptPreset.medium "Klassinen (sallittujen lista + Web Security)">
+<!ENTITY noscriptPreset.high "Linnake (täysi lukitus)">
+<!ENTITY noscript.hoverUI "Avaa oikeudet valikko kun hiiri osoittaa NoScript kuvaketta">
+<!ENTITY noscriptDonate "Lahjoita">
+<!ENTITY noscriptDonate.accesskey "o">
+<!ENTITY noscriptAutoReload.currentTab "Reload the current tab only">
+<!ENTITY noscriptCustom "Custom">
+<!ENTITY noscriptCascadePermissions "Cascade top document's permissions to 3rd party scripts">
+<!ENTITY noscriptRestrictSubdocScripting "Block scripting in whitelisted subdocuments of non-whitelisted pages">
+<!ENTITY noscriptGlobalHttpsWhitelist "Allow HTTPS scripts globally on HTTPS documents">
+<!ENTITY noscriptPermanentInPrivate "Permanent &quot;Allow&quot; commands in private windows">

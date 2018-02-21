@@ -1,0 +1,192 @@
+<!ENTITY noscriptOptions "Opties…">
+<!ENTITY noscriptOptions.accesskey "O">
+<!ENTITY noscriptOptionsLong "NoScript-opties">
+<!ENTITY noscriptAbout "Over NoScript @VERSION@">
+<!ENTITY noscriptPermissionsText "U kunt opgeven welke websites scripts mogen gebruiken. Typ het adres of domein (bv. ‘http://www.website.com’ of ‘website.com’) van de website die u wilt toestaan, en klik daarna op Toestaan.">
+<!ENTITY noscriptWebAddress "Adres van website:">
+<!ENTITY noscriptAllow "Toestaan">
+<!ENTITY noscriptAllow.accesskey "T">
+<!ENTITY noscriptForbid "Verbieden">
+<!ENTITY noscriptForbid.accesskey "V">
+<!ENTITY noscriptTrust "Markeren als vertrouwd">
+<!ENTITY noscriptTrust.accesskey "M">
+<!ENTITY noscriptUntrust "Markeren als niet vertrouwd">
+<!ENTITY noscriptUntrust.accesskey "n">
+<!ENTITY noscriptRemoveSelected "Geselecteerde websites verwijderen">
+<!ENTITY noscriptGloballyEnabled "Scripts worden overal toegestaan (gevaarlijk)">
+<!ENTITY noscriptAutoReload "Betrokken pagina’s automatisch vernieuwen als toestemmingen wijzigen">
+<!ENTITY noscriptAutoReload.currentTab "Alleen het huidige tabblad opnieuw laden">
+<!ENTITY noscriptGeneral "Algemeen">
+<!ENTITY noscriptAppearance "Vormgeving">
+<!ENTITY noscriptShow "Tonen…">
+<!ENTITY noscriptCtxMenu "Contextmenu">
+<!ENTITY noscriptStatusIcon "Statusbalkpictogram">
+<!ENTITY noscriptFullAddr "Volledige adressen (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Volledige domeinen (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Basisdomeinen op 2e niveau (noscript.net)">
+<!ENTITY noscriptTempCmd "[…] tijdelijk toestaan">
+<!ENTITY noscriptSound "Geluidsmelding wanneer scripts worden geblokkeerd">
+<!ENTITY noscriptImport "Importeren">
+<!ENTITY noscriptImport.accesskey "I">
+<!ENTITY noscriptExport "Exporteren">
+<!ENTITY noscriptExport.accesskey "E">
+<!ENTITY noscriptNotify "Bericht over geblokkeerde scripts tonen">
+<!ENTITY noscriptNotify.bottom "Bericht onder in het scherm plaatsen">
+<!ENTITY noscriptSound.choose "Kiezen">
+<!ENTITY noscriptSound.choose.accesskey "K">
+<!ENTITY noscriptSound.play "Afspelen">
+<!ENTITY noscriptSound.play.accesskey "A">
+<!ENTITY noscriptSound.reset "Standaardwaarden">
+<!ENTITY noscriptSound.reset.accesskey "S">
+<!ENTITY noscriptAdvanced "Geavanceerd">
+<!ENTITY noscriptAdditionalPermissions "Aanvullende toestemmingen voor vertrouwde websites">
+<!ENTITY noscriptAllowClipboard "Kopiëren en plakken van tekst met opmaakcodes vanaf extern klembord toestaan">
+<!ENTITY noscriptAdditionalRestrictions "Aanvullende beperkingen voor niet-vertrouwde websites">
+<!ENTITY noscriptPlugins "Plug-ins">
+<!ENTITY noscriptContentBlocker "Deze beperkingen ook op vertrouwde websites toepassen">
+<!ENTITY noscriptForbidJava "Java™ verbieden">
+<!ENTITY noscriptForbidXSLT "XSLT verbieden">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™ verbieden">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt; verbieden">
+<!ENTITY noscriptForbidFrames "&lt;FRAME&gt; verbieden">
+<!ENTITY noscriptForbidFonts "@font-face verbieden">
+<!ENTITY noscriptForbidWebGL "WebGL verbieden">
+<!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; verbieden">
+<!ENTITY noscriptForbidFlash "Adobe® Flash® verbieden">
+<!ENTITY noscriptForbidPlugins "Andere plug-ins verbieden">
+<!ENTITY noscriptReloadWarn "Deze opties worden van kracht op nieuwe of (handmatig) vernieuwde pagina’s">
+<!ENTITY noscriptConfirmUnblock "Om bevestiging vragen voordat een objectblokkering tijdelijk wordt opgeheven">
+<!ENTITY noscriptStatusLabel "Statusbalklabel">
+<!ENTITY noscriptForbidBookmarklets "Bookmarklets verbieden">
+<!ENTITY noscriptShowPlaceholder "Vervangend pictogram tonen">
+<!ENTITY noscriptTruncateTitle "Documenttitels inkorten">
+<!ENTITY noscriptFixLinks "JavaScript-koppelingen proberen te herstellen">
+<!ENTITY noscriptAllowBookmarks "Via bladwijzers geopende websites toestaan">
+<!ENTITY noscriptAllowViaBookmarks "Via bladwijzers geopende websites toestaan">
+<!ENTITY noscriptAllowPing "&lt;A PING…&gt; toestaan">
+<!ENTITY noscriptAllowLocalLinks "Lokale koppelingen toestaan">
+<!ENTITY noscriptForbidPing "&lt;A PING…&gt; verbieden">
+<!ENTITY noscriptForbidMetaRefresh "META-omleidingen in &lt;NOSCRIPT&gt;-elementen verbieden">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "V">
+<!ENTITY noscriptNotifyMeta "Bericht over geblokkeerde META-omleidingen tonen">
+<!ENTITY noscriptNotifyMeta.accesskey "r">
+<!ENTITY noscriptWhitelist "Toestemmingenlijst">
+<!ENTITY noscriptPermissions "Toestemmingen">
+<!ENTITY noscriptRefresh "Vernieuwen">
+<!ENTITY noscriptNotifications "Meldingen">
+<!ENTITY noscriptToolbarToggle "Met de linkermuisknop op de NoScript-werkbalkknop klikken schakelt toestemmingen voor huidige top-levelwebsite in/uit">
+<!ENTITY noscriptTrusted "Vertrouwd">
+<!ENTITY noscriptUntrusted "Niet vertrouwd">
+<!ENTITY noscriptUnknown "Onbekend">
+<!ENTITY noscriptAdd "Toevoegen">
+<!ENTITY noscriptAdd.accesskey "T">
+<!ENTITY noscriptClose "Sluiten">
+<!ENTITY noscriptSiteManager "Websitebeheerder">
+<!ENTITY noscriptSecurityManager "Beveiligingsbeheerder">
+<!ENTITY noscriptPolicies "Beleid">
+<!ENTITY noscriptDefaultPolicies "Standaardbeleid">
+<!ENTITY noscriptSitePolicies "Website-specifiek beleid">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt;-elementen verbergen">
+<!ENTITY noscriptNselForce "Het &lt;NOSCRIPT&gt;-element dat na een geblokkeerd &lt;SCRIPT&gt; volgt tonen">
+<!ENTITY noscriptAutoAllowTopLevel "Top-levelwebsites standaard tijdelijk toestaan">
+<!ENTITY noscriptDescription "Extra bescherming voor Firefox: NoScript staat JavaScript, Java (en andere plug-ins) alleen toe voor zelf gekozen vertrouwde domeinen (zoals uw website voor internetbankieren). Deze op toestemmingslijsten gebaseerde blokkering voorkomt exploitatie van beveiligingskwetsbaarheden (bekende en zelfs onbekende!) zonder verlies aan functionaliteit… Experts zullen het bevestigen: Firefox is echt veiliger met NoScript :-)">
+<!ENTITY noscriptOptBlockCssScanners "Op cross-site scripting (CSS) gebaseerde scanners blokkeren">
+<!ENTITY noscriptOptFilterXGet "Verdachte cross-site-aanvragen zuiveren">
+<!ENTITY noscriptOptFilterXPost "Cross-site POST-aanvragen omzetten naar gegevensarme GET-aanvragen">
+<!ENTITY noscriptShowConsole "Console tonen…">
+<!ENTITY noscriptShowConsole.accesskey "t">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS-FAQ…">
+<!ENTITY noscriptXssFaq.accesskey "Q">
+<!ENTITY noscriptUnsafeReload "Onveilig herladen">
+<!ENTITY noscriptUnsafeReload.accesskey "h">
+<!ENTITY noscriptXssExceptions "Uitzonderingen voor Anti-XSS-bescherming">
+<!ENTITY noscriptXssExceptions.description "Bestemmingen die aan deze reguliere expressies voldoen, zullen NIET tegen XSS worden beschermd.">
+<!ENTITY noscriptMatchSample "Voorbeeld van patroonovereenkomst:">
+<!ENTITY noscriptReset "Herstellen">
+<!ENTITY noscriptReset.accesskey "H">
+<!ENTITY noscriptResetDef "Standaardwaarden terugzetten">
+<!ENTITY noscriptResetDef.accesskey "S">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptRevokeTemp "Tijdelijke toestemmingen intrekken">
+<!ENTITY noscriptRevokeTemp.accesskey "s">
+<!ENTITY noscriptNoUntrustedPlaceholder "Geen vervangend pictogram voor objecten afkomstig van als niet vertrouwd gemarkeerde websites">
+<!ENTITY noscriptCollapseBlockedObjects "Geblokkeerde objecten samenvouwen">
+<!ENTITY noscriptExceptions "Uitzonderingen…">
+<!ENTITY noscriptBlockedObjects "Geblokkeerde objecten">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Elk object afkomstig van een als niet vertrouwd gemarkeerde website blokkeren">
+<!ENTITY noscriptTempAllowPage "Alles op deze pagina tijdelijk toestaan">
+<!ENTITY noscriptTempAllowPage.accesskey "t">
+<!ENTITY noscriptAllowPage "Alles op deze pagina toestaan">
+<!ENTITY noscriptAllowPage.accesskey "A">
+<!ENTITY noscriptTempToPerm "Paginatoestemmingen definitief maken">
+<!ENTITY noscriptTempToPerm.accesskey "m">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS-FAQ…">
+<!ENTITY noscriptHttpsFaq.accesskey "Q">
+<!ENTITY noscriptHttps.behavior "Gedrag">
+<!ENTITY noscriptHttps.cookies "Cookies">
+<!ENTITY noscriptHttps.description "Actieve webinhoud verbieden, tenzij afkomstig van een beveiligde (HTTPS-)verbinding:">
+<!ENTITY noscriptHttps.never "Nooit">
+<!ENTITY noscriptHttps.proxy "Bij gebruik van een proxy (aanbevolen voor Tor)">
+<!ENTITY noscriptHttps.always "Altijd">
+<!ENTITY noscriptHttpsForced "Onderstaande websites dwingen beveiligde (HTTPS-)verbindingen te gebruiken:">
+<!ENTITY noscriptHttpsForcedExceptions "Onderstaande websites NOOIT dwingen beveiligde (HTTPS-)verbindingen te gebruiken:">
+<!ENTITY noscriptSecureCookies "Automatisch beheer van beveiligde cookies inschakelen">
+<!ENTITY noscriptSecureCookiesForced "Alle cookies ingesteld via HTTPS door onderstaande websites dwingen versleuteling te gebruiken:">
+<!ENTITY noscriptSecureCookiesExceptions "Door onderstaande websites via HTTPS ingestelde onveilige cookies negeren:">
+<!ENTITY noscriptClearClickTitle "‘ClearClick’-waarschuwing">
+<!ENTITY noscriptClearClickHeader "Potentiële poging tot ‘Clickjacking’ / aanpassing van gebruikersinterface!">
+<!ENTITY noscriptClearClickDescription "NoScript heeft een muis- of toetsenbordinteractie met een gedeeltelijk verborgen element onderschept. Klik op de onderstaande afbeelding om tussen de belemmerde en de zichtbare versie om te schakelen.">
+<!ENTITY noscriptClearClickOpt "‘ClearClick’-bescherming op pagina’s…">
+<!ENTITY noscriptClearClickReport "Rapport">
+<!ENTITY noscriptClearClickReport.accesskey "R">
+<!ENTITY noscriptClearClickReportId "Rapport-ID:">
+<!ENTITY noscriptTrustedPagesAdj "vertrouwd">
+<!ENTITY noscriptUntrustedPagesAdj "niet vertrouwd">
+<!ENTITY noscriptKeepLocked "Dit element geblokkeerd houden (aanbevolen)">
+<!ENTITY noscriptEmbeddings "Ingebouwde objecten">
+<!ENTITY noscriptPrev "Vorige">
+<!ENTITY noscriptNext "Volgende">
+<!ENTITY noscriptFrameOptErr.title "Deze inhoud kan niet in een deelvenster worden weergegeven">
+<!ENTITY noscriptFrameOptErr.desc "Om uw veiligheid te beschermen, staat de uitgever van deze inhoud niet toe deze in een deelvenster weer te geven.">
+<!ENTITY noscriptFrameOptErr.link "Klik hier om deze inhoud in een nieuw venster weer te geven">
+<!ENTITY noscriptBookmarkSync "NoScript-configuratie in een bladwijzer opslaan voor eenvoudige synchronisatie">
+<!ENTITY noscriptShowReleaseNotes "Uitgaveopmerkingen weergeven na bijwerken">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Regels:">
+<!ENTITY ABE.enabled.label "ABE (Application Boundaries Enforcer) inschakelen">
+<!ENTITY ABE.siteEnabled.label "Websites toestaan eigen regels door te geven">
+<!ENTITY ABE.edit.label "Wijzigen…">
+<!ENTITY ABE.edit.accesskey "W">
+<!ENTITY ABE.enable.label "Inschakelen">
+<!ENTITY ABE.enable.accesskey "I">
+<!ENTITY ABE.disable.label "Uitschakelen">
+<!ENTITY ABE.disable.accesskey "U">
+<!ENTITY ABE.refresh.label "Vernieuwen">
+<!ENTITY ABE.refresh.accesskey "V">
+<!ENTITY noscriptUninstall "De-installeren">
+<!ENTITY noscriptRecentBlocked "Onlangs geblokkeerde websites">
+<!ENTITY noscriptExternalFilters "Externe filters">
+<!ENTITY noscriptEF.enable "Externe filters inschakelen">
+<!ENTITY noscriptEF.add "Nieuw filter…">
+<!ENTITY noscriptEF.executable "Uitvoerbaar bestand:">
+<!ENTITY noscriptEF.browse "Bladeren…">
+<!ENTITY noscriptEF.contentType "Te filteren inhoudstype (MIME) (exacte overeenkomst of reguliere expressie):">
+<!ENTITY noscriptEF.exceptions "Objecten niet filteren als ze van deze websites afkomstig zijn:">
+<!ENTITY noscriptEF.remove "Verwijderen">
+<!ENTITY noscriptPreset "Beveiligingsniveau">
+<!ENTITY noscriptPreset.off "Uit (sterk afgeraden!)">
+<!ENTITY noscriptPreset.low "Eenvoudig (Blokkeerlijst en webbeveiliging)">
+<!ENTITY noscriptPreset.medium "Klassiek (Toestemmingenlijst + webbeveiliging)">
+<!ENTITY noscriptPreset.high "Zwaar (volledige afsluiting)">
+<!ENTITY noscript.hoverUI "Toestemmingenmenu openen als muis op NoScript-pictogram wordt geplaatst">
+<!ENTITY noscriptDonate "Doneren">
+<!ENTITY noscriptDonate.accesskey "D">
+<!ENTITY noscriptCascadePermissions "Toestemmingen van bovenste document aan scripts van derden doorgeven">
+<!ENTITY noscriptRestrictSubdocScripting "Scripts in toegestane subdocumenten van niet-toegestane pagina’s blokkeren">
+<!ENTITY noscriptGlobalHttpsWhitelist "HTTPS-scripts op HTTPS-documenten overal toestaan">
+<!ENTITY noscriptPermanentInPrivate "Permanente ‘Toestaan’-opdrachten in privévensters">
+<!ENTITY noscriptCustom "Custom">

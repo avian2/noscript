@@ -1,0 +1,192 @@
+<!ENTITY noscriptOptions "Seçenekler">
+<!ENTITY noscriptOptions.accesskey "S">
+<!ENTITY noscriptOptionsLong "NoScript Seçenekleri">
+<!ENTITY noscriptAbout "NoScript @VERSION@ @XVERSION@ Hakkında">
+<!ENTITY noscriptPermissionsText "Hangi web sayfalarında JavaScript'e izni vereceğinizi kolayca seçebilirsiniz. Lütfen adresi tam olarak girin (örn. &quot;http://www.site.com&quot; veya &quot;site.com&quot;) ve 'İzin ver' düğmesine tıklayarak sayfanın JavaScript kullanmasına izin verin.">
+<!ENTITY noscriptWebAddress "Site adresi:">
+<!ENTITY noscriptAllow "İzin ver">
+<!ENTITY noscriptAllow.accesskey "z">
+<!ENTITY noscriptForbid "Engelle">
+<!ENTITY noscriptForbid.accesskey "E">
+<!ENTITY noscriptTrust "Güvenilir Olarak İşaretle">
+<!ENTITY noscriptTrust.accesskey "G">
+<!ENTITY noscriptUntrust "Güvensiz Olarak İşaretle">
+<!ENTITY noscriptUntrust.accesskey "v">
+<!ENTITY noscriptRemoveSelected "Seçili Siteleri Kaldır">
+<!ENTITY noscriptGloballyEnabled "Betiklere Tüm Siteler İçin İzin Verilir (Tehlikelidir)">
+<!ENTITY noscriptAutoReload "İzinler değişince etkilenen sayfayı otomatik olarak tazele">
+<!ENTITY noscriptGeneral "Genel">
+<!ENTITY noscriptAppearance "Görünüm">
+<!ENTITY noscriptShow "Göster…">
+<!ENTITY noscriptCtxMenu "Bağlamsal menü">
+<!ENTITY noscriptStatusIcon "Durum çubugu simgesi">
+<!ENTITY noscriptFullAddr "Tam Adresler (http://www.noscript.net)">
+<!ENTITY noscriptFullDom "Tam Alan Adları (www.noscript.net)">
+<!ENTITY noscriptBaseDom "Temel 2. Seviye Alan Adları (noscript.net)">
+<!ENTITY noscriptTempCmd "[…] eylemine geçici olarak izin ver">
+<!ENTITY noscriptSound "Kodlar engellenince ses dosyası çal">
+<!ENTITY noscriptImport "İçe aktar">
+<!ENTITY noscriptImport.accesskey "K">
+<!ENTITY noscriptExport "Dışa aktar">
+<!ENTITY noscriptExport.accesskey "A">
+<!ENTITY noscriptNotify "Betikler engellendiğinde ileti göster">
+<!ENTITY noscriptNotify.bottom "İletiyi aşağıdaki kenarda göster">
+<!ENTITY noscriptSound.choose "Seç">
+<!ENTITY noscriptSound.choose.accesskey "S">
+<!ENTITY noscriptSound.play "Çal">
+<!ENTITY noscriptSound.play.accesskey "a">
+<!ENTITY noscriptSound.reset "Varsayılanları yükle">
+<!ENTITY noscriptSound.reset.accesskey "R">
+<!ENTITY noscriptAdvanced "Gelişmiş">
+<!ENTITY noscriptAdditionalPermissions "Güvenli siteler için ek izinler">
+<!ENTITY noscriptAllowClipboard "Harici panoda zengin Kopyala ve Yapıştır işlemlerine izin ver">
+<!ENTITY noscriptAdditionalRestrictions "Güvensiz siteler için ek kısıtlamalar">
+<!ENTITY noscriptPlugins "Eklentiler">
+<!ENTITY noscriptContentBlocker "Bu sınırlamaları güvenilen sitelere de uygula">
+<!ENTITY noscriptForbidJava "Java™'yı yasakla">
+<!ENTITY noscriptForbidXSLT "XSLT'yı yasakla">
+<!ENTITY noscriptForbidSilverlight "Microsoft® Silverlight™'ı yasakla">
+<!ENTITY noscriptForbidIFrames "&lt;IFRAME&gt;'leri yasakla">
+<!ENTITY noscriptForbidFrames "&lt;FRAME&gt;'leri yasakla">
+<!ENTITY noscriptForbidFonts "Yazıtipi @font-face tanımını yasakla">
+<!ENTITY noscriptForbidMedia "&lt;AUDIO&gt; / &lt;VIDEO&gt; yasakla">
+<!ENTITY noscriptForbidFlash "Adobe® Flash®'ı yasakla">
+<!ENTITY noscriptForbidPlugins "Diğer eklentileri yasakla">
+<!ENTITY noscriptForbidWebGL "Yazıtipi WebGL tanımını yasakla">
+<!ENTITY noscriptReloadWarn "Bu ayarlar sadece yeni veya kendinizin yeniden yüklediği sayfalar için geçerlidir.">
+<!ENTITY noscriptConfirmUnblock "Bir nesne engelini geçici olarak kaldırırken onay iste">
+<!ENTITY noscriptStatusLabel "Durum çubuğu etiketi">
+<!ENTITY noscriptForbidBookmarklets "Yer imlerini yasakla">
+<!ENTITY noscriptShowPlaceholder "Yer tutucu simgelerini göster">
+<!ENTITY noscriptTruncateTitle "Belge başlığını kes">
+<!ENTITY noscriptFixLinks "JavaScript bağlantılarını düzeltmeye çalış">
+<!ENTITY noscriptAllowBookmarks "Yer imlerimde kayıtlı sitelere izin ver">
+<!ENTITY noscriptAllowViaBookmarks "Yer imlerinden açılan sitelere izin ver">
+<!ENTITY noscriptAllowPing "&lt;A PING…&gt;'e izin ver">
+<!ENTITY noscriptAllowLocalLinks "Yerel bağlantılara izin ver">
+<!ENTITY noscriptForbidPing "&lt;A PING…&gt;'i yasakla">
+<!ENTITY noscriptForbidMetaRefresh "&lt;NOSCRIPT&gt; öğeleri içindeki META yeniden yönlendirmelerini engelle">
+<!ENTITY noscriptForbidMetaRefresh.accesskey "M">
+<!ENTITY noscriptNotifyMeta "Engellenen META yeniden yönlendirmeleri hakkında bilgilendir">
+<!ENTITY noscriptNotifyMeta.accesskey "M">
+<!ENTITY noscriptWhitelist "Beyazliste">
+<!ENTITY noscriptPermissions "İzinler">
+<!ENTITY noscriptRefresh "Tazele">
+<!ENTITY noscriptNotifications "Bildirimler">
+<!ENTITY noscriptToolbarToggle "Araç çubuğundaki NoScript düğmesine sol tıklayarak üst seviye sitenin erişim izinlerini değiştirebilirsiniz">
+<!ENTITY noscriptTrusted "Güvenilen">
+<!ENTITY noscriptUntrusted "Güvenilmeyen">
+<!ENTITY noscriptUnknown "Bilinmeyen">
+<!ENTITY noscriptAdd "Ekle">
+<!ENTITY noscriptAdd.accesskey "E">
+<!ENTITY noscriptClose "Kapat">
+<!ENTITY noscriptSiteManager "Site Yöneticisi">
+<!ENTITY noscriptSecurityManager "Güvenlik Yöneticisi">
+<!ENTITY noscriptPolicies "İlkeler">
+<!ENTITY noscriptDefaultPolicies "Varsayılan İlkeler">
+<!ENTITY noscriptSitePolicies "Siteye özel ilkeler">
+<!ENTITY noscriptNselNever "&lt;NOSCRIPT&gt; öğelerini sakla">
+<!ENTITY noscriptNselForce "&lt;SCRIPT&gt;'den sonra oluşan &lt;NOSCRIPT&gt; öğelerini göster">
+<!ENTITY noscriptAutoAllowTopLevel "Varsayılan olarak üst seviye sitelere geçici izin ver">
+<!ENTITY noscriptDescription "Firefox'unuz için ek koruma: NoScript sadece güvendiğiniz sitelerde (örneğin bankanızın web sitesi) JavaScript, Java (ve diğer eklentiler) kullanımına izin verebilir veya yasaklayabilirsiniz. Beyaz liste tabanlı öncelikli engelleme yaklaşımı, güvenlik açıklarının yayılmasını hiçbir işlev kaybı olmadan önler (bilinen veya bilinmeyen!)… Uzmanlar Firefox'un NoScript eklentisi ile daha güvenli olduğunda hemfikir olacaklardır :-)">
+<!ENTITY noscriptOptBlockCssScanners "CSS temelli tarayıcıları engelle">
+<!ENTITY noscriptOptFilterXGet "Çapraz-site şüpheli isteklerini temizle">
+<!ENTITY noscriptOptFilterXPost "Çapraz-site POST isteklerini GET'e çevir">
+<!ENTITY noscriptShowConsole "Konsolu Göster…">
+<!ENTITY noscriptShowConsole.accesskey "K">
+<!ENTITY noscriptXss "XSS">
+<!ENTITY noscriptXss.accesskey "X">
+<!ENTITY noscriptXssFaq "XSS SSS…">
+<!ENTITY noscriptXssFaq.accesskey "S">
+<!ENTITY noscriptUnsafeReload "Güvensiz Tekrar Yükleme">
+<!ENTITY noscriptUnsafeReload.accesskey "Y">
+<!ENTITY noscriptXssExceptions "Anti-XSS Koruma Ayrıcalıkları">
+<!ENTITY noscriptXssExceptions.description "Aşağıdaki tanımlara uyan hedefler XSS&apos;e karşı KORUNMAYACAKLAR.">
+<!ENTITY noscriptMatchSample "Eşleşen desen örneği:">
+<!ENTITY noscriptReset "Sıfırla">
+<!ENTITY noscriptReset.accesskey "s">
+<!ENTITY noscriptResetDef "Varsayılana Sıfırla">
+<!ENTITY noscriptResetDef.accesskey "v">
+<!ENTITY noscriptOptionsWidth "40em">
+<!ENTITY noscriptRevokeTemp "Geçici İzinleri Kaldır">
+<!ENTITY noscriptRevokeTemp.accesskey "K">
+<!ENTITY noscriptNoUntrustedPlaceholder "Güvensiz işaretlenen sitelerden gelen nesnelerde yer tutucuları gösterme">
+<!ENTITY noscriptCollapseBlockedObjects "Engellenen nesneleri daralt">
+<!ENTITY noscriptExceptions "Hariç tutulanlar…">
+<!ENTITY noscriptBlockedObjects "Engellenen Nesneler">
+<!ENTITY noscriptAlwaysBlockUntrustedContent "Güvensiz olarak işaretlenen sitelerden gelen tüm nesneleri engelle">
+<!ENTITY noscriptTempAllowPage "Geçici olarak bu sayfanın tümüne izin ver">
+<!ENTITY noscriptTempAllowPage.accesskey "G">
+<!ENTITY noscriptAllowPage "Bu sayfanın tümüne izin ver">
+<!ENTITY noscriptAllowPage.accesskey "z">
+<!ENTITY noscriptTempToPerm "Sayfa izinlerini kalıcı yap">
+<!ENTITY noscriptTempToPerm.accesskey "k">
+<!ENTITY noscriptHttps "HTTPS">
+<!ENTITY noscriptHttpsFaq "HTTPS SSS...">
+<!ENTITY noscriptHttpsFaq.accesskey "S">
+<!ENTITY noscriptHttps.behavior "Davranış">
+<!ENTITY noscriptHttps.cookies "Çerezler">
+<!ENTITY noscriptHttps.description "Etkin web içeriği, güvenli bağlantı üzerinden gelmezse (HTTPS) engelle:">
+<!ENTITY noscriptHttps.never "Asla">
+<!ENTITY noscriptHttps.proxy "Vekil sunucu kullanırken (Tor kullanırken tavsiye edilir)">
+<!ENTITY noscriptHttps.always "Her zaman">
+<!ENTITY noscriptHttpsForced "Bu siteleri güvenli bağlantı kullanmaya zorla (HTTPS):">
+<!ENTITY noscriptHttpsForcedExceptions "Bu siteleri güvenli bağlantı (HTTPS) kullanmaya asla zorlama:">
+<!ENTITY noscriptSecureCookies "Otomatik Güvenli Çerez Yönetimini etkinleştir">
+<!ENTITY noscriptSecureCookiesForced "Bu sitelerin HTTPS üzerinden gönderilen çerezlerinin şifrelenmesini zorla:">
+<!ENTITY noscriptSecureCookiesExceptions "HTTPS üzerinden gönderilen güvensiz çerezleri bu siteler için yoksay:">
+<!ENTITY noscriptClearClickTitle "TemizTıklama Uyarısı">
+<!ENTITY noscriptClearClickHeader "Muhtemel Tıklama Hilesi/Yeniden Adresleme Denemesi">
+<!ENTITY noscriptClearClickDescription "NoScript kısmen gizlenmiş bir öğe ile fare veya klavyenin etkileşimini engelledi. Engellenmiş ve temiz sürüm arasında geçiş yapmak için üstteki resme tıklayın.">
+<!ENTITY noscriptClearClickOpt "Sayfalarda TemizTıklama koruması yap…">
+<!ENTITY noscriptClearClickReport "Bildir">
+<!ENTITY noscriptClearClickReport.accesskey "B">
+<!ENTITY noscriptClearClickReportId "Bildiri Kimliği:">
+<!ENTITY noscriptTrustedPagesAdj "güvenilenlerde">
+<!ENTITY noscriptUntrustedPagesAdj "güvenilmeyenlerde">
+<!ENTITY noscriptKeepLocked "Bu öğeyi kilitli olarak bırak (tavsiye edilir)">
+<!ENTITY noscriptEmbeddings "Gömülü Nesneler">
+<!ENTITY noscriptPrev "Önceki">
+<!ENTITY noscriptNext "Sonraki">
+<!ENTITY noscriptFrameOptErr.title "Bu içerik bir çerçeve içerisinde gösterilemez">
+<!ENTITY noscriptFrameOptErr.desc "Güvenliğinizi korumak için, bu içeriğin sağlayıcısı bir çerçeve içerisinde gösterilmesine izin vermiyor.">
+<!ENTITY noscriptFrameOptErr.link "İçeriği yeni bir pencere içerisinde açmak için buraya tıklayın">
+<!ENTITY noscriptBookmarkSync "NoScript yapılandırmasını kolay eşitleme için yer imlerine yedekle">
+<!ENTITY noscriptShowReleaseNotes "Güncelleme olduğunda sürüm notlarını görüntüle">
+<!ENTITY ABE "ABE">
+<!ENTITY ABE.accesskey "A">
+<!ENTITY ABE.rulesets.label "Kural Kümeleri:">
+<!ENTITY ABE.enabled.label "ABE (Uygulama Sınır Zorlayıcı) Etkinleştir">
+<!ENTITY ABE.siteEnabled.label "Sitelerin kendi kural kümelerini kullanmasına izin ver">
+<!ENTITY ABE.edit.label "Düzenle…">
+<!ENTITY ABE.edit.accesskey "D">
+<!ENTITY ABE.enable.label "Etkinleştir">
+<!ENTITY ABE.enable.accesskey "n">
+<!ENTITY ABE.disable.label "Devre Dışı Bırak">
+<!ENTITY ABE.disable.accesskey "E">
+<!ENTITY ABE.refresh.label "Yenile">
+<!ENTITY ABE.refresh.accesskey "Y">
+<!ENTITY noscriptUninstall "Kaldır">
+<!ENTITY noscriptRecentBlocked "Yakın zamanda engellenen siteler">
+<!ENTITY noscriptExternalFilters "Harici Süzgeçler">
+<!ENTITY noscriptEF.enable "Harici süzgeçleri etkinleştir">
+<!ENTITY noscriptEF.add "Yeni Süzgeç…">
+<!ENTITY noscriptEF.executable "Uygulama dosyası:">
+<!ENTITY noscriptEF.browse "Gözat...">
+<!ENTITY noscriptEF.contentType "Süzülecek içerik türü (MIME) (tam metin veya düzenli ifade):">
+<!ENTITY noscriptEF.exceptions "Bu sitelerden gelen nesneleri süzme:">
+<!ENTITY noscriptEF.remove "Kaldır">
+<!ENTITY noscriptPreset "Güvenlik Seviyesi">
+<!ENTITY noscriptPreset.off "Kapalı (ciddi misiniz?!)">
+<!ENTITY noscriptPreset.low "Kolay kullanım (Karaliste + Web Güvenliği)">
+<!ENTITY noscriptPreset.medium "Klasik (Beyazliste + Web Güvenliği)">
+<!ENTITY noscriptPreset.high "Kale (Tamamen kilitle)">
+<!ENTITY noscript.hoverUI "Fare ile NoScript simgesi üzerine gidince izinler listesini aç">
+<!ENTITY noscriptDonate "Bağış Yap">
+<!ENTITY noscriptDonate.accesskey "B">
+<!ENTITY noscriptAutoReload.currentTab "Sadece geçerli sekmeyi yeniden yükle">
+<!ENTITY noscriptCascadePermissions "Üst belge izinlerini 3. parti betiklere de indir">
+<!ENTITY noscriptRestrictSubdocScripting "Beyaz listede olmayan sayfaların, beyaz listedeki alt sayfalarında bulunan betikleri engelle">
+<!ENTITY noscriptGlobalHttpsWhitelist "HTTPS belgelerinde HTTPS betiklerine genel olarak izin ver">
+<!ENTITY noscriptPermanentInPrivate "Özel pencerelerdeki komutlara kalıcı olarak &quot;İzin Ver&quot;">
+<!ENTITY noscriptCustom "Custom">

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://noscript/skin/browser.css" type="text/css"?>
+<?xml-stylesheet href="chrome://noscript/skin/options.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://noscript/locale/noscript.dtd">
+<dialog id="clearClick"
+  title="&noscriptClearClickTitle;"
+  onload="ClearClick.init()"
+  ondialogaccept="ClearClick.end()"
+	ondialogdisclosure="ClearClick.disclosure()"
+  ondialogextra1="ClearClick.report()"
+ 
+  
+	buttons="accept,extra1,disclosure"
+  buttonlabelextra1="&noscriptClearClickReport;"
+  buttonaccesskeyextra1="&noscriptClearClickReport.accesskey;"
+  
+  spacerflex="1"
+  persist="screenX screenY"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    
+  <script type="application/x-javascript" src="noscript.js" />
+  <script type="application/x-javascript" src="clearClick.js" />
+	<hbox style="width: 400px">
+		<vbox>
+			<image src="chrome://noscript/skin/icon32.png" width="32" height="32" />
+	  </vbox>
+		<vbox flex="1">
+		<label class="header" value="&noscriptClearClickHeader;" />
+		<description style="white-space: normal;">&noscriptClearClickDescription;</description>
+		<hbox align="center" style="margin: 8px;">
+			<vbox align="center">
+				<stack id="imgs-stack" align="center" 
+							 onkeypress="if (event.which > 9) ClearClick.swap(this)"
+								onclick="ClearClick.swap(this)">
+					<image id="fakeImg" src="" width="350" height="200" style="border: 2px solid #800"/>
+					<image id="trueImg" src="" width="350" height="200" style="border: 2px solid #080"/>
+				</stack>
+			</vbox>
+	  </hbox>
+		<label control="keepLocked" class="text-link" id="hiddenContentURL" onclick="ClearClick.browse()" value="" />
+		<checkbox id="keepLocked" label="&noscriptKeepLocked;" checked="true" />
+    <separator/>
+    <hbox id="clearClickOpts" align="center">
+      <label control="cc1" value="&noscriptClearClickOpt;"/>
+      <checkbox id="cc1" value="1" label="&noscriptUntrustedPagesAdj;"/>
+      <checkbox id="cc2" value="2" label="&noscriptTrustedPagesAdj;"/>
+    </hbox>
+    <hbox>
+      <label id="report" collapsed="true">&noscriptClearClickReportId;</label>
+      <textbox readonly="true" class="plain" id="report-id" value="" style="visibility: hidden" />
+      <progressmeter id="progress" mode="undetermined" collapsed="true" flex="1"/>
+    </hbox>
+    
+		</vbox>
+   </hbox>
+</dialog>

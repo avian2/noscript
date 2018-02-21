@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "NoScript",
+  "applications": {
+    "gecko": {
+      "id":  "{73a6fe31-595d-460b-a920-fcc0f8843232}",
+      "strict_min_version": "52.0"
+    }
+  },
+  "version": "10.1.0",
+  "description": "NoScript Security Suite",
+
+  "permissions": [
+      "contextMenus",
+      "privacy",
+      "storage",
+      "tabs",
+      "unlimitedStorage",
+      "webNavigation",
+      "webRequest",
+      "webRequestBlocking",
+      "<all_urls>"
+  ],
+
+  "background": {
+    "scripts": ["legacy.js"]
+  }
+}

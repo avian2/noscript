@@ -1,0 +1,62 @@
+content noscript chrome/content/noscript/
+
+skin    noscript classic/1.0 chrome/skin/classic/noscript/
+
+# Work around for breakages caused by the .NET Framework Assistant
+override chrome://dotnetassistant/content/bootstrap.xul data:text/xml,<lame/>
+
+# Localization
+locale noscript ar    chrome/locale/ar/noscript/
+locale noscript be-BY chrome/locale/be-BY/noscript/
+locale noscript bg-BG chrome/locale/bg-BG/noscript/
+locale noscript bn-IN chrome/locale/bn-IN/noscript/
+locale noscript ca-AD chrome/locale/ca-AD/noscript/
+locale noscript cs-CZ chrome/locale/cs-CZ/noscript/
+locale noscript cy-GB chrome/locale/cy-GB/noscript/
+locale noscript da    chrome/locale/da/noscript/
+locale noscript de    chrome/locale/de/noscript/
+locale noscript el    chrome/locale/el/noscript/
+locale noscript en-GB    chrome/locale/en-GB/noscript/
+locale noscript en-US    chrome/locale/en-US/noscript/
+locale noscript eo    chrome/locale/eo/noscript/
+locale noscript es-AR chrome/locale/es-AR/noscript/
+locale noscript es-CL chrome/locale/es-CL/noscript/
+locale noscript es-ES chrome/locale/es-ES/noscript/
+locale noscript et-EE chrome/locale/et-EE/noscript/
+locale noscript eu    chrome/locale/eu/noscript/
+locale noscript fa-IR chrome/locale/fa-IR/noscript/
+locale noscript fi    chrome/locale/fi/noscript/
+locale noscript fr    chrome/locale/fr/noscript/
+locale noscript gl-ES chrome/locale/gl-ES/noscript/
+locale noscript he-IL chrome/locale/he-IL/noscript/
+locale noscript hr-HR chrome/locale/hr-HR/noscript/
+locale noscript hsb   chrome/locale/hsb/noscript/
+locale noscript hu-HU chrome/locale/hu-HU/noscript/
+locale noscript id-ID chrome/locale/id-ID/noscript/
+locale noscript it    chrome/locale/it/noscript/
+locale noscript ja-JP chrome/locale/ja-JP/noscript/
+locale noscript kk-KZ chrome/locale/kk-KZ/noscript/
+locale noscript km-KH chrome/locale/km-KH/noscript/
+locale noscript ko-KR chrome/locale/ko-KR/noscript/
+locale noscript lt    chrome/locale/lt/noscript/
+locale noscript mk-MK chrome/locale/mk-MK/noscript/
+locale noscript ms-MY chrome/locale/ms-MY/noscript/
+locale noscript nb-NO chrome/locale/nb-NO/noscript/
+locale noscript nl    chrome/locale/nl/noscript/
+locale noscript pl    chrome/locale/pl/noscript/
+locale noscript pt-BR chrome/locale/pt-BR/noscript/
+locale noscript pt-PT chrome/locale/pt-PT/noscript/
+locale noscript ro    chrome/locale/ro/noscript/
+locale noscript ru-RU chrome/locale/ru-RU/noscript/
+locale noscript sk-SK chrome/locale/sk-SK/noscript/
+locale noscript sl-SI chrome/locale/sl-SI/noscript/
+locale noscript sr    chrome/locale/sr/noscript/
+locale noscript sr-RS chrome/locale/sr-RS/noscript/
+locale noscript sv-SE chrome/locale/sv-SE/noscript/
+locale noscript te-IN chrome/locale/te-IN/noscript/
+locale noscript th    chrome/locale/th/noscript/
+locale noscript tr    chrome/locale/tr/noscript/
+locale noscript uk    chrome/locale/uk/noscript/
+locale noscript vi    chrome/locale/vi/noscript/
+locale noscript zh-CN chrome/locale/zh-CN/noscript/
+locale noscript zh-TW chrome/locale/zh-TW/noscript/
