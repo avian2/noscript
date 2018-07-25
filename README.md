@@ -1,9 +1,10 @@
 # Unofficial NoScript version history
 
 This repository contains version history for the NoScript Firefox add-on **up
-to around March 2018**.
+to around March 2018**. **This repository is no longer being updated. It
+predates the official noscript repository on GitHub.**
 
-**This repository is no longer being updated.**
+**As of July 2018, official noscript repository is [here](https://github.com/hackademix/noscript).**
 
 Files in the xpi/ subdirectory were automatically extracted from XPI files
 downloaded from https://addons.mozilla.org/en-US/firefox/addon/noscript.
